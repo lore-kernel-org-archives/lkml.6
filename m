@@ -2,151 +2,181 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A756C00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0341C00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CFF213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E3C213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YzAVhjas"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CFF213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DYaz8iY5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E3C213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJDHpQ (ORCPT
+        id S1727221AbeJDHpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 03:45:16 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:62804 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbeJDHpQ (ORCPT
+        Thu, 4 Oct 2018 03:45:23 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35846 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeJDHpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 03:45:16 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w940sOdu003328
-        for <linux-kernel@vger.kernel.org>; Thu, 4 Oct 2018 09:54:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w940sOdu003328
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538614465;
-        bh=TRD8gFMjv78UfY2xvFIpjl5q9W42lyhVO7AMnwUYdE0=;
-        h=From:Date:Subject:To:Cc:From;
-        b=YzAVhjasr+L8KGEXdWZ7p0OsvP/pzj4tliP4X2nxX/OOY22a8CmyhraAWtldp2ucs
-         ftKiVTVGKcplAOBedKEXUNHdUCCJyc176Ndm0Yr6a7wXNZ1hhSbUf1PkQX1mNA0e/7
-         h5PBo8nJRkq3g7Pi5H4j7HiO/opc9XHTLlylk0hoex/MAj+CY/L3ng1AIbSJFTl1qH
-         Oy2sRB7NpvAi/1myo1yi7yQvcjaXhPurtzr5VeNzT0IXDfSpXJgN97tWik5WRDVSWN
-         qPfbsoR7HP+QbhW0UV/6AchIWnBQeHh3Dqz3I2rUHWzfuXfRxzJbbcR4ruulkZLcv2
-         IwUJ9AD9qgQZQ==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id a202so1206254vsd.5
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:54:25 -0700 (PDT)
-X-Gm-Message-State: ABuFfoibVqXlkhexaKit/7rC+Rjg0U9SYSJ4uxsMGEAAtJn9bzwO7yHd
-        zlq1HkRfdc24D1NgFHfznRtonMIBOkRnGbDQF/4=
-X-Google-Smtp-Source: ACcGV61EE9X3+3Bs/n3UN17K2nHEBFkhtThSa/P/IDvUH6RL5U5/zmxQ0KFXWzl8v6j2gU+ZDE7AmKoqajjRCVATGTE=
-X-Received: by 2002:a67:3793:: with SMTP id j19mr1386060vsi.215.1538614464497;
- Wed, 03 Oct 2018 17:54:24 -0700 (PDT)
+        Thu, 4 Oct 2018 03:45:23 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b7-v6so2500129pfo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ABMhAV/wQYAX7YsQXcF6ItaCBUorFc3bFz1Cdfn2xk0=;
+        b=DYaz8iY5Oh48w5HAxrgCKYHVOrOj5pw2nXHPXv+vmUZcgityBpYbbbotsTjwEAhJSB
+         lMt+Spmoh9Vs7i0/K/dCCtdS9kHXX/V2Tt1eAUEKTeoFfKzz//LCnF76j9YgD137bFj4
+         r/6CXle/D6eaTG71rT78PY9FPJAe5o1YScEX8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ABMhAV/wQYAX7YsQXcF6ItaCBUorFc3bFz1Cdfn2xk0=;
+        b=GyYmTYNyrShfxVGVuoyfeJUqZMWVuNvhmLd6ZCAtInM/w6CtnoMVEpD3VSlMOGARnU
+         alKdePLrEeYJSMOb6bE3Jj2Ee6wQ+LfB27IivbSOyZS8rZVwyLw1nA36iSRmCQ23ZtKu
+         J7teSmsdQvCPYxd274TFyT+LqopS5twCJtjMvdairJtXl8/WNMmAbObRP9a99Q9o9PWW
+         GPnnjvIqYFsyBR7Ki0Vk+RDMkqh8yj8GSsS5XFMXeOuP+tVeIKdSFcgaG64wU5jA2X7a
+         qDkaqpFHYQiNHjyIDc2BF9Jb/Img4k6CCwQtJ1FPtuYteEyqAOXDKyLD6is1cCbN/G6A
+         r+4Q==
+X-Gm-Message-State: ABuFfoi2B7wy06pFU4RtGE1yS9eDIKL+Ea0TSEmPb2jjHkq+GOfz8TEw
+        MTTK1JDpu11+ShiLYuSNPEQxSYuGOoep9g==
+X-Google-Smtp-Source: ACcGV62PPAqGXKXq7fUIg8rjYTUAfvBKACyQD7WxzZ/Faa7o9GEGhqSUCY3pG9RYGO2wpMf59FK0BA==
+X-Received: by 2002:a63:904a:: with SMTP id a71-v6mr3653236pge.264.1538614476221;
+        Wed, 03 Oct 2018 17:54:36 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s195-v6sm5533336pgs.76.2018.10.03.17.54.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 17:54:35 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 17:54:33 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
+Cc:     ohad@wizery.com, clew@codeaurora.org, sricharan@codeaurora.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] rpmsg: Add TIOCMGET/TIOCMSET ioctl support
+Message-ID: <20181004005433.GX2523@minitux>
+References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
+ <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 4 Oct 2018 09:53:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR90vJA6vyEP_6_zmW_CAoxrHQC8-iAK0ixn6+o2uQfkg@mail.gmail.com>
-Message-ID: <CAK7LNAR90vJA6vyEP_6_zmW_CAoxrHQC8-iAK0ixn6+o2uQfkg@mail.gmail.com>
-Subject: [GIT PULL v2] ARM: dts: uniphier: UniPhier DT updates for v4.20
-To:     arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Olof,
+On Wed 03 Oct 04:34 PDT 2018, Arun Kumar Neelakantam wrote:
 
-Please pull UniPhier DT updates for the v4.20 MW.
+> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
+> to get/set the low level transport signals.
+> 
+> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 54 +++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 51 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 86003d5..c983d6c 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/slab.h>
+> +#include <linux/termios.h>
+>  #include <linux/uaccess.h>
+>  #include <uapi/linux/rpmsg.h>
+>  
+> @@ -274,15 +275,62 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+>  	return mask;
+>  }
+>  
+> +static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
+> +				 unsigned long arg)
 
-This is v2, for which I picked up a little more patches.
+Make arg type int __user *
 
+> +{
+> +	struct rpmsg_eptdev *eptdev = fp->private_data;
+> +	u32 lsigs, rsigs, val;
+> +	int ret;
+> +
+> +	ret = get_user(val, (u32 *)arg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	switch (cmd) {
+> +	case TIOCMBIS:
+> +		lsigs |= val;
+> +		break;
+> +	case TIOCMBIC:
+> +		lsigs &= ~val;
+> +		break;
+> +	case TIOCMSET:
+> +		lsigs = val;
+> +		break;
+> +	}
+> +
+> +	ret = rpmsg_set_sigs(eptdev->ept, lsigs);
 
-In this cycle, I queued up all arm/arm64 changes
-into a single branch to avoid build errors.
+This is racy, as the signals might change while we update them. Mimic
+tty_tiocmset() instead and make rpmsg_set_sigs() take a clear and set
+mask.
 
-Thanks!
+And please do spell out rpmsg_set_signal() and rpmsg_get_signal().
 
+> +	return ret;
 
+return rpmsg_set_signals();
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> +}
+> +
+>  static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  			       unsigned long arg)
+>  {
+>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+> +	u32 lsigs, rsigs;
+> +	int ret;
+>  
+> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> -		return -EINVAL;
+> +	switch (cmd) {
+> +	case TIOCMGET:
+> +		ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
+> +		if (!ret)
+> +			ret = put_user(rsigs, (u32 *)arg);
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+Cast to int __user *
 
-are available in the git repository at:
+> +		break;
+> +	case TIOCMSET:
+> +	case TIOCMBIS:
+> +	case TIOCMBIC:
+> +		ret = rpmsg_eptdev_tiocmset(fp, cmd, arg);
+> +		break;
+> +	case RPMSG_DESTROY_EPT_IOCTL:
+> +		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+>  
+> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	return ret;
+>  }
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-tags/uniphier-dt-v4.20
-
-for you to fetch changes up to 546cba0623df695ac84c10a821cf98fea24b2a18:
-
-  arm64: dts: uniphier: Add USB2 PHY nodes (2018-10-04 09:41:06 +0900)
-
-----------------------------------------------------------------
-UniPhier ARM SoC DT updates for v4.20
-
-- Add more clocks to NAND controller nodes
-
-- Add SPI controller nodes
-
-- Add SD controller nodes
-
-- Add USB 3.0 and its PHY nodes
-
-- Add PHY nodes for USB 2.0
-
-----------------------------------------------------------------
-Kunihiko Hayashi (7):
-      ARM: dts: uniphier: add SPI pin-mux node
-      ARM: dts: uniphier: add SPI node for UniPhier 32bit SoCs
-      arm64: dts: uniphier: add SPI node for LD20, LD11 and PXs3
-      ARM: dts: uniphier: Add USB3 controller nodes
-      ARM: dts: uniphier: Add USB2 PHY nodes
-      arm64: dts: uniphier: Add USB3 controller nodes
-      arm64: dts: uniphier: Add USB2 PHY nodes
-
-Masahiro Yamada (4):
-      ARM: uniphier: dts: add more clocks to Denali NAND controller node
-      arm64: uniphier: dts: add more clocks to Denali NAND controller node
-      ARM: dts: uniphier: add SD/eMMC controller nodes
-      arm64: dts: uniphier: add SD controller nodes
-
- arch/arm/boot/dts/uniphier-ld4-ref.dts                 |   4 +
- arch/arm/boot/dts/uniphier-ld4.dtsi                    |  48 +++-
- arch/arm/boot/dts/uniphier-ld6b-ref.dts                |  12 +
- arch/arm/boot/dts/uniphier-pinctrl.dtsi                |  25 ++
- arch/arm/boot/dts/uniphier-pro4-ace.dts                |  12 +
- arch/arm/boot/dts/uniphier-pro4-ref.dts                |  12 +
- arch/arm/boot/dts/uniphier-pro4-sanji.dts              |  12 +
- arch/arm/boot/dts/uniphier-pro4.dtsi                   | 189 ++++++++++++++-
- arch/arm/boot/dts/uniphier-pro5.dtsi                   |  59 ++++-
- arch/arm/boot/dts/uniphier-pxs2-gentil.dts             |  12 +
- arch/arm/boot/dts/uniphier-pxs2-vodka.dts              |   8 +
- arch/arm/boot/dts/uniphier-pxs2.dtsi                   | 239
-++++++++++++++++++-
- arch/arm/boot/dts/uniphier-sld8-ref.dts                |   4 +
- arch/arm/boot/dts/uniphier-sld8.dtsi                   |  48 +++-
- arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi       |  52 ++++-
- arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts |   4 +
- arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts    |   4 +
- arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi       | 255
-+++++++++++++++++++-
- arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts    |  12 +
- arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi       | 283
-++++++++++++++++++++++-
- 20 files changed, 1286 insertions(+), 8 deletions(-)
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Regards,
+Bjorn
