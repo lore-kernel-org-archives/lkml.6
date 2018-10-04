@@ -2,119 +2,158 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DECECC00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A21F3C00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 738F220856
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 348EE20856
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:41:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7Ze14El"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 738F220856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="PLX56Jf3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 348EE20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeJDI2i (ORCPT
+        id S1727368AbeJDIch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 04:28:38 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38346 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeJDI2i (ORCPT
+        Thu, 4 Oct 2018 04:32:37 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:46610 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726843AbeJDIch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 04:28:38 -0400
-Received: by mail-ot1-f67.google.com with SMTP id h15-v6so7574870otj.5;
-        Wed, 03 Oct 2018 18:37:42 -0700 (PDT)
+        Thu, 4 Oct 2018 04:32:37 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 04 Oct 2018 10:41:38 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id CC1D961BAE;
+        Thu,  4 Oct 2018 10:41:38 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,338,1534777200"; 
+   d="scan'208";a="292637675"
+Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 04 Oct 2018 10:41:38 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NuNsoZwTAh5hwJxz70Ax20g6nWN91thSOj9I0FaDBnI=;
-        b=s7Ze14ElCAnFIlf1+vu+ugm+UKMuIDxF8JoXN8EqESW5DSifKf/FxEXBvqVL7W7QSw
-         F1yqbih4nEUCaRM0/PP9U4IvI+ddfXZkF8eEbXt+JzUztSC3Lf53LBwQinQCzQmuYKZj
-         52FnmZ5dBybXCAkpv+Mn8Q5ngAj11S9LmidPQrqCQji/NXeNC2GdyRK8O1DlHytQw/SD
-         LMp2yBOm3Ep6Ey2wBNziSl18lsD/FtxSdZaAcyYWif4wZH7qLMnUzcFE2yfCJUSe3Txc
-         OBGWxu7atRaI3L28G0fEYYvRLY4C6O5ra7XQwtvRX/q7PbPAyA2xzoiNMhr9B/0Rwzka
-         qTxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NuNsoZwTAh5hwJxz70Ax20g6nWN91thSOj9I0FaDBnI=;
-        b=YLUsSRQFoVtgyO+/RqX6oq7gGiMekh1gJCeRWPNDwdtdbgcAwPd6+rcLo1yRhLKTzG
-         69KIHqb4vbX8DaLXx0JgOPEWtCmQP6MlSus7u2woAICayMp6GH6NCFaIfiiVDx1GsZus
-         rNQnmlI3kxk0yQxyJarnQVnL78bJwnaaCT8IfCFc0/x4QzPrsNS/XSpVHGbq1pYlMyYU
-         wEtB2sQSZqVqt2cu835r08V7WyIGMjK/4JhcvB+4TugUtVTP4O8IY+nqXxj4WT4aJwV7
-         v9LAkqhcBL9pPyT4Mvl4K72p3A47Kh1DacRmTmi/j50CN6jBQRR+SKfWDdUevpI+SxQ+
-         exzg==
-X-Gm-Message-State: ABuFfoijXUq2yu8z6txzYIUkiMsiR3iFpA1J/YgOHk67/eEmbk1MAeHt
-        f7eT3C2UsKkmT8EHkXgUolPVe8WGrk9+CD27EE8=
-X-Google-Smtp-Source: ACcGV60sCHHWrxBPUhVd7TidY4wrMGSUmW7aJVvs3jQ7JuXYSqhpF24ys9ZRkoe4z3gPlB5piMNj5VBRg2dfJ8RXdhA=
-X-Received: by 2002:a9d:2568:: with SMTP id j37mr2516279otd.263.1538617062494;
- Wed, 03 Oct 2018 18:37:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180928020816.11251-1-leobras.c@gmail.com> <20181001075607.GA3776@rric.localdomain>
- <CADvQ+rETmm2Ag4sijXG-0Aya7B0oww7LkLgijAC+nznyWskkvg@mail.gmail.com> <alpine.LNX.2.21.1810040915040.8@nippy.intranet>
-In-Reply-To: <alpine.LNX.2.21.1810040915040.8@nippy.intranet>
-From:   Leonardo Bras <leobras.c@gmail.com>
-Date:   Wed, 3 Oct 2018 22:37:29 -0300
-Message-ID: <CADvQ+rE8qQmSangHOCrJo7aAD-BJiN3Gt2hCi-3O8uRTgXnP-w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] Remove errors building drivers/DRIVERNAME
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Robert Richter <rric@kernel.org>, lkcamp@lists.libreplanetbr.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-m68k@lists.linux-m68k.org, oprofile-list@lists.sf.net,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VhGW9UrD/aKlSgPB5KKmAr9oy5xhaEneTzu+c3eGoig=;
+ b=PLX56Jf3QDITq89/D3lgL9R1uVkAvTNZ9DpQZRbM8bVtxIn5HfHyO39OZ0nExLvfXzvs3v/atSAjANGxJ0S01U+ff54eErbf4t7XcOQXCzenuEJ6VWh4vXQlpKR+mIYqDIJ5dC14pP+zrrDGC1IG4a2WljwmxhZzikRk8YxRiQA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.21; Thu, 4 Oct 2018 01:41:36 +0000
+Message-ID: <87va6ipkaz.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     <jiada_wang@mentor.com>
+Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH linux-next v2 9/9] ASoC: rsnd: add busif       property to dai stream
+In-Reply-To: <20181003090136.4556-1-jiada_wang@mentor.com>
+References: <20181003090136.4556-1-jiada_wang@mentor.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Thu, 4 Oct 2018 01:41:36 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: OSAPR01CA0092.jpnprd01.prod.outlook.com
+ (2603:1096:604:b::32) To TY1PR01MB1865.jpnprd01.prod.outlook.com
+ (2603:1096:403:2::21)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 25171c56-60a1-434d-5adb-08d6299a85dd
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1865;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;3:rNrmfuDhpdIKf4jebaBtxR+4puxMh3TaWDim5hy1P538SbnFpa2QWQsQz+6t/BcKlgvlNEqxX+sTWrxmQwJ8cfNNRPcXu48MICjdZbEMsSAY+ppTdFQT7AfvLTTD8O5sD0QXgl8BD6W7CI4dFHtyMaVbRLrL7K8iGeDquVfb2OkPd/GM/094AN/IGNuw0tuDbcrhAYTTlRsy67/9vpCzmhka8SaYLIyYdYaWv1gKKAXwFvLt4QPGnjEt4Y6AKwDe;25:Rn3UYPkn4jVUVw5IKkH3wkO7X2EjqZiw3fPmFSkZ8K2PvXiyXqoClPAwnMGrMflp6JdtNis/+MjAzMPzZA2ONjjgw2fEqFhF6g1hjAFznB5Yh4LmU4Qy6x5FLHGcOW02xsk+ebMqrDHiCHH5pKMTgSzKlrAZVXmbBxb1sXe46Fa2ENpVAPL4VdlxxYjuFMinm91YE3Q4dujS5MbK7zUTxbI5l6VOEJ7I74FUTZGruPxMaQVJAwE7eWReAkgHnJ6RCUXiKxWgviy29nh5WQm5yTVoo2N19eaazcx4hv6QVmmF4RljmTwttHfhXu09cDteMGDArZNFdtl2sTjwPOT0bg==;31:LG56b2TJqSzG2Fu4vXj6mu231S8xuPHZZhShT+rPOb+N7POrBDHRTbs/fx0Z9VpgfvjOEcN753tj5FQ4kOcWoiARPOF4/0GzaDstuFx7RatLvCJM/9v/YcWxsisC8ZvU2jJTc5eOyb9BlnGZfP1oSg2iMiZymqM621tZKIiTD8HC3kSapnWEkxC7Qo7EEVuUQ8XvHPYcLpm06wc93oEPF+bGbQbWCmrwckNxonl0sUw=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1865:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:uOm6rfeOuK373A+ZEDOKW1R0Gprgwx71qODYLZH7fdeh/QIfg4w1H3QXf8+UtaIZHbirsUzJm2sddOSs94LB9Z2T6BFzJ1Q70316Mv7VKvmYSbJJLBXvUZA9PJkWFx++jUv+HxhbfZ4bx6erqgdyDbxNBSkFw/YLEG0TfJxv6l3/fwukBrsIggz3D8JH0umVcUCmb7nNw38uaKKhTjSzrYa5eDRQO38Sa23PtxhbjMe+BUffBO+j0Pag+aKDuzpNr4WYqUdYkwJY/UZ3iPGv+KzcisRNSY7GcqGlfv2aWRxF5gdCSXa2WProzcSI8dlxzBzxzXA8LJqEQInuueChGPvP3YWCNrsBsCVJqPPYUAmpmsxLBwkJcBZ20HpxvkRDLfsf21U51JWPsKfkIAvP34/fxnN01yHaZZBxhOIFAZO6zGpgGH+tHhkyfh0bw1Lh6qiYVaKDMP8SIkmNF49TyqUTtqB9mzyo/xrv1fLOt+n+Aqrw4KhKyiharJWxoDoP;4:o2lf6Rg7Q61pvXK0AlAuBFMmEn0WezB38D8/PVnZ1vKMogJVsXkXFHFWCwNwaWx9jxm+8OkaVZ01JnasYwal7inhh8BfwLTLhB6j3rZucODIcpMLm+9km0GM0KVzJsZ02++mzQ35ki3OKQVI9/uo31k7WMW/A2+hDDDknJD1Lh5tSoVj+IrJwxoKf/CG3z97P2p2+jVoBdI07OwL5tMvv/cyK75LtK0PYPn7VbB00L/WkTZUGibGcn88ef7C/DYVkxuKGkNz9KgXF6xlZmoszg==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB186514833A211E929A6BF099D4EA0@TY1PR01MB1865.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:TY1PR01MB1865;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1865;
+X-Forefront-PRVS: 0815F8251E
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(136003)(346002)(376002)(366004)(189003)(199004)(14444005)(186003)(16526019)(50466002)(39060400002)(26005)(4326008)(476003)(446003)(486006)(2616005)(11346002)(956004)(25786009)(68736007)(386003)(76176011)(305945005)(7736002)(86362001)(7696005)(52116002)(47776003)(66066001)(316002)(58126008)(54906003)(6116002)(3846002)(23726003)(2906002)(105586002)(5660300001)(69596002)(106356001)(6486002)(478600001)(345774005)(53936002)(81156014)(6246003)(53416004)(8936002)(36756003)(6916009)(81166006)(229853002)(97736004)(2351001)(16586007)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1865;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1865;23:q8cv/rnzj+79lheLSCXkWzFuYE8wI2jWOYL7b3VUX?=
+ =?us-ascii?Q?XkRwSTTKYMxRAhWvmeCt95pv88TOUX9S2+xomu+qyhLTXP2NyIArHSvSWK8k?=
+ =?us-ascii?Q?1BT7qIhZ0e5WhzZsB2wyF2X9ht11em8bO7GHJ1qf5pqOSgoIM8K3Z+sfyDRn?=
+ =?us-ascii?Q?T50gzUTIgKwnCYMYRhA4MXEo43vqsuUNA9jA3wv/ed00VOzruO9u0M21caRy?=
+ =?us-ascii?Q?/vPdYLbbLRh6lYyQx7+NLHXt9YvjKsESo3uy7yZOvQzfhxImy48I5MrkFhfi?=
+ =?us-ascii?Q?WIwN7/xIcoKxvn10ehezVeCYhRrS5RxtQ/Fl7I/EkWDe88pqG5+4UKF5waEM?=
+ =?us-ascii?Q?BAWOpXxwO6pRRt4nQNQvhrpwtzOGXOcFSmueWh5iabGqik8Qo3g3y2qsYsVB?=
+ =?us-ascii?Q?uktgtRnb1tGngi3H9+Iv7LJOKoMT6HMCQfxQglFJIg4H9cXRyAPbHpPoqd7b?=
+ =?us-ascii?Q?7DeKJayFCtiyKLZBZnDD1Zn1eh7wDdT1I3JuAAx7W/RZKozswgDchzdKjwV9?=
+ =?us-ascii?Q?1HopoiNMR1aCjoz5KDcndwVsOgXHa/EIU+4V2bWV0OPXSHv1Y0csBSAqSYIt?=
+ =?us-ascii?Q?BxjpffGds7TtUh3BIUOlQDwfEU6GvNkeNC6AVqf8uJ9ZKAQThl5eAdTITDPI?=
+ =?us-ascii?Q?UdNBr3ZtP+9uLs0Jg+uSq8TnxNbxLxuReqcymDHU2CEkN2sI0qdjkrPZRxEi?=
+ =?us-ascii?Q?HXSw6mHp3YS7EKjSU32IenXKM2/1b6TOorNGIP4M9CNfKWl7NiDGZzqNkVJU?=
+ =?us-ascii?Q?1yDsSg1gBhw+n744CFuNSD5n/omoFlzl6oVlP6UprQQRuwer4fNKSjHrk7ZA?=
+ =?us-ascii?Q?+T+ZUHE6EY0VlOO6iI72Kzm045dzE3JuYkzbQbWTkNiBwCAlJLkZpclpfdEq?=
+ =?us-ascii?Q?HyifASfhwU99OecyqFtI7r5CY0Zp1PTHjrsjMsEjyRzgTheAFpuQvVTXeAAz?=
+ =?us-ascii?Q?BuKIMd8X6JCDzu5dFi4NK0CG5HGWxq31JjMiTYOx9uIHvKeCVs+B5OYcs4PH?=
+ =?us-ascii?Q?F4UqJgBBc+QP0reIocJhXKKsBVIQvOd6YjDC9mdkYrQWQcbqUCbJf19CK5hH?=
+ =?us-ascii?Q?pf2Su0U6QIrE4HKOUnFkE2wMLSN1MpFFb4d3+Ll0OxcfM52i/2/qkDJs97K3?=
+ =?us-ascii?Q?kyKLUegf77GpBfjVK48rapQMvDuJRLVKL/aNDVEEdiZahK7NNWLugo3da2dD?=
+ =?us-ascii?Q?kqUkp9SJJygBzdMOfq3jSC4N7nYaOYM1wRnsyKxal3uhEMdm9ikG+6IicXbE?=
+ =?us-ascii?Q?CEuMsJ6PRT+3lQAUhZQZ+POkbvyZ6bDmv5IfbO2n5pc4GRRpgK7yZ+B0X8cZ?=
+ =?us-ascii?Q?Y6fzPyZ/kMkvTcWM11NfKA=3D?=
+X-Microsoft-Antispam-Message-Info: 9EYgV3IcjVvBruqqgfFxri/N4c4RH4oW6OTn1BGvrH72yoR5SyYN+iDFIruxKFjcEpToNlwcl6ZDQOJpf50LqtapWvDy4Kb0B24eBzj4XvPspgj34oOLVaGLbgVcRZ6nrsao67ZMwuPzOvaBIoGZIJQ3TtgvvzTAx2UUKt+GFaUuRzI+Z+j7zA6MMUmUwuUfKRFrABXWiJlb2QPjwSOpE7gZMMlb4PD+ZnJL/rdSx6fqXPZ6zFa9lFVF7AFPloVLj4IPCbfYGwyjcmwqFE6GkWs2xC7s/9WrcsQFkdkHPZicGOJAy9j6Mq41X+tv2i8RqwUdOmAkdJh8KzYXh59NIyWxsDjczAtw+K12qseuLRs=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;6:HVRZa03ZbDYwyoPPismqgo0/bdkYJM09OErD1J4IJ7vkUEBASpS/QcoAX+8QVmH24+MSYipQuLb9S9rNIB/re6Jys61mtj05SNGSSTPL8rGW9/WRm2daH+AZdaYTPYUfhGCyONHz44rGwmmYuXRw7BO3VIVYWBEsqcM1EcxEtt86L5DLXU5J+kUVLH0Og2JmLadzUDHz+vhj78LODFzVPIJt/RIEljbwm2CghkJCWNz9KiJdTdHt1Xb8vPFvnxMDeRmsGizYzJBVWN7+rs3Bju/jpeabvuxCS9CtykUowKQJ+ikVB8qw07B26tWO8QAx/iFTyqfb01KndWRPqVegXdC6hVbD6chQ4fWL2TNdmRxugGPdKktXnPAPWd9GPn8FMna91VYhZ9VvqZvO+xUEq+afJcf7IIUGGFhRwH2drac8BF810nG9kgSxVNRegETCB16iG/1nlwA9TdTZu2/tAA==;5:VsnaeJsg17b2gZpXAzKqUDu3Sdl+bkufMGGHhEOHyFkpLy4wvb38lhCLk+q3EccjLIggKPG1N+9FlHMI/WKuKQ60QKEtFcWL+SiNHhv0vc2PCJ515Eie1RoUXlqALhBjeSn63DL3TcFWBe1goLTP/pyResd9CsDFWYDipuTYHSo=;7:2sI/2qWsU1JnjVJeKWr0Diuj7UVw4BdWyO1uLrDPDfq06NJXYRzQ4bsJqRITBlkPLapzEnAvvD2gUjwuLd/s6VFP/PiQJQRVGhOxcEExobemiIQ5i4Ekm9ZVT+90MkwkZSiG6xnuHMDdgD60SlwJyimKh+keu3AYbrZgDSFowQq52DYQkAvG2VGiZRJnaDFIniDxERlbawocwjI5KdNEvHixBmUjFw3diyzvKHScR/7RNMDNG1WzOcPA08vjt4KO
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:O1NreIjvZx0R2wPIYuPftynF16WcOxTvJjUZ2ieQ22X7NUL4V47bzHrG0l7OcabildPZ+22x5wcu/nLqBQl4/79JLEysuBvc9f5bxWyHO0RoKkBAbHOJ3rz5I6aznbxWpbm6H3O9oqIakhBe2DkwG8z5rQOwjhj0aQmixAwqW4Y=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 01:41:36.4582 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25171c56-60a1-434d-5adb-08d6299a85dd
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1865
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 8:27 PM Finn Thain <fthain@telegraphics.com.au> wrote:
->
-> On Wed, 3 Oct 2018, Leonardo Bras wrote:
->
-> >
-> > Sorry, I was not very clear at my reasons why this change is important,
-> > I will try to briefly explain the whole story.
-> >
-> > Some weeks ago I was trying to solve a task that needed to change some
-> > compiling options, build the whole kernel (allyesconfig) and look for
-> > errors. The problem was: It would take a long time to build everything
-> > in my computer. And many friends with slimmer laptops would take much
-> > longer.
-> >
->
-> It seems to me that you shouldn't need expensive optimization for
-> continuous integration. In theory that could make a big difference though
-> I admit to no experience of build farms.
->
-> Have you looked at ccache? It will save you from having to recompile any
-> files not changed.
->
-> You could also leverage all of your laptops together using distcc.
->
-> HTH.
->
-> --
 
-Both ccache and distcc seem very interesting,
-I will take my time to study them better as they can solve some situations
-I face. Thanks for sharing!
+Hi Jiada
 
-Still, I believe my patchset is relevant, as it would enable people to rebuild
-the whole kernel (with build flags changes, for example) at the cost of only
-git-pushing the changes to a fork of my Gitlab repo, and waiting 3 hours.
+Thank you for your patch
 
-Thanks for helping!
+> in GEN3 SSI may use different BUSIF for data transfer,
+> this patch adds busif property to each dai stream,
+> to indicate the BUSIF used by playback/capture stream.
+> 
+> Also adds rsnd_ssi_select_busif() to automatically select
+> BUSIF (currently only BUSIF0 is selected)
+> 
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+>  sound/soc/sh/rcar/core.c |  3 +++
+>  sound/soc/sh/rcar/dma.c  | 31 +++++++++++++++++++++++++++++++
+>  sound/soc/sh/rcar/rsnd.h |  3 +++
+>  sound/soc/sh/rcar/ssi.c  | 30 +++++++++++++++++++++++++++++-
+>  4 files changed, 66 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+> index 40d7dc4f7839..5e3e6e65bcdf 100644
+> --- a/sound/soc/sh/rcar/core.c
+> +++ b/sound/soc/sh/rcar/core.c
+> @@ -1158,6 +1158,9 @@ static int rsnd_hw_params(struct snd_pcm_substream *substream,
+>  	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+>  	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
+>  	int ret;
+> +	int chan = rsnd_runtime_channel_for_ssi_with_params(io, hw_params);
+> +
+> +	rsnd_ssi_select_busif(io, chan);
+
+If my understanding was correct, the chance to use BUSIFx is when TDM split mode.
+And this patch selects it on runtime (= hw_param) ?
+But, I think we can/should select it on probe timing from DT connection.
+Am I misunderstanding ?
+
+I'm not sure how to select, but adding new ssiuX0 - ssiuX7
+is realistic idea (parse sound card is not realistic...) ?
+If so, your rxu/txu DMA can be more simple ?
