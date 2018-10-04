@@ -2,109 +2,217 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF076C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD0CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81B762082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:14:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdONSnEi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B762082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1690F213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:15:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1690F213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeJDRHC (ORCPT
+        id S1727576AbeJDRHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:07:02 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37794 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbeJDRHB (ORCPT
+        Thu, 4 Oct 2018 13:07:42 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50845 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbeJDRHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:07:01 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u12-v6so9235696wrr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:14:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5uYwxQHzVVjKKKIcBn7qdgUaMoYMrJ57XcFa7IxpZiU=;
-        b=DdONSnEiW3wI6mpL9QDsZTOI6tpMGeUx5fUWjwlP/mZDZf08OgrTViArp26dU6D6p4
-         Y1sXvqfdA5urEF/suY+arEbcmYZsCOYwo1lhU2ML7REJlvzEw0sRdGtM/N/xh9LwYRXc
-         pDcDdeDK8/PZJlyd/GQ0s4M6Fd3aOXido2O/NU8FD2b8f3YLs7VOQyJcEMdlvLTsL9ZA
-         Ywb6cVk3oHijfsOZr7lOnX6ehfN5FzgP5bOh3YPxWhQ1VKvrIZkuIRE3aYYbhbAYe+ob
-         X5ENW4rcHW/CYpRk8qLr1tf2XSdaIrDiZKVGhDGLCJejfwUSMZKvJAhI+jKgHTrYrwuv
-         VXBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5uYwxQHzVVjKKKIcBn7qdgUaMoYMrJ57XcFa7IxpZiU=;
-        b=NHCtaK5kS7J0kQe9fsPuu2aVFaHOzs633OpQ6SK818J/F+rXQbJURUFjn/LSAv4wkm
-         X/TMcJDUd8zHYZlkyGqrF8Vof+KJw09f2KnpixsZ8vGZcjZfy2IYUT3weN3Y1HMmZzcF
-         6Fg4Uf5fEHmgOKF9R3iDRsEiUzSSnECWibqCM7xXoRA2beaeqh4ZH7n4ngeevnRAZg89
-         VKNHgKH7T0l2XJnFQkCJsrYn1BurPuX4JU0Jkatj2Z9FhjS5giPjidBzjhErd3j6rdor
-         JzvG2Tn9anX0O022Cr3ZvdorMPXXhGYEY6/U2Qo4E+KPmWvk/olaDH4L6UAd10MVEfT1
-         djSg==
-X-Gm-Message-State: ABuFfoi4bUWFAM0ekJKLPb3d4jIyhep0P1+ceozAd+V4VaOJSnUnb8a+
-        gUQbWlszupAQpsP35aOBs7I=
-X-Google-Smtp-Source: ACcGV60wsb+b4jfMiEOpgrAYS/rZ2DMRpcmh06t7VWsPjwVrtrtOODZXdMFoEMBHo5/y1iDdOHl0jg==
-X-Received: by 2002:a5d:4c4d:: with SMTP id n13-v6mr3900694wrt.120.1538648066035;
-        Thu, 04 Oct 2018 03:14:26 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id z21-v6sm3291209wmi.29.2018.10.04.03.14.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 03:14:25 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 12:14:23 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] locking/lockdep: Make class->ops a percpu counter
-Message-ID: <20181004101423.GA83274@gmail.com>
-References: <1538511560-10090-1-git-send-email-longman@redhat.com>
- <1538511560-10090-5-git-send-email-longman@redhat.com>
- <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
- <62801eb9-16f2-606f-d3a2-61fef5b0a704@redhat.com>
- <d66681f3-8781-9793-1dcf-2436a284550b@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d66681f3-8781-9793-1dcf-2436a284550b@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 4 Oct 2018 13:07:42 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g80el-0001Pj-Gt; Thu, 04 Oct 2018 12:14:55 +0200
+Message-ID: <1538648094.14153.8.camel@pengutronix.de>
+Subject: Re: [PATCH v2] reset: Exclusive resets must be dedicated to a
+ single hardware block
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Date:   Thu, 04 Oct 2018 12:14:54 +0200
+In-Reply-To: <20180927180038.24599-1-geert+renesas@glider.be>
+References: <20180927180038.24599-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert,
 
-* Waiman Long <longman@redhat.com> wrote:
+Thank you for the patch. I'd still like to hear the device tree
+maintainers' (added to Cc:) opinion on parsing the whole DT for "resets"
+phandle properties to find shared resets like this.
 
-> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> index b0d0b51c4d85..1fd82ff99c65 100644
-> --- a/include/linux/lockdep.h
-> +++ b/include/linux/lockdep.h
-> @@ -99,13 +99,8 @@ struct lock_class {
->  	 */
->  	unsigned int			version;
+On Thu, 2018-09-27 at 20:00 +0200, Geert Uytterhoeven wrote:
+> In some SoCs multiple hardware blocks may share a reset control.
+> The reset control API for shared resets will only assert such a reset
+> when the drivers for all hardware blocks agree.
+> The exclusive reset control API still allows to assert such a reset, but
+> that impacts all other hardware blocks sharing the reset.
+> 
+> While the kernel doc comments clearly state that the API for shared
+> resets applies to reset controls which are shared between hardware
+> blocks, the exact meaning of exclusive resets is not documented.
+> Fix the semantic ambiguity with respect to exclusive access vs.
+> exclusive reset lines by:
+>   1. Clarifying that exclusive resets really are intended for use with
+>      reset controls which are dedicated to a single hardware block,
+>   2. Ensuring that obtaining an exclusive reset control will fail if the
+>      reset is shared by multiple hardware blocks, for both DT-based and
+>      lookup-based reset controls.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This is v2 of "[RFC] reset: Add support for dedicated reset controls":
+>   - Fix wrong variable in __reset_is_dedicated() loop,
+>   - Add missing of_node_put() in __of_reset_is_dedicated(),
+>   - Document that exclusive reset controls imply they are dedicated to a
+>     single hardware block,
+>   - Drop new dedicated flag and new API reset_control_get_dedicated(),
+>     as exclusive already implies dedicated,
+>   - Rename {__of_,}reset_is_dedicated() to {__of_,}reset_is_exclusive(),
+>   - Reword description.
+> 
+> Note: Exclusive lookup-based reset controls were not tested.
+> ---
+>  drivers/reset/core.c  | 58 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/reset.h |  5 +++-
+>  2 files changed, 62 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 225e34c56b94a2e3..2f5b61226c7964eb 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -459,6 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
+>  	kref_put(&rstc->refcnt, __reset_control_release);
+>  }
 >  
-> -	/*
-> -	 * Statistics counter:
-> -	 */
-> -	unsigned long			ops;
-> -
-> -	const char			*name;
->  	int				name_version;
-> +	const char			*name;
+> +static bool __of_reset_is_exclusive(const struct device_node *node,
+> +				    const struct of_phandle_args args)
+> +{
+> +	struct of_phandle_args args2;
+> +	struct device_node *node2;
+> +	int index, ret;
+> +	bool eq;
 
-'name' gets moved by the patch - better structure packing on 64-bit kernels?
+I suppose it is very unlikely to get false positives where an arbitrary
+node contains a "resets" property that looks like a proper phandle to an
+actual reset-controller node.
+Are we allowed though to scan the whole tree for "resets" properties
+regardless of the nodes' bindings or compatible properties like this?
 
-Looks good to me otherwise.
+> +	for_each_node_with_property(node2, "resets") {
+> +		if (node == node2)
+> +			continue;
+> +
+> +		for (index = 0; ; index++) {
+> +			ret = of_parse_phandle_with_args(node2, "resets",
+> +							 "#reset-cells", index,
+> +							 &args2);
+> +			if (ret)
+> +				break;
+> +
+> +			eq = (args2.np == args.np &&
+> +			      args2.args_count == args.args_count &&
+> +			      !memcmp(args2.args, args.args,
+> +				      args.args_count * sizeof(args.args[0])));
+> +			of_node_put(args2.np);
+> +			if (eq)
 
-Thanks,
+Emitting a loud warning here could be very helpful if it contains
+both the reset controller node and the reset index, as well as the
+consumer nodes: node and node2.
 
-	Ingo
+> +				return false;
+> +		}
+> +	}
+> +	return true;
+> +}
+> +
+>  struct reset_control *__of_reset_control_get(struct device_node *node,
+>  				     const char *id, int index, bool shared,
+>  				     bool optional)
+> @@ -514,6 +546,11 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>  		return ERR_PTR(rstc_id);
+>  	}
+>  
+> +	if (!shared && !__of_reset_is_exclusive(node, args)) {
+> +		mutex_unlock(&reset_list_mutex);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+>  	/* reset_list_mutex also protects the rcdev's reset_control list */
+>  	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
+>  
+> @@ -541,6 +578,22 @@ __reset_controller_by_name(const char *name)
+>  	return NULL;
+>  }
+>  
+> +static bool __reset_is_exclusive(const struct reset_control_lookup *lookup)
+> +{
+> +	const struct reset_control_lookup *lookup2;
+> +
+> +	list_for_each_entry(lookup2, &reset_lookup_list, list) {
+> +		if (lookup2 == lookup)
+> +			continue;
+> +
+> +		if (lookup2->provider == lookup->provider &&
+> +		    lookup2->index == lookup->index)
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  static struct reset_control *
+>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  				bool shared, bool optional)
+> @@ -562,6 +615,11 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  		if ((!con_id && !lookup->con_id) ||
+>  		    ((con_id && lookup->con_id) &&
+>  		     !strcmp(con_id, lookup->con_id))) {
+> +			if (!shared && !__reset_is_exclusive(lookup)) {
+> +				mutex_unlock(&reset_lookup_mutex);
+> +				return ERR_PTR(-EINVAL);
+> +			}
+> +
+>  			mutex_lock(&reset_list_mutex);
+>  			rcdev = __reset_controller_by_name(lookup->provider);
+>  			if (!rcdev) {
+> diff --git a/include/linux/reset.h b/include/linux/reset.h
+> index 29af6d6b2f4b8103..5881d2594761e48f 100644
+> --- a/include/linux/reset.h
+> +++ b/include/linux/reset.h
+> @@ -116,8 +116,11 @@ static inline int device_reset_optional(struct device *dev)
+>   * @id: reset line name
+>   *
+>   * Returns a struct reset_control or IS_ERR() condition containing errno.
+> - * If this function is called more than once for the same reset_control it will
+> + * If this function is called more than once for the same reset control it will
+>   * return -EBUSY.
+> + * This function is intended for use with reset controls which are dedicated
+> + * to a single hardware block.  If called for a reset control shared among
+> + * multiple hardware blocks, it will return -EINVAL.
+>   *
+>   * See reset_control_get_shared for details on shared references to
+>   * reset-controls.
+
+regards
+Philipp
