@@ -2,95 +2,88 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA4BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6487C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA0D2098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:10:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA0D2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B74F32098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B74F32098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeJDQDN (ORCPT
+        id S1727519AbeJDQDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:03:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:32828 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbeJDQDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:03:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43F1180D;
-        Thu,  4 Oct 2018 02:10:54 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E3943F5D3;
-        Thu,  4 Oct 2018 02:10:49 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 10:10:48 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v7 08/14] sched/topology: Disable EAS on inappropriate
- platforms
-Message-ID: <20181004091046.7nn2odqrjy7tp5vx@queper01-lin>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-9-quentin.perret@arm.com>
- <20181003162719.GB19252@hirez.programming.kicks-ass.net>
+        Thu, 4 Oct 2018 12:03:34 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65098 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeJDQDe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:03:34 -0400
+Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 23b951b3e89db010; Thu, 4 Oct 2018 11:11:13 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Al Cooper <alcooperx@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH] PM / core: Clear the direct_complete flag on errors
+Date:   Thu, 04 Oct 2018 11:08:12 +0200
+Message-ID: <61559514.Vym8FNvob2@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181003162719.GB19252@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 03 Oct 2018 at 18:27:19 (+0200), Peter Zijlstra wrote:
-> On Wed, Sep 12, 2018 at 10:13:03AM +0100, Quentin Perret wrote:
-> > @@ -288,6 +321,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
-> >  			goto free;
-> >  		tmp->next = pd;
-> >  		pd = tmp;
-> > +
-> > +		/*
-> > +		 * Count performance domains and capacity states for the
-> > +		 * complexity check.
-> > +		 */
-> > +		nr_pd++;
-> > +		nr_cs += em_pd_nr_cap_states(pd->obj);
-> > +	}
-> > +
-> > +	/* Bail out if the Energy Model complexity is too high. */
-> > +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
-> > +		if (sched_debug())
-> > +			pr_info("rd %*pbl: EM complexity is too high\n ",
-> > +						cpumask_pr_args(cpu_map));
-> > +		goto free;
-> >  	}
-> 
-> I would make than an unconditional WARN, we do not really expect that to
-> trigger, but then it does, we really don't want to hide it.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-OTOH that also means that some people with big asymmetric machines can
-get a WARN message every time they boot, and even if they don't want to
-use EAS.
+If __device_suspend() returns early on an error or pending wakeup
+and the power.direct_complete flag has been set for the device
+already, the subsequent device_resume() will be confused by it
+and it will call pm_runtime_enable() incorrectly, as runtime PM
+has not been disabled for the device by __device_suspend().
 
-Now, that shouldn't happen any time soon, so it's maybe a good thing if
-we get reports when/if people start to hit that one, so why not ...
+To avoid that, clear power.direct_complete if __device_suspend()
+is not going to disable runtime PM for the device before returning.
 
-Thanks,
-Quentin
+Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
+Reported-by: Al Cooper <alcooperx@gmail.com>
+Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/main.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/base/power/main.c
+===================================================================
+--- linux-pm.orig/drivers/base/power/main.c
++++ linux-pm/drivers/base/power/main.c
+@@ -1713,8 +1713,10 @@ static int __device_suspend(struct devic
+ 
+ 	dpm_wait_for_subordinate(dev, async);
+ 
+-	if (async_error)
++	if (async_error) {
++		dev->power.direct_complete = false;
+ 		goto Complete;
++	}
+ 
+ 	/*
+ 	 * If a device configured to wake up the system from sleep states
+@@ -1726,6 +1728,7 @@ static int __device_suspend(struct devic
+ 		pm_wakeup_event(dev, 0);
+ 
+ 	if (pm_wakeup_pending()) {
++		dev->power.direct_complete = false;
+ 		async_error = -EBUSY;
+ 		goto Complete;
+ 	}
+
