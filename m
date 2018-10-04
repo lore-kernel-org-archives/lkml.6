@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7186CC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D688EC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E9220877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:24:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E9220877
+	by mail.kernel.org (Postfix) with ESMTP id A78AB20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:24:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78AB20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbeJDTP4 (ORCPT
+        id S1727644AbeJDTPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:15:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35763 "EHLO mail.bootlin.com"
+        Thu, 4 Oct 2018 15:15:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35704 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727705AbeJDTP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:15:56 -0400
+        id S1727354AbeJDTPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:15:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B034C208B5; Thu,  4 Oct 2018 14:22:51 +0200 (CEST)
+        id 9C93420DE1; Thu,  4 Oct 2018 14:22:41 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 38E6120CFE;
-        Thu,  4 Oct 2018 14:22:32 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 406FF209D6;
+        Thu,  4 Oct 2018 14:22:31 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
         paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
@@ -36,9 +36,9 @@ Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next v4 04/11] net: mscc: ocelot: move the HSIO header to include/soc
-Date:   Thu,  4 Oct 2018 14:22:01 +0200
-Message-Id: <20181004122208.32272-5-quentin.schulz@bootlin.com>
+Subject: [PATCH net-next v4 01/11] MIPS: mscc: ocelot: make HSIO registers address range a syscon
+Date:   Thu,  4 Oct 2018 14:21:58 +0200
+Message-Id: <20181004122208.32272-2-quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181004122208.32272-1-quentin.schulz@bootlin.com>
 References: <20181004122208.32272-1-quentin.schulz@bootlin.com>
@@ -47,39 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since HSIO address space can be used by different drivers (PLL, SerDes
-muxing, temperature sensor), let's move it somewhere it can be included
-by all drivers.
+HSIO contains registers for PLL5 configuration, SerDes/switch port
+muxing and a thermal sensor, hence we can't keep it in the switch DT
+node.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Paul Burton <paul.burton@mips.com>
 Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- drivers/net/ethernet/mscc/ocelot.h                       | 2 +-
- {drivers/net/ethernet => include/soc}/mscc/ocelot_hsio.h | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename {drivers/net/ethernet => include/soc}/mscc/ocelot_hsio.h (100%)
+ arch/mips/boot/dts/mscc/ocelot.dtsi | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
-index 616bec30dfa3..d3980158c4a3 100644
---- a/drivers/net/ethernet/mscc/ocelot.h
-+++ b/drivers/net/ethernet/mscc/ocelot.h
-@@ -13,10 +13,10 @@
- #include <linux/if_vlan.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <soc/mscc/ocelot_hsio.h>
+diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+index f7eb612b46ba..149b1a7e7091 100644
+--- a/arch/mips/boot/dts/mscc/ocelot.dtsi
++++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+@@ -107,7 +107,6 @@
+ 			reg = <0x1010000 0x10000>,
+ 			      <0x1030000 0x10000>,
+ 			      <0x1080000 0x100>,
+-			      <0x10d0000 0x10000>,
+ 			      <0x11e0000 0x100>,
+ 			      <0x11f0000 0x100>,
+ 			      <0x1200000 0x100>,
+@@ -121,10 +120,10 @@
+ 			      <0x1280000 0x100>,
+ 			      <0x1800000 0x80000>,
+ 			      <0x1880000 0x10000>;
+-			reg-names = "sys", "rew", "qs", "hsio", "port0",
+-				    "port1", "port2", "port3", "port4", "port5",
+-				    "port6", "port7", "port8", "port9", "port10",
+-				    "qsys", "ana";
++			reg-names = "sys", "rew", "qs", "port0", "port1",
++				    "port2", "port3", "port4", "port5", "port6",
++				    "port7", "port8", "port9", "port10", "qsys",
++				    "ana";
+ 			interrupts = <21 22>;
+ 			interrupt-names = "xtr", "inj";
  
- #include "ocelot_ana.h"
- #include "ocelot_dev.h"
--#include "ocelot_hsio.h"
- #include "ocelot_qsys.h"
- #include "ocelot_rew.h"
- #include "ocelot_sys.h"
-diff --git a/drivers/net/ethernet/mscc/ocelot_hsio.h b/include/soc/mscc/ocelot_hsio.h
-similarity index 100%
-rename from drivers/net/ethernet/mscc/ocelot_hsio.h
-rename to include/soc/mscc/ocelot_hsio.h
+@@ -231,5 +230,10 @@
+ 			pinctrl-0 = <&miim1>;
+ 			status = "disabled";
+ 		};
++
++		hsio: syscon@10d0000 {
++			compatible = "mscc,ocelot-hsio", "syscon", "simple-mfd";
++			reg = <0x10d0000 0x10000>;
++		};
+ 	};
+ };
 -- 
 2.17.1
 
