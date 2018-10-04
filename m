@@ -2,249 +2,127 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E618EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEC0C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7152084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:44:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7152084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 435322084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:44:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="koIWB+/7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 435322084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbeJDWh6 (ORCPT
+        id S1728259AbeJDWiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:37:58 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:42213 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728157AbeJDWh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:37:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42QxyB3YyCz9ttRf;
-        Thu,  4 Oct 2018 17:44:02 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id KBj8e2U21lfA; Thu,  4 Oct 2018 17:44:02 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42QxyB2wlmz9ttRV;
-        Thu,  4 Oct 2018 17:44:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1BAF28BB65;
-        Thu,  4 Oct 2018 17:44:05 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id oCQDBv7AmfSz; Thu,  4 Oct 2018 17:44:05 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B5FA18BB5F;
-        Thu,  4 Oct 2018 17:44:04 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 7AFA26F2D5; Thu,  4 Oct 2018 15:44:04 +0000 (UTC)
-Message-Id: <0d4cb7638343eda7fb871f5e523f65a2f4ac91c5.1538541955.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1538541946.git.christophe.leroy@c-s.fr>
-References: <cover.1538541946.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 8/9] powerpc/64: Remove CURRENT_THREAD_INFO
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu,  4 Oct 2018 15:44:04 +0000 (UTC)
+        Thu, 4 Oct 2018 18:38:07 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:36906 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeJDWiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 18:38:07 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 63CD81C4
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 15:44:16 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id IWJ-XL-8WpYv for <linux-kernel@vger.kernel.org>;
+        Thu,  4 Oct 2018 10:44:16 -0500 (CDT)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 396D1426
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 10:44:16 -0500 (CDT)
+Received: by mail-io1-f69.google.com with SMTP id x5-v6so9206184ioa.6
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=C9FXET8nLUYT7EaXtCe+aZgjNqt94iaq704cE4c5DaY=;
+        b=koIWB+/7PXG5fMOwFrE5jwXh8lO8++Vu3oHWGfvuaQZdnCb4+Cd8dYW5oUao1PkmBQ
+         IJx8oWZHp0vRSf/eRZJq5Ezy1rMDi5qG99/iaMFGOV9/18esW/KctrT++jWAIH//0rVa
+         +um6A5qT6lnYKzbq5ZnY7Ua0bHBZJHyh2zrSuHwD7M+1sfG+ztJb3+g843KNX4NZPy6F
+         +0tTtBsvuV60QgCHGK2HNjkJPMP70bzCyNV6GM1i9F3ZzfQLPNERVMof1MonOtNZyP0f
+         w4hXPj69+9/DxeNbgeL69BGK9/qcdLGEINR0Gnw2GRbiHFzzJxHSNN5TPZuzm3mQ7bPf
+         U4GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C9FXET8nLUYT7EaXtCe+aZgjNqt94iaq704cE4c5DaY=;
+        b=jOQ1MJGvFth2ufX7vlq7w3sjD7zIGN5hKt09NgDbxapYGgPl6U6YgLxK7SHApM4yG3
+         l84g+HM+z+d1LauF8h0nAP0Hd3zW9gY3n94HUzePCXmqXGYmSG9Y/vYimoLrkPE2S4PF
+         PbxOo9ShbdzjQAVMKr0POxbQdkKZyKTVummG1Oh3ISM9bYYTjSsv21QIMr9Yif5X8Avk
+         1/HgYsQbFpiha/cuCwfHyPIe/xKw3Jl85G7VNYXbAbqLUaCjVG4/zhduDxjPmZRY74xI
+         7FYXM6vh6k51qoNoSeczbLlRfkKm+laccarmkSpfEbCN3D4du2QkxQif5RQxfgynyt/c
+         nCzQ==
+X-Gm-Message-State: ABuFfoiDT11urXR4jeajjRMqccQM4Io1WtRUs2/iTnp2sB3O8/MxMUKQ
+        /7nNii7Kexpr5ZuEbn//XLkP35fIAaPcwz/t8Q/XV2drwwsXLzBRCXJlwq41JUC2B8+NntoaxIn
+        fB+6eevUUo0S2I1DE/1suuSHde3qH
+X-Received: by 2002:a24:7cc6:: with SMTP id a189-v6mr4955747itd.42.1538667855857;
+        Thu, 04 Oct 2018 08:44:15 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV6139mxWTu6Cd7JeIiZzfcE6qrA5mkFrSqiynLLU2FgYelr8Ga4qly/ETt1TuCOcjqg2ZQgiNw==
+X-Received: by 2002:a24:7cc6:: with SMTP id a189-v6mr4955733itd.42.1538667855664;
+        Thu, 04 Oct 2018 08:44:15 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id r202-v6sm1569637iod.28.2018.10.04.08.44.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 04 Oct 2018 08:44:14 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org (open list:TI DAVINCI SERIES MEDIA DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] media: isif: fix a NULL pointer dereference bug
+Date:   Thu,  4 Oct 2018 10:44:02 -0500
+Message-Id: <1538667843-18091-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that current_thread_info is located at the beginning of 'current'
-task struct, CURRENT_THREAD_INFO macro is not really needed any more.
+In isif_probe(), there is a while loop to get the ISIF base address and
+linearization table0 and table1 address. In the loop body, the function
+platform_get_resource() is called to get the resource. If
+platform_get_resource() returns NULL, the loop is terminated and the
+execution goes to 'fail_nobase_res'. Suppose the loop is terminated at the
+first iteration because platform_get_resource() returns NULL and the
+execution goes to 'fail_nobase_res'. Given that there is another while loop
+at 'fail_nobase_res' and i equals to 0, one iteration of the second while
+loop will be executed. However, the second while loop does not check the
+return value of platform_get_resource(). This can cause a NULL pointer
+dereference bug if the return value is a NULL pointer.
 
-This patch replaces it by loads of the value at PACACURRENT(r13).
+This patch avoids the above issue by adding a check in the second while
+loop after the call to platform_get_resource().
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 ---
- arch/powerpc/include/asm/exception-64s.h       |  4 ++--
- arch/powerpc/include/asm/thread_info.h         |  4 ----
- arch/powerpc/kernel/entry_64.S                 | 10 +++++-----
- arch/powerpc/kernel/exceptions-64e.S           |  2 +-
- arch/powerpc/kernel/exceptions-64s.S           |  2 +-
- arch/powerpc/kernel/idle_book3e.S              |  2 +-
- arch/powerpc/kernel/idle_power4.S              |  2 +-
- arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  6 +++---
- 8 files changed, 14 insertions(+), 18 deletions(-)
+ drivers/media/platform/davinci/isif.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/exception-64s.h b/arch/powerpc/include/asm/exception-64s.h
-index a86feddddad0..ca3af3e9015e 100644
---- a/arch/powerpc/include/asm/exception-64s.h
-+++ b/arch/powerpc/include/asm/exception-64s.h
-@@ -680,7 +680,7 @@ END_FTR_SECTION_NESTED(ftr,ftr,943)
+diff --git a/drivers/media/platform/davinci/isif.c b/drivers/media/platform/davinci/isif.c
+index f924e76..340f821 100644
+--- a/drivers/media/platform/davinci/isif.c
++++ b/drivers/media/platform/davinci/isif.c
+@@ -1100,7 +1100,8 @@ static int isif_probe(struct platform_device *pdev)
  
- #define RUNLATCH_ON				\
- BEGIN_FTR_SECTION				\
--	CURRENT_THREAD_INFO(r3, r1);		\
-+	ld	r3, PACACURRENT(r13);		\
- 	ld	r4,TI_LOCAL_FLAGS(r3);		\
- 	andi.	r0,r4,_TLF_RUNLATCH;		\
- 	beql	ppc64_runlatch_on_trampoline;	\
-@@ -730,7 +730,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_CTRL)
- #ifdef CONFIG_PPC_970_NAP
- #define FINISH_NAP				\
- BEGIN_FTR_SECTION				\
--	CURRENT_THREAD_INFO(r11, r1);		\
-+	ld	r11, PACACURRENT(r13);		\
- 	ld	r9,TI_LOCAL_FLAGS(r11);		\
- 	andi.	r10,r9,_TLF_NAPPING;		\
- 	bnel	power4_fixup_nap;		\
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 361bb45b8990..2ee9e248c933 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -17,10 +17,6 @@
- 
- #define THREAD_SIZE		(1 << THREAD_SHIFT)
- 
--#ifdef CONFIG_PPC64
--#define CURRENT_THREAD_INFO(dest, sp)	stringify_in_c(ld dest, PACACURRENT(r13))
--#endif
--
- #ifndef __ASSEMBLY__
- #include <linux/cache.h>
- #include <asm/processor.h>
-diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-index 6fce0f8fd8c4..06d9a7c084a1 100644
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -158,7 +158,7 @@ system_call:			/* label this so stack traces look sane */
- 	li	r10,IRQS_ENABLED
- 	std	r10,SOFTE(r1)
- 
--	CURRENT_THREAD_INFO(r11, r1)
-+	ld	r11, PACACURRENT(r13)
- 	ld	r10,TI_FLAGS(r11)
- 	andi.	r11,r10,_TIF_SYSCALL_DOTRACE
- 	bne	.Lsyscall_dotrace		/* does not return */
-@@ -205,7 +205,7 @@ system_call:			/* label this so stack traces look sane */
- 	ld	r3,RESULT(r1)
- #endif
- 
--	CURRENT_THREAD_INFO(r12, r1)
-+	ld	r12, PACACURRENT(r13)
- 
- 	ld	r8,_MSR(r1)
- #ifdef CONFIG_PPC_BOOK3S
-@@ -336,7 +336,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_HAS_PPR)
- 
- 	/* Repopulate r9 and r10 for the syscall path */
- 	addi	r9,r1,STACK_FRAME_OVERHEAD
--	CURRENT_THREAD_INFO(r10, r1)
-+	ld	r10, PACACURRENT(r13)
- 	ld	r10,TI_FLAGS(r10)
- 
- 	cmpldi	r0,NR_syscalls
-@@ -735,7 +735,7 @@ _GLOBAL(ret_from_except_lite)
- 	mtmsrd	r10,1		  /* Update machine state */
- #endif /* CONFIG_PPC_BOOK3E */
- 
--	CURRENT_THREAD_INFO(r9, r1)
-+	ld	r9, PACACURRENT(r13)
- 	ld	r3,_MSR(r1)
- #ifdef CONFIG_PPC_BOOK3E
- 	ld	r10,PACACURRENT(r13)
-@@ -849,7 +849,7 @@ resume_kernel:
- 1:	bl	preempt_schedule_irq
- 
- 	/* Re-test flags and eventually loop */
--	CURRENT_THREAD_INFO(r9, r1)
-+	ld	r9, PACACURRENT(r13)
- 	ld	r4,TI_FLAGS(r9)
- 	andi.	r0,r4,_TIF_NEED_RESCHED
- 	bne	1b
-diff --git a/arch/powerpc/kernel/exceptions-64e.S b/arch/powerpc/kernel/exceptions-64e.S
-index 231d066b4a3d..dfafcd0af009 100644
---- a/arch/powerpc/kernel/exceptions-64e.S
-+++ b/arch/powerpc/kernel/exceptions-64e.S
-@@ -469,7 +469,7 @@ exc_##n##_bad_stack:							    \
-  * interrupts happen before the wait instruction.
-  */
- #define CHECK_NAPPING()							\
--	CURRENT_THREAD_INFO(r11, r1);					\
-+	ld	r11, PACACURRENT(r13);					\
- 	ld	r10,TI_LOCAL_FLAGS(r11);				\
- 	andi.	r9,r10,_TLF_NAPPING;					\
- 	beq+	1f;							\
-diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
-index b9239dbf6d59..f776f30ecfcc 100644
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -1738,7 +1738,7 @@ do_hash_page:
- 	ori	r0,r0,DSISR_BAD_FAULT_64S@l
- 	and.	r0,r4,r0		/* weird error? */
- 	bne-	handle_page_fault	/* if not, try to insert a HPTE */
--	CURRENT_THREAD_INFO(r11, r1)
-+	ld	r11, PACACURRENT(r13)
- 	lwz	r0,TI_PREEMPT(r11)	/* If we're in an "NMI" */
- 	andis.	r0,r0,NMI_MASK@h	/* (i.e. an irq when soft-disabled) */
- 	bne	77f			/* then don't call hash_page now */
-diff --git a/arch/powerpc/kernel/idle_book3e.S b/arch/powerpc/kernel/idle_book3e.S
-index 4e0d94d02030..31e732c378ad 100644
---- a/arch/powerpc/kernel/idle_book3e.S
-+++ b/arch/powerpc/kernel/idle_book3e.S
-@@ -63,7 +63,7 @@ _GLOBAL(\name)
- 1:	/* Let's set the _TLF_NAPPING flag so interrupts make us return
- 	 * to the right spot
- 	*/
--	CURRENT_THREAD_INFO(r11, r1)
-+	ld	r11, PACACURRENT(r13)
- 	ld	r10,TI_LOCAL_FLAGS(r11)
- 	ori	r10,r10,_TLF_NAPPING
- 	std	r10,TI_LOCAL_FLAGS(r11)
-diff --git a/arch/powerpc/kernel/idle_power4.S b/arch/powerpc/kernel/idle_power4.S
-index a09b3c7ca176..61ac89fd0a05 100644
---- a/arch/powerpc/kernel/idle_power4.S
-+++ b/arch/powerpc/kernel/idle_power4.S
-@@ -68,7 +68,7 @@ BEGIN_FTR_SECTION
- 	DSSALL
- 	sync
- END_FTR_SECTION_IFSET(CPU_FTR_ALTIVEC)
--	CURRENT_THREAD_INFO(r9, r1)
-+	ld	r9, PACACURRENT(r13)
- 	ld	r8,TI_LOCAL_FLAGS(r9)	/* set napping bit */
- 	ori	r8,r8,_TLF_NAPPING	/* so when we take an exception */
- 	std	r8,TI_LOCAL_FLAGS(r9)	/* it will return to our caller */
-diff --git a/arch/powerpc/kernel/trace/ftrace_64_mprofile.S b/arch/powerpc/kernel/trace/ftrace_64_mprofile.S
-index 32476a6e4e9c..202bec086e3b 100644
---- a/arch/powerpc/kernel/trace/ftrace_64_mprofile.S
-+++ b/arch/powerpc/kernel/trace/ftrace_64_mprofile.S
-@@ -229,7 +229,7 @@ ftrace_call:
- 	 *  - r0, r11 & r12 are free
- 	 */
- livepatch_handler:
--	CURRENT_THREAD_INFO(r12, r1)
-+	ld	r12, PACACURRENT(r13)
- 
- 	/* Allocate 3 x 8 bytes */
- 	ld	r11, TI_livepatch_sp(r12)
-@@ -256,7 +256,7 @@ livepatch_handler:
- 	 * restore it.
- 	 */
- 
--	CURRENT_THREAD_INFO(r12, r1)
-+	ld	r12, PACACURRENT(r13)
- 
- 	ld	r11, TI_livepatch_sp(r12)
- 
-@@ -273,7 +273,7 @@ livepatch_handler:
- 	ld	r2,  -24(r11)
- 
- 	/* Pop livepatch stack frame */
--	CURRENT_THREAD_INFO(r12, r1)
-+	ld	r12, PACACURRENT(r13)
- 	subi	r11, r11, 24
- 	std	r11, TI_livepatch_sp(r12)
- 
+ 	while (i >= 0) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		release_mem_region(res->start, resource_size(res));
++		if (res)
++			release_mem_region(res->start, resource_size(res));
+ 		i--;
+ 	}
+ 	vpfe_unregister_ccdc_device(&isif_hw_dev);
 -- 
-2.13.3
+2.7.4
 
