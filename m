@@ -2,76 +2,95 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72277C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F66C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC2920684
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:20:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC2920684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id A7C0120652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C0120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeJDVOE (ORCPT
+        id S1727540AbeJDVP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:14:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45061 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727283AbeJDVOE (ORCPT
+        Thu, 4 Oct 2018 17:15:27 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35953 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeJDVP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:14:04 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g84UO-0004Zf-9d; Thu, 04 Oct 2018 14:20:28 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: make const array config_ids static
-Date:   Thu,  4 Oct 2018 15:20:27 +0100
-Message-Id: <20181004142027.21009-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 4 Oct 2018 17:15:27 -0400
+Received: by mail-ua1-f68.google.com with SMTP id b3so3471091uak.3;
+        Thu, 04 Oct 2018 07:21:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=80mK9cXUh/w1d9a8Orsv+1HXHc67l7VaNHmDHFUb36w=;
+        b=Uvgp2KVtsGJ4sLJ73Cn4gQQSaWySxWdBxII2SWqviMUhs5V9X64tSvNemM7IWGpD7w
+         GlcoFYfPlibZjjFLlsHNgoO15QzZCuH4XsHMl/jCpIhEg9J0rsMeHbTU9ZZe2a98Iw3t
+         H83YcuV/SrqCk3cM4tZoTs4swO9iC1XoREj/TtlXwjeByXjg955srqO95Vz4ej5ub+dm
+         SQDc78cG8V3GnxGDIHKGA89unuJbgofFaUDwMhw1lugCGrrIzQml0ab0iYQiRlTk9TID
+         FKcsOMuRc/eiqAqchWcbbvRm062HyMu2WNhAk3xhjCXYCharbtpIIjAVdkNsb7CSjc6F
+         6T8Q==
+X-Gm-Message-State: ABuFfojNWSjq9EBsApW6AoazZNlst0qDWOG4B7d6Ql+3//YcvOHdEiih
+        XaR7SbxWpnGInymPd+VOk+tHp78HxXuke9Mq6thtqqao
+X-Google-Smtp-Source: ACcGV60jcT6D9eTLT1loWz3NDKJWvyGSoqjGFWASPULdOMXuLvt1h7VwaOONfalQCxtpU+c/ju1qdryEckdH4Ont9fk=
+X-Received: by 2002:ab0:1624:: with SMTP id k33-v6mr2824202uae.0.1538662915127;
+ Thu, 04 Oct 2018 07:21:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20181004183449.36bcc93b@canb.auug.org.au> <20181004134644.GA9130@roeck-us.net>
+In-Reply-To: <20181004134644.GA9130@roeck-us.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 4 Oct 2018 16:21:42 +0200
+Message-ID: <CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
+Subject: Re: linux-next: Tree for Oct 4
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Oct 4, 2018 at 3:47 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> Time for a status report.
+>
+> Build results:
+>         total: 135 pass: 121 fail: 14
+> Failed builds:
+>         arm:allmodconfig
+>         i386:allyesconfig
+>         i386:allmodconfig
+>         m68k:defconfig
+>         m68k:allmodconfig
+>         m68k:sun3_defconfig
+>         mips:allmodconfig
+>         parisc:allmodconfig
+>         powerpc:ppc6xx_defconfig
+>         s390:defconfig
+>         s390:allmodconfig
+>         s390:allnoconfig
+>         sparc32:allmodconfig
+>         xtensa:allmodconfig
 
-The const array config_ids can be made static, saves populating it on
-the stack and will make it read-only.
+Most (all?) 32-bit builds are broken due to commit 571ed1fd2390f74e
+("SUNRPC: Replace krb5_seq_lock with a lockless scheme"), presumably fixed
+by Arnd's "SUNRPC: use cmpxchg64() in gss_seq_send64_fetch_and_inc"
+(https://lore.kernel.org/patchwork/patch/994909/).
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 5ddb2321e9e4..f5fc54de19da 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -656,7 +656,7 @@ static int fimc_is_hw_open_sensor(struct fimc_is *is,
- 
- int fimc_is_hw_initialize(struct fimc_is *is)
- {
--	const int config_ids[] = {
-+	static const int config_ids[] = {
- 		IS_SC_PREVIEW_STILL, IS_SC_PREVIEW_VIDEO,
- 		IS_SC_CAPTURE_STILL, IS_SC_CAPTURE_VIDEO
- 	};
--- 
-2.17.1
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
