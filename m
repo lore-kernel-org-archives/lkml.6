@@ -2,121 +2,121 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBA0C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC69C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D538D2082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D538D2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 422CB2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:40:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="if+TXo44"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422CB2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeJDVcq (ORCPT
+        id S1727634AbeJDVeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:32:46 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40611 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbeJDVcq (ORCPT
+        Thu, 4 Oct 2018 17:34:17 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41903 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbeJDVeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:32:46 -0400
-Received: by mail-qt1-f194.google.com with SMTP id b4-v6so2047195qtc.7;
-        Thu, 04 Oct 2018 07:39:10 -0700 (PDT)
+        Thu, 4 Oct 2018 17:34:17 -0400
+Received: by mail-io1-f66.google.com with SMTP id q4-v6so8080905iob.8
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=SavHLmJUNRwwJVSzw3nYo3pKKy4gR4lS5YhBRwZCqnY=;
+        b=if+TXo44sVAAP7f7oIdwAhkEQxrOBog+e9k51BYRXDDwb9eYezx26bnDVCHlcUZzFN
+         1IJZmj3n89RYiZCU/O6HMVCE+Y7JxqBL17sv21Q0hF5Tn+7p9Hv/AbXiHNGPBWRFcKLH
+         9yp9C3bo/SSyEk5W8KOngpwZ5B2L7WL0Q572U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=S8kY2KZcv5clBm6IljvPQOeVp2ZgUbugkxxstMi9iu4=;
-        b=LteK12j7+1ovzWLhcudq8dzCfbqFNeSv94ZLe+pBTae2uDitXV4kN0ySnBHoVGRQlw
-         f0LDAPfa74T/dIWKHc7QrhGEp/FIkauUpLYdr1gqDACD34LN4hcZBgP9x4iioUn3VchP
-         3+/rPm2h3lCSDYXMVKPkZ6y48PF/Z9XkyngUdt9Fka8vHSU3QUJPCr0BRd98O2qMxt2W
-         9VW3UnO2hNEdV3Lny9lk+T4Wy0y4NyFkCklJRyD7f36lFm5iOuKQKz+eUltBdbIeACEH
-         dHSYFoERl66B94cEyW1GOaVmGG5UwAzKJXM9WR4DrnkdGGl/FodsY4RBK/ipIQyMHG6D
-         Y59A==
-X-Gm-Message-State: ABuFfoivFbN0Q9cb8jbuHXsI0DxrTzXUirZE3qGLt/fRJspOIdxedjyl
-        OYsBum26xzD9gWrXhj604tOwe6o1shvph9WMvtQ=
-X-Google-Smtp-Source: ACcGV60oO5m0XqX6FPxBekVW7eerkvmCEC6HjFj34/sHDJNjrdMvNlCdyjPQ3KjX/uGLJpHpVjzkmH25wJM+hHrSfjU=
-X-Received: by 2002:aed:3f08:: with SMTP id p8-v6mr5532329qtf.185.1538663949960;
- Thu, 04 Oct 2018 07:39:09 -0700 (PDT)
+        bh=SavHLmJUNRwwJVSzw3nYo3pKKy4gR4lS5YhBRwZCqnY=;
+        b=Iq/GMtt+ZiZR+6tzhOqHJwlvswQQu4nc4qbnMO5e0CHrdFXjrTE7NRovrpy9ZLANjd
+         xk60xkgv9urUB269OKzhQ9y34Ob0Vk5xPzQC7ZIwKEjry2z7z0zbGUm2ByvWvMhN7KUC
+         pFru+qD/FIBJTSbvlWamJcn4SilqBbzPeM9qcBktNtQWFD4HyhEZWlq/0M7ohIEmhCnT
+         fxusWfKl0ddAO6t+JZL212yz9jxfF0nMKkx5wZwvEu79ar8S0lx4c9txmJi2kpae6gRw
+         ZtVAQAmNdw9j1upy9sd0wnGooGz9rA2feUNdvlJw/PA6KPQhBNL8T0EOLRspHVcbYhpO
+         w/QA==
+X-Gm-Message-State: ABuFfoi5q7nrdm2jnRGt+KY+ssXORt5rgrKeSsM/Qzs5+aFZatM1wxAf
+        TWWZHO6ofhD+U4voT/yFr4ChJvvaw8ZnrCIz89EGdw==
+X-Google-Smtp-Source: ACcGV62ZLQjRwGPcKudVvDUGXPKf90ixQX0eVHkwRb5S/Di/ykkTI5X8UdqHkwl+WWsnU1CRzbtxMMGFavDXDauRPIE=
+X-Received: by 2002:a6b:144b:: with SMTP id 72-v6mr4577471iou.218.1538664040605;
+ Thu, 04 Oct 2018 07:40:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180810080526.27207-1-brgl@bgdev.pl> <20180831194643.GA62862@ban.mtv.corp.google.com>
- <CAMRc=MejZLV1EQ7uAddsxLY0MTUF8WyiBn=F0ZhkWQJpET0EDQ@mail.gmail.com>
- <a4c2e6cf-749a-83a1-0bda-43ddb7e744cd@gmail.com> <CAMRc=MfwM7vODsnuV9eKS4Uf7M5ac59u7ao7KvyaxKzPv5FRvw@mail.gmail.com>
- <CAK8P3a1LufzR1_6mXH=1zDb34VQStLywGM1w5x5CDAMh_7uMyA@mail.gmail.com> <20181004143508.GG13299@oracle.com>
-In-Reply-To: <20181004143508.GG13299@oracle.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 4 Oct 2018 16:38:51 +0200
-Message-ID: <CAK8P3a3Z7CT3tV=mMB-qZFJfyamP0kTHK2PPCbqzh-WXDNdPZA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/29] at24: remove at24_platform_data
-To:     Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        gregkh <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        naren.kernel@gmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        ivan.khoronzhuk@linaro.org, svendev@arcx.com, pabeni@redhat.com,
-        Alban Bedel <albeu@free.fr>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 07:40:00 -0700 (PDT)
+In-Reply-To: <CAOGqxeXCsXbxOcDrdjsgLXXxOtFfyzE0-zVEU6Y9kLxUaVfDiQ@mail.gmail.com>
+References: <61559514.Vym8FNvob2@aspire.rjw.lan> <CAPDyKFoUdQRUYQ0qb5WM=Bi-F_4Fe8VEPNYZGu2ezMPj_wxoPg@mail.gmail.com>
+ <CAOGqxeXCsXbxOcDrdjsgLXXxOtFfyzE0-zVEU6Y9kLxUaVfDiQ@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 4 Oct 2018 16:40:00 +0200
+Message-ID: <CAPDyKFodNLoHcCJQ0MnoPb6nJ4Nr7V57V16EAYBrk0B01uKagg@mail.gmail.com>
+Subject: Re: [PATCH] PM / core: Clear the direct_complete flag on errors
+To:     Alan Cooper <alcooperx@gmail.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Brian Norris <briannorris@chromium.org>
+        Alan Stern <stern@rowland.harvard.edu>,
+        Pavel Machek <pavel@ucw.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 4:36 PM Sowmini Varadhan
-<sowmini.varadhan@oracle.com> wrote:
+On 4 October 2018 at 15:59, Alan Cooper <alcooperx@gmail.com> wrote:
+>> On 4 October 2018 at 11:08, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> >
+>> > If __device_suspend() returns early on an error or pending wakeup
+>> > and the power.direct_complete flag has been set for the device
+>> > already, the subsequent device_resume() will be confused by it
+>> > and it will call pm_runtime_enable() incorrectly, as runtime PM
+>> > has not been disabled for the device by __device_suspend().
+>>
+>> I think it would be fair to mention that is related to the async
+>> suspend path, in dpm_suspend().
 >
-> Just catching up on this thread, so please excuse any unintentional
-> misquotes here.
+> This also fixed the issue and looks cleaner.
 >
-> > > > > David: I couldn't find a place in sparc code where any ethernet device
-> > > > > would be registered, so is there a chance that nobody is using it?
-> > > >
-> > > > SPARC uses a true Open Firmware implementation, so it would register
-> > > > drivers through the CONFIG_OF infrastructure.
+>>
+>> >
+>> > To avoid that, clear power.direct_complete if __device_suspend()
+>> > is not going to disable runtime PM for the device before returning.
+>>
+>> Overall, by looking at the behavior in dpm_suspend() of async
+>> suspended devices, it does look a bit fragile to me.
+>>
+>> My worries is that we put asynced suspended devices in the
+>> dpm_suspended_list, no matter if the device was successfully suspended
+>> or not. This differs from the no-async path.
+>>
+>> In the long run, maybe we should change that instead?
 >
-> correct
+> I originally looked into this. Currently dmp_suspend moves async
+> devices from the prepared list to the suspended list as they are
+> queued and I looked at moving this to __device_suspend (after the
+> checks for async_error and wake_pending) but realized that this would
+> change normal resume ordering and was afraid that would be too
+> disruptive.
 >
-> > The calls are not even that old, and clearly added intentionally for sparc,
-> > see commit ba94272d08a7 ("i40e: use eth_platform_get_mac_address()")
-> > which added the first one.
->
-> Yes, correct again. Wouldn't PPC also end up doing the same thing?
->
-> See also commit c762dff24c06 (for ixgbe) - without this fix sparc systems
-> will come up with a bogus mac address and then you end up having to
-> manually fix this in ugly ways.
 
-The of_get_mac_address() portion is not controversial at all I think,
-the question was whether we need the fallback to
-arch_get_platform_mac_address() in any of the drivers that
-call eth_platform_get_mac_address().
+I understand, however, I would be surprised if that would be a real
+problem. But who knows. :-)
 
-      Arnd
+The hole async thing is opt-in, and it does also assume that
+drivers/subsystems to cope with devices suspend/resume ordering to be
+based upon device relationships, like parent/child,
+device_link-supplier/consumers. If it's not working, drivers should
+disable the async option, at least in my opinion.
+
+Kind regards
+Uffe
