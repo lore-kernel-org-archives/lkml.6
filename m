@@ -2,92 +2,150 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF47C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0D5C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B9B21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:46:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B9B21473
+	by mail.kernel.org (Postfix) with ESMTP id 0E3D02098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:46:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E3D02098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeJDQif (ORCPT
+        id S1727879AbeJDQiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:38:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59757 "EHLO mail.bootlin.com"
+        Thu, 4 Oct 2018 12:38:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59772 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbeJDQif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:38:35 -0400
+        id S1727046AbeJDQiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:38:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 905CC20802; Thu,  4 Oct 2018 11:46:05 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 410F8206A7;
-        Thu,  4 Oct 2018 11:45:35 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 11:45:35 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for
- mt35xu512aba
-Message-ID: <20181004114535.3a5dba05@bbrezillon>
-In-Reply-To: <20181003165603.2579-2-vigneshr@ti.com>
-References: <20181003165603.2579-1-vigneshr@ti.com>
-        <20181003165603.2579-2-vigneshr@ti.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id 7986F20DDB; Thu,  4 Oct 2018 11:46:16 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3F33F20DCD;
+        Thu,  4 Oct 2018 11:45:51 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 11:45:51 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, andrew@lunn.ch,
+        allan.nielsen@microchip.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        antoine.tenart@bootlin.com
+Subject: Re: [PATCH net-next 4/7] net: phy: mscc: add support for VSC8574 PHY
+Message-ID: <20181004094551.wizlpc6udhkqufgo@qschulz>
+References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
+ <236ef7815c0bec6048e79ef06868719b65c63892.1536916714.git-series.quentin.schulz@bootlin.com>
+ <bc95fae7-cf2f-5cf1-4e24-59fcc231fd64@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xoljisyeyscb6hrd"
+Content-Disposition: inline
+In-Reply-To: <bc95fae7-cf2f-5cf1-4e24-59fcc231fd64@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018 22:26:01 +0530
-Vignesh R <vigneshr@ti.com> wrote:
 
-> Micron's mt35xu512aba flash is an Octal flash that has x8 IO lines. It
-> supports read/write over 8 IO lines simulatenously. Add support for
-> Octal read mode for Micron mt35xu512aba.
-> Unfortunately, this flash is only complaint to SFDP JESD216B and does not
-> seem to support newer JESD216C standard that provides auto detection of
-> Octal mode capabilities and opcodes. Therefore, this capability is
-> manually added using new SPI_NOR_OCTAL_READ flag.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 11 ++++++++++-
->  include/linux/mtd/spi-nor.h   |  2 ++
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index aff5e6ff0b2c..4926e805a8cb 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -90,6 +90,7 @@ struct flash_info {
->  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip erase */
->  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
->  #define USE_CLSR		BIT(14)	/* use CLSR command */
-> +#define SPI_NOR_OCTAL_READ	BIT(15)	/* Flash supports Octal Read */
+--xoljisyeyscb6hrd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hm, we'll need to clarify what OCTAL means. I see at least 3 different
-modes using 8 IO lines (1-1-8, 1-8-8 and 8-8-8) and all of them could
-be qualified as "octal" modes.
-So how about renaming this macro SPI_NOR_1_1_8_READ.
+Hi Florian,
 
-Also, I fear we'll soon run out of bits in ->flags if we keep adding
-one flag per mode which is why I proposed a solution to let flash
-chips tweak the flash parameters as they wish [1][2]. I'm not saying we
-should do it now, but we should definitely plan for something like that.
+On Fri, Sep 14, 2018 at 01:26:06PM -0700, Florian Fainelli wrote:
+> On 09/14/2018 02:44 AM, Quentin Schulz wrote:
+> > The VSC8574 PHY is a 4-ports PHY that is 10/100/1000BASE-T, 100BASE-FX,
+> > 1000BASE-X and triple-speed copper SFP capable, can communicate with
+> > the MAC via SGMII, QSGMII or 1000BASE-X, supports WOL, downshifting and
+> > can set the blinking pattern of each of its 4 LEDs, supports SyncE as
+> > well as HP Auto-MDIX detection.
+> >=20
+> > This adds support for 10/100/1000BASE-T, SGMII/QSGMII link with the MAC,
+> > WOL, downshifting, HP Auto-MDIX detection and blinking pattern for its 4
+> > LEDs.
+> >=20
+> > The VSC8574 has also an internal Intel 8051 microcontroller whose
+> > firmware needs to be patched when the PHY is reset. If the 8051's
+> > firmware has the expected CRC, its patching can be skipped. The
+> > microcontroller can be accessed from any port of the PHY, though the CRC
+> > function can only be done through the PHY that is the base PHY of the
+> > package (internal address 0) due to a limitation of the firmware.
+> >=20
+> > The GPIO register bank is a set of registers that are common to all PHYs
+> > in the package. So any modification in any register of this bank affects
+> > all PHYs of the package.
+> >=20
+> > If the PHYs haven't been reset before booting the Linux kernel and were
+> > configured to use interrupts for e.g. link status updates, it is
+> > required to clear the interrupts mask register of all PHYs before being
+> > able to use interrupts with any PHY. The first PHY of the package that
+> > will be init will take care of clearing all PHYs interrupts mask
+> > registers. Thus, we need to keep track of the init sequence in the
+> > package, if it's already been done or if it's to be done.
+> >=20
+> > Most of the init sequence of a PHY of the package is common to all PHYs
+> > in the package, thus we use the SMI broadcast feature which enables us
+> > to propagate a write in one register of one PHY to all PHYs in the
+> > package.
+> >=20
+> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> > ---
+>=20
+> [snip]
+>=20
+> > +	reg =3D __mdiobus_read(bus, phy, MSCC_PHY_TEST_PAGE_8);
+> > +	reg |=3D 0x8000;
+>=20
+> Having a define would be nice here? This looks like a write enable?
+>=20
 
-[1]https://github.com/bbrezillon/linux/commit/9c672e4c85a91f1b0803c9c6e4b8f3aae5d79ffb
-[2]https://github.com/bbrezillon/linux/commit/3a5515c8821314c06a3d84f9861aefe476bb711e
+I had asked for the meaning of this bit in this register before but we
+couldn't find documentation for it. I'll ask again and let you know.
+
+> > +	__mdiobus_write(bus, phy, MSCC_PHY_TEST_PAGE_8, reg);
+> > +
+> > +	__mdiobus_write(bus, phy, MSCC_EXT_PAGE_ACCESS, MSCC_PHY_PAGE_TR);
+> > +
+> > +	vsc8584_csr_write(bus, phy, 0x8fae, 0x000401bd);
+>=20
+> Just make this an array of address + value pairs and blast it to the
+> PHY, having them be inlined here is both error prone and does not scale
+> well at all.
+
+Right. Turned out it was a great idea as the below values were
+mistakenly adding 0x8000 to the register (which was fine since in
+vsc8584_csr_write does a 0x8000 | reg).
+
+Thanks,
+Quentin
+
+--xoljisyeyscb6hrd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlu14U4ACgkQhLiadT7g
+8aP6tBAAnZRGhR2pqANoJY0A0EERdxFa7jATOs7/nIPLSOl7sX+28IWh1mVWAq5A
+KNujB7KQ9SeWnTYsnrRcwEjvBQPjRkd1mxYPZ+2sGC/BiCzLeutDr/LrniK9trr8
++SsU9O05+rmoIb+Re1vJ9jSealvKo+ruMi1IPOlonFruTWN44H35vHQCIf0bFzNk
++CtHBO8xzwWYkqHOTEPUIoY1r3IKgnplWAHx09JEYhMJKZCWGlKyLuW5EdnbQa2N
+c81InLG1a88GM/taY9wcVkcEdwBAANqTHMidexdOT1q7lOVlQ4gsPtzXQu1j2THF
+5SUAykPXPoTLTcUykycb0WRnYWb6vb/u0I3OY45+B0NFMCdYjWHlWrzRIzM5+iPw
+A1TwUlPL8P0g+Zo0FyCe8WzJ+vzM04oRwVXQqgJO/aiH9ubdBfCvT2LaTILWHwpC
+1Uk8GcwrEvGMhZwVeVvCgSOzzDruxHJDRp7rOc8go1qGi/o44Il/7Xpk0BxPHdMp
+kKx7ZYkIs31tCLS3A8sYUR7n9tucuHBdk/xD/q6Vv7+2wlHmUo8Dxrmf7efWwYGv
+nxKYW8D1PVfOOQt+OhXFwjNivfXEU42P+DBdz5XYWOkElmOYDJetJmmn6R/sUgZG
+cUY8NvP85T21T5xvsFmkipGBc7LrC2IkJ1+6uf0zdYghM1qgBcg=
+=lcii
+-----END PGP SIGNATURE-----
+
+--xoljisyeyscb6hrd--
