@@ -2,104 +2,151 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3991C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D75BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6410A2083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6410A2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E64852098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:05:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="GB93FSb/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E64852098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbeJEC5o (ORCPT
+        id S1727714AbeJEDAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:57:44 -0400
-Received: from mail-pl1-f171.google.com ([209.85.214.171]:43461 "EHLO
-        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeJEC5o (ORCPT
+        Thu, 4 Oct 2018 23:00:42 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46120 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJEDAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:57:44 -0400
-Received: by mail-pl1-f171.google.com with SMTP id 30-v6so5698733plb.10;
-        Thu, 04 Oct 2018 13:02:55 -0700 (PDT)
+        Thu, 4 Oct 2018 23:00:42 -0400
+Received: by mail-pl1-f195.google.com with SMTP id v5-v6so5680461plz.13
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 13:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=0noOyB/d0YIJyaZfGPSLOCEgOe+l0ChWQPXnaoXY3i0=;
+        b=GB93FSb/zaRNdLeMsKLFY60oZ5OGn9MvG8GxLt6HSxti24Kpyv8GfdKZlcF9RiEPY7
+         w88cjY3B99aaDdm02htbK/jjH9Y/UeUPS9vguVPIyWkb4YVYoRe+PBdYwl6T5pqHLx/v
+         KR5ISVwdv49rYXR15WrMel0A34lcDi+8vD0stpSFL5XxSep6t6TpbAm1/Uq0LzWRHCJe
+         xbox4XRHWn1ckDBdCLiWO0j+x0OTJXRsMExrRwg5pKkCvimbVt2H46JkCx80H4+WcXhI
+         eZlu9bRRgR1cLfeUGL/ahodsIwPpAb91ATXOOdwy+cIypowffKmw4ydcVBjsiaz6LQAG
+         YKcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=/PUdVBkYEiRB0NoRa3qumHSwhJXB0XyWPqQ1ZhNVNRw=;
-        b=ftjbVllVcXvVwZbb62qLTrkBgspIeNkT5gCg0eF0yT/97vCvH3tXSvyXHZud3qgu3l
-         /981QhpI9ESV4MHBYOChxQidHhV37wZ7y9adRvAoux3qEsrjLktProTknk9L7tXjV8mL
-         jJcKh0gdrpktFRBsG9n0t/3c2t7CMhaNRgIq6DO/P0l2hddPjR61Y0xgZXvYBS1O0tGE
-         mXV30PezQ9Ys7sxemEh56P6cH8eatTaB3GTCW1cA5J/s0DItOthFRzid648DJwvUV3UR
-         /lDHyy8Mivn6S4hA1MOSGFzttoKJYv/RTNLdmLKnjHL2Vj7lsr5jz3PC6NWKuKUxv3rz
-         /MLA==
-X-Gm-Message-State: ABuFfoiC7xaja74ReNBu6u15sEKxFgEtqlBBONsPRNmFPZPa++W6WATB
-        EhkM7bY+lagK/gTxVbiINKR2AZE0
-X-Google-Smtp-Source: ACcGV63FFrwv3Tgoc7QY6Di53jrim+qk+adZL6RpPRs3EB3n2pXgy6ftYN7h86HuCoeGp2rzMrEpHA==
-X-Received: by 2002:a17:902:9696:: with SMTP id n22-v6mr8233550plp.212.1538683374365;
-        Thu, 04 Oct 2018 13:02:54 -0700 (PDT)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id v63-v6sm6738002pgd.69.2018.10.04.13.02.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 13:02:53 -0700 (PDT)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 04 Oct 2018 13:02:49 -0700
-Date:   Thu, 4 Oct 2018 13:02:49 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Petr Vorel <pvorel@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Felix Fietkau <nbd@nbd.name>, kconfig-sat@googlegroups.com
-Subject: [ANN] init-kconfig - easy way to embrace Linux's kconfig
-Message-ID: <20181004200249.GL5238@garbanzo.do-not-panic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=0noOyB/d0YIJyaZfGPSLOCEgOe+l0ChWQPXnaoXY3i0=;
+        b=EBLhWLxXxG0cs+nbHHuhVVWA/ohUqzivrTQgXpx4QIhY+BBjHqsioRFWCMeaqTPOjz
+         TcOaBA3CyjM1SDmCJwMfH+iui21rv5dlM/K1CfEHOF1SCK//qs7XsDM0gZpkKwNlSaX9
+         BvrUnC3oaME+ZKvT/rt0LTeCQfvqLnL/DEELyDwixU/8An/TNqC9vwjUcWP6yUsMttFt
+         1KCSWxw7k/3wJA/vEMfu/KpiXJ/Sjt79TYFEfyimfNurgh3NRkVbV7zqkbHpMOGiXkMq
+         O/LD4Q1siNHQheaIfAe5RIa8o3P/ID4eoe5NXtefOvbKF2Xw02CPuTEXnqxLk5hYYVBs
+         SxBA==
+X-Gm-Message-State: ABuFfoiRobTbGM2QWbgFoMFRSYLrY4eRzxUD/lFZiIFQf1A4Rl4KJdUU
+        SCrLLcISxbZtg65hxpwBQ014bA==
+X-Google-Smtp-Source: ACcGV61moOA2zDEBrt73wzmy2yhm+hVD74ONL5SVdCyYwUQM3SLeOFp6Zicc5wFW5IiyAh7E2Z16eA==
+X-Received: by 2002:a17:902:7207:: with SMTP id ba7-v6mr8159107plb.266.1538683553218;
+        Thu, 04 Oct 2018 13:05:53 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:950e:67bb:f88c:b77f? ([2601:646:c200:7429:950e:67bb:f88c:b77f])
+        by smtp.gmail.com with ESMTPSA id s85-v6sm9909101pfi.15.2018.10.04.13.05.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 13:05:52 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <20181004193150.GQ19272@hirez.programming.kicks-ass.net>
+Date:   Thu, 4 Oct 2018 13:05:50 -0700
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <499807AB-E779-40C3-AA3F-E8C77A7770EC@amacapital.net>
+References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com> <87sh1ne64t.fsf@vitty.brq.redhat.com> <20181003190617.GC21381@amt.cnet> <87k1mycfju.fsf@vitty.brq.redhat.com> <20181004081100.GI19272@hirez.programming.kicks-ass.net> <B8C05946-43BB-40A4-A564-53904FAF8CC0@amacapital.net> <20181004193150.GQ19272@hirez.programming.kicks-ass.net>
+To:     Peter Zijlstra <peterz@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Every now and then a project is born, and they decide to use Linux's
-kconfig to enable configuration of their project. As it stands we *know*
-kconfig is now used in at least over 12 different projects [0]. I myself
-added kconfig to one as well years ago. Even research reveals that
-kconfig has become one of the leading industrial variability modeling
-languages [1] [2].
 
-What is often difficult to do though is to start off using kconfig and
-integrating it into a project. Or updating / syncing to the latest
-kconfig from upstream Linux.
 
-I had yet another need to use kconfig for another small project so
-decided to make a clean template others can use and help keep it in sync.
-This is a passive fork which aims to keep in sync with the Linux
-kernel's latest kconfig to make it easier to keep up to date and to
-enable new projects to use and embrace kconfig on their own.  The goal
-is *not* to fork kconfig and evolve it separately, but rather keep in
-sync with the evolution of kconfig on Linux to make it easier for
-projects to use kconfig and also update their own kconfig when needed.
+> On Oct 4, 2018, at 12:31 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+> On Thu, Oct 04, 2018 at 07:00:45AM -0700, Andy Lutomirski wrote:
+>>> On Oct 4, 2018, at 1:11 AM, Peter Zijlstra <peterz@infradead.org> wrote:=
 
-This may also be useful if folks want to test R&D code on a smaller
-compartamentalized codebase.
+>>>=20
+>>>> On Thu, Oct 04, 2018 at 09:54:45AM +0200, Vitaly Kuznetsov wrote:
+>>>> I was hoping to hear this from you :-) If I am to suggest how we can
+>>>> move forward I'd propose:
+>>>> - Check if pure TSC can be used on SkyLake+ systems (where TSC scaling
+>>>> is supported).
+>>>> - Check if non-masterclock mode is still needed. E.g. HyperV's TSC page=
 
-If you find this useful and you'd like to help keep it in sync, send
-patches my way as the kernel's kconfig evolves. The code is up on
-gitlab [3].
+>>>> clocksource is a single page for the whole VM, not a per-cpu thing. Can=
 
-Do we want to document this option on Linux in case folks want to try
-and embrace kconfig on their own for other projects?
-  
-[0] http://www.eng.uwaterloo.ca/~shshe/kconfig_semantics.pdf
-[1] http://gsd.uwaterloo.ca/sites/default/files/vm-2013-berger.pdf
-[2] http://gsd.uwaterloo.ca/sites/default/files/ase241-berger_0.pdf
-[3] https://gitlab.com/mcgrof/init-kconfig
+>>>> we think that all the buggy hardware is already gone?
+>>>=20
+>>> No, and it is not the hardware you have to worry about (mostly), it is
+>>> the frigging PoS firmware people put on it.
+>>>=20
+>>> Ever since Nehalem TSC is stable (unless you get to >4 socket systems,
+>>> after which it still can be, but bets are off). But even relatively
+>>> recent systems fail the TSC sync test because firmware messes it up by
+>>> writing to either MSR_TSC or MSR_TSC_ADJUST.
+>>>=20
+>>> But the thing is, if the TSC is not synced, you cannot use it for
+>>> timekeeping, full stop. So having a single page is fine, it either
+>>> contains a mult/shift that is valid, or it indicates TSC is messed up
+>>> and you fall back to something else.
+>>>=20
+>>> There is no inbetween there.
+>>>=20
+>>> For sched_clock we can still use the global page, because the rate will
+>>> still be the same for each cpu, it's just offset between CPUs and the
+>>> code compensates for that.
+>>=20
+>> But if we=E2=80=99re in a KVM guest, then the clock will jump around on t=
+he
+>> same *vCPU* when the vCPU migrates.
+>=20
+> Urgh yes..
+>=20
+>> But I don=E2=80=99t see how kvmclock helps here, since I don=E2=80=99t th=
+ink it=E2=80=99s used
+>> for sched_clock.
+>=20
+> I get hits on kvm_sched_clock, but haven't looked further.
 
-  Luis
+Ok, so KVM is using the per-vCPU pvclock data for sched_clock. Which hopeful=
+ly does something intelligent.
+
+Regardless of any TSC syncing issues, a paravirt clock should presumably be u=
+sed for sched_clock to account for time that the vCPU was stopped.
+
+It would be fantastic if this stuff were documented much better, both in ter=
+ms of the data structures and the Linux code.
+
