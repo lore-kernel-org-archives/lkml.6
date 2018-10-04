@@ -2,137 +2,105 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59ABDC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38049C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E70302098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:45:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfw/7MCI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70302098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0464A2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0464A2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeJDQhv (ORCPT
+        id S1727675AbeJDQiY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:37:51 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45362 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbeJDQhu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:37:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q5-v6so9136997wrw.12
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 02:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=HDicjxug5RKfq+HhpP3ZQdTUad2l64SudYBZtE7m778=;
-        b=bfw/7MCIyusllTKOr5PPN2d2p4KbGjfdN2fxUWzMxi4egP2VLACACovo6Lj9IhBgt8
-         WSW1HVLPTzL/N0RkI3eS/5Md30x//tVZmTDeKPzkZCKKJYot12lYjDRGx0gsRKGUHulP
-         wiTwHPpfsjt+eJ8DhLDl1wm99I1o09qnOmiMf5bYY9Brm9UUdq4+1NLbXjVFD6jlOKT9
-         Mu7bT71Rbgth7ZeeEjOn+d1oDjAfjt6JV95mVXBs08pl2OdCeocRzMUo7owxuRyPJcct
-         edebjwYx5kwkQoUt+wIIWpYQ1/28WNj/8lNdjXZ2BCXWlKD/awjNXQoGwVBPUEPu0eJZ
-         nzCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=HDicjxug5RKfq+HhpP3ZQdTUad2l64SudYBZtE7m778=;
-        b=EUu1PAtIhS2qUx7HvZuqLMoxaKQemOUCDtv8nNkGtM+XFeXLPZc8uUPLQSoYN4NYaG
-         iD7ha63iFYMXQjh5Q2YKlNlJyYgbhhKfIPW7spp9UPwzjp+KEFCGdQK0dLeo1uszIxHd
-         evqDh/AVIrlNZ+gt9g81rJjYk8QPoAZ+DanvZRdIoBB9BQHxVb1OHx7BBnT6iUslRzUD
-         7lwEV+wPn2NtYHytQFhSu2cZcKcARpsHkxK42opDOn27i/RJK1bH3ndlvt74nTf7TTK/
-         qZ26CLXlxM4P737FO4FpsRizKCmXSI2Y5eue52XG9yvOKa7Ifb5naKz9ALAIc7b9/xCV
-         ERZA==
-X-Gm-Message-State: ABuFfohoEZ0simW1h4PWhR0jNqhIKjVZ2wvTWh4RseD76KNAp+KedaQC
-        BilPhs2Nb284MhDpT8dzOP+ohdya
-X-Google-Smtp-Source: ACcGV63sVf6h+eQ+/NpC+MUlbT3UQ0Pd3IKS2KWpUrKD5Bv7oCoiJH3H0pkd9RhfJJa3L66LNny4rw==
-X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr4106822wrx.271.1538646322494;
-        Thu, 04 Oct 2018 02:45:22 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm4437649wmh.47.2018.10.04.02.45.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 02:45:21 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 11:45:19 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     "hpa@zytor.com" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
-Message-ID: <20181004094519.GA97692@gmail.com>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181003213100.189959-5-namit@vmware.com>
- <20181004075755.GA3353@gmail.com>
- <20181004083333.GA9802@gmail.com>
- <10D29A50-C352-4407-A824-0C3C06CD8592@zytor.com>
- <A5DED74C-A95A-48D8-AF68-39E23696385F@vmware.com>
- <20181004091222.GB21864@gmail.com>
- <D42AB116-BFA4-4CF0-BF45-41C579A9B4C7@vmware.com>
+        Thu, 4 Oct 2018 12:38:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:33538 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727046AbeJDQiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:38:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6936E7A9;
+        Thu,  4 Oct 2018 02:45:56 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C0003F5D3;
+        Thu,  4 Oct 2018 02:45:52 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 10:45:47 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v7 08/14] sched/topology: Disable EAS on inappropriate
+ platforms
+Message-ID: <20181004094545.ajkpxmvabfgbdy3y@queper01-lin>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
+ <20180912091309.7551-9-quentin.perret@arm.com>
+ <20181003162719.GB19252@hirez.programming.kicks-ass.net>
+ <20181004091046.7nn2odqrjy7tp5vx@queper01-lin>
+ <20181004093848.GM19272@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D42AB116-BFA4-4CF0-BF45-41C579A9B4C7@vmware.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181004093848.GM19272@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thursday 04 Oct 2018 at 11:38:48 (+0200), Peter Zijlstra wrote:
+> On Thu, Oct 04, 2018 at 10:10:48AM +0100, Quentin Perret wrote:
+> > On Wednesday 03 Oct 2018 at 18:27:19 (+0200), Peter Zijlstra wrote:
+> > > On Wed, Sep 12, 2018 at 10:13:03AM +0100, Quentin Perret wrote:
+> > > > @@ -288,6 +321,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+> > > >  			goto free;
+> > > >  		tmp->next = pd;
+> > > >  		pd = tmp;
+> > > > +
+> > > > +		/*
+> > > > +		 * Count performance domains and capacity states for the
+> > > > +		 * complexity check.
+> > > > +		 */
+> > > > +		nr_pd++;
+> > > > +		nr_cs += em_pd_nr_cap_states(pd->obj);
+> > > > +	}
+> > > > +
+> > > > +	/* Bail out if the Energy Model complexity is too high. */
+> > > > +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
+> > > > +		if (sched_debug())
+> > > > +			pr_info("rd %*pbl: EM complexity is too high\n ",
+> > > > +						cpumask_pr_args(cpu_map));
+> > > > +		goto free;
+> > > >  	}
+> > > 
+> > > I would make than an unconditional WARN, we do not really expect that to
+> > > trigger, but then it does, we really don't want to hide it.
+> > 
+> > OTOH that also means that some people with big asymmetric machines can
+> > get a WARN message every time they boot, and even if they don't want to
+> > use EAS.
+> > 
+> > Now, that shouldn't happen any time soon, so it's maybe a good thing if
+> > we get reports when/if people start to hit that one, so why not ...
+> 
+> Right, and if becomes a real problem we can think of a solution (like
+> maybe a DT thingy that says to not use EAS, or a 'better' EAS
+> algorithm).
 
-* Nadav Amit <namit@vmware.com> wrote:
-
-> > Another, separate question I wanted to ask: how do we ensure that the kernel stays fixed?
-> > I.e. is there some tooling we can use to actually measure whether there's bad inlining decisions 
-> > done, to detect all these bad patterns that cause bad GCC code generation?
-> 
-> Good question. First, I’ll indicate that this patch-set does not handle all
-> the issues. There is still the issue of conditional use of
-> __builtin_constant_p().
-> 
-> One indication for bad inlining decisions is the inlined functions have
-> multiple (non-inlined) instances in the binary and are short. I don’t
-> have an automatic solution, but you can try, for example to run:
-> 
-> nm --print-size ./vmlinux | grep ' t ' | cut -d' ' -f2- | sort | uniq -c | \
-> 	grep -v '^      1' | sort -n -r | head -n 5
-> 
-> There are however many false positives. After these patches, for example, I
-> get:
-> 
->      11 000000000000012f t jhash
->       7 0000000000000017 t dst_output
->       6 0000000000000011 t kzalloc
->       5 000000000000002f t acpi_os_allocate_zeroed
->       5 0000000000000029 t acpi_os_allocate
-> 
-> 
-> jhash() should not have been inlined in my mind, and should have a
-> non-inlined implementation. dst_output() is used as a function pointer.
-> kzalloc() and the next two suffer from the __builtin_constant_p() problem I
-> described in the past.
-
-Ok, that's useful info.
-
-The histogram suggests that with all your patches applied the kernel is now in a pretty good 
-state in terms of inlining decisions, right?
-
-Are you using defconfig or a reasonable distro-config for your tests?
+That works for me. I'll switch to a plain WARN in v8.
 
 Thanks,
-
-	Ingo
+Quentin
