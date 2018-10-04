@@ -2,77 +2,108 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E2EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF88C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C222098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:14:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C222098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C79120652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:14:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C79120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeJDXIM (ORCPT
+        id S1727977AbeJDXIo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:08:12 -0400
-Received: from mga02.intel.com ([134.134.136.20]:26868 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbeJDXIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:08:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 09:14:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,340,1534834800"; 
-   d="scan'208";a="97431979"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2018 09:14:01 -0700
-Received: from [10.252.2.114] (abudanko-mobl.ccr.corp.intel.com [10.252.2.114])
-        by linux.intel.com (Postfix) with ESMTP id 9B2B25801E6;
-        Thu,  4 Oct 2018 09:13:59 -0700 (PDT)
-Subject: Re: [PATCH v3] perf record: encode -k clockid frequency into Perf
- trace
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <4f558425-b420-d99c-ff19-8f91e8ed5302@linux.intel.com>
- <20181004152758.GL3541@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <3c9d937b-42ca-f1ff-f2b3-4870907073c9@linux.intel.com>
-Date:   Thu, 4 Oct 2018 19:13:57 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 19:08:44 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:38886 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727484AbeJDXIo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:08:44 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0812346|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01546;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CzOm7Av_1538669673;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzOm7Av_1538669673)
+          by smtp.aliyun-inc.com(10.147.44.129);
+          Fri, 05 Oct 2018 00:14:33 +0800
+Date:   Fri, 5 Oct 2018 00:14:32 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, anurup.m@huawei.com,
+        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
+        zhangshaokun@hisilicon.com, jhogan@kernel.org,
+        paul.burton@mips.com, peterz@infradead.org, f.fainelli@gmail.com,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V9 3/8] clocksource: add C-SKY SMP timer
+Message-ID: <20181004161431.GA30844@guoren-Inspiron-7460>
+References: <cover.1538355281.git.ren_guo@c-sky.com>
+ <eee964dd57d12bc630280ab84235b5356799b1fb.1538355281.git.ren_guo@c-sky.com>
+ <88e320f2-8cf0-fdb9-c9b0-ee25d7a4d00f@linaro.org>
+ <20181002054024.GA12645@guoren>
+ <49238cda-d12c-7d3f-9333-296527d94f12@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20181004152758.GL3541@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49238cda-d12c-7d3f-9333-296527d94f12@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.10.2018 18:27, Arnaldo Carvalho de Melo wrote:
-
-<SNIP>
-
-> Please add two spaces before the output of programs, specially those
-> that start with a #, otherwise when applying they will vanish.
-
-Good to know. will do.
-
+On Tue, Oct 02, 2018 at 09:59:42AM +0200, Daniel Lezcano wrote:
+> On 02/10/2018 07:40, Guo Ren wrote:
+> [ ... ]
 > 
-> Fixed that up, applied!
+> >>
+> >> 	irq = irq_of_parse_and_map(np, 0);
+> >> 	if (irq <= 0)
+> >> 		return -EINVAL;
+> > 		panic();
+> > I want a panic here. Return will make debug confused and directly tell
+> > the people where is wrong. It's root-timer for us and it must bootup.
+> > 
+> > If it's a co-timer, I also think return is good.
+> 
+> We don't need a panic in case of failure. If the board as an alternate
+> timer it should be able to boot, that is the general rule of thumb for
+> these drivers in this directory.
+> 
+> The init timer functions will be called via the timer_probe() which
+> browse the timer_of_table (the one with all entries for the
+> TIMER_OF_DECLARE macros).
+> 
+> You can see in the code below (from timer_probe.c), there is an error
+> message emitted if the driver fails to initialize and another one much
+> stronger if no timer was initialize.
+> 
+> This is enough trace IMO.
+> 
+> void __init timer_probe(void)
+> {
+>         struct device_node *np;
+>         const struct of_device_id *match;
+>         of_init_fn_1_ret init_func_ret;
+>         unsigned timers = 0;
+>         int ret;
+> 
+>         for_each_matching_node_and_match(np, __timer_of_table, &match) {
+>                 if (!of_device_is_available(np))
+>                         continue;
+> 
+>                 init_func_ret = match->data;
+> 
+>                 ret = init_func_ret(np);
+>                 if (ret) {
+>                         pr_err("Failed to initialize '%pOF': %d\n", np,
+> ret);
+>                         continue;
+>                 }
+> 
+>                 timers++;
+Ok, let other timers boot up as possible and no panic for csky timer.
 
-Thanks!
-
-- Alexey
+ Guo Ren
