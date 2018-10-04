@@ -2,35 +2,49 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E723DC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FF5C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B78732082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:55:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B78732082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EB1B22082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:56:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TUNeBo5W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1B22082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeJDRr7 (ORCPT
+        id S1727427AbeJDRs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:47:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34430 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727109AbeJDRr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:47:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8242F7A9;
-        Thu,  4 Oct 2018 03:55:15 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64DA63F5D3;
-        Thu,  4 Oct 2018 03:55:11 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 11:55:09 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
+        Thu, 4 Oct 2018 13:48:57 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52902 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbeJDRs5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 13:48:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uk9/+Rux2h0eMgBe1OnQ6iheLXgx5sSN9B1amX2CG1E=; b=TUNeBo5W25cSVrq/7ZvDZmA1v
+        pIwbacZSzQzPvPaY9QGWca8qWuhzKGwLvV4mtocu3uxbkVoP46Vh43Ql5Tccnj/Nkce4OqIn4EjoN
+        hXxiALAl//LMCNxit9rwbp8PWTxzF9KJhQkv5TOPKDykdabXgDssh2kFsTzV2+xtyJhei60O0goTj
+        psCNF1sOwuUIC0k0l9bWHkBQIn+CCMu0GbGu1SGCedY7KQmnDVYdISo5dhC2wUGj2XJIaKCj9dRNr
+        1YLcAOlzJL0r+wpvNsTD4tPEF4Dw324lcQUCO71zcHHjCeBlBEUYETxz0EuUCpcw+5py6UWQMYGKr
+        XsC4HKJyw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g81IY-00009j-Dx; Thu, 04 Oct 2018 10:56:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EE97B202C1A0F; Thu,  4 Oct 2018 12:50:23 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 12:50:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
 Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
         mingo@redhat.com, dietmar.eggemann@arm.com,
@@ -43,36 +57,39 @@ Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
         juri.lelli@redhat.com, edubezval@gmail.com,
         srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
         javi.merino@kernel.org
-Subject: Re: [PATCH v7 12/14] sched/fair: Select an energy-efficient CPU on
- task wake-up
-Message-ID: <20181004105507.ordjpa3hsb6zoelc@queper01-lin>
+Subject: Re: [PATCH v7 13/14] sched/topology: Make Energy Aware Scheduling
+ depend on schedutil
+Message-ID: <20181004105023.GE19252@hirez.programming.kicks-ass.net>
 References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-13-quentin.perret@arm.com>
- <20181004094412.GD19252@hirez.programming.kicks-ass.net>
- <20181004102722.izp7y42cvayq4pqg@queper01-lin>
- <20181004104107.GN19272@hirez.programming.kicks-ass.net>
+ <20180912091309.7551-14-quentin.perret@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181004104107.GN19272@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180912091309.7551-14-quentin.perret@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 04 Oct 2018 at 12:41:07 (+0200), Peter Zijlstra wrote:
-> Not sure, see what it looks like ;-) My main concern here was to get rid
-> of that giant blob in select_task_rq_fair().
+On Wed, Sep 12, 2018 at 10:13:08AM +0100, Quentin Perret wrote:
+> Energy Aware Scheduling (EAS) is designed with the assumption that
+> frequencies of CPUs follow their utilization value. When using a CPUFreq
+> governor other than schedutil, the chances of this assumption being true
+> are small, if any. When schedutil is being used, EAS' predictions are at
+> least consistent with the frequency requests. Although those requests
+> have no guarantees to be honored by the hardware, they should at least
+> guide DVFS in the right direction and provide some hope in regards to the
+> EAS model being accurate.
+> 
+> To make sure EAS is only used in a sane configuration, create a strong
+> dependency on schedutil being used. Since having sugov compiled-in does
+> not provide that guarantee, make CPUFreq call a scheduler function on
+> on governor changes hence letting it rebuild the scheduling domains,
+> check the governors of the online CPUs, and enable/disable EAS
+> accordingly.
 
-OK, got it. I'll probably just move the checks into the function and
-merge that large comment into the already massive comment above
-find_energy_efficient_cpu() or something. We'll see :-)
+So this patch disables EAS when we change cpufreq gov. How about we
+force select schedutil and disallow changing it when EAS is enabled?
 
-And do you actually care about the function name ? We've been using
-find_energy_efficient_cpu() for some time in Android now, so that's just
-slightly easier for us if that can be re-used. Not a big deal either,
-though.
-
-Thanks,
-Quentin
+Instead of silently disabling EAS when we frob the governor?
