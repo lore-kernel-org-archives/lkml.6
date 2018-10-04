@@ -2,107 +2,119 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 385ABC00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECECC00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE6B020856
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 738F220856
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 01:37:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rj/uVx7t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6B020856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7Ze14El"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 738F220856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeJDIXy (ORCPT
+        id S1727417AbeJDI2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 04:23:54 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35236 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeJDIXy (ORCPT
+        Thu, 4 Oct 2018 04:28:38 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38346 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeJDI2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 04:23:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w5-v6so8090861wrt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 18:32:59 -0700 (PDT)
+        Thu, 4 Oct 2018 04:28:38 -0400
+Received: by mail-ot1-f67.google.com with SMTP id h15-v6so7574870otj.5;
+        Wed, 03 Oct 2018 18:37:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=la17VNTm7gH2smnjwiXoVT4jBF8ETsayS53yegxuu2c=;
-        b=rj/uVx7tJMj/fMkXCZ9hwEL49lp/lC9hR84f9+pnZtbxwzXypJe9vRXV5IBEO5Qics
-         qYeIW5OEYEreuD/IncQpV8sQ2fXcbRoQIiCgiM/xyvrErFKXgyjCKsrJX1C+thsYJmQE
-         3RyM/hMLqsz88GD4rlEgrw/BNFCHw2Zv/Ob8LRT613BTxFqzDWsYry2biwgUHuckv6V5
-         V2hNrfdIWPeg+mRrC6IqMlF2eo+AyJ0ug7J95JzzVjd9th2LFuM79IYhufNKAPhR898D
-         /gY6w106Ek3csUtrqYq7pqS/iTMmNmR/hXSQUUyItSkgh20T2rP9jp16Y1KjfrjivoiE
-         WXxw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NuNsoZwTAh5hwJxz70Ax20g6nWN91thSOj9I0FaDBnI=;
+        b=s7Ze14ElCAnFIlf1+vu+ugm+UKMuIDxF8JoXN8EqESW5DSifKf/FxEXBvqVL7W7QSw
+         F1yqbih4nEUCaRM0/PP9U4IvI+ddfXZkF8eEbXt+JzUztSC3Lf53LBwQinQCzQmuYKZj
+         52FnmZ5dBybXCAkpv+Mn8Q5ngAj11S9LmidPQrqCQji/NXeNC2GdyRK8O1DlHytQw/SD
+         LMp2yBOm3Ep6Ey2wBNziSl18lsD/FtxSdZaAcyYWif4wZH7qLMnUzcFE2yfCJUSe3Txc
+         OBGWxu7atRaI3L28G0fEYYvRLY4C6O5ra7XQwtvRX/q7PbPAyA2xzoiNMhr9B/0Rwzka
+         qTxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=la17VNTm7gH2smnjwiXoVT4jBF8ETsayS53yegxuu2c=;
-        b=BnwUdtjSEeBnGlXpu9QXohSV0xGPy1VRQNpgg25/WuHp7Z8q8RiM/r1VYERyUyNmX8
-         fmNZI12P/HIAWAkk7yycEL2EAcfJGjodCjMESBq1KFpKkfZS7Hj2WCIbM/FpVC70WMBK
-         mOtZFjT2NLPuyZF1WM8MiEQNV1RklIEW/PrN42Oz84vAlwGyPl8Ms+AjitxFAjAmbvuJ
-         OILhp+ww4soY/lek47hH2In77rDFQeF/K5YQrmBTDMc0axox/gzOAEG+t3BymycrDJz5
-         lBKhDHzUxUf4NS0Z6bNPVBqPiJsG5/NpQBj5DPKZcD5IjvZAq4ma80pOd2eDE81fpEIT
-         hilw==
-X-Gm-Message-State: ABuFfojagclVSx8ClQ306+rWMm83mAshYPGotcDrb5kMGwLIIWx/rm/d
-        zsz1HhFhwqZsSUHnQkWhsqk=
-X-Google-Smtp-Source: ACcGV62cL3LAD2i9TtRgjffTq9Nw1zbpumTRnLKnGpa8tjcOMeTXUU/SnR6q7EJ/oV5cFQOWTuhVwg==
-X-Received: by 2002:adf:e28d:: with SMTP id v13-v6mr2918259wri.139.1538616778445;
-        Wed, 03 Oct 2018 18:32:58 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e142-v6sm7926185wmf.20.2018.10.03.18.32.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 18:32:57 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: Remove unnecessary parentheses and dead commented code
-Date:   Wed,  3 Oct 2018 18:32:51 -0700
-Message-Id: <20181004013251.24253-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NuNsoZwTAh5hwJxz70Ax20g6nWN91thSOj9I0FaDBnI=;
+        b=YLUsSRQFoVtgyO+/RqX6oq7gGiMekh1gJCeRWPNDwdtdbgcAwPd6+rcLo1yRhLKTzG
+         69KIHqb4vbX8DaLXx0JgOPEWtCmQP6MlSus7u2woAICayMp6GH6NCFaIfiiVDx1GsZus
+         rNQnmlI3kxk0yQxyJarnQVnL78bJwnaaCT8IfCFc0/x4QzPrsNS/XSpVHGbq1pYlMyYU
+         wEtB2sQSZqVqt2cu835r08V7WyIGMjK/4JhcvB+4TugUtVTP4O8IY+nqXxj4WT4aJwV7
+         v9LAkqhcBL9pPyT4Mvl4K72p3A47Kh1DacRmTmi/j50CN6jBQRR+SKfWDdUevpI+SxQ+
+         exzg==
+X-Gm-Message-State: ABuFfoijXUq2yu8z6txzYIUkiMsiR3iFpA1J/YgOHk67/eEmbk1MAeHt
+        f7eT3C2UsKkmT8EHkXgUolPVe8WGrk9+CD27EE8=
+X-Google-Smtp-Source: ACcGV60sCHHWrxBPUhVd7TidY4wrMGSUmW7aJVvs3jQ7JuXYSqhpF24ys9ZRkoe4z3gPlB5piMNj5VBRg2dfJ8RXdhA=
+X-Received: by 2002:a9d:2568:: with SMTP id j37mr2516279otd.263.1538617062494;
+ Wed, 03 Oct 2018 18:37:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180928020816.11251-1-leobras.c@gmail.com> <20181001075607.GA3776@rric.localdomain>
+ <CADvQ+rETmm2Ag4sijXG-0Aya7B0oww7LkLgijAC+nznyWskkvg@mail.gmail.com> <alpine.LNX.2.21.1810040915040.8@nippy.intranet>
+In-Reply-To: <alpine.LNX.2.21.1810040915040.8@nippy.intranet>
+From:   Leonardo Bras <leobras.c@gmail.com>
+Date:   Wed, 3 Oct 2018 22:37:29 -0300
+Message-ID: <CADvQ+rE8qQmSangHOCrJo7aAD-BJiN3Gt2hCi-3O8uRTgXnP-w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] Remove errors building drivers/DRIVERNAME
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Robert Richter <rric@kernel.org>, lkcamp@lists.libreplanetbr.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-m68k@lists.linux-m68k.org, oprofile-list@lists.sf.net,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
+On Wed, Oct 3, 2018 at 8:27 PM Finn Thain <fthain@telegraphics.com.au> wrote:
+>
+> On Wed, 3 Oct 2018, Leonardo Bras wrote:
+>
+> >
+> > Sorry, I was not very clear at my reasons why this change is important,
+> > I will try to briefly explain the whole story.
+> >
+> > Some weeks ago I was trying to solve a task that needed to change some
+> > compiling options, build the whole kernel (allyesconfig) and look for
+> > errors. The problem was: It would take a long time to build everything
+> > in my computer. And many friends with slimmer laptops would take much
+> > longer.
+> >
+>
+> It seems to me that you shouldn't need expensive optimization for
+> continuous integration. In theory that could make a big difference though
+> I admit to no experience of build farms.
+>
+> Have you looked at ccache? It will save you from having to recompile any
+> files not changed.
+>
+> You could also leverage all of your laptops together using distcc.
+>
+> HTH.
+>
+> --
 
-drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c:3351:20: warning:
-equality comparison with extraneous parentheses [-Wparentheses-equality]
+Both ccache and distcc seem very interesting,
+I will take my time to study them better as they can solve some situations
+I face. Thanks for sharing!
 
-The commented code is pointless since _HW_STATE_AP_ is handled right
-below this block.
+Still, I believe my patchset is relevant, as it would enable people to rebuild
+the whole kernel (with build flags changes, for example) at the cost of only
+git-pushing the changes to a fork of my Gitlab repo, and waiting 3 hours.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/168
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 592917fc00aa..c7e55618b9a8 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -3348,7 +3348,7 @@ static void hw_var_set_opmode(struct adapter *padapter, u8 variable, u8 *val)
- 			/*  disable atim wnd */
- 			rtw_write8(padapter, REG_BCN_CTRL, DIS_TSF_UDT|EN_BCN_FUNCTION|DIS_ATIM);
- 			/* rtw_write8(padapter, REG_BCN_CTRL, 0x18); */
--		} else if ((mode == _HW_STATE_ADHOC_) /*|| (mode == _HW_STATE_AP_)*/) {
-+		} else if (mode == _HW_STATE_ADHOC_) {
- 			ResumeTxBeacon(padapter);
- 			rtw_write8(padapter, REG_BCN_CTRL, DIS_TSF_UDT|EN_BCN_FUNCTION|DIS_BCNQ_SUB);
- 		} else if (mode == _HW_STATE_AP_) {
--- 
-2.19.0
-
+Thanks for helping!
