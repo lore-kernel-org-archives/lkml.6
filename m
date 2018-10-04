@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86512C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2386CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54CFD20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54CFD20652
+	by mail.kernel.org (Postfix) with ESMTP id E6F7220652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:30:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F7220652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbeJDTXU (ORCPT
+        id S1727809AbeJDTXj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:23:20 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:43993 "EHLO hermes.aosc.io"
+        Thu, 4 Oct 2018 15:23:39 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:44012 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727483AbeJDTXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:23:20 -0400
+        id S1727483AbeJDTXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:23:39 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id D7E4566839;
-        Thu,  4 Oct 2018 12:30:12 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id C769766839;
+        Thu,  4 Oct 2018 12:30:31 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -33,9 +33,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 04/10] arm64: allwinner: dts: h6: add USB2-related device nodes
-Date:   Thu,  4 Oct 2018 20:28:49 +0800
-Message-Id: <20181004122855.22981-5-icenowy@aosc.io>
+Subject: [PATCH v4 05/10] arm64: allwinner: dts: h6: add USB Vbus regulator
+Date:   Thu,  4 Oct 2018 20:28:50 +0800
+Message-Id: <20181004122855.22981-6-icenowy@aosc.io>
 In-Reply-To: <20181004122855.22981-1-icenowy@aosc.io>
 References: <20181004122855.22981-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,9 +43,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 has two USB2 ports, one OTG and one host-only.
+The 5V output of the USB ports on Pine H64 is controlled via a GPIO.
 
-Add device tree nodes related to them.
+Add the USB Vbus regulator device tree node.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
@@ -53,104 +53,32 @@ Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 No changes in v4.
 
 Changes in v3:
-- Removed the wrongly introduced usb3phy node.
 - Added Chen-Yu's Review tag.
 
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 81 ++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 040828d2e2c0..3d60af6cb3ae 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -258,6 +258,87 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+index 48daec7f78ba..b181088d7500 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+@@ -39,6 +39,16 @@
+ 			gpios = <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
  		};
+ 	};
++
++	reg_usb_vbus: vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb-vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		startup-delay-us = <100000>;
++		gpio = <&r_pio 0 5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
  
-+		usb2otg: usb@5100000 {
-+			compatible = "allwinner,sun8i-a33-musb";
-+			reg = <0x05100000 0x0400>;
-+			clocks = <&ccu CLK_BUS_OTG>;
-+			resets = <&ccu RST_BUS_OTG>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "mc";
-+			phys = <&usb2phy 0>;
-+			phy-names = "usb";
-+			extcon = <&usb2phy 0>;
-+			status = "disabled";
-+		};
-+
-+		usb2phy: phy@5100400 {
-+			compatible = "allwinner,sun50i-h6-usb-phy";
-+			reg = <0x05100400 0x14>,
-+			      <0x05101800 0x4>,
-+			      <0x05311800 0x4>;
-+			reg-names = "phy_ctrl",
-+				    "pmu0",
-+				    "pmu3";
-+			clocks = <&ccu CLK_USB_PHY0>,
-+				 <&ccu CLK_USB_PHY3>;
-+			clock-names = "usb0_phy",
-+				      "usb3_phy";
-+			resets = <&ccu RST_USB_PHY0>,
-+				 <&ccu RST_USB_PHY3>;
-+			reset-names = "usb0_reset",
-+				      "usb3_reset";
-+			status = "disabled";
-+			#phy-cells = <1>;
-+		};
-+
-+		ehci0: usb@5101000 {
-+			compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
-+			reg = <0x05101000 0x100>;
-+			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_OHCI0>,
-+				 <&ccu CLK_BUS_EHCI0>,
-+				 <&ccu CLK_USB_OHCI0>;
-+			resets = <&ccu RST_BUS_OHCI0>,
-+				 <&ccu RST_BUS_EHCI0>;
-+			status = "disabled";
-+		};
-+
-+		ohci0: usb@5101400 {
-+			compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
-+			reg = <0x05101400 0x100>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_OHCI0>,
-+				 <&ccu CLK_USB_OHCI0>;
-+			resets = <&ccu RST_BUS_OHCI0>;
-+			status = "disabled";
-+		};
-+
-+		ehci3: usb@5311000 {
-+			compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
-+			reg = <0x05311000 0x100>;
-+			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_OHCI3>,
-+				 <&ccu CLK_BUS_EHCI3>,
-+				 <&ccu CLK_USB_OHCI3>;
-+			resets = <&ccu RST_BUS_OHCI3>,
-+				 <&ccu RST_BUS_EHCI3>;
-+			phys = <&usb2phy 3>;
-+			phy-names = "usb";
-+			status = "disabled";
-+		};
-+
-+		ohci3: usb@5311400 {
-+			compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
-+			reg = <0x05311400 0x100>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_OHCI3>,
-+				 <&ccu CLK_USB_OHCI3>;
-+			resets = <&ccu RST_BUS_OHCI3>;
-+			phys = <&usb2phy 3>;
-+			phy-names = "usb";
-+			status = "disabled";
-+		};
-+
- 		r_ccu: clock@7010000 {
- 			compatible = "allwinner,sun50i-h6-r-ccu";
- 			reg = <0x07010000 0x400>;
+ &mmc0 {
 -- 
 2.18.0
 
