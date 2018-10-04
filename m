@@ -2,71 +2,103 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E279C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B5CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFDDD20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFDDD20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1641020652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:11:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1641020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeJDWES (ORCPT
+        id S1727679AbeJDWEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:04:18 -0400
-Received: from mail-qt1-f175.google.com ([209.85.160.175]:36821 "EHLO
-        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJDWES (ORCPT
+        Thu, 4 Oct 2018 18:04:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43231 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbeJDWEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:04:18 -0400
-Received: by mail-qt1-f175.google.com with SMTP id u34-v6so10244572qth.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:10:36 -0700 (PDT)
+        Thu, 4 Oct 2018 18:04:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 80-v6so3283764pgh.10;
+        Thu, 04 Oct 2018 08:11:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zULJSZwvFbZiKsUbKFSCdtIcZosdoZmHrmVGnr+B/jY=;
-        b=Hu5IC7snWhVHVyGfT52GqkTzj4NEOQQXSwpjgH6ph/qLlgswO5cBSFVbIaw8ZowXxM
-         BS8499qsRwE4n5eJqt2j1iGv9TqFz0BE1rU7oY8bP1rfYgH5v9zRi7F5Ns5QYxyce9/l
-         0XV0qydDOGZmbVf+bRj9sVOWco3UOWfEYeq6R9KArzLyKv0nloaCNZIAK2fu53KgiU72
-         j3yBnHaOaBgxyot1hTWr9LXB743cklSCSCGlZlUNMYS0bhLXlRB66ezi+xFFsaj9DDaA
-         KlpTGtDlmjcSgpeU7b6x/wH1nx8MloC3mb3YZBLXgL7ylYzUmS7AL8FGTtjpEBw/Jzhn
-         TaSA==
-X-Gm-Message-State: ABuFfojrxPwPrId7j0x3LKPSbSOazb8TgTb93kzP+HlKKcZ/Pr52a3fd
-        J2PdvKqq87vawTAek88yMwXKeK/GhD5CrspCvruPAQ==
-X-Google-Smtp-Source: ACcGV61d++E8M97cpTEEVzDHYbsP3Vvm1tUMdy0H6qxZOCaH+qTFOjCmrY8IPcI/v7AFi2XiOCfB3rNUoELTacpEI1k=
-X-Received: by 2002:a0c:a8cc:: with SMTP id h12-v6mr5839495qvc.161.1538665836025;
- Thu, 04 Oct 2018 08:10:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <1538525903-22548-1-git-send-email-yamada.masahiro@socionext.com> <1538525903-22548-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538525903-22548-2-git-send-email-yamada.masahiro@socionext.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 4 Oct 2018 17:10:19 +0200
-Message-ID: <CAK8P3a0Sx2BcM9NUSxb7He3sVyWm4JJWnp0fiV24_xQP-4CbEQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: defconfig: enable CONFIG_MMC_UNIPHIER
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=q2W8R1FFLUHNquwmu9Iew0zKD9sT9pbfhuPUxwlu5Rw=;
+        b=nFBzMvoaiBZ/LOYd5vlFCQfMZiiEAWe/tm+dp7ZQtocDC8NZQHKwfeWPN8Vm5HKejd
+         8MoUtRLe5GUbaHo8uLCJaoNT+vdD0dex2sh01WJwZuASI4SGt6dT+/vUSTaPqcdaqMu5
+         A5pPZRSJ7HHG989k0QOj50okW0l4UUnxFF2IHQhvnt4j4zd8WkP/Oo+KGbarlV1a55IC
+         YYuunGLOegwq0w9Tohl+mMDxCZm94CXj1LPr2Xx21nCkuh8KQb3pNG67XKmSvn+tvvMm
+         +LOW6mnAaLdG+xAtpx7Q0j1Bx19Vzff2+K9enKhg4TEeEEnIF1thkxQ+UjdaaRVxj42x
+         T1eg==
+X-Gm-Message-State: ABuFfoim3W7NTTfv5XX/6wbscNoQiysnHoBeu/1q3fyG2Ip5XsZkAAjv
+        8YeRPXgCe5iAVDKJEomqiikw+ahQkyH9CA==
+X-Google-Smtp-Source: ACcGV62hRK5soVGadZevmYUKJmSC+/+0jFdhdwHSTio0dj6SuucY0nQjNmMS7q8ZqgUWV2KvfnxAOw==
+X-Received: by 2002:a63:78cc:: with SMTP id t195-v6mr6136665pgc.329.1538665859979;
+        Thu, 04 Oct 2018 08:10:59 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id r205-v6sm11437839pgr.11.2018.10.04.08.10.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 08:10:59 -0700 (PDT)
+Message-ID: <1538665857.230807.1.camel@acm.org>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        bfq-iosched@googlegroups.com
+Date:   Thu, 04 Oct 2018 08:10:57 -0700
+In-Reply-To: <20181004101305.GA6412@sirena.org.uk>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+         <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+         <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+         <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
+         <CACRpkdYG2Y=rspbZ_o=H3REXTEfOcaiqEyQD4kzO=G=d63V3yA@mail.gmail.com>
+         <20181004101305.GA6412@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 2:19 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Enable the UniPhier SD controller driver.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Thu, 2018-10-04 at 11:13 +-0100, Mark Brown wrote:
++AD4 On Thu, Oct 04, 2018 at 10:14:38AM +-0200, Linus Walleij wrote:
++AD4 
++AD4 +AD4 And these are millions and millions of deployed
++AD4 +AD4 systems not using udev+-systemd we are talking about,
++AD4 +AD4 they are not fringe hobby projects. It's not that I
++AD4 +AD4 personally dislike udev or anything, I kind of like
++AD4 +AD4 it, but these tailored distros simply don't use it
++AD4 +AD4 and they are huge in numbers. They need help to do
++AD4 +AD4 the right thing. Fixing a udev rule doesn't solve
++AD4 +AD4 even half the world's problems I'm afraid.
++AD4 
++AD4 Further, even those embedded systems that do use udev (some of them do
++AD4 lean heavily on modern init stuff like that and systemd, especially when
++AD4 boot time is a priority) they'll still need to get the relevant udev
++AD4 rule installed somehow.
 
-Applied to next/defconfig, thanks!
+Hi Mark,
 
-     Arnd
+Are you aware that the systemd source tree includes a set of udev rules?
+See also https://github.com/systemd/systemd/tree/master/rules.
+
+Bart.
