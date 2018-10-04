@@ -2,56 +2,75 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C639C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2473FC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F2F2087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:45:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33F2F2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D7AAC20854
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:52:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7AAC20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeJEDkz (ORCPT
+        id S1727980AbeJEDrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:40:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47932 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbeJEDkz (ORCPT
+        Thu, 4 Oct 2018 23:47:04 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55874 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727536AbeJEDrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:40:55 -0400
-Received: from localhost (unknown [104.132.1.111])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5DB81AC7;
-        Thu,  4 Oct 2018 20:45:55 +0000 (UTC)
-Date:   Thu, 4 Oct 2018 13:45:53 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: Re: [GIT PULL] overlayfs fixes for 4.19-rc7
-Message-ID: <20181004204553.GA15946@kroah.com>
-References: <20181004190012.GD23439@veci.piliscsaba.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004190012.GD23439@veci.piliscsaba.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 4 Oct 2018 23:47:04 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3607313ADD682;
+        Thu,  4 Oct 2018 13:52:03 -0700 (PDT)
+Date:   Thu, 04 Oct 2018 13:52:02 -0700 (PDT)
+Message-Id: <20181004.135202.1340830794025516563.davem@davemloft.net>
+To:     yuzhao@google.com
+Cc:     steve.glendinning@shawell.net, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/usb: cancel pending work when unbinding smsc75xx
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180928230430.125003-1-yuzhao@google.com>
+References: <20180928230430.125003-1-yuzhao@google.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 04 Oct 2018 13:52:03 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:00:12PM +0200, Miklos Szeredi wrote:
-> Hi Greg,
-> 
-> Please pull from:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-4.19-rc7
+From: Yu Zhao <yuzhao@google.com>
+Date: Fri, 28 Sep 2018 17:04:30 -0600
 
-Now merged, thanks.
+> Cancel pending work before freeing smsc75xx private data structure
+> during binding. This fixes the following crash in the driver:
+> 
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
+> IP: mutex_lock+0x2b/0x3f
+> <snipped>
+> Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
+> task: ffff8caa83e85700 task.stack: ffff948b80518000
+> RIP: 0010:mutex_lock+0x2b/0x3f
+> <snipped>
+> Call Trace:
+>  smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
+>  process_one_work+0x18d/0x2fc
+>  worker_thread+0x1a2/0x269
+>  ? pr_cont_work+0x58/0x58
+>  kthread+0xfa/0x10a
+>  ? pr_cont_work+0x58/0x58
+>  ? rcu_read_unlock_sched_notrace+0x48/0x48
+>  ret_from_fork+0x22/0x40
+> 
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 
-greg k-h
+Applied and queued up for -stable.
