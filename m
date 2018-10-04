@@ -2,36 +2,66 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EB4C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6A7C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532692098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:25:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532692098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 507E62098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:25:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gGZzHJqk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507E62098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbeJDPRi (ORCPT
+        id S1727444AbeJDPSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:17:38 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:60759 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbeJDPRi (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 4 Oct 2018 11:17:38 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 04 Oct 2018 10:25:29 +0200
-Received: from suselix ([10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 04 Oct 2018 09:24:57 +0100
-Date:   Thu, 4 Oct 2018 10:24:55 +0200
-From:   Andreas Herrmann <aherrmann@suse.com>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Jan Kara <jack@suse.cz>, Linus Walleij <linus.walleij@linaro.org>,
-        Paolo Valente <paolo.valente@linaro.org>,
+        Thu, 4 Oct 2018 11:18:03 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38782 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727325AbeJDPSD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:18:03 -0400
+Received: by mail-io1-f65.google.com with SMTP id e2-v6so5532651ioh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4mjjJU8n40vSZZvAZqSV5idSHC7+L4DCzd8oCuPu6Cs=;
+        b=gGZzHJqkghBmRSrfFCCu8DRBk9wYUsEJifqd0oakuzHDmpacZM1PwzDfgNeQF2Hq2Z
+         4uBnNkf0KzFPUu2pJwetw8wqHlde7fmWuR5dbSs2ACxDyhpnnSgK3vzbv2iVK1NozXdc
+         8jozlmVESC89QhYNxLLtujvT/t3mrQbBHp/8g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4mjjJU8n40vSZZvAZqSV5idSHC7+L4DCzd8oCuPu6Cs=;
+        b=JdyYDMbD7eS6Fht2o7YQfcjNLEovE8nG+Duru4nKwbKqOSs8OdzmAVuDkPB5/J7NAr
+         tTItfbo71mZieVNmK6nUtczJbk0bhKVFCwv7LIW8A/5abDsyYUtEXW7xM2nlTu+5pxf3
+         niuMl6C7pQdp1nlNcM5R/dYR4ue5S40ptN9N/Oc2O7Vcv0YvTh4Ek1ZRo9JITBhozmL/
+         zHuszmoPrslG7jEoPPqBgGLBaWXIlcEoh0EIATyPHZp0JNeEl0jIuO54Qqr6JmmGq0IB
+         M6fxNGmEFRhMF3DVorlAJFBx4g9gFBHHMMiHNYm4xtJDrwTSNBSKO4i/hFFaDFs0q0FU
+         5o0A==
+X-Gm-Message-State: ABuFfogo89avm6zXwfTjq/SOu/1S+o+f9UzuzH5QMUVKN9UzMalris0X
+        XUpKq/SC8FchgsMi+wtAetflLid6yDSYVDj9YLwQUw==
+X-Google-Smtp-Source: ACcGV62jKEK7P/B9TH+D+aqHNbgNnXo9jTCBYpod20OrgAB5Oq+bWFpiu7GDS9nBrhQMBVVP/umcEitvm67qty1Imnc=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3373931ioa.277.1538641556569;
+ Thu, 04 Oct 2018 01:25:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk> <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
+In-Reply-To: <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Oct 2018 10:25:43 +0200
+Message-ID: <CACRpkdb1YSw3WWpGSqwxORaMSAeemiaP4i6cWJcY5VtADfzorQ@mail.gmail.com>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+To:     oleksandr@natalenko.name
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
         Jens Axboe <axboe@kernel.dk>,
         linux-block <linux-block@vger.kernel.org>,
         linux-mmc <linux-mmc@vger.kernel.org>,
@@ -39,116 +69,74 @@ Cc:     Jan Kara <jack@suse.cz>, Linus Walleij <linus.walleij@linaro.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Richard Weinberger <richard@nod.at>,
         Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, mgorman@suse.com,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
         Chunyan Zhang <zhang.chunyan@linaro.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181004082455.ulk37hzmyuo4byw2@suselix>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <CACRpkdaeYU+Crr75T49WftyOHqCrsyBLBPDBBsJF-RCjmAQEdw@mail.gmail.com>
- <20181003132554.GC21043@quack2.suse.cz>
- <20181004074535.GB6682@linux-x5ow.site>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181004074535.GB6682@linux-x5ow.site>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        bfq-iosched@googlegroups.com, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:45:35AM +0200, Johannes Thumshirn wrote:
-> On Wed, Oct 03, 2018 at 03:25:54PM +0200, Jan Kara wrote:
-> > On Wed 03-10-18 08:53:37, Linus Walleij wrote:
-> > > On Wed, Oct 3, 2018 at 8:29 AM Paolo Valente <paolo.valente@linaro.org> wrote:
-> > > 
-> > > > So, I do understand your need for conservativeness, but, after so much
-> > > > evidence on single-queue devices, and so many years! :), what's the
-> > > > point in keeping Linux worse for virtually everybody, by default?
-> > > 
-> > > I understand if we need to ease things in as well, I don't intend this
-> > > change for the current merge window or anything, since v4.19
-> > > will notably have this patch:
-> > > 
-> > > commit d5038a13eca72fb216c07eb717169092e92284f1
-> > > Author: Johannes Thumshirn <jthumshirn@suse.de>
-> > > Date:   Wed Jul 4 10:53:56 2018 +0200
-> > > 
-> > >     scsi: core: switch to scsi-mq by default
-> > > 
-> > >     It has been more than one year since we tried to change the default from
-> > >     legacy to multi queue in SCSI with commit c279bd9e406 ("scsi: default to
-> > >     scsi-mq"). But due to issues with suspend/resume and performance problems
-> > >     it had been reverted again with commit cbe7dfa26eee ("Revert "scsi: default
-> > >     to scsi-mq"").
-> > > 
-> > >     In the meantime there have been a substantial amount of performance
-> > >     improvements and suspend/resume got fixed as well, thus we can re-enable
-> > >     scsi-mq without a significant performance penalty.
-> > > 
-> > >     Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-> > >     Reviewed-by: Hannes Reinecke <hare@suse.com>
-> > >     Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> > >     Acked-by: John Garry <john.garry@huawei.com>
-> > >     Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> > > 
-> > > I guess that patch can be a bit scary by itself. But IIUC it all went
-> > > fine this time!
-> > > 
-> > > But hey, if that works, that means $SUBJECT patch will enable BFQ on all
-> > > libata devices and any SCSI that is single queue as well, not just
-> > > "obscure" stuff like MMC/SD and UBI, and that is
-> > > indeed a massive crowd of legacy devices. But we're talking
-> > > v4.21 here.
-> > > 
-> > > Johannes, you might be interested in $SUBJECT patch.
-> > > It'd be nice to hear what SUSE people have to add, since they
-> > > are pretty proactive in this area.
-> > 
-> > So we do have a udev rules in our distro which sets the IO scheduler based
-> > on device parameters (rotational at least, with blk-mq we might start
-> > considering number of queues as well, plus we have some exceptions like
-> > virtio, loop, etc.). So the kernel default doesn't concern us too much as a
-> > distro.
-> > 
-> > I personally would consider bfq a safer default for single-queue devices
-> > (loop probably needs exception) but I don't feel too strongly about it.
-> 
-> [Full quote for context]
-> 
-> What about resurrecting CONFIG_DEFAULT_IOSCHED for MQ as well and
-> leave it default to mq-deadline but give bfq, kyber and none as a
-> choice as well?
+On Wed, Oct 3, 2018 at 1:49 PM Oleksandr Natalenko
+<oleksandr@natalenko.name> wrote:
 
-I second this -- introduction of a CONFIG_DEFAULT_MQ_IOSCHED.
-Having a default I/O scheduler kernel config option for MQ allows to
-build a kernel suitable for specific use w/o userspace
-dependencies.
-(But it still allows to reconfigure things via userspace.)
+> On another hand, the users of embedded devices, mentioned by Linus,
+> should already know what scheduler to choose because dealing with
+> embedded world assumes the person can decide this on their own, or with
+> the help of abovementioned udev scripts and/or Documentation/ as a
+> reference point.
+>
+> So I see no obstacles here, and the choice to rely on udev by default
+> sounds reasonable.
 
-> The question is shall we only do it for single queue devices or for
-> native MQ devices as well if we go down that road?
+I am sorry but I do not agree with this.
 
-Good question. I am not yet sure about this.
-I'd start with using the default for single queue devices.
+There are several historical precedents where we have
+concluded that just "have the kernel do the right thing
+by default" is the way to go.
 
-Andreas
+Example 1: pluggable CPU schedulers.
+The reasoning was that users or distros have no clue what
+scheduler they want, only scheduler developers do. We
+drove it to the point where we have one and one
+scheduler only, not different flavors. (Special
+usecases have special scheduling classes inside the
+one scheduler instead.)
 
-> I understand the embedded floks will want a different interface than
-> udev, but from the non-embedded point of view I'm with Jens and Jan
-> here, let udev do the job.
-> 
->       Johannes
-> -- 
-> Johannes Thumshirn                                          Storage
-> jthumshirn@suse.de                                +49 911 74053 689
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
-> Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Example 2: Automatic process group scheduling
+The reasoning was that daemons such as systemd would
+be better at placing processes/tasks into the right
+control groups to manage their resources, so this would
+be a userspace policy handled by the udev/systemd
+complex. We did not do that. Instead the kernel does
+autogrouping per-session, indeed it is a Kconfig option
+but even e.g. Fedora has this enabled by default.
+(commit 5091faa449ee)
+
+As pointed out elsewhere: these defaults make it
+easy for custom builds not using udev+systemd to
+get a system up and running with sensible defaults.
+
+Simple embedded systems use Busybox' mdev (I wouldn't
+trust it do do any complex decisions). OpenWRT
+has ubox+ubus+uci, also extremely lightweight,
+Android has its own init system that I don't
+manage to keep track of anymore. Instead of running
+all over the map and fixing these userspaces to
+do the right thing, it makes sense to make the
+right thing the default.
+
+And these are millions and millions of deployed
+systems not using udev+systemd we are talking about,
+they are not fringe hobby projects. It's not that I
+personally dislike udev or anything, I kind of like
+it, but these tailored distros simply don't use it
+and they are huge in numbers. They need help to do
+the right thing. Fixing a udev rule doesn't solve
+even half the world's problems I'm afraid.
+
+Yours,
+Linus Walleij
