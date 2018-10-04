@@ -2,158 +2,164 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0542BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51DCC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2582087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:35:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZcsAxnSL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD2582087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9F38D2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F38D2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeJECad (ORCPT
+        id S1727765AbeJECbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:30:33 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33128 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbeJECad (ORCPT
+        Thu, 4 Oct 2018 22:31:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52972 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727499AbeJECbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:30:33 -0400
-Received: by mail-ed1-f66.google.com with SMTP id g26-v6so9647508edp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 12:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=yDbfYw7wkzpkAyib8N58NEJFyOf7ZQ8jMXKdqpVd+uU=;
-        b=ZcsAxnSLm7gQ9Ke4y2v3FcD3yTmVi/eL3LfTqa3QlEKHEtF0CeOk5hmWAdi1hcAk2h
-         jurWeGJYKf+z+yINBnTixWXPpAQiO3vExiBuCY8LjLHCA7wFtU0zf2aoLdJzq8CNzYfx
-         OLrInffaxp1yCRULrHqjJy4X0z8jxTRA7NuDs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=yDbfYw7wkzpkAyib8N58NEJFyOf7ZQ8jMXKdqpVd+uU=;
-        b=dXNxKiCWlh8mpbQ2dX/Cj29T3Jqf2rIkhC9jnv6Ph5tKgDgTgxr1hDLvq7VBDNi9Ml
-         D3Cjidh0JlXRBFlhvWA6z3SlYFN9aXXl+H/WSFlkaJsEfy5ADizvnItUlM/NV/dmpgwQ
-         dUoydcmr2v4nHxznCzRtss524P64VV6r2C1ppXslRbCc/RClxbYUZKdflKoN9sZTl1IK
-         +U3ochsDTWzQ1SQUgTVwR6zDRhQod4G/6Lr+qD0B8gCXfNXAXLLLXDApzlBZp28jbl7I
-         arxPPOaecRGcdPI4NkW4ERZZS2gbHX5EhwmnmpJ7gdYxOKPaQXestfbor5aqhbNOpMps
-         K9Lw==
-X-Gm-Message-State: ABuFfoh6KfB734fFhFvRxm0jZcEy2jJbYqLLplC3iLNGT5egiWtHX584
-        EMK7ZPvbRTrpJn05tPIAlxYRgQ==
-X-Google-Smtp-Source: ACcGV63ax9GhFWGGDYPOhHXAgGxfmWH9xAged+IlKP0NqixbsJP5uMyoxaQaNWqTL+v9EqAcPb4NXQ==
-X-Received: by 2002:aa7:c458:: with SMTP id n24-v6mr10162000edr.55.1538681749276;
-        Thu, 04 Oct 2018 12:35:49 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id ha9-v6sm1021789ejb.77.2018.10.04.12.35.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 12:35:45 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 21:35:43 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     noralf@tronnes.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>, tzimmermann@suse.de,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/imx: move 'legacyfb_depth' definition out of #ifdef
-Message-ID: <20181004193543.GQ31561@phenom.ffwll.local>
-Mail-Followup-To: Arnd Bergmann <arnd@arndb.de>, noralf@tronnes.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>, tzimmermann@suse.de,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181002205836.2323084-1-arnd@arndb.de>
- <123f7e1c-8f2b-5797-de16-650ec01d0b24@tronnes.org>
- <20181003161326.GD31561@phenom.ffwll.local>
- <CAK8P3a1gKxXEthLvUxSxOrt6+1qzZE9Jba+vH_qFepv3KXba9g@mail.gmail.com>
- <CAKMK7uFn=u+04=HQvzkSNdE8_9p=3eX14-h=0nOJ7QKPJSrdmw@mail.gmail.com>
- <af5994a3-5739-ed7f-4374-85e9d19d2408@tronnes.org>
- <CAK8P3a1fzr9kX4kNcAnM4ZPh_-Kp61326zrbhDjHyPJJrJq=OQ@mail.gmail.com>
+        Thu, 4 Oct 2018 22:31:04 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w94JZNnS021106
+        for <linux-kernel@vger.kernel.org>; Thu, 4 Oct 2018 15:36:21 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mwpd3frx3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 15:36:20 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 4 Oct 2018 15:36:19 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 4 Oct 2018 15:36:17 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w94JaGR226083406
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 4 Oct 2018 19:36:16 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6DD71B2065;
+        Thu,  4 Oct 2018 15:34:25 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FCD8B2068;
+        Thu,  4 Oct 2018 15:34:25 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.172])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  4 Oct 2018 15:34:25 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 1DF7916C3757; Thu,  4 Oct 2018 12:36:16 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 12:36:16 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: mousedev - add a schedule point in
+ mousedev_write()
+Reply-To: paulmck@linux.ibm.com
+References: <20181004154749.111595-1-edumazet@google.com>
+ <20181004185949.GA233675@dtor-ws>
+ <CANn89iJMhGEkw13KrGbqrvGbznb45QZwdr7eLy_rUV6zitvs=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK8P3a1fzr9kX4kNcAnM4ZPh_-Kp61326zrbhDjHyPJJrJq=OQ@mail.gmail.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANn89iJMhGEkw13KrGbqrvGbznb45QZwdr7eLy_rUV6zitvs=Q@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18100419-0052-0000-0000-0000033C8336
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009822; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01097881; UDB=6.00567814; IPR=6.00877922;
+ MB=3.00023616; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-04 19:36:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100419-0053-0000-0000-00005E4BD2EC
+Message-Id: <20181004193616.GL2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-04_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810040175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 05:04:21PM +0200, Arnd Bergmann wrote:
-> On Thu, Oct 4, 2018 at 4:43 PM Noralf Trønnes <noralf@tronnes.org> wrote:
-> > Den 04.10.2018 09.48, skrev Daniel Vetter:
-> > > On Wed, Oct 3, 2018 at 9:51 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >> On Wed, Oct 3, 2018 at 6:13 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >>> On Wed, Oct 03, 2018 at 05:49:32PM +0200, Noralf Trønnes wrote:
-> > >>>>
-> > >>>> Den 02.10.2018 22.58, skrev Arnd Bergmann:
-> > >>>>> The variable is now referenced unconditionally, but still
-> > >>>>> declared in an #ifdef:
-> > >>>>>
-> > >>>>> drivers/gpu/drm/imx/imx-drm-core.c: In function 'imx_drm_bind':
-> > >>>>> drivers/gpu/drm/imx/imx-drm-core.c:264:6: error: 'legacyfb_depth' undeclared (first use in this function); did you mean 'lockdep_depth'?
-> > >>>>>
-> > >>>>> Remove the #ifdef so it can always be accessed.
-> > >>>>>
-> > >>>>> Fixes: f53705fd9803 ("drm/imx: Use drm_fbdev_generic_setup()")
-> > >>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > >>>>> ---
-> > >>>> I've already applied the previous one you sent:
-> > >>>> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=064b06bbf117f8b5e64a5143e970d5a1cf602fd6
-> > >>>>
-> > >>>> Not sure when it reaches linux-next now that we are past rc6.
-> > >>> Only once we're past -rc1.
-> > >> Can we revert f53705fd9803 in linux-next then to prevent the regression from
-> > >> making it into 4.20?
-> > > Probably simpler to cherry pick the fix from drm-misc-next to
-> > > drm-misc-next-fixes. Noralf, can you pls do that?
+On Thu, Oct 04, 2018 at 12:28:56PM -0700, Eric Dumazet wrote:
+> On Thu, Oct 4, 2018 at 11:59 AM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
 > >
-> > Would this be the correct procudure:
+> > Hi Eric,
 > >
-> >      dim update-branches
-> >      dim create-workdir drm-misc-next-fixes
-> >      <build>
-> >      CONFIG_DRM_FBDEV_EMULATION=n
-> >      <build will break>
-> >      git cherry-pick 064b06bbf117f8b5e64a5143e970d5a1cf602fd6
-> >      <build passes>
-> >      dim push-branch drm-misc-next-fixes
+> > On Thu, Oct 04, 2018 at 08:47:49AM -0700, Eric Dumazet wrote:
+> > > syzbot was able to trigger rcu stalls by calling write()
+> > > with large number of bytes.
+> > >
+> > > Add a cond_resched() in the loop to avoid this.
 > >
-> > I read that cherry picking creates a new commit with a new hash.
-> > But since you ask me to do this, I assume git will handle this when
-> > branches are merged?
+> > I think this simply masks a deeper issue. The code fetches characters
+> > from userspace in a loop, takes a lock, quickly places response in an
+> > output buffer, and releases interrupt. I do not see why this should
+> > cause stalls as we do not hold spinlock/interrupts off for extended
+> > period of time.
+> >
+> > Adding Paul so he can straighten me out...
+> >
 > 
-> The git history will show both commit IDs, which is a bit ugly but
-> ok if it's rare enough. There is a chance for creating a conflict if the
-> backport changes context, or one branch contains extra changes
-> that touch the same lines, but usually this is not a problem.
+> Well...
+> 
+> write(fd, buffer, 0x7FFF0000);
+> 
+> Takes between 20 seconds and 2 minutes depending on CONFIG options ....
 
-+1, and your recipe looks good too. drm-intel works entirely on these
-cherry-picks, and we've done it a few times in drm-misc too. Having to
-cherry-pick is one of the downsides of group maintainership, since you
-really can't rebase trees at will. Definitely not the -next queue.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+And two minutes would get you an RCU CPU stall warning, even on distro
+kernels that set the stall-warning time to a full minute (as opposed
+to 21 seconds in mainline).
+
+> So either apply my patch, or add a limit on the max count, and
+> possibly break legitimate user space ?
+> 
+> I dunno...
+
+I vote for Eric's patch.  In fact:
+
+Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
+
+> > > Link: https://lkml.org/lkml/2018/8/23/1106
+> > > Signed-off-by: Eric Dumazet <edumazet@google.com>
+> > > Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
+> > > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > Cc: linux-input@vger.kernel.org
+> > > ---
+> > >  drivers/input/mousedev.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
+> > > index e08228061bcdd2f97aaadece31d6c83eb7539ae5..412fa71245afe26a7a8ad75705566f83633ba347 100644
+> > > --- a/drivers/input/mousedev.c
+> > > +++ b/drivers/input/mousedev.c
+> > > @@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file *file, const char __user *buffer,
+> > >               mousedev_generate_response(client, c);
+> > >
+> > >               spin_unlock_irq(&client->packet_lock);
+> > > +             cond_resched();
+> > >       }
+> > >
+> > >       kill_fasync(&client->fasync, SIGIO, POLL_IN);
+> > > --
+> > > 2.19.0.605.g01d371f741-goog
+> > >
+> >
+> > Thanks.
+> >
+> > --
+> > Dmitry
+> 
+
