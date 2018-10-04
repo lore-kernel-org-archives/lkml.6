@@ -4,68 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE430C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6229C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A190B213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0B4213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:38:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCp61+6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A190B213A2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV7BA2Z/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE0B4213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeJDQau (ORCPT
+        id S1728016AbeJDQax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:30:50 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42255 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeJDQau (ORCPT
+        Thu, 4 Oct 2018 12:30:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35621 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbeJDQav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:30:50 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y71-v6so7742406lje.9
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 02:38:24 -0700 (PDT)
+        Thu, 4 Oct 2018 12:30:51 -0400
+Received: by mail-lj1-f193.google.com with SMTP id o14-v6so7774164ljj.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 02:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=x1B0Y30vIKl43mNFFoM4zS/CVKUi3q7w/0ajlJ3RvMA=;
-        b=UCp61+6gYvqeEqHJpBjQ+XBApH+6Nz/QrLN20048Utst/wn8aZJFdGzI6EQcFRklKV
-         QdiAiXBg1nxHXJHtw6Z26RdI2yFG/faXExh5d5Z09muileLtBWyBTax61dXe+/t9/kIH
-         OjMGGDFAJ6hN6h80/mmL9i2zTjyc/vF2Vmiw+bNxFHxoSnWJhoo/tFDf2XaDHF+lkrPX
-         SZ8sIyED/JlL2It/IM+h0mSiYEh+nRqfPw8XcJIP5gkkU54zS5GJit495vwtqLGFk14g
-         jdfvjB5FAM6DZPIxK54P47GODN7vw0u51lkHyxO4kCDUfWXdDe8nEMDfOm7vVyZg86C5
-         GN6w==
+        bh=tcYspiJYtZfcqgqjK4lio0qLobpPosb81mJf/GBdgdM=;
+        b=gV7BA2Z/iGffwfFhLpvF65F1uLZldBwuJdWUSDtiOjCCtJccSq7IyodhP0D0kRi4Xw
+         sj7E3dridHeM/Ggq66PDzwOWtaYNSIo5YBOtGSoQTOCXiIWplGg1u1yLLI/hiwENylPe
+         q8xfdLRv3nSOLqRt52yRlbjv1iMUulnXz7gM7KZ45cG0NHdMLMMRhoDdjhRzktIvA0bv
+         BClTMuCA6bfoa2N5KTYA82uknjQNvAIc3cFmo/7p8UH+jGVbzT4Q3fuHJRw12RNRWw+C
+         VvXfcjKCz4fhf/8QNTgDN3+5bwgTLvK32hDhlthiUTQ5FLC9rlUQGcogva58pmUezYJs
+         WKgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=x1B0Y30vIKl43mNFFoM4zS/CVKUi3q7w/0ajlJ3RvMA=;
-        b=K/iiOmaMq1D6VtApslQX5ZXSheopVT1UzOSCUKtLHldqYSiPwg9TQS/DePwXyracLy
-         3Gl1RcXOx3N2DigyybeYtKTg/hFz+iTOiLR+OCrWmUz2pxGXKxVTIlgZaVl1Zwfd0fY2
-         zUiYXQUMsiZ0QY1BFX3I7V0Vljrsk2+s5NP9N3SPhhlGs/AVHi8CcN+HDHOhN+DMfWfa
-         Oe7js8QIoItlGOR8BtzyixPztHkDkWPAJJ0DGYLyumMftaQp3WhvzYhL0yXewaYzqZ0+
-         +z7WP+mqNgXGqXqxzL+ntYGBVUgF99g0pYIZDW2n/rGZ4pmyKHAWuE3Z0jU0yWqPKNDn
-         5gTg==
-X-Gm-Message-State: ABuFfoi8wDRvzYT+kJJLNvNjvwRXhrKzeCBLmw6vJXTW99/zXNAhV7UO
-        5mLHpMUeTyC6NIQewGKEuZo=
-X-Google-Smtp-Source: ACcGV60cwPJORnlKplWvQ82GQ/8c6yqSWOvqmSNX7uiKNgtpQgVv4XX4pCsYBbw+WshAba2iO/qcUw==
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr3535666ljh.59.1538645902989;
-        Thu, 04 Oct 2018 02:38:22 -0700 (PDT)
+        bh=tcYspiJYtZfcqgqjK4lio0qLobpPosb81mJf/GBdgdM=;
+        b=poWAKp+5WPSiuLOCWNpFI1IE6SdEO/jnTTFgKPkoPocPLSULtzfAM4EQYSWnqs8NEG
+         zImrWA5AQMMqZ3wum82T++E3T8QuAau0UDezmQho1T+lM7JPpTKB6nOhuFQ/FO3t/wlS
+         QkH3/JxaO0gJk+2EJmxt0PTk9PJKLGtH2o51hGqyZ7eyDqV/DKoWM80JbzFjIySXPbNz
+         kNkKnk6oepbctApfDl8NZv3Yowv9c61TbYAPyFJ/xlQdUTLesT90zuopr3QyH4aX6gi4
+         6oJMfIlsR0C/Y4fltkKBG/Bm40p6P9wSrfkqsF7RP9JM6MXXQZNzEg7wNMpWxHkUE978
+         M1Hw==
+X-Gm-Message-State: ABuFfoiGM/CmfnmPrlFNlo6FMLChSwiSPGoUgbObpjjwYVwphWXZ9EyQ
+        mlxiTJXhTE7kVQR09vfOjcs=
+X-Google-Smtp-Source: ACcGV60euBcJ98POYcOEXGfhk+EosaJOBPp274WHCG4vWX9Y6lF9lYWXiSyHYDLPA4xm6mRI70Y6ZQ==
+X-Received: by 2002:a2e:9c08:: with SMTP id s8-v6mr3122233lji.149.1538645904089;
+        Thu, 04 Oct 2018 02:38:24 -0700 (PDT)
 Received: from localhost.localdomain (df8yyyyyyyyyyygn-tkvt-3.rev.dnainternet.fi. [2001:14ba:2700::157f:8223])
-        by smtp.gmail.com with ESMTPSA id f128-v6sm899738lff.40.2018.10.04.02.38.21
+        by smtp.gmail.com with ESMTPSA id f128-v6sm899738lff.40.2018.10.04.02.38.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 02:38:22 -0700 (PDT)
+        Thu, 04 Oct 2018 02:38:23 -0700 (PDT)
 From:   Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
         linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org,
         Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-Subject: [PATCH 3/7] staging: vc04_services: Drop trivially unused fields from SERVICE_CREATION_T
-Date:   Thu,  4 Oct 2018 12:37:43 +0300
-Message-Id: <20181004093747.21750-4-tuomas.tynkkynen@iki.fi>
+Subject: [PATCH 4/7] staging: vc04_services: Drop declaration of vchi_crc_control()
+Date:   Thu,  4 Oct 2018 12:37:44 +0300
+Message-Id: <20181004093747.21750-5-tuomas.tynkkynen@iki.fi>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
 References: <20181004093747.21750-1-tuomas.tynkkynen@iki.fi>
@@ -74,76 +75,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These fields are only initialized with constants and never read. Drop
-them.
+There is no definition for this unused function, so drop its prototype.
 
 Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
 ---
- .../vc04_services/bcm2835-audio/bcm2835-vchiq.c       |  5 -----
- .../staging/vc04_services/bcm2835-camera/mmal-vchiq.c |  5 -----
- drivers/staging/vc04_services/interface/vchi/vchi.h   | 11 -----------
- 3 files changed, 21 deletions(-)
+ drivers/staging/vc04_services/interface/vchi/vchi.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-index 6ec15e44d7e2..bc48a74a6be6 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-@@ -130,13 +130,8 @@ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
- 	SERVICE_CREATION_T params = {
- 		.version		= VCHI_VERSION_EX(VC_AUDIOSERV_VER, VC_AUDIOSERV_MIN_VER),
- 		.service_id		= VC_AUDIO_SERVER_NAME,
--		.rx_fifo_size		= 0,
--		.tx_fifo_size		= 0,
- 		.callback		= audio_vchi_callback,
- 		.callback_param		= instance,
--		.want_unaligned_bulk_rx = 1, //TODO: remove VCOS_FALSE
--		.want_unaligned_bulk_tx = 1, //TODO: remove VCOS_FALSE
--		.want_crc		= 0
- 	};
- 	int status;
- 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index e234b95b61c0..074a4acc196d 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -1806,13 +1806,8 @@ int vchiq_mmal_init(struct vchiq_mmal_instance **out_instance)
- 	SERVICE_CREATION_T params = {
- 		.version		= VCHI_VERSION_EX(VC_MMAL_VER, VC_MMAL_MIN_VER),
- 		.service_id		= VC_MMAL_SERVER_NAME,
--		.rx_fifo_size		= 0,
--		.tx_fifo_size		= 0,
- 		.callback		= service_callback,
- 		.callback_param		= NULL,
--		.want_unaligned_bulk_rx = 1,
--		.want_unaligned_bulk_tx = 1,
--		.want_crc		= 0
- 	};
- 
- 	/* compile time checks to ensure structure size as they are
 diff --git a/drivers/staging/vc04_services/interface/vchi/vchi.h b/drivers/staging/vc04_services/interface/vchi/vchi.h
-index 1ea997c658f9..347825329ea4 100644
+index 347825329ea4..103d67024335 100644
 --- a/drivers/staging/vc04_services/interface/vchi/vchi.h
 +++ b/drivers/staging/vc04_services/interface/vchi/vchi.h
-@@ -77,19 +77,8 @@ typedef struct {
- typedef struct {
- 	struct vchi_version version;
- 	int32_t service_id;
--	uint32_t rx_fifo_size;
--	uint32_t tx_fifo_size;
- 	VCHI_CALLBACK_T callback;
- 	void *callback_param;
--	/* client intends to receive bulk transfers of
--		odd lengths or into unaligned buffers */
--	int32_t want_unaligned_bulk_rx;
--	/* client intends to transmit bulk transfers of
--		odd lengths or out of unaligned buffers */
--	int32_t want_unaligned_bulk_tx;
--	/* client wants to check CRCs on (bulk) xfers.
--		Only needs to be set at 1 end - will do both directions. */
--	int32_t want_crc;
- } SERVICE_CREATION_T;
+@@ -117,10 +117,6 @@ extern int32_t vchi_connect(VCHI_CONNECTION_T **connections,
+ //Bulk transfers can remain 'queued'
+ extern int32_t vchi_disconnect(VCHI_INSTANCE_T instance_handle);
  
- // Opaque handle for a VCHI instance
+-// Global control over bulk CRC checking
+-extern int32_t vchi_crc_control(VCHI_CONNECTION_T *connection,
+-				VCHI_CRC_CONTROL_T control);
+-
+ // helper functions
+ extern void *vchi_allocate_buffer(VCHI_SERVICE_HANDLE_T handle, uint32_t *length);
+ extern void vchi_free_buffer(VCHI_SERVICE_HANDLE_T handle, void *address);
 -- 
 2.18.0
 
