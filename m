@@ -2,281 +2,145 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB3CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3CFC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D10B2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:09:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D10B2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 933E42084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:09:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcqajKK7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 933E42084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbeJEEER (ORCPT
+        id S1727838AbeJEEET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:04:17 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33759 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeJEEER (ORCPT
+        Fri, 5 Oct 2018 00:04:19 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41418 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbeJEEES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:04:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94L8UvE2885129
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 4 Oct 2018 14:08:30 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94L8TBR2885126;
-        Thu, 4 Oct 2018 14:08:29 -0700
-Date:   Thu, 4 Oct 2018 14:08:29 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-4f72adc5068294268387a81a6bf91d9bb07ecc5c@git.kernel.org>
-Cc:     fweimer@redhat.com, sboyd@kernel.org, kys@microsoft.com,
-        linux-kernel@vger.kernel.org, vkuznets@redhat.com, hpa@zytor.com,
-        tglx@linutronix.de, pbonzini@redhat.com, jgross@suse.com,
-        arnd@arndb.de, luto@kernel.org, mingo@kernel.org,
-        john.stultz@linaro.org, matt@softrans.com.au, peterz@infradead.org
-Reply-To: fweimer@redhat.com, kys@microsoft.com,
-          linux-kernel@vger.kernel.org, sboyd@kernel.org,
-          vkuznets@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-          pbonzini@redhat.com, jgross@suse.com, luto@kernel.org,
-          mingo@kernel.org, arnd@arndb.de, peterz@infradead.org,
-          matt@softrans.com.au, john.stultz@linaro.org
-In-Reply-To: <20180917130707.657928937@linutronix.de>
-References: <20180917130707.657928937@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/vdso] x86/vdso: Simplify the invalid vclock case
-Git-Commit-ID: 4f72adc5068294268387a81a6bf91d9bb07ecc5c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 5 Oct 2018 00:04:18 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x12-v6so11389661wru.8;
+        Thu, 04 Oct 2018 14:09:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KINXlk27WRpSUheO0VnsIAEdikcBUGjWtxgADN3RBno=;
+        b=XcqajKK7CXCZCvj8eOhx+lzX2CHglgXRXpZyb3CfmRFV+A5DefG64RzIvyWww0hn/N
+         IhnvML1NTEKjV8q2hKY1arSH2wDITfMg/2ipcVVQVmsuRU7DbxgOTjDxZhQbIyTFodRF
+         +AVhDTMTJwLy/5LifLrZHFDPUqhj51S9ty0pmmtupcQTpEZzB323QbI9hirLaUF8xgPN
+         RpqKvTmcKqdnixVvt3Ds2rlLW2DGrFX8HRAA2kv+YL4MCrLVpfL2Mnu6wQ2zp+6FZE4g
+         e1xnePP22Wf92tzG+kY1vKh7W+mXzTt1o92IUgmJYsgiF/K7EJ3IRNhw6DDcLqpjZpFW
+         i/3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KINXlk27WRpSUheO0VnsIAEdikcBUGjWtxgADN3RBno=;
+        b=FTFRDnNMzdS/t7MtCTPDANWxxWDYZ6ewivRzWVf/djdv77H95ICuQfBPVR/9VPl1C3
+         eZMG4ae/fuvXNOEsQg+dzpHXcuhNrqsvGFDJj785I8KaWqKA2POs1yk55c3YDCFjH5kD
+         JCxqxG5GPsI0Ba5Iopa1N4s9C++Ff3060E0o5CSGeSQx6PsF8NnMAnii7EK7Z4q/kIs7
+         veFKiwfLdxJHKHelB4AFaq/DHClUAr2KlW3OZCO0i53lUiRRXzD292XEPQjXYSxUMeQR
+         YWay4LZEqH13rL4HAs/LI3cYAXGsSqzSsScgC9rpTJ9NVsS8BV2bOJxs2t9wOmGLtacU
+         dyAg==
+X-Gm-Message-State: ABuFfoj1He5n7JIRD6OjTE6yO4XTscis0Cy9/xBh2mVf7/litvQc+/02
+        y3YAwda3dFIQ04oqJT2RmWXxGzsu/y6ZiZu+tLU=
+X-Google-Smtp-Source: ACcGV63mIorQiv+kiFrXYSuXsjjzT6nbkN1oXqOmlzw5riUcKmZjXC9aPiavNxY0FZVGjHxBMTVrZUBW8+UnpwvRMa8=
+X-Received: by 2002:adf:b3d7:: with SMTP id x23-v6mr6173507wrd.253.1538687349817;
+ Thu, 04 Oct 2018 14:09:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <CACE8ZKbUhFyWg5oK1B8+aWAa0tdqKf5Kokj80+8x1X2EUaA_DQ@mail.gmail.com>
+In-Reply-To: <CACE8ZKbUhFyWg5oK1B8+aWAa0tdqKf5Kokj80+8x1X2EUaA_DQ@mail.gmail.com>
+From:   =?UTF-8?Q?Ren=C3=A9_Kjellerup?= <rk.katana.steel@gmail.com>
+Date:   Thu, 4 Oct 2018 14:08:55 -0700
+Message-ID: <CACE8ZKZEpQjOW6CSvUuM9xhjtkSCF0bYxcfQ3htSabC=rVJcTA@mail.gmail.com>
+Subject: Adding a Basic DT for the Linksys ea6500 v2 wireless home router
+To:     Hauke Mehrtens <hauke@hauke-m.de>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     "Cc: Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="000000000000e8d96d05776d906a"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4f72adc5068294268387a81a6bf91d9bb07ecc5c
-Gitweb:     https://git.kernel.org/tip/4f72adc5068294268387a81a6bf91d9bb07ecc5c
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 17 Sep 2018 14:45:42 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 4 Oct 2018 23:00:26 +0200
+--000000000000e8d96d05776d906a
+Content-Type: text/plain; charset="UTF-8"
 
-x86/vdso: Simplify the invalid vclock case
+Hi Hauke,
 
-The code flow for the vclocks is convoluted as it requires the vclocks
-which can be invalidated separately from the vsyscall_gtod_data sequence to
-store the fact in a separate variable. That's inefficient.
+thank you for suggesting adding the dts patch to mainline kernel,
+so here it is.
+I feel Rafal technically still have the copyrights, this is pretty
+much just a few string updates for the ea6500v2. However with this
+dts in latest OpenWrt 18.06 loads and installs on my device.
 
-Restructure the code so the vclock readout returns cycles and the
-conversion to nanoseconds is handled at the call site.
+I will be available to do more testing should it be required.
 
-If the clock gets invalidated or vclock is already VCLOCK_NONE, return
-U64_MAX as the cycle value, which is invalid for all clocks and leave the
-sequence loop immediately in that case by calling the fallback function
-directly.
+Regrads
+Rene Kjellerup
+--
+-- as life grows older, I gain experience.
+-- http://www.alchemiestick.net/
 
-This allows to remove the gettimeofday fallback as it now uses the
-clock_gettime() fallback and does the nanoseconds to microseconds
-conversion in the same way as it does when the vclock is functional. It
-does not make a difference whether the division by 1000 happens in the
-kernel fallback or in userspace.
+--000000000000e8d96d05776d906a
+Content-Type: application/x-patch; 
+	name="0001-ARM-dts-BCM5301X-Add-basic-DT-for-Linksys-EA6500-V2.patch"
+Content-Disposition: attachment; 
+	filename="0001-ARM-dts-BCM5301X-Add-basic-DT-for-Linksys-EA6500-V2.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jmqu74zq0>
+X-Attachment-Id: f_jmqu74zq0
 
-Generates way better code and gains a few cycles back.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Matt Rickard <matt@softrans.com.au>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: devel@linuxdriverproject.org
-Cc: virtualization@lists.linux-foundation.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Juergen Gross <jgross@suse.com>
-Link: https://lkml.kernel.org/r/20180917130707.657928937@linutronix.de
-
----
- arch/x86/entry/vdso/vclock_gettime.c | 82 +++++++++---------------------------
- 1 file changed, 21 insertions(+), 61 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index 672e50e35d6c..40105024a210 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -49,17 +49,6 @@ notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
- 	return ret;
- }
- 
--notrace static long vdso_fallback_gtod(struct timeval *tv, struct timezone *tz)
--{
--	long ret;
--
--	asm ("syscall" : "=a" (ret), "=m" (*tv), "=m" (*tz) :
--	     "0" (__NR_gettimeofday), "D" (tv), "S" (tz) :
--	     "memory", "rcx", "r11");
--	return ret;
--}
--
--
- #else
- 
- notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
-@@ -77,21 +66,6 @@ notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
- 	return ret;
- }
- 
--notrace static long vdso_fallback_gtod(struct timeval *tv, struct timezone *tz)
--{
--	long ret;
--
--	asm (
--		"mov %%ebx, %%edx \n"
--		"mov %[tv], %%ebx \n"
--		"call __kernel_vsyscall \n"
--		"mov %%edx, %%ebx \n"
--		: "=a" (ret), "=m" (*tv), "=m" (*tz)
--		: "0" (__NR_gettimeofday), [tv] "g" (tv), "c" (tz)
--		: "memory", "edx");
--	return ret;
--}
--
- #endif
- 
- #ifdef CONFIG_PARAVIRT_CLOCK
-@@ -100,7 +74,7 @@ static notrace const struct pvclock_vsyscall_time_info *get_pvti0(void)
- 	return (const struct pvclock_vsyscall_time_info *)&pvclock_page;
- }
- 
--static notrace u64 vread_pvclock(int *mode)
-+static notrace u64 vread_pvclock(void)
- {
- 	const struct pvclock_vcpu_time_info *pvti = &get_pvti0()->pvti;
- 	u64 ret;
-@@ -132,10 +106,8 @@ static notrace u64 vread_pvclock(int *mode)
- 	do {
- 		version = pvclock_read_begin(pvti);
- 
--		if (unlikely(!(pvti->flags & PVCLOCK_TSC_STABLE_BIT))) {
--			*mode = VCLOCK_NONE;
--			return 0;
--		}
-+		if (unlikely(!(pvti->flags & PVCLOCK_TSC_STABLE_BIT)))
-+			return U64_MAX;
- 
- 		ret = __pvclock_read_cycles(pvti, rdtsc_ordered());
- 	} while (pvclock_read_retry(pvti, version));
-@@ -150,17 +122,12 @@ static notrace u64 vread_pvclock(int *mode)
- }
- #endif
- #ifdef CONFIG_HYPERV_TSCPAGE
--static notrace u64 vread_hvclock(int *mode)
-+static notrace u64 vread_hvclock(void)
- {
- 	const struct ms_hyperv_tsc_page *tsc_pg =
- 		(const struct ms_hyperv_tsc_page *)&hvclock_page;
--	u64 current_tick = hv_read_tsc_page(tsc_pg);
--
--	if (current_tick != U64_MAX)
--		return current_tick;
- 
--	*mode = VCLOCK_NONE;
--	return 0;
-+	return hv_read_tsc_page(tsc_pg);
- }
- #endif
- 
-@@ -184,47 +151,42 @@ notrace static u64 vread_tsc(void)
- 	return last;
- }
- 
--notrace static inline u64 vgetsns(int *mode)
-+notrace static inline u64 vgetcyc(int mode)
- {
--	u64 v;
--	cycles_t cycles;
--
--	if (gtod->vclock_mode == VCLOCK_TSC)
--		cycles = vread_tsc();
-+	if (mode == VCLOCK_TSC)
-+		return vread_tsc();
- #ifdef CONFIG_PARAVIRT_CLOCK
--	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
--		cycles = vread_pvclock(mode);
-+	else if (mode == VCLOCK_PVCLOCK)
-+		return vread_pvclock();
- #endif
- #ifdef CONFIG_HYPERV_TSCPAGE
--	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
--		cycles = vread_hvclock(mode);
-+	else if (mode == VCLOCK_HVCLOCK)
-+		return vread_hvclock();
- #endif
--	else
--		return 0;
--	v = cycles - gtod->cycle_last;
--	return v * gtod->mult;
-+	return U64_MAX;
- }
- 
- notrace static int do_hres(clockid_t clk, struct timespec *ts)
- {
- 	struct vgtod_ts *base = &gtod->basetime[clk];
- 	unsigned int seq;
--	int mode;
--	u64 ns;
-+	u64 cycles, ns;
- 
- 	do {
- 		seq = gtod_read_begin(gtod);
--		mode = gtod->vclock_mode;
- 		ts->tv_sec = base->sec;
- 		ns = base->nsec;
--		ns += vgetsns(&mode);
-+		cycles = vgetcyc(gtod->vclock_mode);
-+		if (unlikely((s64)cycles < 0))
-+			return vdso_fallback_gettime(clk, ts);
-+		ns += (cycles - gtod->cycle_last) * gtod->mult;
- 		ns >>= gtod->shift;
- 	} while (unlikely(gtod_read_retry(gtod, seq)));
- 
- 	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
- 	ts->tv_nsec = ns;
- 
--	return mode;
-+	return 0;
- }
- 
- notrace static void do_coarse(clockid_t clk, struct timespec *ts)
-@@ -253,8 +215,7 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 	 */
- 	msk = 1U << clock;
- 	if (likely(msk & VGTOD_HRES)) {
--		if (do_hres(clock, ts) != VCLOCK_NONE)
--			return 0;
-+		return do_hres(clock, ts);
- 	} else if (msk & VGTOD_COARSE) {
- 		do_coarse(clock, ts);
- 		return 0;
-@@ -270,8 +231,7 @@ notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
- 	if (likely(tv != NULL)) {
- 		struct timespec *ts = (struct timespec *) tv;
- 
--		if (unlikely(do_hres(CLOCK_REALTIME, ts) == VCLOCK_NONE))
--			return vdso_fallback_gtod(tv, tz);
-+		do_hres(CLOCK_REALTIME, ts);
- 		tv->tv_usec /= 1000;
- 	}
- 	if (unlikely(tz != NULL)) {
+RnJvbSBiZGM0NDI5MzUzZWUwNGY0OTc0OTUwMTZjOWVlYmFjMTg4NjAzOTBjIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBSZW5lIEtqZWxsZXJ1cCA8cmsua2F0YW5hLnN0ZWVsQGdtYWls
+LmNvbT4KRGF0ZTogTW9uLCAxIE9jdCAyMDE4IDE0OjExOjU2IC0wNzAwClN1YmplY3Q6IFtQQVRD
+SF0gQVJNOiBkdHM6IEJDTTUzMDFYOiBBZGQgYmFzaWMgRFQgZm9yIExpbmtzeXMgRUE2NTAwIFYy
+CgpJdCdzIHdpcmVsZXNzIGhvbWUgcm91dGVyIGJhc2VkIG9uIEJDTTQ3MDhBMCB3aXRoIEJDTTQz
+NjAgKyBCQ000MzMxCndpcmVsZXNzIGNoaXBzZXRzLiBUaGUgQkNNNDMzMSA1R0h6IGNoaXAgY3Vy
+cmVudGx5IGlzbid0IHN1cHBvcnRlZApvbmx5IGR1ZSB0byBtaXNzaW5nIGNvbXBhdGlibGUgZmly
+bXdhcmUuCgpTaWduZWQtb2ZmLWJ5OiBSZW5lIEtqZWxsZXJ1cCA8cmsua2F0YW5hLnN0ZWVsQGdt
+YWlsLmNvbT4KLS0tCiBhcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZSAgICAgICAgICAgICAgICAg
+ICAgICB8ICAxICsKIGFyY2gvYXJtL2Jvb3QvZHRzL2JjbTQ3MDgtbGlua3N5cy1lYTY1MDAtdjIu
+ZHRzIHwgNDUgKysrKysrKysrKysrKysrKysrKysrKysrKwogMiBmaWxlcyBjaGFuZ2VkLCA0NiBp
+bnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9vdC9kdHMvYmNtNDcw
+OC1saW5rc3lzLWVhNjUwMC12Mi5kdHMKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9N
+YWtlZmlsZSBiL2FyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlCmluZGV4IGI1YmQzZGU4N2MzMy4u
+YWRmOGYyOGY1ZTQ0IDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZQorKysg
+Yi9hcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZQpAQCAtODgsNiArODgsNyBAQCBkdGItJChDT05G
+SUdfQVJDSF9CQ01fNTMwMVgpICs9IFwKIAliY200NzA4LWFzdXMtcnQtYWM2OHUuZHRiIFwKIAli
+Y200NzA4LWJ1ZmZhbG8td3pyLTE3NTBkaHAuZHRiIFwKIAliY200NzA4LWxpbmtzeXMtZWE2MzAw
+LXYxLmR0YiBcCisJYmNtNDcwOC1saW5rc3lzLWVhNjUwMC12Mi5kdGIgXAogCWJjbTQ3MDgtbHV4
+dWwteGFwLTE1MTAuZHRiIFwKIAliY200NzA4LWx1eHVsLXh3Yy0xMDAwLmR0YiBcCiAJYmNtNDcw
+OC1uZXRnZWFyLXI2MjUwLmR0YiBcCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9iY200
+NzA4LWxpbmtzeXMtZWE2NTAwLXYyLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2JjbTQ3MDgtbGlu
+a3N5cy1lYTY1MDAtdjIuZHRzCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAw
+MC4uYmFiY2ZlYzUwZGRlCi0tLSAvZGV2L251bGwKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvYmNt
+NDcwOC1saW5rc3lzLWVhNjUwMC12Mi5kdHMKQEAgLTAsMCArMSw0NSBAQAorLy8gU1BEWC1MaWNl
+bnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb3ItbGF0ZXIgT1IgTUlUCisvKgorICogQ29weXJpZ2h0
+IChDKSAyMDE3IFJhZmHFgiBNacWCZWNraSA8cmFmYWxAbWlsZWNraS5wbD4KKyAqIENvcHlyaWdo
+dCAoQykgMjAxOCBSZW5lIEtqZWxsZXJ1cCA8cmsua2F0YW5hLnN0ZWVsQGdtYWlsLmNvbT4KKyAq
+LworCisvZHRzLXYxLzsKKworI2luY2x1ZGUgImJjbTQ3MDguZHRzaSIKKyNpbmNsdWRlICJiY201
+MzAxeC1uYW5kLWNzMC1iY2g4LmR0c2kiCisKKy8geworCWNvbXBhdGlibGUgPSAibGlua3N5cyxl
+YTY1MDAtdjIiLCAiYnJjbSxiY200NzA4IjsKKwltb2RlbCA9ICJMaW5rc3lzIEVBNjUwMCBWMiI7
+CisKKwljaG9zZW4geworCQlib290YXJncyA9ICJjb25zb2xlPXR0eVMwLDExNTIwMCI7CisJfTsK
+KworCW1lbW9yeSB7CisJCXJlZyA9IDwweDAwMDAwMDAwIDB4MDgwMDAwMDA+OworCX07CisKKwln
+cGlvLWtleXMgeworCQljb21wYXRpYmxlID0gImdwaW8ta2V5cyI7CisJCSNhZGRyZXNzLWNlbGxz
+ID0gPDE+OworCQkjc2l6ZS1jZWxscyA9IDwwPjsKKworCQl3cHMgeworCQkJbGFiZWwgPSAiV1BT
+IjsKKwkJCWxpbnV4LGNvZGUgPSA8S0VZX1dQU19CVVRUT04+OworCQkJZ3Bpb3MgPSA8JmNoaXBj
+b21tb24gNyBHUElPX0FDVElWRV9MT1c+OworCQl9OworCisJCXJlc3RhcnQgeworCQkJbGFiZWwg
+PSAiUmVzZXQiOworCQkJbGludXgsY29kZSA9IDxLRVlfUkVTVEFSVD47CisJCQlncGlvcyA9IDwm
+Y2hpcGNvbW1vbiAxMSBHUElPX0FDVElWRV9MT1c+OworCQl9OworCX07Cit9OworCismdXNiM19w
+aHkgeworCXN0YXR1cyA9ICJva2F5IjsKK307Ci0tIAoyLjE2LjQKCg==
+--000000000000e8d96d05776d906a--
