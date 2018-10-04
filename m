@@ -2,210 +2,127 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 202F3C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B50CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCB3A213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:04:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB3A213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D2C1213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:05:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbd9mv5S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2C1213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbeJDO41 (ORCPT
+        id S1727711AbeJDO5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:56:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48691 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727533AbeJDO41 (ORCPT
+        Thu, 4 Oct 2018 10:57:12 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46675 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbeJDO5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:56:27 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9483ruY2668272
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 4 Oct 2018 01:03:53 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9483qUA2668269;
-        Thu, 4 Oct 2018 01:03:52 -0700
-Date:   Thu, 4 Oct 2018 01:03:52 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Pu Wen <tipbot@zytor.com>
-Message-ID: <tip-995d5f64b62f20f05b8e0972f07ec4d6c23333c9@git.kernel.org>
-Cc:     puwen@hygon.cn, hpa@zytor.com, shuah@kernel.org, prarit@redhat.com,
-        trenn@suse.com, bp@suse.de, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          mingo@kernel.org, prarit@redhat.com, hpa@zytor.com,
-          shuah@kernel.org, puwen@hygon.cn, bp@suse.de, trenn@suse.com
-In-Reply-To: <5ce86123a7b9dad925ac583d88d2f921040e859b.1538583282.git.puwen@hygon.cn>
-References: <5ce86123a7b9dad925ac583d88d2f921040e859b.1538583282.git.puwen@hygon.cn>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] tools/cpupower: Add Hygon Dhyana support
-Git-Commit-ID: 995d5f64b62f20f05b8e0972f07ec4d6c23333c9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 4 Oct 2018 10:57:12 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a5-v6so2763797pgv.13;
+        Thu, 04 Oct 2018 01:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CGiBDWlIpRh8VALnhCWgMozJdSr2mchsYAxFy2Px9jk=;
+        b=bbd9mv5SY1VLmXLSMxoeTFG/zkTLPL+nev4CnwlIsJ+W3H/vf8XTlxqCiiUdzTXrV/
+         ZHOSTtzVwZV40StvtHcO/KEnxAfsxF0wAVlLAQsxhPSFEj/OU+rxGu8Cb4xnZFaVN9uE
+         iuIIln6lvljMJ6xgsZfzGr2fn+WkCG18WektqtJRK4bnHvhG23lUfYpjQuwHR2dlQyR6
+         ukXs5kC9mbeQ4GoxMqd34boXr+oY+6e3Eozn/kUV0Dxp+5jwHYLcoLUfSr/Fe0xe3PTb
+         t6uLzyrK/tfJQgzBQSNDcFGL2DgSVFpo4vBBwIh/4IUo6EDsaqMx/xfeDHEHEVBayf0K
+         wpew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CGiBDWlIpRh8VALnhCWgMozJdSr2mchsYAxFy2Px9jk=;
+        b=Lb4j+w22TYfP1lb+1jTZwdvamd8ZmXGTZQrLpJSkbFHVEJh1iduQbz2rSC4wT8r8N1
+         DR3wt3NLRlZlW4x3f5XYZIwdNvFTSlzcs0mcTFPiamq5831xSOLunKoLYpah/KJdN8ie
+         B0t1JVFenASrVtptDqira8jRP9oTzEGecFHeSMOOZORNRSkNRcRWHAl6+ZTAYMQRhX9B
+         VKwq/2qphzlipPEUTxK0sjmpylHys5H4jx3Ut3eIw9NWWByOQILqS0MpTIXDtLIXicHU
+         7Rqm0HrcMZcorBtDGDNvWnHE0rT5Af1GIzwpXlb6R7X6BDFDAfjxeFVIPh8oeyu3rO3w
+         hyhw==
+X-Gm-Message-State: ABuFfoi59lyCrC/kvUhW/Hzkby4VCfpuMjNbtzNjGWkbkh8Y8q61iSX3
+        amVo92prSS+g6WcVmYmLxOs=
+X-Google-Smtp-Source: ACcGV61XFnxzOE3aCPypqYI3FTJPRKUsZ5+j83JtlGOaILo3/645FjOaTGIVG1UQf26KCCX7+DNevQ==
+X-Received: by 2002:a63:a012:: with SMTP id r18-v6mr4788365pge.282.1538640310882;
+        Thu, 04 Oct 2018 01:05:10 -0700 (PDT)
+Received: from localhost ([175.223.49.70])
+        by smtp.gmail.com with ESMTPSA id h19-v6sm6892239pfk.71.2018.10.04.01.05.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 01:05:09 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 17:05:06 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     rostedt@goodmis.org, Petr Mladek <pmladek@suse.com>,
+        stable@vger.kernel.org, Alexander.Levin@microsoft.com,
+        akpm@linux-foundation.org, byungchul.park@lge.com,
+        dave.hansen@intel.com, hannes@cmpxchg.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181004080506.GB12879@jagdpanzerIV>
+References: <20181001152324.72a20bea@gandalf.local.home>
+ <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
+ <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
+ <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
+ <20181002212327.7aab0b79@vmware.local.home>
+ <20181003091400.rgdjpjeaoinnrysx@pathway.suse.cz>
+ <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
+ <20181003133704.43a58cf5@gandalf.local.home>
+ <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
+ <20181004074442.GA12879@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181004074442.GA12879@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  995d5f64b62f20f05b8e0972f07ec4d6c23333c9
-Gitweb:     https://git.kernel.org/tip/995d5f64b62f20f05b8e0972f07ec4d6c23333c9
-Author:     Pu Wen <puwen@hygon.cn>
-AuthorDate: Thu, 4 Oct 2018 09:21:43 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 4 Oct 2018 09:57:25 +0200
+On (10/04/18 16:44), Sergey Senozhatsky wrote:
+> So... Just an idea. Can you try a very dirty hack? Forcibly increase
+> oops_in_progress in panic() before console_flush_on_panic(), so 8250
+> serial8250_console_write() will use spin_trylock_irqsave() and maybe
+> avoid deadlock.
 
-tools/cpupower: Add Hygon Dhyana support
+E.g. something like below?
+[this is not a patch; just a theory]:
 
-The tool cpupower is useful to get CPU frequency information and monitor
-power stats on the Hygon Dhyana platform. So add Hygon Dhyana support to
-it by checking vendor and family to share the code path of AMD family
-17h.
-
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-CC: Prarit Bhargava <prarit@redhat.com>
-CC: Shuah Khan <shuah@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Thomas Renninger <trenn@suse.com>
-CC: linux-pm@vger.kernel.org
-Link: http://lkml.kernel.org/r/5ce86123a7b9dad925ac583d88d2f921040e859b.1538583282.git.puwen@hygon.cn
 ---
- tools/power/cpupower/utils/cpufreq-info.c               | 6 ++++--
- tools/power/cpupower/utils/helpers/amd.c                | 4 ++--
- tools/power/cpupower/utils/helpers/cpuid.c              | 8 +++++---
- tools/power/cpupower/utils/helpers/helpers.h            | 2 +-
- tools/power/cpupower/utils/helpers/misc.c               | 2 +-
- tools/power/cpupower/utils/idle_monitor/mperf_monitor.c | 3 ++-
- 6 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
-index df43cd45d810..56e54eabc65c 100644
---- a/tools/power/cpupower/utils/cpufreq-info.c
-+++ b/tools/power/cpupower/utils/cpufreq-info.c
-@@ -170,6 +170,7 @@ static int get_boost_mode(unsigned int cpu)
- 	unsigned long pstates[MAX_HW_PSTATES] = {0,};
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 8b2e002d52eb..188338a55d1c 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -233,7 +233,13 @@ void panic(const char *fmt, ...)
+ 	if (_crash_kexec_post_notifiers)
+ 		__crash_kexec(NULL);
  
- 	if (cpupower_cpu_info.vendor != X86_VENDOR_AMD &&
-+	    cpupower_cpu_info.vendor != X86_VENDOR_HYGON &&
- 	    cpupower_cpu_info.vendor != X86_VENDOR_INTEL)
- 		return 0;
++	/*
++	 * Decrement oops_in_progress and let bust_spinlocks() to
++	 * unblank_screen(), console_unblank() and wake_up_klogd()
++	 */
+ 	bust_spinlocks(0);
++	/* Set oops_in_progress, so we can reenter serial console driver*/
++	bust_spinlocks(1);
  
-@@ -190,8 +191,9 @@ static int get_boost_mode(unsigned int cpu)
- 	printf(_("    Supported: %s\n"), support ? _("yes") : _("no"));
- 	printf(_("    Active: %s\n"), active ? _("yes") : _("no"));
- 
--	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
--	    cpupower_cpu_info.family >= 0x10) {
-+	if ((cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
-+	     cpupower_cpu_info.family >= 0x10) ||
-+	     cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
- 		ret = decode_pstates(cpu, cpupower_cpu_info.family, b_states,
- 				     pstates, &pstate_no);
- 		if (ret)
-diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
-index bb41cdd0df6b..65beaeefeef0 100644
---- a/tools/power/cpupower/utils/helpers/amd.c
-+++ b/tools/power/cpupower/utils/helpers/amd.c
-@@ -45,7 +45,7 @@ static int get_did(int family, union msr_pstate pstate)
- 
- 	if (family == 0x12)
- 		t = pstate.val & 0xf;
--	else if (family == 0x17)
-+	else if (family == 0x17 || family == 0x18)
- 		t = pstate.fam17h_bits.did;
- 	else
- 		t = pstate.bits.did;
-@@ -59,7 +59,7 @@ static int get_cof(int family, union msr_pstate pstate)
- 	int fid, did, cof;
- 
- 	did = get_did(family, pstate);
--	if (family == 0x17) {
-+	if (family == 0x17 || family == 0x18) {
- 		fid = pstate.fam17h_bits.fid;
- 		cof = 200 * fid / did;
- 	} else {
-diff --git a/tools/power/cpupower/utils/helpers/cpuid.c b/tools/power/cpupower/utils/helpers/cpuid.c
-index 732b0b41ba26..5cc39d4e23ed 100644
---- a/tools/power/cpupower/utils/helpers/cpuid.c
-+++ b/tools/power/cpupower/utils/helpers/cpuid.c
-@@ -8,7 +8,7 @@
- #include "helpers/helpers.h"
- 
- static const char *cpu_vendor_table[X86_VENDOR_MAX] = {
--	"Unknown", "GenuineIntel", "AuthenticAMD",
-+	"Unknown", "GenuineIntel", "AuthenticAMD", "HygonGenuine",
- };
- 
- #if defined(__i386__) || defined(__x86_64__)
-@@ -109,6 +109,7 @@ out:
- 	fclose(fp);
- 	/* Get some useful CPU capabilities from cpuid */
- 	if (cpu_info->vendor != X86_VENDOR_AMD &&
-+	    cpu_info->vendor != X86_VENDOR_HYGON &&
- 	    cpu_info->vendor != X86_VENDOR_INTEL)
- 		return ret;
- 
-@@ -124,8 +125,9 @@ out:
- 	if (cpuid_level >= 6 && (cpuid_ecx(6) & 0x1))
- 		cpu_info->caps |= CPUPOWER_CAP_APERF;
- 
--	/* AMD Boost state enable/disable register */
--	if (cpu_info->vendor == X86_VENDOR_AMD) {
-+	/* AMD or Hygon Boost state enable/disable register */
-+	if (cpu_info->vendor == X86_VENDOR_AMD ||
-+	    cpu_info->vendor == X86_VENDOR_HYGON) {
- 		if (ext_cpuid_level >= 0x80000007 &&
- 		    (cpuid_edx(0x80000007) & (1 << 9)))
- 			cpu_info->caps |= CPUPOWER_CAP_AMD_CBP;
-diff --git a/tools/power/cpupower/utils/helpers/helpers.h b/tools/power/cpupower/utils/helpers/helpers.h
-index 41da392be448..902139689315 100644
---- a/tools/power/cpupower/utils/helpers/helpers.h
-+++ b/tools/power/cpupower/utils/helpers/helpers.h
-@@ -61,7 +61,7 @@ extern int be_verbose;
- 
- /* cpuid and cpuinfo helpers  **************************/
- enum cpupower_cpu_vendor {X86_VENDOR_UNKNOWN = 0, X86_VENDOR_INTEL,
--			  X86_VENDOR_AMD, X86_VENDOR_MAX};
-+			  X86_VENDOR_AMD, X86_VENDOR_HYGON, X86_VENDOR_MAX};
- 
- #define CPUPOWER_CAP_INV_TSC		0x00000001
- #define CPUPOWER_CAP_APERF		0x00000002
-diff --git a/tools/power/cpupower/utils/helpers/misc.c b/tools/power/cpupower/utils/helpers/misc.c
-index 80fdf55f414d..f406adc40bad 100644
---- a/tools/power/cpupower/utils/helpers/misc.c
-+++ b/tools/power/cpupower/utils/helpers/misc.c
-@@ -26,7 +26,7 @@ int cpufreq_has_boost_support(unsigned int cpu, int *support, int *active,
- 		 * has Hardware determined variable increments instead.
- 		 */
- 
--		if (cpu_info.family == 0x17) {
-+		if (cpu_info.family == 0x17 || cpu_info.family == 0x18) {
- 			if (!read_msr(cpu, MSR_AMD_HWCR, &val)) {
- 				if (!(val & CPUPOWER_AMD_CPBDIS))
- 					*active = 1;
-diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-index d7c2a6d13dea..f2a7e9cfd577 100644
---- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-+++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-@@ -241,7 +241,8 @@ static int init_maxfreq_mode(void)
- 	if (!(cpupower_cpu_info.caps & CPUPOWER_CAP_INV_TSC))
- 		goto use_sysfs;
- 
--	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD) {
-+	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
-+	    cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
- 		/* MSR_AMD_HWCR tells us whether TSC runs at P0/mperf
- 		 * freq.
- 		 * A test whether hwcr is accessable/available would be:
+ 	/*
+ 	 * We may have ended up stopping the CPU holding the lock (in
