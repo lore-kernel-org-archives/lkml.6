@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B24C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C20C64EBD
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455342147D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455342147D
+	by mail.kernel.org (Postfix) with ESMTP id 786832147D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786832147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJDU7h (ORCPT
+        id S1727941AbeJDU7j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:59:37 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36307 "EHLO
+        Thu, 4 Oct 2018 16:59:39 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36323 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbeJDU7g (ORCPT
+        with ESMTP id S1727790AbeJDU7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:59:36 -0400
+        Thu, 4 Oct 2018 16:59:37 -0400
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1g84GS-0002ic-N1; Thu, 04 Oct 2018 16:06:05 +0200
+        id 1g84GU-0002ic-ED; Thu, 04 Oct 2018 16:06:06 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 07/11] x86/pkeys: Drop the preempt-disable section
-Date:   Thu,  4 Oct 2018 16:05:43 +0200
-Message-Id: <20181004140547.13014-8-bigeasy@linutronix.de>
+Subject: [PATCH 09/11] x86/entry: add TIF_LOAD_FPU
+Date:   Thu,  4 Oct 2018 16:05:45 +0200
+Message-Id: <20181004140547.13014-10-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181004140547.13014-1-bigeasy@linutronix.de>
 References: <20181004140547.13014-1-bigeasy@linutronix.de>
@@ -49,42 +49,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+Add TIF_LOAD_FPU. This is reserved for loading the FPU registers before
+returning to userpace. This flag must not be set for systems without a
+FPU.
+It is introduced now, so we can add code handling it now before adding
+the main feature.
 
-The fpu->initialized flag should not be changed underneath us. This might be a
-fallout during the removal of the LazyFPU support. The FPU is marked
-initialized as soon as the state has been set to an initial value. It does not
-signal if the CPU's FPU registers are loaded.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/mm/pkeys.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/x86/include/asm/thread_info.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index a150984171684..eeb03b0f0f514 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -40,17 +40,13 @@ int __execute_only_pkey(struct mm_struct *mm)
- 	 * dance to set PKRU if we do not need to.  Check it
- 	 * first and assume that if the execute-only pkey is
- 	 * write-disabled that we do not have to set it
--	 * ourselves.  We need preempt off so that nobody
--	 * can make fpregs inactive.
-+	 * ourselves.
- 	 */
--	preempt_disable();
- 	if (!need_to_set_mm_pkey &&
- 	    current->thread.fpu.initialized &&
- 	    !__pkru_allows_read(read_pkru(), execute_only_pkey)) {
--		preempt_enable();
- 		return execute_only_pkey;
- 	}
--	preempt_enable();
- 
- 	/*
- 	 * Set up PKRU so that it denies access for everything
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index cd6920674b905..cd910fd8c8c4c 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -83,6 +83,7 @@ struct thread_info {
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
++#define TIF_LOAD_FPU		10	/* load FPU on return to userspace */
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+@@ -110,6 +111,7 @@ struct thread_info {
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
++#define _TIF_LOAD_FPU		(1 << TIF_LOAD_FPU)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
 -- 
 2.19.0
 
