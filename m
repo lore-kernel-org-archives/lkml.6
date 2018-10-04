@@ -2,76 +2,108 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B6DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35233C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B34721470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB7821470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:46:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I9cmM1oy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B34721470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="USgm8LgZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CUoSZaEx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB7821470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbeJDOiI (ORCPT
+        id S1727722AbeJDOiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:38:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbeJDOiH (ORCPT
+        Thu, 4 Oct 2018 10:38:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40378 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbeJDOiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:38:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eZBDnwGr9oVNA7kA7h5byR297Q47nz9SxD+TMpGg3PE=; b=I9cmM1oyIS4RlrOx5ra2WHXbD
-        Z5dpiQoxGh8ftfmtuPIdbLeJBLpIiu4l/CR8LC53OG5wmsj7qBMk37yEVpUS5kENd+a9BAEF6/seW
-        I4gGZgQAsTmsz8of3K3FNSbvt0C5lMIubezIPeKvaFe0A6rZBSG/nx05KaYUSRl5aKi2BmHIy5iV1
-        6cAd6fn0WWn9QxbBQEXW0p8DtYYTJ90CEpbcchf1Ds8cvGlIpJ6Hn1L0lZAc7ftXRIocJ3MgdOjZT
-        Da6qRCXhFaN7rEc1faF5b20LpsCd4DW1eoOd5SWkx8OL2/plaika+zt4pWmJ39eW2bdMuhkx1OuHP
-        ySWUxWiXg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7yKi-00018M-E7; Thu, 04 Oct 2018 07:46:04 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E3EFA202666EC; Thu,  4 Oct 2018 09:37:19 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 09:37:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [RFC] x86/cpu_entry_area: move part of it back to fixmap
-Message-ID: <20181004073719.GD19272@hirez.programming.kicks-ass.net>
-References: <20181004045948.129142-1-namit@vmware.com>
+        Thu, 4 Oct 2018 10:38:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 428BA60C85; Thu,  4 Oct 2018 07:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538639187;
+        bh=hPrj+O7jw+NB3lOsFapTmxWa6itS6tw33wUTru/drLQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=USgm8LgZey2bta0sR3HnyRJEjxowN3DnSa807nXIEBwHzuAotIdnwn6TOfX8BWQp5
+         EMh+NwA8/bYE0wkMgYR+YyVz7awYsKgtXKYvKXGPCTZy05s1nY8yW1QIlXvwfa6x0X
+         2Y7M6+kF3fB7Q5AIDS1m3JQiTi6cg4GC6jpTHoEg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D6CFB60227;
+        Thu,  4 Oct 2018 07:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538639186;
+        bh=hPrj+O7jw+NB3lOsFapTmxWa6itS6tw33wUTru/drLQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CUoSZaExpx8vZZNal72Mm0+WNBhPgwiPKFcGLAAfEh6I0UCeDWnH4K7Mvdt5L+Atw
+         Hzb9u0vk2I2eBNFXdDWdMPQkLRBvom82cDiK4q73vsZ+xEgfUI+8uG8XJDa1Gm4nSj
+         zNJu5+8N3GQ2ycD8w1LH6IjwLivc7khyhdHsQ4dA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004045948.129142-1-namit@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 04 Oct 2018 13:16:26 +0530
+From:   alokc@codeaurora.org
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        linux-i2c-owner@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] i2c: i2c-qcom-geni: Simplify irq handler
+In-Reply-To: <CAD=FV=WWCrY3Kxa1qXXvYd4FM_8cAtWnKMm4mYU8zxEfQmHmVw@mail.gmail.com>
+References: <20180924235235.182649-1-swboyd@chromium.org>
+ <20180924235235.182649-3-swboyd@chromium.org>
+ <CAD=FV=WWCrY3Kxa1qXXvYd4FM_8cAtWnKMm4mYU8zxEfQmHmVw@mail.gmail.com>
+Message-ID: <63135265545c5da50522e346e2a2d311@codeaurora.org>
+X-Sender: alokc@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 09:59:48PM -0700, Nadav Amit wrote:
-> This patch proposes to do something different: break
-> it into two. One part holds code+data that is needed for the entry
-> (trampoline code, entry stack and TSS), which is mapped in the fixmap.
+On 2018-09-26 03:19, Doug Anderson wrote:
+> Hi,
+> 
+> On Mon, Sep 24, 2018 at 4:52 PM Stephen Boyd <swboyd@chromium.org> 
+> wrote:
+>> 
+>> We don't need to use goto here, we can just collapse the if statement
+>> and goto chain into multiple branches and then combine some duplicate
+>> completion calls into one big if statement. Let's do it to clean up 
+>> code
+>> some more.
+>> 
+>> Cc: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+>> Cc: Sagar Dharia <sdharia@codeaurora.org>
+>> Cc: Girish Mahadevan <girishm@codeaurora.org>
+>> Cc: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>> ---
+>>  drivers/i2c/busses/i2c-qcom-geni.c | 70 
+>> +++++++++++++-----------------
+>>  1 file changed, 29 insertions(+), 41 deletions(-)
+> 
+> It doesn't gleam as powerfully the cleanups in patch 2/3 but this does
+> have a few nice readability improvements.
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-> The other part holds the exception_stacks, debug store and buffers, and
-> is left in its current (new) position.
+agree.
 
-> The name
-> "cpu_entry_area_aux" for the second area is awful (ideas are welcomed),
+Reviewed-by: Alok Chauhan <alokc@codeaurora.org>
 
-How about: cpu_data_area ? Since none of that is required for the entry,
-that should also not be part of its name.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,a Linux Foundation Collaborative Project
