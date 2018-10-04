@@ -2,175 +2,249 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47968C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E7FC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097A62084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:33:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s9OQ4/LL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097A62084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C25720684
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:35:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C25720684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeJEA2I (ORCPT
+        id S1727640AbeJEA3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:28:08 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51385 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbeJEA2H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:28:07 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 143-v6so9775707wmf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 10:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AIZu1cVH6VXZelD1rqMghap6Ebp1rR+Sz/ZsB4vIn6c=;
-        b=s9OQ4/LLV3pAKB4yhBOCwL4StETzlqgeeGtsqe+2Iqysnyp14J+MNu8/j0zBFT3eVy
-         1d5YBfi5N7r4p+iO35NINNhD035JAdb7zLRD5k0k0k+1Q2XhsQhVwlfGAOeDWu2uw339
-         YwXeQ303N1XCW3umFWAEm3KUx4hXwI9jeybLd+U/8C/tQJdihdV4u4mzDlg63IWIPRUM
-         bSnJdgWU9cJzgDQUcVG7m/mKWbmRuH5oo+2/dwWFKOluDY0e69GhXwzbtMdSxnAW9Fsa
-         USM7qddnNATgWS2e6NdrvC7lb0EF2xXlt1EcKQFsy8BfDLsuLmiTiTRZuBiOZPem5X2B
-         0lbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AIZu1cVH6VXZelD1rqMghap6Ebp1rR+Sz/ZsB4vIn6c=;
-        b=PwkXnBdq0Vm4dYypWXkq/+kvG2qp9ImoX5DcMDddIX3aEPTrFSUhDaZk2C/unlXMG6
-         0q4j8Ar1KRTPathmovFN1JTpvDz5Oy8ahRWpaGwn+U7ieUOaShkWvmi0L6TTQcwFJKle
-         GAsp7uq13rleHnA1e7yECKcLjuz7mco6AoDpCFYF11wl04XubOUK57/FnHTtYN4yVCWx
-         Zs+YqmxLqrmv1KwMgOTZLh5ILbChU6j7Td6BGlCCpccjHpZluanjY2Lxo2T39GR+Lu3V
-         XrI/jHF0XDWsXRBIxN3kUKY3H7WINwSLZC5+R6YQalz6iGjqVxUb3G8+z/uan/LzWaYm
-         d+5Q==
-X-Gm-Message-State: ABuFfoi+i+wxnaZyAXMT3q7EuAjzjCV1hdRf2XJ5Tr54YzUNKr6EFvdY
-        2DcVz3o4NX+NTSe9P2/p+V0=
-X-Google-Smtp-Source: ACcGV63p+NsCOlc1fycEbzS2w10CbHey+dZcFPn5mfmrze5OpiqIXibvb82JxtlCd1lPaOV5EGV/Gg==
-X-Received: by 2002:a1c:5702:: with SMTP id l2-v6mr5020172wmb.83.1538674429731;
-        Thu, 04 Oct 2018 10:33:49 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id m12sm3608298wrx.75.2018.10.04.10.33.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 10:33:48 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 19:33:47 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     chenchacha <chen.chenchacha@foxmail.com>
-Cc:     hirofumi@mail.parknet.co.jp, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH 1/2] Add FAT_IOCTL_GET_VOLUME_LABEL in fat_generic_ioctl()
-Message-ID: <20181004173347.kmymtmiilo7lrxmy@pali>
-References: <20181004172101.15525-1-chen.chenchacha@foxmail.com>
- <20181004172101.15525-2-chen.chenchacha@foxmail.com>
+        Thu, 4 Oct 2018 20:29:39 -0400
+Received: from foss.arm.com ([217.140.101.70]:40798 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727406AbeJEA3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 20:29:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98B2915AD;
+        Thu,  4 Oct 2018 10:35:22 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89DE43F5B3;
+        Thu,  4 Oct 2018 10:35:19 -0700 (PDT)
+Subject: Re: [PATCH v3 1/3] acpi: arm64: add iort support for PMCG
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc:     will.deacon@arm.com, mark.rutland@arm.com, guohanjun@huawei.com,
+        john.garry@huawei.com, pabba@codeaurora.org,
+        vkilari@codeaurora.org, rruigrok@codeaurora.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
+        neil.m.leeder@gmail.com
+References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+ <20180921150803.25444-2-shameerali.kolothum.thodi@huawei.com>
+ <20181004164356.GA16278@red-moon>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7572d65b-1d10-b460-c2c8-4f46e2e0d53c@arm.com>
+Date:   Thu, 4 Oct 2018 18:35:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yy2izu3rfglgbmus"
-Content-Disposition: inline
-In-Reply-To: <20181004172101.15525-2-chen.chenchacha@foxmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181004164356.GA16278@red-moon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/10/18 17:43, Lorenzo Pieralisi wrote:
+> On Fri, Sep 21, 2018 at 04:08:01PM +0100, Shameer Kolothum wrote:
+>> From: Neil Leeder <nleeder@codeaurora.org>
+>>
+>> Add support for the SMMU Performance Monitor Counter Group
+>> information from ACPI. This is in preparation for its use
+>> in the SMMUv3 PMU driver.
+>>
+>> Signed-off-by: Neil Leeder <nleeder@codeaurora.org>
+>> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+>> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+>> ---
+>>   drivers/acpi/arm64/iort.c | 78 +++++++++++++++++++++++++++++++++++++++--------
+>>   1 file changed, 66 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+>> index 08f26db..b979c86 100644
+>> --- a/drivers/acpi/arm64/iort.c
+>> +++ b/drivers/acpi/arm64/iort.c
+>> @@ -356,7 +356,8 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
+>>   	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
+>>   		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
+>>   		    node->type == ACPI_IORT_NODE_PCI_ROOT_COMPLEX ||
+>> -		    node->type == ACPI_IORT_NODE_SMMU_V3) {
+>> +		    node->type == ACPI_IORT_NODE_SMMU_V3 ||
+>> +		    node->type == ACPI_IORT_NODE_PMCG) {
+>>   			*id_out = map->output_base;
+>>   			return parent;
+>>   		}
+>> @@ -394,6 +395,8 @@ static int iort_get_id_mapping_index(struct acpi_iort_node *node)
+>>   		}
+>>   
+>>   		return smmu->id_mapping_index;
+>> +	case ACPI_IORT_NODE_PMCG:
+>> +		return 0;
+>>   	default:
+>>   		return -EINVAL;
+>>   	}
+>> @@ -1309,6 +1312,50 @@ static bool __init arm_smmu_is_coherent(struct acpi_iort_node *node)
+>>   	return smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK;
+>>   }
+>>   
+>> +static void __init arm_smmu_common_dma_configure(struct device *dev,
+>> +						enum dev_dma_attr attr)
+>> +{
+>> +	/* We expect the dma masks to be equivalent for all SMMUs set-ups */
+>> +	dev->dma_mask = &dev->coherent_dma_mask;
+>> +
+>> +	/* Configure DMA for the page table walker */
+>> +	acpi_dma_configure(dev, attr);
+>> +}
+> 
+> It looks like we can't get rid of this acpi_dma_configure() call
+> given that the platform device we create has no ACPI companion
+> (and I am not looking forward to fabricating one to make the
+> code homogeneous :)).
 
---yy2izu3rfglgbmus
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, given that this is essentially only for SMMUs, the alternatives 
+all end up looking like too much bother to be worthwhile.
 
-On Friday 05 October 2018 01:21:00 chenchacha wrote:
-> Signed-off-by: chenchacha <chen.chenchacha@foxmail.com>
-> ---
->  fs/fat/file.c                 | 22 ++++++++++++++++++++++
->  include/uapi/linux/msdos_fs.h |  1 +
->  2 files changed, 23 insertions(+)
->=20
-> diff --git a/fs/fat/file.c b/fs/fat/file.c
-> index 4724cc9ad650..56db0b5a8df1 100644
-> --- a/fs/fat/file.c
-> +++ b/fs/fat/file.c
-> @@ -121,10 +121,30 @@ static int fat_ioctl_get_volume_id(struct inode *in=
-ode, u32 __user *user_attr)
->  	return put_user(sbi->vol_id, user_attr);
->  }
-> =20
-> +static int fat_ioctl_get_volume_label(struct inode *inode, u8 __user *la=
-bel)
-> +{
-> +	struct super_block *sb =3D inode->i_sb;
-> +	struct inode *root_inode =3D d_inode(sb->s_root);
-> +	struct buffer_head *bh =3D NULL;
-> +	struct msdos_dir_entry *de;
-> +	int err;
-> +
-> +	inode_lock_shared(root_inode);
-> +	err =3D fat_get_root_entry(root_inode, &bh, &de);
-> +	if (err =3D=3D 0) {
-> +		if (copy_to_user(label, de->name, MSDOS_NAME))
+> Still, having two methods per IORT node type (dev_is_coherent() and
+> dev_dma_configure()) does not make much sense, we can merge it into one
+> I think.
 
-You need to convert entry name from 8.3 format to label in correct
-encoding specified by codepage mount option. Plus needs to handle
-leading 0x03 byte.
+Good point - looks the attr from dev_is_coherent is only ever passed 
+through dev_dma_configure, so we may as well just have per-SMMU-type 
+dev_dma_configure methods which retrieve their own relevant coherency 
+directly. FWIW, on v2 I was tempted to suggest just wrapping the DMA 
+setup in "if (node->type != ACPI_IORT_NODE_PMCG)..." rather than messing 
+with more callbacks, but that clearly wouldn't fit well with the local 
+style here.
 
-> +			err =3D -EFAULT;
-> +	}
-> +	inode_unlock_shared(root_inode);
-> +
-> +	return err;
-> +}
-> +
->  long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned lon=
-g arg)
->  {
->  	struct inode *inode =3D file_inode(filp);
->  	u32 __user *user_attr =3D (u32 __user *)arg;
-> +	u8 __user *user_vol_label =3D (u8 __user *)arg;
-> =20
->  	switch (cmd) {
->  	case FAT_IOCTL_GET_ATTRIBUTES:
-> @@ -133,6 +153,8 @@ long fat_generic_ioctl(struct file *filp, unsigned in=
-t cmd, unsigned long arg)
->  		return fat_ioctl_set_attributes(filp, user_attr);
->  	case FAT_IOCTL_GET_VOLUME_ID:
->  		return fat_ioctl_get_volume_id(inode, user_attr);
-> +	case FAT_IOCTL_GET_VOLUME_LABEL:
-> +		return fat_ioctl_get_volume_label(inode, user_vol_label);
->  	default:
->  		return -ENOTTY;	/* Inappropriate ioctl for device */
->  	}
-> diff --git a/include/uapi/linux/msdos_fs.h b/include/uapi/linux/msdos_fs.h
-> index fde753735aba..8ba8e2d7bafe 100644
-> --- a/include/uapi/linux/msdos_fs.h
-> +++ b/include/uapi/linux/msdos_fs.h
-> @@ -109,6 +109,7 @@ struct __fat_dirent {
->  #define FAT_IOCTL_SET_ATTRIBUTES	_IOW('r', 0x11, __u32)
->  /*Android kernel has used 0x12, so we use 0x13*/
->  #define FAT_IOCTL_GET_VOLUME_ID		_IOR('r', 0x13, __u32)
-> +#define FAT_IOCTL_GET_VOLUME_LABEL	_IOR('r', 0x14, __u8[MSDOS_NAME])
-> =20
->  struct fat_boot_sector {
->  	__u8	ignored[3];	/* Boot strap short or near jump */
+Robin.
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---yy2izu3rfglgbmus
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCW7ZO+gAKCRCL8Mk9A+RD
-UjYyAKDOTjXURBsmPf88HeQtz+BblhlqPACfTMbUX6slXYKn2/DI3uxfjzshLFw=
-=ys9q
------END PGP SIGNATURE-----
-
---yy2izu3rfglgbmus--
+> 
+> Thanks,
+> Lorenzo
+> 
+>> +static int __init arm_smmu_v3_pmcg_count_resources(struct acpi_iort_node *node)
+>> +{
+>> +	struct acpi_iort_pmcg *pmcg;
+>> +
+>> +	/* Retrieve PMCG specific data */
+>> +	pmcg = (struct acpi_iort_pmcg *)node->node_data;
+>> +
+>> +	/*
+>> +	 * There are always 2 memory resources.
+>> +	 * If the overflow_gsiv is present then add that for a total of 3.
+>> +	 */
+>> +	return pmcg->overflow_gsiv ? 3 : 2;
+>> +}
+>> +
+>> +static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
+>> +					       struct acpi_iort_node *node)
+>> +{
+>> +	struct acpi_iort_pmcg *pmcg;
+>> +
+>> +	/* Retrieve PMCG specific data */
+>> +	pmcg = (struct acpi_iort_pmcg *)node->node_data;
+>> +
+>> +	res[0].start = pmcg->page0_base_address;
+>> +	res[0].end = pmcg->page0_base_address + SZ_4K - 1;
+>> +	res[0].flags = IORESOURCE_MEM;
+>> +	res[1].start = pmcg->page1_base_address;
+>> +	res[1].end = pmcg->page1_base_address + SZ_4K - 1;
+>> +	res[1].flags = IORESOURCE_MEM;
+>> +
+>> +	if (pmcg->overflow_gsiv)
+>> +		acpi_iort_register_irq(pmcg->overflow_gsiv, "overflow",
+>> +				       ACPI_EDGE_SENSITIVE, &res[2]);
+>> +}
+>> +
+>>   struct iort_dev_config {
+>>   	const char *name;
+>>   	int (*dev_init)(struct acpi_iort_node *node);
+>> @@ -1318,6 +1365,8 @@ struct iort_dev_config {
+>>   				     struct acpi_iort_node *node);
+>>   	void (*dev_set_proximity)(struct device *dev,
+>>   				    struct acpi_iort_node *node);
+>> +	void (*dev_dma_configure)(struct device *dev,
+>> +					enum dev_dma_attr attr);
+>>   };
+>>   
+>>   static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+>> @@ -1326,23 +1375,34 @@ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+>>   	.dev_count_resources = arm_smmu_v3_count_resources,
+>>   	.dev_init_resources = arm_smmu_v3_init_resources,
+>>   	.dev_set_proximity = arm_smmu_v3_set_proximity,
+>> +	.dev_dma_configure = arm_smmu_common_dma_configure,
+>>   };
+>>   
+>>   static const struct iort_dev_config iort_arm_smmu_cfg __initconst = {
+>>   	.name = "arm-smmu",
+>>   	.dev_is_coherent = arm_smmu_is_coherent,
+>>   	.dev_count_resources = arm_smmu_count_resources,
+>> -	.dev_init_resources = arm_smmu_init_resources
+>> +	.dev_init_resources = arm_smmu_init_resources,
+>> +	.dev_dma_configure = arm_smmu_common_dma_configure,
+>> +};
+>> +
+>> +static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
+>> +	.name = "arm-smmu-v3-pmu",
+>> +	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
+>> +	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
+>>   };
+>>   
+>>   static __init const struct iort_dev_config *iort_get_dev_cfg(
+>>   			struct acpi_iort_node *node)
+>>   {
+>> +
+>>   	switch (node->type) {
+>>   	case ACPI_IORT_NODE_SMMU_V3:
+>>   		return &iort_arm_smmu_v3_cfg;
+>>   	case ACPI_IORT_NODE_SMMU:
+>>   		return &iort_arm_smmu_cfg;
+>> +	case ACPI_IORT_NODE_PMCG:
+>> +		return &iort_arm_smmu_v3_pmcg_cfg;
+>>   	default:
+>>   		return NULL;
+>>   	}
+>> @@ -1398,12 +1458,6 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+>>   	if (ret)
+>>   		goto dev_put;
+>>   
+>> -	/*
+>> -	 * We expect the dma masks to be equivalent for
+>> -	 * all SMMUs set-ups
+>> -	 */
+>> -	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+>> -
+>>   	fwnode = iort_get_fwnode(node);
+>>   
+>>   	if (!fwnode) {
+>> @@ -1413,11 +1467,11 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+>>   
+>>   	pdev->dev.fwnode = fwnode;
+>>   
+>> -	attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
+>> +	if (ops->dev_dma_configure) {
+>> +		attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
+>>   			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
+>> -
+>> -	/* Configure DMA for the page table walker */
+>> -	acpi_dma_configure(&pdev->dev, attr);
+>> +		ops->dev_dma_configure(&pdev->dev, attr);
+>> +	}
+>>   
+>>   	iort_set_device_domain(&pdev->dev, node);
+>>   
+>> -- 
+>> 2.7.4
+>>
+>>
