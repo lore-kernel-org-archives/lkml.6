@@ -2,121 +2,93 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215D3C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5A2C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E741020877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E741020877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B5EB620877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:40:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5EB620877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeJDSaw (ORCPT
+        id S1727336AbeJDSdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 14:30:52 -0400
-Received: from mga03.intel.com ([134.134.136.65]:33525 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbeJDSaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 14:30:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 04:37:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
-   d="scan'208";a="238433976"
-Received: from ssemen1x-mobl.ccr.corp.intel.com (HELO localhost) ([10.252.37.241])
-  by orsmga004.jf.intel.com with ESMTP; 04 Oct 2018 04:36:12 -0700
-Date:   Thu, 4 Oct 2018 14:36:11 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Message-ID: <20181004113611.GA12571@linux.intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
- <20181003120141.GA7969@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
- <20181004113502.GA12498@linux.intel.com>
+        Thu, 4 Oct 2018 14:33:41 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:40922 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727183AbeJDSdk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 14:33:40 -0400
+X-UUID: 1285fb8a764c465ca00be7cc07482b33-20181004
+X-UUID: 1285fb8a764c465ca00be7cc07482b33-20181004
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2077952065; Thu, 04 Oct 2018 19:40:42 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 4 Oct 2018 19:40:39 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 4 Oct 2018 19:40:40 +0800
+From:   <sean.wang@mediatek.com>
+To:     <linus.walleij@linaro.org>, <linux-mediatek@lists.infradead.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>
+Subject: [PATCH] MAINTAINERS: update entry for Mediatek pin controller
+Date:   Thu, 4 Oct 2018 19:40:38 +0800
+Message-ID: <98b17a3b47f75d4f3f17dae81a087b4163fcd857.1538652946.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004113502.GA12498@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 3B87B1EA3FE4E25C6DCFAFD127F82959E2BA9073B6E64083C2061BEAFA7941892000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 02:35:02PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
-> > 
-> > 
-> > > -----Original Message-----
-> > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> > > Sent: Wednesday, October 03, 2018 15:02
-> > > To: Winkler, Tomas <tomas.winkler@intel.com>
-> > > Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
-> > > <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
-> > > <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
-> > > linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
-> > > Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-> > > 
-> > > On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
-> > > >
-> > > >
-> > > > >
-> > > > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
-> > > > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
-> > > > > > required by tpm-interface.c. It wraps the original open code
-> > > implementation.
-> > > > > > The original original tpm2_pcr_extend() function is renamed to
-> > > > > > __tpm2_pcr_extend() and made static, it is called only from new
-> > > > > > tpm2_pcr_extend().
-> > > > > >
-> > > > > > Fix warnings in __tpm2_pcr_extend()
-> > > > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
-> > > > > > integer expressions [-Wsign-compare]
-> > > > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
-> > > > > > integer expressions [-Wsign-compare]
-> > > > > >
-> > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > >
-> > > > > We do not want the signature change, especially because as we are
-> > > > > working on getting Roberto's changes in and also because it has
-> > > > > absolutely a zero gain. Who cares if those functions take different
-> > > parameters? I don't.
-> > > >
-> > > > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
-> > > specs. Please, let's finish one transformation and then move to another.
-> > > > I understand that Roberto will have to rebase anyhow, if this series goes in
-> > > first, if this is hard I can do it myself, it's trivial.
-> > > >
-> > > > Tomas
-> > > 
-> > > I'm happy to tune this minor stuff.
-> > What minor stuff?  This patch is just okay, let's change the API in next round.
-> 
-> The patch is not okay because it does a completely unnecessary API
-> change.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Other minor stuff was missing commas in the list of return values if I
-recall...
+Add all source files under drivers/pinctrl/mediatek for the entry and
+change the address to a permanent one since I have a personal leave
+over the next few months and the address would be suspended for a while.
 
-/Jarkko
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@kernel.org>
+---
+ MAINTAINERS | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 73a692e..bc0e03a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11654,15 +11654,12 @@ S:	Maintained
+ F:	drivers/pinctrl/intel/
+ 
+ PIN CONTROLLER - MEDIATEK
+-M:	Sean Wang <sean.wang@mediatek.com>
++M:	Sean Wang <sean.wang@kernel.org>
+ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+ F:	Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+-F:	drivers/pinctrl/mediatek/mtk-eint.*
+-F:	drivers/pinctrl/mediatek/pinctrl-mtk-common.*
+-F:	drivers/pinctrl/mediatek/pinctrl-mt2701.c
+-F:	drivers/pinctrl/mediatek/pinctrl-mt7622.c
++F:	drivers/pinctrl/mediatek/
+ 
+ PIN CONTROLLER - QUALCOMM
+ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+-- 
+2.7.4
+
