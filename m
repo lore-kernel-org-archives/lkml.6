@@ -2,311 +2,158 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369EDC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3BCC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AA72098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8AA72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 44CFF20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="AU1VWG6c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CFF20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeJEDbU (ORCPT
+        id S1727810AbeJEDd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:31:20 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59030 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbeJEDbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:31:20 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id y9bLJaC3APof; Thu,  4 Oct 2018 22:36:22 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 44DA31EC032D;
-        Thu,  4 Oct 2018 22:36:22 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 22:36:21 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
-        mchehab@kernel.org, sudeep.holla@arm.com, amit.kucheria@linaro.org,
-        leoyang.li@nxp.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v8 03/10] edac: synopsys: Modify the comments in the
- driver
-Message-ID: <20181004203621.GE5149@zn.tnic>
-References: <1538667328-9465-1-git-send-email-manish.narani@xilinx.com>
- <1538667328-9465-4-git-send-email-manish.narani@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1538667328-9465-4-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 4 Oct 2018 23:33:29 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:33926 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJEDd3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 23:33:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hxKaBbQP9Ohf6unfmS5C4E5JDsTkQe6IxUA7qgDVBQc=; b=AU1VWG6c6U0Tcj29nA5TnaB9i
+        yf4HzBgo0h+2bKYXNSnhpf3lj0a4NtcoVGVBrXWLH8DxemA4oiPT7q6XF0laRSRMGb1kzKABT2+Cs
+        wtSGEbhs1MhP7951I3K/trG7ArKgYwTwPOrx0xCH/q3WxJPjzObu7tT1f2JRQWgWU6ZMc=;
+Received: from p200300ccfbcbd5001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcb:d500:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g8AOA-0007GZ-C4; Thu, 04 Oct 2018 22:38:26 +0200
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g8AOA-0005mB-1h; Thu, 04 Oct 2018 22:38:26 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 1/2] clk: ti: add a usecount for autoidle
+Date:   Thu,  4 Oct 2018 22:38:16 +0200
+Message-Id: <20181004203817.22101-2-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181004203817.22101-1-andreas@kemnade.info>
+References: <20181004203817.22101-1-andreas@kemnade.info>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:05:21PM +0530, Manish Narani wrote:
-> There are some comments which can be updated for better readability of
-> the driver. Update abbreviations to capital letters in the comments.
-> 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/edac/synopsys_edac.c | 98 ++++++++++++++++++++++----------------------
->  1 file changed, 48 insertions(+), 50 deletions(-)
+We have the scenario that first autoidle is disabled for all clocks,
+then it is disabled for selected ones and then enabled for all. So
+we should have some counting here, also according to the
+comment in  _setup_iclk_autoidle()
 
-From: Manish Narani <manish.narani@xilinx.com>
-Date: Thu, 4 Oct 2018 21:05:21 +0530
-Subject: [PATCH 2/2] EDAC, synopsys: Correct comments
-
-Spellcheck and improve/correct comments.
-
-Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Michal Simek <michal.simek@xilinx.com>
-CC: amit.kucheria@linaro.org
-CC: devicetree@vger.kernel.org
-CC: leoyang.li@nxp.com
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-edac <linux-edac@vger.kernel.org>
-CC: mark.rutland@arm.com
-CC: michal.simek@xilinx.com
-CC: robh+dt@kernel.org
-CC: sudeep.holla@arm.com
-Link: http://lkml.kernel.org/r/1538667328-9465-4-git-send-email-manish.narani@xilinx.com
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- drivers/edac/synopsys_edac.c | 104 +++++++++++++++++------------------
- 1 file changed, 51 insertions(+), 53 deletions(-)
+ drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++--------
+ include/linux/clk/ti.h    |  1 +
+ 2 files changed, 25 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-index fbaf33540ce3..b4666310a5f6 100644
---- a/drivers/edac/synopsys_edac.c
-+++ b/drivers/edac/synopsys_edac.c
-@@ -96,12 +96,12 @@
- #define SCRUB_MODE_SECDED		0x4
+diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+index 7bb9afbe4058..bb6cff168e73 100644
+--- a/drivers/clk/ti/autoidle.c
++++ b/drivers/clk/ti/autoidle.c
+@@ -37,6 +37,14 @@ struct clk_ti_autoidle {
+ static LIST_HEAD(autoidle_clks);
+ static LIST_HEAD(clk_hw_omap_clocks);
  
++/*
++ * we have some non-atomic read/write
++ * operations behind it, so lets
++ * take one mutex for handling autoidle
++ * of all clocks
++ */
++static DEFINE_MUTEX(autoidle_mutex);
++
  /**
-- * struct ecc_error_info - ECC error log information
-- * @row:	Row number
-- * @col:	Column number
-- * @bank:	Bank number
-- * @bitpos:	Bit position
-- * @data:	Data causing the error
-+ * struct ecc_error_info - ECC error log information.
-+ * @row:	Row number.
-+ * @col:	Column number.
-+ * @bank:	Bank number.
-+ * @bitpos:	Bit position.
-+ * @data:	Data causing the error.
-  */
- struct ecc_error_info {
- 	u32 row;
-@@ -112,11 +112,11 @@ struct ecc_error_info {
+  * omap2_clk_deny_idle - disable autoidle on an OMAP clock
+  * @clk: struct clk * to disable autoidle for
+@@ -48,8 +56,13 @@ int omap2_clk_deny_idle(struct clk *clk)
+ 	struct clk_hw_omap *c;
+ 
+ 	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	if (c->ops && c->ops->deny_idle)
+-		c->ops->deny_idle(c);
++	if (c->ops && c->ops->deny_idle) {
++		mutex_lock(&autoidle_mutex);
++		c->autoidle_count--;
++		if (c->autoidle_count == -1)
++			c->ops->deny_idle(c);
++		mutex_unlock(&autoidle_mutex);
++	}
+ 	return 0;
+ }
+ 
+@@ -64,8 +77,13 @@ int omap2_clk_allow_idle(struct clk *clk)
+ 	struct clk_hw_omap *c;
+ 
+ 	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	if (c->ops && c->ops->allow_idle)
+-		c->ops->allow_idle(c);
++	if (c->ops && c->ops->allow_idle) {
++		mutex_lock(&autoidle_mutex);
++		c->autoidle_count++;
++		if (c->autoidle_count == 0)
++			c->ops->allow_idle(c);
++		mutex_unlock(&autoidle_mutex);
++	}
+ 	return 0;
+ }
+ 
+@@ -201,8 +219,7 @@ int omap2_clk_enable_autoidle_all(void)
+ 	struct clk_hw_omap *c;
+ 
+ 	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+-		if (c->ops && c->ops->allow_idle)
+-			c->ops->allow_idle(c);
++		omap2_clk_allow_idle(c->hw.clk);
+ 
+ 	_clk_generic_allow_autoidle_all();
+ 
+@@ -223,8 +240,7 @@ int omap2_clk_disable_autoidle_all(void)
+ 	struct clk_hw_omap *c;
+ 
+ 	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+-		if (c->ops && c->ops->deny_idle)
+-			c->ops->deny_idle(c);
++		omap2_clk_deny_idle(c->hw.clk);
+ 
+ 	_clk_generic_deny_autoidle_all();
+ 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index a8faa38b1ed6..c460355419c0 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -159,6 +159,7 @@ struct clk_hw_omap {
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+ 	const struct clk_hw_omap_ops	*ops;
++	int autoidle_count;
  };
  
- /**
-- * struct synps_ecc_status - ECC status information to report
-- * @ce_cnt:	Correctable error count
-- * @ue_cnt:	Uncorrectable error count
-- * @ceinfo:	Correctable error log information
-- * @ueinfo:	Uncorrectable error log information
-+ * struct synps_ecc_status - ECC status information to report.
-+ * @ce_cnt:	Correctable error count.
-+ * @ue_cnt:	Uncorrectable error count.
-+ * @ceinfo:	Correctable error log information.
-+ * @ueinfo:	Uncorrectable error log information.
-  */
- struct synps_ecc_status {
- 	u32 ce_cnt;
-@@ -126,12 +126,12 @@ struct synps_ecc_status {
- };
- 
- /**
-- * struct synps_edac_priv - DDR memory controller private instance data
-- * @baseaddr:	Base address of the DDR controller
-- * @message:	Buffer for framing the event specific info
-- * @stat:	ECC status information
-- * @ce_cnt:	Correctable Error count
-- * @ue_cnt:	Uncorrectable Error count
-+ * struct synps_edac_priv - DDR memory controller private instance data.
-+ * @baseaddr:	Base address of the DDR controller.
-+ * @message:	Buffer for framing the event specific info.
-+ * @stat:	ECC status information.
-+ * @ce_cnt:	Correctable Error count.
-+ * @ue_cnt:	Uncorrectable Error count.
-  */
- struct synps_edac_priv {
- 	void __iomem *baseaddr;
-@@ -142,13 +142,11 @@ struct synps_edac_priv {
- };
- 
- /**
-- * get_error_info - Get the current ecc error info
-- * @base:	Pointer to the base address of the ddr memory controller
-- * @p:		Pointer to the synopsys ecc status structure
-+ * get_error_info - Get the current ECC error info.
-+ * @base:	Base address of the DDR memory controller.
-+ * @p:		Synopsys ECC status structure.
-  *
-- * Determines there is any ecc error or not
-- *
-- * Return: one if there is no error otherwise returns zero
-+ * Return: one if there is no error otherwise zero.
-  */
- static int get_error_info(void __iomem *base, struct synps_ecc_status *p)
- {
-@@ -195,11 +193,11 @@ static int get_error_info(void __iomem *base, struct synps_ecc_status *p)
- }
- 
- /**
-- * handle_error - Handle controller error types CE and UE
-- * @mci:	Pointer to the edac memory controller instance
-- * @p:		Pointer to the synopsys ecc status structure
-+ * handle_error - Handle Correctable and Uncorrectable errors.
-+ * @mci:	EDAC memory controller instance.
-+ * @p:		Synopsys ECC status structure.
-  *
-- * Handles the controller ECC correctable and uncorrectable error.
-+ * Handles ECC correctable and uncorrectable errors.
-  */
- static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
- {
-@@ -230,10 +228,10 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
- }
- 
- /**
-- * check_errors - Check controller for ECC errors
-- * @mci:	Pointer to the edac memory controller instance
-+ * check_errors - Check controller for ECC errors.
-+ * @mci:	EDAC memory controller instance.
-  *
-- * Used to check and post ECC errors. Called by the polling thread
-+ * Check and post ECC errors. Called by the polling thread.
-  */
- static void check_errors(struct mem_ctl_info *mci)
- {
-@@ -253,8 +251,8 @@ static void check_errors(struct mem_ctl_info *mci)
- }
- 
- /**
-- * get_dtype - Return the controller memory width
-- * @base:	Pointer to the ddr memory controller base address
-+ * get_dtype - Return the controller memory width.
-+ * @base:	DDR memory controller base address.
-  *
-  * Get the EDAC device type width appropriate for the current controller
-  * configuration.
-@@ -284,12 +282,12 @@ static enum dev_type get_dtype(const void __iomem *base)
- }
- 
- /**
-- * get_ecc_state - Return the controller ECC enable/disable status
-- * @base:	Pointer to the DDR memory controller base address
-+ * get_ecc_state - Return the controller ECC enable/disable status.
-+ * @base:	DDR memory controller base address.
-  *
-- * Get the ECC enable/disable status for the controller.
-+ * Get the ECC enable/disable status of the controller.
-  *
-- * Return: a ECC status boolean i.e true/false - enabled/disabled.
-+ * Return: true if enabled, otherwise false.
-  */
- static bool get_ecc_state(void __iomem *base)
- {
-@@ -309,9 +307,9 @@ static bool get_ecc_state(void __iomem *base)
- }
- 
- /**
-- * get_memsize - reads the size of the attached memory device
-+ * get_memsize - Read the size of the attached memory device.
-  *
-- * Return: the memory size in bytes
-+ * Return: the memory size in bytes.
-  */
- static u32 get_memsize(void)
- {
-@@ -323,8 +321,8 @@ static u32 get_memsize(void)
- }
- 
- /**
-- * get_mtype - Returns controller memory type
-- * @base:	pointer to the synopsys ecc status structure
-+ * get_mtype - Return the controller memory type.
-+ * @base:	Synopsys ECC status structure.
-  *
-  * Get the EDAC memory type appropriate for the current controller
-  * configuration.
-@@ -347,11 +345,11 @@ static enum mem_type get_mtype(const void __iomem *base)
- }
- 
- /**
-- * init_csrows - Initialize the cs row data
-- * @mci:	Pointer to the edac memory controller instance
-+ * init_csrows - Initialize the csrow data.
-+ * @mci:	EDAC memory controller instance.
-  *
-- * Initializes the chip select rows associated with the EDAC memory
-- * controller instance
-+ * Initialize the chip select rows associated with the EDAC memory
-+ * controller instance.
-  *
-  * Return: Unconditionally 0.
-  */
-@@ -381,11 +379,11 @@ static int init_csrows(struct mem_ctl_info *mci)
- }
- 
- /**
-- * mc_init - Initialize driver instance
-- * @mci:	Pointer to the edac memory controller instance
-- * @pdev:	Pointer to the platform_device struct
-+ * mc_init - Initialize one driver instance.
-+ * @mci:	EDAC memory controller instance.
-+ * @pdev:	platform device.
-  *
-- * Performs initialization of the EDAC memory controller instance and
-+ * Perform initialization of the EDAC memory controller instance and
-  * related driver-private data associated with the memory controller the
-  * instance is bound to.
-  *
-@@ -421,10 +419,10 @@ static int mc_init(struct mem_ctl_info *mci, struct platform_device *pdev)
- }
- 
- /**
-- * mc_probe - Check controller and bind driver
-- * @pdev:	Pointer to the platform_device struct
-+ * mc_probe - Check controller and bind driver.
-+ * @pdev:	platform device.
-  *
-- * Probes a specific controller instance for binding with the driver.
-+ * Probe a specific controller instance for binding with the driver.
-  *
-  * Return: 0 if the controller instance was successfully bound to the
-  * driver; otherwise, < 0 on error.
-@@ -493,8 +491,8 @@ static int mc_probe(struct platform_device *pdev)
- }
- 
- /**
-- * mc_remove - Unbind driver from controller
-- * @pdev:	Pointer to the platform_device struct
-+ * mc_remove - Unbind driver from controller.
-+ * @pdev:	Platform device.
-  *
-  * Return: Unconditionally 0
-  */
+ /*
 -- 
-2.19.0.271.gfe8321ec057f
+2.11.0
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
