@@ -2,101 +2,384 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 502D3C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDFFC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 185B72084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:07:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185B72084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B1752084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:08:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJdyLimF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1752084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbeJDUAS (ORCPT
+        id S1727620AbeJDUBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:00:18 -0400
-Received: from gateway36.websitewelcome.com ([192.185.199.121]:49229 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727367AbeJDUAR (ORCPT
+        Thu, 4 Oct 2018 16:01:38 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46261 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbeJDUBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:00:17 -0400
-X-Greylist: delayed 333 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 16:00:17 EDT
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 25413400DEE21
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 07:13:22 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 83LNgBX7bBcCX83LNgVpib; Thu, 04 Oct 2018 08:07:05 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:50284 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g83LM-0026zF-Ex; Thu, 04 Oct 2018 08:07:04 -0500
-Date:   Thu, 4 Oct 2018 15:07:01 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] rtc: m41t80: mark expected switch fall-through
-Message-ID: <20181004130701.GA4539@embeddedor.com>
+        Thu, 4 Oct 2018 16:01:38 -0400
+Received: by mail-ed1-f67.google.com with SMTP id g32-v6so8453937edg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 06:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sHHRdD5WMGAdqUe/yoUkLXqlDr4I6PusDHNRz8sbSwI=;
+        b=iJdyLimF+WWMwBUf245VvqJR2fidh9BHy1PaK4ZyWrnk02dRrvVRe0NUWvGV+i28Ps
+         0LiRphuAX6Fr+Leo7EzRx3hi8SUncG7D+cRvxvV3ideWGmxlr4KmqtfH1ZOpDiTQ5Ulr
+         UBP6DmQosM1ycc8s6fVRCCh4EOhVmY6OwLyAcKjfTnmGnxJfJDklP5IVcT3JQZExpcYt
+         tEHo6zwyy8rQD+CiQo4KhzPz9JGf9lprVqbrq+LFQxG4KsB7+4IJgYON/mbTjKassa3Z
+         HoKc8th3Uh1ZYo2/4NR7ByGUkhmxs0w+oBXZzdUCVkZF5FpHiJPn/idas41NdtH63g6o
+         RY1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sHHRdD5WMGAdqUe/yoUkLXqlDr4I6PusDHNRz8sbSwI=;
+        b=F8e+7i/4eHYl9ywVwJZrTBLi6FMP5CPyVDudjzg37VNiLT2bTafrHFQ0Wa0IRJaX8n
+         9R8JMuxX4/H+NL1dWcunEdhMx6n9cGkPcSihK7Lr6wV97a002AELQT5Pi3gsn9LYLn4h
+         sNjazx9cP4B/8nKGoM0Edx0P+0lm5O/7/evihPO8AjP0Vl/7lcei2QWxZ+cG/s969QKb
+         EzJ+2BV7uT0pH/QkbqpJTbDRpKxWWk3G08GB6NUnpnQpvXVgAamCZP8qSlw8hOAFy+uo
+         8DTsIGK8FiHASZZjqs8Kcb731IguxMt1737bhimF6yuTj1XfWPmT6SnMiVhWUbL6vmPM
+         7dTw==
+X-Gm-Message-State: ABuFfoi7NWKyU1sri4L8NRNIY33zUYdn8k3OjaWOAzZb6/hfEh9S+cGB
+        kDGupzUHOcd4D/+D168fr9I=
+X-Google-Smtp-Source: ACcGV60kkIkIEDV53HgQcvjID2YR+SGrGJcR+Tz41ST1p1kWB7BUjIHWn+19C0J1Ow9My/W08cu0CA==
+X-Received: by 2002:a17:906:2cc2:: with SMTP id r2-v6mr6483167ejr.38.1538658502537;
+        Thu, 04 Oct 2018 06:08:22 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id a16-v6sm858504ejv.65.2018.10.04.06.08.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 06:08:20 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v7 10/10] mtd: maps: gpio-addr-flash: Add support for device-tree devices
+Date:   Thu,  4 Oct 2018 15:08:19 +0200
+Message-Id: <20181004130819.9647-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g83LM-0026zF-Ex
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:50284
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Allow creating gpio-addr-flash via device-tree and not just via platform
+data.
 
-Notice that in this particular case, I replaced "Fall" with a proper
-"Fall through" comment.
+Mimic what physmap_of_versatile and physmap_of_gemini does to reduce
+code duplicity.
 
-Addresses-Coverity-ID: 1373875 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
-Changes in v2:
- - Change subject and commit log.
+ drivers/mtd/maps/Kconfig           |  8 +++
+ drivers/mtd/maps/Makefile          |  3 +-
+ drivers/mtd/maps/gpio-addr-flash.c | 91 ++++++++++++++++++------------
+ drivers/mtd/maps/gpio-addr-flash.h | 31 ++++++++++
+ drivers/mtd/maps/physmap_of_core.c |  5 ++
+ drivers/mtd/maps/physmap_of_gpio.c | 24 ++++++++
+ 6 files changed, 125 insertions(+), 37 deletions(-)
+ create mode 100644 drivers/mtd/maps/gpio-addr-flash.h
+ create mode 100644 drivers/mtd/maps/physmap_of_gpio.c
 
- drivers/rtc/rtc-m41t80.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
-index ad03e2f..a3fb235 100644
---- a/drivers/rtc/rtc-m41t80.c
-+++ b/drivers/rtc/rtc-m41t80.c
-@@ -745,7 +745,7 @@ static int wdt_ioctl(struct file *file, unsigned int cmd,
- 			return -EINVAL;
- 		wdt_margin = new_margin;
- 		wdt_ping();
--		/* Fall */
-+		/* Fall through */
- 	case WDIOC_GETTIMEOUT:
- 		return put_user(wdt_margin, (int __user *)arg);
+diff --git a/drivers/mtd/maps/Kconfig b/drivers/mtd/maps/Kconfig
+index afb36bff13a7..427143d42168 100644
+--- a/drivers/mtd/maps/Kconfig
++++ b/drivers/mtd/maps/Kconfig
+@@ -94,6 +94,14 @@ config MTD_PHYSMAP_OF_GEMINI
+ 	  platforms, some detection and setting up parallel mode on the
+ 	  external interface.
  
++config MTD_PHYSMAP_OF_GPIO
++	bool "GPIO-assisted OF-based physical memory map handling"
++	depends on MTD_PHYSMAP_OF
++	depends on MTD_GPIO_ADDR
++	help
++	  This provides some extra DT physmap parsing for flashes that are
++	  partially physically addressed and assisted by GPIOs.
++
+ config MTD_PMC_MSP_EVM
+ 	tristate "CFI Flash device mapped on PMC-Sierra MSP"
+ 	depends on PMC_MSP && MTD_CFI
+diff --git a/drivers/mtd/maps/Makefile b/drivers/mtd/maps/Makefile
+index 51acf1fec19b..c232ccf05bee 100644
+--- a/drivers/mtd/maps/Makefile
++++ b/drivers/mtd/maps/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_MTD_PHYSMAP)	+= physmap.o
+ physmap_of-objs-y		+= physmap_of_core.o
+ physmap_of-objs-$(CONFIG_MTD_PHYSMAP_OF_VERSATILE) += physmap_of_versatile.o
+ physmap_of-objs-$(CONFIG_MTD_PHYSMAP_OF_GEMINI) += physmap_of_gemini.o
++physmap_of-objs-$(CONFIG_MTD_PHYSMAP_OF_GPIO) += physmap_of_gpio.o
+ physmap_of-objs			:= $(physmap_of-objs-y)
+ obj-$(CONFIG_MTD_PHYSMAP_OF)	+= physmap_of.o
+ obj-$(CONFIG_MTD_PISMO)		+= pismo.o
+@@ -44,6 +45,6 @@ obj-$(CONFIG_MTD_PLATRAM)	+= plat-ram.o
+ obj-$(CONFIG_MTD_INTEL_VR_NOR)	+= intel_vr_nor.o
+ obj-$(CONFIG_MTD_RBTX4939)	+= rbtx4939-flash.o
+ obj-$(CONFIG_MTD_VMU)		+= vmu-flash.o
+-obj-$(CONFIG_MTD_GPIO_ADDR)	+= gpio-addr-flash.o
++obj-$(CONFIG_MTD_GPIO_ADDR)    += gpio-addr-flash.o
+ obj-$(CONFIG_MTD_LATCH_ADDR)	+= latch-addr-flash.o
+ obj-$(CONFIG_MTD_LANTIQ)	+= lantiq-flash.o
+diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio-addr-flash.c
+index a20e85aa770e..7837fc7b8de8 100644
+--- a/drivers/mtd/maps/gpio-addr-flash.c
++++ b/drivers/mtd/maps/gpio-addr-flash.c
+@@ -25,25 +25,25 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
++#include "gpio-addr-flash.h"
+ 
+ #define win_mask(x) ((BIT(x)) - 1)
+ 
+ #define DRIVER_NAME "gpio-addr-flash"
+ 
++#define gf_map_info_to_state(mi) ((struct async_state *)(mi)->map_priv_1)
++
+ /**
+- * struct async_state - keep GPIO flash state
++ * struct async_state_pdev - Async state platform device
+  *	@mtd:         MTD state for this mapping
+  *	@map:         MTD map state for this flash
+  *	@gpios:       Struct containing the array of GPIO descriptors
+- *	@gpio_values: cached GPIO values
+- *	@win_order:   dedicated memory size (if no GPIOs)
++ *	@state:       GPIO flash state
+  */
+-struct async_state {
++struct async_state_pdev {
+ 	struct mtd_info *mtd;
+ 	struct map_info map;
+-	struct gpio_descs *gpios;
+-	unsigned int gpio_values;
+-	unsigned int win_order;
++	struct async_state state;
+ };
+ #define gf_map_info_to_state(mi) ((struct async_state *)(mi)->map_priv_1)
+ 
+@@ -174,6 +174,31 @@ static void gf_copy_to(struct map_info *map, unsigned long to,
+ static const char * const part_probe_types[] = {
+ 	"cmdlinepart", "RedBoot", NULL };
+ 
++int gpio_flash_probe_common(struct device *dev, struct async_state *state,
++			    struct map_info *map)
++{
++	if (!is_power_of_2(map->size)) {
++		dev_err(dev, "Window size must be aligned\n");
++		return -EIO;
++	}
++
++	state->gpios = devm_gpiod_get_array(dev, "addr", GPIOD_OUT_LOW);
++	if (IS_ERR(state->gpios))
++		return PTR_ERR(state->gpios);
++
++	state->win_order  = get_bitmask_order(map->size) - 1;
++	map->read       = gf_read;
++	map->copy_from  = gf_copy_from;
++	map->write      = gf_write;
++	map->copy_to    = gf_copy_to;
++	map->size       = BIT(state->win_order + state->gpios->ndescs);
++	map->phys	= NO_XIP;
++	map->map_priv_1 = (unsigned long)state;
++
++	return 0;
++}
++EXPORT_SYMBOL(gpio_flash_probe_common);
++
+ /**
+  * gpio_flash_probe() - setup a mapping for a GPIO assisted flash
+  *	@pdev: platform device
+@@ -210,7 +235,8 @@ static int gpio_flash_probe(struct platform_device *pdev)
+ {
+ 	struct physmap_flash_data *pdata;
+ 	struct resource *memory;
+-	struct async_state *state;
++	struct async_state_pdev *state_pdev;
++	int ret;
+ 
+ 	pdata = dev_get_platdata(&pdev->dev);
+ 	memory = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -218,40 +244,33 @@ static int gpio_flash_probe(struct platform_device *pdev)
+ 	if (!memory)
+ 		return -EINVAL;
+ 
+-	state = devm_kzalloc(&pdev->dev, sizeof(*state), GFP_KERNEL);
+-	if (!state)
++	state_pdev = devm_kzalloc(&pdev->dev, sizeof(*state_pdev), GFP_KERNEL);
++	if (!state_pdev)
+ 		return -ENOMEM;
+ 
+-	state->gpios = devm_gpiod_get_array(&pdev->dev, "addr", GPIOD_OUT_LOW);
+-	if (IS_ERR(state->gpios))
+-		return PTR_ERR(state->gpios);
+-
+-	state->win_order      = get_bitmask_order(resource_size(memory)) - 1;
++	state_pdev->map.virt = devm_ioremap_resource(&pdev->dev, memory);
++	if (IS_ERR(state_pdev->map.virt))
++		return PTR_ERR(state_pdev->map.virt);
+ 
+-	state->map.name       = DRIVER_NAME;
+-	state->map.read       = gf_read;
+-	state->map.copy_from  = gf_copy_from;
+-	state->map.write      = gf_write;
+-	state->map.copy_to    = gf_copy_to;
+-	state->map.bankwidth  = pdata->width;
+-	state->map.size       = BIT(state->win_order + state->gpios->ndescs);
+-	state->map.virt	      = devm_ioremap_resource(&pdev->dev, memory);
+-	if (IS_ERR(state->map.virt))
+-		return PTR_ERR(state->map.virt);
++	state_pdev->map.name       = DRIVER_NAME;
++	state_pdev->map.bankwidth  = pdata->width;
++	state_pdev->map.size       = resource_size(memory);
+ 
+-	state->map.phys       = NO_XIP;
+-	state->map.map_priv_1 = (unsigned long)state;
++	ret = gpio_flash_probe_common(&pdev->dev, &state_pdev->state,
++				      &state_pdev->map);
++	if (ret)
++		return ret;
+ 
+-	platform_set_drvdata(pdev, state);
++	platform_set_drvdata(pdev, state_pdev);
+ 
+ 	dev_notice(&pdev->dev, "probing %d-bit flash bus\n",
+-		   state->map.bankwidth * 8);
+-	state->mtd = do_map_probe(memory->name, &state->map);
+-	if (!state->mtd)
++		   state_pdev->map.bankwidth * 8);
++	state_pdev->mtd = do_map_probe(memory->name, &state_pdev->map);
++	if (!state_pdev->mtd)
+ 		return -ENXIO;
+-	state->mtd->dev.parent = &pdev->dev;
++	state_pdev->mtd->dev.parent = &pdev->dev;
+ 
+-	mtd_device_parse_register(state->mtd, part_probe_types, NULL,
++	mtd_device_parse_register(state_pdev->mtd, part_probe_types, NULL,
+ 				  pdata->parts, pdata->nr_parts);
+ 
+ 	return 0;
+@@ -259,10 +278,10 @@ static int gpio_flash_probe(struct platform_device *pdev)
+ 
+ static int gpio_flash_remove(struct platform_device *pdev)
+ {
+-	struct async_state *state = platform_get_drvdata(pdev);
++	struct async_state_pdev *state_pdev = platform_get_drvdata(pdev);
+ 
+-	mtd_device_unregister(state->mtd);
+-	map_destroy(state->mtd);
++	mtd_device_unregister(state_pdev->mtd);
++	map_destroy(state_pdev->mtd);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/mtd/maps/gpio-addr-flash.h b/drivers/mtd/maps/gpio-addr-flash.h
+new file mode 100644
+index 000000000000..46d97a8031eb
+--- /dev/null
++++ b/drivers/mtd/maps/gpio-addr-flash.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <linux/of.h>
++#include <linux/mtd/map.h>
++
++/**
++ * struct async_state - keep GPIO flash state
++ *	@gpios:       Struct containing the array of GPIO descriptors
++ *	@gpio_values: cached GPIO values
++ *	@win_order:   dedicated memory size (if no GPIOs)
++ */
++struct async_state {
++	struct gpio_descs *gpios;
++	unsigned int gpio_values;
++	unsigned int win_order;
++};
++
++int gpio_flash_probe_common(struct device *dev,
++				   struct async_state *state,
++				   struct map_info *map);
++
++#ifdef CONFIG_MTD_PHYSMAP_OF_GPIO
++int of_flash_probe_gpio(struct platform_device *pdev, struct device_node *np,
++			struct map_info *map);
++#else
++static inline
++int of_flash_probe_gpio(struct platform_device *pdev, struct device_node *np,
++			struct map_info *map)
++{
++	return 0;
++}
++#endif
+diff --git a/drivers/mtd/maps/physmap_of_core.c b/drivers/mtd/maps/physmap_of_core.c
+index 062add8b3a6e..b532b8cf16c4 100644
+--- a/drivers/mtd/maps/physmap_of_core.c
++++ b/drivers/mtd/maps/physmap_of_core.c
+@@ -27,6 +27,7 @@
+ #include <linux/slab.h>
+ #include "physmap_of_gemini.h"
+ #include "physmap_of_versatile.h"
++#include "gpio-addr-flash.h"
+ 
+ struct of_flash_list {
+ 	struct mtd_info *mtd;
+@@ -257,6 +258,10 @@ static int of_flash_probe(struct platform_device *dev)
+ 
+ 		simple_map_init(&info->list[i].map);
+ 
++		err = of_flash_probe_gpio(dev, dp, &info->list[i].map);
++		if (err)
++			goto err_out_release;
++
+ 		/*
+ 		 * On some platforms (e.g. MPC5200) a direct 1:1 mapping
+ 		 * may cause problems with JFFS2 usage, as the local bus (LPB)
+diff --git a/drivers/mtd/maps/physmap_of_gpio.c b/drivers/mtd/maps/physmap_of_gpio.c
+new file mode 100644
+index 000000000000..97e02737ed67
+--- /dev/null
++++ b/drivers/mtd/maps/physmap_of_gpio.c
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2018 Qtechnology A/S
++ *
++ * Ricardo Ribalda <ricardo.ribalda@gmail.com>
++ *
++ */
++#include <linux/platform_device.h>
++#include "gpio-addr-flash.h"
++
++int of_flash_probe_gpio(struct platform_device *pdev, struct device_node *np,
++			struct map_info *map)
++{
++	struct async_state *state;
++
++	if (!of_device_is_compatible(np, "mtd,gpio-addr-flash"))
++		return 0;
++
++	state = devm_kzalloc(&pdev->dev, sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return -ENOMEM;
++
++	return gpio_flash_probe_common(&pdev->dev, state, map);
++}
 -- 
-2.7.4
+2.19.0
 
