@@ -2,141 +2,108 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6A7C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDECC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507E62098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:25:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gGZzHJqk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507E62098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C34921473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:28:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C34921473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeJDPSD (ORCPT
+        id S1727310AbeJDPU2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:18:03 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38782 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727325AbeJDPSD (ORCPT
+        Thu, 4 Oct 2018 11:20:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38571 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbeJDPU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:18:03 -0400
-Received: by mail-io1-f65.google.com with SMTP id e2-v6so5532651ioh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4mjjJU8n40vSZZvAZqSV5idSHC7+L4DCzd8oCuPu6Cs=;
-        b=gGZzHJqkghBmRSrfFCCu8DRBk9wYUsEJifqd0oakuzHDmpacZM1PwzDfgNeQF2Hq2Z
-         4uBnNkf0KzFPUu2pJwetw8wqHlde7fmWuR5dbSs2ACxDyhpnnSgK3vzbv2iVK1NozXdc
-         8jozlmVESC89QhYNxLLtujvT/t3mrQbBHp/8g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4mjjJU8n40vSZZvAZqSV5idSHC7+L4DCzd8oCuPu6Cs=;
-        b=JdyYDMbD7eS6Fht2o7YQfcjNLEovE8nG+Duru4nKwbKqOSs8OdzmAVuDkPB5/J7NAr
-         tTItfbo71mZieVNmK6nUtczJbk0bhKVFCwv7LIW8A/5abDsyYUtEXW7xM2nlTu+5pxf3
-         niuMl6C7pQdp1nlNcM5R/dYR4ue5S40ptN9N/Oc2O7Vcv0YvTh4Ek1ZRo9JITBhozmL/
-         zHuszmoPrslG7jEoPPqBgGLBaWXIlcEoh0EIATyPHZp0JNeEl0jIuO54Qqr6JmmGq0IB
-         M6fxNGmEFRhMF3DVorlAJFBx4g9gFBHHMMiHNYm4xtJDrwTSNBSKO4i/hFFaDFs0q0FU
-         5o0A==
-X-Gm-Message-State: ABuFfogo89avm6zXwfTjq/SOu/1S+o+f9UzuzH5QMUVKN9UzMalris0X
-        XUpKq/SC8FchgsMi+wtAetflLid6yDSYVDj9YLwQUw==
-X-Google-Smtp-Source: ACcGV62jKEK7P/B9TH+D+aqHNbgNnXo9jTCBYpod20OrgAB5Oq+bWFpiu7GDS9nBrhQMBVVP/umcEitvm67qty1Imnc=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3373931ioa.277.1538641556569;
- Thu, 04 Oct 2018 01:25:56 -0700 (PDT)
+        Thu, 4 Oct 2018 11:20:28 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g7yzc-0001Nn-6l; Thu, 04 Oct 2018 08:28:20 +0000
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [SCSI] pmcraid: PMC-Sierra MaxRAID driver to support 6Gb/s SAS
+ RAID controller
+Message-ID: <f512d8fa-e782-0679-8140-0a27dd3b9062@canonical.com>
+Date:   Thu, 4 Oct 2018 09:28:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk> <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
-In-Reply-To: <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Oct 2018 10:25:43 +0200
-Message-ID: <CACRpkdb1YSw3WWpGSqwxORaMSAeemiaP4i6cWJcY5VtADfzorQ@mail.gmail.com>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-To:     oleksandr@natalenko.name
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 1:49 PM Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
+Hi,
 
-> On another hand, the users of embedded devices, mentioned by Linus,
-> should already know what scheduler to choose because dealing with
-> embedded world assumes the person can decide this on their own, or with
-> the help of abovementioned udev scripts and/or Documentation/ as a
-> reference point.
->
-> So I see no obstacles here, and the choice to rely on udev by default
-> sounds reasonable.
+Static analysis from CoverityScan (CID#114178 "Operands don't affect
+result") detected an issue in drivers/scsi/pmcraid.c, function
+pmcraid_init_res_table with the following check:
 
-I am sorry but I do not agree with this.
+        if (pinstance->cfg_table->flags & MICROCODE_UPDATE_REQUIRED)
+                pmcraid_err("IOA requires microcode download\n");
 
-There are several historical precedents where we have
-concluded that just "have the kernel do the right thing
-by default" is the way to go.
 
-Example 1: pluggable CPU schedulers.
-The reasoning was that users or distros have no clue what
-scheduler they want, only scheduler developers do. We
-drove it to the point where we have one and one
-scheduler only, not different flavors. (Special
-usecases have special scheduling classes inside the
-one scheduler instead.)
+pinstance->cfg_table->flags is a u8, MICROCODE_UPDATE_REQUIRED is  1 <<
+31, so the & operation always results in false and the error message is
+never displayed.  From my understanding, flags should be a u8, so there
+is something wrong here with the check.  Any ideas?
 
-Example 2: Automatic process group scheduling
-The reasoning was that daemons such as systemd would
-be better at placing processes/tasks into the right
-control groups to manage their resources, so this would
-be a userspace policy handled by the udev/systemd
-complex. We did not do that. Instead the kernel does
-autogrouping per-session, indeed it is a Kconfig option
-but even e.g. Fedora has this enabled by default.
-(commit 5091faa449ee)
-
-As pointed out elsewhere: these defaults make it
-easy for custom builds not using udev+systemd to
-get a system up and running with sensible defaults.
-
-Simple embedded systems use Busybox' mdev (I wouldn't
-trust it do do any complex decisions). OpenWRT
-has ubox+ubus+uci, also extremely lightweight,
-Android has its own init system that I don't
-manage to keep track of anymore. Instead of running
-all over the map and fixing these userspaces to
-do the right thing, it makes sense to make the
-right thing the default.
-
-And these are millions and millions of deployed
-systems not using udev+systemd we are talking about,
-they are not fringe hobby projects. It's not that I
-personally dislike udev or anything, I kind of like
-it, but these tailored distros simply don't use it
-and they are huge in numbers. They need help to do
-the right thing. Fixing a udev rule doesn't solve
-even half the world's problems I'm afraid.
-
-Yours,
-Linus Walleij
+Colin
