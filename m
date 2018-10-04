@@ -2,205 +2,481 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35585C64EBD
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF723C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E404A2082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91E9520877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lYKEOPxb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E404A2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsExVI+n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E9520877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbeJDX2w (ORCPT
+        id S1728102AbeJDX3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:28:52 -0400
-Received: from mail-eopbgr80058.outbound.protection.outlook.com ([40.107.8.58]:50486
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727810AbeJDX2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:28:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iTbqyO0fLgcear2T3IwYWkna0x3/qAXQuYdQ+1SYwcw=;
- b=lYKEOPxbvFgKAOKDLDKzHV9cPzU9qzapv/1QcvC+KWNiUy8WL8u+AuaWPIBNHzrObWI5E0KQuUuUMnwOQstG4r2wsv2XTBaaR5DghisQdhsF1Rp6myZGOWlSlM+7HrWm/Z0q499eM1aQd5/TPjDCLQbLQ3pU8/7E1l7MG2w7kF4=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB5266.eurprd04.prod.outlook.com (20.177.42.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.25; Thu, 4 Oct 2018 16:34:30 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef%3]) with mapi id 15.20.1207.022; Thu, 4 Oct 2018
- 16:34:30 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>
-CC:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/4] PCI: imx: Add PME_Turn_Off support
-Thread-Topic: [PATCH v2 4/4] PCI: imx: Add PME_Turn_Off support
-Thread-Index: AQHUXAAfuxXhw+LsYE6gE8iU25MszA==
-Date:   Thu, 4 Oct 2018 16:34:30 +0000
-Message-ID: <37d60fe2119361381a6a81f439fa1c3ad29db45e.1538670431.git.leonard.crestez@nxp.com>
-References: <cover.1538670431.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1538670431.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [95.76.156.53]
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: DB6PR02CA0003.eurprd02.prod.outlook.com
- (2603:10a6:6:15::16) To AM0PR04MB4290.eurprd04.prod.outlook.com
- (2603:10a6:208:67::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5266;6:+j2bP5nHl86TuqUfHVN+QnNatU5a5HlzBKqQgfyAOmYVI/dxjGWbUulPdqkDLGwsJEq4fEG2DyOTuv7LczA9z+olxoZ7DthgfhA6umuGly8K/JJSeRLT5ljYJaI/11K7kRa4lpF0azQ9MdZ1r2asvTVNidpT2+UJo4X9qtXe7A8lDWMO2/X0SE5OUgDizxuWihaPFwUv6bO8AiZAMup+7W2QnAA6oAJ50J/AcSECf6XBfzKUmdjSzFChJHx652dtUwGtTt/RhIXb+HxEx6nVPD4S44uAXvHJdGUpThkc+FRrqnzro6hURlmQbTrESxsvGlgnC1f/BScxepa75EN97L3EZZ3HTLQYv+8qws2B2SEu3rIEBMmhChoNbLqbpUNWmy5NKfxwNROivKOM/vWE/6FLzJVNVi8klY0t6ZE1BKOtCG/d7f/MHNwrrSOCtjZS0GLCFQ9hwCVWN/acTxkl+w==;5:TjO851GbQYD7U3m72ZGKmZdb8/48sF/VfeDWWGmszNAE+SMgxiz6FJSqOsyO+gNVZNaNJ37XynDmfoqQrRsPwSZYJQXobrpgvuc/S+ahuy8QNavUXeuV9Kj6jqIGuq2c515lQ29v5hG2RDqYrygja9W1h14lkIZwMaCpKMIILlE=;7:F6AvALCK++s4HDDfOKXdDGz0qpYp/JNEDX22R0MPSPpre+NBpM5+qh6bmPw8WYR691mffQ8AOIEzkjHzkebA8ttGX5h+4iy5GTY2p+E4ZmrfpxIb7u7pVlNuCTQAz0NC+mQYugtawN5pkJNEvasxYldQQdduV5cyA43mAXQN+62ZONzJI+amk41SrOrGqzV2DtUNxVr/7Wbm+ESDQtRwGjqYUNG4ndd91nIKMQa/jIDD8uMPar2A15UdesbSpCS2
-x-ms-office365-filtering-correlation-id: 6a17609b-d0a5-4356-1e5c-08d62a1741f9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5266;
-x-ms-traffictypediagnostic: AM0PR04MB5266:
-x-microsoft-antispam-prvs: <AM0PR04MB52668405AEF2FAA0298BDBC2EEEA0@AM0PR04MB5266.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:AM0PR04MB5266;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5266;
-x-forefront-prvs: 0815F8251E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(39860400002)(346002)(376002)(199004)(189003)(86362001)(66066001)(14454004)(50226002)(39060400002)(4326008)(6436002)(14444005)(256004)(8936002)(106356001)(81156014)(81166006)(5660300001)(105586002)(316002)(2906002)(68736007)(478600001)(476003)(2616005)(44832011)(36756003)(26005)(3846002)(486006)(6116002)(11346002)(446003)(186003)(2900100001)(102836004)(8676002)(6506007)(386003)(54906003)(76176011)(53936002)(71200400001)(71190400001)(52116002)(97736004)(99286004)(6512007)(6636002)(118296001)(7416002)(110136005)(5250100002)(25786009)(7736002)(305945005)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5266;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: KXPGTBxcpyNaDCpVCzrQxQP3Xd9xd6p+R7jIdwfz3FhTGtjqRFhBnF8EWRDNj9kY3tCiTuXZa7B/9aLRX8xvGgjhO41bH8uf1tADKU6fSEjaQne/Xv5fX8KJedUwgqvH0bZ90W8DgJshvOBBrzg43vMD5SYfK7Ou1dTKE2dSvE8pOiCQmwxoWQopv+Bv2bu074h8EXxW1/9UbTHf6hhQ3RjAfd7VKKfKaVCUS1RPpVWH2etCi6PCE/ZHjA/86pw69gZvC76ttBwTMv5WODwi3pygHpvk10dJPNu0H2HofibMu40ne6EkVmkUsjmuXFZs1bcICe+StdRwCPjhlGV4KFR+0Jlg8YQgqEZYbwyx8YU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 4 Oct 2018 19:29:48 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38844 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeJDX3s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:29:48 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r77-v6so3409412pgr.5
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 09:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Nfec9crX6Z0IYXdkV6/aHbqKQJKhKWoFZUQmiFu93iM=;
+        b=IsExVI+nmDfVHRox7Ls/zclyRmGpVUKhTOBC5zsbbtv7PH/mwlXAEH2NFETwFeoill
+         yo8Z4fU5p1WgB5nztuhd82+AKC4rjw4X5izLIIkSRg/Ga/qOiHCUJi8vf3TV9VD2oLFB
+         NV3axlezaSuITTtcKq0FBRDfDsWe5GYmvwsDOQsJRQGwGeggyZwIqM8E9blysXCGB/2O
+         zofIZGLGaPHDxT3NOj9f+MLWZkHhFnenr7dUIMBnjv85WTfLxnXk+r+4wWLqJYlIPHec
+         IxmwdPF8ZS9h7/EXXE64INzMXKRSnpxO6AaYvCHJLyi9lk98JB/SmTp63VpUqFvOg/2E
+         6Ihw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Nfec9crX6Z0IYXdkV6/aHbqKQJKhKWoFZUQmiFu93iM=;
+        b=ILhIOuNpawAf3Z16S0q7XZVufOt6gHXddqOH4KnHiXvzPEaepvxZJBvb2UCNI6+EZ2
+         CVHGOptWGhINKuelkYJ+iqiVstpU85yZBO1ri5nz36miI1MLtrViseAs1i9XFMZR/ZN6
+         +tOQehrOXVUEWWGSa16sAPFxSSOeShxdF5iq3osYAmmCkEVVQDuchHA/QSHnDmt04LIC
+         wUL38NYu/EjgUt3BLn7bqNkIvg8P9aSAWDgW/69qDK5UG6jKcNkdVt4QGf2WOwO/ReFb
+         xWe2x85YAtg9NTnQ+S+tmcWiROrCrEssAIQ/oSzl5GMXvRjQB1WYf/Fm2GFV+foToKQP
+         jF5g==
+X-Gm-Message-State: ABuFfoh0v6KMlsmZlJhaF/Ss0RQ3b2IircMZwS5JBMCUOZAB3PN/kDMF
+        pjndmzDgb4SsygFmuWCp2/E=
+X-Google-Smtp-Source: ACcGV62fASzj4prwQ7oB6GSlPTi3yBEMNIM3evC07hVZuHlsZ57NLQhM9Dgb6Y3yhjbFwOAY6RtIzw==
+X-Received: by 2002:a62:8a4f:: with SMTP id y76-v6mr7704526pfd.142.1538670945636;
+        Thu, 04 Oct 2018 09:35:45 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id w23-v6sm5666097pgi.18.2018.10.04.09.35.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 09:35:45 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 22:05:38 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>
+Cc:     NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v6 1/3] staging: mt7621-mmc: Remove #if 0 blocks in sd.c
+Message-ID: <d24db4fd34fc2347ba0512aaae04b937b942ac0e.1538670306.git.nishadkamdar@gmail.com>
+References: <cover.1538670306.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a17609b-d0a5-4356-1e5c-08d62a1741f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2018 16:34:30.2135
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5266
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1538670306.git.nishadkamdar@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the root complex suspends it must send a PME_Turn_Off TLP.
-Implement this by asserting the "turnoff" reset.
+This patch removes #if 0 code blocks and usages of
+functions defined in the #if 0 blocks in sd.c.
 
-On imx7d this functionality is part of the SRC and exposed through the
-linux reset-controller subsystem. On imx6 equivalent bits are in the
-IOMUXC GPR area which the imx6-pcie driver accesses directly.
-
-This is only for imx7d right now but it's deliberately implemented as an
-optional reset, ignoring the chip variant:
-* Older dtbs won't have this reset so it will be ignored.
-* Future chips might also expose this as a reset controller.
-
-For example imx8m (not yet supported) has the exact same
-PCIE_CTRL_APPS_TURNOFF bit in the same location.
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/staging/mt7621-mmc/sd.c | 249 +-------------------------------
+ 1 file changed, 1 insertion(+), 248 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller=
-/dwc/pci-imx6.c
-index 6ba16fd1373c..2bf80f1ad852 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -50,10 +50,11 @@ struct imx6_pcie {
- 	struct clk		*pcie_inbound_axi;
- 	struct clk		*pcie;
- 	struct regmap		*iomuxc_gpr;
- 	struct reset_control	*pciephy_reset;
- 	struct reset_control	*apps_reset;
-+	struct reset_control	*turnoff_reset;
- 	enum imx6_pcie_variants variant;
- 	u32			tx_deemph_gen1;
- 	u32			tx_deemph_gen2_3p5db;
- 	u32			tx_deemph_gen2_6db;
- 	u32			tx_swing_full;
-@@ -812,10 +813,25 @@ static void imx6_pcie_ltssm_disable(struct device *de=
-v)
- 	default:
- 		dev_err(dev, "ltssm_disable not supported\n");
+diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+index 4a216b9e6d91..f17beff2e3df 100644
+--- a/drivers/staging/mt7621-mmc/sd.c
++++ b/drivers/staging/mt7621-mmc/sd.c
+@@ -72,11 +72,6 @@
+ #define GPIO_PULL_DOWN      (0)
+ #define GPIO_PULL_UP        (1)
+ 
+-#if 0 /* --- by chhung */
+-#define MSDC_CLKSRC_REG     (0xf100000C)
+-#define PDN_REG           (0xF1000010)
+-#endif /* end of --- */
+-
+ #define DEFAULT_DEBOUNCE    (8)       /* 8 cycles */
+ #define DEFAULT_DTOC        (40)      /* data timeout counter. 65536x40 sclk. */
+ 
+@@ -100,26 +95,6 @@ static int cd_active_low = 1;
+ //#define PERI_MSDC2_PDN    (17)
+ //#define PERI_MSDC3_PDN    (18)
+ 
+-#if 0 /* --- by chhung */
+-/* gate means clock power down */
+-static int g_clk_gate = 0;
+-#define msdc_gate_clock(id) \
+-	do {					       \
+-		g_clk_gate &= ~(1 << ((id) + PERI_MSDC0_PDN));	\
+-	} while (0)
+-/* not like power down register. 1 means clock on. */
+-#define msdc_ungate_clock(id) \
+-	do {					    \
+-		g_clk_gate |= 1 << ((id) + PERI_MSDC0_PDN);	\
+-	} while (0)
+-
+-// do we need sync object or not
+-void msdc_clk_status(int *status)
+-{
+-	*status = g_clk_gate;
+-}
+-#endif /* end of --- */
+-
+ /* +++ by chhung */
+ struct msdc_hw msdc0_hw = {
+ 	.clk_src        = 0,
+@@ -221,7 +196,6 @@ static void msdc_tasklet_card(struct work_struct *work)
+ 				struct msdc_host, card_delaywork.work);
+ 	u32 inserted;
+ 	u32 status = 0;
+-    //u32 change = 0;
+ 
+ 	spin_lock(&host->lock);
+ 
+@@ -231,33 +205,17 @@ static void msdc_tasklet_card(struct work_struct *work)
+ 	else
+ 		inserted = (status & MSDC_PS_CDSTS) ? 1 : 0;
+ 
+-#if 0
+-	change = host->card_inserted ^ inserted;
+-	host->card_inserted = inserted;
+-
+-	if (change && !host->suspend) {
+-		if (inserted)
+-			host->mmc->f_max = HOST_MAX_MCLK;  // work around
+-		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
+-	}
+-#else  /* Make sure: handle the last interrupt */
++	/* Make sure: handle the last interrupt */
+ 	host->card_inserted = inserted;
+ 
+ 	if (!host->suspend) {
+ 		host->mmc->f_max = HOST_MAX_MCLK;
+ 		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
  	}
+-#endif
+ 
+ 	spin_unlock(&host->lock);
  }
-=20
-+static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
-+{
-+	reset_control_assert(imx6_pcie->turnoff_reset);
-+	reset_control_deassert(imx6_pcie->turnoff_reset);
-+
-+	/*
-+	 * Components with an upstream port must respond to
-+	 * PME_Turn_Off with PME_TO_Ack but we can't check.
-+	 *
-+	 * The standard recommends a 1-10ms timeout after which to
-+	 * proceed anyway as if acks were received.
-+	 */
-+	usleep_range(1000, 10000);
-+}
-+
- static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+ 
+-#if 0 /* --- by chhung */
+-/* For E2 only */
+-static u8 clk_src_bit[4] = {
+-	0, 3, 5, 7
+-};
+-
+ static void msdc_select_clksrc(struct msdc_host *host, unsigned char clksrc)
  {
- 	clk_disable_unprepare(imx6_pcie->pcie);
- 	clk_disable_unprepare(imx6_pcie->pcie_phy);
- 	clk_disable_unprepare(imx6_pcie->pcie_bus);
-@@ -832,10 +848,11 @@ static int imx6_pcie_suspend_noirq(struct device *dev=
-)
- 	struct imx6_pcie *imx6_pcie =3D dev_get_drvdata(dev);
-=20
- 	if (imx6_pcie->variant !=3D IMX7D)
- 		return 0;
-=20
-+	imx6_pcie_pm_turnoff(imx6_pcie);
- 	imx6_pcie_clk_disable(imx6_pcie);
- 	imx6_pcie_ltssm_disable(dev);
-=20
- 	return 0;
+ 	u32 val;
+@@ -358,115 +316,6 @@ static void msdc_abort_data(struct msdc_host *host)
+ 	//}
  }
-@@ -959,10 +976,17 @@ static int imx6_pcie_probe(struct platform_device *pd=
-ev)
- 		break;
- 	default:
- 		break;
+ 
+-#if 0 /* --- by chhung */
+-static void msdc_pin_config(struct msdc_host *host, int mode)
+-{
+-	struct msdc_hw *hw = host->hw;
+-	int pull = (mode == MSDC_PIN_PULL_UP) ? GPIO_PULL_UP : GPIO_PULL_DOWN;
+-
+-	/* Config WP pin */
+-	if (hw->flags & MSDC_WP_PIN_EN) {
+-		if (hw->config_gpio_pin) /* NULL */
+-			hw->config_gpio_pin(MSDC_WP_PIN, pull);
+-	}
+-
+-	switch (mode) {
+-	case MSDC_PIN_PULL_UP:
+-		//sdr_set_field(MSDC_PAD_CTL0, MSDC_PAD_CTL0_CLKPU, 1); /* Check & FIXME */
+-		//sdr_set_field(MSDC_PAD_CTL0, MSDC_PAD_CTL0_CLKPD, 0); /* Check & FIXME */
+-		sdr_set_field(host->base + MSDC_PAD_CTL1, MSDC_PAD_CTL1_CMDPU, 1);
+-		sdr_set_field(host->base + MSDC_PAD_CTL1, MSDC_PAD_CTL1_CMDPD, 0);
+-		sdr_set_field(host->base + MSDC_PAD_CTL2, MSDC_PAD_CTL2_DATPU, 1);
+-		sdr_set_field(host->base + MSDC_PAD_CTL2, MSDC_PAD_CTL2_DATPD, 0);
+-		break;
+-	case MSDC_PIN_PULL_DOWN:
+-		//sdr_set_field(MSDC_PAD_CTL0, MSDC_PAD_CTL0_CLKPU, 0); /* Check & FIXME */
+-		//sdr_set_field(MSDC_PAD_CTL0, MSDC_PAD_CTL0_CLKPD, 1); /* Check & FIXME */
+-		sdr_set_field(host->base + MSDC_PAD_CTL1, MSDC_PAD_CTL1_CMDPU, 0);
+-		sdr_set_field(host->base + MSDC_PAD_CTL1, MSDC_PAD_CTL1_CMDPD, 1);
+-		sdr_set_field(host->base + MSDC_PAD_CTL2, MSDC_PAD_CTL2_DATPU, 0);
+-		sdr_set_field(host->base + MSDC_PAD_CTL2, MSDC_PAD_CTL2_DATPD, 1);
+-		break;
+-	case MSDC_PIN_PULL_NONE:
+-	default:
+-		//sdr_set_field(MSDC_PAD_CTL0, MSDC_PAD_CTL0_CLKPU, 0); /* Check & FIXME */
+-		//sdr_set_field(MSDC_PAD_CTL0, MSDC_PAD_CTL0_CLKPD, 0); /* Check & FIXME */
+-		sdr_set_field(host->base + MSDC_PAD_CTL1, MSDC_PAD_CTL1_CMDPU, 0);
+-		sdr_set_field(host->base + MSDC_PAD_CTL1, MSDC_PAD_CTL1_CMDPD, 0);
+-		sdr_set_field(host->base + MSDC_PAD_CTL2, MSDC_PAD_CTL2_DATPU, 0);
+-		sdr_set_field(host->base + MSDC_PAD_CTL2, MSDC_PAD_CTL2_DATPD, 0);
+-		break;
+-	}
+-
+-}
+-
+-void msdc_pin_reset(struct msdc_host *host, int mode)
+-{
+-	struct msdc_hw *hw = (struct msdc_hw *)host->hw;
+-	int pull = (mode == MSDC_PIN_PULL_UP) ? GPIO_PULL_UP : GPIO_PULL_DOWN;
+-
+-	/* Config reset pin */
+-	if (hw->flags & MSDC_RST_PIN_EN) {
+-		if (hw->config_gpio_pin) /* NULL */
+-			hw->config_gpio_pin(MSDC_RST_PIN, pull);
+-
+-		if (mode == MSDC_PIN_PULL_UP)
+-			sdr_clr_bits(host->base + EMMC_IOCON, EMMC_IOCON_BOOTRST);
+-		else
+-			sdr_set_bits(host->base + EMMC_IOCON, EMMC_IOCON_BOOTRST);
+-	}
+-}
+-
+-static void msdc_core_power(struct msdc_host *host, int on)
+-{
+-	if (on && host->core_power == 0) {
+-		msdc_vcore_on(host);
+-		host->core_power = 1;
+-		msleep(1);
+-	} else if (!on && host->core_power == 1) {
+-		msdc_vcore_off(host);
+-		host->core_power = 0;
+-		msleep(1);
+-	}
+-}
+-
+-static void msdc_host_power(struct msdc_host *host, int on)
+-{
+-	if (on) {
+-		//msdc_core_power(host, 1); // need do card detection.
+-		msdc_pin_reset(host, MSDC_PIN_PULL_UP);
+-	} else {
+-		msdc_pin_reset(host, MSDC_PIN_PULL_DOWN);
+-		//msdc_core_power(host, 0);
+-	}
+-}
+-
+-static void msdc_card_power(struct msdc_host *host, int on)
+-{
+-	if (on) {
+-		msdc_pin_config(host, MSDC_PIN_PULL_UP);
+-		//msdc_vdd_on(host);  // need todo card detection.
+-		msleep(1);
+-	} else {
+-		//msdc_vdd_off(host);
+-		msdc_pin_config(host, MSDC_PIN_PULL_DOWN);
+-		msleep(1);
+-	}
+-}
+-
+-static void msdc_set_power_mode(struct msdc_host *host, u8 mode)
+-{
+-	if (host->power_mode == MMC_POWER_OFF && mode != MMC_POWER_OFF) {
+-		msdc_host_power(host, 1);
+-		msdc_card_power(host, 1);
+-	} else if (host->power_mode != MMC_POWER_OFF && mode == MMC_POWER_OFF) {
+-		msdc_card_power(host, 0);
+-		msdc_host_power(host, 0);
+-	}
+-	host->power_mode = mode;
+-}
+-#endif /* end of --- */
+-
+ #ifdef CONFIG_PM
+ /*
+    register as callback function of WIFI(combo_sdio_register_pm) .
+@@ -722,14 +571,6 @@ static unsigned int msdc_do_command(struct msdc_host   *host,
+ 	return cmd->error;
+ }
+ 
+-#if 0 /* --- by chhung */
+-// DMA resume / start / stop
+-static void msdc_dma_resume(struct msdc_host *host)
+-{
+-	sdr_set_field(host->base + MSDC_DMA_CTRL, MSDC_DMA_CTRL_RESUME, 1);
+-}
+-#endif /* end of --- */
+-
+ static void msdc_dma_start(struct msdc_host *host)
+ {
+ 	u32 wints = MSDC_INTEN_XFER_COMPL | MSDC_INTEN_DATTMO | MSDC_INTEN_DATCRCERR;
+@@ -828,12 +669,6 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 	cmd  = mrq->cmd;
+ 	data = mrq->cmd->data;
+ 
+-#if 0 /* --- by chhung */
+-	//if(host->id ==1){
+-	msdc_ungate_clock(host->id);
+-	//}
+-#endif /* end of --- */
+-
+ 	if (!data) {
+ 		send_type = SND_CMD;
+ 		if (msdc_do_command(host, cmd, 1, CMD_TIMEOUT) != 0)
+@@ -920,36 +755,8 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 		dma_unmap_sg(mmc_dev(mmc), data->sg, data->sg_len,
+ 			     mmc_get_dma_dir(data));
+ 		host->blksz = 0;
+-
+-#if 0 // don't stop twice!
+-		if (host->hw->flags & MSDC_REMOVABLE && data->error) {
+-			msdc_abort_data(host);
+-			/* reset in IRQ, stop command has issued. -> No need */
+-		}
+-#endif
+-
  	}
-=20
-+	/* Grab turnoff reset */
-+	imx6_pcie->turnoff_reset =3D devm_reset_control_get_optional_exclusive(de=
-v, "turnoff");
-+	if (IS_ERR(imx6_pcie->turnoff_reset)) {
-+		dev_err(dev, "Failed to get TURNOFF reset control\n");
-+		return PTR_ERR(imx6_pcie->turnoff_reset);
-+	}
-+
- 	/* Grab GPR config register range */
- 	imx6_pcie->iomuxc_gpr =3D
- 		 syscon_regmap_lookup_by_compatible("fsl,imx6q-iomuxc-gpr");
- 	if (IS_ERR(imx6_pcie->iomuxc_gpr)) {
- 		dev_err(dev, "unable to find iomuxc registers\n");
---=20
+ 
+-#if 0 /* --- by chhung */
+-#if 1
+-	//if(host->id==1) {
+-	if (send_type == SND_CMD) {
+-		if (cmd->opcode == MMC_SEND_STATUS) {
+-			if ((cmd->resp[0] & CARD_READY_FOR_DATA) || (CARD_CURRENT_STATE(cmd->resp[0]) != 7))
+-				msdc_gate_clock(host->id);
+-		} else {
+-			msdc_gate_clock(host->id);
+-		}
+-	} else {
+-		if (read)
+-			msdc_gate_clock(host->id);
+-	}
+-	//}
+-#else
+-	msdc_gate_clock(host->id);
+-#endif
+-#endif /* end of --- */
+-
+ 	if (mrq->cmd->error)
+ 		host->error = 0x001;
+ 	if (mrq->data && mrq->data->error)
+@@ -968,11 +775,7 @@ static int msdc_app_cmd(struct mmc_host *mmc, struct msdc_host *host)
+ 
+ 	memset(&cmd, 0, sizeof(struct mmc_command));
+ 	cmd.opcode = MMC_APP_CMD;
+-#if 0   /* bug: we meet mmc->card is null when ACMD6 */
+-	cmd.arg = mmc->card->rca << 16;
+-#else
+ 	cmd.arg = host->app_cmd_arg;
+-#endif
+ 	cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+ 
+ 	memset(&mrq, 0, sizeof(struct mmc_request));
+@@ -1359,22 +1162,10 @@ static void msdc_ops_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ {
+ 	struct msdc_host *host = mmc_priv(mmc);
+ 
+-	//=== for sdio profile ===
+-#if 0 /* --- by chhung */
+-	u32 old_H32, old_L32, new_H32, new_L32;
+-	u32 ticks = 0, opcode = 0, sizes = 0, bRx = 0;
+-#endif /* end of --- */
+-
+ 	WARN_ON(host->mrq);
+ 
+ 	/* start to process */
+ 	spin_lock(&host->lock);
+-#if 0 /* --- by chhung */
+-	if (sdio_pro_enable) {  //=== for sdio profile ===
+-		if (mrq->cmd->opcode == 52 || mrq->cmd->opcode == 53)
+-			GPT_GetCounter64(&old_L32, &old_H32);
+-	}
+-#endif /* end of --- */
+ 
+ 	host->mrq = mrq;
+ 
+@@ -1394,26 +1185,6 @@ static void msdc_ops_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 
+ 	host->mrq = NULL;
+ 
+-#if 0 /* --- by chhung */
+-	//=== for sdio profile ===
+-	if (sdio_pro_enable) {
+-		if (mrq->cmd->opcode == 52 || mrq->cmd->opcode == 53) {
+-			GPT_GetCounter64(&new_L32, &new_H32);
+-			ticks = msdc_time_calc(old_L32, old_H32, new_L32, new_H32);
+-
+-			opcode = mrq->cmd->opcode;
+-			if (mrq->cmd->data) {
+-				sizes = mrq->cmd->data->blocks * mrq->cmd->data->blksz;
+-				bRx = mrq->cmd->data->flags & MMC_DATA_READ ? 1 : 0;
+-			} else {
+-				bRx = mrq->cmd->arg	& 0x80000000 ? 1 : 0;
+-			}
+-
+-			if (!mrq->cmd->error)
+-				msdc_performance(opcode, sizes, bRx, ticks);
+-		}
+-	}
+-#endif /* end of --- */
+ 	spin_unlock(&host->lock);
+ 
+ 	mmc_request_done(mmc, mrq);
+@@ -1480,7 +1251,6 @@ static void msdc_ops_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 	case MMC_POWER_UP:
+-		// msdc_set_power_mode(host, ios->power_mode); /* --- by chhung */
+ 		break;
+ 	case MMC_POWER_ON:
+ 		host->power_mode = MMC_POWER_ON;
+@@ -1552,9 +1322,6 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
+ 	/* MSDC_CD_PIN_EN set for card */
+ 	if (host->hw->flags & MSDC_CD_PIN_EN) {
+ 		spin_lock_irqsave(&host->lock, flags);
+-#if 0
+-		present = host->card_inserted;  /* why not read from H/W: Fix me*/
+-#else
+ 		// CD
+ 		present = readl(host->base + MSDC_PS) & MSDC_PS_CDSTS;
+ 		if (cd_active_low)
+@@ -1562,7 +1329,6 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
+ 		else
+ 			present = present ? 1 : 0;
+ 		host->card_inserted = present;
+-#endif
+ 		spin_unlock_irqrestore(&host->lock, flags);
+ 	} else {
+ 		present = 0; /* TODO? Check DAT3 pins for card detection */
+@@ -1725,14 +1491,6 @@ static void msdc_enable_cd_irq(struct msdc_host *host, int enable)
+ static void msdc_init_hw(struct msdc_host *host)
+ {
+ 
+-	/* Power on */
+-#if 0 /* --- by chhung */
+-	msdc_vcore_on(host);
+-	msdc_pin_reset(host, MSDC_PIN_PULL_UP);
+-	msdc_select_clksrc(host, hw->clk_src);
+-	enable_clock(PERI_MSDC0_PDN + host->id, "SD");
+-	msdc_vdd_on(host);
+-#endif /* end of --- */
+ 	/* Configure to MMC/SD mode */
+ 	sdr_set_field(host->base + MSDC_CFG, MSDC_CFG_MODE, MSDC_SDMMC);
+ 
+@@ -1764,10 +1522,6 @@ static void msdc_init_hw(struct msdc_host *host)
+ 
+ 	writel(0x00000000, host->base + MSDC_DAT_RDDLY1);
+ 	writel(0x00000000, host->base + MSDC_IOCON);
+-#if 0 // use MT7620 default value: 0x403c004f
+-	/* bit0 modified: Rx Data Clock Source: 1 -> 2.0*/
+-	writel(0x003C000F, host->base + MSDC_PATCH_BIT0);
+-#endif
+ 
+ 	if (readl(host->base + MSDC_ECO_VER) >= 4) {
+ 		if (host->id == 1) {
+@@ -1834,7 +1588,6 @@ static void msdc_deinit_hw(struct msdc_host *host)
+ 
+ 	/* Disable card detection */
+ 	msdc_enable_cd_irq(host, 0);
+-	// msdc_set_power_mode(host, MMC_POWER_OFF);   /* make sure power down */ /* --- by chhung */
+ }
+ 
+ /* init gpd and bd list in msdc_drv_probe */
+-- 
 2.17.1
 
