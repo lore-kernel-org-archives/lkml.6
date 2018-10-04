@@ -2,91 +2,116 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A756C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B5BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA5A213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:32:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RR7ioxzW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA5A213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DDA3A213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA3A213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeJDSZS (ORCPT
+        id S1727436AbeJDS2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 14:25:18 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36628 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbeJDSZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 14:25:17 -0400
-Received: by mail-it1-f194.google.com with SMTP id c85-v6so13511353itd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 04:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZnDXGBd0ueBaNE9ti9uz9DfaUR27jaCIrm1LxBlChDo=;
-        b=RR7ioxzWXyMNHlD0apDNQyICAgmnDx7kPbzpa94u45NFlJnxV/UEjBwplWdhVBgw8P
-         dSEr+jYcUMt8UUG5j33NvNwjD3Dx1u7MCo+wMeCD3G0S/Sq/BB7adbJ77uJKeh34oez0
-         I+YNZmM5LiQY18NBT6urDpKJnopbItj44+Kpc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZnDXGBd0ueBaNE9ti9uz9DfaUR27jaCIrm1LxBlChDo=;
-        b=BVXfs086h4QwbqkmZz8cNpOhx0hptpfKZX5O0xsSTr5QPievxaBOunXiuzw02IzTmq
-         7It/0WXBOHyHucIU0AVpHjjbPJurAkGeKZXOW2dQZdzq5Ue+tMnwLC0x1l9nS8lPW+6F
-         /CLnjyCC2w6OZoqOcwXUd3JxWX4S/gQDSR6xVY1RlKq0aguay4aG2bOxTRGpglya8q/Q
-         UsSDgomA4B6zXfCqQNV+8fs+e3FPPwn8izY2C/GFIpRApUevBgmIiqawdd0X1/OmyrxN
-         zA5kXPEKxS8kNmy3JmXZ2d5lJ0eK0KPGQPEgBpM/ipv/nLx4R5x3KE46BOtehb3w+m9y
-         EEIg==
-X-Gm-Message-State: ABuFfoicWKtYRkFLZ+FZlkmGtoz3qUwIgpBTpHmtpn1185MTdXJ3uRaY
-        igxe8R7PXkL4jQP8FKd26KCnxtkx8Gitd4RRQ3LgDA==
-X-Google-Smtp-Source: ACcGV60FonI3/3huGq+xvMGfkThwBAYfTvu6YHWut5zH3jJK5JHCDvuTWUjQShK5ekXtaS4Op1IhpvsyQ0oGjOkM9/g=
-X-Received: by 2002:a02:9643:: with SMTP id c61-v6mr4810423jai.37.1538652746078;
- Thu, 04 Oct 2018 04:32:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181004090654.32233-1-linus.walleij@linaro.org> <20181004105031.GD6412@sirena.org.uk>
-In-Reply-To: <20181004105031.GD6412@sirena.org.uk>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Oct 2018 13:32:13 +0200
-Message-ID: <CACRpkdZZHYSRXktPLHKRc4Afsegn4q3rOmcPMhXh5chC1jH-JQ@mail.gmail.com>
-Subject: Re: [PATCH] regulator: fixed: Use more standard GPIO binding
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thu, 4 Oct 2018 14:28:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:21439 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727278AbeJDS2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 14:28:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 04:35:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
+   d="scan'208";a="269440867"
+Received: from ssemen1x-mobl.ccr.corp.intel.com (HELO localhost) ([10.252.37.241])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Oct 2018 04:35:03 -0700
+Date:   Thu, 4 Oct 2018 14:35:02 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Message-ID: <20181004113502.GA12498@linux.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-13-tomas.winkler@intel.com>
+ <20181002005208.GH23753@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+ <20181003120141.GA7969@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 12:50 PM Mark Brown <broonie@kernel.org> wrote:
-> On Thu, Oct 04, 2018 at 11:06:54AM +0200, Linus Walleij wrote:
->
-> >  Optional properties:
-> > -- gpio: gpio to use for enable control
-> > +- gpios: gpio to use for enable control
->
-> Are we supposed to be able to have just plain gpios as a standards
-> conforming property or would best practice be to call it enable-gpios or
-> something?
+On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> > Sent: Wednesday, October 03, 2018 15:02
+> > To: Winkler, Tomas <tomas.winkler@intel.com>
+> > Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+> > <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+> > <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
+> > linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+> > Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+> > 
+> > On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+> > >
+> > >
+> > > >
+> > > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+> > > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
+> > > > > required by tpm-interface.c. It wraps the original open code
+> > implementation.
+> > > > > The original original tpm2_pcr_extend() function is renamed to
+> > > > > __tpm2_pcr_extend() and made static, it is called only from new
+> > > > > tpm2_pcr_extend().
+> > > > >
+> > > > > Fix warnings in __tpm2_pcr_extend()
+> > > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
+> > > > > integer expressions [-Wsign-compare]
+> > > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
+> > > > > integer expressions [-Wsign-compare]
+> > > > >
+> > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > >
+> > > > We do not want the signature change, especially because as we are
+> > > > working on getting Roberto's changes in and also because it has
+> > > > absolutely a zero gain. Who cares if those functions take different
+> > parameters? I don't.
+> > >
+> > > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
+> > specs. Please, let's finish one transformation and then move to another.
+> > > I understand that Roberto will have to rebase anyhow, if this series goes in
+> > first, if this is hard I can do it myself, it's trivial.
+> > >
+> > > Tomas
+> > 
+> > I'm happy to tune this minor stuff.
+> What minor stuff?  This patch is just okay, let's change the API in next round.
 
-Oh I didn't think of that really. The gpio-regulator indeed uses
-enable-gpio for the same thing. But it complicates things codewise,
-as the GPIO line is also optional. I'm a bit uncertain, I tend
-to think just "gpios" is fine when the usage is unambigous. but
-I don't know what the DT maintainers think.
+The patch is not okay because it does a completely unnecessary API
+change.
 
-Yours,
-Linus Walleij
+/Jarkko
