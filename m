@@ -2,161 +2,129 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA4BC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23ED4C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BEFC21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC10C20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:46:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vJVG2WuX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BEFC21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZPiz3O2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC10C20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeJECk1 (ORCPT
+        id S1727726AbeJEClb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:40:27 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37057 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeJECk0 (ORCPT
+        Thu, 4 Oct 2018 22:41:31 -0400
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:45674 "EHLO
+        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJEClb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:40:26 -0400
-Received: by mail-io1-f66.google.com with SMTP id m16-v6so4691311ioj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 12:45:41 -0700 (PDT)
+        Thu, 4 Oct 2018 22:41:31 -0400
+Received: by mail-qt1-f171.google.com with SMTP id e10-v6so201411qtq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 12:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=1CW1xtYMnKRE2dEASH2cpWl7IqrCtBVvjiSx7+lGCdg=;
-        b=vJVG2WuXvdjUgiwoVAeFlHw2UWkNhA086gz1E7K9wYo5eT00pXxDX3kBX5lQePcrwG
-         7+J3zjsuzND7UywJHxodMNVXuYkLOcuwZIkJ3brSIgkyj4sFBbRaFi6V34FR5kamku0M
-         GpHYeFeHifqaqp18TmUHfvGMohPJxgNpX6Z3QKTAju8vzHydhX38mwbIP7DsLmNVn9s6
-         ZV0sc8I0aq9XMsOg7EaxtQ9vw31JgpWgTssHkY8Ecl0TQuVKOGOVwu1HhYJL3ik3tm/H
-         M7IJlHAQRzD11f6C0zW0RKgbJsoUskmpdB46iVLkZHCnnhc4R6c9ZojobttdxheLAk03
-         PFLQ==
+        bh=G/+EA7bQ9/iq0TYaBp6k8OBwDdqPOFEpviVmZxk1obk=;
+        b=XZPiz3O2jJqE7onE8rmmdwtafuNEiYM/i7Mt51T29TLQtp0tD6cw1jkWf1CBxZQ5Hr
+         K2bgjnY2+haWYt3X6F7NUuYdAubD5QDW/uUQkyWuuM4zdWiLT66wCRRNSUgRHGagBuu4
+         swRGfeI4RAVea94o++or9+8SM7Xc6IuJJDeg40tZsgW2d8RLV7zXyNJaGSY3mj0xST/v
+         iV42oDg9QqmquZV6OfSgGjJ24wOFhdsMKujRk9F6JhQFCzbfXW1tciqVMyfpMSXZOgpq
+         fQWswPrKUW60WPOABI5Zqm+n32wQWscrsmE9Jiii+vQziLA7JqCAlY2qrOzEQAQJyRxh
+         c7cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1CW1xtYMnKRE2dEASH2cpWl7IqrCtBVvjiSx7+lGCdg=;
-        b=nLCK10Fmmy2ZYiHiE2CJrDUaTNbVrNUsdwTQPpNMPw4nha/qp92z18/pYBjKHtITNo
-         Bcky09pFfRfl6Lv69y3a1bflZScCZqKggZ7+HtZyWVAC4GyVbAAFK3aJ9SyiJh5x3BMg
-         fktf3Zd1ePe/RqUcJ1E0+dnK2A1nimk/vgpPX3TMxIZ4NEB8ZdEIzfgyYRfnKNcKWSEq
-         IwW16+3VStKA2CMtGMglzPw1UMbRzyOUfCPdjlREJoD9zs2gjqWHYjhagkB7J7ZEN7/7
-         a5tJUhXizkdJ64hfJFXVw/KBf6yrYHfR5KVcgCI7a50HTJmAwC82WOrsFIOIERb11rIK
-         UTSQ==
-X-Gm-Message-State: ABuFfogzCScStE8tTkyX3xOmHj9grhb2Lbhz8jIYr9MEU5cEubibfYbJ
-        OnMLKLlWDiWdfo7fUMiTANfL+/LT4SGPPfI/UvzRSg==
-X-Google-Smtp-Source: ACcGV60d2Djlr/xzk4r2bnSlqYQUYZLHh3stCrBSaAEaxw8HpZb//46GqRLoluSA+6+GLuKHSmeJzQdso5UePSC4UO0=
-X-Received: by 2002:a6b:500e:: with SMTP id e14-v6mr6126487iob.73.1538682340750;
- Thu, 04 Oct 2018 12:45:40 -0700 (PDT)
+        bh=G/+EA7bQ9/iq0TYaBp6k8OBwDdqPOFEpviVmZxk1obk=;
+        b=IqqXIdXp2gSBgj+kEpmH1e5Pg0TCMvdSxRx6jSh+fLTszVZrkNknGKHnE0WWcGJ+y1
+         /OOdVDdNAc82nMRSR+gSf8C39obTOvH+GtbR8c1O5Y460FppdLZj223azui2iQzSfHaE
+         aOVdjpprVx2i765bKFBO98Sa9Ey5EOIt2s6AVvrhfAf9+nWSuYrcTRNmEQqiPGYF5RqB
+         S3mFXUD6rVCSGiG22NvI46pNm56Mw7ZyGEa5jdg2hJwFpdso00m4lAQt40vviqXy3epI
+         +xbHkkhLNxZ7h5f3+I5ktVMKfn7UL9aTfKA/1sQ0Civ6UA+TRxuJiCSa1B0ct0x4xH96
+         4jIw==
+X-Gm-Message-State: ABuFfohJn24rEPHf0kjV1Kjx6YN3/j5fEPOrEZ7bSndbeoCCrGskNSgS
+        44Rtn2Q+PeXY/LFvXMkkmH+yZ3OGP8rmONGPRlc=
+X-Google-Smtp-Source: ACcGV61wz3SwjM5x/SHklykdDqD8RIkxT1hKfgG4DqDNxg6YE0vLjOHYE4lyF/kyy9Pcqs3Rqf+wf7UJXN2rYL4zD8M=
+X-Received: by 2002:a0c:87ba:: with SMTP id 55-v6mr6629634qvj.202.1538682406064;
+ Thu, 04 Oct 2018 12:46:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181004154749.111595-1-edumazet@google.com> <20181004185949.GA233675@dtor-ws>
- <CANn89iJMhGEkw13KrGbqrvGbznb45QZwdr7eLy_rUV6zitvs=Q@mail.gmail.com> <30074728-D1C4-46D4-8BF5-6AB8ECAE3EBD@gmail.com>
-In-Reply-To: <30074728-D1C4-46D4-8BF5-6AB8ECAE3EBD@gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Thu, 4 Oct 2018 12:45:29 -0700
-Message-ID: <CANn89i+Xoyjrjg_XcwAj9G7KP7CXt+CvpJ38Bj4O53j3sac4Xw@mail.gmail.com>
-Subject: Re: [PATCH] Input: mousedev - add a schedule point in mousedev_write()
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        linux-input@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
+ <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
+ <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
+ <20181004123400.GC30658@n2100.armlinux.org.uk> <CAFqt6zZPOM17QwmcWKF3F1gqkJm=2PxvuJ3naWuRXZGHc2HrEQ@mail.gmail.com>
+ <20181004181736.GB20842@bombadil.infradead.org> <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
+In-Reply-To: <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 4 Oct 2018 21:46:34 +0200
+Message-ID: <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux@armlinux.org.uk,
+        Robin van der Gracht <robin@protonic.nl>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Dave Airlie <airlied@linux.ie>, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
+        mhocko@suse.com, Dan Williams <dan.j.williams@intel.com>,
+        kirill.shutemov@linux.intel.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
+        riel@redhat.com, minchan@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, ying.huang@intel.com,
+        Andi Kleen <ak@linux.intel.com>, rppt@linux.vnet.ibm.com,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
+        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
+        mcgrof@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 12:38 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> On October 4, 2018 12:28:56 PM PDT, Eric Dumazet <edumazet@google.com> wrote:
-> >On Thu, Oct 4, 2018 at 11:59 AM Dmitry Torokhov
-> ><dmitry.torokhov@gmail.com> wrote:
-> >>
-> >> Hi Eric,
-> >>
-> >> On Thu, Oct 04, 2018 at 08:47:49AM -0700, Eric Dumazet wrote:
-> >> > syzbot was able to trigger rcu stalls by calling write()
-> >> > with large number of bytes.
-> >> >
-> >> > Add a cond_resched() in the loop to avoid this.
-> >>
-> >> I think this simply masks a deeper issue. The code fetches characters
-> >> from userspace in a loop, takes a lock, quickly places response in an
-> >> output buffer, and releases interrupt. I do not see why this should
-> >> cause stalls as we do not hold spinlock/interrupts off for extended
-> >> period of time.
-> >>
-> >> Adding Paul so he can straighten me out...
-> >>
-> >
-> >Well...
-> >
-> >write(fd, buffer, 0x7FFF0000);
-> >
-> >Takes between 20 seconds and 2 minutes depending on CONFIG options ....
->
-> That's fine even if it takes a couple of years. We are not holding spinlock for the entirety of this time, so we should get bumped off CPU at some point.
+Hi Souptick,
 
-Well, you are saying that we could get rid of all cond_resched() calls
-in the kernel.
+On Thu, Oct 4, 2018 at 8:49 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Thu, Oct 4, 2018 at 11:47 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > I think this is a bad plan.  What we should rather do is examine the current
+> > users of vm_insert_page() and ask "What interface would better replace
+> > vm_insert_page()?"
+> >
+> > As I've said to you before, I believe the right answer is to have a
+> > vm_insert_range() which takes an array of struct page pointers.  That
+> > fits the majority of remaining users.
+>
+> Ok, but it will take some time.
+> Is it a good idea to introduce the final vm_fault_t patch and then
+> start working on vm_insert_range as it will be bit time consuming ?
+>
 
-You should send patches asap ;)
+Well, why is there a rush? Development should be done in a patch
+series or a tree, and submitted as a whole, instead of sending partial
+patches.
 
->
-> >
-> >So either apply my patch, or add a limit on the max count, and
-> >possibly break legitimate user space ?
->
-> Legitimate users write a single character at a time and read response, so exciting after, let's say, 32 bytes would be fine. But I still want to understand why we have to do that.
->
-> >
-> >I dunno...
-> >
-> >> >
-> >> > Link: https://lkml.org/lkml/2018/8/23/1106
-> >> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> >> > Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
-> >> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >> > Cc: linux-input@vger.kernel.org
-> >> > ---
-> >> >  drivers/input/mousedev.c | 1 +
-> >> >  1 file changed, 1 insertion(+)
-> >> >
-> >> > diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
-> >> > index
-> >e08228061bcdd2f97aaadece31d6c83eb7539ae5..412fa71245afe26a7a8ad75705566f83633ba347
-> >100644
-> >> > --- a/drivers/input/mousedev.c
-> >> > +++ b/drivers/input/mousedev.c
-> >> > @@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file
-> >*file, const char __user *buffer,
-> >> >               mousedev_generate_response(client, c);
-> >> >
-> >> >               spin_unlock_irq(&client->packet_lock);
-> >> > +             cond_resched();
-> >> >       }
-> >> >
-> >> >       kill_fasync(&client->fasync, SIGIO, POLL_IN);
-> >> > --
-> >> > 2.19.0.605.g01d371f741-goog
-> >> >
-> >>
-> >> Thanks.
-> >>
-> >> --
-> >> Dmitry
->
->
-> Thanks.
->
-> --
-> Dmitry
+Also, not sure if you saw my comments/review: if the interface is not
+going to change, why the name change? Why can't we simply keep using
+vm_insert_page?
+
+Cheers,
+Miguel
