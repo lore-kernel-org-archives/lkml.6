@@ -2,156 +2,105 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976D6C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 516CBC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 483402082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0963C2082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:08:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxtKfn0Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483402082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxR9O46H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0963C2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeJDQ7r (ORCPT
+        id S1727740AbeJDRBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:59:47 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34832 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeJDQ7r (ORCPT
+        Thu, 4 Oct 2018 13:01:17 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33142 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbeJDRBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:59:47 -0400
-Received: by mail-lj1-f194.google.com with SMTP id o14-v6so7845708ljj.2;
-        Thu, 04 Oct 2018 03:07:13 -0700 (PDT)
+        Thu, 4 Oct 2018 13:01:16 -0400
+Received: by mail-ed1-f65.google.com with SMTP id g26-v6so8044887edp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:08:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1LMwMIpNo9BoxjsZCyB38K6u5kj58SlDOP+no+C7Q0I=;
-        b=kxtKfn0ZI7NKXRfdG4X+wE39J8SHLbwCcGicwEjFB5VHzw0gcf8coA6ChJyFAlak6u
-         2w+BqLy69jcDtgE/WDjlGKIeRU4KocxKN2QP7DAqWHfOHYilZ3jwyORJnbGBghb3gDGL
-         Tm/oE1mw1NaPFSFeH7gyd6cm6KPFg7bTLTcej8fggt/h9ETuJ4Vm3hOe4cs2+gFGqUtJ
-         mKCxSj7iojDwC0G48ANGWPNcO/7EvHHQDI0sfd+9wEVKzMWusiGjdrDo8UM5z1WNjflV
-         lWkLq2HLpZJwUQc2774Yz3ei1n7OXOSz2xGy5lhbfyDGfK3n3XMLT+w2XYtH17CayDEk
-         s7NQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZtPppqn0cObkHfFqeBrroPaPD+bDud26pGAf+e3d480=;
+        b=DxR9O46HwnBIfPX3F9oFvptUrwM3A7G5pfdRALBQ53/0nRfvMJgNQTc4mofz7HaBEV
+         BVXWc9XCmlJdhZDqpiwfGdFcCTOWE8z608PtGK4TCJ/ER/XltzyFHw8SklBHJdQoSKyD
+         yvI8cvQJSo3QrZuL0Puo/WeC6ChilgXhScacvobw/v/UETYeb4/db5+LvJ7PqqiKVcs8
+         h89nhu7dWtysd3YonEgPx4q1JsL6YrNRwhLI6nNWIY87FI0zrPF+fhQKj9B9sdmNp7sO
+         EEKjfJCXlOPWBCIKe8xldtwxuHa41T4tllyViBIZw5X/9ckkJDjEHHfLmFqk2BwMENlH
+         hUwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1LMwMIpNo9BoxjsZCyB38K6u5kj58SlDOP+no+C7Q0I=;
-        b=h5Hf440pVmT6zgkO2B08sJVbk7Hvk0XTELHWaovXcMnnaHNMTLGU57cXJSXJgX7tY2
-         tIrFDcxjKOJuJ3UElYfGz2DY1PIN5l0eSNXzhtgtIHKsKAGMLcAJY68gUXOTX1mSgPMY
-         nJubRE201bb9e39t1dtn3RUHTRGScUaHp7tZKFv+9gjFuCQ9g5aq8n33nJ0ZxCqREPhq
-         1hLgFwKr+LkwoT+NdIGpfGKbOtWuyYmZux2M137dpEKrsmAslmF59772JTeFukKPq7nS
-         WbgPAdu1RnCM+rGZeQuXCVrWuikHQoXEKY+oFStqV7FdUJ/gd6/QzD85nnRBd6XFgMPt
-         7E0Q==
-X-Gm-Message-State: ABuFfojDgHujlYDJHntf/RJiuTeH2qND4feRUiS6rIEBdIOtrlNjZj/F
-        RYqdKrgKo52fuiT6L0N/qlZOnaBT3ECGc1Tb7qhEGg==
-X-Google-Smtp-Source: ACcGV60akK9ptUZ/lg3Ywlg0eHEAZBlx3IivwmpPiyS+RNDYw5Px74tqGAHfzLGniMflCtgmcEkIPb4uisciLd8bzMk=
-X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr3735176ljj.30.1538647633054;
- Thu, 04 Oct 2018 03:07:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181003130951.19140-1-ricardo.ribalda@gmail.com>
- <20181003194658.zj6jkfmpbrkmnlen@kekkonen.localdomain> <CAPybu_0Og50WhkO2hHmg5cLQ6a2sx+KEp3_DOTKS=AJ2Shf3YQ@mail.gmail.com>
- <20181003221415.jgpeea5ligm7oyr6@kekkonen.localdomain>
-In-Reply-To: <20181003221415.jgpeea5ligm7oyr6@kekkonen.localdomain>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZtPppqn0cObkHfFqeBrroPaPD+bDud26pGAf+e3d480=;
+        b=YsxEMqkMfNay+02XUD3PcjfnfS5mzqi1IRLGw0tVv2GT7OIMnCT8JlaTlohdmsRJWN
+         glMB21lLHc1TV4CczNiOhBsdBSPc+Xn/9Xr6mdUP/RhQ8oYtqyO0ckBIspe3jAxOXJyX
+         2p5atdCK2Gj/mn11qZwq1tjgoKQ+ZWSvcXG+wz8qtD9dTc578e4B/OjBv9ks8Kb84SsV
+         rKz8xQWskrvEVZAXMKt3h9HvlCDiB1gGsomz3cIa6gaKjw8ICCWEa71wflTfl1vP0qM7
+         /XtYmpjgPdzxMljC3wms6ftAu/SRUFwBOYE6kLenb62vt2mpYVUiW1wEcH4t5+IXpr24
+         LIwA==
+X-Gm-Message-State: ABuFfohzWNdA/Ef5qt/XgY/SJPbppBhYCru9SWh9Ww41VK1+6q56hr9n
+        M01TlfJQf+gDnudJX4j4bmE=
+X-Google-Smtp-Source: ACcGV62TQ1KdTv/n20Y+rnNnP0NzX6aHEZYKO52vDqfX21uRpZZMMM0KONboR5fmGp+eCTUpo3DiCQ==
+X-Received: by 2002:a50:a706:: with SMTP id h6-v6mr7699457edc.290.1538647722005;
+        Thu, 04 Oct 2018 03:08:42 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id c27-v6sm1409426edc.4.2018.10.04.03.08.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 03:08:40 -0700 (PDT)
 From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Thu, 4 Oct 2018 12:06:56 +0200
-Message-ID: <CAPybu_2CPQFwuGF9Pbbnqe6KHCZzm_70+Zs2xs3iPsUgQqjECQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] [media] imx214: Add imx214 camera sensor driver
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>, jacopo@jmondi.org
-Content-Type: text/plain; charset="UTF-8"
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] mtd: physmap_of: Remove unused struct of_device_id
+Date:   Thu,  4 Oct 2018 12:08:38 +0200
+Message-Id: <20181004100838.12911-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari
-On Thu, Oct 4, 2018 at 12:14 AM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> On Wed, Oct 03, 2018 at 10:24:17PM +0200, Ricardo Ribalda Delgado wrote:
-> ...
-> > > > +static int imx214_enum_frame_size(struct v4l2_subdev *subdev,
-> > > > +                               struct v4l2_subdev_pad_config *cfg,
-> > > > +                               struct v4l2_subdev_frame_size_enum *fse)
-> > > > +{
-> > > > +     if (fse->code != IMX214_MBUS_CODE)
-> > > > +             return -EINVAL;
-> > > > +
-> > > > +     if (fse->index >= ARRAY_SIZE(imx214_modes))
-> > >
-> > > array_index_nospec() ?? I find it scary that you'd need that in drivers.
-> > > :-o
->
-> Uh... not needed.
->
-> The value is just sent back to the user as such so this is fine AFAICT.
->
-> > >
-> > > > +             return -EINVAL;
-> > > > +
-> > > > +     fse->min_width = fse->max_width = imx214_modes[fse->index].width;
-> > > > +     fse->min_height = fse->max_height = imx214_modes[fse->index].height;
-> > > > +
-> > > > +     return 0;
-> > > > +}
->
-> ...
->
-> > > > +     /*
-> > > > +      * WARNING!
-> > > > +      * Values obtained reverse engineering blobs and/or devices.
-> > > > +      * Ranges and functionality might be wrong.
-> > > > +      *
-> > > > +      * Sony, please release some register set documentation for the
-> > > > +      * device.
-> > > > +      *
-> > > > +      * Yours sincerely, Ricardo.
-> > > > +      */
-> > > > +     imx214->exposure = v4l2_ctrl_new_std(&imx214->ctrls, &imx214_ctrl_ops,
-> > > > +                                          V4L2_CID_EXPOSURE,
-> > > > +                                          0, 0xffff, 1, 0x0c70);
-> > >
-> > > The exposure is in lines so it can't exceed frame height + blanking.
-> > > There's a marginal, too. I don't know what it might be for this sensor
-> > > though. Usually it's small, such as 8 or 16. The image will almost
-> > > certainly be garbled if you exceed the allowed value.
-> > >Seems that this sensor
-> >
-> > On this sensor what I am experiencing instead of garbage is that the
-> > fps gets reduced. So I believe it is fine to
-> > set it up this way.
->
-> That's rather confusing as well. The user should explicitly need to change
-> fps first, rather than it happening as a side effect of a seemingly
-> unrelated control.
->
+This struct does not seem to be used anywhere on the code
 
-I'd rather maintain this behaviour until we get access to better documentation.
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/mtd/maps/physmap_of_gemini.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Currently I cannot change the fps on demand, just changing the
-exposure time, so I have no proper way of set/get fps
+diff --git a/drivers/mtd/maps/physmap_of_gemini.c b/drivers/mtd/maps/physmap_of_gemini.c
+index 830b1b7e702b..9df62ca721d5 100644
+--- a/drivers/mtd/maps/physmap_of_gemini.c
++++ b/drivers/mtd/maps/physmap_of_gemini.c
+@@ -44,11 +44,6 @@
+ 
+ #define FLASH_PARALLEL_HIGH_PIN_CNT	(1 << 20)	/* else low pin cnt */
+ 
+-static const struct of_device_id syscon_match[] = {
+-	{ .compatible = "cortina,gemini-syscon" },
+-	{ },
+-};
+-
+ int of_flash_probe_gemini(struct platform_device *pdev,
+ 			  struct device_node *np,
+ 			  struct map_info *map)
+-- 
+2.19.0
 
-
-
-> --
-> Regards,
->
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
-
-
-
---
-Ricardo Ribalda
