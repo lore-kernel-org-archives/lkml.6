@@ -2,146 +2,95 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055A4C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7BEC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985912083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:46:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4lV5Zpu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985912083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 576972083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 576972083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeJEAka (ORCPT
+        id S1727734AbeJEAlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:40:30 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36496 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbeJEAka (ORCPT
+        Thu, 4 Oct 2018 20:41:36 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38362 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727472AbeJEAlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:40:30 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y16so10857177wrw.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 10:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=OzoRTxYBLACAnCY2+UUdXOVE6XnKNsyyzO6S0yIWaO0=;
-        b=K4lV5Zpuh2Ff5Qny4d1dJsfsRS52KnEcQcd2KV6LqazWZXxd4VKKkMFfdxDBur44m2
-         9319fqJrzd7oP9aZGCk8da+oyERNrg6YfywjDgY2litJTms2gym6hU9dtFrrp4cABB/L
-         L9+M27g7NftV9tttfaFUEsbbup2ohP9SMU6XqjoEwRmoS+5kRneGeM228O/dVLSRDblx
-         gnsKCP3bA0J8sg7QXcW6GbgOr/V0204hW+mw6J4v8P/f34WzfqNIqhQaey5U08zR1D3J
-         Zy+JEXO1BwQp4y3Z5uEOf0FeI54oGuwMfnTPS/v+zxofPAW40DO8JFF2nKilKp1Ena/f
-         kl8w==
+        Thu, 4 Oct 2018 20:41:36 -0400
+Received: by mail-ot1-f67.google.com with SMTP id h15-v6so10026696otj.5;
+        Thu, 04 Oct 2018 10:47:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=OzoRTxYBLACAnCY2+UUdXOVE6XnKNsyyzO6S0yIWaO0=;
-        b=IdWdVBukgSJls/Ogv17+VPAhtIi2nDgRGy4hATyQaSXnyCZE2PWiDkEoh1VFyTKFGs
-         st0FdfpMhk3Wtu4dui9UFHV/CXlUte6MX4tAPNEl05uZGza/2Gor9uKOLpnd1owqshWx
-         11CYtrqFphRFI9X++Y/WmkCGAQ3kGfEFQULlTawtR0oyTC0cP/AiGeCLN131Q7/+FApT
-         ohAW65+AspCROIdBsQg9uIxsHc54sIIUFgA1Ajt72/WbEoiK/3Ty6yd6SNWg1rpI4zlJ
-         I19/if6qOepvjtX2ah5yzTKNKHEPxbORIRSTqk4nS0XNP3VenPo/QkFwZkXCn3sMyPPp
-         ZhPA==
-X-Gm-Message-State: ABuFfoiRtio5A5zKZ/ykdMGZ4gycMPeQFLz8ynRJxdf+FnXSngMCmGwu
-        WZG5+GpFB94TIjRgzpkSTGNfAqAEj0A=
-X-Google-Smtp-Source: ACcGV62vx6DFmTJ4e+nQtF7AQVWrVR0Y9pruVJdFWX0DPx44MyKvubMHJPu5mh6FXzyLdUouGQF7eQ==
-X-Received: by 2002:adf:e403:: with SMTP id g3-v6mr5376616wrm.96.1538675169439;
-        Thu, 04 Oct 2018 10:46:09 -0700 (PDT)
-Received: from minipc.home ([2a00:23c4:911f:4500:a5ab:58b7:ec39:bb8])
-        by smtp.gmail.com with ESMTPSA id p8sm5028131wrx.9.2018.10.04.10.46.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 10:46:08 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 18:52:25 +0100
-From:   Laurence Rochfort <laurence.rochfort@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        Todd Poynor <toddpoynor@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: gasket: Fix sparse "incorrect type in assignment"
- warnings.
-Message-ID: <20181004175225.GA22487@minipc.home>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8HCpyyxqmoao7fBg8aIBcW/4jZxbsY2lesZJ5z2xFw8=;
+        b=eFTD0CpqXX0cfv/TOxwUWXXPzkfgpXswbjUc0RmbVw/AEcVUet+kDvCByTxLN7MlKw
+         f6/UIrRngSbHEDBS67ejcuofOnVM2+A9sISrjznOAvvRt+qB+nhi3AoCCWefY8DvVRRk
+         Dkd5IueUZETGMAigR2g0xXtjpTfl2HVfNKZ+6ewnipzaQtDLu39PqFxOeHNA6oBRsnsA
+         YF4HiAzxMuuFGj2/wblfwL6ARB1vfrtVZngKa0sF+X3ycxo7opSNTx7lKionsRAczN9+
+         nf81XENw1leOq08rraxDx5/M7UUzWbdP60zuLxP2FsNA7cON1MOnDZspOzmWltvvJE7m
+         rexw==
+X-Gm-Message-State: ABuFfogvMjbEqoYe6jIXeU9onAlJnoQxdpE0atWVqWmLBmi7V9uG+rpv
+        iS/l94c4zD4AOYB4+UcKGfGA+gBFOYYPwqNXHUI=
+X-Google-Smtp-Source: ACcGV62Low7lWuAfJITLFWZIrQBw6TzYh8iVv+HKUypgoPm7mlpK5q3IvH0GIDm/gUx6ZvwG2+Ah6wbwFTcqoVy/hW0=
+X-Received: by 2002:a9d:7594:: with SMTP id s20-v6mr4516585otk.258.1538675234360;
+ Thu, 04 Oct 2018 10:47:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <61559514.Vym8FNvob2@aspire.rjw.lan> <CAPDyKFoUdQRUYQ0qb5WM=Bi-F_4Fe8VEPNYZGu2ezMPj_wxoPg@mail.gmail.com>
+In-Reply-To: <CAPDyKFoUdQRUYQ0qb5WM=Bi-F_4Fe8VEPNYZGu2ezMPj_wxoPg@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 4 Oct 2018 19:47:02 +0200
+Message-ID: <CAJZ5v0ih4Hn5W-dTzOayMyMfLMe=djKVhxBcoQ=7oJz6QnpTJQ@mail.gmail.com>
+Subject: Re: [PATCH] PM / core: Clear the direct_complete flag on errors
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>, alcooperx@gmail.com,
+        Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Silence the below sparse warnings by casting betwen u8 __iomem *, and
-void *.
+On Thu, Oct 4, 2018 at 3:23 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On 4 October 2018 at 11:08, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > If __device_suspend() returns early on an error or pending wakeup
+> > and the power.direct_complete flag has been set for the device
+> > already, the subsequent device_resume() will be confused by it
+> > and it will call pm_runtime_enable() incorrectly, as runtime PM
+> > has not been disabled for the device by __device_suspend().
+>
+> I think it would be fair to mention that is related to the async
+> suspend path, in dpm_suspend().
 
-warning: incorrect type in assignment (different address spaces)
-   expected unsigned char [noderef] [usertype] <asn:2>*virt_base
-   got void *[assigned] mem
-warning: incorrect type in argument 3 (different address spaces)
-   expected void *cpu_addr
-   got unsigned char [noderef] [usertype] <asn:2>*virt_base
+OK, fair enough.
 
-Signed-off-by: Laurence Rochfort <laurence.rochfort@gmail.com>
----
- drivers/staging/gasket/gasket_page_table.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > To avoid that, clear power.direct_complete if __device_suspend()
+> > is not going to disable runtime PM for the device before returning.
+>
+> Overall, by looking at the behavior in dpm_suspend() of async
+> suspended devices, it does look a bit fragile to me.
+>
+> My worries is that we put asynced suspended devices in the
+> dpm_suspended_list, no matter if the device was successfully suspended
+> or not. This differs from the no-async path.
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index d4c5f8a..7f5e5b3 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -1278,7 +1278,7 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- 				 dma_addr_t *dma_address, u64 index)
- {
- 	dma_addr_t handle;
--	void *mem;
-+	u8 __iomem *mem;
- 	int j;
- 	unsigned int num_pages = (size + PAGE_SIZE - 1) / PAGE_SIZE;
- 	const struct gasket_driver_desc *driver_desc =
-@@ -1290,7 +1290,7 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- 	if (num_pages == 0)
- 		return -EINVAL;
- 
--	mem = dma_alloc_coherent(gasket_get_device(gasket_dev),
-+	mem = (u8 __iomem *)dma_alloc_coherent(gasket_get_device(gasket_dev),
- 				 num_pages * PAGE_SIZE, &handle, 0);
- 	if (!mem)
- 		goto nomem;
-@@ -1325,7 +1325,7 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- nomem:
- 	if (mem) {
- 		dma_free_coherent(gasket_get_device(gasket_dev),
--				  num_pages * PAGE_SIZE, mem, handle);
-+				  num_pages * PAGE_SIZE, (void __force *)mem, handle);
- 	}
- 
- 	if (gasket_dev->page_table[index]->coherent_pages) {
-@@ -1353,7 +1353,7 @@ int gasket_free_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- 	if (gasket_dev->coherent_buffer.length_bytes) {
- 		dma_free_coherent(gasket_get_device(gasket_dev),
- 				  gasket_dev->coherent_buffer.length_bytes,
--				  gasket_dev->coherent_buffer.virt_base,
-+				  (void __force *)gasket_dev->coherent_buffer.virt_base,
- 				  gasket_dev->coherent_buffer.phys_base);
- 		gasket_dev->coherent_buffer.length_bytes = 0;
- 		gasket_dev->coherent_buffer.virt_base = NULL;
-@@ -1372,7 +1372,7 @@ void gasket_free_coherent_memory_all(
- 	if (gasket_dev->coherent_buffer.length_bytes) {
- 		dma_free_coherent(gasket_get_device(gasket_dev),
- 				  gasket_dev->coherent_buffer.length_bytes,
--				  gasket_dev->coherent_buffer.virt_base,
-+				  (void __force *)gasket_dev->coherent_buffer.virt_base,
- 				  gasket_dev->coherent_buffer.phys_base);
- 		gasket_dev->coherent_buffer.length_bytes = 0;
- 		gasket_dev->coherent_buffer.virt_base = NULL;
--- 
-2.9.5
+That's because this was the most straightforward way to organize that
+(otherwise you need to worry about the list locking with respect to
+the async suspends etc and you really need to preserve the ordering
+there).
 
+> In the long run, maybe we should change that instead?
+
+Is there anything wrong with it really?
