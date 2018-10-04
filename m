@@ -2,93 +2,183 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2853BC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DB9C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9AF0213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9AF0213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BE4C420877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:04:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cTfc4tny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4C420877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeJEB7N (ORCPT
+        id S1727644AbeJEB7P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:59:13 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.251]:12783 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727432AbeJEB7N (ORCPT
+        Thu, 4 Oct 2018 21:59:15 -0400
+Received: from mail.efficios.com ([167.114.142.138]:59606 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeJEB7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:59:13 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id C85EE14483B
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 14:04:36 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 88vMgRotrkBj688vMgYfw7; Thu, 04 Oct 2018 14:04:36 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:57534 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g88vL-001K0j-Kw; Thu, 04 Oct 2018 14:04:36 -0500
-Date:   Thu, 4 Oct 2018 21:04:31 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+        Thu, 4 Oct 2018 21:59:14 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 80786243D41;
+        Thu,  4 Oct 2018 15:04:37 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id tzb9BZXz_C1w; Thu,  4 Oct 2018 15:04:36 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 9B7B0243D3C;
+        Thu,  4 Oct 2018 15:04:36 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9B7B0243D3C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1538679876;
+        bh=+Lwqq2mBS4UGvI1Cv138bWTblHLGUaEQAE3gS9a6zgA=;
+        h=From:To:Date:Message-Id;
+        b=cTfc4tnyIKZkgD7/1XM+12HXw7dOTKK1klfS955EInus20oaDV2t8kI8QN3N7c0lY
+         NRCvFFgWnPFcLW+XJBzO67c0aWGoD72ZFmhXorFHprwhNYcdfaHFI/cL0C39qRq9bY
+         2HszdwmBHhCuqubhuPJ4ljKpm1kJtmXTD7+5zI+2ivkiGaoAXZKMwb+acRtxfEKKaH
+         G0ZNchtakhf7y9jUkUOhdQOU8Y7GTxqp0U1vjsjZdd7yBqNPEQvBsY4bxz6Q4G4EjT
+         4nuBn6uv3uPW9j6F1I3zwP6tnMsY3lLWW9iPCuhkdYNeth0MdkKQ88PUiQdjY27agK
+         r7NVfM6ZvF/VQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id HceUTtCWa214; Thu,  4 Oct 2018 15:04:36 -0400 (EDT)
+Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 2DE8B243D36;
+        Thu,  4 Oct 2018 15:04:36 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     stable@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] parport: parport_pc: Mark expected switch fall-through
-Message-ID: <20181004190431.GA20196@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g88vL-001K0j-Kw
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:57534
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joel Fernandes <joelaf@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        linux-kselftest@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Chris Lameter <cl@linux.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Paul Turner <pjt@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Maurer <bmaurer@fb.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH backport for 4.18] rseq/selftests: fix parametrized test with -fpie
+Date:   Thu,  4 Oct 2018 15:04:30 -0400
+Message-Id: <20181004190430.812-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+commit ce01a1575f45bf319e374592656441021a7f5823 upstream.
 
-Addresses-Coverity-ID: 114730 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On x86-64, the parametrized selftest code for rseq crashes with a
+segmentation fault when compiled with -fpie. This happens when the
+param_test binary is loaded at an address beyond 32-bit on x86-64.
+
+The issue is caused by use of a 32-bit register to hold the address
+of the loop counter variable.
+
+Fix this by using a 64-bit register to calculate the address of the
+loop counter variables as an offset from rip.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Acked-by: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: <stable@vger.kernel.org> # v4.18
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- drivers/parport/parport_pc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/rseq/param_test.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-index 380916b..9c8249f 100644
---- a/drivers/parport/parport_pc.c
-+++ b/drivers/parport/parport_pc.c
-@@ -1667,7 +1667,7 @@ static int parport_ECP_supported(struct parport *pb)
- 	default:
- 		printk(KERN_WARNING "0x%lx: Unknown implementation ID\n",
- 			pb->base);
--		/* Assume 1 */
-+		/* Fall through - Assume 1 */
- 	case 1:
- 		pword = 1;
- 	}
+diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
+index 615252331813..4bc071525bf7 100644
+--- a/tools/testing/selftests/rseq/param_test.c
++++ b/tools/testing/selftests/rseq/param_test.c
+@@ -56,15 +56,13 @@ unsigned int yield_mod_cnt, nr_abort;
+ 			printf(fmt, ## __VA_ARGS__);	\
+ 	} while (0)
+ 
+-#if defined(__x86_64__) || defined(__i386__)
++#ifdef __i386__
+ 
+ #define INJECT_ASM_REG	"eax"
+ 
+ #define RSEQ_INJECT_CLOBBER \
+ 	, INJECT_ASM_REG
+ 
+-#ifdef __i386__
+-
+ #define RSEQ_INJECT_ASM(n) \
+ 	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
+ 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
+@@ -76,9 +74,16 @@ unsigned int yield_mod_cnt, nr_abort;
+ 
+ #elif defined(__x86_64__)
+ 
++#define INJECT_ASM_REG_P	"rax"
++#define INJECT_ASM_REG		"eax"
++
++#define RSEQ_INJECT_CLOBBER \
++	, INJECT_ASM_REG_P \
++	, INJECT_ASM_REG
++
+ #define RSEQ_INJECT_ASM(n) \
+-	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG "\n\t" \
+-	"mov (%%" INJECT_ASM_REG "), %%" INJECT_ASM_REG "\n\t" \
++	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
++	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
+ 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
+ 	"jz 333f\n\t" \
+ 	"222:\n\t" \
+@@ -86,10 +91,6 @@ unsigned int yield_mod_cnt, nr_abort;
+ 	"jnz 222b\n\t" \
+ 	"333:\n\t"
+ 
+-#else
+-#error "Unsupported architecture"
+-#endif
+-
+ #elif defined(__ARMEL__)
+ 
+ #define RSEQ_INJECT_INPUT \
 -- 
-2.7.4
+2.17.1
 
