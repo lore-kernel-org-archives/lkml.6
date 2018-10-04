@@ -2,121 +2,141 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271D9C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC01EC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2F452087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59AA20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="ZeBFcSu2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2F452087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z2SdoDqv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59AA20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbeJEDdg (ORCPT
+        id S1728010AbeJEDeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:33:36 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:33974 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbeJEDdf (ORCPT
+        Thu, 4 Oct 2018 23:34:21 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36937 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727536AbeJEDeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:33:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gsrVQYqOvt6bHEaGNBZ3ivI+imRg6+0o4MIOMQo5To4=; b=ZeBFcSu2Hx1koLT2PIh73dYHu
-        jPtkOI5GZ4A3vQqPOip3WbsbqBQuOXL6a7pl6sVMRKQvigEUWEv/gj1sX0JHgt2HZY8KHZaBmYftz
-        I8SKgTmAGsw5/qS9qdNkhfI02qaMqmMFGnPNVvdBLfMciucd4zBaYijGNIzUD4sSQKWhk=;
-Received: from p200300ccfbcbd5001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcb:d500:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g8AOG-0007Gy-FE; Thu, 04 Oct 2018 22:38:32 +0200
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g8AOG-0005mE-71; Thu, 04 Oct 2018 22:38:32 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 2/2] arm: omap_hwmod disable ick autoidling when a hwmod requires that
-Date:   Thu,  4 Oct 2018 22:38:17 +0200
-Message-Id: <20181004203817.22101-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181004203817.22101-1-andreas@kemnade.info>
-References: <20181004203817.22101-1-andreas@kemnade.info>
+        Thu, 4 Oct 2018 23:34:21 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y11-v6so586354wrd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 13:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=P2SzKngWQmTMeesDAsT186A/MDilvXbaxeJYoWc4fkU=;
+        b=Z2SdoDqvK8QxWTqP+KfQ29zhUCFsyashc6WPJBoudEivDbSJVPbwBYKCtKpGzNzuNk
+         vgVDQmBLULbww4q17Jo0C7VIhmv3Usmv8y5ZTAEn57nvbIXuuE6HJlGHfzcMVBL/DorE
+         wuVfMKMAUChf7ue3mA+rIpySyI/X5XUpCa4kQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=P2SzKngWQmTMeesDAsT186A/MDilvXbaxeJYoWc4fkU=;
+        b=SRsBO0SwyseWW0X1m3qNzvoNucnhEjar9nve386Jh6nr6aUjbAaGUuzVtbAKjguhj4
+         tn6haUwtAyLKr9UWorqblRcMmGnspv2O9ykLX90CRO+4vX/X87HaG3CqeCZ7RrPro/YG
+         C3/1UkiaIFtwUQvmrdG7MUtieDjovtr37Mn7FZeqATb7m8ozrlWo4e1LbA1Q2MCuhxzK
+         EBWtz3/cA06x+/QUrs9TdoNMnMl3MNyQt+JW0oyDQFmwZQR7lv22a+XGBYQZYHtBqicH
+         vG6X9tsZaFd7XohtJq99xv5exmJEk5QMfSvJIyPk6PP8JIrsxKWmDmf2KPn/k58gd78u
+         6kEQ==
+X-Gm-Message-State: ABuFfoh/tpcSTIR8U+xw0ns61f9xdDvfeWaEzVXR6NYoETEa33pIfSOw
+        h/xXhcmoM1JrkteWUH5i00gwBg==
+X-Google-Smtp-Source: ACcGV602v6+/4N1X2jxglUp8M4284OQAtJQfxYTbVhNaOBCtd8Az461hiqVXbjOgEPWmVQJ82Mwhfg==
+X-Received: by 2002:a5d:41d0:: with SMTP id e16-v6mr6527020wrq.8.1538685562876;
+        Thu, 04 Oct 2018 13:39:22 -0700 (PDT)
+Received: from [192.168.0.100] (146-241-9-213.dyn.eolo.it. [146.241.9.213])
+        by smtp.gmail.com with ESMTPSA id x8-v6sm603753wrd.54.2018.10.04.13.39.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 13:39:21 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1538683746.230807.9.camel@acm.org>
+Date:   Thu, 4 Oct 2018 22:39:20 +0200
+Cc:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
+        Mel Gorman <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A017CAC7-41E6-4BB3-AC31-5EB524276138@linaro.org>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+ <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1538582091.205649.20.camel@acm.org> <20181004202553.71c2599c@alans-desktop>
+ <1538683746.230807.9.camel@acm.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
-that makes hwmods working properly which cannot handle
-autoidle properly in lower power states.
-Affected is e. g. the omap_hdq.
-Since an ick might have mulitple users, autoidle is disabled
-when an individual user requires that rather than in
-_setup_iclk_autoidle. dss_ick is an example for that.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index bb641e6c93d0..0078b0e1d242 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -986,8 +986,10 @@ static int _enable_clocks(struct omap_hwmod *oh)
- 		clk_enable(oh->_clk);
- 
- 	list_for_each_entry(os, &oh->slave_ports, node) {
--		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-+		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
-+			omap2_clk_deny_idle(os->_clk);
- 			clk_enable(os->_clk);
-+		}
- 	}
- 
- 	/* The opt clocks are controlled by the device driver. */
-@@ -1039,8 +1041,10 @@ static int _disable_clocks(struct omap_hwmod *oh)
- 		clk_disable(oh->_clk);
- 
- 	list_for_each_entry(os, &oh->slave_ports, node) {
--		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-+		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
- 			clk_disable(os->_clk);
-+			omap2_clk_allow_idle(os->_clk);
-+		}
- 	}
- 
- 	if (oh->flags & HWMOD_OPT_CLKS_NEEDED)
-@@ -2410,9 +2414,13 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
- 			continue;
- 
- 		if (os->flags & OCPIF_SWSUP_IDLE) {
--			/* XXX omap_iclk_deny_idle(c); */
-+			/*
-+			 * we might have multiple users of one iclk with
-+			 * different requirements, disable autoidle when
-+			 * the module is enabled, e.g. dss iclk
-+			 */
- 		} else {
--			/* XXX omap_iclk_allow_idle(c); */
-+			/* we are enabling autoidle afterwards anyways */
- 			clk_enable(os->_clk);
- 		}
- 	}
--- 
-2.11.0
+> Il giorno 04 ott 2018, alle ore 22:09, Bart Van Assche =
+<bvanassche@acm.org> ha scritto:
+>=20
+> On Thu, 2018-10-04 at 20:25 +0100, Alan Cox wrote:
+>>> I agree with Jens that it's best to leave it to the Linux =
+distributors to
+>>> select a default I/O scheduler.
+>>=20
+>> That assumes such a thing exists. The kernel knows what devices it is
+>> dealing with. The kernel 'default' ought to be 'whatever is usually =
+best
+>> for this device'. A distro cannot just pick a correct single default
+>> because NVME and USB sticks are both normal and rather different in =
+needs.
+>=20
+> Which I/O scheduler works best also depends which workload the user =
+will run.
+> BFQ has significant advantages for interactive workloads like video =
+replay
+> with concurrent background I/O but probably slows down kernel builds.
+
+No, kernel build is, for evident reasons, one of the workloads I cared
+most about.  Actually, I tried to focus on all my main
+kernel-development tasks, such as also git checkout, git merge, git
+grep, ...
+
+According to my test results, with BFQ these tasks are at least as
+fast as, or, in most system configurations, much faster than with the
+other schedulers.  Of course, at the same time the system also remains
+responsive with BFQ.
+
+You can repeat these tests using one of my first scripts in the S
+suite: kern_dev_tasks_vs_rw.sh (usually, the older the tests, the more
+hypertrophied the names I gave :) ).
+
+I stopped sharing also my kernel-build results years ago, because I
+went on obtaining the same, identical good results for years, and I'm
+aware that I tend to show and say too much stuff.
+
+Thanks,
+Paolo
+
+> That's
+> why I'm not sure whether the kernel should select the default I/O =
+scheduler.
+>=20
+> Bart.
 
