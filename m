@@ -2,94 +2,286 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 982EEC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7727EC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5194721470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5194721470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 337D621470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:40:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337D621470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeJDPcE (ORCPT
+        id S1727369AbeJDPcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:32:04 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40207 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbeJDPcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:32:04 -0400
-Received: by mail-ot1-f68.google.com with SMTP id w67so8356697ota.7;
-        Thu, 04 Oct 2018 01:39:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=axIFo+cUgSvH1vO5kg9LM4Taav9GMLA9ueuh1F6HlKs=;
-        b=CE6lvrW3kzxt1iaZljbfNVLQ6qHQMNVEEI2KXncN59N5p3xeaaetCy86GwEiZOYkC6
-         Wo9qkVE+uu9fAJXI/4wXH/RZJx6y58e9VN062IIh+Rm/bN28P5coLelu/YH/3kKtVsm9
-         rcvydVJF88xkskM4wOTNCib5ntZOpdaBL2XO33dRqu7Kb64d1YXE5jeRFeavhbFMNNVO
-         Ijuhjn0svLYzhyR4f5aHmahJqrQCls7Fv1HTpxcmgU4MUM9KGieovXPPIOwtXvU5gYyc
-         rICvd45xQVChMRb7Bju/2ahXnHFB17LDmmWkFARlU1pdrvgWXlbsNT1yLbWFg+PXk+rT
-         FoWQ==
-X-Gm-Message-State: ABuFfoj4GO69Y8n8Hgl9yIg1B6hCNsUtBKcpbAou+4q4fRxdQfjtImBF
-        QdfmElBYUf16/3EMBjoJUjKCmhkk0UJWBhWVfPw=
-X-Google-Smtp-Source: ACcGV62gYrcAYdXmoXp8KaUL3IIKvrIvnpySbLXp80gTK41jfj520ie0I6heDJuMrvVrdECRSIU6BtnbPlsaY37Osb4=
-X-Received: by 2002:a9d:7594:: with SMTP id s20-v6mr3205449otk.258.1538642393801;
- Thu, 04 Oct 2018 01:39:53 -0700 (PDT)
+        Thu, 4 Oct 2018 11:32:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25753 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726857AbeJDPcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:32:21 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9585630014CB;
+        Thu,  4 Oct 2018 08:40:11 +0000 (UTC)
+Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A0E8A60C45;
+        Thu,  4 Oct 2018 08:40:08 +0000 (UTC)
+Subject: Re: [PATCH v6 00/18] kvm: arm64: Dynamic IPA and 52bit IPA
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
+        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180926163258.20218-1-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <9cd03f6e-7738-0ad5-3eb6-4013ef0d3a1f@redhat.com>
+Date:   Thu, 4 Oct 2018 10:40:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20181003143824.13059-1-ulf.hansson@linaro.org>
-In-Reply-To: <20181003143824.13059-1-ulf.hansson@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 4 Oct 2018 10:39:42 +0200
-Message-ID: <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM) (a subset)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180926163258.20218-1-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 04 Oct 2018 08:40:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 4:39 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> I have digested the review comments so far, including a recent offlist chat
-> with with Lorenzo Pieralisi around the debatable PSCI changes. More or less I
-> have a plan for how to move forward.
->
-> However, to avoid re-posting non-changed patches over and over again, I decided
-> to withhold the more debatable part from this v9, hence this is not the complete
-> series to make things play. In v9, I have just included the trivial changes,
-> which are either already acked/reviewed or hopefully can be rather soon/easily.
->
-> My hope is to get this queued for v4.20, to move things forward. I know it's
-> late, but there are more or less nothing new here since v8.
+Hi Suzuki,
 
-I have no problems with the first three patches in this series, so I
-can apply them right away.  Do you want me to do that?
+On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
+> 
+> The physical address space size for a VM (IPA size) on arm/arm64 is
+> limited to a static limit of 40bits. This series adds support for
+> using an IPA size specific to a VM, allowing to use a size supported
+> by the host (based on the host kernel configuration and CPU support).
+> The default size is fixed to 40bits. On arm64, we can allow the limit
+> to be lowered (limiting the number of levels in stage2 to 2, to prevent
+> splitting the host PMD huge pages at stage2). We also add support for
+> handling 52bit IPA addresses (where supported) added by Arm v8.2
+> extensions.
+> 
+> We need to set the IPA limit as early as the VM creation to keep the
+> code simpler to avoid sprinkling checks everywhere to ensure that the
+> IPA is configured. We encode the IPA size in the machine_type
+> argument to KVM_CREATE_VM ioctl. Bits [7-0] of the type are reserved
+> for the IPA size. The availability of this feature is advertised by a
+> new cap KVM_CAP_ARM_VM_IPA_SIZE. When supported, this capability
+> returns the maximum IPA shift supported by the host. The supported IPA
+> size on a host could be different from the system's PARange indicated
+> by the CPUs (e.g, kernel limit on the PA size).
+> 
+> Supporting different IPA size requires modification to the stage2 page
+> table code. The arm64 page table level helpers are defined based on the
+> page table levels used by the host VA. So, the accessors may not work
+> if the guest uses more number of levels in stage2 than the stage1
+> of the host.  The previous versions (v1 & v2) of this series refactored
+> the stage1 page table accessors to reuse the low-level accessors for an
+> independent stage2 table. However, due to the level folding in the
+> generic code, the types are redefined as well. i.e, if the PUD is
+> folded, the pud_t could be defined as :
+> 
+>  typedef struct { pgd_t pgd; } pud_t;
+> 
+> similarly for pmd_t.  So, without stage1 independent page table entry
+> types for stage2, we could be dealing with a different type for level
+>  0-2 entries. This is practically fine on arm/arm64 as the entries
+> have similar format and size and we always use the appropriate
+> accessors to get the raw value (i.e, pud_val/pmd_val etc). But not
+> ideal for a solution upstream. So, this version caps the stage2 page
+> table levels to that of the stage1. This has the following impact on
+> the IPA support for various pagesize/host-va combinations :
+> 
+> 
+> x-----------------------------------------------------x
+> | host\ipa    | 40bit | 42bit | 44bit | 48bit | 52bit |
+> -------------------------------------------------------
+> | 39bit-4K    |  y    |   y   |  n    |   n   |  n/a  |
+> -------------------------------------------------------
+> | 48bit-4K    |  y    |   y   |  y    |   y   |  n/a  |
+> -------------------------------------------------------
+> | 36bit-16K   |  y    |   n   |  n    |   n   |  n/a  |
+> -------------------------------------------------------
+> | 47bit-16K   |  y    |   y   |  y    |   y   |  n/a  |
+> -------------------------------------------------------
+> | 48bit-4K    |  y    |   y   |  y    |   y   |  n/a  |
+> -------------------------------------------------------
+> | 42bit-64K   |  y    |   y   |  y    |   n   |  n    |
+> -------------------------------------------------------
+> | 48bit-64K   |  y    |   y   |  y    |   y   |  y    |
+> x-----------------------------------------------------x
+> 
+> Or the following list shows what cannot be supported :
+> 
+>  39bit-4K host  | [44 - 48]
+>  36bit-16K host | [41 - 48]
+>  42bit-64K host | [47 - 52]
+> 
+> which is not really bad. We can pursue the independent stage2
+> page table support and lift the restriction once we get there.
+> Given there is a proposal for new generic page table walker [0],
+> it would make sense to make our efforts in sync with it to avoid
+> diverting from a common API.
+> 
+> 52bit support is added for VGIC (including ITS emulation) and handling
+> of PAR, HPFAR registers.
+> 
+> The series applies on 4.19-rc4. A tree is available here:
+> 
+> 	 git://linux-arm.org/linux-skp.git ipa52/v6
+> 
+> Tested with
+>   - Modified kvmtool, which can only be used for (patches included in
+>     the series for reference / testing):
+>     * with virtio-pci upto 44bit PA (Due to 4K page size for virtio-pci
+>       legacy implemented by kvmtool)
+>     * Upto 48bit PA with virtio-mmio, due to 32bit PFN limitation.
+>   - Hacked Qemu (boot loader support for highmem, IPA size support)
+>     * with virtio-pci GIC-v3 ITS & MSI upto 52bit on Foundation model.
+>     Also see [1] for Qemu support.
+> 
+> [0] https://lkml.org/lkml/2018/4/24/777
+> [1] https://lists.gnu.org/archive/html/qemu-devel/2018-06/msg05759.html
+> 
+> Change since v5:
+>  - Don't raise the IPA Limit to 40bits on systems with lower PA size.
+>    Doesn't break backward compatibility, we still allow KVM_CREATE_VM
+>    to succeed with "0" as the IPA size (40bits). But prevent specifying
+>    40bit explicitly, when the limit is lower.
+>  - Rename CAP, KVM_CAP_ARM_VM_PHYS_SHIFT => KVM_CAP_ARM_VM_IPA_SIZE
+>    and helper, KVM_VM_TYPE_ARM_VM_PHY_SHIFT => KVM_VM_TYPE_ARM_VM_IPA_SIZE
+>  - Update Documentation of the API
+>  - Update comments and commit description as reported by Eric
+>  - Set the missing TCR_T0SZ in patch "kvm: arm64: Configure VTCR_EL2 per VM"
+>  - Fix bits for CBASER_ADDRESS mask, GITS_CBASER_ADDRESS()
+> 
+> Changes since V4:
+>  - Rebased on v4.19-rc3
+>  - Dropped virtio patches queued already by mst.
+>  - Collect Acks from Christoffer
+>  - Restrict IPA configuration support to arm64 only
+>  - Use KVM_CAP_ARM_VM_PHYS_SHIFT for detecting the support for
+>    IPA size configuration along with the limit on the IPA for the host.
+>  - Update comments on __load_guest_stage2
+>  - Add comment about the default value for unknown PARange values.
+>  - Update Documentation of the API
+> 
+> Changes since V3:
+>  - Use per-VM VTCR instead per-VM private VTCR bits
+>  - Allow IPA less than 40bits
+>  - Split the patch adding support for stage2 dynamic page tables
+>  - Rearrange the series to keep the userspace API at the end, which
+>    needs further discussion.
+>  - Collect Reviews/Acks from Eric & Marc
+> 
+> Changes since V2:
+>  - Drop "refactoring of host page table helpers" and restrict the IPA size
+>    to make sure stage2 doesn't use more page table levels than that of the host.
+>  - Load VTCR for TLB operations on behalf of the VM (Pointed-by: James Morse)
+>  - Split a couple of patches to make them easier to review.
+>  - Fall back to normal (non-concatenated) entry level page table support if
+>    possible.
+>  - Bump the IOCTL number
+> 
+> Changes since V1:
+>  - Change the userspace API for configuring VM to encode the IPA
+>    size in the VM type.  (suggested by Christoffer)
+>  - Expose the IPA limit on the host via ioctl on /dev/kvm
+>  - Handle 52bit addresses in PAR & HPFAR
+>  - Drop patch changing the life time of stage2 PGD
+>  - Rename macros for 48-to-52 bit conversion for GIC ITS BASER.
+>    (suggested by Christoffer)
+>  - Split virtio PFN check patches and address comments.
+> 
+> 
+> Kristina Martsenko (1):
+>   vgic: Add support for 52bit guest physical address
+> 
+> Suzuki K Poulose (17):
+>   kvm: arm/arm64: Fix stage2_flush_memslot for 4 level page table
+>   kvm: arm/arm64: Remove spurious WARN_ON
+>   kvm: arm64: Add helper for loading the stage2 setting for a VM
+>   arm64: Add a helper for PARange to physical shift conversion
+>   kvm: arm64: Clean up VTCR_EL2 initialisation
+>   kvm: arm/arm64: Allow arch specific configurations for VM
+>   kvm: arm64: Configure VTCR_EL2 per VM
+>   kvm: arm/arm64: Prepare for VM specific stage2 translations
+>   kvm: arm64: Prepare for dynamic stage2 page table layout
+>   kvm: arm64: Make stage2 page table layout dynamic
+>   kvm: arm64: Dynamic configuration of VTTBR mask
+>   kvm: arm64: Configure VTCR_EL2.SL0 per VM
+>   kvm: arm64: Switch to per VM IPA limit
+>   kvm: arm64: Add 52bit support for PAR to HPFAR conversoin
+>   kvm: arm64: Set a limit on the IPA size
+>   kvm: arm64: Limit the minimum number of page table levels
+>   kvm: arm64: Allow tuning the physical address size for VM
+> 
+>  Documentation/virtual/kvm/api.txt             |  31 +++
+>  arch/arm/include/asm/kvm_arm.h                |   3 +-
+>  arch/arm/include/asm/kvm_host.h               |   7 +
+>  arch/arm/include/asm/kvm_mmu.h                |  15 +-
+>  arch/arm/include/asm/stage2_pgtable.h         |  50 ++--
+>  arch/arm64/include/asm/cpufeature.h           |  20 ++
+>  arch/arm64/include/asm/kvm_arm.h              | 157 +++++++++---
+>  arch/arm64/include/asm/kvm_asm.h              |   2 -
+>  arch/arm64/include/asm/kvm_host.h             |  16 +-
+>  arch/arm64/include/asm/kvm_hyp.h              |  10 +
+>  arch/arm64/include/asm/kvm_mmu.h              |  42 +++-
+>  arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 ----
+>  arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 ---
+>  arch/arm64/include/asm/stage2_pgtable.h       | 236 +++++++++++++-----
+>  arch/arm64/kvm/hyp/Makefile                   |   1 -
+>  arch/arm64/kvm/hyp/s2-setup.c                 |  90 -------
+>  arch/arm64/kvm/hyp/switch.c                   |   4 +-
+>  arch/arm64/kvm/hyp/tlb.c                      |   4 +-
+>  arch/arm64/kvm/reset.c                        | 103 ++++++++
+>  include/linux/irqchip/arm-gic-v3.h            |   5 +
+>  include/uapi/linux/kvm.h                      |  10 +
+>  virt/kvm/arm/arm.c                            |   9 +-
+>  virt/kvm/arm/mmu.c                            | 120 ++++-----
+>  virt/kvm/arm/vgic/vgic-its.c                  |  36 +--
+>  virt/kvm/arm/vgic/vgic-kvm-device.c           |   2 +-
+>  virt/kvm/arm/vgic/vgic-mmio-v3.c              |   2 -
+>  26 files changed, 648 insertions(+), 408 deletions(-)
+>  delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
+>  delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
+>  delete mode 100644 arch/arm64/kvm/hyp/s2-setup.c
+> 
+> kvmtool changes:
+> 
+> Suzuki K Poulose (4):
+>   kvmtool: Allow backends to run checks on the KVM device fd
+>   kvmtool: arm64: Add support for guest physical address size
+>   kvmtool: arm64: Switch memory layout
+>   kvmtool: arm: Add support for creating VM with PA size
+> 
+>  arm/aarch32/include/kvm/kvm-arch.h        |  6 ++--
+>  arm/aarch64/include/kvm/kvm-arch.h        | 15 ++++++++--
+>  arm/aarch64/include/kvm/kvm-config-arch.h |  5 +++-
+>  arm/include/arm-common/kvm-arch.h         | 17 ++++++++----
+>  arm/include/arm-common/kvm-config-arch.h  |  1 +
+>  arm/kvm.c                                 | 34 ++++++++++++++++++++++-
+>  include/kvm/kvm.h                         |  4 +++
+>  kvm.c                                     |  2 ++
+>  8 files changed, 71 insertions(+), 13 deletions(-)
+> 
 
-As for the rest, the cpuidle driver patch looks OK to me, but the
-PSCI-related ones need ACKs.
+Feel free to add
+Tested-by: Eric Auger <eric.auger@redhat.com>
 
-Thanks,
-Rafael
+I tested this series with QEMU, using cold plugged 4GB PC-DIMM at 2TB on
+a Gigabyte machine. The VM is created with 43 IPA bits. I ran memtester
+on guest at 2TB using "memtester -p 20000000000 1G 1" and it succeeds.
+
+Thanks
+
+Eric
