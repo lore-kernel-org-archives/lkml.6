@@ -2,136 +2,181 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA14C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6934C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3738A21470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3738A21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 9EEC621473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:33:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NLJNiyt1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEC621473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbeJDPYv (ORCPT
+        id S1727499AbeJDPZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:24:51 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:3798 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727167AbeJDPYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:24:51 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42QmNR3NjPz9ttFL;
-        Thu,  4 Oct 2018 10:32:39 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id uLuFNDXyu5rK; Thu,  4 Oct 2018 10:32:39 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42QmNR2sgdz9ttBv;
-        Thu,  4 Oct 2018 10:32:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 919438B90F;
-        Thu,  4 Oct 2018 10:32:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id T3xQxRH_8etP; Thu,  4 Oct 2018 10:32:41 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A72CA8B907;
-        Thu,  4 Oct 2018 10:32:40 +0200 (CEST)
-Subject: Re: [RFC PATCH v3 1/7] book3s/64: avoid circular header inclusion in
- mmu-hash.h
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <cover.1538396658.git.christophe.leroy@c-s.fr>
- <c95148024873842459472bbcc0dd0e65607fd43b.1538396658.git.christophe.leroy@c-s.fr>
- <20181003142400.490fd38a@roar.ozlabs.ibm.com>
- <bed3d788-6633-6eef-30ea-bdfa374e0216@c-s.fr>
- <1516af9d-bb0b-4a2c-71f8-554a3f830281@linux.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <cd9590e5-5a0a-7ee4-a214-2ddbe00ee572@c-s.fr>
-Date:   Thu, 4 Oct 2018 10:32:40 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 11:25:11 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:39310 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727336AbeJDPZL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:25:11 -0400
+Received: by mail-it1-f196.google.com with SMTP id w200-v6so12870720itc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2lyvIaNzi3as9klnx/wt8BAP/YKGZAKnJ8N23b4uyts=;
+        b=NLJNiyt1k5x2l1SodsnmAuYQuBCh2RxXNQo6mq+pzdvW7er1w1zopR84x0et+H+1+d
+         FXofF2yCiBcOL1O+XZNBB5TGVNtDP45k18dRDRhJkxB7DtenrVUsvr2gpx5OS5H/szvo
+         o/ZN6Yg+omLdhqpF5+HYFkjJ9FbHsqYB4PLuc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2lyvIaNzi3as9klnx/wt8BAP/YKGZAKnJ8N23b4uyts=;
+        b=Rf43EvEQCpfwk1oRrPBSq6oYbvjZQCrnexUPAlcBsHCb+ybQbqWK3NKKADY1XFKvlk
+         B5qPApgTN7sx8occPMw5x9ixSzBVcXtPld2txO8UqRH2NWAXSz3UdzXRW42Pzx/WLFCZ
+         r+JrHj3R6zAOABHdGREDMSvpsgsdOqex6//kQjtB3YQjMz8kFZ3synWnNxDGygn0EXUQ
+         YerR32d2OTrO3pdcQhVR3IfOJnx5GsfHVVop3tfYUqivunHuBWHtOIsxodv5wl5W2Jb1
+         jdNJbzfRcV9V5ZaKzIJ7R7OR24qTXcJOMmB95CiE4qsxdheyE2whxuKO1lgZMKdEXO18
+         L3Bw==
+X-Gm-Message-State: ABuFfohkNzyTPdDv9ebLl8L1ZXzXeDMDNH6lr8G4XebNG96uwAgm+Qwr
+        myKQy4GmUV2pcBipbJBbC2W5anP0Xb30cHFyU9sGZA==
+X-Google-Smtp-Source: ACcGV60I5CqioR8lqxqClpeXlwcYNMSSftas+oMQSni1agw64Rog4BVZbGYK/R7fNww1i0vb7JssCoScEMJWemubztg=
+X-Received: by 2002:a24:d857:: with SMTP id b84-v6mr4570925itg.77.1538641982594;
+ Thu, 04 Oct 2018 01:33:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1516af9d-bb0b-4a2c-71f8-554a3f830281@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20181003222715.28667-1-robh@kernel.org>
+In-Reply-To: <20181003222715.28667-1-robh@kernel.org>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu, 4 Oct 2018 10:32:50 +0200
+Message-ID: <CAKMK7uHYnOVJBn57M0yxgXWAxrkg79+rz0zX+7XRHt8KwgvOuw@mail.gmail.com>
+Subject: Re: [PATCH] Add a skeleton Travis-CI config
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 4, 2018 at 12:27 AM Rob Herring <robh@kernel.org> wrote:
+>
+> It's convenient to use Travis-CI for doing kernel builds. Doing so
+> requires a github repo, Travis-CI enabled for that repo, and a
+> .travis.yml file in the repository. This commit addresses the last part.
+> Each repository branch must have a .travis.yml file in order to run
+> Travis-CI jobs.
+>
+> Obviously, we can't create a single configuration that works for
+> everyone as every developer will want to run different configs and
+> build targets. Therefore, this only adds a skeleton .travis.yml file.
+> With this a user can either set $CONFIG and $TARGET in their Travis-CI
+> environment or customized builds can be triggered remotely.
+>
+> Here's an example of setting up a matrix build of different
+> architectures:
+>
+> body='{
+>   "request": {
+>     "branch": "master",
+>     "config" : {
+>       "env": {
+>         "global": "CONFIG=defconfig TARGET=all",
+>         "matrix": [
+>           "ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-",
+>           "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-",
+>           "ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu-"
+>         ]
+>       }
+>     }
+>   }
+> }'
+>
+> curl -s -X POST \
+>    -H "Content-Type: application/json" \
+>    -H "Accept: application/json" \
+>    -H "Travis-API-Version: 3" \
+>    -H "Authorization: token $TOKEN" \
+>    -d "$body" \
+>    https://api.travis-ci.org/repo/robherring%2Flinux/requests
+>
+> Additionally, it is possible to override 'scripts' or any other part of
+> the config as well.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> I'm wondering if there's other interest in this. If so, please chime in.
+>
+> Maybe I should be looking at Gitlab CI instead, but Travis I know
+> already and Gitlab just seems to be the shiniest new thing. In any case,
+> both could coexist.
+
+So I haven't looked in-depth at the travis+github combo, but on gitlab
+you can set the path for your .gitlab-ci.yaml file per-repo. Which
+means each maintainer group can have their own thing, without
+trampling on each another's feet.
+
+I guess if gitlab+travis can't do that then a dispatcher like you
+propose here would be good. Personally I have reservations with gitlab
+though, since it's proprietary infrastructure not under out control.
+That's a big reason for why fd.o opted for gitlab, and the handful of
+graphics projects that tried out a gitlab+travis workflow all plan to
+move back to gitlab.fd.o. Gitlab definitely works - there's enough
+projects out there to prove that :-) But in the kernel we've already
+seen how that can go all wrong with bitkeeper.
+-Daniel
+
+>
+> Rob
+>
+>  .travis.yml | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 .travis.yml
+>
+> diff --git a/.travis.yml b/.travis.yml
+> new file mode 100644
+> index 000000000000..ba1e59dd44f6
+> --- /dev/null
+> +++ b/.travis.yml
+> @@ -0,0 +1,23 @@
+> +language: c
+> +
+> +sudo: false
+> +dist: trusty
+> +
+> +cache:
+> +  apt: true
+> +
+> +env:
+> +  - CONFIG=allnoconfig TARGET=all
+> +
+> +addons:
+> +  apt:
+> +    packages:
+> +      - build-essential
+> +      - bc
+> +      - gcc-arm-linux-gnueabihf
+> +      - gcc-aarch64-linux-gnu
+> +      - gcc-powerpc-linux-gnu
+> +
+> +script:
+> +  - make $CONFIG
+> +  - make $TARGET
+> --
+> 2.17.1
+>
 
 
-Le 04/10/2018 à 10:23, Aneesh Kumar K.V a écrit :
-> On 10/4/18 1:50 PM, Christophe LEROY wrote:
->>
->>
->> Le 03/10/2018 à 06:24, Nicholas Piggin a écrit :
->>> On Mon,  1 Oct 2018 12:30:19 +0000 (UTC)
->>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>>
->>>> When activating CONFIG_THREAD_INFO_IN_TASK, linux/sched.h
->>>> includes asm/current.h. This generates a circular dependency.
->>>> To avoid that, asm/processor.h shall not be included in mmu-hash.h
->>>>
->>>> In order to do that, this patch moves into a new header called
->>>> asm/task_size.h the information from asm/processor.h requires by
->>>> mmu-hash.h
->>>
->>> Doesn't look like you use this header in 32-bit code. Put task_size.h
->>> in asm/64/ maybe?
->>
->> There is no asm/64/ dir at the time being, only book3s/64/ and nohash/64/
->>
->> I'm thinking about leaving it in asm/ but renaming it task_size_user64.h
->>
-> 
-> Quiet a lot of that is book3s 64 specifi because we have there.
-> 
-> #if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
-> /*
->   * Max value currently used:
->   */
-
-We have an #if / #else
-
-#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
-/*
-  * Max value currently used:
-  */
-#define TASK_SIZE_USER64		TASK_SIZE_4PB
-#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
-#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
-
-#else
-
-#define TASK_SIZE_USER64		TASK_SIZE_64TB
-#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
-/*
-  * We don't need to allocate extended context ids for 4K page size, because
-  * we limit the max effective address on this config to 64TB.
-  */
-#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
-#endif
-
-And processor .h derives several other consts applying to both BOOK3S64 
-et BOOK3E64 from that.
-
-
-And arch/powerpc/mm/pgtable-book3e.c has:
-
-	BUILD_BUG_ON(TASK_SIZE_USER64 > PGTABLE_RANGE);
-
-
-Christophe
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
