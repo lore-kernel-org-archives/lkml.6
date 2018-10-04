@@ -2,166 +2,206 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FE9C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A502C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 820A82098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:32:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TO7RNBGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820A82098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 148C32098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:34:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148C32098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeJDRZ3 (ORCPT
+        id S1727336AbeJDR1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:25:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51700 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbeJDRZ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:25:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gGPiU8MwCannIy8crpa0wcSAS1sw/TYGmX5DDWzpca4=; b=TO7RNBGIlB0g8zTUScv0cQrFe
-        ox/0uMuATvFjahSRTaZ8EroIW1/wPL1KScR0yUlTMY2ap5XjoZu5UoINDWv/OwotpLb3Esx6cSPIP
-        Ko4yVxScjk4BWnAhh36hMaBibwnWIluEmpIeE8OMHYe3Rg/Api90QcMYhSkJyvYrpYyOw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g80w3-0008HR-KB; Thu, 04 Oct 2018 10:32:47 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3CF8E1122286; Thu,  4 Oct 2018 11:32:47 +0100 (BST)
-Date:   Thu, 4 Oct 2018 11:32:47 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        H Hartley Sweeten <hartleys@visionengravers.com>,
-        Mika Westerberg <mika.westerberg@iki.fi>
-Subject: Re: [PATCH] spi: spi-ep93xx: Change dir type in
- ep93xx_spi_dma_{finish,prepare}
-Message-ID: <20181004103247.GC6412@sirena.org.uk>
-References: <20181004023926.15847-1-natechancellor@gmail.com>
+        Thu, 4 Oct 2018 13:27:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:27883 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727030AbeJDR1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 13:27:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 03:34:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
+   d="scan'208";a="79810624"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 04 Oct 2018 03:34:23 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Thu, 04 Oct 2018 13:34:22 +0300
+Date:   Thu, 4 Oct 2018 13:34:22 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH v2] drm: fb-helper: Reject all pixel format changing
+ requests
+Message-ID: <20181004103422.GL9144@intel.com>
+References: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6zdv2QT/q3FMhpsV"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181004023926.15847-1-natechancellor@gmail.com>
-X-Cookie: Safety Third.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---6zdv2QT/q3FMhpsV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 03, 2018 at 07:39:26PM -0700, Nathan Chancellor wrote:
-> Clang warns when one enumerated type is implicitly converted to another.
->=20
-> drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
-> enumeration type 'enum dma_transfer_direction' to different enumeration
-
-Please remember to CC driver maintainers and authors on patch
-submissions so they can review things, copying in Hartley and Mika.
-
-> type 'enum dma_data_direction' [-Wenum-conversion]
->         nents =3D dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir=
-);
->                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> ./include/linux/dma-mapping.h:428:58: note: expanded from macro
-> 'dma_map_sg'
-> \#define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
->                                ~~~~~~~~~~~~~~~~          ^
-> drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
-> enumeration type 'enum dma_transfer_direction' to different enumeration
-> type 'enum dma_data_direction' [-Wenum-conversion]
->                 dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir=
-);
->                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> ./include/linux/dma-mapping.h:429:62: note: expanded from macro
-> 'dma_unmap_sg'
-> \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
->                                  ~~~~~~~~~~~~~~~~~~          ^
-> drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
-> enumeration type 'enum dma_transfer_direction' to different enumeration
-> type 'enum dma_data_direction' [-Wenum-conversion]
->         dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
->         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> ./include/linux/dma-mapping.h:429:62: note: expanded from macro
-> 'dma_unmap_sg'
-> \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
->                                  ~~~~~~~~~~~~~~~~~~          ^
-> 3 warnings generated.
->=20
-> dma_{,un}map_sg expects an enum of type dma_data_direction but this
-> driver uses dma_transfer_direction for everything. Converting to
-> dma_data_direction would be desirable but there are a few shared
-> structures that expect dma_transfer_direction so it is just simpler to
-> change the parameter here. dma_transfer_direction and dma_data_direction
-> are different sizes but this driver only uses the 1 and 2 values which
-> mean the same thing so this change is safe.
->=20
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On Wed, Oct 03, 2018 at 07:45:38PM +0300, Eugeniy Paltsev wrote:
+> drm fbdev emulation doesn't support changing the pixel format at all,
+> so reject all pixel format changing requests.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 > ---
->  drivers/spi/spi-ep93xx.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-> index f1526757aaf6..189fc2225b69 100644
-> --- a/drivers/spi/spi-ep93xx.c
-> +++ b/drivers/spi/spi-ep93xx.c
-> @@ -256,8 +256,7 @@ static int ep93xx_spi_read_write(struct spi_master *m=
-aster)
->   * in case of failure.
->   */
->  static struct dma_async_tx_descriptor *
-> -ep93xx_spi_dma_prepare(struct spi_master *master,
-> -		       enum dma_transfer_direction dir)
-> +ep93xx_spi_dma_prepare(struct spi_master *master, int dir)
+> Changes v1->v2:
+>  * Reject all pixel format changing request, not just the invalid ones.
+> 
+>  drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++++-----------------------------
+>  1 file changed, 26 insertions(+), 65 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 16ec93b75dbf..48598d7f673f 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -1580,6 +1580,25 @@ int drm_fb_helper_ioctl(struct fb_info *info, unsigned int cmd,
+>  }
+>  EXPORT_SYMBOL(drm_fb_helper_ioctl);
+>  
+> +static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
+> +				      const struct fb_var_screeninfo *var_2)
+> +{
+> +	return var_1->bits_per_pixel == var_2->bits_per_pixel &&
+> +	       var_1->grayscale == var_2->grayscale &&
+> +	       var_1->red.offset == var_2->red.offset &&
+> +	       var_1->red.length == var_2->red.length &&
+> +	       var_1->red.msb_right == var_2->red.msb_right &&
+> +	       var_1->green.offset == var_2->green.offset &&
+> +	       var_1->green.length == var_2->green.length &&
+> +	       var_1->green.msb_right == var_2->green.msb_right &&
+> +	       var_1->blue.offset == var_2->blue.offset &&
+> +	       var_1->blue.length == var_2->blue.length &&
+> +	       var_1->blue.msb_right == var_2->blue.msb_right &&
+> +	       var_1->transp.offset == var_2->transp.offset &&
+> +	       var_1->transp.length == var_2->transp.length &&
+> +	       var_1->transp.msb_right == var_2->transp.msb_right;
+> +}
+
+Could have shortened a bit with memcmp() but this works too.
+
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+
+I suppose we really should be doing the same for most of the rest of
+var_screeninfo as we don't allow changing the timings/etc. either.
+
+> +
+>  /**
+>   * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
+>   * @var: screeninfo to check
+> @@ -1590,7 +1609,6 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
 >  {
->  	struct ep93xx_spi *espi =3D spi_master_get_devdata(master);
->  	struct spi_transfer *xfer =3D master->cur_msg->state;
-> @@ -359,8 +358,7 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
->   * Function finishes with the DMA transfer. After this, the DMA buffer is
->   * unmapped.
->   */
-> -static void ep93xx_spi_dma_finish(struct spi_master *master,
-> -				  enum dma_transfer_direction dir)
-> +static void ep93xx_spi_dma_finish(struct spi_master *master, int dir)
->  {
->  	struct ep93xx_spi *espi =3D spi_master_get_devdata(master);
->  	struct dma_chan *chan;
-> --=20
-> 2.19.0
->=20
+>  	struct drm_fb_helper *fb_helper = info->par;
+>  	struct drm_framebuffer *fb = fb_helper->fb;
+> -	int depth;
+>  
+>  	if (var->pixclock != 0 || in_dbg_master())
+>  		return -EINVAL;
+> @@ -1610,72 +1628,15 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+>  		return -EINVAL;
+>  	}
+>  
+> -	switch (var->bits_per_pixel) {
+> -	case 16:
+> -		depth = (var->green.length == 6) ? 16 : 15;
+> -		break;
+> -	case 32:
+> -		depth = (var->transp.length > 0) ? 32 : 24;
+> -		break;
+> -	default:
+> -		depth = var->bits_per_pixel;
+> -		break;
+> -	}
+> -
+> -	switch (depth) {
+> -	case 8:
+> -		var->red.offset = 0;
+> -		var->green.offset = 0;
+> -		var->blue.offset = 0;
+> -		var->red.length = 8;
+> -		var->green.length = 8;
+> -		var->blue.length = 8;
+> -		var->transp.length = 0;
+> -		var->transp.offset = 0;
+> -		break;
+> -	case 15:
+> -		var->red.offset = 10;
+> -		var->green.offset = 5;
+> -		var->blue.offset = 0;
+> -		var->red.length = 5;
+> -		var->green.length = 5;
+> -		var->blue.length = 5;
+> -		var->transp.length = 1;
+> -		var->transp.offset = 15;
+> -		break;
+> -	case 16:
+> -		var->red.offset = 11;
+> -		var->green.offset = 5;
+> -		var->blue.offset = 0;
+> -		var->red.length = 5;
+> -		var->green.length = 6;
+> -		var->blue.length = 5;
+> -		var->transp.length = 0;
+> -		var->transp.offset = 0;
+> -		break;
+> -	case 24:
+> -		var->red.offset = 16;
+> -		var->green.offset = 8;
+> -		var->blue.offset = 0;
+> -		var->red.length = 8;
+> -		var->green.length = 8;
+> -		var->blue.length = 8;
+> -		var->transp.length = 0;
+> -		var->transp.offset = 0;
+> -		break;
+> -	case 32:
+> -		var->red.offset = 16;
+> -		var->green.offset = 8;
+> -		var->blue.offset = 0;
+> -		var->red.length = 8;
+> -		var->green.length = 8;
+> -		var->blue.length = 8;
+> -		var->transp.length = 8;
+> -		var->transp.offset = 24;
+> -		break;
+> -	default:
+> +	/*
+> +	 * drm fbdev emulation doesn't support changing the pixel format at all,
+> +	 * so reject all pixel format changing requests.
+> +	 */
+> +	if (!drm_fb_pixel_format_equal(var, &info->var)) {
+> +		DRM_DEBUG("fbdev emulation doesn't support changing the pixel format\n");
+>  		return -EINVAL;
+>  	}
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(drm_fb_helper_check_var);
+> -- 
+> 2.14.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---6zdv2QT/q3FMhpsV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu17E4ACgkQJNaLcl1U
-h9BaGAf/fV+/e0h6rs2itGWzMcx4OzEXDa6d3Whxpc9ruajYoMwZK0hkzvnNBCQZ
-gz8L4JJSqds/ycFS8JHiDL93Gs9j7tQb9WoCAAReY0SjUoUak/bawG4VrtRq0qlx
-w8lfCmhGMYSOJuXrA3RosGo3MgoImRk2xtE/545LXDE4a7rhfv5Q2JMHiME9r6jI
-Jzmu9UlajUQahpTGiGgwyYJ0e4pJ5eqtbgtSu3dqW8TXaVLH29DnfDf7dSTCX3fs
-v9Yw4OwvtwwXRoaEBp3+M/jwoyF53ncPxgD2kYI6i2V0w2kEVsdZLcVuwTUyJ+Zb
-EpmKELAeQlaD5q4CFbezTAalgurhKw==
-=bvKK
------END PGP SIGNATURE-----
-
---6zdv2QT/q3FMhpsV--
+-- 
+Ville Syrjälä
+Intel
