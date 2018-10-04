@@ -2,167 +2,127 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96EDC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEDCC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24862084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB77C2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:39:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKV/QcBp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24862084D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ourg54zZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB77C2084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeJECcx (ORCPT
+        id S1727625AbeJECe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:32:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46571 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbeJECcx (ORCPT
+        Thu, 4 Oct 2018 22:34:28 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36357 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJECe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:32:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r64-v6so3852734pfb.13;
-        Thu, 04 Oct 2018 12:38:10 -0700 (PDT)
+        Thu, 4 Oct 2018 22:34:28 -0400
+Received: by mail-oi1-f193.google.com with SMTP id p125-v6so8499928oic.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 12:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=XPVQB4kd5mn3ThSlhxyms94NTJzTyj9C96LKEJUkSXA=;
-        b=WKV/QcBphpjFCearY14qC8TZNKJ/j+JMBDnPbZucSS8BDi6qNOFdIl9Wkz1U6Zd8hd
-         FX+ldBX7aRiDfs5ofVpBjuN1gDOt8q0YGOBly92GRjq5/hWGIq7ZDLgLRzwKp0vixZGJ
-         ZobigHnjozqpYpzrjDXJBNMvm/5PntFNT3ypAHBmy5V95ko3c85fadMVMwsvljGPcDUj
-         2cSImtwBFRn/qxalpvCaw7HDNirEH1LTlsoZg9NadZL/KIi/OCXrXrozCPxAX4tJPlB1
-         sTfBBPRGxx/17du42eUQGjeOxGmtJfludpYJStLvRwNPGzpKK9XOF5g8JAcc3XuYQ+z0
-         ch4A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y4kQ8VJxC3cT+BnlsYuBYZJ7ENAvD+eaH4vZhPmOGWs=;
+        b=Ourg54zZ9jTMCGImlUYvrln9xXvblGsyrJYSCFDVfTWfmigYQFyBSGz5zu6GB0/Rid
+         ADMtOcs0WLqfVIUaBaXpIhw+Db9hTR990kzZp+bnj0Cwd82WEa4YtU8fKEVNuc4RLWmM
+         9TM4VH89hffOLIMbXoCN0UzX0qdIH0HJpgXGemts766GXx864pqbd6ka+UfFKDwRzBR5
+         A3buJkrw9zQX2+ECbmFrHyvdSs4O+hAsGNx5QwqkgqzlD9kBMkfHyTtQNuLNKU7N827s
+         ACW1d4pv8M0kFsY5T9bEwG5InWYm0Lb/UeeDcXOGROBRQMcgsicPNmkQozyuAmTto3iJ
+         +CuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=XPVQB4kd5mn3ThSlhxyms94NTJzTyj9C96LKEJUkSXA=;
-        b=c2qZF0ZxbgaoqtvxScgnar5/og3K77+aoSQ+PlZ8XtfGtZJpXNS09OzB/dOymx1ye1
-         xP+cq0wuGEXENJbR+GW4sIahzUSS7mOmoMJeaIyKOicnk0WSOA+C0/2JS3+uMTVbmXtA
-         vm4XG2CeiANVv2wXPoIKIgh4K+SB8ru3AYe5wyBwjmhIawLMhfO06xmaleZJ0Y3RfmXr
-         u0c8sLRzBscImhbHLMOQyI8qPCWzZL5qA8WqUBHFtBRzoqs3VqsXtr2I8HVhzq55U4Z5
-         WjGKVLxPCLlfGVRKy3gt5N90TlDdBKHE3LT0GpoupQ13f+ZG86I79FuaEoaHSUVL8c6K
-         umZw==
-X-Gm-Message-State: ABuFfogV15++YhX1gR5n30LlVswPO7+5x/MGKDsRoBERHF2lnHLEBpIq
-        JGhj4eN268CtZyExhTxciIbS4/8j
-X-Google-Smtp-Source: ACcGV62MFTAk9FIoxK7PSIBa0CN0rmkcDmrT/7zlQCpIQ0VOwBe44eKmEWzaZSQUTNhzNwpwtNn4fw==
-X-Received: by 2002:a62:8f0c:: with SMTP id n12-v6mr8344761pfd.172.1538681889144;
-        Thu, 04 Oct 2018 12:38:09 -0700 (PDT)
-Received: from ?IPv6:2620:0:1000:fd28:2c8f:9cc8:6674:4e3e? ([2620:0:1000:fd28:2c8f:9cc8:6674:4e3e])
-        by smtp.gmail.com with ESMTPSA id y9-v6sm7624166pfn.123.2018.10.04.12.38.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 12:38:07 -0700 (PDT)
-Date:   Thu, 04 Oct 2018 12:38:02 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CANn89iJMhGEkw13KrGbqrvGbznb45QZwdr7eLy_rUV6zitvs=Q@mail.gmail.com>
-References: <20181004154749.111595-1-edumazet@google.com> <20181004185949.GA233675@dtor-ws> <CANn89iJMhGEkw13KrGbqrvGbznb45QZwdr7eLy_rUV6zitvs=Q@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y4kQ8VJxC3cT+BnlsYuBYZJ7ENAvD+eaH4vZhPmOGWs=;
+        b=oq4sC0IL3f6RWawaRPIA5ImpD02I8iUuAm8XgdUYVZbhjTuewcQ/8VzWWPkt7YmLha
+         xrkcVhbbjLEuF95XGbQ09wHtr/rv12LgPT8zWYZl1Zp/oSkzpo0dLn5xYEoBinZMLXOe
+         ZGbxM7Aq3s6dEgrFA4QI3ekwV+AhucxwQsQ+NJvXW4BoWWHAc2cxZlrQKP5o+jSDM8Ze
+         p4kzeWrwBtGWFFLVQ4X+50XSciTxlskMgvDgZlgy5JXi9RYEn06mFyLlWeoKRspdlPMT
+         1ESZUfhTQ+PjJ1peCF00F0JxaCOXnV1v3IQMbNZt9C+k2JvcQmNMgeopVyrDmwrE6jB0
+         994Q==
+X-Gm-Message-State: ABuFfoggPUJLTtVNZt58YzrP4RuJ2Vx4awKR6lferBwdvIUuaTDizpxL
+        7fFyBgvQW5e/w786Jmz8tLcdidtDF9qT6OMAHQM=
+X-Google-Smtp-Source: ACcGV62Xh1rU8ckujdPttVl8lwljzjVlIW3lnQfKUgbGAB5g7b3TdiU0cE1CE2dW3pob7JnUkQ+zxvkYiTi0ZBMI52I=
+X-Received: by 2002:aca:c54f:: with SMTP id v76-v6mr3527410oif.276.1538681984887;
+ Thu, 04 Oct 2018 12:39:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] Input: mousedev - add a schedule point in mousedev_write()
-To:     Eric Dumazet <edumazet@google.com>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        linux-input@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Message-ID: <30074728-D1C4-46D4-8BF5-6AB8ECAE3EBD@gmail.com>
+References: <20181001100707.16840-1-ganapatrao.kulkarni@cavium.com>
+ <20181001142914.GD9716@arm.com> <CAKTKpr6SQUc9EgdYL2N32a=szUmSs82Mbb4y89htbVQhTPp2rQ@mail.gmail.com>
+ <CAKTKpr5+p=X6QcRp+tsxYYgirwWW=cfs7GOKyKegutEfM_W2vg@mail.gmail.com> <20181004122207.GE4065@arm.com>
+In-Reply-To: <20181004122207.GE4065@arm.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Fri, 5 Oct 2018 01:09:33 +0530
+Message-ID: <CAKTKpr4a12FHkMtFNueWqQbAhT4TLw_4DLDrOD6Tjsbno28U3A@mail.gmail.com>
+Subject: Re: [PATCH] arm_pmu: Delete incorrect cache event mapping for some
+ armv8_pmuv3 events.
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Ganapatrao Kulkarni <Ganapatrao.Kulkarni@cavium.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On October 4, 2018 12:28:56 PM PDT, Eric Dumazet <edumazet@google=2Ecom> wr=
-ote:
->On Thu, Oct 4, 2018 at 11:59 AM Dmitry Torokhov
-><dmitry=2Etorokhov@gmail=2Ecom> wrote:
->>
->> Hi Eric,
->>
->> On Thu, Oct 04, 2018 at 08:47:49AM -0700, Eric Dumazet wrote:
->> > syzbot was able to trigger rcu stalls by calling write()
->> > with large number of bytes=2E
->> >
->> > Add a cond_resched() in the loop to avoid this=2E
->>
->> I think this simply masks a deeper issue=2E The code fetches characters
->> from userspace in a loop, takes a lock, quickly places response in an
->> output buffer, and releases interrupt=2E I do not see why this should
->> cause stalls as we do not hold spinlock/interrupts off for extended
->> period of time=2E
->>
->> Adding Paul so he can straighten me out=2E=2E=2E
->>
->
->Well=2E=2E=2E
->
->write(fd, buffer, 0x7FFF0000);
->
->Takes between 20 seconds and 2 minutes depending on CONFIG options =2E=2E=
-=2E=2E
+Hi Will,
 
-That's fine even if it takes a couple of years=2E We are not holding spinl=
-ock for the entirety of this time, so we should get bumped off CPU at some =
-point=2E
+On Thu, Oct 4, 2018 at 5:51 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> Hi Ganapat,
+>
+> On Thu, Oct 04, 2018 at 11:12:09AM +0530, Ganapatrao Kulkarni wrote:
+> > can you please pull this patch?
+>
+> I still don't like the idea of just removing events like this, especially
+> when other architectures (including some x86 and Power CPUs afaict) playa
+> similar games for generic events, and these events do actually appear in
+> user code.
+>
+> I also don't understand why you remove the TLB events. I think that logic
+> would imply we should remove all of the events, because we can't distinguish
+> prefetches from reads either. If we want to be consistent, then I think
+> we should just remove the OP_WRITE events for L1D and BPU -- would you be
+> ok with that instead?
+
+IIUC, dTLB-load-misses is mapped to
+ARMV8_PMUV3_PERFCTR_L1D_TLB_REFILL(event 0x05) and dTLB-loads is
+mapped to ARMV8_PMUV3_PERFCTR_L1D_TLB(0x25). Which are as per spec,
+counts TLB access/misses for both memory-read operation and
+memory-write operation.
+
+IMO, It won't help in keeping these events, knowingly that their
+mapping is not accurate, only thing i can say to users is , dont use
+events that are marked as "Hardware cache event"
 
 >
->So either apply my patch, or add a limit on the max count, and
->possibly break legitimate user space ?
+> Also, looking at the code, I think our PMCEID parsing is broken for 8.1
+> parts, where the upper 32 bits of the register are offset by 0x4000 in the
+> event numbering space.
 
-Legitimate users write a single character at a time and read response, so =
-exciting after, let's say, 32 bytes would be fine=2E But I still want to un=
-derstand why we have to do that=2E
+yes, i did not find any mapping in PMCEIDx registers for
+implementation defined events, otherwise we would have remapped at
+runtime.
 
 >
->I dunno=2E=2E=2E
->
->> >
->> > Link: https://lkml=2Eorg/lkml/2018/8/23/1106
->> > Signed-off-by: Eric Dumazet <edumazet@google=2Ecom>
->> > Reported-by: syzbot+9436b02171ac0894d33e@syzkaller=2Eappspotmail=2Eco=
-m
->> > Cc: Dmitry Torokhov <dmitry=2Etorokhov@gmail=2Ecom>
->> > Cc: linux-input@vger=2Ekernel=2Eorg
->> > ---
->> >  drivers/input/mousedev=2Ec | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->> > diff --git a/drivers/input/mousedev=2Ec b/drivers/input/mousedev=2Ec
->> > index
->e08228061bcdd2f97aaadece31d6c83eb7539ae5=2E=2E412fa71245afe26a7a8ad757055=
-66f83633ba347
->100644
->> > --- a/drivers/input/mousedev=2Ec
->> > +++ b/drivers/input/mousedev=2Ec
->> > @@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file
->*file, const char __user *buffer,
->> >               mousedev_generate_response(client, c);
->> >
->> >               spin_unlock_irq(&client->packet_lock);
->> > +             cond_resched();
->> >       }
->> >
->> >       kill_fasync(&client->fasync, SIGIO, POLL_IN);
->> > --
->> > 2=2E19=2E0=2E605=2Eg01d371f741-goog
->> >
->>
->> Thanks=2E
->>
->> --
->> Dmitry
+> Will
 
-
-Thanks=2E
-
---=20
-Dmitry
+thanks
+Ganapat
