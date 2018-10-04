@@ -2,407 +2,121 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E16C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2F2C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D5DE21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:13:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hu8dUVEo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D5DE21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id AD30F20652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:17:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD30F20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeJDSGD (ORCPT
+        id S1727385AbeJDSKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 14:06:03 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:60238 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbeJDSF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 14:05:29 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w94BCbjE103636;
-        Thu, 4 Oct 2018 06:12:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538651558;
-        bh=c/ESLYCz9KsNt/gnRPpxJaztrQ/0k/Gk5Oe7Gziz6VI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hu8dUVEoD8qg4AbQKjyNLb2WI7vDC6MZ8uOdkw1/LhFueXkt/5QYUdNOcnxCbaBqv
-         DfIhF86Yp63EAjZak1Hw2jYU63N9Dnvr76Aw7C+Wf4Mf1WHNWI6xhp1usoayJMV/Y2
-         zRRgjpyd1s6iK/1fR3BDoCqN1Eg1BovixqfosXsU=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94BCbi1020069;
-        Thu, 4 Oct 2018 06:12:37 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 4 Oct
- 2018 06:12:37 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 4 Oct 2018 06:12:37 -0500
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94BCSLc027478;
-        Thu, 4 Oct 2018 06:12:35 -0500
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <kishon@ti.com>, <faiz_abbas@ti.com>, <ulf.hansson@linaro.org>,
-        <robh+dt@kernel.org>, <catalin.marinas@arm.com>,
-        <adrian.hunter@intel.com>
-Subject: [PATCH 2/6] phy: am654-mmc-phy: Add Support for MMC PHY on AM654 Devices
-Date:   Thu, 4 Oct 2018 16:44:47 +0530
-Message-ID: <20181004111451.9539-3-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181004111451.9539-1-faiz_abbas@ti.com>
-References: <20181004111451.9539-1-faiz_abbas@ti.com>
+        Thu, 4 Oct 2018 14:10:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33899 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727109AbeJDSKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 14:10:34 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D6AEF207C8; Thu,  4 Oct 2018 13:17:42 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7F98220703;
+        Thu,  4 Oct 2018 13:17:32 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 13:17:32 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: Re: [PATCH 0/3] spi-nor: Add Octal SPI support
+Message-ID: <20181004131732.4c9e2ae9@bbrezillon>
+In-Reply-To: <1074d503-71ef-2998-7096-de6135bb965d@ti.com>
+References: <20181003165603.2579-1-vigneshr@ti.com>
+        <20181003212017.653e739f@bbrezillon>
+        <1074d503-71ef-2998-7096-de6135bb965d@ti.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver support for the MMC physical layer present
-on TI's AM654 devices.
+On Thu, 4 Oct 2018 16:05:36 +0530
+Vignesh R <vigneshr@ti.com> wrote:
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
----
- drivers/phy/ti/Kconfig         |   7 +
- drivers/phy/ti/Makefile        |   1 +
- drivers/phy/ti/phy-am654-mmc.c | 291 +++++++++++++++++++++++++++++++++
- 3 files changed, 299 insertions(+)
- create mode 100644 drivers/phy/ti/phy-am654-mmc.c
+> >>
+> >>  .../devicetree/bindings/mtd/cadence-quadspi.txt       |  1 +
+> >>  drivers/mtd/spi-nor/cadence-quadspi.c                 |  9 +++++++++  
+> > 
+> > On a slightly different topic, do you plan to convert the Cadence
+> > driver to spi-mem? And if you don't, is it because you don't have time
+> > or because some features are missing in spi-mem (I remember you
+> > mentioned a few things back when you were reviewing the spi-mem series)?
+> >   
+> 
+> I do not have plans to convert cadence QSPI driver to spi-mem yet,
+> mainly due to lack of time. Also, not sure if original author Marek and
+> other altera people are okay with that.
+> 
+> I see couple of issues in the way of conversion:
+> 1. I would wait to know what direction would direct mapping APIs[1] go
+> before starting spi-mem conversion for Cadence QSPI driver. Else, we
+> have may to re write again if direct mapping APIs are merged.
 
-diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
-index 20503562666c..ea5fe4db01c8 100644
---- a/drivers/phy/ti/Kconfig
-+++ b/drivers/phy/ti/Kconfig
-@@ -76,3 +76,10 @@ config TWL4030_USB
- 	  family chips (including the TWL5030 and TPS659x0 devices).
- 	  This transceiver supports high and full speed devices plus,
- 	  in host mode, low speed.
-+
-+config PHY_AM654_MMC
-+	bool "TI AM654 MMC PHY Support"
-+	select GENERIC_PHY
-+	help
-+	  This option enables support for the Physical layer for MMC host
-+	  controllers present on TI AM654 SOCs.
-diff --git a/drivers/phy/ti/Makefile b/drivers/phy/ti/Makefile
-index 9f361756eaf2..5b2db2d164a5 100644
---- a/drivers/phy/ti/Makefile
-+++ b/drivers/phy/ti/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
- obj-$(CONFIG_TI_PIPE3)			+= phy-ti-pipe3.o
- obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
- obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
-+obj-$(CONFIG_PHY_AM654_MMC)		+= phy-am654-mmc.o
-diff --git a/drivers/phy/ti/phy-am654-mmc.c b/drivers/phy/ti/phy-am654-mmc.c
-new file mode 100644
-index 000000000000..91255947fb67
---- /dev/null
-+++ b/drivers/phy/ti/phy-am654-mmc.c
-@@ -0,0 +1,291 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * phy-am654-mmc.c - MMC PHY driver for TI's AM654 SOCs
-+ *
-+ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com
-+ *
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/printk.h>
-+#include <linux/regmap.h>
-+
-+/* MMC PHY Registers */
-+#define PHYCTRL_CTRL1_REG	0x00
-+#define PHYCTRL_CTRL2_REG	0x04
-+#define PHYCTRL_CTRL3_REG	0x08
-+#define PHYCTRL_CTRL4_REG	0x0C
-+#define PHYCTRL_CTRL5_REG	0x10
-+#define PHYCTRL_CTRL6_REG	0x14
-+#define PHYCTRL_STAT1_REG	0x30
-+#define PHYCTRL_STAT2_REG	0x34
-+
-+#define IOMUX_ENABLE_SHIFT	31
-+#define IOMUX_ENABLE_MASK	BIT(IOMUX_ENABLE_SHIFT)
-+#define OTAPDLYENA_SHIFT	20
-+#define OTAPDLYENA_MASK	BIT(OTAPDLYENA_SHIFT)
-+#define OTAPDLYSEL_SHIFT	12
-+#define OTAPDLYSEL_MASK	GENMASK(15, 12)
-+#define STRBSEL_SHIFT		24
-+#define STRBSEL_MASK		GENMASK(27, 24)
-+#define SEL50_SHIFT		8
-+#define SEL50_MASK		BIT(SEL50_SHIFT)
-+#define SEL100_SHIFT		9
-+#define SEL100_MASK		BIT(SEL100_SHIFT)
-+#define DLL_TRIM_ICP_SHIFT	4
-+#define DLL_TRIM_ICP_MASK	GENMASK(7, 4)
-+#define DR_TY_SHIFT		20
-+#define DR_TY_MASK		GENMASK(22, 20)
-+#define ENDLL_SHIFT		1
-+#define ENDLL_MASK		BIT(ENDLL_SHIFT)
-+#define DLLRDY_SHIFT		0
-+#define DLLRDY_MASK		BIT(DLLRDY_SHIFT)
-+#define PDB_SHIFT		0
-+#define PDB_MASK		BIT(PDB_SHIFT)
-+#define CALDONE_SHIFT		1
-+#define CALDONE_MASK		BIT(CALDONE_SHIFT)
-+
-+#define DRIVER_STRENGTH_50_OHM	0x0
-+#define DRIVER_STRENGTH_33_OHM	0x1
-+#define DRIVER_STRENGTH_66_OHM	0x2
-+#define DRIVER_STRENGTH_100_OHM	0x3
-+#define DRIVER_STRENGTH_40_OHM	0x4
-+
-+static struct regmap_config am654_mmc_phy_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.fast_io = true,
-+};
-+
-+struct am654_mmc_phy {
-+	struct regmap *reg_base;
-+	struct clk *mmcclk;
-+	int otap_del_sel;
-+	int trm_icp;
-+	int drv_strength;
-+};
-+
-+static int am654_mmc_phy_init(struct phy *phy)
-+{
-+	struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
-+	int ret;
-+	u32 val;
-+
-+	/* Reset registers to default value */
-+	regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL1_REG, 0x10000);
-+	regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL4_REG, 0x0);
-+	regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL5_REG, 0x0);
-+
-+	/* Calibrate IO lines */
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
-+			   PDB_MASK, PDB_MASK);
-+	ret = regmap_read_poll_timeout(mmc_phy->reg_base, PHYCTRL_STAT1_REG,
-+				       val, val & CALDONE_MASK, 1, 20);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable pins by setting the IO mux to 0 */
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
-+			   IOMUX_ENABLE_MASK, 0);
-+
-+	mmc_phy->mmcclk = clk_get(&phy->dev, "mmcclk");
-+	if (IS_ERR(mmc_phy->mmcclk)) {
-+		dev_err(&phy->dev, "Error getting mmcclk");
-+		return PTR_ERR(mmc_phy->mmcclk);
-+	}
-+
-+	return 0;
-+}
-+
-+static int am654_mmc_phy_exit(struct phy *phy)
-+{
-+	struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
-+
-+	clk_put(mmc_phy->mmcclk);
-+
-+	return 0;
-+}
-+
-+static int am654_mmc_phy_power_on(struct phy *phy)
-+{
-+	struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
-+	u32 mask, val;
-+	int sel50, sel100;
-+	int rate;
-+
-+	/* Setup DLL Output TAP delay */
-+	mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
-+	val = (1 << OTAPDLYENA_SHIFT) |
-+	      (mmc_phy->otap_del_sel << OTAPDLYSEL_SHIFT);
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL4_REG,
-+			   mask, val);
-+
-+	rate = clk_get_rate(mmc_phy->mmcclk);
-+	switch (rate) {
-+	case 200000000:
-+		sel50 = 0;
-+		sel100 = 0;
-+		break;
-+	case 100000000:
-+		sel50 = 0;
-+		sel100 = 1;
-+		break;
-+	default:
-+		sel50 = 1;
-+		sel100 = 0;
-+	}
-+
-+	/* Configure PHY DLL frequency */
-+	mask = SEL50_MASK | SEL100_MASK;
-+	val = (sel50 << SEL50_SHIFT) | (sel100 << SEL100_SHIFT);
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL5_REG,
-+			   mask, val);
-+
-+	/* Configure DLL TRIM */
-+	mask = DLL_TRIM_ICP_MASK;
-+	val = mmc_phy->trm_icp << DLL_TRIM_ICP_SHIFT;
-+
-+	/* Configure DLL driver strength */
-+	mask |= DR_TY_MASK;
-+	val |= mmc_phy->drv_strength << DR_TY_SHIFT;
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG, mask, val);
-+
-+	/* Enable DLL */
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
-+			   ENDLL_MASK, 0x1 << ENDLL_SHIFT);
-+
-+	/*
-+	 * Poll for DLL ready. Use a one second timeout.
-+	 * Works in all experiments done so far
-+	 */
-+	return regmap_read_poll_timeout(mmc_phy->reg_base, PHYCTRL_STAT1_REG,
-+					val, val & DLLRDY_MASK, 1000, 1000000);
-+
-+}
-+
-+static int am654_mmc_phy_power_off(struct phy *phy)
-+{
-+	struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
-+
-+	/* Disable DLL */
-+	regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
-+			   ENDLL_MASK, 0);
-+
-+	/* Reset registers to default value except PDB */
-+	regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
-+		     0x10000 | PDB_MASK);
-+	regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL4_REG, 0x0);
-+	regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL5_REG, 0x0);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops ops = {
-+	.init		= am654_mmc_phy_init,
-+	.exit		= am654_mmc_phy_exit,
-+	.power_on	= am654_mmc_phy_power_on,
-+	.power_off	= am654_mmc_phy_power_off,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int am654_mmc_phy_probe(struct platform_device *pdev)
-+{
-+	struct phy_provider *phy_provider;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct am654_mmc_phy *mmc_phy;
-+	struct phy *generic_phy;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct regmap *map;
-+	int drv_strength;
-+	int err;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	map = devm_regmap_init_mmio(dev, base, &am654_mmc_phy_regmap_config);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "could not initialize regmap\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	mmc_phy = devm_kzalloc(dev, sizeof(struct am654_mmc_phy), GFP_KERNEL);
-+	if (!mmc_phy)
-+		return -ENOMEM;
-+
-+	mmc_phy->reg_base = map;
-+	err = of_property_read_u32(np, "ti,otap-del-sel",
-+				   &mmc_phy->otap_del_sel);
-+	if (err)
-+		return err;
-+
-+	err = of_property_read_u32(np, "ti,trm-icp",
-+				   &mmc_phy->trm_icp);
-+	if (err)
-+		return err;
-+
-+	err = of_property_read_u32(np, "ti,driver-strength-ohm", &drv_strength);
-+	if (err)
-+		return err;
-+
-+	switch (drv_strength) {
-+	case 50:
-+		mmc_phy->drv_strength = DRIVER_STRENGTH_50_OHM;
-+		break;
-+	case 33:
-+		mmc_phy->drv_strength = DRIVER_STRENGTH_33_OHM;
-+		break;
-+	case 66:
-+		mmc_phy->drv_strength = DRIVER_STRENGTH_66_OHM;
-+		break;
-+	case 100:
-+		mmc_phy->drv_strength = DRIVER_STRENGTH_100_OHM;
-+		break;
-+	case 40:
-+		mmc_phy->drv_strength = DRIVER_STRENGTH_40_OHM;
-+		break;
-+	default:
-+		dev_err(dev, "Invalid driver strength\n");
-+		return -EINVAL;
-+	}
-+
-+	generic_phy = devm_phy_create(dev, dev->of_node, &ops);
-+	if (IS_ERR(generic_phy)) {
-+		dev_err(dev, "failed to create PHY\n");
-+		return PTR_ERR(generic_phy);
-+	}
-+
-+	phy_set_drvdata(generic_phy, mmc_phy);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static const struct of_device_id am654_mmc_phy_dt_ids[] = {
-+	{ .compatible = "ti,am654-mmc-phy" },
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(of, am654_mmc_phy_dt_ids);
-+
-+static struct platform_driver am654_mmc_phy_driver = {
-+	.probe		= am654_mmc_phy_probe,
-+	.driver		= {
-+		.name	= "am654-mmc-phy",
-+		.of_match_table = am654_mmc_phy_dt_ids,
-+	},
-+};
-+
-+module_platform_driver(am654_mmc_phy_driver);
-+
-+MODULE_AUTHOR("Faiz Abbas <faiz_abbas@ti.com>");
-+MODULE_DESCRIPTION("TI AM654 MMC PHY driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.18.0
+I'd suggest reviewing the proposal I posted so that you can influence
+the design of this new API ;-).
 
+> 2. New Cadence OSPI IP has an integrated PHY to support high throughput
+> OSPI flashes operating up 200MHz in Octal DDR mode. In order to work
+> with such flashes, PHY DLLs need to be calibrated. Highly simplified
+> calibration sequence is as below(See [2] for actual sequence):
+> -Read flash ID at low speed and store it.
+> -Enable PHY and set DLLs to a defined initial value
+> -Increment RX DLL value
+> -Read flash ID and check for correctness of data read
+> -repeat above two steps until a band of passing values is obtained for
+> RX DLL where flash ID is correctly read.
+> -DLL needs to set to middle of the passing band.
+
+Is the Read ID operation hardcoded or do you just use it as a way to
+trigger predictable transfers on the IO bus?
+
+> 
+> I am trying to figure out how to fit this into the spi-mem framework as
+> controller would to need to store READ ID opcode and expected JEDEC ID
+> before starting calibration sequence.
+
+I think this should be split in 2:
+
+- the SPI NOR framework passing the operation to use to do the
+  calibration (here a READ ID)
+- the SPI controller framework replaying the same operation with
+  different DLL configs until it finds the best match
+
+So, it would basically be added as a new hook:
+
+	int (*calibrate)(struct spi_mem *mem,
+			 const struct spi_mem_op *tmpl);
+
+and a new function provided by the spi-mem API
+
+int spi_mem_calibrate(struct spi_mem *mem,
+		      const struct spi_mem_op *tmpl);
+
+and calibration outcome would be somehow attached to the spi_mem
+object.
+
+This way we stay memory agnostic but still provide the necessary blocks
+at the spi-mem level to do such callibrations.
+
+Would that work?
