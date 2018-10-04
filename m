@@ -2,128 +2,138 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA54C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B1BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D74612084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:06:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D74612084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 93E562084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E562084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbeJEBAy (ORCPT
+        id S1727826AbeJEBCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:00:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44208 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbeJEBAx (ORCPT
+        Thu, 4 Oct 2018 21:02:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49630 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbeJEBCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:00:53 -0400
-Received: from localhost (unknown [104.132.1.111])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C026AA70;
-        Thu,  4 Oct 2018 18:06:29 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-serial@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jslaby@suse.com, aszlig@nix.build,
-        gmazyland@gmail.com, torvalds@linux-foundation.org, w@1wt.eu,
-        Greg KH <greg@kroah.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 2/2] tty: wipe buffer if not echoing data
-Date:   Thu,  4 Oct 2018 11:06:14 -0700
-Message-Id: <20181004180614.25619-3-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181004180614.25619-1-gregkh@linuxfoundation.org>
-References: <20181004180614.25619-1-gregkh@linuxfoundation.org>
+        Thu, 4 Oct 2018 21:02:41 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g882o-0001DP-3Y; Thu, 04 Oct 2018 18:08:14 +0000
+To:     Yang Shi <yang.shi@linux.alibaba.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazcICSjX06e
+ fanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZOxbBCTvTitYOy3bjs
+ +LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2NoaSEC8Ae8LSSyCMecd22d9Pn
+ LR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyBP9GP65oPev39SmfAx9R92SYJygCy0pPv
+ BMWKvEZS/7bpetPNx6l2xu9UvwoeEbpzUvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3oty
+ dNTWkP6Wh3Q85m+AlifgKZudjZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2m
+ uj83IeFQ1FZ65QAiCdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08y
+ LGPLTf5wyAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
+ zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaByVUv/NsyJ
+ FQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQABzSJDb2xpbiBLaW5n
+ IDxjb2xpbi5raW5nQHVidW50dS5jb20+wsF3BBMBCAAhBQJPCrjvAhsDBQsJCAcDBRUKCQgL
+ BRYCAwEAAh4BAheAAAoJEGjCh9/GqAImjVsP/iA8hDQy7LlMYepND9tKJD2haNLmsBC+yuxX
+ BybYprtSjwvMbx6CtmtiJ4nGfdBzbZv3xOJPr/n6wxrdfGHEFn0W8Au97Xvk087P7alCwBXz
+ y1Hk1aTlhLOGunOLv6SWRYRUAHvWEoVlxPSo2UNJ6D01d9tc7IJU08MlAl+u048S6625G5SG
+ tfOJpFyGqaWGazMpkYdbJuY9acNAQAl1GzZPDCyLrxaBJypqmp3W+rb7m9arNRMlygevFU6e
+ UGrR7QiVuumTGebGF9D63H9LD0E/1EhOA4QWHq1/u7CXLr9qo1YyAUtYAICs0wyRbI6wWPyi
+ 5IyOTiWCVP3qSxV4JR8qq8JhGEwxS5fEB76r+XGxcL7qqiQmVx3bkjlT6FnnanPcD7RsMOAg
+ NcpeftVsqignFPA3XHaDeew4t99ef+wKwiiyU7jqduvSt8amLVip5dxN1TYKqWPauIHL3E2A
+ KIKuqsZ9ftUJ3NXClAfI3EHPMYbok6b04nZSWmBttKHr8YkVF5b4jrabMLlVoCg+DGYffyDS
+ YDwy9FPvJWkt6nffUXciearieSlHEt3f12CPp6OOR8yFZWlISYKdD9PDzXP9kJYTEWnr7dD3
+ feEZK+J9N5wpCU7HvfrA5HCOMJgf8Dcfscrj9H2Qp8vbErMP7jZ6OYapCOV5MZS6W57wlG2k
+ zsFNBE6TJCgBEADF+hz+c0qF0R58DwiM8M/PopzFu5ietBpl0jUzglaKhMZKKW7lAr4pzeE4
+ PgJ4ZwQd0dSkx63hRqM963Fe35iXrreglpwZxgbbGluRJpoeoGWzuUpXE6Ze0A2nICFLk79a
+ YHsFRwnKyol9M0AyZHCvBXi1HAdj17iXerCYN/ZILD5SO0dDiQl570/1Rp3d1z0l16DuCnK+
+ X3I7GT8Z9B3WAr6KCRiP0Grvopjxwkj4Z191mP/auf1qpWPXEAPLVAvu5oM7dlTIxX7dYa6f
+ wlcm1uobZvmtXeDEuHJ3TkbFgRHrZwuh50GMLguG1QjhIPXlzE7/PBQszh5zGxPj8cR81txs
+ 6K/0GGRnIrPhCIlOoTU8L+BenxZF31uutdScHw1EAgB6AsRdwdd8a9AR+XdhHGzQel8kGyBp
+ 4MA7508ih0L9+MBPuCrSsccjwV9+mfsTszrbZosIhVpBaeHNrUMphwFe9HbGUwQeS6tOr+py
+ bOtNUHeiJ5aU3Npo3eZkWVGePP2O4vr8rjVQ1xZMIWA18xUaLTvVSarV7/IqjLb0uMTz6Ng7
+ SceqjsgxO4J35pPOCG8gy85Tmd5NKe46K1xGsNG2zzfXQ6cNkofUyQFGVbLCtdfQyWV7+dgU
+ nOnPhrTKpFfJ5lnWpLpze0LfyW03CpWx9x4yMlwcvIFw2hLaOQARAQABwsFfBBgBCAAJBQJO
+ kyQoAhsMAAoJEGjCh9/GqAImeJYP/jdppMeb7AZnLGVXd8rN7CLBtfMOkXCWaOUhjMRAY7dV
+ IMiF1iPZc6SgiiMSsdG7JJhMjMuLTxA0kX2Z6P0+6dZlO4bDOKMIv4nNGhgSj9NuSKJPRiyi
+ XKKD/wNnPXVFdBZsoHnEXGyAFGnidu4KLUJIiSm4tHJdoMk0ZaJSmwt0dtytuC1IWH8eIaVo
+ /Ah6FxCaznRzvGNFx+9Ofcc7+aMZ15dkg9XagOuiDZ1/r6VuEw9ovnkDT4H5BAsysxo/qykX
+ 4XQ2RQSY/P3td9WNLeXLvt1aJNRcwcIEKgZ5AO3YQbEJt1dEfCU7TAKiRpsjnC/iQiQHGt2I
+ vNci8oZmM3EQEi7yZqD07A6dpGTnRq9OQ7fGhj0SS99yZvooH3fBIHA2LRuvhfDAgTrpbU0w
+ LvkAIo0T2b9SoRCV8FEpHvR2b86NbTU5WN4eqZQbAbnxC7tJp6kLx2Zn2uQMvfXRfnS9R1ja
+ etvpk3h7F+r/RAAh+EvgsPUNaiRJRRLvf9bxTQZhmNrw79eIFNsRIktniLyomJf2+WPOUECz
+ h1lfLqe9yiuUKv+m5uAalXdayhiPbp/JHs1EDRgSq3tiirOsKrh/KMpwz/22qGMRBjFwYBhf
+ 6ozgujmPlO5DVFtzfwOydzNlXTky7t4VU8yTGXZTJprIO+Gs72Q1e+XVIoKl3MIx
+Cc:     linux-mm@kvack.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: re: mm: brk: downgrade mmap_sem to read when shrinking
+Message-ID: <3fe71059-557b-4bab-dc88-4d0c5cfd1845@canonical.com>
+Date:   Thu, 4 Oct 2018 19:08:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg KH <greg@kroah.com>
+Hi,
 
-If we are not echoing the data to userspace or the console is in icanon
-mode, then perhaps it is a "secret" so we should wipe it once we are
-done with it.
+Static analysis has found a couple of issues as follows:
 
-This mirrors the logic that the audit code has.
+commit 551f205aff9198e17add1264dd781771d1a2bd9d
+Author: Yang Shi <yang.shi@linux.alibaba.com>
+Date:   Thu Oct 4 07:43:18 2018 +1000
 
-Reported-by: aszlig <aszlig@nix.build>
-Tested-by: Milan Broz <gmazyland@gmail.com>
-Tested-by: aszlig <aszlig@nix.build>
-Cc: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-v2 - update changelog comment to mention icanon
-     address the fact that copy_to_user() might not copy the whole buffer
+    mm: brk: downgrade mmap_sem to read when shrinking
 
- drivers/tty/n_tty.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+Static analysis with CoverityScan has detected an issue in mm/mmap.c,
+function do_brk_flags():
 
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index 431742201709..3ad460219fd6 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -152,17 +152,28 @@ static inline unsigned char *echo_buf_addr(struct n_tty_data *ldata, size_t i)
- 	return &ldata->echo_buf[i & (N_TTY_BUF_SIZE - 1)];
- }
- 
-+/* If we are not echoing the data, perhaps this is a secret so erase it */
-+static void zero_buffer(struct tty_struct *tty, u8 *buffer, int size)
-+{
-+	bool icanon = !!L_ICANON(tty);
-+	bool no_echo = !L_ECHO(tty);
-+
-+	if (icanon && no_echo)
-+		memset(buffer, 0x00, size);
-+}
-+
- static int tty_copy_to_user(struct tty_struct *tty, void __user *to,
- 			    size_t tail, size_t n)
- {
- 	struct n_tty_data *ldata = tty->disc_data;
- 	size_t size = N_TTY_BUF_SIZE - tail;
--	const void *from = read_buf_addr(ldata, tail);
-+	void *from = read_buf_addr(ldata, tail);
- 	int uncopied;
- 
- 	if (n > size) {
- 		tty_audit_add_data(tty, from, size);
- 		uncopied = copy_to_user(to, from, size);
-+		zero_buffer(tty, from, size - uncopied);
- 		if (uncopied)
- 			return uncopied;
- 		to += size;
-@@ -171,7 +182,9 @@ static int tty_copy_to_user(struct tty_struct *tty, void __user *to,
- 	}
- 
- 	tty_audit_add_data(tty, from, n);
--	return copy_to_user(to, from, n);
-+	uncopied = copy_to_user(to, from, n);
-+	zero_buffer(tty, from, n - uncopied);
-+	return uncopied;
- }
- 
- /**
-@@ -1960,11 +1973,12 @@ static int copy_from_read_buf(struct tty_struct *tty,
- 	n = min(head - ldata->read_tail, N_TTY_BUF_SIZE - tail);
- 	n = min(*nr, n);
- 	if (n) {
--		const unsigned char *from = read_buf_addr(ldata, tail);
-+		unsigned char *from = read_buf_addr(ldata, tail);
- 		retval = copy_to_user(*b, from, n);
- 		n -= retval;
- 		is_eof = n == 1 && *from == EOF_CHAR(tty);
- 		tty_audit_add_data(tty, from, n);
-+		zero_buffer(tty, from, n);
- 		smp_store_release(&ldata->read_tail, ldata->read_tail + n);
- 		/* Turn single EOF into zero-length read */
- 		if (L_EXTPROC(tty) && ldata->icanon && is_eof &&
--- 
-2.19.0
+                retval = __do_munmap(mm, newbrk, oldbrk-newbrk, &uf, true);
+                if (retval < 0) {
+                        mm->brk = origbrk;
+                        goto out;
+                } else if (retval == 1)
+                        downgraded = true;
 
+retval is unsigned long, so the retval < 0 check is always false, which
+looks bogus to me.
+
+Also same kind of issue with:
+
+commit e66477708ec2a764d3add92ca59134e3812da0bb
+Author: Yang Shi <yang.shi@linux.alibaba.com>
+Date:   Thu Oct 4 07:43:18 2018 +1000
+
+    mm: mremap: downgrade mmap_sem to read when shrinking
+
+                ret = __do_munmap(mm, addr+new_len, old_len - new_len,
+                                  &uf_unmap, true);
+                if (ret < 0 && old_len != new_len)
+                        goto out;
+                /* Returning 1 indicates mmap_sem is downgraded to read. */
+                else if (ret == 1)
+                        downgraded = true;
+
+again, ret is unsigned long, so the comparison with ret < 0 is always false.
+
+Detected by CoverityScan, CID#1473794, CID#1473791 "Unsigned compared
+against 0".
+
+Colin
