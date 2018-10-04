@@ -2,118 +2,104 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB67C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2B0C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4396021470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C755321473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cikmoFM2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4396021470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4fXPgq/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C755321473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJDPZq (ORCPT
+        id S1727650AbeJDP0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:25:46 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44911 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727325AbeJDPZp (ORCPT
+        Thu, 4 Oct 2018 11:26:23 -0400
+Received: from mail-io1-f44.google.com ([209.85.166.44]:40689 "EHLO
+        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbeJDP0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:25:45 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 63-v6so8893749wra.11
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:33:37 -0700 (PDT)
+        Thu, 4 Oct 2018 11:26:23 -0400
+Received: by mail-io1-f44.google.com with SMTP id w16-v6so7226833iom.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nmDtcvCkwb975nAcqWHoB0JIXhy725B2m4ynNAJgE70=;
-        b=cikmoFM2nlvTf8k0Jjseugkh221+L3qXfvUskmi/ucfGemg98UH1jpUd18xfiWNYE+
-         jbtFRFXYZJf4ImX+EKF/K8ZwPLdyVemvxA6ZiwbTdtjOeIV6NK1aGs/ZOQJ+FrgRHh8r
-         f5MS2+5LFn3jWggsd0YtZ8LBeW+tdeE/uQbgw5aqYc9Zx1XRX1dfkSM4wWrAkd44i1/z
-         Oz06PKgIJg6wh6bQs5RD1h+AZzw8Gf+7BJWEFB221e7Kt7FsePjLd8/QgR8RGDQHAAfD
-         4z3NOkCCvesaK807wWc+/yAbe0MoDO/qtUaI6kA9e0MFzQJ4d1iJ1VM2xDTQiZEjxIQt
-         dsCQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2/WUmzkdF/fk4ktL33DmDmI0KxA3V7GEhh9xis7amoM=;
+        b=P4fXPgq/JhwUfpIhImG/08BZV5FTR/HDqDMiLFFhd0UToAVUVmrhbGpF54texp90eb
+         HzPGG4lnjqj02Fistx9oE7MFpHsg4UwJQ3oDDs8Cmz8hbuKBPfEhvghXckjY6WYvJGAb
+         QjgA8Q9osldhAGEzgLqbL0Uc9pm81HzLIzM74=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nmDtcvCkwb975nAcqWHoB0JIXhy725B2m4ynNAJgE70=;
-        b=r1oERQdAYwBdOStk/ndU0iYoNQCVc/Kg+iIriKfqs00z5cYkaXEueu7P1/J0vG3gUH
-         BvAqIYlp5e3NcXSJmaWiy3iZaxFebPWNOJeJTt2nQVZLjOI99DAnaPxg8q40esu5Q1Gf
-         D/DP0IWaaPF3s4rgMoXLgPurPyxvHTNesRxrUDxBQsFarlTO4oHn9U8popmW3L6Waggw
-         z3RKDY87g56SaYGvF3k8hq5Zk8KfqfaODb+RjR0r1jI9E4wIPxO3bwYuyywy3GyeAi4E
-         tI01+Fwgj3BkN7rfqSq2BYflR/DXYOvSevqogLayeGdiCE4kNl1BLO8tcatQPa/8utT/
-         +JvQ==
-X-Gm-Message-State: ABuFfogewqBurwMXApzTdrFIL/A+V4mLvGtGKDrA5iSMGApqL8jSx9N2
-        54DW9Dg8xByGcvBMW4FmLVo=
-X-Google-Smtp-Source: ACcGV637OMPJ9qEZRf/p8xNqKSm95eS+ttn3O7tg79EeicM5mafwzlCRS5G3Wf/qnSnaj6d35yDhoQ==
-X-Received: by 2002:a5d:6ac5:: with SMTP id u5-v6mr3907132wrw.288.1538642016274;
-        Thu, 04 Oct 2018 01:33:36 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id u10-v6sm2767465wrt.59.2018.10.04.01.33.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 01:33:35 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 10:33:33 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
-Message-ID: <20181004083333.GA9802@gmail.com>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181003213100.189959-5-namit@vmware.com>
- <20181004075755.GA3353@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2/WUmzkdF/fk4ktL33DmDmI0KxA3V7GEhh9xis7amoM=;
+        b=I9lIGLch/XXOkj1eFheSH6Z7gmk/JhsxqwYmyrKbZyw3LBfgiVBaQvCTpH++sfo7C0
+         aWq+xhDVpmx5lerShqn+oAA8wY23fiWHuJjvW0SJCysQLL14F4dGygfBAJkkkDsAYOcH
+         GqkAFVCreOIMUsp2R3DOmVeNYsGzgpygZuejdc1HuYbEVt31dw6kKiIVyHsDAqlAPmRP
+         rzQugswXZ9CCfRAoRKu9AfT9gCiQPKY00QTamShFo+jtSdUGxcNEK0w9fWUb/64/Qzr5
+         4WYmZRjk3jaIDcPoKWomx4QWliZQluwfr53hDia+14Hcw8sYneb/fr1k2a3SFsXflkEw
+         qIew==
+X-Gm-Message-State: ABuFfog9k0QxUY7hOhxj+ZbbRt4li5l727qPar1qPiXZ/x+t8EUk8kmj
+        WE18HLuQidWUKF16x/3KSHl49Kt9VEx1AFE/YJRimQ==
+X-Google-Smtp-Source: ACcGV61ntl8Rn9gGqrgo/P/ZaaMdhLNKvAHpJyJTv3shwsBscKfo87ky2hboxD+1Du0G9k7wzyc1yAVx23sPMH2i9y4=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr3738422iog.175.1538642054940;
+ Thu, 04 Oct 2018 01:34:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004075755.GA3353@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
+In-Reply-To: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Oct 2018 10:34:03 +0200
+Message-ID: <CACRpkdazxOt0E0J8D763_Mc5RVxpYTrfNgHYkMVQB+GVi1S9Hw@mail.gmail.com>
+Subject: Re: protected pins and debugfs
+To:     psodagud@codeaurora.org
+Cc:     Stephen Boyd <sboyd@codeaurora.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 3, 2018 at 2:38 PM Sodagudi Prasad <psodagud@codeaurora.org> wrote:
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+> This is regarding the protected pins configuration reading and printing
+> from non-secure operating systems.
 
-> I'm also somewhat annoyed at the fact that this series carries a boatload
-> of reviewed-by's and acked-by's, yet none of those reviewers found it
-> important to point out the large chasm that is gaping between description
-> and reality.
+I do not think anyone with security in mind should have debugfs
+enabled. But maybe that is beside the point.
 
-Another problem I just realized is that we now include arch/x86/kernel/macros.S in every 
-translation pass when building the kernel, right?
+> GPIO framework is checking whether pin is in use(flag FLAG_REQUESTED) or
+> not in gpiolib_dbg_show().
+>
+> If GPIO chip drivers are overriding the dbg_show callback, drivers are
+> not checking whether a pin is really in use or not to print
+> configuration details.
+>      if (chip->dbg_show)
+>                  chip->dbg_show(s, chip);
+>          else
+>                  gpiolib_dbg_show(s, gdev);
 
-But arch/x86/kernel/macros.S expands to a pretty large hiearchy of header files:
+Ah that is right. Because some drivers can inspect all pins whether they
+are requested or not.
 
-  $ make arch/x86/kernel/macros.s
+> Can we use a simple/common solution like below?  It will check whether a
+> pin is in use or not before printing configuration data with the help of
+> gpiochip_is_requested().
 
-  $ cat $(grep include arch/x86/kernel/macros.s | cut -d\" -f2 | sort | uniq) | wc -l
-  4128
+In the msm case I think maybe you want to inspect the valid_mask
+instead, so you display debugfs info for all pins you can inspect
+in hardware but avoid the "invalid" ones which I half-guess is used
+by ACPI in your case.
 
-That's 4,100 extra lines of code to be preprocessed for every translation unit, of
-which there are tens of thousands. More if other pieces of code get macrofied in
-this fasion in the future.
-
-If we assume that a typical distribution kernel build has ~20,000 translation units
-then this change adds 82,560,000 more lines to be preprocessed, just to work around
-a stupid GCC bug?
-
-I'm totally unhappy about that. Can we do this without adding macros.S?
-
-It's also a pretty stupidly central file anyway that moves source code away
-from where it's used.
-
-Thanks,
-
-	Ingo
+Yours,
+Linus Walleij
