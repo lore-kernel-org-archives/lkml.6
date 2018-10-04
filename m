@@ -2,387 +2,175 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D632DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EACC00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F4121473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:27:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F4121473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C60520856
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:29:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="E5yek9Ox"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C60520856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeJDJS0 (ORCPT
+        id S1727293AbeJDJUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 05:18:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:53775 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeJDJS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 05:18:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 19:27:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
-   d="scan'208";a="92023231"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Oct 2018 19:27:16 -0700
-Subject: [PATCH v2 2/3] mm: Move buddy list manipulations into helpers
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org
-Date:   Wed, 03 Oct 2018 19:15:29 -0700
-Message-ID: <153861932911.2863953.7518554698135022474.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Thu, 4 Oct 2018 05:20:03 -0400
+Received: from mail-eopbgr20047.outbound.protection.outlook.com ([40.107.2.47]:18512
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726277AbeJDJUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 05:20:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aszaQJVEdvHV4WLEmT2ZSv7sTuhBvYMe+Zltv69qmw8=;
+ b=E5yek9OxTthsaSKTqqow80EXd6okr3Q6BpFD+B86CfhFJ7PfYocvBgIUYcbmYZ1h9/7o6Imtg+JNAORGgjfPUExXTPIEpxvOiaVYDfhq9g6WXa0KUdRSgQ/jOfwXM+wXA6m01lEV51LlY7364t5ETjPksuJHgmAWbRFpeqKidrw=
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com (10.169.135.8) by
+ VI1PR0501MB2446.eurprd05.prod.outlook.com (10.168.136.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.22; Thu, 4 Oct 2018 02:28:54 +0000
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::e4c2:d0a4:ae7c:7d29]) by VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::e4c2:d0a4:ae7c:7d29%10]) with mapi id 15.20.1185.026; Thu, 4 Oct 2018
+ 02:28:54 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Parav Pandit <parav@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "leon@kernel.org" <leon@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        "dledford@redhat.com" <dledford@redhat.com>
+Subject: RE: [PATCHv1] RDMA/core: Check error status of
+ rdma_find_ndev_for_src_ip_rcu
+Thread-Topic: [PATCHv1] RDMA/core: Check error status of
+ rdma_find_ndev_for_src_ip_rcu
+Thread-Index: AQHUUbv0He77yOgtWky+XYLnap0KHKUOb/YQ
+Date:   Thu, 4 Oct 2018 02:28:54 +0000
+Message-ID: <VI1PR0501MB2271905AAC309C636C0B63B7D1EA0@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+References: <1537542022-4451-1-git-send-email-parav@mellanox.com>
+In-Reply-To: <1537542022-4451-1-git-send-email-parav@mellanox.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [107.77.217.183]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2446;6:1okqJ3QOYbpMxRnLI5GI+hSnJPqM4C4+XCUfHrs5wY6rnYWJ/i4M7DBlk/7IwiIIbk/SAe5CN+E4VfqtSAdLTK5uoSPfuoRo7/T2BjTvn4zwBUMWIkajxjNa4Q9HGxA/LKBCv5KzJJPUpY1B5reZ61eIN4MoLjQYHYtmBJZmLVoHygXOOZ8Z7GLxdc6BS73SWZoTX4vIL+OqubsLe0dwv9yHFFk2A5Vcdutd7P3Qj5FrtNKSYiu46al2NiloWvp3AGMKT/JbJU7/jSNBr5DzVh1JTjYSjK17s+sHtit5aYktabTypii8ag9NlToGqhpVKTJ7VvRXno6fKSiR6jHj21EBy+jkEltWNRgA0JazgD8ayTtT5/zxbp1SQ9omylnR0dUGlakBX6TJAqsnQun4FoCzJi2IDQkWuTSVie31AZQDVYrjVjFwTg+SaPPS2lrBp7Yb2+3Np7ct9JbVdilZ4A==;5:RjcXF9q1J4huz/N76fUoP86oHB5bDh3Po9VFfloL5sgz8aC/J3PBVTTIv4zqSTDtZqK8DnJhbNVTA2gHv6D19n4yqBlm7c55g10oGVl6Teu9CAPe5HSEBJvwF9TP8EmtZLgLsC3b9i7OyeTRVHS0WMKIUGNXj4qOT1WMndhvjR4=;7:ePJ8SI2KW0jDR83Op6JI8MuclE+8dXrYBv5T0+mA288Eb4vIHtn9qsPAZ1gFOcK274P2RuRuiIFhBxHBNbonElLev30gHck2Wbr4AzVfIG7WHBIvOxf9Eo44iatyKLU2ejszC5pk8KqSo10+Pz79OfKjBRcFAZZSTJdZ4W/Wr0MIs623r1x5Yb8NlOXbqM9jOUQUceFvaGxDbMshTXd/nrfCv0N3LGIaaFevFNNHMmpFSybtW328nLE4XMT9veSO
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 679da5e7-d5b4-4c14-8007-08d629a1217c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2446;
+x-ms-traffictypediagnostic: VI1PR0501MB2446:
+x-microsoft-antispam-prvs: <VI1PR0501MB24467209C762EC6B040D22F8D1EA0@VI1PR0501MB2446.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(215639381216008)(84791874153150)(45079756050767)(189930954265078);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051);SRVR:VI1PR0501MB2446;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2446;
+x-forefront-prvs: 0815F8251E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(39860400002)(136003)(396003)(199004)(189003)(13464003)(25786009)(26005)(305945005)(476003)(7736002)(11346002)(74316002)(186003)(45080400002)(102836004)(446003)(2906002)(478600001)(486006)(81166006)(110136005)(68736007)(2900100001)(2501003)(5250100002)(6436002)(2201001)(66066001)(8676002)(316002)(81156014)(8936002)(105586002)(966005)(106356001)(229853002)(71200400001)(71190400001)(76176011)(33656002)(14454004)(7696005)(6306002)(9686003)(53936002)(6246003)(6116002)(3846002)(6506007)(53546011)(256004)(97736004)(86362001)(575784001)(5660300001)(99286004)(55016002)(99710200001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2446;H:VI1PR0501MB2271.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 81C4ADX151bKj0wSPmJLuiSaS3Lcpk4NmnLsGSbkvGU0fjwswdCXM521pYgwSe9rtsBGtF8SR0euBfLoaRf9+g+xm+EI7tPGH18L5gVQ71XDLrhmXPk5Z3txtq+jnGObHRKaMikwEtNuKIDlPfjX6nYnHOLx4s3EHvGRyCScG6ixu/WZRs11JZZdlPSetrto56xrRxEGNV9JVqS/dKZAc2lcJB/G6OqCwI7h+SukbN6n58QUMQbDAdGLRbaUr7uZVsAA183At8M1JNUnApw1UPcfmmW4Eo7Nl+yQV75jJPzbGug9JpVRGoY+3PWzqJAZOn8cautW2I7HmvmHizFG0FwNBrNBFlNWfBvVBla/62Y=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 679da5e7-d5b4-4c14-8007-08d629a1217c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2018 02:28:54.6453
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2446
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for runtime randomization of the zone lists, take all
-(well, most of) the list_*() functions in the buddy allocator and put
-them in helper functions. Provide a common control point for injecting
-additional behavior when freeing pages.
+Hi Doug, Jason,
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/mm.h       |    3 --
- include/linux/mm_types.h |    3 ++
- include/linux/mmzone.h   |   51 ++++++++++++++++++++++++++++++++++
- mm/compaction.c          |    4 +--
- mm/page_alloc.c          |   70 ++++++++++++++++++----------------------------
- 5 files changed, 84 insertions(+), 47 deletions(-)
+> -----Original Message-----
+> From: Parav Pandit <parav@mellanox.com>
+> Sent: Friday, September 21, 2018 10:00 AM
+> To: linux-rdma@vger.kernel.org; linux-kernel@vger.kernel.org;
+> leon@kernel.org; jgg@ziepe.ca; syzkaller-bugs@googlegroups.com; Daniel
+> Jurgens <danielj@mellanox.com>; dledford@redhat.com
+> Cc: Parav Pandit <parav@mellanox.com>
+> Subject: [PATCHv1] RDMA/core: Check error status of
+> rdma_find_ndev_for_src_ip_rcu
+>=20
+> rdma_find_ndev_for_src_ip_rcu() returns either valid netdev pointer or
+> ERR_PTR().
+> Instead of checking for NULL, check for error.
+>=20
+> Fixes: caf1e3ae9fa6 ("RDMA/core Introduce and use
+> rdma_find_ndev_for_src_ip_rcu")
+> Reported-by: syzbot+20c32fa6ff84a2d28c36@syzkaller.appspotmail.com
+> Signed-off-by: Parav Pandit <parav@mellanox.com>
+> ---
+>  drivers/infiniband/core/addr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/add=
+r.c
+> index c2ca9e4..3c07eeb 100644
+> --- a/drivers/infiniband/core/addr.c
+> +++ b/drivers/infiniband/core/addr.c
+> @@ -513,8 +513,8 @@ static int rdma_set_src_addr_rcu(struct
+> rdma_dev_addr *dev_addr,
+>  		 * loopback IP address.
+>  		 */
+>  		ndev =3D rdma_find_ndev_for_src_ip_rcu(dev_net(ndev),
+> dst_in);
+> -		if (!ndev)
+> -			return -ENODEV;
+> +		if (IS_ERR(ndev))
+> +			return PTR_ERR(ndev);
+>  	}
+>=20
+>  	return copy_src_l2_addr(dev_addr, dst_in, dst, ndev);
+> --
+> 1.8.3.1
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ca1581814fe2..1d19ec6a2b81 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -473,9 +473,6 @@ static inline void vma_set_anonymous(struct vm_area_struct *vma)
- struct mmu_gather;
- struct inode;
- 
--#define page_private(page)		((page)->private)
--#define set_page_private(page, v)	((page)->private = (v))
--
- #if !defined(__HAVE_ARCH_PTE_DEVMAP) || !defined(CONFIG_TRANSPARENT_HUGEPAGE)
- static inline int pmd_devmap(pmd_t pmd)
- {
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index cd2bc939efd0..191610be62bd 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -209,6 +209,9 @@ struct page {
- #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
- #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
- 
-+#define page_private(page)		((page)->private)
-+#define set_page_private(page, v)	((page)->private = (v))
-+
- struct page_frag_cache {
- 	void * va;
- #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 8f8fc7dab5cb..adf9b3a7440d 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -18,6 +18,8 @@
- #include <linux/pageblock-flags.h>
- #include <linux/page-flags-layout.h>
- #include <linux/atomic.h>
-+#include <linux/mm_types.h>
-+#include <linux/page-flags.h>
- #include <asm/page.h>
- 
- /* Free memory management - zoned buddy allocator.  */
-@@ -98,6 +100,55 @@ struct free_area {
- 	unsigned long		nr_free;
- };
- 
-+/* Used for pages not on another list */
-+static inline void add_to_free_area(struct page *page, struct free_area *area,
-+			     int migratetype)
-+{
-+	list_add(&page->lru, &area->free_list[migratetype]);
-+	area->nr_free++;
-+}
-+
-+/* Used for pages not on another list */
-+static inline void add_to_free_area_tail(struct page *page, struct free_area *area,
-+				  int migratetype)
-+{
-+	list_add_tail(&page->lru, &area->free_list[migratetype]);
-+	area->nr_free++;
-+}
-+
-+/* Used for pages which are on another list */
-+static inline void move_to_free_area(struct page *page, struct free_area *area,
-+			     int migratetype)
-+{
-+	list_move(&page->lru, &area->free_list[migratetype]);
-+}
-+
-+static inline struct page *get_page_from_free_area(struct free_area *area,
-+					    int migratetype)
-+{
-+	return list_first_entry_or_null(&area->free_list[migratetype],
-+					struct page, lru);
-+}
-+
-+static inline void rmv_page_order(struct page *page)
-+{
-+	__ClearPageBuddy(page);
-+	set_page_private(page, 0);
-+}
-+
-+static inline void del_page_from_free_area(struct page *page,
-+		struct free_area *area, int migratetype)
-+{
-+	list_del(&page->lru);
-+	rmv_page_order(page);
-+	area->nr_free--;
-+}
-+
-+static inline bool free_area_empty(struct free_area *area, int migratetype)
-+{
-+	return list_empty(&area->free_list[migratetype]);
-+}
-+
- struct pglist_data;
- 
- /*
-diff --git a/mm/compaction.c b/mm/compaction.c
-index faca45ebe62d..48736044f682 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1358,13 +1358,13 @@ static enum compact_result __compact_finished(struct zone *zone,
- 		bool can_steal;
- 
- 		/* Job done if page is free of the right migratetype */
--		if (!list_empty(&area->free_list[migratetype]))
-+		if (!free_area_empty(area, migratetype))
- 			return COMPACT_SUCCESS;
- 
- #ifdef CONFIG_CMA
- 		/* MIGRATE_MOVABLE can fallback on MIGRATE_CMA */
- 		if (migratetype == MIGRATE_MOVABLE &&
--			!list_empty(&area->free_list[MIGRATE_CMA]))
-+			!free_area_empty(area, MIGRATE_CMA))
- 			return COMPACT_SUCCESS;
- #endif
- 		/*
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 9a1d97655c19..b4a1598fcab5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -705,12 +705,6 @@ static inline void set_page_order(struct page *page, unsigned int order)
- 	__SetPageBuddy(page);
- }
- 
--static inline void rmv_page_order(struct page *page)
--{
--	__ClearPageBuddy(page);
--	set_page_private(page, 0);
--}
--
- /*
-  * This function checks whether a page is free && is the buddy
-  * we can coalesce a page and its buddy if
-@@ -811,13 +805,11 @@ static inline void __free_one_page(struct page *page,
- 		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
- 		 * merge with it and move up one order.
- 		 */
--		if (page_is_guard(buddy)) {
-+		if (page_is_guard(buddy))
- 			clear_page_guard(zone, buddy, order, migratetype);
--		} else {
--			list_del(&buddy->lru);
--			zone->free_area[order].nr_free--;
--			rmv_page_order(buddy);
--		}
-+		else
-+			del_page_from_free_area(buddy, &zone->free_area[order],
-+					migratetype);
- 		combined_pfn = buddy_pfn & pfn;
- 		page = page + (combined_pfn - pfn);
- 		pfn = combined_pfn;
-@@ -867,15 +859,13 @@ static inline void __free_one_page(struct page *page,
- 		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
- 		if (pfn_valid_within(buddy_pfn) &&
- 		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
--			list_add_tail(&page->lru,
--				&zone->free_area[order].free_list[migratetype]);
--			goto out;
-+			add_to_free_area_tail(page, &zone->free_area[order],
-+					      migratetype);
-+			return;
- 		}
- 	}
- 
--	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
--out:
--	zone->free_area[order].nr_free++;
-+	add_to_free_area(page, &zone->free_area[order], migratetype);
- }
- 
- /*
-@@ -1977,7 +1967,7 @@ static inline void expand(struct zone *zone, struct page *page,
- 		if (set_page_guard(zone, &page[size], high, migratetype))
- 			continue;
- 
--		list_add(&page[size].lru, &area->free_list[migratetype]);
-+		add_to_free_area(&page[size], area, migratetype);
- 		area->nr_free++;
- 		set_page_order(&page[size], high);
- 	}
-@@ -2119,13 +2109,10 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
- 	/* Find a page of the appropriate size in the preferred list */
- 	for (current_order = order; current_order < MAX_ORDER; ++current_order) {
- 		area = &(zone->free_area[current_order]);
--		page = list_first_entry_or_null(&area->free_list[migratetype],
--							struct page, lru);
-+		page = get_page_from_free_area(area, migratetype);
- 		if (!page)
- 			continue;
--		list_del(&page->lru);
--		rmv_page_order(page);
--		area->nr_free--;
-+		del_page_from_free_area(page, area, migratetype);
- 		expand(zone, page, order, current_order, area, migratetype);
- 		set_pcppage_migratetype(page, migratetype);
- 		return page;
-@@ -2215,8 +2202,7 @@ static int move_freepages(struct zone *zone,
- 		}
- 
- 		order = page_order(page);
--		list_move(&page->lru,
--			  &zone->free_area[order].free_list[migratetype]);
-+		move_to_free_area(page, &zone->free_area[order], migratetype);
- 		page += 1 << order;
- 		pages_moved += 1 << order;
- 	}
-@@ -2365,7 +2351,7 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
- 
- single_page:
- 	area = &zone->free_area[current_order];
--	list_move(&page->lru, &area->free_list[start_type]);
-+	move_to_free_area(page, area, start_type);
- }
- 
- /*
-@@ -2389,7 +2375,7 @@ int find_suitable_fallback(struct free_area *area, unsigned int order,
- 		if (fallback_mt == MIGRATE_TYPES)
- 			break;
- 
--		if (list_empty(&area->free_list[fallback_mt]))
-+		if (free_area_empty(area, fallback_mt))
- 			continue;
- 
- 		if (can_steal_fallback(order, migratetype))
-@@ -2476,9 +2462,7 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
- 		for (order = 0; order < MAX_ORDER; order++) {
- 			struct free_area *area = &(zone->free_area[order]);
- 
--			page = list_first_entry_or_null(
--					&area->free_list[MIGRATE_HIGHATOMIC],
--					struct page, lru);
-+			page = get_page_from_free_area(area, MIGRATE_HIGHATOMIC);
- 			if (!page)
- 				continue;
- 
-@@ -2591,8 +2575,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype)
- 	VM_BUG_ON(current_order == MAX_ORDER);
- 
- do_steal:
--	page = list_first_entry(&area->free_list[fallback_mt],
--							struct page, lru);
-+	page = get_page_from_free_area(area, fallback_mt);
- 
- 	steal_suitable_fallback(zone, page, start_migratetype, can_steal);
- 
-@@ -3019,6 +3002,7 @@ EXPORT_SYMBOL_GPL(split_page);
- 
- int __isolate_free_page(struct page *page, unsigned int order)
- {
-+	struct free_area *area = &page_zone(page)->free_area[order];
- 	unsigned long watermark;
- 	struct zone *zone;
- 	int mt;
-@@ -3043,9 +3027,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 	}
- 
- 	/* Remove page from free list */
--	list_del(&page->lru);
--	zone->free_area[order].nr_free--;
--	rmv_page_order(page);
-+
-+	del_page_from_free_area(page, area, mt);
- 
- 	/*
- 	 * Set the pageblock if the isolated page is at least half of a
-@@ -3339,13 +3322,13 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
- 			continue;
- 
- 		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
--			if (!list_empty(&area->free_list[mt]))
-+			if (!free_area_empty(area, mt))
- 				return true;
- 		}
- 
- #ifdef CONFIG_CMA
- 		if ((alloc_flags & ALLOC_CMA) &&
--		    !list_empty(&area->free_list[MIGRATE_CMA])) {
-+		    !free_area_empty(area, MIGRATE_CMA)) {
- 			return true;
- 		}
- #endif
-@@ -5191,7 +5174,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 
- 			types[order] = 0;
- 			for (type = 0; type < MIGRATE_TYPES; type++) {
--				if (!list_empty(&area->free_list[type]))
-+				if (!free_area_empty(area, type))
- 					types[order] |= 1 << type;
- 			}
- 		}
-@@ -8220,6 +8203,9 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 	spin_lock_irqsave(&zone->lock, flags);
- 	pfn = start_pfn;
- 	while (pfn < end_pfn) {
-+		struct free_area *area;
-+		int mt;
-+
- 		if (!pfn_valid(pfn)) {
- 			pfn++;
- 			continue;
-@@ -8238,13 +8224,13 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		BUG_ON(page_count(page));
- 		BUG_ON(!PageBuddy(page));
- 		order = page_order(page);
-+		area = &zone->free_area[order];
- #ifdef CONFIG_DEBUG_VM
- 		pr_info("remove from free list %lx %d %lx\n",
- 			pfn, 1 << order, end_pfn);
- #endif
--		list_del(&page->lru);
--		rmv_page_order(page);
--		zone->free_area[order].nr_free--;
-+		mt = get_pageblock_migratetype(page);
-+		del_page_from_free_area(page, area, mt);
- 		for (i = 0; i < (1 << order); i++)
- 			SetPageReserved((page+i));
- 		pfn += (1 << order);
+Can you please review this fix?
+I got below report from syzbot that it tested the patch and reproducer didn=
+'t trigger.
+
+Report:
+
+syzbot has tested the proposed patch and the reproducer did not trigger =20
+crash:
+
+Reported-and-tested-by: =20
+syzbot+20c32fa6ff84a2d28c36@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         41ab1cb7d1cd RDMA/cma: Introduce and use cma_ib_acquire_de.=
+.
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git=
+ =20
+for-next
+kernel config:  https://emea01.safelinks.protection.outlook.com/?url=3Dhttp=
+s%3A%2F%2Fsyzkaller.appspot.com%2Fx%2F.config%3Fx%3D112cc1aec8b19ba4&amp;da=
+ta=3D02%7C01%7Cparav%40mellanox.com%7Ce0a5662bb6aa4fdee43508d6298c9e60%7Ca6=
+52971c7d2e4d9ba6a4d149256f461b%7C0%7C0%7C636742081267605003&amp;sdata=3DXiJ=
+9F0gNuDvCWt0m2qzS6SbocXbFXIdWEHe%2BaJuvvcM%3D&amp;reserved=3D0
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+patch:          https://emea01.safelinks.protection.outlook.com/?url=3Dhttp=
+s%3A%2F%2Fsyzkaller.appspot.com%2Fx%2Fpatch.diff%3Fx%3D10558231400000&amp;d=
+ata=3D02%7C01%7Cparav%40mellanox.com%7Ce0a5662bb6aa4fdee43508d6298c9e60%7Ca=
+652971c7d2e4d9ba6a4d149256f461b%7C0%7C0%7C636742081267605003&amp;sdata=3Dda=
+0p6AW3YnXmFVrSaR%2FxSrB%2Bj%2Bml%2B5AXx%2B%2FKG4Kjb1M%3D&amp;reserved=3D0
+
+Note: testing is done by a robot and is best-effort only.
 
