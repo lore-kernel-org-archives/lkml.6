@@ -2,92 +2,157 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19935C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25865C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D329720877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tN5oT/6K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D329720877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E736720877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E736720877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeJDTN1 (ORCPT
+        id S1727608AbeJDTNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:13:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34062 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727325AbeJDTN0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:13:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=v7pL1j6omxzEbtqGNokJV0j7V2CQAY4hx58HtWUfndc=; b=tN5oT/6KPxD9vM050D+JHtQ6I
-        7ZSthfwqKQZQsdbraLSsxuN6SXTnsQJGzS4HbEyo4qnBzBrzNwzfLiyNml13UpYhywKAiUC6ukbAo
-        Ws2bBiBP7bt8GCKmNPfui2L4nW+8Lej33JcQfBukkhK22HOYVkgmYHooNSWdGF7cJyvJU5A+7vqTQ
-        jMfW2pCCnTowPv2hI0KP2Cl38SHVJ5fOMJiC7xunnMaVgP6qn2vKDMQLubBjKT4IOmJh4hNZvbDgZ
-        kmTSzIheuQE0LkXr5HjVtBdjtcRoDd58wroNTVmr74CjuwRTraiH34H+FxaKKv3/1jQ3k/EZAvPZR
-        sHli/eg8w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g82aH-00074A-4z; Thu, 04 Oct 2018 12:20:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7D2FD2026A8C7; Thu,  4 Oct 2018 14:18:07 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 14:18:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v7 12/14] sched/fair: Select an energy-efficient CPU on
- task wake-up
-Message-ID: <20181004121807.GO19272@hirez.programming.kicks-ass.net>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-13-quentin.perret@arm.com>
- <20181004094412.GD19252@hirez.programming.kicks-ass.net>
- <20181004102722.izp7y42cvayq4pqg@queper01-lin>
- <20181004104107.GN19272@hirez.programming.kicks-ass.net>
- <20181004105507.ordjpa3hsb6zoelc@queper01-lin>
+        Thu, 4 Oct 2018 15:13:53 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2095 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727325AbeJDTNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:13:53 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 517163D3B2D1;
+        Thu,  4 Oct 2018 13:20:48 +0100 (IST)
+Received: from [10.204.65.138] (10.204.65.138) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 4 Oct
+ 2018 13:20:46 +0100
+Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-13-tomas.winkler@intel.com>
+ <20181002005208.GH23753@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+ <20181003120141.GA7969@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+ <20181004113502.GA12498@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9E6D00@hasmsx109.ger.corp.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <19c26db0-cde9-da70-1b02-7e37ca188b45@huawei.com>
+Date:   Thu, 4 Oct 2018 14:20:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004105507.ordjpa3hsb6zoelc@queper01-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E6D00@hasmsx109.ger.corp.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.138]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 11:55:09AM +0100, Quentin Perret wrote:
-> On Thursday 04 Oct 2018 at 12:41:07 (+0200), Peter Zijlstra wrote:
-> > Not sure, see what it looks like ;-) My main concern here was to get rid
-> > of that giant blob in select_task_rq_fair().
+On 10/4/2018 1:45 PM, Winkler, Tomas wrote:
 > 
-> OK, got it. I'll probably just move the checks into the function and
-> merge that large comment into the already massive comment above
-> find_energy_efficient_cpu() or something. We'll see :-)
 > 
-> And do you actually care about the function name ? We've been using
-> find_energy_efficient_cpu() for some time in Android now, so that's just
-> slightly easier for us if that can be re-used. Not a big deal either,
-> though.
+>> -----Original Message-----
+>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+>> Sent: Thursday, October 04, 2018 14:35
+>> To: Winkler, Tomas <tomas.winkler@intel.com>
+>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+>> <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
+>> linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+>>
+>> On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+>>>> Sent: Wednesday, October 03, 2018 15:02
+>>>> To: Winkler, Tomas <tomas.winkler@intel.com>
+>>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+>>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+>>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
+>>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
+>>>> linux-security-module@vger.kernel.org;
+>>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+>>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to
+>>>> tpm2-cmd.c
+>>>>
+>>>> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+>>>>>
+>>>>>
+>>>>>>
+>>>>>> On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+>>>>>>> Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
+>>>>>>> required by tpm-interface.c. It wraps the original open code
+>>>> implementation.
+>>>>>>> The original original tpm2_pcr_extend() function is renamed to
+>>>>>>> __tpm2_pcr_extend() and made static, it is called only from
+>>>>>>> new tpm2_pcr_extend().
+>>>>>>>
+>>>>>>> Fix warnings in __tpm2_pcr_extend()
+>>>>>>> tpm2-cmd.c:251:16: warning: comparison between signed and
+>>>>>>> unsigned integer expressions [-Wsign-compare]
+>>>>>>> tpm2-cmd.c:252:17: warning: comparison between signed and
+>>>>>>> unsigned integer expressions [-Wsign-compare]
+>>>>>>>
+>>>>>>> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+>>>>>>
+>>>>>> We do not want the signature change, especially because as we
+>>>>>> are working on getting Roberto's changes in and also because it
+>>>>>> has absolutely a zero gain. Who cares if those functions take
+>>>>>> different
+>>>> parameters? I don't.
+>>>>>
+>>>>> Yes, we do care this series tries to have a clean cut between 1.x
+>>>>> and 2.x
+>>>> specs. Please, let's finish one transformation and then move to another.
+>>>>> I understand that Roberto will have to rebase anyhow, if this
+>>>>> series goes in
+>>>> first, if this is hard I can do it myself, it's trivial.
+>>>>>
+>>>>> Tomas
+>>>>
+>>>> I'm happy to tune this minor stuff.
+>>> What minor stuff?  This patch is just okay, let's change the API in next
+>> round.
+>>
+>> The patch is not okay because it does a completely unnecessary API change.
+>   
+> There is no API change, in that sense.
+> The exported API is in tpm-interface.c int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+> that is used is outside of the tpm reminds the same, only the open coded implementation of tpm2_pcr_extned has moved to
+> tpm2-cmd.c, This code is not called out of tpm module.
+> Please review the code again.
 
-Sure, that's fine I suppose.
+Hi Tomas
+
+I will update tpm_pcr_extend() by replacing the array of u8 with an
+array of tpm2_digest structures, so that the caller can provide multiple
+digests with one call. The array of tpm2_digest structures will be
+passed to tpm2_pcr_extend(). Please, don't modify the parameters of
+tpm2_pcr_extend().
+
+Thanks
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
