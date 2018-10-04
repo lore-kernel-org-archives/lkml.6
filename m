@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2145EC65BA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420B2C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D099E2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:30:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D099E2084D
+	by mail.kernel.org (Postfix) with ESMTP id EB8C32084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB8C32084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbeJEFZy (ORCPT
+        id S1728037AbeJEFZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 01:25:54 -0400
+        Fri, 5 Oct 2018 01:25:52 -0400
 Received: from mga17.intel.com ([192.55.52.151]:23027 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727814AbeJEFZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 01:25:53 -0400
+        id S1727851AbeJEFZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 01:25:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 15:30:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,341,1534834800"; 
-   d="scan'208";a="94741776"
+   d="scan'208";a="94741866"
 Received: from hanvin-mobl2.amr.corp.intel.com ([10.254.189.220])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Oct 2018 15:30:04 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 04 Oct 2018 15:30:02 -0700
 From:   "H. Peter Anvin (Intel)" <hpa@zytor.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-serial@vger.kernel.org
 Cc:     "H. Peter Anvin (Intel)" <hpa@zytor.com>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-xtensa@linux-xtensa.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 5/5] arch/xtensa, termios: use <asm-generic/termbits.h>
-Date:   Thu,  4 Oct 2018 15:29:53 -0700
-Message-Id: <20181004222953.2229-6-hpa@zytor.com>
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-ia64@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH 2/5] arch/ia64, termios: use <asm-generic/termbits.h>
+Date:   Thu,  4 Oct 2018 15:29:50 -0700
+Message-Id: <20181004222953.2229-3-hpa@zytor.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181004222953.2229-1-hpa@zytor.com>
 References: <20181004222953.2229-1-hpa@zytor.com>
@@ -53,43 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Xtensa definition of termbits.h is identical to the generic one.
+The IA64 definition of termbits.h is identical to the generic.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: <linux-xtensa@linux-xtensa.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <linux-ia64@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Jiri Slaby <jslaby@suse.com>
 ---
- arch/xtensa/include/uapi/asm/termbits.h | 222 +-------------------------------
- 1 file changed, 1 insertion(+), 221 deletions(-)
+ arch/ia64/include/uapi/asm/termbits.h | 210 +---------------------------------
+ 1 file changed, 1 insertion(+), 209 deletions(-)
 
-diff --git a/arch/xtensa/include/uapi/asm/termbits.h b/arch/xtensa/include/uapi/asm/termbits.h
-index d4206a7c5138..3935b106de79 100644
---- a/arch/xtensa/include/uapi/asm/termbits.h
-+++ b/arch/xtensa/include/uapi/asm/termbits.h
-@@ -1,221 +1 @@
+diff --git a/arch/ia64/include/uapi/asm/termbits.h b/arch/ia64/include/uapi/asm/termbits.h
+index 000a1a297c75..3935b106de79 100644
+--- a/arch/ia64/include/uapi/asm/termbits.h
++++ b/arch/ia64/include/uapi/asm/termbits.h
+@@ -1,209 +1 @@
 -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ASM_IA64_TERMBITS_H
+-#define _ASM_IA64_TERMBITS_H
+-
 -/*
-- * include/asm-xtensa/termbits.h
+- * Based on <asm-i386/termbits.h>.
 - *
-- * Copied from SH.
+- * Modified 1999
+- *	David Mosberger-Tang <davidm@hpl.hp.com>, Hewlett-Packard Co
 - *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-- *
-- * Copyright (C) 2001 - 2005 Tensilica Inc.
+- * 99/01/28	Added new baudrates
 - */
--
--#ifndef _XTENSA_TERMBITS_H
--#define _XTENSA_TERMBITS_H
--
 -
 -#include <linux/posix_types.h>
 -
@@ -130,7 +126,6 @@ index d4206a7c5138..3935b106de79 100644
 -};
 -
 -/* c_cc characters */
--
 -#define VINTR 0
 -#define VQUIT 1
 -#define VERASE 2
@@ -150,7 +145,6 @@ index d4206a7c5138..3935b106de79 100644
 -#define VEOL2 16
 -
 -/* c_iflag bits */
--
 -#define IGNBRK	0000001
 -#define BRKINT	0000002
 -#define IGNPAR	0000004
@@ -168,7 +162,6 @@ index d4206a7c5138..3935b106de79 100644
 -#define IUTF8	0040000
 -
 -/* c_oflag bits */
--
 -#define OPOST	0000001
 -#define OLCUC	0000002
 -#define ONLCR	0000004
@@ -202,7 +195,6 @@ index d4206a7c5138..3935b106de79 100644
 -#define   FF1	0100000
 -
 -/* c_cflag bit meaning */
--
 -#define CBAUD	0010017
 -#define  B0	0000000		/* hang up */
 -#define  B50	0000001
@@ -234,7 +226,7 @@ index d4206a7c5138..3935b106de79 100644
 -#define HUPCL	0002000
 -#define CLOCAL	0004000
 -#define CBAUDEX 0010000
--#define	   BOTHER 0010000
+-#define    BOTHER 0010000
 -#define    B57600 0010001
 -#define   B115200 0010002
 -#define   B230400 0010003
@@ -257,7 +249,6 @@ index d4206a7c5138..3935b106de79 100644
 -#define IBSHIFT	16		/* Shift from CBAUD to CIBAUD */
 -
 -/* c_lflag bits */
--
 -#define ISIG	0000001
 -#define ICANON	0000002
 -#define XCASE	0000004
@@ -276,25 +267,22 @@ index d4206a7c5138..3935b106de79 100644
 -#define EXTPROC	0200000
 -
 -/* tcflow() and TCXONC use these */
--
 -#define	TCOOFF		0
 -#define	TCOON		1
 -#define	TCIOFF		2
 -#define	TCION		3
 -
 -/* tcflush() and TCFLSH use these */
--
 -#define	TCIFLUSH	0
 -#define	TCOFLUSH	1
 -#define	TCIOFLUSH	2
 -
 -/* tcsetattr uses these */
--
 -#define	TCSANOW		0
 -#define	TCSADRAIN	1
 -#define	TCSAFLUSH	2
 -
--#endif	/* _XTENSA_TERMBITS_H */
+-#endif /* _ASM_IA64_TERMBITS_H */
 +#include <asm-generic/termbits.h>
 -- 
 2.14.4
