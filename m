@@ -2,138 +2,109 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662D8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A64CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 364162148D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:51:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364162148D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B6C902084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:54:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="naEH1LjV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C902084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbeJDUpM (ORCPT
+        id S1727511AbeJDUr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:45:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727355AbeJDUpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:45:11 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E934A88308;
-        Thu,  4 Oct 2018 13:51:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D780B2D02A;
-        Thu,  4 Oct 2018 13:51:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next 9/9] rxrpc: Allow the reply time to be obtained on
- a client call
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 04 Oct 2018 14:51:46 +0100
-Message-ID: <153866110607.27255.9371776374717097082.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153866103101.27255.4710558896251591679.stgit@warthog.procyon.org.uk>
-References: <153866103101.27255.4710558896251591679.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Thu, 4 Oct 2018 16:47:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51234 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbeJDUr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:47:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GjUEwFDEyi0T31gyr6yhmj5QuNqGBsKQERskuxCxYuc=; b=naEH1LjVYaP50HRwR2EXWZ7au
+        KIJ5EJIesH4Hc8fKp7ZPcnDQCjkoo18NBybNJjFcv5zV9A+8CzB3qFQKpc85EaHxF65k+9QGaJDGN
+        9F/pbud0iwWzrKgtkGSiN2S/SsdOLN4WBtsUyecEIpo7lVfcAkyWr9fxRFbf0vNZnVuVU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g845D-0008SE-TF; Thu, 04 Oct 2018 13:54:27 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 5AFB31121C82; Thu,  4 Oct 2018 14:54:27 +0100 (BST)
+Date:   Thu, 4 Oct 2018 14:54:27 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] regulator: fixed: Use more standard GPIO binding
+Message-ID: <20181004135427.GE6412@sirena.org.uk>
+References: <20181004090654.32233-1-linus.walleij@linaro.org>
+ <20181004105031.GD6412@sirena.org.uk>
+ <CACRpkdZZHYSRXktPLHKRc4Afsegn4q3rOmcPMhXh5chC1jH-JQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 04 Oct 2018 13:51:48 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="JBi0ZxuS5uaEhkUZ"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZZHYSRXktPLHKRc4Afsegn4q3rOmcPMhXh5chC1jH-JQ@mail.gmail.com>
+X-Cookie: Safety Third.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the epoch value to be queried on a server connection.  This is in the
-rxrpc header of every packet for use in routing and is derived from the
-client's state.  It's also not supposed to change unless the client gets
-restarted.
 
-AFS can make use of this information to deduce whether a fileserver has
-been restarted because the fileserver makes client calls to the filesystem
-driver's cache manager to send notifications (ie. callback breaks) about
-conflicting changes from other clients.  These convey the fileserver's own
-epoch value back to the filesystem.
+--JBi0ZxuS5uaEhkUZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+On Thu, Oct 04, 2018 at 01:32:13PM +0200, Linus Walleij wrote:
+> On Thu, Oct 4, 2018 at 12:50 PM Mark Brown <broonie@kernel.org> wrote:
+> > On Thu, Oct 04, 2018 at 11:06:54AM +0200, Linus Walleij wrote:
 
- Documentation/networking/rxrpc.txt |   14 ++++++++++++++
- include/net/af_rxrpc.h             |    1 +
- net/rxrpc/af_rxrpc.c               |   14 ++++++++++++++
- 3 files changed, 29 insertions(+)
+> > >  Optional properties:
+> > > -- gpio: gpio to use for enable control
+> > > +- gpios: gpio to use for enable control
 
-diff --git a/Documentation/networking/rxrpc.txt b/Documentation/networking/rxrpc.txt
-index 67879992b4c2..605e00cdd6be 100644
---- a/Documentation/networking/rxrpc.txt
-+++ b/Documentation/networking/rxrpc.txt
-@@ -1080,6 +1080,20 @@ The kernel interface functions are as follows:
-      successful, the timestamp will be stored into *_ts and true will be
-      returned; false will be returned otherwise.
- 
-+ (*) Get remote client epoch.
-+
-+	u32 rxrpc_kernel_get_epoch(struct socket *sock,
-+				   struct rxrpc_call *call)
-+
-+     This allows the epoch that's contained in packets of an incoming client
-+     call to be queried.  This value is returned.  The function always
-+     successful if the call is still in progress.  It shouldn't be called once
-+     the call has expired.  Note that calling this on a local client call only
-+     returns the local epoch.
-+
-+     This value can be used to determine if the remote client has been
-+     restarted as it shouldn't change otherwise.
-+
- 
- =======================
- CONFIGURABLE PARAMETERS
-diff --git a/include/net/af_rxrpc.h b/include/net/af_rxrpc.h
-index c4c912554dee..de587948042a 100644
---- a/include/net/af_rxrpc.h
-+++ b/include/net/af_rxrpc.h
-@@ -78,6 +78,7 @@ int rxrpc_kernel_retry_call(struct socket *, struct rxrpc_call *,
- int rxrpc_kernel_check_call(struct socket *, struct rxrpc_call *,
- 			    enum rxrpc_call_completion *, u32 *);
- u32 rxrpc_kernel_check_life(struct socket *, struct rxrpc_call *);
-+u32 rxrpc_kernel_get_epoch(struct socket *, struct rxrpc_call *);
- bool rxrpc_kernel_get_reply_time(struct socket *, struct rxrpc_call *,
- 				 ktime_t *);
- 
-diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
-index 2fdd276f6842..013dbcb052e5 100644
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -385,6 +385,20 @@ u32 rxrpc_kernel_check_life(struct socket *sock, struct rxrpc_call *call)
- }
- EXPORT_SYMBOL(rxrpc_kernel_check_life);
- 
-+/**
-+ * rxrpc_kernel_get_epoch - Retrieve the epoch value from a call.
-+ * @sock: The socket the call is on
-+ * @call: The call to query
-+ *
-+ * Allow a kernel service to retrieve the epoch value from a service call to
-+ * see if the client at the other end rebooted.
-+ */
-+u32 rxrpc_kernel_get_epoch(struct socket *sock, struct rxrpc_call *call)
-+{
-+	return call->conn->proto.epoch;
-+}
-+EXPORT_SYMBOL(rxrpc_kernel_get_epoch);
-+
- /**
-  * rxrpc_kernel_check_call - Check a call's state
-  * @sock: The socket the call is on
+> > Are we supposed to be able to have just plain gpios as a standards
+> > conforming property or would best practice be to call it enable-gpios or
+> > something?
 
+> Oh I didn't think of that really. The gpio-regulator indeed uses
+> enable-gpio for the same thing. But it complicates things codewise,
+> as the GPIO line is also optional. I'm a bit uncertain, I tend
+> to think just "gpios" is fine when the usage is unambigous. but
+> I don't know what the DT maintainers think.
+
+Right, well from my point of view -gpio is perfectly fine also so... :)
+Rob?
+
+--JBi0ZxuS5uaEhkUZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu2G5IACgkQJNaLcl1U
+h9Dv0Af+NqNh4M686tx+nqKIgH4ozAC/fBA1Y2LfN1um8IE7pI7kh21OjK254T0f
+pigDLEN7pTb7gqtFoAqx3mso846aQMR8mDKaxZgsd67P74gFBfQUoYwcLvxVkkWb
+bE/EsXlDYkqbzFZrqWTj2RCPK2Y2ReMQ7eyVxg3UUdh8P7wHelzNa3+kQPx6lcu7
+x624M/EFb9GMrxedKr+jbHKrnB4rPxhXQ1OTXo/ysHmtBB8nWSIdupX/MzcJJwnn
+32orkEn4dnN390oR0lvChpDAD3GeOPevH7vOtbrrCYSWQXjE/QKw15GCuIG0rKEi
+bSnbpLNwpACAgEjmdwOpQasN0rpbEw==
+=604p
+-----END PGP SIGNATURE-----
+
+--JBi0ZxuS5uaEhkUZ--
