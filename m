@@ -2,95 +2,95 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3634AC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0D7C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68F221470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:53:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68F221470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6CB6A21470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:54:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB6A21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeJDOpt (ORCPT
+        id S1727672AbeJDOqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:45:49 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42149 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbeJDOps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:45:48 -0400
-Received: by mail-ot1-f67.google.com with SMTP id h26-v6so8255293otl.9;
-        Thu, 04 Oct 2018 00:53:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GDx4p5DFZ9XPKXannRc4MFzWbtLPe7XcgronuugR8Xw=;
-        b=KSnzAKhaiNQDUMmoZdcC10+3lApKHDiu3zw14HPVmBtfWC7QbNm01ADvogfH3cNkyD
-         ukJDiICN3ks7BvR8xbzM331sDXBG30Onz7zk+jMmCyboZJ6SY3haGSpIj6FZTOiA0OxZ
-         KWI1rqJVNgj0nuZ4uXSjYyLYP6Lmi21dcOhcvu4GSu334hTTeRWTT+64gfa8QWqZsYm/
-         c16ZKXLl90xgtUv8REH3W/OiDoF3JUB/JiNV7CwAHBISaACji4lIIRIQ+3uptJ5WxrTv
-         b//FNfOBr2Q514/sFKAMh4bO+ughLGafTJZEF0msrM6KgZM9+rZ1Xs444vD3VEa2bAEU
-         nIxA==
-X-Gm-Message-State: ABuFfoju3WX4qP79pgbB0hTnKVjewgZPrOQ9TpDxJBKKHQwPTkCxYCZx
-        RWpZksIILgi8b7Vr6fZ6Gc8R/FE9sLmwoBEezn8SWDTU
-X-Google-Smtp-Source: ACcGV618RVqsiIWgEclyULb0hws3OaXE0It+jOPTm3w9R7HjBxgvAVh5pUJ4t319R/gU+YAge95JFujnsvHVdrsv3OU=
-X-Received: by 2002:a9d:7303:: with SMTP id e3-v6mr2784012otk.124.1538639630361;
- Thu, 04 Oct 2018 00:53:50 -0700 (PDT)
+        Thu, 4 Oct 2018 10:46:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41612 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727311AbeJDOqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:46:52 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E53603082129;
+        Thu,  4 Oct 2018 07:54:53 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.40.205.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 260C91710E;
+        Thu,  4 Oct 2018 07:54:47 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
+In-Reply-To: <20181003190617.GC21381@amt.cnet>
+References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com> <87sh1ne64t.fsf@vitty.brq.redhat.com> <20181003190617.GC21381@amt.cnet>
+Date:   Thu, 04 Oct 2018 09:54:45 +0200
+Message-ID: <87k1mycfju.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <3510260.hvypppS8Bs@aspire.rjw.lan> <4130376.2FFt7p4687@aspire.rjw.lan>
- <20181004074627.GE19272@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181004074627.GE19272@hirez.programming.kicks-ass.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 4 Oct 2018 09:53:39 +0200
-Message-ID: <CAJZ5v0gvAOz7R8uwXy=37ni=+dz9-gb69S2M2PtZSXc+tUhxrQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] cpuidle: menu: Get rid of first_idx from menu_select()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 04 Oct 2018 07:54:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 9:46 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Oct 02, 2018 at 11:44:06PM +0200, Rafael J. Wysocki wrote:
-> >       idx = -1;
-> > -     for (i = first_idx; i < drv->state_count; i++) {
-> > +     for (i = 0; i < drv->state_count; i++) {
-> >               struct cpuidle_state *s = &drv->states[i];
-> >               struct cpuidle_state_usage *su = &dev->states_usage[i];
-> >
-> >               if (s->disabled || su->disable)
-> >                       continue;
-> > +
-> >               if (idx == -1)
-> >                       idx = i; /* first enabled state */
-> > +
-> >               if (s->target_residency > predicted_us) {
-> > +                     /*
-> > +                      * Use a physical idle state, not busy polling, unless
-> > +                      * a timer is going to trigger really really soon.
-> > +                      */
-> > +                     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> > +                         i == idx + 1 && latency_req > s->exit_latency &&
-> > +                         data->next_timer_us > max_t(unsigned int, 20,
-> > +                                                     s->target_residency)) {
->
-> Not new in this patch, but this is where I really noticed it; that 20,
-> should that not be something like: POLL_IDLE_TIME_LIMIT / NSEC_PER_USEC
-> ?
+Marcelo Tosatti <mtosatti@redhat.com> writes:
 
-The POLL_IDLE_TIME_LIMIT is how much time we allow it to spin in
-idle_poll() and I'm not sure it is related.  Besides, I want it to go
-away actually (https://patchwork.kernel.org/patch/10624117/).
+> On Wed, Oct 03, 2018 at 11:22:58AM +0200, Vitaly Kuznetsov wrote:
+>> 
+>> There is a very long history of different (hardware) issues Marcelo was
+>> fighting with and the current code is the survived Frankenstein.
+>
+> Right, the code has to handle different TSC modes.
+>
+>>  E.g. it
+>> is very, very unclear what "catchup", "always catchup" and
+>> masterclock-less mode in general are and if we still need them.
+>
+> Catchup means handling exposed (to guest) TSC frequency smaller than
+> HW TSC frequency.
+>
+> That is "frankenstein" code, could be removed.
+>
+>> That said I'm all for simplification. I'm not sure if we still need to
+>> care about buggy hardware though.
+>
+> What simplification is that again? 
+>
 
-I could use a separate symbol for this particular magic number, but it
-has been magic forever and it is used just in this one place, so ...
+I was hoping to hear this from you :-) If I am to suggest how we can
+move forward I'd propose:
+- Check if pure TSC can be used on SkyLake+ systems (where TSC scaling
+is supported).
+- Check if non-masterclock mode is still needed. E.g. HyperV's TSC page
+clocksource is a single page for the whole VM, not a per-cpu thing. Can
+we think that all the buggy hardware is already gone?
+
+-- 
+Vitaly
