@@ -2,185 +2,84 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D61C8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F632C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C086213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:48:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C086213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C9FC9213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:48:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FC9213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeJDPkQ (ORCPT
+        id S1727705AbeJDPk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:40:16 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:52619 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbeJDPkQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:40:16 -0400
-Received: by mail-it1-f197.google.com with SMTP id e9-v6so10103933itf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JkL7gIx/yrK0zyPvYjxl56OkynjF7cZblZ5aAWSxr3A=;
-        b=AGgrWzWOEljWdsyXCsdSxqSiaSfc47HIlsvrmHg0TF3LOjGRBYqDq98FLr6GzmH2+s
-         APdjeOJLCFFRreyWFUViOr0nHBZ/6kQL9xe/oha9vtg1q9u2BEhdDVBfOH0c2yYkM687
-         T8bBiAAgMExmG6jnsYHa9/0N7ij4nvDcoZ3Wwu5zeoZf+fgd1vVsghzhz6OPay8ksoCq
-         G9EIt4XYP0zMyNwaP//mxaCuMKueTDBmJozUHB0uuUWHeBbSMAxElMHr98TGm/Kvgt7P
-         drmXDv2aGJwl4jWBm+0JXSdDTPmYztt5JrMRruFr95jBKc6OZNpX3aRkjoILrSI48xYG
-         PQeA==
-X-Gm-Message-State: ABuFfohg9tqxlN719JjzHA6pEORcbBlPO1k2UuwjxNNT5LDvd1Xyyvx9
-        iDb9GSqyUVL/8FIzhrHlwxwGuhJwkN28gHHO2VeBosjiEYGq
-X-Google-Smtp-Source: ACcGV606Wsq3QRE6IN8Zf5DB3F+XNTi829CKafF2hmC3g1iGri5lxNGv0JCiyUgcNX0yxR0Vt4gI8ncakC4rVE3cSZ0DgeknyDOC
+        Thu, 4 Oct 2018 11:40:28 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:59598 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbeJDPk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:40:27 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id iXEpg-BHx6Zo; Thu,  4 Oct 2018 10:48:14 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 85B4C1EC02D1;
+        Thu,  4 Oct 2018 10:48:14 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 10:48:06 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Paul Menzel <pmenzel@molgen.mpg.de>, linux-mm@kvack.org,
+        x86@kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: x86/mm: Found insecure W+X mapping at address (ptrval)/0xc00a0000
+Message-ID: <20181004084806.GC1864@zn.tnic>
+References: <e75fa739-4bcc-dc30-2606-25d2539d2653@molgen.mpg.de>
+ <alpine.DEB.2.21.1809191004580.1468@nanos.tec.linutronix.de>
+ <0922cc1b-ed51-06e9-df81-57fd5aa8e7de@molgen.mpg.de>
+ <alpine.DEB.2.21.1809210045220.1434@nanos.tec.linutronix.de>
+ <c8da5778-3957-2fab-69ea-42f872a5e396@molgen.mpg.de>
+ <alpine.DEB.2.21.1809281653270.2004@nanos.tec.linutronix.de>
+ <20181003212255.GB28361@zn.tnic>
+ <20181004080321.GA3630@8bytes.org>
+ <20181004081429.GB1864@zn.tnic>
+ <20181004084318.GB3630@8bytes.org>
 MIME-Version: 1.0
-X-Received: by 2002:a24:4245:: with SMTP id i66-v6mr3895759itb.5.1538642883275;
- Thu, 04 Oct 2018 01:48:03 -0700 (PDT)
-Date:   Thu, 04 Oct 2018 01:48:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007e767d05776336da@google.com>
-Subject: KASAN: use-after-free Read in sctp_id2assoc
-From:   syzbot <syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181004084318.GB3630@8bytes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Oct 04, 2018 at 10:43:18AM +0200, Joerg Roedel wrote:
+> Yeah, that's what I also found out back then, the region needs to be WX.
+> So we can either leave with the warning, as we know it is harmless and
+> where it comes from or implement an exception in the checking code for
+> that region.
 
-syzbot found the following crash on:
+The second thing is what I'm thinking too.
 
-HEAD commit:    4e6d47206c32 tls: Add support for inplace records encryption
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13834b81400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e569aa5632ebd436
-dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd55d7aec49d48e49a
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Or, a 3rd: not direct-map that first range at all. Commenting out the
+ISA range mapping didn't have any adverse effects on my system here, for
+example. But then those other mappings appeared:
 
-Unfortunately, I don't have any reproducer for this crash yet.
+https://lkml.kernel.org/r/20181003212255.GB28361@zn.tnic
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
+for which I have no explanation yet how they came about.
 
-netlink: 'syz-executor1': attribute type 1 has an invalid length.
-==================================================================
-BUG: KASAN: use-after-free in sctp_id2assoc+0x3a7/0x3e0  
-net/sctp/socket.c:276
-Read of size 8 at addr ffff880195b3eb20 by task syz-executor2/15454
+This needs to be understood fully before we do anything. But it is
+32-bit so it gets preempted by more important things all the time :)
 
-CPU: 1 PID: 15454 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #242
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  sctp_id2assoc+0x3a7/0x3e0 net/sctp/socket.c:276
-  sctp_do_peeloff+0x88/0x530 net/sctp/socket.c:5327
-  sctp_getsockopt_peeloff_common.isra.24+0xb5/0x2f0 net/sctp/socket.c:5376
-  sctp_getsockopt_peeloff_flags net/sctp/socket.c:5452 [inline]
-  sctp_getsockopt+0x17f1/0x7c78 net/sctp/socket.c:7474
-  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2997
-  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
-  __do_sys_getsockopt net/socket.c:1950 [inline]
-  __se_sys_getsockopt net/socket.c:1947 [inline]
-  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457579
-Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f86d7f8bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457579
-RDX: 000000000000007a RSI: 0000000000000084 RDI: 0000000000000007
-RBP: 000000000072c040 R08: 00000000200001c0 R09: 0000000000000000
-R10: 0000000020000080 R11: 0000000000000246 R12: 00007f86d7f8c6d4
-R13: 00000000004c79b8 R14: 00000000004cdb70 R15: 00000000ffffffff
+-- 
+Regards/Gruss,
+    Boris.
 
-Allocated by task 15404:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  sctp_association_new+0x12b/0x22a0 net/sctp/associola.c:311
-  __sctp_connect+0x6ad/0xda0 net/sctp/socket.c:1209
-  __sctp_setsockopt_connectx+0x134/0x190 net/sctp/socket.c:1368
-  sctp_setsockopt_connectx net/sctp/socket.c:1400 [inline]
-  sctp_setsockopt+0x18e2/0x6da0 net/sctp/socket.c:4359
-  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
-  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
-  __do_sys_setsockopt net/socket.c:1913 [inline]
-  __se_sys_setsockopt net/socket.c:1910 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 15404:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3813
-  sctp_association_destroy net/sctp/associola.c:437 [inline]
-  sctp_association_put+0x264/0x350 net/sctp/associola.c:885
-  sctp_wait_for_connect+0x444/0x640 net/sctp/socket.c:8677
-  __sctp_connect+0xbb3/0xda0 net/sctp/socket.c:1260
-  __sctp_setsockopt_connectx+0x134/0x190 net/sctp/socket.c:1368
-  sctp_setsockopt_connectx net/sctp/socket.c:1400 [inline]
-  sctp_setsockopt+0x18e2/0x6da0 net/sctp/socket.c:4359
-  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
-  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
-  __do_sys_setsockopt net/socket.c:1913 [inline]
-  __se_sys_setsockopt net/socket.c:1910 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff880195b3eb00
-  which belongs to the cache kmalloc-4096 of size 4096
-The buggy address is located 32 bytes inside of
-  4096-byte region [ffff880195b3eb00, ffff880195b3fb00)
-The buggy address belongs to the page:
-page:ffffea000656cf80 count:1 mapcount:0 mapping:ffff8801da800dc0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0006e66188 ffffea00065b5d08 ffff8801da800dc0
-raw: 0000000000000000 ffff880195b3eb00 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff880195b3ea00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff880195b3ea80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff880195b3eb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                ^
-  ffff880195b3eb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff880195b3ec00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Good mailing practices for 400: avoid top-posting and trim the reply.
