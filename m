@@ -2,95 +2,235 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0D7C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5ECC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB6A21470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB6A21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BB1621470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:56:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hKffz4zb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB1621470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeJDOqw (ORCPT
+        id S1727684AbeJDOsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:46:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41612 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727311AbeJDOqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:46:52 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E53603082129;
-        Thu,  4 Oct 2018 07:54:53 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.40.205.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 260C91710E;
-        Thu,  4 Oct 2018 07:54:47 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
-In-Reply-To: <20181003190617.GC21381@amt.cnet>
-References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com> <87sh1ne64t.fsf@vitty.brq.redhat.com> <20181003190617.GC21381@amt.cnet>
-Date:   Thu, 04 Oct 2018 09:54:45 +0200
-Message-ID: <87k1mycfju.fsf@vitty.brq.redhat.com>
+        Thu, 4 Oct 2018 10:48:19 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33567 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbeJDOsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:48:19 -0400
+Received: by mail-ed1-f67.google.com with SMTP id g26-v6so7707654edp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=59kp/jMiBlYDJHEkq+sGtZINQoDKtgRJlxx9mK8eWbc=;
+        b=hKffz4zbfk98O5NGPFU1Sdh59fDLV8LiQt/iUQLCyg9Tl66Gm21suoNoYMFySQOuwn
+         qzpIUe6NAA78OWzsZD+JGXzTU7LCrSMI+idwohakRRGvRYMgIO4NAcJ5GujTjefK1daz
+         b6ruedjpD7S+bGZKlNpGPFlvUt7xmDG+iq2ho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=59kp/jMiBlYDJHEkq+sGtZINQoDKtgRJlxx9mK8eWbc=;
+        b=sovjvgroz2xgtsdWadAtfZwQXlq26gmJDUBBEYQkAL5oJL53ibzbj2BponmFosyolo
+         evAvZBb0eAwkuSJZBmyMBPgw8ciLaMBgytF0BV2dKqIEIotJpnLQvt6tzz6yXdCUjww5
+         IU0Bn61i+m5Bgffl7hw4bRNTyvQDaHkUPALNaKOMiaO/0P/PzmrmTvoJIcJON80BQas1
+         mZql3lnK1f2oGm1iyxDwMRLd6GxpbXmT6jFz3Z9vsw2a3ixPl0eehkKoLmWzhC5sniWt
+         5jzRzO0ADdiczQ/7N9/nMCDchblpGQ5qiFZ8+G/r6TpRii0+CEJEaGh60itXgUWCXN9s
+         1YNA==
+X-Gm-Message-State: ABuFfojS8J2bZT8Hnku6L8x8h6Hy+yIkK48jgAetaaqmj3KFLI615gnu
+        w6H0touRUiO/CY/RPq/bmVni+Q==
+X-Google-Smtp-Source: ACcGV63c4wilojgtork+H2VXpf3CvZOySd25VMRzfeDeSvVzei1+wcUlkCBhkYxLixTZKj16lesbmA==
+X-Received: by 2002:a17:906:14c7:: with SMTP id y7-v6mr5333942ejc.184.1538639778141;
+        Thu, 04 Oct 2018 00:56:18 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id m11sm1247183edv.90.2018.10.04.00.56.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 00:56:16 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 09:56:14 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH v2] drm: fb-helper: Reject all pixel format changing
+ requests
+Message-ID: <20181004075614.GH31561@phenom.ffwll.local>
+Mail-Followup-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
+References: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 04 Oct 2018 07:54:54 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marcelo Tosatti <mtosatti@redhat.com> writes:
+On Wed, Oct 03, 2018 at 07:45:38PM +0300, Eugeniy Paltsev wrote:
+> drm fbdev emulation doesn't support changing the pixel format at all,
+> so reject all pixel format changing requests.
 
-> On Wed, Oct 03, 2018 at 11:22:58AM +0200, Vitaly Kuznetsov wrote:
->> 
->> There is a very long history of different (hardware) issues Marcelo was
->> fighting with and the current code is the survived Frankenstein.
->
-> Right, the code has to handle different TSC modes.
->
->>  E.g. it
->> is very, very unclear what "catchup", "always catchup" and
->> masterclock-less mode in general are and if we still need them.
->
-> Catchup means handling exposed (to guest) TSC frequency smaller than
-> HW TSC frequency.
->
-> That is "frankenstein" code, could be removed.
->
->> That said I'm all for simplification. I'm not sure if we still need to
->> care about buggy hardware though.
->
-> What simplification is that again? 
->
+For next time around: Please keep the note here why we need this and what
+the impact is. Otherwise it's not immediately clear why we should backport
+this patch to all stable kernels.
 
-I was hoping to hear this from you :-) If I am to suggest how we can
-move forward I'd propose:
-- Check if pure TSC can be used on SkyLake+ systems (where TSC scaling
-is supported).
-- Check if non-masterclock mode is still needed. E.g. HyperV's TSC page
-clocksource is a single page for the whole VM, not a per-cpu thing. Can
-we think that all the buggy hardware is already gone?
+I'll gather a few acks and then apply.
+-Daniel
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
+> Changes v1->v2:
+>  * Reject all pixel format changing request, not just the invalid ones.
+> 
+>  drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++++-----------------------------
+>  1 file changed, 26 insertions(+), 65 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 16ec93b75dbf..48598d7f673f 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -1580,6 +1580,25 @@ int drm_fb_helper_ioctl(struct fb_info *info, unsigned int cmd,
+>  }
+>  EXPORT_SYMBOL(drm_fb_helper_ioctl);
+>  
+> +static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
+> +				      const struct fb_var_screeninfo *var_2)
+> +{
+> +	return var_1->bits_per_pixel == var_2->bits_per_pixel &&
+> +	       var_1->grayscale == var_2->grayscale &&
+> +	       var_1->red.offset == var_2->red.offset &&
+> +	       var_1->red.length == var_2->red.length &&
+> +	       var_1->red.msb_right == var_2->red.msb_right &&
+> +	       var_1->green.offset == var_2->green.offset &&
+> +	       var_1->green.length == var_2->green.length &&
+> +	       var_1->green.msb_right == var_2->green.msb_right &&
+> +	       var_1->blue.offset == var_2->blue.offset &&
+> +	       var_1->blue.length == var_2->blue.length &&
+> +	       var_1->blue.msb_right == var_2->blue.msb_right &&
+> +	       var_1->transp.offset == var_2->transp.offset &&
+> +	       var_1->transp.length == var_2->transp.length &&
+> +	       var_1->transp.msb_right == var_2->transp.msb_right;
+> +}
+> +
+>  /**
+>   * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
+>   * @var: screeninfo to check
+> @@ -1590,7 +1609,6 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+>  {
+>  	struct drm_fb_helper *fb_helper = info->par;
+>  	struct drm_framebuffer *fb = fb_helper->fb;
+> -	int depth;
+>  
+>  	if (var->pixclock != 0 || in_dbg_master())
+>  		return -EINVAL;
+> @@ -1610,72 +1628,15 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+>  		return -EINVAL;
+>  	}
+>  
+> -	switch (var->bits_per_pixel) {
+> -	case 16:
+> -		depth = (var->green.length == 6) ? 16 : 15;
+> -		break;
+> -	case 32:
+> -		depth = (var->transp.length > 0) ? 32 : 24;
+> -		break;
+> -	default:
+> -		depth = var->bits_per_pixel;
+> -		break;
+> -	}
+> -
+> -	switch (depth) {
+> -	case 8:
+> -		var->red.offset = 0;
+> -		var->green.offset = 0;
+> -		var->blue.offset = 0;
+> -		var->red.length = 8;
+> -		var->green.length = 8;
+> -		var->blue.length = 8;
+> -		var->transp.length = 0;
+> -		var->transp.offset = 0;
+> -		break;
+> -	case 15:
+> -		var->red.offset = 10;
+> -		var->green.offset = 5;
+> -		var->blue.offset = 0;
+> -		var->red.length = 5;
+> -		var->green.length = 5;
+> -		var->blue.length = 5;
+> -		var->transp.length = 1;
+> -		var->transp.offset = 15;
+> -		break;
+> -	case 16:
+> -		var->red.offset = 11;
+> -		var->green.offset = 5;
+> -		var->blue.offset = 0;
+> -		var->red.length = 5;
+> -		var->green.length = 6;
+> -		var->blue.length = 5;
+> -		var->transp.length = 0;
+> -		var->transp.offset = 0;
+> -		break;
+> -	case 24:
+> -		var->red.offset = 16;
+> -		var->green.offset = 8;
+> -		var->blue.offset = 0;
+> -		var->red.length = 8;
+> -		var->green.length = 8;
+> -		var->blue.length = 8;
+> -		var->transp.length = 0;
+> -		var->transp.offset = 0;
+> -		break;
+> -	case 32:
+> -		var->red.offset = 16;
+> -		var->green.offset = 8;
+> -		var->blue.offset = 0;
+> -		var->red.length = 8;
+> -		var->green.length = 8;
+> -		var->blue.length = 8;
+> -		var->transp.length = 8;
+> -		var->transp.offset = 24;
+> -		break;
+> -	default:
+> +	/*
+> +	 * drm fbdev emulation doesn't support changing the pixel format at all,
+> +	 * so reject all pixel format changing requests.
+> +	 */
+> +	if (!drm_fb_pixel_format_equal(var, &info->var)) {
+> +		DRM_DEBUG("fbdev emulation doesn't support changing the pixel format\n");
+>  		return -EINVAL;
+>  	}
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(drm_fb_helper_check_var);
+> -- 
+> 2.14.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Vitaly
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
