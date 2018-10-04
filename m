@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB03C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DEBC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C23520877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C23520877
+	by mail.kernel.org (Postfix) with ESMTP id 9626521473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9626521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeJDTP5 (ORCPT
+        id S1727814AbeJDTP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 4 Oct 2018 15:15:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35745 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:35726 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727701AbeJDTP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:15:56 -0400
+        id S1727336AbeJDTPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:15:55 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9592A2072C; Thu,  4 Oct 2018 14:22:51 +0200 (CEST)
+        id 938A7208C2; Thu,  4 Oct 2018 14:22:51 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DCF5F20A90;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8FCD52072C;
         Thu,  4 Oct 2018 14:22:31 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
@@ -36,9 +36,9 @@ Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next v4 03/11] net: mscc: ocelot: get HSIO regmap from syscon
-Date:   Thu,  4 Oct 2018 14:22:00 +0200
-Message-Id: <20181004122208.32272-4-quentin.schulz@bootlin.com>
+Subject: [PATCH net-next v4 02/11] dt-bindings: net: ocelot: remove hsio from the list of register address spaces
+Date:   Thu,  4 Oct 2018 14:21:59 +0200
+Message-Id: <20181004122208.32272-3-quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181004122208.32272-1-quentin.schulz@bootlin.com>
 References: <20181004122208.32272-1-quentin.schulz@bootlin.com>
@@ -47,60 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HSIO address space was moved to a syscon, hence we need to get the
-regmap of this address space from there and no more from the device
-node.
+HSIO register address space should be handled outside of the MAC
+controller as there are some registers for PLL5 configuring,
+SerDes/switch port muxing and a thermal sensor IP, so let's remove it.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- drivers/net/ethernet/mscc/ocelot_board.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/mips/mscc.txt  | 16 ++++++++++++++++
+ .../devicetree/bindings/net/mscc-ocelot.txt      |  9 +++------
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
-index 3cdf63e35b53..dca205e0ef75 100644
---- a/drivers/net/ethernet/mscc/ocelot_board.c
-+++ b/drivers/net/ethernet/mscc/ocelot_board.c
-@@ -9,6 +9,7 @@
- #include <linux/netdevice.h>
- #include <linux/of_mdio.h>
- #include <linux/of_platform.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/skbuff.h>
- 
- #include "ocelot.h"
-@@ -168,6 +169,7 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device_node *ports, *portnp;
- 	struct ocelot *ocelot;
-+	struct regmap *hsio;
- 	u32 val;
- 
- 	struct {
-@@ -179,7 +181,6 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
- 		{ QSYS, "qsys" },
- 		{ ANA, "ana" },
- 		{ QS, "qs" },
--		{ HSIO, "hsio" },
+diff --git a/Documentation/devicetree/bindings/mips/mscc.txt b/Documentation/devicetree/bindings/mips/mscc.txt
+index ae15ec333542..bc817e984628 100644
+--- a/Documentation/devicetree/bindings/mips/mscc.txt
++++ b/Documentation/devicetree/bindings/mips/mscc.txt
+@@ -41,3 +41,19 @@ Example:
+ 		compatible = "mscc,ocelot-cpu-syscon", "syscon";
+ 		reg = <0x70000000 0x2c>;
  	};
- 
- 	if (!np && !pdev->dev.platform_data)
-@@ -202,6 +203,14 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
- 		ocelot->targets[res[i].id] = target;
- 	}
- 
-+	hsio = syscon_regmap_lookup_by_compatible("mscc,ocelot-hsio");
-+	if (IS_ERR(hsio)) {
-+		dev_err(&pdev->dev, "missing hsio syscon\n");
-+		return PTR_ERR(hsio);
-+	}
 +
-+	ocelot->targets[HSIO] = hsio;
++o HSIO regs:
 +
- 	err = ocelot_chip_init(ocelot);
- 	if (err)
- 		return err;
++The SoC has a few registers (HSIO) handling miscellaneous functionalities:
++configuration and status of PLL5, RCOMP, SyncE, SerDes configurations and
++status, SerDes muxing and a thermal sensor.
++
++Required properties:
++- compatible: Should be "mscc,ocelot-hsio", "syscon", "simple-mfd"
++- reg : Should contain registers location and length
++
++Example:
++	syscon@10d0000 {
++		compatible = "mscc,ocelot-hsio", "syscon", "simple-mfd";
++		reg = <0x10d0000 0x10000>;
++	};
+diff --git a/Documentation/devicetree/bindings/net/mscc-ocelot.txt b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
+index 0a84711abece..9e5c17d426ce 100644
+--- a/Documentation/devicetree/bindings/net/mscc-ocelot.txt
++++ b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
+@@ -12,7 +12,6 @@ Required properties:
+   - "sys"
+   - "rew"
+   - "qs"
+-  - "hsio"
+   - "qsys"
+   - "ana"
+   - "portX" with X from 0 to the number of last port index available on that
+@@ -45,7 +44,6 @@ Example:
+ 		reg = <0x1010000 0x10000>,
+ 		      <0x1030000 0x10000>,
+ 		      <0x1080000 0x100>,
+-		      <0x10d0000 0x10000>,
+ 		      <0x11e0000 0x100>,
+ 		      <0x11f0000 0x100>,
+ 		      <0x1200000 0x100>,
+@@ -59,10 +57,9 @@ Example:
+ 		      <0x1280000 0x100>,
+ 		      <0x1800000 0x80000>,
+ 		      <0x1880000 0x10000>;
+-		reg-names = "sys", "rew", "qs", "hsio", "port0",
+-			    "port1", "port2", "port3", "port4", "port5",
+-			    "port6", "port7", "port8", "port9", "port10",
+-			    "qsys", "ana";
++		reg-names = "sys", "rew", "qs", "port0", "port1", "port2",
++			    "port3", "port4", "port5", "port6", "port7",
++			    "port8", "port9", "port10", "qsys", "ana";
+ 		interrupts = <21 22>;
+ 		interrupt-names = "xtr", "inj";
+ 
 -- 
 2.17.1
 
