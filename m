@@ -2,142 +2,128 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C252BC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABF6C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1EC2087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C9020877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=neverware.com header.i=@neverware.com header.b="df3aVKQg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1EC2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neverware.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTzW9MGK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C9020877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeJEBxf (ORCPT
+        id S1727608AbeJEBy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:53:35 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45625 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeJEBxf (ORCPT
+        Thu, 4 Oct 2018 21:54:29 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34486 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727293AbeJEBy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:53:35 -0400
-Received: by mail-qt1-f195.google.com with SMTP id e10-v6so25800qtq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 11:59:00 -0700 (PDT)
+        Thu, 4 Oct 2018 21:54:28 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g12-v6so3588192pgs.1;
+        Thu, 04 Oct 2018 11:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverware.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DmpLN7jl8dOyjcHvlmW7QHGVoHmIXAmQAKW9LpIK2Wc=;
-        b=df3aVKQga0sg2LCNCBtOQUUwSmCo77xGWBuNrzNgQi7o3q+S2Impjz3s3UcVRb2LKH
-         B2zI1BF/Jv87fAllQ371x5dHIMmF53uFnUkvmBnU9WVSZKYF4BgeXewJPkzdxLh2PFgt
-         upMsaLA6x+qKPIaBg3JKDtLDg841NdZbp6XfU=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ByrrTnNKG2Vk0e638TtaEFEqX7jB+JOThk7pu3SU1H8=;
+        b=dTzW9MGKgZm7H0fZ6OdXQxb9DisUc8f4C+l1m6vFHJsnMBsBiCWmcbwDSag7msCjNI
+         Jf8cIp2iotlP6+oFEqUy+ZvRNU513lcSxD5gCuzHk86Cef2i0XQa+RLBrWQUB/LsiXMW
+         PDc2LGFyQyW+3wOho2rDkQQ+IfgxEYhVR2hxPVq11ri4hZE8ENy8qV4+t3BZAYANgyIn
+         vJfDU3Lb42FABJrDdL5rffhcsGjzSnTVluN5U7Y/0kJSB9PO8aU9c4i3Ght/We4Vay1t
+         G3Fy7pJCNH+FVnqjb0/xeBPj3JMHkBdePC6HJfVO3YdnAJsVCnrMuYYbHikD0iHZP/Zm
+         8UyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DmpLN7jl8dOyjcHvlmW7QHGVoHmIXAmQAKW9LpIK2Wc=;
-        b=GsPYDEfB9vXgqKiOI2uI6CLIFcnotkqjOnSvqTC73I2VgXYq6ejsz+ksffq0B9R8sv
-         PkXAEVxWh0RG6RKU2F/aydQVguXW4Zy3FbikpicVf4DTk1y37BaZeYCiRNcOP0Vdm4kT
-         EHeUOwVKGXV7R99wEdELf/saH2Vw+ZddWANc9f8tKxSKPwBmwizVqrBbqpATEr/U+L4j
-         ZwjJWB7J7oODbJNw18ls+MnaOOs6/Z7DcnfBRMZjr55UkjYgZQixc5LDa962mgxBmCLS
-         dDRgH6+tWFhzkq8zQDHNEKGdzCmbkAu5mMGvZLmjbOhT5qH8KvYdCpbFq2ggkNZ7oPrV
-         2pDQ==
-X-Gm-Message-State: ABuFfogpKWZVSgXXQt37oJFI+2XUAIabWZ7fSVedj9nT9FWox+XmssY2
-        EIRHBjBxCZ2xiRc3RiL1+A0CVw==
-X-Google-Smtp-Source: ACcGV61ksO+KTN3+JQZDq5DpFIUfIUREDB6Vnn3zmJCsU4hiLiLjvbJpffsqAc4um0s7sZ2FDfPcfA==
-X-Received: by 2002:ac8:362a:: with SMTP id m39-v6mr6611128qtb.210.1538679540222;
-        Thu, 04 Oct 2018 11:59:00 -0700 (PDT)
-Received: from hotbox.seaworld.local (rrcs-208-105-51-90.nyc.biz.rr.com. [208.105.51.90])
-        by smtp.googlemail.com with ESMTPSA id j18-v6sm3404852qkh.20.2018.10.04.11.58.59
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ByrrTnNKG2Vk0e638TtaEFEqX7jB+JOThk7pu3SU1H8=;
+        b=D5Agx9lC0ZPHoYlOZKTX9fGZcPPuS0ynq+ARFM45crUBRhb1WmH2+kR/NHh0MImk8z
+         fVCfEPlnhIfE48aEny6UysQnTbzkHuf/SFBFbVnqiewegzQ4jmh0OwoClDqZJOpGrhch
+         72FSzvcPkq6m89GOsnkw7APQT+sYptYZGkBVqv8TkJfb76i8aT/tvf3MfxjhDvwiZWKT
+         0gJbqsOZlO4eDkuHc0KSik7NOfRJUCSZsX5au6YDV+0gCwL0S89d+JmBzNv40mT2V1RC
+         HFOr3IittiZDXrHk+k/ZAxlNo+OamDpNCpvUgQpe0hU1gjiYpRlZ2TdvwYZ13Y4m4mSo
+         jx9g==
+X-Gm-Message-State: ABuFfoiTOf96sBZrTEvlekriTeKl/8wj8sgOtWxCs200hVdqBghpfdS6
+        fdOQlLxYndTY1FLc8CwAaZz1yEIpcDM=
+X-Google-Smtp-Source: ACcGV60UftP5aVTJ+201BQGjQAICFDpG2TZAqH64tEN/QFsMs7qDdKUgVtKr8ePdRATgOF+scY18TQ==
+X-Received: by 2002:a62:c8c3:: with SMTP id i64-v6mr8280765pfk.183.1538679592998;
+        Thu, 04 Oct 2018 11:59:52 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm11007052pfb.101.2018.10.04.11.59.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 11:58:59 -0700 (PDT)
-From:   Michael Pobega <mpobega@neverware.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Michael Pobega <mpobega@neverware.com>
-Subject: [PATCH] ALSA: hda/sigmatel - Disable automute for Elo VuPoint
-Date:   Thu,  4 Oct 2018 14:58:21 -0400
-Message-Id: <20181004185821.67612-1-mpobega@neverware.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 04 Oct 2018 11:59:51 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 11:59:49 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        linux-input@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH] Input: mousedev - add a schedule point in
+ mousedev_write()
+Message-ID: <20181004185949.GA233675@dtor-ws>
+References: <20181004154749.111595-1-edumazet@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181004154749.111595-1-edumazet@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Elo VuPoint 15MX has two headphone jacks of which neither work by
-default. Disabling automute allows ALSA to work normally with the
-speakers & left headphone jack.
+Hi Eric,
 
-Future pin configuration changes may be required in the future to get
-the right headphone jack working in tandem.
+On Thu, Oct 04, 2018 at 08:47:49AM -0700, Eric Dumazet wrote:
+> syzbot was able to trigger rcu stalls by calling write()
+> with large number of bytes.
+> 
+> Add a cond_resched() in the loop to avoid this.
 
-Signed-off-by: Michael Pobega <mpobega@neverware.com>
----
- sound/pci/hda/patch_sigmatel.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+I think this simply masks a deeper issue. The code fetches characters
+from userspace in a loop, takes a lock, quickly places response in an
+output buffer, and releases interrupt. I do not see why this should
+cause stalls as we do not hold spinlock/interrupts off for extended
+period of time.
 
-diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c
-index 046705b4691a..d8168aa2cef3 100644
---- a/sound/pci/hda/patch_sigmatel.c
-+++ b/sound/pci/hda/patch_sigmatel.c
-@@ -77,6 +77,7 @@ enum {
- 	STAC_DELL_M6_BOTH,
- 	STAC_DELL_EQ,
- 	STAC_ALIENWARE_M17X,
-+	STAC_ELO_VUPOINT_15MX,
- 	STAC_92HD89XX_HP_FRONT_JACK,
- 	STAC_92HD89XX_HP_Z1_G2_RIGHT_MIC_JACK,
- 	STAC_92HD73XX_ASUS_MOBO,
-@@ -1879,6 +1880,18 @@ static void stac92hd73xx_fixup_no_jd(struct hda_codec *codec,
- 		codec->no_jack_detect = 1;
- }
- 
-+
-+static void stac92hd73xx_disable_automute(struct hda_codec *codec,
-+				     const struct hda_fixup *fix, int action)
-+{
-+	struct sigmatel_spec *spec = codec->spec;
-+
-+	if (action != HDA_FIXUP_ACT_PRE_PROBE)
-+		return;
-+
-+	spec->gen.suppress_auto_mute = 1;
-+}
-+
- static const struct hda_fixup stac92hd73xx_fixups[] = {
- 	[STAC_92HD73XX_REF] = {
- 		.type = HDA_FIXUP_FUNC,
-@@ -1904,6 +1917,10 @@ static const struct hda_fixup stac92hd73xx_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = stac92hd73xx_fixup_alienware_m17x,
- 	},
-+	[STAC_ELO_VUPOINT_15MX] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = stac92hd73xx_disable_automute,
-+	},
- 	[STAC_92HD73XX_INTEL] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = intel_dg45id_pin_configs,
-@@ -1942,6 +1959,7 @@ static const struct hda_model_fixup stac92hd73xx_models[] = {
- 	{ .id = STAC_DELL_M6_BOTH, .name = "dell-m6" },
- 	{ .id = STAC_DELL_EQ, .name = "dell-eq" },
- 	{ .id = STAC_ALIENWARE_M17X, .name = "alienware" },
-+	{ .id = STAC_ELO_VUPOINT_15MX, .name = "elo-vupoint-15mx" },
- 	{ .id = STAC_92HD73XX_ASUS_MOBO, .name = "asus-mobo" },
- 	{}
- };
-@@ -1991,6 +2009,8 @@ static const struct snd_pci_quirk stac92hd73xx_fixup_tbl[] = {
- 		      "Alienware M17x", STAC_ALIENWARE_M17X),
- 	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x0490,
- 		      "Alienware M17x R3", STAC_DELL_EQ),
-+	SND_PCI_QUIRK(0x1059, 0x1011,
-+		      "ELO VuPoint 15MX", STAC_ELO_VUPOINT_15MX),
- 	SND_PCI_QUIRK(PCI_VENDOR_ID_HP, 0x1927,
- 				"HP Z1 G2", STAC_92HD89XX_HP_Z1_G2_RIGHT_MIC_JACK),
- 	SND_PCI_QUIRK(PCI_VENDOR_ID_HP, 0x2b17,
+Adding Paul so he can straighten me out...
+
+> 
+> Link: https://lkml.org/lkml/2018/8/23/1106
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: linux-input@vger.kernel.org
+> ---
+>  drivers/input/mousedev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
+> index e08228061bcdd2f97aaadece31d6c83eb7539ae5..412fa71245afe26a7a8ad75705566f83633ba347 100644
+> --- a/drivers/input/mousedev.c
+> +++ b/drivers/input/mousedev.c
+> @@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file *file, const char __user *buffer,
+>  		mousedev_generate_response(client, c);
+>  
+>  		spin_unlock_irq(&client->packet_lock);
+> +		cond_resched();
+>  	}
+>  
+>  	kill_fasync(&client->fasync, SIGIO, POLL_IN);
+> -- 
+> 2.19.0.605.g01d371f741-goog
+> 
+
+Thanks.
+
 -- 
-2.17.1
-
+Dmitry
