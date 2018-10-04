@@ -2,105 +2,98 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F47FC65BA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EEFC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E414B2087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:29:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E414B2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id C0FA72084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FA72084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeJEFZD (ORCPT
+        id S1727799AbeJEFZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 01:25:03 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:53820 "EHLO ale.deltatee.com"
+        Fri, 5 Oct 2018 01:25:47 -0400
+Received: from mga17.intel.com ([192.55.52.151]:23017 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbeJEFZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 01:25:03 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g8C7W-0003NZ-B4; Thu, 04 Oct 2018 16:29:23 -0600
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Steve Wise <swise@opengridcomputing.com>
-References: <20181004212747.6301-1-logang@deltatee.com>
- <20181004212747.6301-14-logang@deltatee.com>
- <a3af4bda-0b73-c964-c7d6-5d59f0710768@grimberg.me>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2bcc0927-83ab-1bf2-d584-aebd5274cefa@deltatee.com>
-Date:   Thu, 4 Oct 2018 16:29:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <a3af4bda-0b73-c964-c7d6-5d59f0710768@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v9 13/13] nvmet: Optionally use PCI P2P memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1725997AbeJEFZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 01:25:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 15:30:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,341,1534834800"; 
+   d="scan'208";a="94741757"
+Received: from hanvin-mobl2.amr.corp.intel.com ([10.254.189.220])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Oct 2018 15:30:02 -0700
+From:   "H. Peter Anvin (Intel)" <hpa@zytor.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     "H. Peter Anvin (Intel)" <hpa@zytor.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH 1/5] asm-generic, termios: add alias constants from MIPS
+Date:   Thu,  4 Oct 2018 15:29:49 -0700
+Message-Id: <20181004222953.2229-2-hpa@zytor.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181004222953.2229-1-hpa@zytor.com>
+References: <20181004222953.2229-1-hpa@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some architectures, in this case MIPS, need a couple of legacy alias
+constants for bits. There really is no reason why we can't define them
+generically for all architectures.
 
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+linux-kernel@vger.kernel.org (open list)
+---
+ include/uapi/asm-generic/termbits.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-On 2018-10-04 4:20 p.m., Sagi Grimberg wrote:
->> +static inline struct device *nvmet_ns_dev(struct nvmet_ns *ns)
->> +{
->> +	return disk_to_dev(ns->bdev->bd_disk);
->> +}
-> 
-> This needs to handle non bdev namespaces.
+diff --git a/include/uapi/asm-generic/termbits.h b/include/uapi/asm-generic/termbits.h
+index 2fbaf9ae89dd..96ae175eec5b 100644
+--- a/include/uapi/asm-generic/termbits.h
++++ b/include/uapi/asm-generic/termbits.h
+@@ -8,7 +8,10 @@ typedef unsigned char	cc_t;
+ typedef unsigned int	speed_t;
+ typedef unsigned int	tcflag_t;
+ 
+-#define NCCS 19
++#ifndef NCCS
++# define NCCS 19
++#endif
++
+ struct termios {
+ 	tcflag_t c_iflag;		/* input mode flags */
+ 	tcflag_t c_oflag;		/* output mode flags */
+@@ -49,6 +52,7 @@ struct ktermios {
+ #define VTIME 5
+ #define VMIN 6
+ #define VSWTC 7
++#define VSWTCH VSWTC
+ #define VSTART 8
+ #define VSTOP 9
+ #define VSUSP 10
+@@ -173,6 +177,7 @@ struct ktermios {
+ #define ECHONL	0000100
+ #define NOFLSH	0000200
+ #define TOSTOP	0000400
++#define ITOSTOP TOSTOP
+ #define ECHOCTL	0001000
+ #define ECHOPRT	0002000
+ #define ECHOKE	0004000
+-- 
+2.14.4
 
-As it's coded now the helper never gets called unless ns->bdev is not
-null. But in general, yes you are right, we should probably return NULL
-if ns->bdev is NULL.
-
-> And this?
-> --
-> diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-> index ef286b72d958..3d12f5f4568d 100644
-> --- a/drivers/nvme/target/fc.c
-> +++ b/drivers/nvme/target/fc.c
-> @@ -2280,6 +2280,7 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport 
-> *tgtport,
->          fod->req.cmd = &fod->cmdiubuf.sqe;
->          fod->req.rsp = &fod->rspiubuf.cqe;
->          fod->req.port = tgtport->pe->port;
-> +       fod->req.p2p_client = tgtport->dev;
-> 
->          /* clear any response payload */
->          memset(&fod->rspiubuf, 0, sizeof(fod->rspiubuf));
-> --
-
-Sure, I guess that makes sense. I've never tried it with fc hardware but
-I assume there's no reason it wouldn't work.
-
-I'll queue these changes up for a v10.
-
-Logan
