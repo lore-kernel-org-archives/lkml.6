@@ -2,106 +2,117 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBAEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5194C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDC220877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68FD92084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:58:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZCnURvq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDC220877
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g+BwXYsG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FD92084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeJDVvQ (ORCPT
+        id S1727620AbeJDVv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:51:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36605 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeJDVvQ (ORCPT
+        Thu, 4 Oct 2018 17:51:58 -0400
+Received: from mail-it1-f169.google.com ([209.85.166.169]:39783 "EHLO
+        mail-it1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727293AbeJDVv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:51:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y16so10290971wrw.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:57:36 -0700 (PDT)
+        Thu, 4 Oct 2018 17:51:58 -0400
+Received: by mail-it1-f169.google.com with SMTP id w200-v6so14419129itc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lZvJwahZ8Jz8etz7lg29/i3Ts6gNK6gnJknBYnXFSaY=;
-        b=jZCnURvqXbHoijG9SPOiE+q3N5BVkelEbjdvMtdg46WcW99kRjk17IHoSV5UhZsrLa
-         gLnnE6WEPsJYHGy3iHuSKiL0q56cFNEiv5AaQkOuz6Uxkhsj4jENUCb63WVTxAR3RhSn
-         KC9iHJAoKGroxQxJnNGJxfe04f8b/gQnrFXmc=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=DM+zNmB7OI8OGxVUhYuwDbO1R9ste+zcr3X/ukoAHRA=;
+        b=g+BwXYsGGkEc3vov39xtcyWifhvEmUahE2a/qVwkaT3Le3BD13UvkwpOjoKrHFBvOg
+         e6MnZmT2hWluVtW/DgMob7vTnU6Crsqog0CqZ/awth3Lm6OHTqFa5BdObcU2/pKOfMeY
+         u4AXDbuge5DVv40cob009hq+0UH+KJqPBpYdc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lZvJwahZ8Jz8etz7lg29/i3Ts6gNK6gnJknBYnXFSaY=;
-        b=C8bu8XTDYUR21EYJlf3pSVlhcmLsHzkeMcr46OqG5iBPj6IgGXCG+hcfzRWKC1WR9y
-         zA6Hrg458ztl58zLNqSBlERrRkUbMr2cQRXFdTCZ06pCyFjPZrV9+Eid5Dq7XlYSVe4c
-         DOAjluru+4e6/B/+azIg4eGyyWD69Mnxy5YsX1+oCw2R4On9y6yFM4XCiJHXQAAqc3YN
-         xNf7Ie/wkr2O+fFaZkVDAmZazeBmNtk5m9+n8fxKhi0SrspeDcdNsi9L4UuWvb9so44I
-         o6tCMsF7ZYstxTAs+cLBos12BErIlGE0U/gEHW2ekInQPvpD/VJoJntWuDa+OMzjI9w/
-         G2fA==
-X-Gm-Message-State: ABuFfogkzrRqhsRM7kNk/X7xvPDK0/hgGCZi0doxswbtSU9K96COiCpF
-        yZzRxtasF2gOqAOSD+gFJzH/p49cZHQ=
-X-Google-Smtp-Source: ACcGV60pOwbNG4fWSHVK3rkojPzVWOxieYpr21Ynh4uexrpGKeF5o482dywdRCEWe8UZgWPjbRwgYQ==
-X-Received: by 2002:adf:f651:: with SMTP id x17-v6mr4741664wrp.317.1538665055990;
-        Thu, 04 Oct 2018 07:57:35 -0700 (PDT)
-Received: from mai (101.142.88.92.rev.sfr.net. [92.88.142.101])
-        by smtp.gmail.com with ESMTPSA id b71-v6sm6019466wma.13.2018.10.04.07.57.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 07:57:35 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 16:57:32 +0200
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] cpuidle: menu: Do not update last_state_idx in
- menu_select()
-Message-ID: <20181004145732.GC1881@mai>
-References: <3510260.hvypppS8Bs@aspire.rjw.lan>
- <1940908.mNKd7HXT40@aspire.rjw.lan>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DM+zNmB7OI8OGxVUhYuwDbO1R9ste+zcr3X/ukoAHRA=;
+        b=jcxY4P4h8/AID3UT5oNMibGWPgRGp5Y+O6+Y3tvs9l1j2xuEBard/kJib8x8RGRooX
+         Bof3Qll8W0GllDlHFbMkzrR2WTk94wGFDZH9H1LoCXVYTALbnQTW/9tqcozepL2KHbjO
+         hQDbIgtcN0rn64XYNeKIP/1P/E5n/8CNy4Mqv/Zs0J6HD2UvLJxKUfI/rWkkA2zjgm32
+         niLv73ghkEOU1DsB42Esv0ZHdSnoYyHw6q2mkjuWtFGg3ysiSiJ2u5+GwRWCY1fFZrWI
+         ONknRcYZUMD885dl34d5utg/EtP202Yy4D9IDV3OwN1TCA6SJuyKpU6jI8E6fD/kEY9c
+         7pAQ==
+X-Gm-Message-State: ABuFfoi9vR1WWOPQMM4OggYHMR1w96Tmw+KqX4jL99PmALaTm3Rt0cpp
+        BkwpGMDfQ8+mbCOZCIfXUOHxsDhpytK+tRIeEdp6DQ==
+X-Google-Smtp-Source: ACcGV60g4btd/UErdt+YQ5vWMiSegTjnYzoc10jNF9m7I04yDrowZdevmoHcKeJJ9bJ4EA/FAetz54hDSFkTZecxS10=
+X-Received: by 2002:a24:8045:: with SMTP id g66-v6mr5459999itd.45.1538665098184;
+ Thu, 04 Oct 2018 07:58:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1940908.mNKd7HXT40@aspire.rjw.lan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 07:57:37 -0700 (PDT)
+In-Reply-To: <20181004134839.GZ5662@atomide.com>
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+ <20181003143824.13059-4-ulf.hansson@linaro.org> <20181004134839.GZ5662@atomide.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 4 Oct 2018 16:57:37 +0200
+Message-ID: <CAPDyKFr1H_ah3OYqghQgADs8fwNd+HpjWw9VfGR1T1-K5KbnhQ@mail.gmail.com>
+Subject: Re: [PATCH v9 03/11] PM / Domains: Document flags for genpd
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 11:45:07PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> It is not necessary to update data->last_state_idx in menu_select()
-> as it only is used in menu_update() which only runs when
-> data->needs_update is set and that is set only when updating
-> data->last_state_idx in menu_reflect().
-> 
-> Accordingly, drop the update of data->last_state_idx from
-> menu_select() and get rid of the (now redundant) "out" label
-> from it.
-> 
-> No intentional behavior changes.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+On 4 October 2018 at 15:48, Tony Lindgren <tony@atomide.com> wrote:
+> Hi,
+>
+> * Ulf Hansson <ulf.hansson@linaro.org> [181003 14:43]:
+>> + * GENPD_FLAG_IRQ_SAFE:              This informs genpd that its backend callbacks,
+>> + *                           ->power_on|off(), doesn't sleep. Hence, these
+>> + *                           can be invoked from within atomic context, which
+>> + *                           enables genpd to power on/off the PM domain,
+>> + *                           even when pm_runtime_is_irq_safe() returns true,
+>> + *                           for any of its attached devices. Note that, a
+>> + *                           genpd having this flag set, requires its
+>> + *                           masterdomains to also have it set.
+>> + *
+>
+> Let's try to avoid adding more irq_safe stuff because of having that
+> propagate to the masterdomains..
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+I am not sure I get your point. This is just documenting existing
+functionality in genpd, there is nothing new here.
 
--- 
+>
+> I think you can just flag the power_on/off in genpd, then have cpu_pm
+> callbacks do it.
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Not really sure what you propose, but feel free to send a patch.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Do note, genpd has since the beginning of its time tried to cope with
+pm_runtime_irq_safe() devices. I admit it's quite complicated, however
+GENPD_FLAG_IRQ_SAFE greatly improved the support for such devices and
+their PM domains. Moreover, we need this functionality, in one way or
+the other, as long as there users of pm_runtime_irq_safe().
+
+Kind regards
+Uffe
