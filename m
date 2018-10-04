@@ -2,165 +2,264 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A62BBC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0ED6C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6F9213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:19:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D59213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:26:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PdW0izqz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6F9213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="WYd6ijT6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D59213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ingics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeJDOLF (ORCPT
+        id S1727319AbeJDOSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:11:05 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44400 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeJDOLF (ORCPT
+        Thu, 4 Oct 2018 10:18:01 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34435 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeJDOSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:11:05 -0400
-Received: by mail-io1-f68.google.com with SMTP id x26-v6so7083306iog.11
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:19:15 -0700 (PDT)
+        Thu, 4 Oct 2018 10:18:01 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f18-v6so4720593plr.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p73WRf1ZvmFlYb+MQdIzApOD+ANqXv8H980Hl3JFA/0=;
-        b=PdW0izqzcK830AX320OBjdRWgohdD77kYYg3vH1ylCvVCT89rFIBb3WgAPaCiSksp8
-         RALpQhr5XiS/zf9dJbK43Z+LLFPKHXW5DLkstgcM8+n/D3pVUmXTdLjTVPkZZljmAd/a
-         2IwTfpF6nJGjiAGmqC66UxRSMhKKKTnYrsEhg=
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=0gACsEi5SzQBmJA5YRO3DwtROkYHQJ1ztFifl7168J4=;
+        b=WYd6ijT6mq49Nt0SocoYHZUnejxx4zcp1I6XIjaQnBNEVaCWlSh14wGbyaHuYmyvY2
+         qdNtYHGQvZ16SzFsVp/axx8TaAy2ETGZk7MibcwqT50T0YYBT8Q2adSqYjb7gFX1TxjV
+         j5OOr82M9d6RalvB70Vrd9mh7nB8AQ6/QXdhs4l+UAJt1XrDO9xbCacqX3xwwx5xD4gg
+         +PK8nsXW5vw2IQZ1GYMmTlRdjx14R3R2rTPeAuFRa1yOhIJW/lTt4I7IC83+CJScNeFC
+         LwQhZ0Ou3Z4kiortL5u7wLrA6/QbNhgOrV1hL+OJKbwzHlvGJTMy1BJdmefqCEFkS3cO
+         ODmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p73WRf1ZvmFlYb+MQdIzApOD+ANqXv8H980Hl3JFA/0=;
-        b=QwR/GchBwQVh7IXGGV2CrC5/F3Sw1iG1+PVN0azxEv2zDC9WZAoyC/vWLZQ330PmNZ
-         66cjHlbYI7phBiJWbA3cpSXfOJliC+knna/3mi8clQHW2SP0YGIoPg8wRXzmcT4XEuuX
-         iBOZZlfuhCKhqV+PxNnBHeCuS/pLBWGNZrF0vuu3U3dLBbDQrPLypVS7dAFLKS349pzB
-         XoBrtOt3xHGB06tp/ykIu1jWBEYUUaH3ccD88GQwHMncOPTLCBJNYrxLM+ICmvkGeqYd
-         EuZSa+7vgOLgsleSg6As+gMeS/yNYP/lUHq8wd5i8bFGADVGkKR/0vwVSwIbd6dACcHo
-         7KcQ==
-X-Gm-Message-State: ABuFfoii8Apgl244bIJcdMchOenP8fNzr1DSjTQZQJP0c9+Fo9Y+/8sm
-        3z8u6TXWC9hcVpl92Jlxz1IbeAOt8GdJfNpTqNL0oA==
-X-Google-Smtp-Source: ACcGV61W4xY8zxSyvTHfyRIR78RFj5xvRYq2tc6i39LRO2SViiNDFNdF9Cxshi307HD1nD62899Jdx09mcpYgpXK/Jo=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3252856ioa.277.1538637554381;
- Thu, 04 Oct 2018 00:19:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181001204346.4655-1-linus.walleij@linaro.org>
- <28e88d54f6503cf1be577eb1872cdf2c50d7dfa3.camel@nxp.com> <20181003121002.GA7132@sirena.org.uk>
- <c2ace38e09344d325271498fe8133c888470b5f6.camel@nxp.com>
-In-Reply-To: <c2ace38e09344d325271498fe8133c888470b5f6.camel@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Oct 2018 09:19:02 +0200
-Message-ID: <CACRpkdYtddXBYQE4RbDj_7rKb38jE9HvKetokjiCi2Tt8-ZhzA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: fixed: Default enable high on DT regulators
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Duan <fugang.duan@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0gACsEi5SzQBmJA5YRO3DwtROkYHQJ1ztFifl7168J4=;
+        b=YD/Mvnp5pOcB6A6zmM2IuYYexKPrYQ/E+AzxODNx6cPSWkl6uRKW128zksMmG2Rpwu
+         Yx1Ea1AzdgDmcyezfKHVXoRJINMzNf4axtF0bJM1LxwVyH0Wkz3nQqiyne8WkZa/v5fZ
+         ehWDj5bwOT4f4zyWRHab+Kt6rAls1BnY+8wyi9R4oWt79d8Rtjjl6Yg56MP8+IeLYrat
+         K9Av5/uIhjqrocJ0aQveqcBIJsKVk/YPNGfvDrAjisbQv7veNuBiItQsrnBYc6AgeLAn
+         XD9WnmwKtnnMndDX7buqu7vqRgUhkAmkcAHnMGBPqhOywB9uXYpxBnWeysvxclHbc2kI
+         tcCA==
+X-Gm-Message-State: ABuFfoj5ISKENEoMRdeybZu9pKUD+iKmwUtcppTe7ekcD/STCX707xZx
+        Mjawsan4c/55SIKybSc4gDluIQ==
+X-Google-Smtp-Source: ACcGV60XcyW5y6eqqirDDe5i3XYaaAp2lgBDWv+CQzMR3jEzGfF19m0sCx33R18DrhjsW5D0Z5B6wA==
+X-Received: by 2002:a17:902:2d24:: with SMTP id o33-v6mr5231256plb.211.1538637969412;
+        Thu, 04 Oct 2018 00:26:09 -0700 (PDT)
+Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
+        by smtp.gmail.com with ESMTPSA id s14-v6sm3821125pgv.29.2018.10.04.00.26.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 00:26:08 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        John Stultz <john.stultz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH v4] regulator: bd718x7: Remove struct bd718xx_pmic
+Date:   Thu,  4 Oct 2018 15:25:58 +0800
+Message-Id: <20181004072558.10209-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 8:08 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> On Wed, 2018-10-03 at 13:10 +0100, Mark Brown wrote:
-> > On Tue, Oct 02, 2018 at 01:42:38PM +0000, Leonard Crestez wrote:
-> >
-> > > This turns the phy off and on again instead of leaving it up from uboot
-> > > and it doesn't work for some reason. However looking at
-> > > reg_fixed_voltage_probe introducing an edge seems to be intentional for
-> > > regulators which are not marked with "enabled-at-boot". Right?
-> >
-> > No, that's definitely not desired.  We don't want to change the state of
-> > the regulator at all if we can avoid it unless the user explicitly asked
-> > for it.
->
-> That also makes sense, for a top level perspective. But
-> reg_fixed_voltage_probe contains the following snippet:
->
->         if (config->enabled_at_boot) {
->                 if (config->enable_high)
->                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
->                 else
->                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
->         } else {
->                 if (config->enable_high)
->                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
->                 else
->                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
->         }
+All the fields in struct bd718xx_pmic are not really necessary.
+Remove struct bd718xx_pmic to simplify the code.
 
-GPIOD_* flags nowadays but yes.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+v4: Drop the pointer to struct bd718xx_pmic inside the struct bd718xx
+v3: Remove the references to struct bd718xx_pmic from include/linux/mfd/rohm-bd718x7.h
+v2: Correct mail subject line
+ drivers/regulator/bd718x7-regulator.c | 59 +++++++++------------------
+ include/linux/mfd/rohm-bd718x7.h      |  2 -
+ 2 files changed, 20 insertions(+), 41 deletions(-)
 
-> Unless config->enabled_at_boot the GPIO is initialized with the
-> opposite polarity of enabled. This means that fixed regulators which
-> are not marked with "enabled-at-boot" but happen to be "on" anyway are
-> always power cycled.
->
-> This is from before recent changes by Linus, code dates from 2012
-> commit 25a53dfbfbfd ("regulator: fixed: Use core GPIO enable support").
-> Even before that the logic was similar:
->
->         drvdata->is_enabled = config->enabled_at_boot;
->         ret = drvdata->is_enabled ?
->                 config->enable_high : !config->enable_high;
->         gpio_flag = ret ? GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW;
->
-> Looking further back it seems that this behavior has always been
-> present in fixed-regulator code.
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index d2522d4e1505..3a47e0372e77 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -15,13 +15,6 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/slab.h>
+ 
+-struct bd718xx_pmic {
+-	struct bd718xx_regulator_data *rdata;
+-	struct bd718xx *mfd;
+-	struct platform_device *pdev;
+-	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+-};
+-
+ /*
+  * BUCK1/2/3/4
+  * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
+@@ -33,12 +26,10 @@ struct bd718xx_pmic {
+ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
+ {
+-	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+-	struct bd718xx *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+ 
+-	dev_dbg(&pmic->pdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
++	dev_dbg(&rdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
+ 		ramp_delay);
+ 	switch (ramp_delay) {
+ 	case 1 ... 1250:
+@@ -55,12 +46,12 @@ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 		break;
+ 	default:
+ 		ramp_value = BUCK_RAMPRATE_10P00MV;
+-		dev_err(&pmic->pdev->dev,
++		dev_err(&rdev->dev,
+ 			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
+ 			rdev->desc->name, ramp_delay);
+ 	}
+ 
+-	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
++	return regmap_update_bits(rdev->regmap, BD718XX_REG_BUCK1_CTRL + id,
+ 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
+ }
+ 
+@@ -1022,7 +1013,7 @@ struct bd718xx_pmic_inits {
+ 
+ static int bd718xx_probe(struct platform_device *pdev)
+ {
+-	struct bd718xx_pmic *pmic;
++	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+ 		[BD718XX_TYPE_BD71837] = {
+@@ -1037,54 +1028,46 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 
+ 	int i, j, err;
+ 
+-	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
+-	if (!pmic)
+-		return -ENOMEM;
+-
+-	pmic->pdev = pdev;
+-	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
+-
+-	if (!pmic->mfd) {
++	mfd = dev_get_drvdata(pdev->dev.parent);
++	if (!mfd) {
+ 		dev_err(&pdev->dev, "No MFD driver data\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+-	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
++
++	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+ 
+-	platform_set_drvdata(pdev, pmic);
+-
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+-		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
++		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+ 		goto err;
+ 	} else {
+-		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
++		dev_dbg(&pdev->dev, "Unlocked lock register 0x%x\n",
+ 			BD718XX_REG_REGLOCK);
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
++		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-		config.driver_data = pmic;
+-		config.regmap = pmic->mfd->regmap;
++		config.regmap = mfd->regmap;
+ 
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+-			dev_err(pmic->mfd->dev,
++			dev_err(&pdev->dev,
+ 				"failed to register %s regulator\n",
+ 				desc->name);
+ 			err = PTR_ERR(rdev);
+@@ -1096,28 +1079,26 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+-			dev_err(&pmic->pdev->dev,
++			dev_err(&pdev->dev,
+ 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+ 				desc->name);
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(pmic->mfd->regmap,
++			err = regmap_update_bits(mfd->regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
+ 			if (err) {
+-				dev_err(&pmic->pdev->dev,
++				dev_err(&pdev->dev,
+ 					"Buck (%s) initialization failed\n",
+ 					desc->name);
+ 				goto err;
+ 			}
+ 		}
+-
+-		pmic->rdev[i] = rdev;
+ 	}
+ 
+ err:
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index 26acf9a92498..fd194bfc836f 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -321,7 +321,6 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd718xx_pmic;
+ struct bd718xx_clk;
+ 
+ struct bd718xx {
+@@ -333,7 +332,6 @@ struct bd718xx {
+ 	int chip_irq;
+ 	struct regmap_irq_chip_data *irq_data;
+ 
+-	struct bd718xx_pmic *pmic;
+ 	struct bd718xx_clk *clk;
+ };
+ 
+-- 
+2.17.1
 
-Yep, I can't take the credit for that, I just tried to preserve the
-logic that was already there.
-
-> In theory it might be possible to request the GPIO while asking to keep
-> the value from the bootloader?
->
-> Maybe I'm confused but I don't see an
-> easy way to do this through the GPIO api; functions for requesting in
-> output mode all seem to also ask for the initial value.
->
-> GPIOD_ASIS looks close but it doesn't even adjust the direction.
-
-If the bootloader set up the line value, isn't it reasonable to assume
-it also set up the direction (to output)? How else would it even work?
-
-That said, you could just call gpiod_direction_output() after
-getting the handle if you want to make sure it is set as output.
-
-We are floating patches that will re-enable the GPIO code to call
-.get_direction() on all descriptors at boot. After that you can use
-gpiod_get_direction() to determine if it needs to be switched,
-but that would be a bit overengineered IMO.
-
-I guess you can make a patch using GPIOD_ASIS, but I am worried
-that several systems will depend on the active driving of this since
-as you describe, it has been like this for ages.
-
-Yet again I'm not the conservative kind, as you notice, so by all means
-try it! :)
-
-> > > It's possible that you exposed an imx board-specific bug: maybe power
-> > > cycling the phy after uboot needs some missing fixup?
-> >
-> > It'd probably also be good to sort this out though.
->
-> Yes, handled separately: https://lore.kernel.org/patchwork/patch/994871/
-
-That one was especially interesting!
-
-Yours,
-Linus Walleij
