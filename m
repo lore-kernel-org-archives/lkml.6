@@ -2,140 +2,140 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8A5C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F481C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CD5120684
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CD5120684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 347902098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:01:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZlKOwwR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347902098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbeJDTrL (ORCPT
+        id S1727422AbeJDTyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:47:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37646 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbeJDTrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:47:11 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 71F14207B4; Thu,  4 Oct 2018 14:53:58 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1535620802;
-        Thu,  4 Oct 2018 14:53:48 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 14:53:47 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, andrew@lunn.ch,
-        allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        antoine.tenart@bootlin.com
-Subject: Re: [PATCH net-next 4/7] net: phy: mscc: add support for VSC8574 PHY
-Message-ID: <20181004125347.p4hzna4rbanvgsbn@qschulz>
-References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
- <236ef7815c0bec6048e79ef06868719b65c63892.1536916714.git-series.quentin.schulz@bootlin.com>
- <bc95fae7-cf2f-5cf1-4e24-59fcc231fd64@gmail.com>
+        Thu, 4 Oct 2018 15:54:37 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37760 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727256AbeJDTyg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:54:36 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 63-v6so8296530ljs.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 06:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cvOv02cS/5OY9CZqapWCURdGssdE7v3kGqWHFy7Kk5o=;
+        b=KZlKOwwRo46FGX9QRU+hK+LGur1TFD1Z+EQhgdREcLXDqvlDXAZFne2y1oHKsfO35R
+         XIq7vmcKyzTkfzJqzLd9Yj9brPOFIs4oZyQdAtWwK0L+ZE/yuKx5Ix1HNyDucuCUTGba
+         SMXZmWbMOFXtcn+QfXFDlOlW1lvTSCw6idDkY2XsBoDiXKSk8LTZ7rgE0WXDuxRgWgFI
+         nHVRWBwX52Drh7/I6Jy/22ZbMaeKWih2gzqpFqdxe37LH4xF6OOZy7bi3LRBe7pIAJmC
+         CmW1nGTfVcz3kH0o6j9xnXSvq+B0I6tTvWnZ2Z8xyfBsJKFfKBVr3N5JT3naFVwBcbd4
+         iLIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cvOv02cS/5OY9CZqapWCURdGssdE7v3kGqWHFy7Kk5o=;
+        b=KrjUBhLHq0jDJR9kwskJciwiCNBIu04F6HT1l4MqsDpKUu6t1vzKajREH2jlfmtiuf
+         wT47qP1leU9GiQ/MjHMZ6fihJeo/YrbqCZkt8ST1aRaoS7BL/EazrCyLX7JGeiaqxc91
+         L3+3uWpAbt87GQRefBluvqdWAjVEZwyeezr69be8Dw+5liSAVIIusOsysP/Xq9DjB1Ym
+         pWwWrSvy03ce2V6tkbs2wmUyLQ4u344/sSB5ebsSU1bjefPLH+REr+7vcV4m1xhmx1rx
+         0zJQ8twPG/zSBhjNKsgPrAT5mz2wtrDMHvfzpse6cEHv+565vDAJ9ZMDB3v+HXzTLKw1
+         Bk4Q==
+X-Gm-Message-State: ABuFfogrYPE6LB5hHhQrsbLKl9sBqXyTZ+zWpIp20AMxxD7TTETWAvRN
+        27x3QAqUb0zj1E5BekCCm4Q=
+X-Google-Smtp-Source: ACcGV61tPqzvUEnswTuaKqF+ARYJftjZcVL60D0v6XrgpPtgEpRxakaXp7CPRc0XoOIFfyUa+DFtNA==
+X-Received: by 2002:a2e:3006:: with SMTP id w6-v6mr1462771ljw.146.1538658083264;
+        Thu, 04 Oct 2018 06:01:23 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id a1-v6sm421415lfk.63.2018.10.04.06.01.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 06:01:22 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v6 01/10] mtd: physmap_of: Release resources on error
+Date:   Thu,  4 Oct 2018 15:01:01 +0200
+Message-Id: <20181004130110.8496-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="33w5ejf5ircqd4gw"
-Content-Disposition: inline
-In-Reply-To: <bc95fae7-cf2f-5cf1-4e24-59fcc231fd64@gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+During probe, if there was an error the memory region and the memory
+map were not properly released.
 
---33w5ejf5ircqd4gw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This can lead a system unusable if deferred probe is in use.
 
-Hi Florian,
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/mtd/maps/physmap_of_core.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-On Fri, Sep 14, 2018 at 01:26:06PM -0700, Florian Fainelli wrote:
-> On 09/14/2018 02:44 AM, Quentin Schulz wrote:
-> > The VSC8574 PHY is a 4-ports PHY that is 10/100/1000BASE-T, 100BASE-FX,
-> > 1000BASE-X and triple-speed copper SFP capable, can communicate with
-> > the MAC via SGMII, QSGMII or 1000BASE-X, supports WOL, downshifting and
-> > can set the blinking pattern of each of its 4 LEDs, supports SyncE as
-> > well as HP Auto-MDIX detection.
-> >=20
-> > This adds support for 10/100/1000BASE-T, SGMII/QSGMII link with the MAC,
-> > WOL, downshifting, HP Auto-MDIX detection and blinking pattern for its 4
-> > LEDs.
-> >=20
-> > The VSC8574 has also an internal Intel 8051 microcontroller whose
-> > firmware needs to be patched when the PHY is reset. If the 8051's
-> > firmware has the expected CRC, its patching can be skipped. The
-> > microcontroller can be accessed from any port of the PHY, though the CRC
-> > function can only be done through the PHY that is the base PHY of the
-> > package (internal address 0) due to a limitation of the firmware.
-> >=20
-> > The GPIO register bank is a set of registers that are common to all PHYs
-> > in the package. So any modification in any register of this bank affects
-> > all PHYs of the package.
-> >=20
-> > If the PHYs haven't been reset before booting the Linux kernel and were
-> > configured to use interrupts for e.g. link status updates, it is
-> > required to clear the interrupts mask register of all PHYs before being
-> > able to use interrupts with any PHY. The first PHY of the package that
-> > will be init will take care of clearing all PHYs interrupts mask
-> > registers. Thus, we need to keep track of the init sequence in the
-> > package, if it's already been done or if it's to be done.
-> >=20
-> > Most of the init sequence of a PHY of the package is common to all PHYs
-> > in the package, thus we use the SMI broadcast feature which enables us
-> > to propagate a write in one register of one PHY to all PHYs in the
-> > package.
-> >=20
-> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > ---
->=20
-> [snip]
->=20
-> > +	reg =3D __mdiobus_read(bus, phy, MSCC_PHY_TEST_PAGE_8);
-> > +	reg |=3D 0x8000;
->=20
-> Having a define would be nice here? This looks like a write enable?
->=20
+diff --git a/drivers/mtd/maps/physmap_of_core.c b/drivers/mtd/maps/physmap_of_core.c
+index 4129535b8e46..062add8b3a6e 100644
+--- a/drivers/mtd/maps/physmap_of_core.c
++++ b/drivers/mtd/maps/physmap_of_core.c
+@@ -241,10 +241,10 @@ static int of_flash_probe(struct platform_device *dev)
+ 
+ 		err = of_flash_probe_gemini(dev, dp, &info->list[i].map);
+ 		if (err)
+-			goto err_out;
++			goto err_out_release;
+ 		err = of_flash_probe_versatile(dev, dp, &info->list[i].map);
+ 		if (err)
+-			goto err_out;
++			goto err_out_release;
+ 
+ 		err = -ENOMEM;
+ 		info->list[i].map.virt = ioremap(info->list[i].map.phys,
+@@ -252,7 +252,7 @@ static int of_flash_probe(struct platform_device *dev)
+ 		if (!info->list[i].map.virt) {
+ 			dev_err(&dev->dev, "Failed to ioremap() flash"
+ 				" region\n");
+-			goto err_out;
++			goto err_out_release;
+ 		}
+ 
+ 		simple_map_init(&info->list[i].map);
+@@ -290,7 +290,7 @@ static int of_flash_probe(struct platform_device *dev)
+ 		err = -ENXIO;
+ 		if (!info->list[i].mtd) {
+ 			dev_err(&dev->dev, "do_map_probe() failed\n");
+-			goto err_out;
++			goto err_out_iounmap;
+ 		} else {
+ 			info->list_size++;
+ 		}
+@@ -329,6 +329,10 @@ static int of_flash_probe(struct platform_device *dev)
+ 
+ 	return 0;
+ 
++err_out_iounmap:
++	iounmap(info->list[i].map.virt);
++err_out_release:
++	release_mem_region(res.start, resource_size(&res));
+ err_out:
+ 	kfree(mtd_list);
+ err_flash_remove:
+-- 
+2.19.0
 
-Same as for the SerDes muxing patch series, I'm sending a new version
-without the suggested change. I've requested some information on this
-bit but can't guarantee I'll get anything (and if anything, worthy).
-
-I'll try not to forget to add a constant if and when I get a clue on
-what this bit does.
-
-Thanks,
-Quentin
-
---33w5ejf5ircqd4gw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlu2DVsACgkQhLiadT7g
-8aN9Eg/+MxF91BbA3+0EjFO80hiu2B47CAKbO6ciF4dlldlX+VCVxC/QwebTa9OU
-AuxWDzKktSnX50aORUb6VtQNMu/hSOzG6Ix+0Q9+HyuIhJiqNd8o17+GDqieGYDi
-YR1JKdlwb9Dn7HWZzuFjjl7/1EEOP3Mn3uivSzRAtNgVFDse9xfxian0/twGBLWM
-xmL/qTeb7EU0WUtqC6dwax0Cy2kOsuVai5BxhFueOf+yKZ+bY1q4wE0q1t33reD/
-4/QPtgR0R3fV1+Uan6SbdNe7VkzANojZ5P/NsaEkYHmS63cuv2td9dO62iJx43To
-KJtaaSNzfKF6HXKjI9fIXzoMA1rW9L2BlGmmleIT0YqeBpghc67lYrSmkVl/Bl/c
-4ZUpr+5cs3tUtcVqqK82kJGIdJ9LsaKV49DEdB1zJPEywgC/4WilNWGv2Inihv2S
-pii0T2Qkau2tu8Vt4C0b0gmoCgxuVpbA3QuAxF5ywrNcWnNp9n9SvESvPHoOkdI0
-qFcTxFe9Iqi0p1j4GikxGq4T0S7J64+d9O6kWEBxJxZfiUcU7eEFUVYrVwhFKtnB
-hszQfHvi4XB5x3zt3lKn3n/JZi5CNBve345xlR0T2DsZK9cN2U4JDKjDLo85KBOo
-6AFIGHJepLXQ9baJbsoKasZ37Iu2AOJLMQQ63Nai7JXu78kv4ng=
-=qxYo
------END PGP SIGNATURE-----
-
---33w5ejf5ircqd4gw--
