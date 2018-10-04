@@ -2,219 +2,123 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974D5C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A614CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 257C321470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:38:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 580E121470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:40:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JSesh6sF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257C321470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SB/qM+Y/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oz4f64yG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 580E121470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbeJDRal (ORCPT
+        id S1727336AbeJDRdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:30:41 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:58136 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbeJDRal (ORCPT
+        Thu, 4 Oct 2018 13:33:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbeJDRdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:30:41 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w94AbfUW096049;
-        Thu, 4 Oct 2018 05:37:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538649461;
-        bh=wGDizo2WCCvowyxifJwFRkkq+4m/A4sOv5V9RgRd0qY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JSesh6sF/RrLWm0bPZXyCtnWUvs7BGEJnG5glqVC03C7wklhFWkT5f9ep0BP/Aiue
-         obMGxBuo2LmxbY3KfeT2CfDhn28XKvPSTZNVe2CUCMdDWzLQiTVXWo1OP8LKRXC1tE
-         romf/eb3D7A5VJ7wy11xf7IltoUEfniD9rvFvDeI=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94AbfSi032045;
-        Thu, 4 Oct 2018 05:37:41 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 4 Oct
- 2018 05:37:41 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 4 Oct 2018 05:37:40 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94AbafD022602;
-        Thu, 4 Oct 2018 05:37:38 -0500
-Subject: Re: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for mt35xu512aba
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Brian Norris <computersforpeace@gmail.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181003165603.2579-1-vigneshr@ti.com>
- <20181003165603.2579-2-vigneshr@ti.com>
- <VI1PR04MB1038C20CA97E453FC4C9CEAE99EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <ad1e560a-9dc8-c99c-acf4-de8be00b934e@ti.com>
-Date:   Thu, 4 Oct 2018 16:08:31 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thu, 4 Oct 2018 13:33:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6D04960C85; Thu,  4 Oct 2018 10:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538649634;
+        bh=EN+D2QcrJH+kaLNiDM01jmxIH/34Lrq2no9ByEC31Vg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SB/qM+Y/o//afCZcLMhVhj/XI/vljiIcfpIDaJljn/Z84YuljpvBO4o/Z5wXggINp
+         ALaRl3vHi5bVuy6FbOluq8N8NlFBhTUEKeX7eRMlCyxK5sNYnsN3nE2+odjIREquMv
+         qOOvTIgBpPTo2mpXGB/cDGz6U1yt4SYlI/JMCZF0=
+Received: from [10.206.24.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0B1D1607F4;
+        Thu,  4 Oct 2018 10:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538649633;
+        bh=EN+D2QcrJH+kaLNiDM01jmxIH/34Lrq2no9ByEC31Vg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oz4f64yGqf5Po+70tHBx5OLZ0gvoK6+fUokvf5a75s9klZxFklmJZFk06N3g977gT
+         byVtmWoRizUl0PJfc9tgBpk9oHwAEA1l3Bj+vYqR1DF2O0tajOwuwgEj50tYLsurUF
+         P8GYvqY481ZwY4elYdIpo8UisLF3drnCBgY7YXio=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B1D1607F4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+Subject: Re: [PATCH V14 2/2] scsi: ufs: Add configfs support for UFS
+ provisioning
+To:     Avri Altman <Avri.Altman@wdc.com>,
+        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "evgreen@chromium.org" <evgreen@chromium.org>,
+        "riteshh@codeaurora.org" <riteshh@codeaurora.org>
+Cc:     "stummala@codeaurora.org" <stummala@codeaurora.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org>
+ <1537770516-28410-3-git-send-email-sayalil@codeaurora.org>
+ <SN6PR04MB4925D198F7AE8961254F43C9FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+Message-ID: <4aca5fe6-43db-c7b0-b255-622ccec4d1fc@codeaurora.org>
+Date:   Thu, 4 Oct 2018 16:10:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <VI1PR04MB1038C20CA97E453FC4C9CEAE99EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <SN6PR04MB4925D198F7AE8961254F43C9FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Thursday 04 October 2018 12:21 PM, Yogesh Narayan Gaur wrote:
-> Hi Vignesh,
-> 
->> -----Original Message-----
->> From: Vignesh R [mailto:vigneshr@ti.com]
->> Sent: Wednesday, October 3, 2018 10:26 PM
->> To: Boris Brezillon <boris.brezillon@bootlin.com>; Marek Vasut
->> <marek.vasut@gmail.com>; Rob Herring <robh+dt@kernel.org>
->> Cc: Brian Norris <computersforpeace@gmail.com>; Yogesh Narayan Gaur
->> <yogeshnarayan.gaur@nxp.com>; Linux ARM Mailing List <linux-arm-
->> kernel@lists.infradead.org>; linux-mtd@lists.infradead.org;
->> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Vignesh R
->> <vigneshr@ti.com>
->> Subject: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for mt35xu512aba
->>
->> Micron's mt35xu512aba flash is an Octal flash that has x8 IO lines. It supports
->> read/write over 8 IO lines simulatenously. Add support for Octal read mode for
->> Micron mt35xu512aba.
->> Unfortunately, this flash is only complaint to SFDP JESD216B and does not seem
->> to support newer JESD216C standard that provides auto detection of Octal
->> mode capabilities and opcodes. Therefore, this capability is manually added
->> using new SPI_NOR_OCTAL_READ flag.
->>
-> 
-> Thanks for sending the patch-set of adding octal support.
-> If possible, can you share the MT35x datasheet?
-> 
-
-I dont have datasheet, this patch is based on prior patches from here:
-http://patchwork.ozlabs.org/patch/740942/
-
-> I also have the patch ready in which I have added support for Read (1-1-8 and 1-8-8) protocol and Write (1-1-8 and 1-8-8).
-> Also have added support of Octal in driver/spi/spi.c framework.
-> 
-> IMO, we would collaborate our patches.
-
-That would be great, thanks!
-
-Regards
-Vignesh
-
-> --
-> Regards
-> Yogesh Gaur
-> 
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->>  drivers/mtd/spi-nor/spi-nor.c | 11 ++++++++++-
->>  include/linux/mtd/spi-nor.h   |  2 ++
->>  2 files changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c index
->> aff5e6ff0b2c..4926e805a8cb 100644
->> --- a/drivers/mtd/spi-nor/spi-nor.c
->> +++ b/drivers/mtd/spi-nor/spi-nor.c
->> @@ -90,6 +90,7 @@ struct flash_info {
->>  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip
->> erase */
->>  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
->>  #define USE_CLSR		BIT(14)	/* use CLSR command */
->> +#define SPI_NOR_OCTAL_READ	BIT(15)	/* Flash supports Octal Read */
->>
->>  	int	(*quad_enable)(struct spi_nor *nor);
->>  };
->> @@ -209,6 +210,7 @@ static inline u8 spi_nor_convert_3to4_read(u8 opcode)
->>  		{ SPINOR_OP_READ_1_2_2,	SPINOR_OP_READ_1_2_2_4B },
->>  		{ SPINOR_OP_READ_1_1_4,	SPINOR_OP_READ_1_1_4_4B },
->>  		{ SPINOR_OP_READ_1_4_4,	SPINOR_OP_READ_1_4_4_4B },
->> +		{ SPINOR_OP_READ_1_1_8,	SPINOR_OP_READ_1_1_8_4B },
->>
->>  		{ SPINOR_OP_READ_1_1_1_DTR,
->> 	SPINOR_OP_READ_1_1_1_DTR_4B },
->>  		{ SPINOR_OP_READ_1_2_2_DTR,
->> 	SPINOR_OP_READ_1_2_2_DTR_4B },
->> @@ -1406,7 +1408,7 @@ static const struct flash_info spi_nor_ids[] = {
->>  	{ "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K |
->> USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
->>
->>  	/* Micron */
->> -	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512, SECT_4K |
->> USE_FSR | SPI_NOR_4B_OPCODES) },
->> +	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512, SECT_4K |
->> USE_FSR
->> +| SPI_NOR_OCTAL_READ | SPI_NOR_4B_OPCODES) },
->>
->>  	/* PMC */
->>  	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
->> @@ -3199,6 +3201,13 @@ static int spi_nor_init_params(struct spi_nor *nor,
->>  					  SNOR_PROTO_1_1_4);
->>  	}
->>
->> +	if (info->flags & SPI_NOR_OCTAL_READ) {
->> +		params->hwcaps.mask |= SNOR_HWCAPS_READ_1_1_8;
->> +		spi_nor_set_read_settings(&params-
->>> reads[SNOR_CMD_READ_1_1_8],
->> +					  0, 8, SPINOR_OP_READ_1_1_8,
->> +					  SNOR_PROTO_1_1_8);
->> +	}
+On 9/24/2018 3:33 PM, Avri Altman wrote:
+>> obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>> obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>> ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+>> +obj-$(CONFIG_SCSI_UFS_PROVISION) += ufs-configfs.o
+> Isn't ufs-configfs should be part of ufshcd-core? like ufs-sysfs ?
+Agree. Will update.
+>
+>
+>> +static ssize_t ufs_config_desc_show(struct config_item *item, char *buf,
+>> +                                   u8 index)
+>> +{
+> The read part already exist in ufs-sysfs.
+User can just read the existing desc here and update the required fields 
+as per need and write updated buffer to same configfs path.
+I think its better to have both r/w functionality here.
+>
+>> +ssize_t ufshcd_desc_configfs_store(struct config_item *item, const char *buf,
+>> +                                  size_t count, u8 index)
+>> +{
+>
 >> +
->>  	/* Page Program settings. */
->>  	params->hwcaps.mask |= SNOR_HWCAPS_PP;
->>  	spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP],
->> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h index
->> 8b1acf68b7ac..ae9861ed7e0f 100644
->> --- a/include/linux/mtd/spi-nor.h
->> +++ b/include/linux/mtd/spi-nor.h
->> @@ -50,6 +50,7 @@
->>  #define SPINOR_OP_READ_1_2_2	0xbb	/* Read data bytes (Dual I/O
->> SPI) */
->>  #define SPINOR_OP_READ_1_1_4	0x6b	/* Read data bytes (Quad
->> Output SPI) */
->>  #define SPINOR_OP_READ_1_4_4	0xeb	/* Read data bytes (Quad I/O
->> SPI) */
->> +#define SPINOR_OP_READ_1_1_8	0x8b	/* Read data bytes (Octal
->> Output SPI) */
->>  #define SPINOR_OP_PP		0x02	/* Page program (up to 256 bytes) */
->>  #define SPINOR_OP_PP_1_1_4	0x32	/* Quad page program */
->>  #define SPINOR_OP_PP_1_4_4	0x38	/* Quad page program */
->> @@ -73,6 +74,7 @@
->>  #define SPINOR_OP_READ_1_2_2_4B	0xbc	/* Read data bytes (Dual I/O
->> SPI) */
->>  #define SPINOR_OP_READ_1_1_4_4B	0x6c	/* Read data bytes (Quad
->> Output SPI) */
->>  #define SPINOR_OP_READ_1_4_4_4B	0xec	/* Read data bytes (Quad I/O
->> SPI) */
->> +#define SPINOR_OP_READ_1_1_8_4B	0x7c	/* Read data bytes (Octal
->> Output SPI) */
->>  #define SPINOR_OP_PP_4B		0x12	/* Page program (up to 256
->> bytes) */
->>  #define SPINOR_OP_PP_1_1_4_4B	0x34	/* Quad page program */
->>  #define SPINOR_OP_PP_1_4_4_4B	0x3e	/* Quad page program */
->> --
->> 2.19.0
-> 
+>> +       /*
+>> +        * First read the current configuration descriptor
+>> +        * and then update with user provided parameters
+>> +        */
+> if originally only lun0 was configured, and you want to configure a new set of luns -
+> luns 8 to 15 (config index 0x1) - won't the read fail in that case?
+Let me try it out on my setup internally and update once I test this 
+scenario
+>
+> Thanks,
+> Avri
 
--- 
-Regards
-Vignesh
