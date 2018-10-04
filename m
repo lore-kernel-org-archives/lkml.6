@@ -2,117 +2,128 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0563DC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A307C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FAED2098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:25:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0EA20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:38:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="2J5LnYnC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FAED2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MrkB5Xo+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0EA20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJDLQv (ORCPT
+        id S1727188AbeJDL3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 07:16:51 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:34180 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbeJDLQu (ORCPT
+        Thu, 4 Oct 2018 07:29:25 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32929 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbeJDL3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 07:16:50 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id w944PPWW030457;
-        Thu, 4 Oct 2018 13:25:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w944PPWW030457
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538627125;
-        bh=Tu5EgNC+a2nzWof8zRD+kOXG3bSs+w0fmQrPdRjIFSc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=2J5LnYnCNn9twb2YKBZBKOdTiyNCFuYko3MqdQGx2C2mOZG9HVcUFgHtmFZCyrdnK
-         FuU7SCNQQMjCj0YAYCv+H6X9JIS/YZm5mLLR3pLuJVYt9aTD5y5T4TdPsuMEzsuLqW
-         wrqoFd+ooiiUXL8jjZgfUFo443As0XECdZ1DMQXelW9zn/yMQV3vvjWynaRVNHo2mj
-         AnIPLhUhtP0Xm19UTJ0gHuokiurfwN+uKEcYdhqlBu6Z2twFdNqRQYGuBl8er8QZFR
-         81URaqcrJwoHQj/6dZ6bAvKzAel4YqQ9FAbbMgeGOeltIPZycyTvPu1BUr50buIe9K
-         /gDFIw4McozRw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kbuild: remove unneeded link_multi_deps
-Date:   Thu,  4 Oct 2018 13:25:19 +0900
-Message-Id: <1538627119-11346-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 4 Oct 2018 07:29:25 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y18-v6so2561419pge.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 21:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jQeE93VbbNfp3K7xt8jRqG4vlZUs03OTr7LfpQaa+tI=;
+        b=MrkB5Xo+6Yg102g/uglJPmqxNterNLrQuqrdM5BZzzRdI2jh2RS5/4tSBXh/ThHNBv
+         UdIxRW1p6+52bHapMMf3LIaer0KdMdbgxrizkJE8z9e1wtw6PjqoGuBT6uonkH9PDLaB
+         Q57t7CrdeE1ITvJ+sdB7p/O1HWRwhc1ggFu4o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jQeE93VbbNfp3K7xt8jRqG4vlZUs03OTr7LfpQaa+tI=;
+        b=gX8ksODCKPI6mPixa6vv0XpxeqaV1VDiBqXWBqUQP/cukk8zJjQNRDjNEKzeqT+woM
+         tqBiqDu8KMBXwjrJo1tjyCYCoYKDlsaRJJluFHIB+KTaZmdM6e7bYyjF2qcek7JooXN0
+         9BC1FKpTL9FwyNAcNfP7252ywJ5aJq6Uw/y7AdSjdcM4xMD9GJdwOx3PgHIU8GgdltXH
+         zlRHhLhYJb9S27aoVg/mVj2J/rySeRnc3A303eUegUe5npaR/R7ZXcxXIFH9W/OaAsDR
+         Ahufqjw+E8bav9BcA1mJZIFj1cp3a1zBv9+3m/gJfRgsyXudJoz+bX76ImfLJP7GjC+x
+         3fcg==
+X-Gm-Message-State: ABuFfogvffn+NCeTQX9p8UsSYXFXA3+mMKlk45v3LznZn8wTEAICb3p8
+        IsTQcGVW1x0F9JXdT6+SNHHJwA==
+X-Google-Smtp-Source: ACcGV62fWji7Dgwn7I4NdFyfqi835U+9NFgU3dCpnZnpJciXpS1/Q3WZX2a5c5mVYE9cbb9gVi6YVQ==
+X-Received: by 2002:a63:9a19:: with SMTP id o25-v6mr4104517pge.440.1538627882126;
+        Wed, 03 Oct 2018 21:38:02 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f25-v6sm4239847pfn.177.2018.10.03.21.38.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 21:38:01 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 21:37:59 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
+Cc:     davem@davemloft.net, clew@codeaurora.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        fw@strlen.de, hannes@stressinduktion.org, dvlasenk@redhat.com,
+        nicolas.dechesne@linaro.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+Subject: Re: [PATCH] soc: qcom: qmi_interface: Limit txn ids to U16_MAX
+Message-ID: <20181004043759.GB1656@tuxbook-pro>
+References: <1538545205-17939-1-git-send-email-aneela@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538545205-17939-1-git-send-email-aneela@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c8589d1e9e01 ("kbuild: handle multi-objs dependency
-appropriately"), $^ really represents all the prerequisite of the
-composite object being built.
+On Tue 02 Oct 22:40 PDT 2018, Arun Kumar Neelakantam wrote:
 
-Hence, $(filter %.o,$^) contains all the objects to link together,
-which is much simpler than link_multi_deps calculation.
+> Txn IDs created up to INT_MAX cause overflow while storing
+> the IDs in u16 type supported by QMI header.
+> 
+> Limit the txn IDs max value to U16_MAX to avoid overflow.
+> 
+> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
-Please note $(filter-out FORCE,$^) does not work here.  When a
-single object module is turned into a multi object module, $^ will
-contain header files that were previously included for building the
-single object, and recorded in the .*.cmd file.  $(filter %.o,$^)
-should be used to filter out such headers.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Regards,
+Bjorn
 
-Changes in v2:
-  - Fix regression reported in linux-next.
-    https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1779047.html
-
- scripts/Makefile.build | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index cb03774..f21b48d 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -485,28 +485,12 @@ targets += $(obj)/lib-ksyms.o
- 
- endif
- 
--#
--# Rule to link composite objects
--#
--#  Composite objects are specified in kbuild makefile as follows:
--#    <composite-object>-objs := <list of .o files>
--#  or
--#    <composite-object>-y    := <list of .o files>
--#  or
--#    <composite-object>-m    := <list of .o files>
--#  The -m syntax only works if <composite object> is a module
--link_multi_deps =                     \
--$(filter $(addprefix $(obj)/,         \
--$($(subst $(obj)/,,$(@:.o=-objs)))    \
--$($(subst $(obj)/,,$(@:.o=-y)))       \
--$($(subst $(obj)/,,$(@:.o=-m)))), $^)
--
- quiet_cmd_link_multi-m = LD [M]  $@
--cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(link_multi_deps) $(cmd_secanalysis)
-+cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^) $(cmd_secanalysis)
- 
- $(multi-used-m): FORCE
- 	$(call if_changed,link_multi-m)
--	@{ echo $(@:.o=.ko); echo $(link_multi_deps); \
-+	@{ echo $(@:.o=.ko); echo $(filter %.o,$^); \
- 	   $(cmd_undef_syms); } > $(MODVERDIR)/$(@F:.o=.mod)
- $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
- 
--- 
-2.7.4
-
+> ---
+>  drivers/soc/qcom/qmi_interface.c | 2 +-
+>  include/linux/soc/qcom/qmi.h     | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
+> index 938ca41c..c239a28 100644
+> --- a/drivers/soc/qcom/qmi_interface.c
+> +++ b/drivers/soc/qcom/qmi_interface.c
+> @@ -318,7 +318,7 @@ int qmi_txn_init(struct qmi_handle *qmi, struct qmi_txn *txn,
+>  	txn->dest = c_struct;
+>  
+>  	mutex_lock(&qmi->txn_lock);
+> -	ret = idr_alloc_cyclic(&qmi->txns, txn, 0, INT_MAX, GFP_KERNEL);
+> +	ret = idr_alloc_cyclic(&qmi->txns, txn, 0, U16_MAX, GFP_KERNEL);
+>  	if (ret < 0)
+>  		pr_err("failed to allocate transaction id\n");
+>  
+> diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
+> index f4de336..5efa2b6 100644
+> --- a/include/linux/soc/qcom/qmi.h
+> +++ b/include/linux/soc/qcom/qmi.h
+> @@ -166,7 +166,7 @@ struct qmi_ops {
+>  struct qmi_txn {
+>  	struct qmi_handle *qmi;
+>  
+> -	int id;
+> +	u16 id;
+>  
+>  	struct mutex lock;
+>  	struct completion completion;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
