@@ -2,206 +2,142 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A502C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B550BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148C32098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:34:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148C32098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 754D021473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:35:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Lz6quGne"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 754D021473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJDR1R (ORCPT
+        id S1727422AbeJDR1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:27:17 -0400
-Received: from mga12.intel.com ([192.55.52.136]:27883 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727030AbeJDR1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:27:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 03:34:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
-   d="scan'208";a="79810624"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 04 Oct 2018 03:34:23 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Thu, 04 Oct 2018 13:34:22 +0300
-Date:   Thu, 4 Oct 2018 13:34:22 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v2] drm: fb-helper: Reject all pixel format changing
- requests
-Message-ID: <20181004103422.GL9144@intel.com>
-References: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
+        Thu, 4 Oct 2018 13:27:47 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57986 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbeJDR1r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 13:27:47 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w94AYjKU095336;
+        Thu, 4 Oct 2018 05:34:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538649285;
+        bh=hu+xnYYzGk2P9gNOGFoNFjwX9zxr3COvS1l5ek5/jzc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Lz6quGnepJa91jMLgfrvsYYos5uFBiE7o+KZ7rRaMmyrCktc2G2TLDAjVptSjV5Nw
+         4SCykDwq2amG0gVLhE4vCFLDMytPvSsJD3fplbGF4Q4O3Q7QNtAYpBA+vgqFqlJAz8
+         n1VSbO67wKrdQcYmYaCCTn1LsrSmN5Ej01/heBks=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94AYjBR027789;
+        Thu, 4 Oct 2018 05:34:45 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 4 Oct
+ 2018 05:34:45 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 4 Oct 2018 05:34:45 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94AYfwY028400;
+        Thu, 4 Oct 2018 05:34:42 -0500
+Subject: Re: [PATCH 0/3] spi-nor: Add Octal SPI support
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+References: <20181003165603.2579-1-vigneshr@ti.com>
+ <20181003212017.653e739f@bbrezillon>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <1074d503-71ef-2998-7096-de6135bb965d@ti.com>
+Date:   Thu, 4 Oct 2018 16:05:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181003212017.653e739f@bbrezillon>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 07:45:38PM +0300, Eugeniy Paltsev wrote:
-> drm fbdev emulation doesn't support changing the pixel format at all,
-> so reject all pixel format changing requests.
+On Thursday 04 October 2018 12:50 AM, Boris Brezillon wrote:
+> On Wed, 3 Oct 2018 22:26:00 +0530
+> Vignesh R <vigneshr@ti.com> wrote:
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> ---
-> Changes v1->v2:
->  * Reject all pixel format changing request, not just the invalid ones.
+>> This series adds support for octal mode of mt35x flash. Also, adds
+>> support for OSPI version of Cadence QSPI controller.
+>>
+>> Based on top of patches adding basic support for mt35xu512aba here:
+>> https://patchwork.ozlabs.org/cover/971437/
+>>
+>> Vignesh R (3):
+>>   mtd: spi-nor: Add Octal mode support for mt35xu512aba
+>>   dt-bindings: cadence-quadspi: Add new compatible for AM654 SoC
+>>   mtd: spi-nor: cadence-quadspi: Add support for Octal SPI controller
 > 
->  drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++++-----------------------------
->  1 file changed, 26 insertions(+), 65 deletions(-)
+> The patchset looks good to me, I'll just wait the next release cycle
+> before applying it, since I'd prefer to have it stay a bit longer in
+> -next. This should leave enough time to let other people review this
+> stuff.
 > 
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index 16ec93b75dbf..48598d7f673f 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -1580,6 +1580,25 @@ int drm_fb_helper_ioctl(struct fb_info *info, unsigned int cmd,
->  }
->  EXPORT_SYMBOL(drm_fb_helper_ioctl);
->  
-> +static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
-> +				      const struct fb_var_screeninfo *var_2)
-> +{
-> +	return var_1->bits_per_pixel == var_2->bits_per_pixel &&
-> +	       var_1->grayscale == var_2->grayscale &&
-> +	       var_1->red.offset == var_2->red.offset &&
-> +	       var_1->red.length == var_2->red.length &&
-> +	       var_1->red.msb_right == var_2->red.msb_right &&
-> +	       var_1->green.offset == var_2->green.offset &&
-> +	       var_1->green.length == var_2->green.length &&
-> +	       var_1->green.msb_right == var_2->green.msb_right &&
-> +	       var_1->blue.offset == var_2->blue.offset &&
-> +	       var_1->blue.length == var_2->blue.length &&
-> +	       var_1->blue.msb_right == var_2->blue.msb_right &&
-> +	       var_1->transp.offset == var_2->transp.offset &&
-> +	       var_1->transp.length == var_2->transp.length &&
-> +	       var_1->transp.msb_right == var_2->transp.msb_right;
-> +}
 
-Could have shortened a bit with memcmp() but this works too.
+Ok, thats fine...
 
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-
-I suppose we really should be doing the same for most of the rest of
-var_screeninfo as we don't allow changing the timings/etc. either.
-
-> +
->  /**
->   * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
->   * @var: screeninfo to check
-> @@ -1590,7 +1609,6 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
->  {
->  	struct drm_fb_helper *fb_helper = info->par;
->  	struct drm_framebuffer *fb = fb_helper->fb;
-> -	int depth;
->  
->  	if (var->pixclock != 0 || in_dbg_master())
->  		return -EINVAL;
-> @@ -1610,72 +1628,15 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
->  		return -EINVAL;
->  	}
->  
-> -	switch (var->bits_per_pixel) {
-> -	case 16:
-> -		depth = (var->green.length == 6) ? 16 : 15;
-> -		break;
-> -	case 32:
-> -		depth = (var->transp.length > 0) ? 32 : 24;
-> -		break;
-> -	default:
-> -		depth = var->bits_per_pixel;
-> -		break;
-> -	}
-> -
-> -	switch (depth) {
-> -	case 8:
-> -		var->red.offset = 0;
-> -		var->green.offset = 0;
-> -		var->blue.offset = 0;
-> -		var->red.length = 8;
-> -		var->green.length = 8;
-> -		var->blue.length = 8;
-> -		var->transp.length = 0;
-> -		var->transp.offset = 0;
-> -		break;
-> -	case 15:
-> -		var->red.offset = 10;
-> -		var->green.offset = 5;
-> -		var->blue.offset = 0;
-> -		var->red.length = 5;
-> -		var->green.length = 5;
-> -		var->blue.length = 5;
-> -		var->transp.length = 1;
-> -		var->transp.offset = 15;
-> -		break;
-> -	case 16:
-> -		var->red.offset = 11;
-> -		var->green.offset = 5;
-> -		var->blue.offset = 0;
-> -		var->red.length = 5;
-> -		var->green.length = 6;
-> -		var->blue.length = 5;
-> -		var->transp.length = 0;
-> -		var->transp.offset = 0;
-> -		break;
-> -	case 24:
-> -		var->red.offset = 16;
-> -		var->green.offset = 8;
-> -		var->blue.offset = 0;
-> -		var->red.length = 8;
-> -		var->green.length = 8;
-> -		var->blue.length = 8;
-> -		var->transp.length = 0;
-> -		var->transp.offset = 0;
-> -		break;
-> -	case 32:
-> -		var->red.offset = 16;
-> -		var->green.offset = 8;
-> -		var->blue.offset = 0;
-> -		var->red.length = 8;
-> -		var->green.length = 8;
-> -		var->blue.length = 8;
-> -		var->transp.length = 8;
-> -		var->transp.offset = 24;
-> -		break;
-> -	default:
-> +	/*
-> +	 * drm fbdev emulation doesn't support changing the pixel format at all,
-> +	 * so reject all pixel format changing requests.
-> +	 */
-> +	if (!drm_fb_pixel_format_equal(var, &info->var)) {
-> +		DRM_DEBUG("fbdev emulation doesn't support changing the pixel format\n");
->  		return -EINVAL;
->  	}
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL(drm_fb_helper_check_var);
-> -- 
-> 2.14.4
+>>
+>>  .../devicetree/bindings/mtd/cadence-quadspi.txt       |  1 +
+>>  drivers/mtd/spi-nor/cadence-quadspi.c                 |  9 +++++++++
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> On a slightly different topic, do you plan to convert the Cadence
+> driver to spi-mem? And if you don't, is it because you don't have time
+> or because some features are missing in spi-mem (I remember you
+> mentioned a few things back when you were reviewing the spi-mem series)?
+> 
+
+I do not have plans to convert cadence QSPI driver to spi-mem yet,
+mainly due to lack of time. Also, not sure if original author Marek and
+other altera people are okay with that.
+
+I see couple of issues in the way of conversion:
+1. I would wait to know what direction would direct mapping APIs[1] go
+before starting spi-mem conversion for Cadence QSPI driver. Else, we
+have may to re write again if direct mapping APIs are merged.
+2. New Cadence OSPI IP has an integrated PHY to support high throughput
+OSPI flashes operating up 200MHz in Octal DDR mode. In order to work
+with such flashes, PHY DLLs need to be calibrated. Highly simplified
+calibration sequence is as below(See [2] for actual sequence):
+-Read flash ID at low speed and store it.
+-Enable PHY and set DLLs to a defined initial value
+-Increment RX DLL value
+-Read flash ID and check for correctness of data read
+-repeat above two steps until a band of passing values is obtained for
+RX DLL where flash ID is correctly read.
+-DLL needs to set to middle of the passing band.
+
+I am trying to figure out how to fit this into the spi-mem framework as
+controller would to need to store READ ID opcode and expected JEDEC ID
+before starting calibration sequence.
+
+
+[1]https://patchwork.ozlabs.org/cover/924041/
+[2]http://www.ti.com/lit/ug/spruid7a/spruid7a.pdf(12.3.2.4.14 PHY Module
+page 9770-9772)
 
 -- 
-Ville Syrjälä
-Intel
+Regards
+Vignesh
