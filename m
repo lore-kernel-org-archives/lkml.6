@@ -2,123 +2,113 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD2DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E09C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D26206B2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:10:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D26206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id A6D8C2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:11:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6D8C2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeJEAEw (ORCPT
+        id S1727840AbeJEAGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:04:52 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.84]:18971 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727536AbeJEAEw (ORCPT
+        Thu, 4 Oct 2018 20:06:06 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34720 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbeJEAGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:04:52 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 41B19C3CB
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 12:10:42 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8798gE6BkBcCX8798gYLsL; Thu, 04 Oct 2018 12:10:42 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:54470 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g8796-000CXX-UB; Thu, 04 Oct 2018 12:10:41 -0500
-Date:   Thu, 4 Oct 2018 19:10:36 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] powerpc/xmon/ppc-opc: Use ARRAY_SIZE macro
-Message-ID: <20181004171036.GA1907@embeddedor.com>
+        Thu, 4 Oct 2018 20:06:06 -0400
+Received: by mail-ot1-f68.google.com with SMTP id i12-v6so9960443otl.1;
+        Thu, 04 Oct 2018 10:11:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=77zgEKOszdVaqrclJTVBGM3sXOUiejLJo61I9DYgGEo=;
+        b=hC/mfwBuoEH8rUAViy1t1fPRT3SDSbuj3X5159Eh1OFVFgAY0N7//ENDUPvmP+Bnq6
+         lhn+iIwBqMHcGxiUK4avqdFM6uBdP9eKcw7b4gVnh355KN9iv8XLtrYQmbnfoijJ47NB
+         vZ8qp3LHX0jWjv/imO41/VynVm6nsJ0iQrp7vwYew8v9A4BCgKIMRHj5ceiRJJIpYWpB
+         ZMsT/ObujYGyNbxmdGAX/AsbTL339IJX6QA5xm5TixZudUZoJD1WHMX+4yRt3Sh50lyV
+         WiDBzAVaY8eQ6braM1S1gDorNiC0bkjaaDBotzXHwOum9LTgdVYiZKc5aar+MKyx114E
+         WXQA==
+X-Gm-Message-State: ABuFfojMQAIi8PVFPV8aVZDfwG5+h2wibF4lEGrt7hNjKAZb2eb7aGlT
+        LMjKKXaWyuVrxcUm15Ecxoy2C77aMaXLDSR0t6s=
+X-Google-Smtp-Source: ACcGV6189eGtnYVq12JoBZjqRHhkeqrcbZjl4FpXSyJw6ltvWqQXpxbM2jjY6P5Wuyg9E9vygJt1JBKVMEOeOynJ0wU=
+X-Received: by 2002:a9d:2b4a:: with SMTP id f10-v6mr4427755otd.139.1538673115701;
+ Thu, 04 Oct 2018 10:11:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g8796-000CXX-UB
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:54470
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <3510260.hvypppS8Bs@aspire.rjw.lan> <2753018.aK9edJ7Dvu@aspire.rjw.lan>
+ <20181004155044.GD1881@mai>
+In-Reply-To: <20181004155044.GD1881@mai>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 4 Oct 2018 19:11:44 +0200
+Message-ID: <CAJZ5v0iqXLZoZ03Hqi-3h_txtnGnDLMYP5K4vtdp+JcJ97P2eg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] cpuidle: menu: Avoid computations for very close timers
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
+On Thu, Oct 4, 2018 at 5:50 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> On Tue, Oct 02, 2018 at 11:46:28PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > If the next timer event (with the tick excluded) is closer than the
+> > target residency of the second state or the PM QoS latency constraint
+> > is below its exit latency, state[0] will be used regardless of any
+> > other factors, so skip the computations in menu_select() then and
+> > return 0 straight away from it.
+> >
+> > Still, do that after the bucket has been determined to avoid
+> > disturbing the wakeup statistics in general.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpuidle/governors/menu.c |   12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > Index: linux-pm/drivers/cpuidle/governors/menu.c
+> > ===================================================================
+> > --- linux-pm.orig/drivers/cpuidle/governors/menu.c
+> > +++ linux-pm/drivers/cpuidle/governors/menu.c
+> > @@ -309,6 +309,18 @@ static int menu_select(struct cpuidle_dr
+> >       get_iowait_load(&nr_iowaiters, &cpu_load);
+> >       data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+> >
+> > +     if (unlikely(drv->state_count <= 1) ||
+>
+> I'm not sure this test is necessary.
 
-This code was detected with the help of Coccinelle.
+Yes, it is IMO.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/powerpc/xmon/ppc-opc.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Strictly speaking it prevents state[1] from being accessed if the
+count is not 2 at least.
 
-diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-opc.c
-index ac2b55b..f3f57a1 100644
---- a/arch/powerpc/xmon/ppc-opc.c
-+++ b/arch/powerpc/xmon/ppc-opc.c
-@@ -966,8 +966,7 @@ const struct powerpc_operand powerpc_operands[] =
-   { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
- };
- 
--const unsigned int num_powerpc_operands = (sizeof (powerpc_operands)
--					   / sizeof (powerpc_operands[0]));
-+const unsigned int num_powerpc_operands = ARRAY_SIZE(powerpc_operands);
- 
- /* The functions used to insert and extract complicated operands.  */
- 
-@@ -6980,8 +6979,7 @@ const struct powerpc_opcode powerpc_opcodes[] = {
- {"fcfidu.",	XRC(63,974,1),	XRA_MASK, POWER7|PPCA2,	PPCVLE,		{FRT, FRB}},
- };
- 
--const int powerpc_num_opcodes =
--  sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
-+const int powerpc_num_opcodes = ARRAY_SIZE(powerpc_opcodes);
- 
- /* The VLE opcode table.
- 
-@@ -7219,8 +7217,7 @@ const struct powerpc_opcode vle_opcodes[] = {
- {"se_bl",	BD8(58,0,1),	BD8_MASK,	PPCVLE,	0,		{B8}},
- };
- 
--const int vle_num_opcodes =
--  sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
-+const int vle_num_opcodes = ARRAY_SIZE(vle_opcodes);
- 
- /* The macro table.  This is only used by the assembler.  */
- 
-@@ -7288,5 +7285,4 @@ const struct powerpc_macro powerpc_macros[] = {
- {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-(%3)"},
- };
- 
--const int powerpc_num_macros =
--  sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
-+const int powerpc_num_macros = ARRAY_SIZE(powerpc_macros);
--- 
-2.7.4
+> If state_count == 0, we don't have to select anything as the cpuidle can't register because of:
+>
+> static int __cpuidle_register_driver(struct cpuidle_driver *drv)
+> {
+>         int ret;
+>
+>         if (!drv || !drv->state_count)
+>                 return -EINVAL;
+>
+>         [ ... ]
+> }
+>
+> If state_count == 1, then there is nothing to select, it is always the state 0.
 
+Which is why it is better to simply return 0 right away in this case. :-)
+
+I guess I could compare state_count just to 1, but <= 1 works too.
