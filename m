@@ -2,379 +2,115 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E325C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F8C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C6A2082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:28:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C6A2082A
+	by mail.kernel.org (Postfix) with ESMTP id 8F3B12098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:29:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3B12098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbeJDUVR (ORCPT
+        id S1727694AbeJDUWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:21:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33156 "EHLO mx1.redhat.com"
+        Thu, 4 Oct 2018 16:22:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38424 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727367AbeJDUVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:21:17 -0400
+        id S1727489AbeJDUWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:22:50 -0400
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C542A7F6B3;
-        Thu,  4 Oct 2018 13:27:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 20C7E2010D55;
-        Thu,  4 Oct 2018 13:27:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next] dns: Allow the dns resolver to retrieve a server
- set
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org
-Date:   Thu, 04 Oct 2018 14:27:55 +0100
-Message-ID: <153865967530.25761.13226347009462917363.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mx1.redhat.com (Postfix) with ESMTPS id 6B0D3317C416;
+        Thu,  4 Oct 2018 13:29:32 +0000 (UTC)
+Received: from tonnant.bos.jonmasters.org (ovpn-124-32.rdu2.redhat.com [10.10.124.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7500C20155E0;
+        Thu,  4 Oct 2018 13:29:31 +0000 (UTC)
+Subject: Re: [RFC 00/60] Coscheduling for Linux
+To:     =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jschoenh@amazon.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+From:   Jon Masters <jcm@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jcm@redhat.com; keydata=
+ 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
+ yrXvw9qg2waGcnb8WuoS+g==
+Message-ID: <859c89b3-f43f-c3c7-3064-6bccb3ee65f8@redhat.com>
+Date:   Thu, 4 Oct 2018 09:29:29 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 04 Oct 2018 13:27:58 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 04 Oct 2018 13:29:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the DNS resolver to retrieve a set of servers and their associated
-addresses, ports, preference and weight ratings.
+On 9/7/18 5:39 PM, Jan H. Schönherr wrote:
 
-In terms of communication with userspace, "srv=1" is added to the callout
-string (the '1' indicating the maximum data version supported by the
-kernel) to ask the userspace side for this.
+> The collective context switch from one coscheduled set of tasks to another
+> -- while fast -- is not atomic. If a use-case needs the absolute guarantee
+> that all tasks of the previous set have stopped executing before any task
+> of the next set starts executing, an additional hand-shake/barrier needs to
+> be added.
 
-If the userspace side doesn't recognise it, it will ignore the option and
-return the usual text address list.
+In case nobody else brought it up yet, you're going to need a handshake
+to strengthen protection against L1TF attacks. Otherwise, there's still
+a small window where an attack can occur during the reschedule. Perhaps
+one could then cause this to happen artificially by repeatedly have a VM
+do some kind of pause/mwait type operation that might do a reschedule.
 
-If the userspace side does recognise it, it will return some binary data
-that begins with a zero byte that would cause the string parsers to give an
-error.  The second byte contains the version of the data in the blob (this
-may be between 1 and the version specified in the callout data).  The
-remainder of the payload is version-specific.
+Jon.
 
-In version 1, the payload looks like (note that this is packed):
-
-	u8	Non-string marker (ie. 0)
-	u8	Content (0 => Server list)
-	u8	Version (ie. 1)
-	u8	Source (eg. DNS_RECORD_FROM_DNS_SRV)
-	u8	Status (eg. DNS_LOOKUP_GOOD)
-	u8	Number of servers
-	foreach-server {
-		u16	Name length (LE)
-		u16	Priority (as per SRV record) (LE)
-		u16	Weight (as per SRV record) (LE)
-		u16	Port (LE)
-		u8	Source (eg. DNS_RECORD_FROM_NSS)
-		u8	Status (eg. DNS_LOOKUP_GOT_NOT_FOUND)
-		u8	Protocol (eg. DNS_SERVER_PROTOCOL_UDP)
-		u8	Number of addresses
-		char[]	Name (not NUL-terminated)
-		foreach-address {
-			u8		Family (AF_INET{,6})
-			union {
-				u8[4]	ipv4_addr
-				u8[16]	ipv6_addr
-			}
-		}
-	}
-
-This can then be used to fetch a whole cell's VL-server configuration for
-AFS, for example.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- include/linux/dns_resolver.h      |    4 -
- include/uapi/linux/dns_resolver.h |  116 +++++++++++++++++++++++++++++++++++++
- net/dns_resolver/dns_key.c        |   67 ++++++++++++++++++++-
- net/dns_resolver/dns_query.c      |    5 --
- 4 files changed, 182 insertions(+), 10 deletions(-)
- create mode 100644 include/uapi/linux/dns_resolver.h
-
-diff --git a/include/linux/dns_resolver.h b/include/linux/dns_resolver.h
-index 6ac3cad9aef1..34a744a1bafc 100644
---- a/include/linux/dns_resolver.h
-+++ b/include/linux/dns_resolver.h
-@@ -24,11 +24,9 @@
- #ifndef _LINUX_DNS_RESOLVER_H
- #define _LINUX_DNS_RESOLVER_H
- 
--#ifdef __KERNEL__
-+#include <uapi/linux/dns_resolver.h>
- 
- extern int dns_query(const char *type, const char *name, size_t namelen,
- 		     const char *options, char **_result, time64_t *_expiry);
- 
--#endif /* KERNEL */
--
- #endif /* _LINUX_DNS_RESOLVER_H */
-diff --git a/include/uapi/linux/dns_resolver.h b/include/uapi/linux/dns_resolver.h
-new file mode 100644
-index 000000000000..129745f9c794
---- /dev/null
-+++ b/include/uapi/linux/dns_resolver.h
-@@ -0,0 +1,116 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+/* DNS resolver interface definitions.
-+ *
-+ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#ifndef _UAPI_LINUX_DNS_RESOLVER_H
-+#define _UAPI_LINUX_DNS_RESOLVER_H
-+
-+#include <linux/types.h>
-+
-+/*
-+ * Type of payload.
-+ */
-+enum dns_payload_content_type {
-+	DNS_PAYLOAD_IS_SERVER_LIST	= 0, /* List of servers, requested by srv=1 */
-+};
-+
-+/*
-+ * Type of address that might be found in an address record.
-+ */
-+enum dns_payload_address_type {
-+	DNS_ADDRESS_IS_IPV4		= 0, /* 4-byte AF_INET address */
-+	DNS_ADDRESS_IS_IPV6		= 1, /* 16-byte AF_INET6 address */
-+};
-+
-+/*
-+ * Type of protocol used to access a server.
-+ */
-+enum dns_payload_protocol_type {
-+	DNS_SERVER_PROTOCOL_UNSPECIFIED	= 0,
-+	DNS_SERVER_PROTOCOL_UDP		= 1, /* Use UDP to talk to the server */
-+	DNS_SERVER_PROTOCOL_TCP		= 2, /* Use TCP to talk to the server */
-+};
-+
-+/*
-+ * Source of record included in DNS resolver payload.
-+ */
-+enum dns_record_source {
-+	DNS_RECORD_UNAVAILABLE		= 0, /* No source available (empty record) */
-+	DNS_RECORD_FROM_CONFIG		= 1, /* From local configuration data */
-+	DNS_RECORD_FROM_DNS_A		= 2, /* From DNS A or AAAA record */
-+	DNS_RECORD_FROM_DNS_AFSDB	= 3, /* From DNS AFSDB record */
-+	DNS_RECORD_FROM_DNS_SRV		= 4, /* From DNS SRV record */
-+	DNS_RECORD_FROM_NSS		= 5, /* From NSS */
-+	NR__dns_record_source
-+};
-+
-+/*
-+ * Status of record included in DNS resolver payload.
-+ */
-+enum dns_lookup_status {
-+	DNS_LOOKUP_NOT_DONE		= 0, /* No lookup has been made */
-+	DNS_LOOKUP_GOOD			= 1, /* Good records obtained */
-+	DNS_LOOKUP_GOOD_WITH_BAD	= 2, /* Good records, some decoding errors */
-+	DNS_LOOKUP_BAD			= 3, /* Couldn't decode results */
-+	DNS_LOOKUP_GOT_NOT_FOUND	= 4, /* Got a "Not Found" result */
-+	DNS_LOOKUP_GOT_LOCAL_FAILURE	= 5, /* Local failure during lookup */
-+	DNS_LOOKUP_GOT_TEMP_FAILURE	= 6, /* Temporary failure during lookup */
-+	DNS_LOOKUP_GOT_NS_FAILURE	= 7, /* Name server failure */
-+	NR__dns_lookup_status
-+};
-+
-+/*
-+ * Header at the beginning of binary format payload.
-+ */
-+struct dns_payload_header {
-+	__u8		zero;		/* Zero byte: marks this as not being text */
-+	__u8		content;	/* enum dns_payload_content_type */
-+	__u8		version;	/* Encoding version */
-+} __packed;
-+
-+/*
-+ * Header at the beginning of a V1 server list.  This is followed directly by
-+ * the server records.  Each server records begins with a struct of type
-+ * dns_server_list_v1_server.
-+ */
-+struct dns_server_list_v1_header {
-+	struct dns_payload_header hdr;
-+	__u8		source;		/* enum dns_record_source */
-+	__u8		status;		/* enum dns_lookup_status */
-+	__u8		nr_servers;	/* Number of server records following this */
-+} __packed;
-+
-+/*
-+ * Header at the beginning of each V1 server record.  This is followed by the
-+ * characters of the name with no NUL-terminator, followed by the address
-+ * records for that server.  Each address record begins with a struct of type
-+ * struct dns_server_list_v1_address.
-+ */
-+struct dns_server_list_v1_server {
-+	__u16		name_len;	/* Length of name (LE) */
-+	__u16		priority;	/* Priority (as SRV record) (LE) */
-+	__u16		weight;		/* Weight (as SRV record) (LE) */
-+	__u16		port;		/* UDP/TCP port number (LE) */
-+	__u8		source;		/* enum dns_record_source */
-+	__u8		status;		/* enum dns_lookup_status */
-+	__u8		protocol;	/* enum dns_payload_protocol_type */
-+	__u8		nr_addrs;
-+} __packed;
-+
-+/*
-+ * Header at the beginning of each V1 address record.  This is followed by the
-+ * bytes of the address, 4 for IPV4 and 16 for IPV6.
-+ */
-+struct dns_server_list_v1_address {
-+	__u8		address_type;	/* enum dns_payload_address_type */
-+} __packed;
-+
-+#endif /* _UAPI_LINUX_DNS_RESOLVER_H */
-diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-index 7f4534828f6c..a65d553e730d 100644
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -29,6 +29,7 @@
- #include <linux/keyctl.h>
- #include <linux/err.h>
- #include <linux/seq_file.h>
-+#include <linux/dns_resolver.h>
- #include <keys/dns_resolver-type.h>
- #include <keys/user-type.h>
- #include "internal.h"
-@@ -48,27 +49,86 @@ const struct cred *dns_resolver_cache;
- /*
-  * Preparse instantiation data for a dns_resolver key.
-  *
-- * The data must be a NUL-terminated string, with the NUL char accounted in
-- * datalen.
-+ * For normal hostname lookups, the data must be a NUL-terminated string, with
-+ * the NUL char accounted in datalen.
-  *
-  * If the data contains a '#' characters, then we take the clause after each
-  * one to be an option of the form 'key=value'.  The actual data of interest is
-  * the string leading up to the first '#'.  For instance:
-  *
-  *        "ip1,ip2,...#foo=bar"
-+ *
-+ * For server list requests, the data must begin with a NUL char and be
-+ * followed by a byte indicating the version of the data format.  Version 1
-+ * looks something like (note this is packed):
-+ *
-+ *	u8      Non-string marker (ie. 0)
-+ *	u8	Content (DNS_PAYLOAD_IS_*)
-+ *	u8	Version (e.g. 1)
-+ *	u8	Source of server list
-+ *	u8	Lookup status of server list
-+ *	u8	Number of servers
-+ *	foreach-server {
-+ *		__le16	Name length
-+ *		__le16	Priority (as per SRV record, low first)
-+ *		__le16	Weight (as per SRV record, higher first)
-+ *		__le16	Port
-+ *		u8	Source of address list
-+ *		u8	Lookup status of address list
-+ *		u8	Protocol (DNS_SERVER_PROTOCOL_*)
-+ *		u8	Number of addresses
-+ *		char[]	Name (not NUL-terminated)
-+ *		foreach-address {
-+ *			u8		Family (DNS_ADDRESS_IS_*)
-+ *			union {
-+ *				u8[4]	ipv4_addr
-+ *				u8[16]	ipv6_addr
-+ *			}
-+ *		}
-+ *	}
-+ *
-  */
- static int
- dns_resolver_preparse(struct key_preparsed_payload *prep)
- {
-+	const struct dns_payload_header *bin;
- 	struct user_key_payload *upayload;
- 	unsigned long derrno;
- 	int ret;
- 	int datalen = prep->datalen, result_len = 0;
- 	const char *data = prep->data, *end, *opt;
- 
-+	if (datalen <= 1 || !data)
-+		return -EINVAL;
-+
-+	if (data[0] == 0) {
-+		/* It may be a server list. */
-+		if (datalen <= sizeof(*bin))
-+			return -EINVAL;
-+
-+		bin = (const struct dns_payload_header *)data;
-+		kenter("[%u,%u],%u", bin->content, bin->version, datalen);
-+		if (bin->content != DNS_PAYLOAD_IS_SERVER_LIST) {
-+			pr_warn_ratelimited(
-+				"dns_resolver: Unsupported content type (%u)\n",
-+				bin->content);
-+			return -EINVAL;
-+		}
-+
-+		if (bin->version != 1) {
-+			pr_warn_ratelimited(
-+				"dns_resolver: Unsupported server list version (%u)\n",
-+				bin->version);
-+			return -EINVAL;
-+		}
-+
-+		result_len = datalen;
-+		goto store_result;
-+	}
-+
- 	kenter("'%*.*s',%u", datalen, datalen, data, datalen);
- 
--	if (datalen <= 1 || !data || data[datalen - 1] != '\0')
-+	if (!data || data[datalen - 1] != '\0')
- 		return -EINVAL;
- 	datalen--;
- 
-@@ -144,6 +204,7 @@ dns_resolver_preparse(struct key_preparsed_payload *prep)
- 		return 0;
- 	}
- 
-+store_result:
- 	kdebug("store result");
- 	prep->quotalen = result_len;
- 
-diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
-index 49da67034f29..76338c38738a 100644
---- a/net/dns_resolver/dns_query.c
-+++ b/net/dns_resolver/dns_query.c
-@@ -148,12 +148,9 @@ int dns_query(const char *type, const char *name, size_t namelen,
- 
- 	if (_result) {
- 		ret = -ENOMEM;
--		*_result = kmalloc(len + 1, GFP_KERNEL);
-+		*_result = kmemdup_nul(upayload->data, len, GFP_KERNEL);
- 		if (!*_result)
- 			goto put;
--
--		memcpy(*_result, upayload->data, len);
--		(*_result)[len] = '\0';
- 	}
- 
- 	if (_expiry)
-
+-- 
+Computer Architect | Sent with my Fedora powered laptop
