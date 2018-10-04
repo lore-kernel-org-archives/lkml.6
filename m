@@ -2,82 +2,145 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 601D9C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B314C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12A6C20877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:21:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A6C20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3580820877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3580820877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbeJDTOp (ORCPT
+        id S1727666AbeJDTPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:14:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:35600 "EHLO foss.arm.com"
+        Thu, 4 Oct 2018 15:15:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35689 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727336AbeJDTOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:14:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C44697A9;
-        Thu,  4 Oct 2018 05:21:43 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ED1653F5A0;
-        Thu,  4 Oct 2018 05:21:42 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A0AEB1AE3326; Thu,  4 Oct 2018 13:22:07 +0100 (BST)
-Date:   Thu, 4 Oct 2018 13:22:07 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc:     Ganapatrao Kulkarni <Ganapatrao.Kulkarni@cavium.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-Subject: Re: [PATCH] arm_pmu: Delete incorrect cache event mapping for some
- armv8_pmuv3 events.
-Message-ID: <20181004122207.GE4065@arm.com>
-References: <20181001100707.16840-1-ganapatrao.kulkarni@cavium.com>
- <20181001142914.GD9716@arm.com>
- <CAKTKpr6SQUc9EgdYL2N32a=szUmSs82Mbb4y89htbVQhTPp2rQ@mail.gmail.com>
- <CAKTKpr5+p=X6QcRp+tsxYYgirwWW=cfs7GOKyKegutEfM_W2vg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKTKpr5+p=X6QcRp+tsxYYgirwWW=cfs7GOKyKegutEfM_W2vg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1727336AbeJDTPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:15:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6F89120DE2; Thu,  4 Oct 2018 14:22:41 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E564020719;
+        Thu,  4 Oct 2018 14:22:30 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
+        andrew@lunn.ch, f.fainelli@gmail.com
+Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH net-next v4 00/11] mscc: ocelot: add support for SerDes muxing configuration
+Date:   Thu,  4 Oct 2018 14:21:57 +0200
+Message-Id: <20181004122208.32272-1-quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ganapat,
+The Ocelot switch has currently an hardcoded SerDes muxing that suits only
+a particular use case. Any other board setup will fail to work.
 
-On Thu, Oct 04, 2018 at 11:12:09AM +0530, Ganapatrao Kulkarni wrote:
-> can you please pull this patch?
+To prepare for upcoming boards' support that do not have the same muxing,
+create a PHY driver that will handle all possible cases.
 
-I still don't like the idea of just removing events like this, especially
-when other architectures (including some x86 and Power CPUs afaict) playa
-similar games for generic events, and these events do actually appear in
-user code.
+A SerDes can work in SGMII, QSGMII or PCIe and is also muxed to use a
+given port depending on the selected mode or board design.
 
-I also don't understand why you remove the TLB events. I think that logic
-would imply we should remove all of the events, because we can't distinguish
-prefetches from reads either. If we want to be consistent, then I think
-we should just remove the OP_WRITE events for L1D and BPU -- would you be
-ok with that instead?
+The SerDes configuration is in the middle of an address space (HSIO) that
+is used to configure some parts in the MAC controller driver, that is why
+we need to use a syscon so that we can write to the same address space from
+different drivers safely using regmap.
 
-Also, looking at the code, I think our PMCEID parsing is broken for 8.1
-parts, where the upper 32 bits of the register are offset by 0x4000 in the
-event numbering space.
+This breaks backward compatibility but it's fine because there's only one
+board at the moment that is using what's modified in this patch series.
+This will break git bisect.
 
-Will
+Even though this patch series is about SerDes __muxing__ configuration, the
+DT node is named serdes for the simple reason that I couldn't find any
+mention to SerDes anywhere else from the address space handled by this
+driver.
+
+Thanks,
+Quentin
+
+v4:
+  - add reviewed-by,
+  - format the patch series with -M for identifying renamed files,
+  - add parent info in DT binding of the SerDes IP,
+  - move to macros SERDES[16]G(X) instead of multiple SERDES[16]G_[012345]
+  constants,
+  - move to SERDES[16]G_MAX being the last VALID macro of a type, so
+  migrate to <= conditions instead of < when iterating,
+  - create a SERDES_MUX_SGMII and SERDES_MUX_QSGMII macro so the muxing
+  configurations are a tad more readable,
+  - use a bunch of unsigned int instead of int,
+  - return -EOPNOTSUPP for SERDES6G/PCIe until it's supported,
+  - simplify condition when there is an error code returned by
+  devm_of_phy_get,
+
+v3:
+  - add Paul Burton's Acked-By on MIPS patches so that the patch series can
+  be merged in the net tree in its entirety,
+
+v2:
+  - use a switch case for setting the phy_mode in the SerDes driver as
+  suggested by Andrew,
+  - stop replacing the value of the error pointer in the SerDes driver,
+  - use a dev_dbg for the deferring of the probe in the SerDes driver,
+  - use constants in the Device Tree to select the SerDes macro in use with
+  a port,
+  - adapt the SerDes driver to use those constants,
+  - add a header file in include/dt-bindings for the constants,
+  - fix space/tab issue,
+
+Quentin Schulz (11):
+  MIPS: mscc: ocelot: make HSIO registers address range a syscon
+  dt-bindings: net: ocelot: remove hsio from the list of register
+    address spaces
+  net: mscc: ocelot: get HSIO regmap from syscon
+  net: mscc: ocelot: move the HSIO header to include/soc
+  net: mscc: ocelot: simplify register access for PLL5 configuration
+  phy: add QSGMII and PCIE modes
+  dt-bindings: phy: add DT binding for Microsemi Ocelot SerDes muxing
+  MIPS: mscc: ocelot: add SerDes mux DT node
+  dt-bindings: add constants for Microsemi Ocelot SerDes driver
+  phy: add driver for Microsemi Ocelot SerDes muxing
+  net: mscc: ocelot: make use of SerDes PHYs for handling their
+    configuration
+
+ .../devicetree/bindings/mips/mscc.txt         |  16 +
+ .../devicetree/bindings/net/mscc-ocelot.txt   |   9 +-
+ .../bindings/phy/phy-ocelot-serdes.txt        |  43 +++
+ arch/mips/boot/dts/mscc/ocelot.dtsi           |  19 +-
+ drivers/net/ethernet/mscc/Kconfig             |   2 +
+ drivers/net/ethernet/mscc/ocelot.c            |  16 +-
+ drivers/net/ethernet/mscc/ocelot.h            |  79 +----
+ drivers/net/ethernet/mscc/ocelot_board.c      |  61 +++-
+ drivers/net/ethernet/mscc/ocelot_regs.c       |  93 +-----
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/mscc/Kconfig                      |  11 +
+ drivers/phy/mscc/Makefile                     |   5 +
+ drivers/phy/mscc/phy-ocelot-serdes.c          | 295 ++++++++++++++++++
+ include/dt-bindings/phy/phy-ocelot-serdes.h   |  12 +
+ include/linux/phy/phy.h                       |   2 +
+ .../soc}/mscc/ocelot_hsio.h                   |  74 +++++
+ 17 files changed, 559 insertions(+), 180 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
+ create mode 100644 drivers/phy/mscc/Kconfig
+ create mode 100644 drivers/phy/mscc/Makefile
+ create mode 100644 drivers/phy/mscc/phy-ocelot-serdes.c
+ create mode 100644 include/dt-bindings/phy/phy-ocelot-serdes.h
+ rename {drivers/net/ethernet => include/soc}/mscc/ocelot_hsio.h (95%)
+
+-- 
+2.17.1
+
