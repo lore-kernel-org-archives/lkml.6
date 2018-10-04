@@ -2,57 +2,57 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D67C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC09BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB10A2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A18F22084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:41:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="RqWlLjhc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB10A2084D
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="s0faqtGJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18F22084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeJECf3 (ORCPT
+        id S1727956AbeJECf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:35:29 -0400
-Received: from mail1.kuutio.org ([92.222.216.83]:47754 "EHLO mail1.kuutio.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727506AbeJECf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 4 Oct 2018 22:35:28 -0400
-X-Greylist: delayed 360 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 22:35:26 EDT
+Received: from mail1.kuutio.org ([92.222.216.83]:47762 "EHLO mail1.kuutio.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727551AbeJECf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 22:35:28 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id 2941F1F939;
-        Thu,  4 Oct 2018 21:34:42 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTP id C6B3E1FBA4;
+        Thu,  4 Oct 2018 21:34:43 +0200 (CEST)
 Authentication-Results: mail1.kuutio.org (amavisd-new);
         dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
         header.d=lemmela.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
-        x-mailer:message-id:date:date:subject:subject:from:from:received
-        :received; s=dkim; t=1538681681; x=1541273682; bh=2lmrm9ERgOon4b
-        q8ddlI1H2P70tRgbnivAMHkXBG8E8=; b=RqWlLjhcOWmzQijZPVNzaYxZOHQO0q
-        herQqev1TQE9wtOmJFuzA8SKbOapU8Pt0hDYJ/FP6iaa6KnTxv6Gt5VpgAK7dlS3
-        kwMbA3RUu1/WLMeoK9JuQmZZw+tydqztc5Tg/DqEv3DZlHwth2Vmd3wgfKebpZsW
-        uc34nN1hVZ0j3S3i0lBxWVwhJRq33JbaQtHCFDAthopB2/XezZImIKmJWliczf4r
-        6HCBaz28tcD7mQp3kYG/qVXkSnWQb5jeNNDXA8EUZmSHfbgarJR6MKr+gZcr0bnk
-        GRdkNlrWUtoJmf70dW8CwCkKYB6+hyij9dPsaOQbuark6RM/RqNLmshwP+89ianz
-        mj0rgQNG8vjWwq9EqpTGWIrrokPv/Z4QqHJhH8hMrroP/OZVvSMmd2icKvPr6IVu
-        pHyaw/zuIGJEa7PeyJgy/gDYoFTZHnCdi9ENWhcyPuqKszTbC0Xp6rI9llYDNI92
-        +RC8wMRvktgvbJJM8umxwptuvT1SLHfTYViyUVs3GN6OWhiNfX70T0EWF9NcdqAm
-        sr7g1JFcX9wvUywb7eFZMCaCFdCn4THATIoIX9JeSXjVlUiGUq0liY3CaYQCkt3m
-        dLry6ceIJEMtGTldXONDVluvo2t8UrDphzlq+uCCWoH/oe17jnd6/oxE8S7GnWD1
-        r/Ry36Odm8iJM=
+        references:in-reply-to:x-mailer:message-id:date:date:subject
+        :subject:from:from:received:received; s=dkim; t=1538681683; x=
+        1541273684; bh=KKVyyBS4oW4DfmHiU/gqRxlOHearp/uEX7HgGQY69JU=; b=s
+        0faqtGJ4xcflRg0rkHPkg3nk8NDHGGnjVuoeHOnHl6aJLCPfv2ExZ6T4Ak4/cVUE
+        cSsOP3XCVTQxqv2C9pxjcrWk1GkBUhq3PE+gND3q1xh1QDjW22Ospg7XY5laF3+F
+        T1+sPhY9mdkjwHJRSwPGvv5u8Rah+nGYUvHLC0LA9FT409gD6tx9mcypIcoitSG/
+        VvLMRPxp4ryzVKP3gcHxxH/Q6bzIrzb2INn/d25BTSgLEtNrXDEEL8OrYx+P0wYK
+        KU3CWT++yvj5dXYvdmaPbxnCgIWSels4axL57MFfa0bH28gqkM0GKRl30KLD4Ec0
+        wk7MXQY5miEK3AaQ6/scGKlcnurJAKAqVOwrK3zZdpY+fIrfcq8tdTBe5znDI0+S
+        SnWDkmvsSAjuLB6A7XAa3OVele31YRa/Vx8GaxiBQadxqNASyfafHf+5JA4WcxAD
+        jc0iismFAATSHySWuePKg4Wfr9ycoLOErbRkC5B2d9RCkY49Ailg8BJtqAmNYfY5
+        ooMTTqzAshfqT7qa66KmBe0aS09C4C/H5wKf4Itvbpx1TYNUioAnXzRopkHTq7uy
+        PYg8eIB//Kv2q/7tfzrVmOxPTaQfSCYtjtDPtJvBrPPCNnZAjUzLxn5yXvAPtx6x
+        mVJKn6hsiaDk3CP8rBlNR9R+RAIRkxJQCmvBxITGqM=
 X-Virus-Scanned: amavisd-new at kuutio.org
 Received: from mail1.kuutio.org ([127.0.0.1])
         by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id r8n3SQyDBlpn; Thu,  4 Oct 2018 21:34:41 +0200 (CEST)
+        with LMTP id B_W0kFCemLKR; Thu,  4 Oct 2018 21:34:43 +0200 (CEST)
 Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id CEFE71F99C;
-        Thu,  4 Oct 2018 21:34:40 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTPSA id 6B4531F99C;
+        Thu,  4 Oct 2018 21:34:42 +0200 (CEST)
 From:   Oskari Lemmela <oskari@lemmela.net>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sebastian Reichel <sre@kernel.org>,
@@ -70,40 +70,40 @@ Cc:     Hartmut Knaack <knaack.h@gmx.de>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] AXP8x3 AC and battery power supply support
-Date:   Thu,  4 Oct 2018 22:34:06 +0300
-Message-Id: <20181004193410.7265-1-oskari@lemmela.net>
+Subject: [PATCH 2/4] ARM: dtsi: axp81x: add AC power supply subnode
+Date:   Thu,  4 Oct 2018 22:34:08 +0300
+Message-Id: <20181004193410.7265-3-oskari@lemmela.net>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181004193410.7265-1-oskari@lemmela.net>
+References: <20181004193410.7265-1-oskari@lemmela.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AXP803 AC and battery power supply support.
-AXP803/AXP813 AC power supply support with input current and
-voltage limiting support.
+Add AC power supply subnode for AXP81X PMIC.
 
-Oskari Lemmela (4):
-  dt-bindings: add compatibles for AXP803 AC and battery power supplies
-  ARM: dtsi: axp81x: add AC power supply subnode
-  arm64: allwinner: a64: add battery and AC power supply support
-  power: supply: add AXP803/AXP813 AC and battery power supply support
+Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+---
+ arch/arm/boot/dts/axp81x.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- .../devicetree/bindings/gpio/gpio-axp209.txt  |   3 +-
- .../bindings/iio/adc/axp20x_adc.txt           |   3 +-
- .../bindings/power/supply/axp20x_ac_power.txt |   4 +
- .../bindings/power/supply/axp20x_battery.txt  |   1 +
- arch/arm/boot/dts/axp81x.dtsi                 |   5 +
- arch/arm64/boot/dts/allwinner/axp803.dtsi     |  31 +++
- .../allwinner/sun50i-a64-sopine-baseboard.dts |   8 +
- drivers/iio/adc/axp20x_adc.c                  |   1 +
- drivers/mfd/axp20x.c                          |  22 +-
- drivers/pinctrl/pinctrl-axp209.c              |   1 +
- drivers/power/supply/axp20x_ac_power.c        | 194 ++++++++++++++++++
- drivers/power/supply/axp20x_battery.c         |   3 +
- include/linux/mfd/axp20x.h                    |   1 +
- 13 files changed, 274 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
+index 043c717dcef1..67c17151b584 100644
+--- a/arch/arm/boot/dts/axp81x.dtsi
++++ b/arch/arm/boot/dts/axp81x.dtsi
+@@ -69,6 +69,11 @@
+ 		};
+ 	};
+ 
++	ac_power_supply: ac-power-supply {
++		compatible = "x-powers,axp813-ac-power-supply";
++		status = "disabled";
++	};
++
+ 	battery_power_supply: battery-power-supply {
+ 		compatible = "x-powers,axp813-battery-power-supply";
+ 		status = "disabled";
 -- 
 2.17.1
 
