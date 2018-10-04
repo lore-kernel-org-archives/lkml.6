@@ -2,127 +2,120 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9EEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE3AC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA662084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:17:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B59542084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z5ie3ZtM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA662084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/L/6XlY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59542084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbeJEDMp (ORCPT
+        id S1727506AbeJEDOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:12:45 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35284 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJEDMp (ORCPT
+        Thu, 4 Oct 2018 23:14:25 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39085 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeJEDOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:12:45 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f8-v6so5713224plb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 13:17:54 -0700 (PDT)
+        Thu, 4 Oct 2018 23:14:25 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 61-v6so10528221wrb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 13:19:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=DRWXQwbaliKlq4Q4fGXtjROvaifpiIon+ksWJndx7Hc=;
-        b=Z5ie3ZtMW/PzE7ePnAM4IPViOYJ1DzOH+xV4LjejwL2ufXtSedDcMRTSSFZtNE5+Pu
-         KXDPMRZ6+DugonrTdHBPkwKJf2O2ChfVsX46Fyce2smenyyfEgRq91wn8mgaPE3kYay4
-         PSX9exyu52nGNA1VXbCK5jPDNr66VdzPdPFHOGQKNXBmgTcw/FyatDCP574HFX/scE1O
-         X8xFH8RdBsLkpc1NBE5wxBV/vH9m0P8Qi03K0YySS55BXfnlgr3KahK9Ai+bkq6/fGvx
-         DsSHHZrMOyqscSPWbV2VQMjSM04lYjCKBslk3zeOe4U75qxLAhHX81EpnFzi/zHey3bc
-         DiCA==
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=8EHvDEausSOaV9oneT8yLoGwoW1HYz1GamChxquWiVI=;
+        b=h/L/6XlYiABBMAMIE5tSX9eYTPfzoVPYUunQ+sjrejQUv6IBeCMI265wkktKY3bAQS
+         hW6gZrmpMA5e1dWCyyT+wSXSlNm84d0cCZjpMhcSasoIEhnu55GKdkAGgg4YK25AaV7q
+         I5DOkOUgLYLT1mg9Z7kJFJzI5EjyfOE5FbKpI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=DRWXQwbaliKlq4Q4fGXtjROvaifpiIon+ksWJndx7Hc=;
-        b=EiDG2kvBGU2uNafE/eGuSsgOlbJhfDwdx2MWREuJUYHTJcPhMzfx+1ETRcvD57wfNN
-         lwCS1WK19L2YngL0RhSPHT/jfYrxt9Qe+1VoLad9sa/acyeLwubgtBWzjvXPZDahGCxD
-         4fbi88bwApZEpytcfK2BAx7houLj9NZtAu07nKFXAq2U4hYcX8YdtZ/U9dZzJ7SYUloW
-         2ncH6CACl5f/koqXPwwv7yxCTYNHLhLEKjCJ9SjS1LFLUhJiOFzsdQC3B+bTLsYbJVRs
-         +RE0577lJLywE/6q2BfdyS/Ei+ki5KJfh+wwa0RRbhYcPG0kl5OrZmr3rPQVOWYfwAPS
-         /dRA==
-X-Gm-Message-State: ABuFfojGh4JvWf+018OcmAOsGCRRSsb20nkp0R8yQ9nX2KbhKfTRv9yb
-        MzfdiTyqHM0icmn7tx+KFJj9tQ==
-X-Google-Smtp-Source: ACcGV615cF6rPSXT32kBqm0h933J6n5iqZtPCOBx9IWijX3yQCPP3bKH5gIaR1nDGLqpc2S+rxkROQ==
-X-Received: by 2002:a17:902:292a:: with SMTP id g39-v6mr8196873plb.269.1538684273724;
-        Thu, 04 Oct 2018 13:17:53 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id s78-v6sm21317260pfd.138.2018.10.04.13.17.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 13:17:52 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 13:17:52 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 2/2] mm, thp: consolidate THP gfp handling into
- alloc_hugepage_direct_gfpmask
-In-Reply-To: <20180926133039.y7o5x4nafovxzh2s@kshutemo-mobl1>
-Message-ID: <alpine.DEB.2.21.1810041317010.16935@chino.kir.corp.google.com>
-References: <20180925120326.24392-1-mhocko@kernel.org> <20180925120326.24392-3-mhocko@kernel.org> <20180926133039.y7o5x4nafovxzh2s@kshutemo-mobl1>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=8EHvDEausSOaV9oneT8yLoGwoW1HYz1GamChxquWiVI=;
+        b=OR4qrtWpghd8moWiBfoinL9/sttreuf6TSA+FS7EY5m1PwHVzhcyaEwd+dP37yYdVB
+         soh7/1hsGKQ+Qzk+UZC5vmSQa8ha2gaJ6u9CGI3GNBRSsNRhRSkmJsE/PkDa5m8D1Rtf
+         Upv4fdoszNRR9+V5mScEqS0ZgZm38oO5juZFEpE79MS/z+Swxm9X+RZUgHf2mbUpVNE5
+         bzx6+Lxg0Qa03VRz31+T7vjqXsTjFwLr41N7GSKCIVyYfwHjPdp6nXPlr5v+SqHMuFjH
+         HxAyP2PrjTlYCnpI9s+5BOXSnGQtaIbBUWaeB3d7xGgyN3Rw+tKaXMHGSfYih6ZZyyOz
+         h07A==
+X-Gm-Message-State: ABuFfohYr7yocD089mwK0wZJDHHBpWxfLlDAn2aJB4MuzO13osG+xqkC
+        8kD7CQxm9XZ5t5Vq8B7keepqgw==
+X-Google-Smtp-Source: ACcGV609ODRWekh808m5ojYHrdV7+5In6OmEMMlJexP7OnHP/xnaESK0SnI/Qfk0w69gxh+KbUbcfQ==
+X-Received: by 2002:adf:fdc2:: with SMTP id i2-v6mr1793146wrs.276.1538684371410;
+        Thu, 04 Oct 2018 13:19:31 -0700 (PDT)
+Received: from [192.168.0.100] (146-241-9-213.dyn.eolo.it. [146.241.9.213])
+        by smtp.gmail.com with ESMTPSA id r8-v6sm7758522wrm.14.2018.10.04.13.19.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 13:19:30 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20181004202553.71c2599c@alans-desktop>
+Date:   Thu, 4 Oct 2018 22:19:34 +0200
+Cc:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
+        Mel Gorman <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Mark Brown <broonie@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <466C47DB-02D7-490C-91E3-8C7AA41B8D79@linaro.org>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+ <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1538582091.205649.20.camel@acm.org> <20181004202553.71c2599c@alans-desktop>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Sep 2018, Kirill A. Shutemov wrote:
 
-> On Tue, Sep 25, 2018 at 02:03:26PM +0200, Michal Hocko wrote:
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index c3bc7e9c9a2a..c0bcede31930 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -629,21 +629,40 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
-> >   *	    available
-> >   * never: never stall for any thp allocation
-> >   */
-> > -static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
-> > +static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma, unsigned long addr)
-> >  {
-> >  	const bool vma_madvised = !!(vma->vm_flags & VM_HUGEPAGE);
-> > +	gfp_t this_node = 0;
-> > +
-> > +#ifdef CONFIG_NUMA
-> > +	struct mempolicy *pol;
-> > +	/*
-> > +	 * __GFP_THISNODE is used only when __GFP_DIRECT_RECLAIM is not
-> > +	 * specified, to express a general desire to stay on the current
-> > +	 * node for optimistic allocation attempts. If the defrag mode
-> > +	 * and/or madvise hint requires the direct reclaim then we prefer
-> > +	 * to fallback to other node rather than node reclaim because that
-> > +	 * can lead to excessive reclaim even though there is free memory
-> > +	 * on other nodes. We expect that NUMA preferences are specified
-> > +	 * by memory policies.
-> > +	 */
-> > +	pol = get_vma_policy(vma, addr);
-> > +	if (pol->mode != MPOL_BIND)
-> > +		this_node = __GFP_THISNODE;
-> > +	mpol_cond_put(pol);
-> > +#endif
-> 
-> I'm not very good with NUMA policies. Could you explain in more details how
-> the code above is equivalent to the code below?
-> 
 
-It breaks mbind() because new_page() is now using numa_node_id() to 
-allocate migration targets for instead of using the mempolicy.  I'm not 
-sure that this patch was tested for mbind().
+> Il giorno 04 ott 2018, alle ore 21:25, Alan Cox =
+<gnomes@lxorguk.ukuu.org.uk> ha scritto:
+>=20
+>> I agree with Jens that it's best to leave it to the Linux =
+distributors to
+>> select a default I/O scheduler.
+>=20
+> That assumes such a thing exists.
+
+Well, as of now the default is more or less in the Schrdinger's cat =
+state :)
+
+Metaphors apart, I do agree with your point.  As for me, what you
+point out is one of the core issues at stake here.
+
+Thanks,
+Paolo
+
+> The kernel knows what devices it is
+> dealing with. The kernel 'default' ought to be 'whatever is usually =
+best
+> for this device'. A distro cannot just pick a correct single default
+> because NVME and USB sticks are both normal and rather different in =
+needs.
+>=20
+> Alan
+
