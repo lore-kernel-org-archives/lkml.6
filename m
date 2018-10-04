@@ -2,234 +2,128 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF61C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F00EC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 637292098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:22:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637292098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6BE5D2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE5D2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeJDPOh (ORCPT
+        id S1727500AbeJDPP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:14:37 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37864 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeJDPOg (ORCPT
+        Thu, 4 Oct 2018 11:15:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50026 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726858AbeJDPP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:14:36 -0400
-Received: by mail-oi1-f193.google.com with SMTP id e17-v6so6783588oib.4;
-        Thu, 04 Oct 2018 01:22:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qkEQT7n617jevzUXJpI6/CEcC4s0vnryc3YYlHWvfvY=;
-        b=BxKSRRRE6YAS6hmBORZKAWKIRw39/kIDm7UxOfqlzU+M9KhSjgSqrw8P4QC3SREvNK
-         sIvfuH5/dbH2guD7zYrCfp0TW/I6ydAZNtaragJC+udCLEUBik+O4w85Jr32FfyGPiGx
-         cAg3TTC6Mn7B79YBBMRxMbMPfw/65rlO4iY/LvfLaOhW5J1Wt4+kDMz83Zu60f/Ef8go
-         NHkiET7ESNSeIUTghkHBPdg+JRkNbgnOWpWVsR6fEvd51+ou5sW3V8fMT9QcIYGb7j+Q
-         LUtKGYVSRoFQIBhpDI0aLkObXYt14Q96w4HM+O92udPgoFrJXuhtxd+dMNeDYf6PBSmx
-         jJgQ==
-X-Gm-Message-State: ABuFfojP94KWfU0rlGs/yPSqSQifE4xj7tk6faMZIP0/UQ3qyNTX+75l
-        /gIRFqI25uTcqfR2cIt9qbQPsDDHIPzE4UPIqSI=
-X-Google-Smtp-Source: ACcGV613egVlKpjgaM8OlhOPfa0VtAX+HV9rUn0zDwhdOSXa8bEr3QeNoUlrVAI5PdGvJrpjNcVnGEcDZ92uWXSjQO8=
-X-Received: by 2002:aca:3a03:: with SMTP id h3-v6mr2372973oia.270.1538641350646;
- Thu, 04 Oct 2018 01:22:30 -0700 (PDT)
+        Thu, 4 Oct 2018 11:15:29 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w948EKvh035944
+        for <linux-kernel@vger.kernel.org>; Thu, 4 Oct 2018 04:23:23 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mwers1bsb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 04:23:23 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 4 Oct 2018 02:23:22 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 4 Oct 2018 02:23:19 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w948NIn120906066
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 4 Oct 2018 01:23:18 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2668B6A047;
+        Thu,  4 Oct 2018 02:23:18 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CBF5C6A058;
+        Thu,  4 Oct 2018 02:23:15 -0600 (MDT)
+Received: from [9.124.31.179] (unknown [9.124.31.179])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  4 Oct 2018 02:23:15 -0600 (MDT)
+Subject: Re: [RFC PATCH v3 1/7] book3s/64: avoid circular header inclusion in
+ mmu-hash.h
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <cover.1538396658.git.christophe.leroy@c-s.fr>
+ <c95148024873842459472bbcc0dd0e65607fd43b.1538396658.git.christophe.leroy@c-s.fr>
+ <20181003142400.490fd38a@roar.ozlabs.ibm.com>
+ <bed3d788-6633-6eef-30ea-bdfa374e0216@c-s.fr>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Thu, 4 Oct 2018 13:53:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <1538638927-26846-1-git-send-email-daniel.lezcano@linaro.org> <1538638927-26846-2-git-send-email-daniel.lezcano@linaro.org>
-In-Reply-To: <1538638927-26846-2-git-send-email-daniel.lezcano@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 4 Oct 2018 10:22:19 +0200
-Message-ID: <CAJZ5v0iLAtfo0w=BE-G+YW1WAxXsAdveiRvNhBSkpVPsd+TC9A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cpuidle/drivers/menu: Remove get_loadavg in the
- performance multiplier
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@android.com>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Alex Shi <alex.shi@linaro.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <bed3d788-6633-6eef-30ea-bdfa374e0216@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18100408-0016-0000-0000-0000093AEF1A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009819; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01097657; UDB=6.00567679; IPR=6.00877697;
+ MB=3.00023607; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-04 08:23:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100408-0017-0000-0000-000040949B27
+Message-Id: <1516af9d-bb0b-4a2c-71f8-554a3f830281@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-04_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=753 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810040085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 9:42 AM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
-> The function get_loadavg() returns almost always zero. To be more
-> precise, statistically speaking for a total of 1023379 times passing
-> in the function, the load is equal to zero 1020728 times, greater than
-> 100, 610 times, the remaining is between 0 and 5.
->
-> In 2011, the get_loadavg() was removed from the Android tree because
-> of the above [1]. At this time, the load was:
->
-> unsigned long this_cpu_load(void)
-> {
->         struct rq *this = this_rq();
->         return this->cpu_load[0];
-> }
->
-> In 2014, the code was changed by commit 372ba8cb46b2 (cpuidle: menu: Lookup CPU
-> runqueues less) and the load is:
->
-> void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
-> {
->         struct rq *rq = this_rq();
->         *nr_waiters = atomic_read(&rq->nr_iowait);
->         *load = rq->load.weight;
-> }
->
-> with the same result.
->
-> Both measurements show using the load in this code path does no matter
-> anymore. Removing it.
->
-> [1] https://android.googlesource.com/kernel/common/+/4dedd9f124703207895777ac6e91dacde0f7cc17
->
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Colin Cross <ccross@android.com>
-> Cc: Ramesh Thomas <ramesh.thomas@intel.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/cpuidle/governors/menu.c | 26 +++++++-------------------
->  include/linux/sched/stat.h       |  1 -
->  kernel/sched/core.c              | 13 -------------
->  3 files changed, 7 insertions(+), 33 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> index e26a409..066b01f 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -135,11 +135,6 @@ struct menu_device {
->  #define LOAD_INT(x) ((x) >> FSHIFT)
->  #define LOAD_FRAC(x) LOAD_INT(((x) & (FIXED_1-1)) * 100)
->
-> -static inline int get_loadavg(unsigned long load)
-> -{
-> -       return LOAD_INT(load) * 10 + LOAD_FRAC(load) / 10;
-> -}
-> -
->  static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters)
->  {
->         int bucket = 0;
-> @@ -173,18 +168,10 @@ static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters
->   * to be, the higher this multiplier, and thus the higher
->   * the barrier to go to an expensive C state.
->   */
-> -static inline int performance_multiplier(unsigned long nr_iowaiters, unsigned long load)
-> +static inline int performance_multiplier(unsigned long nr_iowaiters)
->  {
-> -       int mult = 1;
-> -
-> -       /* for higher loadavg, we are more reluctant */
-> -
-> -       mult += 2 * get_loadavg(load);
-> -
-> -       /* for IO wait tasks (per cpu!) we add 5x each */
-> -       mult += 10 * nr_iowaiters;
-> -
-> -       return mult;
-> +       /* for IO wait tasks (per cpu!) we add 10x each */
-> +       return 1 + 10 * nr_iowaiters;
->  }
->
->  static DEFINE_PER_CPU(struct menu_device, menu_devices);
-> @@ -290,7 +277,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->         int idx;
->         unsigned int interactivity_req;
->         unsigned int expected_interval;
-> -       unsigned long nr_iowaiters, cpu_load;
-> +       unsigned long nr_iowaiters;
->         ktime_t delta_next;
->
->         if (data->needs_update) {
-> @@ -307,7 +294,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->         /* determine the expected residency time, round up */
->         data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
->
-> -       get_iowait_load(&nr_iowaiters, &cpu_load);
-> +       nr_iowaiters = nr_iowait_cpu(dev->cpu);
->         data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
->
->         /*
-> @@ -359,7 +346,8 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->                  * Use the performance multiplier and the user-configurable
->                  * latency_req to determine the maximum exit latency.
->                  */
-> -               interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-> +               interactivity_req = data->predicted_us /
-> +                       performance_multiplier(nr_iowaiters);
+On 10/4/18 1:50 PM, Christophe LEROY wrote:
+> 
+> 
+> Le 03/10/2018 à 06:24, Nicholas Piggin a écrit :
+>> On Mon,  1 Oct 2018 12:30:19 +0000 (UTC)
+>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>
+>>> When activating CONFIG_THREAD_INFO_IN_TASK, linux/sched.h
+>>> includes asm/current.h. This generates a circular dependency.
+>>> To avoid that, asm/processor.h shall not be included in mmu-hash.h
+>>>
+>>> In order to do that, this patch moves into a new header called
+>>> asm/task_size.h the information from asm/processor.h requires by
+>>> mmu-hash.h
+>>
+>> Doesn't look like you use this header in 32-bit code. Put task_size.h
+>> in asm/64/ maybe?
+> 
+> There is no asm/64/ dir at the time being, only book3s/64/ and nohash/64/
+> 
+> I'm thinking about leaving it in asm/ but renaming it task_size_user64.h
+> 
 
-I wouldn't break this line.
+Quiet a lot of that is book3s 64 specifi because we have there.
 
->                 if (latency_req > interactivity_req)
->                         latency_req = interactivity_req;
->         }
-> diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
-> index 04f1321..f30954c 100644
-> --- a/include/linux/sched/stat.h
-> +++ b/include/linux/sched/stat.h
-> @@ -20,7 +20,6 @@ extern unsigned long nr_running(void);
->  extern bool single_task_running(void);
->  extern unsigned long nr_iowait(void);
->  extern unsigned long nr_iowait_cpu(int cpu);
-> -extern void get_iowait_load(unsigned long *nr_waiters, unsigned long *load);
->
->  static inline int sched_info_on(void)
->  {
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index b88a145..5605f03 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2873,25 +2873,12 @@ unsigned long long nr_context_switches(void)
->
->         return sum;
->  }
-> -/*
-> - * Consumers of these two interfaces, like for example the cpufreq menu
-> - * governor are using nonsensical data. Boosting frequency for a CPU that has
-> - * IO-wait which might not even end up running the task when it does become
-> - * runnable.
-> - */
+#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
+/*
+  * Max value currently used:
+  */
 
-Doesn't the comment still apply to nr_iowait_cpu()?
 
->
->  unsigned long nr_iowait_cpu(int cpu)
->  {
->         return atomic_read(&cpu_rq(cpu)->nr_iowait);
->  }
->
-> -void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
-> -{
-> -       struct rq *rq = this_rq();
-> -       *nr_waiters = atomic_read(&rq->nr_iowait);
-> -       *load = rq->load.weight;
-> -}
-> -
->  /*
->   * IO-wait accounting, and how its mostly bollocks (on SMP).
->   *
-> --
+-aneesh
+
