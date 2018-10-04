@@ -2,121 +2,223 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F40C00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E1FC00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46B41213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBC40213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:09:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RTLjzHrG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B41213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1UiJINU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC40213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbeJDGyh (ORCPT
+        id S1727150AbeJDHAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 02:54:37 -0400
-Received: from mail-yb1-f170.google.com ([209.85.219.170]:42491 "EHLO
-        mail-yb1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbeJDGyf (ORCPT
+        Thu, 4 Oct 2018 03:00:05 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33582 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeJDHAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 02:54:35 -0400
-Received: by mail-yb1-f170.google.com with SMTP id p74-v6so3176369ybc.9
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:03:58 -0700 (PDT)
+        Thu, 4 Oct 2018 03:00:05 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y140-v6so355774wmd.0;
+        Wed, 03 Oct 2018 17:09:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bmL0ZyPC0ChRPdmL9WJ4CMlC25RswfvQYlntOSokPnQ=;
-        b=RTLjzHrG8qvsQTgyIVVQqV6vJZzXuH9f2wd/G/9lwZ40a33lEHc2JFkqQcRsDx61pZ
-         xb8z/BZ77fd0a2XR90Ro6efOirtKv69bnQmAFOqXllOX+7gVRFWIVYf0Y49/r1ylogZF
-         KT8RV2XSFIr4MH2wwUsb2+v7tttgoDzdaffzU=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tb3R41wl20clZlH+Lc9pp7bzGmfrXUQ2YG61xEliRdA=;
+        b=X1UiJINUtJkEy9KU2UOOnwBtFVnBFj+IT5a4lAHafEfclmQQQDSKsbEY8f47ArNVV8
+         kMfA0Nw7kej4IMs1EJhs0T+s9uukXfVzJ+hK6TkycTLKhaFuoQ1sLTLb7ibg460gMc1t
+         qm5WqxdcfSrQbY6tpS9gTxzAAGOuNXybu22Xo40p+pLCfgvm2YtB7TXc+Jv0JDkOF0YH
+         4juoo/Wf3bL50mIVIGvzFLYv6bKZR9bJWS5JRx5/tm7BP1LyfkW2rnNyZNKVQlPAq8RQ
+         zG26I1aoKdWD5CP7smtzh0wv4OHy1K7lS0vN1onRhn/zgzkHvXqNOk0549SK32QAUl4K
+         k+cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bmL0ZyPC0ChRPdmL9WJ4CMlC25RswfvQYlntOSokPnQ=;
-        b=B2kQTZ7IGXB3VSJ1G46mAkT+4GVulwQPzqvCSJlGtykZ6O4bnM8HZUdb2p+Jd+3Wq7
-         PRwkyy5eWECeHs7ofFtrQvcp7f5nE6TDEVbSs9Dm8/3cAmPQjN6AmqG+z3QLxw+jM8WO
-         P8UJqbZZSae8Isg4HTiMF+hJAfP5O9QvZva2N1CYCzp/fe5QZS1Q+VC0J83IBgnYs+RY
-         jQJf/SNzEVWbjbTldkcUIZNjEaMK/gQ24+mL6g0dmqahugrguWlZM7+ZqKfc3SM6s2i4
-         BzDQEZaDiBPAYdPMBuiyBqFzW0PE3lNC5wYsLk6HSSvh6MYoxE0ub8N2mAnQe+pEJ/lG
-         ud6w==
-X-Gm-Message-State: ABuFfoi8WQtcCk2qv0XjpXiW8aIvAos/FR24ft8THlJsEAmPBmqI35/B
-        JS3XDyui9HNktcVl0pTpqlDFVDqhOPw=
-X-Google-Smtp-Source: ACcGV61VUiw2LlQYsaqCCTGahWAy0wi9pCzNUpa1MmNM2OMfT+/R9PNdfSY/N05nKLzufdki3o7VtQ==
-X-Received: by 2002:a25:4846:: with SMTP id v67-v6mr2259685yba.355.1538611437212;
-        Wed, 03 Oct 2018 17:03:57 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id w207-v6sm3574296yww.95.2018.10.03.17.03.55
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tb3R41wl20clZlH+Lc9pp7bzGmfrXUQ2YG61xEliRdA=;
+        b=uNwb4xGaUzTb1e02L47K7/OpSUOuHC2XteBoSHVhMV9qLu//1R2VBUDw63ED7V3K+c
+         8bQIj5RfC7nyhlgdVyXR/iKz76oQJSNCN4RmqsbwprFieOGGUAoGhDzHxc0wd0SVsKVT
+         5cz03h6clHLk3VVb5rUrYnh5gMqUyUlPd3OTmC7HODJY9hiyrxaNQ9VsriLFWD2FeEAi
+         +YFl1LbGJtrYw398JF+XMqkPJlyIJZkYW/0pr2yZsNfq6pZ656YBrxkTXxOfE1JPSB9I
+         E4gJluF3tun2TyiWj79mImrY5xd13Cv8aEJrjgpbLt8ULQhJcblJiN7y46APyuEETu7p
+         dcAQ==
+X-Gm-Message-State: ABuFfogGIxuklJefIVXjMayuwOpKQWA/ZRXF/0vqrnAIKDvj4CzBVD7P
+        MViVi4pvkJUkHnfqwEZnX18=
+X-Google-Smtp-Source: ACcGV63xu8TTBjXV2BaRIblQHCkDECUUO8cncnlHZ2Fo5Ub74NLtuoG+acEpG2cMIG9zOxmmd1wo9g==
+X-Received: by 2002:a1c:58f:: with SMTP id 137-v6mr2936557wmf.37.1538611764159;
+        Wed, 03 Oct 2018 17:09:24 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id y7-v6sm2064524wmy.27.2018.10.03.17.09.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 17:03:55 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id h1-v6so3190744ybm.4
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:03:55 -0700 (PDT)
-X-Received: by 2002:a25:640a:: with SMTP id y10-v6mr2344354ybb.421.1538611434689;
- Wed, 03 Oct 2018 17:03:54 -0700 (PDT)
+        Wed, 03 Oct 2018 17:09:23 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] qed: Remove unneeded enumerated type core_tx_dest
+Date:   Wed,  3 Oct 2018 17:09:12 -0700
+Message-Id: <20181004000912.22242-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 17:03:53 -0700 (PDT)
-In-Reply-To: <6037a1f0-7af1-9847-91f6-6444f04f5b21@infradead.org>
-References: <20181002005505.6112-1-keescook@chromium.org> <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
- <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
- <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
- <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org>
- <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
- <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
- <alpine.LRH.2.21.1810040723320.16168@namei.org> <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
- <6037a1f0-7af1-9847-91f6-6444f04f5b21@infradead.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 3 Oct 2018 17:03:53 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKGtNYXkFQVxOM9M1fdgaZcki6NqfJAtE0_VsG75Ku=HQ@mail.gmail.com>
-Message-ID: <CAGXu5jKGtNYXkFQVxOM9M1fdgaZcki6NqfJAtE0_VsG75Ku=HQ@mail.gmail.com>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 4:59 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> To me, "security=selinux" means SELinux and nothing else, so I think that
-> all of these params are inviting a lot of confusion.
->
-> Sorry, I don't have a good answer for this.
+Clang warns when one enumerated type is implicitly converted to another.
 
-This part, at least, has a pretty clear solution. :) The consensus is
-to limit "security=" to what have been considered the "major" LSMs" so
-it'll work in spirit the way it was designed. The goal of the new
-options, though, is to find something that'll fit all the ways LSMs
-are getting used: the majors, the minors, and the coming "medium"
-LSMs. The precedent is pretty good here, since "security=" already
-ignores the minor LSMs: Yama and LoadPin. So it'll just control the
-enable/disable of the "major" LSMs, who will carry an internal marking
-indicating that they're mediated by "security=" (and no new LSMs would
-get this marking).
+drivers/net/ethernet/qlogic/qed/qed_ll2.c:799:32: warning: implicit
+conversion from enumeration type 'enum core_tx_dest' to different
+enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
+                tx_pkt.tx_dest = p_ll2_conn->tx_dest;
+                               ~ ~~~~~~~~~~~~^~~~~~~
+1 warning generated.
 
--Kees
+These enumerated types are not 1 to 1:
 
+/* Light L2 TX Destination */
+enum core_tx_dest {
+    CORE_TX_DEST_NW,
+    CORE_TX_DEST_LB,
+    CORE_TX_DEST_RESERVED,
+    CORE_TX_DEST_DROP,
+    MAX_CORE_TX_DEST
+};
+
+enum qed_ll2_tx_dest {
+    QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the Network */
+    QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the Loopback */
+    QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
+    QED_LL2_TX_DEST_MAX
+};
+
+Fix this conversion warning by adding CORE_TX_DEST_DROP to
+qed_ll2_tx_dest and converting all values of core_tx_dest to
+the equivalent value in qed_ll2_tx_dest so that there is no
+conversion warning or functional change.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+I'm by no means married to the name of the new enum value, it could even
+be CORE_TX_DEST_DROP (didn't know if that was going to set anyone off or
+not) but this is the cleanest solution to the warning in my opinion but
+I'm open to other opinions.
+
+ drivers/net/ethernet/qlogic/qed/qed_hsi.h |  9 ---------
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 16 ++++++++--------
+ drivers/net/ethernet/qlogic/qed/qed_ll2.h |  2 +-
+ include/linux/qed/qed_ll2_if.h            |  1 +
+ 4 files changed, 10 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_hsi.h b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
+index 15b4cd317f14..c2ce8428c413 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_hsi.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
+@@ -331,15 +331,6 @@ struct core_tx_bd {
+ #define CORE_TX_BD_TX_DST_SHIFT			14
+ };
+ 
+-/* Light L2 TX Destination */
+-enum core_tx_dest {
+-	CORE_TX_DEST_NW,
+-	CORE_TX_DEST_LB,
+-	CORE_TX_DEST_RESERVED,
+-	CORE_TX_DEST_DROP,
+-	MAX_CORE_TX_DEST
+-};
+-
+ /* Ramrod data for tx queue start ramrod */
+ struct core_tx_start_ramrod_data {
+ 	struct regpair pbl_base_addr;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index da13117a604a..741185a62e84 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -1345,13 +1345,13 @@ int qed_ll2_acquire_connection(void *cxt, struct qed_ll2_acquire_data *data)
+ 
+ 	switch (data->input.tx_dest) {
+ 	case QED_LL2_TX_DEST_NW:
+-		p_ll2_info->tx_dest = CORE_TX_DEST_NW;
++		p_ll2_info->tx_dest = QED_LL2_TX_DEST_NW;
+ 		break;
+ 	case QED_LL2_TX_DEST_LB:
+-		p_ll2_info->tx_dest = CORE_TX_DEST_LB;
++		p_ll2_info->tx_dest = QED_LL2_TX_DEST_LB;
+ 		break;
+ 	case QED_LL2_TX_DEST_DROP:
+-		p_ll2_info->tx_dest = CORE_TX_DEST_DROP;
++		p_ll2_info->tx_dest = QED_LL2_TX_DEST_DROP_CORE;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -1684,7 +1684,7 @@ qed_ll2_prepare_tx_packet_set_bd(struct qed_hwfn *p_hwfn,
+ 	u16 prod_idx = qed_chain_get_prod_idx(p_tx_chain);
+ 	struct core_tx_bd *start_bd = NULL;
+ 	enum core_roce_flavor_type roce_flavor;
+-	enum core_tx_dest tx_dest;
++	enum qed_ll2_tx_dest tx_dest;
+ 	u16 bd_data = 0, frag_idx;
+ 
+ 	roce_flavor = (pkt->qed_roce_flavor == QED_LL2_ROCE) ? CORE_ROCE
+@@ -1692,16 +1692,16 @@ qed_ll2_prepare_tx_packet_set_bd(struct qed_hwfn *p_hwfn,
+ 
+ 	switch (pkt->tx_dest) {
+ 	case QED_LL2_TX_DEST_NW:
+-		tx_dest = CORE_TX_DEST_NW;
++		tx_dest = QED_LL2_TX_DEST_NW;
+ 		break;
+ 	case QED_LL2_TX_DEST_LB:
+-		tx_dest = CORE_TX_DEST_LB;
++		tx_dest = QED_LL2_TX_DEST_LB;
+ 		break;
+ 	case QED_LL2_TX_DEST_DROP:
+-		tx_dest = CORE_TX_DEST_DROP;
++		tx_dest = QED_LL2_TX_DEST_DROP_CORE;
+ 		break;
+ 	default:
+-		tx_dest = CORE_TX_DEST_LB;
++		tx_dest = QED_LL2_TX_DEST_LB;
+ 		break;
+ 	}
+ 
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.h b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
+index 1a5c1ae01474..e676bbaf55c9 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
+@@ -119,7 +119,7 @@ struct qed_ll2_info {
+ 	u8 queue_id;
+ 	u8 tx_stats_id;
+ 	bool b_active;
+-	enum core_tx_dest tx_dest;
++	enum qed_ll2_tx_dest tx_dest;
+ 	u8 tx_stats_en;
+ 	bool main_func_queue;
+ 	struct qed_ll2_rx_queue rx_queue;
+diff --git a/include/linux/qed/qed_ll2_if.h b/include/linux/qed/qed_ll2_if.h
+index 5eb022953aca..1b260e73943c 100644
+--- a/include/linux/qed/qed_ll2_if.h
++++ b/include/linux/qed/qed_ll2_if.h
+@@ -65,6 +65,7 @@ enum qed_ll2_tx_dest {
+ 	QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the Network */
+ 	QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the Loopback */
+ 	QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
++	QED_LL2_TX_DEST_DROP_CORE, /* CORE_TX_DEST_DROP value */
+ 	QED_LL2_TX_DEST_MAX
+ };
+ 
 -- 
-Kees Cook
-Pixel Security
+2.19.0
+
