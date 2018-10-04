@@ -2,173 +2,128 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E62C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00030C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42892082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42892082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B72202082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo1JyTuL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72202082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbeJDVDj (ORCPT
+        id S1727662AbeJDVDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:03:39 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2096 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727369AbeJDVDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:03:39 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 8CC95D1BDADD8;
-        Thu,  4 Oct 2018 15:10:06 +0100 (IST)
-Received: from [10.204.65.138] (10.204.65.138) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 4 Oct
- 2018 15:10:08 +0100
-Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
- <20181003120141.GA7969@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
- <20181004113502.GA12498@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E6D00@hasmsx109.ger.corp.intel.com>
- <19c26db0-cde9-da70-1b02-7e37ca188b45@huawei.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E6E47@hasmsx109.ger.corp.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <1851e1d3-edc8-613d-00c3-dd3847f3ecd2@huawei.com>
-Date:   Thu, 4 Oct 2018 16:10:07 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 17:03:42 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36261 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbeJDVDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 17:03:42 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d4-v6so6907940lfa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=26OpygXkVkQ+yy/bOBSZug/4KNAD5akX+cDA2JpwiYI=;
+        b=Lo1JyTuLy0JkdfX/5X2hYieCvqUgyGKcs5fa8U3FhZLoOJ8bBMWtmXrR5Tfley5Xtk
+         TAHilvZ15Tnr1O7LsI3oLi/yDq2p23lugoLLYvF19yonOivzRETbZzrMMys71/+vUXVj
+         pbDNuvaSO0LCjfzMHiaGrMsY5UISaGBvZpmIgJNlu3tP7NAKArDZHzSacvnEVQXicYjV
+         0b+MBQLIyb6OruaT86QogT6fcDLDBrfRWY6+XN8vTr652kVK5xcMvRH3hRJXuIFQc3To
+         dXtFKRw+Ql7lbCXSTApqa7Xaj9u6KyVk8sHQwHySCj2pY48gVyPP0CPuPWnTZUu4QZ4X
+         La9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=26OpygXkVkQ+yy/bOBSZug/4KNAD5akX+cDA2JpwiYI=;
+        b=ui+BLhVob7I73kn6dkbVzn/rRYMgSMj3X7lyHCk/wFlc45NYSt9z1BwXptQuUEiiP/
+         fvcwx/yDdk0OF7qd0Wmk4qkO3aBP2iK3MPsO5hQbZOEbzkgICYvPHeLntj0hGMpvHYXZ
+         P8C8JM21hbiiv4PwsSFcSIMOeueOxLiHqXDLy2jsJE5+GE99UYrj2pXRpRZrVG858RXj
+         XNR/upXA40koDnE9wyNDUjEzW6MrfZvDFLYLQKWQ77JNMREHL1uiYxjNIEG952XPg+DJ
+         6FLEo+Miggup3Z89w25Dsq04oUoEY5pS32ntfYStShzqWF8ErOwO43MK0+uKd0+/IvTW
+         oqwA==
+X-Gm-Message-State: ABuFfohXvjNLsdNvQ6PpbR5FLkA2KSCaffEywmhMgjWZ2XalU8wefRY8
+        nt5zYpvCNwV2QdMKp8/4Ujk=
+X-Google-Smtp-Source: ACcGV61YqXGROw40LUBsmjoOjlMetrtIspVX63dpa98BorqXXuy+Iohw2yfYcBdMIoFRYYsMFZMsyQ==
+X-Received: by 2002:a19:d3c4:: with SMTP id k187-v6mr4160505lfg.101.1538662210873;
+        Thu, 04 Oct 2018 07:10:10 -0700 (PDT)
+Received: from z50.localnet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1105856lji.87.2018.10.04.07.10.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 07:10:10 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
+Date:   Thu, 04 Oct 2018 16:11:42 +0200
+Message-ID: <38470936.GRFaOSl3cF@z50>
+In-Reply-To: <20181004155933.0a32c4ac@bbrezillon>
+References: <20180719081508.5dafebde@bbrezillon> <7546835.d2Xs8Qh0bZ@z50> <20181004155933.0a32c4ac@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E6E47@hasmsx109.ger.corp.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.138]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/4/2018 3:46 PM, Winkler, Tomas wrote:
->>
->> On 10/4/2018 1:45 PM, Winkler, Tomas wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->>>> Sent: Thursday, October 04, 2018 14:35
->>>> To: Winkler, Tomas <tomas.winkler@intel.com>
->>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
->>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
->>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
->>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
->>>> linux-security-module@vger.kernel.org;
->>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
->>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
->>>>
->>>> On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->>>>>> Sent: Wednesday, October 03, 2018 15:02
->>>>>> To: Winkler, Tomas <tomas.winkler@intel.com>
->>>>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
->>>>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
->>>>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
->>>>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
->>>>>> linux-security-module@vger.kernel.org;
->>>>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
->>>>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to
->>>>>> tpm2-cmd.c
->>>>>>
->>>>>> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
->>>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
->>>>>>>>> Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
->>>>>>>>> required by tpm-interface.c. It wraps the original open code
->>>>>> implementation.
->>>>>>>>> The original original tpm2_pcr_extend() function is renamed to
->>>>>>>>> __tpm2_pcr_extend() and made static, it is called only from new
->>>>>>>>> tpm2_pcr_extend().
->>>>>>>>>
->>>>>>>>> Fix warnings in __tpm2_pcr_extend()
->>>>>>>>> tpm2-cmd.c:251:16: warning: comparison between signed and
->>>>>>>>> unsigned integer expressions [-Wsign-compare]
->>>>>>>>> tpm2-cmd.c:252:17: warning: comparison between signed and
->>>>>>>>> unsigned integer expressions [-Wsign-compare]
->>>>>>>>>
->>>>>>>>> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
->>>>>>>>
->>>>>>>> We do not want the signature change, especially because as we are
->>>>>>>> working on getting Roberto's changes in and also because it has
->>>>>>>> absolutely a zero gain. Who cares if those functions take
->>>>>>>> different
->>>>>> parameters? I don't.
->>>>>>>
->>>>>>> Yes, we do care this series tries to have a clean cut between 1.x
->>>>>>> and 2.x
->>>>>> specs. Please, let's finish one transformation and then move to
->> another.
->>>>>>> I understand that Roberto will have to rebase anyhow, if this
->>>>>>> series goes in
->>>>>> first, if this is hard I can do it myself, it's trivial.
->>>>>>>
->>>>>>> Tomas
->>>>>>
->>>>>> I'm happy to tune this minor stuff.
->>>>> What minor stuff?  This patch is just okay, let's change the API in
->>>>> next
->>>> round.
->>>>
->>>> The patch is not okay because it does a completely unnecessary API
->> change.
->>>
->>> There is no API change, in that sense.
->>> The exported API is in tpm-interface.c int tpm_pcr_extend(struct
->>> tpm_chip *chip, int pcr_idx, const u8 *hash) that is used is outside
->>> of the tpm reminds the same, only the open coded implementation of
->> tpm2_pcr_extned has moved to tpm2-cmd.c, This code is not called out of
->> tpm module.
->>> Please review the code again.
->>
->> Hi Tomas
->>
->> I will update tpm_pcr_extend() by replacing the array of u8 with an array of
->> tpm2_digest structures, so that the caller can provide multiple digests with
->> one call. The array of tpm2_digest structures will be passed to
->> tpm2_pcr_extend(). Please, don't modify the parameters of
->> tpm2_pcr_extend().
+On Thursday, October 4, 2018 3:59:33 PM CEST Boris Brezillon wrote:
+> On Thu, 04 Oct 2018 15:52:57 +0200
+> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 > 
-> What about tpm1_pcr_extend/read()?
+> > Hi Boris,
+> > 
+> > On Wednesday, October 3, 2018 4:06:34 PM CEST Boris Brezillon wrote:
+> > > On Wed, 03 Oct 2018 15:55:25 +0200
+> > > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> > >     
+> > > > > > 
+> > > > > > Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
+> > > > > > nand_wait_ready(),    
+> > > > > 
+> > > > > I don't remember what the ams-delta ->dev_ready()/->waitfunc() hooks
+> > > > > are doing, but is shouldn't be too hard to replace them by an
+> > > > > ams_delta_wait_ready() func.    
+> > > > 
+> > > > Default nand_wait() is used as ->waitfunc(), and ->dev_ready() returns 
+R/B 
+> > > > GPIO pin status.  
+> > > 
+> > > Okay. Then it might make sense to provide a generic helper to poll a
+> > > gpio.
+> > > 
+> > > void nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod)
+> > > {
+> > > 	...
+> > > }  
+> > 
+> > How about a still more generic helper which accepts dev_ready() callback 
+as an 
+> > argument?
+> 
+> Nope, I still prefer the GPIO based one. We'll see if others need a
+> a more generic helper, but I doubt it.
 
-tpm_pcr_extend/read() would pass to them the array of u8 from the
-tpm2_digest structure. Check this patch:
+OK.
 
-[PATCH v2 2/3] tpm: modify tpm_pcr_read() definition to pass TPM hash
-algorithms
+Legacy nand_wait_ready() uses a hardcoded timeout value of 400 ms.   Should we 
+follow the same approach in nand_gpio_waitrdy(), or should we rather let 
+drivers pass the timeout value, like in case of nand_soft_waitrdy()?
 
-Roberto
+Thanks,
+Janusz
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+
