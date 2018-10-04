@@ -2,128 +2,93 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631F3C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EC7C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6BD21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:18:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLpGOg7n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6BD21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2746521470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:18:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2746521470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeJDQKT (ORCPT
+        id S1727722AbeJDQKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:10:19 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37774 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbeJDQKT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:10:19 -0400
-Received: by mail-pl1-f194.google.com with SMTP id az3-v6so4873446plb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 02:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=bmhM7/u2L/Z64GZwk50hxpk7YMbmNX1GUQUryl21ihY=;
-        b=KLpGOg7nV/XYLqTFOSMop+iIiv2Jy3h3hJWN5407rcMPcN4bROtt6XRew7CwL9yRJA
-         HbZJZ0jJx7Nlzz7X175NYhrW5Jjx1oyF9dF299givCRYjx8kaxFlENUD1CN55zcoXGHi
-         2WPQK1YANmadWHPlRQq4IyRUocVbBXy74NLEoZnRENpmdN7W2LOYbb6bTuQ+eXObijmz
-         l3tUEos85LoOajxEJCGTr4kLJ8D7yRkAD+QkNMrOFBvySCx0UWMtH+pGzFAbpWBdB9pG
-         N0e/QNmJb7e4gr68oGuhwEE+61HtfR8gPkAqCn8ZF2eXSW2bcyj49ZxfTfY7gdN6P+3A
-         2mhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=bmhM7/u2L/Z64GZwk50hxpk7YMbmNX1GUQUryl21ihY=;
-        b=UR2syjXOzwBQ1maBcVGMKhyLyBLdXeTHslTpluNGK8VoRoFOnaZ21CkjLak5++lVNU
-         rHkoUUmLfg3d+ctG/BMI5hcv+pLsDvhfl+mcr8E2A5YlO/4LDMpQB8ec/SL8h9dkefZ2
-         Q5lHHJu9QOXrMzOEJ1dKg/NA0+PRuZzLZUdhxkQdMie6aJKBokm/HwMjX7khztMAOHa5
-         EpPHIvSFyG0Pd6YRMle2OhR3s/VMbOpXyWFs5c1SNff3xTBRP8AFK0bzfDNKJ2Z1K7AD
-         TYRRFCbv8wfjBQDsGkxTLSGPMDnW3VO1z8xx6ca2gHtMHaa5wRrJReTAwW76jRBzy/4I
-         MgWg==
-X-Gm-Message-State: ABuFfogCBztKRQ7EMt8xKEVBWjCpby7BXapkPnmjz4LeoRtevUG1XhV2
-        +mn1/kOARwr+tzbJfuj2Em/NCq8b
-X-Google-Smtp-Source: ACcGV63tKoAZIJQMdA/HfZ1hCVXQqVdtT/WdY0gLh2IYvzgiSlgd5C0rBPkHqvVH+1sTGNXLW1SSlg==
-X-Received: by 2002:a17:902:7e0f:: with SMTP id b15-v6mr5659147plm.246.1538644678122;
-        Thu, 04 Oct 2018 02:17:58 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.3? ([2402:f000:1:1501:200:5efe:a66f:4703])
-        by smtp.gmail.com with ESMTPSA id 68-v6sm9598694pfg.136.2018.10.04.02.17.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 02:17:57 -0700 (PDT)
-Subject: Re: [BUG] sound: pci: trident: a possible data race
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     keescook@chromium.org, perex@perex.cz, alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <864e211c-8be5-6a34-902a-a71f176111db@gmail.com>
- <s5hk1mzowkd.wl-tiwai@suse.de>
- <e334c065-5768-7710-bd70-059f7316157b@gmail.com>
- <s5hmurunv13.wl-tiwai@suse.de>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <3be565e2-d2fe-689b-52a9-f6bed0e215f1@gmail.com>
-Date:   Thu, 4 Oct 2018 17:17:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 4 Oct 2018 12:10:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58280 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727030AbeJDQKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:10:55 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CF121208B5; Thu,  4 Oct 2018 11:18:31 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7AE152072C;
+        Thu,  4 Oct 2018 11:18:21 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 11:18:22 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
+        vigneshr@ti.com, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
+        computersforpeace@gmail.com, frieder.schrempf@exceet.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: dts: lx2160a: update fspi node
+Message-ID: <20181004111822.48ab1f5c@bbrezillon>
+In-Reply-To: <1538642920-3843-5-git-send-email-yogeshnarayan.gaur@nxp.com>
+References: <1538642920-3843-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <1538642920-3843-5-git-send-email-yogeshnarayan.gaur@nxp.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <s5hmurunv13.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu,  4 Oct 2018 14:18:40 +0530
+Yogesh Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
+> Flash mt35xu512aba connected to FlexSPI controller supports
+> 1-1-8 protocol.
+> Added flag spi-rx-bus-width and spi-tx-bus-width with values as
+> 8 and 1 respectively for both flashes connected at CS0 and CS1.
+> 
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> index 901ca346..817175a 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -42,6 +42,8 @@
+>  		m25p,fast-read;
+>  		spi-max-frequency = <20000000>;
+>  		reg = <0>;
+> +		spi-rx-bus-width = <8>;
+> +		spi-tx-bus-width = <1>;
 
-On 2018/10/4 13:24, Takashi Iwai wrote:
-> On Thu, 04 Oct 2018 05:08:45 +0200,
-> Jia-Ju Bai wrote:
->> Thanks for the reply :)
->>
->>
->> On 2018/10/3 23:54, Takashi Iwai wrote:
->>> On Wed, 03 Oct 2018 14:50:25 +0200,
->>> Jia-Ju Bai wrote:
->>>> CPU0:
->>>> snd_trident_hw_free
->>>>       snd_trident_free_voice
->>>>               line 3870: spin_lock_irqsave()
->>>>               line 3881: voice->substream = NULL; [WRITE]
->>>> CPU1:
->>>> snd_trident_interrupt
->>>>       line 3798: snd_pcm_period_elapsed(voice->substream);  [READ]
->>>>
->>>> As for voice->substream, the WRITE operation in CPU0 is performed
->>>> with holding a spinlock, but the READ operation in CPU1 is performed
->>>> without holding this spinlock, so there may exist a data race.
->>> Thanks for the report.
->>>
->>> The actual crash must be very unlikely, almost 0%, though.
->>> snd_trident_hw_free() is called always after the PCM stream gets
->>> stopped via trigger callback, i.e. at the moment, there is no
->>> corresponding interrupt is generated for that voice entry.
->> How about the case that playback and capture are performed concurrently?
->> Namely, snd_trident_hw_free() is called for playback, and the
->> interrupt is generated for capture.
-> They are different substreams, hence it won't pick up the substream
-> object.
+Why 1? The flash is already flagged with SPI_NOR_OCTAL_READ, which
+means only the read path will use 1-1-8 mode, so you can safely set
+spi-tx-bus-width here and let the framework choose the appropriate mode
+based on the flash capabilities.
 
-Actually, I performed a runtime testing, and found that 
-snd_trident_hw_free() and snd_trident_interrupt() are executed concurrently.
-However, I did not check the substream object, so I guess this report 
-was produced in the case that I mentioned.
-Anyway, my report should be false, sorry...
+>  	};
+>  
+>  	mt35xu512aba1: flash@1 {
+> @@ -51,6 +53,8 @@
+>  		m25p,fast-read;
+>  		spi-max-frequency = <20000000>;
+>  		reg = <1>;
+> +		spi-rx-bus-width = <8>;
+> +		spi-tx-bus-width = <1>;
+>  	};
+>  };
+>  
 
-
-Best wishes,
-Jia-Ju Bai
