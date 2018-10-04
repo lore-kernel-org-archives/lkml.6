@@ -2,129 +2,110 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94B4C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBE4C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7764A2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0697D2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:49:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TA2j7LmZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7764A2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KtkCvvYI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jxsg4gUI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0697D2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeJEBnY (ORCPT
+        id S1728069AbeJEBoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:43:24 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52366 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727663AbeJEBnY (ORCPT
+        Thu, 4 Oct 2018 21:44:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53724 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbeJEBoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:43:24 -0400
-Received: by mail-it1-f193.google.com with SMTP id 134-v6so14580681itz.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 11:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/bGHkySm1qJPlLwcpKu3hmzXg3MmBYURlKzFW1nB+Hc=;
-        b=TA2j7LmZ4Uaoov1bu4p5srCr13Kmxmk8Nt47+Pk6XZP6bN0mKOCy+5LKc6U0sBmf8R
-         LpwX1b9LIrFwxx6g3bG0CkViU97kTDpnzTeRAJmNPcSOlF9P+Z61784uJajuqN8D9aVC
-         r4HyRgQ2Cx7toE4BsDL8quYBAMAcm8/Xxl/eo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/bGHkySm1qJPlLwcpKu3hmzXg3MmBYURlKzFW1nB+Hc=;
-        b=prPPHFquDcuP9IaoGlOXhbJqed70ap4NjQuEsb0MJOF+L6rSj6Y2rbE7HACIuh8vvR
-         m88Wn3UoiePePtHeBDJIQqhuEbWlGMoMGBMyDJ0k6xxSb7NlYgKYLhTQ5DgVecWV7u4F
-         T6DdLSwmmvaGaRDXs6C3oRKMNwczbrsZ5Fxoms185QYUyEb/s2kwNvNuwBZSh6Lf9p7Z
-         amYyXQqogS6/p3OxmKf88xH9UCxG0f2PeBjISLQHRo25edCJyU3mKcg7MDD4pU7WTfXM
-         u3tdv2398kGb6KS3B/yScEW7NychIdusVxxgbiznuMOtbogDxCknCDV2VcYFmD4fqYgR
-         7Hjw==
-X-Gm-Message-State: ABuFfoh3zhUJZGka5fvmqK20eFU49UhUwuVEzwVrd0RE2g297lE2LOmb
-        T815S+QeO+pljfFFJx5AdHENP3VxOZ1SZr4gVjg3VA==
-X-Google-Smtp-Source: ACcGV60ZDpJbGoIAGDaXmxcSC2nGes+XSrr5XeSKtG+pdnhw+iA+6yyIzVkXsKTP8OJcMtx/rWb7qW96UVMRGktCB0I=
-X-Received: by 2002:a24:8045:: with SMTP id g66-v6mr6266786itd.45.1538678931053;
- Thu, 04 Oct 2018 11:48:51 -0700 (PDT)
+        Thu, 4 Oct 2018 21:44:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6E6E960C6A; Thu,  4 Oct 2018 18:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538678985;
+        bh=uOXFksYigTZ6g/WmDdTdwe33JIX+gima0wvwtIVL4ck=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KtkCvvYIabarWEwX6WlPxLfvBEObYlDnCZbwAu9fzkpN+K/AgbL/0RD5U91SPHRbm
+         jKLjNaerpg0xSVQJPJhANRHxfkFSR8aZ9Wvk4LRNUrt9gvH44MeYeT6Yx5t+YuEiSJ
+         atd75nE0jctclmEUXw4kngAPRSU6NuElQkVQON1I=
+Received: from [192.168.0.3] (unknown [115.99.100.183])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7D00160866;
+        Thu,  4 Oct 2018 18:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538678984;
+        bh=uOXFksYigTZ6g/WmDdTdwe33JIX+gima0wvwtIVL4ck=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Jxsg4gUIPin+ICkumOZ8EYBWTi8QbBHilVnbT0myeOTdyzjKDApLIGe3diX4uKJ6v
+         i3ciQC1dKToaSfT1tG1AFAR3D92R8zaaRRtfJtFjauL7bDUICoq4kIdb//3tAZtgia
+         NTk5ydo02eqSY3uAwW3+UpeHYfF0qswJlBy0ulWs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D00160866
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCHv3 2/2] iommu/arm-smmu: Add SMMU clock
+To:     thor.thayer@linux.intel.com, dinguyen@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, joro@8bytes.org, aisheng.dong@nxp.com,
+        sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+References: <1538605693-22073-1-git-send-email-thor.thayer@linux.intel.com>
+ <1538605693-22073-3-git-send-email-thor.thayer@linux.intel.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <1898b9fb-0523-4de4-741a-a52de5fdab70@codeaurora.org>
+Date:   Fri, 5 Oct 2018 00:19:37 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 11:48:10 -0700 (PDT)
-In-Reply-To: <CAJZ5v0ih4Hn5W-dTzOayMyMfLMe=djKVhxBcoQ=7oJz6QnpTJQ@mail.gmail.com>
-References: <61559514.Vym8FNvob2@aspire.rjw.lan> <CAPDyKFoUdQRUYQ0qb5WM=Bi-F_4Fe8VEPNYZGu2ezMPj_wxoPg@mail.gmail.com>
- <CAJZ5v0ih4Hn5W-dTzOayMyMfLMe=djKVhxBcoQ=7oJz6QnpTJQ@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 4 Oct 2018 20:48:10 +0200
-Message-ID: <CAPDyKFqMHVvyrjDzoC+QbSLbtdMYcfzDenb+uWTu+Fr-awbU1A@mail.gmail.com>
-Subject: Re: [PATCH] PM / core: Clear the direct_complete flag on errors
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Al Cooper <alcooperx@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1538605693-22073-3-git-send-email-thor.thayer@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 October 2018 at 19:47, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Thu, Oct 4, 2018 at 3:23 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>
->> On 4 October 2018 at 11:08, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> >
->> > If __device_suspend() returns early on an error or pending wakeup
->> > and the power.direct_complete flag has been set for the device
->> > already, the subsequent device_resume() will be confused by it
->> > and it will call pm_runtime_enable() incorrectly, as runtime PM
->> > has not been disabled for the device by __device_suspend().
->>
->> I think it would be fair to mention that is related to the async
->> suspend path, in dpm_suspend().
+Hi Thor,
+
+
+On 10/4/2018 3:58 AM, thor.thayer@linux.intel.com wrote:
+> From: Thor Thayer <thor.thayer@linux.intel.com>
 >
-> OK, fair enough.
+> Add a clock to the SMMU structure. In the device tree case,
+> check for a clock node and enable the clock if found.
 >
->> >
->> > To avoid that, clear power.direct_complete if __device_suspend()
->> > is not going to disable runtime PM for the device before returning.
->>
->> Overall, by looking at the behavior in dpm_suspend() of async
->> suspended devices, it does look a bit fragile to me.
->>
->> My worries is that we put asynced suspended devices in the
->> dpm_suspended_list, no matter if the device was successfully suspended
->> or not. This differs from the no-async path.
+> This patch is dependent upon the following patches that add
+> a device tree bulk clock function.
+> "[V6, 1/4] clk: bulk: add of_clk_bulk_get()"
+> https://patchwork.kernel.org/patch/10583133/
+> "[V6, 2/4] clk: add new APIs to operation on all available
+> clocks"
+> https://patchwork.kernel.org/patch/10583131/
+> "[V6, 3/4] clk: add managerged version of clk_bulk_get_all"
+> https://patchwork.kernel.org/patch/10583139/
 >
-> That's because this was the most straightforward way to organize that
-> (otherwise you need to worry about the list locking with respect to
-> the async suspends etc and you really need to preserve the ordering
-> there).
+> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+> ---
+>   drivers/iommu/arm-smmu.c | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
 
-I understand about the lock, but not sure if that is something to
-worry about, at least from contention point of view, if that is what
-you mean?
+The clock part is already handled by one of the patch in the
+runtime pm series of arm-smmu [1]. This patch should not be needed.
 
-In regards to the order, is that really problem for async enabled devices?
+[1] https://patchwork.kernel.org/patch/10581899/
 
->
->> In the long run, maybe we should change that instead?
->
-> Is there anything wrong with it really?
+[...]
 
-No, besides complexity. :-)
-
-My, point was that we could potentially simplify the code in
-device_resume() and in __device_suspend(), as the behavior would them
-becomes more deterministic. device_resume() will never be called
-unless __device_suspend() has succeeded for the device.
-
-Anyway, as stated, I fine with your patch. And if I get some time I
-might send a patch to show you what I mean.
-
-Kind regards
-Uffe
+Regards
+Vivek
