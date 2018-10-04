@@ -2,135 +2,178 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DDCC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6197CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59BE22087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10DAF2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhzFmhQs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59BE22087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cbKIfSfS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10DAF2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbeJEDKd (ORCPT
+        id S1727869AbeJEDL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:10:33 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40343 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJEDKc (ORCPT
+        Thu, 4 Oct 2018 23:11:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39810 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJEDL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:10:32 -0400
-Received: by mail-qt1-f193.google.com with SMTP id b4-v6so3326731qtc.7;
-        Thu, 04 Oct 2018 13:15:41 -0700 (PDT)
+        Thu, 4 Oct 2018 23:11:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so3658658pgv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 13:16:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1Q1go12HLtc90YPynS8xBT3ZaYwTO0tIWQ1i0fd/CeE=;
-        b=JhzFmhQs0VGmeNCxRnMiM42bQLcPbVvcuKrv+i9NnI8kNRc3obx5Z0nRlldw8XYrFI
-         UFwwWNfgV1fgPZT5Wh9sUw08/nsESixTzPHEvxvXqoSAVwNQh4th6ycbtSSnjlAaq+lI
-         XhcDTXfFnhhd3lDp0Pxq/9DRntI+m+FEUheYR+tRd8/TU/EOyrG4qsnXff3gVn/kixip
-         rMFGPW2Ed74LrrKZW7WpvIbU4wWbWxSiHWD9RP6kKbFqNKQOVjAB84aTSEuYbJJQNg5g
-         Szf/zmp1eLtg/d9NtxesX9kgKLk/uZ8CVXrLVfwyG5WJ8CEf/49LQqLJlyQLzDFFl79G
-         i7qw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ITt33YEkn5yF4X/XcEV8bEEuJBcjDxM5JsoA+km5PJ4=;
+        b=cbKIfSfSyDF381CqO9daEyuW17NdE4OC48R2QWBhPpVmGje2okmmmf9xgv8BQRmdLA
+         tmzMILu8viEa5FnJJ40sFUpEG9y1JZ3YiSAPuQnriP65GxZwGF1+rUSgkDT6cJdUChHG
+         2wnHTXexJPJRMr3XUizDB5vtdNMA0wyOL2ioqV7F/XX4VbSnh7kS8H95hhQqHSDTB8nY
+         TBSeuU0FpVp7dS7vwpvsBvdit2hUG8TOOoJfuKFCBb27QmJ+bwStMgEe7Oat2q6FdsyF
+         0bDj4rS9ZlM09Jy8x8LN27ahFRo/bNnvo+39sq7DxanEESyYz8qcyR7/giCmggL3Rs0X
+         EB/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1Q1go12HLtc90YPynS8xBT3ZaYwTO0tIWQ1i0fd/CeE=;
-        b=WUW42ZiAjkfwfX5aIVKqOmKRCQt6GJV1lu4qKhCvjQ33dRx3l3TvRCjDCauYofqQwt
-         UdGv5jplKccfy5rIdzQYowGUkIi72k9IqlBxGhj49antZjq75AsBcHt6PKbMGOpWYNIr
-         OhnbXEF0KvxXgJAkKULqWjaLSIR1nL2ZG0jT//MSBd2Wz19BKWQqGqAb4xq9v8Xnivzm
-         7nBvGb63vjsuYH1ptrpr14/sN4vNvU2e+Ka/341gWTyuTV5HW+1xeRGS2r+lm7Dxh8T3
-         tq5Qeq7hmwc87R0K+twjA67c7b9oOFahYcxtexB2oqeUiRUjchP1FBJPnglRcgv5jxOd
-         hgPQ==
-X-Gm-Message-State: ABuFfohXS60HS7I5BeBLSRuC1tVnAKBLTo5EHEGlA95ZFCqB3ABr+5gF
-        zuMEd3hctTUPgFeHeqs3ids=
-X-Google-Smtp-Source: ACcGV63VwoheWp495h3T6TfGS2QH8eI5rFMuo/No6NBTLgrVbdbzcNEnEKeTTOJXm355f2gxTb/aLw==
-X-Received: by 2002:aed:2807:: with SMTP id r7-v6mr6752350qtd.68.1538684140686;
-        Thu, 04 Oct 2018 13:15:40 -0700 (PDT)
-Received: from [10.67.50.87] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id e8-v6sm3200029qkj.0.2018.10.04.13.15.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 13:15:39 -0700 (PDT)
-Subject: Re: [PATCH net-next v4 09/11] dt-bindings: add constants for
- Microsemi Ocelot SerDes driver
-To:     Quentin Schulz <quentin.schulz@bootlin.com>,
-        alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
-        andrew@lunn.ch
-Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com
-References: <20181004122208.32272-1-quentin.schulz@bootlin.com>
- <20181004122208.32272-10-quentin.schulz@bootlin.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <8529862a-1a68-509b-9512-1ef0f8cdbea0@gmail.com>
-Date:   Thu, 4 Oct 2018 13:15:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ITt33YEkn5yF4X/XcEV8bEEuJBcjDxM5JsoA+km5PJ4=;
+        b=sbOBvSXrdUm541LTnRlTygwqZDsp1fVO1Pc9D+oaQ5OLg3bm1bh9Y/O46BxKmpRE4a
+         lSFNF3h+LV25dbMsl1s25CrvNiz1n/FfBI+tsAe9PMXBB6AOpi0KSapGgMFxgIbXKgp6
+         Zb3NbTqCKSPLFV4DLWLUdVYW0noOJ6u0RXy92P3cqJRhiW4kdGbPntdPZjWUt29nqdmj
+         P9ydZYpNJtZFq7gCGNmauXbouGyuzPGnVG2AyfU7uqwqQ/8zG/GoqE7sv/9HKEMaxxrc
+         L0foGJxLRbJo/qx0GbIEtwqzK34caZXas4rl/RDRdE+gNlmCWLwvgmFcBrfW+4JNJmHd
+         gjHQ==
+X-Gm-Message-State: ABuFfoglPs8ZTlboXfiNTW5CKNMG2b1PQB1a21tuXi2+/Vof0xl86Zg9
+        4xJYTBKUsZXnhqabV7SsZTd7Pw==
+X-Google-Smtp-Source: ACcGV63Xj8UJMfjS+f98/NOAHDgqmqlmOiLh/mvFHM35wrPdtoMd1R4KZ1e/lxPAUBWg29QSUcpZgw==
+X-Received: by 2002:a63:2f81:: with SMTP id v123-v6mr6868713pgv.223.1538684194681;
+        Thu, 04 Oct 2018 13:16:34 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id j187-v6sm10799661pfc.39.2018.10.04.13.16.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 13:16:33 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 13:16:32 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Stable tree <stable@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+In-Reply-To: <20180925120326.24392-2-mhocko@kernel.org>
+Message-ID: <alpine.DEB.2.21.1810041302330.16935@chino.kir.corp.google.com>
+References: <20180925120326.24392-1-mhocko@kernel.org> <20180925120326.24392-2-mhocko@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181004122208.32272-10-quentin.schulz@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 05:22 AM, Quentin Schulz wrote:
-> The Microsemi Ocelot has multiple SerDes and requires that the SerDes be
-> muxed accordingly to the hardware representation.
-> 
-> Let's add a constant for each SerDes available in the Microsemi Ocelot.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+On Tue, 25 Sep 2018, Michal Hocko wrote:
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index da858f794eb6..149b6f4cf023 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -2046,8 +2046,36 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
+>  		nmask = policy_nodemask(gfp, pol);
+>  		if (!nmask || node_isset(hpage_node, *nmask)) {
+>  			mpol_cond_put(pol);
+> -			page = __alloc_pages_node(hpage_node,
+> -						gfp | __GFP_THISNODE, order);
+> +			/*
+> +			 * We cannot invoke reclaim if __GFP_THISNODE
+> +			 * is set. Invoking reclaim with
+> +			 * __GFP_THISNODE set, would cause THP
+> +			 * allocations to trigger heavy swapping
+> +			 * despite there may be tons of free memory
+> +			 * (including potentially plenty of THP
+> +			 * already available in the buddy) on all the
+> +			 * other NUMA nodes.
+> +			 *
+> +			 * At most we could invoke compaction when
+> +			 * __GFP_THISNODE is set (but we would need to
+> +			 * refrain from invoking reclaim even if
+> +			 * compaction returned COMPACT_SKIPPED because
+> +			 * there wasn't not enough memory to succeed
+> +			 * compaction). For now just avoid
+> +			 * __GFP_THISNODE instead of limiting the
+> +			 * allocation path to a strict and single
+> +			 * compaction invocation.
+> +			 *
+> +			 * Supposedly if direct reclaim was enabled by
+> +			 * the caller, the app prefers THP regardless
+> +			 * of the node it comes from so this would be
+> +			 * more desiderable behavior than only
+> +			 * providing THP originated from the local
+> +			 * node in such case.
+> +			 */
+> +			if (!(gfp & __GFP_DIRECT_RECLAIM))
+> +				gfp |= __GFP_THISNODE;
+> +			page = __alloc_pages_node(hpage_node, gfp, order);
+>  			goto out;
+>  		}
+>  	}
+
+This causes, on average, a 13.9% access latency regression on Haswell, and 
+the regression would likely be more severe on Naples and Rome.
+
+There exist libraries that allow the .text segment of processes to be 
+remapped to memory backed by transparent hugepages and use MADV_HUGEPAGE 
+to stress local compaction to defragment node local memory for hugepages 
+at startup.  The cost, including the statistics Mel gathered, is 
+acceptable for these processes: they are not concerned with startup cost, 
+they are concerned only with optimal access latency while they are 
+running.
+
+So while it may take longer to start the process because memory compaction 
+is attempting to allocate hugepages with __GFP_DIRECT_RECLAIM, in the 
+cases where compaction is successful, this is a very significant long-term 
+win.  In cases where compaction fails, falling back to local pages of the 
+native page size instead of remote thp is a win for the remaining time 
+this process wins: as stated, 13.9% faster for all memory accesses to the 
+process's text while it runs on Haswell.
+
+So these processes, and there are 100's of users of these libraries, 
+explicitly want to incur the cost of startup to attempt to get local thp 
+and fallback only when necessary to local pages of the native page size.  
+They want the behavior this patch is changing and regress if the patch is 
+merged.
+
+This patch does not provide an alternative beyond MPOL_BIND to preserve 
+the existing behavior.  In that case, if local memory is actually oom, we 
+unnecessarily oom kill processes which would be completely unacceptable to 
+these users since they are fine to accept 10-20% of their memory being 
+faulted remotely if necessary to prevent processes being oom killed.
+
+These libraries were implemented with the existing behavior of 
+MADV_HUGEPAGE in mind and I cannot ask for 100s of binaries to be rebuilt 
+to enforce new constraints specifically for hugepages with no alternative 
+that does not allow unnecessary oom killing.
+
+There are ways to address this without introducing regressions for 
+existing users of MADV_HUGEPAGE: introduce an madvise() mode to accept 
+remote thp allocations, which users of this library would never set, or 
+fix memory compaction so that it does not incur substantial allocation 
+latency when it will likely fail.
+
+We don't introduce 13.9% regressions for binaries that are correctly using 
+MADV_HUGEPAGE as it is implemented.
+
+Nacked-by: David Rientjes <rientjes@google.com>
