@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B4FC64EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E137AC64EBC
 	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811C4214C1
+	by mail.kernel.org (Postfix) with ESMTP id B031F21470
 	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 811C4214C1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B031F21470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeJDNGR (ORCPT
+        id S1727458AbeJDNGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:06:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:47319 "EHLO ozlabs.org"
+        Thu, 4 Oct 2018 09:06:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:47965 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeJDNGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:06:16 -0400
+        id S1726858AbeJDNGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 09:06:20 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 42QjK83lG3z9sBq; Thu,  4 Oct 2018 16:14:36 +1000 (AEST)
+        id 42QjKC65JCz9sBj; Thu,  4 Oct 2018 16:14:39 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: b9ef7b4b867f56114bedbe6bf104cfaba0ca818e
-In-Reply-To: <20180828015252.28511-6-robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+X-powerpc-patch-commit: 51423a9c9b09352bea1c53b8324db78bf3b170d1
+In-Reply-To: <86e85efc4b5a90523de6e964c5cef8858eb1177d.1537884465.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: powerpc: Convert to using %pOFn instead of device_node.name
-Message-Id: <42QjK83lG3z9sBq@ozlabs.org>
-Date:   Thu,  4 Oct 2018 16:14:36 +1000 (AEST)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2] powerpc/traps: merge unrecoverable_exception() and nonrecoverable_exception()
+Message-Id: <42QjKC65JCz9sBj@ozlabs.org>
+Date:   Thu,  4 Oct 2018 16:14:39 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-28 at 01:52:07 UTC, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+On Tue, 2018-09-25 at 14:10:04 UTC, Christophe Leroy wrote:
+> PPC32 uses nonrecoverable_exception() while PPC64 uses
+> unrecoverable_exception().
 > 
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Both functions are doing almost the same thing.
+> 
+> This patch removes nonrecoverable_exception()
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/b9ef7b4b867f56114bedbe6bf104cf
+https://git.kernel.org/powerpc/c/51423a9c9b09352bea1c53b8324db7
 
 cheers
