@@ -2,106 +2,107 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE52C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E70C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC6C20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC6C20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id EF67820652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:05:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IiJ0PdCA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ak+aoK7n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF67820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbeJDQ5i (ORCPT
+        id S1728218AbeJDQ5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:57:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39845 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbeJDQ5h (ORCPT
+        Thu, 4 Oct 2018 12:57:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52350 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727758AbeJDQ5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:57:37 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94A4jSo2703519
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 4 Oct 2018 03:04:45 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94A4jiu2703516;
-        Thu, 4 Oct 2018 03:04:45 -0700
-Date:   Thu, 4 Oct 2018 03:04:45 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Rafael J. Wysocki" <tipbot@zytor.com>
-Message-ID: <tip-9c2298aad355d8c1957df3015448fef333526934@git.kernel.org>
-Cc:     rafael.j.wysocki@intel.com, tj@kernel.org,
-        linux-pm@vger.kernel.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org
-Reply-To: rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-          tj@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, mingo@kernel.org
-In-Reply-To: <3803514.xkx7zY50tF@aspire.rjw.lan>
-References: <3803514.xkx7zY50tF@aspire.rjw.lan>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Fix comment regarding nr_iowait_cpu()
- and get_iowait_load()
-Git-Commit-ID: 9c2298aad355d8c1957df3015448fef333526934
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 4 Oct 2018 12:57:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7BA4960B26; Thu,  4 Oct 2018 10:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538647513;
+        bh=YreLcI82fpjiE1hcoZzqzJwALxy5ORnOxNYV3swoyT8=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=IiJ0PdCADeK4acu+hx5Enry8eIsKWQANF7/Tfi6yQ8taUBK3KUTxzIGh4W6P/eqvN
+         7VF5UCKW2fhL87MzJubu+3pQppRKGnufv1oHT4i8C18rkU625/HCC4v1zWQSE9ZH7g
+         mRyv5lXAyjdXbHNY0pT+P2MdqDqa757CjJIDbEUQ=
+Received: from x230.qca.qualcomm.com (85-76-114-39-nat.elisa-mobile.fi [85.76.114.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C80EB60B72;
+        Thu,  4 Oct 2018 10:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538647512;
+        bh=YreLcI82fpjiE1hcoZzqzJwALxy5ORnOxNYV3swoyT8=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Ak+aoK7nMUyYSxZTinQvFn6VRLWUnxlvOSNmDolvctgS4TBVOA3HinM4lAbqXIoXo
+         rtn3daQ+13G4kzUmoVLJ9LtesuB9OsfUg7bvzzE46KWMR7GgrsqRXPljvQSHlsCuLQ
+         81yKWVyGKnwoJBhe1BcGV79Ga1nnEptnm/tTwUq0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C80EB60B72
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Lance Roy <ldr709@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Daniel Drake <dsd@gentoo.org>,
+        Ulrich Kunitz <kune@deine-taler.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 08/16] wireless: Replace spin_is_locked() with lockdep
+References: <20181003053902.6910-1-ldr709@gmail.com>
+        <20181003053902.6910-9-ldr709@gmail.com>
+        <877eizjt5j.fsf@kamboji.qca.qualcomm.com>
+        <20181004065720.GE896@E570.localdomain>
+Date:   Thu, 04 Oct 2018 13:05:08 +0300
+In-Reply-To: <20181004065720.GE896@E570.localdomain> (Lance Roy's message of
+        "Wed, 3 Oct 2018 23:57:20 -0700")
+Message-ID: <87in2i2fjf.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9c2298aad355d8c1957df3015448fef333526934
-Gitweb:     https://git.kernel.org/tip/9c2298aad355d8c1957df3015448fef333526934
-Author:     Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-AuthorDate: Thu, 4 Oct 2018 11:05:14 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 4 Oct 2018 11:25:56 +0200
+Lance Roy <ldr709@gmail.com> writes:
 
-sched/core: Fix comment regarding nr_iowait_cpu() and get_iowait_load()
+> On Wed, Oct 03, 2018 at 12:06:48PM +0300, Kalle Valo wrote:
+>> Lance Roy <ldr709@gmail.com> writes:
+>>
+>> > lockdep_assert_held() is better suited to checking locking requirements,
+>> > since it won't get confused when someone else holds the lock. This is
+>> > also a step towards possibly removing spin_is_locked().
+>> >
+>> > Signed-off-by: Lance Roy <ldr709@gmail.com>
+>> > Cc: Daniel Drake <dsd@gentoo.org>
+>> > Cc: Ulrich Kunitz <kune@deine-taler.de>
+>> > Cc: Kalle Valo <kvalo@codeaurora.org>
+>> > Cc: "David S. Miller" <davem@davemloft.net>
+>> > Cc: <linux-wireless@vger.kernel.org>
+>> > Cc: <netdev@vger.kernel.org>
+>> > ---
+>> >  drivers/net/wireless/zydas/zd1211rw/zd_mac.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> Should I take this or is it going through some other tree?
+>
+> Sure you can take this if you like. If not, Paul McKenney will take it in his
+> tree.
 
-The comment related to nr_iowait_cpu() and get_iowait_load() confuses
-cpufreq with cpuidle and is not very useful for this reason, so fix it.
+Ok, then I'll take this to wireless-drivers-next. And I'll change the
+title prefix to "zd1211rw: ".
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: e33a9bba85a8 "sched/core: move IO scheduling accounting from io_schedule_timeout() into scheduler"
-Link: http://lkml.kernel.org/r/3803514.xkx7zY50tF@aspire.rjw.lan
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 56b3c1781276..fe0223121883 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2916,10 +2916,10 @@ unsigned long nr_iowait(void)
- }
- 
- /*
-- * Consumers of these two interfaces, like for example the cpufreq menu
-- * governor are using nonsensical data. Boosting frequency for a CPU that has
-- * IO-wait which might not even end up running the task when it does become
-- * runnable.
-+ * Consumers of these two interfaces, like for example the cpuidle menu
-+ * governor, are using nonsensical data. Preferring shallow idle state selection
-+ * for a CPU that has IO-wait which might not even end up running the task when
-+ * it does become runnable.
-  */
- 
- unsigned long nr_iowait_cpu(int cpu)
+-- 
+Kalle Valo
