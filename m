@@ -2,229 +2,165 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D72C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4789CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEDCF21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB9B2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:55:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VpjiaiwY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEDCF21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="mhlfOM42"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB9B2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeJDNns (ORCPT
+        id S1727343AbeJDNqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:43:48 -0400
-Received: from mail-eopbgr20085.outbound.protection.outlook.com ([40.107.2.85]:30450
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        Thu, 4 Oct 2018 09:46:53 -0400
+Received: from mail-sn1nam01on0055.outbound.protection.outlook.com ([104.47.32.55]:16224
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726899AbeJDNnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:43:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1726899AbeJDNqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 09:46:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=twkahazTH0Ti4wqkBQX5MmwPda037BSCkcewYIPvlzY=;
- b=VpjiaiwYmdJVuLBmuKuYgvcDG/BBG4KOljkYK0LCCsRVe3ZYOvUcI5X9+EISZZx7Ey014MZUlP1R5LTf/49aBQyUD1HB1B1WMxwfOd0IEbKE+xHDSCELJzCrjDF7cPdO7uv15Mz3OIpY0ClHBPgDOVVOQGaKc6rx6xGW3O9NDrM=
-Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
- VI1PR04MB4093.eurprd04.prod.outlook.com (52.133.12.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.25; Thu, 4 Oct 2018 06:51:41 +0000
-Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
- ([fe80::644c:d070:c632:d3eb]) by VI1PR04MB1038.eurprd04.prod.outlook.com
- ([fe80::644c:d070:c632:d3eb%4]) with mapi id 15.20.1185.027; Thu, 4 Oct 2018
- 06:51:41 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Vignesh R <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Brian Norris <computersforpeace@gmail.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for mt35xu512aba
-Thread-Topic: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for
- mt35xu512aba
-Thread-Index: AQHUWzpebO9UjE7y3ESdBwkaF5y7X6UOpRKg
-Date:   Thu, 4 Oct 2018 06:51:41 +0000
-Message-ID: <VI1PR04MB1038C20CA97E453FC4C9CEAE99EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20181003165603.2579-1-vigneshr@ti.com>
- <20181003165603.2579-2-vigneshr@ti.com>
-In-Reply-To: <20181003165603.2579-2-vigneshr@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4093;6:5YR6IJhQ0Q4u53xIEKrFsAqzDk19evmBwa5rEaa9FiogQlHAj8pF6EJe2Tpnr8qiQ5wAbPhx6LJx+mVe1vq3hvW7+WJw4eJLF2mSU6xyBHVauRgu2l6h1nrmtS7S/XEt1NbUnHtjbaRRPBZhCLpMYAXK3m7HwJFgdoeqozd3eafAdpDpIYy7mXoyvz5uXwoMcWdUqDXrk4UbkiU/oJTtiWoWi+NZxHgN/+a1G0Dvv/VJqzFtfv35WJx8ZsHEi4f+IMpQAtkj4aPFk3wOg9Gb6CM6Rr+aaDBPNwZgq2XUy6gFBfrpgGYwGd0M3239iYSL1+csd11SuX6OX6rIvfTcBc2hfo0IICLN9j8Y2RbvQIGXkGbrhI64G7kwsSC/6kR+R2rSh6n/A56rhpZZxybxO+7yPzGmcrRQ7m/hbTOSqyYgvaAhulWpDxEVM6aYiCbGQ8GwYtniKxTZiIg4UjufSQ==;5:fIhT6Em4x8P6AHBOG4siAHtilOUW9JshnrXCaD7nODNVYMXYNUU4vRcKKmHgzuvsDKeruEV4NrTjzs6m8qdfO4txbsR+6uhC1uGUmhfGqhLxp0ulr/ySySC7ceFt9BQoueXbJ3KLym831dz/WKFdRkc1e0/uhU5VRzXk0nCmtEY=;7:AQqzl2xb5HM6/RnVhS7BYXOFNM6okT26jhkBgYOJcp5D3XP4O9H9tufm2FMObXkQ4jHwFrcRm0NjQFuYhU9X+GxOo0Ih8JcUgDCnLfS3qm10zTmr50f8YWbx+w5GiDvOtQigPKVi2XGKWIUchDY08tFKpbvO4jkfkqbYKPQrZWR5gB5NUJrhWwkHlK8zy6XJikbBaJuFeJ3RK2maUdXhxri6EKkBmrc+j6Uj92048lQl2VqayQ1h9vTUW2NPiZEL
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 944464f4-0fcc-47ea-9850-08d629c5d73a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4093;
-x-ms-traffictypediagnostic: VI1PR04MB4093:
-x-microsoft-antispam-prvs: <VI1PR04MB4093F997BFE795B265F5ABA699EA0@VI1PR04MB4093.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(31051911155226)(258649278758335)(9452136761055)(85827821059158)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051);SRVR:VI1PR04MB4093;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4093;
-x-forefront-prvs: 0815F8251E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(136003)(346002)(39860400002)(189003)(199004)(13464003)(74316002)(7736002)(6116002)(575784001)(6436002)(3846002)(8936002)(305945005)(25786009)(97736004)(478600001)(33656002)(86362001)(2900100001)(105586002)(66066001)(486006)(8676002)(26005)(476003)(186003)(6246003)(81166006)(11346002)(5660300001)(102836004)(81156014)(7696005)(68736007)(229853002)(4326008)(446003)(53546011)(2906002)(55236004)(14454004)(53936002)(6506007)(54906003)(106356001)(39060400002)(76176011)(110136005)(316002)(99286004)(71190400001)(71200400001)(14444005)(256004)(55016002)(5250100002)(9686003)(138113003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4093;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: W4Jlz3hJorWUCu2xZG1LFGW9MYbSQQfBWdRzzTkUD0EzLFe3KALn7EAiwFQbjdUO36uvQJaVN3jSO9zezq+8MUpFH0MsYtwoLC4GyrG8trtc3dmAZrDp5/o1tSqztl1mlDx7pTBwDSnDpMbnWrplT0Qu2Vqi8g01ZfRvRXpg6BVpiEmGRGVKg4f7NulRrBP8VPW8TTbXEXuV/lYfZnvln/ZLXYniloAisbZlct96krMKiP+2zUyNRsxa2x5kT0aIYD+T0pQDNnWtltvCUgEhiTy76Dm7KrlGpeuphFxZmxld/Gg3xXBqFFKmEc99w55sylrNBZuV/RNyhY7bqX9ER6GH88q5LBWHrPxKZZEMQOw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=CzTwxpVSZMNR++gW9uYgo5xNKy3mTfFny8s2Wrt4Ajk=;
+ b=mhlfOM42ULzugEvawhOgYfzFOP+tw7BifuR/8EaQUZ995ZwE4OGgq1iIH1Rw/ifKk+0ZPYyzkmTfWM6Qb2A0IoUT1Ae2LeSXlEqPvnTtka5CUjqmVwP3GiK63eGPqIHXZw39AimsyRCJu5Li5ZBSmimDGhcwepOFd1GVdi4IN2w=
+Received: from SN4PR0201CA0041.namprd02.prod.outlook.com
+ (2603:10b6:803:2e::27) by SN6PR02MB5120.namprd02.prod.outlook.com
+ (2603:10b6:805:68::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1185.23; Thu, 4 Oct
+ 2018 06:55:02 +0000
+Received: from CY1NAM02FT027.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::208) by SN4PR0201CA0041.outlook.office365.com
+ (2603:10b6:803:2e::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1207.21 via Frontend
+ Transport; Thu, 4 Oct 2018 06:55:02 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT027.mail.protection.outlook.com (10.152.75.159) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1207.19
+ via Frontend Transport; Thu, 4 Oct 2018 06:55:02 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <anurag.kumar.vulisha@xilinx.com>)
+        id 1g7xXJ-0005YM-Ss; Wed, 03 Oct 2018 23:55:01 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <anurag.kumar.vulisha@xilinx.com>)
+        id 1g7xXE-0002IO-PE; Wed, 03 Oct 2018 23:54:56 -0700
+Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w946sqmD020558;
+        Wed, 3 Oct 2018 23:54:52 -0700
+Received: from [172.23.64.8] (helo=xhdvnc108.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <anuragku@xilinx.com>)
+        id 1g7xXA-0002H5-7b; Wed, 03 Oct 2018 23:54:52 -0700
+Received: by xhdvnc108.xilinx.com (Postfix, from userid 15427)
+        id 5426E6050F; Thu,  4 Oct 2018 12:24:51 +0530 (IST)
+From:   Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+To:     <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <v.anuragkumar@gmail.com>, <apandey@xilinx.com>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+Subject: [PATCH] usb: host: xhci: Set the controller as wakeup capable
+Date:   Thu, 4 Oct 2018 12:24:50 +0530
+Message-ID: <1538636090-16288-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+X-Mailer: git-send-email 2.1.1
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(396003)(2980300002)(438002)(199004)(189003)(48376002)(39060400002)(16586007)(336012)(36386004)(36756003)(186003)(6266002)(110136005)(103686004)(478600001)(8676002)(476003)(54906003)(90966002)(305945005)(51416003)(2906002)(316002)(8936002)(4326008)(106002)(26005)(356003)(50226002)(47776003)(107886003)(81156014)(486006)(2616005)(81166006)(1857600001)(426003)(50466002)(126002)(106466001)(63266004)(5660300001)(42186006)(52956003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB5120;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT027;1:lYa2+Nz+/6FRKNXt8ooo/1F13+Ef0JY4NlxzzBfhPJTrD6Gud47Wy0quzHCSzAV3EIwpKLvyNTuFFG03jTN43yCLKeuz8fKz/w8OlZFhbUSqGulnfUZvGkOVzKducDLo
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 944464f4-0fcc-47ea-9850-08d629c5d73a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2018 06:51:41.4179
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b8d16c8d-ecc0-45af-3a66-08d629c64f0d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB5120;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;3:kZRhDLJU3oJ3saxSf9JZVOLxKLkBVIwxRYf0XiP0PmIooijCmQ37rTPlmye/Lf2FQR+tcwjW8Jfh4WgZyeOYZ+ISm+rbepVDhRnkSWQrnQ+BrshT18StFN23C8UKJzErx+zc6dZ0vZwjZft/jkYw1UZ1IiKTvbFViXhJLCAmD1aBMshDL7m0YMjOXBkinDhJUrfqCgQiizosPV0kCv1/dB6+nxFH2jeUjCkts6yrx1gw1Z5L4qsHPFR9aIc4OzdELNop5yqSWyugX3dttpLJ3p58nFCowaKZqCZsFed93hkQNa13wSilSbuDPz5+nAWOZrgfL/EenzHYGsj8WGqWAWhMKsoxpjpIHPZVRSaMdQU=;25:kq+VDqPxuTlH2M9sMxXQMp26raIyNKtywUA7yooVdWKQsZEj/Pv3Gpx2qdgQeHaYEoUBEzwvFSlSB/hNGLzDpvEGXyFtbb5ta95H7HjPVt9Fd//GHZwCKzq6z0rOzwRBxIZxTlHDBisQ1it21znsGZBZfc9C0FmBxcwgKiGUweGre4TjmoxqOETzsT5XA5+ytekuxCZgpX2VRi4xnRRYEyiJjqMEXuJAuzYTyQf3tErGGggCgLV+ZKEpIi9yLTZ/8REjj8QkG1WGQnD5+H9YJ9iW4mKS7KPZAx5c2N704IdHxadsxaIwbO48Alejst27y1RsGct+yh9ZFtIYtO25rA==
+X-MS-TrafficTypeDiagnostic: SN6PR02MB5120:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;31:xkhTGV4Rfa0TK2YV93zp+B/AP976kFh4OBfXhibZW4kMrwcamT+FjVb9jNcLzhHVsNmvcV/Jur85fJ4/qlY18/6b40OEZEwl8uyE8YQ6rHdahbvqGG+w0HEZ0pghn5rCZXZvRJ/T9YJSAdMsMC9U4oMF0qOpUSnO5Xy7MhzOpU0YkCeYZXhl88k7NyeM0TDMAzSq9LqBxiem8UTl98/kGFA+Oa80DnIEOBQPuis8R4k=;20:+Xv51c2gCGiOW+PfUF4MpyfMNfegr02jVbswwkRZxt23bJwtk7MXVbYH1K9aV1Q7bIl/Cu0UvoK2Tm5+2EEiig9nyx27TC38hwG5WuC3iOmhtPzYx39DoIouuIgcJCuawPGd7Q+2ZnScJxRRcp4bfUX3FnipDTaP38SRPk1ZOcZXU9vi+zq5AHJzMSIoUW6r5Kehobv3oGmM9eY7fMkrkGdial84paN2qXRupphfhYMyeTgdNQtmAOgztVg2UhgjWWGGd53hlQWppA1ddb8ePsZK9g6x3lk77YpNgx9e3dtgyzJNb1xDW0Flh+SvLgWFPtVwfhOPiNncmW9WxaDKryI6H49DhLYRIY6hxz202L215DxP7FqjDVlKdf2wboRQne6D5CZSjim1Nki/z/gaAy2NPitTfv1XGapaFh8uatzHsBMC8uofPY6lD2x8VAPiO8j8RWLj92unuXTQgNj6yqfNvJoIoq38VDieYoTxKZAQ8PThTXTWp/kTsZrtTsQm
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <SN6PR02MB51208D86544614D7EE6C47B4A7EA0@SN6PR02MB5120.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(10201501046)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051);SRVR:SN6PR02MB5120;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB5120;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;4:IKX7HblrmXKKdSR/IhR/yb2+ZtdAlIeZw9FQ6xv+O1EYSBmv6RTsePVnTnxsVKU1sUiTpJCDBvNHmM23wLQOHeZCugsSaXQFsYNDpcVhf9w9bLIRbCvKEjKz4BoOyCcLwl6hE7GS1Pchvsrhf0M9QrXIeQ8sD4BvGucPe88qvVJTBTIefaiytHprlVd3WI8LsAvlzBkIVTez5GTZVTF/gzia6V47Cbd6p05Q9MbTdZ1FLHfC7F/dg44r7kuhLvrD7lTNYQALsPffhkyed1swgSDMv5TxMpOeSiKKZ0djdGCPeSDJSA6FRlSmI/DVwcTh
+X-Forefront-PRVS: 0815F8251E
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB5120;23:zkZJDZWjdIMKQdQrCSSgnYGco3G4Q24MmGCF3TmHg?=
+ =?us-ascii?Q?APtJptIzsDap9rLbZlGw1P+3/OUu+S+m59TgJghSnITIjZ76RM8UGqxZpEL6?=
+ =?us-ascii?Q?/uZayzPdW6bZ8cM6Kc6QvVZDp7hLUMUWGV2B7aMHoqo/BoSxvT9veTnZjJal?=
+ =?us-ascii?Q?3q1IZihXtQ0VaZHnV/QOMjAFCbTYlBHKV+dsVGR3FJm+3wgUaHP8UgofLQDi?=
+ =?us-ascii?Q?odkLZAaV6F6SFb8L+NMWb35zzLUxwnuqNRMsXQZLe+N7FeLe2pIEsEDcf63Q?=
+ =?us-ascii?Q?Rz+6CimY93VAwI64vT8St1udRMvCzCFZ47WQuCUr4Y9GW50kzAmaIgSPnWCp?=
+ =?us-ascii?Q?Yc3IVUGBgZKKyqpqxcV0YTqoj9Rl0yuqHinRiXx00fGYotPvsINdYtvEUtVf?=
+ =?us-ascii?Q?fb8MiOlde2kNjhQKUuyxq7tXcCh+VZYMJPUqAP5z6WgvPPQqf0RpPatotQ21?=
+ =?us-ascii?Q?ER/c6QKQi8W/KyUhbqL9SNq7qMWPV/dSQ58UaKhhxlWoDO8ArtCJxUrY+Eks?=
+ =?us-ascii?Q?aidf2o/Mv/IU/8ZPCtHqw+H14I7XEH6agVHacN0yIMacK9RotexP4ryQU/R8?=
+ =?us-ascii?Q?rqxR854Dwb+ZHgsZCT3DHsk9pICO5HZzMePWxdnLhlw065+T2Ih0ZL/s9cdS?=
+ =?us-ascii?Q?1utHHAX0dJv7v8/+NOVmvMqV4mLIFnsN8lpsIHyU0oXU45dMZ1INZWcwhbBW?=
+ =?us-ascii?Q?UEY9dehj7JDpReKUtXfERmtYkegWLIDtK6Zi3BupCIxmH3BWkpRJuXYrproE?=
+ =?us-ascii?Q?Vt+5yOw4ASyc8U/ANbMHBk0tdwTyJepcUcjgTSxoYM4KPqNPXctIvrTmZmHN?=
+ =?us-ascii?Q?ploDtIGizBRgpAsCycme8IiCocuAmVKq0LO6etfvaSs2Fr6Rnd+i7GM+R/s0?=
+ =?us-ascii?Q?oi8OHTtGawwoMWG1wfQc3DaJoKBWV+4dKEyPhB4FeDzQbCl+JSS2mUQqXBoh?=
+ =?us-ascii?Q?qnv9sNh8ACi/aoidYvildQcscgUBq4WqqEOYyG+a5u1Mq5S5XTuRGwMB+2rx?=
+ =?us-ascii?Q?WKFrBu77U4eeb5cnb5ZCrYt3W4BGnVOYP8J3dvbSGsf5Inr+PKymIMjXH7l+?=
+ =?us-ascii?Q?LE95PbqYjCozT09yfNii5HQ5JS8AU/CscfAdLo3j3Pk8qdBuDlIZZkikM/Va?=
+ =?us-ascii?Q?3WuVEcyPPw=3D?=
+X-Microsoft-Antispam-Message-Info: oif5Lm94stkybBB2ho/BIybbxwK4hITce2/McYI4oLWLsqMTIACrQSK3+XNxn1VFcoUWFnasCK69KeZSday1p6ZMCtRam8kp1gIhB/MZJ1wcJzxsNvlI3QWrQdeZzhh4AebPFI01+5xNwwRwdJ1RD+tQ2j8siKxVCBO0UVsdmm1twjIVcDKQB3tLtvl7Y2cwcMIj0uNYXyPo8sLsR+mhz2xoAAkiPTFLGPDpHLzYMNPw5YlljAB9f/hutay67umuP1Bd80L4jZmLUYJJUsy36mqhl2h1XNXhL68PAsO/NBiq4WBUOTgPfHQ803NeWjFcrtq6xISmoznzWAwWDJv458dhtWMHAtniHSDlr7fBL8s=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;6:+GbjzBHRT1/QULBDXLyvGuUwspNJdB3IotPWVac3PAogzYPAmssMo74VLXqBKowkA7Pz6LmN9XO5C3laEcvrqDlSDkLaTqX1L+HvQ60aTMe8m2WyQ874THxlTEzWJJjqxv3e02bbj838xYF/vYjwiVNJd8ifEhDqWK5KEeYHUfSugYaZWSDFROSeJN8X+z0fMhldYqPSZyGTiGOg47v8IkkLm5h0YEQEDLtZe538jXICzlinb5yb9L6O8LGL72F86z1I8HL/qNWZzrDtmK4EG5xSpBVcdI+v8qYKx5mcusLSuZIFOYZrtwJKzUkkcxOBR56Ru3EWKQmduzN/Ar5MEz0kQiVUJ3CCgwn94a/2RYOgf2IG1PmKhZN/X1xURbnkV/VMqHJK3wKmdQkn0Sots5lvz9u0Uz29Lfi2FsbWGzt20JmJAgaQ42TCwB+v1Rqtqh2TkF9eTHmJKQpnd5HF3g==;5:am2BzAbDdai1nOx76oeQEu9GucOZy0hlwvQ7LpyMYl98DgWbRbJVTs+EqO901uKRUiyDBzkMLfpFHqdbvF3w37A2rcm4ReUdpz0FQ9hvy8ZSgm0Lzy3/z8LNgKbkRBvn7odZJZSQ12gBahEf9RjmX9anafg8SiB/PiDNXFXP8D0=;7:6Hn42DVYaDeP5hmSUYMBKlhmAPqyP8Prv2WDjL44xWv2qhX0Vv+TrHORDGwv3W4iG/5g9cbm7D1V1SC+CPDDPTg5IIlcpy/V7Q9q6iY+1GFyxCtoQTX1hIm+fbhwQcvf1n+08TmG2sBTx7yqRYKw/mMF6Mp7jWtqNgDyDvOvLHJtISdUoWTHC5K5b+srjpPVSYb43LIRHFScABZpAp9E86ZyeGcMBoubHZ8xPczwNwJuE4yYG8UUc8hMIQRTu3/0
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 06:55:02.2752
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4093
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8d16c8d-ecc0-45af-3a66-08d629c64f0d
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vignesh,
+This patch modifies the xhci_plat_probe() to set the
+controller as wakeup capable if "wakeup-source" is
+added into the device node.
 
-> -----Original Message-----
-> From: Vignesh R [mailto:vigneshr@ti.com]
-> Sent: Wednesday, October 3, 2018 10:26 PM
-> To: Boris Brezillon <boris.brezillon@bootlin.com>; Marek Vasut
-> <marek.vasut@gmail.com>; Rob Herring <robh+dt@kernel.org>
-> Cc: Brian Norris <computersforpeace@gmail.com>; Yogesh Narayan Gaur
-> <yogeshnarayan.gaur@nxp.com>; Linux ARM Mailing List <linux-arm-
-> kernel@lists.infradead.org>; linux-mtd@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Vignesh R
-> <vigneshr@ti.com>
-> Subject: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for mt35xu512ab=
-a
->=20
-> Micron's mt35xu512aba flash is an Octal flash that has x8 IO lines. It su=
-pports
-> read/write over 8 IO lines simulatenously. Add support for Octal read mod=
-e for
-> Micron mt35xu512aba.
-> Unfortunately, this flash is only complaint to SFDP JESD216B and does not=
- seem
-> to support newer JESD216C standard that provides auto detection of Octal
-> mode capabilities and opcodes. Therefore, this capability is manually add=
-ed
-> using new SPI_NOR_OCTAL_READ flag.
->=20
+Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+---
+ drivers/usb/host/xhci-plat.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks for sending the patch-set of adding octal support.
-If possible, can you share the MT35x datasheet?
-
-I also have the patch ready in which I have added support for Read (1-1-8 a=
-nd 1-8-8) protocol and Write (1-1-8 and 1-8-8).
-Also have added support of Octal in driver/spi/spi.c framework.
-
-IMO, we would collaborate our patches.
---
-Regards
-Yogesh Gaur
-
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 11 ++++++++++-
->  include/linux/mtd/spi-nor.h   |  2 ++
->  2 files changed, 12 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.=
-c index
-> aff5e6ff0b2c..4926e805a8cb 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -90,6 +90,7 @@ struct flash_info {
->  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip
-> erase */
->  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
->  #define USE_CLSR		BIT(14)	/* use CLSR command */
-> +#define SPI_NOR_OCTAL_READ	BIT(15)	/* Flash supports Octal Read */
->=20
->  	int	(*quad_enable)(struct spi_nor *nor);
->  };
-> @@ -209,6 +210,7 @@ static inline u8 spi_nor_convert_3to4_read(u8 opcode)
->  		{ SPINOR_OP_READ_1_2_2,	SPINOR_OP_READ_1_2_2_4B },
->  		{ SPINOR_OP_READ_1_1_4,	SPINOR_OP_READ_1_1_4_4B },
->  		{ SPINOR_OP_READ_1_4_4,	SPINOR_OP_READ_1_4_4_4B },
-> +		{ SPINOR_OP_READ_1_1_8,	SPINOR_OP_READ_1_1_8_4B },
->=20
->  		{ SPINOR_OP_READ_1_1_1_DTR,
-> 	SPINOR_OP_READ_1_1_1_DTR_4B },
->  		{ SPINOR_OP_READ_1_2_2_DTR,
-> 	SPINOR_OP_READ_1_2_2_DTR_4B },
-> @@ -1406,7 +1408,7 @@ static const struct flash_info spi_nor_ids[] =3D {
->  	{ "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K |
-> USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
->=20
->  	/* Micron */
-> -	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512, SECT_4K |
-> USE_FSR | SPI_NOR_4B_OPCODES) },
-> +	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512, SECT_4K |
-> USE_FSR
-> +| SPI_NOR_OCTAL_READ | SPI_NOR_4B_OPCODES) },
->=20
->  	/* PMC */
->  	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
-> @@ -3199,6 +3201,13 @@ static int spi_nor_init_params(struct spi_nor *nor=
-,
->  					  SNOR_PROTO_1_1_4);
->  	}
->=20
-> +	if (info->flags & SPI_NOR_OCTAL_READ) {
-> +		params->hwcaps.mask |=3D SNOR_HWCAPS_READ_1_1_8;
-> +		spi_nor_set_read_settings(&params-
-> >reads[SNOR_CMD_READ_1_1_8],
-> +					  0, 8, SPINOR_OP_READ_1_1_8,
-> +					  SNOR_PROTO_1_1_8);
-> +	}
-> +
->  	/* Page Program settings. */
->  	params->hwcaps.mask |=3D SNOR_HWCAPS_PP;
->  	spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP],
-> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h in=
-dex
-> 8b1acf68b7ac..ae9861ed7e0f 100644
-> --- a/include/linux/mtd/spi-nor.h
-> +++ b/include/linux/mtd/spi-nor.h
-> @@ -50,6 +50,7 @@
->  #define SPINOR_OP_READ_1_2_2	0xbb	/* Read data bytes (Dual I/O
-> SPI) */
->  #define SPINOR_OP_READ_1_1_4	0x6b	/* Read data bytes (Quad
-> Output SPI) */
->  #define SPINOR_OP_READ_1_4_4	0xeb	/* Read data bytes (Quad I/O
-> SPI) */
-> +#define SPINOR_OP_READ_1_1_8	0x8b	/* Read data bytes (Octal
-> Output SPI) */
->  #define SPINOR_OP_PP		0x02	/* Page program (up to 256 bytes) */
->  #define SPINOR_OP_PP_1_1_4	0x32	/* Quad page program */
->  #define SPINOR_OP_PP_1_4_4	0x38	/* Quad page program */
-> @@ -73,6 +74,7 @@
->  #define SPINOR_OP_READ_1_2_2_4B	0xbc	/* Read data bytes (Dual I/O
-> SPI) */
->  #define SPINOR_OP_READ_1_1_4_4B	0x6c	/* Read data bytes (Quad
-> Output SPI) */
->  #define SPINOR_OP_READ_1_4_4_4B	0xec	/* Read data bytes (Quad I/O
-> SPI) */
-> +#define SPINOR_OP_READ_1_1_8_4B	0x7c	/* Read data bytes (Octal
-> Output SPI) */
->  #define SPINOR_OP_PP_4B		0x12	/* Page program (up to 256
-> bytes) */
->  #define SPINOR_OP_PP_1_1_4_4B	0x34	/* Quad page program */
->  #define SPINOR_OP_PP_1_4_4_4B	0x3e	/* Quad page program */
-> --
-> 2.19.0
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 94e9392..602e95c 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -210,6 +210,10 @@ static int xhci_plat_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 
++	/* Set the controller as wakeup capable */
++	if (device_property_read_bool(&pdev->dev, "wakeup-source"))
++		device_set_wakeup_capable(&pdev->dev, true);
++
+ 	hcd = __usb_create_hcd(driver, sysdev, &pdev->dev,
+ 			       dev_name(&pdev->dev), NULL);
+ 	if (!hcd) {
+-- 
+2.1.1
 
