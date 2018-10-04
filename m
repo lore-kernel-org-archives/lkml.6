@@ -2,139 +2,76 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7B3C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B6DC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ACBC21470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:45:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ACBC21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 6B34721470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:46:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I9cmM1oy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B34721470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbeJDOhd (ORCPT
+        id S1727701AbeJDOiI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:37:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38630 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727476AbeJDOhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:37:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E3B6CAE0B;
-        Thu,  4 Oct 2018 07:45:35 +0000 (UTC)
-Date:   Thu, 4 Oct 2018 09:45:35 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Paolo Valente <paolo.valente@linaro.org>, aherrmann@suse.com,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181004074535.GB6682@linux-x5ow.site>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <CACRpkdaeYU+Crr75T49WftyOHqCrsyBLBPDBBsJF-RCjmAQEdw@mail.gmail.com>
- <20181003132554.GC21043@quack2.suse.cz>
+        Thu, 4 Oct 2018 10:38:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48280 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbeJDOiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:38:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eZBDnwGr9oVNA7kA7h5byR297Q47nz9SxD+TMpGg3PE=; b=I9cmM1oyIS4RlrOx5ra2WHXbD
+        Z5dpiQoxGh8ftfmtuPIdbLeJBLpIiu4l/CR8LC53OG5wmsj7qBMk37yEVpUS5kENd+a9BAEF6/seW
+        I4gGZgQAsTmsz8of3K3FNSbvt0C5lMIubezIPeKvaFe0A6rZBSG/nx05KaYUSRl5aKi2BmHIy5iV1
+        6cAd6fn0WWn9QxbBQEXW0p8DtYYTJ90CEpbcchf1Ds8cvGlIpJ6Hn1L0lZAc7ftXRIocJ3MgdOjZT
+        Da6qRCXhFaN7rEc1faF5b20LpsCd4DW1eoOd5SWkx8OL2/plaika+zt4pWmJ39eW2bdMuhkx1OuHP
+        ySWUxWiXg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g7yKi-00018M-E7; Thu, 04 Oct 2018 07:46:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E3EFA202666EC; Thu,  4 Oct 2018 09:37:19 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 09:37:19 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [RFC] x86/cpu_entry_area: move part of it back to fixmap
+Message-ID: <20181004073719.GD19272@hirez.programming.kicks-ass.net>
+References: <20181004045948.129142-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181003132554.GC21043@quack2.suse.cz>
+In-Reply-To: <20181004045948.129142-1-namit@vmware.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 03:25:54PM +0200, Jan Kara wrote:
-> On Wed 03-10-18 08:53:37, Linus Walleij wrote:
-> > On Wed, Oct 3, 2018 at 8:29 AM Paolo Valente <paolo.valente@linaro.org> wrote:
-> > 
-> > > So, I do understand your need for conservativeness, but, after so much
-> > > evidence on single-queue devices, and so many years! :), what's the
-> > > point in keeping Linux worse for virtually everybody, by default?
-> > 
-> > I understand if we need to ease things in as well, I don't intend this
-> > change for the current merge window or anything, since v4.19
-> > will notably have this patch:
-> > 
-> > commit d5038a13eca72fb216c07eb717169092e92284f1
-> > Author: Johannes Thumshirn <jthumshirn@suse.de>
-> > Date:   Wed Jul 4 10:53:56 2018 +0200
-> > 
-> >     scsi: core: switch to scsi-mq by default
-> > 
-> >     It has been more than one year since we tried to change the default from
-> >     legacy to multi queue in SCSI with commit c279bd9e406 ("scsi: default to
-> >     scsi-mq"). But due to issues with suspend/resume and performance problems
-> >     it had been reverted again with commit cbe7dfa26eee ("Revert "scsi: default
-> >     to scsi-mq"").
-> > 
-> >     In the meantime there have been a substantial amount of performance
-> >     improvements and suspend/resume got fixed as well, thus we can re-enable
-> >     scsi-mq without a significant performance penalty.
-> > 
-> >     Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-> >     Reviewed-by: Hannes Reinecke <hare@suse.com>
-> >     Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> >     Acked-by: John Garry <john.garry@huawei.com>
-> >     Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> > 
-> > I guess that patch can be a bit scary by itself. But IIUC it all went
-> > fine this time!
-> > 
-> > But hey, if that works, that means $SUBJECT patch will enable BFQ on all
-> > libata devices and any SCSI that is single queue as well, not just
-> > "obscure" stuff like MMC/SD and UBI, and that is
-> > indeed a massive crowd of legacy devices. But we're talking
-> > v4.21 here.
-> > 
-> > Johannes, you might be interested in $SUBJECT patch.
-> > It'd be nice to hear what SUSE people have to add, since they
-> > are pretty proactive in this area.
-> 
-> So we do have a udev rules in our distro which sets the IO scheduler based
-> on device parameters (rotational at least, with blk-mq we might start
-> considering number of queues as well, plus we have some exceptions like
-> virtio, loop, etc.). So the kernel default doesn't concern us too much as a
-> distro.
-> 
-> I personally would consider bfq a safer default for single-queue devices
-> (loop probably needs exception) but I don't feel too strongly about it.
+On Wed, Oct 03, 2018 at 09:59:48PM -0700, Nadav Amit wrote:
+> This patch proposes to do something different: break
+> it into two. One part holds code+data that is needed for the entry
+> (trampoline code, entry stack and TSS), which is mapped in the fixmap.
 
-[Full quote for context]
+> The other part holds the exception_stacks, debug store and buffers, and
+> is left in its current (new) position.
 
-What about resurrecting CONFIG_DEFAULT_IOSCHED for MQ as well and
-leave it default to mq-deadline but give bfq, kyber and none as a
-choice as well?
+> The name
+> "cpu_entry_area_aux" for the second area is awful (ideas are welcomed),
 
-The question is shall we only do it for single queue devices or for
-native MQ devices as well if we go down that road?
-
-I understand the embedded floks will want a different interface than
-udev, but from the non-embedded point of view I'm with Jens and Jan
-here, let udev do the job.
-
-      Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+How about: cpu_data_area ? Since none of that is required for the entry,
+that should also not be part of its name.
