@@ -2,117 +2,184 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1AAC65BA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8ACC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A46E21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:08:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A46E21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EC02421473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:08:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TouK+Ryq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC02421473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeJEACT (ORCPT
+        id S1727972AbeJEACe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:02:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:40364 "EHLO foss.arm.com"
+        Thu, 4 Oct 2018 20:02:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727505AbeJEACT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:02:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E76567A9;
-        Thu,  4 Oct 2018 10:08:09 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74B823F5B3;
-        Thu,  4 Oct 2018 10:08:07 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 18:08:02 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] reset: imx7: Add PCIE_CTRL_APPS_TURNOFF
-Message-ID: <20181004170802.GA12234@e107981-ln.cambridge.arm.com>
-References: <cover.1538670431.git.leonard.crestez@nxp.com>
- <c3a7dfd1395b12e170393a3da77e0d1602b9f542.1538670431.git.leonard.crestez@nxp.com>
- <1538671621.14153.20.camel@pengutronix.de>
+        id S1727415AbeJEACe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 20:02:34 -0400
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1E9F2148C
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 17:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538672904;
+        bh=awmvM9LQKmTDCg6+gCUkwTg6m3a4sQ6SrgY6rTVXxpU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TouK+RyqQFjT+ZNDPTpkUSWFHlxJTVw8DhZ4XlQMA5O8D0tptNuGq5p4H71/qzc56
+         xxliMsKIDTJY5dwmRHVcjz3SEsWvkUPLYss8UPAGLtz8f0rwLPv0m4j3FvBP6O9cf7
+         ApXMFYfakWN6ydwslH178EyR7NXYwhXZMHqygwGg=
+Received: by mail-wm1-f44.google.com with SMTP id y140-v6so2005904wmd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 10:08:24 -0700 (PDT)
+X-Gm-Message-State: ABuFfogAYrP+o7+V1ASphEVNHM4Tcqh4rB604YLxccmLakJ8TKHhQ222
+        fDZAg/Tl2iLndZ2vkNnL1uKaVack9e/etgd9FvcwlQ==
+X-Google-Smtp-Source: ACcGV61zlcSqEAdVesItMTENrJnuVR0ininduiKJybALt3rXNVSgWJTTZSaDgHrA5GnsCX+xTpfvDOR3I1BeM6j8FCE=
+X-Received: by 2002:a1c:d4b:: with SMTP id 72-v6mr5735072wmn.102.1538672902995;
+ Thu, 04 Oct 2018 10:08:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538671621.14153.20.camel@pengutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
+ <20181003190026.GB21381@amt.cnet> <CALCETrXwEDGNry=9KKvWyc7Eot3eEDifkJ234igDLrea2mVfuA@mail.gmail.com>
+ <20181004163705.GA25129@amt.cnet>
+In-Reply-To: <20181004163705.GA25129@amt.cnet>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 4 Oct 2018 10:08:11 -0700
+X-Gmail-Original-Message-ID: <CALCETrWbWLM5Jjm7iJCE7S=BJ9OFw2QQGJ2Ao-qsuaN50z=y0A@mail.gmail.com>
+Message-ID: <CALCETrWbWLM5Jjm7iJCE7S=BJ9OFw2QQGJ2Ao-qsuaN50z=y0A@mail.gmail.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 06:47:01PM +0200, Philipp Zabel wrote:
-> Hi Leonard,
-> 
-> On Thu, 2018-10-04 at 16:34 +0000, Leonard Crestez wrote:
-> > This is required for the imx pci driver to send the PME_Turn_Off TLP.
-> > 
-> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  drivers/reset/reset-imx7.c             | 1 +
-> >  include/dt-bindings/reset/imx7-reset.h | 4 +++-
-> >  2 files changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/reset/reset-imx7.c b/drivers/reset/reset-imx7.c
-> > index 97d9f08271c5..77911fa8f31d 100644
-> > --- a/drivers/reset/reset-imx7.c
-> > +++ b/drivers/reset/reset-imx7.c
-> > @@ -65,10 +65,11 @@ static const struct imx7_src_signal imx7_src_signals[IMX7_RESET_NUM] = {
-> >  	[IMX7_RESET_MIPI_PHY_MRST]	= { SRC_MIPIPHY_RCR, BIT(1) },
-> >  	[IMX7_RESET_MIPI_PHY_SRST]	= { SRC_MIPIPHY_RCR, BIT(2) },
-> >  	[IMX7_RESET_PCIEPHY]		= { SRC_PCIEPHY_RCR, BIT(2) | BIT(1) },
-> >  	[IMX7_RESET_PCIEPHY_PERST]	= { SRC_PCIEPHY_RCR, BIT(3) },
-> >  	[IMX7_RESET_PCIE_CTRL_APPS_EN]	= { SRC_PCIEPHY_RCR, BIT(6) },
-> > +	[IMX7_RESET_PCIE_CTRL_APPS_TURNOFF] = { SRC_PCIEPHY_RCR, BIT(11) },
-> >  	[IMX7_RESET_DDRC_PRST]		= { SRC_DDRC_RCR, BIT(0) },
-> >  	[IMX7_RESET_DDRC_CORE_RST]	= { SRC_DDRC_RCR, BIT(1) },
-> >  };
-> >  
-> >  static struct imx7_src *to_imx7_src(struct reset_controller_dev *rcdev)
-> > diff --git a/include/dt-bindings/reset/imx7-reset.h b/include/dt-bindings/reset/imx7-reset.h
-> > index 63948170c7b2..31b3f87dde9a 100644
-> > --- a/include/dt-bindings/reset/imx7-reset.h
-> > +++ b/include/dt-bindings/reset/imx7-reset.h
-> > @@ -54,9 +54,11 @@
-> >   */
-> >  #define IMX7_RESET_PCIE_CTRL_APPS_EN	22
-> >  #define IMX7_RESET_DDRC_PRST		23
-> >  #define IMX7_RESET_DDRC_CORE_RST	24
-> >  
-> > -#define IMX7_RESET_NUM			25
-> > +#define IMX7_RESET_PCIE_CTRL_APPS_TURNOFF 25
-> > +
-> > +#define IMX7_RESET_NUM			26
-> >  
-> >  #endif
-> 
-> This is contained enough to be merged with the rest of the series,
-> patches 1 and 2:
-> 
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
-> Let me know if I should pick them up instead.
+On Thu, Oct 4, 2018 at 9:43 AM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+>
+> On Wed, Oct 03, 2018 at 03:32:08PM -0700, Andy Lutomirski wrote:
+> > On Wed, Oct 3, 2018 at 12:01 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> > >
+> > > On Tue, Oct 02, 2018 at 10:15:49PM -0700, Andy Lutomirski wrote:
+> > > > Hi Vitaly, Paolo, Radim, etc.,
+> > > >
+> > > > On Fri, Sep 14, 2018 at 5:52 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > > >
+> > > > > Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
+> > > > > implementation, which extended the clockid switch case and added yet
+> > > > > another slightly different copy of the same code.
+> > > > >
+> > > > > Especially the extended switch case is problematic as the compiler tends to
+> > > > > generate a jump table which then requires to use retpolines. If jump tables
+> > > > > are disabled it adds yet another conditional to the existing maze.
+> > > > >
+> > > > > This series takes a different approach by consolidating the almost
+> > > > > identical functions into one implementation for high resolution clocks and
+> > > > > one for the coarse grained clock ids by storing the base data for each
+> > > > > clock id in an array which is indexed by the clock id.
+> > > > >
+> > > >
+> > > > I was trying to understand more of the implications of this patch
+> > > > series, and I was again reminded that there is an entire extra copy of
+> > > > the vclock reading code in arch/x86/kvm/x86.c.  And the purpose of
+> > > > that code is very, very opaque.
+> > > >
+> > > > Can one of you explain what the code is even doing?  From a couple of
+> > > > attempts to read through it, it's a whole bunch of
+> > > > probably-extremely-buggy code that,
+> > >
+> > > Yes, probably.
+> > >
+> > > > drumroll please, tries to atomically read the TSC value and the time.  And decide whether the
+> > > > result is "based on the TSC".
+> > >
+> > > I think "based on the TSC" refers to whether TSC clocksource is being
+> > > used.
+> > >
+> > > > And then synthesizes a TSC-to-ns
+> > > > multiplier and shift, based on *something other than the actual
+> > > > multiply and shift used*.
+> > > >
+> > > > IOW, unless I'm totally misunderstanding it, the code digs into the
+> > > > private arch clocksource data intended for the vDSO, uses a poorly
+> > > > maintained copy of the vDSO code to read the time (instead of doing
+> > > > the sane thing and using the kernel interfaces for this), and
+> > > > propagates a totally made up copy to the guest.
+> > >
+> > > I posted kernel interfaces for this, and it was suggested to
+> > > instead write a "in-kernel user of pvclock data".
+> > >
+> > > If you can get kernel interfaces to replace that, go for it. I prefer
+> > > kernel interfaces as well.
+> > >
+> > > >  And gets it entirely
+> > > > wrong when doing nested virt, since, unless there's some secret in
+> > > > this maze, it doesn't acutlaly use the scaling factor from the host
+> > > > when it tells the guest what to do.
+> > > >
+> > > > I am really, seriously tempted to send a patch to simply delete all
+> > > > this code.
+> > >
+> > > If your patch which deletes the code gets the necessary features right,
+> > > sure, go for it.
+> > >
+> > > > The correct way to do it is to hook
+> > >
+> > > Can you expand on the correct way to do it?
+> > >
+> > > > And I don't see how it's even possible to pass kvmclock correctly to
+> > > > the L2 guest when L0 is hyperv.  KVM could pass *hyperv's* clock, but
+> > > > L1 isn't notified when the data structure changes, so how the heck is
+> > > > it supposed to update the kvmclock structure?
+> > >
+> > > I don't parse your question.
+> >
+> > Let me ask it more intelligently: when the "reenlightenment" IRQ
+> > happens, what tells KVM to do its own update for its guests?
+>
+> Update of what, and why it needs to update anything from IRQ?
+>
+> The update i can think of is from host kernel clocksource,
+> which there is a notifier for.
+>
+>
 
-I can take the whole series but I would like to have it rebased against
-v4.19-rc4 please since it does not apply as it is, thanks.
+Unless I've missed some serious magic, L2 guests see kvmclock, not hv.
+So we have the following sequence of events:
 
-Lorenzo
+ - L0 migrates the whole VM.  Starting now, RDTSC is emulated to match
+the old host, which applies in L1 and L2.
+
+ - An IRQ is queued to L1.
+
+ - L1 acknowledges that it noticed the TSC change.  RDTSC stops being
+emulated for L1 and L2.
+
+ - L2 reads the TSC.  It has no idea that anything changed, and it
+gets the wrong answer.
+
+ - At some point, kvm clock updates.
+
+What prevents this?  Vitaly, am I missing some subtlety of what
+actually happens?
