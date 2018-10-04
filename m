@@ -2,71 +2,71 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF07C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806A7C64EBD
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93B820652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:06:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93B820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 5001C20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:07:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5001C20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbeJDV7t (ORCPT
+        id S1727569AbeJDWBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:59:49 -0400
-Received: from mail-qk1-f174.google.com ([209.85.222.174]:37459 "EHLO
-        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJDV7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:59:49 -0400
-Received: by mail-qk1-f174.google.com with SMTP id x8-v6so5936332qka.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:06:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=xwSEDJR2Egw+s8PCruacdPqlKnjlSHp7X+lyynFTriI=;
-        b=qBz+DZxf6KV8leE22W7hkA+sPJKsfyvS/i7YRLyWclAj2/kp1KwZ0eCSz8p0rnnlo1
-         S9glrtdJ35wuJKHPmWQ60vpctcBxD29exHi6bkovd68GqrLrnJ4jz3keBWDyFyhFQRZy
-         tCx3xN9ejwRxqJZvdbYSgoOQ8I93Hx1hZEUUqPKSa8Enf12KTp93kl9pG+UzvqlaW2Sd
-         ewCV0K6+hCAezEpjcGC0nFo3wu5wfoNB+soI00a48GtFNupm2sTOYc6ieP6Fx+p+LKU7
-         vzAm+XsYONo4tmmcWeiMTxeFlLdlMoabbKpKyNvEzAwE3hChNZYf4Q4x3iWbcmCLicYt
-         jhmQ==
-X-Gm-Message-State: ABuFfohh+WPA+zXbC7W7sQMQMF5PJ4Wijg87Zip/gA+Ttro79MAtO4Z0
-        njUkxsM+mdMQwo++SrAER4yYcYofc7pbUhjdSPc=
-X-Google-Smtp-Source: ACcGV62mR1q2AhfFwrOOYojpcSITN5Hr/iaXoG+oCLIHNoQt8yZlhAOa1rhbUOJtHpMd0oVJkEhVF5iVHb1h2X4TCsQ=
-X-Received: by 2002:a37:2b12:: with SMTP id r18-v6mr5259914qkh.343.1538665567857;
- Thu, 04 Oct 2018 08:06:07 -0700 (PDT)
+        Thu, 4 Oct 2018 18:01:36 -0400
+Received: from muru.com ([72.249.23.125]:58240 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727354AbeJDWBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 18:01:36 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 4C18A809C;
+        Thu,  4 Oct 2018 15:12:23 +0000 (UTC)
+Date:   Thu, 4 Oct 2018 08:07:51 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     Andreas Kemnade <andreas@kemnade.info>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paul@pwsan.com, letux-kernel@openphoenux.org,
+        Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH RFC 0/2] mach-omap2: handle autoidle denial
+Message-ID: <20181004150751.GF5662@atomide.com>
+References: <20181004055147.23048-1-andreas@kemnade.info>
+ <20181004142558.GB5662@atomide.com>
+ <013b01a1-2593-bdc0-dd9a-e5a114388067@ti.com>
 MIME-Version: 1.0
-References: <20181003134553.aqbogomrxqmpgpmo@M43218.corp.atmel.com>
-In-Reply-To: <20181003134553.aqbogomrxqmpgpmo@M43218.corp.atmel.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 4 Oct 2018 17:05:50 +0200
-Message-ID: <CAK8P3a08=FMJUKgSe10d5Nw+626=-pmP7Fy8G6f+_+OtU_VEcQ@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM: at91: DT for 4.20 #2
-To:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <013b01a1-2593-bdc0-dd9a-e5a114388067@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 3:45 PM Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
->
-> Arnd, Olof,
->
-> Here are the second round of DT changes for 4.20. It consists in NAND
-> description fixes (size and partitions).
+* Tero Kristo <t-kristo@ti.com> [181004 14:47]:
+> On 04/10/18 17:25, Tony Lindgren wrote:
+> > It seems we should just provide a generic interface for
+> > clk_allow_autoidle() and clk_deny_autoidle()? Otherwise we'll
+> > be forever stuck with pdata callbacks it seems.
+> 
+> The TI clock driver is actually providing these APIs, so that should be
+> fine. I don't think there is any use / need for pdata callbacks atm, it just
+> happens hwmod core is calling these at the moment which might have confused
+> you.
 
-Pulled into next/dt, thanks!
+Hmm OK. So do we already have some way to deny autoidle for a
+clock from ti-sysc.c driver without pdata callbacks?
 
-       Arnd
+Suman pointed out few days ago that for a reset driver to work
+we must do clkdm_deny_idle() and clkdm_allow_idle() as the hwmod
+code does. I gues that really just boils down to doing clk deny
+idle and allow idle on the clockdomain clkctrl clock?
+
+Regards,
+
+Tony
