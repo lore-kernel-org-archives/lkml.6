@@ -2,134 +2,384 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA2DC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE2EC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF42120877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF42120877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B69A20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:29:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B69A20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlid.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJDSVA (ORCPT
+        id S1727443AbeJDSWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 14:21:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34189 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbeJDSU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 14:20:59 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 226492090A; Thu,  4 Oct 2018 13:28:07 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BF00320890;
-        Thu,  4 Oct 2018 13:27:56 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 13:27:57 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for
- mt35xu512aba
-Message-ID: <20181004132757.16107d10@bbrezillon>
-In-Reply-To: <904391ba-5a12-aee9-966a-17346dded080@ti.com>
-References: <20181003165603.2579-1-vigneshr@ti.com>
-        <20181003165603.2579-2-vigneshr@ti.com>
-        <20181004114535.3a5dba05@bbrezillon>
-        <904391ba-5a12-aee9-966a-17346dded080@ti.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 4 Oct 2018 14:22:20 -0400
+Received: from forward101j.mail.yandex.net ([5.45.198.241]:60243 "EHLO
+        forward101j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727183AbeJDSWU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 14:22:20 -0400
+X-Greylist: delayed 432 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 14:22:17 EDT
+Received: from mxback19j.mail.yandex.net (mxback19j.mail.yandex.net [IPv6:2a02:6b8:0:1619::95])
+        by forward101j.mail.yandex.net (Yandex) with ESMTP id 7DB751245474
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 14:22:15 +0300 (MSK)
+Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
+        by mxback19j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id BIeWRW7fvN-MFrKjSLW;
+        Thu, 04 Oct 2018 14:22:15 +0300
+Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id Ni7tdLC7QB-MEWeSwT2;
+        Thu, 04 Oct 2018 14:22:14 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     AD-Aleksandrov <aleksandr.aleksandrov@emlid.com>
+Subject: [PATCH v2] arm64: new board - Emlid Neutis N5
+Date:   Thu,  4 Oct 2018 14:22:02 +0300
+Message-Id: <1538652122-11224-1-git-send-email-aleksandr.aleksandrov@emlid.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 4 Oct 2018 16:42:22 +0530
-Vignesh R <vigneshr@ti.com> wrote:
+From: AD-Aleksandrov <aleksandr.aleksandrov@emlid.com>
 
-> On Thursday 04 October 2018 03:15 PM, Boris Brezillon wrote:
-> > On Wed, 3 Oct 2018 22:26:01 +0530
-> > Vignesh R <vigneshr@ti.com> wrote:
-> >   
-> >> Micron's mt35xu512aba flash is an Octal flash that has x8 IO lines. It
-> >> supports read/write over 8 IO lines simulatenously. Add support for
-> >> Octal read mode for Micron mt35xu512aba.
-> >> Unfortunately, this flash is only complaint to SFDP JESD216B and does not
-> >> seem to support newer JESD216C standard that provides auto detection of
-> >> Octal mode capabilities and opcodes. Therefore, this capability is
-> >> manually added using new SPI_NOR_OCTAL_READ flag.
-> >>
-> >> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> >> ---
-> >>  drivers/mtd/spi-nor/spi-nor.c | 11 ++++++++++-
-> >>  include/linux/mtd/spi-nor.h   |  2 ++
-> >>  2 files changed, 12 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> >> index aff5e6ff0b2c..4926e805a8cb 100644
-> >> --- a/drivers/mtd/spi-nor/spi-nor.c
-> >> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> >> @@ -90,6 +90,7 @@ struct flash_info {
-> >>  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip erase */
-> >>  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
-> >>  #define USE_CLSR		BIT(14)	/* use CLSR command */
-> >> +#define SPI_NOR_OCTAL_READ	BIT(15)	/* Flash supports Octal Read */  
-> > 
-> > Hm, we'll need to clarify what OCTAL means. I see at least 3 different
-> > modes using 8 IO lines (1-1-8, 1-8-8 and 8-8-8) and all of them could
-> > be qualified as "octal" modes.
-> > So how about renaming this macro SPI_NOR_1_1_8_READ.
-> >   
-> 
-> My understanding is that, if a flash is Octal IO capable, then it
-> supports all mode of Octal IO (1-1-8, 1-8-8 and 8-8-8). At least in the
-> current code, I see SPI_NOR_QUAD_READ seems to imply 1-1-4, 1-4-4 and
-> 4-4-4 modes.
+Emlid Neutis N5 is a SoM based on Allwinner H5, has a WiFi & BT
+module, DDR3 RAM and eMMC.
 
-I already have one NOR which is not following this rule (mx25uw51245g)
-and is only supporting 1-1-1 and 8-8-8, nothing in between.
+- add neutis n5 dtsi file for SoM needs
+- add neutis devboard dts file
+- add neutis devboard target to dtb makefile
+- new vendor prefix - emlid
 
-> Moreover, these capabilities should be auto discoverable once flash
-> start populating SFDP JESD216C tables (IIRC, JESD216B already takes care
-> of QUAD IO modes). So, I don't think we need different flags for 1-1-8,
-> 1-8-8 and 8-8-8. Please let me if that's not the case.
+Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+---
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../sun50i-h5-emlid-neutis-n5-devboard.dts         | 184 +++++++++++++++++++++
+ .../dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi   |  96 +++++++++++
+ 4 files changed, 282 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
 
-Except we already have NORs out there that do not have a valid SFDP
-table but still support a subset of the octal modes (mx25uw51245g is in
-this case, but I'm pretty sure there are others).
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2c3fc51..2336e44 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -112,6 +112,7 @@ edt	Emerging Display Technologies
+ eeti	eGalax_eMPIA Technology Inc
+ elan	Elan Microelectronic Corp.
+ embest	Shenzhen Embest Technology Co., Ltd.
++emlid	Emlid, Ltd.
+ emmicro	EM Microelectronic
+ emtrion	emtrion GmbH
+ energymicro	Silicon Laboratories (formerly Energy Micro AS)
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index 9ffa7a0..e0b6a0d 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-emlid-neutis-n5-devboard.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+new file mode 100644
+index 0000000..493947c
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
+@@ -0,0 +1,184 @@
++/*
++ * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++#include "sun50i-h5-emlid-neutis-n5.dtsi"
++
++/ {
++	model = "Emlid Neutis N5 Developer board";
++	compatible = "emlid,emlid-neutis-n5-devboard",
++		"emlid,emlid-neutis-n5",
++		"allwinner,sun50i-h5";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
++	reg_usb0_vbus: usb0-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb0-vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		enable-active-high;
++		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>;   /* PL9 */
++		status = "okay";
++	};
++
++	vdd_cpux: gpio-regulator {
++		compatible = "regulator-gpio";
++		pinctrl-names = "default";
++		regulator-name = "vdd-cpux";
++		regulator-type = "voltage";
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-ramp-delay = <50>; /* 4ms */
++		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
++		gpios-states = <0x1>;
++		states = <1100000 0x0
++			  1300000 0x1>;
++	};
++};
++
++&codec {
++	allwinner,audio-routing =
++		"Line Out", "LINEOUT",
++		"LINEIN", "Line In",
++		"MIC1", "Mic",
++		"MIC2", "Mic",
++		"Mic",  "MBIAS";
++	status = "okay";
++};
++
++&de {
++	status = "okay";
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&ehci1 {
++	status = "okay";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
++&ehci3 {
++	status = "okay";
++};
++
++&ohci0 {
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&ohci3 {
++	status = "okay";
++};
++
++&emac {
++	phy-handle = <&int_mii_phy>;
++	phy-mode = "mii";
++	allwinner,leds-active-low;
++	status = "okay";
++};
++
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
++&mmc0 {
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usbphy {
++	usb0_id_det-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
++	usb0_vbus-supply = <&reg_usb0_vbus>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
+new file mode 100644
+index 0000000..8e1e37d
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
+@@ -0,0 +1,96 @@
++/*
++ * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++#include "sun50i-h5.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	reg_vcc3v3: vcc3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		reset-gpios = <&pio 2 7 GPIO_ACTIVE_LOW>; /* PC7 */
++		post-power-on-delay-ms = <200>;
++	};
++};
++
++&mmc1 {
++	vmmc-supply = <&reg_vcc3v3>;
++	vqmmc-supply = <&reg_vcc3v3>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++
++	brcmf: wifi@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++		interrupt-parent = <&r_pio>;
++		interrupts = <0 5 IRQ_TYPE_LEVEL_LOW>;	/* PL5 */
++		interrupt-names = "host-wake";
++	};
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
++	status = "okay";
++};
+-- 
+2.7.4
 
-> 
-> For this patch, I wanted to start small and support only 1-1-8 mode
-> which is the easiest.
-
-Which is fine, just wanted to know what SPI_NOR_OCTAL_READ meant.
-
-> 
-> 
-> > Also, I fear we'll soon run out of bits in ->flags if we keep adding
-> > one flag per mode which is why I proposed a solution to let flash
-> > chips tweak the flash parameters as they wish [1][2]. I'm not saying we
-> > should do it now, but we should definitely plan for something like that.
-> > 
-> > [1]https://github.com/bbrezillon/linux/commit/9c672e4c85a91f1b0803c9c6e4b8f3aae5d79ffb
-> > [2]https://github.com/bbrezillon/linux/commit/3a5515c8821314c06a3d84f9861aefe476bb711e
-> >   
-> 
-> Hmm, it almost seems like Macronix flash warrants its own driver now.
-> 
-
-Actually, we already have quite a bit of code that is vendor (and even
-chip) specific in spi-nor.c, and I indeed think it would be beneficial
-to have one driver per manufacturer so that the core is not polluted by
-those chip/manufacturer specific hacks. The thing is, the spi_nor
-interface (and the way hwcaps selection works) is not ready for that.
