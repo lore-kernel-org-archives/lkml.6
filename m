@@ -8,66 +8,68 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D282C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB234C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B696720652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B2920652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaMKpe7x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B696720652
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0/y5dp2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B2920652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeJEAvj (ORCPT
+        id S1727841AbeJEAvm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:51:39 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36266 "EHLO
+        Thu, 4 Oct 2018 20:51:42 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55490 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbeJEAvj (ORCPT
+        with ESMTP id S1727624AbeJEAvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:51:39 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a8-v6so5898705wmf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 10:57:17 -0700 (PDT)
+        Thu, 4 Oct 2018 20:51:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 206-v6so9890555wmb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 10:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aZivVnlNha4ZCurNBHw/tfWfbsCUyglvmtQ7cMFSUJc=;
-        b=EaMKpe7xI0EBcuy5HpqroXrgQUEaGCvZJol3MD1bjDwsmebwyZxZbyv0gQK4xv32cm
-         C1qRPmJkktO8cLMU0hvVlDFUjOLbPfiggoAoTgCb7P0NjONOLvZjBm2T6+rjKblCsc2F
-         Ki/SF+Dc2AXhjjb02rDr/0MQLD4YNK0Yyn+9o8VgtcTOyunntCqHjEC8eftOob+0sZMG
-         O9W5WuiH+JZFIzWObO7UxKSIvanKQJXXXBemR5CYw0Anz4I2lDvSrB9LItucHoohM5hX
-         ActcsVls21IKuQ8lryZ8GLjjPRkwdU57RmCxMLCdfIn+YFWqwFrBhEFGU+9OlZiqBhSZ
-         DHsQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z7c4cPtMAJjhFJ2kJ9mNencpwCvqYGc9xJWGq2HXmQQ=;
+        b=H0/y5dp2XY738ieLkdhobUIKhdzTGz3S1tXlLxqYdDaXeKpyjOs/YFQKeoeW+SQbXd
+         kaSzJdUenx3+nLWBcG9oDL3FV0Wj5SNrnOq3vqDehbdj7SVBuT0gwbcVcdNZeUhdXzFm
+         od27Emuu0N2OI8hfNFZ/vpVkTlaESJSKAcOcpbKVxZ0xiGRDZDr46C1aATPdubtrcb4B
+         EhAnkEQe3FZKPQp5XprLHpNM6xBFUI0foPCMouRxD/SZpWAN5BMX55bj0QEY2lV3CCNN
+         qJWXJCZb2AVGm9cy/KPt25WfnoH+L9l04RtbZPJ8Ivr32lAfE2kYfTXE8yT+TbxD+w8i
+         QVTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aZivVnlNha4ZCurNBHw/tfWfbsCUyglvmtQ7cMFSUJc=;
-        b=kpfcftGqRoTCaqQEl/WdQuiNUVZ5TY06XbBJVAdEqV/0FYnY98bKuts0KVrnAORMvx
-         1R663FV4GG3aM3tVsIrdu4mE2IgsHYBmzhG1vb8G6/Ul0mooPSKxfAk2OAT9mq7gqPyj
-         iLeLFdWNEwR2Tb+ADJRgbG8Hnofzo5j/nftsDd9fWIYJODsPuWPPJXlAxfxq6iSNEDXk
-         gjiRE19+UdU0ka1VJgVRd0QjSg7M0Rwf+Ef3yt/qv4vildTHgjyaythKDLzUHdvSVIq+
-         DI+efh3IkjodGSqfby6bMqLU5YODf8w8R7FDHTZBpIOHRBWzIR2QiCuxEJUL4qCew8tU
-         aipQ==
-X-Gm-Message-State: ABuFfogUpSxX0bALXh+xQe6fWMq1rVj03fmVjE9ixIsbZapSIus0YNsb
-        GozdWmcZH4E1ia7XUCmLuIA86fzg
-X-Google-Smtp-Source: ACcGV62WhRpG2jp4BUhezCleUHpB2uIkSxp40fbAdHKo78+q27L4GJZfdOofuU5fxclCvGmI0MsWcQ==
-X-Received: by 2002:a1c:3795:: with SMTP id e143-v6mr5657053wma.9.1538675837278;
-        Thu, 04 Oct 2018 10:57:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z7c4cPtMAJjhFJ2kJ9mNencpwCvqYGc9xJWGq2HXmQQ=;
+        b=cMfCRyEc4PbVyGjnDVbZJtbXDpW0vBhbpbIdLWjwAi9G7D/ma82Dlo28KqE8vEmxhT
+         XGPL7YmKZADPcELGpv3yyrLJHiwXNZACQx02+C8QYFck9r40SdDI/PR3KslOmaFYGCcw
+         GIQk8hRr95nxmcM888IeAGOdXcnLIXPXrlTk9RGIRy67exBRW1ONLRXK0dU1jNirZn2b
+         h3s5UhQdB93CAWfbR8d5deQdDxW41bdpRZEdsPVELdab1dilaRjRfpDx9+6r/goEzp4B
+         tmV8DA8tcc/MwLRRNkX+i5IQdkY1Er3WKGLtU0z/1cxFTtaLxWHyRX3v+ybaceNWadtw
+         +5fw==
+X-Gm-Message-State: ABuFfohFsRnIP0QG3osz9eS3dO8Egbcf4KDXlCDWHUlZFVaL6t6XSnF4
+        g4ExaQ+hEnySfewySH2k91SSW/Ya
+X-Google-Smtp-Source: ACcGV62VwwbDmBrJBEIEf8cE3nMU76Ba4/3RXnKQbRp8WfUXRQU5JjpSzV8G4ye4BkycOIKkBV6/Ag==
+X-Received: by 2002:a1c:838a:: with SMTP id f132-v6mr5750122wmd.51.1538675838486;
+        Thu, 04 Oct 2018 10:57:18 -0700 (PDT)
 Received: from localhost.localdomain (ip1f12fa7d.dynamic.kabel-deutschland.de. [31.18.250.125])
-        by smtp.gmail.com with ESMTPSA id o63-v6sm3697353wmd.3.2018.10.04.10.57.16
+        by smtp.gmail.com with ESMTPSA id o63-v6sm3697353wmd.3.2018.10.04.10.57.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 10:57:16 -0700 (PDT)
+        Thu, 04 Oct 2018 10:57:17 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 1/4] staging: rtl8188eu: change array type to const u8
-Date:   Thu,  4 Oct 2018 19:56:57 +0200
-Message-Id: <20181004175700.1500-1-straube.linux@gmail.com>
+Subject: [PATCH 2/4] staging: rtl8188eu: make struct field of mlme_handler const
+Date:   Thu,  4 Oct 2018 19:56:58 +0200
+Message-Id: <20181004175700.1500-2-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181004175700.1500-1-straube.linux@gmail.com>
+References: <20181004175700.1500-1-straube.linux@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,60 +77,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the type of MCS_rate_1R from unsigned char to const u8.
+The strings in the uses of struct mlme_handler are constant.
+Change the type of field str from 'char *' to 'const char *'.
 
 Suggested-by: Joe Perches <joe@perches.com>
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
+ drivers/staging/rtl8188eu/include/rtw_mlme_ext.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-NOTE:
-This series depends on the previous sent series.
-[1/3] staging: rtl8188eu: fix line over 80 characters - style
-
- drivers/staging/rtl8188eu/core/rtw_mlme.c     | 2 +-
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 2 +-
- drivers/staging/rtl8188eu/include/rtw_mlme.h  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index 858b597cb506..6302be43c2e0 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -20,7 +20,7 @@
- #include <rtw_ioctl_set.h>
- #include <linux/vmalloc.h>
+diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+index ade68af15e04..3e8a0ab46ff2 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+@@ -232,7 +232,7 @@ enum SCAN_STATE {
  
--extern unsigned char	MCS_rate_1R[16];
-+extern const u8 MCS_rate_1R[16];
- 
- int rtw_init_mlme_priv(struct adapter *padapter)
- {
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index c6945164ee34..6790b840aef8 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -39,7 +39,7 @@ extern unsigned char REALTEK_96B_IE[];
- /********************************************************
- MCS rate definitions
- *********************************************************/
--unsigned char MCS_rate_1R[16] = {
-+const u8 MCS_rate_1R[16] = {
- 	0xff, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
- 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+ struct mlme_handler {
+ 	unsigned int   num;
+-	char *str;
++	const char *str;
+ 	unsigned int (*func)(struct adapter *adapt, struct recv_frame *frame);
  };
-diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme.h b/drivers/staging/rtl8188eu/include/rtw_mlme.h
-index 49d23aef47df..8d9d663f0645 100644
---- a/drivers/staging/rtl8188eu/include/rtw_mlme.h
-+++ b/drivers/staging/rtl8188eu/include/rtw_mlme.h
-@@ -214,7 +214,7 @@ void hostapd_mode_unload(struct adapter *padapter);
- extern unsigned char WPA_TKIP_CIPHER[4];
- extern unsigned char RSN_TKIP_CIPHER[4];
- extern unsigned char REALTEK_96B_IE[];
--extern unsigned char	MCS_rate_1R[16];
-+extern const u8 MCS_rate_1R[16];
  
- void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf);
- void rtw_survey_event_callback(struct adapter *adapter, u8 *pbuf);
 -- 
 2.19.0
 
