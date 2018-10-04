@@ -2,86 +2,101 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E18C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEB0C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0CC2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0CC2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E5982082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNC0YrS/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5982082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeJDVDv (ORCPT
+        id S1727753AbeJDVD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:03:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49990 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727355AbeJDVDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:03:51 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6F5A512F8E4;
-        Thu,  4 Oct 2018 14:10:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 622B41084288;
-        Thu,  4 Oct 2018 14:10:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <153861496327.30373.10501882399296347125.stgit@noble>
-References: <153861496327.30373.10501882399296347125.stgit@noble> <153861471803.30373.6184444014227748848.stgit@noble>
-To:     NeilBrown <neilb@suse.com>
-Cc:     dhowells@redhat.com, "J. Bruce Fields" <bfields@fieldses.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, linux-nfs@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-afs@lists.infradead.org, coda@cs.cmu.edu,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 1/3] VFS: introduce MAY_ACT_AS_OWNER
+        Thu, 4 Oct 2018 17:03:58 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36824 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbeJDVD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 17:03:57 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a8-v6so5186033wmf.1;
+        Thu, 04 Oct 2018 07:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EP+hAHkqhC4uHVQ+14r5ce+EW1DJ7+BFMjEeH7ku7Ow=;
+        b=GNC0YrS/fivTUvcFs4FOTPGP+tygk4D+qdwmoYa66UjXxHrsiZmU0t5Q2WhLQyCa+3
+         dilHxjUyFVMXvZDMbMZLXySNsdARH6o4TFNDqusdZeoE3NeYuEs80xosZ0gwDvz1VIZR
+         /9KEk3s9/idMUxGtnSQBt90O1qVdnUBTHVaWMlbkfXINMrAryaqRgA12CpJ66Q1qkcOZ
+         Oa7gXKnk7ge7pl0d5aoHChYi4MLHGLR2pg8C+RyGyDpF7pcriyDK8fV92srA+YFs2E6l
+         md1oUgNh1dtPmh0gypFcWBj447hywL17z16Gf+yKZQBp8zStBJa4CGSjN1AZs+4PyniK
+         vEPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EP+hAHkqhC4uHVQ+14r5ce+EW1DJ7+BFMjEeH7ku7Ow=;
+        b=PADb40/za+sLS3nLDzEHd0TFHhs1bad9unQbA652EM+Z1XLDs8tykUdnux4JlBOOEh
+         bpqqUlSHh25Ls6iveRTEJ54KFP5d2C4tq9YY8Mxn1klIdTPlId1sBhDPjVI7ROJtlBfS
+         pm07niZNR0rK6lro/cHpY4BG2/Nrvcs3djic5hrta9IKy/nqNfNVPbl1XvAj9hg7DlLI
+         5EaP57FKI/HA3jZR5SDftmAYQwdMGR5Rlo9wxXaf8u41a0bZhxS6YaHB8GFvrdMfVvso
+         jO8rBiky/3nQonIH7NrwIpcqHgEECHPbdZB44pAqP3ZIGlQnuLZkmrMx7D0/Whre2LTb
+         chRA==
+X-Gm-Message-State: ABuFfojO9429S5tnljEai5t7I2wvOkrl0uO5mdCffeaX51dux330c6s2
+        lBat2+w7LiKWzEa/TH9ViIo8jvNPhbJo1eLiJywTbQ==
+X-Google-Smtp-Source: ACcGV62b9D5Jd54HohKbxEqVY76PvJ4l8tsQNOXFddfeUe8fW8Y1xrttBCKfYpHp2toclw+1jNf2mFbP4ogrxikOW84=
+X-Received: by 2002:a1c:3745:: with SMTP id e66-v6mr4642131wma.142.1538662227225;
+ Thu, 04 Oct 2018 07:10:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <28762.1538662213.1@warthog.procyon.org.uk>
-Date:   Thu, 04 Oct 2018 15:10:13 +0100
-Message-ID: <28763.1538662213@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 04 Oct 2018 14:10:22 +0000 (UTC)
+References: <20181004134223.17735-1-michael@schupikov.de>
+In-Reply-To: <20181004134223.17735-1-michael@schupikov.de>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Thu, 4 Oct 2018 16:10:14 +0200
+Message-ID: <CAFLxGvw6tsdO2rqH1XzW84jN5kRqjzMP+cLtKhkDU1MtYUgJow@mail.gmail.com>
+Subject: Re: [PATCH] kernel/sysctl.c: remove duplicated include
+To:     michael@schupikov.de
+Cc:     mcgrof@kernel.org, Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NeilBrown <neilb@suse.com> wrote:
+On Thu, Oct 4, 2018 at 3:48 PM Michael Schupikov <michael@schupikov.de> wrote:
+>
+> Remove one include of <linux/pipe_fs_i.h>.
+> No functional changes.
+>
+> Signed-off-by: Michael Schupikov <michael@schupikov.de>
+> ---
+>  kernel/sysctl.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index cc02050fd0c4..523cb36b72eb 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -66,7 +66,6 @@
+>  #include <linux/kexec.h>
+>  #include <linux/bpf.h>
+>  #include <linux/mount.h>
+> -#include <linux/pipe_fs_i.h>
+>
+>  #include <linux/uaccess.h>
+>  #include <asm/processor.h>
 
-> diff --git a/fs/afs/security.c b/fs/afs/security.c
-> index 81dfedb7879f..ac2e39de8bff 100644
-> --- a/fs/afs/security.c
-> +++ b/fs/afs/security.c
-> @@ -349,6 +349,16 @@ int afs_permission(struct inode *inode, int mask)
->  	if (mask & MAY_NOT_BLOCK)
->  		return -ECHILD;
->  
-> +	/* Short-circuit for owner */
-> +	if (mask & MAY_ACT_AS_OWNER) {
-> +		if (inode_owner_or_capable(inode))
+Reviewed-by: Richard Weinberger <richard@nod.at>
 
-You don't know that inode->i_uid in meaningful.  You may have noticed that
-afs_permission() ignores i_uid and i_gid entirely.  It queries the server (if
-this information is not otherwise cached) to ask what permits the user is
-granted - where the user identity is defined by the key returned from
-afs_request_key()[*].
-
-So, NAK for the afs piece.
-
-David
-
-[*] If there's no appropriate key, anonymous permits will be used.
+-- 
+Thanks,
+//richard
