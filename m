@@ -2,67 +2,139 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A37C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7B3C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99AA21470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A99AA21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4ACBC21470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:45:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ACBC21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbeJDOgz (ORCPT
+        id S1727674AbeJDOhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:36:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38526 "EHLO mx1.suse.de"
+        Thu, 4 Oct 2018 10:37:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38630 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727589AbeJDOgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:36:55 -0400
+        id S1727476AbeJDOhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:37:33 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7A174AC36;
-        Thu,  4 Oct 2018 07:44:58 +0000 (UTC)
-Date:   Thu, 4 Oct 2018 09:44:57 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Randomize free memory
-Message-ID: <20181004074457.GD22173@dhcp22.suse.cz>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
+        by mx1.suse.de (Postfix) with ESMTP id E3B6CAE0B;
+        Thu,  4 Oct 2018 07:45:35 +0000 (UTC)
+Date:   Thu, 4 Oct 2018 09:45:35 +0200
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Paolo Valente <paolo.valente@linaro.org>, aherrmann@suse.com,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, mgorman@suse.com,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+Message-ID: <20181004074535.GB6682@linux-x5ow.site>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+ <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <CACRpkdaeYU+Crr75T49WftyOHqCrsyBLBPDBBsJF-RCjmAQEdw@mail.gmail.com>
+ <20181003132554.GC21043@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181003132554.GC21043@quack2.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-10-18 19:15:18, Dan Williams wrote:
-> Changes since v1:
-> * Add support for shuffling hot-added memory (Andrew)
-> * Update cover letter and commit message to clarify the performance impact
->   and relevance to future platforms
+On Wed, Oct 03, 2018 at 03:25:54PM +0200, Jan Kara wrote:
+> On Wed 03-10-18 08:53:37, Linus Walleij wrote:
+> > On Wed, Oct 3, 2018 at 8:29 AM Paolo Valente <paolo.valente@linaro.org> wrote:
+> > 
+> > > So, I do understand your need for conservativeness, but, after so much
+> > > evidence on single-queue devices, and so many years! :), what's the
+> > > point in keeping Linux worse for virtually everybody, by default?
+> > 
+> > I understand if we need to ease things in as well, I don't intend this
+> > change for the current merge window or anything, since v4.19
+> > will notably have this patch:
+> > 
+> > commit d5038a13eca72fb216c07eb717169092e92284f1
+> > Author: Johannes Thumshirn <jthumshirn@suse.de>
+> > Date:   Wed Jul 4 10:53:56 2018 +0200
+> > 
+> >     scsi: core: switch to scsi-mq by default
+> > 
+> >     It has been more than one year since we tried to change the default from
+> >     legacy to multi queue in SCSI with commit c279bd9e406 ("scsi: default to
+> >     scsi-mq"). But due to issues with suspend/resume and performance problems
+> >     it had been reverted again with commit cbe7dfa26eee ("Revert "scsi: default
+> >     to scsi-mq"").
+> > 
+> >     In the meantime there have been a substantial amount of performance
+> >     improvements and suspend/resume got fixed as well, thus we can re-enable
+> >     scsi-mq without a significant performance penalty.
+> > 
+> >     Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> >     Reviewed-by: Hannes Reinecke <hare@suse.com>
+> >     Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> >     Acked-by: John Garry <john.garry@huawei.com>
+> >     Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+> > 
+> > I guess that patch can be a bit scary by itself. But IIUC it all went
+> > fine this time!
+> > 
+> > But hey, if that works, that means $SUBJECT patch will enable BFQ on all
+> > libata devices and any SCSI that is single queue as well, not just
+> > "obscure" stuff like MMC/SD and UBI, and that is
+> > indeed a massive crowd of legacy devices. But we're talking
+> > v4.21 here.
+> > 
+> > Johannes, you might be interested in $SUBJECT patch.
+> > It'd be nice to hear what SUSE people have to add, since they
+> > are pretty proactive in this area.
+> 
+> So we do have a udev rules in our distro which sets the IO scheduler based
+> on device parameters (rotational at least, with blk-mq we might start
+> considering number of queues as well, plus we have some exceptions like
+> virtio, loop, etc.). So the kernel default doesn't concern us too much as a
+> distro.
+> 
+> I personally would consider bfq a safer default for single-queue devices
+> (loop probably needs exception) but I don't feel too strongly about it.
 
-I believe this hasn't addressed my questions in
-http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
-"
-It is the more general idea that I am not really sure about. First of
-all. Does it make _any_ sense to randomize 4MB blocks by default? Why
-cannot we simply have it disabled? Then and more concerning question is,
-does it even make sense to have this randomization applied to higher
-orders than 0? Attacker might fragment the memory and keep recycling the
-lowest order and get the predictable behavior that we have right now.
-"
+[Full quote for context]
 
-> [1]: https://lkml.org/lkml/2018/9/15/366
+What about resurrecting CONFIG_DEFAULT_IOSCHED for MQ as well and
+leave it default to mq-deadline but give bfq, kyber and none as a
+choice as well?
+
+The question is shall we only do it for single queue devices or for
+native MQ devices as well if we go down that road?
+
+I understand the embedded floks will want a different interface than
+udev, but from the non-embedded point of view I'm with Jens and Jan
+here, let udev do the job.
+
+      Johannes
 -- 
-Michal Hocko
-SUSE Labs
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
