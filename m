@@ -2,156 +2,148 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AFAC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5E8C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC1E22084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:34:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1E22084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 413CA2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:35:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="eVzfrA9h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413CA2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeJEC3J (ORCPT
+        id S1727691AbeJEC3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:29:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34696 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727528AbeJEC3I (ORCPT
+        Thu, 4 Oct 2018 22:29:45 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:33778 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbeJEC3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:29:08 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w94JTr8m014494
-        for <linux-kernel@vger.kernel.org>; Thu, 4 Oct 2018 15:34:26 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mwrs994cq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 15:34:26 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 4 Oct 2018 15:34:25 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 4 Oct 2018 15:34:08 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w94JY7Ae24117308
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 4 Oct 2018 19:34:07 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 14C9AB2064;
-        Thu,  4 Oct 2018 15:32:17 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EAC5CB206A;
-        Thu,  4 Oct 2018 15:32:16 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.172])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  4 Oct 2018 15:32:16 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B8DDA16C3757; Thu,  4 Oct 2018 12:34:07 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 12:34:07 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: mousedev - add a schedule point in
- mousedev_write()
-Reply-To: paulmck@linux.ibm.com
-References: <20181004154749.111595-1-edumazet@google.com>
- <20181004185949.GA233675@dtor-ws>
+        Thu, 4 Oct 2018 22:29:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BuQLrtChRyBTYyuIDcmVQimPper4LvVNyYDui4Vrnbw=; b=eVzfrA9hJG2ZzbhxL38+6OJZz
+        eNqBoA75HNA/gdm+7kwByDRlj1dTjVb3gGI2XwK8Y37qThGR1b9E+yt+kKULqjXd+mwvg52odJUny
+        AhZL+puW3nzzWqcg9gssxoPEJnWdPeUWi02T8QDeCEkL9Qg/EypdNd4aKyBUbdRrmHmHY=;
+Received: from pd9e2f808.dip0.t-ipconnect.de ([217.226.248.8] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g89Og-0006NZ-9k; Thu, 04 Oct 2018 21:34:54 +0200
+Date:   Thu, 4 Oct 2018 21:34:48 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
+        <tony@atomide.com>, <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH RFC 1/2] clk: ti: add a usecount for autoidle
+Message-ID: <20181004213448.55c08208@aktux>
+In-Reply-To: <d3119268-2716-c5e6-5ed8-28495f597fb0@ti.com>
+References: <20181004055147.23048-1-andreas@kemnade.info>
+        <20181004055147.23048-2-andreas@kemnade.info>
+        <d3119268-2716-c5e6-5ed8-28495f597fb0@ti.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004185949.GA233675@dtor-ws>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18100419-0052-0000-0000-0000033C82F1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009822; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01097881; UDB=6.00567814; IPR=6.00877921;
- MB=3.00023616; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-04 19:34:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100419-0053-0000-0000-00005E4BD1F5
-Message-Id: <20181004193407.GK2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810040174
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DI2+y_6kLlI.i7YQdkdRjJF"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 11:59:49AM -0700, Dmitry Torokhov wrote:
-> Hi Eric,
-> 
-> On Thu, Oct 04, 2018 at 08:47:49AM -0700, Eric Dumazet wrote:
-> > syzbot was able to trigger rcu stalls by calling write()
-> > with large number of bytes.
-> > 
-> > Add a cond_resched() in the loop to avoid this.
-> 
-> I think this simply masks a deeper issue. The code fetches characters
-> from userspace in a loop, takes a lock, quickly places response in an
-> output buffer, and releases interrupt. I do not see why this should
-> cause stalls as we do not hold spinlock/interrupts off for extended
-> period of time.
-> 
-> Adding Paul so he can straighten me out...
+--Sig_/DI2+y_6kLlI.i7YQdkdRjJF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If you are running a !PREEMPT kernel, then you need the cond_resched()
-to allow the scheduler to choose someone else to run if needed and
-to let RCU know that grace periods can end.  Without the cond_resched(),
-if you stay in that loop long enough you will get excessive scheduling
-latencies and eventually even RCU CPU stall warning splats.
+Hi,
 
-In a PREEMPT (instead of !PREEMPT) kernel, you would be right.  When
-preemption is enabled, the scheduler can preempt and RCU can sense
-lack of readers from the scheduling-clock interrupt handler.  Which
-is why cond_resched() is nothingness in a PREEMPT kernel.
+On Thu, 4 Oct 2018 17:40:06 +0300
+Tero Kristo <t-kristo@ti.com> wrote:
 
-But because people run !PREEMPT as well as PREEMPT kernels, if that loop
-can run for a long time, you need that cond_resched().
-
-							Thanx, Paul
-
-> > Link: https://lkml.org/lkml/2018/8/23/1106
-> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
-> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > Cc: linux-input@vger.kernel.org
+> On 04/10/18 08:51, Andreas Kemnade wrote:
+> > We have the scenario that first autoidle is disabled for all clocks,
+> > then it is disabled for selected ones and then enabled for all. So
+> > we should have some counting here, also according to the
+> > comment in  _setup_iclk_autoidle()
+> >=20
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > > ---
-> >  drivers/input/mousedev.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
-> > index e08228061bcdd2f97aaadece31d6c83eb7539ae5..412fa71245afe26a7a8ad75705566f83633ba347 100644
-> > --- a/drivers/input/mousedev.c
-> > +++ b/drivers/input/mousedev.c
-> > @@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file *file, const char __user *buffer,
-> >  		mousedev_generate_response(client, c);
-> >  
-> >  		spin_unlock_irq(&client->packet_lock);
-> > +		cond_resched();
-> >  	}
-> >  
-> >  	kill_fasync(&client->fasync, SIGIO, POLL_IN);
-> > -- 
-> > 2.19.0.605.g01d371f741-goog
-> > 
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
-> 
+> >   drivers/clk/ti/autoidle.c | 20 ++++++++++++--------
+> >   include/linux/clk/ti.h    |  1 +
+> >   2 files changed, 13 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+> > index 7bb9afbe4058..be2ce42e4f33 100644
+> > --- a/drivers/clk/ti/autoidle.c
+> > +++ b/drivers/clk/ti/autoidle.c
+> > @@ -48,8 +48,11 @@ int omap2_clk_deny_idle(struct clk *clk)
+> >   	struct clk_hw_omap *c;
+> >  =20
+> >   	c =3D to_clk_hw_omap(__clk_get_hw(clk));
+> > -	if (c->ops && c->ops->deny_idle)
+> > -		c->ops->deny_idle(c);
+> > +	if (c->ops && c->ops->deny_idle) {
+> > +		c->autoidle_count--;
+> > +		if (c->autoidle_count =3D=3D -1)
+> > +			c->ops->deny_idle(c); =20
+>=20
+> This code is racy as you have no locking in place. Please fix.
+>=20
 
+hmm, yes, it is. Due to low risk (things are only called from init
+before the drivers are initialized, if I understand that correctly). I
+kept that for final polishing and not for a rfc patch.
+The deny_idle/allow_idle are also racy themselves. Multiple clocks with
+bits in the same register changed at the same time would also create a
+mess.
+
+> Also, this should be verified that it doesn't cause any PM regressions,=20
+> I hope you have done that?
+>=20
+Tested things: I checked various autoidle registers for changes.
+I checked registers by reading out /dev/mem
+Seen changes: hdq iclk no autoidle (that is the goal of all this)
+dss iclk no autoidle. This one is really interesting: There are
+multiple users of dss_ick, so that is a special case. I will check
+whether I can handle that (I have already an idea) or just delete that
+flag there for sorting out that later, we could somehow live with not
+disabled autoidle flag there but needed some strange fixes in the past.
+Now dss_ick does unecessarily enabled, so yes, a little regression.
+
+CORE/PER idlest seems to behave as well as before that change.
+
+Regards,
+Andreas
+
+--Sig_/DI2+y_6kLlI.i7YQdkdRjJF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlu2a1gACgkQfb1qx03i
+kyTUJw//bk67LvreD5J0A92GGWjzLptxyyqnzPs6JmSzGymmvcNzCfwUFHri76CT
+xDBs5DyRUWcTg51aRFmjcYS1yBx3UJSscDX52V2CPYF6zvhfWL3w92VDlqawdQjt
+ADIRnpiFA/JsaRakszMia/2Yvqybf/eXchmE/PVZgn8IQnFJW0SgcvBXrUmFVznX
+55nkSeBThO8Rt/1JWmeaUp73m4MPZ0IDp0/5a2nFRMoIp1Arkd632MbWKesT7sD+
+d84LSP5MEslEpB0mHdXNgkuJfxS0WcgrkXeVuvTJq3JkJSy+LQLYlyDwAJkfC8TV
+/FO8lYFFnH7GcgdNhPmv3r/iUrdSUIujIat5oyUpuz00AVMA0+tstrQxQ2mIRIpM
+P/2+h8AL+4el+bNQRYCPMCckCVj/zvzSD2XVnAc9N5q+GD4UYQQ3+9CZanpETr16
+XFMAK5nzGpxPI0f13utAsunRMk+7RNX3ECybnO/402T/CQYepITQWhjig5n5nDx8
+ZHvBHKLmWBxVPvg0ml598m5PHRO/FCbCBPK1hfSd1fhy9HN9Ya/LW6EjAyjY9s9c
+v8jOw3eik4iokdz5zSxhhdArqU0mO4FwA8p5/lTLC/Fuurr9gnpxIm1Xr5nMIWik
+0O0/1OqtM2LwgQ1IvfAenwODCaKcwSG1VupZzG8rj0+mt2DbNuE=
+=xAN8
+-----END PGP SIGNATURE-----
+
+--Sig_/DI2+y_6kLlI.i7YQdkdRjJF--
