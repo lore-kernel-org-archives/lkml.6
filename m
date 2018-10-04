@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F12EC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DE2C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D718C2087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D718C2087D
+	by mail.kernel.org (Postfix) with ESMTP id BCC6A2087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC6A2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeJEARl (ORCPT
+        id S1727952AbeJEARP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:17:41 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:41687 "EHLO
+        Thu, 4 Oct 2018 20:17:15 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43924 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727354AbeJEARf (ORCPT
+        by vger.kernel.org with ESMTP id S1727443AbeJEARO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:17:35 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08179823|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CzPh..h_1538673761;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzPh..h_1538673761)
-          by smtp.aliyun-inc.com(10.147.41.138);
-          Fri, 05 Oct 2018 01:22:41 +0800
+        Thu, 4 Oct 2018 20:17:14 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2429236|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CzPi7fU_1538673757;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzPi7fU_1538673757)
+          by smtp.aliyun-inc.com(10.147.43.95);
+          Fri, 05 Oct 2018 01:22:37 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com,
@@ -36,9 +36,9 @@ To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V10 4/8] dt-bindings: interrupt-controller: C-SKY APB intc
-Date:   Fri,  5 Oct 2018 01:22:24 +0800
-Message-Id: <df0c8ded4a52bb3f6e37d7124b443ea9671ea531.1538672812.git.ren_guo@c-sky.com>
+Subject: [PATCH V10 2/8] dt-bindings: interrupt-controller: C-SKY SMP intc
+Date:   Fri,  5 Oct 2018 01:22:22 +0800
+Message-Id: <22b6f2800b7f0d6ad1ac5b845b34fc9c924f019f.1538672812.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1538672812.git.ren_guo@c-sky.com>
 References: <cover.1538672812.git.ren_guo@c-sky.com>
@@ -49,81 +49,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - Dt-bindings doc about C-SKY apb bus interrupt controller.
+Dt-bindings doc about C-SKY Multi-processors interrupt controller.
+
+Changelog:
+ - Should be: '#interrupt-cells' not 'interrupt-cells'
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../interrupt-controller/csky,apb-intc.txt         | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+ .../bindings/interrupt-controller/csky,mpintc.txt  | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
 new file mode 100644
-index 0000000..44286dc
+index 0000000..ab921f1
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-@@ -0,0 +1,62 @@
-+==============================
-+C-SKY APB Interrupt Controller
-+==============================
++++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+@@ -0,0 +1,40 @@
++===========================================
++C-SKY Multi-processors Interrupt Controller
++===========================================
 +
-+C-SKY APB Interrupt Controller is a simple soc interrupt controller
-+on the apb bus and we only use it as root irq controller.
++C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
++SMP soc, and it also could be used in non-SMP system.
 +
-+ - csky,apb-intc is used in a lot of csky fpgas and socs, it support 64 irq nums.
-+ - csky,dual-apb-intc consists of 2 apb-intc and 128 irq nums supported.
-+ - csky,gx6605s-intc is gx6605s soc internal irq interrupt controller, 64 irq nums.
++Interrupt number definition:
++
++  0-15  : software irq, and we use 15 as our IPI_IRQ.
++ 16-31  : private  irq, and we use 16 as the co-processor timer.
++ 31-1024: common irq for soc ip.
 +
 +=============================
 +intc node bindings definition
 +=============================
 +
-+	Description: Describes APB interrupt controller
++	Description: Describes SMP interrupt controller
 +
 +	PROPERTIES
 +
 +	- compatible
 +		Usage: required
 +		Value type: <string>
-+		Definition: must be "csky,apb-intc"
-+				    "csky,dual-apb-intc"
-+				    "csky,gx6605s-intc"
++		Definition: must be "csky,mpintc"
 +	- #interrupt-cells
 +		Usage: required
 +		Value type: <u32>
 +		Definition: must be <1>
-+	- reg
-+		Usage: required
-+		Value type: <u32 u32>
-+		Definition: <phyaddr size> in soc from cpu view
 +	- interrupt-controller:
 +		Usage: required
-+	- csky,support-pulse-signal:
-+		Usage: select
-+		Description: to support pulse signal flag
 +
 +Examples:
 +---------
 +
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,apb-intc";
++	intc: interrupt-controller {
++		compatible = "csky,mpintc";
 +		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
-+		interrupt-controller;
-+	};
-+
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,dual-apb-intc";
-+		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
-+		interrupt-controller;
-+	};
-+
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,gx6605s-intc";
-+		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
 +		interrupt-controller;
 +	};
 -- 
