@@ -2,158 +2,95 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52ACC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3634AC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2E521470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:52:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JTnSzD4I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2E521470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E68F221470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68F221470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeJDOoc (ORCPT
+        id S1727608AbeJDOpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:44:32 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39743 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeJDOoc (ORCPT
+        Thu, 4 Oct 2018 10:45:49 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42149 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbeJDOps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:44:32 -0400
-Received: by mail-yw1-f67.google.com with SMTP id v1-v6so3407122ywv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=JWF3lv0izd3kQMjG0xl0p6X0RF+nnvok+00YcCm5gOs=;
-        b=JTnSzD4ISv3NpGnG8grQVMXZOkb6EHGUk8RgurbOkoOaSb2zj2CAj9B2U2orPQ15+V
-         ziNjwm9NJKME3kPYaOQAzhU69ZIMu0fudrneuNkOWz60h6UhJ2BVbrNQWIYnGQ+Ijzlo
-         yrP0UhMh57vtadu5LUBkS6oNMxGaZTwG7oD38=
+        Thu, 4 Oct 2018 10:45:48 -0400
+Received: by mail-ot1-f67.google.com with SMTP id h26-v6so8255293otl.9;
+        Thu, 04 Oct 2018 00:53:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=JWF3lv0izd3kQMjG0xl0p6X0RF+nnvok+00YcCm5gOs=;
-        b=Bv8K9DFPOQQxNDaeO1++XslOL3tYv3aNCwVpzgt/gGJpvx0fd6vKVs0iSU8hwnJe9L
-         UnnGwWufuyO+ogVxND4mStdVKZOKY4c2LJve3sRKF0McDePUi8f+M/0FRqYw0ha8m953
-         UFLLV1HhTi1gyKs5TBPnjxUYDYxyW0a/M0rz0GUsw0/rXa1DB850gYGJ6B/ERPTGPe5i
-         KLLg/q27ZLJpd6BLTozL6lJeVT3ZnH88mXIiu/HqEVMzUUyXxVAMOFxN84rGc1b/ax4p
-         sJBNtNZnddoNkK0Gtk2I81qi3lr/L2Bwoe22kk1TYnlIGWeR9I8Th128zd5EO6G8B0MS
-         Z8WA==
-X-Gm-Message-State: ABuFfog9qFEemUtHxsbkxthgcMEjmFafhKP9ToGRhz5hRHUvhNKSSHFP
-        cRW43UmVxT7QH710wjgToHlq7FTv1DdITw==
-X-Google-Smtp-Source: ACcGV63IA982tHyFZZhyI7pJUyKgBtTJ0cC+B9x11FEC8ZvkRzc5OnpzoLXeW12sK3PO6Is1CU3wkA==
-X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr2924185ywd.124.1538639553115;
-        Thu, 04 Oct 2018 00:52:33 -0700 (PDT)
-Received: from localhost ([202.189.238.75])
-        by smtp.gmail.com with ESMTPSA id y198-v6sm1650915ywy.64.2018.10.04.00.52.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 00:52:32 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     mka@chromium.org, rui.zhang@intel.com, edubezval@gmail.com,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GDx4p5DFZ9XPKXannRc4MFzWbtLPe7XcgronuugR8Xw=;
+        b=KSnzAKhaiNQDUMmoZdcC10+3lApKHDiu3zw14HPVmBtfWC7QbNm01ADvogfH3cNkyD
+         ukJDiICN3ks7BvR8xbzM331sDXBG30Onz7zk+jMmCyboZJ6SY3haGSpIj6FZTOiA0OxZ
+         KWI1rqJVNgj0nuZ4uXSjYyLYP6Lmi21dcOhcvu4GSu334hTTeRWTT+64gfa8QWqZsYm/
+         c16ZKXLl90xgtUv8REH3W/OiDoF3JUB/JiNV7CwAHBISaACji4lIIRIQ+3uptJ5WxrTv
+         b//FNfOBr2Q514/sFKAMh4bO+ughLGafTJZEF0msrM6KgZM9+rZ1Xs444vD3VEa2bAEU
+         nIxA==
+X-Gm-Message-State: ABuFfoju3WX4qP79pgbB0hTnKVjewgZPrOQ9TpDxJBKKHQwPTkCxYCZx
+        RWpZksIILgi8b7Vr6fZ6Gc8R/FE9sLmwoBEezn8SWDTU
+X-Google-Smtp-Source: ACcGV618RVqsiIWgEclyULb0hws3OaXE0It+jOPTm3w9R7HjBxgvAVh5pUJ4t319R/gU+YAge95JFujnsvHVdrsv3OU=
+X-Received: by 2002:a9d:7303:: with SMTP id e3-v6mr2784012otk.124.1538639630361;
+ Thu, 04 Oct 2018 00:53:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <3510260.hvypppS8Bs@aspire.rjw.lan> <4130376.2FFt7p4687@aspire.rjw.lan>
+ <20181004074627.GE19272@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181004074627.GE19272@hirez.programming.kicks-ass.net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 4 Oct 2018 09:53:39 +0200
+Message-ID: <CAJZ5v0gvAOz7R8uwXy=37ni=+dz9-gb69S2M2PtZSXc+tUhxrQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] cpuidle: menu: Get rid of first_idx from menu_select()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH v2 2/2] drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir
-Date:   Thu,  4 Oct 2018 13:22:12 +0530
-Message-Id: <18c718d98eeb519c14c52b02141783f93b95442c.1538638640.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1538638640.git.amit.kucheria@linaro.org>
-References: <cover.1538638640.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1538638640.git.amit.kucheria@linaro.org>
-References: <cover.1538638640.git.amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cleans up the directory a bit allowing just one place to look for
-thermal related drivers for QCOM platforms instead of being scattered in
-the root directory and the qcom/ subdirectory. Compile-tested with
-ARCH=arm64 defconfig and the driver explicitly enabled with menuconfig.
+On Thu, Oct 4, 2018 at 9:46 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Oct 02, 2018 at 11:44:06PM +0200, Rafael J. Wysocki wrote:
+> >       idx = -1;
+> > -     for (i = first_idx; i < drv->state_count; i++) {
+> > +     for (i = 0; i < drv->state_count; i++) {
+> >               struct cpuidle_state *s = &drv->states[i];
+> >               struct cpuidle_state_usage *su = &dev->states_usage[i];
+> >
+> >               if (s->disabled || su->disable)
+> >                       continue;
+> > +
+> >               if (idx == -1)
+> >                       idx = i; /* first enabled state */
+> > +
+> >               if (s->target_residency > predicted_us) {
+> > +                     /*
+> > +                      * Use a physical idle state, not busy polling, unless
+> > +                      * a timer is going to trigger really really soon.
+> > +                      */
+> > +                     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> > +                         i == idx + 1 && latency_req > s->exit_latency &&
+> > +                         data->next_timer_us > max_t(unsigned int, 20,
+> > +                                                     s->target_residency)) {
+>
+> Not new in this patch, but this is where I really noticed it; that 20,
+> should that not be something like: POLL_IDLE_TIME_LIMIT / NSEC_PER_USEC
+> ?
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/Kconfig                           | 11 -----------
- drivers/thermal/Makefile                          |  1 -
- drivers/thermal/qcom/Kconfig                      | 11 +++++++++++
- drivers/thermal/qcom/Makefile                     |  1 +
- drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c |  0
- 5 files changed, 12 insertions(+), 12 deletions(-)
- rename drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c (100%)
+The POLL_IDLE_TIME_LIMIT is how much time we allow it to spin in
+idle_poll() and I'm not sure it is related.  Besides, I want it to go
+away actually (https://patchwork.kernel.org/patch/10624117/).
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 6f18110f1480..c075f1190e63 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -374,17 +374,6 @@ config TANGO_THERMAL
- 
- source "drivers/thermal/tegra/Kconfig"
- 
--config QCOM_SPMI_TEMP_ALARM
--	tristate "Qualcomm SPMI PMIC Temperature Alarm"
--	depends on OF && SPMI && IIO
--	select REGMAP_SPMI
--	help
--	  This enables a thermal sysfs driver for Qualcomm plug-and-play (QPNP)
--	  PMIC devices. It shows up in sysfs as a thermal sensor with multiple
--	  trip points. The temperature reported by the thermal sensor reflects the
--	  real time die temperature if an ADC is present or an estimate of the
--	  temperature based upon the over temperature stage value.
--
- config GENERIC_ADC_THERMAL
- 	tristate "Generic ADC based thermal sensor"
- 	depends on IIO
-diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index 031f61e7dfe8..415361685480 100644
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@ -29,7 +29,6 @@ thermal_sys-$(CONFIG_DEVFREQ_THERMAL) += devfreq_cooling.o
- 
- # platform thermal drivers
- obj-y				+= broadcom/
--obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
- obj-$(CONFIG_SPEAR_THERMAL)	+= spear_thermal.o
- obj-$(CONFIG_ROCKCHIP_THERMAL)	+= rockchip_thermal.o
- obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
-diff --git a/drivers/thermal/qcom/Kconfig b/drivers/thermal/qcom/Kconfig
-index be32e5abce3c..cdb455ffd575 100644
---- a/drivers/thermal/qcom/Kconfig
-+++ b/drivers/thermal/qcom/Kconfig
-@@ -9,3 +9,14 @@ config QCOM_TSENS
- 	  thermal zone device via the mode file results in disabling the sensor.
- 	  Also able to set threshold temperature for both hot and cold and update
- 	  when a threshold is reached.
-+
-+config QCOM_SPMI_TEMP_ALARM
-+	tristate "Qualcomm SPMI PMIC Temperature Alarm"
-+	depends on OF && SPMI && IIO
-+	select REGMAP_SPMI
-+	help
-+	  This enables a thermal sysfs driver for Qualcomm plug-and-play (QPNP)
-+	  PMIC devices. It shows up in sysfs as a thermal sensor with multiple
-+	  trip points. The temperature reported by the thermal sensor reflects the
-+	  real time die temperature if an ADC is present or an estimate of the
-+	  temperature based upon the over temperature stage value.
-diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
-index a821929ede0b..717a08600bb5 100644
---- a/drivers/thermal/qcom/Makefile
-+++ b/drivers/thermal/qcom/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
- qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o
-+obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
-diff --git a/drivers/thermal/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-similarity index 100%
-rename from drivers/thermal/qcom-spmi-temp-alarm.c
-rename to drivers/thermal/qcom/qcom-spmi-temp-alarm.c
--- 
-2.17.1
-
+I could use a separate symbol for this particular magic number, but it
+has been magic forever and it is used just in this one place, so ...
