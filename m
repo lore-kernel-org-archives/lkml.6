@@ -2,133 +2,119 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0229BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA570C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CED320877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:18:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATNLXE7G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CED320877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E1A120877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:21:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1A120877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbeJEEN5 (ORCPT
+        id S1727176AbeJEEQ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:13:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45227 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbeJEEN5 (ORCPT
+        Fri, 5 Oct 2018 00:16:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37006 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbeJEEQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:13:57 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q5-v6so11397896wrw.12;
-        Thu, 04 Oct 2018 14:18:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WT0xwDE2k48UmpozmoHuJLxV7m7Uv4n+3lX6lFZSCBQ=;
-        b=ATNLXE7G2A1+3p91ehPazwa/rpMdi4Y0aB68xMcvoKSZNGMpBOYT2Jj5W1D5gKpHKv
-         CnwEvNcMDOYdEG7kIkJRGKFo9TaNGMbGkoA9hSe650TFtJ0lTZP8H7rSEbSH90PMOZq9
-         aDmffOT3s/9vP1cceAGYbPEEgwi1j0DIs+BmCXu3p0UmYSESCrPKcVXrkd2KxZLwQDK3
-         K8eeP6uZmCfFZ221bnqUCGps9r/DBqG+z8WazHQR9FQnIcYJOkwkhWlI8FLdJN5Aq+0N
-         MoKFJkTk4xaHfrmIDIvZDvJRH0JnBvHZ3LIUMdq00v/yyaHr5zkUsbQKybZnV7L64yNO
-         49/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WT0xwDE2k48UmpozmoHuJLxV7m7Uv4n+3lX6lFZSCBQ=;
-        b=psz6XW1lOad3O4MU69jiV5pxUsd68YoePouxZAgwTB/9ZG004ZiqU4AvhpLUe2WJLP
-         a+u7qcUfWP+AThXXwOFgte/yV+Ff9UZKWPVRaJPp/3xbCxAATm7VPodt9f6PsqfQevEm
-         tX2dPlynMbjP1vhZ8sEwOVdYmdmgBmTreAci2UtljCJ3TXmOpvd7peUsZrhumniAagXZ
-         RviLE3FvKK26s8jrszKmDxu9aRku0Cxshutohm197iKUNHz5H2XfDkJJIbOQfcJ/Bdj4
-         FSo9SXatl0u+BB1XBiCRRciufwuim1Kjmp7xlnv76gQz75YLFI/1XulzASg9p+OCsDGm
-         MgQA==
-X-Gm-Message-State: ABuFfoi1kKWyo2fXDut03T1gEsWZG9O8l24fOuWBVUbLlzBH9W4SMtdn
-        7joDNoqgF/48J4x3VPJv2QA=
-X-Google-Smtp-Source: ACcGV60wD+HG1BIMUvukyGHpBdypsTloA7PUrvK30z931U1lgcQLnfEmfOd5irKTEGLHOnxRn8q7ug==
-X-Received: by 2002:a5d:67c8:: with SMTP id n8-v6mr6065657wrw.196.1538687926735;
-        Thu, 04 Oct 2018 14:18:46 -0700 (PDT)
-Received: from Ettosoft-T55 (208-202-243-213.terrecablate.net. [213.243.202.208])
-        by smtp.gmail.com with ESMTPSA id t194-v6sm8476051wmd.48.2018.10.04.14.18.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 14:18:46 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 23:18:44 +0200
-From:   ektor5 <ek5.chimenti@gmail.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     hverkuil@xs4all.nl, luca.pisani@udoo.org, jose.abreu@synopsys.com,
-        sean@mess.org, sakari.ailus@linux.intel.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add SECO Boards CEC device driver
-Message-ID: <20181004211842.qxfvojrcbsl7llsx@Ettosoft-T55>
-References: <cover.1538474121.git.ek5.chimenti@gmail.com>
- <757ab7a8-4bb2-4573-5870-eae2b9745650@baylibre.com>
+        Fri, 5 Oct 2018 00:16:28 -0400
+Received: from tmo-108-109.customers.d1-online.com ([80.187.108.109] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g8B3W-0008FU-D5; Thu, 04 Oct 2018 23:21:10 +0200
+Date:   Thu, 4 Oct 2018 23:21:09 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+cc:     Daniel Wagner <daniel.wagner@siemens.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Julia Cartwright <julia@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH RT 1/2] x86/kconfig: Use ticket spinlocks for -rt
+In-Reply-To: <20181004140846.uerpx7txvx7pj6yc@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1810042303040.29948@nanos.tec.linutronix.de>
+References: <20181004134622.23181-1-daniel.wagner@siemens.com> <20181004134622.23181-2-daniel.wagner@siemens.com> <20181004140846.uerpx7txvx7pj6yc@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <757ab7a8-4bb2-4573-5870-eae2b9745650@baylibre.com>
-User-Agent: NeoMutt/20180716-421-ff8684
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 02:29:32PM +0200, Neil Armstrong wrote:
-> Hi Ettore,
-> 
-> On 02/10/2018 18:59, ektor5 wrote:
-> > This series of patches aims to add CEC functionalities to SECO
-> > devices, in particular UDOO X86.
-> > 
-> > The communication is achieved via Braswell SMBus (i2c-i801) to the
-> > onboard STM32 microcontroller that handles the CEC signals. The driver
-> > use direct access to the PCI addresses, due to the limitations of the
-> > specific driver in presence of ACPI calls.
-> > 
-> > The basic functionalities are tested with success with cec-ctl and
-> > cec-compliance.
-> 
-> Glad to see another user of the i915 cec notifier !
+On Thu, 4 Oct 2018, Sebastian Andrzej Siewior wrote:
 
-Thanks to you for the patch! It works really well!
+> On 2018-10-04 15:46:21 [+0200], Daniel Wagner wrote:
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index 6df130a37d41..21f9418d850f 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -42,7 +42,7 @@ config X86
+> >  	select ARCH_USE_BUILTIN_BSWAP
+> >  	select ARCH_USE_CMPXCHG_LOCKREF		if X86_64
+> >  	select ARCH_USE_QUEUED_RWLOCKS
+> > -	select ARCH_USE_QUEUED_SPINLOCKS
+> > +	select ARCH_USE_QUEUED_SPINLOCKS	if !PREEMPT_RT_FULL
+> >  	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
+> >  	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
+> >  	select ARCH_WANT_FRAME_POINTERS
+> 
+> I would argue, that RT exposes a problem and we should not limit it to
+> RT only. Anyone?
 
-Ettore
+It has absolutely nothing to do with RT, really. RT is merily exposing the
+problem in an observable way. The same issue happens with upstream, it's
+harder to trigger and it's harder to observe for obvious reasons.
 
-> 
-> Neil
-> 
-> > 
-> > Ettore Chimenti (2):
-> >   media: add SECO cec driver
-> >   seco-cec: add Consumer-IR support
-> > 
-> >  MAINTAINERS                                |   6 +
-> >  drivers/media/platform/Kconfig             |  21 +
-> >  drivers/media/platform/Makefile            |   4 +
-> >  drivers/media/platform/seco-cec/Makefile   |   1 +
-> >  drivers/media/platform/seco-cec/seco-cec.c | 859 +++++++++++++++++++++
-> >  drivers/media/platform/seco-cec/seco-cec.h | 143 ++++
-> >  6 files changed, 1034 insertions(+)
-> >  create mode 100644 drivers/media/platform/seco-cec/Makefile
-> >  create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
-> >  create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
-> > 
-> 
+If you read through the discussions then you really see that there is an
+upstream issue with the x86 qrlock implementation and Peter has posted fixes
+which resolve it, both at the practical and the theoretical level.
+
+So making this depend on RT is just shooting the messenger and sending the
+totally wrong signal.
+
+The original x86 ticket lock implementation does not have this issue by
+design, so switching back to ticket locks on 4.4 is the right thing to do
+because backporting a gazillion of updates and fixes for qrlocks to 4.4 is
+worse.
+
+While I agree that we want to fix that for 4.4-RT ASAP because it can be
+triggered, the real solution is to fix that in 4.4 stable as well. In fact
+all stable trees need too be fixed because the issue can be triggered on
+all versions.
+
+   4.4:  Trivial by switching back to ticket locks.
+
+   4.9:  Decide whether bringing back ticket locks or backporting all qrlock
+   	 fixes. Sebastian has done the latter already and it's probably the
+   	 right solution
+
+   4.14:
+   4.18: Backporting the qrlock fixes
+
+   4.19: Either the fix ends up in 4.19 final or it needs to be backported
+
+Aside of that there is no solution for ARM64 yet. aside of the horrible
+hack of adding the delay loop into cpu_relax(). Still working on that, but
+won't be able to do more investigation before monday.
+
+Thanks,
+
+	tglx
+
+
+
+
