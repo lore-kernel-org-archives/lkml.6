@@ -2,68 +2,78 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12242C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A58C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A8D2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:48:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A8D2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schupikov.de
+	by mail.kernel.org (Postfix) with ESMTP id 10DA62084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:48:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10DA62084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeJDUlj (ORCPT
+        id S1727600AbeJDUmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:41:39 -0400
-Received: from gravityforest ([185.233.107.85]:47902 "EHLO
-        gravity.schupikov.de" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbeJDUlj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:41:39 -0400
-X-Greylist: delayed 336 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 16:41:38 EDT
-Received: from zlid.rus.uni-stuttgart.de (s-8d3a2fc9.on.site.uni-stuttgart.de [141.58.47.201])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by gravity.schupikov.de (Postfix) with ESMTPSA id B66E25D096;
-        Thu,  4 Oct 2018 15:42:39 +0200 (CEST)
-From:   Michael Schupikov <michael@schupikov.de>
-To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc:     Michael Schupikov <michael@schupikov.de>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] kernel/sysctl.c: remove duplicated include
-Date:   Thu,  4 Oct 2018 15:42:23 +0200
-Message-Id: <20181004134223.17735-1-michael@schupikov.de>
+        Thu, 4 Oct 2018 16:42:07 -0400
+Received: from muru.com ([72.249.23.125]:58134 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727354AbeJDUmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:42:06 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E7A4B809C;
+        Thu,  4 Oct 2018 13:53:11 +0000 (UTC)
+Date:   Thu, 4 Oct 2018 06:48:39 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 03/11] PM / Domains: Document flags for genpd
+Message-ID: <20181004134839.GZ5662@atomide.com>
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+ <20181003143824.13059-4-ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003143824.13059-4-ulf.hansson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove one include of <linux/pipe_fs_i.h>.
-No functional changes.
+Hi,
 
-Signed-off-by: Michael Schupikov <michael@schupikov.de>
----
- kernel/sysctl.c | 1 -
- 1 file changed, 1 deletion(-)
+* Ulf Hansson <ulf.hansson@linaro.org> [181003 14:43]:
+> + * GENPD_FLAG_IRQ_SAFE:		This informs genpd that its backend callbacks,
+> + *				->power_on|off(), doesn't sleep. Hence, these
+> + *				can be invoked from within atomic context, which
+> + *				enables genpd to power on/off the PM domain,
+> + *				even when pm_runtime_is_irq_safe() returns true,
+> + *				for any of its attached devices. Note that, a
+> + *				genpd having this flag set, requires its
+> + *				masterdomains to also have it set.
+> + *
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cc02050fd0c4..523cb36b72eb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -66,7 +66,6 @@
- #include <linux/kexec.h>
- #include <linux/bpf.h>
- #include <linux/mount.h>
--#include <linux/pipe_fs_i.h>
- 
- #include <linux/uaccess.h>
- #include <asm/processor.h>
--- 
-2.19.0
+Let's try to avoid adding more irq_safe stuff because of having that
+propagate to the masterdomains..
 
+I think you can just flag the power_on/off in genpd, then have cpu_pm
+callbacks do it.
+
+Regards,
+
+Tony
