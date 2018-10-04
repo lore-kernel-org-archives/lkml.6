@@ -2,141 +2,124 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D04C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DE8C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1AC621480
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE4192082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:14:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFxCmYry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1AC621480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y8KSQb4F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4192082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeJDWHV (ORCPT
+        id S1727691AbeJDWIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:07:21 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37571 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbeJDWHV (ORCPT
+        Thu, 4 Oct 2018 18:08:38 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42078 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbeJDWIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:07:21 -0400
-Received: by mail-io1-f66.google.com with SMTP id m16-v6so3983946ioj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:13:38 -0700 (PDT)
+        Thu, 4 Oct 2018 18:08:37 -0400
+Received: by mail-vs1-f68.google.com with SMTP id w16-v6so5573834vso.9
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aFkA/0wrykNoe/6zOrHUhGlT+Q7Jx6eOGkCxdr4cYdk=;
-        b=FFxCmYry6eP1yN1ufHNzOppBREw4u/zF406X8tFxqchaGBoGVgsF/1kcm4z8ZECKAX
-         4/NMUlx4kQL7yJF/BJx71swkLQt2Jp3klUwoznSDe1v3SUYbNolpwTAMiimEWxJMWp+0
-         qXgpMYLrSXgroplVl33QzJbPbBr6sx6SRh5mxhqPuOqg6fLMaKiH7oFRjplEUVAIJuOy
-         fb1YjqFlr7DgDgCN9hEV4e5Tw+5LFHdO0h4XpVVQ+sxJTZQzHS9e5GvsJj64IoEhZ1LU
-         sXo1z6Q/OJ+BAUrt1jLWrLIxzasExlSoDjv+WYouT8MPb0osWkszYaVIwTQquAP24X9q
-         PO9g==
+        bh=oLUZlAEuI80YOsK7uODQB3rfm1N8Lu9Vuv38c6Q9A4U=;
+        b=Y8KSQb4FSgXRhj/teS15Z5MlqjVcM/vspQ+woMBHp0/lBWVTNAlL9r4XC57XLj2UWx
+         gfZi8pssxCeuNv2wEt4OkVIaIPNZU9e/mj8XED3gUFYfAKUrRzavu4kFi0ZEiHlP0d+r
+         R7AnrwcrAtlfequahfEJxXCkx2FXDgNrGPsPQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aFkA/0wrykNoe/6zOrHUhGlT+Q7Jx6eOGkCxdr4cYdk=;
-        b=sHnJOuGVhNkhtEDlyEfQTsmf/CLKyKjWMXsWyz9FHpl66fQg9pMal1ynV2QI83Nuc2
-         sgQGH4aT3Sci4edW5mIxDFMSiJ2ASyqOd31sweE4zJvW2pE0kVOq0xpu7Oeo01civ9Az
-         g8JVQvA9oRsCvvbb0N8DUHobN4WDmvbs/bEsJHCeBGR5hhlfAPF33/bkb0TLpVt8kgws
-         OjGZ9W2zEdtqUikAZKgZ9u1Bze20MaBPLfSqbPxFFh+kL7DdhDT7ST6TwwwkcElp90G5
-         vBACTBUfu3xE7DlBvKYh8x4o0/oQEdMvV2IM4zJTuB16dexKgiZSPhSMX8g9R8AseXP2
-         1I/Q==
-X-Gm-Message-State: ABuFfohiNAb7KpvX6MeKC7jUyBrk8sH2U2h7W9g1p3hT+Z8k6Vv3KFBr
-        GaCAHLM2YasLI0YRWY4Vqg3yWtUyfhjkpXQJwtj4pnhmm/A=
-X-Google-Smtp-Source: ACcGV62keSvva26IlRF+QlIMv5vQ6CGMfp9ODFrN7mJnnksiY+3GoRWtioauSmtovRhB6mAdu82Xj+U2yVZCAkDxl5Q=
-X-Received: by 2002:a6b:e91a:: with SMTP id u26-v6mr4551737iof.200.1538666017780;
- Thu, 04 Oct 2018 08:13:37 -0700 (PDT)
+        bh=oLUZlAEuI80YOsK7uODQB3rfm1N8Lu9Vuv38c6Q9A4U=;
+        b=J7tUWIuJtsn0VgkG+jfPSQy1AzPRzD4N+M/sKnhMiRD5O1pRFteFl2VJm/3Li0dCUj
+         MEDfrHsUF8hSlmX4sMEQQQWu74uuUFs581g7IMHAXUTDXhWJ8c2oVh/HHXXPwrWVm0xN
+         egZS7Yusn9UL1MEES6awXkGi8h1kEZa8ZheqgvqM1iZJuOvNJZ0fGR3vSGG22sHesv8V
+         lAD0YCA21Ff9npG21gHUKSqrVHKCZpdmOquO8gdeWcwGzRCCJnI7Ob+q/xxkEsiXq6e7
+         x10nkzQ0SqxbEcDrdWa3u44SaXLdiMb7x+OgoKMy3zSwsEKDcN0bPcE1iKXDuXcutSEY
+         N/cw==
+X-Gm-Message-State: ABuFfohnjtAEbCd8NO9s8LcdgiWjTd9sqsm81WxaaU40F8vwfNsCTqcQ
+        sR56sOHDHBo9fmXZuj07MX1OoRPddF8=
+X-Google-Smtp-Source: ACcGV635kI/Y1B5uCU04AoYiCMoWsBJxQWqYdbND223wCwGvbi0Zqf472Qsw/ITg/7gbAB9cRRoFGg==
+X-Received: by 2002:a67:b14c:: with SMTP id z12mr2741283vsl.28.1538666093450;
+        Thu, 04 Oct 2018 08:14:53 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id v85-v6sm294855vkd.18.2018.10.04.08.14.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 08:14:52 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id t202-v6so2235771vke.9
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:14:51 -0700 (PDT)
+X-Received: by 2002:a1f:280c:: with SMTP id o12-v6mr2691499vko.4.1538666091362;
+ Thu, 04 Oct 2018 08:14:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181003234746.3586.42014.stgit@localhost.localdomain> <5329f992-d3aa-c16c-1218-c26d758889b8@arm.com>
-In-Reply-To: <5329f992-d3aa-c16c-1218-c26d758889b8@arm.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Thu, 4 Oct 2018 08:13:26 -0700
-Message-ID: <CAKgT0UfbAokpR=-xrfNjeYMroEDH4HtPgM6qK_nWmBqK3QOf6A@mail.gmail.com>
-Subject: Re: [PATCH] dma-direct: Fix return value of dma_direct_supported
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     alexander.h.duyck@linux.intel.com,
-        "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>
+References: <20181004001432.21218-1-mka@chromium.org> <20181004001432.21218-2-mka@chromium.org>
+In-Reply-To: <20181004001432.21218-2-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 4 Oct 2018 08:14:37 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xhic45SCQSVx0XXgtcyFAMEmOt97HUKZjHa_nyd4Ur2A@mail.gmail.com>
+Message-ID: <CAD=FV=Xhic45SCQSVx0XXgtcyFAMEmOt97HUKZjHa_nyd4Ur2A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: iio: vadc: Update example to include
+ unit address for node 'usb-id-nopull'
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-iio <linux-iio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 4:25 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 04/10/18 00:48, Alexander Duyck wrote:
-> > It appears that in commit 9d7a224b463e ("dma-direct: always allow dma mask
-> > <= physiscal memory size") the logic of the test was changed from a "<" to
-> > a ">=" however I don't see any reason for that change. I am assuming that
-> > there was some additional change planned, specifically I suspect the logic
-> > was intended to be reversed and possibly used for a return. Since that is
-> > the case I have gone ahead and done that.
->
-> Bah, seems I got hung up on the min_mask code above it and totally
-> overlooked that the condition itself got flipped. It probably also can't
-> help that it's an int return type, but treated as a bool by callers
-> rather than "0 for success" as int tends to imply in isolation.
->
-> Anyway, paying a bit more attention this time, I think this looks like
-> the right fix - cheers Alex.
->
-> Robin.
+Hi,
 
-Thanks for the review.
+On Wed, Oct 3, 2018 at 5:14 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> The node has a reg property, therefore its name should include a unit
+> address.
+>
+> Also change the name from 'usb_id_nopull' to 'usb-id-nopull' to follow
+> DT conventions.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes in v4:
+> - patch added to the series
+> ---
+>  Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+> index d0c188e5c922..ff7aa5038ba6 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+> @@ -112,7 +112,7 @@ Example:
+>                 io-channel-ranges;
+>
+>                 /* Channel node */
+> -               usb_id_nopull {
+> +               usb-id-nopull@VADC_LR_MUX10_USB_ID {
+>                         reg = <VADC_LR_MUX10_USB_ID>;
 
-- Alex
+This is my understanding of how it should be done and matches some
+existing examples I see in the tree.  AKA "pd_hdcp@RK3399_PD_HDCP".
+Thanks for cleaning it up!
 
-P.S. It looks like I forgot to add Christoph to the original mail
-since I had just copied the To and Cc from the original submission, so
-I added him to the Cc for this.
-
-> > This addresses issues I had on my system that prevented me from booting
-> > with the above mentioned commit applied on an x86_64 system w/ Intel IOMMU.
-> >
-> > Fixes: 9d7a224b463e ("dma-direct: always allow dma mask <= physiscal memory size")
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > ---
-> >   kernel/dma/direct.c |    4 +---
-> >   1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> > index 5a0806b5351b..65872f6c2e93 100644
-> > --- a/kernel/dma/direct.c
-> > +++ b/kernel/dma/direct.c
-> > @@ -301,9 +301,7 @@ int dma_direct_supported(struct device *dev, u64 mask)
-> >
-> >       min_mask = min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
-> >
-> > -     if (mask >= phys_to_dma(dev, min_mask))
-> > -             return 0;
-> > -     return 1;
-> > +     return mask >= phys_to_dma(dev, min_mask);
-> >   }
-> >
-> >   int dma_direct_mapping_error(struct device *dev, dma_addr_t dma_addr)
-> >
-> > _______________________________________________
-> > iommu mailing list
-> > iommu@lists.linux-foundation.org
-> > https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> >
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
