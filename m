@@ -2,102 +2,88 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A518C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6F1C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB6D213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:00:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D97221477
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:03:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BdZjSEXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB6D213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="oyQBRYvA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D97221477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeJDOwO (ORCPT
+        id S1727625AbeJDOzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:52:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbeJDOwN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:52:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=M0uhfCsA6x6UOlSHvZb1/TFsFfNWTtwuUWe7kcKDGp0=; b=BdZjSEXbe7awyBmMKvVkBvDeb
-        +RR9xCUEgHjjLue3wRCVYOD4vdsAa7wzU5i4rE1rpp2KT+2LC6dezDweU2e9dIXmSFYbqwSutJ366
-        oXDNumbAHy375vt7rGbhnx8c+wSdFjXM6bEtMdeM5R5OXmfDoI3QYRsNRyA0mtLrkGPXVSEdm0Uuc
-        7EMgS7rjaxufo20iPncCJrtdBD6y84DXBU03GPvRASmJMIyacPONO6SfUarkT4LQ4i2Gkm5AlkxJk
-        y3t6l/Gb++9dFONGQirLxbhEcq15XKq+/WrWv83GH4WGr3Zd2k8++8OKKIkHTRfM06w2qHmRpC96q
-        6qWypIZBg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7yYO-0006RH-K8; Thu, 04 Oct 2018 08:00:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F40E72059A40C; Thu,  4 Oct 2018 10:00:06 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 10:00:06 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 3/6] cpuidle: menu: Get rid of first_idx from
- menu_select()
-Message-ID: <20181004080006.GH19272@hirez.programming.kicks-ass.net>
-References: <3510260.hvypppS8Bs@aspire.rjw.lan>
- <4130376.2FFt7p4687@aspire.rjw.lan>
- <20181004074627.GE19272@hirez.programming.kicks-ass.net>
- <CAJZ5v0gvAOz7R8uwXy=37ni=+dz9-gb69S2M2PtZSXc+tUhxrQ@mail.gmail.com>
+        Thu, 4 Oct 2018 10:55:23 -0400
+Received: from 8bytes.org ([81.169.241.247]:33664 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727369AbeJDOzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:55:23 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id D1EBF345; Thu,  4 Oct 2018 10:03:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1538640201; bh=XPhccCMbtn9iplTQHeIw6KhjAjgA241zOIp2H4Nhr08=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oyQBRYvAsjaE5XbSACbXLIWioaFV8Qh0uNFFZc5nldknQAZzam1gjWECJdvvv5icb
+         gLKjiAQRGMEodw7FJmm43kl9OZn4GHEONxEcXz2B9dUyigmHOXLh2PwouqcbI4e35E
+         nnr8S9LCS8EgxLTHzG6pDcFQozD+eSHznZGUMGTmpXtUqaEbr2pis2wEiYQLg8CH70
+         dtm/IHqNDBFbMLc+lAp9egY9HV9z9ovGVHI6upV8sY7npnpnIekwpGKdaYIjVfRGaJ
+         VJD6Nh11nUEotndHpCklmvDPnLzyx5ec1ku+TEJMZK7QPOa3wV83cKmx5bK3r/+tyT
+         447zPvP4dktEQ==
+Date:   Thu, 4 Oct 2018 10:03:21 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Paul Menzel <pmenzel@molgen.mpg.de>, linux-mm@kvack.org,
+        x86@kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: x86/mm: Found insecure W+X mapping at address (ptrval)/0xc00a0000
+Message-ID: <20181004080321.GA3630@8bytes.org>
+References: <e75fa739-4bcc-dc30-2606-25d2539d2653@molgen.mpg.de>
+ <alpine.DEB.2.21.1809191004580.1468@nanos.tec.linutronix.de>
+ <0922cc1b-ed51-06e9-df81-57fd5aa8e7de@molgen.mpg.de>
+ <alpine.DEB.2.21.1809210045220.1434@nanos.tec.linutronix.de>
+ <c8da5778-3957-2fab-69ea-42f872a5e396@molgen.mpg.de>
+ <alpine.DEB.2.21.1809281653270.2004@nanos.tec.linutronix.de>
+ <20181003212255.GB28361@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gvAOz7R8uwXy=37ni=+dz9-gb69S2M2PtZSXc+tUhxrQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181003212255.GB28361@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:53:39AM +0200, Rafael J. Wysocki wrote:
-> On Thu, Oct 4, 2018 at 9:46 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Tue, Oct 02, 2018 at 11:44:06PM +0200, Rafael J. Wysocki wrote:
-> > >       idx = -1;
-> > > -     for (i = first_idx; i < drv->state_count; i++) {
-> > > +     for (i = 0; i < drv->state_count; i++) {
-> > >               struct cpuidle_state *s = &drv->states[i];
-> > >               struct cpuidle_state_usage *su = &dev->states_usage[i];
-> > >
-> > >               if (s->disabled || su->disable)
-> > >                       continue;
-> > > +
-> > >               if (idx == -1)
-> > >                       idx = i; /* first enabled state */
-> > > +
-> > >               if (s->target_residency > predicted_us) {
-> > > +                     /*
-> > > +                      * Use a physical idle state, not busy polling, unless
-> > > +                      * a timer is going to trigger really really soon.
-> > > +                      */
-> > > +                     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> > > +                         i == idx + 1 && latency_req > s->exit_latency &&
-> > > +                         data->next_timer_us > max_t(unsigned int, 20,
-> > > +                                                     s->target_residency)) {
-> >
-> > Not new in this patch, but this is where I really noticed it; that 20,
-> > should that not be something like: POLL_IDLE_TIME_LIMIT / NSEC_PER_USEC
-> > ?
-> 
-> The POLL_IDLE_TIME_LIMIT is how much time we allow it to spin in
-> idle_poll() and I'm not sure it is related.  Besides, I want it to go
-> away actually (https://patchwork.kernel.org/patch/10624117/).
+On Wed, Oct 03, 2018 at 11:22:55PM +0200, Borislav Petkov wrote:
+> On Fri, Sep 28, 2018 at 04:55:19PM +0200, Thomas Gleixner wrote:
+> > Sorry for the delay and thanks for the data. A quick diff did not reveal
+> > anything obvious. I'll have a closer look and we probably need more (other)
+> > information to nail that down.
 
-Ah, ok. Making it go away is better still!
+I also triggered this when working in the PTI-x32 code. It always
+happens on a 32-bit PAE kernel for me.
+
+Tracking it down I ended up in (iirc) arch/x86/mm/pageattr.c
+	function static_protections():
+
+		/*
+		 * The BIOS area between 640k and 1Mb needs to be executable for
+		 * PCI BIOS based config access (CONFIG_PCI_GOBIOS) support.
+		 */
+	#ifdef CONFIG_PCI_BIOS
+		if (pcibios_enabled && within(pfn, BIOS_BEGIN >> PAGE_SHIFT, BIOS_END >> PAGE_SHIFT))
+			pgprot_val(forbidden) |= _PAGE_NX;
+	#endif
+
+I think that is the reason we are seeing this in that configuration.
+
+
+Regards,
+
+	Joerg
