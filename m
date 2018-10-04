@@ -2,139 +2,135 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAE4C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87B8C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5796521473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77B172082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:11:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TYhxUl0+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5796521473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hxiZg5BJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77B172082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbeJDRCh (ORCPT
+        id S1727648AbeJDRDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:02:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41978 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbeJDRCh (ORCPT
+        Thu, 4 Oct 2018 13:03:55 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43252 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeJDRDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:02:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f38-v6so8012775edd.8
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:10:03 -0700 (PDT)
+        Thu, 4 Oct 2018 13:03:55 -0400
+Received: by mail-io1-f68.google.com with SMTP id y10-v6so7411623ioa.10
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qrRfwHd2XEk+J9Pc5pppRSs6dgkBz6W9RXEh1coAO7E=;
-        b=TYhxUl0+8/8Y3KMEb35yQTaEcL+CZ2VenqL/Ey4XL3vnfAwutp452ffWpoO8b9fZdO
-         sUNARRZlWlpCgTDuMRor565LQZ8Z5u2m7YdI1SRb++6ftzjEMxFbOLWpd/wn9muFA4ky
-         nfiSRn9iZJ418+PCfFI3Jdm9fb7BN5eNPUN/A=
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=r9U8GJ7bA7IWXUwn75k/SS4CGv0zhs8KIl4o221x0VE=;
+        b=hxiZg5BJBQ/WKCb3p6SW7PxJyMUkExHmIS8632CuwhFl1wZUoW9eqkZi0wURjzYznD
+         5Cq2BX8acGeVIeCIZ7pPI0X2fKmFML8SH4BDlZVcCtC2qZ4soI9mi2flYejNdGIMChA2
+         YAoPupxMlbNGa/YTzXv54W3KTognAfWOgN1RE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=qrRfwHd2XEk+J9Pc5pppRSs6dgkBz6W9RXEh1coAO7E=;
-        b=QMaF6bQ7/UeJqVzYNPjNrNVIdqdqNXgv7eG+mSD2fy4qorbC1Z2D8my82e4GGnLVmN
-         qXveVsxEIWgZfbZBVWprM9jHyiqnNnm+Q8f9n7Wk2qnjuXvN2Qfiog8cPA3EJ1T2KGI8
-         I5VK4RkxSVcTHXUxlqqvLR2pmtgt+OA9RmUvsED/AaboTIa1Kdzb+TtwQb6QfgFGAwQI
-         KRGEApxkdxR+4jDG3bRYdyBEVl3cNOLU2LrkTvOvfo454t39llyZBSb711/4+3YeJHSV
-         wOc4cmIHqQ0A3fs0UjQd6KuQA5wvnrgjZugD31GDAcRE8ocuLyg56Oqll1o5pqccZMbT
-         FIrQ==
-X-Gm-Message-State: ABuFfoh6U0oL/BU2ciUyHKyki/2cWeGmrkgrDV9m1EJ6S0WjJ9hmvlHf
-        iGSXrJx9Uy1cEyvTS9+f0lceVQ==
-X-Google-Smtp-Source: ACcGV630+nugQA54oaCb1641c/CtxBo4WWiiy2+vog9aVjHAwGOPzSdtUp5txxMgPZChjI2iwS9h5A==
-X-Received: by 2002:aa7:d352:: with SMTP id m18-v6mr7331958edr.266.1538647802292;
-        Thu, 04 Oct 2018 03:10:02 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id gi7-v6sm779608ejb.55.2018.10.04.03.10.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 03:10:00 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 12:09:58 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drm/meson: fix max mode_config height/width
-Message-ID: <20181004100958.GI31561@phenom.ffwll.local>
-Mail-Followup-To: Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1538642563-22465-1-git-send-email-narmstrong@baylibre.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=r9U8GJ7bA7IWXUwn75k/SS4CGv0zhs8KIl4o221x0VE=;
+        b=IA1w584NVTH9uH6cDPGI5/0PFPFfxA1534oWs9I0gTR6GTMNgv7O+1cU3LWiC+wiML
+         9F+QQRAqREIqD+BjJLZssZRqMo/oNLbWxnrU2wa6GC6syvIIeeqtBxGB+y7KYM/SuB0m
+         HLVvQf6vBDX32+lEfnhaapv5VgMJx8e6DN8rRXzcc1cXLkggyv34qFKJ0tLgwVG/j5PU
+         BOPwR187HZZYuFtkibbbiuDHCl2h5/o922jwqqfBcS2i2gIqWOH25nkuCmkNnaFSi5C8
+         Fgo7E0hnzg3PKxM+Eb49asb1+8Vaqv3QGXUWBTr3E8OKGDVMZhpDGjTZnlGaaTweebBa
+         4F1w==
+X-Gm-Message-State: ABuFfoiM/MXoJUrLF50tq29T2WMapDf49aq4QeyBRIBHYjwYZvyk+aAZ
+        H3wLFLWP1IjlmTP3OXE8brNkVAyKpvDAWsp3999kJg==
+X-Google-Smtp-Source: ACcGV628cOhvEh+S2U9KBeD6/H5L8UM/V0Vh6FpK2s/xb4BYgrTFjHrTcV+QRv1o7hL107ZVhl3vq37FvpXxtMqeit4=
+X-Received: by 2002:a6b:203:: with SMTP id 3-v6mr3787776ioc.131.1538647881014;
+ Thu, 04 Oct 2018 03:11:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538642563-22465-1-git-send-email-narmstrong@baylibre.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 03:10:40 -0700 (PDT)
+In-Reply-To: <CAJZ5v0iv9OYoaLYHsmdp2xbDuENPgue_mBgFujdmesnBOegRKQ@mail.gmail.com>
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+ <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
+ <CAPDyKFq0GLs2AMA+6b-Khf+4kGxzVCTvtehp-YmwV2h=_SP4=g@mail.gmail.com>
+ <10136406.EY9A7BdqYq@aspire.rjw.lan> <CAJZ5v0iv9OYoaLYHsmdp2xbDuENPgue_mBgFujdmesnBOegRKQ@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 4 Oct 2018 12:10:40 +0200
+Message-ID: <CAPDyKFqgXy9Yf9j_zf5n7QcrCg8V20qqprVdZK-KYKhWJEkuoQ@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] PM / Domains: Support hierarchical CPU
+ arrangement (PSCI/ARM) (a subset)
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 10:42:43AM +0200, Neil Armstrong wrote:
-> The mode_config max_width/max_height determines the maximum framebuffer
-> size the pixel reader can handle. But the values were set thinking they
-> were determining the maximum screen dimensions.
-> 
-> This patch changes the values to the maximum height/width the CANVAS block
-> can handle rounded to some coherent values.
-> 
-> Fixes: a41e82e6c457 ("drm/meson: Add support for components")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+On 4 October 2018 at 11:32, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Thu, Oct 4, 2018 at 11:04 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>
+>> On Thursday, October 4, 2018 10:58:53 AM CEST Ulf Hansson wrote:
+>> > On 4 October 2018 at 10:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> > > On Wed, Oct 3, 2018 at 4:39 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> > >>
+>> > >> I have digested the review comments so far, including a recent offlist chat
+>> > >> with with Lorenzo Pieralisi around the debatable PSCI changes. More or less I
+>> > >> have a plan for how to move forward.
+>> > >>
+>> > >> However, to avoid re-posting non-changed patches over and over again, I decided
+>> > >> to withhold the more debatable part from this v9, hence this is not the complete
+>> > >> series to make things play. In v9, I have just included the trivial changes,
+>> > >> which are either already acked/reviewed or hopefully can be rather soon/easily.
+>> > >>
+>> > >> My hope is to get this queued for v4.20, to move things forward. I know it's
+>> > >> late, but there are more or less nothing new here since v8.
+>> > >
+>> > > I have no problems with the first three patches in this series, so I
+>> > > can apply them right away.  Do you want me to do that?
+>> >
+>> > Yes, please.
+>> >
+>> > >
+>> > > As for the rest, the cpuidle driver patch looks OK to me, but the
+>> > > PSCI-related ones need ACKs.
+>> >
+>> > For some yes, but I think you can go ahead with a few more.
+>> >
+>> > Patch 4, 5 is already acked/reviewed.
+>> >
+>> > Patch 6 should be fine (if you are okay with it else wait for an ack
+>> > from Daniel)
+>>
+>> OK, thanks.
+>>
+>> Do the 4-6 depend on the 1-3?
+>
+> I don't see any dependency there, so I'll queue up the 1-3 in
+> pm-domains and the 4-6 in pm-cpuidle.
 
-It's both. Grep for all the callers of ->fill_modes and you'll see that
-this limit is also used to filter max screen sizes.
+Great, thanks!
 
-If you want to change this, then I think we need a new
-mode_config.fb_max_width/height, which if non-zero, would extend the limit
-for fbs.
+Make sure you put the remaining of the PSCI changes on pm-cpuidle
+(once acked), as there are dependency.
 
-There's also the problem that if you extend this for fbs, then there's no
-check anymore in the atomic_commit paths (or legacy modeset), so that
-needs to be addressed somehow too.
-
-Bunch of igt to make sure we're not missing anything would be sweet on
-top, e.g. e.g. trying to set a mode over the limit and making sure it
-fails.
-
-Cheers, Daniel
-
-> ---
->  drivers/gpu/drm/meson/meson_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> index d344312..2e29968 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -243,8 +243,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->  		goto free_drm;
->  
->  	drm_mode_config_init(drm);
-> -	drm->mode_config.max_width = 3840;
-> -	drm->mode_config.max_height = 2160;
-> +	drm->mode_config.max_width = 16384;
-> +	drm->mode_config.max_height = 8192;
->  	drm->mode_config.funcs = &meson_mode_config_funcs;
->  
->  	/* Hardware Initialization */
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Kind regards
+Uffe
