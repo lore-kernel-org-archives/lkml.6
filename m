@@ -2,101 +2,132 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEB0C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA1BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5982082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B63420652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNC0YrS/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5982082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ppOO3KYl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B63420652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeJDVD6 (ORCPT
+        id S1727439AbeJDVIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:03:58 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36824 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbeJDVD5 (ORCPT
+        Thu, 4 Oct 2018 17:08:40 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33420 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbeJDVIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:03:57 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a8-v6so5186033wmf.1;
-        Thu, 04 Oct 2018 07:10:27 -0700 (PDT)
+        Thu, 4 Oct 2018 17:08:40 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e4-v6so10146775wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EP+hAHkqhC4uHVQ+14r5ce+EW1DJ7+BFMjEeH7ku7Ow=;
-        b=GNC0YrS/fivTUvcFs4FOTPGP+tygk4D+qdwmoYa66UjXxHrsiZmU0t5Q2WhLQyCa+3
-         dilHxjUyFVMXvZDMbMZLXySNsdARH6o4TFNDqusdZeoE3NeYuEs80xosZ0gwDvz1VIZR
-         /9KEk3s9/idMUxGtnSQBt90O1qVdnUBTHVaWMlbkfXINMrAryaqRgA12CpJ66Q1qkcOZ
-         Oa7gXKnk7ge7pl0d5aoHChYi4MLHGLR2pg8C+RyGyDpF7pcriyDK8fV92srA+YFs2E6l
-         md1oUgNh1dtPmh0gypFcWBj447hywL17z16Gf+yKZQBp8zStBJa4CGSjN1AZs+4PyniK
-         vEPA==
+        bh=eqNt2PpXNA3fvyQENUtKxiEO+/eq2FJuYNroZP+aR/U=;
+        b=ppOO3KYl4TRKJog5wOjCHvTVIlyCWQWW+JOBTh+xEkDEvGB4qffDUQF8GDyO4rV46u
+         hL7MCHg2yVXF8IFkCTPV91XdAd8PHNl6wo38sBMB+fTIQ6pT+OUehNNagNw6g8WKWjUJ
+         0FDwTW/vgf9wtZAIb1mapw/mE0mxkmnHFh7Hd20sGC84Mj+D3UoslMB0FNCSCv6z93tz
+         AyIgXSKpFYLIomVPQ9qBtTyQZx8I8hyxPHnhI9oAgkzVDEL8HEWkF5CT28d7Ra/cF1IP
+         L3E1LiNfaOjLCGnmFXEM1+grV752GBrPiM0MUYuQPGOI+wEeHzYiFmUKz5K2coPt35vT
+         +bfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EP+hAHkqhC4uHVQ+14r5ce+EW1DJ7+BFMjEeH7ku7Ow=;
-        b=PADb40/za+sLS3nLDzEHd0TFHhs1bad9unQbA652EM+Z1XLDs8tykUdnux4JlBOOEh
-         bpqqUlSHh25Ls6iveRTEJ54KFP5d2C4tq9YY8Mxn1klIdTPlId1sBhDPjVI7ROJtlBfS
-         pm07niZNR0rK6lro/cHpY4BG2/Nrvcs3djic5hrta9IKy/nqNfNVPbl1XvAj9hg7DlLI
-         5EaP57FKI/HA3jZR5SDftmAYQwdMGR5Rlo9wxXaf8u41a0bZhxS6YaHB8GFvrdMfVvso
-         jO8rBiky/3nQonIH7NrwIpcqHgEECHPbdZB44pAqP3ZIGlQnuLZkmrMx7D0/Whre2LTb
-         chRA==
-X-Gm-Message-State: ABuFfojO9429S5tnljEai5t7I2wvOkrl0uO5mdCffeaX51dux330c6s2
-        lBat2+w7LiKWzEa/TH9ViIo8jvNPhbJo1eLiJywTbQ==
-X-Google-Smtp-Source: ACcGV62b9D5Jd54HohKbxEqVY76PvJ4l8tsQNOXFddfeUe8fW8Y1xrttBCKfYpHp2toclw+1jNf2mFbP4ogrxikOW84=
-X-Received: by 2002:a1c:3745:: with SMTP id e66-v6mr4642131wma.142.1538662227225;
- Thu, 04 Oct 2018 07:10:27 -0700 (PDT)
+        bh=eqNt2PpXNA3fvyQENUtKxiEO+/eq2FJuYNroZP+aR/U=;
+        b=GA/nS2CU2OrJkDegGd1w/qstcjABYtbxZJ2744xKN1wTvKVAp57i7Fb/mNLo3IqxCv
+         vEcqmrcOTbUU7ignVJ8jOhU09SORMwsYA04QHv9DrA6it3ln1p8U3NfPHgak9jNAvUjV
+         YNkQ08PBSQZ0DUh1pNl7Ct1KxzmzggDkYQnEWcdLwUV7DgBKPzb68fq1nDR8Y0FPG+RO
+         4Y0H23w2ND1GBcYsfCcUeK4fmQTzg29OdSXXJ4Bsgiug2VavsqeC/UfJJ1rBQKju8tVO
+         MDVszfATIIbTOunDYRVbfQcBC/zb3AbRSBlBbF/rivnWY4ewz+pDfdsH8gNPjSjBeg8/
+         cFxg==
+X-Gm-Message-State: ABuFfoiCb/9Vqaeefw7PNCCmx6YNb1mIGtMRddnhlSmIu4Yi76E/U4jG
+        tPWHGgS8xQRGooPDiCmov046oHJA1cA1JPR3IWg=
+X-Google-Smtp-Source: ACcGV60MS6bj6QAy5nrSLWUDWgUBQyxdhW4IipqG5x0QtxFlqL5oly4a/rS2oPH3Zi4uWdSwA4H5D5wSJoK7qp9NdoU=
+X-Received: by 2002:a5d:404b:: with SMTP id w11-v6mr4743156wrp.147.1538662509195;
+ Thu, 04 Oct 2018 07:15:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181004134223.17735-1-michael@schupikov.de>
-In-Reply-To: <20181004134223.17735-1-michael@schupikov.de>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Thu, 4 Oct 2018 16:10:14 +0200
-Message-ID: <CAFLxGvw6tsdO2rqH1XzW84jN5kRqjzMP+cLtKhkDU1MtYUgJow@mail.gmail.com>
-Subject: Re: [PATCH] kernel/sysctl.c: remove duplicated include
-To:     michael@schupikov.de
-Cc:     mcgrof@kernel.org, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <1538406558-6433-1-git-send-email-ayan.halder@arm.com>
+In-Reply-To: <1538406558-6433-1-git-send-email-ayan.halder@arm.com>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Thu, 4 Oct 2018 15:09:45 +0100
+Message-ID: <CACvgo50fW1=0WC6PY85XHVzXYiNFo5Q732s2K0DVLyiwUtNGhA@mail.gmail.com>
+Subject: Re: [PATCH libdrm v4] libdrm: headers: Sync with drm-next
+To:     Ayan Kumar Halder <ayan.halder@arm.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mali DP Maintainers <malidp@foss.arm.com>,
+        David Airlie <airlied@linux.ie>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 3:48 PM Michael Schupikov <michael@schupikov.de> wrote:
+On Mon, 1 Oct 2018 at 16:09, Ayan Kumar Halder <ayan.halder@arm.com> wrote:
 >
-> Remove one include of <linux/pipe_fs_i.h>.
-> No functional changes.
+> Generated using make headers_install from the drm-next
+> tree - git://anongit.freedesktop.org/drm/drm
+> branch - drm-next
+> commit - 2dc7bad71cd310dc94d1c9907909324dd2b0618f
 >
-> Signed-off-by: Michael Schupikov <michael@schupikov.de>
-> ---
->  kernel/sysctl.c | 1 -
->  1 file changed, 1 deletion(-)
+> The changes were as follows :-
 >
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index cc02050fd0c4..523cb36b72eb 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -66,7 +66,6 @@
->  #include <linux/kexec.h>
->  #include <linux/bpf.h>
->  #include <linux/mount.h>
-> -#include <linux/pipe_fs_i.h>
+>   core: (drm.h, drm_fourcc.h, drm_mode.h)
+>     - Added client capabilities for ASPECT_RATIO and WRITEBACK_CONNECTORS
+>     - Added Arm AFBC modifiers
+>     - Added BROADCOM's SAND and UIF modifiers
+>     - Added Qualcomm's modifiers
+>     - Added some picture aspect ratio and content type options
+>     - Added some drm mode flags
+>     - Added writeback connector id
 >
->  #include <linux/uaccess.h>
->  #include <asm/processor.h>
+>   amdgpu:
+>     - Added GEM domain mask
+>     - Added some GEM flags
+>     - Added some hardware ip flags
+>     - Added chunk id and IB fence.
+>     - Added some query ids
+>
+>   i915:
+>     -Added an IOCTL (I915_PARAM_MMAP_GTT_COHERENT)
+>
+>   qxl:
+>     - Minor changes
+>
+>   tegra:
+>     - Added some comments about struct drm_tegra* members
+>     - Modified DRM_IOCTL_TEGRA_CLOSE_CHANNEL
+>
+>   vc4:
+>     - Added some members for 'struct drm_vc4_submit_cl'
+>
+> Changes in v2:
+>     - Mentioned 'libdrm' in the commit header.
+>
+> Changes in v3:
+>     - Removed the changes to radeon_drm.h, sis_drm.h and via_drm.h as suggested by
+>       Emil Velikov <emil.l.velikov@gmail.com>
+>
+> Changes in v4:
+>     - Removed the changes to vmwgfx_drm.h as it caused a build break ie
+>       'make check' failed.
+>
+> Change-Id: I018a06f65bf4a6a68400ab252b9cd05d041299b3
+> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
 
-Reviewed-by: Richard Weinberger <richard@nod.at>
-
--- 
-Thanks,
-//richard
+With all the corner-cases sorted, merged to master. Thanks for the patience.
+-Emil
