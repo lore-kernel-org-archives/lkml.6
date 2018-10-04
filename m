@@ -2,55 +2,56 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCB7C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512D1C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA0AE2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:05:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0AE2084D
+	by mail.kernel.org (Postfix) with ESMTP id 0CADA2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:06:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CADA2084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbeJEEA6 (ORCPT
+        id S1726885AbeJEEB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:00:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39163 "EHLO
+        Fri, 5 Oct 2018 00:01:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37657 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbeJEEA6 (ORCPT
+        with ESMTP id S1726732AbeJEEB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:00:58 -0400
+        Fri, 5 Oct 2018 00:01:29 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94L57ro2884703
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94L5eTH2884739
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 4 Oct 2018 14:05:07 -0700
+        Thu, 4 Oct 2018 14:05:40 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94L56KG2884700;
-        Thu, 4 Oct 2018 14:05:06 -0700
-Date:   Thu, 4 Oct 2018 14:05:06 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94L5euT2884736;
+        Thu, 4 Oct 2018 14:05:40 -0700
+Date:   Thu, 4 Oct 2018 14:05:40 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-a51e996d48ac9fa0a1260a3822a14f3d570d3be7@git.kernel.org>
-Cc:     luto@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, john.stultz@linaro.org,
-        pbonzini@redhat.com, arnd@arndb.de, kys@microsoft.com,
-        mingo@kernel.org, fweimer@redhat.com, matt@softrans.com.au,
-        vkuznets@redhat.com, sboyd@kernel.org, hpa@zytor.com,
-        jgross@suse.com
-Reply-To: jgross@suse.com, hpa@zytor.com, sboyd@kernel.org,
-          vkuznets@redhat.com, matt@softrans.com.au, kys@microsoft.com,
-          fweimer@redhat.com, mingo@kernel.org, pbonzini@redhat.com,
-          arnd@arndb.de, john.stultz@linaro.org, tglx@linutronix.de,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
-          luto@kernel.org
-In-Reply-To: <20180917130707.151963007@linutronix.de>
-References: <20180917130707.151963007@linutronix.de>
+Message-ID: <tip-77e9c678c54f2d9214796c1c5bd0c7c7ccedd932@git.kernel.org>
+Cc:     mingo@kernel.org, jgross@suse.com, hpa@zytor.com,
+        peterz@infradead.org, tglx@linutronix.de, fweimer@redhat.com,
+        pbonzini@redhat.com, luto@kernel.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, sboyd@kernel.org, vkuznets@redhat.com,
+        matt@softrans.com.au, kys@microsoft.com, john.stultz@linaro.org
+Reply-To: sboyd@kernel.org, vkuznets@redhat.com, matt@softrans.com.au,
+          linux-kernel@vger.kernel.org, arnd@arndb.de,
+          john.stultz@linaro.org, kys@microsoft.com, mingo@kernel.org,
+          tglx@linutronix.de, fweimer@redhat.com, pbonzini@redhat.com,
+          luto@kernel.org, peterz@infradead.org, jgross@suse.com,
+          hpa@zytor.com
+In-Reply-To: <20180917130707.236250416@linutronix.de>
+References: <20180917130707.236250416@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/vdso] x86/vdso: Enforce 64bit clocksource
-Git-Commit-ID: a51e996d48ac9fa0a1260a3822a14f3d570d3be7
+Subject: [tip:x86/vdso] x86/vdso: Use unsigned int consistently for
+ vsyscall_gtod_data:: Seq
+Git-Commit-ID: 77e9c678c54f2d9214796c1c5bd0c7c7ccedd932
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,18 +65,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a51e996d48ac9fa0a1260a3822a14f3d570d3be7
-Gitweb:     https://git.kernel.org/tip/a51e996d48ac9fa0a1260a3822a14f3d570d3be7
+Commit-ID:  77e9c678c54f2d9214796c1c5bd0c7c7ccedd932
+Gitweb:     https://git.kernel.org/tip/77e9c678c54f2d9214796c1c5bd0c7c7ccedd932
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 17 Sep 2018 14:45:36 +0200
+AuthorDate: Mon, 17 Sep 2018 14:45:37 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 4 Oct 2018 23:00:25 +0200
 
-x86/vdso: Enforce 64bit clocksource
+x86/vdso: Use unsigned int consistently for vsyscall_gtod_data:: Seq
 
-All VDSO clock sources are TSC based and use CLOCKSOURCE_MASK(64). There is
-no point in masking with all FF. Get rid of it and enforce the mask in the
-sanity checker.
+The sequence count in vgtod_data is unsigned int, but the call sites use
+unsigned long, which is a pointless exercise. Fix the call sites and
+replace 'unsigned' with unsinged 'int' while at it.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Andy Lutomirski <luto@kernel.org>
@@ -91,38 +92,87 @@ Cc: virtualization@lists.linux-foundation.org
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Juergen Gross <jgross@suse.com>
-Link: https://lkml.kernel.org/r/20180917130707.151963007@linutronix.de
+Link: https://lkml.kernel.org/r/20180917130707.236250416@linutronix.de
 
 ---
- arch/x86/entry/vdso/vclock_gettime.c | 2 +-
- arch/x86/kernel/time.c               | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/entry/vdso/vclock_gettime.c |  8 ++++----
+ arch/x86/include/asm/vgtod.h         | 10 +++++-----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index e48ca3afa091..6a950854034f 100644
+index 6a950854034f..b50ee064beff 100644
 --- a/arch/x86/entry/vdso/vclock_gettime.c
 +++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -201,7 +201,7 @@ notrace static inline u64 vgetsns(int *mode)
- #endif
- 	else
- 		return 0;
--	v = (cycles - gtod->cycle_last) & gtod->mask;
-+	v = cycles - gtod->cycle_last;
- 	return v * gtod->mult;
+@@ -208,7 +208,7 @@ notrace static inline u64 vgetsns(int *mode)
+ /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
+ notrace static int __always_inline do_realtime(struct timespec *ts)
+ {
+-	unsigned long seq;
++	unsigned int seq;
+ 	u64 ns;
+ 	int mode;
+ 
+@@ -229,7 +229,7 @@ notrace static int __always_inline do_realtime(struct timespec *ts)
+ 
+ notrace static int __always_inline do_monotonic(struct timespec *ts)
+ {
+-	unsigned long seq;
++	unsigned int seq;
+ 	u64 ns;
+ 	int mode;
+ 
+@@ -250,7 +250,7 @@ notrace static int __always_inline do_monotonic(struct timespec *ts)
+ 
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+-	unsigned long seq;
++	unsigned int seq;
+ 	do {
+ 		seq = gtod_read_begin(gtod);
+ 		ts->tv_sec = gtod->wall_time_coarse_sec;
+@@ -260,7 +260,7 @@ notrace static void do_realtime_coarse(struct timespec *ts)
+ 
+ notrace static void do_monotonic_coarse(struct timespec *ts)
+ {
+-	unsigned long seq;
++	unsigned int seq;
+ 	do {
+ 		seq = gtod_read_begin(gtod);
+ 		ts->tv_sec = gtod->monotonic_time_coarse_sec;
+diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
+index 53748541c487..91cad1f01027 100644
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -15,9 +15,9 @@ typedef unsigned long gtod_long_t;
+  * so be carefull by modifying this structure.
+  */
+ struct vsyscall_gtod_data {
+-	unsigned seq;
++	unsigned int seq;
+ 
+-	int vclock_mode;
++	int	vclock_mode;
+ 	u64	cycle_last;
+ 	u64	mask;
+ 	u32	mult;
+@@ -44,9 +44,9 @@ static inline bool vclock_was_used(int vclock)
+ 	return READ_ONCE(vclocks_used) & (1 << vclock);
  }
  
-diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
-index 1fa632e0829f..b23f5420b26a 100644
---- a/arch/x86/kernel/time.c
-+++ b/arch/x86/kernel/time.c
-@@ -120,4 +120,10 @@ void clocksource_arch_init(struct clocksource *cs)
- 			cs->name, cs->archdata.vclock_mode);
- 		cs->archdata.vclock_mode = VCLOCK_NONE;
- 	}
-+
-+	if (cs->mask != CLOCKSOURCE_MASK(64)) {
-+		pr_warn("clocksource %s registered with invalid mask %016llx. Disabling vclock.\n",
-+			cs->name, cs->mask);
-+		cs->archdata.vclock_mode = VCLOCK_NONE;
-+	}
+-static inline unsigned gtod_read_begin(const struct vsyscall_gtod_data *s)
++static inline unsigned int gtod_read_begin(const struct vsyscall_gtod_data *s)
+ {
+-	unsigned ret;
++	unsigned int ret;
+ 
+ repeat:
+ 	ret = READ_ONCE(s->seq);
+@@ -59,7 +59,7 @@ repeat:
  }
+ 
+ static inline int gtod_read_retry(const struct vsyscall_gtod_data *s,
+-					unsigned start)
++				  unsigned int start)
+ {
+ 	smp_rmb();
+ 	return unlikely(s->seq != start);
