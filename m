@@ -2,87 +2,95 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB42EC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA4BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65CD92064E
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:10:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CD92064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DA0D2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:10:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA0D2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJDQDC convert rfc822-to-8bit (ORCPT
+        id S1727478AbeJDQDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:03:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57961 "EHLO mail.bootlin.com"
+        Thu, 4 Oct 2018 12:03:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:32828 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbeJDQDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:03:01 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 966F920719; Thu,  4 Oct 2018 11:10:40 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 48A5920618;
-        Thu,  4 Oct 2018 11:10:30 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 11:10:30 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Vignesh R <vigneshr@ti.com>, Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "juliensu@mxic.com.tw" <juliensu@mxic.com.tw>,
-        "zhengxunli@mxic.com.tw" <zhengxunli@mxic.com.tw>,
-        "masonccyang@mxic.com.tw" <masonccyang@mxic.com.tw>
-Subject: Re: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for
- mt35xu512aba
-Message-ID: <20181004111030.4ae3670c@bbrezillon>
-In-Reply-To: <VI1PR04MB103837831B8BFEC2F7FD12E799EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20181003165603.2579-1-vigneshr@ti.com>
-        <20181003165603.2579-2-vigneshr@ti.com>
-        <VI1PR04MB1038C20CA97E453FC4C9CEAE99EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181004093925.2961d881@bbrezillon>
-        <VI1PR04MB103837831B8BFEC2F7FD12E799EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1726998AbeJDQDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:03:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43F1180D;
+        Thu,  4 Oct 2018 02:10:54 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E3943F5D3;
+        Thu,  4 Oct 2018 02:10:49 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 10:10:48 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v7 08/14] sched/topology: Disable EAS on inappropriate
+ platforms
+Message-ID: <20181004091046.7nn2odqrjy7tp5vx@queper01-lin>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
+ <20180912091309.7551-9-quentin.perret@arm.com>
+ <20181003162719.GB19252@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003162719.GB19252@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 4 Oct 2018 08:47:33 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+On Wednesday 03 Oct 2018 at 18:27:19 (+0200), Peter Zijlstra wrote:
+> On Wed, Sep 12, 2018 at 10:13:03AM +0100, Quentin Perret wrote:
+> > @@ -288,6 +321,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+> >  			goto free;
+> >  		tmp->next = pd;
+> >  		pd = tmp;
+> > +
+> > +		/*
+> > +		 * Count performance domains and capacity states for the
+> > +		 * complexity check.
+> > +		 */
+> > +		nr_pd++;
+> > +		nr_cs += em_pd_nr_cap_states(pd->obj);
+> > +	}
+> > +
+> > +	/* Bail out if the Energy Model complexity is too high. */
+> > +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
+> > +		if (sched_debug())
+> > +			pr_info("rd %*pbl: EM complexity is too high\n ",
+> > +						cpumask_pr_args(cpu_map));
+> > +		goto free;
+> >  	}
+> 
+> I would make than an unconditional WARN, we do not really expect that to
+> trigger, but then it does, we really don't want to hide it.
 
-> > 
-> > Yogesh, you already sent "spi: add flags for octal I/O data
-> > transfer" [3] which is only adding the new OCTAL flags but is not
-> > patching spi.c and spi-mem.c to take those new flags into account.
-> > Here is my version of this patch [2] (it's still missing an update
-> > of SPI_MEM_MAX_BUSWIDTH). Let me know what you want to do (rework
-> > your version to address the problem or take mine). 
-> I haven't said that I have sent the patches.
+OTOH that also means that some people with big asymmetric machines can
+get a WARN message every time they boot, and even if they don't want to
+use EAS.
 
-Well, you at least sent one of them, I know it because I was in
-CC :P.
+Now, that shouldn't happen any time soon, so it's maybe a good thing if
+we get reports when/if people start to hit that one, so why not ...
 
-> My patches are ready and needed to be sent for review.
-
-I initially told you to drop those patches because we didn't have a
-user yet, that's about to change, so I guess we're all good.
-
-> In these patches,  I am adding support for X-X-X protocol for octal
-> support and integrating them with spi  and flash m25p80 interface.
-
-From what I've seen you're not adding support of 8-8-8 but for 1-8-8 an
-1-1-8, which is a lot easier to deal with (it's completely stateless,
-which is what the spi-nor expects). Unless you're talking about other
-patches you haven't sent yet...
-
+Thanks,
+Quentin
