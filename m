@@ -6,182 +6,107 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FEDC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B139CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A4220877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A4220877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EB7420877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB7420877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbeJEEYT (ORCPT
+        id S1728408AbeJEEY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:24:19 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:52872 "EHLO ale.deltatee.com"
+        Fri, 5 Oct 2018 00:24:29 -0400
+Received: from shell.v3.sk ([90.176.6.54]:37145 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbeJEEXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:23:16 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8BA2-0002Ye-PM; Thu, 04 Oct 2018 15:27:55 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8B9x-0001eg-Qo; Thu, 04 Oct 2018 15:27:49 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu,  4 Oct 2018 15:27:37 -0600
-Message-Id: <20181004212747.6301-4-logang@deltatee.com>
+        id S1727012AbeJEEY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 00:24:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5E23ABC4A2;
+        Thu,  4 Oct 2018 23:29:12 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id oxBF065sA8i8; Thu,  4 Oct 2018 23:29:09 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 6C6DFBC4A3;
+        Thu,  4 Oct 2018 23:29:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id wIHkBRRj8D_m; Thu,  4 Oct 2018 23:29:08 +0200 (CEST)
+Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id A3AB1BC4A2;
+        Thu,  4 Oct 2018 23:29:08 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>, stable@vger.kernel.org
+Subject: [PATCH] [media] ov7670: make "xclk" clock optional
+Date:   Thu,  4 Oct 2018 23:29:03 +0200
+Message-Id: <20181004212903.364064-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181004212747.6301-1-logang@deltatee.com>
-References: <20181004212747.6301-1-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v9 03/13] PCI/P2PDMA: Add PCI p2pmem DMA mappings to adjust the bus offset
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DMA address used when mapping PCI P2P memory must be the PCI bus
-address. Thus, introduce pci_p2pmem_map_sg() to map the correct
-addresses when using P2P memory.
+When the "xclk" clock was added, it was made mandatory. This broke the
+driver on an OLPC plaform which doesn't know such clock. Make it
+optional.
 
-Memory mapped in this way does not need to be unmapped and thus if we
-provided pci_p2pmem_unmap_sg() it would be empty. This breaks the
-expected balance between map/unmap but was left out as an empty
-function doesn't really provide any benefit. In the future, if
-this call becomes necessary it can be added without much difficulty.
+Tested on a OLPC XO-1 laptop.
 
-For this, we assume that an SGL passed to these functions contain all
-P2P memory or no P2P memory.
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org # 4.11+
+Fixes: 0a024d634cee ("[media] ov7670: get xclk")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/pci/p2pdma.c       | 43 ++++++++++++++++++++++++++++++++++++++
- include/linux/memremap.h   |  1 +
- include/linux/pci-p2pdma.h |  7 +++++++
- 3 files changed, 51 insertions(+)
+ drivers/media/i2c/ov7670.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index 526c638579d1..e914f04ea1ec 100644
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -194,6 +194,8 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
- 	pgmap->res.flags = pci_resource_flags(pdev, bar);
- 	pgmap->ref = &pdev->p2pdma->devmap_ref;
- 	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
-+	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
-+		pci_resource_start(pdev, bar);
- 
- 	addr = devm_memremap_pages(&pdev->dev, pgmap);
- 	if (IS_ERR(addr)) {
-@@ -682,3 +684,44 @@ void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
- 	pdev->p2pdma->p2pmem_published = publish;
- }
- EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
-+
-+/**
-+ * pci_p2pdma_map_sg - map a PCI peer-to-peer scatterlist for DMA
-+ * @dev: device doing the DMA request
-+ * @sg: scatter list to map
-+ * @nents: elements in the scatterlist
-+ * @dir: DMA direction
-+ *
-+ * Scatterlists mapped with this function should not be unmapped in any way.
-+ *
-+ * Returns the number of SG entries mapped or 0 on error.
-+ */
-+int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
-+		      enum dma_data_direction dir)
-+{
-+	struct dev_pagemap *pgmap;
-+	struct scatterlist *s;
-+	phys_addr_t paddr;
-+	int i;
-+
-+	/*
-+	 * p2pdma mappings are not compatible with devices that use
-+	 * dma_virt_ops. If the upper layers do the right thing
-+	 * this should never happen because it will be prevented
-+	 * by the check in pci_p2pdma_add_client()
-+	 */
-+	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_DMA_VIRT_OPS) &&
-+			 dev->dma_ops == &dma_virt_ops))
-+		return 0;
-+
-+	for_each_sg(sg, s, nents, i) {
-+		pgmap = sg_page(s)->pgmap;
-+		paddr = sg_phys(s);
-+
-+		s->dma_address = paddr - pgmap->pci_p2pdma_bus_offset;
-+		sg_dma_len(s) = s->length;
+diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+index 31bf577b0bd3..64d1402882c8 100644
+--- a/drivers/media/i2c/ov7670.c
++++ b/drivers/media/i2c/ov7670.c
+@@ -1808,17 +1808,24 @@ static int ov7670_probe(struct i2c_client *client=
+,
+ 			info->pclk_hb_disable =3D true;
+ 	}
+=20
+-	info->clk =3D devm_clk_get(&client->dev, "xclk");
+-	if (IS_ERR(info->clk))
+-		return PTR_ERR(info->clk);
+-	ret =3D clk_prepare_enable(info->clk);
+-	if (ret)
+-		return ret;
++	info->clk =3D devm_clk_get(&client->dev, "xclk"); /* optional */
++	if (IS_ERR(info->clk)) {
++		ret =3D PTR_ERR(info->clk);
++		if (ret =3D=3D -ENOENT)
++			info->clk =3D NULL;
++		else
++			return ret;
 +	}
-+
-+	return nents;
-+}
-+EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 9553370ebdad..0ac69ddf5fc4 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -125,6 +125,7 @@ struct dev_pagemap {
- 	struct device *dev;
- 	void *data;
- 	enum memory_type type;
-+	u64 pci_p2pdma_bus_offset;
- };
- 
- #ifdef CONFIG_ZONE_DEVICE
-diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
-index 7bdaacfd5892..b6dfb6dc2e53 100644
---- a/include/linux/pci-p2pdma.h
-+++ b/include/linux/pci-p2pdma.h
-@@ -30,6 +30,8 @@ struct scatterlist *pci_p2pmem_alloc_sgl(struct pci_dev *pdev,
- 					 unsigned int *nents, u32 length);
- void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
- void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
-+int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
-+		      enum dma_data_direction dir);
- #else /* CONFIG_PCI_P2PDMA */
- static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
- 		size_t size, u64 offset)
-@@ -75,6 +77,11 @@ static inline void pci_p2pmem_free_sgl(struct pci_dev *pdev,
- static inline void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
- {
- }
-+static inline int pci_p2pdma_map_sg(struct device *dev,
-+		struct scatterlist *sg, int nents, enum dma_data_direction dir)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_PCI_P2PDMA */
- 
- 
--- 
++	if (info->clk) {
++		ret =3D clk_prepare_enable(info->clk);
++		if (ret)
++			return ret;
+=20
+-	info->clock_speed =3D clk_get_rate(info->clk) / 1000000;
+-	if (info->clock_speed < 10 || info->clock_speed > 48) {
+-		ret =3D -EINVAL;
+-		goto clk_disable;
++		info->clock_speed =3D clk_get_rate(info->clk) / 1000000;
++		if (info->clock_speed < 10 || info->clock_speed > 48) {
++			ret =3D -EINVAL;
++			goto clk_disable;
++		}
+ 	}
+=20
+ 	ret =3D ov7670_init_gpio(client, info);
+--=20
 2.19.0
 
