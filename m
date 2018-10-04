@@ -2,142 +2,103 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA32C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAC4C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4416B20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12ABE2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FZDvqLxt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4416B20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzLQ74N+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12ABE2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbeJDK7H (ORCPT
+        id S1727091AbeJDLIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 06:59:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:44729 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726504AbeJDK7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 06:59:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42QfVp60wnz9s55;
-        Thu,  4 Oct 2018 14:07:45 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538626067;
-        bh=eWWTlThW6PpcUQfhHWNR+0e1UG8+rReJXzJgIQqQXM0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FZDvqLxtz/1PUX6N9eawn8/dFtpnV7cZUQQrTw/oV1o4LkHpqi5z4Op5wtqsR3jOO
-         KHfGnsVtliahV2/o0a4aaGwVG9x0XcyrsOOdWdn2PoKStkRtEyfHmqw3lYfm62D8CI
-         Y0WdbM38x7Bu+TktvE+/wwO90pmDisZ1U73akqGhKzsr3erMG8N2XXu2jioQTdAdNC
-         rYcy74RTtatMhDW1WRvxxHmp5kWKzanOO5gIYPJ6mWUU51kM/nX+iqe3wRFldN/3dt
-         K7iZmVsa+C4iuUJOyJjdE5uxHToYqK+TXG8dw5Ufzn/62BMq7f+HZ8uU5OHrPzGLc6
-         iVP9GJ2dCbtww==
-Date:   Thu, 4 Oct 2018 14:07:37 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christoffer Dall <cdall@cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <20181004140737.214df900@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/03S_PquRkNovGEDg+fb2OkM"; protocol="application/pgp-signature"
+        Thu, 4 Oct 2018 07:08:01 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45876 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbeJDLIB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 07:08:01 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y15-v6so4480522plr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 21:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ShjguVtKgx8USFMbbAaUpwPgJamNI5T7sPuXtPbQDdo=;
+        b=fzLQ74N+cQWSvyN+AwzO5+kk5L2TALtw6DmbvhL4DTyiCFsVIMKC+n0MDq4bl81TT8
+         8MGiw9JolUQaKMVG1AaraWJByeFDxY3GOz2UbA4DTOQrMO5tlYm22FzAOb6jCPa4UrGM
+         cdcmgpOpCsYPlt38ykKNX0ZWTOdvug7u4X7DQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ShjguVtKgx8USFMbbAaUpwPgJamNI5T7sPuXtPbQDdo=;
+        b=B0cJY/qOH/yThGDRdvmvwupjatpf5m9va0egUyzWI8xXL6+ntL1WuldOAc1PXqElfy
+         ltqPSnSbEbOpe4uoO3yu7lkTnIzFvxDhHjaO22oNT9nE+ygmpZtJFPCx0OgWx9yJxce2
+         UVStR/okgso3BuG9rDFmJI3/B5V1A3JGuK61QoJ/fKWXQB5Q/onvgXTG+ctq+JHMEgTT
+         eHn3b9xEDhsCaQWiY0S62vobi16ieCCfNJEk1TPj8HVjw62Lh7FCA1zXxlE+Mkqklwz4
+         xOU5PDzGrOcan7t9h5s0GJttCvfNJdq38bd5zLJgAqnlduFbBYjBL0FOEdghPN8yglCC
+         6qOQ==
+X-Gm-Message-State: ABuFfoh7g7iiUGEXf64ZSKkuENMF0QWOPbnwBR7c+WkIMmaD5bVPB4uL
+        8eIBocAow5wSsD53iZ2mage5fhoYuys=
+X-Google-Smtp-Source: ACcGV60tLUzJ6AjSjIODohjmuLNn0So6mSbzjJWPGUKNcAitaIh+jGkohc4Djz4fzrkfS9s+m1Cuhg==
+X-Received: by 2002:a17:902:261:: with SMTP id 88-v6mr4705778plc.331.1538626602558;
+        Wed, 03 Oct 2018 21:16:42 -0700 (PDT)
+Received: from localhost ([122.172.76.11])
+        by smtp.gmail.com with ESMTPSA id y8-v6sm6985153pfd.168.2018.10.03.21.16.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 21:16:41 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        niklas.cassel@linaro.org, d-gerlach@ti.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] OPP: Fix more bugs and improve error handling
+Date:   Thu,  4 Oct 2018 09:46:19 +0530
+Message-Id: <cover.1538625101.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/03S_PquRkNovGEDg+fb2OkM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+Few more bugs have surfaced recently, few of which have been there
+forever but came to light only after the recent changes in OPP core.
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Dave already sent fix for one of them sometime back and as he isn't
+around for a week, I picked up the patch, modified it and posting V2 of
+it here.
 
-  arch/arm64/include/asm/cpufeature.h
+Niklas already helped testing two of these on Qcom hardware where he
+originally faced the issues.
 
-between commit:
+--
+Viresh
 
-  520ad98871a0 ("arm64/cpufeatures: Factorize emulate_mrs()")
+Dave Gerlach (1):
+  PM / OPP: _of_add_opp_table_v2(): increment count only if OPP is added
 
-from the arm64 tree and commit:
+Viresh Kumar (3):
+  OPP: Improve error handling in dev_pm_opp_of_cpumask_add_table()
+  OPP: Return error on error from dev_pm_opp_get_opp_count()
+  cpufreq: dt: Try freeing static OPPs only if we have added them
 
-  ce00e3cb4fb4 ("arm64: Add a helper for PARange to physical shift conversi=
-on")
+ drivers/cpufreq/cpufreq-dt.c | 34 +++++++++++++-----------
+ drivers/opp/core.c           |  2 +-
+ drivers/opp/of.c             | 51 ++++++++++++++++++++++--------------
+ 3 files changed, 52 insertions(+), 35 deletions(-)
 
-from the kvm-arm tree.
+-- 
+2.18.0.rc1.242.g61856ae69a2c
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/include/asm/cpufeature.h
-index 6db48d90ad63,072cc1c970c2..000000000000
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@@ -536,7 -530,26 +536,28 @@@ void arm64_set_ssbd_mitigation(bool sta
-  static inline void arm64_set_ssbd_mitigation(bool state) {}
-  #endif
- =20
-+ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
-+ {
-+ 	switch (parange) {
-+ 	case 0: return 32;
-+ 	case 1: return 36;
-+ 	case 2: return 40;
-+ 	case 3: return 42;
-+ 	case 4: return 44;
-+ 	case 5: return 48;
-+ 	case 6: return 52;
-+ 	/*
-+ 	 * A future PE could use a value unknown to the kernel.
-+ 	 * However, by the "D10.1.4 Principles of the ID scheme
-+ 	 * for fields in ID registers", ARM DDI 0487C.a, any new
-+ 	 * value is guaranteed to be higher than what we know already.
-+ 	 * As a safe limit, we return the limit supported by the kernel.
-+ 	 */
-+ 	default: return CONFIG_ARM64_PA_BITS;
-+ 	}
-+ }
-++
- +extern int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
-  #endif /* __ASSEMBLY__ */
- =20
-  #endif
-
---Sig_/03S_PquRkNovGEDg+fb2OkM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1kgkACgkQAVBC80lX
-0GzllggAmWJr0gflzWrLVWaiyAcMDH6B86g4XbTMbvDb+UaM0hQbQBKwG5QeIHAv
-YL3X4tFXLzMpNKBHIbBe6n6ETsxayeg7j6WDl8pWklL1EGx6YkcloERLFBF/171C
-JPiFUshd+M217RWxw53D3YBq1uHE+I57gYaRvPJGGsTEuH2wdlesAuqhqXNBKP8s
-oRE0j696SA59bYFdgNkdjTEgDuSRH9xgs7q0PRXwzeSYO2I1FpWud2r9RBU8P7j9
-DQxCkgK7zwUKBU4G5kiyyTJtCKUoSRwl4LLYTVGEl+jT1wQAGtEhKhqrprW3od5L
-Ew4rH24gX08hfentzAxsr6T6qsBaDQ==
-=oYES
------END PGP SIGNATURE-----
-
---Sig_/03S_PquRkNovGEDg+fb2OkM--
