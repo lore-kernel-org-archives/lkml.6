@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B439C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37DFC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19E320877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C4F52082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:20:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CGunVYc5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CGunVYc5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19E320877
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RXP/e0gm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TWOBSEL3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4F52082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJDWOV (ORCPT
+        id S1727848AbeJDWOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:14:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56634 "EHLO
+        Thu, 4 Oct 2018 18:14:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56732 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbeJDWOU (ORCPT
+        with ESMTP id S1727807AbeJDWOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:14:20 -0400
+        Thu, 4 Oct 2018 18:14:22 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B140760C4E; Thu,  4 Oct 2018 15:20:35 +0000 (UTC)
+        id C28B260D84; Thu,  4 Oct 2018 15:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538666435;
-        bh=IYkDeCLEo0iUaXGkDm/0nbl9OXzzTgkiyu7XZ+M+gRw=;
+        s=default; t=1538666437;
+        bh=jMf+39+yDtjpVAt90Py1Zf3oIxoOh1kTS88F9ToNgR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CGunVYc5idX8ls3GscD//jr1e56Ta+GgS/uTbhnLzyrKUillQSQPHtQ2ae9j9LI9I
-         zEDuX0ImbkGLnmaoC/+G5vXG7OlIDvBwZrod6T1xh22zUt35lnk0tmH7dV0B0+ndk0
-         kaKreUBdaPe2hJGWQDqloGULQuzgTmj61lMcqq0s=
+        b=RXP/e0gmFwRz0w9QVIMR4l3U9lknhk56Lzx1ZPXE/TaMCE0FBGJrGRbHKg07Nm+l1
+         hhevhHeyK/LEuNTWY1CizJhm4/lFw1geYARMRKliFQwxf0ke+kK4mwcHvbTTWZIwI7
+         Z00/ezeOTkJq5OhOo3lnZH/GwYeDrPlFssxZBvSw=
 Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 68D7860D2D;
-        Thu,  4 Oct 2018 15:20:34 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F325E60D84;
+        Thu,  4 Oct 2018 15:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538666435;
-        bh=IYkDeCLEo0iUaXGkDm/0nbl9OXzzTgkiyu7XZ+M+gRw=;
+        s=default; t=1538666436;
+        bh=jMf+39+yDtjpVAt90Py1Zf3oIxoOh1kTS88F9ToNgR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CGunVYc5idX8ls3GscD//jr1e56Ta+GgS/uTbhnLzyrKUillQSQPHtQ2ae9j9LI9I
-         zEDuX0ImbkGLnmaoC/+G5vXG7OlIDvBwZrod6T1xh22zUt35lnk0tmH7dV0B0+ndk0
-         kaKreUBdaPe2hJGWQDqloGULQuzgTmj61lMcqq0s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68D7860D2D
+        b=TWOBSEL3FhZZy2Gz0yjtBdf18FsTuwuuSdQVZ3Dx3Gn+J5hIRWnmHuDlP6RNlfFOT
+         HMxVXCVAyaVa7ZfpLhuc1eDiN2eX2O3whJbY9BYwNTD65WlZRQcaSJ24y+r+BRaEm8
+         bIKCB2gVR+4yL/e4JI4xqbuS3e69h1nuw74Dj1bg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F325E60D84
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
 From:   Jeffrey Hugo <jhugo@codeaurora.org>
@@ -58,9 +58,9 @@ To:     sudeep.holla@arm.com, gregkh@linuxfoundation.org,
         jeremy.linton@arm.com
 Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org,
         Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v4 1/2] drivers: base: cacheinfo: Do not populate sysfs for unknown cache types
-Date:   Thu,  4 Oct 2018 09:20:05 -0600
-Message-Id: <1538666406-7504-2-git-send-email-jhugo@codeaurora.org>
+Subject: [PATCH v4 2/2] ACPI/PPTT: Handle architecturally unknown cache types
+Date:   Thu,  4 Oct 2018 09:20:06 -0600
+Message-Id: <1538666406-7504-3-git-send-email-jhugo@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1538666406-7504-1-git-send-email-jhugo@codeaurora.org>
 References: <1538666406-7504-1-git-send-email-jhugo@codeaurora.org>
@@ -69,41 +69,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a cache has an unknown type because neither the hardware nor the
-firmware told us, an entry in the sysfs tree will be made, but the type
-file will not be present.  lscpu depends on the type file being present
-for every entry, and will error out without printing system information
-if lscpu cannot open the type file.
+The type of a cache might not be specified by architectural mechanisms (ie
+system registers), but its type might be specified in the PPTT.  In this
+case, we should populate the type of the cache, rather than leave it
+undefined.
 
-Presenting information about a cache without indicating its type is not
-useful, therefore if we hit a cache with an unknown type, stop populating
-sysfs so that userspace has the maximum amount of useful information.
+This fixes the issue where the cacheinfo driver will not populate sysfs
+for such caches, resulting in the information missing from utilities like
+lstopo and lscpu, thus degrading the user experience.
 
-This addresses the following lscpu error, which prevents any output.
-lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
-file or directory
-
-Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
+Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
+Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
 Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
 Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/base/cacheinfo.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/pptt.c | 33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 5d5b598..cf78fa6 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -615,6 +615,8 @@ static int cache_add_dev(unsigned int cpu)
- 		this_leaf = this_cpu_ci->info_list + i;
- 		if (this_leaf->disable_sysfs)
- 			continue;
-+		if (this_leaf->type == CACHE_TYPE_NOCACHE)
-+			break;
- 		cache_groups = cache_get_attribute_groups(this_leaf);
- 		ci_dev = cpu_device_create(parent, this_leaf, cache_groups,
- 					   "index%1u", i);
+diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+index d1e26cb..da031b1 100644
+--- a/drivers/acpi/pptt.c
++++ b/drivers/acpi/pptt.c
+@@ -338,9 +338,6 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
+ 	return found;
+ }
+ 
+-/* total number of attributes checked by the properties code */
+-#define PPTT_CHECKED_ATTRIBUTES 4
+-
+ /**
+  * update_cache_properties() - Update cacheinfo for the given processor
+  * @this_leaf: Kernel cache info structure being updated
+@@ -357,25 +354,15 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+ 				    struct acpi_pptt_cache *found_cache,
+ 				    struct acpi_pptt_processor *cpu_node)
+ {
+-	int valid_flags = 0;
+-
+ 	this_leaf->fw_token = cpu_node;
+-	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
++	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
+ 		this_leaf->size = found_cache->size;
+-		valid_flags++;
+-	}
+-	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID) {
++	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
+ 		this_leaf->coherency_line_size = found_cache->line_size;
+-		valid_flags++;
+-	}
+-	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID) {
++	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
+ 		this_leaf->number_of_sets = found_cache->number_of_sets;
+-		valid_flags++;
+-	}
+-	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID) {
++	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
+ 		this_leaf->ways_of_associativity = found_cache->associativity;
+-		valid_flags++;
+-	}
+ 	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
+ 		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
+ 		case ACPI_PPTT_CACHE_POLICY_WT:
+@@ -402,11 +389,17 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+ 		}
+ 	}
+ 	/*
+-	 * If the above flags are valid, and the cache type is NOCACHE
+-	 * update the cache type as well.
++	 * If cache type is NOCACHE, then the cache hasn't been specified
++	 * via other mechanisms.  Update the type if a cache type has been
++	 * provided.
++	 *
++	 * Note, we assume such caches are unified based on conventional system
++	 * design and known examples.  Significant work is required elsewhere to
++	 * fully support data/instruction only type caches which are only
++	 * specified in PPTT.
+ 	 */
+ 	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
+-	    valid_flags == PPTT_CHECKED_ATTRIBUTES)
++	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
+ 		this_leaf->type = CACHE_TYPE_UNIFIED;
+ }
+ 
 -- 
 Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
 Qualcomm Technologies, Inc. is a member of the
