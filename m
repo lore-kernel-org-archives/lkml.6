@@ -2,134 +2,66 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A40C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D17C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E1EF20877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:32:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E1EF20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B9222082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9222082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeJDX0T (ORCPT
+        id S1727797AbeJDX1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:26:19 -0400
-Received: from mga03.intel.com ([134.134.136.65]:10903 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbeJDX0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:26:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 09:32:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,340,1534834800"; 
-   d="scan'208";a="78731131"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by orsmga008.jf.intel.com with ESMTP; 04 Oct 2018 09:30:13 -0700
-Message-ID: <5fad8118868739a452b8f5834290a04f1b343775.camel@intel.com>
-Subject: Re: [RFC PATCH v4 6/9] x86/cet/ibt: Add arch_prctl functions for IBT
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Florian Weimer <fw@deneb.enyo.de>
-Cc:     Eugene Syromiatnikov <esyr@redhat.com>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Carlos O'Donell <carlos@redhat.com>
-Date:   Thu, 04 Oct 2018 09:25:32 -0700
-In-Reply-To: <CALCETrXTqxQLWEHhSQ6WsDosnD61rnN2TgAFFomVAf5URP4DzA@mail.gmail.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
-         <20180921150553.21016-7-yu-cheng.yu@intel.com>
-         <20181004132811.GJ32759@asgard.redhat.com>
-         <3350f7b42b32f3f7a1963a9c9c526210c24f7b05.camel@intel.com>
-         <87murtn19o.fsf@mid.deneb.enyo.de>
-         <CALCETrXTqxQLWEHhSQ6WsDosnD61rnN2TgAFFomVAf5URP4DzA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
+        Thu, 4 Oct 2018 19:27:54 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51300 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbeJDX1x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:27:53 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 083A9145433A0;
+        Thu,  4 Oct 2018 09:33:51 -0700 (PDT)
+Date:   Thu, 04 Oct 2018 09:33:51 -0700 (PDT)
+Message-Id: <20181004.093351.1136416281432963961.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     derek.chickles@caviumnetworks.com,
+        satananda.burla@caviumnetworks.com,
+        felix.manlunas@caviumnetworks.com,
+        raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][liquidio-next] liquidio: fix a couple of spelling
+ mistakes
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181004121118.18014-1-colin.king@canonical.com>
+References: <20181004121118.18014-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 04 Oct 2018 09:33:52 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 09:12 -0700, Andy Lutomirski wrote:
-> On Thu, Oct 4, 2018 at 9:08 AM Florian Weimer <fw@deneb.enyo.de> wrote:
-> > 
-> > * Yu-cheng Yu:
-> > 
-> > > On Thu, 2018-10-04 at 15:28 +0200, Eugene Syromiatnikov wrote:
-> > > > On Fri, Sep 21, 2018 at 08:05:50AM -0700, Yu-cheng Yu wrote:
-> > > > > Update ARCH_CET_STATUS and ARCH_CET_DISABLE to include Indirect
-> > > > > Branch Tracking features.
-> > > > > 
-> > > > > Introduce:
-> > > > > 
-> > > > > arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
-> > > > >     Enable the Indirect Branch Tracking legacy code bitmap.
-> > > > > 
-> > > > >     The parameter 'addr' is a pointer to a user buffer.
-> > > > >     On returning to the caller, the kernel fills the following:
-> > > > > 
-> > > > >     *addr = IBT bitmap base address
-> > > > >     *(addr + 1) = IBT bitmap size
-> > > > 
-> > > > Again, some structure with a size field would be better from
-> > > > UAPI/extensibility standpoint.
-> > > > 
-> > > > One additional point: "size" in the structure from kernel should have
-> > > > structure size expected by kernel, and at least providing there "0" from
-> > > > user space shouldn't lead to failure (in fact, it is possible to provide
-> > > > structure size back to userspace even if buffer is too small, along
-> > > > with error).
-> > > 
-> > > This has been in GLIBC v2.28.  We cannot change it anymore.
-> > 
-> > In theory, you could, if you change the ARCH_CET_LEGACY_BITMAP
-> > constant, so that glibc will not use the different arch_prctl
-> > operation.  We could backport the change into the glibc 2.28 dynamic
-> > linker, so that existing binaries will start using CET again.  Then
-> > only statically linked binaries will be impacted.
-> > 
-> > It's definitely not ideal, but it's doable if the interface is
-> > terminally broken or otherwise unacceptable.  But to me it looks like
-> > this threshold isn't reached here.
-> 
-> I tend to agree.
-> 
-> But I do think there's a real problem that should be fixed and won't
-> affect ABI: the *name* of the prctl is pretty bad.  I read the test
-> several times trying to decide if you meant
-> ARCH_GET_CET_LEGACY_BITMAP?  But you don't.
-> 
-> Maybe name it ARCH_CET_CREATE_LEGACY_BITMAP?  And explicitly document
-> what it does if legacy bitmap already exists?
+From: Colin King <colin.king@canonical.com>
+Date: Thu,  4 Oct 2018 13:11:18 +0100
 
-I will fix it.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistakes in dev_dbg warning messages
+> 
+> "Reloade" -> "Reload"
+> "chang" -> "change"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Yu-cheng
+Applied.
