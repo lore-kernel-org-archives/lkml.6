@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D012EC65BA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5CEC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E06E21486
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB0362087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="tAT+AbSC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E06E21486
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="zDLiNIJg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0362087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeJEET2 (ORCPT
+        id S1728051AbeJEETl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:19:28 -0400
-Received: from mail-sn1nam01on0053.outbound.protection.outlook.com ([104.47.32.53]:5760
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Fri, 5 Oct 2018 00:19:41 -0400
+Received: from mail-bl2nam02on0077.outbound.protection.outlook.com ([104.47.38.77]:22955
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725996AbeJEET0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:19:26 -0400
+        id S1726570AbeJEETZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 00:19:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M39qo0zj4PCoi+MjONaPAVHRKQdD9EIssUqWbk3rOt8=;
- b=tAT+AbSCwvnH5owfE9DS+30pznDin+yd+oMeRUwXsKPa4PPj/A7je+KVEcbFYWnn2GG4V6T25pLZ9wC9YzhXIi2zlPr7gLYpSfQRmh5yQDSliOFCLGGs523iF/UWx9kgwkLGFe+XNZHrlu8CzPietWaTrtHk6PihS5f81aOWAjw=
-Received: from BL0PR02CA0042.namprd02.prod.outlook.com (2603:10b6:207:3d::19)
- by BYAPR02MB4469.namprd02.prod.outlook.com (2603:10b6:a03:10::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1207.21; Thu, 4 Oct
- 2018 21:24:11 +0000
-Received: from BL2NAM02FT023.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::201) by BL0PR02CA0042.outlook.office365.com
- (2603:10b6:207:3d::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1122.17 via Frontend
- Transport; Thu, 4 Oct 2018 21:24:10 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ bh=LQUAg2zEnhJHhxj56+Qf30lNEYmBi97e55gUiTkzj0s=;
+ b=zDLiNIJgj2wyjQUbmZnd+G/acmXzPIMqCU/wAp0r++/mLRKqnyiFaBrFXVOxkbmL5E7LizXeA//HH4NvqoIAE5pHHJmvRB47cid3++8xD5GEhMOVACzyDquQRlXBXGB5Dec7mYZYXzNVoKQA38FwnE1CJkK4bDOUBwfUBFnn2sc=
+Received: from MWHPR0201CA0088.namprd02.prod.outlook.com
+ (2603:10b6:301:75::29) by BYAPR02MB4757.namprd02.prod.outlook.com
+ (2603:10b6:a03:4e::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1185.22; Thu, 4 Oct
+ 2018 21:24:06 +0000
+Received: from BL2NAM02FT062.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::206) by MWHPR0201CA0088.outlook.office365.com
+ (2603:10b6:301:75::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1207.21 via Frontend
+ Transport; Thu, 4 Oct 2018 21:24:06 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT023.mail.protection.outlook.com (10.152.77.72) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT062.mail.protection.outlook.com (10.152.77.57) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1207.19
- via Frontend Transport; Thu, 4 Oct 2018 21:24:05 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+ via Frontend Transport; Thu, 4 Oct 2018 21:24:04 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:48244 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1g8B6K-0003dY-2V; Thu, 04 Oct 2018 14:24:04 -0700
+        id 1g8B6K-0004fA-4W; Thu, 04 Oct 2018 14:24:04 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1g8B6E-0001wm-Tl; Thu, 04 Oct 2018 14:23:58 -0700
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w94LNvus016480;
+        id 1g8B6F-0001wm-0T; Thu, 04 Oct 2018 14:23:59 -0700
+Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w94LNujB006252;
         Thu, 4 Oct 2018 14:23:57 -0700
 Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <jollys@xilinx.com>)
-        id 1g8B6C-0001w6-Tz; Thu, 04 Oct 2018 14:23:56 -0700
+        id 1g8B6C-0001w6-PR; Thu, 04 Oct 2018 14:23:56 -0700
 From:   Jolly Shah <jolly.shah@xilinx.com>
 To:     <matthias.bgg@gmail.com>, <andy.gross@linaro.org>,
         <shawnguo@kernel.org>, <geert+renesas@glider.be>,
@@ -75,12 +75,11 @@ To:     <matthias.bgg@gmail.com>, <andy.gross@linaro.org>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <rajanv@xilinx.com>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Jolly Shah <jolly.shah@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
+        <linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>,
         Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v3 4/4] drivers: soc: xilinx: Add ZynqMP power domain driver
-Date:   Thu, 4 Oct 2018 14:23:41 -0700
-Message-ID: <1538688221-9823-5-git-send-email-jollys@xilinx.com>
+Subject: [PATCH v3 2/4] firmware: xilinx: Add APIs to control node status/power
+Date:   Thu, 4 Oct 2018 14:23:39 -0700
+Message-ID: <1538688221-9823-3-git-send-email-jollys@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538688221-9823-1-git-send-email-jollys@xilinx.com>
 References: <1538688221-9823-1-git-send-email-jollys@xilinx.com>
@@ -89,574 +88,205 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(396003)(136003)(2980300002)(438002)(189003)(199004)(478600001)(63266004)(16586007)(316002)(4744004)(48376002)(72206003)(2906002)(107886003)(36756003)(106466001)(36386004)(50466002)(6666003)(4326008)(11346002)(126002)(446003)(47776003)(426003)(110136005)(8936002)(9786002)(44832011)(7416002)(476003)(5660300001)(2616005)(186003)(77096007)(336012)(26005)(81156014)(106002)(81166006)(8676002)(7696005)(51416003)(54906003)(5024004)(14444005)(76176011)(305945005)(356003)(2201001)(486006)(39060400002)(50226002)(921003)(107986001)(1121003)(83996005)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4469;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT023;1:8eT4DgflxVSZ023D+pLKz6sN9X5nv7b5hbnWKmr0GA3WJYhZRV7uXm3be3uVbUEqWx6zGgkS+6RuEotVyeCz5Ira1N4Z/g8IysnnRvRiKKX0XylvA1pOvJOXZZ4XSbAL
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39850400004)(2980300002)(438002)(189003)(199004)(110136005)(4326008)(16586007)(26005)(36386004)(106466001)(47776003)(316002)(2906002)(107886003)(39060400002)(63266004)(186003)(11346002)(7416002)(76176011)(77096007)(486006)(44832011)(51416003)(305945005)(2616005)(36756003)(8676002)(7696005)(476003)(126002)(2201001)(48376002)(336012)(50226002)(5660300001)(9786002)(72206003)(81166006)(81156014)(8936002)(6666003)(356003)(50466002)(106002)(426003)(14444005)(446003)(54906003)(478600001)(107986001)(921003)(2101003)(5001870100001)(1121003)(83996005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4757;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT062;1:yLOfmo53v1+dWxlRp+2AZ5uwzyZyetRiiGoppnhWFwrxpOZfbJHI+5s2Ep+4BtnrVNL9vC4C4EvmRBmTFxaKkKAAcfr6yd51hB0frsBHXU9AX7MBiMEyfon8CRFCBBUc
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fc6c16fb-b9f7-4206-7d39-08d62a3fb941
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4469;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;3:ELSVfpmHASfEIqQe69HJsf8KBKIQrEckkbSOM5+Lpzy+v4lIb1qcIq84T0ykPQZG+mruUI8z4D8z2+4+x7pIFpeVt79vYjpS8SO1d9cAEoTImpDsx2Ixg5V/W4QHAmXu5xMOY8LM6+SDeKpqzcIz9n/GAROf8/bIBGhMQp1OEgXF9Pcjzv4CDItn227PlX4v7YYh15AihP02n28JFraxbXH2isPYKdBUX7S8KFuhjtFFjvdnk65rQU5KXiXkxZkNTYsOTpoDPf2f4SX09NWd10vS1nJfwDWySnOqPwXfSCDxV+ipe1EJeTT+RTet+HL83dKZd/rG1YgnMwLZUmYejWFuh9B/qt2wGh2RbokOa6E=;25:PrLbzpIKRVVMA9p03CQHDerWKrIk7wJwQVFM/JtOXZCa6H64WLOASpWZxa6u7/lwjj5g1f5JJdUmB3mqvIncJVkyE++j2Stw1H5uyfHRzIjBD4No5ZCo1cml4IDDv2x5sj2m+gm5ihkT30Rj0xgS3PxqUsw9FOzN9nooIdfBBK8KWlV1b53FuP/f7HXfd9cxTvDRjcXf3mPkh2K+swC2S5h8ieRDioCca2nUOhgLpG0+H/n5jepqd+tz+/28Hg0hSZt63lVbZmRbMYWcADWHOAjNExJrKUGjTLszlZmfWnreXA78E068btngQ49BAZGl8/3AAQ5obZWqsBXP4rA/gw==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4469:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;31:6sAzJ5TInfo8Za3A3V8fUaRJAdgFknemZlhCG8QxzC5jACXEJ8xUzEomCPBxlH6D2yAQcUCoD/UykGupD0qRyYqIs4+D/wdLjDbtJ710IZol9LjxgPF4MuIuEpAKJ/0R/tRCHpxHQQT/dsR7hjpjJQX/hBSdKxiXfF1UldGBDM9W9ZHe8wJKdBorI7PNXpMGqaAGkMQPGlzyXv9K2kY6Qipj+xJwzujWmQVEEo2VdSE=;20:hq1WA+Bskwk52PYTjs8qGsK3W5GmZNWkrBl4mABRl5W+9GPrLoMQ4M2PjpOF1JED8gXM/BLzq2DU9eYB63vTARX8d31BY01q0IO1lC1hp0TwsDME3GAHYqSAmpGaWHhAqlFC3h4VNmfL19yhAPzbr/tHftTov8RFf8vOMY3dSg4aqakpIrxy2HI86pHdnIHSNO/kRrUBHdtzwDTsGvWiVCZ0OGDB22nD/d9fwtFD5fpKOOWdMAjLAwC85NgnuXf2hiOGVWAhRsMBehHvjFIdthDTOG4mndZy46KS1ykozGF5VhzQK46d0PGcT5Usg37WoPlaPA2uKu+aWpRGi19PbdI9VR2laTua/tMYEKETt5Tju3854Ia7oH2yfoKkFSP/2ty7fwXj6rxrnGu7aj2qLMl9vIjZgm8ONXiIsPVENwkfcRr1hl0f41a2eanwGFA5UC6D1241tvFwjqLFscjuaPrgjTVUSpy0DKHdjz+RY7OUrhDNvnd6KVC2M0ZHj1tT
+X-MS-Office365-Filtering-Correlation-Id: 202cfb3f-f42b-4a26-f16c-08d62a3fb6eb
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR02MB4757;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4757;3:HYxWaUx10qeEVg90rV+LZlo8Puo1slbxU5INCDxRyM5bVDQx2rlpCqzrflNmaPoAzHoxBlyjGdpoI8u9aEmuAeQkyKSEN/+P5syouK4tZOsR/0BDrykmcmozKha168yPk4p6rhZcxlZ4AFcMe8vH+DtZbuhItrozd0ckG7cjrFBCPZg+fklzy33sC05zUaQwAqNE1mSQzcV+mmx0g6rd5OaoaDEkVZX35BjiYrU/jdGlA7UUJiJ/wsAIcICZFySTFLJhNhLXZYO3UUyMsfFvLMLIQbYmVHdRf/Gjc7qEDe6avHlxCdLiO5RaaFx2/SMPw6lHIR2dhu8AtYa20JM6WjvB7OgWrUw9pe7ldEN88qk=;25:BCs1STq7vWdoyelivcnt5eyjLsE9IGN8nvTJSQ70iP/ilirwqNrHOXGbzXu/DngOvRYyGlnjF3Gmt2NFi2yQbKeFpsyraNeQJVvCe7sxreuD+WxETQ94yg/QvQDrRuUG5BuyJyoaQQ/fl5E93KhQ8E5Ayfzgq+4IVhqq6LN5iNtEaTWDDVteSfAf8+NZ7r6ZkmfS7Qq/D2L9QNLTcdcOBUreK0faFXulBu0zAVdsc3kCIGL0iNZr5jyMZLr1wpNxysG+F32woYVnwtV4sfSVFOv5tNxdBEeKJ395T+M6w0oQ2cstIJ1R27d+5FBckoAJrrMIyebQuaa70Sqmbt1iWQ==
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4757:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4757;31:2jlvkQ1DxjrkrZ4e5PWtoI7l1OoKwYmsN/cZubbUHJDYP1UmDtEHImn0uu8TwUjXola2R4OauSA0rI9SP7ZPTUGPo+1xnJ+iUoLvqfQBhRc6cwcakU1LFHYm+7CDAfO37Vg5U7/JbwcZNfd13bwb6KD4wN1EHdVgS9YvABXakgHXuQ9Oo5UATesh3C1ZVAyNSu89bzYWR6GIGoHd6AarviU5uI7j5bqxwMCawYG58JY=;20:3DkubFmc80pHc9S7HozS07qE4RHV+fRQ2BJCWICDu99fwRActnIwofTV4gmf0WkWPFgcOGtoq48c7Rc37QQOv2gbDCt8VGiNuzsvKR5HAsDbhaCcHEDkfsiab5RbOns/plkwNvRzLRn/vPX2fK/0vZ5iyBGsLAsFWjcfTqSJ1KzWfwNB3/FWRE+X3B7gbaIjkEg9Zx229CU+2KOXrEX5vhySUIiJkAZPWB/UPgn9yHc02JqNbywh65f/wxikVdB3nyJE1uTk0zg9JCWbt7coQUhwMOHeRclIdTgcVyeXkg67o1xf1sRqiNW8dGooDdQ4HHG6GdwbqvLDhwW8dRJ7rP9sxUgMxnDxMCuO01MZpD1mHwVEQ3OY0yROY4Cdyxng4LLXlmStwbtV/XqCyLA3EweFql30Qh4MCHzyxunbikGXdu5oel9snCGtKbUi7dmccXtec9ohkLVBe61OqyD/sGexxtSjEYETwwVd2C/A2geri43nzMgD3+7bG6vzli3N
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB4469717B08CA93F4A165CFA5B8EA0@BYAPR02MB4469.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(269456686620040)(192813158149592)(17755550239193);
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4757BE2D591CC0AB56468716B8EA0@BYAPR02MB4757.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(269456686620040);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93004095)(10201501046)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051);SRVR:BYAPR02MB4469;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4469;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;4:HKN/+++4BRv2XJHHkix8ZtWcI1U3nAmEc+hRVUovQKivihtW0TEY0lpsgVF2pqVfsNFe0YDXAi6JD5sNdi/Vg+rZiKCzv5c4Nh8DBK9of+Pq1lnRfkbmyBTiQQd2W6Fp9p7/if+hf0VdKOHBAJrIIKDWeZVlEl91ATdulUpCXMMWeGfSwTtNV4nfuACU3VL4qTEwF3ejmDTxAHc3a6PDltwRO6F7lOcVwqb7rWxuK7jNAzRqPUWsPeftEtwLgkjkl+/5UaL/VlBHcJJwlKtj6npRmCwg4rbDpBJApf98ZpAwNlvwcB7+l3CeFHcnlP37w6OdAqooQ/ZRyP0RoAcESkpaYMHMaABSNxYIE414IH4E0/bKtqqTScKkYeiSJ+RU
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231355)(944501410)(52105095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:BYAPR02MB4757;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4757;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4757;4:7sDOLna4VGst4zYysl5Xymb5edvKpwLYmS72fIyHy1G8cTcIX0GWkZJDwRCG520Ufib6Cx2wml//wHR5Q8k7lsKBDA0fH6t42Dv9N0/EatBg62yZKcRRCLcKoRA4IIALKnqR4Qg31r3Ez4WNDrNoD4FjUZiy4BKw6YXV9klr1gZHFRx6CalNsGNbcrWhZv8CIyXQInesjqnd8RgDiic+stL8ZsHZbkaaU/foccFhbhlEYbGWOUEjDCPop97+/E1G3ClUqSkgDczfVwyKY/cP2WfsdYpLimGkPuAR+nTcYlErD4BhsYj61udDfRXM0RDu4r8vT9jzDsrb+2Dq5mLSVYDJLQYkkjDr/EEeRwNk6p4=
 X-Forefront-PRVS: 0815F8251E
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4469;23:p/eJP6Phg4Lmeh0N21aHARA5ivaRUjCvwYA2xGINu?=
- =?us-ascii?Q?S2MlzBkqHPkj2oeqty0HFNEAseLH8cYMFeuri8tAF0lyKNRE9ShsZ1OmLdU4?=
- =?us-ascii?Q?Ut1SZJUQeWafCCs4Hs0PSKSQLc+t4LNcE3nXWPLxWmf+K0h59CnZXvWSoLeA?=
- =?us-ascii?Q?k30cRZyaM108pnsAclgB2TC50g6x50ENL4klPSLwv8+fb0kWVs2cqdpAtMhr?=
- =?us-ascii?Q?QEi6YHmdHDnok/xLaZoiFkZD/pP6/qVzjxo555Tyjt6KIbGUeKXaiOP5mFQW?=
- =?us-ascii?Q?rXLu9gQUFXMNPV4UXzqqTlBoFLidDS30MJ2ax0Hu9V3P0+RSBULc/DhtjZoL?=
- =?us-ascii?Q?9wKWLDbobK0CE9dYPKtPCZad9sUi9ha9e9WNUoEHCuMqydhvOXV+yfOt3Srg?=
- =?us-ascii?Q?gihirtiyRcZ6+2bSS2EAeWL+05v5lcKqazROKh1GWdzjiAwOLEpj/4omShCz?=
- =?us-ascii?Q?WR6a/6dyh4iVOklQyzR7Kj++XJBkiZIIpWSEHEkjWBg5OYa2aYuQRfNVvgfU?=
- =?us-ascii?Q?Zn0Gyboihb4Jt6pImRRTggokr2xASipFmqYMDzXnLB7pEsyrkQZ2q3+dd5b8?=
- =?us-ascii?Q?8PaIZxHtC32BpL29l5vB7aQ6lM+Z1wZ4xLGboxR8BTVukW0LtMVkFLm8Zej3?=
- =?us-ascii?Q?qCQ4ZeHNip7+aTfzs8/zpYSAsxmeY7WpzKsmgf2SMjSL761fDRQMnz/DN25r?=
- =?us-ascii?Q?7GQ8p5UMC3jAtY1q/Esdao2I5g517QfHvM412WFL8m8baMA1m8W6/fw8ppm9?=
- =?us-ascii?Q?RfyGBqRZ/HMAkejg9QEIP1WZULJ48nw1kEamsrtYukCdwQGbS7Bib+rSRAal?=
- =?us-ascii?Q?KPPh3MqiPZ1sB3GRcxCr92wrS5xeR6tdJWMEjNYuanOm71i+eESMt4zgmPeA?=
- =?us-ascii?Q?jCnvj2RTSkOR4WESVKaC7DGmyNw5gQ09qKsfoz+rbRPFhLM7MA7XLDSaWQuD?=
- =?us-ascii?Q?a9i3U1+CMtnW4LWHoy9EK+VGdqQkAchVSwrjrlWOiDbCLRPqT9JV7JkABDwN?=
- =?us-ascii?Q?Fg13fmwdoO51cdY7FLOWZTOFF5Xw0NpXMF1UlHH0Dq5+NN97McGvVQ5DL1V2?=
- =?us-ascii?Q?VF0oFMm1E0hNTWHxOF/wSmPzWNGvYvNMAm01d++Ml9Awh85qJHYTJJt0xhuG?=
- =?us-ascii?Q?YPNWay+yS+jf36j4K3vomPSsaqIct1EgLkKdpxVVXqbNERyZ/am6sf/wE7dD?=
- =?us-ascii?Q?e9hsqbqSRdujUNPzKTHAUK13X2cgiyA0VBQSNzNre4bJfySAmdpyi5iolgf3?=
- =?us-ascii?Q?O0Lp+X+2SueVzwaWUueeSlR1aPbuhO0rHu5e5egVPoDzZ6S5jHT9KPN3D0kB?=
- =?us-ascii?Q?nDvyePFggMrwgMVvCcyHSx+TX1zW7Ypg+Q1dncqjFwo?=
-X-Microsoft-Antispam-Message-Info: VgSQVlChtw1RaZpqSDczAZVqk0qT46uHJelZ+OhrosW3gxCKneJVbKWDzGW+MHN//A3ZmhpykWSougfLYVG18sVLNXIPk0v8j2/sIRS8unLi2b7deH6IO3qQkTLpHz2PrLamj5xkyR1LUGmdQmh7gGFKa+cqsGlK0n9XD77NgAuOX5eg5RFifnwFt6vDgp/xEEKB9dZa8UjwHJijtQp1aB6WSGSVUFDbsrGcTijojMyK+99zvmUb4rIENybYeRL7H8+PV4KlJMkEbKkzTzjPXq9W1iKku6p1qANVRu0sm2iH+g7E6LMOfVSIW5rO4AqXxi8V9CSD6K3ddU8i0BqatddGv/yEtSgYUuKGv3mBxK4=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;6:lxQlmdSqFg+pP05Rhkd3Y5qSwwI5IZyETUd9EfkLMntGWKeyoIgOdgeT/6Pxc9SDdZXm1O2m/qunEEr9COLWTyoLrqXW+KVL9EaTsgiK7Rhlqfn2uCigoz5b1BXrfsnBnX4rQY3iM/D9ODkuz/mAqBeHk4HBk6PZq+uo1iRbqqAsIU/IZt0cRV99peEMLKHH44TE2qciOD8nity6E7ePOg5cop01hBJor8I5nfgZQbjnSuGmDmGXvgnX4EMcKnsW050TcMLfTLlBbRHq9htmvk6NQIncBEC9UondGrMJNW058AoNTzqGWDBCe4vX7Pd/qgq5cWXIUF5AUUCB1VDyk8TD+DmfrryPelH7vhjICQB6zEpYc1e60m9wvnUPEchLoloF6PfeCNxEqaK/mHb49egALFCcZM+pMsCPgBtXlN8yv3dIb4NSEjU5B9gfxojG9c74hQVORY2mz8j6KdSm8w==;5:lmIihx6nVW5BC3s+laR8vKdtG16YkWIEnzmfWkg7MdbuDj8gqp2+efEAhf43ngkdmdQQeCBHnq9bAXyX7xJvctTicUF7ZVefcVUY+xZ5rXpFQfCBNwjW/1XQ/zkCok5dlSjGXSWOjDpQ70JfgT6hQTJuCiP1kjMzdgdN2vZjVv8=;7:ct/N/G9vQnJsFxHMSoKofecgCyaWcaJvfBQImUwBmB1S9wlXrlEu3le/OzhYX3VE5BfiPAgdeNxvooX2o/EgUAmGYdDL86kPq4E5au+KaoM7/nXHAf2nPCgTjoQDEeUTCjc26FnqWgN3O7sWEDXdCKneN/tP5WBWl0Atp4aQx77tPxAhjfFI4vLsbeerg6y0wM75icflL9y5JkD7oKufRr7LJa7lIENYGbtVZkj2/fO6YYyWHqtRD4lN/1btn3v6
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4757;23:FjZ6PDD2ishLFbzheEbNpZylUB+F4Sj53y8ja7iD7?=
+ =?us-ascii?Q?aQaeHvzXaPU8yqiLbxbJe6zUaPuwBxKTzF+YK/FFv04ufrDd9aysoyw/QBMh?=
+ =?us-ascii?Q?8boS0GJF+DjP9no+fJXoR+tCTBx7spJ+0/tZ1nymhG8vYzKB8KadxBjKqsKX?=
+ =?us-ascii?Q?3vEsIVB4zXBcd9rGGXOdO/Rd4wjHGww8ng8QekQ4fXvZSv8H07Av5dx9KzE5?=
+ =?us-ascii?Q?thR9Wmk4fdfZqb348cT3qrErHnl2DkcyvsPlx1e37gpfsRM2a66mBtsLFcbM?=
+ =?us-ascii?Q?v9Iq7SJgJu4X+t51Osn6YUinwI6HIuY0aQs88yAflKntyJUkkY0Gvdxnxe0L?=
+ =?us-ascii?Q?KclnXNHjw5mE7OZEBkPRDDkl+Wz28z1Ts34nfxJtDyYuMqK66USRcn0FWi5y?=
+ =?us-ascii?Q?jH/Hqze3GHP560CKIIL50V9+Fi21qFrbAcwgUiblzpgI+uAUMh2K3QPEZtXB?=
+ =?us-ascii?Q?REYS0s6kR+Me1/80ZgLJsdnbNVTFXU2oRORhnwhbwjUdFtOiOi1kQ0bmIo4v?=
+ =?us-ascii?Q?dHh9uy5oN3rQ0YVQ1zaE2UWhu6zq5dL60gzlqHwgcC8s5mbWe7cmseVOWIQp?=
+ =?us-ascii?Q?Ry4YSXqPF3Fxuu/teztcXTJiNYursUqIpnXT8f5SrgHpLd+WxlffIroHweS8?=
+ =?us-ascii?Q?Lw8sDMQZfwCRlmVIdzwISp/BhR+Oal/P9SdMEVcmOmTdspzawZfK/t7TSK3/?=
+ =?us-ascii?Q?lPTJKtcMK8JkhbyT4NPNhuHHGVOtfWkGsdmiGMNNEdO9ij8DpdnfRtXVf9Tp?=
+ =?us-ascii?Q?BcChTaOFqQqEmagdseJB8VTefMsRJtzex3qF9OvB6mY9RXqSX2QzLStEY5H+?=
+ =?us-ascii?Q?MO7aUfpO7V616WTxGt/qJ1V3a0oT626I94XQ8g2qEv3HcUSQx2RVQ+z2aeGh?=
+ =?us-ascii?Q?w5klltfZ12YmL0rvwRq8iCcUT5F11TBYGbsDEHR0AbaxOf2C2HbdkYFJk+XR?=
+ =?us-ascii?Q?lPAmNrCOz6Ya7NneLcJlf+PEu5Kgq06NARGOFWoDefX93HHZ6PYxj3hmYYlB?=
+ =?us-ascii?Q?IhcrKwrrNgyAFnuUFfYn5hEDoFTbZEMtkpARlqyh8rbONEW9cw1nc7yjVbyu?=
+ =?us-ascii?Q?5ZxoVry+7oHWngUCg0QVkzdY4njAylR5Fcduozdtu4Fox0F/M5jyAEtTbL8Z?=
+ =?us-ascii?Q?0h/W5FFzUXj8FAk2ZNndXVpsMdRAnKb2kL4EuMLRKZ8Z7py8C+ZzxPpZO4uc?=
+ =?us-ascii?Q?OuxRHauwcgQiheM1ZcE9rEEcFleFiwbvbMO1kFDPCkGpfo0x2fIweTOL1RDQ?=
+ =?us-ascii?Q?3Pljg7k9I4VGp4nAbrZjp2sfKnAygqF68I6pOxBghL9m2M1kUpNZasXubGSO?=
+ =?us-ascii?Q?V7/buwjMlkL/yaK2e/1Q3cwqFyJiNwUnOnxBY05OzAS?=
+X-Microsoft-Antispam-Message-Info: zYstvwPjIsG5LLYNAchWL4eQUOdJNNUwz823KH2uhqTesgC8Cw98W5Hm0teIa52PfZG9l90otfXf7LBnlD1NTy4SNCHmtGJ9xBayZGF3U3J4QzQ3oxyUKB+GPFkNZKHpAuXBjBC0rY+gr/Oc1ZeUlLKpYX0Vd+itL3mWpwrMYq73bxzUI0DFLy7/7WOtHKFQpP9iGBVPCS/qWGsib0JFc2+518I3MOFOWSYjC506U7rKphknuPWwbx5sekQz3iAxoKqwCRndITm8JOo/JiOcpqkOFYygI4mtY8JJpIBSRW+KVAFRtE5xp5HaxXtJeNlTZglMMyS62EIqDEDguDevPid99ZAououFt6IIzVpeHbw=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4757;6:3xttu3sZIUwfFmWW5jE+yXJaupgvjzrQ3ASA5SZZHq3BdrjdP7lhgDliy+dpfV0QhA6rUH6z18FOXwvjdA+2t40cER/YVPA2ZJDl/w4xrfqdwaCBkP5TBl8ITYY8JNmsw1xpYC7Z+W4LzuVtKF0eIQO4N7HQA/z0Go53LRst1OLWwqMsBD1GEhS1KJ0l52DmA1QRrXuShWfnpoJWZ4Z4URMxh72QT2jaqEHp+Er1qec2UMbP2k2UPZwQqkHxi7fqLqhfRqcY1u0lZM2IB/IxFsBWYItN6WQeRwWK03l2iKjA8CGOh0Or0Ec+8tET5B5kTrxNOnec0wo16s2tsdzFbzLL3L/GGIbcHpBeCD897Zsycglfb0UzQrkyRLO0NgEER94Eu26MW6eFDWViV1bzTZRoPuiAXWVp/2+YtXsbCtJFgqPzEeJxrl311Bz6FBkB2Z1IWJOw+07BBtAwdh/3EQ==;5:fN/lsXsgouu/4Jft43WssJpHEwGsc2LjAFn2sIPpuxgYkE9f7JSkNgWjWukq8PoAuPXsAIWo+cZymjzRuCilsV2l3+buOaQL/ssHTnzT1HYDx9iP37fA77+A6MAXn5JtajuYyCCkJA/oOEn25TCvQn+kCdLBxCNjTziay/XRybk=;7:FpgoP+ARllTLgg06BiYb7h/iEq1b2FEEuP38ND+eLVeJs7iFvoFSjSqf9xtX7eDihW7ZA5qLR597iYWEFkOulIFgZxa+4aE4v5nReBsO7gy6Yg55pHj1tyqdHzshxGKyBCtNNj1IilrHhCpQGGglT4VlbRrdjGWBdIWyBKlqyhHe5ZAyfj3H0V9x4y/eHPi/JVzvaA5FX1qSe55QNZlxEcFHX/TGEDylrnUMjbZw0UJTPrmGWj3U9VijiWnnywph
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 21:24:05.0447
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 21:24:04.8788
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc6c16fb-b9f7-4206-7d39-08d62a3fb941
+X-MS-Exchange-CrossTenant-Network-Message-Id: 202cfb3f-f42b-4a26-f16c-08d62a3fb6eb
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4469
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4757
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jolly Shah <jolly.shah@xilinx.com>
+From: Rajan Vaja <rajan.vaja@xilinx.com>
 
-The zynqmp-genpd driver communicates the usage requirements
-for logical power domains / devices to the platform FW.
-FW is responsible for choosing appropriate power states,
-taking Linux' usage information into account.
+Add Xilinx ZynqMP firmware APIs to control node status
+and power. These APIs allows turning on/off power domain
+and setting capabilities of devices present in power domain.
 
 Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
 Signed-off-by: Jolly Shah <jollys@xilinx.com>
 ---
- drivers/firmware/xilinx/Kconfig        |   1 +
- drivers/firmware/xilinx/zynqmp.c       |  15 ++
- drivers/soc/xilinx/Kconfig             |   9 +
- drivers/soc/xilinx/Makefile            |   2 +
- drivers/soc/xilinx/zynqmp_pm_domains.c | 403 +++++++++++++++++++++++++++++++++
- 5 files changed, 430 insertions(+)
- create mode 100644 drivers/soc/xilinx/zynqmp_pm_domains.c
+ drivers/firmware/xilinx/zynqmp.c     | 58 ++++++++++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 26 ++++++++++++++++
+ 2 files changed, 84 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/Kconfig b/drivers/firmware/xilinx/Kconfig
-index 8f44b9c..bd33bbf 100644
---- a/drivers/firmware/xilinx/Kconfig
-+++ b/drivers/firmware/xilinx/Kconfig
-@@ -6,6 +6,7 @@ menu "Zynq MPSoC Firmware Drivers"
- 
- config ZYNQMP_FIRMWARE
- 	bool "Enable Xilinx Zynq MPSoC firmware interface"
-+	select MFD_CORE
- 	help
- 	  Firmware interface driver is used by different
- 	  drivers to communicate with the firmware for
 diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index faf6a52..6b365df 100644
+index 9a1c72a..faf6a52 100644
 --- a/drivers/firmware/xilinx/zynqmp.c
 +++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -14,6 +14,7 @@
- #include <linux/compiler.h>
- #include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/mfd/core.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-@@ -23,6 +24,12 @@
- #include <linux/firmware/xlnx-zynqmp.h>
- #include "zynqmp-debug.h"
+@@ -469,6 +469,61 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
+ }
  
-+static const struct mfd_cell firmware_devs[] = {
-+	{
-+		.name = "zynqmp_power_controller",
-+	},
++/**
++ * zynqmp_pm_request_node() - Request a node with specific capabilities
++ * @node:		Node ID of the slave
++ * @capabilities:	Requested capabilities of the slave
++ * @qos:		Quality of service (not supported)
++ * @ack:		Flag to specify whether acknowledge is requested
++ *
++ * This function is used by master to request particular node from firmware.
++ * Every master must request node before using it.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_request_node(const u32 node, const u32 capabilities,
++				  const u32 qos,
++				  const enum zynqmp_pm_request_ack ack)
++{
++	return zynqmp_pm_invoke_fn(PM_REQUEST_NODE, node, capabilities,
++				   qos, ack, NULL);
++}
++
++/**
++ * zynqmp_pm_release_node() - Release a node
++ * @node:	Node ID of the slave
++ *
++ * This function is used by master to inform firmware that master
++ * has released node. Once released, master must not use that node
++ * without re-request.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_release_node(const u32 node)
++{
++	return zynqmp_pm_invoke_fn(PM_RELEASE_NODE, node, 0, 0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
++ * @node:		Node ID of the slave
++ * @capabilities:	Requested capabilities of the slave
++ * @qos:		Quality of service (not supported)
++ * @ack:		Flag to specify whether acknowledge is requested
++ *
++ * This API function is to be used for slaves a PU already has requested
++ * to change its capabilities.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
++				     const u32 qos,
++				     const enum zynqmp_pm_request_ack ack)
++{
++	return zynqmp_pm_invoke_fn(PM_SET_REQUIREMENT, node, capabilities,
++				   qos, ack, NULL);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.query_data = zynqmp_pm_query_data,
+@@ -482,6 +537,9 @@ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.clock_setparent = zynqmp_pm_clock_setparent,
+ 	.clock_getparent = zynqmp_pm_clock_getparent,
+ 	.ioctl = zynqmp_pm_ioctl,
++	.request_node = zynqmp_pm_request_node,
++	.release_node = zynqmp_pm_release_node,
++	.set_requirement = zynqmp_pm_set_requirement,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 3c3c28e..6998f7d 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -32,8 +32,19 @@
+ /* Number of 32bits values in payload */
+ #define PAYLOAD_ARG_CNT	4U
+ 
++#define ZYNQMP_PM_MAX_QOS	100U
++
++/* Node capabilities */
++#define	ZYNQMP_PM_CAPABILITY_ACCESS	0x1U
++#define	ZYNQMP_PM_CAPABILITY_CONTEXT	0x2U
++#define	ZYNQMP_PM_CAPABILITY_WAKEUP	0x4U
++#define	ZYNQMP_PM_CAPABILITY_POWER	0x8U
++
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_REQUEST_NODE = 13,
++	PM_RELEASE_NODE,
++	PM_SET_REQUIREMENT,
+ 	PM_IOCTL = 34,
+ 	PM_QUERY_DATA,
+ 	PM_CLOCK_ENABLE,
+@@ -75,6 +86,12 @@ enum pm_query_id {
+ 	PM_QID_CLOCK_GET_NUM_CLOCKS = 12,
+ };
+ 
++enum zynqmp_pm_request_ack {
++	ZYNQMP_PM_REQUEST_ACK_NO = 1,
++	ZYNQMP_PM_REQUEST_ACK_BLOCKING,
++	ZYNQMP_PM_REQUEST_ACK_NON_BLOCKING,
 +};
 +
  /**
-  * zynqmp_pm_ret_code() - Convert PMU-FW error codes to Linux error codes
-  * @ret_status:		PMUFW return code
-@@ -596,11 +603,19 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
+  * struct zynqmp_pm_query_data - PM query data
+  * @qid:	query ID
+@@ -102,6 +119,15 @@ struct zynqmp_eemi_ops {
+ 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
+ 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*request_node)(const u32 node,
++			    const u32 capabilities,
++			    const u32 qos,
++			    const enum zynqmp_pm_request_ack ack);
++	int (*release_node)(const u32 node);
++	int (*set_requirement)(const u32 node,
++			       const u32 capabilities,
++			       const u32 qos,
++			       const enum zynqmp_pm_request_ack ack);
+ };
  
- 	zynqmp_pm_api_debugfs_init();
- 
-+	ret = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, firmware_devs,
-+			      ARRAY_SIZE(firmware_devs), NULL, 0, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
-+		return ret;
-+	}
-+
- 	return of_platform_populate(dev->of_node, NULL, NULL, dev);
- }
- 
- static int zynqmp_firmware_remove(struct platform_device *pdev)
- {
-+	mfd_remove_devices(&pdev->dev);
- 	zynqmp_pm_api_debugfs_exit();
- 
- 	return 0;
-diff --git a/drivers/soc/xilinx/Kconfig b/drivers/soc/xilinx/Kconfig
-index 687c8f3..81a345e 100644
---- a/drivers/soc/xilinx/Kconfig
-+++ b/drivers/soc/xilinx/Kconfig
-@@ -17,4 +17,13 @@ config XILINX_VCU
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called xlnx_vcu.
- 
-+config ZYNQMP_PM_DOMAINS
-+	bool "Enable Zynq MPSoC generic PM domains"
-+	default y
-+	depends on PM && ARCH_ZYNQMP && ZYNQMP_FIRMWARE
-+	select PM_GENERIC_DOMAINS
-+	help
-+	  Say yes to enable device power management through PM domains
-+	  If in doubt, say N.
-+
- endmenu
-diff --git a/drivers/soc/xilinx/Makefile b/drivers/soc/xilinx/Makefile
-index dee8fd5..f468d1b 100644
---- a/drivers/soc/xilinx/Makefile
-+++ b/drivers/soc/xilinx/Makefile
-@@ -1,2 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_XILINX_VCU)	+= xlnx_vcu.o
-+
-+obj-$(CONFIG_ZYNQMP_PM_DOMAINS) += zynqmp_pm_domains.o
-diff --git a/drivers/soc/xilinx/zynqmp_pm_domains.c b/drivers/soc/xilinx/zynqmp_pm_domains.c
-new file mode 100644
-index 0000000..999fe67
---- /dev/null
-+++ b/drivers/soc/xilinx/zynqmp_pm_domains.c
-@@ -0,0 +1,403 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * ZynqMP Generic PM domain support
-+ *
-+ *  Copyright (C) 2015-2018 Xilinx, Inc.
-+ *
-+ *  Davorin Mista <davorin.mista@aggios.com>
-+ *  Jolly Shah <jollys@xilinx.com>
-+ *  Rajan Vaja <rajan.vaja@xilinx.com>
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/slab.h>
-+
-+#include <linux/firmware/xlnx-zynqmp.h>
-+
-+/* Flag stating if PM nodes mapped to the PM domain has been requested */
-+#define ZYNQMP_PM_DOMAIN_REQUESTED	BIT(0)
-+
-+/**
-+ * struct zynqmp_pm_domain - Wrapper around struct generic_pm_domain
-+ * @gpd:		Generic power domain
-+ * @dev_list:		List of devices belong to power domain
-+ * @node_ids:		PM node IDs corresponding to device(s) inside PM domain
-+ * @node_id_num:	Number of PM node IDs
-+ * @flags:		ZynqMP PM domain flags
-+ */
-+struct zynqmp_pm_domain {
-+	struct generic_pm_domain gpd;
-+	struct list_head dev_list;
-+	const u32 *node_ids;
-+	int node_id_num;
-+	u8 flags;
-+};
-+
-+/*
-+ * struct zynqmp_domain_device - Device node present in power domain
-+ * @dev:	Device
-+ * &list:	List member for the devices in domain list
-+ */
-+struct zynqmp_domain_device {
-+	struct device *dev;
-+	struct list_head list;
-+};
-+
-+/*
-+ * struct zynqmp_pd_info - PM domain info
-+ * @id:		Number of PM node IDs
-+ * @ids:	PM node IDs corresponding to device(s) inside PM domain
-+ * @name:	PM node name
-+ */
-+struct zynqmp_pd_info {
-+	u32 num_id;
-+	const u32 *ids;
-+	const char *name;
-+};
-+
-+/**
-+ * zynqmp_gpd_is_active_wakeup_path() - Check if device is in wakeup source
-+ *					path
-+ * @dev:	Device to check for wakeup source path
-+ * @not_used:	Data member (not required)
-+ *
-+ * This function is checks device's child hierarchy and checks if any device is
-+ * set as wakeup source.
-+ *
-+ * Return: 1 if device is in wakeup source path else 0
-+ */
-+static int zynqmp_gpd_is_active_wakeup_path(struct device *dev, void *not_used)
-+{
-+	int may_wakeup;
-+
-+	may_wakeup = device_may_wakeup(dev);
-+	if (may_wakeup)
-+		return may_wakeup;
-+
-+	return device_for_each_child(dev, NULL,
-+			zynqmp_gpd_is_active_wakeup_path);
-+}
-+
-+/**
-+ * zynqmp_gpd_power_on() - Power on PM domain
-+ * @domain:	Generic PM domain
-+ *
-+ * This function is called before devices inside a PM domain are resumed, to
-+ * power on PM domain.
-+ *
-+ * Return: 0 on success, error code otherwise
-+ */
-+static int zynqmp_gpd_power_on(struct generic_pm_domain *domain)
-+{
-+	int ret, i;
-+	struct zynqmp_pm_domain *pd;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+
-+	if (!eemi_ops || !eemi_ops->set_requirement)
-+		return -ENXIO;
-+
-+	pd = container_of(domain, struct zynqmp_pm_domain, gpd);
-+	for (i = 0; i < pd->node_id_num; i++) {
-+		ret = eemi_ops->set_requirement(pd->node_ids[i],
-+						ZYNQMP_PM_CAPABILITY_ACCESS,
-+						ZYNQMP_PM_MAX_QOS,
-+						ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+		if (ret) {
-+			pr_err("%s() %s set requirement for node %d failed: %d\n",
-+			       __func__, domain->name, pd->node_ids[i], ret);
-+			return ret;
-+		}
-+	}
-+
-+	pr_debug("%s() Powered on %s domain\n", __func__, domain->name);
-+	return 0;
-+}
-+
-+/**
-+ * zynqmp_gpd_power_off() - Power off PM domain
-+ * @domain:	Generic PM domain
-+ *
-+ * This function is called after devices inside a PM domain are suspended, to
-+ * power off PM domain.
-+ *
-+ * Return: 0 on success, error code otherwise
-+ */
-+static int zynqmp_gpd_power_off(struct generic_pm_domain *domain)
-+{
-+	int ret, i;
-+	struct zynqmp_pm_domain *pd;
-+	struct zynqmp_domain_device *zdev, *tmp;
-+	u32 capabilities = 0;
-+	bool may_wakeup;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+
-+	if (!eemi_ops || !eemi_ops->set_requirement)
-+		return -ENXIO;
-+
-+	pd = container_of(domain, struct zynqmp_pm_domain, gpd);
-+
-+	/* If domain is already released there is nothing to be done */
-+	if (!(pd->flags & ZYNQMP_PM_DOMAIN_REQUESTED))
-+		return 0;
-+
-+	list_for_each_entry_safe(zdev, tmp, &pd->dev_list, list) {
-+		/* If device is in wakeup path, set capability to WAKEUP */
-+		may_wakeup = zynqmp_gpd_is_active_wakeup_path(zdev->dev, NULL);
-+		if (may_wakeup) {
-+			dev_dbg(zdev->dev, "device is in wakeup path in %s\n",
-+				domain->name);
-+			capabilities = ZYNQMP_PM_CAPABILITY_WAKEUP;
-+			break;
-+		}
-+	}
-+
-+	for (i = pd->node_id_num - 1; i >= 0; i--) {
-+		ret = eemi_ops->set_requirement(pd->node_ids[i],
-+						capabilities, 0,
-+						ZYNQMP_PM_REQUEST_ACK_NO);
-+		/**
-+		 * If powering down of any node inside this domain fails,
-+		 * report and return the error
-+		 */
-+		if (ret) {
-+			pr_err("%s() %s set requirement for node %d failed: %d\n",
-+			       __func__, domain->name, pd->node_ids[i], ret);
-+			return ret;
-+		}
-+	}
-+
-+	pr_debug("%s() Powered off %s domain\n", __func__, domain->name);
-+	return 0;
-+}
-+
-+/**
-+ * zynqmp_gpd_attach_dev() - Attach device to the PM domain
-+ * @domain:	Generic PM domain
-+ * @dev:	Device to attach
-+ *
-+ * Return: 0 on success, error code otherwise
-+ */
-+static int zynqmp_gpd_attach_dev(struct generic_pm_domain *domain,
-+				 struct device *dev)
-+{
-+	int ret, i;
-+	struct zynqmp_pm_domain *pd;
-+	struct zynqmp_domain_device *zdev;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+
-+	if (!eemi_ops || !eemi_ops->request_node)
-+		return -ENXIO;
-+
-+	pd = container_of(domain, struct zynqmp_pm_domain, gpd);
-+
-+	zdev = devm_kzalloc(dev, sizeof(*zdev), GFP_KERNEL);
-+	if (!zdev)
-+		return -ENOMEM;
-+
-+	zdev->dev = dev;
-+	list_add(&zdev->list, &pd->dev_list);
-+
-+	/* If this is not the first device to attach there is nothing to do */
-+	if (domain->device_count)
-+		return 0;
-+
-+	for (i = 0; i < pd->node_id_num; i++) {
-+		ret = eemi_ops->request_node(pd->node_ids[i], 0, 0,
-+					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+		/* If requesting a node fails print and return the error */
-+		if (ret) {
-+			pr_err("%s() %s request failed for node %d: %d\n",
-+			       __func__, domain->name, pd->node_ids[i], ret);
-+			list_del(&zdev->list);
-+			zdev->dev = NULL;
-+			devm_kfree(dev, zdev);
-+			return ret;
-+		}
-+	}
-+
-+	pd->flags |= ZYNQMP_PM_DOMAIN_REQUESTED;
-+
-+	pr_debug("%s() %s attached to %s domain\n", __func__,
-+		 dev_name(dev), domain->name);
-+	return 0;
-+}
-+
-+/**
-+ * zynqmp_gpd_detach_dev() - Detach device from the PM domain
-+ * @domain:	Generic PM domain
-+ * @dev:	Device to detach
-+ */
-+static void zynqmp_gpd_detach_dev(struct generic_pm_domain *domain,
-+				  struct device *dev)
-+{
-+	int ret, i;
-+	struct zynqmp_pm_domain *pd;
-+	struct zynqmp_domain_device *zdev, *tmp;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+
-+	if (!eemi_ops || !eemi_ops->release_node)
-+		return;
-+
-+	pd = container_of(domain, struct zynqmp_pm_domain, gpd);
-+
-+	list_for_each_entry_safe(zdev, tmp, &pd->dev_list, list)
-+		if (zdev->dev == dev) {
-+			list_del(&zdev->list);
-+			zdev->dev = NULL;
-+			devm_kfree(dev, zdev);
-+		}
-+
-+	/* If this is not the last device to detach there is nothing to do */
-+	if (domain->device_count)
-+		return;
-+
-+	for (i = 0; i < pd->node_id_num; i++) {
-+		ret = eemi_ops->release_node(pd->node_ids[i]);
-+		/* If releasing a node fails print the error and return */
-+		if (ret) {
-+			pr_err("%s() %s release failed for node %d: %d\n",
-+			       __func__, domain->name, pd->node_ids[i], ret);
-+			return;
-+		}
-+	}
-+
-+	pd->flags &= ~ZYNQMP_PM_DOMAIN_REQUESTED;
-+
-+	pr_debug("%s() %s detached from %s domain\n", __func__,
-+		 dev_name(dev), domain->name);
-+}
-+
-+static const u32 usb0_ids[] = {NODE_USB_0};
-+static const u32 usb1_ids[] = {NODE_USB_1};
-+static const u32 sata_ids[] = {NODE_SATA};
-+static const u32 spi0_ids[] = {NODE_SPI_0};
-+static const u32 spi1_ids[] = {NODE_SPI_1};
-+static const u32 uart0_ids[] = {NODE_UART_0};
-+static const u32 uart1_ids[] = {NODE_UART_1};
-+static const u32 eth0_ids[] = {NODE_ETH_0};
-+static const u32 eth1_ids[] = {NODE_ETH_1};
-+static const u32 eth2_ids[] = {NODE_ETH_2};
-+static const u32 eth3_ids[] = {NODE_ETH_3};
-+static const u32 i2c0_ids[] = {NODE_I2C_0};
-+static const u32 i2c1_ids[] = {NODE_I2C_1};
-+static const u32 dp_ids[] = {NODE_DP};
-+static const u32 gdma_ids[] = {NODE_GDMA};
-+static const u32 adma_ids[] = {NODE_ADMA};
-+static const u32 ttc0_ids[] = {NODE_TTC_0};
-+static const u32 ttc1_ids[] = {NODE_TTC_1};
-+static const u32 ttc2_ids[] = {NODE_TTC_2};
-+static const u32 ttc3_ids[] = {NODE_TTC_3};
-+static const u32 sd0_ids[] = {NODE_SD_0};
-+static const u32 sd1_ids[] = {NODE_SD_1};
-+static const u32 nand_ids[] = {NODE_NAND};
-+static const u32 qspi_ids[] = {NODE_QSPI};
-+static const u32 gpio_ids[] = {NODE_GPIO};
-+static const u32 can0_ids[] = {NODE_CAN_0};
-+static const u32 can1_ids[] = {NODE_CAN_1};
-+static const u32 pcie_ids[] = {NODE_PCIE};
-+static const u32 gpu_ids[] = {NODE_GPU, NODE_GPU_PP_0, NODE_GPU_PP_1};
-+
-+#define ZYNQMP_PM_DOMAIN(nm)	{ \
-+		.name = "pd-" #nm, \
-+		.num_id = ARRAY_SIZE(nm ## _ids), \
-+		.ids = nm ## _ids, \
-+	}
-+
-+static const struct zynqmp_pd_info pm_ids[] = {
-+	ZYNQMP_PM_DOMAIN(usb0),
-+	ZYNQMP_PM_DOMAIN(usb1),
-+	ZYNQMP_PM_DOMAIN(sata),
-+	ZYNQMP_PM_DOMAIN(spi0),
-+	ZYNQMP_PM_DOMAIN(spi1),
-+	ZYNQMP_PM_DOMAIN(uart0),
-+	ZYNQMP_PM_DOMAIN(uart1),
-+	ZYNQMP_PM_DOMAIN(eth0),
-+	ZYNQMP_PM_DOMAIN(eth1),
-+	ZYNQMP_PM_DOMAIN(eth2),
-+	ZYNQMP_PM_DOMAIN(eth3),
-+	ZYNQMP_PM_DOMAIN(i2c0),
-+	ZYNQMP_PM_DOMAIN(i2c1),
-+	ZYNQMP_PM_DOMAIN(dp),
-+	ZYNQMP_PM_DOMAIN(gdma),
-+	ZYNQMP_PM_DOMAIN(adma),
-+	ZYNQMP_PM_DOMAIN(ttc0),
-+	ZYNQMP_PM_DOMAIN(ttc1),
-+	ZYNQMP_PM_DOMAIN(ttc2),
-+	ZYNQMP_PM_DOMAIN(ttc3),
-+	ZYNQMP_PM_DOMAIN(sd0),
-+	ZYNQMP_PM_DOMAIN(sd1),
-+	ZYNQMP_PM_DOMAIN(nand),
-+	ZYNQMP_PM_DOMAIN(qspi),
-+	ZYNQMP_PM_DOMAIN(gpio),
-+	ZYNQMP_PM_DOMAIN(can0),
-+	ZYNQMP_PM_DOMAIN(can1),
-+	ZYNQMP_PM_DOMAIN(pcie),
-+	ZYNQMP_PM_DOMAIN(gpu),
-+};
-+
-+static int zynqmp_gpd_probe(struct platform_device *pdev)
-+{
-+	int i;
-+	struct genpd_onecell_data *zynqmp_pd_data;
-+	struct generic_pm_domain **domains;
-+	struct zynqmp_pm_domain *pd;
-+	struct device *dev = &pdev->dev;
-+
-+	pd = devm_kcalloc(dev, ARRAY_SIZE(pm_ids), sizeof(*pd), GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	zynqmp_pd_data = devm_kzalloc(dev, sizeof(*zynqmp_pd_data), GFP_KERNEL);
-+	if (!zynqmp_pd_data)
-+		return -ENOMEM;
-+
-+	domains = devm_kcalloc(dev, ARRAY_SIZE(pm_ids), sizeof(*domains),
-+			       GFP_KERNEL);
-+	if (!domains)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(pm_ids); i++, pd++) {
-+		pd->node_id_num = pm_ids[i].num_id;
-+		pd->node_ids = pm_ids[i].ids;
-+		pd->gpd.name = pm_ids[i].name;
-+		pd->gpd.power_off = zynqmp_gpd_power_off;
-+		pd->gpd.power_on = zynqmp_gpd_power_on;
-+		pd->gpd.attach_dev = zynqmp_gpd_attach_dev;
-+		pd->gpd.detach_dev = zynqmp_gpd_detach_dev;
-+
-+		domains[i] = &pd->gpd;
-+
-+		/* Mark all PM domains as initially powered off */
-+		pm_genpd_init(&pd->gpd, NULL, true);
-+		INIT_LIST_HEAD(&pd->dev_list);
-+	}
-+
-+	zynqmp_pd_data->domains = domains;
-+	zynqmp_pd_data->num_domains = ARRAY_SIZE(pm_ids);
-+	of_genpd_add_provider_onecell(dev->parent->of_node, zynqmp_pd_data);
-+
-+	return 0;
-+}
-+
-+static int zynqmp_gpd_remove(struct platform_device *pdev)
-+{
-+	of_genpd_del_provider(pdev->dev.parent->of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver zynqmp_power_domain_driver = {
-+	.driver	= {
-+		.name = "zynqmp_power_controller",
-+	},
-+	.probe = zynqmp_gpd_probe,
-+	.remove = zynqmp_gpd_remove,
-+};
-+module_platform_driver(zynqmp_power_domain_driver);
-+
-+MODULE_ALIAS("platform:zynqmp_power_controller");
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
 2.7.4
 
