@@ -2,116 +2,101 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5E9C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D73C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F4392083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F4392083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2BF0B2087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF0B2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbeJDXlO (ORCPT
+        id S1728129AbeJDXlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:41:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45041 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbeJDXlO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:41:14 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g86mD-0003FW-TF; Thu, 04 Oct 2018 18:47:01 +0200
-Message-ID: <1538671621.14153.20.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/4] reset: imx7: Add PCIE_CTRL_APPS_TURNOFF
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 04 Oct 2018 18:47:01 +0200
-In-Reply-To: <c3a7dfd1395b12e170393a3da77e0d1602b9f542.1538670431.git.leonard.crestez@nxp.com>
-References: <cover.1538670431.git.leonard.crestez@nxp.com>
-         <c3a7dfd1395b12e170393a3da77e0d1602b9f542.1538670431.git.leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 4 Oct 2018 19:41:23 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59628 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728094AbeJDXlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:41:23 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 90FB81A015D;
+        Thu,  4 Oct 2018 18:47:16 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5BB991A0007;
+        Thu,  4 Oct 2018 18:47:16 +0200 (CEST)
+Received: from someleo.am.freescale.net (someleo.am.freescale.net [10.81.33.178])
+        by inv1260.us-phx01.nxp.com (Postfix) with ESMTP id 9C79C40A63;
+        Thu,  4 Oct 2018 09:47:15 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org
+Subject: [GIT PULL] for-next updates for soc/fsl drivers for v4.20 take 2
+Date:   Thu,  4 Oct 2018 11:47:15 -0500
+Message-Id: <20181004164715.14646-1-leoyang.li@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonard,
+Hi arm-soc maintainers,
 
-On Thu, 2018-10-04 at 16:34 +0000, Leonard Crestez wrote:
-> This is required for the imx pci driver to send the PME_Turn_Off TLP.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/reset/reset-imx7.c             | 1 +
->  include/dt-bindings/reset/imx7-reset.h | 4 +++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/reset/reset-imx7.c b/drivers/reset/reset-imx7.c
-> index 97d9f08271c5..77911fa8f31d 100644
-> --- a/drivers/reset/reset-imx7.c
-> +++ b/drivers/reset/reset-imx7.c
-> @@ -65,10 +65,11 @@ static const struct imx7_src_signal imx7_src_signals[IMX7_RESET_NUM] = {
->  	[IMX7_RESET_MIPI_PHY_MRST]	= { SRC_MIPIPHY_RCR, BIT(1) },
->  	[IMX7_RESET_MIPI_PHY_SRST]	= { SRC_MIPIPHY_RCR, BIT(2) },
->  	[IMX7_RESET_PCIEPHY]		= { SRC_PCIEPHY_RCR, BIT(2) | BIT(1) },
->  	[IMX7_RESET_PCIEPHY_PERST]	= { SRC_PCIEPHY_RCR, BIT(3) },
->  	[IMX7_RESET_PCIE_CTRL_APPS_EN]	= { SRC_PCIEPHY_RCR, BIT(6) },
-> +	[IMX7_RESET_PCIE_CTRL_APPS_TURNOFF] = { SRC_PCIEPHY_RCR, BIT(11) },
->  	[IMX7_RESET_DDRC_PRST]		= { SRC_DDRC_RCR, BIT(0) },
->  	[IMX7_RESET_DDRC_CORE_RST]	= { SRC_DDRC_RCR, BIT(1) },
->  };
->  
->  static struct imx7_src *to_imx7_src(struct reset_controller_dev *rcdev)
-> diff --git a/include/dt-bindings/reset/imx7-reset.h b/include/dt-bindings/reset/imx7-reset.h
-> index 63948170c7b2..31b3f87dde9a 100644
-> --- a/include/dt-bindings/reset/imx7-reset.h
-> +++ b/include/dt-bindings/reset/imx7-reset.h
-> @@ -54,9 +54,11 @@
->   */
->  #define IMX7_RESET_PCIE_CTRL_APPS_EN	22
->  #define IMX7_RESET_DDRC_PRST		23
->  #define IMX7_RESET_DDRC_CORE_RST	24
->  
-> -#define IMX7_RESET_NUM			25
-> +#define IMX7_RESET_PCIE_CTRL_APPS_TURNOFF 25
-> +
-> +#define IMX7_RESET_NUM			26
->  
->  #endif
+Please merge the following updates for next.
 
-This is contained enough to be merged with the rest of the series,
-patches 1 and 2:
+PS.  One of the patches is depending on the last pull request for fixes to build
+https://patchwork.kernel.org/patch/10622883/
+I didn't include the fix patches directly in this pull request to prevent a
+complicated merge.  Please let me know if there is a more preferred approach
+to deal with dependencies between pull requests.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Regards,
+Leo
 
-Let me know if I should pick them up instead.
+The following changes since commit afa86d264a7ce62ba214bc7c6012e2129141421e:
 
-regards
-Philipp
+  soc: fsl: dpio: remove redundant pointer 'priv' (2018-08-30 12:19:02 -0500)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v4.20-2
+
+for you to fetch changes up to aeaf982954849e9d2bccffab138703be28edd2ae:
+
+  soc: fsl: qbman: add interrupt coalesce changing APIs (2018-10-02 15:04:19 -0500)
+
+----------------------------------------------------------------
+NXP/FSL SoC drivers updates for v4.20 take 2
+
+- Update qbman driver to better work with CPU hotplug
+- Add Kconfig dependency of 64-bit DMA addressing for qbman driver
+- Use last reponse to determine valid bit for qbman driver
+- Defer bman_portals probe if bman is not probed
+- Add interrupt coalescing APIs to qbman driver
+
+----------------------------------------------------------------
+Laurentiu Tudor (1):
+      soc: fsl: bman_portals: defer probe after bman's probe
+
+Madalin Bucur (2):
+      soc: fsl: qbman: replace CPU 0 with any online CPU in hotplug handlers
+      soc: fsl: qbman: add interrupt coalesce changing APIs
+
+Roy Pledge (3):
+      soc: fsl: qbman: Check if CPU is offline when initializing portals
+      soc: fsl: qbman: Add 64 bit DMA addressing requirement to QBMan
+      soc: fsl: qbman: Use last response to determine valid bit
+
+ drivers/soc/fsl/qbman/Kconfig       |  2 +-
+ drivers/soc/fsl/qbman/bman.c        |  6 ++---
+ drivers/soc/fsl/qbman/bman_portal.c | 14 ++++++++--
+ drivers/soc/fsl/qbman/dpaa_sys.h    | 20 ++++++++++++++
+ drivers/soc/fsl/qbman/qman.c        | 53 ++++++++++++++++++++++++++++++++-----
+ drivers/soc/fsl/qbman/qman_portal.c |  6 +++--
+ include/soc/fsl/qman.h              | 27 +++++++++++++++++++
+ 7 files changed, 113 insertions(+), 15 deletions(-)
