@@ -2,164 +2,118 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61995C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F393C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2802D2083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:19:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2802D2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C725B2083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:22:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oM5gJI97"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C725B2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeJECO1 (ORCPT
+        id S1727591AbeJECRQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:14:27 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11512 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727432AbeJECO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:14:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 12:19:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,341,1534834800"; 
-   d="scan'208";a="238551728"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga004.jf.intel.com with ESMTP; 04 Oct 2018 12:19:47 -0700
-Subject: Re: [Patch v2 2/4] x86/speculation: Provide application property
- based STIBP protection
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-References: <cover.1537920575.git.tim.c.chen@linux.intel.com>
- <ce0454aa84320b34de5b00058a56daefdd817e22.1537920575.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1810022104480.1435@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c90810ac-e527-45af-1893-1e95c3da7dad@linux.intel.com>
-Date:   Thu, 4 Oct 2018 12:19:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Thu, 4 Oct 2018 22:17:16 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41382 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbeJECRP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 22:17:15 -0400
+Received: by mail-pl1-f193.google.com with SMTP id q17-v6so5645041plr.8;
+        Thu, 04 Oct 2018 12:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PDAXGuik59FtHdBSCQdlM93BjbA1AEBUywHJ+lxA/7U=;
+        b=oM5gJI97IxjkitgBa0JxU8Ymsk5jTMN5bTgFmLSetFmI7RLaAHarqWkplPpfOxAcW7
+         DCoWd0t4GOF/iY+UxZTuDakT1pk6O9VwhyJ8WP5doNBk8ct+ITsQkbh3erznNvMIG8Gl
+         RNbYGgsdoOXQ6URpiQ4fxm5O2uYO3Rh9zAMrnNzX43gf+cUowoo/ZhPrSPzOJAoQ8gqT
+         cUz/1iImoJX0inIXr3uTEtTqD8c7N56VhN1soqcGtsESqmipeZxlA8fkBZGMiCp4Ou66
+         cimJpyvDx5ZxgBTqYGX9vejCgA8B/ySM4vLtwEHVVxYh60an+InEnJnaj6jZ3H7bDtOv
+         65ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PDAXGuik59FtHdBSCQdlM93BjbA1AEBUywHJ+lxA/7U=;
+        b=UhhXkUtTsU8XwzMPi0ZgdmaOtIjVKNmA6AhQxTwjw56nKEmCRhu9JP8LKWt0GBuWCd
+         nWjtRhZ2V0sTYAPru4X+1QO2GaAnH1KJxSIP24PNmjeEzqB2G3n6PCBeymy38Ejo70rL
+         yesmXLHRzQ597xyraqFAgZ2SUD2MZuCGLZN8nIqwIu0fHFMpgH80NSVoR+YkFFJrs0Ne
+         W1ChlGwLKK5QN2zIoE04fHENvnwIIpUopYds0gLdg4f7/cGQ/9aS0P0MIiMBCZY6Wj16
+         mmUByfJC4d7ZVqgHUpm4q1ispmH3EYX1gf3u9JmbltZHmPjxswS5senU+Nn7mXMMb2mw
+         LBTg==
+X-Gm-Message-State: ABuFfoijPiAJ7iLoptDZKGnrlX6gqEPWtUqNVqLipK5t3HT/AFky3cBv
+        0x14OfM+vr+YNrJFaWyvOTtSX4zY8jIsxw==
+X-Google-Smtp-Source: ACcGV62OuOxQeAIRsibVFUN+7Jzq/VWD7k6xExUlbqapBFdbIqkUDQMXq86vuA8wRCu5p38rcW73dA==
+X-Received: by 2002:a17:902:b484:: with SMTP id y4-v6mr7986220plr.262.1538680955853;
+        Thu, 04 Oct 2018 12:22:35 -0700 (PDT)
+Received: from localhost ([82.102.30.219])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm8189883pfa.47.2018.10.04.12.22.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 12:22:35 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 12:22:31 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Lars Ellenberg <lars.ellenberg@linbit.com>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH RESEND] drbd: avoid clang warning about pointless switch
+ statement
+Message-ID: <20181004192231.GA29744@localhost>
+References: <20181002171447.10765-1-natechancellor@gmail.com>
+ <20181004191854.GD10984@soda.linbit>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810022104480.1435@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181004191854.GD10984@soda.linbit>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/02/2018 12:10 PM, Thomas Gleixner wrote:
-> On Tue, 25 Sep 2018, Tim Chen wrote:
+On Thu, Oct 04, 2018 at 09:18:54PM +0200, Lars Ellenberg wrote:
+> On Tue, Oct 02, 2018 at 10:14:48AM -0700, Nathan Chancellor wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > The drbd code causes warnings that we cannot easily disable when building with clang:
+> > 
+> > In file included from drivers/block/drbd/drbd_debugfs.c:10:
+> > In file included from drivers/block/drbd/drbd_int.h:48:
+> > In file included from include/linux/drbd_genl_api.h:53:
+> > In file included from include/linux/genl_magic_struct.h:237:
+> > include/linux/drbd_genl.h:300:1: warning: no case matching constant switch condition '0'
+> > 
+> > There is nothing wrong with the code, and adding 'default:' labels
+> > in the right place is enough to let clang shut up about the warning.
 > 
->> This patch provides an application property based spectre_v2
+> Actually, I think I'd prefer a "case 0:" instead of the "default:",
+> because that would assert that we don't use a 0 for op or field numbers.
 > 
-> # git grep 'This patch' Documentation/process/
-> 
->> protection with STIBP against attack from another app from
-> 
-> s/app/application/ please. This is not android.
-> 
->> a sibling hyper-thread.  For security sensitive non-dumpable
->> app, STIBP will be turned on before switching to it for Intel
->> processors vulnerable to spectre_v2.
-> 
-> What has this to do with Intel processors?
-> 
->> -static __always_inline void intel_set_ssb_state(unsigned long tifn)
->> +static __always_inline void set_spec_ctrl_state(unsigned long tifn)
->>  {
->> -	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
->> +	u64 msr = x86_spec_ctrl_base;
->> +
->> +	if (static_cpu_has(X86_FEATURE_SSBD))
->> +		msr |= ssbd_tif_to_spec_ctrl(tifn);
->> +
->> +	if (cpu_smt_control == CPU_SMT_ENABLED)
->> +		msr |= stibp_tif_to_spec_ctrl(tifn);
-> 
-> Oh no. We are not adding yet another conditional into switch to. Either
-> that's done unconditionally or this wants to have a static key.
-
-Okay, will add a static_key to indicate that SMT is in use.
-
-Tim
-
-> 
->>  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+> As at least some people seem to care, I suggest we bundle up
+> this and the other clang warning you just resent the patch for
+> with whatever else we may come up with for the next merge window
+> and send a pull request to Jens then.
+> In case we forget, please send a friendly reminder.
 > 
 > Thanks,
 > 
-> 	tglx
+>     Lars
 > 
 
+Hi Lars,
+
+I will go ahead and test that change shortly and send it over for
+review.
+
+Thanks for the quick reply!
+Nathan
