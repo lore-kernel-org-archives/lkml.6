@@ -2,124 +2,124 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DE8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A9AC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE4192082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260732082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:16:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y8KSQb4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4192082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DVz5Cea/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260732082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeJDWIi (ORCPT
+        id S1727647AbeJDWKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:08:38 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42078 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbeJDWIh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:08:37 -0400
-Received: by mail-vs1-f68.google.com with SMTP id w16-v6so5573834vso.9
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oLUZlAEuI80YOsK7uODQB3rfm1N8Lu9Vuv38c6Q9A4U=;
-        b=Y8KSQb4FSgXRhj/teS15Z5MlqjVcM/vspQ+woMBHp0/lBWVTNAlL9r4XC57XLj2UWx
-         gfZi8pssxCeuNv2wEt4OkVIaIPNZU9e/mj8XED3gUFYfAKUrRzavu4kFi0ZEiHlP0d+r
-         R7AnrwcrAtlfequahfEJxXCkx2FXDgNrGPsPQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oLUZlAEuI80YOsK7uODQB3rfm1N8Lu9Vuv38c6Q9A4U=;
-        b=J7tUWIuJtsn0VgkG+jfPSQy1AzPRzD4N+M/sKnhMiRD5O1pRFteFl2VJm/3Li0dCUj
-         MEDfrHsUF8hSlmX4sMEQQQWu74uuUFs581g7IMHAXUTDXhWJ8c2oVh/HHXXPwrWVm0xN
-         egZS7Yusn9UL1MEES6awXkGi8h1kEZa8ZheqgvqM1iZJuOvNJZ0fGR3vSGG22sHesv8V
-         lAD0YCA21Ff9npG21gHUKSqrVHKCZpdmOquO8gdeWcwGzRCCJnI7Ob+q/xxkEsiXq6e7
-         x10nkzQ0SqxbEcDrdWa3u44SaXLdiMb7x+OgoKMy3zSwsEKDcN0bPcE1iKXDuXcutSEY
-         N/cw==
-X-Gm-Message-State: ABuFfohnjtAEbCd8NO9s8LcdgiWjTd9sqsm81WxaaU40F8vwfNsCTqcQ
-        sR56sOHDHBo9fmXZuj07MX1OoRPddF8=
-X-Google-Smtp-Source: ACcGV635kI/Y1B5uCU04AoYiCMoWsBJxQWqYdbND223wCwGvbi0Zqf472Qsw/ITg/7gbAB9cRRoFGg==
-X-Received: by 2002:a67:b14c:: with SMTP id z12mr2741283vsl.28.1538666093450;
-        Thu, 04 Oct 2018 08:14:53 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id v85-v6sm294855vkd.18.2018.10.04.08.14.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 08:14:52 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id t202-v6so2235771vke.9
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 08:14:51 -0700 (PDT)
-X-Received: by 2002:a1f:280c:: with SMTP id o12-v6mr2691499vko.4.1538666091362;
- Thu, 04 Oct 2018 08:14:51 -0700 (PDT)
+        Thu, 4 Oct 2018 18:10:20 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:53844 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727355AbeJDWKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 18:10:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=rLXJLGLbUNC+wDOIeuKfWvWaWFSEJwlmKlHt/R3XqaI=;
+        b=DVz5Cea/KBuzLzd87yePaFXKR1jb6A8yippQzA8LiucukLL9Z+MgnhKS1iYqg/gYxQUBG8BalaIdhRgQyb56HOKoMzK+FjCVM6a7yNJSb9WBTYVPoGniKy8NWZu5jyqvwP1GDiiBNJTWo+bxQ38B1eP5PNK6vlmJE1KhOOSMRC4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g85Mc-0007EI-US; Thu, 04 Oct 2018 17:16:30 +0200
+Date:   Thu, 4 Oct 2018 17:16:30 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com
+Subject: Re: [PATCH net-next v2 1/6] net: phy: mscc: migrate to
+ phy_select/restore_page functions
+Message-ID: <20181004151630.GE4730@lunn.ch>
+References: <20181004124728.9821-1-quentin.schulz@bootlin.com>
+ <20181004124728.9821-2-quentin.schulz@bootlin.com>
 MIME-Version: 1.0
-References: <20181004001432.21218-1-mka@chromium.org> <20181004001432.21218-2-mka@chromium.org>
-In-Reply-To: <20181004001432.21218-2-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 4 Oct 2018 08:14:37 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xhic45SCQSVx0XXgtcyFAMEmOt97HUKZjHa_nyd4Ur2A@mail.gmail.com>
-Message-ID: <CAD=FV=Xhic45SCQSVx0XXgtcyFAMEmOt97HUKZjHa_nyd4Ur2A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: iio: vadc: Update example to include
- unit address for node 'usb-id-nopull'
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-iio <linux-iio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181004124728.9821-2-quentin.schulz@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Oct 04, 2018 at 02:47:23PM +0200, Quentin Schulz wrote:
+> @@ -197,25 +199,30 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
+>  	if (rc != 0)
+>  		return rc;
+>  
+> -	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED);
+> -	if (rc != 0)
+> -		return rc;
+> +	oldpage = phy_select_page(phydev, MSCC_PHY_PAGE_EXTENDED);
+> +	if (oldpage < 0) {
+> +		rc = oldpage;
+> +		goto out;
+> +	}
+>  
+> -	reg_val = phy_read(phydev, MSCC_PHY_EXT_MODE_CNTL);
+> +	reg_val = __phy_read(phydev, MSCC_PHY_EXT_MODE_CNTL);
+>  	reg_val &= ~(FORCE_MDI_CROSSOVER_MASK);
+>  	if (mdix == ETH_TP_MDI)
+>  		reg_val |= FORCE_MDI_CROSSOVER_MDI;
+>  	else if (mdix == ETH_TP_MDI_X)
+>  		reg_val |= FORCE_MDI_CROSSOVER_MDIX;
 
-On Wed, Oct 3, 2018 at 5:14 PM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> The node has a reg property, therefore its name should include a unit
-> address.
->
-> Also change the name from 'usb_id_nopull' to 'usb-id-nopull' to follow
-> DT conventions.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Changes in v4:
-> - patch added to the series
-> ---
->  Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-> index d0c188e5c922..ff7aa5038ba6 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-> @@ -112,7 +112,7 @@ Example:
->                 io-channel-ranges;
->
->                 /* Channel node */
-> -               usb_id_nopull {
-> +               usb-id-nopull@VADC_LR_MUX10_USB_ID {
->                         reg = <VADC_LR_MUX10_USB_ID>;
+Hi Quentin
 
-This is my understanding of how it should be done and matches some
-existing examples I see in the tree.  AKA "pd_hdcp@RK3399_PD_HDCP".
-Thanks for cleaning it up!
+Could you use phy_modify_paged() here? This function only accesses a
+single register, so using the wrapper should not have any
+disadvantages. The same should apply for any function modifying a single
+register.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> -	rc = phy_write(phydev, MSCC_PHY_EXT_MODE_CNTL, reg_val);
+> +	rc = __phy_write(phydev, MSCC_PHY_EXT_MODE_CNTL, reg_val);
+>  	if (rc != 0)
+> -		return rc;
+> +		goto out;
+>  
+> -	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
+> -	if (rc != 0)
+> +	rc = phy_restore_page(phydev, oldpage, rc);
+> +	if (rc < 0)
+>  		return rc;
+>  
+>  	return genphy_restart_aneg(phydev);
+> +
+> +out:
+> +	return phy_restore_page(phydev, oldpage, rc);
+>  }
+>  
+>  static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
+> @@ -223,25 +230,24 @@ static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
+>  	int rc;
+>  	u16 reg_val;
+>  
+> -	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED);
+> -	if (rc != 0)
+> +	rc = phy_select_page(phydev, MSCC_PHY_PAGE_EXTENDED);
+> +	if (rc < 0)
+>  		goto out;
+>  
+> -	reg_val = phy_read(phydev, MSCC_PHY_ACTIPHY_CNTL);
+> +	reg_val = __phy_read(phydev, MSCC_PHY_ACTIPHY_CNTL);
+>  	reg_val &= DOWNSHIFT_CNTL_MASK;
+>  	if (!(reg_val & DOWNSHIFT_EN))
+>  		*count = DOWNSHIFT_DEV_DISABLE;
+>  	else
+>  		*count = ((reg_val & ~DOWNSHIFT_EN) >> DOWNSHIFT_CNTL_POS) + 2;
+
+phy_read_paged()? Any function which just accesses a single register
+should try to use phy_read_paged(), phy_write_paged() or
+phy_modify_paged() to avoid a lot of boilerplate code.
+
+	   Andrew
