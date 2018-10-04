@@ -2,93 +2,75 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5613EC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E20C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132752082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:50:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IplMn5CE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132752082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ABA942082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:54:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA942082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJDRnS (ORCPT
+        id S1727278AbeJDRrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:43:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53288 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeJDRnS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:43:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oCwKq3koAt9EVrwAvlJ8K1HOKiRI20kWtt/9MIcEsz4=; b=IplMn5CE0D5qixjS4aGIEYj8P
-        DLH/ROm6U6aQrxH09pvggTDYbjA875Xeo7x5xYUcK1bn/uff2OKMgABEYPTlQ2JgMwSd52keywcEJ
-        ZSFcuV4tmGeogmnXYfAjrIV93NC1IkaQ2tOL1zg9Tmdx4TRPyX/7gShrUTWbR1K87gWb0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g81DE-0008IJ-A6; Thu, 04 Oct 2018 10:50:32 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E1F311121BA8; Thu,  4 Oct 2018 11:50:31 +0100 (BST)
-Date:   Thu, 4 Oct 2018 11:50:31 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Leonard Crestez <leonard.crestez@nxp.com>, robh@kernel.org
-Subject: Re: [PATCH] regulator: fixed: Use more standard GPIO binding
-Message-ID: <20181004105031.GD6412@sirena.org.uk>
-References: <20181004090654.32233-1-linus.walleij@linaro.org>
+        Thu, 4 Oct 2018 13:47:33 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36914 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727109AbeJDRrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 13:47:33 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 9iLxEzf4aA6l; Thu,  4 Oct 2018 12:54:49 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 68F8B1EC02D1;
+        Thu,  4 Oct 2018 12:54:49 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 12:54:43 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        x86@kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: x86/mm: Found insecure W+X mapping at address (ptrval)/0xc00a0000
+Message-ID: <20181004105443.GH1864@zn.tnic>
+References: <0922cc1b-ed51-06e9-df81-57fd5aa8e7de@molgen.mpg.de>
+ <alpine.DEB.2.21.1809210045220.1434@nanos.tec.linutronix.de>
+ <c8da5778-3957-2fab-69ea-42f872a5e396@molgen.mpg.de>
+ <alpine.DEB.2.21.1809281653270.2004@nanos.tec.linutronix.de>
+ <20181003212255.GB28361@zn.tnic>
+ <20181004080321.GA3630@8bytes.org>
+ <20181004081429.GB1864@zn.tnic>
+ <6cbb9135-7e89-748f-1d55-ac105a9f8091@molgen.mpg.de>
+ <20181004084946.GD1864@zn.tnic>
+ <bdc5d224-91d6-eeee-c334-4b76efb56cac@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a2FkP9tdjPU2nyhF"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181004090654.32233-1-linus.walleij@linaro.org>
-X-Cookie: Safety Third.
+In-Reply-To: <bdc5d224-91d6-eeee-c334-4b76efb56cac@molgen.mpg.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 04, 2018 at 10:59:18AM +0200, Paul Menzel wrote:
+> I meant just the test you did.
 
---a2FkP9tdjPU2nyhF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+https://lkml.kernel.org/r/20181003212255.GB28361@zn.tnic
 
-On Thu, Oct 04, 2018 at 11:06:54AM +0200, Linus Walleij wrote:
+> The SSD is also used in the Lenovo X60 and T60, which are
+> 32-bit systems.
 
->  Optional properties:
-> -- gpio: gpio to use for enable control
-> +- gpios: gpio to use for enable control
+And what exactly is the problem when you access it on a 64-bit OS?
 
-Are we supposed to be able to have just plain gpios as a standards
-conforming property or would best practice be to call it enable-gpios or
-something?
+-- 
+Regards/Gruss,
+    Boris.
 
---a2FkP9tdjPU2nyhF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu18HcACgkQJNaLcl1U
-h9DrPwf7Bh2tYKRDE9uZ3rdDUFBuNurCRgtWm7BsUaccxX5NvLnJJ5GNK310VNxl
-qVh5M96vfWmoylOBi2ETFo0wtOXMIwNyVeWXfvPJNhCZnVLZuBtITDN5zAJPqlAX
-mgb0mWp0w/IuQ8OSlHwrd7HioG0k/8RPPrQ0A0SmVXWuKgIKDsS2MZaqKLA6vkVF
-bsWOx4FqX7IiCyduFC12baqFxtrKCrhTkEkYCKVxaNZ88tn/mqqwqt3fHush550w
-wI9Ek7j/lSVMbHKTj0jA6eVs1bNYgqY1qfRJKafKQv446Yy2nK85xF6vTFMqYQFs
-Muo4xvKIzBM88b8sw0HqigGKMkjfRA==
-=Nkv4
------END PGP SIGNATURE-----
-
---a2FkP9tdjPU2nyhF--
+Good mailing practices for 400: avoid top-posting and trim the reply.
