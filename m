@@ -2,117 +2,128 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4E4C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E6EC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FCB62098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0021021473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:58:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGk4ZYBp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FCB62098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=infinidat-com.20150623.gappssmtp.com header.i=@infinidat-com.20150623.gappssmtp.com header.b="Z9Dr9OQZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0021021473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infinidat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeJDNtI (ORCPT
+        id S1727472AbeJDNuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:49:08 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34391 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbeJDNtH (ORCPT
+        Thu, 4 Oct 2018 09:50:39 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34414 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727293AbeJDNug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:49:07 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k19-v6so2918612pfi.1;
-        Wed, 03 Oct 2018 23:57:21 -0700 (PDT)
+        Thu, 4 Oct 2018 09:50:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i12-v6so8171918otl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 23:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=W/aJB4CDKepmf+nTK2KN68zVTtYD6k3/U7624cOERLI=;
-        b=nGk4ZYBpxMasPe8lIcIApoqyLPwBcoyIqE+dVOUFX9MdISmleoTifkIWO++jeTHdnP
-         fuXRMu8gbA3mVeyDQupbQ4bTDyRjpNqgKZPS6WBe09SVHJgq70LsrDUHzLCuwGv2hFfM
-         /XlRDCm5s9ubye2lmS8JS7bt3aw/eyNjNwbRchqYlkIgbEsojaWvY441R8nhu1kV+eb7
-         OeyAg1sVfF7QdD7RTOhPDMZKSv9sB8felD2IW8TnMydjgeVXIZ+7c2T/wJQzOg3HhvnU
-         TLdufajZtCEz3wHJn9FyycIALk0MMXE++6DCMbrs9ikWKeLJiCqntIHoFZV95FXyw1mh
-         NzTA==
+        d=infinidat-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ILgMXlBvUEo+sZHLx50+QCGySzxBjzwtiFLrday+WkA=;
+        b=Z9Dr9OQZk5sasDJozWyp9Acgu+ATjRQo4NOdWhIALWMgdSO5NF5jFsnvIm7muKaog+
+         zmwsTgvfMqbrfW7+Lme5fT+MR938Q+TVBvvmqJE1pf2Kw334DHVndww7s995ywIrVsTx
+         GYLeDngGS3R6vZhq+JnySDgyTK7BqrI4IgRzamVyj2+qVW2Pw/g1CrcAgEQ+rstKnola
+         NKxQhH4ZQLlkEiZkow/wRIWwoWafQWe7WRDT7A8g0ZbQ5jdu03h/ZbNRTf/fPSJQcIad
+         fb3lh6sXgMLIJzcHH+A3ASNVFpgK6f1adBMvsxZ3NNNLMsZP5XbKN9e7bzyjHBSAegOY
+         hVpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W/aJB4CDKepmf+nTK2KN68zVTtYD6k3/U7624cOERLI=;
-        b=kaSXykLRZhidy7geBpS8Ej6VlApiAZKaE0ZErOvmIUhRwN+LL7m5tg+kuwi4ErzNPJ
-         lxKLVqZuEt/dbuLM2RGNQWXvoAtC5ME+5+WVmAijv8a3e+n1+7yGNe3Vo5TjcEFfphJZ
-         7X94Y7b3nSZpYj9I3H/IJsxNqRXSVRJwRzoSFTHtNZxGSA5Ab0hyGb0NncK+VWosZFPY
-         OP30kYe0YJPT9fzwceLbBYmZUxgeZ4I0wof0nnTJ+uQVx+HN4WdZy/TWQetoyghKeTLN
-         c9iZLWOXMsqkiIXwhQD9uBU7yofTpyK6duTh1+IBxgGUO3zcV1mx8ydo/BgiHgHno5M/
-         mjLg==
-X-Gm-Message-State: ABuFfohO4C/Rwwa+FqSYv3/4dwH8b3WgA1OIrafpnvrdlRj6bd38qByQ
-        W82fDxXuJ/bS8hvSFERxhtM=
-X-Google-Smtp-Source: ACcGV60RP5+YEwOa/f51OxPnuNMZbcRwCcr5ZqqyUfamd33iCi2rjVnfFLTykKvonSos6S+BQd53Jw==
-X-Received: by 2002:a63:d749:: with SMTP id w9-v6mr4389249pgi.415.1538636240785;
-        Wed, 03 Oct 2018 23:57:20 -0700 (PDT)
-Received: from E570.localdomain (c-24-21-68-121.hsd1.or.comcast.net. [24.21.68.121])
-        by smtp.gmail.com with ESMTPSA id u77-v6sm6885942pfj.40.2018.10.03.23.57.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 23:57:20 -0700 (PDT)
-Received: by E570.localdomain (Postfix, from userid 1000)
-        id A2029160683; Wed,  3 Oct 2018 23:57:20 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 23:57:20 -0700
-From:   Lance Roy <ldr709@gmail.com>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Daniel Drake <dsd@gentoo.org>,
-        Ulrich Kunitz <kune@deine-taler.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 08/16] wireless: Replace spin_is_locked() with lockdep
-Message-ID: <20181004065720.GE896@E570.localdomain>
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-9-ldr709@gmail.com>
- <877eizjt5j.fsf@kamboji.qca.qualcomm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ILgMXlBvUEo+sZHLx50+QCGySzxBjzwtiFLrday+WkA=;
+        b=TMSgWjbHQIEPzo+rFG81vFsnQzhY38U599AhXrZmeYPxbDOMBFN2H+94/Yurxd3R52
+         0T6fcJ+RpArk3TrqzRA3LR/1KgP4rSXhQVdMcWzjHSwF64Io/KpY8rGtNjDXbCRpljro
+         pqutpxvurjxR+HyLyEpafhdPWD+4vH42FKQoDvODBxyqjmT+rO0YoQVjdxrMmi1wCrdz
+         C52D33K3KO01j4ORVxElVLmKgD/tfyeHhb/+YnR9m7CNp1Z5c5XwFuN87x7nRxPYVj1s
+         Dj4Yp14pr0QSCLZrDIoJxHcG03i4m8pwKQxe3kpDk+QVZfh1rBABo/rkzvISExK+Vjwf
+         avcg==
+X-Gm-Message-State: ABuFfoguXmNtKqxJb96D9yQ7nhCj+yxztMSNxliY9x8fEplmIbDIvUVE
+        4y/i+EIaSgpt+2bVWVknXqIUpnWfaa5icDoFyYMP
+X-Google-Smtp-Source: ACcGV61dWvoVtXCL1PDMM2ZJryEIYAX9U/3UXvB5hu1zSN1mOae4LgKzEfhl0WGAC0EqC7L1kV8qxYeWgEUeio5z/m4=
+X-Received: by 2002:a9d:3c9:: with SMTP id f67-v6mr2986177otf.208.1538636329410;
+ Wed, 03 Oct 2018 23:58:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877eizjt5j.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
+ <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
+ <CA+55aFyLC8PhjZ+iV7MucSZ1aGKMT=S9=EkEAQ6T1=ZRqD-xLA@mail.gmail.com> <CAOuWhkbNuesaVYar6ML-qFw7RAfkPsaOYUXT4Ypfiu5=Nt1kWw@mail.gmail.com>
+In-Reply-To: <CAOuWhkbNuesaVYar6ML-qFw7RAfkPsaOYUXT4Ypfiu5=Nt1kWw@mail.gmail.com>
+From:   Dror Levin <drorl@infinidat.com>
+Date:   Thu, 4 Oct 2018 09:58:37 +0300
+Message-ID: <CAOuWhkYRtTqrnp1uyDWFqXFcTLhPbcqv8XzdV_jurJHstGQmuA@mail.gmail.com>
+Subject: Re: Recent removal of bsg read/write support
+To:     torvalds@linux-foundation.org
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, hch@infradead.org, axboe@kernel.dk,
+        gregkh@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 12:06:48PM +0300, Kalle Valo wrote:
-> Lance Roy <ldr709@gmail.com> writes:
+CC'ing Greg.
+
+On Mon, Sep 3, 2018 at 11:34 AM Dror Levin <drorl@infinidat.com> wrote:
 >
-> > lockdep_assert_held() is better suited to checking locking requirements,
-> > since it won't get confused when someone else holds the lock. This is
-> > also a step towards possibly removing spin_is_locked().
+> On Sun, Sep 2, 2018 at 8:55 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > Signed-off-by: Lance Roy <ldr709@gmail.com>
-> > Cc: Daniel Drake <dsd@gentoo.org>
-> > Cc: Ulrich Kunitz <kune@deine-taler.de>
-> > Cc: Kalle Valo <kvalo@codeaurora.org>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: <linux-wireless@vger.kernel.org>
-> > Cc: <netdev@vger.kernel.org>
-> > ---
-> >  drivers/net/wireless/zydas/zd1211rw/zd_mac.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > On Sun, Sep 2, 2018 at 4:44 AM Richard Weinberger
+> > <richard.weinberger@gmail.com> wrote:
+> > >
+> > > CC'ing relevant people. Otherwise your mail might get lost.
+> >
+> > Indeed.
 >
-> Should I take this or is it going through some other tree?
-Sure you can take this if you like. If not, Paul McKenney will take it in his
-tree.
+> Sorry for that.
+>
+> > > On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
+> > > >
+> > > > We have an internal tool that uses the bsg read/write interface to
+> > > > issue SCSI commands as part of a test suite for a storage device.
+> > > >
+> > > > After recently reading on LWN that this interface is to be removed we
+> > > > tried porting our code to use sg instead. However, that raises new
+> > > > issues - mainly getting ENOMEM over iSCSI for unknown reasons.
+> >
+> > Is there any chance that you can make more data available?
+>
+> Sure, I can try.
+>
+> We use writev() to send up to SG_MAX_QUEUE tasks at a time. Occasionally not
+> all tasks are written at which point we wait for tasks to return before
+> sending more, but then writev() fails with ENOMEM and we see this in the syslog:
+>
+> Sep  1 20:58:14 gdc-qa-io-017 kernel: sd 441:0:0:5: [sg73]
+> sg_common_write: start_req err=-12
+>
+> Failing tasks are reads of 128KiB.
+>
+> > I'd rather fix the sg interface (which while also broken garbage, we
+> > can't get rid of) than re-surrect the bsg interface.
+
+Discussion seems to have died down but release of 4.19 is drawing near.
+
+Is there still any chance removal of bsg can be reconsidered? Maybe
+postponed to the
+next version to allow more time to adjust?
+
+I'm especially concerned about the possibility of this being
+backported to stable kernels
+which might leave us very little time to fix our code.
 
 Thanks,
-Lance
-
-> If it goes to via some other tree:
->
-> Acked-by: Kalle Valo <kvalo@codeaurora.org>
->
-> --
-> Kalle Valo
+Dror
