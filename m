@@ -3,70 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA93C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F14C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F7D2083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:47:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F7D2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 5AA692098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:49:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA692098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeJEAmA (ORCPT
+        id S1727677AbeJEAoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:42:00 -0400
-Received: from mail78-59.sinamail.sina.com.cn ([219.142.78.59]:38564 "HELO
-        mail78-59.sinamail.sina.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1727472AbeJEAmA (ORCPT
+        Thu, 4 Oct 2018 20:44:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49270 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbeJEAoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:42:00 -0400
-Received: from unknown (HELO localhost.localdomain)([139.204.57.91])
-        by sina.com with ESMTP
-        id 5BB652280000D8FD; Thu, 5 Oct 2018 01:47:29 +0800 (CST)
-X-Sender: penghao122@sina.com.cn
-X-Auth-ID: penghao122@sina.com.cn
-X-SMAIL-MID: 715275398706
-From:   Peng Hao <penghao122@sina.com.cn>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, joro@8bytes.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  kvm/x86 : avoid shifting signed 32-bit value by 31 bits
-Date:   Thu,  4 Oct 2018 13:47:18 -0400
-Message-Id: <1538675238-27356-1-git-send-email-penghao122@sina.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 4 Oct 2018 20:44:16 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g87l3-0000Oo-El; Thu, 04 Oct 2018 17:49:53 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][drm-next] drm/vmwgfx: remove redundant return ret statement
+Date:   Thu,  4 Oct 2018 18:49:53 +0100
+Message-Id: <20181004174953.28107-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-From: Peng Hao <peng.hao2@zte.com.cn>
+The return statement is redundant as there is a return statement
+immediately before it so we have dead code that can be removed.
+Also remove the unused declaration of ret.
 
-  modify AVIC_LOGICAL_ID_ENTRY_VALID_MASK to unsigned
+Detected by CoverityScan, CID#1473793 ("Structurally dead code")
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/kvm/svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index d96092b..bf1ded4 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -262,7 +262,7 @@ struct amd_svm_iommu_ir {
- };
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 5a6b70ba137a..260650bb5560 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -1738,7 +1738,6 @@ static int vmw_cmd_check_define_gmrfb(struct vmw_private *dev_priv,
+ 				      void *buf)
+ {
+ 	struct vmw_buffer_object *vmw_bo;
+-	int ret;
  
- #define AVIC_LOGICAL_ID_ENTRY_GUEST_PHYSICAL_ID_MASK	(0xFF)
--#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK		(1 << 31)
-+#define AVIC_LOGICAL_ID_ENTRY_VALID_MASK		(1UL << 31)
+ 	struct {
+ 		uint32_t header;
+@@ -1748,7 +1747,6 @@ static int vmw_cmd_check_define_gmrfb(struct vmw_private *dev_priv,
+ 	return vmw_translate_guest_ptr(dev_priv, sw_context,
+ 				       &cmd->body.ptr,
+ 				       &vmw_bo);
+-	return ret;
+ }
  
- #define AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK	(0xFFULL)
- #define AVIC_PHYSICAL_ID_ENTRY_BACKING_PAGE_MASK	(0xFFFFFFFFFFULL << 12)
+ 
 -- 
-1.8.3.1
-
+2.17.1
 
