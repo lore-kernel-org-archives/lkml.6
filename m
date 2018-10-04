@@ -2,107 +2,156 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E70C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976D6C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF67820652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:05:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 483402082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:07:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IiJ0PdCA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ak+aoK7n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF67820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxtKfn0Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483402082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbeJDQ5r (ORCPT
+        id S1727558AbeJDQ7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:57:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52350 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeJDQ5p (ORCPT
+        Thu, 4 Oct 2018 12:59:47 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34832 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbeJDQ7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:57:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7BA4960B26; Thu,  4 Oct 2018 10:05:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538647513;
-        bh=YreLcI82fpjiE1hcoZzqzJwALxy5ORnOxNYV3swoyT8=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=IiJ0PdCADeK4acu+hx5Enry8eIsKWQANF7/Tfi6yQ8taUBK3KUTxzIGh4W6P/eqvN
-         7VF5UCKW2fhL87MzJubu+3pQppRKGnufv1oHT4i8C18rkU625/HCC4v1zWQSE9ZH7g
-         mRyv5lXAyjdXbHNY0pT+P2MdqDqa757CjJIDbEUQ=
-Received: from x230.qca.qualcomm.com (85-76-114-39-nat.elisa-mobile.fi [85.76.114.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C80EB60B72;
-        Thu,  4 Oct 2018 10:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538647512;
-        bh=YreLcI82fpjiE1hcoZzqzJwALxy5ORnOxNYV3swoyT8=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Ak+aoK7nMUyYSxZTinQvFn6VRLWUnxlvOSNmDolvctgS4TBVOA3HinM4lAbqXIoXo
-         rtn3daQ+13G4kzUmoVLJ9LtesuB9OsfUg7bvzzE46KWMR7GgrsqRXPljvQSHlsCuLQ
-         81yKWVyGKnwoJBhe1BcGV79Ga1nnEptnm/tTwUq0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C80EB60B72
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Lance Roy <ldr709@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Daniel Drake <dsd@gentoo.org>,
-        Ulrich Kunitz <kune@deine-taler.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 08/16] wireless: Replace spin_is_locked() with lockdep
-References: <20181003053902.6910-1-ldr709@gmail.com>
-        <20181003053902.6910-9-ldr709@gmail.com>
-        <877eizjt5j.fsf@kamboji.qca.qualcomm.com>
-        <20181004065720.GE896@E570.localdomain>
-Date:   Thu, 04 Oct 2018 13:05:08 +0300
-In-Reply-To: <20181004065720.GE896@E570.localdomain> (Lance Roy's message of
-        "Wed, 3 Oct 2018 23:57:20 -0700")
-Message-ID: <87in2i2fjf.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 4 Oct 2018 12:59:47 -0400
+Received: by mail-lj1-f194.google.com with SMTP id o14-v6so7845708ljj.2;
+        Thu, 04 Oct 2018 03:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1LMwMIpNo9BoxjsZCyB38K6u5kj58SlDOP+no+C7Q0I=;
+        b=kxtKfn0ZI7NKXRfdG4X+wE39J8SHLbwCcGicwEjFB5VHzw0gcf8coA6ChJyFAlak6u
+         2w+BqLy69jcDtgE/WDjlGKIeRU4KocxKN2QP7DAqWHfOHYilZ3jwyORJnbGBghb3gDGL
+         Tm/oE1mw1NaPFSFeH7gyd6cm6KPFg7bTLTcej8fggt/h9ETuJ4Vm3hOe4cs2+gFGqUtJ
+         mKCxSj7iojDwC0G48ANGWPNcO/7EvHHQDI0sfd+9wEVKzMWusiGjdrDo8UM5z1WNjflV
+         lWkLq2HLpZJwUQc2774Yz3ei1n7OXOSz2xGy5lhbfyDGfK3n3XMLT+w2XYtH17CayDEk
+         s7NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1LMwMIpNo9BoxjsZCyB38K6u5kj58SlDOP+no+C7Q0I=;
+        b=h5Hf440pVmT6zgkO2B08sJVbk7Hvk0XTELHWaovXcMnnaHNMTLGU57cXJSXJgX7tY2
+         tIrFDcxjKOJuJ3UElYfGz2DY1PIN5l0eSNXzhtgtIHKsKAGMLcAJY68gUXOTX1mSgPMY
+         nJubRE201bb9e39t1dtn3RUHTRGScUaHp7tZKFv+9gjFuCQ9g5aq8n33nJ0ZxCqREPhq
+         1hLgFwKr+LkwoT+NdIGpfGKbOtWuyYmZux2M137dpEKrsmAslmF59772JTeFukKPq7nS
+         WbgPAdu1RnCM+rGZeQuXCVrWuikHQoXEKY+oFStqV7FdUJ/gd6/QzD85nnRBd6XFgMPt
+         7E0Q==
+X-Gm-Message-State: ABuFfojDgHujlYDJHntf/RJiuTeH2qND4feRUiS6rIEBdIOtrlNjZj/F
+        RYqdKrgKo52fuiT6L0N/qlZOnaBT3ECGc1Tb7qhEGg==
+X-Google-Smtp-Source: ACcGV60akK9ptUZ/lg3Ywlg0eHEAZBlx3IivwmpPiyS+RNDYw5Px74tqGAHfzLGniMflCtgmcEkIPb4uisciLd8bzMk=
+X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr3735176ljj.30.1538647633054;
+ Thu, 04 Oct 2018 03:07:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20181003130951.19140-1-ricardo.ribalda@gmail.com>
+ <20181003194658.zj6jkfmpbrkmnlen@kekkonen.localdomain> <CAPybu_0Og50WhkO2hHmg5cLQ6a2sx+KEp3_DOTKS=AJ2Shf3YQ@mail.gmail.com>
+ <20181003221415.jgpeea5ligm7oyr6@kekkonen.localdomain>
+In-Reply-To: <20181003221415.jgpeea5ligm7oyr6@kekkonen.localdomain>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Thu, 4 Oct 2018 12:06:56 +0200
+Message-ID: <CAPybu_2CPQFwuGF9Pbbnqe6KHCZzm_70+Zs2xs3iPsUgQqjECQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] [media] imx214: Add imx214 camera sensor driver
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>, jacopo@jmondi.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lance Roy <ldr709@gmail.com> writes:
-
-> On Wed, Oct 03, 2018 at 12:06:48PM +0300, Kalle Valo wrote:
->> Lance Roy <ldr709@gmail.com> writes:
->>
->> > lockdep_assert_held() is better suited to checking locking requirements,
->> > since it won't get confused when someone else holds the lock. This is
->> > also a step towards possibly removing spin_is_locked().
->> >
->> > Signed-off-by: Lance Roy <ldr709@gmail.com>
->> > Cc: Daniel Drake <dsd@gentoo.org>
->> > Cc: Ulrich Kunitz <kune@deine-taler.de>
->> > Cc: Kalle Valo <kvalo@codeaurora.org>
->> > Cc: "David S. Miller" <davem@davemloft.net>
->> > Cc: <linux-wireless@vger.kernel.org>
->> > Cc: <netdev@vger.kernel.org>
->> > ---
->> >  drivers/net/wireless/zydas/zd1211rw/zd_mac.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> Should I take this or is it going through some other tree?
+Hi Sakari
+On Thu, Oct 4, 2018 at 12:14 AM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
-> Sure you can take this if you like. If not, Paul McKenney will take it in his
-> tree.
+> On Wed, Oct 03, 2018 at 10:24:17PM +0200, Ricardo Ribalda Delgado wrote:
+> ...
+> > > > +static int imx214_enum_frame_size(struct v4l2_subdev *subdev,
+> > > > +                               struct v4l2_subdev_pad_config *cfg,
+> > > > +                               struct v4l2_subdev_frame_size_enum *fse)
+> > > > +{
+> > > > +     if (fse->code != IMX214_MBUS_CODE)
+> > > > +             return -EINVAL;
+> > > > +
+> > > > +     if (fse->index >= ARRAY_SIZE(imx214_modes))
+> > >
+> > > array_index_nospec() ?? I find it scary that you'd need that in drivers.
+> > > :-o
+>
+> Uh... not needed.
+>
+> The value is just sent back to the user as such so this is fine AFAICT.
+>
+> > >
+> > > > +             return -EINVAL;
+> > > > +
+> > > > +     fse->min_width = fse->max_width = imx214_modes[fse->index].width;
+> > > > +     fse->min_height = fse->max_height = imx214_modes[fse->index].height;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+>
+> ...
+>
+> > > > +     /*
+> > > > +      * WARNING!
+> > > > +      * Values obtained reverse engineering blobs and/or devices.
+> > > > +      * Ranges and functionality might be wrong.
+> > > > +      *
+> > > > +      * Sony, please release some register set documentation for the
+> > > > +      * device.
+> > > > +      *
+> > > > +      * Yours sincerely, Ricardo.
+> > > > +      */
+> > > > +     imx214->exposure = v4l2_ctrl_new_std(&imx214->ctrls, &imx214_ctrl_ops,
+> > > > +                                          V4L2_CID_EXPOSURE,
+> > > > +                                          0, 0xffff, 1, 0x0c70);
+> > >
+> > > The exposure is in lines so it can't exceed frame height + blanking.
+> > > There's a marginal, too. I don't know what it might be for this sensor
+> > > though. Usually it's small, such as 8 or 16. The image will almost
+> > > certainly be garbled if you exceed the allowed value.
+> > >Seems that this sensor
+> >
+> > On this sensor what I am experiencing instead of garbage is that the
+> > fps gets reduced. So I believe it is fine to
+> > set it up this way.
+>
+> That's rather confusing as well. The user should explicitly need to change
+> fps first, rather than it happening as a side effect of a seemingly
+> unrelated control.
+>
 
-Ok, then I'll take this to wireless-drivers-next. And I'll change the
-title prefix to "zd1211rw: ".
+I'd rather maintain this behaviour until we get access to better documentation.
 
--- 
-Kalle Valo
+Currently I cannot change the fps on demand, just changing the
+exposure time, so I have no proper way of set/get fps
+
+
+
+> --
+> Regards,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+
+
+--
+Ricardo Ribalda
