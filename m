@@ -2,102 +2,117 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC1AC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FF3C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE1D2098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:38:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE1D2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id D84C62098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:39:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84C62098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbeJDOaF (ORCPT
+        id S1727591AbeJDObW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:30:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37444 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727269AbeJDOaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:30:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E9E5FAE4D;
-        Thu,  4 Oct 2018 07:38:09 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 15E801E3614; Thu,  4 Oct 2018 09:38:09 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 09:38:09 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181004073809.GD29482@quack2.suse.cz>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
- <6AF8CEDE-2720-4206-900A-1A9B914A8FF0@linaro.org>
+        Thu, 4 Oct 2018 10:31:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55285 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbeJDObW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:31:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E7AC220802; Thu,  4 Oct 2018 09:39:25 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 89094207B4;
+        Thu,  4 Oct 2018 09:39:25 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 09:39:25 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     Vignesh R <vigneshr@ti.com>, Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "juliensu@mxic.com.tw" <juliensu@mxic.com.tw>,
+        "zhengxunli@mxic.com.tw" <zhengxunli@mxic.com.tw>,
+        "masonccyang@mxic.com.tw" <masonccyang@mxic.com.tw>
+Subject: Re: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for
+ mt35xu512aba
+Message-ID: <20181004093925.2961d881@bbrezillon>
+In-Reply-To: <VI1PR04MB1038C20CA97E453FC4C9CEAE99EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <20181003165603.2579-1-vigneshr@ti.com>
+        <20181003165603.2579-2-vigneshr@ti.com>
+        <VI1PR04MB1038C20CA97E453FC4C9CEAE99EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6AF8CEDE-2720-4206-900A-1A9B914A8FF0@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-10-18 17:55:41, Paolo Valente wrote:
-> > On 03.10.2018 08:29, Paolo Valente wrote:
-> >> As also Linus Torvalds complained [1], people feel lost among
-> >> I/O-scheduler options.  Actual differences across I/O schedulers are
-> >> basically obscure to non experts.  In this respect, Linux-kernel
-> >> 'users' are way more than a few top-level distros that can afford a
-> >> strong performance team, and that, basing on the input of such a team,
-> >> might venture light-heartedly to change a critical component like an
-> >> I/O scheduler.  Plus, as Linus Walleij pointed out, some users simply
-> >> are not distros that use udev.
-> > 
-> > I feel a contradiction in this counter-argument. On one hand, there are lots of, let's call them, home users, that use major distributions with udev, so the distribution maintainers can reasonably decide which scheduler to use for which type of device based on the udev rule and common sense provided via Documentation/ by linux-block devs. Moreover, most likely, those rules should be similar or the same across all the major distros and available via some (systemd?) upstream.
-> > 
-> 
-> Let me basically repeat Mark's answer here, with my words.
-> 
-> Unfortunately, facts mismatch with your optimistic view: after so many
-> years and concordant test results, only very few distributions
-> switched to bfq, no major distribution did (AFAIK).  As I already
-> wrote, the reason is the one pointed out by Torvalds [1].  Do you want
-> a simple example?  Take the last sentence in Jan's email in this
-> thread: "I *personally would* consider bfq a safer default ...  but *I
-> don't feel too strongly* about it." And he is definitely a storage
-> expert.
++Julien, Zhengxunli and Mason from Macronix
 
-Yeah, but let me add that currently all our released kernels still use legacy
-block stack for SCSI by default and thus CFQ/deadline. And once we feel
-scsi-mq + BFQ is comparable enough for rotating disks (which may be after
-your latest changes, Andreas will be running some larger evaluation), we
-are going to switch to that instead of scsi + CFQ. So it's not like for us
-it is a question between deadline-mq and BFQ, it is rather between scsi +
-CFQ vs scsi-mq + BFQ.
+Hi Yogesh,
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Thu, 4 Oct 2018 06:51:41 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+
+> Hi Vignesh,
+> 
+> > -----Original Message-----
+> > From: Vignesh R [mailto:vigneshr@ti.com]
+> > Sent: Wednesday, October 3, 2018 10:26 PM
+> > To: Boris Brezillon <boris.brezillon@bootlin.com>; Marek Vasut
+> > <marek.vasut@gmail.com>; Rob Herring <robh+dt@kernel.org>
+> > Cc: Brian Norris <computersforpeace@gmail.com>; Yogesh Narayan Gaur
+> > <yogeshnarayan.gaur@nxp.com>; Linux ARM Mailing List <linux-arm-  
+> > kernel@lists.infradead.org>; linux-mtd@lists.infradead.org;  
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Vignesh R
+> > <vigneshr@ti.com>
+> > Subject: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for mt35xu512aba
+> > 
+> > Micron's mt35xu512aba flash is an Octal flash that has x8 IO lines. It supports
+> > read/write over 8 IO lines simulatenously. Add support for Octal read mode for
+> > Micron mt35xu512aba.
+> > Unfortunately, this flash is only complaint to SFDP JESD216B and does not seem
+> > to support newer JESD216C standard that provides auto detection of Octal
+> > mode capabilities and opcodes. Therefore, this capability is manually added
+> > using new SPI_NOR_OCTAL_READ flag.
+> >   
+> 
+> Thanks for sending the patch-set of adding octal support.
+> If possible, can you share the MT35x datasheet?
+> 
+> I also have the patch ready in which I have added support for Read (1-1-8 and 1-8-8) protocol and Write (1-1-8 and 1-8-8).
+> Also have added support of Octal in driver/spi/spi.c framework.
+> 
+> IMO, we would collaborate our patches.
+
+Looks like we are of stepping on each others toes here (see this branch
+[1]). I guess it's not a problem if we agree on who is working on what.
+
+Yogesh, you already sent "spi: add flags for octal I/O data
+transfer" [3] which is only adding the new OCTAL flags but is not
+patching spi.c and spi-mem.c to take those new flags into account. Here
+is my version of this patch [2] (it's still missing an update of
+SPI_MEM_MAX_BUSWIDTH). Let me know what you want to do (rework your
+version to address the problem or take mine).
+
+Regarding other patches in [2], they're mainly here to add support for
+X-X-X and DTR modes and get the m25p80 logic integrated in spi-nor.c so
+that we can really check which NOR operations are supported by the SPI
+controller.
+
+Regards,
+
+Boris
+
+[1]https://github.com/bbrezillon/linux/commits/spi-nor/octo
+[2]https://github.com/bbrezillon/linux/commit/9854a8fdd23f64e79859fd07a71d4a1c57b812f2
+[3]https://patchwork.ozlabs.org/patch/894916/
