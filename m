@@ -6,157 +6,194 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58405C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA42C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 272B42098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:54:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272B42098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B9462098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9462098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeJDQq3 (ORCPT
+        id S1727986AbeJDQqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 4 Oct 2018 12:46:34 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34883 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbeJDQq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 4 Oct 2018 12:46:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33636 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727557AbeJDQq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:46:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9F3C7A9;
-        Thu,  4 Oct 2018 02:53:59 -0700 (PDT)
-Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55A6B3F5D3;
-        Thu,  4 Oct 2018 02:53:59 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Lukas Braun <koomi@moshbit.net>
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, Ralph Palutke <ralph.palutke@fau.de>
-Subject: Re: [PATCH v2] KVM: arm/arm64: Check memslot bounds before mapping hugepages
-References: <20180926151135.16083-1-koomi@moshbit.net>
-Date:   Thu, 04 Oct 2018 10:53:57 +0100
-In-Reply-To: <20180926151135.16083-1-koomi@moshbit.net> (Lukas Braun's message
-        of "Wed, 26 Sep 2018 17:11:35 +0200")
-Message-ID: <87ftxmhway.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g80KT-0007qY-1p; Thu, 04 Oct 2018 11:53:57 +0200
+Message-ID: <1538646836.14153.4.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: socfpga: add an early reset driver for SoCFPGA
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     marex@denx.de, linux-kernel@vger.kernel.org
+Date:   Thu, 04 Oct 2018 11:53:56 +0200
+In-Reply-To: <1537195830-25759-1-git-send-email-dinguyen@kernel.org>
+References: <1537195830-25759-1-git-send-email-dinguyen@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukas,
+Hi Dinh,
 
-Lukas Braun <koomi@moshbit.net> writes:
-
-> Userspace can create a memslot with memory backed by (transparent)
-> hugepages, but with bounds that do not align with hugepages.
-> In that case, we cannot map the entire region in the guest as hugepages
-> without exposing additional host memory to the guest and potentially
-> interfering with other memslots.
-> Consequently, this patch adds a bounds check when populating guest page
-> tables and forces the creation of regular PTEs if mapping an entire
-> hugepage would violate the memslots bounds.
->
-> Signed-off-by: Lukas Braun <koomi@moshbit.net>
+On Mon, 2018-09-17 at 09:50 -0500, Dinh Nguyen wrote:
+> Create a separate reset driver that uses the reset operations in reset-simple.
+> The reset driver for the SoCFPGA platform needs to register early in order to
+> be able bring online timers that needed early in the kernel bootup.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
->
-> Hi everyone,
->
-> for v2, in addition to writing the condition the way Marc suggested, I
-> moved the whole check so it also catches the problem when the hugepage
-> was allocated explicitly, not only for THPs.
-
-Ok, that makes sense. Memslot bounds could exceed for hugetlbfs pages as
-well.
-
-> The second line is quite long, but splitting it up would make things
-> rather ugly IMO, so I left it as it is.
-
-Let's try to do better - user_mem_abort() is quite hard to follow as it
-is.
-
->
->
-> Regards,
-> Lukas
->
->
->  virt/kvm/arm/mmu.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index ed162a6c57c5..ba77339e23ec 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1500,7 +1500,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		return -EFAULT;
->  	}
+>  arch/arm/mach-socfpga/socfpga.c |  4 ++
+>  drivers/reset/Kconfig           |  7 ++++
+>  drivers/reset/Makefile          |  1 +
+>  drivers/reset/reset-simple.c    | 17 ---------
+>  drivers/reset/reset-socfpga.c   | 85 +++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 97 insertions(+), 17 deletions(-)
+>  create mode 100644 drivers/reset/reset-socfpga.c
+> 
+> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+> index dde14f7..cc64576 100644
+> --- a/arch/arm/mach-socfpga/socfpga.c
+> +++ b/arch/arm/mach-socfpga/socfpga.c
+> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
+>  void __iomem *sdr_ctl_base_addr;
+>  unsigned long socfpga_cpu1start_addr;
 >  
-> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
-> +	if ((fault_ipa & S2_PMD_MASK) < (memslot->base_gfn << PAGE_SHIFT) ||
-> +	    ALIGN(fault_ipa, S2_PMD_SIZE) >= ((memslot->base_gfn + memslot->npages) << PAGE_SHIFT)) {
-> +		/* PMD entry would map something outside of the memslot */
-> +		force_pte = true;
-> +	} else if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
->  		hugetlb = true;
->  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->  	} else {
+> +extern void __init socfpga_reset_init(void);
+> +
+>  void __init socfpga_sysmgr_init(void)
+>  {
+>  	struct device_node *np;
+> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
+>  
+>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>  		socfpga_init_ocram_ecc();
+> +	socfpga_reset_init();
+>  }
+>  
+>  static void __init socfpga_arria10_init_irq(void)
+> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
+>  		socfpga_init_arria10_l2_ecc();
+>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>  		socfpga_init_arria10_ocram_ecc();
+> +	socfpga_reset_init();
+>  }
+>  
+>  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 13d28fd..dcc5f1d 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -119,6 +119,13 @@ config RESET_STM32MP157
+>  	help
+>  	  This enables the RCC reset controller driver for STM32 MPUs.
+>  
+> +config RESET_SOCFPGA
+> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
+> +	default ARCH_SOCFPGA
+> +	select RESET_SIMPLE
+> +	help
+> +	  This enables the reset driver for SoCFPGA.
+> +
+>  config RESET_SUNXI
+>  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+>  	default ARCH_SUNXI
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 4243c38..d09bb41 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+> diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
+> index a91107f..483824f 100644
+> --- a/drivers/reset/reset-simple.c
+> +++ b/drivers/reset/reset-simple.c
+> @@ -106,21 +106,12 @@ struct reset_simple_devdata {
+>  	bool status_active_low;
+>  };
+>  
+> -#define SOCFPGA_NR_BANKS	8
+> -
+> -static const struct reset_simple_devdata reset_simple_socfpga = {
+> -	.reg_offset = 0x10,
 
-For the purpose of this fix, using a helper to check whether the mapping
-fits in the memslot makes things clearer (imo) (untested patch below) -
+Before, the default reg_offset for DTs missing the altr,modrst-offset
+property was 0x10 ...
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index ed162a6c57c5..8bca141eb45e 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1466,6 +1466,18 @@ static void kvm_send_hwpoison_signal(unsigned long address,
-        send_sig_info(SIGBUS, &info, current);
- }
- 
-+static bool mapping_in_memslot(struct kvm_memory_slot *memslot,
-+                        phys_addr_t fault_ipa, unsigned long mapping_size)
-+{
-+ gfn_t start_gfn = (fault_ipa & ~(mapping_size - 1)) >> PAGE_SHIFT;
-+ gfn_t end_gfn = ALIGN(fault_ipa, mapping_size) >> PAGE_SHIFT;
-+
-+ WARN_ON(!is_power_of_2(mapping_size));
-+
-+ return memslot->base_gfn <= start_gfn &&
-+         end_gfn < memslot->base_gfn + memslot->npages;
-+}
-+
- static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-                          struct kvm_memory_slot *memslot, unsigned long hva,
-                          unsigned long fault_status)
-@@ -1480,7 +1492,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-        kvm_pfn_t pfn;
-        pgprot_t mem_type = PAGE_S2;
-        bool logging_active = memslot_is_logging(memslot);
--   unsigned long flags = 0;
-+ unsigned long vma_pagesize, flags = 0;
- 
-        write_fault = kvm_is_write_fault(vcpu);
-        exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
-@@ -1500,7 +1512,15 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-                return -EFAULT;
-        }
- 
--   if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
-+ vma_pagesize = vma_kernel_pagesize(vma);
-+ /* Is the mapping contained in the memslot? */
-+ if (!mapping_in_memslot(memslot, fault_ipa, vma_pagesize)) {
-+         /* memslot should be aligned to page size */
-+         vma_pagesize = PAGE_SIZE;
-+         force_pte = true;
-+ }
-+
-+ if (vma_pagesize == PMD_SIZE && !logging_active) {
-                hugetlb = true;
-                gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
-        } else {
+> -	.nr_resets = SOCFPGA_NR_BANKS * 32,
+> -	.status_active_low = true,
+> -};
+> -
+[...]
+> +static int a10_reset_init(struct device_node *np)
+> +{
+> +	struct reset_simple_data *data;
+> +	struct resource res;
+> +	resource_size_t size;
+> +	int ret;
+> +	u32 reg_offset = 0;
 
-Thoughts?
+... now it is 0x0.
+I think this should be
+
+	u32 reg_offset = 0x10;
+
+to avoid breaking SocFPGA with ancient device trees.
+
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	ret = of_address_to_resource(np, 0, &res);
+> +	if (ret)
+> +		goto err_alloc;
+> +
+> +	size = resource_size(&res);
+> +	if (!request_mem_region(res.start, size, np->name)) {
+> +		ret = -EBUSY;
+> +		goto err_alloc;
+> +	}
+> +
+> +	data->membase = ioremap(res.start, size);
+> +	if (!data->membase) {
+> +		ret = -ENOMEM;
+> +		goto err_alloc;
+> +	}
+> +
+> +	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
+> +		pr_warn("missing altr,modrst-offset property, assuming 0x0\n");
+> +	data->membase += reg_offset;
+> +
+> +	spin_lock_init(&data->lock);
+> +
+> +	data->rcdev.owner = THIS_MODULE;
+> +	data->rcdev.nr_resets = 32 * 8;
+
+Could we keep the SOCFPGA_NR_BANKS #define to reduce the amount of magic
+numbers?
+
+I can make both changes when applying if you want.
+
+regards
+Philipp
