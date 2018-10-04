@@ -2,115 +2,166 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44907C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FE9C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F08B72098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 820A82098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2dm0exD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08B72098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TO7RNBGI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820A82098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeJDRXT (ORCPT
+        id S1727347AbeJDRZ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:23:19 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40640 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbeJDRXT (ORCPT
+        Thu, 4 Oct 2018 13:25:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51700 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbeJDRZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:23:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n31-v6so2954314pgm.7;
-        Thu, 04 Oct 2018 03:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DIrB1GFmPaUBymO1pImmGm1WpkpLxTjq2keCTPeUT4w=;
-        b=b2dm0exDSD+LuLekoDzUxOqXLilQhJus9JzO2K2//rUGhRQv3WG56STzbqDjRSigxY
-         KdTbkmYfisZ01Ljh3chs4eMED6H19q6dzps5KNF6hmek7Lbd2T00kX60Qup0tRHVk3OK
-         oBkMuWB9dNF9z//S1Vp88vF63Emez/M2F8MHIKsn8Z8Gs8dMdTxZhDz/jkiT6i/3lIps
-         cWZOIUvSAK6Dct4E5H1sSYHSkj62moHNiKjdcZw1qWMWC1VVbV6Mo0pEDiVYgkuaRAG3
-         M5J/vzNFXcRPm5KSmvHXsHpQCoyGzfrbu13iPg7nGFi5pxPTX4EZwi8BInx9gc0/YHbV
-         JX8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DIrB1GFmPaUBymO1pImmGm1WpkpLxTjq2keCTPeUT4w=;
-        b=V7xxkU34z2qa+MfPE6jxKwkqmQYgtn6eGVy5YYrKWYbsjxnq9+Q2DYOz6p2xc+y3ms
-         26ia/dGjjnuQSqGYe2ySBz/hfmCSprDO3kxAKeNMXFUXgxUT67tKvgXh3LciOCJd0//E
-         il+/jkSNOefYMZ7PHab3nh8pHnEnbwHCqMClBGjxNEQ7nA4Lhb2z8oew3dadXGFoRwaQ
-         ItCbILZxN2C3tnxR2kuhs5/MNetxfzLRq8/29b/fJ/Ez4BgD3YbbmrgmRbS3ZZ5ZfR8l
-         T2+L/b85dD/dEWFrt01sNmdaYMmRR4E3DNtuxuns/iHrBHimh5Lm1xDOn9yHYXRRYcE/
-         PQXw==
-X-Gm-Message-State: ABuFfogzBeTdnJE0BllfS20xFmdSDTudJ01ur3TeEhI/vyhSeMjbs9wq
-        NBkKiBz5itVptM71k4PE27MkPR36
-X-Google-Smtp-Source: ACcGV62z0Ra/+cRbAXfWNVb2JKRWOcKurVaM1q5FyQGVPzKQn4cVoJNrvQWrqTvtvp5IzbS0wLz1aQ==
-X-Received: by 2002:a63:ef53:: with SMTP id c19-v6mr5119548pgk.386.1538649040192;
-        Thu, 04 Oct 2018 03:30:40 -0700 (PDT)
-Received: from icarus (122-223-50-245.fukuoka.fdn.vectant.ne.jp. [122.223.50.245])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm11925440pfk.149.2018.10.04.03.30.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 03:30:39 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 19:30:28 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linus.walleij@linaro.org, akpm@linux-foundation.org,
-        linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RESEND PATCH v4 1/8] bitops: Introduce the for_each_set_clump
- macro
-Message-ID: <20181004103028.GA4779@icarus>
-References: <cover.1538441919.git.vilhelm.gray@gmail.com>
- <f5250b9c78377e476667be1b616c86cf573b57dc.1538441919.git.vilhelm.gray@gmail.com>
- <40ecad49-2797-0d30-b52d-a2e6838dc1ab@rasmusvillemoes.dk>
- <20181002082142.GC15943@smile.fi.intel.com>
+        Thu, 4 Oct 2018 13:25:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gGPiU8MwCannIy8crpa0wcSAS1sw/TYGmX5DDWzpca4=; b=TO7RNBGIlB0g8zTUScv0cQrFe
+        ox/0uMuATvFjahSRTaZ8EroIW1/wPL1KScR0yUlTMY2ap5XjoZu5UoINDWv/OwotpLb3Esx6cSPIP
+        Ko4yVxScjk4BWnAhh36hMaBibwnWIluEmpIeE8OMHYe3Rg/Api90QcMYhSkJyvYrpYyOw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g80w3-0008HR-KB; Thu, 04 Oct 2018 10:32:47 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3CF8E1122286; Thu,  4 Oct 2018 11:32:47 +0100 (BST)
+Date:   Thu, 4 Oct 2018 11:32:47 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        H Hartley Sweeten <hartleys@visionengravers.com>,
+        Mika Westerberg <mika.westerberg@iki.fi>
+Subject: Re: [PATCH] spi: spi-ep93xx: Change dir type in
+ ep93xx_spi_dma_{finish,prepare}
+Message-ID: <20181004103247.GC6412@sirena.org.uk>
+References: <20181004023926.15847-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6zdv2QT/q3FMhpsV"
 Content-Disposition: inline
-In-Reply-To: <20181002082142.GC15943@smile.fi.intel.com>
+In-Reply-To: <20181004023926.15847-1-natechancellor@gmail.com>
+X-Cookie: Safety Third.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 11:21:42AM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 02, 2018 at 09:42:48AM +0200, Rasmus Villemoes wrote:
-> > On 2018-10-02 03:13, William Breathitt Gray wrote:
-> 
-> > The cover letter says
-> > 
-> >   The clump_size argument can be an arbitrary number of bits and is not
-> >   required to be a multiple of 2.
-> > 
-> > by which I assume you mean "power of 2", but either way, the above code
-> > does not seem to take into account the case where bits_offset +
-> > clump_size straddles a word boundary, so it wouldn't work for a
-> > clump_size that does not divide BITS_PER_LONG.
-> 
-> E.g. 3 bits in a clump? Hmm...
-> 
-> Why would we need that? I mean some real use case?
 
-GPIOs in hardware may be routed to devices logically in groups of I/O
-lines, yet must still be accessed via the word-sized registers on the
-operating machine.
+--6zdv2QT/q3FMhpsV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For example, suppose a GPIO card is used to control a set of shower
-devices. The card supports 4 shower devices, each device controlled by 3
-lines of I/O: enable, hot-cold selection, high-low pressure selection.
-In this case, a operating machine would still have to access the GPIO
-lines via the I/O registers (e.g. 8-bit port I/O); but with a macro
-handling a clump size of 3-bits, we can loop logically by each shower
-device which is much simpler from a driver perspective.
+On Wed, Oct 03, 2018 at 07:39:26PM -0700, Nathan Chancellor wrote:
+> Clang warns when one enumerated type is implicitly converted to another.
+>=20
+> drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
+> enumeration type 'enum dma_transfer_direction' to different enumeration
 
-William Breathitt Gray
+Please remember to CC driver maintainers and authors on patch
+submissions so they can review things, copying in Hartley and Mika.
+
+> type 'enum dma_data_direction' [-Wenum-conversion]
+>         nents =3D dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir=
+);
+>                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+> ./include/linux/dma-mapping.h:428:58: note: expanded from macro
+> 'dma_map_sg'
+> \#define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
+>                                ~~~~~~~~~~~~~~~~          ^
+> drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
+> enumeration type 'enum dma_transfer_direction' to different enumeration
+> type 'enum dma_data_direction' [-Wenum-conversion]
+>                 dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir=
+);
+>                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+> ./include/linux/dma-mapping.h:429:62: note: expanded from macro
+> 'dma_unmap_sg'
+> \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
+>                                  ~~~~~~~~~~~~~~~~~~          ^
+> drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
+> enumeration type 'enum dma_transfer_direction' to different enumeration
+> type 'enum dma_data_direction' [-Wenum-conversion]
+>         dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
+>         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+> ./include/linux/dma-mapping.h:429:62: note: expanded from macro
+> 'dma_unmap_sg'
+> \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
+>                                  ~~~~~~~~~~~~~~~~~~          ^
+> 3 warnings generated.
+>=20
+> dma_{,un}map_sg expects an enum of type dma_data_direction but this
+> driver uses dma_transfer_direction for everything. Converting to
+> dma_data_direction would be desirable but there are a few shared
+> structures that expect dma_transfer_direction so it is just simpler to
+> change the parameter here. dma_transfer_direction and dma_data_direction
+> are different sizes but this driver only uses the 1 and 2 values which
+> mean the same thing so this change is safe.
+>=20
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/spi/spi-ep93xx.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
+> index f1526757aaf6..189fc2225b69 100644
+> --- a/drivers/spi/spi-ep93xx.c
+> +++ b/drivers/spi/spi-ep93xx.c
+> @@ -256,8 +256,7 @@ static int ep93xx_spi_read_write(struct spi_master *m=
+aster)
+>   * in case of failure.
+>   */
+>  static struct dma_async_tx_descriptor *
+> -ep93xx_spi_dma_prepare(struct spi_master *master,
+> -		       enum dma_transfer_direction dir)
+> +ep93xx_spi_dma_prepare(struct spi_master *master, int dir)
+>  {
+>  	struct ep93xx_spi *espi =3D spi_master_get_devdata(master);
+>  	struct spi_transfer *xfer =3D master->cur_msg->state;
+> @@ -359,8 +358,7 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
+>   * Function finishes with the DMA transfer. After this, the DMA buffer is
+>   * unmapped.
+>   */
+> -static void ep93xx_spi_dma_finish(struct spi_master *master,
+> -				  enum dma_transfer_direction dir)
+> +static void ep93xx_spi_dma_finish(struct spi_master *master, int dir)
+>  {
+>  	struct ep93xx_spi *espi =3D spi_master_get_devdata(master);
+>  	struct dma_chan *chan;
+> --=20
+> 2.19.0
+>=20
+
+--6zdv2QT/q3FMhpsV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu17E4ACgkQJNaLcl1U
+h9BaGAf/fV+/e0h6rs2itGWzMcx4OzEXDa6d3Whxpc9ruajYoMwZK0hkzvnNBCQZ
+gz8L4JJSqds/ycFS8JHiDL93Gs9j7tQb9WoCAAReY0SjUoUak/bawG4VrtRq0qlx
+w8lfCmhGMYSOJuXrA3RosGo3MgoImRk2xtE/545LXDE4a7rhfv5Q2JMHiME9r6jI
+Jzmu9UlajUQahpTGiGgwyYJ0e4pJ5eqtbgtSu3dqW8TXaVLH29DnfDf7dSTCX3fs
+v9Yw4OwvtwwXRoaEBp3+M/jwoyF53ncPxgD2kYI6i2V0w2kEVsdZLcVuwTUyJ+Zb
+EpmKELAeQlaD5q4CFbezTAalgurhKw==
+=bvKK
+-----END PGP SIGNATURE-----
+
+--6zdv2QT/q3FMhpsV--
