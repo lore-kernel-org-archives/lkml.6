@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A7EC00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943E0C00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F24D2098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3533A20856
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:31:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AUklqD8m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F24D2098A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R2RqU4Bk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3533A20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbeJDHRh (ORCPT
+        id S1727137AbeJDHWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 03:17:37 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39945 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeJDHRg (ORCPT
+        Thu, 4 Oct 2018 03:22:21 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38629 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbeJDHWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 03:17:36 -0400
-Received: by mail-pl1-f195.google.com with SMTP id 1-v6so4251253plv.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:26:54 -0700 (PDT)
+        Thu, 4 Oct 2018 03:22:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r77-v6so2304635pgr.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:31:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Pu+/MNSmssfVnfC0GoBTE79yvYkr3WN76F9lOnSLGyk=;
-        b=AUklqD8m2RzPbGMdGt+sIxqjH3YtD7APywijItl7yHpfUGxBUxVv1OcNQh7kPn1kR8
-         tjZN2SUrzq+isc8h8KmuaU/Vw1ccMKWI0T2rOBO1xvJbgmsLJCU70l8T9z5xqCkDwu8l
-         MyKoMV1g8BMWRO/953r1kLpfxPWsrZ6LVcYF0=
+        bh=IR4L5sY3osFQfSsbbpfpMeUP7zquVGvASIBs/79thSQ=;
+        b=R2RqU4BkEwcoOhfscl481xlbT6ETjwnXLizQPx6v+9zWSX3hZ0ApslcWbtPQwxRJxe
+         vZ4lR+MXTaM6P7Q517Mydk8l4bmWmQp8nw6vOqzgDUAnF97AJJOvx07dFLnycucrlaMg
+         VJi3ND8tk+ddU2FFGuH301O9tEVUgl/3J37xw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pu+/MNSmssfVnfC0GoBTE79yvYkr3WN76F9lOnSLGyk=;
-        b=rYFHE+B8BfVOD5uWTu9+4okKOnizt+LVMc2R9maD4FFkjfZZ8Sr3hUqtP1/b0tLGXm
-         ikzWFnoF1mATW1TOiS3YKcz6xIfxS0gFPToKyE8V9IsrpQoBUIWRUPgdYWF9yJmNFkn9
-         GALkaUSope6oscPUjbuZ0jIGPx/7QKG1gb41cDmMD4MM2Gqh74kZwGxaMDjb4sQqiSyN
-         yfXb8IMUGBlwhdz8y3UK8sgThx3ZWzJLuNWj7JxHEBEySCTqN/p/SMzwm1KHYVCX/1i/
-         l1RL3rhELPZJ6zoSulog3JcBHPzrLeceIs293JO/3M1zfBeVx4JYxLNHnxG6RN2AifOZ
-         7e6g==
-X-Gm-Message-State: ABuFfohvUnCACyFtGvT8C0D/JqyAzbt+MP88fFwrPHgIPWIskYfmCHpD
-        mjzVUYpJmqHOD+wqTCdZwivHE8RlzVEAbw==
-X-Google-Smtp-Source: ACcGV63eg/dGTqIqO2OECzHMhD72MR5TfJywlsLFs5xylXEKVGGUKc8K2w+ycVXUvBfCBrvU21kIfw==
-X-Received: by 2002:a17:902:4225:: with SMTP id g34-v6mr4003185pld.161.1538612814321;
-        Wed, 03 Oct 2018 17:26:54 -0700 (PDT)
+        bh=IR4L5sY3osFQfSsbbpfpMeUP7zquVGvASIBs/79thSQ=;
+        b=JUiUvysO2NaYragnP+ZfkxkQG4MHUmNTNetvAzk4G6077DWORm9XDrXBThlpS6z6Qf
+         YjEqKk+7DLH6eZLopgBGvo6cfX/UoLrpYQHN2txjF7hPPxY2LWl0dki1VliAU016rCIg
+         hrF0ncir+ht7KlY/rirA/DAZC2m8Dlp3oFYAqOx14+hCD2jDtKkezwSOBtvASoi3lgV+
+         8jKr4FgqKG2Dqfvu5qp3udRBZdWNTrpU40mjjWu6JuCEiftWi34KlAUA8kLoEyKAnt0V
+         5J662p8MEcAlEw+8/DIq5q/RsX3+/+xsZaZbfoqgKUyDAWpVWwMyJD3ky5eUbF2m/0Xf
+         VZVA==
+X-Gm-Message-State: ABuFfoiHndCVHD3KvVukCJzNwoHXz9jKEJC9n2fL9Ow7m5ocEkkojixZ
+        P+tP7R47cs01MzIpB4lX68xDmA==
+X-Google-Smtp-Source: ACcGV632ANbZBQJR0OF5RSvADSfynwy4DORlxr35Jxib9AcZAJ9QfPjiTqQ4fNSxHxV6D6HotPf2sQ==
+X-Received: by 2002:a62:c999:: with SMTP id l25-v6mr4078411pfk.10.1538613097362;
+        Wed, 03 Oct 2018 17:31:37 -0700 (PDT)
 Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a190-v6sm3684817pge.47.2018.10.03.17.26.52
+        by smtp.gmail.com with ESMTPSA id c24-v6sm8719102pgn.60.2018.10.03.17.31.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 17:26:53 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 17:26:51 -0700
+        Wed, 03 Oct 2018 17:31:36 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 17:31:34 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
 Cc:     ohad@wizery.com, clew@codeaurora.org, sricharan@codeaurora.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] rpmsg: Add signal callback to rpmsg char device
-Message-ID: <20181004002651.GU2523@minitux>
+Subject: Re: [PATCH 4/5] rpmsg: wakeup poll to notify signal update
+Message-ID: <20181004003134.GV2523@minitux>
 References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
- <1538566463-24627-3-git-send-email-aneela@codeaurora.org>
+ <1538566463-24627-5-git-send-email-aneela@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1538566463-24627-3-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1538566463-24627-5-git-send-email-aneela@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -77,53 +77,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed 03 Oct 04:34 PDT 2018, Arun Kumar Neelakantam wrote:
 
-> Register a callback to get the signal notifications from rpmsg.
+> Add support to wait on poll to get signal notifications.
+> Send POLLPRI mask to indicate the signal change.
 > 
 > Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-
-Please incorporate this into patch 4.
-
-Regards,
-Bjorn
- 
 > ---
->  drivers/rpmsg/rpmsg_char.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  drivers/rpmsg/rpmsg_char.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
 > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index a76b963..86003d5 100644
+> index c983d6c..aee5561 100644
 > --- a/drivers/rpmsg/rpmsg_char.c
 > +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -5,6 +5,7 @@
->   * Copyright (c) 2012, PetaLogix
->   * Copyright (c) 2011, Texas Instruments, Inc.
->   * Copyright (c) 2011, Google, Inc.
-> + * Copyright (c) 2018, The Linux Foundation.
->   *
->   * Based on rpmsg performance statistics driver by Michal Simek, which in turn
->   * was based on TI & Google OMX rpmsg driver.
-> @@ -120,6 +121,12 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+> @@ -64,6 +64,7 @@ struct rpmsg_ctrldev {
+>   * @queue_lock:	synchronization of @queue operations
+>   * @queue:	incoming message queue
+>   * @readq:	wait object for incoming queue
+> + * @sig_pending:state of signal notification
+>   */
+>  struct rpmsg_eptdev {
+>  	struct device dev;
+> @@ -78,6 +79,8 @@ struct rpmsg_eptdev {
+>  	spinlock_t queue_lock;
+>  	struct sk_buff_head queue;
+>  	wait_queue_head_t readq;
+> +
+> +	atomic_t sig_pending;
+>  };
+>  
+>  static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+> @@ -125,6 +128,12 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
+>  			 u32 old, u32 new)
+>  {
+> +	struct rpmsg_eptdev *eptdev = priv;
+> +
+> +	atomic_set(&eptdev->sig_pending, 1);
+> +
+> +	/* wake up any blocking processes, waiting for signal notification */
+> +	wake_up_interruptible(&eptdev->readq);
+
+This will execute a full memory barrier, so you shouldn't need to use
+atomic_t to carry this information.
+
 >  	return 0;
 >  }
 >  
-> +static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
-> +			 u32 old, u32 new)
-> +{
-> +	return 0;
-> +}
-> +
->  static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  {
->  	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-> @@ -136,6 +143,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  		return -EINVAL;
->  	}
->  
-> +	ept->sig_cb = rpmsg_sigs_cb;
->  	eptdev->ept = ept;
->  	filp->private_data = eptdev;
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+
+The rest looks good.
+
+Regards,
+Bjorn
