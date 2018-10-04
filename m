@@ -2,129 +2,110 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEC7C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C9AC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1D7320684
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58EFE20684
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:02:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="ZIc2Vd1G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D7320684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SC6dkYue"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EFE20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbeJDWyk (ORCPT
+        id S1727684AbeJDW4t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:54:40 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:39336 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbeJDWyk (ORCPT
+        Thu, 4 Oct 2018 18:56:49 -0400
+Received: from mail-yb1-f174.google.com ([209.85.219.174]:41487 "EHLO
+        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbeJDW4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:54:40 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 990CD1195
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 16:00:45 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id GfKvsdncQaNm for <linux-kernel@vger.kernel.org>;
-        Thu,  4 Oct 2018 11:00:45 -0500 (CDT)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 6AF8E11AB
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 11:00:45 -0500 (CDT)
-Received: by mail-io1-f69.google.com with SMTP id z15-v6so8078018iob.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 09:00:45 -0700 (PDT)
+        Thu, 4 Oct 2018 18:56:49 -0400
+Received: by mail-yb1-f174.google.com with SMTP id e16-v6so4088542ybk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 09:02:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ie3cKh7tyt3QXvlrAGVJ8y4Hy36L8S8XML8eOFURSKY=;
-        b=ZIc2Vd1GrGTeCPPGrR1W13bRcX/GOrEL7m8+n0Tt9tSZkllE5dtrj23OoWtKIj6s3+
-         TSwxvJS4qaSp98XUTeyOvcFYe94BVxABr0AaMoyZSggxIvT4Mzrnt0+xKGmZdHhw86ZK
-         z+kDUmHF7ynLDz70Pnn3MdJ0KPw7XTZZBWRMJ5oEKzQ+l26SC7IaGASRf4P+/on7eSsB
-         KMhHjQo374e8Mi2uo9p45TlkC986OV3Sam7xakMPwjUvIoAeFYGg1BmLegnhYgT/QcLX
-         gW21m5TzT2fWsQCBLHuh86/P8GlyPh354gJUhfVEL+IIrH/b6yL+gwujHylCTm3mdc/G
-         DcMg==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ypCfS2PgP8RQK85F3gN7hN9fyU5MYN1UsS9KF6upNOA=;
+        b=SC6dkYueb5HmqJ4931EPohjoQ7JOgyPmgF7PsxB6ovvyYUBoie/2UEKXctbgCu4FxA
+         vZLGlmKegUkRhNINWcNNYOQysk5gfDCy12ym6xXmpC1JKlNuRSJ2G27rXYrYzLLm2gqx
+         ObEJ+hzku/IywTG5coOZZZHQGSXMk2OCyYY8o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ie3cKh7tyt3QXvlrAGVJ8y4Hy36L8S8XML8eOFURSKY=;
-        b=KP1NePbK0XwF1tvJ57yjCURQFKiIB+NrZFd4IJpfaywb0UOcV0DXZwp09FIRr2bCUW
-         7qmtk+bk5jZ4pw80VSq5CLolYh2TkQ1FAVZmORIPWZiDXmz3iKrypLJBcZjpJ8aDdjpB
-         fLVI3cbqIigRtgPIDD4W7hV+WTdbKkMXEcLeNKEIJRPik1NfbMKeISgE5GOMBZP+0M/Q
-         K1HC6NiAsJHqTeoG4AdUUQ0u0mopUUYVU08PRcilhOJTylmtAe7MS4FmyM9qwXkwR7F4
-         B8ruYdj9urw7Gt9SoKhzIJd9500eORADJxyKaq24UgbxWX8xiu35aJUn2EK6dkvC5B3T
-         Wg0A==
-X-Gm-Message-State: ABuFfoiQXcp2hNNuP2l7E4sKtJTOvpMZG7LScFmAKdCaaaW0FGg2N8iy
-        VYEjV6f4r8COyqrB9sb1fNuLwUCgvIO4+LRNtmC1h7uq1PiUMGMiVwuR+OlcVV8obrlfjb32uAL
-        95mNyMI4Fg5FSnV8q/ZYjtNBOs0S8
-X-Received: by 2002:a02:238f:: with SMTP id u137-v6mr5702299jau.0.1538668845123;
-        Thu, 04 Oct 2018 09:00:45 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV60+skhG7cj7TF9eMlqQnjgBQseKEUJl+gCJQfHjir12PsmEQOlElYLiWwPfIZq1lQCAnDxPGg==
-X-Received: by 2002:a02:238f:: with SMTP id u137-v6mr5702281jau.0.1538668844884;
-        Thu, 04 Oct 2018 09:00:44 -0700 (PDT)
-Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
-        by smtp.gmail.com with ESMTPSA id f15-v6sm2225553ita.24.2018.10.04.09.00.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 04 Oct 2018 09:00:44 -0700 (PDT)
-From:   Wenwen Wang <wang6495@umn.edu>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
-        (V4L/DVB)),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] media: davinci_vpfe: fix a NULL pointer dereference bug
-Date:   Thu,  4 Oct 2018 11:00:31 -0500
-Message-Id: <1538668833-18372-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ypCfS2PgP8RQK85F3gN7hN9fyU5MYN1UsS9KF6upNOA=;
+        b=XW4LBtGgUaoHJyNutNeeFBOq8vUoCxNJRiIevIDk+GmFew538LsyRbOyPMj/ZN0qSg
+         NIK8lVP+2JX7bhH81iqbIuQlpsF4yvwmZMWoR41i4DA+QE0b4CySUAq7wlJqWQeGa6j7
+         q06kWtQGFUPELtCvGxZLTnjbAU75gV/mS5E0LML9yPNvBEYC1eoIdTb1vPmSqbNFWD3Z
+         WF9jhJjw4jHGn3IBwL4wO9JANxVl7LutJCsyrRHML7U8bYy6q2uMVDVIKmlvzCxJw1sN
+         BtXJMOp9L0dWQbaA4RYwlW1ZxSZp1p/qy+qAj3reT4wJ5QZsQz85S0OpmwJGmTq9hJD7
+         DmMA==
+X-Gm-Message-State: ABuFfog5KYunRDwvzKpARYpJ1EEVbDyN3aYfuEExNF4Y6HOZbNHCXsup
+        l4xWOcbdfO3qYUyxt3QYW4D372b9T80=
+X-Google-Smtp-Source: ACcGV63SEQRGnbNIDDDQdv8A1GUqOKDZUekphnor+Ay6Is9b5/1XktsndF8Bto3ONvZt+ijrSoE/BA==
+X-Received: by 2002:a25:8b88:: with SMTP id j8-v6mr4167819ybl.183.1538668973927;
+        Thu, 04 Oct 2018 09:02:53 -0700 (PDT)
+Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
+        by smtp.gmail.com with ESMTPSA id w207-v6sm6202091yww.95.2018.10.04.09.02.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 09:02:52 -0700 (PDT)
+Received: by mail-yw1-f41.google.com with SMTP id l79-v6so3965939ywc.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 09:02:52 -0700 (PDT)
+X-Received: by 2002:a0d:cd84:: with SMTP id p126-v6mr4109421ywd.288.1538668971937;
+ Thu, 04 Oct 2018 09:02:51 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 09:02:50 -0700 (PDT)
+In-Reply-To: <638db305-cfef-4391-90bf-458f50c4612f@canonical.com>
+References: <20181002005505.6112-1-keescook@chromium.org> <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+ <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <CAGXu5jKqSZ5LhQ_HwbA9-_DAg3efNzWfLjpxO_rurBgUZ-nnAA@mail.gmail.com>
+ <583a703e-18af-a1b2-dfc9-62a2a3384825@tycho.nsa.gov> <CAGXu5jLmQQd4e=B3YsiEoRVih2m889ia2tnzu5r8bqcms2sOqQ@mail.gmail.com>
+ <638db305-cfef-4391-90bf-458f50c4612f@canonical.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 4 Oct 2018 09:02:50 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKkCL7YVajp0b5x7G=06XyrhLrvh_p8FAKNKKYZW7sAfw@mail.gmail.com>
+Message-ID: <CAGXu5jKkCL7YVajp0b5x7G=06XyrhLrvh_p8FAKNKKYZW7sAfw@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In vpfe_isif_init(), there is a while loop to get the ISIF base address and
-linearization table0 and table1 address. In the loop body, the function
-platform_get_resource() is called to get the resource. If
-platform_get_resource() returns NULL, the loop is terminated and the
-execution goes to 'fail_nobase_res'. Suppose the loop is terminated at the
-first iteration because platform_get_resource() returns NULL and the
-execution goes to 'fail_nobase_res'. Given that there is another while loop
-at 'fail_nobase_res' and i equals to 0, one iteration of the second while
-loop will be executed. However, the second while loop does not check the
-return value of platform_get_resource(). This can cause a NULL pointer
-dereference bug if the return value is a NULL pointer.
+On Wed, Oct 3, 2018 at 10:38 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> but distinct of first exclusive (major) will likely be going away
+> once full lsm stacking land.
 
-This patch avoids the above issue by adding a check in the second while
-loop after the call to platform_get_resource().
+Right -- then policy loading because the "enabled" flag. The point is
+to get us to where we don't care about exclusivity at all.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- drivers/staging/media/davinci_vpfe/dm365_isif.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+-Kees
 
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_isif.c b/drivers/staging/media/davinci_vpfe/dm365_isif.c
-index 745e33f..b0425a6 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_isif.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_isif.c
-@@ -2080,7 +2080,8 @@ int vpfe_isif_init(struct vpfe_isif_device *isif, struct platform_device *pdev)
- 
- 	while (i >= 0) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		release_mem_region(res->start, res_len);
-+		if (res)
-+			release_mem_region(res->start, res_len);
- 		i--;
- 	}
- 	return status;
 -- 
-2.7.4
-
+Kees Cook
+Pixel Security
