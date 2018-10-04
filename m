@@ -2,105 +2,139 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516CBC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAE4C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0963C2082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5796521473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxR9O46H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0963C2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TYhxUl0+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5796521473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeJDRBR (ORCPT
+        id S1727719AbeJDRCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:01:17 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33142 "EHLO
+        Thu, 4 Oct 2018 13:02:37 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41978 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeJDRBQ (ORCPT
+        with ESMTP id S1727369AbeJDRCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:01:16 -0400
-Received: by mail-ed1-f65.google.com with SMTP id g26-v6so8044887edp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:08:42 -0700 (PDT)
+        Thu, 4 Oct 2018 13:02:37 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f38-v6so8012775edd.8
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:10:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZtPppqn0cObkHfFqeBrroPaPD+bDud26pGAf+e3d480=;
-        b=DxR9O46HwnBIfPX3F9oFvptUrwM3A7G5pfdRALBQ53/0nRfvMJgNQTc4mofz7HaBEV
-         BVXWc9XCmlJdhZDqpiwfGdFcCTOWE8z608PtGK4TCJ/ER/XltzyFHw8SklBHJdQoSKyD
-         yvI8cvQJSo3QrZuL0Puo/WeC6ChilgXhScacvobw/v/UETYeb4/db5+LvJ7PqqiKVcs8
-         h89nhu7dWtysd3YonEgPx4q1JsL6YrNRwhLI6nNWIY87FI0zrPF+fhQKj9B9sdmNp7sO
-         EEKjfJCXlOPWBCIKe8xldtwxuHa41T4tllyViBIZw5X/9ckkJDjEHHfLmFqk2BwMENlH
-         hUwA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qrRfwHd2XEk+J9Pc5pppRSs6dgkBz6W9RXEh1coAO7E=;
+        b=TYhxUl0+8/8Y3KMEb35yQTaEcL+CZ2VenqL/Ey4XL3vnfAwutp452ffWpoO8b9fZdO
+         sUNARRZlWlpCgTDuMRor565LQZ8Z5u2m7YdI1SRb++6ftzjEMxFbOLWpd/wn9muFA4ky
+         nfiSRn9iZJ418+PCfFI3Jdm9fb7BN5eNPUN/A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZtPppqn0cObkHfFqeBrroPaPD+bDud26pGAf+e3d480=;
-        b=YsxEMqkMfNay+02XUD3PcjfnfS5mzqi1IRLGw0tVv2GT7OIMnCT8JlaTlohdmsRJWN
-         glMB21lLHc1TV4CczNiOhBsdBSPc+Xn/9Xr6mdUP/RhQ8oYtqyO0ckBIspe3jAxOXJyX
-         2p5atdCK2Gj/mn11qZwq1tjgoKQ+ZWSvcXG+wz8qtD9dTc578e4B/OjBv9ks8Kb84SsV
-         rKz8xQWskrvEVZAXMKt3h9HvlCDiB1gGsomz3cIa6gaKjw8ICCWEa71wflTfl1vP0qM7
-         /XtYmpjgPdzxMljC3wms6ftAu/SRUFwBOYE6kLenb62vt2mpYVUiW1wEcH4t5+IXpr24
-         LIwA==
-X-Gm-Message-State: ABuFfohzWNdA/Ef5qt/XgY/SJPbppBhYCru9SWh9Ww41VK1+6q56hr9n
-        M01TlfJQf+gDnudJX4j4bmE=
-X-Google-Smtp-Source: ACcGV62TQ1KdTv/n20Y+rnNnP0NzX6aHEZYKO52vDqfX21uRpZZMMM0KONboR5fmGp+eCTUpo3DiCQ==
-X-Received: by 2002:a50:a706:: with SMTP id h6-v6mr7699457edc.290.1538647722005;
-        Thu, 04 Oct 2018 03:08:42 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id c27-v6sm1409426edc.4.2018.10.04.03.08.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 03:08:40 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH] mtd: physmap_of: Remove unused struct of_device_id
-Date:   Thu,  4 Oct 2018 12:08:38 +0200
-Message-Id: <20181004100838.12911-1-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=qrRfwHd2XEk+J9Pc5pppRSs6dgkBz6W9RXEh1coAO7E=;
+        b=QMaF6bQ7/UeJqVzYNPjNrNVIdqdqNXgv7eG+mSD2fy4qorbC1Z2D8my82e4GGnLVmN
+         qXveVsxEIWgZfbZBVWprM9jHyiqnNnm+Q8f9n7Wk2qnjuXvN2Qfiog8cPA3EJ1T2KGI8
+         I5VK4RkxSVcTHXUxlqqvLR2pmtgt+OA9RmUvsED/AaboTIa1Kdzb+TtwQb6QfgFGAwQI
+         KRGEApxkdxR+4jDG3bRYdyBEVl3cNOLU2LrkTvOvfo454t39llyZBSb711/4+3YeJHSV
+         wOc4cmIHqQ0A3fs0UjQd6KuQA5wvnrgjZugD31GDAcRE8ocuLyg56Oqll1o5pqccZMbT
+         FIrQ==
+X-Gm-Message-State: ABuFfoh6U0oL/BU2ciUyHKyki/2cWeGmrkgrDV9m1EJ6S0WjJ9hmvlHf
+        iGSXrJx9Uy1cEyvTS9+f0lceVQ==
+X-Google-Smtp-Source: ACcGV630+nugQA54oaCb1641c/CtxBo4WWiiy2+vog9aVjHAwGOPzSdtUp5txxMgPZChjI2iwS9h5A==
+X-Received: by 2002:aa7:d352:: with SMTP id m18-v6mr7331958edr.266.1538647802292;
+        Thu, 04 Oct 2018 03:10:02 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id gi7-v6sm779608ejb.55.2018.10.04.03.10.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 03:10:00 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 12:09:58 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm/meson: fix max mode_config height/width
+Message-ID: <20181004100958.GI31561@phenom.ffwll.local>
+Mail-Followup-To: Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1538642563-22465-1-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538642563-22465-1-git-send-email-narmstrong@baylibre.com>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This struct does not seem to be used anywhere on the code
+On Thu, Oct 04, 2018 at 10:42:43AM +0200, Neil Armstrong wrote:
+> The mode_config max_width/max_height determines the maximum framebuffer
+> size the pixel reader can handle. But the values were set thinking they
+> were determining the maximum screen dimensions.
+> 
+> This patch changes the values to the maximum height/width the CANVAS block
+> can handle rounded to some coherent values.
+> 
+> Fixes: a41e82e6c457 ("drm/meson: Add support for components")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/mtd/maps/physmap_of_gemini.c | 5 -----
- 1 file changed, 5 deletions(-)
+It's both. Grep for all the callers of ->fill_modes and you'll see that
+this limit is also used to filter max screen sizes.
 
-diff --git a/drivers/mtd/maps/physmap_of_gemini.c b/drivers/mtd/maps/physmap_of_gemini.c
-index 830b1b7e702b..9df62ca721d5 100644
---- a/drivers/mtd/maps/physmap_of_gemini.c
-+++ b/drivers/mtd/maps/physmap_of_gemini.c
-@@ -44,11 +44,6 @@
- 
- #define FLASH_PARALLEL_HIGH_PIN_CNT	(1 << 20)	/* else low pin cnt */
- 
--static const struct of_device_id syscon_match[] = {
--	{ .compatible = "cortina,gemini-syscon" },
--	{ },
--};
--
- int of_flash_probe_gemini(struct platform_device *pdev,
- 			  struct device_node *np,
- 			  struct map_info *map)
+If you want to change this, then I think we need a new
+mode_config.fb_max_width/height, which if non-zero, would extend the limit
+for fbs.
+
+There's also the problem that if you extend this for fbs, then there's no
+check anymore in the atomic_commit paths (or legacy modeset), so that
+needs to be addressed somehow too.
+
+Bunch of igt to make sure we're not missing anything would be sweet on
+top, e.g. e.g. trying to set a mode over the limit and making sure it
+fails.
+
+Cheers, Daniel
+
+> ---
+>  drivers/gpu/drm/meson/meson_drv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+> index d344312..2e29968 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -243,8 +243,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>  		goto free_drm;
+>  
+>  	drm_mode_config_init(drm);
+> -	drm->mode_config.max_width = 3840;
+> -	drm->mode_config.max_height = 2160;
+> +	drm->mode_config.max_width = 16384;
+> +	drm->mode_config.max_height = 8192;
+>  	drm->mode_config.funcs = &meson_mode_config_funcs;
+>  
+>  	/* Hardware Initialization */
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.19.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
