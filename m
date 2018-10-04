@@ -2,113 +2,109 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66342C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF076C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1705E21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81B762082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:14:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tfSUVPyH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1705E21473
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdONSnEi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B762082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeJDRGB (ORCPT
+        id S1727634AbeJDRHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:06:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47378 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbeJDRGA (ORCPT
+        Thu, 4 Oct 2018 13:07:02 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37794 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbeJDRHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:06:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b5R1YZ4WvzqAMFQ4o4ee+cvhk8glspoGLFm+o9aXkkI=; b=tfSUVPyHWVauoLKcdVz1s/m8s
-        zgObCAZlM9KeVcEUQT7UjiO5LMgZPem1SZurwkFo/M/FAalbLuDn0OLzrskKQH8yrLe+kNHcZLl2Z
-        onc+6+QO217ZXeOSE1HHt8VnxjxEGOREiyp3SMfYXTk/i8MiNTlhp4FqzBUXEBwJd/2vw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g80d0-0008GZ-55; Thu, 04 Oct 2018 10:13:06 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C40A91122286; Thu,  4 Oct 2018 11:13:05 +0100 (BST)
-Date:   Thu, 4 Oct 2018 11:13:05 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181004101305.GA6412@sirena.org.uk>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
- <CACRpkdYG2Y=rspbZ_o=H3REXTEfOcaiqEyQD4kzO=G=d63V3yA@mail.gmail.com>
+        Thu, 4 Oct 2018 13:07:01 -0400
+Received: by mail-wr1-f65.google.com with SMTP id u12-v6so9235696wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 03:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5uYwxQHzVVjKKKIcBn7qdgUaMoYMrJ57XcFa7IxpZiU=;
+        b=DdONSnEiW3wI6mpL9QDsZTOI6tpMGeUx5fUWjwlP/mZDZf08OgrTViArp26dU6D6p4
+         Y1sXvqfdA5urEF/suY+arEbcmYZsCOYwo1lhU2ML7REJlvzEw0sRdGtM/N/xh9LwYRXc
+         pDcDdeDK8/PZJlyd/GQ0s4M6Fd3aOXido2O/NU8FD2b8f3YLs7VOQyJcEMdlvLTsL9ZA
+         Ywb6cVk3oHijfsOZr7lOnX6ehfN5FzgP5bOh3YPxWhQ1VKvrIZkuIRE3aYYbhbAYe+ob
+         X5ENW4rcHW/CYpRk8qLr1tf2XSdaIrDiZKVGhDGLCJejfwUSMZKvJAhI+jKgHTrYrwuv
+         VXBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5uYwxQHzVVjKKKIcBn7qdgUaMoYMrJ57XcFa7IxpZiU=;
+        b=NHCtaK5kS7J0kQe9fsPuu2aVFaHOzs633OpQ6SK818J/F+rXQbJURUFjn/LSAv4wkm
+         X/TMcJDUd8zHYZlkyGqrF8Vof+KJw09f2KnpixsZ8vGZcjZfy2IYUT3weN3Y1HMmZzcF
+         6Fg4Uf5fEHmgOKF9R3iDRsEiUzSSnECWibqCM7xXoRA2beaeqh4ZH7n4ngeevnRAZg89
+         VKNHgKH7T0l2XJnFQkCJsrYn1BurPuX4JU0Jkatj2Z9FhjS5giPjidBzjhErd3j6rdor
+         JzvG2Tn9anX0O022Cr3ZvdorMPXXhGYEY6/U2Qo4E+KPmWvk/olaDH4L6UAd10MVEfT1
+         djSg==
+X-Gm-Message-State: ABuFfoi4bUWFAM0ekJKLPb3d4jIyhep0P1+ceozAd+V4VaOJSnUnb8a+
+        gUQbWlszupAQpsP35aOBs7I=
+X-Google-Smtp-Source: ACcGV60wsb+b4jfMiEOpgrAYS/rZ2DMRpcmh06t7VWsPjwVrtrtOODZXdMFoEMBHo5/y1iDdOHl0jg==
+X-Received: by 2002:a5d:4c4d:: with SMTP id n13-v6mr3900694wrt.120.1538648066035;
+        Thu, 04 Oct 2018 03:14:26 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z21-v6sm3291209wmi.29.2018.10.04.03.14.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 03:14:25 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 12:14:23 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] locking/lockdep: Make class->ops a percpu counter
+Message-ID: <20181004101423.GA83274@gmail.com>
+References: <1538511560-10090-1-git-send-email-longman@redhat.com>
+ <1538511560-10090-5-git-send-email-longman@redhat.com>
+ <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
+ <62801eb9-16f2-606f-d3a2-61fef5b0a704@redhat.com>
+ <d66681f3-8781-9793-1dcf-2436a284550b@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYG2Y=rspbZ_o=H3REXTEfOcaiqEyQD4kzO=G=d63V3yA@mail.gmail.com>
-X-Cookie: Safety Third.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d66681f3-8781-9793-1dcf-2436a284550b@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Waiman Long <longman@redhat.com> wrote:
 
-On Thu, Oct 04, 2018 at 10:14:38AM +0200, Linus Walleij wrote:
+> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> index b0d0b51c4d85..1fd82ff99c65 100644
+> --- a/include/linux/lockdep.h
+> +++ b/include/linux/lockdep.h
+> @@ -99,13 +99,8 @@ struct lock_class {
+>  	 */
+>  	unsigned int			version;
+>  
+> -	/*
+> -	 * Statistics counter:
+> -	 */
+> -	unsigned long			ops;
+> -
+> -	const char			*name;
+>  	int				name_version;
+> +	const char			*name;
 
-> And these are millions and millions of deployed
-> systems not using udev+systemd we are talking about,
-> they are not fringe hobby projects. It's not that I
-> personally dislike udev or anything, I kind of like
-> it, but these tailored distros simply don't use it
-> and they are huge in numbers. They need help to do
-> the right thing. Fixing a udev rule doesn't solve
-> even half the world's problems I'm afraid.
+'name' gets moved by the patch - better structure packing on 64-bit kernels?
 
-Further, even those embedded systems that do use udev (some of them do
-lean heavily on modern init stuff like that and systemd, especially when
-boot time is a priority) they'll still need to get the relevant udev
-rule installed somehow.
+Looks good to me otherwise.
 
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu157EACgkQJNaLcl1U
-h9BBkwf/Q9GIidNJDuHpmm+LavB0wocpu32qHC5GsxYNyo2v5lRvYq6YBUzZmG1J
-U3aytRnyQh/4/0ttPCUxh/9weXA3P5uyOaQdYz7LMQ2RcsXV0hgqxqvrQAzzUaEA
-ZjpzjCa9WxCvwf6RSiDkqzgPfPIXDFRKu9WMBX2hHt9VGMWszD5lJI9FjRUROr/s
-QtV4jjf0vvxPDefhe3YuOhYmCAPsgVlSunFAC8LjYilLOxoOIruGD6AfJinr7f6v
-6ANVMSrdRGb89J0BgU+FCXO2KJMYx9T0ETsSN0Tbr1FUNPdfFDelyY78qnokMzGj
-wV16/LdECx8c5qQ4KSf3CdpNMDOS+w==
-=TeIs
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
+	Ingo
