@@ -2,128 +2,114 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABF6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A61CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C9020877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5838220877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:00:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTzW9MGK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C9020877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="WCb/68y3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5838220877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeJEBy3 (ORCPT
+        id S1727746AbeJEByw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:54:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34486 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeJEBy2 (ORCPT
+        Thu, 4 Oct 2018 21:54:52 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35684 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727293AbeJEByw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:54:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g12-v6so3588192pgs.1;
-        Thu, 04 Oct 2018 11:59:53 -0700 (PDT)
+        Thu, 4 Oct 2018 21:54:52 -0400
+Received: by mail-wm1-f66.google.com with SMTP id e187-v6so2578819wmf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 12:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ByrrTnNKG2Vk0e638TtaEFEqX7jB+JOThk7pu3SU1H8=;
-        b=dTzW9MGKgZm7H0fZ6OdXQxb9DisUc8f4C+l1m6vFHJsnMBsBiCWmcbwDSag7msCjNI
-         Jf8cIp2iotlP6+oFEqUy+ZvRNU513lcSxD5gCuzHk86Cef2i0XQa+RLBrWQUB/LsiXMW
-         PDc2LGFyQyW+3wOho2rDkQQ+IfgxEYhVR2hxPVq11ri4hZE8ENy8qV4+t3BZAYANgyIn
-         vJfDU3Lb42FABJrDdL5rffhcsGjzSnTVluN5U7Y/0kJSB9PO8aU9c4i3Ght/We4Vay1t
-         G3Fy7pJCNH+FVnqjb0/xeBPj3JMHkBdePC6HJfVO3YdnAJsVCnrMuYYbHikD0iHZP/Zm
-         8UyQ==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=cZFFDDhsW4wW4ERmDdcXT/qMNbRqFaZtjnVcB7iXqn4=;
+        b=WCb/68y39u7rO5wRwC1e9Nd0ZnuQl142ohlRZfACiM090aPWDjlIKhUPIhP7vI0LSU
+         pQ3wxlIMStzY1zvEf8QRUSXsv03FnVkYX2bFJSkAwQhqEY3uIQTQNzOEUVt4s5xon9w1
+         vXiEaBfQNdyJ5pFH225uB1MplQFZ8/5C0Ssxo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ByrrTnNKG2Vk0e638TtaEFEqX7jB+JOThk7pu3SU1H8=;
-        b=D5Agx9lC0ZPHoYlOZKTX9fGZcPPuS0ynq+ARFM45crUBRhb1WmH2+kR/NHh0MImk8z
-         fVCfEPlnhIfE48aEny6UysQnTbzkHuf/SFBFbVnqiewegzQ4jmh0OwoClDqZJOpGrhch
-         72FSzvcPkq6m89GOsnkw7APQT+sYptYZGkBVqv8TkJfb76i8aT/tvf3MfxjhDvwiZWKT
-         0gJbqsOZlO4eDkuHc0KSik7NOfRJUCSZsX5au6YDV+0gCwL0S89d+JmBzNv40mT2V1RC
-         HFOr3IittiZDXrHk+k/ZAxlNo+OamDpNCpvUgQpe0hU1gjiYpRlZ2TdvwYZ13Y4m4mSo
-         jx9g==
-X-Gm-Message-State: ABuFfoiTOf96sBZrTEvlekriTeKl/8wj8sgOtWxCs200hVdqBghpfdS6
-        fdOQlLxYndTY1FLc8CwAaZz1yEIpcDM=
-X-Google-Smtp-Source: ACcGV60UftP5aVTJ+201BQGjQAICFDpG2TZAqH64tEN/QFsMs7qDdKUgVtKr8ePdRATgOF+scY18TQ==
-X-Received: by 2002:a62:c8c3:: with SMTP id i64-v6mr8280765pfk.183.1538679592998;
-        Thu, 04 Oct 2018 11:59:52 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm11007052pfb.101.2018.10.04.11.59.51
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=cZFFDDhsW4wW4ERmDdcXT/qMNbRqFaZtjnVcB7iXqn4=;
+        b=O1vAtsWcLVq9/SquClk7qU8W44bguZOChpGiNzmpnIazbs32/9noYc3x7zapJTKcRl
+         Ww7spDHkS557GaCKHVla1sLT6IPhn6QNLWuTcySZskWEB/ql2nN1jWeUs9fD+j/TypVn
+         ZB0Xa9ywr48+s5C2HCO7M6Im8yxmwE+G5dsviXQVps/JgIAx77jFpzfJj1LI8pLqQVDh
+         SIpv6I99EkDlTwFxlNP1aZLQyxXOasZIAe5BVjLiYpblLsQeVOehMXNWMFI6B0P22XOk
+         C346e4zYne36QLRgsoXefDC53JVb0MLDRNR9V0CT6IbNFFajVSeZucUZJzZ8G8NfdMKm
+         BTYA==
+X-Gm-Message-State: ABuFfoiSrxuTZhsYMoUHt5IZwOKAhx6kNfjjQ9SoD590GrvHxy384bIJ
+        SCmKnJ4GhvPguZ+WeX1VL6SIK55KBihlzg==
+X-Google-Smtp-Source: ACcGV63FBbZ9++enRcSZ+hX4Oh0n9WglStmuD8da+ApztUMK5gIDk4WOEfPmjw4J1FqClBXHC//8OA==
+X-Received: by 2002:a1c:ce02:: with SMTP id e2-v6mr5436262wmg.85.1538679616324;
+        Thu, 04 Oct 2018 12:00:16 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id h64-v6sm2753563wmh.27.2018.10.04.12.00.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 11:59:51 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 11:59:49 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        linux-input@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] Input: mousedev - add a schedule point in
- mousedev_write()
-Message-ID: <20181004185949.GA233675@dtor-ws>
-References: <20181004154749.111595-1-edumazet@google.com>
+        Thu, 04 Oct 2018 12:00:14 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 21:00:12 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs fixes for 4.19-rc7
+Message-ID: <20181004190012.GD23439@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181004154749.111595-1-edumazet@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Greg,
 
-On Thu, Oct 04, 2018 at 08:47:49AM -0700, Eric Dumazet wrote:
-> syzbot was able to trigger rcu stalls by calling write()
-> with large number of bytes.
-> 
-> Add a cond_resched() in the loop to avoid this.
+Please pull from:
 
-I think this simply masks a deeper issue. The code fetches characters
-from userspace in a loop, takes a lock, quickly places response in an
-output buffer, and releases interrupt. I do not see why this should
-cause stalls as we do not hold spinlock/interrupts off for extended
-period of time.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-4.19-rc7
 
-Adding Paul so he can straighten me out...
+This update fixes a couple of regressions in the stacked file update added
+in this cycle, as well as some older bugs uncovered by syzkaller.
 
-> 
-> Link: https://lkml.org/lkml/2018/8/23/1106
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-input@vger.kernel.org
-> ---
->  drivers/input/mousedev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
-> index e08228061bcdd2f97aaadece31d6c83eb7539ae5..412fa71245afe26a7a8ad75705566f83633ba347 100644
-> --- a/drivers/input/mousedev.c
-> +++ b/drivers/input/mousedev.c
-> @@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file *file, const char __user *buffer,
->  		mousedev_generate_response(client, c);
->  
->  		spin_unlock_irq(&client->packet_lock);
-> +		cond_resched();
->  	}
->  
->  	kill_fasync(&client->fasync, SIGIO, POLL_IN);
-> -- 
-> 2.19.0.605.g01d371f741-goog
-> 
+There's also one trivial naming change that touches other parts of the fs
+subsystem.
 
-Thanks.
+Thanks,
+Miklos
 
--- 
-Dmitry
+---
+Amir Goldstein (5):
+      ovl: fix memory leak on unlink of indexed file
+      ovl: fix freeze protection bypass in ovl_write_iter()
+      ovl: fix freeze protection bypass in ovl_clone_file_range()
+      vfs: swap names of {do,vfs}_clone_file_range()
+      ovl: fix access beyond unterminated strings
+
+Miklos Szeredi (1):
+      ovl: fix format of setxattr debug
+
+Wei Yongjun (1):
+      ovl: make symbol 'ovl_aops' static
+
+---
+ fs/ioctl.c               |  2 +-
+ fs/nfsd/vfs.c            |  3 ++-
+ fs/overlayfs/copy_up.c   |  2 +-
+ fs/overlayfs/file.c      |  2 ++
+ fs/overlayfs/inode.c     |  2 +-
+ fs/overlayfs/namei.c     |  2 +-
+ fs/overlayfs/overlayfs.h |  4 ++--
+ fs/overlayfs/util.c      |  3 ++-
+ fs/read_write.c          | 17 +++++++++++++++--
+ include/linux/fs.h       | 17 +++--------------
+ 10 files changed, 30 insertions(+), 24 deletions(-)
