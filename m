@@ -2,81 +2,118 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B32CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB980C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8B72084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:07:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8B72084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 10C922082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:07:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ehuk.net header.i=@ehuk.net header.b="emG5t3n5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C922082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ehuk.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeJDU7c (ORCPT
+        id S1727877AbeJDVBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:59:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36267 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJDU7c (ORCPT
+        Thu, 4 Oct 2018 17:01:24 -0400
+Received: from schatzi.steelbluetech.co.uk ([92.63.139.240]:24203 "EHLO
+        schatzi.steelbluetech.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727394AbeJDVBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:59:32 -0400
-Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1g84GN-0002ic-TO; Thu, 04 Oct 2018 16:06:00 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 01/11] x86/entry: remove _TIF_ALLWORK_MASK
-Date:   Thu,  4 Oct 2018 16:05:37 +0200
-Message-Id: <20181004140547.13014-2-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181004140547.13014-1-bigeasy@linutronix.de>
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
+        Thu, 4 Oct 2018 17:01:24 -0400
+Received: from [10.0.5.25] (tv.ehuk.net [10.0.5.25])
+        by schatzi.steelbluetech.co.uk (Postfix) with ESMTP id 69019BFD68;
+        Thu,  4 Oct 2018 15:07:54 +0100 (BST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 schatzi.steelbluetech.co.uk 69019BFD68
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ehuk.net; s=default;
+        t=1538662074; bh=/+jd7c8Be2Q66V7cUgTmMjbwu+tWkf/S98vILRYWLys=;
+        h=Subject:To:Cc:References:From:Reply-To:Date:In-Reply-To:From;
+        b=emG5t3n5yllVTOuwD2O4iQm+lgSvCjnsQV6uGKYRB0igl4TKX4hlxZbtmdGPlGViA
+         7BR96qPkXrEQEFtm0MxE9Y/Ky/Ymvpr6dsCehTyiZW7HJjlKXvPV6BA19k807hjAEn
+         EsQVY9BjX/zMiZmzKdaBdtuk8ldmMOgQtTfsJ7SM=
+Subject: Re: [PATCH] bcache: add separate workqueue for journal_write to avoid
+ deadlock
+To:     Coly Li <colyli@suse.de>
+Cc:     guoju <fangguoju@gmail.com>, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        s.priebe@profihost.ag
+References: <1538055919-5757-1-git-send-email-fangguoju@gmail.com>
+ <bda92f58-d321-d4db-c73f-0ceecbfd9c38@suse.de>
+ <9b1abe65-c6f5-77b4-290e-e6af21723cfc@ehuk.net>
+ <ef36fbef-9f2e-0208-aa00-bd9ba656de31@suse.de>
+From:   Eddie Chapman <eddie@ehuk.net>
+Reply-To: Eddie Chapman <eddie@ehuk.net>
+Message-ID: <17ea92fa-a07b-2391-aba3-377382c63d9b@ehuk.net>
+Date:   Thu, 4 Oct 2018 15:07:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef36fbef-9f2e-0208-aa00-bd9ba656de31@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no user of _TIF_ALLWORK_MASK since commit 21d375b6b34ff
-("x86/entry/64: Remove the SYSCALL64 fast path").
-Remove unused define _TIF_ALLWORK_MASK.
+On 28/09/18 03:32, Coly Li wrote:
+> 
+> On 9/27/18 11:53 PM, Eddie Chapman wrote:
+>> On 27/09/18 16:23, Coly Li wrote:
+>>>
+>>> On 9/27/18 9:45 PM, guoju wrote:
+>>>> After write SSD completed, bcache schedule journal_write work to
+>>>> system_wq, that is a public workqueue in system, without WQ_MEM_RECLAIM>>>> flag. system_wq is also a bound wq, and there may be no idle kworker on
+>>>> current processor. Creating a new kworker may unfortunately need to
+>>>> reclaim memory first, by shrinking cache and slab used by vfs, which
+>>>> depends on bcache device. That's a deadlock.
+>>>>
+>>>> This patch create a new workqueue for journal_write with WQ_MEM_RECLAIM
+>>>> flag. It's rescuer thread will work to avoid the deadlock.
+>>>>
+>>>> Signed-off-by: guoju <fangguoju@gmail.com>
+>>>
+>>> Nice catch, this fix is quite important. I will try to submit to Jens 
+>>> ASAP.
+>>>
+>>> Thanks.
+>>>
+>>> Coly Li
+>>
+>> Once this goes into 4.19, would this be a candidate for backporting to 
+>> any stable kernels, or does it only fix something introduced in this 
+>> cycle?
+>>
+> This bug exists in upstream for quite long time, it should be applied to 
+> all stable kernels which it can be applied. And it is Cced to 
+> stable@vger.kernel.org already.
+> 
+> Coly Li
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/include/asm/thread_info.h | 8 --------
- 1 file changed, 8 deletions(-)
+Thanks Coly! :-)
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 2ff2a30a264f4..cd6920674b905 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -136,14 +136,6 @@ struct thread_info {
- 	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT |	\
- 	 _TIF_NOHZ)
- 
--/* work to do on any return to user space */
--#define _TIF_ALLWORK_MASK						\
--	(_TIF_SYSCALL_TRACE | _TIF_NOTIFY_RESUME | _TIF_SIGPENDING |	\
--	 _TIF_NEED_RESCHED | _TIF_SINGLESTEP | _TIF_SYSCALL_EMU |	\
--	 _TIF_SYSCALL_AUDIT | _TIF_USER_RETURN_NOTIFY | _TIF_UPROBE |	\
--	 _TIF_PATCH_PENDING | _TIF_NOHZ | _TIF_SYSCALL_TRACEPOINT |	\
--	 _TIF_FSCHECK)
--
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW							\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
--- 
-2.19.0
+Just to let you know, I applied this (and couple of other cherry picks) 
+to a couple of 4.14 boxes last night, so far so good, running without 
+issues. However, this one needed this recent commit upstream as a 
+pre-requisite:
 
+16c1fdf4cfd6c0091e59b93ec2cb7e99973f8244
+bcache: do not assign in if condition in bcache_init()
+
+in order to be able to apply it.
+
+This is because the context of the second hunk for 
+drivers/md/bcache/super.c (in this journal_write workqueue patch) 
+contains code added by that commit 16c1fdf4cfd6c0091e59b93ec2cb7e99973f8244.
+
+So I guess either 16c1fdf4cfd6c0091e59b93ec2cb7e99973f8244 also needs 
+tagging for stable, or perhaps a backport of this journal_write 
+workqueue will have to be created for earlier kernels, with different 
+context for that hunk?
+
+Eddie
