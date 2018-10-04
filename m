@@ -2,145 +2,179 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B314C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AD7C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3580820877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3580820877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 79C8420877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C8420877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeJDTPq (ORCPT
+        id S1727694AbeJDTPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:15:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35689 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727336AbeJDTPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:15:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6F89120DE2; Thu,  4 Oct 2018 14:22:41 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E564020719;
-        Thu,  4 Oct 2018 14:22:30 +0200 (CEST)
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
-        andrew@lunn.ch, f.fainelli@gmail.com
-Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next v4 00/11] mscc: ocelot: add support for SerDes muxing configuration
-Date:   Thu,  4 Oct 2018 14:21:57 +0200
-Message-Id: <20181004122208.32272-1-quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 4 Oct 2018 15:15:50 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39354 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727336AbeJDTPt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:15:49 -0400
+Received: by mail-lf1-f66.google.com with SMTP id w21-v6so6614842lff.6
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 05:22:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VqRB+w/AR0vyqUU5bmUPsy7aaI2NxAAOv6Ilc+DdOqw=;
+        b=XWVTLPP934uKWnPCT/udWTtkxL5JIOZ96alHhKHeibSlD/6lxfa5354yGNM2SRwJ50
+         xSZ2GITBlct+IDMCM5dHLG5HlzroshQdDZS6Sv4Jk2OdXkjYxtt+WqBIFw2p7MCnYK8W
+         cnFzUJQUv0pOgBwr7UA52EJQm4OtP24Qr/h0TmlHCPwVbsvK6aSMZ+jj/0fflXoTRdlY
+         /B67z5LeNZPJpOkas22ea65KKfyK02u3c4LL7uEXdMrdJ0iJiAu+b9LrJLvDzVLAjMR/
+         B1r2IDiXq61NOu6i8R/+JDAfWK5jYtqu6Jis2ib/2PmBEycyzCLiFcTfc1Qbk1I+glM6
+         azGA==
+X-Gm-Message-State: ABuFfojXpu+rlFCdyOLj9bTisUpZiuUETveeCb6obof7WkIu1rXXA2mS
+        Ql0xRvALHUScnYoM2zHgjMO9ozdJE+iqyWRnv1Jeng==
+X-Google-Smtp-Source: ACcGV610hMvj4SXVmb7oEzd1Hh292+0I7mjBndzhZt31quXVBcHfBv5CbPa/XMV6pSCbEGrcmBmXdnTuhsY/mskIzWY=
+X-Received: by 2002:a19:d3c4:: with SMTP id k187-v6mr3872203lfg.101.1538655764688;
+ Thu, 04 Oct 2018 05:22:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180907085115.30242-1-benjamin.tissoires@gmail.com> <20180908014442.GA16029@jelly>
+In-Reply-To: <20180908014442.GA16029@jelly>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 4 Oct 2018 14:22:33 +0200
+Message-ID: <CAO-hwJLpf0-aFRG1yhfSxJA20bw5_HTH+LcwQ9+ys4UE1YVNRw@mail.gmail.com>
+Subject: Re: [PATCH] Input: reserve 2 events code because of HID
+To:     Peter Hutterer <peter.hutterer@who-t.net>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, hcutts@chromium.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Ocelot switch has currently an hardcoded SerDes muxing that suits only
-a particular use case. Any other board setup will fail to work.
+Oops, looks like this one fell through the cracks.
 
-To prepare for upcoming boards' support that do not have the same muxing,
-create a PHY driver that will handle all possible cases.
+On Sat, Sep 8, 2018 at 3:44 AM Peter Hutterer <peter.hutterer@who-t.net> wrote:
+>
+> On Fri, Sep 07, 2018 at 10:51:15AM +0200, Benjamin Tissoires wrote:
+> > From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> >
+> > Prior to commit 190d7f02ce8e ("HID: input: do not increment usages when
+> > a duplicate is found") from the v4.18 kernel, HID used to shift the
+> > event codes if a duplicate usage was found. This ended up in a situation
+> > where a device would export a ton of ABS_MISC+n event codes, or a ton
+> > of REL_MISC+n event codes.
+> >
+> > This is now fixed, however userspace needs to detect those situation.
+> > Fortunately, ABS_MISC+1 was never assigned a code, and so libinput
+> > can detect fake multitouch devices from genuine ones by checking is
+> > ABS_MISC+1 is set.
+>
+> sorry, this isn't quite correct. we use ABS_MT_SLOT - 1 (0x2e) for the
+> detection of fake MT devices, i.e.
+>   if (ABS_MT_SLOT and not ABS_MT_SLOT-1) then multitouch
 
-A SerDes can work in SGMII, QSGMII or PCIe and is also muxed to use a
-given port depending on the selected mode or board design.
+Will send a v2 ASAP.
 
-The SerDes configuration is in the middle of an address space (HSIO) that
-is used to configure some parts in the MAC controller driver, that is why
-we need to use a syscon so that we can write to the same address space from
-different drivers safely using regmap.
+>
+> That gives you up to ABS_MISC + 6 for legitimate usage. this is handled by
+> libevdev, not libinput directly. libevdev adjusts the various bits on "is
+> this device an MT device" based on whether ABS_MT_SLOT-1 is set.
+>
+> I can change this to also check for (ABS_MISC and not ABS_MISC+1) but that
+> obviously will depend on updated libraries then. Though I guess it won't
+> really be an issue until we fill up the other codes up to including 0x2e
+> with real values and expect userspace to handle those.
 
-This breaks backward compatibility but it's fine because there's only one
-board at the moment that is using what's modified in this patch series.
-This will break git bisect.
+Nah, better changing the value here.
 
-Even though this patch series is about SerDes __muxing__ configuration, the
-DT node is named serdes for the simple reason that I couldn't find any
-mention to SerDes anywhere else from the address space handled by this
-driver.
+>
+> None of the bits I maintain have special code for REL_MISC+n so that bit
+> works fine, IMO.
+>
+> One request though: instead of just having the value reserved, can we make
+> it REL_RESERVED and ABS_RESERVED please? Or ABS_CANARY :) Much easier than
+> hardcoding the numeric value.
 
-Thanks,
-Quentin
+My first thoughts were that ABS_CANARY has the inconvenient of being
+too tempting to be used as a real value.
+OTOH, REL_RESERVED and ABS_RESERVED should be fine.
 
-v4:
-  - add reviewed-by,
-  - format the patch series with -M for identifying renamed files,
-  - add parent info in DT binding of the SerDes IP,
-  - move to macros SERDES[16]G(X) instead of multiple SERDES[16]G_[012345]
-  constants,
-  - move to SERDES[16]G_MAX being the last VALID macro of a type, so
-  migrate to <= conditions instead of < when iterating,
-  - create a SERDES_MUX_SGMII and SERDES_MUX_QSGMII macro so the muxing
-  configurations are a tad more readable,
-  - use a bunch of unsigned int instead of int,
-  - return -EOPNOTSUPP for SERDES6G/PCIe until it's supported,
-  - simplify condition when there is an error code returned by
-  devm_of_phy_get,
+I'll send out a v2 with those changes.
 
-v3:
-  - add Paul Burton's Acked-By on MIPS patches so that the patch series can
-  be merged in the net tree in its entirety,
+Cheers,
+Benjamin
 
-v2:
-  - use a switch case for setting the phy_mode in the SerDes driver as
-  suggested by Andrew,
-  - stop replacing the value of the error pointer in the SerDes driver,
-  - use a dev_dbg for the deferring of the probe in the SerDes driver,
-  - use constants in the Device Tree to select the SerDes macro in use with
-  a port,
-  - adapt the SerDes driver to use those constants,
-  - add a header file in include/dt-bindings for the constants,
-  - fix space/tab issue,
-
-Quentin Schulz (11):
-  MIPS: mscc: ocelot: make HSIO registers address range a syscon
-  dt-bindings: net: ocelot: remove hsio from the list of register
-    address spaces
-  net: mscc: ocelot: get HSIO regmap from syscon
-  net: mscc: ocelot: move the HSIO header to include/soc
-  net: mscc: ocelot: simplify register access for PLL5 configuration
-  phy: add QSGMII and PCIE modes
-  dt-bindings: phy: add DT binding for Microsemi Ocelot SerDes muxing
-  MIPS: mscc: ocelot: add SerDes mux DT node
-  dt-bindings: add constants for Microsemi Ocelot SerDes driver
-  phy: add driver for Microsemi Ocelot SerDes muxing
-  net: mscc: ocelot: make use of SerDes PHYs for handling their
-    configuration
-
- .../devicetree/bindings/mips/mscc.txt         |  16 +
- .../devicetree/bindings/net/mscc-ocelot.txt   |   9 +-
- .../bindings/phy/phy-ocelot-serdes.txt        |  43 +++
- arch/mips/boot/dts/mscc/ocelot.dtsi           |  19 +-
- drivers/net/ethernet/mscc/Kconfig             |   2 +
- drivers/net/ethernet/mscc/ocelot.c            |  16 +-
- drivers/net/ethernet/mscc/ocelot.h            |  79 +----
- drivers/net/ethernet/mscc/ocelot_board.c      |  61 +++-
- drivers/net/ethernet/mscc/ocelot_regs.c       |  93 +-----
- drivers/phy/Kconfig                           |   1 +
- drivers/phy/Makefile                          |   1 +
- drivers/phy/mscc/Kconfig                      |  11 +
- drivers/phy/mscc/Makefile                     |   5 +
- drivers/phy/mscc/phy-ocelot-serdes.c          | 295 ++++++++++++++++++
- include/dt-bindings/phy/phy-ocelot-serdes.h   |  12 +
- include/linux/phy/phy.h                       |   2 +
- .../soc}/mscc/ocelot_hsio.h                   |  74 +++++
- 17 files changed, 559 insertions(+), 180 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
- create mode 100644 drivers/phy/mscc/Kconfig
- create mode 100644 drivers/phy/mscc/Makefile
- create mode 100644 drivers/phy/mscc/phy-ocelot-serdes.c
- create mode 100644 include/dt-bindings/phy/phy-ocelot-serdes.h
- rename {drivers/net/ethernet => include/soc}/mscc/ocelot_hsio.h (95%)
-
--- 
-2.17.1
-
+>
+> Cheers,
+>    Peter
+>
+>
+> > Now that we have REL_WHEEL_HI_RES, libinput won't be able to differentiate
+> > true high res mice from some other device in a pre-v4.18 kernel.
+> >
+> > Set in stone that the ABS_MISC+1 and REL_MISC+1 are reserved and should not
+> > be used so userspace can properly work around those old kernels.
+> >
+> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > ---
+> >
+> > Hi,
+> >
+> > while reviewing my local tree, I realize that we might want to be able
+> > to differentiate older kernels from new ones that export REL_WHEEL_HI_RES.
+> >
+> > I know Dmitry was against adding several REL_MISC, so I hope just moving
+> > REL_WHEEL_HI_RES by one and reserving the faulty event codes would be good
+> > this time.
+> >
+> > This patch applies on top of the branch for-4.20/logitech-highres from
+> > Jiri's tree. It should go through Jiri's tree as well.
+> >
+> > Cheers,
+> > Benjamin
+> >
+> >  include/uapi/linux/input-event-codes.h | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> > index 29fb891ea337..30149939249a 100644
+> > --- a/include/uapi/linux/input-event-codes.h
+> > +++ b/include/uapi/linux/input-event-codes.h
+> > @@ -708,7 +708,12 @@
+> >  #define REL_DIAL             0x07
+> >  #define REL_WHEEL            0x08
+> >  #define REL_MISC             0x09
+> > -#define REL_WHEEL_HI_RES     0x0a
+> > +/*
+> > + * 0x0a is reserved and should not be used.
+> > + * It was used by HID as REL_MISC+1 and usersapce needs to detect if
+> > + * the next REL_* event is correct or is just REL_MISC + n.
+> > + */
+> > +#define REL_WHEEL_HI_RES     0x0b
+> >  #define REL_MAX                      0x0f
+> >  #define REL_CNT                      (REL_MAX+1)
+> >
+> > @@ -745,6 +750,12 @@
+> >
+> >  #define ABS_MISC             0x28
+> >
+> > +/*
+> > + * 0x29 is reserved and should not be used.
+> > + * It was used by HID as ABS_MISC+1 and usersapce needs to detect if
+> > + * the next ABS_* event is correct or is just ABS_MISC + n.
+> > + */
+> > +
+> >  #define ABS_MT_SLOT          0x2f    /* MT slot being modified */
+> >  #define ABS_MT_TOUCH_MAJOR   0x30    /* Major axis of touching ellipse */
+> >  #define ABS_MT_TOUCH_MINOR   0x31    /* Minor axis (omit if circular) */
+> > --
+> > 2.14.3
+> >
