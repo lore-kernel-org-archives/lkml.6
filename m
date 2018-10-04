@@ -2,101 +2,136 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB1CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C805C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38CC62098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:19:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CC62098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 50BCA21473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o6XaFakR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BCA21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeJDPLw (ORCPT
+        id S1727353AbeJDPMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:11:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:60204 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbeJDPLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:11:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 593A980D;
-        Thu,  4 Oct 2018 01:19:48 -0700 (PDT)
-Received: from [10.4.13.99] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E8FD3F5A0;
-        Thu,  4 Oct 2018 01:19:47 -0700 (PDT)
-Subject: Re: kernel BUG at arch/arm/kvm/coproc.c:1406!
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kvmarm@lists.cs.columbia.edu,
-        linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>, christoffer.dall@arm.com
-References: <6b134030-f9a4-1983-caac-5cfcc2be9776@gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <3d719d5f-d7b9-9bba-4fa8-61175a9b05a9@arm.com>
-Date:   Thu, 4 Oct 2018 09:19:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 11:12:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37698 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbeJDPMO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:12:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so8844473wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kyEeTjaTExqJyJMJXTMGlCOUVx6p7HnXFrjwKusRlYE=;
+        b=o6XaFakR7hDHTK7UVRkJmqmFUq3R5oTyFUnlawwO5hRilcNVxALnVT/0alVo8xaFMA
+         9vxQCoFHAnZZKaG4htbVQHtDdjMfemkN8L2dPZlA8q6tVdQvzkLZB4yVfibqKzFYkNWg
+         zN+dOc67t1HyIjxegvT68r99BIUP+yoQzI4ZUIv77/BPyL0FynoFbikYMTqi8771oOpX
+         T2GN9eJA+DnvNKrpt5moqJwal2oeOmvCRLZhL3F+snEkzXeh4YV6dOH9SFTcM3qCiioz
+         X/7HIjY9VyjWXzsHAUeeRNVNoXMJTxuc7+iHuJIEZ8JGBJ59jfKu4X1DHQn4YLh5/s52
+         mJaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kyEeTjaTExqJyJMJXTMGlCOUVx6p7HnXFrjwKusRlYE=;
+        b=sVrzWtfpOOQpCEkT8T/4UHQwTg+jeCgj5fvVUPNT7+Mmw87+S4cIbHVhWJwGtilAHG
+         /YT9LPcQZa/QZJhW8q3ntMtcuF3ZGrm6U5zvwpNJ1gkuA98BvxBk+21VfwY0s3jXM29w
+         lNtYvTmg9da/mLvH0cHUJ/FyKT11gPy9ec/kI0HDdU67j6Y9j8D9fKGzev+EPVBF2EY7
+         3c3M+L1fraIzHAQGJyducfBp1ElCRctJh5y+Df8zYeDAmWsz4NcWLMJql8x86aDAubzn
+         //4qHGS45LFCYMlCZOq3E9K7SSfvokCP0+3ckGc0iLdqtoQBIifEQheAP4ZzxFGrnyIg
+         lM7w==
+X-Gm-Message-State: ABuFfohPtd9IfkOfN89GX/WCILZJ2dFbvkHHSosH6ch5YjFx8zyKQeqJ
+        7fu0AVjMLX/4BX7suj/Ljv3Amkyy
+X-Google-Smtp-Source: ACcGV63bP4spcyGEXda3HUZi/6z79JmEjz3mSd/QoEQupQSWJmpmvvkK2m2pZbbJWNcJLP4aGU5mzg==
+X-Received: by 2002:a5d:4589:: with SMTP id p9-v6mr4022064wrq.122.1538641207226;
+        Thu, 04 Oct 2018 01:20:07 -0700 (PDT)
+Received: from [192.168.0.19] (ip1f12fd1c.dynamic.kabel-deutschland.de. [31.18.253.28])
+        by smtp.gmail.com with ESMTPSA id z69-v6sm3732325wmz.18.2018.10.04.01.20.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 01:20:06 -0700 (PDT)
+Subject: Re: [PATCH 2/3] staging: rtl8188eu: cleanup array declaration - style
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20181003204359.30676-1-straube.linux@gmail.com>
+ <20181003204359.30676-2-straube.linux@gmail.com>
+ <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <87089eae-3cf2-8cea-b381-6e721b87ce94@gmail.com>
+Date:   Thu, 4 Oct 2018 10:20:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <6b134030-f9a4-1983-caac-5cfcc2be9776@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
-
-On 04/10/18 04:02, Florian Fainelli wrote:
-> Hi,
+On 10/3/18 11:30 PM, Joe Perches wrote:
+> On Wed, 2018-10-03 at 22:43 +0200, Michael Straube wrote:
+>> Cleanup array declaration to clear two 'line over 80 characters'
+>> checkpatch warnings and improve readability.
+> []
+>> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+> []
+>> @@ -3836,24 +3836,20 @@ Following are the initialization functions for WiFi MLME
+>>   *****************************************************************************/
+>>   
+>>   static struct mlme_handler mlme_sta_tbl[] = {
+>> -	{WIFI_ASSOCREQ,		"OnAssocReq",	&OnAssocReq},
+>> -	{WIFI_ASSOCRSP,		"OnAssocRsp",	&OnAssocRsp},
+>> -	{WIFI_REASSOCREQ,	"OnReAssocReq",	&OnAssocReq},
+>> -	{WIFI_REASSOCRSP,	"OnReAssocRsp",	&OnAssocRsp},
+>> -	{WIFI_PROBEREQ,		"OnProbeReq",	&OnProbeReq},
+>> -	{WIFI_PROBERSP,		"OnProbeRsp",		&OnProbeRsp},
+>> -
+>> -	/*----------------------------------------------------------
+>> -					below 2 are reserved
+>> -	-----------------------------------------------------------*/
+>> -	{0,					"DoReserved",		&DoReserved},
+>> -	{0,					"DoReserved",		&DoReserved},
+>> -	{WIFI_BEACON,		"OnBeacon",		&OnBeacon},
+>> -	{WIFI_ATIM,			"OnATIM",		&OnAtim},
+>> -	{WIFI_DISASSOC,		"OnDisassoc",		&OnDisassoc},
+>> -	{WIFI_AUTH,			"OnAuth",		&OnAuthClient},
+>> -	{WIFI_DEAUTH,		"OnDeAuth",		&OnDeAuth},
+>> -	{WIFI_ACTION,		"OnAction",		&OnAction},
+>> +	{WIFI_ASSOCREQ,	  "OnAssocReq",	  &OnAssocReq},
+>> +	{WIFI_ASSOCRSP,	  "OnAssocRsp",	  &OnAssocRsp},
+>> +	{WIFI_REASSOCREQ, "OnReAssocReq", &OnAssocReq},
+>> +	{WIFI_REASSOCRSP, "OnReAssocRsp", &OnAssocRsp},
+>> +	{WIFI_PROBEREQ,	  "OnProbeReq",	  &OnProbeReq},
+>> +	{WIFI_PROBERSP,	  "OnProbeRsp",	  &OnProbeRsp},
+>> +	{0,		  "DoReserved",	  &DoReserved},
+>> +	{0,		  "DoReserved",	  &DoReserved},
+>> +	{WIFI_BEACON,	  "OnBeacon",	  &OnBeacon},
+>> +	{WIFI_ATIM,	  "OnATIM",	  &OnAtim},
+>> +	{WIFI_DISASSOC,	  "OnDisassoc",	  &OnDisassoc},
+>> +	{WIFI_AUTH,	  "OnAuth",	  &OnAuthClient},
+>> +	{WIFI_DEAUTH,	  "OnDeAuth",	  &OnDeAuth},
+>> +	{WIFI_ACTION,	  "OnAction",	  &OnAction},
+>>   };
 > 
-> Seeing the following BUG_ON() being triggered on a Lamobo R1
-> (SUN7I/Cortex-A7), did not have the time to run a bisection since I was
-> chasing another regression. My guess would be that
-> 3e8a8a50c7ef1a4f71921731f0e1748a7f70ddaa ("KVM: arm: vgic-v3: Add
-> support for ICC_SGI0R and ICC_ASGI1R accesses") is the culprit since it
-> does add new entries to cp15_regs[].
+> Perhaps const here too, and as well, the struct
+> declaration could use const char * instead of char *
+>
 
-OK, this is quite embarrassing. I remember fixing that exact bug before
-the 4.19 merge window, and was 100% convinced that I had merged the fix.
+Just to be sure, it should be
 
-Turns out I didn't. 
+static const struct mlme_handler mlme_sta_tbl[] = {
 
-Can you verify that the following patch works for you?
-
-diff --git a/arch/arm/kvm/coproc.c b/arch/arm/kvm/coproc.c
-index 450c7a4fbc8a..cb094e55dc5f 100644
---- a/arch/arm/kvm/coproc.c
-+++ b/arch/arm/kvm/coproc.c
-@@ -478,15 +478,15 @@ static const struct coproc_reg cp15_regs[] = {
- 
- 	/* ICC_SGI1R */
- 	{ CRm64(12), Op1( 0), is64, access_gic_sgi},
--	/* ICC_ASGI1R */
--	{ CRm64(12), Op1( 1), is64, access_gic_sgi},
--	/* ICC_SGI0R */
--	{ CRm64(12), Op1( 2), is64, access_gic_sgi},
- 
- 	/* VBAR: swapped by interrupt.S. */
- 	{ CRn(12), CRm( 0), Op1( 0), Op2( 0), is32,
- 			NULL, reset_val, c12_VBAR, 0x00000000 },
- 
-+	/* ICC_ASGI1R */
-+	{ CRm64(12), Op1( 1), is64, access_gic_sgi},
-+	/* ICC_SGI0R */
-+	{ CRm64(12), Op1( 2), is64, access_gic_sgi},
- 	/* ICC_SRE */
- 	{ CRn(12), CRm(12), Op1( 0), Op2(5), is32, access_gic_sre },
- 
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+?
