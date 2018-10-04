@@ -2,186 +2,117 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 566DFC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA2FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 190C621473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 190C621473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7728521477
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:15:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PalRItz4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7728521477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeJDQH0 (ORCPT
+        id S1727614AbeJDQIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:07:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58095 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727461AbeJDQHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:07:25 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6CA71208E7; Thu,  4 Oct 2018 11:15:03 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 120A120719;
-        Thu,  4 Oct 2018 11:14:53 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 11:14:53 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        vigneshr@ti.com, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        computersforpeace@gmail.com, frieder.schrempf@exceet.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mtd: spi-nor: add support for octal mode data
- transfer
-Message-ID: <20181004111453.1ef576f9@bbrezillon>
-In-Reply-To: <1538642920-3843-3-git-send-email-yogeshnarayan.gaur@nxp.com>
-References: <1538642920-3843-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <1538642920-3843-3-git-send-email-yogeshnarayan.gaur@nxp.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 4 Oct 2018 12:08:00 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41669 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbeJDQIA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:08:00 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m77-v6so3069911pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 02:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=pz+qjDnOSMwpXFoomShA6aeyy9jCwAHreDh5uaYSGw4=;
+        b=PalRItz4CJbLU9DlF4v7lSa6nTWNoCZup+cePw6Hhe56af4GSN9heIUSyKUnXiJbXP
+         DOTk6ZP7DZ378YlvFRumk6W+8Ejs817zhv2kzT6yNYbsZypespznRXwbb2mShxQQAVEJ
+         bZ5GdeM1VW2B7qMp4SnpzwQUWKk7qJZmAFsVuqr7X52x253TVj/ntM4PEO9DBR4BoN5l
+         O2rNLCpFHtflvQQGTuXMW/FdemPcZI1uEncCfVDyo2XHWccXufa+GiFSwV2LLUOFkhv3
+         8wvlpWuLrbHY+6RiiwG2gLCj3AWb+ICTPYdumaibrkgI8hivru+1XTUJiz6Cts+MGbEj
+         Vf9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=pz+qjDnOSMwpXFoomShA6aeyy9jCwAHreDh5uaYSGw4=;
+        b=jShUnnwUACol7uw+cfN3LzJaF2oJMMp4u9kgw6kG8gROZk7J7TXJkuVuMFzW7B6Q4m
+         9FJw/VXtCMSu0o0iXBOcbOtIfzUxgIS0OdApOcIpfyGuuCRWMprEdDOYHGX5Lt66KQzI
+         qDpwt5csPJjDwwhyLn++6MRB6vLpTBDnkKoYPHhW1eR4/OQkvcXASKvZmTBLQpPz8Fkv
+         5hxPwxoCUuLCVEB2/cNu4ZymKvRO9arvIWGsiVF77oTlX7yEaYCQdBczViHhpjbuB6ii
+         JTWjXvCTpMeKk1gU5eMNlZXti6J6ZKomWc095C8ipreMcTLRQrL5Kn6mO3/LS/DDE6mc
+         NWSw==
+X-Gm-Message-State: ABuFfohRC/BwmaurvsGOpeHiPTIy4fckr7+D/IkPD/+YZKZn4BSrSSzJ
+        BINzT5F9Y8Ux4VqJoLbpV1hCSQ==
+X-Google-Smtp-Source: ACcGV61BKHVJ9WzYwjN50uloTbr9rBVmi0JVI1zE4i33LRVo3ElSukQSRDtOmhYyZK/Zuh4j8OnbBA==
+X-Received: by 2002:a62:401:: with SMTP id 1-v6mr5781763pfe.236.1538644539653;
+        Thu, 04 Oct 2018 02:15:39 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id g5-v6sm6838979pfk.160.2018.10.04.02.15.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 02:15:38 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 02:15:38 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+In-Reply-To: <20181004055842.GA22173@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1810040209130.113459@chino.kir.corp.google.com>
+References: <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz> <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com> <20180925202959.GY18685@dhcp22.suse.cz> <alpine.DEB.2.21.1809251440001.94921@chino.kir.corp.google.com>
+ <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org> <20180926060624.GA18685@dhcp22.suse.cz> <20181002112851.GP18290@dhcp22.suse.cz> <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com> <20181003073640.GF18290@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1810031547150.202532@chino.kir.corp.google.com> <20181004055842.GA22173@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  4 Oct 2018 14:18:38 +0530
-Yogesh Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+On Thu, 4 Oct 2018, Michal Hocko wrote:
 
-> Add support for octal mode data transfer for Micron mt35xu512aba.
+> > > > > So how about this? (not tested yet but it should be pretty
+> > > > > straightforward)
+> > > > 
+> > > > Umm, prctl(PR_GET_THP_DISABLE)?
+> > > 
+> > > /me confused. I thought you want to query for the flag on a
+> > > _different_ process. 
+> > 
+> > Why would we want to check three locations (system wide setting, prctl 
+> > setting, madvise setting) to determine if a heap can be backed by thp?
 > 
-> Unfortunately, this flash is only complaint to SFDP JESD216B and does
-> not seem to support newer JESD216C standard that provides auto detection
-> of Octal mode capabilities and opcodes. Therefore, this capability is
-> manually added using new SPI_NOR_OCTAL_READ flag.
+> Because we simply have 3 different ways to control THP? Is this a real
+> problem?
 > 
-> Added support of Octal mode parsing for 'm25p80' spi-nor flash interface.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> ---
->  drivers/mtd/devices/m25p80.c  |  9 ++++++++-
->  drivers/mtd/spi-nor/spi-nor.c | 14 +++++++++++++-
->  include/linux/mtd/spi-nor.h   |  8 ++++++++
 
-You mix a lot of changes in a single patch, please try to split it up:
+And prior to the offending commit, there were three ways to control thp 
+but two ways to determine if a mapping was eligible for thp based on the 
+implementation detail of one of those ways.  If there are three ways to 
+control thp, userspace is still in the dark wrt which takes precedence 
+over the other: we have PR_SET_THP_DISABLE but globally sysfs has it set 
+to "always", or we have MADV_HUGEPAGE set per smaps but PR_SET_THP_DISABLE 
+shown in /proc/pid/status, etc.
 
-1/ Add new opcodes and patch spi_nor_convert_3to4_read/program() and
-   spi_nor_init_params()
-2/ Modify m25p80.c to support octal mode
-3/ Add a new entry for mt35xu512aba
-
->  3 files changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-> index fe260cc..e22aa2b 100644
-> --- a/drivers/mtd/devices/m25p80.c
-> +++ b/drivers/mtd/devices/m25p80.c
-> @@ -182,7 +182,14 @@ static int m25p_probe(struct spi_mem *spimem)
->  	spi_mem_set_drvdata(spimem, flash);
->  	flash->spimem = spimem;
->  
-> -	if (spi->mode & SPI_RX_QUAD) {
-> +	if (spi->mode & SPI_RX_OCTAL) {
-> +		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_8;
-> +
-> +		if (spi->mode & SPI_TX_OCTAL)
-> +			hwcaps.mask |= (SNOR_HWCAPS_READ_1_8_8 |
-> +					SNOR_HWCAPS_PP_1_1_8 |
-> +					SNOR_HWCAPS_PP_1_8_8);
-> +	} else if (spi->mode & SPI_RX_QUAD) {
->  		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_4;
->  
->  		if (spi->mode & SPI_TX_QUAD)
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 6042df8..0587b9c 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -89,6 +89,7 @@ struct flash_info {
->  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip erase */
->  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
->  #define USE_CLSR		BIT(14)	/* use CLSR command */
-> +#define SPI_NOR_OCTAL_READ	BIT(15)	/* Flash supports Octal Read */
->  
->  	int	(*quad_enable)(struct spi_nor *nor);
->  };
-> @@ -208,6 +209,8 @@ static inline u8 spi_nor_convert_3to4_read(u8 opcode)
->  		{ SPINOR_OP_READ_1_2_2,	SPINOR_OP_READ_1_2_2_4B },
->  		{ SPINOR_OP_READ_1_1_4,	SPINOR_OP_READ_1_1_4_4B },
->  		{ SPINOR_OP_READ_1_4_4,	SPINOR_OP_READ_1_4_4_4B },
-> +		{ SPINOR_OP_READ_1_1_8,	SPINOR_OP_READ_1_1_8_4B },
-> +		{ SPINOR_OP_READ_1_8_8,	SPINOR_OP_READ_1_8_8_4B },
->  
->  		{ SPINOR_OP_READ_1_1_1_DTR,	SPINOR_OP_READ_1_1_1_DTR_4B },
->  		{ SPINOR_OP_READ_1_2_2_DTR,	SPINOR_OP_READ_1_2_2_DTR_4B },
-> @@ -224,6 +227,8 @@ static inline u8 spi_nor_convert_3to4_program(u8 opcode)
->  		{ SPINOR_OP_PP,		SPINOR_OP_PP_4B },
->  		{ SPINOR_OP_PP_1_1_4,	SPINOR_OP_PP_1_1_4_4B },
->  		{ SPINOR_OP_PP_1_4_4,	SPINOR_OP_PP_1_4_4_4B },
-> +		{ SPINOR_OP_PP_1_1_8,	SPINOR_OP_PP_1_1_8_4B },
-> +		{ SPINOR_OP_PP_1_8_8,	SPINOR_OP_PP_1_8_8_4B },
->  	};
->  
->  	return spi_nor_convert_opcode(opcode, spi_nor_3to4_program,
-> @@ -1114,7 +1119,7 @@ static const struct flash_info spi_nor_ids[] = {
->  	{ "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
->  
->  	/* Micron */
-> -	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512, SECT_4K | USE_FSR | SPI_NOR_4B_OPCODES) },
-> +	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512, SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ | SPI_NOR_4B_OPCODES) },
->  
->  	/* PMC */
->  	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
-> @@ -2493,6 +2498,13 @@ static int spi_nor_init_params(struct spi_nor *nor,
->  					  SNOR_PROTO_1_1_4);
->  	}
->  
-> +	if (info->flags & SPI_NOR_OCTAL_READ) {
-> +		params->hwcaps.mask |= SNOR_HWCAPS_READ_1_1_8;
-> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_8],
-> +					  0, 8, SPINOR_OP_READ_1_1_8,
-> +					  SNOR_PROTO_1_1_8);
-> +	}
-> +
->  	/* Page Program settings. */
->  	params->hwcaps.mask |= SNOR_HWCAPS_PP;
->  	spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP],
-> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-> index f43bfc5..b23c69d 100644
-> --- a/include/linux/mtd/spi-nor.h
-> +++ b/include/linux/mtd/spi-nor.h
-> @@ -50,9 +50,13 @@
->  #define SPINOR_OP_READ_1_2_2	0xbb	/* Read data bytes (Dual I/O SPI) */
->  #define SPINOR_OP_READ_1_1_4	0x6b	/* Read data bytes (Quad Output SPI) */
->  #define SPINOR_OP_READ_1_4_4	0xeb	/* Read data bytes (Quad I/O SPI) */
-> +#define SPINOR_OP_READ_1_1_8	0x8b	/* Read data bytes (Octal Output SPI) */
-> +#define SPINOR_OP_READ_1_8_8	0xcb	/* Read data bytes (Octal I/O SPI) */
->  #define SPINOR_OP_PP		0x02	/* Page program (up to 256 bytes) */
->  #define SPINOR_OP_PP_1_1_4	0x32	/* Quad page program */
->  #define SPINOR_OP_PP_1_4_4	0x38	/* Quad page program */
-> +#define SPINOR_OP_PP_1_1_8	0x82	/* Octal page program */
-> +#define SPINOR_OP_PP_1_8_8	0xc2	/* Octal page program */
->  #define SPINOR_OP_BE_4K		0x20	/* Erase 4KiB block */
->  #define SPINOR_OP_BE_4K_PMC	0xd7	/* Erase 4KiB block on PMC chips */
->  #define SPINOR_OP_BE_32K	0x52	/* Erase 32KiB block */
-> @@ -73,9 +77,13 @@
->  #define SPINOR_OP_READ_1_2_2_4B	0xbc	/* Read data bytes (Dual I/O SPI) */
->  #define SPINOR_OP_READ_1_1_4_4B	0x6c	/* Read data bytes (Quad Output SPI) */
->  #define SPINOR_OP_READ_1_4_4_4B	0xec	/* Read data bytes (Quad I/O SPI) */
-> +#define SPINOR_OP_READ_1_1_8_4B	0x7c	/* Read data bytes (Octal Output SPI) */
-> +#define SPINOR_OP_READ_1_8_8_4B	0xcc	/* Read data bytes (Octal I/O SPI) */
->  #define SPINOR_OP_PP_4B		0x12	/* Page program (up to 256 bytes) */
->  #define SPINOR_OP_PP_1_1_4_4B	0x34	/* Quad page program */
->  #define SPINOR_OP_PP_1_4_4_4B	0x3e	/* Quad page program */
-> +#define SPINOR_OP_PP_1_1_8_4B	0x84	/* Octal page program */
-> +#define SPINOR_OP_PP_1_8_8_4B	0x8e	/* Octal page program */
->  #define SPINOR_OP_BE_4K_4B	0x21	/* Erase 4KiB block */
->  #define SPINOR_OP_BE_32K_4B	0x5c	/* Erase 32KiB block */
->  #define SPINOR_OP_SE_4B		0xdc	/* Sector erase (usually 64KiB) */
-
+Which one is the ultimate authority?  There's one way to specify it: in a 
+single per-mapping location that reveals whether that mapping is eligible 
+for thp or not.  So I think it would be a very sane extension so that 
+smaps reveals if a mapping can be backed by hugepages or not depending on 
+the helper function thp uses itself to determine if it can fault 
+hugepages.  I don't think we should have three locations to check and then 
+try to resolve which one takes precedence over the other for each 
+userspace implementation (and perhaps how the kernel implementation 
+evolves).
