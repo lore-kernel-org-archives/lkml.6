@@ -2,200 +2,379 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039F1C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E325C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C7721470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C7721470
+	by mail.kernel.org (Postfix) with ESMTP id 39C6A2082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:28:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C6A2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeJDUVM (ORCPT
+        id S1727856AbeJDUVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:21:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51886 "EHLO mx1.redhat.com"
+        Thu, 4 Oct 2018 16:21:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33156 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727367AbeJDUVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:21:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1727367AbeJDUVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:21:17 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 161F5C0467C0;
-        Thu,  4 Oct 2018 13:27:54 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-200-44.brq.redhat.com [10.40.200.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 279AD66082;
-        Thu,  4 Oct 2018 13:27:42 +0000 (UTC)
-Date:   Thu, 4 Oct 2018 15:28:11 +0200
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v4 6/9] x86/cet/ibt: Add arch_prctl functions for IBT
-Message-ID: <20181004132811.GJ32759@asgard.redhat.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
- <20180921150553.21016-7-yu-cheng.yu@intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id C542A7F6B3;
+        Thu,  4 Oct 2018 13:27:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 20C7E2010D55;
+        Thu,  4 Oct 2018 13:27:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net-next] dns: Allow the dns resolver to retrieve a server
+ set
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Date:   Thu, 04 Oct 2018 14:27:55 +0100
+Message-ID: <153865967530.25761.13226347009462917363.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921150553.21016-7-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 04 Oct 2018 13:27:54 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 04 Oct 2018 13:27:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 08:05:50AM -0700, Yu-cheng Yu wrote:
-> Update ARCH_CET_STATUS and ARCH_CET_DISABLE to include Indirect
-> Branch Tracking features.
-> 
-> Introduce:
-> 
-> arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
->     Enable the Indirect Branch Tracking legacy code bitmap.
-> 
->     The parameter 'addr' is a pointer to a user buffer.
->     On returning to the caller, the kernel fills the following:
-> 
->     *addr = IBT bitmap base address
->     *(addr + 1) = IBT bitmap size
+Allow the DNS resolver to retrieve a set of servers and their associated
+addresses, ports, preference and weight ratings.
 
-Again, some structure with a size field would be better from
-UAPI/extensibility standpoint.
+In terms of communication with userspace, "srv=1" is added to the callout
+string (the '1' indicating the maximum data version supported by the
+kernel) to ask the userspace side for this.
 
-One additional point: "size" in the structure from kernel should have
-structure size expected by kernel, and at least providing there "0" from
-user space shouldn't lead to failure (in fact, it is possible to provide
-structure size back to userspace even if buffer is too small, along
-with error).
+If the userspace side doesn't recognise it, it will ignore the option and
+return the usual text address list.
 
-> 
-> Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> ---
->  arch/x86/include/uapi/asm/prctl.h |  1 +
->  arch/x86/kernel/cet_prctl.c       | 38 ++++++++++++++++++++++++++++++-
->  arch/x86/kernel/process.c         |  1 +
->  3 files changed, 39 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
-> index 3aec1088e01d..31d2465f9caf 100644
-> --- a/arch/x86/include/uapi/asm/prctl.h
-> +++ b/arch/x86/include/uapi/asm/prctl.h
-> @@ -18,5 +18,6 @@
->  #define ARCH_CET_DISABLE	0x3002
->  #define ARCH_CET_LOCK		0x3003
->  #define ARCH_CET_ALLOC_SHSTK	0x3004
-> +#define ARCH_CET_LEGACY_BITMAP	0x3005
+If the userspace side does recognise it, it will return some binary data
+that begins with a zero byte that would cause the string parsers to give an
+error.  The second byte contains the version of the data in the blob (this
+may be between 1 and the version specified in the callout data).  The
+remainder of the payload is version-specific.
 
-It would probably be nice to have mention of an architecture in these
-definitions ("ARCH_X86_CET_"...), but it's likely too late.
+In version 1, the payload looks like (note that this is packed):
 
->  
->  #endif /* _ASM_X86_PRCTL_H */
-> diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
-> index c4b7c19f5040..df47b5ebc3f4 100644
-> --- a/arch/x86/kernel/cet_prctl.c
-> +++ b/arch/x86/kernel/cet_prctl.c
-> @@ -20,6 +20,8 @@ static int handle_get_status(unsigned long arg2)
->  
->  	if (current->thread.cet.shstk_enabled)
->  		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-> +	if (current->thread.cet.ibt_enabled)
-> +		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
->  
->  	shstk_base = current->thread.cet.shstk_base;
->  	shstk_size = current->thread.cet.shstk_size;
-> @@ -49,9 +51,35 @@ static int handle_alloc_shstk(unsigned long arg2)
->  	return 0;
->  }
->  
-> +static int handle_bitmap(unsigned long arg2)
-> +{
-> +	unsigned long addr, size;
-> +
-> +	if (current->thread.cet.ibt_enabled) {
-> +		int err;
-> +
-> +		err  = cet_setup_ibt_bitmap();
-> +		if (err)
-> +			return err;
-> +
-> +		addr = current->thread.cet.ibt_bitmap_addr;
-> +		size = current->thread.cet.ibt_bitmap_size;
-> +	} else {
-> +		addr = 0;
-> +		size = 0;
-> +	}
-> +
-> +	if (put_user(addr, (unsigned long __user *)arg2) ||
-> +	    put_user(size, (unsigned long __user *)arg2 + 1))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
->  int prctl_cet(int option, unsigned long arg2)
->  {
-> -	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-> +	    !cpu_feature_enabled(X86_FEATURE_IBT))
+	u8	Non-string marker (ie. 0)
+	u8	Content (0 => Server list)
+	u8	Version (ie. 1)
+	u8	Source (eg. DNS_RECORD_FROM_DNS_SRV)
+	u8	Status (eg. DNS_LOOKUP_GOOD)
+	u8	Number of servers
+	foreach-server {
+		u16	Name length (LE)
+		u16	Priority (as per SRV record) (LE)
+		u16	Weight (as per SRV record) (LE)
+		u16	Port (LE)
+		u8	Source (eg. DNS_RECORD_FROM_NSS)
+		u8	Status (eg. DNS_LOOKUP_GOT_NOT_FOUND)
+		u8	Protocol (eg. DNS_SERVER_PROTOCOL_UDP)
+		u8	Number of addresses
+		char[]	Name (not NUL-terminated)
+		foreach-address {
+			u8		Family (AF_INET{,6})
+			union {
+				u8[4]	ipv4_addr
+				u8[16]	ipv6_addr
+			}
+		}
+	}
 
-This check is repeated many times, it is probably worth defining
-something like cpu_x86_cet_enabled() or something like that.
-Besides, early introduction of the macro would allow avoiding all these
-changes over the code in IBT patches, only macro definition has
-to be changed that way.
+This can then be used to fetch a whole cell's VL-server configuration for
+AFS, for example.
 
-> @@ -73,6 +103,12 @@ int prctl_cet(int option, unsigned long arg2)
->  	case ARCH_CET_ALLOC_SHSTK:
->  		return handle_alloc_shstk(arg2);
->  
-> +	/*
-> +	 * Allocate legacy bitmap and return address & size to user.
-> +	 */
-> +	case ARCH_CET_LEGACY_BITMAP:
-> +		return handle_bitmap(arg2);
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index ac0ea9c7e89f..aea15a9b6a3e 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -797,6 +797,7 @@ long do_arch_prctl_common(struct task_struct *task, int option,
->  	case ARCH_CET_DISABLE:
->  	case ARCH_CET_LOCK:
->  	case ARCH_CET_ALLOC_SHSTK:
-> +	case ARCH_CET_LEGACY_BITMAP:
->  		return prctl_cet(option, cpuid_enabled);
->  	}
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-I wonder, whether this duplication is really needed for CET-related
-arch_prctl commands, why not just call them from do_arch_prctl_common?
+ include/linux/dns_resolver.h      |    4 -
+ include/uapi/linux/dns_resolver.h |  116 +++++++++++++++++++++++++++++++++++++
+ net/dns_resolver/dns_key.c        |   67 ++++++++++++++++++++-
+ net/dns_resolver/dns_query.c      |    5 --
+ 4 files changed, 182 insertions(+), 10 deletions(-)
+ create mode 100644 include/uapi/linux/dns_resolver.h
+
+diff --git a/include/linux/dns_resolver.h b/include/linux/dns_resolver.h
+index 6ac3cad9aef1..34a744a1bafc 100644
+--- a/include/linux/dns_resolver.h
++++ b/include/linux/dns_resolver.h
+@@ -24,11 +24,9 @@
+ #ifndef _LINUX_DNS_RESOLVER_H
+ #define _LINUX_DNS_RESOLVER_H
+ 
+-#ifdef __KERNEL__
++#include <uapi/linux/dns_resolver.h>
+ 
+ extern int dns_query(const char *type, const char *name, size_t namelen,
+ 		     const char *options, char **_result, time64_t *_expiry);
+ 
+-#endif /* KERNEL */
+-
+ #endif /* _LINUX_DNS_RESOLVER_H */
+diff --git a/include/uapi/linux/dns_resolver.h b/include/uapi/linux/dns_resolver.h
+new file mode 100644
+index 000000000000..129745f9c794
+--- /dev/null
++++ b/include/uapi/linux/dns_resolver.h
+@@ -0,0 +1,116 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/* DNS resolver interface definitions.
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#ifndef _UAPI_LINUX_DNS_RESOLVER_H
++#define _UAPI_LINUX_DNS_RESOLVER_H
++
++#include <linux/types.h>
++
++/*
++ * Type of payload.
++ */
++enum dns_payload_content_type {
++	DNS_PAYLOAD_IS_SERVER_LIST	= 0, /* List of servers, requested by srv=1 */
++};
++
++/*
++ * Type of address that might be found in an address record.
++ */
++enum dns_payload_address_type {
++	DNS_ADDRESS_IS_IPV4		= 0, /* 4-byte AF_INET address */
++	DNS_ADDRESS_IS_IPV6		= 1, /* 16-byte AF_INET6 address */
++};
++
++/*
++ * Type of protocol used to access a server.
++ */
++enum dns_payload_protocol_type {
++	DNS_SERVER_PROTOCOL_UNSPECIFIED	= 0,
++	DNS_SERVER_PROTOCOL_UDP		= 1, /* Use UDP to talk to the server */
++	DNS_SERVER_PROTOCOL_TCP		= 2, /* Use TCP to talk to the server */
++};
++
++/*
++ * Source of record included in DNS resolver payload.
++ */
++enum dns_record_source {
++	DNS_RECORD_UNAVAILABLE		= 0, /* No source available (empty record) */
++	DNS_RECORD_FROM_CONFIG		= 1, /* From local configuration data */
++	DNS_RECORD_FROM_DNS_A		= 2, /* From DNS A or AAAA record */
++	DNS_RECORD_FROM_DNS_AFSDB	= 3, /* From DNS AFSDB record */
++	DNS_RECORD_FROM_DNS_SRV		= 4, /* From DNS SRV record */
++	DNS_RECORD_FROM_NSS		= 5, /* From NSS */
++	NR__dns_record_source
++};
++
++/*
++ * Status of record included in DNS resolver payload.
++ */
++enum dns_lookup_status {
++	DNS_LOOKUP_NOT_DONE		= 0, /* No lookup has been made */
++	DNS_LOOKUP_GOOD			= 1, /* Good records obtained */
++	DNS_LOOKUP_GOOD_WITH_BAD	= 2, /* Good records, some decoding errors */
++	DNS_LOOKUP_BAD			= 3, /* Couldn't decode results */
++	DNS_LOOKUP_GOT_NOT_FOUND	= 4, /* Got a "Not Found" result */
++	DNS_LOOKUP_GOT_LOCAL_FAILURE	= 5, /* Local failure during lookup */
++	DNS_LOOKUP_GOT_TEMP_FAILURE	= 6, /* Temporary failure during lookup */
++	DNS_LOOKUP_GOT_NS_FAILURE	= 7, /* Name server failure */
++	NR__dns_lookup_status
++};
++
++/*
++ * Header at the beginning of binary format payload.
++ */
++struct dns_payload_header {
++	__u8		zero;		/* Zero byte: marks this as not being text */
++	__u8		content;	/* enum dns_payload_content_type */
++	__u8		version;	/* Encoding version */
++} __packed;
++
++/*
++ * Header at the beginning of a V1 server list.  This is followed directly by
++ * the server records.  Each server records begins with a struct of type
++ * dns_server_list_v1_server.
++ */
++struct dns_server_list_v1_header {
++	struct dns_payload_header hdr;
++	__u8		source;		/* enum dns_record_source */
++	__u8		status;		/* enum dns_lookup_status */
++	__u8		nr_servers;	/* Number of server records following this */
++} __packed;
++
++/*
++ * Header at the beginning of each V1 server record.  This is followed by the
++ * characters of the name with no NUL-terminator, followed by the address
++ * records for that server.  Each address record begins with a struct of type
++ * struct dns_server_list_v1_address.
++ */
++struct dns_server_list_v1_server {
++	__u16		name_len;	/* Length of name (LE) */
++	__u16		priority;	/* Priority (as SRV record) (LE) */
++	__u16		weight;		/* Weight (as SRV record) (LE) */
++	__u16		port;		/* UDP/TCP port number (LE) */
++	__u8		source;		/* enum dns_record_source */
++	__u8		status;		/* enum dns_lookup_status */
++	__u8		protocol;	/* enum dns_payload_protocol_type */
++	__u8		nr_addrs;
++} __packed;
++
++/*
++ * Header at the beginning of each V1 address record.  This is followed by the
++ * bytes of the address, 4 for IPV4 and 16 for IPV6.
++ */
++struct dns_server_list_v1_address {
++	__u8		address_type;	/* enum dns_payload_address_type */
++} __packed;
++
++#endif /* _UAPI_LINUX_DNS_RESOLVER_H */
+diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
+index 7f4534828f6c..a65d553e730d 100644
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -29,6 +29,7 @@
+ #include <linux/keyctl.h>
+ #include <linux/err.h>
+ #include <linux/seq_file.h>
++#include <linux/dns_resolver.h>
+ #include <keys/dns_resolver-type.h>
+ #include <keys/user-type.h>
+ #include "internal.h"
+@@ -48,27 +49,86 @@ const struct cred *dns_resolver_cache;
+ /*
+  * Preparse instantiation data for a dns_resolver key.
+  *
+- * The data must be a NUL-terminated string, with the NUL char accounted in
+- * datalen.
++ * For normal hostname lookups, the data must be a NUL-terminated string, with
++ * the NUL char accounted in datalen.
+  *
+  * If the data contains a '#' characters, then we take the clause after each
+  * one to be an option of the form 'key=value'.  The actual data of interest is
+  * the string leading up to the first '#'.  For instance:
+  *
+  *        "ip1,ip2,...#foo=bar"
++ *
++ * For server list requests, the data must begin with a NUL char and be
++ * followed by a byte indicating the version of the data format.  Version 1
++ * looks something like (note this is packed):
++ *
++ *	u8      Non-string marker (ie. 0)
++ *	u8	Content (DNS_PAYLOAD_IS_*)
++ *	u8	Version (e.g. 1)
++ *	u8	Source of server list
++ *	u8	Lookup status of server list
++ *	u8	Number of servers
++ *	foreach-server {
++ *		__le16	Name length
++ *		__le16	Priority (as per SRV record, low first)
++ *		__le16	Weight (as per SRV record, higher first)
++ *		__le16	Port
++ *		u8	Source of address list
++ *		u8	Lookup status of address list
++ *		u8	Protocol (DNS_SERVER_PROTOCOL_*)
++ *		u8	Number of addresses
++ *		char[]	Name (not NUL-terminated)
++ *		foreach-address {
++ *			u8		Family (DNS_ADDRESS_IS_*)
++ *			union {
++ *				u8[4]	ipv4_addr
++ *				u8[16]	ipv6_addr
++ *			}
++ *		}
++ *	}
++ *
+  */
+ static int
+ dns_resolver_preparse(struct key_preparsed_payload *prep)
+ {
++	const struct dns_payload_header *bin;
+ 	struct user_key_payload *upayload;
+ 	unsigned long derrno;
+ 	int ret;
+ 	int datalen = prep->datalen, result_len = 0;
+ 	const char *data = prep->data, *end, *opt;
+ 
++	if (datalen <= 1 || !data)
++		return -EINVAL;
++
++	if (data[0] == 0) {
++		/* It may be a server list. */
++		if (datalen <= sizeof(*bin))
++			return -EINVAL;
++
++		bin = (const struct dns_payload_header *)data;
++		kenter("[%u,%u],%u", bin->content, bin->version, datalen);
++		if (bin->content != DNS_PAYLOAD_IS_SERVER_LIST) {
++			pr_warn_ratelimited(
++				"dns_resolver: Unsupported content type (%u)\n",
++				bin->content);
++			return -EINVAL;
++		}
++
++		if (bin->version != 1) {
++			pr_warn_ratelimited(
++				"dns_resolver: Unsupported server list version (%u)\n",
++				bin->version);
++			return -EINVAL;
++		}
++
++		result_len = datalen;
++		goto store_result;
++	}
++
+ 	kenter("'%*.*s',%u", datalen, datalen, data, datalen);
+ 
+-	if (datalen <= 1 || !data || data[datalen - 1] != '\0')
++	if (!data || data[datalen - 1] != '\0')
+ 		return -EINVAL;
+ 	datalen--;
+ 
+@@ -144,6 +204,7 @@ dns_resolver_preparse(struct key_preparsed_payload *prep)
+ 		return 0;
+ 	}
+ 
++store_result:
+ 	kdebug("store result");
+ 	prep->quotalen = result_len;
+ 
+diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
+index 49da67034f29..76338c38738a 100644
+--- a/net/dns_resolver/dns_query.c
++++ b/net/dns_resolver/dns_query.c
+@@ -148,12 +148,9 @@ int dns_query(const char *type, const char *name, size_t namelen,
+ 
+ 	if (_result) {
+ 		ret = -ENOMEM;
+-		*_result = kmalloc(len + 1, GFP_KERNEL);
++		*_result = kmemdup_nul(upayload->data, len, GFP_KERNEL);
+ 		if (!*_result)
+ 			goto put;
+-
+-		memcpy(*_result, upayload->data, len);
+-		(*_result)[len] = '\0';
+ 	}
+ 
+ 	if (_expiry)
+
