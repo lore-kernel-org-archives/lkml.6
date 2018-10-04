@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1A4C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9742C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743C12087D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743C12087D
+	by mail.kernel.org (Postfix) with ESMTP id 986EC2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986EC2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbeJEARZ (ORCPT
+        id S1728152AbeJEAR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:17:25 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:59040 "EHLO
+        Thu, 4 Oct 2018 20:17:29 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40411 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727650AbeJEARY (ORCPT
+        by vger.kernel.org with ESMTP id S1727523AbeJEAR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:17:24 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07438133|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CzPraGj_1538673755;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzPraGj_1538673755)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Fri, 05 Oct 2018 01:22:35 +0800
+        Thu, 4 Oct 2018 20:17:27 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03276;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CzPhl00_1538673759;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzPhl00_1538673759)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Fri, 05 Oct 2018 01:22:39 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com,
@@ -36,9 +36,9 @@ To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V10 1/8] irqchip: add C-SKY SMP interrupt controller
-Date:   Fri,  5 Oct 2018 01:22:21 +0800
-Message-Id: <e06484474231375248e3e7a6ab47cf8ff8893129.1538672812.git.ren_guo@c-sky.com>
+Subject: [PATCH V10 3/8] irqchip: add C-SKY APB bus interrupt controller
+Date:   Fri,  5 Oct 2018 01:22:23 +0800
+Message-Id: <4e249a83fe479e49589cbdf9040641ef788c1d43.1538672812.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1538672812.git.ren_guo@c-sky.com>
 References: <cover.1538672812.git.ren_guo@c-sky.com>
@@ -49,63 +49,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - Irq-csky-mpintc is C-SKY smp system interrupt controller and it
-   could support 16 soft irqs, 16 private irqs, and 992 max common
-   irqs.
+ - irq-csky-apb-intc is a simple SOC interrupt controller which is
+   used in a lot of C-SKY CPU SOC products.
 
 Changelog:
- - pass checkpatch.pl
- - Move IPI_IRQ into the driver
- - Remove irq_set_default_host() and use set_ipi_irq_mapping()
- - Change name with upstream feed-back
- - Change irq map, reserve soft_irq & private_irq space
- - Add License and Copyright
- - Support set_affinity for irq balance in SMP
+ - pass checkpatch.pl.
+ - use "bool ret" instead of "int ret"
+ - add support-pulse-signal in irq-csky-apb-intc.c
+ - change name with upstream feed-back
+ - add INTC_IFR to clear irq-pending
+ - remove CSKY_VECIRQ_LEGENCY
+ - change to generic irq chip framework
+ - add License and Copyright
+ - use irq_domain_add_linear instead of leagcy
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- drivers/irqchip/Kconfig           |   9 ++
- drivers/irqchip/Makefile          |   1 +
- drivers/irqchip/irq-csky-mpintc.c | 197 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 207 insertions(+)
- create mode 100644 drivers/irqchip/irq-csky-mpintc.c
+ drivers/irqchip/Kconfig             |   8 ++
+ drivers/irqchip/Makefile            |   1 +
+ drivers/irqchip/irq-csky-apb-intc.c | 274 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 283 insertions(+)
+ create mode 100644 drivers/irqchip/irq-csky-apb-intc.c
 
 diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 383e7b7..8103f6f 100644
+index 8103f6f..41cdca0 100644
 --- a/drivers/irqchip/Kconfig
 +++ b/drivers/irqchip/Kconfig
-@@ -371,6 +371,15 @@ config QCOM_PDC
- 	  Power Domain Controller driver to manage and configure wakeup
- 	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
+@@ -380,6 +380,14 @@ config CSKY_MPINTC
+ 	  In fact it's not mmio map in hw and it use ld/st to visit the
+ 	  controller's register inside CPU.
  
-+config CSKY_MPINTC
-+	bool "C-SKY Multi Processor Interrupt Controller"
++config CSKY_APB_INTC
++	bool "C-SKY APB Interrupt Controller"
 +	depends on CSKY
 +	help
-+	  Say yes here to enable C-SKY SMP interrupt controller driver used
-+	  for C-SKY SMP system.
-+	  In fact it's not mmio map in hw and it use ld/st to visit the
-+	  controller's register inside CPU.
++	  Say yes here to enable C-SKY APB interrupt controller driver used
++	  by C-SKY single core SOC system. It use mmio map apb-bus to visit
++	  the controller's register.
 +
  endmenu
  
  config SIFIVE_PLIC
 diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index fbd1ec8..6b739ea 100644
+index 6b739ea..72eaf53 100644
 --- a/drivers/irqchip/Makefile
 +++ b/drivers/irqchip/Makefile
-@@ -87,4 +87,5 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
- obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
+@@ -88,4 +88,5 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
  obj-$(CONFIG_NDS32)			+= irq-ativic32.o
  obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
-+obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
+ obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
++obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
  obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-diff --git a/drivers/irqchip/irq-csky-mpintc.c b/drivers/irqchip/irq-csky-mpintc.c
+diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
 new file mode 100644
-index 0000000..a008f8e
+index 0000000..2543bab
 --- /dev/null
-+++ b/drivers/irqchip/irq-csky-mpintc.c
-@@ -0,0 +1,197 @@
++++ b/drivers/irqchip/irq-csky-apb-intc.c
+@@ -0,0 +1,274 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
 +
@@ -118,191 +118,268 @@ index 0000000..a008f8e
 +#include <linux/irqchip.h>
 +#include <linux/irq.h>
 +#include <linux/interrupt.h>
-+#include <linux/smp.h>
 +#include <linux/io.h>
 +#include <asm/irq.h>
-+#include <asm/traps.h>
-+#include <asm/reg_ops.h>
 +
++#define INTC_IRQS		64
++
++#define CK_INTC_ICR		0x00
++#define CK_INTC_PEN31_00	0x14
++#define CK_INTC_PEN63_32	0x2c
++#define CK_INTC_NEN31_00	0x10
++#define CK_INTC_NEN63_32	0x28
++#define CK_INTC_SOURCE		0x40
++#define CK_INTC_DUAL_BASE	0x100
++
++#define GX_INTC_PEN31_00	0x00
++#define GX_INTC_PEN63_32	0x04
++#define GX_INTC_NEN31_00	0x40
++#define GX_INTC_NEN63_32	0x44
++#define GX_INTC_NMASK31_00	0x50
++#define GX_INTC_NMASK63_32	0x54
++#define GX_INTC_SOURCE		0x60
++
++static void __iomem *reg_base;
 +static struct irq_domain *root_domain;
-+static void __iomem *INTCG_base;
-+static void __iomem *INTCL_base;
 +
-+#define IPI_IRQ		15
-+#define INTC_IRQS	256
-+#define COMM_IRQ_BASE	32
++static int nr_irq = INTC_IRQS;
 +
-+#define INTCG_SIZE	0x8000
-+#define INTCL_SIZE	0x1000
-+
-+#define INTCG_ICTLR	0x0
-+#define INTCG_CICFGR	0x100
-+#define INTCG_CIDSTR	0x1000
-+
-+#define INTCL_PICTLR	0x0
-+#define INTCL_SIGR	0x60
-+#define INTCL_HPPIR	0x68
-+#define INTCL_RDYIR	0x6c
-+#define INTCL_SENR	0xa0
-+#define INTCL_CENR	0xa4
-+#define INTCL_CACR	0xb4
-+
-+static DEFINE_PER_CPU(void __iomem *, intcl_reg);
-+
-+static void csky_mpintc_handler(struct pt_regs *regs)
++/*
++ * When controller support pulse signal, the PEN_reg will hold on signal
++ * without software trigger.
++ *
++ * So, to support pulse signal we need to clear IFR_reg and the address of
++ * IFR_offset is NEN_offset - 8.
++ */
++static void irq_ck_mask_set_bit(struct irq_data *d)
 +{
-+	void __iomem *reg_base = this_cpu_read(intcl_reg);
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct irq_chip_type *ct = irq_data_get_chip_type(d);
++	unsigned long ifr = ct->regs.mask - 8;
++	u32 mask = d->mask;
 +
-+	do {
-+		handle_domain_irq(root_domain,
-+				  readl_relaxed(reg_base + INTCL_RDYIR),
-+				  regs);
-+	} while (readl_relaxed(reg_base + INTCL_HPPIR) & BIT(31));
++	irq_gc_lock(gc);
++	*ct->mask_cache |= mask;
++	irq_reg_writel(gc, *ct->mask_cache, ct->regs.mask);
++	irq_reg_writel(gc, irq_reg_readl(gc, ifr) & ~mask, ifr);
++	irq_gc_unlock(gc);
 +}
 +
-+static void csky_mpintc_enable(struct irq_data *d)
++static void __init ck_set_gc(struct device_node *node, void __iomem *reg_base,
++			     u32 mask_reg, u32 irq_base)
 +{
-+	void __iomem *reg_base = this_cpu_read(intcl_reg);
++	struct irq_chip_generic *gc;
 +
-+	writel_relaxed(d->hwirq, reg_base + INTCL_SENR);
++	gc = irq_get_domain_generic_chip(root_domain, irq_base);
++	gc->reg_base = reg_base;
++	gc->chip_types[0].regs.mask = mask_reg;
++	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
++	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
++
++	if (of_find_property(node, "csky,support-pulse-signal", NULL))
++		gc->chip_types[0].chip.irq_unmask = irq_ck_mask_set_bit;
 +}
 +
-+static void csky_mpintc_disable(struct irq_data *d)
++static inline u32 build_channel_val(u32 idx, u32 magic)
 +{
-+	void __iomem *reg_base = this_cpu_read(intcl_reg);
-+
-+	writel_relaxed(d->hwirq, reg_base + INTCL_CENR);
-+}
-+
-+static void csky_mpintc_eoi(struct irq_data *d)
-+{
-+	void __iomem *reg_base = this_cpu_read(intcl_reg);
-+
-+	writel_relaxed(d->hwirq, reg_base + INTCL_CACR);
-+}
-+
-+#ifdef CONFIG_SMP
-+static int csky_irq_set_affinity(struct irq_data *d,
-+				 const struct cpumask *mask_val,
-+				 bool force)
-+{
-+	unsigned int cpu;
-+	unsigned int offset = 4 * (d->hwirq - COMM_IRQ_BASE);
-+
-+	if (!force)
-+		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-+	else
-+		cpu = cpumask_first(mask_val);
-+
-+	if (cpu >= nr_cpu_ids)
-+		return -EINVAL;
-+
-+	/* Enable interrupt destination */
-+	cpu |= BIT(31);
-+
-+	writel_relaxed(cpu, INTCG_base + INTCG_CIDSTR + offset);
-+
-+	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+
-+	return IRQ_SET_MASK_OK_DONE;
-+}
-+#endif
-+
-+static struct irq_chip csky_irq_chip = {
-+	.name           = "C-SKY SMP Intc",
-+	.irq_eoi	= csky_mpintc_eoi,
-+	.irq_enable	= csky_mpintc_enable,
-+	.irq_disable	= csky_mpintc_disable,
-+#ifdef CONFIG_SMP
-+	.irq_set_affinity = csky_irq_set_affinity,
-+#endif
-+};
-+
-+static int csky_irqdomain_map(struct irq_domain *d, unsigned int irq,
-+			      irq_hw_number_t hwirq)
-+{
-+	if (hwirq < COMM_IRQ_BASE) {
-+		irq_set_percpu_devid(irq);
-+		irq_set_chip_and_handler(irq, &csky_irq_chip,
-+					 handle_percpu_irq);
-+	} else {
-+		irq_set_chip_and_handler(irq, &csky_irq_chip,
-+					 handle_fasteoi_irq);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops csky_irqdomain_ops = {
-+	.map	= csky_irqdomain_map,
-+	.xlate	= irq_domain_xlate_onecell,
-+};
-+
-+#ifdef CONFIG_SMP
-+static void csky_mpintc_send_ipi(const unsigned long *mask)
-+{
-+	void __iomem *reg_base = this_cpu_read(intcl_reg);
++	u32 res;
 +
 +	/*
-+	 * INTCL_SIGR[3:0] INTID
-+	 * INTCL_SIGR[8:15] CPUMASK
++	 * Set the same index for each channel
 +	 */
-+	writel_relaxed((*mask) << 8 | IPI_IRQ, reg_base + INTCL_SIGR);
++	res = idx | (idx << 8) | (idx << 16) | (idx << 24);
++
++	/*
++	 * Set the channel magic number in descending order.
++	 * The magic is 0x00010203 for ck-intc
++	 * The magic is 0x03020100 for gx6605s-intc
++	 */
++	return res | magic;
 +}
 +
-+static int csky_mpintc_ipi_irq_mapping(void)
++static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
 +{
-+	return irq_create_mapping(root_domain, IPI_IRQ);
-+}
-+#endif
++	u32 i;
 +
-+/* C-SKY multi processor interrupt controller */
++	/* Setup 64 channel slots */
++	for (i = 0; i < INTC_IRQS; i += 4)
++		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
++}
++
 +static int __init
-+csky_mpintc_init(struct device_node *node, struct device_node *parent)
++ck_intc_init_comm(struct device_node *node, struct device_node *parent)
 +{
-+	unsigned int cpu, nr_irq;
 +	int ret;
 +
-+	if (parent)
-+		return 0;
-+
-+	ret = of_property_read_u32(node, "csky,num-irqs", &nr_irq);
-+	if (ret < 0)
-+		nr_irq = INTC_IRQS;
-+
-+	if (INTCG_base == NULL) {
-+		INTCG_base = ioremap(mfcr("cr<31, 14>"),
-+				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
-+		if (INTCG_base == NULL)
-+			return -EIO;
-+
-+		INTCL_base = INTCG_base + INTCG_SIZE;
-+
-+		writel_relaxed(BIT(0), INTCG_base + INTCG_ICTLR);
++	if (parent) {
++		pr_err("C-SKY Intc not a root irq controller\n");
++		return -EINVAL;
 +	}
 +
-+	root_domain = irq_domain_add_linear(node, nr_irq, &csky_irqdomain_ops,
-+					    NULL);
-+	if (!root_domain)
-+		return -ENXIO;
-+
-+	/* for every cpu */
-+	for_each_present_cpu(cpu) {
-+		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
-+		writel_relaxed(BIT(0), per_cpu(intcl_reg, cpu) + INTCL_PICTLR);
++	reg_base = of_iomap(node, 0);
++	if (!reg_base) {
++		pr_err("C-SKY Intc unable to map: %p.\n", node);
++		return -EINVAL;
 +	}
 +
-+	set_handle_irq(&csky_mpintc_handler);
++	root_domain = irq_domain_add_linear(node, nr_irq,
++					    &irq_generic_chip_ops, NULL);
++	if (!root_domain) {
++		pr_err("C-SKY Intc irq_domain_add failed.\n");
++		return -ENOMEM;
++	}
 +
-+#ifdef CONFIG_SMP
-+	set_send_ipi(&csky_mpintc_send_ipi);
-+
-+	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
-+#endif
++	ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
++			"csky_intc", handle_level_irq,
++			IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0);
++	if (ret) {
++		pr_err("C-SKY Intc irq_alloc_gc failed.\n");
++		return -ENOMEM;
++	}
 +
 +	return 0;
 +}
-+IRQCHIP_DECLARE(csky_mpintc, "csky,mpintc", csky_mpintc_init);
++
++static inline bool handle_irq_perbit(struct pt_regs *regs, u32 hwirq,
++				     u32 irq_base)
++{
++	u32 irq;
++
++	if (hwirq == 0)
++		return 0;
++
++	while (hwirq) {
++		irq = __ffs(hwirq);
++		hwirq &= ~BIT(irq);
++		handle_domain_irq(root_domain, irq_base + irq, regs);
++	}
++
++	return 1;
++}
++
++/* gx6605s 64 irqs interrupt controller */
++static void gx_irq_handler(struct pt_regs *regs)
++{
++	bool ret;
++
++	do {
++		ret  = handle_irq_perbit(regs,
++				readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
++		ret |= handle_irq_perbit(regs,
++				readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
++	} while (ret);
++}
++
++static int __init
++gx_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	ret = ck_intc_init_comm(node, parent);
++	if (ret)
++		return ret;
++
++	/*
++	 * Initial enable reg to disable all interrupts
++	 */
++	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
++	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
++
++	/*
++	 * Initial mask reg with all unmasked, because we only use enalbe reg
++	 */
++	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
++	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
++
++	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
++
++	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0);
++	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 32);
++
++	set_handle_irq(gx_irq_handler);
++
++	return 0;
++}
++IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
++
++/*
++ * C-SKY simple 64 irqs interrupt controller, dual-together could support 128
++ * irqs.
++ */
++static void ck_irq_handler(struct pt_regs *regs)
++{
++	bool ret;
++	void __iomem *reg_pen_lo = reg_base + CK_INTC_PEN31_00;
++	void __iomem *reg_pen_hi = reg_base + CK_INTC_PEN63_32;
++
++	do {
++		/* handle 0 - 31 irqs */
++		ret  = handle_irq_perbit(regs, readl_relaxed(reg_pen_lo), 0);
++		ret |= handle_irq_perbit(regs, readl_relaxed(reg_pen_hi), 32);
++
++		if (nr_irq == INTC_IRQS)
++			continue;
++
++		/* handle 64 - 127 irqs */
++		ret |= handle_irq_perbit(regs,
++			readl_relaxed(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
++		ret |= handle_irq_perbit(regs,
++			readl_relaxed(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
++	} while (ret);
++}
++
++static int __init
++ck_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	ret = ck_intc_init_comm(node, parent);
++	if (ret)
++		return ret;
++
++	/* Initial enable reg to disable all interrupts */
++	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
++	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
++
++	/* Enable irq intc */
++	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
++
++	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
++	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
++
++	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
++
++	set_handle_irq(ck_irq_handler);
++
++	return 0;
++}
++IRQCHIP_DECLARE(ck_intc, "csky,apb-intc", ck_intc_init);
++
++static int __init
++ck_dual_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	/* dual-apb-intc up to 128 irq sources*/
++	nr_irq = INTC_IRQS * 2;
++
++	ret = ck_intc_init(node, parent);
++	if (ret)
++		return ret;
++
++	/* Initial enable reg to disable all interrupts */
++	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
++	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
++
++	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
++	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
++
++	setup_irq_channel(0x00010203,
++			  reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
++
++	return 0;
++}
++IRQCHIP_DECLARE(ck_dual_intc, "csky,dual-apb-intc", ck_dual_intc_init);
 -- 
 2.7.4
 
