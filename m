@@ -2,89 +2,133 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B197C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C4BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BAD12084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:53:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="os4CQv+O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BAD12084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id B30062084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30062084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbeJEEsb (ORCPT
+        id S1728040AbeJEEvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:48:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:36305 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbeJEEsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:48:31 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42R68453Brz9s9m;
-        Fri,  5 Oct 2018 07:53:08 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538689988;
-        bh=Z1weWdNXpq5CAaDyafp3XqLkk3WYe5+xmsj6rfa96Ys=;
-        h=Date:From:To:Cc:Subject:From;
-        b=os4CQv+OHQKpLgQmwcggvLtd8AjvV+vJCB/yVFM3TeQIqSWNgtm5h1RvYuIQ+MINe
-         eEEtceX1IFpWyXNj/c2PKnscrLbLNoGv17PPpVOkZece54+m2dnA2Y3wSHIpS0wD+Y
-         7yXEpwFVFurMXCKswrgLfI5+OdS99zVt8waex0uQMxUpXC0XX7NGGy4nsoKsA02/jt
-         bx+WQ02AN2BdpZGp2S7xYCqqOIQ8JWpRnKPi54XY6drQK7VDWBRgd39ZxRtubU3LTO
-         b9FyB6AU+asYNX3TYVJw78MPTTQeyCrUHsY4Fzs/MQAG+2YpJHjqJbQ1W87/LVcMl5
-         fVwYhIXM239jw==
-Date:   Fri, 5 Oct 2018 07:52:56 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the drm-msm tree
-Message-ID: <20181005075256.50f06745@canb.auug.org.au>
+        Fri, 5 Oct 2018 00:51:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42262 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726753AbeJEEvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 00:51:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 493BCAE69;
+        Thu,  4 Oct 2018 21:55:48 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jan Harkes <jaharkes@cs.cmu.edu>,
+        David Howells <dhowells@redhat.com>
+Date:   Fri, 05 Oct 2018 07:55:39 +1000
+Cc:     dhowells@redhat.com, "J. Bruce Fields" <bfields@fieldses.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-afs@lists.infradead.org, coda@cs.cmu.edu,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 1/3] VFS: introduce MAY_ACT_AS_OWNER
+In-Reply-To: <3D5BB0E9-E43C-43D1-86E9-96E409A17D54@cs.cmu.edu>
+References: <153861496327.30373.10501882399296347125.stgit@noble> <153861471803.30373.6184444014227748848.stgit@noble> <28763.1538662213@warthog.procyon.org.uk> <3D5BB0E9-E43C-43D1-86E9-96E409A17D54@cs.cmu.edu>
+Message-ID: <877eixtm04.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4iJMsux.lLYDaVgkiApjxum"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4iJMsux.lLYDaVgkiApjxum
-Content-Type: text/plain; charset=US-ASCII
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Thu, Oct 04 2018, Jan Harkes wrote:
 
-Commit
+> Same for Coda.
+>
+> uid/gid/mode don't mean anything, access is based on the directory ACL an=
+d the authentication token that is held by the userspace cache manager and =
+ultimately decided by the servers.
+>
+> Unless someone broke this recently and made permission checks uid based I=
+ would expect no change. If this is broken by a recent commit I expect some=
+thing similar to what NFS is trying to do by allowing the actual check to b=
+e passed down.
 
-  c693ecbd6357 ("WIP: drm/msm: update generated headers")
+As with afs, the only permission check I can find that is uid based and
+which actually affects coda is the check for use fcntl(F_SETFL) to set
+O_NOATIME. I suspect that is irrelevant for coda.
+I'll resubmit with the same code for both NFS and code - and probably
+AFS.
 
-is missing a Signed-off-by from its author and committer.
+Thanks,
+NeilBrown
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/4iJMsux.lLYDaVgkiApjxum
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>
+> Jan
+>
+> On October 4, 2018 10:10:13 AM EDT, David Howells <dhowells@redhat.com> w=
+rote:
+>>NeilBrown <neilb@suse.com> wrote:
+>>
+>>> diff --git a/fs/afs/security.c b/fs/afs/security.c
+>>> index 81dfedb7879f..ac2e39de8bff 100644
+>>> --- a/fs/afs/security.c
+>>> +++ b/fs/afs/security.c
+>>> @@ -349,6 +349,16 @@ int afs_permission(struct inode *inode, int
+>>mask)
+>>>  	if (mask & MAY_NOT_BLOCK)
+>>>  		return -ECHILD;
+>>>=20=20
+>>> +	/* Short-circuit for owner */
+>>> +	if (mask & MAY_ACT_AS_OWNER) {
+>>> +		if (inode_owner_or_capable(inode))
+>>
+>>You don't know that inode->i_uid in meaningful.  You may have noticed
+>>that
+>>afs_permission() ignores i_uid and i_gid entirely.  It queries the
+>>server (if
+>>this information is not otherwise cached) to ask what permits the user
+>>is
+>>granted - where the user identity is defined by the key returned from
+>>afs_request_key()[*].
+>>
+>>So, NAK for the afs piece.
+>>
+>>David
+>>
+>>[*] If there's no appropriate key, anonymous permits will be used.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2i7gACgkQAVBC80lX
-0GxKuAf9ESWeeA/byThJO2USLxLY+mS0i8fCsghROBtIyIYTUI+SF4XZeq/G3Xbi
-E44Sboo41SYfy3Bz9toXiWL0uraoI7zs4kW6n1HCgvL6UKgDIw5PUiRT2HenH8x6
-dpc9CRT/Ev3TF4Xn+2STpBWU5HR8bJ48Sl0kpSiz8pVTRLD0a2q02Za3zopfQ2WZ
-cEAUVXwFZxdMUvrcGhMuUcBq1FoiyZh1lUdtaldaM1qtWVRX3HK/18zaboteCnxJ
-yL3C7Eh7mMij4wURms6zBDyv8MbXPbyVeQQHTBbG4pHofdFv0X8cpgCk+dO6+4sn
-aXlV49CADMNNSKihUs8P/vaALlT76Q==
-=RfwS
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlu2jFsACgkQOeye3VZi
+gblLuRAAnR31Tb6JV0RE8ovKIvqI5QnUr0207Po+mbADvzWFLYoaZ8WolExNgVea
+WSyDc0NcPWvtlnwcMWPpP++nznLSmYXk7bkFAgd+GWSth7GRIJHLmT8jGVmp7clg
+Pufhm01ig/VRGpR/rrx+Wb+oDn5hlL1hs7kRQC1X8H378FuXBaeziCJzkhRCnruo
+iWNjU/PKX0pBpCLcDQKZVyDoGec4fzw9R6T+2EPOrK1KRX+R0zrSeyBNLyytUhAa
+rNiw42IRTvc7YMCekW0MInKWNaC5qhklWN61kQVrNkgBzJbob6tuE0kXO4HuisXQ
+SijV6gwalEF5d08Zx+pxu5qKLMymK7E5CdAwgtf2Og3Bo6BZp+/MMtciuPmsNFKR
+ec0MPohasRI1VFIvG3tV6axWif+axJ+wcJbGI3eJkNxDFussvStvXzZ9oc20mB9T
+W212vQqiE5IdpHDmkSG1Dj8hQCFwNWtoA0waF/iVD1nI9XUi1LZoyrlN8+T/MSB0
+C727iVI7tn5Z2YUOcr2yi+9guW+Gj4aNFEnNujQ7msVy6V2q+kQUwKcx4j3X4dB9
+Tsaf4xjRs+WQb+q2DBqzp5ha4i6dDe8tLMKxdE1w1OSPTUfx7JEtBzqDePeVzfN6
+fOqi6zUmTIU14ju/KGxyN3kDA17HSkTNCJ+Ufn3hUBjyzTb0i94=
+=6336
 -----END PGP SIGNATURE-----
-
---Sig_/4iJMsux.lLYDaVgkiApjxum--
+--=-=-=--
