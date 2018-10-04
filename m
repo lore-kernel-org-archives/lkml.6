@@ -2,116 +2,129 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5C1C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8540CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1F0A213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F0A213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4CD1321473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:33:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=secretlab-ca.20150623.gappssmtp.com header.i=@secretlab-ca.20150623.gappssmtp.com header.b="RMlBgxlU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CD1321473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secretlab.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeJDQZR (ORCPT
+        id S1727765AbeJDQZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:25:17 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38259 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeJDQZR (ORCPT
+        Thu, 4 Oct 2018 12:25:33 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39229 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727150AbeJDQZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:25:17 -0400
-Received: by mail-ot1-f68.google.com with SMTP id h15-v6so8493007otj.5;
-        Thu, 04 Oct 2018 02:32:53 -0700 (PDT)
+        Thu, 4 Oct 2018 12:25:32 -0400
+Received: by mail-qt1-f194.google.com with SMTP id e22-v6so2048138qto.6
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 02:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=secretlab-ca.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sCKH4RQnTBpbeTBBN1euQfMgvs4V7eNXnGtZahTXz9o=;
+        b=RMlBgxlURbreXIvdBKCc8WEpGZTsp5EPcsqG5rqIft2HhSRlBjEA7MCj+q9wmhcyTK
+         UjVEWp9nnMwzmSaZkYgV626vgbEWhlqC05dGIhNWlhs/Gz1arFsjNWQNO51ASTEVeKhg
+         V2x2aXqVTJqcb4somx66vMEdK67w4LvQq7hAZvtY2t17z0eribA5YCtqcuVYiIQHCcwY
+         VXFYgR3lsSOYfGUjhb6r2/IFkhBuiNAa4UuAHg7nQgBxrs5PIGUziFeXSKEbyg1cTZZ1
+         yvEDWjLigph+Vqz+rkz/O7D2yUtJexolqzVy5cPuyeM8rXH6cLhEM5MXGwqx0WOKnBam
+         aFAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vttIPmW6bRPFnjF4MnucHltErxDXz5XftYR6jv18fpg=;
-        b=pwkrDwQ7YXVuETR68f1ElCRn3qqkTF6Ry1n7EJNCb0uEQjEPj+u/PcNgfRIQ8v3/bS
-         0GKnmWbkoTUFeKHZJvqJacqyT085QJgu/b8EJbyiF1IUSHdZq7A0dkojC/Z/Y36nGT12
-         MnXcBpiLnsLuJ8vbn4LMCsqX1vszRmBkoIrUj29BBU13rT63Xnk4qbFr/NewW/yX/A8T
-         qvTaTVcfPH4B7J7cEsLx2v30IYTKrXf9tNmT86FI0psmVH+hsxS9vGB9mtYeI5MDu+7v
-         fLK69+QsCf2yVzBO5J5/R2Ev7ZN8WczIAi1b71/1BzVPjzX1dyQ9zRX4FO9W2J8D32O1
-         9Sqw==
-X-Gm-Message-State: ABuFfog9GyYG0aN4xPWgfaGwE37Gm0fGSIJnEUlLTrzOXFmbsYAQx803
-        klF7KQ9kpig9BoG+mcYjmawiXlDVUkFfe7HHpVc=
-X-Google-Smtp-Source: ACcGV61HvPLPCRxXN2OTA4toFy1xmgIC+vRm5yDXpz5nKAdubGHi4mU2aIUtnD0fay/i3eWx67l7Ir5SPS3FURER5JU=
-X-Received: by 2002:a9d:34f:: with SMTP id 73mr3353641otv.343.1538645572909;
- Thu, 04 Oct 2018 02:32:52 -0700 (PDT)
+        bh=sCKH4RQnTBpbeTBBN1euQfMgvs4V7eNXnGtZahTXz9o=;
+        b=pYwujR9n/zgpDCAqIqnCkL8nEUljGH8CAYVdFs3DkuYvov+feNsKVtJi5daFAdTkGn
+         uGgxQIf3UCFhI2d7eGc0Vrn24tHb6HjblHeFrIBrSkP7/M7SvI/9qgCYP6hk7yslYpX8
+         RyUAacdsP96yNpPyGPAISo9gHZfDVj36Y4l20JbZyKKaEDzPEUHP1+3d9f57aobw5vvl
+         dsyoQ8wV2nOuKF1f2an9IkPaMjU2F256QxNGyOx2HW6oP2gYenBTZxUrV4HCgXq/CRmV
+         mnxm9+jCw7nxzJoOF+2/v+DGkw9Kb3xh2oTmJcFH3FKSpq8rBgMOcbQhA7y2q4jsPtpJ
+         h+Uw==
+X-Gm-Message-State: ABuFfoj0f1qOZRaofGrgCzLql5OPMFsPml7T86dAP0vDEpa7K6JmsVnQ
+        aCVivVIMo3e19s+wP4NmQzEBYYEgcpdAjFSrnu1qrQ==
+X-Google-Smtp-Source: ACcGV63u0comoE/bR2Z8HnA95ESTlTk6G33GXn5IO/aUkVWIic4fpDVQxIPIZkr0m2fg3z2S0/9iMzgocLHwGyFLv4g=
+X-Received: by 2002:ac8:1b87:: with SMTP id z7-v6mr4513208qtj.321.1538645588379;
+ Thu, 04 Oct 2018 02:33:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181003143824.13059-1-ulf.hansson@linaro.org>
- <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
- <CAPDyKFq0GLs2AMA+6b-Khf+4kGxzVCTvtehp-YmwV2h=_SP4=g@mail.gmail.com> <10136406.EY9A7BdqYq@aspire.rjw.lan>
-In-Reply-To: <10136406.EY9A7BdqYq@aspire.rjw.lan>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 4 Oct 2018 11:32:41 +0200
-Message-ID: <CAJZ5v0iv9OYoaLYHsmdp2xbDuENPgue_mBgFujdmesnBOegRKQ@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM) (a subset)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+References: <CADRPPNT0QiBkJtJnxjW95Yf-mirL5OzRrvqj8rC-O8fiz17VnA@mail.gmail.com>
+ <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com> <CADRPPNQam-QUfqDMvu42KS+50VaHfGPhCZj-1jRHQ-Od0fbxuQ@mail.gmail.com>
+In-Reply-To: <CADRPPNQam-QUfqDMvu42KS+50VaHfGPhCZj-1jRHQ-Od0fbxuQ@mail.gmail.com>
+From:   Grant Likely <grant.likely@secretlab.ca>
+Date:   Thu, 4 Oct 2018 10:32:56 +0100
+Message-ID: <CACxGe6u2FQ8r1Ya6-mWoGcs7g2OLMccu68uskZvDLS6ows-hXQ@mail.gmail.com>
+Subject: Re: drivers binding to device node with multiple compatible strings
+To:     leoyang.li@nxp.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linuxppc-dev@lists.ozlabs.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        Grant Likely <grant.likely@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 11:04 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+On Fri, Sep 28, 2018 at 10:01 PM Li Yang <leoyang.li@nxp.com> wrote:
 >
-> On Thursday, October 4, 2018 10:58:53 AM CEST Ulf Hansson wrote:
-> > On 4 October 2018 at 10:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > On Wed, Oct 3, 2018 at 4:39 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > >>
-> > >> I have digested the review comments so far, including a recent offlist chat
-> > >> with with Lorenzo Pieralisi around the debatable PSCI changes. More or less I
-> > >> have a plan for how to move forward.
-> > >>
-> > >> However, to avoid re-posting non-changed patches over and over again, I decided
-> > >> to withhold the more debatable part from this v9, hence this is not the complete
-> > >> series to make things play. In v9, I have just included the trivial changes,
-> > >> which are either already acked/reviewed or hopefully can be rather soon/easily.
-> > >>
-> > >> My hope is to get this queued for v4.20, to move things forward. I know it's
-> > >> late, but there are more or less nothing new here since v8.
+> On Fri, Sep 28, 2018 at 3:07 PM Rob Herring <robh+dt@kernel.org> wrote:
+> >
+> > On Thu, Sep 27, 2018 at 5:25 PM Li Yang <leoyang.li@nxp.com> wrote:
 > > >
-> > > I have no problems with the first three patches in this series, so I
-> > > can apply them right away.  Do you want me to do that?
-> >
-> > Yes, please.
-> >
+> > > Hi Rob and Grant,
 > > >
-> > > As for the rest, the cpuidle driver patch looks OK to me, but the
-> > > PSCI-related ones need ACKs.
+> > > Various device tree specs are recommending to include all the
+> > > potential compatible strings in the device node, with the order from
+> > > most specific to most general.  But it looks like Linux kernel doesn't
+> > > provide a way to bind the device to the most specific driver, however,
+> > > the first registered compatible driver will be bound.
+> > >
+> > > As more and more generic drivers are added to the Linux kernel, they
+> > > are competing with the more specific vendor drivers and causes problem
+> > > when both are built into the kernel.  I'm wondering if there is a
+> > > generic solution (or in plan) to make the most specific driver bound
+> > > to the device.   Or we have to disable the more general driver or
+> > > remove the more general compatible string from the device tree?
 > >
-> > For some yes, but I think you can go ahead with a few more.
+> > It's been a known limitation for a long time. However, in practice it
+> > doesn't seem to be a common problem. Perhaps folks just remove the
+> > less specific compatible from their DT (though that's not ideal). For
+> > most modern bindings, there's so many other resources beyond
+> > compatible (clocks, resets, pinctrl, etc.) that there are few generic
+> > drivers that can work.
 > >
-> > Patch 4, 5 is already acked/reviewed.
-> >
-> > Patch 6 should be fine (if you are okay with it else wait for an ack
-> > from Daniel)
+> > I guess if we want to fix this, we'd need to have weighted matching in
+> > the driver core and unbind drivers when we get a better match. Though
+> > it could get messy if the better driver probe fails. Then we've got to
+> > rebind to the original driver.
 >
-> OK, thanks.
+> Probably we can populate the platform devices from device tree after
+> the device_init phase?  So that all built-in drivers are already
+> registered when the devices are created and we can try find the best
+> match in one go?  For more specific loadable modules we probably need
+> to unbind from the old driver and bind to the new one.  But I agree
+> with you that it could be messy.
+
+It's a tradeoff.
 >
-> Do the 4-6 depend on the 1-3?
-
-I don't see any dependency there, so I'll queue up the 1-3 in
-pm-domains and the 4-6 in pm-cpuidle.
-
-Thanks,
-Rafael
+> >
+> > Do you have a specific case where you hit this?
+>
+> Maybe not a new issue but "snps,dw-pcie" is competing with various
+> "fsl,<chip>-pcie" compatibles.  Also a specific PHY
+> "ethernet-phy-idAAAA.BBBB" with generic "ethernet-phy-ieee802.3-c45".
+>
+> Regards,
+> Leo
