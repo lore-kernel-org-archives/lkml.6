@@ -2,136 +2,94 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7831C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982EEC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6DE21470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:36:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JAoAUOAt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6DE21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5194721470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5194721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbeJDP2u (ORCPT
+        id S1727253AbeJDPcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:28:50 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44145 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727190AbeJDP2u (ORCPT
+        Thu, 4 Oct 2018 11:32:04 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40207 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbeJDPcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:28:50 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g2-v6so2809804pgu.11
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vf5szHRTiYd5p8iO8+8KCHUjRmsNBiKPK1lNrizeXNo=;
-        b=JAoAUOAt45GlXTsaSTAaUTZWJwrsNKC3rTtDJCsPajH1LQnYgS9b1R7pfkcsQjRVfh
-         4932VUs14FU8Wn8c34xRJtTh9XKPiR0XxJrRmgXxKR+Yowat7YFi6t9H8bt0eb+UPgit
-         pM9fGGFXEUKtR07Ep4voahZoCfKwIClLsu9aY=
+        Thu, 4 Oct 2018 11:32:04 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w67so8356697ota.7;
+        Thu, 04 Oct 2018 01:39:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vf5szHRTiYd5p8iO8+8KCHUjRmsNBiKPK1lNrizeXNo=;
-        b=obDJxrPy1jlLvAugoxznnwkwupHRSncaHYGBqA5LJjO824jR1ktViLEDkdSM7hLD9s
-         y5HS8d/RKd0lU1tycrL3jWNn0wzCDd0NPRn/cyLMLA5L2DSEOiqi3sab2+7DbrejLp4g
-         4H5HJ9s2UkRM5n4pIBZh52B9g6tlnhPbliMn0m+NJ/X5T9w8QQm+t4bscxJrVKJWWvtJ
-         Bhjyl2IbumkXELYKl/81KEQkQ2Zjn0ZAo7iDgpqiGjZeG5fzwPp4oJ6es2tR0wyONGcx
-         s9RzAEqLXVZ27AludlknQbpXbR6vOsB6sOa/t5uWUU+wkXZ4oYOvFXW/5FRiuQ/433aj
-         SEAA==
-X-Gm-Message-State: ABuFfoi+EfOfW2cpXJqnxjjVtwxmLunbOM0CxEYaizIM7tPFmEhnYGSt
-        e7kdQux+EkLM+W95M6NZHfUAzQ==
-X-Google-Smtp-Source: ACcGV62z5h32e+16gvUO3ReTyLcHGXtFwVTRS3WJHV2qZiaNd0zo51Z0wE/kxr0h53zTPzdH7eLguw==
-X-Received: by 2002:a62:2fc1:: with SMTP id v184-v6mr5668754pfv.115.1538642200507;
-        Thu, 04 Oct 2018 01:36:40 -0700 (PDT)
-Received: from localhost ([122.172.76.11])
-        by smtp.gmail.com with ESMTPSA id 68-v6sm9016703pfg.136.2018.10.04.01.36.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 01:36:39 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 14:06:37 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/6] dt-bindings: power: Add qcom rpm power domain
- driver bindings
-Message-ID: <20181004083637.xlz26rpn4qtsvdk7@vireshk-i7>
-References: <20180627045234.27403-1-rnayak@codeaurora.org>
- <20180627045234.27403-3-rnayak@codeaurora.org>
- <20180703223554.GA32313@rob-hp-laptop>
- <20180704055757.4li26b6poxllmh2k@vireshk-i7>
- <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org>
- <CAL_JsqJe+m4hD3nxQDjOT1JzRoSMXppy1r6APV1w=NtgCr-X_A@mail.gmail.com>
- <271db7b1-f65b-f42d-b00b-9362429b3749@codeaurora.org>
- <CAL_JsqJQypZbeZRa2u2+nM96p0ZHMHgDSpMbXqZx6zn+OiZSrw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=axIFo+cUgSvH1vO5kg9LM4Taav9GMLA9ueuh1F6HlKs=;
+        b=CE6lvrW3kzxt1iaZljbfNVLQ6qHQMNVEEI2KXncN59N5p3xeaaetCy86GwEiZOYkC6
+         Wo9qkVE+uu9fAJXI/4wXH/RZJx6y58e9VN062IIh+Rm/bN28P5coLelu/YH/3kKtVsm9
+         rcvydVJF88xkskM4wOTNCib5ntZOpdaBL2XO33dRqu7Kb64d1YXE5jeRFeavhbFMNNVO
+         Ijuhjn0svLYzhyR4f5aHmahJqrQCls7Fv1HTpxcmgU4MUM9KGieovXPPIOwtXvU5gYyc
+         rICvd45xQVChMRb7Bju/2ahXnHFB17LDmmWkFARlU1pdrvgWXlbsNT1yLbWFg+PXk+rT
+         FoWQ==
+X-Gm-Message-State: ABuFfoj4GO69Y8n8Hgl9yIg1B6hCNsUtBKcpbAou+4q4fRxdQfjtImBF
+        QdfmElBYUf16/3EMBjoJUjKCmhkk0UJWBhWVfPw=
+X-Google-Smtp-Source: ACcGV62gYrcAYdXmoXp8KaUL3IIKvrIvnpySbLXp80gTK41jfj520ie0I6heDJuMrvVrdECRSIU6BtnbPlsaY37Osb4=
+X-Received: by 2002:a9d:7594:: with SMTP id s20-v6mr3205449otk.258.1538642393801;
+ Thu, 04 Oct 2018 01:39:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJQypZbeZRa2u2+nM96p0ZHMHgDSpMbXqZx6zn+OiZSrw@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+In-Reply-To: <20181003143824.13059-1-ulf.hansson@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 4 Oct 2018 10:39:42 +0200
+Message-ID: <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] PM / Domains: Support hierarchical CPU
+ arrangement (PSCI/ARM) (a subset)
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-09-18, 14:43, Rob Herring wrote:
-> On Tue, Sep 25, 2018 at 5:25 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> >
-> > Hi Rob,
-> >
-> > []...
-> > >>>>> +   rpmhpd_opp_table: opp-table {
-> > >>>>> +           compatible = "operating-points-v2-qcom-level";
-> > >>>>> +
-> > >>>>> +           rpmhpd_opp_ret: opp1 {
-> > >>>>> +                   qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-> > >>>>> +           };
-> > >>>>
-> > >>>> I don't see the point in using the OPP binding here when you aren't
-> > >>>> using *any* of the properties from it.
-> > >>>
-> > >>> Yeah, that's the case for now. But there are cases (as Stephen
-> > >>> mentioned earlier [1]) where the voltage values (and maybe other
-> > >>> values like current, etc) would be known and filled in DT. And that's
-> > >>> why we all agreed to use OPP tables for PM domains as well, as these
-> > >>> are really "operating performance points" of these PM domains.
-> > >>
-> > >> Rob, are you fine with these bindings then?
-> > >
-> > > Okay, my only thought is whether we should just use 'reg' here, or do
-> > > we need 'level' for anything else and should make it common?
-> >
-> > I am not quite sure I understood what you are suggesting here :(
-> 
-> You could use the  'reg' property instead of 'qcom,level'. Any reason
-> not to do that?
+On Wed, Oct 3, 2018 at 4:39 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> I have digested the review comments so far, including a recent offlist chat
+> with with Lorenzo Pieralisi around the debatable PSCI changes. More or less I
+> have a plan for how to move forward.
+>
+> However, to avoid re-posting non-changed patches over and over again, I decided
+> to withhold the more debatable part from this v9, hence this is not the complete
+> series to make things play. In v9, I have just included the trivial changes,
+> which are either already acked/reviewed or hopefully can be rather soon/easily.
+>
+> My hope is to get this queued for v4.20, to move things forward. I know it's
+> late, but there are more or less nothing new here since v8.
 
-They can use any property which uniquely identifies the OPP nodes in
-the table. Though I never thought we can use 'reg' property in such a
-way. I always thought it must be related to registers somehow :)
+I have no problems with the first three patches in this series, so I
+can apply them right away.  Do you want me to do that?
 
-Yeah, CPU is one of the examples where 'reg' has a special meaning.
+As for the rest, the cpuidle driver patch looks OK to me, but the
+PSCI-related ones need ACKs.
 
-> Alternatively, would 'level' be something useful in other situations
-> and should not be QCom specific?
-
-It is too early to say that. The only platform which needs this is
-Qcom right now, lets see what the requirements from other users are.
-
--- 
-viresh
+Thanks,
+Rafael
