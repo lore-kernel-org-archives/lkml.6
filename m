@@ -2,181 +2,168 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0341C00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA48CC00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E3C213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72CD3205C9
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DYaz8iY5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E3C213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="n3RJrf8m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72CD3205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeJDHpX (ORCPT
+        id S1727355AbeJDHqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 03:45:23 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35846 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbeJDHpX (ORCPT
+        Thu, 4 Oct 2018 03:46:02 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:4064 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726209AbeJDHqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 03:45:23 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b7-v6so2500129pfo.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:54:36 -0700 (PDT)
+        Thu, 4 Oct 2018 03:46:01 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie2.idc.renesas.com with ESMTP; 04 Oct 2018 09:55:12 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 9FA3243743;
+        Thu,  4 Oct 2018 09:55:12 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,338,1534777200"; 
+   d="scan'208";a="292632543"
+Received: from mail-os2jpn01lp0146.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.146])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 04 Oct 2018 09:55:12 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ABMhAV/wQYAX7YsQXcF6ItaCBUorFc3bFz1Cdfn2xk0=;
-        b=DYaz8iY5Oh48w5HAxrgCKYHVOrOj5pw2nXHPXv+vmUZcgityBpYbbbotsTjwEAhJSB
-         lMt+Spmoh9Vs7i0/K/dCCtdS9kHXX/V2Tt1eAUEKTeoFfKzz//LCnF76j9YgD137bFj4
-         r/6CXle/D6eaTG71rT78PY9FPJAe5o1YScEX8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ABMhAV/wQYAX7YsQXcF6ItaCBUorFc3bFz1Cdfn2xk0=;
-        b=GyYmTYNyrShfxVGVuoyfeJUqZMWVuNvhmLd6ZCAtInM/w6CtnoMVEpD3VSlMOGARnU
-         alKdePLrEeYJSMOb6bE3Jj2Ee6wQ+LfB27IivbSOyZS8rZVwyLw1nA36iSRmCQ23ZtKu
-         J7teSmsdQvCPYxd274TFyT+LqopS5twCJtjMvdairJtXl8/WNMmAbObRP9a99Q9o9PWW
-         GPnnjvIqYFsyBR7Ki0Vk+RDMkqh8yj8GSsS5XFMXeOuP+tVeIKdSFcgaG64wU5jA2X7a
-         qDkaqpFHYQiNHjyIDc2BF9Jb/Img4k6CCwQtJ1FPtuYteEyqAOXDKyLD6is1cCbN/G6A
-         r+4Q==
-X-Gm-Message-State: ABuFfoi2B7wy06pFU4RtGE1yS9eDIKL+Ea0TSEmPb2jjHkq+GOfz8TEw
-        MTTK1JDpu11+ShiLYuSNPEQxSYuGOoep9g==
-X-Google-Smtp-Source: ACcGV62PPAqGXKXq7fUIg8rjYTUAfvBKACyQD7WxzZ/Faa7o9GEGhqSUCY3pG9RYGO2wpMf59FK0BA==
-X-Received: by 2002:a63:904a:: with SMTP id a71-v6mr3653236pge.264.1538614476221;
-        Wed, 03 Oct 2018 17:54:36 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s195-v6sm5533336pgs.76.2018.10.03.17.54.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 17:54:35 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 17:54:33 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
-Cc:     ohad@wizery.com, clew@codeaurora.org, sricharan@codeaurora.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] rpmsg: Add TIOCMGET/TIOCMSET ioctl support
-Message-ID: <20181004005433.GX2523@minitux>
-References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
- <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VNk90PXlOwMEgXkqbqFmqBccWvrvbNmUlP9illOoHiw=;
+ b=n3RJrf8muyCWwt5rqml+vXWosPZ7t30wybGc41vC1LKpUq9Yu0uhKnwhwK47zxf9sQfsxaYwRyYtOQxPmkPAToq5dauRHo7f5DHNoaJ5pi8793ty2whoC3aE60bhAiesieF2su/rcwftj/+S8GnljgXIz3IejQaVH2RMTDwkBko=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.21; Thu, 4 Oct 2018 00:55:10 +0000
+Message-ID: <87y3bepmgb.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     <jiada_wang@mentor.com>
+Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH linux-next v2 1/9] arm64: r8a7795: add dma request number for busif0 ~ busif7
+In-Reply-To: <20181003085855.4305-2-jiada_wang@mentor.com>
+References: <20181003085855.4305-1-jiada_wang@mentor.com>
+        <20181003085855.4305-2-jiada_wang@mentor.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Thu, 4 Oct 2018 00:55:10 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: OSBPR01CA0019.jpnprd01.prod.outlook.com (2603:1096:603::31)
+ To TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0cceab94-444f-4da9-738a-08d629940930
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1865;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;3:z66xCFImK2Mrg10x+pjg2PgTGhfxyfuoRtCkAyY3paXt6roe8vCBuXuEMPJWs+xOxqMs7r6HoUjGA+QOsK7xBOLK49QQhsWQEL2Olevc7hdfojDI8H9xOdL2BmP2vLPkinu9AgX8Hx7TcPYS7mZtpgsaOShlHV1KNFBQ2jHte72QeRMjFFakZPnlDaqnuGdcy9OR5B/VjYkzFlHO5QuZlhsAL/6kbukKsM6FBo/JRyWn8JdFioUVR0XJY8/HUBov;25:t1kMlcVrH78E8BFG8yYLSIEKhYh71UQdd8Il0jLgJCyDLtIU9wkuOE55lvWsyJgW67VbxS+uHl2t7QKjpF4rFkdB9pW8gnb8o2wi89b6n8G71pukOOjk/ID+1rnM5wgsYuapejmQPfUUhtUKsFQgix6wTbipIbjiytD0MZ5rpFpELoqM7vh3yfvPCoi+03fCkboX1+Bo/ZUYmm3ThkUHsyIxKN830dqfKxqlU8pTh7+Q7whCavxdURnjLcNw4ngI9W5idIN/77L5argK8ZLlfN92GwcEwz8OROJwWe9pQQTLQ0FFBfevbQIIelYpBlsPQTxZuY8tsYgJpJNcC1ii+A==;31:pXiPVTargxrkFRJVE+qg1izOcpNX6mU1Din6UnkZ7WQcA1m34fiQx6lfumXS4HtS7MTQ7gIG1+uFNl2SHUAshlYWFMr3Tzo8lr5cFcXLkppoiaU455AUIn5fUMLbziJXept4KzMizZfThY8vgoKYWBl75rWa0JZVf1IWQm5UAXPWR/qQrnDFRz5u/9obM+Ofal3f0uJj+3na5WlI95YqW+0Mv52Pvcp8Su4OdjEtt2M=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1865:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:r1RJHFzzlWWOtSf2BqcV1uVh9WgVeDu2c2brmBCBamn8G4y17lx9wkZW+xV2JDpa9KcghIKOFluTDebXN9Krgbkm9PfAmVlcoreP5LL0bfiQP/ufd8+0yJgGLB8+25MIYpI9wX5tXM8mInBd6aN6tgX0V3nc/f4Eyrmzizt0LzpT1LzxycdvtecuQlAhbUXjpCDC7W1f5Yhuee6OqKFi7On9ee+DJ2oOG+9mvgtr5noxcff1PrTr+5qTK9j/sIF5mDeUEu/aTRQbyPd5CIyDF0Jpn4aFUNKviY48X6TFZEWwCPMEsqjOMFNXihCLoWI9ScHOX4oC0xPVhsKmUcRjxtc82GLUDi5GBHd8hJOFYzszpebYeicUE5uaD3RfCn08YjkCTzSLU9RJzuVLIhMsM/Tte5M6/n5Bltl5J6sFNajJRG6AJkZhDsuB9tXOaBe3+ewrE6W6CIQ8Z/RgaE8Q5bjDrjh/qtKCtm7k5AIBlrmegv0FpnTNAc25yJ03fl6N;4:hl9D5fmjuPu6Wubbrz5u/uhkEmTPWXR75dNKXwapasHmn9wFokBvqU2PR4bocdBMt4f7Pe/dVTVfiUEcDRgAC5P9ii8Qzne56jN0dVBLgBgBfNBjnjfxdVQmF5CWqwSdjy0IrO3Y9FT/7NdrT4RaFnvsTX/KZDKRbQl66DnYTaZ3yUXOYiAuRTxs76GN6Pamklvjqt7TX0UPtH91jhFToLsCVCyVY2iBlWsrG6W7cv9vwawjIAegk0j1p5mql5/f/0dMp+rco8YvMixhOSZmYw==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB18658370C055CF9B9DCF7AD8D4EA0@TY1PR01MB1865.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(10201501046)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051);SRVR:TY1PR01MB1865;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1865;
+X-Forefront-PRVS: 0815F8251E
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(39860400002)(136003)(396003)(199004)(189003)(69596002)(6486002)(106356001)(5660300001)(53936002)(478600001)(345774005)(3846002)(6116002)(23726003)(2906002)(58126008)(54906003)(105586002)(6916009)(81156014)(81166006)(8676002)(2351001)(16586007)(229853002)(97736004)(6246003)(53416004)(36756003)(8936002)(68736007)(25786009)(7736002)(86362001)(76176011)(386003)(305945005)(186003)(16526019)(14444005)(2616005)(11346002)(956004)(476003)(486006)(446003)(50466002)(39060400002)(26005)(4326008)(316002)(7696005)(52116002)(66066001)(47776003)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1865;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1865;23:9MImfzw7tgpvtfPJN64+zqqXTdzcu3sn7FxFxz+I8?=
+ =?us-ascii?Q?a+tmn/Bu+ysb4mY1EqCtEeyfkvmv7qzLG75AtFQrCTiI1h034bK1bzaVeTGU?=
+ =?us-ascii?Q?DenAb5J1xYlP3dOp0udGD/HBcj/Vi8d9WLmqhzxg2iwxts36c4bt+YIWxJti?=
+ =?us-ascii?Q?23gAtSusm045mStoRPQAcOd700MqFXRokSCAn9PzzNfCyMyPGCYcjuaY/COT?=
+ =?us-ascii?Q?fSIl8nmhPrGeEV73m11MN5FGUggJcG2jjTb8uHG3jlCDAZ+7AJtb9i7Epskn?=
+ =?us-ascii?Q?RYDuGJ2IkQBgBLnrQ8HfQEUg89mVgRdaQi+Qm9TPlgsLWNfvaF37p1LDvH9O?=
+ =?us-ascii?Q?8MUM6UXB7ivy6OtshCXumwbro8NGGhXlzd2oBmE+Rp7zINEhziEG6PowDtsk?=
+ =?us-ascii?Q?mP0OHg4ymwf2A5cFpMRla/+12iwFYzLGlwqMeftQR17X6TTECg7e15/QL9dt?=
+ =?us-ascii?Q?LhL4o74iR9vyJOGXoZv4NoeDPP7WvDUZ590yQVvn/4irOqxcp7c/vEieO8n8?=
+ =?us-ascii?Q?CYJF3zfMZgAmpt+C6LCK/+ECZ/Sr92S/wYLdqAZG30ElOyzNfeIlOiJwzM/D?=
+ =?us-ascii?Q?qVQo0q8gF+itlAkULMoCVBbjb45x71IBWqCz1xxiIxEBb4D+DPKjHr8nc3dw?=
+ =?us-ascii?Q?yg7bhnXG0x14eTwxlTymsprhdoSkqAzWx1nDFTydOMDJDMp3Qb/ieizussXY?=
+ =?us-ascii?Q?6/SoNHs51M4WwBgPnOfKxQYIik3UU6PJF4IVN6Ix10KiqBkQEDKj/OwzugvP?=
+ =?us-ascii?Q?YQiGkcXpHOPMyqLo4K1zZfpL9dTdbxR8ig5rKIBKYP5SAEsVEWaW9aI2u9/S?=
+ =?us-ascii?Q?zRfjOUg5YBM5FA10V66LlzvO+p4WkbHjaNdu5swIt3sJ3gO26E3o5A5qC9O3?=
+ =?us-ascii?Q?HQKqH+EDc6fYG90NYUk9p5oimxUH3YXfGnxzUrrVgXLnyvBf+/YzVDLU30WA?=
+ =?us-ascii?Q?Tu6mcSByk8l1QPF2JxEQ4N/PmSuK6kfw6Yeh1tTQ3Z8VghzA8etF8keO5xjl?=
+ =?us-ascii?Q?VZ9sT/TN8E7CMibhzGBPkS/6vx3qmT4DHkF/cMiFd9yNBPfIrQ/7+4VX8DX9?=
+ =?us-ascii?Q?qZigTkHY5HsG3T/QRdjoQjbhpLnERFIoZwL1IMnEfWIRqSLY6FX45THQVgkp?=
+ =?us-ascii?Q?HtbzO1dvKNsRSPcCbkHPQeBeGBs7RskjSVJrXy3/EzTK/zHnD1Jrhz7J2CK0?=
+ =?us-ascii?Q?kRmpWxqrwQxosobMozrRXVyBk4pP1wZnH9ZIfp/tIKCco1KioddmwxUDpEio?=
+ =?us-ascii?Q?USeCQaPxECjWE/5ASF6+QaDCBzYW6XaWosHSvRx85waKfNrSugl0XKFfHNJC?=
+ =?us-ascii?Q?ceXYz2M+caHxFho9n7h92kPbBcEa383zaQMBIMHmlJ2?=
+X-Microsoft-Antispam-Message-Info: 1s8/d4FVSbuwv4nn/KTN5alfX5udpouaNPdIerfaMKzSevO4O0/1uffHslPf1OyRpHRfkKMpPErP1NQUmzt9MrDMjEMgDjU3ZT2rruE+N/yZQFMMYiFJxGPtneTEXv2pzBSwADabgFz3tc7fiYbSojsOlrxDmGTl2cbwW92VY4cOr2qcl3KLj3CGvmh5GMJj/N3oNLVdduZ9VaDpDGRvX9t2VauCbo2S08wH9HQgjp6lFu7KP3rmknqDn6ITbZmENMSO1E7G7c1YMPMuJm7EBJtmURdxZcT9wHJbwVNFe2OlvnIEk0XVuU+3UpOnJEodT+yB+czqvyPc9cjfjyfLwn6k77TSfC/iQhqzpuKiu3w=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;6:h9rq7F+ncLXsXEsnA6PfAMScxF+x6mvraWXpM5afpUL3/FUcZtyy/mpX12enZ5BLyodd24wbqH8SJruud/7ZeR+2nG5AB2R+TF9nr/Ik1osnnlVn+q3UJBCRGaRhTb99HVRv16uQhxCKfUz8G1eMGfDU/lZp9WmCWtUZyZpFkdVO/mxqMDF3NGfBOgIpOKUgVaEu1PSckYN+BuvgpGm75OfkO9T1h9074SSP5207w8bKcx6PDyfpvsSxxbXaUmB8pOuZvKVYtVovb4fFA19MPHCUjj0UGwBRX4/DGL20CThsA3DlcfTA9u+7LkZrJ01TvcVwrsgAZuJGXOl6wEr4A4nfQqsdKBjjYq5daymYXdPZ0gTAqEUfr0MjCJ3E98FVOdr5URw+uYVeGEbQBjAr0R+qK4Xfo1OohnyzVUogM7Xbh5l7WeP01mmAMWc2ncE965dKa9tkbEIgbTcCwc6FwQ==;5:GsfY3OO7SKbtpEJbsqRL9vVgiUkegPWq/RqkgFSqAQb+zwcXkoNdP2LQn4j38pyk5MKWoZw6fiKOFES8kllFb+Ird3E4H4byLuIjYbT3JlJSJ4CUziW7HkNuTULJNSjca0Qetrgm365lL3q7fckneaZFrb96tPVpF8gLakosFPk=;7:yFOg/9ZlV6vNCUkoFRwlEEPb1VI4/5081f8VqF8PCau/2KTCI+Cga9jZB43EpowZRH460a0FAuzt5a8e2eS4bDpwlJS2L8UXa+IDFNDCH/3g7Xp59DFaoqcrQMJ2Gzl9uVnfSp9wGTbD1oxAQ0zrONHM6YErRw+VNQDgbhaQvMrXBdQZ1Ztuzob/LZNvfVp/uUEZ4k67x1xkx3/YV0ow/2aZ8QnKiR/nMrJ0JuhXK/cOe5LHSFHIi0MAekaZmePs
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:EjUFjbqYQZE7+51c2sd4D5CS7fv9rSyRV18khgTlFQYPM+peOvxvsQxfKjpE3VL9LsBB0BhFmr24cHm6/yfyHj/i8xvE7KMxL6Wn2gjH9YEip+ZTu0ixrO1DHjabr/Ap+ETas17ftH9hg4BEeoof6YQMev9oDHZovW+sNPHmfbI=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 00:55:10.3228 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cceab94-444f-4da9-738a-08d629940930
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1865
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03 Oct 04:34 PDT 2018, Arun Kumar Neelakantam wrote:
 
-> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
-> to get/set the low level transport signals.
+Hi Jiada
+
+Thank you for your patch
+
+> From: Jiada Wang <jiada_wang@mentor.com>
 > 
-> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> This patch adds dma request number for busif0 ~ busif7
+> to be used by GEN3 series. GEN2 continues to use rxu/txu
+> for busif data transfer.
+> 
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 > ---
->  drivers/rpmsg/rpmsg_char.c | 54 +++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 51 insertions(+), 3 deletions(-)
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 164 ++++++++++++++++++++---
+>  1 file changed, 144 insertions(+), 20 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 86003d5..c983d6c 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -20,6 +20,7 @@
->  #include <linux/rpmsg.h>
->  #include <linux/skbuff.h>
->  #include <linux/slab.h>
-> +#include <linux/termios.h>
->  #include <linux/uaccess.h>
->  #include <uapi/linux/rpmsg.h>
->  
-> @@ -274,15 +275,62 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
->  	return mask;
->  }
->  
-> +static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
-> +				 unsigned long arg)
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> index b5f2273caca4..fc6100eddfed 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -1923,53 +1923,177 @@
+>  			rcar_sound,ssi {
+>  				ssi0: ssi-0 {
+>  					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+> -					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
+> -					dma-names = "rx", "tx", "rxu", "txu";
+> +					dmas = <&audma0 0x01>, <&audma1 0x02>,
+> +					       <&audma0 0x15>, <&audma1 0x16>,
+> +					       <&audma0 0x15>, <&audma1 0x16>,
+> +					       <&audma0 0x35>, <&audma1 0x36>,
+> +					       <&audma0 0x37>, <&audma1 0x38>,
+> +					       <&audma0 0x47>, <&audma1 0x48>,
+> +					       <&audma0 0x3f>, <&audma1 0x40>,
+> +					       <&audma0 0x43>, <&audma1 0x44>,
+> +					       <&audma0 0x4f>, <&audma1 0x50>,
+> +					       <&audma0 0x53>, <&audma1 0x54>;
+> +					dma-names = "rx", "tx",
+> +						    "rxu", "txu",
+> +						    "rxu0", "txu0",
+> +						    "rxu1", "txu1",
+> +						    "rxu2", "txu2",
+> +						    "rxu3", "txu3",
+> +						    "rxu4", "txu4",
+> +						    "rxu5", "txu5",
+> +						    "rxu6", "txu6",
+> +						    "rxu7", "txu7";
 
-Make arg type int __user *
-
-> +{
-> +	struct rpmsg_eptdev *eptdev = fp->private_data;
-> +	u32 lsigs, rsigs, val;
-> +	int ret;
-> +
-> +	ret = get_user(val, (u32 *)arg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	switch (cmd) {
-> +	case TIOCMBIS:
-> +		lsigs |= val;
-> +		break;
-> +	case TIOCMBIC:
-> +		lsigs &= ~val;
-> +		break;
-> +	case TIOCMSET:
-> +		lsigs = val;
-> +		break;
-> +	}
-> +
-> +	ret = rpmsg_set_sigs(eptdev->ept, lsigs);
-
-This is racy, as the signals might change while we update them. Mimic
-tty_tiocmset() instead and make rpmsg_set_sigs() take a clear and set
-mask.
-
-And please do spell out rpmsg_set_signal() and rpmsg_get_signal().
-
-> +	return ret;
-
-return rpmsg_set_signals();
-
-> +}
-> +
->  static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->  			       unsigned long arg)
->  {
->  	struct rpmsg_eptdev *eptdev = fp->private_data;
-> +	u32 lsigs, rsigs;
-> +	int ret;
->  
-> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
-> -		return -EINVAL;
-> +	switch (cmd) {
-> +	case TIOCMGET:
-> +		ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
-> +		if (!ret)
-> +			ret = put_user(rsigs, (u32 *)arg);
-
-Cast to int __user *
-
-> +		break;
-> +	case TIOCMSET:
-> +	case TIOCMBIS:
-> +	case TIOCMBIC:
-> +		ret = rpmsg_eptdev_tiocmset(fp, cmd, arg);
-> +		break;
-> +	case RPMSG_DESTROY_EPT_IOCTL:
-> +		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-> +	default:
-> +		ret = -EINVAL;
-> +	}
->  
-> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-> +	return ret;
->  }
-
-Regards,
-Bjorn
+In theory, I think DT side patch should be posted/applied
+if driver side patch was accepted.
+And, Gen3 side DT doesn't need "rxu/txu" I think.
