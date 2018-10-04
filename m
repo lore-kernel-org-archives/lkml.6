@@ -2,119 +2,118 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD7AC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D23C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 059F9213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1252420645
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="YHxbR7ft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059F9213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FfzQM3Yl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1252420645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeJDRLN (ORCPT
+        id S1727356AbeJDRMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:11:13 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:46440 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbeJDRLM (ORCPT
+        Thu, 4 Oct 2018 13:12:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58868 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727183AbeJDRMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:11:12 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id B704625B772;
-        Thu,  4 Oct 2018 20:18:35 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1538648316; bh=NtyS/46QjfkfEZx+xioRrJ6E6/sHS4bCAEDJSR15FP0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YHxbR7ftIccgaFLC4Oam0z9aOfb97FIU4oOz8/9ojou1je8MA6GxO6BKxKYB4hqO/
-         1uChy/1HU20qOjK4AnE2gTHGzLQdt2rBTgLwbYszzq8DUZwXcK6dCL5i3u4TBQgRiR
-         3qNpI/Qd5t8onVre95zLx18ZjlCLNpHmsqzTje5s=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 9937C94038C; Thu,  4 Oct 2018 12:18:33 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 12:18:33 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Message-ID: <20181004101833.jlopmzmyx6nkjnux@verge.net.au>
-References: <20181001131026.14635-1-phil.edworthy@renesas.com>
- <20181001131026.14635-4-phil.edworthy@renesas.com>
+        Thu, 4 Oct 2018 13:12:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=igoCYCRQTg0FafoeboqLmgsaNIPF0NwtxFPgJJqm6lw=; b=FfzQM3YlryuAhvYeop12Pz7sY
+        WKAY0bCkuHOh8GEtCDUCHHD6v7MyGboRnkcAvh2Vh6OICKYlHNa39DsoOfwn0Z0xJUygEyGbeB9Ek
+        rdK+pZxEEnhtaKhHznFHe49L9rOdQhJgr48UJ0EYGASv7Xmd7dko31+bS/qFOi4EP4bQY=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g80jt-0008Gx-E2; Thu, 04 Oct 2018 10:20:13 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id E675D1122286; Thu,  4 Oct 2018 11:20:12 +0100 (BST)
+Date:   Thu, 4 Oct 2018 11:20:12 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Duan <fugang.duan@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "anders.roxell@linaro.org" <anders.roxell@linaro.org>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>
+Subject: Re: [PATCH] regulator: fixed: Default enable high on DT regulators
+Message-ID: <20181004102012.GB6412@sirena.org.uk>
+References: <20181001204346.4655-1-linus.walleij@linaro.org>
+ <28e88d54f6503cf1be577eb1872cdf2c50d7dfa3.camel@nxp.com>
+ <20181003121002.GA7132@sirena.org.uk>
+ <c2ace38e09344d325271498fe8133c888470b5f6.camel@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
 Content-Disposition: inline
-In-Reply-To: <20181001131026.14635-4-phil.edworthy@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <c2ace38e09344d325271498fe8133c888470b5f6.camel@nxp.com>
+X-Cookie: Safety Third.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 02:10:26PM +0100, Phil Edworthy wrote:
-> This provides a pinctrl driver for the Renesas R9A06G032 SoC
-> 
-> Based on a patch originally written by Michel Pollet at Renesas.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-Hi Phil,
+--CUfgB8w4ZwR/yMy5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I have accepted (a slightly older posting of) this patch
-for v4.21.
+On Wed, Oct 03, 2018 at 06:08:09PM +0000, Leonard Crestez wrote:
+> On Wed, 2018-10-03 at 13:10 +0100, Mark Brown wrote:
 
-> ---
-> v7:
->  - No changes.
-> 
-> v6:
->  - No changes.
-> 
-> v5:
->  - No changes.
-> 
-> v4:
->  - No changes.
-> 
-> v3:
->  - No changes.
-> 
-> v2:
->  - Add "renesas,rzn1-pinctrl" compatible fallback string
->  - Register size corrected.
-> ---
->  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> index eaf94976ed6d..2322268bc862 100644
-> --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -165,6 +165,14 @@
->  			status = "disabled";
->  		};
->  
-> +		pinctrl: pin-controller@40067000 {
-> +			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-> +			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-> +			clock-names = "bus";
-> +			status = "okay";
-> +		};
-> +
->  		gic: gic@44101000 {
->  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
->  			interrupt-controller;
-> -- 
-> 2.17.1
-> 
+> > No, that's definitely not desired.  We don't want to change the state of
+> > the regulator at all if we can avoid it unless the user explicitly asked
+> > for it.
+
+> That also makes sense, for a top level perspective. But
+> reg_fixed_voltage_probe contains the following snippet:
+
+...
+
+> In theory it might be possible to request the GPIO while asking to keep
+> the value from the bootloader? Maybe I'm confused but I don't see an
+> easy way to do this through the GPIO api; functions for requesting in
+> output mode all seem to also ask for the initial value.
+
+There isn't one.  You're not supposed to read back an output GPIO at all
+unfortunately, it makes this sort of handover stuff a problem.
+
+> GPIOD_ASIS looks close but it doesn't even adjust the direction.
+
+That's new - it's probably closest to what we want but we need to be
+able to read back the state as well and will want to make it output if
+it isn't already.
+
+--CUfgB8w4ZwR/yMy5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu16VwACgkQJNaLcl1U
+h9AXtgf8CLj4MoHaShDENVRVrMhiytEHU9qh+BpvA7Na96mpdqGkNwtCWlSKwLpm
+nqf51ObRrpGYJco0RafiocXvtwS3aVHoXPOf3S/3aRRegxWh6ileRp7vqTifFrcc
+214fwVuok5HEgz3RGduj3hsG2WrhmxELYNufn5FOQNfxWRZf0ElLkq/rPwhmpXGP
+yaUl72jQV+K17vzOBuLXm+jT+wmQA/H0XUT31gEtfSRhBskaJLn73TPBxusMXNup
+QBJo/REEzovmUiE43nVPXvo9GOtPCpM+cpH6P90d8hD4+lKr+iEsu5EF97v0Di7X
+q9eOWS+t5novPSdqVN6Y87iItHFIcQ==
+=F6cU
+-----END PGP SIGNATURE-----
+
+--CUfgB8w4ZwR/yMy5--
