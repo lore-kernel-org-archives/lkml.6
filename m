@@ -2,159 +2,159 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0B6C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4332C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A18E20877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:15:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwNd5rdB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A18E20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 750752147D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750752147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeJDTI3 (ORCPT
+        id S1727483AbeJDTNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:08:29 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43404 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeJDTI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:08:28 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r8-v6so8124115ljc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 05:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=owfY93D/AZyx/pWCU2S4gZFwRLheDcKJ6m0Ky0moCA0=;
-        b=FwNd5rdB9Hj56MpI/YhPqXpPChMVrX5x9XRkdsE+ekihFtUZJiV5aOD3H0QRh1PIzy
-         p5LVenOeMzterFzKfI+cAnJoCgWe0ZejLQiGfzitApKI8N0df08ytWASvtrfTm7IBL2U
-         LUuEvpzeXC7vNx4ZNSTv+n82kedHut95pR5rL7izCzL7eTnOihI/Rk/hEeARyZ59b/3c
-         QVaMqbGTPSmwZDLD9pQr3GLImAoBPDVbeRcdMn5chMkCQZnANySpErmpXwqllyuu/gQt
-         Cqg8OHhctPuQ/XtoAhkbUUa4BFW2Sf2U/IkpxbG9tExt+DvEAUV0JPocrmBBWmGY395s
-         YFxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=owfY93D/AZyx/pWCU2S4gZFwRLheDcKJ6m0Ky0moCA0=;
-        b=SpNb69nCHgNdsVsOUR3GbvBnqi8isbdI/DMjp1RudH5yje2DWfk/GzBORIold3t5bi
-         F43qBIXHoHRJT3EHxLKeX0wzXtKAUeHakyV9CwZvj+jgcxIbC3txg225ZjhmXj+3Tp5G
-         9ETAjEbTX2nwCIH8BuCc/lqCKuZ6XVgKMVL6wT4/Bw3Hro4QzKvG5RLL9qhXYLMui9sV
-         lAMicMEGwL4flHET3DoQHe1zPIg+QjEW6WnFTw41GesdsXFmbiKUdOhbS/V/bxKFRy1s
-         neI9smvVED2b6cbdlRy+Skl5ciSRn5hdn1X7mvVbwcShKVubRb2UWNhUWGvja7Ug1ApC
-         Y/cA==
-X-Gm-Message-State: ABuFfogL3jLcn2MwOyL9wguB2W92TkMhic+KvdnaoowC7ctioLHW4qIl
-        SIt9VJKx+kLM1pSSpqALLX1J/knSo+i57irqyv0=
-X-Google-Smtp-Source: ACcGV61ChL/YkEaob5D8q1Q1A+q6gACPVpRrR5jaSH4Ljem3rLVtRbnlLeVZc1HTCXYNu3ggz1KI6VbU1NDS6m8NITo=
-X-Received: by 2002:a2e:b04b:: with SMTP id d11-v6mr3942847ljl.93.1538655325719;
- Thu, 04 Oct 2018 05:15:25 -0700 (PDT)
+        Thu, 4 Oct 2018 15:13:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35586 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727325AbeJDTNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:13:21 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 09BC92072C; Thu,  4 Oct 2018 14:20:17 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8682E20618;
+        Thu,  4 Oct 2018 14:20:16 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 14:20:16 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
+        andrew@lunn.ch, allan.nielsen@microchip.com,
+        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net-next v3 11/11] net: mscc: ocelot: make use of SerDes
+ PHYs for handling their configuration
+Message-ID: <20181004122016.udpugy65sam6m2si@qschulz>
+References: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
+ <00989856964175eafbe1435a70862c2ac66cffc0.1536912834.git-series.quentin.schulz@bootlin.com>
+ <0f762d63-a392-d2fe-a121-a013a13a8584@gmail.com>
+ <20181001094245.cr4hdcechrqkjymq@qschulz>
+ <228f9d74-be17-5157-9755-b265a6e234b8@gmail.com>
 MIME-Version: 1.0
-References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
- <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
-In-Reply-To: <20181003221444.GZ30658@n2100.armlinux.org.uk>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Thu, 4 Oct 2018 17:45:13 +0530
-Message-ID: <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
-        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
-        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
-        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
-        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dys5m2n3k3cy45ea"
+Content-Disposition: inline
+In-Reply-To: <228f9d74-be17-5157-9755-b265a6e234b8@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 3:45 AM Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
->
-> On Wed, Oct 03, 2018 at 01:00:03PM -0700, Matthew Wilcox wrote:
-> > On Thu, Oct 04, 2018 at 12:28:54AM +0530, Souptick Joarder wrote:
-> > > These are the approaches which could have been taken to handle
-> > > this scenario -
-> > >
-> > > *  Replace vm_insert_page with vmf_insert_page and then write few
-> > >    extra lines of code to convert VM_FAULT_CODE to errno which
-> > >    makes driver users more complex ( also the reverse mapping errno to
-> > >    VM_FAULT_CODE have been cleaned up as part of vm_fault_t migration ,
-> > >    not preferred to introduce anything similar again)
-> > >
-> > > *  Maintain both vm_insert_page and vmf_insert_page and use it in
-> > >    respective places. But it won't gurantee that vm_insert_page will
-> > >    never be used in #PF context.
-> > >
-> > > *  Introduce a similar API like vm_insert_page, convert all non #PF
-> > >    consumer to use it and finally remove vm_insert_page by converting
-> > >    it to vmf_insert_page.
-> > >
-> > > And the 3rd approach was taken by introducing vm_insert_kmem_page().
-> > >
-> > > In short, vmf_insert_page will be used in page fault handlers
-> > > context and vm_insert_kmem_page will be used to map kernel
-> > > memory to user vma outside page fault handlers context.
-> >
-> > As far as I can tell, vm_insert_kmem_page() is line-for-line identical
-> > with vm_insert_page().  Seriously, here's a diff I just did:
-> >
-> > -static int insert_page(struct vm_area_struct *vma, unsigned long addr,
-> > -                       struct page *page, pgprot_t prot)
-> > +static int insert_kmem_page(struct vm_area_struct *vma, unsigned long addr,
-> > +               struct page *page, pgprot_t prot)
-> > -       /* Ok, finally just insert the thing.. */
-> > -int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
-> > +int vm_insert_kmem_page(struct vm_area_struct *vma, unsigned long addr,
-> > -       return insert_page(vma, addr, page, vma->vm_page_prot);
-> > +       return insert_kmem_page(vma, addr, page, vma->vm_page_prot);
-> > -EXPORT_SYMBOL(vm_insert_page);
-> > +EXPORT_SYMBOL(vm_insert_kmem_page);
-> >
-> > What on earth are you trying to do?
 
->
-> Reading the commit log, it seems that the intention is to split out
-> vm_insert_page() used outside of page-fault handling with the use
-> within page-fault handling, so that different return codes can be
-> used.
->
-> I don't see that justifies the code duplication - can't
-> vm_insert_page() and vm_insert_kmem_page() use the same mechanics
-> to do their job, and just translate the error code from the most-
-> specific to the least-specific error code?  Do we really need two
-> copies of the same code just to return different error codes.
+--dys5m2n3k3cy45ea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about it.
-can I take below approach in a patch series ->
+Hi Florian,
 
-create a wrapper function vm_insert_kmem_page using vm_insert_page.
-Convert all the non #PF users to use it.
-Then make vm_insert_page static and convert inline vmf_insert_page to caller.
+On Mon, Oct 01, 2018 at 09:29:07AM -0700, Florian Fainelli wrote:
+> On 10/01/2018 02:42 AM, Quentin Schulz wrote:
+> > Hi Florian,
+> >=20
+> > On Sat, Sep 15, 2018 at 02:25:05PM -0700, Florian Fainelli wrote:
+> >>
+> >>
+> >> On 09/14/18 01:16, Quentin Schulz wrote:
+> >>> Previously, the SerDes muxing was hardcoded to a given mode in the MAC
+> >>> controller driver. Now, the SerDes muxing is configured within the
+> >>> Device Tree and is enforced in the MAC controller driver so we can ha=
+ve
+> >>> a lot of different SerDes configurations.
+> >>>
+> >>> Make use of the SerDes PHYs in the MAC controller to set up the SerDes
+> >>> according to the SerDes<->switch port mapping and the communication m=
+ode
+> >>> with the Ethernet PHY.
+> >>
+> >> This looks good, just a few comments below:
+> >>
+> >> [snip]
+> >>
+> >>> +		err =3D of_get_phy_mode(portnp);
+> >>> +		if (err < 0)
+> >>> +			ocelot->ports[port]->phy_mode =3D PHY_INTERFACE_MODE_NA;
+> >>> +		else
+> >>> +			ocelot->ports[port]->phy_mode =3D err;
+> >>> +
+> >>> +		switch (ocelot->ports[port]->phy_mode) {
+> >>> +		case PHY_INTERFACE_MODE_NA:
+> >>> +			continue;
+> >>
+> >> Would not you want to issue a message indicating that the Device Tree
+> >> must be updated here? AFAICT with your patch series, this should no
+> >> longer be a condition that you will hit unless you kept the old DTB
+> >> around, right?
+> >>
+> >=20
+> > It'll occur for internal PHYs. On the PCB123[1], there are four of them,
+> > so we need to be able to give no mode in the DT for those. For the
+> > upcoming PCB120, there'll be 4 external PHYs that require a mode in the
+> > DT and 4 internal PHYs that do not require any mode. I could put a debug
+> > message that says this or that PHY is configured as an internal PHY but
+> > I wouldn't put a message that is printed with the default log level.
+> >=20
+> > So I think we should keep it, shouldn't we?
+>=20
+> Internal PHYs either use a standard connection internally (e.g: GMII) or
+> they are using a proprietary connection interface, in which case
+> phy-mode =3D "internal" is what we defined to represent those.
+>=20
+
+Just to let you know that I'll send a new version in a few minutes that
+does not contain the requested change. I don't have the information yet,
+I know it's MII compatible but nothing more.
+I haven't forgotten (yet; so don't hesitate to tell me if I do) your
+suggestion.
+
+Two thoughts:
+1) Doing what you suggested is rather straightforward once I have the
+information so it does not impact the actual overall behaviour of the
+driver (reviewable as is),
+
+2) The current behaviour aligns with the behaviour induced by the code
+snippet above, so we don't break anything or introduce any change in
+behaviour. Once I have an answer, I could always send a small patch for
+this if the driver gets merged before, which would also change the DT
+(to add the phy-mode property).
+
+Thanks,
+Quentin
+
+--dys5m2n3k3cy45ea
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlu2BYAACgkQhLiadT7g
+8aPTjA/6A1UsA2NoZ6pCfL9gEMekhK5C/6ZIvr3IY+u5A2Q2dGmIFbROpGF4U3Mj
+od/QtZmKCGiG5v9O2ra4jOVTDunGslvv1u9rAQwIcFuNBPGEWrNV+h2HmXOWANly
+V6DfiFF3D99cWLk89f3XeJKgJY1ad58A/lj03UnzGnW5WWGwACDu2VBP4tczC4JN
+kVLrQx/eQSZZGfF5rUUXpOMc27n2DJ07nafQ9Cc0DZtuP003p3QnT0NtbIZxY4vV
+UYM6fohjqtZH9MRFaxjZVFcTK5RdmdmwRXPwj1/2H59Fa20qSUkHvc+FoO81AUqk
+9SgLcVr3u0XNScLiW1ayzz7UulN1LAqEuPdXmNF68I1xCyec1fkWoaSLx6iD6OiX
+UfwF1zx2jEc0KGD1/fYyTVP6LEtzfTcSWhFPDboY/sZpHjTZA+hhNLx1oaAnDvMD
+StSwlT/53psOHYzxCjo4H+fTSJSXubTTw96/rLjTeXt1G7n8rfa+VVg+gq180Vrj
+bVrWqbh/Lq+tpVWdNG3WlTP+/qXTALTUJxMqZE2aA7FYxoO/DeehqkbGYewrwDi6
+LXOQfVFnDLnKDtbpjciIrRTz8+FXLTJWnz1mfBJRexotHCZz3uQC4E/3scRPZWVj
+ZA5ko1xmYM+D9tZxaZW/fuDeD8h/FiVtKinlLMGQC01z7fJKvEo=
+=oKWs
+-----END PGP SIGNATURE-----
+
+--dys5m2n3k3cy45ea--
