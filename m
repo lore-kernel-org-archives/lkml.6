@@ -2,104 +2,116 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2B0C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263E2C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C755321473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:34:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4fXPgq/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C755321473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DE1B321470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1B321470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJDP0X (ORCPT
+        id S1727662AbeJDP0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:26:23 -0400
-Received: from mail-io1-f44.google.com ([209.85.166.44]:40689 "EHLO
-        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbeJDP0X (ORCPT
+        Thu, 4 Oct 2018 11:26:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32886 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726808AbeJDP0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:26:23 -0400
-Received: by mail-io1-f44.google.com with SMTP id w16-v6so7226833iom.7
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2/WUmzkdF/fk4ktL33DmDmI0KxA3V7GEhh9xis7amoM=;
-        b=P4fXPgq/JhwUfpIhImG/08BZV5FTR/HDqDMiLFFhd0UToAVUVmrhbGpF54texp90eb
-         HzPGG4lnjqj02Fistx9oE7MFpHsg4UwJQ3oDDs8Cmz8hbuKBPfEhvghXckjY6WYvJGAb
-         QjgA8Q9osldhAGEzgLqbL0Uc9pm81HzLIzM74=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2/WUmzkdF/fk4ktL33DmDmI0KxA3V7GEhh9xis7amoM=;
-        b=I9lIGLch/XXOkj1eFheSH6Z7gmk/JhsxqwYmyrKbZyw3LBfgiVBaQvCTpH++sfo7C0
-         aWq+xhDVpmx5lerShqn+oAA8wY23fiWHuJjvW0SJCysQLL14F4dGygfBAJkkkDsAYOcH
-         GqkAFVCreOIMUsp2R3DOmVeNYsGzgpygZuejdc1HuYbEVt31dw6kKiIVyHsDAqlAPmRP
-         rzQugswXZ9CCfRAoRKu9AfT9gCiQPKY00QTamShFo+jtSdUGxcNEK0w9fWUb/64/Qzr5
-         4WYmZRjk3jaIDcPoKWomx4QWliZQluwfr53hDia+14Hcw8sYneb/fr1k2a3SFsXflkEw
-         qIew==
-X-Gm-Message-State: ABuFfog9k0QxUY7hOhxj+ZbbRt4li5l727qPar1qPiXZ/x+t8EUk8kmj
-        WE18HLuQidWUKF16x/3KSHl49Kt9VEx1AFE/YJRimQ==
-X-Google-Smtp-Source: ACcGV61ntl8Rn9gGqrgo/P/ZaaMdhLNKvAHpJyJTv3shwsBscKfo87ky2hboxD+1Du0G9k7wzyc1yAVx23sPMH2i9y4=
-X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr3738422iog.175.1538642054940;
- Thu, 04 Oct 2018 01:34:14 -0700 (PDT)
+        Thu, 4 Oct 2018 11:26:47 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w948Y169085008
+        for <linux-kernel@vger.kernel.org>; Thu, 4 Oct 2018 04:34:38 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mwem3a3fs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 04:34:38 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 4 Oct 2018 09:34:36 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 4 Oct 2018 09:34:32 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w948YVo164094412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 4 Oct 2018 08:34:31 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84EAE42049;
+        Thu,  4 Oct 2018 11:34:11 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 538A74203F;
+        Thu,  4 Oct 2018 11:34:10 +0100 (BST)
+Received: from skywalker (unknown [9.124.31.179])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Thu,  4 Oct 2018 11:34:10 +0100 (BST)
+Received: (nullmailer pid 27280 invoked by uid 1000);
+        Thu, 04 Oct 2018 08:34:29 -0000
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>, mpe@ellerman.id.au
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH V3 0/2] mm/kvm/vfio/ppc64: Migrate compound pages out of CMA region
+In-Reply-To: <20180918115839.22154-1-aneesh.kumar@linux.ibm.com>
+References: <20180918115839.22154-1-aneesh.kumar@linux.ibm.com>
+Date:   Thu, 04 Oct 2018 14:04:29 +0530
 MIME-Version: 1.0
-References: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
-In-Reply-To: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Oct 2018 10:34:03 +0200
-Message-ID: <CACRpkdazxOt0E0J8D763_Mc5RVxpYTrfNgHYkMVQB+GVi1S9Hw@mail.gmail.com>
-Subject: Re: protected pins and debugfs
-To:     psodagud@codeaurora.org
-Cc:     Stephen Boyd <sboyd@codeaurora.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18100408-4275-0000-0000-000002C4D3E0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100408-4276-0000-0000-000037CFEAF1
+Message-Id: <87y3beaz56.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-04_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=676 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810040088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 2:38 PM Sodagudi Prasad <psodagud@codeaurora.org> wrote:
 
-> This is regarding the protected pins configuration reading and printing
-> from non-secure operating systems.
+Hi Andrew,
 
-I do not think anyone with security in mind should have debugfs
-enabled. But maybe that is beside the point.
+"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com> writes:
 
-> GPIO framework is checking whether pin is in use(flag FLAG_REQUESTED) or
-> not in gpiolib_dbg_show().
+> ppc64 use CMA area for the allocation of guest page table (hash page table). We won't
+> be able to start guest if we fail to allocate hash page table. We have observed
+> hash table allocation failure because we failed to migrate pages out of CMA region
+> because they were pinned. This happen when we are using VFIO. VFIO on ppc64 pins
+> the entire guest RAM. If the guest RAM pages get allocated out of CMA region, we
+> won't be able to migrate those pages. The pages are also pinned for the lifetime of the
+> guest.
 >
-> If GPIO chip drivers are overriding the dbg_show callback, drivers are
-> not checking whether a pin is really in use or not to print
-> configuration details.
->      if (chip->dbg_show)
->                  chip->dbg_show(s, chip);
->          else
->                  gpiolib_dbg_show(s, gdev);
+> Currently we support migration of non-compound pages. With THP and with the addition of
+>  hugetlb migration we can end up allocating compound pages from CMA region. This
+> patch series add support for migrating compound pages. The first path adds the helper
+> get_user_pages_cma_migrate() which pin the page making sure we migrate them out of
+> CMA region before incrementing the reference count. 
+>
+> Aneesh Kumar K.V (2):
+>   mm: Add get_user_pages_cma_migrate
+>   powerpc/mm/iommu: Allow migration of cma allocated pages during
+>     mm_iommu_get
+>
+>  arch/powerpc/mm/mmu_context_iommu.c | 120 ++++++++-----------------
+>  include/linux/hugetlb.h             |   2 +
+>  include/linux/migrate.h             |   3 +
+>  mm/hugetlb.c                        |   4 +-
+>  mm/migrate.c                        | 132 ++++++++++++++++++++++++++++
+>  5 files changed, 174 insertions(+), 87 deletions(-)
 
-Ah that is right. Because some drivers can inspect all pins whether they
-are requested or not.
+Any feedback on this.
 
-> Can we use a simple/common solution like below?  It will check whether a
-> pin is in use or not before printing configuration data with the help of
-> gpiochip_is_requested().
+-aneesh
 
-In the msm case I think maybe you want to inspect the valid_mask
-instead, so you display debugfs info for all pins you can inspect
-in hardware but avoid the "invalid" ones which I half-guess is used
-by ACPI in your case.
-
-Yours,
-Linus Walleij
