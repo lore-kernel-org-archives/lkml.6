@@ -2,91 +2,121 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D98C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BC3C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12C9420854
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C9420854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DACA920645
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:44:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="J9DSFo7J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DACA920645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbeJEGaE (ORCPT
+        id S1727198AbeJEGks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 02:30:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58592 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 02:40:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:40739 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbeJEGaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 02:30:03 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726278AbeJEGks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 02:40:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D023A6DE0;
-        Thu,  4 Oct 2018 23:34:15 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F038167C7E;
-        Thu,  4 Oct 2018 23:34:13 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        stable@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] drm/i915: Fix intel_dp_mst_best_encoder()
-Date:   Thu,  4 Oct 2018 19:33:50 -0400
-Message-Id: <20181004233353.5388-6-lyude@redhat.com>
-In-Reply-To: <20181004233353.5388-1-lyude@redhat.com>
-References: <20181004233353.5388-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 04 Oct 2018 23:34:15 +0000 (UTC)
+        by ozlabs.org (Postfix) with ESMTPSA id 42R8cz5b49z9s9m;
+        Fri,  5 Oct 2018 09:44:51 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538696693;
+        bh=ZibloiZdFc3/EhLgNQ5Lfm6pYUQ09F79UjX0+Xaq3SU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=J9DSFo7JCDoNdK8RL+0O1/lY9WDxjqKvqGEDlMhIMIbWwpBMXoB2mhhhFZh02cV4g
+         ktTfTlm7HwgJoXiuzmm28ifn8KxOFV9+xZLrKNp3qy6UDMkX33lLSWQwR+vRs0T2we
+         RdNjQvCqwnf95V24wMg62/8TAdpbZ4v48aoVLAKk4g0Iy0CEQy1qVbjd8NU5y0OyX8
+         3r1wE7Gk2qmaKMEtORVvBKAfMG5LXhXtGzAoF7EPUjb+0Ow+Dqsv80uowdEfdIVJ4E
+         Q2hJczj+Jdj49FKatI6PLBG9XCAJ+T8B8J8/V4v+qbSFkQWsp+EQPYtFlTlhHtNIFQ
+         JP/Ld55sb0juw==
+Date:   Fri, 5 Oct 2018 09:44:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: Tree for Oct 4
+Message-ID: <20181005094445.4d0b68bc@canb.auug.org.au>
+In-Reply-To: <CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
+References: <20181004183449.36bcc93b@canb.auug.org.au>
+        <20181004134644.GA9130@roeck-us.net>
+        <CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1Ambw=BwbLYFipXzDTvp3qv"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, i915 appears to rely on blocking modesets on
-no-longer-present MSTB ports by simply returning NULL for
-->best_encoder(), which in turn causes any new atomic commits that don't
-disable the CRTC to fail. This is wrong however, since we still want to
-allow userspace to disable CRTCs on no-longer-present MSTB ports by
-changing the DPMS state to off and this still requires that we retrieve
-an encoder.
+--Sig_/1Ambw=BwbLYFipXzDTvp3qv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So, fix this by always returning a valid encoder regardless of the state
-of the MST port.
+Hi Geert,
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
+On Thu, 4 Oct 2018 16:21:42 +0200 Geert Uytterhoeven <geert@linux-m68k.org>=
+ wrote:
+>
+> On Thu, Oct 4, 2018 at 3:47 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > Time for a status report.
+> >
+> > Build results:
+> >         total: 135 pass: 121 fail: 14
+> > Failed builds:
+> >         arm:allmodconfig
+> >         i386:allyesconfig
+> >         i386:allmodconfig
+> >         m68k:defconfig
+> >         m68k:allmodconfig
+> >         m68k:sun3_defconfig
+> >         mips:allmodconfig
+> >         parisc:allmodconfig
+> >         powerpc:ppc6xx_defconfig
+> >         s390:defconfig
+> >         s390:allmodconfig
+> >         s390:allnoconfig
+> >         sparc32:allmodconfig
+> >         xtensa:allmodconfig =20
+>=20
+> Most (all?) 32-bit builds are broken due to commit 571ed1fd2390f74e
+> ("SUNRPC: Replace krb5_seq_lock with a lockless scheme"), presumably fixed
+> by Arnd's "SUNRPC: use cmpxchg64() in gss_seq_send64_fetch_and_inc"
+> (https://lore.kernel.org/patchwork/patch/994909/).
 
-Changes since v1:
-- Remove mst atomic helper, since this got replaced with a much simpler
-  solution
+I have added that patch to the nfs tree merge in linux-next today.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/i915/intel_dp_mst.c | 2 --
- 1 file changed, 2 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index a366f32b048a..daade60c5714 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -407,8 +407,6 @@ static struct drm_encoder *intel_mst_atomic_best_encoder(struct drm_connector *c
- 	struct intel_dp *intel_dp = intel_connector->mst_port;
- 	struct intel_crtc *crtc = to_intel_crtc(state->crtc);
- 
--	if (intel_connector->mst_port_gone)
--		return NULL;
- 	return &intel_dp->mst_encoders[crtc->pipe]->base.base;
- }
- 
--- 
-2.17.1
+--Sig_/1Ambw=BwbLYFipXzDTvp3qv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2pe0ACgkQAVBC80lX
+0GxyPgf/SZTNxWSN/TKpHs8ENfnrb9JjTE3pX6NSKe/UqoLVQDrxx72+AXfbbI26
+gIVL5oawVL9Z0IcQvxv5c2vjbjtiBgvo/kH+ZACYQYHP2C4SY7SNMJc7NtbAwHJE
+0mpEOfwSA5KXoBRsBvvpFHFabLi4ysaq57ExOM9aYOUTmvVUYMseJuy21FDuQaoc
+HBhSwvrU09kYY6Mwz6Msma6poa0bjVskRaqJO/TERrD1in3LSuHv1tK37PDZxcB2
+DIuRbADCTPPxlbWq5/+HtBix4IpxPT3Tg0T7A0oEiXQE7vlMQUusdGvwTbqi5oS9
+eVGbGNHm4bfw6n+5LofdrcLZSsHEQg==
+=eg9t
+-----END PGP SIGNATURE-----
+
+--Sig_/1Ambw=BwbLYFipXzDTvp3qv--
