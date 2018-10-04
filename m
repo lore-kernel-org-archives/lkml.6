@@ -2,111 +2,107 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46856C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7FEC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C9E2083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818DD206B2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="esi3OnSs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C9E2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="muOAV5B5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818DD206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeJDXnd (ORCPT
+        id S1727830AbeJDXo7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:43:33 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40278 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727415AbeJDXnd (ORCPT
+        Thu, 4 Oct 2018 19:44:59 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44488 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbeJDXo7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:43:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/5D44jJ+Gabb8x0xtlJxCZbOknPqaRI2Fm3Qbi9RYao=; b=esi3OnSsphK4E7LjwTu9ZhQjr
-        oFYo9BH4hfLyYdDENbpSTPfuMQxljgmyFoGwM/YtmdGTtzJkHV4ktlU5RM4bsHRjG9rTAV3GcnVEJ
-        ESg/GMehzB6cSiPfoAoQizgn77dfrwovE6Tpfp158YK9czFV0gGNQGcZm/+EksZxYCLEQ=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:52068)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g86oS-0007ie-KP; Thu, 04 Oct 2018 17:49:20 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g86oN-0006Sx-DP; Thu, 04 Oct 2018 17:49:15 +0100
-Date:   Thu, 4 Oct 2018 17:49:12 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 1/2] reboot: Make restart_handler_list a blocking notifier
- chain.
-Message-ID: <20181004164911.GD30658@n2100.armlinux.org.uk>
-References: <20181004162339.19493-1-nicolas.cavallari@green-communications.fr>
- <20181004162339.19493-2-nicolas.cavallari@green-communications.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004162339.19493-2-nicolas.cavallari@green-communications.fr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 4 Oct 2018 19:44:59 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r9-v6so3513603pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 09:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=NuSFvU6mksMMmx+Ai23GH9YjuyxFzvL4ep+n0IFWo00=;
+        b=muOAV5B5ZFAC5LvGAs638C00/kcvJtKdhTb5H3LmQcjunnMEY/ZDHQZ+PqeQwPb39u
+         xvjOww9e7hZO4Z073cvvPJ5811Qk0OFcotQTSm/tqYJ6A2/C/sNN6VV+so35c9F0w8Fe
+         noKMgrnHFUq69YURKeGC1zUtoJfOpgc0HcDPRuXA/6VdmKLiAvlYWr8hHA7P8Nvxo9yq
+         NySpSIY4sGHOO6ttR4NXVkHDDUu266UQQtE7GAH+26o6SIcshY1kr3rhKd7JhHcmp0gJ
+         pT6O1zJCt6NX3TUVLb1tc8InfxAiZ3Kr0RfPCjYKmwmWLCU3WEwlZrfNeh0s+fB7i3Fx
+         7Glw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=NuSFvU6mksMMmx+Ai23GH9YjuyxFzvL4ep+n0IFWo00=;
+        b=dTHbsgzyxKjV28ywg46uwUsF87s0a5NSdnikyTRpmeXP09cD5gvJka2hxDRdUQYndS
+         rf+KC9GWYDISiJ3UO0MjatzY0Wbcs7HAuCYayZgXVk/AllI25jLXWQbhW/D4faaPAZT+
+         Hj4eiHYwA4OZutnX+fLatCiHrdZdBv+RWiyZmIiKwt2So+52UNH1j1zwzpAuxD6MtpUx
+         QUUAW91gsLrIemPLlda1mJpAAKqDDswEhxM+7yCjlZAT9GbU6feG8AZvnvihbkthrwbK
+         mjh3TXRCheChflEvBlw4JlBBFATXLftagECDfwsKk84TdycofkG72+cQ8Zl8hxtncT4v
+         8Z3w==
+X-Gm-Message-State: ABuFfohB++ndBEw606BHMqZQv2mipddBQU3h7C8v2/7LS6nVUOn4sG8D
+        LuWig7tZ/2iFT9PvV0ZN24kkPw==
+X-Google-Smtp-Source: ACcGV61RxyMgutle2UE4PyYZx2VXMcFZCIzSPfePSGHT5VBYPRlgOJDqFitnoUIxgpaYHnwSj7UCag==
+X-Received: by 2002:a63:525c:: with SMTP id s28-v6mr6418696pgl.78.1538671853024;
+        Thu, 04 Oct 2018 09:50:53 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:8123:d110:9b20:937c? ([2601:646:c200:7429:8123:d110:9b20:937c])
+        by smtp.gmail.com with ESMTPSA id h5-v6sm7507146pfo.135.2018.10.04.09.50.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 09:50:51 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 00/11 v3] x86: load FPU registers on return to userland
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <8ea44ae2bb4844df812ea4c6cb0c00ef12708c51.camel@surriel.com>
+Date:   Thu, 4 Oct 2018 09:50:51 -0700
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <1DDD1BB3-A306-4366-A941-4F7321672C6B@amacapital.net>
+References: <20181004140547.13014-1-bigeasy@linutronix.de> <8ea44ae2bb4844df812ea4c6cb0c00ef12708c51.camel@surriel.com>
+To:     Rik van Riel <riel@surriel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 06:23:38PM +0200, Nicolas Cavallari wrote:
-> Many users of restart_handlers are sleeping in their callbacks.  Some
-> are doing infinite loops or calling driver code that may sleep or
-> perform operation on slow busses, like i2c.
+
+
+> On Oct 4, 2018, at 9:45 AM, Rik van Riel <riel@surriel.com> wrote:
 > 
-> This is not allowed in an atomic notifier chain, which is what
-> restart_handler_list currently is, so use a blocking notifier chain
-> instead.
+> On Thu, 2018-10-04 at 16:05 +0200, Sebastian Andrzej Siewior wrote:
+> 
+> 
+>> In v3 I dropped that decouple idea. I also learned that the wrpkru
+>> instruction is not privileged and so caching it in kernel does not
+>> work.
+> 
+> Wait, so any thread can bypass its memory protection
+> keys, even if there is a seccomp filter preventing
+> it from calling the PKRU syscalls?
+> 
+> Is that intended?
+> 
+> Is that simply a hardware limitation, or something
+> where we can set a flag somewhere to force tasks to
+> go through the kernel?
+> 
+> 
 
-This isn't going to work.
-
-For example, sysrq processing (which can happen in IRQ context) calls
-emergency_restart() for the reboot sysrq.  That calls through to
-machine_restart(), which then calls do_kernel_restart().
-
-If do_kernel_restart() sleeps, then we're trying to sleep in IRQ
-context, and that's a no no.  I'm afraid you can't just add an irq
-enable and change the notifier list to be atomic - and, as you're
-making the change in generic code, this affects everyone, not just the
-architecture that happens to be in front of you (so if it were merged,
-you're likely to get a lot of bug reports!)
-
-It gets worse, because (eg) a panic() or IRQ can happen with any locks
-held - and if the I2C device's locks are held when one of those events
-happen, you have a deadlock situation (hence you won't reboot!)
-
-I suppose a good first step would be for us to have our own
-machine_emergency_restart() on ARM, to separate the atomic paths
-from the non-atomic paths, so that those who need to talk to an I2C,
-that can happen from the non-atomic path (which means things like
-/sbin/reboot will work) but other stuff (eg, restart on panic, sysrq,
-soft-watchdog) will fail.
-
-This issue as come up recently surrounding PMIC issues, but the
-discussions there appear to have completely dried up...
-
-However, my conclusion is that having an I2C driver deal with reboot
-is possible for the process-induced reboot cases, but it's never going
-to work reliably for the emergency case.
-
-If you want the emergency case to work, then you need to work out some
-way to talk on the I2C bus without involving any locks and with the I2C
-bus possibly mid-transfer - which is not an easy problem to solve.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Hardware limitation.
