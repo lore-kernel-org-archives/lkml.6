@@ -2,99 +2,148 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E8CC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35728C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAD621473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:12:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qg2a1Pft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEAD621473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F23CA20684
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F23CA20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeJDTFG (ORCPT
+        id S1727600AbeJDTFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:05:06 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44695 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeJDTFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:05:06 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 63-v6so9634672wra.11
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 05:12:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZMYMit00069q3Wa4pHLtH/qxhEADzGSxQvEGyNiu9lA=;
-        b=Qg2a1PftIFC8hU14okQVJawfjzxNxjnkzTsuW+ouU3iwc2tskBDpfQZuqVl57qxX4j
-         GThjAIBntybcQVurslTgy/BbIWlUltMxSUpeVG6J5Onf+ATKJ1/bjLo3Yjjn0EYSiW8L
-         iFe2REibB55LkiIf2D8Ql9L5lkeDzLWDnPNaP2t7Pmz9kT8daPnRl30J1tRdvFBxbrQM
-         4cwv5vp1Qf13XfmDVLkL8EuIdwt7elOEoI8LN922k6rwYXulBcEN1J1CEpUKRUJOsmVT
-         QO47JlefiBMMymDq9ggP9rOlOLyNtnHdDNFgTvSDMzk0kNSKOaB6uxgbLvpAw5GvieMf
-         8IwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZMYMit00069q3Wa4pHLtH/qxhEADzGSxQvEGyNiu9lA=;
-        b=EUjBo+qV9WJIglbwrGReQnNinmGt1btCyoSLWj6qwFPKR2zLfPsdU85/FoyPwind17
-         bri8Ougf0D+Og8CURJ8NpMgT29RW+gVQhkE3fNYIq84FqJRjKbnRCEOto7gFMoOV3NTx
-         qm4+N7JlAN6NVXleiFgcjEy9eEnuKtbSfZ6+6ULUPfiCqYhSvdLSgWISfaWipp7weMed
-         Ep5U/FfBfeBwDHJ+tmZlx5xIu5Rpls9UXtm9jP4vMdhZxelbgSa/X4xhj9Oh9vTpU/fV
-         mkX+lYfvetZk4sO2bxL6jiAXk3V+BdBDO3pddoL//87z0HKNSRSa+6c/9cw+Re2v9PLz
-         2Ykg==
-X-Gm-Message-State: ABuFfojaocrTUBUfiWHosjiPEcJm5WwKzcURe6MQK8CBnwjjPbv24iwN
-        LjDB2zaESC2uOebXjj5AimusrNUq
-X-Google-Smtp-Source: ACcGV62IrrntXCiJmC74GCegfmuhAzzuYMH1eWbE/wxAIZIaD3xDUnawot2mKjBd54TponZnb5B4fw==
-X-Received: by 2002:adf:cf0b:: with SMTP id o11-v6mr4543782wrj.272.1538655125190;
-        Thu, 04 Oct 2018 05:12:05 -0700 (PDT)
-Received: from [192.168.0.19] (ip1f12fa7d.dynamic.kabel-deutschland.de. [31.18.250.125])
-        by smtp.gmail.com with ESMTPSA id t143-v6sm4461273wmt.2.2018.10.04.05.12.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 05:12:04 -0700 (PDT)
-Subject: Re: [PATCH 2/3] staging: rtl8188eu: cleanup array declaration - style
-To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20181003204359.30676-1-straube.linux@gmail.com>
- <20181003204359.30676-2-straube.linux@gmail.com>
- <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <e2c8ffb7-4c62-8da9-9f78-00edb4edcb5e@gmail.com>
-Date:   Thu, 4 Oct 2018 14:12:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 4 Oct 2018 15:05:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35320 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727209AbeJDTFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:05:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9717020719; Thu,  4 Oct 2018 14:12:04 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 32ABF20618;
+        Thu,  4 Oct 2018 14:12:04 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 14:12:04 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] spi: add support for octal I/O data transfer
+Message-ID: <20181004141204.04168a22@bbrezillon>
+In-Reply-To: <VI1PR04MB10384B74E6E27435313CC73099EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <1538642920-3843-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <1538642920-3843-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <20181004110446.5e1bb255@bbrezillon>
+        <VI1PR04MB10380FD9CE99E34BA27E55B699EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181004111941.0da33ec0@bbrezillon>
+        <VI1PR04MB1038E23CBFE9CFD5C2ECCD3299EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <VI1PR04MB10384B74E6E27435313CC73099EA0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/18 11:30 PM, Joe Perches wrote:
-   
->>   static struct mlme_handler mlme_sta_tbl[] = {
+On Thu, 4 Oct 2018 12:07:17 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+
+> Hi Boris,
 > 
-> Perhaps const here too, and as well, the struct
-> declaration could use const char * instead of char *
+> > -----Original Message-----
+> > From: Yogesh Narayan Gaur
+> > Sent: Thursday, October 4, 2018 2:56 PM
+> > To: 'Boris Brezillon' <boris.brezillon@bootlin.com>
+> > Cc: linux-mtd@lists.infradead.org; marek.vasut@gmail.com; vigneshr@ti.com;
+> > linux-spi@vger.kernel.org; devicetree@vger.kernel.org; robh@kernel.org;
+> > mark.rutland@arm.com; shawnguo@kernel.org; linux-arm-
+> > kernel@lists.infradead.org; computersforpeace@gmail.com;
+> > frieder.schrempf@exceet.de; linux-kernel@vger.kernel.org
+> > Subject: RE: [PATCH 1/4] spi: add support for octal I/O data transfer
+> > 
+> > Hi Boris,
+> >   
+> > > -----Original Message-----
+> > > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > > Sent: Thursday, October 4, 2018 2:50 PM
+> > > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> > > Cc: linux-mtd@lists.infradead.org; marek.vasut@gmail.com;
+> > > vigneshr@ti.com; linux-spi@vger.kernel.org;
+> > > devicetree@vger.kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> > > shawnguo@kernel.org; linux-arm- kernel@lists.infradead.org;
+> > > computersforpeace@gmail.com; frieder.schrempf@exceet.de;
+> > > linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH 1/4] spi: add support for octal I/O data transfer
+> > >
+> > > On Thu, 4 Oct 2018 09:14:36 +0000
+> > > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> > >  
+> > > > Hi Boris,
+> > > >  
+> > > > > -----Original Message-----
+> > > > > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > > > > Sent: Thursday, October 4, 2018 2:35 PM
+> > > > > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> > > > > Cc: linux-mtd@lists.infradead.org; marek.vasut@gmail.com;
+> > > > > vigneshr@ti.com; linux-spi@vger.kernel.org;
+> > > > > devicetree@vger.kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> > > > > shawnguo@kernel.org; linux-arm- kernel@lists.infradead.org;
+> > > > > computersforpeace@gmail.com; frieder.schrempf@exceet.de;
+> > > > > linux-kernel@vger.kernel.org Subject: Re: [PATCH 1/4] spi: add
+> > > > > support for octal I/O data transfer
+> > > > >
+> > > > > Hi Yogesh,
+> > > > >  
+> [...]
+> > > > > > +#define	SPI_RX_OCTAL
+> > > > > > 0x2000			/* receive with 8 wires  
+> > > > > */  
+> > > > > >  	int			irq;
+> > > > > >  	void			*controller_state;
+> > > > > >  	void			*controller_data;  
+> > > > >
+> > > > > You're still not updating spi-mem.c to check those flags and
+> > > > > SPI_MEM_MAX_BUSWIDTH is not updated to match the new limit (8
+> > > > > instead of 4).
+> > > > >  
+> > > > Yes and its strange that my octal mode communication is working fine
+> > > > without adding support in spi-mem.c and that's why this has been
+> > > > missed from me.  
+> > >
+> > > Are you based on top of spi-next?  
+> > 
+> > Ok, that might be the reason. I have rebased few days back.
+> > Would rebase with current tip and add support in spi-mem interface too.  
 > 
+> I have rebased spi-next and currently on top but still my octal command support is working fine without any issue with current shared patch series, performed data sanity.
+> 
+> =>  git log  --pretty=oneline -3  
+> 	496c415717b8bb7d37181127fcfad0ba450eb10d mtd: spi-nor: fsl-quadspi: Don't let -EINVAL on the bus
+> 	2336d3a7b125683c9e8b25d6efa6064310d19dbe mtd: devices: m25p80: Make sure WRITE_EN is issued before each write
+> 	e55841874471282d32eec595997afce43a5f55c0 mtd: spi-nor: Support controllers with limited TX FIFO size
+> 
+> GIT Repo - 	git://git.infradead.org/linux-mtd.git
+> Branch -	remotes/origin/spi-nor/next
+> 
+> Also, I am not able to find string SPI_MEM_MAX_BUSWIDTH in current source code, can you share the GIT details where these changes are pushed.
 
-Making it const gives following warning.
+It's in Mark's tree [1] (spi-next != spi-nor/next).
 
-drivers/staging/rtl8188eu/core/rtw_mlme_ext.c: In function 'mgt_dispatcher':
-drivers/staging/rtl8188eu/core/rtw_mlme_ext.c:4114:9: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   ptable = mlme_sta_tbl;
-          ^
-
-So I'll only change the char * to const char *.
-Thanks.
+[1]https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/log/?h=for-next
