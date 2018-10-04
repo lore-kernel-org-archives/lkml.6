@@ -2,146 +2,135 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCE0C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC50BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7A02084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A346E2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:38:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zkot1Lqe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7A02084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i3CBSemw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A346E2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbeJDV0g (ORCPT
+        id S1727644AbeJDVbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:26:36 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34705 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbeJDV0g (ORCPT
+        Thu, 4 Oct 2018 17:31:43 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:60138 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeJDVbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:26:36 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f8-v6so8606129ljk.1;
-        Thu, 04 Oct 2018 07:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sFh4/z6kc+w/tczrmSajZkNfvZfWYf64ehKmrvnAHkQ=;
-        b=Zkot1LqePJDh9we2MfQXd39JYj7D9Zi5tX1BBn0+mRj/Or/hjGFDZH3zoycHNJQYTy
-         fjCOfafbTzVjzSRDxycYAiPgaEV7OnjHA9ERJnQRgRWYg/MwQrbF3dLTMCUBpyQg/wDR
-         DiKnetha155el77TCr0G55YsfxetPUYfu3EvMKzuCC4+jX8+FLpVTyYmSgwRvp7Jz6Up
-         jGNDMCmfR8HOThNKYtuzcqmrbTZaM2SW0fcl1v9+0x7FJWPtnGC336i7WLRYZyjM1fJ+
-         BWyD66vBxxwamUtsU1BSTgL0a1wqiTGT5m23sXv0J0J7Zi3/HZH6WUgiTGabnswjZPo+
-         vZ3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sFh4/z6kc+w/tczrmSajZkNfvZfWYf64ehKmrvnAHkQ=;
-        b=LVLZlEQfE9VL3Yra/mHJXX6NsCQ5BU2nyqk/KYU6sbHI5/nS6iBwfAapVOIzoGm1y7
-         Y76VlYmMfAYqz+1ak8afyPGMMzDx+Tfc+tGbmm/+M7Rw/EDgNhXdy2uDMcADy+tIfPFb
-         izVrtkd0s0vr7q6Lpba7Z8niLj8HW4DVcrPRsjGJq9AtSYZPaHX/jpRZ1IbzfVvQdtER
-         XHHhbaSTnl8fE9OHPkCTBcDeKAaeBIzWTWsC9oczL+AEqc4eV6/0Vyxm6ryLr0eyYALl
-         Lvb5Nux+cioMY8v/ql0Aoup3xZPLBUHdDDlVqyvbhFmpJL6OxcP98HcNOMyIataOjOUT
-         DlbQ==
-X-Gm-Message-State: ABuFfohDeRydA+5S0wYYqVuFznkRhuJwBT/787Ihf4BVX9z/+vKQPo9h
-        cyDy74CTHXEg7DbxK7GN1V+UsXj8aOxGgrsYEiI=
-X-Google-Smtp-Source: ACcGV62YIlGkJkawPnBnMQqLzaYBjxTG5Od63gn0TkyVti8o8jTkUy4uIhHTTmXOejGCEhaSJAbtGE/zE8qGgL1oCE4=
-X-Received: by 2002:a2e:811:: with SMTP id 17-v6mr4396882lji.140.1538663580049;
- Thu, 04 Oct 2018 07:33:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181004130110.8496-1-ricardo.ribalda@gmail.com>
- <20181004130110.8496-9-ricardo.ribalda@gmail.com> <20181004160207.3b0403d7@bbrezillon>
-In-Reply-To: <20181004160207.3b0403d7@bbrezillon>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Thu, 4 Oct 2018 16:32:43 +0200
-Message-ID: <CAPybu_02nJf3JusnBrBZhEU4QvsDFWidEgZ_Teuv9ZqedCek1Q@mail.gmail.com>
-Subject: Re: [PATCH v6 09/10] dt-binding: mtd: Document gpio-addr-flash
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Thu, 4 Oct 2018 17:31:43 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w94EYH8v090817;
+        Thu, 4 Oct 2018 14:35:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=3zAwkcCqsiJJ3tf4fDUCP8h5IpJmykzD0Smpt5CumTM=;
+ b=i3CBSemwUW/9qWBIil8nUkq9cFzwriFnJQ8mTPe5poKPjYoQqGokTy/dOeKPEOMy5mkN
+ u9t30YcaVeSyuHgNHdO5xktLnqaivihYbgecYVvUc5GjB39wQWnbUQdtLfEhFaNPezm6
+ iLgWOApEkvv+s1cWqNgqT75z7BJZ0JcUQL9RQNnPAR4nurmsg72Q2RaQajaW3BzU6EIa
+ c+GXhzrFtxFaacVlKwRrzHSYYAN9KXmuOpKV6ktiddR2fxOuyV7m5sfxl5K+3nsUB7dC
+ tMN8x4LHT64HiBDhaCiIVO0vjYqcFT31OU2/0L43XTu76dCpuXAUJLGpFqUofuxwwkt5 Cg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2mt0tu4r43-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Oct 2018 14:35:54 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w94EZsnx018685
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 4 Oct 2018 14:35:54 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w94EZnbE016456;
+        Thu, 4 Oct 2018 14:35:49 GMT
+Received: from oracle.com (/10.39.202.251)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 04 Oct 2018 14:35:48 +0000
+Date:   Thu, 4 Oct 2018 10:35:08 -0400
+From:   Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Brian Norris <computersforpeace@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        gregkh <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Marek Vasut <marek.vasut@gmail.com>,
         Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        naren.kernel@gmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        ivan.khoronzhuk@linaro.org, svendev@arcx.com, pabeni@redhat.com,
+        Alban Bedel <albeu@free.fr>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v2 00/29] at24: remove at24_platform_data
+Message-ID: <20181004143508.GG13299@oracle.com>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+ <20180831194643.GA62862@ban.mtv.corp.google.com>
+ <CAMRc=MejZLV1EQ7uAddsxLY0MTUF8WyiBn=F0ZhkWQJpET0EDQ@mail.gmail.com>
+ <a4c2e6cf-749a-83a1-0bda-43ddb7e744cd@gmail.com>
+ <CAMRc=MfwM7vODsnuV9eKS4Uf7M5ac59u7ao7KvyaxKzPv5FRvw@mail.gmail.com>
+ <CAK8P3a1LufzR1_6mXH=1zDb34VQStLywGM1w5x5CDAMh_7uMyA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1LufzR1_6mXH=1zDb34VQStLywGM1w5x5CDAMh_7uMyA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9035 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810040137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris
-On Thu, Oct 4, 2018 at 4:02 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> On Thu,  4 Oct 2018 15:01:09 +0200
-> Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
->
-> > Add documentation for gpio-addr-flash. This binding allow creating
-> > flash devices that are paged using GPIOs.
-> >
-> > Cc: devicetree@vger.kernel.org
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > ---
-> >  .../bindings/mtd/mtd,gpio-addr-flash.txt      | 25 +++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mtd/mtd,gpio-addr-flash.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/mtd/mtd,gpio-addr-flash.txt b/Documentation/devicetree/bindings/mtd/mtd,gpio-addr-flash.txt
-> > new file mode 100644
-> > index 000000000000..304a33880f9e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mtd/mtd,gpio-addr-flash.txt
-> > @@ -0,0 +1,25 @@
-> > +Memory Mapped flash with some address lines addressed using GPIOs
-> > +
-> > +Handle the case where a flash device is mostly addressed using physical
-> > +line and supplemented by GPIOs.  This way you can hook up say a 8MiB flash
-> > +to a 2MiB memory range and use the GPIOs to select a particular range.
-> > +
-> > + - compatible :  must be "mtd,gpio-addr-flash", "cfi-flash";
->
-> I keep thinking you don't need a specific binding, just add an optional
-> addr-gpios property to the generic physmap binding and that should do
-> the trick. Plus, "*mtd*,gpio-addr-flash" is a linux-ism, and DT
-> bindings should be OS-agnostic.
->
+Just catching up on this thread, so please excuse any unintentional
+misquotes here.
 
-That is a very good point. Please take a look to v10, and tell me what
-do you think.
+> > > > David: I couldn't find a place in sparc code where any ethernet device
+> > > > would be registered, so is there a chance that nobody is using it?
+> > >
+> > > SPARC uses a true Open Firmware implementation, so it would register
+> > > drivers through the CONFIG_OF infrastructure.
 
-It does not require a specific binding and also it can be build optionally.
+correct
 
-Regards!
+> The calls are not even that old, and clearly added intentionally for sparc,
+> see commit ba94272d08a7 ("i40e: use eth_platform_get_mac_address()")
+> which added the first one.
 
-> > + - reg : Address range of the mtd chip that is memory mapped, this is,
-> > +   on the previous example 2MiB.
-> > + - addr-gpios: List of GPIO specifiers that will be used to address the MSBs
-> > +   address lines. The order goes from LSB to MSB.
-> > +
-> > +For the rest of the properties, see mtd-physmap.txt.
-> > +
-> > +The device tree may optionally contain sub-nodes describing partitions of the
-> > +address space. Check partition.txt for more details.
-> > +
-> > +Example:
-> > +
-> > +     flash@300000 {
-> > +             compatible = "mtd,gpio-addr-flash", "cfi-flash";
-> > +             bank-width = <2>;
-> > +             reg = < 0x00300000 0x00200000 >;
-> > +             addr-gpios = <&gpio_0 3 0>, <&gpio_0 4 0>;
-> > +     } ;
->
+Yes, correct again. Wouldn't PPC also end up doing the same thing?
+
+See also commit c762dff24c06 (for ixgbe) - without this fix sparc systems
+will come up with a bogus mac address and then you end up having to
+manually fix this in ugly ways.
+
+--Sowmini
 
 
--- 
-Ricardo Ribalda
