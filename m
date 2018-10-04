@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD28C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26917C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8737C2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44192084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:40:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="Ws5OQI5d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8737C2084D
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="nwDVyYnn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44192084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeJECf3 (ORCPT
+        id S1728080AbeJECfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:35:29 -0400
-Received: from mail1.kuutio.org ([92.222.216.83]:47766 "EHLO mail1.kuutio.org"
+        Thu, 4 Oct 2018 22:35:30 -0400
+Received: from mail1.kuutio.org ([92.222.216.83]:47768 "EHLO mail1.kuutio.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727642AbeJECf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:35:28 -0400
+        id S1727654AbeJECf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 22:35:29 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id C093720657;
-        Thu,  4 Oct 2018 21:34:44 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTP id 0734B1F99C;
+        Thu,  4 Oct 2018 21:34:46 +0200 (CEST)
 Authentication-Results: mail1.kuutio.org (amavisd-new);
         dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
         header.d=lemmela.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
         references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received; s=dkim; t=1538681683; x=
-        1541273684; bh=/PFfFkGU2tveO+f1uD/iVS5pMKTkgRs5f1tx974Fqsg=; b=W
-        s5OQI5dIBTo6sicaSx6tQN/hV30Uz+kGjyvobhMh7q193ONXVJllGxIU7JRC4Jt8
-        txtAzRkRSet4YNyyn8nlaLsp0oMELYlayT77PnBSNwuVEdl96uUbb8XXQ4jp+ZpU
-        PurWiMy9h1RbvLhDGHlHHSe5Pzsr9yuMNVKvQAo69OXe5BJRxutO6M6j3UkhyGZ2
-        dObasgJov4VCv+pGZ6BoVS97VeBO9XNgQODGdAUEkk6JKoX9FBI8zVW/0BPp4EWw
-        gduNlK6CZNSNeyuSYexOXDqbHGOCQtWBcBaq5gB1QmhGenr90K1oqavhN5n4k5Tt
-        Dg6cFgw9KYZOEHxQFfgPlc4F19HFT4IO4EVfxeX/qxJfG40GSHGCm7CFiJoqdpbR
-        ChXAHfYT4W5wSYfREhehX/fCMBCIvSUd4xLGxVDJle5727MZRnLV8XvRqtnKUXBP
-        gp+yOStBK0quCz8XXruaDKKv0HDWNYqjUeOFa6IWh1EncWf5evxR40ddqwFdRMg8
-        ssYX/uVaJ0bJ0ZCOhfbg48Qx8zc/GbpVa++Hz13F9ZNQZfEiTLCSVS4JR3/0vMiK
-        TRI+yXkEK3L7YUCSOINSKx8z9/PKbV/syGm2LiCMyEdnuog+ecXsZK67AqgQw9OC
-        ZH8aH2485EfmdldDvQ4Z0qf5LGp/ljICdlzUjpmDmM=
+        :subject:from:from:received:received; s=dkim; t=1538681684; x=
+        1541273685; bh=nH9jCOZMiAQffXTRDY0K3dj/dvc9nqOMIuTRGT/kQII=; b=n
+        wDVyYnnghr9vuNsXK1c5b5qHjuRF3JxK6NVVaKTyYTVZ/Z3YIll9u9Y72HOLSATx
+        MGC1o6Ng07odZuUGa+FoW6ijqAGEt3CvaceaXyJA8d3Fe7TjCdwdJVmDvrl9a6Kx
+        ZfWR4Vuo1U+7c/KdLzZ6nJeudYLg+afNF6LqX+zt1q1rdU+V0hwQbWs0Nz7DoXH4
+        zyUxQdA4Lz+HIyKQuxkw+KURN/b7+sOUeilqEzTqMIepGhuCgLM3xcwsKkyugRaC
+        eDnCqEggV1osDkjgL4ykSQkmW9iT1nV14l23WlaJBUcpVhDaT2vGIwV6p27seXK+
+        6IDbmH/aSiiO3oLe1VE2w+t+ycno4ui6dz516OvdwSX1xFx8Pz7XvFJ7EkROf7v6
+        6SXhemnXqR88U2CUKFKQpgbXfXa4ZK7+l0ayKyNacU6IFjIfM2MweekcRuP1AaIu
+        U84l6X13363NQno0p4TNjXmPS+z7/QzgIvc6CNkqDOtsMeGi8dF1KBp5Nvw4lK8s
+        M7J0yrc2PRTRA1dMygwn3Q0pfZUz5eEJzsUT4KmHlOnPol+x3y8k6Z32lpJlOkZm
+        ngiLL0lrqHWzTea6SQO9V0Agb1FEPy15jQ+0HYXsKMWKGgWhVy3hqoYZKT61cfQb
+        3L/plzddvr1aDA1sTz0zeKYX/mUwyoN0BnqppB8Bog=
 X-Virus-Scanned: amavisd-new at kuutio.org
 Received: from mail1.kuutio.org ([127.0.0.1])
         by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id LgYUfUWXGgUJ; Thu,  4 Oct 2018 21:34:43 +0200 (CEST)
+        with LMTP id BwkJ3V_T2fzg; Thu,  4 Oct 2018 21:34:44 +0200 (CEST)
 Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id 39E041FBED;
-        Thu,  4 Oct 2018 21:34:43 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTPSA id 0EC8A1FBF3;
+        Thu,  4 Oct 2018 21:34:44 +0200 (CEST)
 From:   Oskari Lemmela <oskari@lemmela.net>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sebastian Reichel <sre@kernel.org>,
@@ -70,9 +70,9 @@ Cc:     Hartmut Knaack <knaack.h@gmx.de>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/4] arm64: allwinner: a64: add battery and AC power supply support
-Date:   Thu,  4 Oct 2018 22:34:09 +0300
-Message-Id: <20181004193410.7265-4-oskari@lemmela.net>
+Subject: [PATCH 4/4] power: supply: add AXP803/AXP813 AC and battery power supply support
+Date:   Thu,  4 Oct 2018 22:34:10 +0300
+Message-Id: <20181004193410.7265-5-oskari@lemmela.net>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181004193410.7265-1-oskari@lemmela.net>
 References: <20181004193410.7265-1-oskari@lemmela.net>
@@ -81,76 +81,360 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add AXP803 DT nodes for AC and battery power supplies.
-Enable AC and battery power supplies for sopine-baseboard.
+AXP803 PMIC is register compatible with AXP813.
+
+Added support for AXP803/AXP813 AC power supply.
+AXP8x3 is capable to limit input current and minimum input voltage.
+Both of these register values are writeable.
 
 Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 ---
- arch/arm64/boot/dts/allwinner/axp803.dtsi     | 31 +++++++++++++++++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts |  8 +++++
- 2 files changed, 39 insertions(+)
+ drivers/iio/adc/axp20x_adc.c           |   1 +
+ drivers/mfd/axp20x.c                   |  22 ++-
+ drivers/pinctrl/pinctrl-axp209.c       |   1 +
+ drivers/power/supply/axp20x_ac_power.c | 194 +++++++++++++++++++++++++
+ drivers/power/supply/axp20x_battery.c  |   3 +
+ include/linux/mfd/axp20x.h             |   1 +
+ 6 files changed, 221 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-index e5eae8bafc42..d23e5d1e9310 100644
---- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-@@ -49,6 +49,37 @@
- 	interrupt-controller;
- 	#interrupt-cells = <1>;
- 
-+	axp_adc: adc {
-+		compatible = "x-powers,axp803-adc";
-+		#io-channel-cells = <1>;
-+	};
-+
-+	axp_gpio: gpio {
-+		compatible = "x-powers,axp803-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		gpio0_ldo: gpio0-ldo {
-+			pins = "GPIO0";
-+			function = "ldo";
-+		};
-+
-+		gpio1_ldo: gpio1-ldo {
-+			pins = "GPIO1";
-+			function = "ldo";
-+		};
-+	};
-+
-+	ac_power_supply: ac-power-supply {
-+		compatible = "x-powers,axp803-ac-power-supply";
-+		status = "disabled";
-+	};
-+
-+	battery_power_supply: battery-power-supply {
-+		compatible = "x-powers,axp803-battery-power-supply";
-+		status = "disabled";
-+	};
-+
- 	regulators {
- 		/* Default work frequency for buck regulators */
- 		x-powers,dcdc-freq = <3000>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index c21f2331add6..335cf2263d19 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -69,6 +69,14 @@
- 	};
+diff --git a/drivers/iio/adc/axp20x_adc.c b/drivers/iio/adc/axp20x_adc.c
+index 5be789269353..f919a16a8533 100644
+--- a/drivers/iio/adc/axp20x_adc.c
++++ b/drivers/iio/adc/axp20x_adc.c
+@@ -641,6 +641,7 @@ static const struct axp_data axp813_data = {
+ static const struct of_device_id axp20x_adc_of_match[] = {
+ 	{ .compatible = "x-powers,axp209-adc", .data = (void *)&axp20x_data, },
+ 	{ .compatible = "x-powers,axp221-adc", .data = (void *)&axp22x_data, },
++	{ .compatible = "x-powers,axp803-adc", .data = (void *)&axp813_data, },
+ 	{ .compatible = "x-powers,axp813-adc", .data = (void *)&axp813_data, },
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index 0be511dd93d0..c540f17549d5 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -731,8 +731,23 @@ static const struct mfd_cell axp803_cells[] = {
+ 		.name			= "axp221-pek",
+ 		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+ 		.resources		= axp803_pek_resources,
++	}, {
++		.name			= "axp20x-regulator"
++	}, {
++		.name			= "axp20x-gpio",
++		.of_compatible		= "x-powers,axp803-gpio",
++	}, {
++		.name			= "axp813-adc",
++		.of_compatible		= "x-powers,axp803-adc",
++	}, {
++		.name		= "axp20x-battery-power-supply",
++		.of_compatible	= "x-powers,axp803-battery-power-supply",
++	}, {
++		.name		= "axp20x-ac-power-supply",
++		.of_compatible	= "x-powers,axp803-ac-power-supply",
++		.num_resources	= ARRAY_SIZE(axp20x_ac_power_supply_resources),
++		.resources	= axp20x_ac_power_supply_resources,
+ 	},
+-	{	.name			= "axp20x-regulator" },
  };
  
-+&ac_power_supply {
-+	status = "okay";
-+};
-+
-+&battery_power_supply {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
+ static const struct mfd_cell axp806_self_working_cells[] = {
+@@ -778,6 +793,11 @@ static const struct mfd_cell axp813_cells[] = {
+ 	}, {
+ 		.name		= "axp20x-battery-power-supply",
+ 		.of_compatible	= "x-powers,axp813-battery-power-supply",
++	}, {
++		.name		= "axp20x-ac-power-supply",
++		.of_compatible	= "x-powers,axp813-ac-power-supply",
++		.num_resources	= ARRAY_SIZE(axp20x_ac_power_supply_resources),
++		.resources	= axp20x_ac_power_supply_resources,
+ 	},
  };
+ 
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+index afd0b533c40a..21859579e0a2 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -387,6 +387,7 @@ static int axp20x_build_funcs_groups(struct platform_device *pdev)
+ 
+ static const struct of_device_id axp20x_pctl_match[] = {
+ 	{ .compatible = "x-powers,axp209-gpio", .data = &axp20x_data, },
++	{ .compatible = "x-powers,axp803-gpio", .data = &axp813_data, },
+ 	{ .compatible = "x-powers,axp813-gpio", .data = &axp813_data, },
+ 	{ }
+ };
+diff --git a/drivers/power/supply/axp20x_ac_power.c b/drivers/power/supply/axp20x_ac_power.c
+index 0771f951b11f..3247efb81cd1 100644
+--- a/drivers/power/supply/axp20x_ac_power.c
++++ b/drivers/power/supply/axp20x_ac_power.c
+@@ -27,6 +27,23 @@
+ #define AXP20X_PWR_STATUS_ACIN_PRESENT	BIT(7)
+ #define AXP20X_PWR_STATUS_ACIN_AVAIL	BIT(6)
+ 
++#define AXP8X3_PWR_ACIN_VHOLD		GENMASK(5, 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_0V	(0 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_1V	(1 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_2V	(2 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_3V	(3 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_4V	(4 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_5V	(5 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_6V	(6 << 3)
++#define AXP8X3_PWR_ACIN_VHOLD_4_7V	(7 << 3)
++#define AXP8X3_PWR_ACIN_CURR_LIMIT	GENMASK(2, 0)
++#define AXP8X3_PWR_ACIN_CURR_1_5A	0
++#define AXP8X3_PWR_ACIN_CURR_2_0A	1
++#define AXP8X3_PWR_ACIN_CURR_2_5A	2
++#define AXP8X3_PWR_ACIN_CURR_3_0A	3
++#define AXP8X3_PWR_ACIN_CURR_3_5A	4
++#define AXP8X3_PWR_ACIN_CURR_4_0A	5
++
+ #define DRVNAME "axp20x-ac-power-supply"
+ 
+ struct axp20x_ac_power {
+@@ -102,6 +119,72 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
+ 
+ 		return 0;
+ 
++	case POWER_SUPPLY_PROP_VOLTAGE_MIN:
++		ret = regmap_read(power->regmap, AXP803_ACIN_PATH_CTRL, &reg);
++		if (ret)
++			return ret;
++
++		switch (reg & AXP8X3_PWR_ACIN_VHOLD) {
++		case AXP8X3_PWR_ACIN_VHOLD_4_0V:
++			val->intval = 4000000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_1V:
++			val->intval = 4100000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_2V:
++			val->intval = 4200000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_3V:
++			val->intval = 4300000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_4V:
++			val->intval = 4400000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_5V:
++			val->intval = 4500000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_6V:
++			val->intval = 4600000;
++			break;
++		case AXP8X3_PWR_ACIN_VHOLD_4_7V:
++			val->intval = 4700000;
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		return 0;
++
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++		ret = regmap_read(power->regmap, AXP803_ACIN_PATH_CTRL, &reg);
++		if (ret)
++			return ret;
++
++		switch (reg & AXP8X3_PWR_ACIN_CURR_LIMIT) {
++		case AXP8X3_PWR_ACIN_CURR_1_5A:
++			val->intval = 1500000;
++			break;
++		case AXP8X3_PWR_ACIN_CURR_2_0A:
++			val->intval = 2000000;
++			break;
++		case AXP8X3_PWR_ACIN_CURR_2_5A:
++			val->intval = 2500000;
++			break;
++		case AXP8X3_PWR_ACIN_CURR_3_0A:
++			val->intval = 3000000;
++			break;
++		case AXP8X3_PWR_ACIN_CURR_3_5A:
++			val->intval = 3500000;
++			break;
++		case AXP8X3_PWR_ACIN_CURR_4_0A:
++			val->intval = 4000000;
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		return 0;
++
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -109,6 +192,88 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
+ 	return -EINVAL;
+ }
+ 
++static int axp20x_ac_power_set_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					const union power_supply_propval *val)
++{
++	struct axp20x_ac_power *power = power_supply_get_drvdata(psy);
++	int setval;
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_VOLTAGE_MIN:
++		switch (val->intval) {
++		case 4000000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_0V;
++			break;
++		case 4100000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_1V;
++			break;
++		case 4200000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_2V;
++			break;
++		case 4300000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_3V;
++			break;
++		case 4400000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_4V;
++			break;
++		case 4500000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_5V;
++			break;
++		case 4600000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_6V;
++			break;
++		case 4700000:
++			setval = AXP8X3_PWR_ACIN_VHOLD_4_7V;
++			break;
++
++		default:
++			return -EINVAL;
++		}
++		return regmap_update_bits(power->regmap, AXP803_ACIN_PATH_CTRL,
++					  AXP8X3_PWR_ACIN_VHOLD, setval);
++
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++
++		switch (val->intval) {
++		case 1500000:
++			setval = AXP8X3_PWR_ACIN_CURR_1_5A;
++			break;
++		case 2000000:
++			setval = AXP8X3_PWR_ACIN_CURR_2_0A;
++			break;
++		case 2500000:
++			setval = AXP8X3_PWR_ACIN_CURR_2_5A;
++			break;
++		case 3000000:
++			setval = AXP8X3_PWR_ACIN_CURR_3_0A;
++			break;
++		case 3500000:
++			setval = AXP8X3_PWR_ACIN_CURR_3_5A;
++			break;
++		case 4000000:
++			setval = AXP8X3_PWR_ACIN_CURR_4_0A;
++			break;
++		default:
++			return -EINVAL;
++		}
++		return regmap_update_bits(power->regmap, AXP803_ACIN_PATH_CTRL,
++					  AXP8X3_PWR_ACIN_CURR_LIMIT, setval);
++
++	default:
++		return -EINVAL;
++	}
++
++	return -EINVAL;
++}
++
++static int axp20x_ac_power_prop_writeable(struct power_supply *psy,
++					  enum power_supply_property psp)
++{
++	return psp == POWER_SUPPLY_PROP_VOLTAGE_MIN ||
++	       psp == POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT;
++}
++
+ static enum power_supply_property axp20x_ac_power_properties[] = {
+ 	POWER_SUPPLY_PROP_HEALTH,
+ 	POWER_SUPPLY_PROP_PRESENT,
+@@ -123,6 +288,14 @@ static enum power_supply_property axp22x_ac_power_properties[] = {
+ 	POWER_SUPPLY_PROP_ONLINE,
+ };
+ 
++static enum power_supply_property axp8x3_ac_power_properties[] = {
++	POWER_SUPPLY_PROP_HEALTH,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_VOLTAGE_MIN,
++	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
++};
++
+ static const struct power_supply_desc axp20x_ac_power_desc = {
+ 	.name = "axp20x-ac",
+ 	.type = POWER_SUPPLY_TYPE_MAINS,
+@@ -139,6 +312,16 @@ static const struct power_supply_desc axp22x_ac_power_desc = {
+ 	.get_property = axp20x_ac_power_get_property,
+ };
+ 
++static const struct power_supply_desc axp8x3_ac_power_desc = {
++	.name = "axp8x3-ac",
++	.type = POWER_SUPPLY_TYPE_MAINS,
++	.properties = axp8x3_ac_power_properties,
++	.num_properties = ARRAY_SIZE(axp8x3_ac_power_properties),
++	.property_is_writeable = axp20x_ac_power_prop_writeable,
++	.get_property = axp20x_ac_power_get_property,
++	.set_property = axp20x_ac_power_set_property,
++};
++
+ struct axp_data {
+ 	const struct power_supply_desc	*power_desc;
+ 	bool				acin_adc;
+@@ -154,6 +337,11 @@ static const struct axp_data axp22x_data = {
+ 	.acin_adc = false,
+ };
+ 
++static const struct axp_data axp8x3_data = {
++	.power_desc = &axp8x3_ac_power_desc,
++	.acin_adc = false,
++};
++
+ static int axp20x_ac_power_probe(struct platform_device *pdev)
+ {
+ 	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
+@@ -234,6 +422,12 @@ static const struct of_device_id axp20x_ac_power_match[] = {
+ 	}, {
+ 		.compatible = "x-powers,axp221-ac-power-supply",
+ 		.data = &axp22x_data,
++	}, {
++		.compatible = "x-powers,axp803-ac-power-supply",
++		.data = &axp8x3_data,
++	}, {
++		.compatible = "x-powers,axp813-ac-power-supply",
++		.data = &axp8x3_data,
+ 	}, { /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, axp20x_ac_power_match);
+diff --git a/drivers/power/supply/axp20x_battery.c b/drivers/power/supply/axp20x_battery.c
+index e84b6e4da14a..932027f4a993 100644
+--- a/drivers/power/supply/axp20x_battery.c
++++ b/drivers/power/supply/axp20x_battery.c
+@@ -537,6 +537,9 @@ static const struct of_device_id axp20x_battery_ps_id[] = {
+ 	}, {
+ 		.compatible = "x-powers,axp221-battery-power-supply",
+ 		.data = (void *)&axp221_data,
++	}, {
++		.compatible = "x-powers,axp803-battery-power-supply",
++		.data = (void *)&axp813_data,
+ 	}, {
+ 		.compatible = "x-powers,axp813-battery-power-supply",
+ 		.data = (void *)&axp813_data,
+diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+index 517e60eecbcb..23d58e243d01 100644
+--- a/include/linux/mfd/axp20x.h
++++ b/include/linux/mfd/axp20x.h
+@@ -266,6 +266,7 @@ enum axp20x_variants {
+ #define AXP288_RT_BATT_V_H		0xa0
+ #define AXP288_RT_BATT_V_L		0xa1
+ 
++#define AXP803_ACIN_PATH_CTRL		0x3a
+ #define AXP813_ADC_RATE			0x85
+ 
+ /* Fuel Gauge */
 -- 
 2.17.1
 
