@@ -2,144 +2,255 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49711C64EBD
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DD0C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0192098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 105A52098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:52:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHnR3rkP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0192098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="ojWIgp3l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105A52098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ingics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeJDNl5 (ORCPT
+        id S1727293AbeJDNnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:41:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43995 "EHLO
+        Thu, 4 Oct 2018 09:43:45 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41457 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbeJDNl5 (ORCPT
+        with ESMTP id S1727046AbeJDNnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:41:57 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p24-v6so2879632pff.10;
-        Wed, 03 Oct 2018 23:50:12 -0700 (PDT)
+        Thu, 4 Oct 2018 09:43:45 -0400
+Received: by mail-pf1-f193.google.com with SMTP id m77-v6so2885703pfi.8
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 23:51:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7v/Ja+Lq5+B4yKE1dTAlKzuYtn+OMr8F5awEI9XnsFs=;
-        b=YHnR3rkPMbf5hnlbcqgP044aMQjvMyZ1ySZ03PSexi/03EOAP/sCb3pdFnf5hSEHcP
-         4gJpeVKTsocnI6hjEyGW9KMc/sOJ+o/tKDJ+72nzCQjbjp+1/8Gaioyze7gAdvsd7gqU
-         NuNM73u00R15u87oJAwmIDgfhVy3dKNQLGjHkf4/BEY13VPRuHu1pzGhnSn7pSDolNq8
-         FUs28HNuOoAx/p88mDFRbqrYewlHVzrZ7d8Azd8tM1InuKNjpU+i0fO+UUorGo9GPYbq
-         S2vRvTjQctQYcdlEifZdmXk6JlWo8tPWh6F4PgUJc+pwG79USAyz6/N6b4X81CW/un3Z
-         mtQQ==
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=dDXX6fqxR8VFKHkmAv/J29DjtCAVJYgflRmoPb+FN+g=;
+        b=ojWIgp3lU/YL9Tutt8fpZcZtCOLXDzVarUhCZ+HthkZYIBjXnBbO1dgVKfkvUD9LYv
+         DEmOeGQ8+XvXHTRXSDkvcVOS+S5z8plj2NyQEFv859Hm+H7TOEtgoCxz6cAhgkmkoj/V
+         a2JHcioEpllEjBghTlxDjxkuwvcYVIZZUp4/rGG8BdrzXNN9XCB3uKUohTBFdVOgAMLf
+         AlmjZNx1CxC9wpu3XNi6MlvUsc0Db7/z4x1Q7+CVPAEUpdFQeZjmv1GcKOKncBmRy2Di
+         DrDb9NEF2hSqsRrdKT66YbFiVLOT1CZtCCpPvjddWkrwWXuS+ImmH7LJdOahGcvTEJYN
+         lfUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7v/Ja+Lq5+B4yKE1dTAlKzuYtn+OMr8F5awEI9XnsFs=;
-        b=K96pApkuJYVF6LOeYnTdvRFncgLnquasqOKMMAsJXbny9H32z7lMpMmXqbG/hns0kK
-         /+SXP1Vm7hgFDKhtDkW0sLnkzGCWOte+r5lPM4Ji4nqbWJQX3mH/QcSQyPStup9beAhT
-         VqvoKYS09fV6A4ewKtYnSLUaRwPAAgIGBRghFWJVvs0o/LQfDsMjsl1V0pSe64gycWEy
-         dYWnlFI9auSQq8Cn2l1Tz9nxa8CaPb8vh4JFj4EG1Evh593jqKF+YR/oo8rp7Rf7UHDc
-         KjovrazFfZ8UTWOH6Suyt3ty6DyY+CYXb9GzogpbhJ31vkE8ZvFjKVQsrNnn4+XbPi+u
-         Nx9A==
-X-Gm-Message-State: ABuFfoiaYLGpfeTtQXXaXZ0msZQCnKgKNewYgOS9jXvujj8V2l7tCgie
-        bghK+mbrKltARSRWM/pxA68=
-X-Google-Smtp-Source: ACcGV60suxW1JbnsBcuE75HHWH9GK8Ls3jwmVxBdvoGxK2j37GPEvNOtQN2jblI2V8SakYXDSFH1SA==
-X-Received: by 2002:a63:8e43:: with SMTP id k64-v6mr4343298pge.75.1538635811982;
-        Wed, 03 Oct 2018 23:50:11 -0700 (PDT)
-Received: from E570.localdomain (c-24-21-68-121.hsd1.or.comcast.net. [24.21.68.121])
-        by smtp.gmail.com with ESMTPSA id r73-v6sm7649816pfk.157.2018.10.03.23.50.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 23:50:11 -0700 (PDT)
-Received: by E570.localdomain (Postfix, from userid 1000)
-        id 6F488160683; Wed,  3 Oct 2018 23:50:11 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 23:50:11 -0700
-From:   Lance Roy <ldr709@gmail.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 01/16] x86/PCI: Replace spin_is_locked() with lockdep
-Message-ID: <20181004065011.GC896@E570.localdomain>
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-2-ldr709@gmail.com>
- <20181003160051.GF120535@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181003160051.GF120535@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dDXX6fqxR8VFKHkmAv/J29DjtCAVJYgflRmoPb+FN+g=;
+        b=R6g9NDZ+ZPbRjD8MLHBX0/fYDpxxxYm0qlib4XiVWogQacyWHkp0yYIWpVDu5VhrYW
+         BavWEkc3ZiVcxb1Z/fNvmt1woMkdlvfqJpaqIte/btCl4bBaEk3XEfwyKvzvcMkvLecO
+         SHxn7dp13YhGt0PwlnHL8rvMA0eiZWMv67xqhFakeVpU0ohOVLhn1TGOuLweBY157oCC
+         4BkQpK7lWuob5WH6mbNPxlpP6ULARXjKC7EYKgnrHuodQVFpKyVuCpipNFszfH/8TKfK
+         RFke2l0STiqmayhs0CrIyODCKC3x1T72W0GtiCaDYFQp5sre33VY8KO4pSjmWL6JRBf/
+         JkBg==
+X-Gm-Message-State: ABuFfojbsg1ZO5BLwK9sDF7+FzFW3juE47lSiQBulblf/MUieIIIKiSh
+        fDnCCdOVMls4HyeuvBPFjboBoAzAPCk=
+X-Google-Smtp-Source: ACcGV61xBSX6owKD/XQBpcsk8Oqvuo1/6RLgs/OF7a5WZUjtf9PafIanr8RAaRf/PYPcHVL6XBszZw==
+X-Received: by 2002:a63:1411:: with SMTP id u17-v6mr4379553pgl.247.1538635918745;
+        Wed, 03 Oct 2018 23:51:58 -0700 (PDT)
+Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
+        by smtp.gmail.com with ESMTPSA id n80-v6sm6717038pfh.166.2018.10.03.23.51.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 23:51:57 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH v3] regulator: bd718x7: Remove struct bd718xx_pmic
+Date:   Thu,  4 Oct 2018 14:51:48 +0800
+Message-Id: <20181004065148.26861-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 11:00:51AM -0500, Bjorn Helgaas wrote:
-> On Tue, Oct 02, 2018 at 10:38:47PM -0700, Lance Roy wrote:
-> > lockdep_assert_held() is better suited to checking locking requirements,
-> > since it won't get confused when someone else holds the lock. This is
-> > also a step towards possibly removing spin_is_locked().
-> >
-> > Signed-off-by: Lance Roy <ldr709@gmail.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: <x86@kernel.org>
-> > Cc: <linux-pci@vger.kernel.org>
->
-> I assume you plan to merge the whole series together.  I don't object
-> to that, but I don't know enough to be able to formally ack this.
->
-> It would be useful to include a tiny bit more detail in the changelog.
-> The spin_is_locked() documentation doesn't mention anything about
-> differences with respect to the lock being held by self vs by someone
-> else, so I can't tell where the confusion arises.
-The difference is that spin_is_locked() will return true when someone else holds
-the lock, while lockdep_assert_held() asserts that the current thread holds the
-lock. How about the following for an new changelog?
+All the fields in struct bd718xx_pmic are not really necessary.
+Remove struct bd718xx_pmic to simplify the code.
 
-lockdep_assert_held() is better suited to checking locking requirements,
-since it only checks if the current thread holds the lock regardless of
-whether someone else does. This is also a step towards possibly removing
-spin_is_locked().
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+v3: Remove the references to struct bd718xx_pmic from include/linux/mfd/rohm-bd718x7.h
 
-Thanks,
-Lance
+ drivers/regulator/bd718x7-regulator.c | 59 +++++++++------------------
+ include/linux/mfd/rohm-bd718x7.h      |  1 -
+ 2 files changed, 20 insertions(+), 40 deletions(-)
 
-> Bjorn
->
-> > ---
-> >  arch/x86/pci/i386.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
-> > index ed4ac215305d..24bb58a007de 100644
-> > --- a/arch/x86/pci/i386.c
-> > +++ b/arch/x86/pci/i386.c
-> > @@ -59,7 +59,7 @@ static struct pcibios_fwaddrmap *pcibios_fwaddrmap_lookup(struct pci_dev *dev)
-> >  {
-> >  	struct pcibios_fwaddrmap *map;
-> >
-> > -	WARN_ON_SMP(!spin_is_locked(&pcibios_fwaddrmap_lock));
-> > +	lockdep_assert_held(&pcibios_fwaddrmap_lock);
-> >
-> >  	list_for_each_entry(map, &pcibios_fwaddrmappings, list)
-> >  		if (map->dev == dev)
-> > --
-> > 2.19.0
-> >
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index d2522d4e1505..3a47e0372e77 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -15,13 +15,6 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/slab.h>
+ 
+-struct bd718xx_pmic {
+-	struct bd718xx_regulator_data *rdata;
+-	struct bd718xx *mfd;
+-	struct platform_device *pdev;
+-	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+-};
+-
+ /*
+  * BUCK1/2/3/4
+  * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
+@@ -33,12 +26,10 @@ struct bd718xx_pmic {
+ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
+ {
+-	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+-	struct bd718xx *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+ 
+-	dev_dbg(&pmic->pdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
++	dev_dbg(&rdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
+ 		ramp_delay);
+ 	switch (ramp_delay) {
+ 	case 1 ... 1250:
+@@ -55,12 +46,12 @@ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 		break;
+ 	default:
+ 		ramp_value = BUCK_RAMPRATE_10P00MV;
+-		dev_err(&pmic->pdev->dev,
++		dev_err(&rdev->dev,
+ 			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
+ 			rdev->desc->name, ramp_delay);
+ 	}
+ 
+-	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
++	return regmap_update_bits(rdev->regmap, BD718XX_REG_BUCK1_CTRL + id,
+ 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
+ }
+ 
+@@ -1022,7 +1013,7 @@ struct bd718xx_pmic_inits {
+ 
+ static int bd718xx_probe(struct platform_device *pdev)
+ {
+-	struct bd718xx_pmic *pmic;
++	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+ 		[BD718XX_TYPE_BD71837] = {
+@@ -1037,54 +1028,46 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 
+ 	int i, j, err;
+ 
+-	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
+-	if (!pmic)
+-		return -ENOMEM;
+-
+-	pmic->pdev = pdev;
+-	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
+-
+-	if (!pmic->mfd) {
++	mfd = dev_get_drvdata(pdev->dev.parent);
++	if (!mfd) {
+ 		dev_err(&pdev->dev, "No MFD driver data\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+-	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
++
++	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+ 
+-	platform_set_drvdata(pdev, pmic);
+-
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+-		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
++		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+ 		goto err;
+ 	} else {
+-		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
++		dev_dbg(&pdev->dev, "Unlocked lock register 0x%x\n",
+ 			BD718XX_REG_REGLOCK);
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
++		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-		config.driver_data = pmic;
+-		config.regmap = pmic->mfd->regmap;
++		config.regmap = mfd->regmap;
+ 
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+-			dev_err(pmic->mfd->dev,
++			dev_err(&pdev->dev,
+ 				"failed to register %s regulator\n",
+ 				desc->name);
+ 			err = PTR_ERR(rdev);
+@@ -1096,28 +1079,26 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+-			dev_err(&pmic->pdev->dev,
++			dev_err(&pdev->dev,
+ 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+ 				desc->name);
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(pmic->mfd->regmap,
++			err = regmap_update_bits(mfd->regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
+ 			if (err) {
+-				dev_err(&pmic->pdev->dev,
++				dev_err(&pdev->dev,
+ 					"Buck (%s) initialization failed\n",
+ 					desc->name);
+ 				goto err;
+ 			}
+ 		}
+-
+-		pmic->rdev[i] = rdev;
+ 	}
+ 
+ err:
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index 26acf9a92498..7d29e3599793 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -321,7 +321,6 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd718xx_pmic;
+ struct bd718xx_clk;
+ 
+ struct bd718xx {
+-- 
+2.17.1
+
