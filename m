@@ -2,86 +2,101 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A44D7C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502D3C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DFAD2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DFAD2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 185B72084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:07:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185B72084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeJDT6p (ORCPT
+        id S1727559AbeJDUAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:58:45 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40441 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727336AbeJDT6p (ORCPT
+        Thu, 4 Oct 2018 16:00:18 -0400
+Received: from gateway36.websitewelcome.com ([192.185.199.121]:49229 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727367AbeJDUAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:58:45 -0400
-Received: by mail-vs1-f67.google.com with SMTP id z130-v6so5297735vsc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 06:05:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fgAFcsqmUdDZPswJ7PWWrvK7N/zPPnmFVWzJCMfQHpM=;
-        b=n9qBeSEDOQBR2rEmAuAyWnYNZ93HhCAOWZvlzAoRZ2O6P+KPoej0dNkRoUNd83vt0R
-         slqq7yo1FfyBMYyevLY13+O8Gzg6LUC8mgApVFyfWjuAzeoAM2NBh2G6akHr8RiTcUcz
-         CJvibECBOyzbn8HJRjryHAxahSPz9BMVM6ZNEf+sjMIho6f72dXB+ZAp3aY2723abAiX
-         /uiSXRD/7tj0pJqqj5D5qN87PPZe68B84tqeANYlWeIseJu81mwwZPytdireF9I33Au6
-         aq+D6BW+I4+bCyfcgnCjxFVp1QDRrrKEZ5hJm4yIn7mHRaP/zC+BfRY7ZvFFNCq5Ql0J
-         uWzQ==
-X-Gm-Message-State: ABuFfohCSQBH6QGl3w16uU0YYvRDiI0hAkFeLPUfK50P9bxiBDY/GuBz
-        BK93bEAQdL+myvOxfnt8dO6qGTKupiH/emQUdHs=
-X-Google-Smtp-Source: ACcGV63AnI4JW5Cf6kDcAd4RwIpjDmNoCi4IQwQKFeGQFzF53APjsEzOkmFMVo2R5NI4r9gXyGSzAmS9VBDu7oK3KQE=
-X-Received: by 2002:a67:f3cc:: with SMTP id j12mr1820590vsn.96.1538658332130;
- Thu, 04 Oct 2018 06:05:32 -0700 (PDT)
+        Thu, 4 Oct 2018 16:00:17 -0400
+X-Greylist: delayed 333 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 16:00:17 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 25413400DEE21
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 07:13:22 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 83LNgBX7bBcCX83LNgVpib; Thu, 04 Oct 2018 08:07:05 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:50284 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g83LM-0026zF-Ex; Thu, 04 Oct 2018 08:07:04 -0500
+Date:   Thu, 4 Oct 2018 15:07:01 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] rtc: m41t80: mark expected switch fall-through
+Message-ID: <20181004130701.GA4539@embeddedor.com>
 MIME-Version: 1.0
-References: <cover.1536709753.git.fthain@telegraphics.com.au> <7a0748d8cd97964a99879a0b9f1c0243c677c7c3.1536709753.git.fthain@telegraphics.com.au>
-In-Reply-To: <7a0748d8cd97964a99879a0b9f1c0243c677c7c3.1536709753.git.fthain@telegraphics.com.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 4 Oct 2018 15:05:20 +0200
-Message-ID: <CAMuHMdVRgo7LCubwXUtv9s8e4U8ROdOWqSWeaKigS9QLPtYX8A@mail.gmail.com>
-Subject: Re: [PATCH 1/7] macintosh: Use common code to access RTC
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g83LM-0026zF-Ex
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:50284
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 2:18 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> Now that the 68k Mac port has adopted the via-pmu driver, the same RTC
-> code can be shared between m68k and powerpc. Replace duplicated code in
-> arch/powerpc and arch/m68k with common RTC accessors for Cuda and PMU.
->
-> Drop the problematic WARN_ON which was introduced in commit 22db552b50fa
-> ("powerpc/powermac: Fix rtc read/write functions").
->
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Notice that in this particular case, I replaced "Fall" with a proper
+"Fall through" comment.
 
-Gr{oetje,eeting}s,
+Addresses-Coverity-ID: 1373875 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Change subject and commit log.
 
-                        Geert
+ drivers/rtc/rtc-m41t80.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
+index ad03e2f..a3fb235 100644
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -745,7 +745,7 @@ static int wdt_ioctl(struct file *file, unsigned int cmd,
+ 			return -EINVAL;
+ 		wdt_margin = new_margin;
+ 		wdt_ping();
+-		/* Fall */
++		/* Fall through */
+ 	case WDIOC_GETTIMEOUT:
+ 		return put_user(wdt_margin, (int __user *)arg);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
