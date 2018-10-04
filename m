@@ -2,103 +2,123 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B5CC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEE1C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1641020652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1641020652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id E926D20652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:11:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZPZIgsWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E926D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeJDWEn (ORCPT
+        id S1727735AbeJDWE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:04:43 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43231 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbeJDWEm (ORCPT
+        Thu, 4 Oct 2018 18:04:56 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4287 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbeJDWE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:04:42 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 80-v6so3283764pgh.10;
-        Thu, 04 Oct 2018 08:11:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=q2W8R1FFLUHNquwmu9Iew0zKD9sT9pbfhuPUxwlu5Rw=;
-        b=nFBzMvoaiBZ/LOYd5vlFCQfMZiiEAWe/tm+dp7ZQtocDC8NZQHKwfeWPN8Vm5HKejd
-         8MoUtRLe5GUbaHo8uLCJaoNT+vdD0dex2sh01WJwZuASI4SGt6dT+/vUSTaPqcdaqMu5
-         A5pPZRSJ7HHG989k0QOj50okW0l4UUnxFF2IHQhvnt4j4zd8WkP/Oo+KGbarlV1a55IC
-         YYuunGLOegwq0w9Tohl+mMDxCZm94CXj1LPr2Xx21nCkuh8KQb3pNG67XKmSvn+tvvMm
-         +LOW6mnAaLdG+xAtpx7Q0j1Bx19Vzff2+K9enKhg4TEeEEnIF1thkxQ+UjdaaRVxj42x
-         T1eg==
-X-Gm-Message-State: ABuFfoim3W7NTTfv5XX/6wbscNoQiysnHoBeu/1q3fyG2Ip5XsZkAAjv
-        8YeRPXgCe5iAVDKJEomqiikw+ahQkyH9CA==
-X-Google-Smtp-Source: ACcGV62hRK5soVGadZevmYUKJmSC+/+0jFdhdwHSTio0dj6SuucY0nQjNmMS7q8ZqgUWV2KvfnxAOw==
-X-Received: by 2002:a63:78cc:: with SMTP id t195-v6mr6136665pgc.329.1538665859979;
-        Thu, 04 Oct 2018 08:10:59 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id r205-v6sm11437839pgr.11.2018.10.04.08.10.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 08:10:59 -0700 (PDT)
-Message-ID: <1538665857.230807.1.camel@acm.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com
-Date:   Thu, 04 Oct 2018 08:10:57 -0700
-In-Reply-To: <20181004101305.GA6412@sirena.org.uk>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
-         <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
-         <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
-         <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
-         <CACRpkdYG2Y=rspbZ_o=H3REXTEfOcaiqEyQD4kzO=G=d63V3yA@mail.gmail.com>
-         <20181004101305.GA6412@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Thu, 4 Oct 2018 18:04:56 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bb62d8f0000>; Thu, 04 Oct 2018 08:11:11 -0700
+Received: from HQMAIL108.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 04 Oct 2018 08:11:13 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 04 Oct 2018 08:11:13 -0700
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 4 Oct
+ 2018 15:11:13 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 4 Oct 2018 15:11:13 +0000
+Received: from [10.21.24.139] (Not Verified[10.21.24.139]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5bb62d8f0000>; Thu, 04 Oct 2018 08:11:13 -0700
+Subject: Re: [PATCH] firmware: tegra-bpmp: mark PM function as __maybe_unused
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Mikko Perttunen <mperttunen@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181002212208.2971433-1-arnd@arndb.de>
+ <64a99db8-85e4-52ab-d0fa-0faa5bb7187a@nvidia.com>
+From:   Timo Alho <talho@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <31707122-ae73-c608-e9f6-c114d6db2b25@nvidia.com>
+Date:   Thu, 4 Oct 2018 18:11:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <64a99db8-85e4-52ab-d0fa-0faa5bb7187a@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1538665871; bh=OiTON1WRo9DiGH9Rq4r8FVo6iSx4dvH2kUw39JYHoFw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:
+         Content-Language:Content-Transfer-Encoding;
+        b=ZPZIgsWGVk+WUUpHrZUQq2XIRHnh7e4j/zefRNdYhzyZefOZNlENgY4wKubOAIaGZ
+         h4X2r5r1sVX5MluB4G4cNxM+nIDnFbz7tm0LveIkEVFMEapXOt7gJMtUJf2uNBVFOd
+         cISMe3l8LZ7axX+qnoBsfYI8iM/BPwKK1MCn1lVhUW4pWKF8pV5PAtL8mpcWj9fimJ
+         K7vsQ1VAb70B1qPJszy3ff5tslGU1ZmWzqfuBva6gHtFKZmNrUFMYaP1xyufJsCv3w
+         ej7KJAxr7+652cbInmZhHsp3+yQhcBRssZLRQlMNIk1t2ON7M33pnHGNts/tMo18JS
+         YnpxW48tkIwoQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 11:13 +-0100, Mark Brown wrote:
-+AD4 On Thu, Oct 04, 2018 at 10:14:38AM +-0200, Linus Walleij wrote:
-+AD4 
-+AD4 +AD4 And these are millions and millions of deployed
-+AD4 +AD4 systems not using udev+-systemd we are talking about,
-+AD4 +AD4 they are not fringe hobby projects. It's not that I
-+AD4 +AD4 personally dislike udev or anything, I kind of like
-+AD4 +AD4 it, but these tailored distros simply don't use it
-+AD4 +AD4 and they are huge in numbers. They need help to do
-+AD4 +AD4 the right thing. Fixing a udev rule doesn't solve
-+AD4 +AD4 even half the world's problems I'm afraid.
-+AD4 
-+AD4 Further, even those embedded systems that do use udev (some of them do
-+AD4 lean heavily on modern init stuff like that and systemd, especially when
-+AD4 boot time is a priority) they'll still need to get the relevant udev
-+AD4 rule installed somehow.
 
-Hi Mark,
 
-Are you aware that the systemd source tree includes a set of udev rules?
-See also https://github.com/systemd/systemd/tree/master/rules.
+On 03.10.2018 11:26, Jonathan Hunter wrote:
+> 
+> On 02/10/18 22:21, Arnd Bergmann wrote:
+>> The newly added tegra_bpmp_resume function is unused when CONFIG_PM
+>> is disabled:
+>>
+>> drivers/firmware/tegra/bpmp.c:847:12: error: 'tegra_bpmp_resume' defined but not used [-Werror=unused-function]
+>>   static int tegra_bpmp_resume(struct device *dev)
+>>
+>> Mark it as __maybe_unused to avoid the warning and let the compiler
+>> drop it silently.
+>>
+>> Fixes: cd40f6ff124c ("firmware: tegra: bpmp: Implement suspend/resume support")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/firmware/tegra/bpmp.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+>> index 41448ba78be9..a3d5b518c10e 100644
+>> --- a/drivers/firmware/tegra/bpmp.c
+>> +++ b/drivers/firmware/tegra/bpmp.c
+>> @@ -844,7 +844,7 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+>>   	return err;
+>>   }
+>>   
+>> -static int tegra_bpmp_resume(struct device *dev)
+>> +static int __maybe_unused tegra_bpmp_resume(struct device *dev)
+>>   {
+>>   	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
+>>   	unsigned int i;
+> 
+> Arnd, is this seen with 32-bit ARM configs?
+> 
+> Timo, does it make sense to make BPMP dependent on ARCH_TEGRA_186_SOC
+> and ARCH_TEGRA_194_SOC instead of just ARCH_TEGRA? For 64-bit Tegra we
+> have a dependency on PM so this should not be seen for 64-bit Tegra.
 
-Bart.
+Jon, there will be eventually a BPMP driver for ARCH_TEGRA_210_SOC as 
+well. So it is probably more appropriate to make BPMP dependent on ARM64 
+& ARCH_TEGRA.
+
+-Timo
