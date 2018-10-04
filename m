@@ -2,117 +2,126 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5194C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CDDC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68FD92084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D463D20652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:59:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g+BwXYsG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FD92084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="LuDu2+/i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D463D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeJDVv6 (ORCPT
+        id S1727504AbeJDVxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:51:58 -0400
-Received: from mail-it1-f169.google.com ([209.85.166.169]:39783 "EHLO
-        mail-it1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeJDVv6 (ORCPT
+        Thu, 4 Oct 2018 17:53:30 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:52788 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbeJDVxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:51:58 -0400
-Received: by mail-it1-f169.google.com with SMTP id w200-v6so14419129itc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:58:18 -0700 (PDT)
+        Thu, 4 Oct 2018 17:53:30 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 702F1DC7
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 14:59:49 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ZqlCzItrYSTX for <linux-kernel@vger.kernel.org>;
+        Thu,  4 Oct 2018 09:59:49 -0500 (CDT)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 49226CF5
+        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 09:59:49 -0500 (CDT)
+Received: by mail-it1-f198.google.com with SMTP id v125-v6so10813993ita.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DM+zNmB7OI8OGxVUhYuwDbO1R9ste+zcr3X/ukoAHRA=;
-        b=g+BwXYsGGkEc3vov39xtcyWifhvEmUahE2a/qVwkaT3Le3BD13UvkwpOjoKrHFBvOg
-         e6MnZmT2hWluVtW/DgMob7vTnU6Crsqog0CqZ/awth3Lm6OHTqFa5BdObcU2/pKOfMeY
-         u4AXDbuge5DVv40cob009hq+0UH+KJqPBpYdc=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KgOOqyF0sYgd10fuDGON9f0ufK6sIlu+JI7XXVK630U=;
+        b=LuDu2+/iCj4pxWq/zMTZoTz6rLQhtUmrYVZwtlJuW0RMpiayudT7h+VebufnHKZ4Qc
+         y0hczb2SzC1+7VjzXgCKw9irnqavgbqoHgDoP6uggEraEH0TCJ0iE3kuRT5NnI9USEO4
+         7aWi/aLYyAXTVo/zhm4G+qXQ7W7+jpmfwqkwvT7f7TCD5G0bG8hRWtQHtzxkNtz2gsLl
+         Ptta/+q30e2Mq7LaiZeABWsqIZXIE7gi3LUN7cnSECgI23dnHOKzm3mK09rhWm9KoruL
+         rw+c6TVpwtHhaI78LcUtkB3MQoC2MeQFCig/isLMehjKvbotYx2LWkawcfiNkMBn+avy
+         XbHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DM+zNmB7OI8OGxVUhYuwDbO1R9ste+zcr3X/ukoAHRA=;
-        b=jcxY4P4h8/AID3UT5oNMibGWPgRGp5Y+O6+Y3tvs9l1j2xuEBard/kJib8x8RGRooX
-         Bof3Qll8W0GllDlHFbMkzrR2WTk94wGFDZH9H1LoCXVYTALbnQTW/9tqcozepL2KHbjO
-         hQDbIgtcN0rn64XYNeKIP/1P/E5n/8CNy4Mqv/Zs0J6HD2UvLJxKUfI/rWkkA2zjgm32
-         niLv73ghkEOU1DsB42Esv0ZHdSnoYyHw6q2mkjuWtFGg3ysiSiJ2u5+GwRWCY1fFZrWI
-         ONknRcYZUMD885dl34d5utg/EtP202Yy4D9IDV3OwN1TCA6SJuyKpU6jI8E6fD/kEY9c
-         7pAQ==
-X-Gm-Message-State: ABuFfoi9vR1WWOPQMM4OggYHMR1w96Tmw+KqX4jL99PmALaTm3Rt0cpp
-        BkwpGMDfQ8+mbCOZCIfXUOHxsDhpytK+tRIeEdp6DQ==
-X-Google-Smtp-Source: ACcGV60g4btd/UErdt+YQ5vWMiSegTjnYzoc10jNF9m7I04yDrowZdevmoHcKeJJ9bJ4EA/FAetz54hDSFkTZecxS10=
-X-Received: by 2002:a24:8045:: with SMTP id g66-v6mr5459999itd.45.1538665098184;
- Thu, 04 Oct 2018 07:58:18 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 07:57:37 -0700 (PDT)
-In-Reply-To: <20181004134839.GZ5662@atomide.com>
-References: <20181003143824.13059-1-ulf.hansson@linaro.org>
- <20181003143824.13059-4-ulf.hansson@linaro.org> <20181004134839.GZ5662@atomide.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 4 Oct 2018 16:57:37 +0200
-Message-ID: <CAPDyKFr1H_ah3OYqghQgADs8fwNd+HpjWw9VfGR1T1-K5KbnhQ@mail.gmail.com>
-Subject: Re: [PATCH v9 03/11] PM / Domains: Document flags for genpd
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KgOOqyF0sYgd10fuDGON9f0ufK6sIlu+JI7XXVK630U=;
+        b=CRIH6EYKWHril+loiCuMIUXsCvckVmCSqtzTgbT/LdW2luDtN5/SB7Ab0saZoWgwG2
+         lvBm4GZsRb1HGi9sQv4isPEMovEQWI+WdSfrEpFzC6iLAIAfPmtgeTyalMOtLySWUmhl
+         HsvGgK9+7S7ro8kRJYGmlBrkdx4Ph5ZpeKMPoDROkbK+mKFc++oAAdYmpRhbPlc2k2sT
+         MlsbG4x+F1MZexNzvDyCu0UjgZG8V17vimcIj/HPTE6nOEDGnh7lIYYjTwHbGrhYM277
+         JGiOqSbYsPDX7XPTJAXOJPpyEo7t6rT3mWmsLsuIMOVKxJsftWUlNuEAj5Gzzj1SPj8E
+         qPaQ==
+X-Gm-Message-State: ABuFfoh7HzqFka9af9Mji80QJ0eQG2xiNpeeOjYH8QKfozm2k6mvofcd
+        i8qy8cWuHvkCoK3b61GKu/a+92pq+5NvczjjEe9mzAF3Qm5w5xHx7qAxSiZSTUgBbq4XFeE3BvX
+        mal2MHsPju8EEwMcwdG/MK5986eFr
+X-Received: by 2002:a24:4386:: with SMTP id s128-v6mr4832546itb.151.1538665188911;
+        Thu, 04 Oct 2018 07:59:48 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV613fWT7EqjhpFZK653TJZen7IibkvSjeh8hS1nwjjEWR1qi3a2YRwZwW46IKUqvgXLU8bZfnw==
+X-Received: by 2002:a24:4386:: with SMTP id s128-v6mr4832525itb.151.1538665188729;
+        Thu, 04 Oct 2018 07:59:48 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id f74-v6sm2218755itf.20.2018.10.04.07.59.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 04 Oct 2018 07:59:48 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
+        (V4L/DVB)), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] media: dvb: fix a missing-check bug
+Date:   Thu,  4 Oct 2018 09:59:36 -0500
+Message-Id: <1538665177-17604-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 October 2018 at 15:48, Tony Lindgren <tony@atomide.com> wrote:
-> Hi,
->
-> * Ulf Hansson <ulf.hansson@linaro.org> [181003 14:43]:
->> + * GENPD_FLAG_IRQ_SAFE:              This informs genpd that its backend callbacks,
->> + *                           ->power_on|off(), doesn't sleep. Hence, these
->> + *                           can be invoked from within atomic context, which
->> + *                           enables genpd to power on/off the PM domain,
->> + *                           even when pm_runtime_is_irq_safe() returns true,
->> + *                           for any of its attached devices. Note that, a
->> + *                           genpd having this flag set, requires its
->> + *                           masterdomains to also have it set.
->> + *
->
-> Let's try to avoid adding more irq_safe stuff because of having that
-> propagate to the masterdomains..
+In dvb_video_write(), the first header byte of the buffer 'buf' supplied by
+the user is checked to see whether 'buf' contains a TS packet, which
+always starts with 0x47 for synchronization purposes. If yes, ts_play() is
+called. Otherwise, dvb_play() will be called. Both of these two functions
+will copy 'buf' again from the user space. However, no check is enforced
+on the first byte of the copied content after the second copy. Since 'buf'
+is in the user space, a malicious user can race to change the first byte
+after the check in dvb_video_write() but before the second copy in
+ts_play(). By doing so, the user can supply inconsistent data, which can
+lead to undefined behavior in the driver.
 
-I am not sure I get your point. This is just documenting existing
-functionality in genpd, there is nothing new here.
+This patch adds the required check in ts_play() to make sure the header
+byte in the second copy is as expected. Otherwise an error code EINVAL will
+be returned.
 
->
-> I think you can just flag the power_on/off in genpd, then have cpu_pm
-> callbacks do it.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/media/pci/ttpci/av7110_av.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Not really sure what you propose, but feel free to send a patch.
+diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
+index ef1bc17..1ff6062 100644
+--- a/drivers/media/pci/ttpci/av7110_av.c
++++ b/drivers/media/pci/ttpci/av7110_av.c
+@@ -468,6 +468,8 @@ static ssize_t ts_play(struct av7110 *av7110, const char __user *buf,
+ 		}
+ 		if (copy_from_user(kb, buf, TS_SIZE))
+ 			return -EFAULT;
++		if (kb[0] != 0x47)
++			return -EINVAL;
+ 		write_ts_to_decoder(av7110, type, kb, TS_SIZE);
+ 		todo -= TS_SIZE;
+ 		buf += TS_SIZE;
+-- 
+2.7.4
 
-Do note, genpd has since the beginning of its time tried to cope with
-pm_runtime_irq_safe() devices. I admit it's quite complicated, however
-GENPD_FLAG_IRQ_SAFE greatly improved the support for such devices and
-their PM domains. Moreover, we need this functionality, in one way or
-the other, as long as there users of pm_runtime_irq_safe().
-
-Kind regards
-Uffe
