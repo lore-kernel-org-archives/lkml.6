@@ -2,141 +2,133 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCE4C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0229BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA3420877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CED320877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YyyDrVIj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA3420877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATNLXE7G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CED320877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbeJEEMK (ORCPT
+        id S1726740AbeJEEN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:12:10 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34485 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbeJEEMK (ORCPT
+        Fri, 5 Oct 2018 00:13:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45227 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbeJEEN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 00:12:10 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f18-v6so5771002plr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 14:17:01 -0700 (PDT)
+        Fri, 5 Oct 2018 00:13:57 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q5-v6so11397896wrw.12;
+        Thu, 04 Oct 2018 14:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m6+rzROd+JZAbf96mpR7TVe7LockULJI5BlTxu3+SaE=;
-        b=YyyDrVIjPslOOuxd3O63eB9jfJOLMxbf/IZfuvlsgIlXqX1biw00sgWJNIfOtlYZBt
-         MV1Wr4NUDzYVu+FJljFQ55tCpjYPStRjuAcb2JilIOlDRqQPTbv2LrXhicCYcvcdb3RO
-         Ja5i1R5rPRi6FIvLFovvQqnFulEMqLYhUNXHJGtG9WP1MUA5CxQuap6B2Ia01m8uU8U1
-         hiDZA+ZkUgqbncwv4jtbzTLqFjYIIBaC/W6VVXw0RcqZdX4Q4Iy14T5BrwywNp8kZ/T4
-         auIf8M7noxtN/JawgcymyvOL9hVc+fm90HqRIWnPIa10iOcZ4t0vdS7BCD/rFtNur9Nt
-         KBNA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WT0xwDE2k48UmpozmoHuJLxV7m7Uv4n+3lX6lFZSCBQ=;
+        b=ATNLXE7G2A1+3p91ehPazwa/rpMdi4Y0aB68xMcvoKSZNGMpBOYT2Jj5W1D5gKpHKv
+         CnwEvNcMDOYdEG7kIkJRGKFo9TaNGMbGkoA9hSe650TFtJ0lTZP8H7rSEbSH90PMOZq9
+         aDmffOT3s/9vP1cceAGYbPEEgwi1j0DIs+BmCXu3p0UmYSESCrPKcVXrkd2KxZLwQDK3
+         K8eeP6uZmCfFZ221bnqUCGps9r/DBqG+z8WazHQR9FQnIcYJOkwkhWlI8FLdJN5Aq+0N
+         MoKFJkTk4xaHfrmIDIvZDvJRH0JnBvHZ3LIUMdq00v/yyaHr5zkUsbQKybZnV7L64yNO
+         49/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m6+rzROd+JZAbf96mpR7TVe7LockULJI5BlTxu3+SaE=;
-        b=T5TU51jiGG/fyrJEuCKVVt4fpMgLgQ8WJVfXgVe0W9AXLidsm7TqHZChCUeVrA5FVP
-         /LuD31JfvL+qMc47JhEJ1zzwKc96xMaTYu7Ph9mi4KniMueB/620pNj07GXfj6/Oc7ja
-         ueTJxMRqb5CjWp1VFAgjftc+hiI7URnIbL6meHkWwBv1Qztds/lbQduh5VNkmMSExU4J
-         bc20MoI7m3ULDEMF0Lv5fFtrKnA2xNxpm0+2HbpYv+7y+u9iLYKv/aFcYXF7nDKYcoAr
-         q6pp2xwDC53T/P9K4mt5h6WutHaaEFbkD5p2hoTWOao7KnBmI2Uc+LyHJw9yq7R1DjYq
-         YGKw==
-X-Gm-Message-State: ABuFfogePJDtzE+uPcksSTTOxLWNRL2jB2ML20AIs/W2eGp+n02IBtTc
-        jgL1mFidd2W8D9RfnJkpNBlRTeE3wSAH7GSbtQrTMA==
-X-Google-Smtp-Source: ACcGV61tY/ReoEzLjdIjyYlbdAoZxYOC9tCd50wqx02FPy4AKWOIGOsGr4SvNvVvAp4CHWMAHbbqRpgYJcvEbO982dE=
-X-Received: by 2002:a17:902:b7c2:: with SMTP id v2-v6mr8432002plz.238.1538687820458;
- Thu, 04 Oct 2018 14:17:00 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WT0xwDE2k48UmpozmoHuJLxV7m7Uv4n+3lX6lFZSCBQ=;
+        b=psz6XW1lOad3O4MU69jiV5pxUsd68YoePouxZAgwTB/9ZG004ZiqU4AvhpLUe2WJLP
+         a+u7qcUfWP+AThXXwOFgte/yV+Ff9UZKWPVRaJPp/3xbCxAATm7VPodt9f6PsqfQevEm
+         tX2dPlynMbjP1vhZ8sEwOVdYmdmgBmTreAci2UtljCJ3TXmOpvd7peUsZrhumniAagXZ
+         RviLE3FvKK26s8jrszKmDxu9aRku0Cxshutohm197iKUNHz5H2XfDkJJIbOQfcJ/Bdj4
+         FSo9SXatl0u+BB1XBiCRRciufwuim1Kjmp7xlnv76gQz75YLFI/1XulzASg9p+OCsDGm
+         MgQA==
+X-Gm-Message-State: ABuFfoi1kKWyo2fXDut03T1gEsWZG9O8l24fOuWBVUbLlzBH9W4SMtdn
+        7joDNoqgF/48J4x3VPJv2QA=
+X-Google-Smtp-Source: ACcGV60wD+HG1BIMUvukyGHpBdypsTloA7PUrvK30z931U1lgcQLnfEmfOd5irKTEGLHOnxRn8q7ug==
+X-Received: by 2002:a5d:67c8:: with SMTP id n8-v6mr6065657wrw.196.1538687926735;
+        Thu, 04 Oct 2018 14:18:46 -0700 (PDT)
+Received: from Ettosoft-T55 (208-202-243-213.terrecablate.net. [213.243.202.208])
+        by smtp.gmail.com with ESMTPSA id t194-v6sm8476051wmd.48.2018.10.04.14.18.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 14:18:46 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 23:18:44 +0200
+From:   ektor5 <ek5.chimenti@gmail.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     hverkuil@xs4all.nl, luca.pisani@udoo.org, jose.abreu@synopsys.com,
+        sean@mess.org, sakari.ailus@linux.intel.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add SECO Boards CEC device driver
+Message-ID: <20181004211842.qxfvojrcbsl7llsx@Ettosoft-T55>
+References: <cover.1538474121.git.ek5.chimenti@gmail.com>
+ <757ab7a8-4bb2-4573-5870-eae2b9745650@baylibre.com>
 MIME-Version: 1.0
-References: <20181004183047.GA1885@flashbox> <1538678069.230807.6.camel@acm.org>
- <20181004184540.GA17513@flashbox>
-In-Reply-To: <20181004184540.GA17513@flashbox>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 4 Oct 2018 14:16:49 -0700
-Message-ID: <CAKwvOd=FrGZ-oh5Q9RGQD2GNORZrqwAZUzNYN+hTKkp5wrfrqw@mail.gmail.com>
-Subject: Re: -Wswitch Clang warnings in drivers/scsi
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     bvanassche@acm.org,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <757ab7a8-4bb2-4573-5870-eae2b9745650@baylibre.com>
+User-Agent: NeoMutt/20180716-421-ff8684
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 11:45 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Thu, Oct 04, 2018 at 11:34:29AM -0700, Bart Van Assche wrote:
-> > On Thu, 2018-10-04 at 11:30 -0700, Nathan Chancellor wrote:
-> > > Hi SCSI folks,
-> > >
-> > > In an effort to get the kernel building warning free with Clang, we've
-> > > come across an interesting occurrence in a few scsi drivers:
-> > >
-> > > drivers/scsi/hpsa.c:6533:7: warning: overflow converting case value to switch condition type (2148024833 to 18446744071562609153) [-Wswitch]
-> > >         case CCISS_GETPCIINFO:
-> > >              ^
-> > > ./include/uapi/linux/cciss_ioctl.h:65:26: note: expanded from macro 'CCISS_GETPCIINFO'
-> > > #define CCISS_GETPCIINFO _IOR(CCISS_IOC_MAGIC, 1, cciss_pci_info_struct)
-> > >                          ^
-> > > ./include/uapi/asm-generic/ioctl.h:86:28: note: expanded from macro '_IOR'
-> > > #define _IOR(type,nr,size)      _IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(size)))
-> > >                                 ^
-> > > ./include/uapi/asm-generic/ioctl.h:70:2: note: expanded from macro '_IOC'
-> > >         (((dir)  << _IOC_DIRSHIFT) | \
-> > >         ^
-> > >
-> > > I see this warning in drivers/scsi/hpsa.c and drivers/scsi/smartpqi/smartpqi_init.c
-> > > on an arm64 allyesconfig build and it has also been reported in a couple of files in
-> > > drivers/scsi/cxlflash.
-> > >
-> > > As the warning states, there is an overflow because the switch statement's value is of
-> > > type int but the switch value is greater than INT_MAX. I did a brief sweep of the tree
-> > > and it seems that all uses of _IOC in switch statement values either are small enough
-> > > to fit into size int or the value is of size unsigned int.
-> > >
-> > > I am unsure of the implications of using a smaller _IOC value or converting all ioctls
-> > > to expect a cmd of type unsigned int (especially since that has userspace implications)
-> > > but I didn't see any negative ioctl commands. Some clarity and insight would be
-> > > appreciated.
-> >
-> > Have you verified how gcc compiles these switch statements? Maybe gcc supports
-> > switch / case statements on integral types that are larger than an int?
+On Thu, Oct 04, 2018 at 02:29:32PM +0200, Neil Armstrong wrote:
+> Hi Ettore,
+> 
+> On 02/10/2018 18:59, ektor5 wrote:
+> > This series of patches aims to add CEC functionalities to SECO
+> > devices, in particular UDOO X86.
+> > 
+> > The communication is achieved via Braswell SMBus (i2c-i801) to the
+> > onboard STM32 microcontroller that handles the CEC signals. The driver
+> > use direct access to the PCI addresses, due to the limitations of the
+> > specific driver in presence of ACPI calls.
+> > 
+> > The basic functionalities are tested with success with cec-ctl and
+> > cec-compliance.
+> 
+> Glad to see another user of the i915 cec notifier !
 
-GCC just doesn't warn when the case expression is greater than the
-maximal representable value and thus would wrap (or appears to, this
-is probably undefined behavior).  Using an unsigned int here is no
-functional change:
-https://godbolt.org/z/1IyYV4
+Thanks to you for the patch! It works really well!
 
-GCC and Clang do effectively the same thing as each other, and in the
-cases of switching on an unsigned int vs signed int.
+Ettore
 
-> >
-> > Bart.
->
-> Hi Bart,
->
-> That is entirely possible, I will do some research. I did build with GCC
-> to see if there was any warning and there isn't so I'll be curious to
-> see what is happening at a lower level.
->
-> Thanks for the comment!
-> Nathan
-
-
-
--- 
-Thanks,
-~Nick Desaulniers
+> 
+> Neil
+> 
+> > 
+> > Ettore Chimenti (2):
+> >   media: add SECO cec driver
+> >   seco-cec: add Consumer-IR support
+> > 
+> >  MAINTAINERS                                |   6 +
+> >  drivers/media/platform/Kconfig             |  21 +
+> >  drivers/media/platform/Makefile            |   4 +
+> >  drivers/media/platform/seco-cec/Makefile   |   1 +
+> >  drivers/media/platform/seco-cec/seco-cec.c | 859 +++++++++++++++++++++
+> >  drivers/media/platform/seco-cec/seco-cec.h | 143 ++++
+> >  6 files changed, 1034 insertions(+)
+> >  create mode 100644 drivers/media/platform/seco-cec/Makefile
+> >  create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
+> >  create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
+> > 
+> 
