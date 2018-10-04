@@ -2,115 +2,158 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813B6C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3B12098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3B12098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 479E220877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:31:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bs1dYuEw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479E220877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeJDUWv (ORCPT
+        id S1727639AbeJDUZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:22:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38424 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbeJDUWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:22:50 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6B0D3317C416;
-        Thu,  4 Oct 2018 13:29:32 +0000 (UTC)
-Received: from tonnant.bos.jonmasters.org (ovpn-124-32.rdu2.redhat.com [10.10.124.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7500C20155E0;
-        Thu,  4 Oct 2018 13:29:31 +0000 (UTC)
-Subject: Re: [RFC 00/60] Coscheduling for Linux
-To:     =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jschoenh@amazon.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org
-References: <20180907214047.26914-1-jschoenh@amazon.de>
-From:   Jon Masters <jcm@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@redhat.com; keydata=
- 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
- yrXvw9qg2waGcnb8WuoS+g==
-Message-ID: <859c89b3-f43f-c3c7-3064-6bccb3ee65f8@redhat.com>
-Date:   Thu, 4 Oct 2018 09:29:29 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 4 Oct 2018 16:25:10 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40316 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbeJDUZK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:25:10 -0400
+Received: by mail-ed1-f68.google.com with SMTP id j62-v6so8563441edd.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 06:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=raX5qEj7fRXQ/iQULa01jf7rlvPVsAVNG0zX/XpZs5g=;
+        b=Bs1dYuEw88RWdvlU/QKrnpxanvvHnNSDQFMCUNnhGfgzRk38FPRYfrPXesa9G65Oje
+         fwRe9wYuwkFuMHMbDQVywWy0puErljO1BsdC14RW/NNTvwxWb8BfhHufi/Mu1zGHoLYQ
+         XshtXDFHCNh6FQG9vZr3wBdxltd7ojT5Unb5R+5qLKhZgvqIsFpGjlwdYbC2Eum7HiIH
+         8aXlt8Ar4pCksyzMcwMdxcBJw5zGPfWZuLsjLjKqhniXvfjB6uU2uOECG84l4wNSln0I
+         lw/LGF0zTqdtpiC3FODvL+vXK4M03SA7WeNws9RfG/dbLQZ+f4+YXFBCEqvhAkU3mhjQ
+         pOqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=raX5qEj7fRXQ/iQULa01jf7rlvPVsAVNG0zX/XpZs5g=;
+        b=E6tXi+524PA4+HMiQUu3zEZyo9smcPKCg4AycztOd046Oe9s5Xjbn3xvk79iz1T00Y
+         b2dbPS2uuTF2tUz0xwOohFbA3FQVLunLUC+vKbFkW0znGxE3ylfd6omZiesdb+/OGtG+
+         WsT/i2aTfAJxzpzRzVnwT8tGbi8UcThCt6Qove+4MDdxo6uFnO+wVe3X8GWO/0sS/Kp3
+         kHjSeGMdb07amyERQrYOvpgEkJYfPvqJQf5zmdQ83fTAUBd6wkWg2ijgGZKU0Imjm2aZ
+         OIcCOUO6YI/wA6NOmNKwdEXj9pyC77TrvAqeloloxOBqqz5rBvrR20W5FYkTBoNj1ira
+         jNhA==
+X-Gm-Message-State: ABuFfohwfo16nodF2PFDB9Kpt4IBjpv9I5KDHlM8EUzrZauvVc/+gT4Q
+        ptg5qDsB/E8M+ALSuPHSAWc=
+X-Google-Smtp-Source: ACcGV62M0y9IvVduVqMidTLJ3pwy/KabW35fThv4AnQreLY6qMvmNnSKU/FK3nSUQoaLDqFSS28euA==
+X-Received: by 2002:a50:8a96:: with SMTP id j22-v6mr8461277edj.189.1538659910169;
+        Thu, 04 Oct 2018 06:31:50 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id c24-v6sm1440569ede.73.2018.10.04.06.31.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 06:31:49 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v8 01/10] mtd: physmap_of: Release resources on error
+Date:   Thu,  4 Oct 2018 15:31:46 +0200
+Message-Id: <20181004133147.20215-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 04 Oct 2018 13:29:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/7/18 5:39 PM, Jan H. Schönherr wrote:
+During probe, if there was an error the memory region and the memory
+map were not properly released.This can lead a system unusable if
+deferred probe is in use.
 
-> The collective context switch from one coscheduled set of tasks to another
-> -- while fast -- is not atomic. If a use-case needs the absolute guarantee
-> that all tasks of the previous set have stopped executing before any task
-> of the next set starts executing, an additional hand-shake/barrier needs to
-> be added.
+Replace mem_request and map with devm_ioremap_resource
 
-In case nobody else brought it up yet, you're going to need a handshake
-to strengthen protection against L1TF attacks. Otherwise, there's still
-a small window where an attack can occur during the reschedule. Perhaps
-one could then cause this to happen artificially by repeatedly have a VM
-do some kind of pause/mwait type operation that might do a reschedule.
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/mtd/maps/physmap_of_core.c | 27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
 
-Jon.
-
+diff --git a/drivers/mtd/maps/physmap_of_core.c b/drivers/mtd/maps/physmap_of_core.c
+index 4129535b8e46..ed75f1781c37 100644
+--- a/drivers/mtd/maps/physmap_of_core.c
++++ b/drivers/mtd/maps/physmap_of_core.c
+@@ -31,7 +31,6 @@
+ struct of_flash_list {
+ 	struct mtd_info *mtd;
+ 	struct map_info map;
+-	struct resource *res;
+ };
+ 
+ struct of_flash {
+@@ -56,18 +55,10 @@ static int of_flash_remove(struct platform_device *dev)
+ 			mtd_concat_destroy(info->cmtd);
+ 	}
+ 
+-	for (i = 0; i < info->list_size; i++) {
++	for (i = 0; i < info->list_size; i++)
+ 		if (info->list[i].mtd)
+ 			map_destroy(info->list[i].mtd);
+ 
+-		if (info->list[i].map.virt)
+-			iounmap(info->list[i].map.virt);
+-
+-		if (info->list[i].res) {
+-			release_resource(info->list[i].res);
+-			kfree(info->list[i].res);
+-		}
+-	}
+ 	return 0;
+ }
+ 
+@@ -215,10 +206,11 @@ static int of_flash_probe(struct platform_device *dev)
+ 
+ 		err = -EBUSY;
+ 		res_size = resource_size(&res);
+-		info->list[i].res = request_mem_region(res.start, res_size,
+-						       dev_name(&dev->dev));
+-		if (!info->list[i].res)
++		info->list[i].map.virt = devm_ioremap_resource(&dev->dev, &res);
++		if (IS_ERR(info->list[i].map.virt)){
++			err = PTR_ERR(info->list[i].map.virt);
+ 			goto err_out;
++		}
+ 
+ 		err = -ENXIO;
+ 		width = of_get_property(dp, "bank-width", NULL);
+@@ -246,15 +238,6 @@ static int of_flash_probe(struct platform_device *dev)
+ 		if (err)
+ 			goto err_out;
+ 
+-		err = -ENOMEM;
+-		info->list[i].map.virt = ioremap(info->list[i].map.phys,
+-						 info->list[i].map.size);
+-		if (!info->list[i].map.virt) {
+-			dev_err(&dev->dev, "Failed to ioremap() flash"
+-				" region\n");
+-			goto err_out;
+-		}
+-
+ 		simple_map_init(&info->list[i].map);
+ 
+ 		/*
 -- 
-Computer Architect | Sent with my Fedora powered laptop
+2.19.0
+
