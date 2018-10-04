@@ -2,264 +2,190 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0ED6C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C986C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D59213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4750E213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="WYd6ijT6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D59213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ingics.com
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="hZ2sDFzI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4750E213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeJDOSB (ORCPT
+        id S1727443AbeJDOSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:18:01 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34435 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeJDOSB (ORCPT
+        Thu, 4 Oct 2018 10:18:09 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40482 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeJDOSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:18:01 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f18-v6so4720593plr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:26:10 -0700 (PDT)
+        Thu, 4 Oct 2018 10:18:09 -0400
+Received: by mail-ed1-f68.google.com with SMTP id j62-v6so7606951edd.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:26:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=0gACsEi5SzQBmJA5YRO3DwtROkYHQJ1ztFifl7168J4=;
-        b=WYd6ijT6mq49Nt0SocoYHZUnejxx4zcp1I6XIjaQnBNEVaCWlSh14wGbyaHuYmyvY2
-         qdNtYHGQvZ16SzFsVp/axx8TaAy2ETGZk7MibcwqT50T0YYBT8Q2adSqYjb7gFX1TxjV
-         j5OOr82M9d6RalvB70Vrd9mh7nB8AQ6/QXdhs4l+UAJt1XrDO9xbCacqX3xwwx5xD4gg
-         +PK8nsXW5vw2IQZ1GYMmTlRdjx14R3R2rTPeAuFRa1yOhIJW/lTt4I7IC83+CJScNeFC
-         LwQhZ0Ou3Z4kiortL5u7wLrA6/QbNhgOrV1hL+OJKbwzHlvGJTMy1BJdmefqCEFkS3cO
-         ODmg==
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bdIMu71RHkQyz0q/XQmi9bcwpKUTSOb4uv9ELshnrrg=;
+        b=hZ2sDFzIAZEYZtvMxJRsqjm1A/Goj75dTEZVgJSeE2JG9jmt82KaMDSzAiZ5UWPL+6
+         fKYoh5P4TwU7ZGuh03DhHQXlkDzDsQBxThNswbPQmKICnDEihA57qyNQWGnJPRlqjStg
+         FB6FhJX6lK9T4DQf8ifav8HYaLjsf0v9ShoVonvqeDJ8DBjH/V1iL5F1XBaTDXPyHMNH
+         qnPIeOfsDAy8r5Pb0k89EQ3VibDcs7zdKhKMlkPuqyT9y3Ij7JbG9VWBkQszaqzHwyVj
+         /sYoQDSdEooEOBoXIyqddeAvPuQ+dQOvv7RH5HEBrwHCOPi9bs+8TL5xc2xdCzQIPR6k
+         /XPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0gACsEi5SzQBmJA5YRO3DwtROkYHQJ1ztFifl7168J4=;
-        b=YD/Mvnp5pOcB6A6zmM2IuYYexKPrYQ/E+AzxODNx6cPSWkl6uRKW128zksMmG2Rpwu
-         Yx1Ea1AzdgDmcyezfKHVXoRJINMzNf4axtF0bJM1LxwVyH0Wkz3nQqiyne8WkZa/v5fZ
-         ehWDj5bwOT4f4zyWRHab+Kt6rAls1BnY+8wyi9R4oWt79d8Rtjjl6Yg56MP8+IeLYrat
-         K9Av5/uIhjqrocJ0aQveqcBIJsKVk/YPNGfvDrAjisbQv7veNuBiItQsrnBYc6AgeLAn
-         XD9WnmwKtnnMndDX7buqu7vqRgUhkAmkcAHnMGBPqhOywB9uXYpxBnWeysvxclHbc2kI
-         tcCA==
-X-Gm-Message-State: ABuFfoj5ISKENEoMRdeybZu9pKUD+iKmwUtcppTe7ekcD/STCX707xZx
-        Mjawsan4c/55SIKybSc4gDluIQ==
-X-Google-Smtp-Source: ACcGV60XcyW5y6eqqirDDe5i3XYaaAp2lgBDWv+CQzMR3jEzGfF19m0sCx33R18DrhjsW5D0Z5B6wA==
-X-Received: by 2002:a17:902:2d24:: with SMTP id o33-v6mr5231256plb.211.1538637969412;
-        Thu, 04 Oct 2018 00:26:09 -0700 (PDT)
-Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm3821125pgv.29.2018.10.04.00.26.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 00:26:08 -0700 (PDT)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH v4] regulator: bd718x7: Remove struct bd718xx_pmic
-Date:   Thu,  4 Oct 2018 15:25:58 +0800
-Message-Id: <20181004072558.10209-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bdIMu71RHkQyz0q/XQmi9bcwpKUTSOb4uv9ELshnrrg=;
+        b=egEz5IlDYxaCwM0gxE6QFQOpKfs0rW9hzw3y28xA6kIRO42fDQWdjOdYhoncXvqNfb
+         VRi0boBwOETeJZHjS41qLcO3s7S2PG0FB7sgm0+ZDpA0AjkdMdPNSYZkW7EYw/eUsSh8
+         twgv6ipj857M4Ne5azMwreqXAse3DfC/9/x6+TD3ISbwbVAHuAmESsXyG7AecR58rh3i
+         Kn7E/6iqmGJtlC4Z2R/KQj8AiL+UZ43bYIYenIz3AkBwa2gPv4a9bohcR6kIN/a4kc/z
+         RdEAkm2+QWP6Avcw0HFH8tYAkFA3VcenP0SCpELKHcotyQdGTuP8DskHwNoAF2BL9C/v
+         asyw==
+X-Gm-Message-State: ABuFfohGGHdTgJClzCJ38BF2SSoHT+zRbp7TPH5Dp8GmsMgFyHLtu4NB
+        8zfKBXHobDAfKnsM85wpDY++8Q==
+X-Google-Smtp-Source: ACcGV61ALrxn+66qbx/HnwmpzhLsNk3ijDPj4khLZzoAOfWXhz4vaRA8VVdQZn/PYU9T5hkEFbb3WA==
+X-Received: by 2002:a50:b085:: with SMTP id j5-v6mr1141226edd.294.1538637976289;
+        Thu, 04 Oct 2018 00:26:16 -0700 (PDT)
+Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id m25-v6sm1247693edc.86.2018.10.04.00.26.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 04 Oct 2018 00:26:15 -0700 (PDT)
+From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To:     mb@lightnvm.io
+Cc:     hlitz@ucsc.edu, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH] lightnvm: pblk: guarantee that backpointer is respected on writer stall
+Date:   Thu,  4 Oct 2018 09:26:08 +0200
+Message-Id: <1538637968-28032-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the fields in struct bd718xx_pmic are not really necessary.
-Remove struct bd718xx_pmic to simplify the code.
+pblk's write buffer must guarantee that it respects the device's
+constrains for reads (i.e., mw_cunits). This is done by maintaining a
+backpointer that updates the L2P table as entries wrap up, making them
+point to the media instead of pointing to the write buffer.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+This mechanism can race in case that the write thread stalls, as the
+write pointer will protect the last written entry, thus disregarding the
+read constrains.
+
+This patch adds an extra check on wrap up, making sure that the
+threshold is respected at all times, preventing new entries to overwrite
+committed data, also in case of write thread stall.
+
+Reported-by: Heiner Litz <hlitz@ucsc.edu>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
-v4: Drop the pointer to struct bd718xx_pmic inside the struct bd718xx
-v3: Remove the references to struct bd718xx_pmic from include/linux/mfd/rohm-bd718x7.h
-v2: Correct mail subject line
- drivers/regulator/bd718x7-regulator.c | 59 +++++++++------------------
- include/linux/mfd/rohm-bd718x7.h      |  2 -
- 2 files changed, 20 insertions(+), 41 deletions(-)
+ drivers/lightnvm/pblk-init.c | 5 +++--
+ drivers/lightnvm/pblk-rb.c   | 9 +++++++--
+ drivers/lightnvm/pblk.h      | 8 +++++++-
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-index d2522d4e1505..3a47e0372e77 100644
---- a/drivers/regulator/bd718x7-regulator.c
-+++ b/drivers/regulator/bd718x7-regulator.c
-@@ -15,13 +15,6 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/slab.h>
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index e3573880dbda..deaeb4649294 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -193,8 +193,9 @@ static int pblk_rwb_init(struct pblk *pblk)
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	unsigned long buffer_size;
+-	int pgs_in_buffer;
++	int pgs_in_buffer, threshold;
  
--struct bd718xx_pmic {
--	struct bd718xx_regulator_data *rdata;
--	struct bd718xx *mfd;
--	struct platform_device *pdev;
--	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
--};
--
- /*
-  * BUCK1/2/3/4
-  * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
-@@ -33,12 +26,10 @@ struct bd718xx_pmic {
- static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
- 					   int ramp_delay)
- {
--	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
--	struct bd718xx *mfd = pmic->mfd;
- 	int id = rdev->desc->id;
- 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
++	threshold = geo->mw_cunits * geo->all_luns;
+ 	pgs_in_buffer = (max(geo->mw_cunits, geo->ws_opt) + geo->ws_opt)
+ 								* geo->all_luns;
  
--	dev_dbg(&pmic->pdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
-+	dev_dbg(&rdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
- 		ramp_delay);
- 	switch (ramp_delay) {
- 	case 1 ... 1250:
-@@ -55,12 +46,12 @@ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
- 		break;
- 	default:
- 		ramp_value = BUCK_RAMPRATE_10P00MV;
--		dev_err(&pmic->pdev->dev,
-+		dev_err(&rdev->dev,
- 			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
- 			rdev->desc->name, ramp_delay);
- 	}
+@@ -203,7 +204,7 @@ static int pblk_rwb_init(struct pblk *pblk)
+ 	else
+ 		buffer_size = pgs_in_buffer;
  
--	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
-+	return regmap_update_bits(rdev->regmap, BD718XX_REG_BUCK1_CTRL + id,
- 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
+-	return pblk_rb_init(&pblk->rwb, buffer_size, geo->csecs);
++	return pblk_rb_init(&pblk->rwb, buffer_size, threshold, geo->csecs);
  }
  
-@@ -1022,7 +1013,7 @@ struct bd718xx_pmic_inits {
- 
- static int bd718xx_probe(struct platform_device *pdev)
+ /* Minimum pages needed within a lun */
+diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+index f653faa6a9ed..b1f4b51783f4 100644
+--- a/drivers/lightnvm/pblk-rb.c
++++ b/drivers/lightnvm/pblk-rb.c
+@@ -56,7 +56,8 @@ static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
+  * allocated and their size must be a power of two
+  * (Documentation/core-api/circular-buffers.rst)
+  */
+-int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int seg_size)
++int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
++		 unsigned int seg_size)
  {
--	struct bd718xx_pmic *pmic;
-+	struct bd718xx *mfd;
- 	struct regulator_config config = { 0 };
- 	struct bd718xx_pmic_inits pmic_regulators[] = {
- 		[BD718XX_TYPE_BD71837] = {
-@@ -1037,54 +1028,46 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	struct pblk *pblk = container_of(rb, struct pblk, rwb);
+ 	struct pblk_rb_entry *entries;
+@@ -79,6 +80,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int seg_size)
+ 	rb->seg_size = (1 << power_seg_sz);
+ 	rb->nr_entries = (1 << power_size);
+ 	rb->mem = rb->subm = rb->sync = rb->l2p_update = 0;
++	rb->back_thres = threshold;
+ 	rb->flush_point = EMPTY_ENTRY;
  
- 	int i, j, err;
+ 	spin_lock_init(&rb->w_lock);
+@@ -404,11 +406,14 @@ static int __pblk_rb_may_write(struct pblk_rb *rb, unsigned int nr_entries,
+ {
+ 	unsigned int mem;
+ 	unsigned int sync;
++	unsigned int threshold;
  
--	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
--	if (!pmic)
--		return -ENOMEM;
--
--	pmic->pdev = pdev;
--	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
--
--	if (!pmic->mfd) {
-+	mfd = dev_get_drvdata(pdev->dev.parent);
-+	if (!mfd) {
- 		dev_err(&pdev->dev, "No MFD driver data\n");
- 		err = -EINVAL;
- 		goto err;
- 	}
--	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
--	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
+ 	sync = READ_ONCE(rb->sync);
+ 	mem = READ_ONCE(rb->mem);
+ 
+-	if (pblk_rb_ring_space(rb, mem, sync, rb->nr_entries) < nr_entries)
++	threshold = nr_entries + rb->back_thres;
 +
-+	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
-+	    !pmic_regulators[mfd->chip_type].r_datas) {
- 		dev_err(&pdev->dev, "Unsupported chip type\n");
- 		err = -EINVAL;
- 		goto err;
- 	}
++	if (pblk_rb_ring_space(rb, mem, sync, rb->nr_entries) < threshold)
+ 		return 0;
  
--	platform_set_drvdata(pdev, pmic);
--
- 	/* Register LOCK release */
--	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
-+	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
- 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
- 	if (err) {
--		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
-+		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
- 		goto err;
- 	} else {
--		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
-+		dev_dbg(&pdev->dev, "Unlocked lock register 0x%x\n",
- 			BD718XX_REG_REGLOCK);
- 	}
+ 	if (pblk_rb_update_l2p(rb, nr_entries, mem, sync))
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 34c9c1dbeed9..c1665e39829d 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -203,6 +203,11 @@ struct pblk_rb {
+ 					 * will be 4KB
+ 					 */
  
--	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
-+	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
++	unsigned int back_thres;	/* Threshold that shall be maintained by
++					 * the backpointer in order to respect
++					 * geo->mw_cunits on a per chunk basis
++					 */
++
+ 	struct list_head pages;		/* List of data pages */
  
- 		const struct regulator_desc *desc;
- 		struct regulator_dev *rdev;
- 		const struct bd718xx_regulator_data *r;
- 
--		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
-+		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
- 		desc = &r->desc;
- 
- 		config.dev = pdev->dev.parent;
--		config.driver_data = pmic;
--		config.regmap = pmic->mfd->regmap;
-+		config.regmap = mfd->regmap;
- 
- 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
- 		if (IS_ERR(rdev)) {
--			dev_err(pmic->mfd->dev,
-+			dev_err(&pdev->dev,
- 				"failed to register %s regulator\n",
- 				desc->name);
- 			err = PTR_ERR(rdev);
-@@ -1096,28 +1079,26 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		 * can now switch the control from PMIC state machine to the
- 		 * register interface
- 		 */
--		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
-+		err = regmap_update_bits(mfd->regmap, r->init.reg,
- 					 r->init.mask, r->init.val);
- 		if (err) {
--			dev_err(&pmic->pdev->dev,
-+			dev_err(&pdev->dev,
- 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
- 				desc->name);
- 			goto err;
- 		}
- 		for (j = 0; j < r->additional_init_amnt; j++) {
--			err = regmap_update_bits(pmic->mfd->regmap,
-+			err = regmap_update_bits(mfd->regmap,
- 						 r->additional_inits[j].reg,
- 						 r->additional_inits[j].mask,
- 						 r->additional_inits[j].val);
- 			if (err) {
--				dev_err(&pmic->pdev->dev,
-+				dev_err(&pdev->dev,
- 					"Buck (%s) initialization failed\n",
- 					desc->name);
- 				goto err;
- 			}
- 		}
--
--		pmic->rdev[i] = rdev;
- 	}
- 
- err:
-diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-index 26acf9a92498..fd194bfc836f 100644
---- a/include/linux/mfd/rohm-bd718x7.h
-+++ b/include/linux/mfd/rohm-bd718x7.h
-@@ -321,7 +321,6 @@ enum {
- 	BD718XX_PWRBTN_LONG_PRESS_15S
- };
- 
--struct bd718xx_pmic;
- struct bd718xx_clk;
- 
- struct bd718xx {
-@@ -333,7 +332,6 @@ struct bd718xx {
- 	int chip_irq;
- 	struct regmap_irq_chip_data *irq_data;
- 
--	struct bd718xx_pmic *pmic;
- 	struct bd718xx_clk *clk;
- };
- 
+ 	spinlock_t w_lock;		/* Write lock */
+@@ -734,7 +739,8 @@ struct pblk_line_ws {
+ /*
+  * pblk ring buffer operations
+  */
+-int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int seg_sz);
++int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
++		 unsigned int seg_sz);
+ int pblk_rb_may_write_user(struct pblk_rb *rb, struct bio *bio,
+ 			   unsigned int nr_entries, unsigned int *pos);
+ int pblk_rb_may_write_gc(struct pblk_rb *rb, unsigned int nr_entries,
 -- 
-2.17.1
+2.7.4
 
