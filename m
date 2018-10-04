@@ -2,96 +2,142 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BC0C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C252BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66ED92084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:57:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66ED92084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D1EC2087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:59:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=neverware.com header.i=@neverware.com header.b="df3aVKQg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1EC2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neverware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbeJEBwF convert rfc822-to-8bit (ORCPT
+        id S1727689AbeJEBxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:52:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:15659 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbeJEBwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:52:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 11:57:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,341,1534834800"; 
-   d="scan'208";a="94691424"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Oct 2018 11:56:54 -0700
-Received: from orsmsx111.amr.corp.intel.com (10.22.240.12) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 4 Oct 2018 11:56:47 -0700
-Received: from orsmsx106.amr.corp.intel.com ([169.254.1.57]) by
- ORSMSX111.amr.corp.intel.com ([169.254.12.89]) with mapi id 14.03.0319.002;
- Thu, 4 Oct 2018 11:56:47 -0700
-From:   "Bowers, AndrewX" <andrewx.bowers@intel.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH 04/16] i40e: Replace spin_is_locked()
- with lockdep
-Thread-Topic: [Intel-wired-lan] [PATCH 04/16] i40e: Replace spin_is_locked()
- with lockdep
-Thread-Index: AQHUWybRK4YZJIaD/UKkphMOV8V7dqUPcZkQ
-Date:   Thu, 4 Oct 2018 18:56:46 +0000
-Message-ID: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D2FD13D@ORSMSX106.amr.corp.intel.com>
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-5-ldr709@gmail.com>
-In-Reply-To: <20181003053902.6910-5-ldr709@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTQ2N2MyYTYtNTM1Zi00OTE4LTk0YTEtMDBiZGU3N2Q5OTFkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidE1mTkp0SEYyQ0dNMyt2N2E2NzJDMWVuazBHVlwvXC9Cc3RiM0VRbmphNzdlOCtJNjFpSmNEMXk1WnVHak9wZTFlIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Thu, 4 Oct 2018 21:53:35 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45625 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727293AbeJEBxf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 21:53:35 -0400
+Received: by mail-qt1-f195.google.com with SMTP id e10-v6so25800qtq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 11:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=neverware.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DmpLN7jl8dOyjcHvlmW7QHGVoHmIXAmQAKW9LpIK2Wc=;
+        b=df3aVKQga0sg2LCNCBtOQUUwSmCo77xGWBuNrzNgQi7o3q+S2Impjz3s3UcVRb2LKH
+         B2zI1BF/Jv87fAllQ371x5dHIMmF53uFnUkvmBnU9WVSZKYF4BgeXewJPkzdxLh2PFgt
+         upMsaLA6x+qKPIaBg3JKDtLDg841NdZbp6XfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DmpLN7jl8dOyjcHvlmW7QHGVoHmIXAmQAKW9LpIK2Wc=;
+        b=GsPYDEfB9vXgqKiOI2uI6CLIFcnotkqjOnSvqTC73I2VgXYq6ejsz+ksffq0B9R8sv
+         PkXAEVxWh0RG6RKU2F/aydQVguXW4Zy3FbikpicVf4DTk1y37BaZeYCiRNcOP0Vdm4kT
+         EHeUOwVKGXV7R99wEdELf/saH2Vw+ZddWANc9f8tKxSKPwBmwizVqrBbqpATEr/U+L4j
+         ZwjJWB7J7oODbJNw18ls+MnaOOs6/Z7DcnfBRMZjr55UkjYgZQixc5LDa962mgxBmCLS
+         dDRgH6+tWFhzkq8zQDHNEKGdzCmbkAu5mMGvZLmjbOhT5qH8KvYdCpbFq2ggkNZ7oPrV
+         2pDQ==
+X-Gm-Message-State: ABuFfogpKWZVSgXXQt37oJFI+2XUAIabWZ7fSVedj9nT9FWox+XmssY2
+        EIRHBjBxCZ2xiRc3RiL1+A0CVw==
+X-Google-Smtp-Source: ACcGV61ksO+KTN3+JQZDq5DpFIUfIUREDB6Vnn3zmJCsU4hiLiLjvbJpffsqAc4um0s7sZ2FDfPcfA==
+X-Received: by 2002:ac8:362a:: with SMTP id m39-v6mr6611128qtb.210.1538679540222;
+        Thu, 04 Oct 2018 11:59:00 -0700 (PDT)
+Received: from hotbox.seaworld.local (rrcs-208-105-51-90.nyc.biz.rr.com. [208.105.51.90])
+        by smtp.googlemail.com with ESMTPSA id j18-v6sm3404852qkh.20.2018.10.04.11.58.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 11:58:59 -0700 (PDT)
+From:   Michael Pobega <mpobega@neverware.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Michael Pobega <mpobega@neverware.com>
+Subject: [PATCH] ALSA: hda/sigmatel - Disable automute for Elo VuPoint
+Date:   Thu,  4 Oct 2018 14:58:21 -0400
+Message-Id: <20181004185821.67612-1-mpobega@neverware.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Lance Roy
-> Sent: Tuesday, October 2, 2018 10:39 PM
-> To: linux-kernel@vger.kernel.org
-> Cc: netdev@vger.kernel.org; Lance Roy <ldr709@gmail.com>; intel-wired-
-> lan@lists.osuosl.org; Paul E. McKenney <paulmck@linux.ibm.com>; David S.
-> Miller <davem@davemloft.net>
-> Subject: [Intel-wired-lan] [PATCH 04/16] i40e: Replace spin_is_locked() with
-> lockdep
-> 
-> lockdep_assert_held() is better suited to checking locking requirements,
-> since it won't get confused when someone else holds the lock. This is also a
-> step towards possibly removing spin_is_locked().
-> 
-> Signed-off-by: Lance Roy <ldr709@gmail.com>
-> Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: intel-wired-lan@lists.osuosl.org
-> Cc: <netdev@vger.kernel.org>
-> ---
->  drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+The Elo VuPoint 15MX has two headphone jacks of which neither work by
+default. Disabling automute allows ALSA to work normally with the
+speakers & left headphone jack.
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Future pin configuration changes may be required in the future to get
+the right headphone jack working in tandem.
 
+Signed-off-by: Michael Pobega <mpobega@neverware.com>
+---
+ sound/pci/hda/patch_sigmatel.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c
+index 046705b4691a..d8168aa2cef3 100644
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -77,6 +77,7 @@ enum {
+ 	STAC_DELL_M6_BOTH,
+ 	STAC_DELL_EQ,
+ 	STAC_ALIENWARE_M17X,
++	STAC_ELO_VUPOINT_15MX,
+ 	STAC_92HD89XX_HP_FRONT_JACK,
+ 	STAC_92HD89XX_HP_Z1_G2_RIGHT_MIC_JACK,
+ 	STAC_92HD73XX_ASUS_MOBO,
+@@ -1879,6 +1880,18 @@ static void stac92hd73xx_fixup_no_jd(struct hda_codec *codec,
+ 		codec->no_jack_detect = 1;
+ }
+ 
++
++static void stac92hd73xx_disable_automute(struct hda_codec *codec,
++				     const struct hda_fixup *fix, int action)
++{
++	struct sigmatel_spec *spec = codec->spec;
++
++	if (action != HDA_FIXUP_ACT_PRE_PROBE)
++		return;
++
++	spec->gen.suppress_auto_mute = 1;
++}
++
+ static const struct hda_fixup stac92hd73xx_fixups[] = {
+ 	[STAC_92HD73XX_REF] = {
+ 		.type = HDA_FIXUP_FUNC,
+@@ -1904,6 +1917,10 @@ static const struct hda_fixup stac92hd73xx_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = stac92hd73xx_fixup_alienware_m17x,
+ 	},
++	[STAC_ELO_VUPOINT_15MX] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = stac92hd73xx_disable_automute,
++	},
+ 	[STAC_92HD73XX_INTEL] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = intel_dg45id_pin_configs,
+@@ -1942,6 +1959,7 @@ static const struct hda_model_fixup stac92hd73xx_models[] = {
+ 	{ .id = STAC_DELL_M6_BOTH, .name = "dell-m6" },
+ 	{ .id = STAC_DELL_EQ, .name = "dell-eq" },
+ 	{ .id = STAC_ALIENWARE_M17X, .name = "alienware" },
++	{ .id = STAC_ELO_VUPOINT_15MX, .name = "elo-vupoint-15mx" },
+ 	{ .id = STAC_92HD73XX_ASUS_MOBO, .name = "asus-mobo" },
+ 	{}
+ };
+@@ -1991,6 +2009,8 @@ static const struct snd_pci_quirk stac92hd73xx_fixup_tbl[] = {
+ 		      "Alienware M17x", STAC_ALIENWARE_M17X),
+ 	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x0490,
+ 		      "Alienware M17x R3", STAC_DELL_EQ),
++	SND_PCI_QUIRK(0x1059, 0x1011,
++		      "ELO VuPoint 15MX", STAC_ELO_VUPOINT_15MX),
+ 	SND_PCI_QUIRK(PCI_VENDOR_ID_HP, 0x1927,
+ 				"HP Z1 G2", STAC_92HD89XX_HP_Z1_G2_RIGHT_MIC_JACK),
+ 	SND_PCI_QUIRK(PCI_VENDOR_ID_HP, 0x2b17,
+-- 
+2.17.1
 
