@@ -2,218 +2,331 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60E7C64EBD
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77297C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA372098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3162098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 04:22:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A2F/LP2j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA372098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lzVSjq5j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3162098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJDLIO (ORCPT
+        id S1727318AbeJDLOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 07:08:14 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35940 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbeJDLIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 07:08:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f18-v6so2535135pgv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 21:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=osHUwuiO0Yt9WNQtlpO1yAjh4ObC+ZQbro/V9Mp9LXI=;
-        b=A2F/LP2jGLnAGdxdQguLbKk9fjbn+UtRFhwsAdUi42XvqiwNBZGDzefFKJw9QkCBGX
-         rCN4ckiV29lETBHTzwIpDP5PE8zZN0HenREVYIizIRFcQGrXSKHQ+E/RkI5B1u6bCAIo
-         C3D8i5DB2nGBhc9sqqHylUXBwjEO/ovIM9v1k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=osHUwuiO0Yt9WNQtlpO1yAjh4ObC+ZQbro/V9Mp9LXI=;
-        b=YbaoO/371tCGnzIL0BExZBcxvHE0Ioib7uAwaa1SEX4O2heW9RCi41SVK/T1yD/fWw
-         Es83cHNjZY1m52clv9AUuYFuYjc5f+bssPPd40bWEH+sAms5TfB7ha5frnoVcKI2+H6Q
-         +XxAbFqfoyoVNz6Jg2W3KEGLUT1X7EB2OCO3uT7d+861YHG8tQ+2ZJlvWtpSwqOeVj7A
-         eb1RsezLa8AUYYXZMkln9pi3i/XJIBJhVKGAuphrWr4EbT+szztQjlSO0RrPzycD+Vlr
-         pUqKSOQvsvLFyj62o8L682cR3BgYXYNEOLOaah3Mlc/nnuK8T8Kuc7kEdpZ418IendDD
-         yXPg==
-X-Gm-Message-State: ABuFfoic8ybhVOEaiA4r2YxLBC+fADq87YQJiyCzEKLCzk6/ke9fpxIg
-        IOXIe6PH76z25MzK6xa5KkAYgg==
-X-Google-Smtp-Source: ACcGV607c9hILgbmxSA7zkzVphS625EdNlH1B/zJCeGDBsvYvXR7YQxZvpIRzIolSDjdTLi9PT/d3g==
-X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr4055386pgp.334.1538626614909;
-        Wed, 03 Oct 2018 21:16:54 -0700 (PDT)
-Received: from localhost ([122.172.76.11])
-        by smtp.gmail.com with ESMTPSA id w13-v6sm2882577pgs.89.2018.10.03.21.16.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 21:16:54 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>, niklas.cassel@linaro.org,
-        d-gerlach@ti.com, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 4/4] PM / OPP: _of_add_opp_table_v2(): increment count only if OPP is added
-Date:   Thu,  4 Oct 2018 09:46:23 +0530
-Message-Id: <deac8703da5faafce96be3f91c668dcd5da931a5.1538625101.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
-In-Reply-To: <cover.1538625101.git.viresh.kumar@linaro.org>
-References: <cover.1538625101.git.viresh.kumar@linaro.org>
+        Thu, 4 Oct 2018 07:14:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:58433 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726661AbeJDLOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 07:14:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Qfqz3VSzz9s5c;
+        Thu,  4 Oct 2018 14:22:39 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538626960;
+        bh=t6ZZiof1eISXVLcuHd5pBgBKZgsQHvG4vc17gvskbOs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=lzVSjq5jPFmUP+/JN3uyL9npTBlHvLCuk3zcOoe9+tXElL+rIgXB7ZHVmPIKjxNkW
+         ZoU0MZ2nQHPPZMrVu4QntA9yZwSWH/SYD0tImeBT2nfw2EBXBgaQYu8GiPX7ydFh/6
+         ZjkwPZK8m7w8Y2lALy11sP1zeppGLaSNA1JJHSMH+jPNy6D0Q31qHp+W2mcc0GC6cV
+         lfpKRo/m44TrYpfpwMfOiFNJyJ/fFrek1n9dkiED0I+0krAt2UTAkfMVOtOowGaLXI
+         LiqouZeS2w3StcQI9Jho1kQntGJiOQx9lE0cPvPXocT0mMHftyjFaFb3m5nbsGuLCY
+         EyeD7JLpXqyMg==
+Date:   Thu, 4 Oct 2018 14:22:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoffer Dall <cdall@cs.columbia.edu>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20181004142238.06c80b6a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NtYu5eHvLWP/5WmU_hBgeT."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Gerlach <d-gerlach@ti.com>
+--Sig_/NtYu5eHvLWP/5WmU_hBgeT.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Currently the _of_add_opp_table_v2 call loops through the OPP nodes in
-the operating-points-v2 table in the device tree and calls
-_opp_add_static_v2 for each to add them to the table. It counts each
-iteration through this loop as an added OPP, however there are cases
-where _opp_add_static_v2() returns 0 but no new OPP is added to the
-list.
+Hi all,
 
-This can happen while adding duplicate OPP or if the OPP isn't supported
-by hardware.
+Today's linux-next merge of the kvm-arm tree got conflicts in:
 
-Because of this the count variable will contain the number of OPP nodes
-in the table in device tree but not necessarily the ones that are
-actually added.
+  arch/arm/include/asm/kvm_mmu.h
+  arch/arm64/include/asm/kvm_arm.h
+  arch/arm64/include/asm/kvm_mmu.h
 
-As this count value is what is checked to determine if there are any
-valid OPPs, if a platform has an operating-points-v2 table with all OPP
-nodes containing opp-supported-hw values that are not currently
-supported, then _of_add_opp_table_v2 will fail to abort as it should due
-to an empty table.
+between commit:
 
-Additionally, since commit 3ba98324e81a ("PM / OPP: Get
-performance state using genpd helper"), the same count variable is
-compared against the number of OPPs containing performance states and
-requires that either all or none have pstates set, however in the case
-of any opp table that has any entries that do not get added by
-_opp_add_static_v2 due to incompatible opp-supported-hw fields, these
-numbers will not match and _of_add_opp_table_v2 will incorrectly fail.
+  ab510027dc4d ("arm64: KVM: Enable Common Not Private translations")
 
-We need to clearly identify all the three cases (success, failure,
-unsupported/duplicate OPPs) and then increment count only on success
-case. Change return type of _opp_add_static_v2() to return the pointer
-to the newly added OPP instead of an integer. This routine now returns a
-valid pointer if the OPP is really added, NULL for unsupported or
-duplicate OPPs, and error value cased as a pointer on errors.
+from the arm64 tree and commit:
 
-Ideally the fixes tag in this commit should point back to the commit
-that introduced OPP v2 initially, as that's where we started incorrectly
-accounting for duplicate OPPs:
+  0f62f0e95be2 ("kvm: arm64: Set a limit on the IPA size")
+  595583306434 ("kvm: arm64: Dynamic configuration of VTTBR mask")
 
-commit 274659029c9d ("PM / OPP: Add support to parse "operating-points-v2" bindings")
+from the kvm-arm tree.
 
-But it wasn't a real problem until recently as the count was only used
-to check if any OPPs are added or not. And so this commit points to a
-rather recent commit where we added more code that depends on the value
-of "count".
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Fixes: 3ba98324e81a ("PM / OPP: Get performance state using genpd helper")
-Reported-by: Dave Gerlach <d-gerlach@ti.com>
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V2:
-- Dave already sent V1 for this sometime back and I am sending the
-  updated patch now as he isn't around and other folks are facing these
-  issues as well.
-- Update _opp_add_static_v2() to return the OPP pointer which can now be
-  used to distinguish all the cases properly.
+--=20
+Cheers,
+Stephen Rothwell
 
- drivers/opp/of.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+diff --cc arch/arm/include/asm/kvm_mmu.h
+index 847f01fa429d,5ad1a54f98dc..000000000000
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@@ -355,11 -358,8 +358,13 @@@ static inline int hyp_map_aux_data(void
+ =20
+  #define kvm_phys_to_vttbr(addr)		(addr)
+ =20
+ +static inline bool kvm_cpu_has_cnp(void)
+ +{
+ +	return false;
+ +}
+ +
++ static inline void kvm_set_ipa_limit(void) {}
++=20
+  #endif	/* !__ASSEMBLY__ */
+ =20
+  #endif /* __ARM_KVM_MMU_H__ */
+diff --cc arch/arm64/include/asm/kvm_arm.h
+index b476bc46f0ab,6e324d1f1231..000000000000
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@@ -145,38 -143,127 +143,128 @@@
+  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
+  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
+ =20
+- #ifdef CONFIG_ARM64_64K_PAGES
+  /*
+-  * Stage2 translation configuration:
+-  * 64kB pages (TG0 =3D 1)
+-  * 2 level page tables (SL =3D 1)
++  * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
++  * Interestingly, it depends on the page size.
++  * See D.10.2.121, VTCR_EL2, in ARM DDI 0487C.a
++  *
++  *	-----------------------------------------
++  *	| Entry level		|  4K  | 16K/64K |
++  *	------------------------------------------
++  *	| Level: 0		|  2   |   -     |
++  *	------------------------------------------
++  *	| Level: 1		|  1   |   2     |
++  *	------------------------------------------
++  *	| Level: 2		|  0   |   1     |
++  *	------------------------------------------
++  *	| Level: 3		|  -   |   0     |
++  *	------------------------------------------
++  *
++  * The table roughly translates to :
++  *
++  *	SL0(PAGE_SIZE, Entry_level) =3D TGRAN_SL0_BASE - Entry_Level
++  *
++  * Where TGRAN_SL0_BASE is a magic number depending on the page size:
++  * 	TGRAN_SL0_BASE(4K) =3D 2
++  *	TGRAN_SL0_BASE(16K) =3D 3
++  *	TGRAN_SL0_BASE(64K) =3D 3
++  * provided we take care of ruling out the unsupported cases and
++  * Entry_Level =3D 4 - Number_of_levels.
++  *
+   */
+- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
+- #define VTTBR_X_TGRAN_MAGIC		38
++ #ifdef CONFIG_ARM64_64K_PAGES
++=20
++ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_64K
++ #define VTCR_EL2_TGRAN_SL0_BASE		3UL
++=20
+  #elif defined(CONFIG_ARM64_16K_PAGES)
+- /*
+-  * Stage2 translation configuration:
+-  * 16kB pages (TG0 =3D 2)
+-  * 2 level page tables (SL =3D 1)
+-  */
+- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
+- #define VTTBR_X_TGRAN_MAGIC		42
++=20
++ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_16K
++ #define VTCR_EL2_TGRAN_SL0_BASE		3UL
++=20
+  #else	/* 4K */
+- /*
+-  * Stage2 translation configuration:
+-  * 4kB pages (TG0 =3D 0)
+-  * 3 level page tables (SL =3D 1)
+-  */
+- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
+- #define VTTBR_X_TGRAN_MAGIC		37
++=20
++ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_4K
++ #define VTCR_EL2_TGRAN_SL0_BASE		2UL
++=20
+  #endif
+ =20
+- #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+- #define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
++ #define VTCR_EL2_LVLS_TO_SL0(levels)	\
++ 	((VTCR_EL2_TGRAN_SL0_BASE - (4 - (levels))) << VTCR_EL2_SL0_SHIFT)
++ #define VTCR_EL2_SL0_TO_LVLS(sl0)	\
++ 	((sl0) + 4 - VTCR_EL2_TGRAN_SL0_BASE)
++ #define VTCR_EL2_LVLS(vtcr)		\
++ 	VTCR_EL2_SL0_TO_LVLS(((vtcr) & VTCR_EL2_SL0_MASK) >> VTCR_EL2_SL0_SHIFT)
++=20
++ #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
++ #define VTCR_EL2_IPA(vtcr)		(64 - ((vtcr) & VTCR_EL2_T0SZ_MASK))
++=20
++ /*
++  * ARM VMSAv8-64 defines an algorithm for finding the translation table
++  * descriptors in section D4.2.8 in ARM DDI 0487C.a.
++  *
++  * The algorithm defines the expectations on the translation table
++  * addresses for each level, based on PAGE_SIZE, entry level
++  * and the translation table size (T0SZ). The variable "x" in the
++  * algorithm determines the alignment of a table base address at a given
++  * level and thus determines the alignment of VTTBR:BADDR for stage2
++  * page table entry level.
++  * Since the number of bits resolved at the entry level could vary
++  * depending on the T0SZ, the value of "x" is defined based on a
++  * Magic constant for a given PAGE_SIZE and Entry Level. The
++  * intermediate levels must be always aligned to the PAGE_SIZE (i.e,
++  * x =3D PAGE_SHIFT).
++  *
++  * The value of "x" for entry level is calculated as :
++  *    x =3D Magic_N - T0SZ
++  *
++  * where Magic_N is an integer depending on the page size and the entry
++  * level of the page table as below:
++  *
++  *	--------------------------------------------
++  *	| Entry level		|  4K    16K   64K |
++  *	--------------------------------------------
++  *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
++  *	--------------------------------------------
++  *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
++  *	--------------------------------------------
++  *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
++  *	--------------------------------------------
++  *	| Level: 3 (1 level)	| -    | 53  | 51  |
++  *	--------------------------------------------
++  *
++  * We have a magic formula for the Magic_N below:
++  *
++  *  Magic_N(PAGE_SIZE, Level) =3D 64 - ((PAGE_SHIFT - 3) * Number_of_leve=
+ls)
++  *
++  * where Number_of_levels =3D (4 - Level). We are only interested in the
++  * value for Entry_Level for the stage2 page table.
++  *
++  * So, given that T0SZ =3D (64 - IPA_SHIFT), we can compute 'x' as follow=
+s:
++  *
++  *	x =3D (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
++  *	  =3D IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
++  *
++  * Here is one way to explain the Magic Formula:
++  *
++  *  x =3D log2(Size_of_Entry_Level_Table)
++  *
++  * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
++  * PAGE_SHIFT bits in the PTE, we have :
++  *
++  *  Bits_Entry_level =3D IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_S=
+HIFT)
++  *		     =3D IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
++  *  where n =3D number of levels, and since each pointer is 8bytes, we ha=
+ve:
++  *
++  *  x =3D Bits_Entry_Level + 3
++  *    =3D IPA_SHIFT - (PAGE_SHIFT - 3) * n
++  *
++  * The only constraint here is that, we have to find the number of page t=
+able
++  * levels for a given IPA size (which we do, see stage2_pt_levels())
++  */
++ #define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
+ =20
+ +#define VTTBR_CNP_BIT     (UL(1))
+- #define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) <=
+< VTTBR_X)
+  #define VTTBR_VMID_SHIFT  (UL(48))
+  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SH=
+IFT)
+ =20
+diff --cc arch/arm64/include/asm/kvm_mmu.h
+index 64337afbf124,77b1af9e64db..000000000000
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@@ -517,10 -519,29 +519,34 @@@ static inline int hyp_map_aux_data(void
+ =20
+  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+ =20
+ +static inline bool kvm_cpu_has_cnp(void)
+ +{
+ +	return system_supports_cnp();
+ +}
+ +
++ /*
++  * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
++  * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
++  * 52bit IPS.
++  */
++ static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
++ {
++ 	int x =3D ARM64_VTTBR_X(ipa_shift, levels);
++=20
++ 	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
++ }
++=20
++ static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
++ {
++ 	unsigned int x =3D arm64_vttbr_x(ipa_shift, levels);
++=20
++ 	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
++ }
++=20
++ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
++ {
++ 	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
++ }
++=20
+  #endif /* __ASSEMBLY__ */
+  #endif /* __ARM64_KVM_MMU_H__ */
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 67a384c8ead2..5a4b47958073 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -297,15 +297,21 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_remove_table);
-  * removed by dev_pm_opp_remove.
-  *
-  * Return:
-- * 0		On success OR
-+ * Valid OPP pointer:
-+ *		On success
-+ * NULL:
-  *		Duplicate OPPs (both freq and volt are same) and opp->available
-- * -EEXIST	Freq are same and volt are different OR
-+ *		OR if the OPP is not supported by hardware.
-+ * ERR_PTR(-EEXIST):
-+ *		Freq are same and volt are different OR
-  *		Duplicate OPPs (both freq and volt are same) and !opp->available
-- * -ENOMEM	Memory allocation failure
-- * -EINVAL	Failed parsing the OPP node
-+ * ERR_PTR(-ENOMEM):
-+ *		Memory allocation failure
-+ * ERR_PTR(-EINVAL):
-+ *		Failed parsing the OPP node
-  */
--static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
--			      struct device_node *np)
-+static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
-+		struct device *dev, struct device_node *np)
- {
- 	struct dev_pm_opp *new_opp;
- 	u64 rate = 0;
-@@ -315,7 +321,7 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
- 
- 	new_opp = _opp_allocate(opp_table);
- 	if (!new_opp)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	ret = of_property_read_u64(np, "opp-hz", &rate);
- 	if (ret < 0) {
-@@ -390,12 +396,12 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
- 	 * frequency/voltage list.
- 	 */
- 	blocking_notifier_call_chain(&opp_table->head, OPP_EVENT_ADD, new_opp);
--	return 0;
-+	return new_opp;
- 
- free_opp:
- 	_opp_free(new_opp);
- 
--	return ret;
-+	return ERR_PTR(ret);
- }
- 
- /* Initializes OPP tables based on new bindings */
-@@ -415,14 +421,15 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 
- 	/* We have opp-table node now, iterate over it and add OPPs */
- 	for_each_available_child_of_node(opp_table->np, np) {
--		count++;
--
--		ret = _opp_add_static_v2(opp_table, dev, np);
--		if (ret) {
-+		opp = _opp_add_static_v2(opp_table, dev, np);
-+		if (IS_ERR(opp)) {
-+			ret = PTR_ERR(opp);
- 			dev_err(dev, "%s: Failed to add OPP, %d\n", __func__,
- 				ret);
- 			of_node_put(np);
- 			goto put_list_kref;
-+		} else if (opp) {
-+			count++;
- 		}
- 	}
- 
--- 
-2.18.0.rc1.242.g61856ae69a2c
+--Sig_/NtYu5eHvLWP/5WmU_hBgeT.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1lY4ACgkQAVBC80lX
+0GwcEAgAnYmbTVHVNSmDE3sv7WpiRGG/qD1WLa++KIQrVLnGj8H39hrn5ydN+3H/
+iLw0HaUVwsrQ7pwCrbJ+twZJxMQS8TN9OB7XibJ0VUfdXoeTyq/B1JiT0fra4G7s
+XPzkEbdMHIk2Qyv3Af21qNH7UB4UGOseUvaCLv2GMv3/mgxCGI/uJexv0FSbMQcY
+GVTvx4y1FvA5Vr34sR1yaQRyciIwzCtNp7g5VumTCn8zYqKeXMRHPosHju5suGO8
+pby+TS/W0crLOxWEh+LU9vKLY4SAsvGgO/+HpsRHKIuTUK3+EjpQgNN1umEWaw3C
+P5XoCsly/dcBQbaVlb1jWwoNIT+i5g==
+=PYgO
+-----END PGP SIGNATURE-----
+
+--Sig_/NtYu5eHvLWP/5WmU_hBgeT.--
