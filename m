@@ -2,172 +2,124 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B67E5C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A002BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0C4206B2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:23:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="bQ6YLNvH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F0C4206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	by mail.kernel.org (Postfix) with ESMTP id 718E7206B2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:24:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718E7206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=green-communications.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeJDXRr (ORCPT
+        id S1727645AbeJDXS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:17:47 -0400
-Received: from mail-eopbgr690076.outbound.protection.outlook.com ([40.107.69.76]:40647
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727415AbeJDXRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:17:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yuST2pLpbrVWLlB0rSn4yaAC7ArCfHoZ+iK/Gp09pYI=;
- b=bQ6YLNvHouvfz5fnsmGsgFAaLzaJvJkghVWZa+3X8MjjrAIDJ4bXz/n2M0nbJ8/6ZmxXD1mVvoN2x1BgEZbt4V50N8U8nGPrtTJCrk0U088TtFLXdpn6amGUyx/vqHg30NfKfePEx0iFtxPbJvHeuMHBqEGLY5mUViN4wUFvStg=
-Received: from CY1PR07MB2554.namprd07.prod.outlook.com (10.167.16.21) by
- CY1PR07MB2444.namprd07.prod.outlook.com (10.166.195.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.25; Thu, 4 Oct 2018 16:23:44 +0000
-Received: from CY1PR07MB2554.namprd07.prod.outlook.com
- ([fe80::d38:17f1:bc0c:5643]) by CY1PR07MB2554.namprd07.prod.outlook.com
- ([fe80::d38:17f1:bc0c:5643%4]) with mapi id 15.20.1185.026; Thu, 4 Oct 2018
- 16:23:44 +0000
-From:   "Tayar, Tomer" <Tomer.Tayar@cavium.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        "Elior, Ariel" <Ariel.Elior@cavium.com>,
-        Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: RE: [PATCH] qed: Remove unneeded enumerated type core_tx_dest
-Thread-Topic: [PATCH] qed: Remove unneeded enumerated type core_tx_dest
-Thread-Index: AQHUW3aEsdm7HfxStUagpdorBQLnFaUPJEFg
-Date:   Thu, 4 Oct 2018 16:23:43 +0000
-Message-ID: <CY1PR07MB2554AFA55E8084990E14D55780EA0@CY1PR07MB2554.namprd07.prod.outlook.com>
-References: <20181004000912.22242-1-natechancellor@gmail.com>
-In-Reply-To: <20181004000912.22242-1-natechancellor@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tomer.Tayar@cavium.com; 
-x-originating-ip: [31.168.140.228]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR07MB2444;6:ty1WAPW0sWOxZm6lhpSHgfU8qPs4MB3LmNg/BCkR2SZggGbHrvXlsib9ZZTZNwo8l+G3exSvUdMm+e/ae4+8sHickZal0o2sqaPGft2d4GJsvltOqWBze0Rcc0SId48viNWwq5HMQDK8jGmGlBtBtXJkQ37JafBSiWEx5R3WS6uXkDy1Bmt9pf5RW+ynhzTxEVbksNyjSTw/011L9FNZzTN5tL/PqbVNGiaozD1F1ySX9jWzqki7xNVCZq+qDu9/hl5wzxz/nl5SeCQjH3j/Mk7IHzK6zEvFMGEF2R7ywyte5tpH5wyvrRrvKCo7KXbAQ2Lz7Th6/X6EVozrsrpgaaG3c2AaYrNd+JEyXLSyvK4vrQpn//GUVOthWmje3pQwTVmV4+cD8YSCPUbDPQZmENHgw+77mJ+N9STR/n+gWWWf9yV4EcfcJR28DiXlM+GWzudAktgDoxkL+UMtqwDf+A==;5:UD/IndSOsbyFltlXkfXQAl4IJ7rNlOKgl03SLfjwB253cowSXbcogqE4kIWnyDTeilyDF/oysyYblw99C+c5/mkRIz7TKDOGeW4dJd38SnNN4Yo6bg1UvTH8Z4+4w+hHl+rhigg6JkJvx47TxfFvea2RqzaQU5TGByg8up7pV9A=;7:tg8NJFf8hJWkzy2tQJbUPqLqbBzwTagP6xgSLBq3JLyBNDcsLkOzFLsCRzHE1pDH0IoZ3lWGeKNncy4SDHH5TAtmiLOJt21wXw5FCIGivyfSjU+kQX9qmhwii5mdzr7Z+gPywEg+T/QArzE/BMbFJugkJT9x0+nSHPf+KAOCwsKnsVdKBgFtuslSBIJBU4pUbKfGNvqqiOMenTo8v/Pl9qlOL1XtqgS8mSRu+kkJkJUp3DHb9ZXDEO56GjxgXVq0
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 8505f417-ccff-48ad-11c8-08d62a15c107
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR07MB2444;
-x-ms-traffictypediagnostic: CY1PR07MB2444:
-x-microsoft-antispam-prvs: <CY1PR07MB244496D1D046CD6545B516A880EA0@CY1PR07MB2444.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(166708455590820)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302088)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(10201501046)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:CY1PR07MB2444;BCL:0;PCL:0;RULEID:;SRVR:CY1PR07MB2444;
-x-forefront-prvs: 0815F8251E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(366004)(199004)(189003)(486006)(76176011)(305945005)(8676002)(476003)(99286004)(7696005)(186003)(11346002)(478600001)(86362001)(446003)(54906003)(14444005)(6506007)(2900100001)(7736002)(256004)(5660300001)(71190400001)(74316002)(71200400001)(68736007)(72206003)(8936002)(966005)(81156014)(81166006)(25786009)(5250100002)(14454004)(6306002)(105586002)(4326008)(229853002)(110136005)(39060400002)(66066001)(2906002)(9686003)(6246003)(6116002)(3846002)(53936002)(55016002)(26005)(33656002)(102836004)(6436002)(316002)(106356001)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2444;H:CY1PR07MB2554.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 3bAMxfoiC/K2iKfFWzB8qGEr6D3a7SJjjk9dNahP16TOdJv+QuJRV6cX6zONdPQRXDRaHG7x3QkfnnIP0suXm4wpgX5TTNutN5GjC1avqiMcqV3MVuEh5SHGSQoAhIyMpnpEz2A5LJQnuGEeoz3JpgdA02jZMj7cAR5NjqEKlmkUPK1cvnPP0EIbk89KXQxdBfcaS1GS/RG+qVh3xSRGjgaOOKVxjgdPKcWkj8JVP8p9NVGv86BrJX+xaoAW4+dUtb71uzLUBIR+n0Lv8gaRrszhz3jQve6jORtIND6ZgrF6M0GHeT/7FGYqm/Y3DPfdIKABnWqXSC4plVmGD1wWWANvMm2sgzugDi6UHpgF5gg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 4 Oct 2018 19:18:27 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:34807 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbeJDXS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:18:27 -0400
+Received: from evilbit.green-communications.fr ([92.154.77.116]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.184]) with ESMTPSA (Nemesis)
+ id 1MjSsm-1fRqaN1qeo-00kxz7; Thu, 04 Oct 2018 18:23:57 +0200
+Received: from evilbit.green-communications.fr ([92.154.77.116]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.184]) with ESMTPSA (Nemesis)
+ id 1MjSsm-1fRqaN1qeo-00kxz7; Thu, 04 Oct 2018 18:23:57 +0200
+From:   Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC 1/2] reboot: Make restart_handler_list a blocking notifier chain.
+Date:   Thu,  4 Oct 2018 18:23:38 +0200
+Message-Id: <20181004162339.19493-2-nicolas.cavallari@green-communications.fr>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181004162339.19493-1-nicolas.cavallari@green-communications.fr>
+References: <20181004162339.19493-1-nicolas.cavallari@green-communications.fr>
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8505f417-ccff-48ad-11c8-08d62a15c107
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2018 16:23:43.9555
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2444
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:nCzxF+ZBR69lODzj8Sb8zf4e+pgpLEDOAGIoMHli4slgeMLR+Xi
+ PvwOQSlOzD9XXW2NL82jHgXalJtxnj/XMwdCbKqfR7uo5Q+nCimn7ik4OdtXJSDqCaAwt1F
+ 5x972HBT0FOh0WI8ZjBLinx1kyPbOwqKjDlwNt2opHCjj9QwgvXm+YFnIR3ejd6GYsHXsoK
+ tstnm+qz5Qjy1qHnvwyZQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5z/exxThLzE=:DzJjP45pwgFwCHCxM+bclZ
+ s2GWeFz8TP1HRABlU82jIIufWjUR7afhZUXeZ5Lq2qEt5LK5/aZpr64QNCzRl36PlptDeMwi0
+ W0NdMhKUqlxYwytZ+IiFE73JQoQrJc8OtE9ffO3R2bxqNt/wXCIqRGD1HwHp1OKbUV1su8Ub6
+ jTWGhXnEjWOub2CyHhO+9uUK7my4vsM9cvaCAYs5rSzlAFv1NMIMYinE1CCPA2ZrzhCStpWkV
+ LpxPbxzjQa6qD17HOuD/37OBB5vh91RG54AKvb7O5yhbCLJU0RTKdoVLnEdOt4aW/xLLlv1q4
+ 9eWayN93bTQ+1pmqP5AqoRwS0QS8PpxUNvxdW4ymffaa7EK5lVHnT3muYct/ZWH3wj3H0adoj
+ SeKVZ8GpKHO9z2qp0hcMwlLk2FoH5ioX4iIfUcXPz7MBdVwsEKMEP9bno07da0Kfc9UNha0ar
+ /IuWodhbmI8YaY4CqV/2lPOXzcNBNa99s009rw/lR7DUBhRWD4qA10GLtUkK3MBSGFgKUOqg7
+ GMJUVvyhaV18kv3DJAqgpaFhavNHo/enQ6wKd1o5CLbOevV2L2mozjHTBmkqPXAkSMJSCtjFj
+ LFaNLm/AGQ8L7ILQOMQUjo+R9CdWgRa/fMSpTSki8uqvi/vPkGNaeZJY9MO6h0qdG/pV9Ydr6
+ +NwPrTNx+UiHF0nOgBEWyVJeclU/VTadCX0M8bSR9Q9+bEJAuPCPF8HozSZaM4tberwU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
-Sent: Thursday, October 04, 2018 3:09 AM
-=20
-> Clang warns when one enumerated type is implicitly converted to another.
->=20
-> drivers/net/ethernet/qlogic/qed/qed_ll2.c:799:32: warning: implicit
-> conversion from enumeration type 'enum core_tx_dest' to different
-> enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
->                 tx_pkt.tx_dest =3D p_ll2_conn->tx_dest;
->                                ~ ~~~~~~~~~~~~^~~~~~~
-> 1 warning generated.
->=20
-> These enumerated types are not 1 to 1:
->=20
-> /* Light L2 TX Destination */
-> enum core_tx_dest {
->     CORE_TX_DEST_NW,
->     CORE_TX_DEST_LB,
->     CORE_TX_DEST_RESERVED,
->     CORE_TX_DEST_DROP,
->     MAX_CORE_TX_DEST
-> };
->=20
-> enum qed_ll2_tx_dest {
->     QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the Network */
->     QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the Loopback */
->     QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
->     QED_LL2_TX_DEST_MAX
-> };
->=20
-> Fix this conversion warning by adding CORE_TX_DEST_DROP to
-> qed_ll2_tx_dest and converting all values of core_tx_dest to
-> the equivalent value in qed_ll2_tx_dest so that there is no
-> conversion warning or functional change.
->=20
-> Link: https://github.com/ClangBuiltLinux/linux/issues/125
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Many users of restart_handlers are sleeping in their callbacks.  Some
+are doing infinite loops or calling driver code that may sleep or
+perform operation on slow busses, like i2c.
 
-[...]
+This is not allowed in an atomic notifier chain, which is what
+restart_handler_list currently is, so use a blocking notifier chain
+instead.
 
-> -/* Light L2 TX Destination */
-> -enum core_tx_dest {
-> -       CORE_TX_DEST_NW,
-> -       CORE_TX_DEST_LB,
-> -       CORE_TX_DEST_RESERVED,
-> -       CORE_TX_DEST_DROP,
-> -       MAX_CORE_TX_DEST
-> -};
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+---
+ kernel/reboot.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-[...]
-
->         QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the Network */
->         QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the Loopback */
->         QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
-> +       QED_LL2_TX_DEST_DROP_CORE, /* CORE_TX_DEST_DROP value */
->         QED_LL2_TX_DEST_MAX
->  };
-
-Thanks Nathan for finding this issue.
-"enum core_tx_dest" is for the interface with the device FW, while "enum qe=
-d_ll2_tx_dest" is for the interface with other qed* kernel modules.
-The distinction is on purpose, so "enum core_tx_dest" shouldn't be deleted.
-Maybe an explicit switch/case would be better as a fix?
-E.g. -
--		tx_pkt.tx_dest =3D p_ll2_conn->tx_dest;
-+		switch (p_ll2_conn->tx_dest) {
-+		case CORE_TX_DEST_NW:
-+			tx_pkt.tx_dest =3D QED_LL2_TX_DEST_NW;
-+			break;
-+		case CORE_TX_DEST_LB:
-+			tx_pkt.tx_dest =3D QED_LL2_TX_DEST_LB;
-+			break;
-+		case CORE_TX_DEST_DROP:
-+			tx_pkt.tx_dest =3D QED_LL2_TX_DEST_DROP;
-+			break;
-+		default:
-+			tx_pkt.tx_dest =3D QED_LL2_TX_DEST_DROP;
-+		}
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index 8fb44dec9ad7..f0ba0008dbde 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -135,7 +135,7 @@ EXPORT_SYMBOL(devm_register_reboot_notifier);
+  *	Notifier list for kernel code which wants to be called
+  *	to restart the system.
+  */
+-static ATOMIC_NOTIFIER_HEAD(restart_handler_list);
++static BLOCKING_NOTIFIER_HEAD(restart_handler_list);
+ 
+ /**
+  *	register_restart_handler - Register function to be called to reset
+@@ -172,12 +172,12 @@ static ATOMIC_NOTIFIER_HEAD(restart_handler_list);
+  *	hardware is expected to register with low priority to ensure that
+  *	it only runs if no other means to restart the system is available.
+  *
+- *	Currently always returns zero, as atomic_notifier_chain_register()
++ *	Currently always returns zero, as blocking_notifier_chain_register()
+  *	always returns zero.
+  */
+ int register_restart_handler(struct notifier_block *nb)
+ {
+-	return atomic_notifier_chain_register(&restart_handler_list, nb);
++	return blocking_notifier_chain_register(&restart_handler_list, nb);
+ }
+ EXPORT_SYMBOL(register_restart_handler);
+ 
+@@ -192,7 +192,7 @@ EXPORT_SYMBOL(register_restart_handler);
+  */
+ int unregister_restart_handler(struct notifier_block *nb)
+ {
+-	return atomic_notifier_chain_unregister(&restart_handler_list, nb);
++	return blocking_notifier_chain_unregister(&restart_handler_list, nb);
+ }
+ EXPORT_SYMBOL(unregister_restart_handler);
+ 
+@@ -209,7 +209,7 @@ EXPORT_SYMBOL(unregister_restart_handler);
+  */
+ void do_kernel_restart(char *cmd)
+ {
+-	atomic_notifier_call_chain(&restart_handler_list, reboot_mode, cmd);
++	blocking_notifier_call_chain(&restart_handler_list, reboot_mode, cmd);
+ }
+ 
+ void migrate_to_reboot_cpu(void)
+-- 
+2.19.0
 
