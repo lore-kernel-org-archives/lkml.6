@@ -2,286 +2,280 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7727EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F35C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337D621470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:40:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337D621470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CFD2D21477
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:40:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YxP2QF4b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD2D21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJDPcW (ORCPT
+        id S1727460AbeJDPca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:32:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:25753 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726857AbeJDPcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:32:21 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9585630014CB;
-        Thu,  4 Oct 2018 08:40:11 +0000 (UTC)
-Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A0E8A60C45;
-        Thu,  4 Oct 2018 08:40:08 +0000 (UTC)
-Subject: Re: [PATCH v6 00/18] kvm: arm64: Dynamic IPA and 52bit IPA
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
-        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <9cd03f6e-7738-0ad5-3eb6-4013ef0d3a1f@redhat.com>
-Date:   Thu, 4 Oct 2018 10:40:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 4 Oct 2018 11:32:30 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34703 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbeJDPca (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:32:30 -0400
+Received: by mail-wm1-f66.google.com with SMTP id z25-v6so1030312wmf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9hMLTU7lM5QN9poKME/xB6QqMGzYiGK8o745Es5Wha4=;
+        b=YxP2QF4bPdPHZhFoXrhmLR69T3Kd9nXc5AqUJkSIZxCBbG4H3iEim7SbayL9kGkcKt
+         ejog1X8QuXJ7HFrP7j7F/ef2zrIWWumZZAx6s/i/R0JtzJQivE4Znq9hiWB/I48r7wx6
+         xuSH6YEcCHBjXuDeaFBbkuWu18kvk+gohcBoA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9hMLTU7lM5QN9poKME/xB6QqMGzYiGK8o745Es5Wha4=;
+        b=FdXfhWsujnxIdF6kNQUVWafSOBv+TbapBftgds3ypjEnB67KgAD7BkMDJOV11FPzR0
+         gaMNrWKfmdCXiB/5KxyewHO9WlY5IPTTnXodaUTpolovEelR+KNZbQiP8F1HCHJAtiPS
+         01pXJBrWj+BpwM23THn/0e4ZDKMiB+ELHt5DoCN18bpGVKXKhiHY34887cpC8uwRJv6i
+         HN+vR4hXs3I2oflWqEGSdZVmHIJYBF6Yy6WlCymrHusitnrtKRpMG5Y33zhy64EM8pC0
+         saVX3pqUPdzEuGbCCPPblyvyNr1yNCL12NSDhQSfoifSXXjoO1BR26661LWGDHa3Dtow
+         Akeg==
+X-Gm-Message-State: ABuFfogNFzidCplHU6gGezBc+LUp7q2E1thI86Ia3T8BGl8tDKHZKOIz
+        VsRByZoUx/E/xFyaLDIGVfPUKMIpVFs=
+X-Google-Smtp-Source: ACcGV62LllQc3d22Fw3wb5jpVnAhrUEfhDCdONLeuFAixuBE5DEv20ULPtrNghdeQ71WyglhlfQguA==
+X-Received: by 2002:a1c:f016:: with SMTP id a22-v6mr3837270wmb.76.1538642418011;
+        Thu, 04 Oct 2018 01:40:18 -0700 (PDT)
+Received: from [192.168.0.40] (225.182.88.92.rev.sfr.net. [92.88.182.225])
+        by smtp.googlemail.com with ESMTPSA id a5-v6sm4102080wmh.8.2018.10.04.01.40.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 01:40:17 -0700 (PDT)
+Subject: Re: [PATCH 2/2] cpuidle/drivers/menu: Remove get_loadavg in the
+ performance multiplier
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Colin Cross <ccross@android.com>,
+        Ramesh Thomas <ramesh.thomas@intel.com>,
+        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Alex Shi <alex.shi@linaro.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1538638927-26846-1-git-send-email-daniel.lezcano@linaro.org>
+ <1538638927-26846-2-git-send-email-daniel.lezcano@linaro.org>
+ <CAJZ5v0iLAtfo0w=BE-G+YW1WAxXsAdveiRvNhBSkpVPsd+TC9A@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <4541426c-8c73-7fe6-b3b6-9707861564ce@linaro.org>
+Date:   Thu, 4 Oct 2018 10:40:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180926163258.20218-1-suzuki.poulose@arm.com>
+In-Reply-To: <CAJZ5v0iLAtfo0w=BE-G+YW1WAxXsAdveiRvNhBSkpVPsd+TC9A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 04 Oct 2018 08:40:11 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On 04/10/2018 10:22, Rafael J. Wysocki wrote:
+> On Thu, Oct 4, 2018 at 9:42 AM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> The function get_loadavg() returns almost always zero. To be more
+>> precise, statistically speaking for a total of 1023379 times passing
+>> in the function, the load is equal to zero 1020728 times, greater than
+>> 100, 610 times, the remaining is between 0 and 5.
+>>
+>> In 2011, the get_loadavg() was removed from the Android tree because
+>> of the above [1]. At this time, the load was:
+>>
+>> unsigned long this_cpu_load(void)
+>> {
+>>         struct rq *this = this_rq();
+>>         return this->cpu_load[0];
+>> }
+>>
+>> In 2014, the code was changed by commit 372ba8cb46b2 (cpuidle: menu: Lookup CPU
+>> runqueues less) and the load is:
+>>
+>> void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
+>> {
+>>         struct rq *rq = this_rq();
+>>         *nr_waiters = atomic_read(&rq->nr_iowait);
+>>         *load = rq->load.weight;
+>> }
+>>
+>> with the same result.
+>>
+>> Both measurements show using the load in this code path does no matter
+>> anymore. Removing it.
+>>
+>> [1] https://android.googlesource.com/kernel/common/+/4dedd9f124703207895777ac6e91dacde0f7cc17
+>>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Todd Kjos <tkjos@google.com>
+>> Cc: Joel Fernandes <joelaf@google.com>
+>> Cc: Colin Cross <ccross@android.com>
+>> Cc: Ramesh Thomas <ramesh.thomas@intel.com>
+>> Cc: Mel Gorman <mgorman@suse.de>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>  drivers/cpuidle/governors/menu.c | 26 +++++++-------------------
+>>  include/linux/sched/stat.h       |  1 -
+>>  kernel/sched/core.c              | 13 -------------
+>>  3 files changed, 7 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+>> index e26a409..066b01f 100644
+>> --- a/drivers/cpuidle/governors/menu.c
+>> +++ b/drivers/cpuidle/governors/menu.c
+>> @@ -135,11 +135,6 @@ struct menu_device {
+>>  #define LOAD_INT(x) ((x) >> FSHIFT)
+>>  #define LOAD_FRAC(x) LOAD_INT(((x) & (FIXED_1-1)) * 100)
+>>
+>> -static inline int get_loadavg(unsigned long load)
+>> -{
+>> -       return LOAD_INT(load) * 10 + LOAD_FRAC(load) / 10;
+>> -}
+>> -
+>>  static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters)
+>>  {
+>>         int bucket = 0;
+>> @@ -173,18 +168,10 @@ static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters
+>>   * to be, the higher this multiplier, and thus the higher
+>>   * the barrier to go to an expensive C state.
+>>   */
+>> -static inline int performance_multiplier(unsigned long nr_iowaiters, unsigned long load)
+>> +static inline int performance_multiplier(unsigned long nr_iowaiters)
+>>  {
+>> -       int mult = 1;
+>> -
+>> -       /* for higher loadavg, we are more reluctant */
+>> -
+>> -       mult += 2 * get_loadavg(load);
+>> -
+>> -       /* for IO wait tasks (per cpu!) we add 5x each */
+>> -       mult += 10 * nr_iowaiters;
+>> -
+>> -       return mult;
+>> +       /* for IO wait tasks (per cpu!) we add 10x each */
+>> +       return 1 + 10 * nr_iowaiters;
+>>  }
+>>
+>>  static DEFINE_PER_CPU(struct menu_device, menu_devices);
+>> @@ -290,7 +277,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>>         int idx;
+>>         unsigned int interactivity_req;
+>>         unsigned int expected_interval;
+>> -       unsigned long nr_iowaiters, cpu_load;
+>> +       unsigned long nr_iowaiters;
+>>         ktime_t delta_next;
+>>
+>>         if (data->needs_update) {
+>> @@ -307,7 +294,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>>         /* determine the expected residency time, round up */
+>>         data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
+>>
+>> -       get_iowait_load(&nr_iowaiters, &cpu_load);
+>> +       nr_iowaiters = nr_iowait_cpu(dev->cpu);
+>>         data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+>>
+>>         /*
+>> @@ -359,7 +346,8 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>>                  * Use the performance multiplier and the user-configurable
+>>                  * latency_req to determine the maximum exit latency.
+>>                  */
+>> -               interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+>> +               interactivity_req = data->predicted_us /
+>> +                       performance_multiplier(nr_iowaiters);
+> 
+> I wouldn't break this line.
 
-On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
-> 
-> The physical address space size for a VM (IPA size) on arm/arm64 is
-> limited to a static limit of 40bits. This series adds support for
-> using an IPA size specific to a VM, allowing to use a size supported
-> by the host (based on the host kernel configuration and CPU support).
-> The default size is fixed to 40bits. On arm64, we can allow the limit
-> to be lowered (limiting the number of levels in stage2 to 2, to prevent
-> splitting the host PMD huge pages at stage2). We also add support for
-> handling 52bit IPA addresses (where supported) added by Arm v8.2
-> extensions.
-> 
-> We need to set the IPA limit as early as the VM creation to keep the
-> code simpler to avoid sprinkling checks everywhere to ensure that the
-> IPA is configured. We encode the IPA size in the machine_type
-> argument to KVM_CREATE_VM ioctl. Bits [7-0] of the type are reserved
-> for the IPA size. The availability of this feature is advertised by a
-> new cap KVM_CAP_ARM_VM_IPA_SIZE. When supported, this capability
-> returns the maximum IPA shift supported by the host. The supported IPA
-> size on a host could be different from the system's PARange indicated
-> by the CPUs (e.g, kernel limit on the PA size).
-> 
-> Supporting different IPA size requires modification to the stage2 page
-> table code. The arm64 page table level helpers are defined based on the
-> page table levels used by the host VA. So, the accessors may not work
-> if the guest uses more number of levels in stage2 than the stage1
-> of the host.  The previous versions (v1 & v2) of this series refactored
-> the stage1 page table accessors to reuse the low-level accessors for an
-> independent stage2 table. However, due to the level folding in the
-> generic code, the types are redefined as well. i.e, if the PUD is
-> folded, the pud_t could be defined as :
-> 
->  typedef struct { pgd_t pgd; } pud_t;
-> 
-> similarly for pmd_t.  So, without stage1 independent page table entry
-> types for stage2, we could be dealing with a different type for level
->  0-2 entries. This is practically fine on arm/arm64 as the entries
-> have similar format and size and we always use the appropriate
-> accessors to get the raw value (i.e, pud_val/pmd_val etc). But not
-> ideal for a solution upstream. So, this version caps the stage2 page
-> table levels to that of the stage1. This has the following impact on
-> the IPA support for various pagesize/host-va combinations :
-> 
-> 
-> x-----------------------------------------------------x
-> | host\ipa    | 40bit | 42bit | 44bit | 48bit | 52bit |
-> -------------------------------------------------------
-> | 39bit-4K    |  y    |   y   |  n    |   n   |  n/a  |
-> -------------------------------------------------------
-> | 48bit-4K    |  y    |   y   |  y    |   y   |  n/a  |
-> -------------------------------------------------------
-> | 36bit-16K   |  y    |   n   |  n    |   n   |  n/a  |
-> -------------------------------------------------------
-> | 47bit-16K   |  y    |   y   |  y    |   y   |  n/a  |
-> -------------------------------------------------------
-> | 48bit-4K    |  y    |   y   |  y    |   y   |  n/a  |
-> -------------------------------------------------------
-> | 42bit-64K   |  y    |   y   |  y    |   n   |  n    |
-> -------------------------------------------------------
-> | 48bit-64K   |  y    |   y   |  y    |   y   |  y    |
-> x-----------------------------------------------------x
-> 
-> Or the following list shows what cannot be supported :
-> 
->  39bit-4K host  | [44 - 48]
->  36bit-16K host | [41 - 48]
->  42bit-64K host | [47 - 52]
-> 
-> which is not really bad. We can pursue the independent stage2
-> page table support and lift the restriction once we get there.
-> Given there is a proposal for new generic page table walker [0],
-> it would make sense to make our efforts in sync with it to avoid
-> diverting from a common API.
-> 
-> 52bit support is added for VGIC (including ITS emulation) and handling
-> of PAR, HPFAR registers.
-> 
-> The series applies on 4.19-rc4. A tree is available here:
-> 
-> 	 git://linux-arm.org/linux-skp.git ipa52/v6
-> 
-> Tested with
->   - Modified kvmtool, which can only be used for (patches included in
->     the series for reference / testing):
->     * with virtio-pci upto 44bit PA (Due to 4K page size for virtio-pci
->       legacy implemented by kvmtool)
->     * Upto 48bit PA with virtio-mmio, due to 32bit PFN limitation.
->   - Hacked Qemu (boot loader support for highmem, IPA size support)
->     * with virtio-pci GIC-v3 ITS & MSI upto 52bit on Foundation model.
->     Also see [1] for Qemu support.
-> 
-> [0] https://lkml.org/lkml/2018/4/24/777
-> [1] https://lists.gnu.org/archive/html/qemu-devel/2018-06/msg05759.html
-> 
-> Change since v5:
->  - Don't raise the IPA Limit to 40bits on systems with lower PA size.
->    Doesn't break backward compatibility, we still allow KVM_CREATE_VM
->    to succeed with "0" as the IPA size (40bits). But prevent specifying
->    40bit explicitly, when the limit is lower.
->  - Rename CAP, KVM_CAP_ARM_VM_PHYS_SHIFT => KVM_CAP_ARM_VM_IPA_SIZE
->    and helper, KVM_VM_TYPE_ARM_VM_PHY_SHIFT => KVM_VM_TYPE_ARM_VM_IPA_SIZE
->  - Update Documentation of the API
->  - Update comments and commit description as reported by Eric
->  - Set the missing TCR_T0SZ in patch "kvm: arm64: Configure VTCR_EL2 per VM"
->  - Fix bits for CBASER_ADDRESS mask, GITS_CBASER_ADDRESS()
-> 
-> Changes since V4:
->  - Rebased on v4.19-rc3
->  - Dropped virtio patches queued already by mst.
->  - Collect Acks from Christoffer
->  - Restrict IPA configuration support to arm64 only
->  - Use KVM_CAP_ARM_VM_PHYS_SHIFT for detecting the support for
->    IPA size configuration along with the limit on the IPA for the host.
->  - Update comments on __load_guest_stage2
->  - Add comment about the default value for unknown PARange values.
->  - Update Documentation of the API
-> 
-> Changes since V3:
->  - Use per-VM VTCR instead per-VM private VTCR bits
->  - Allow IPA less than 40bits
->  - Split the patch adding support for stage2 dynamic page tables
->  - Rearrange the series to keep the userspace API at the end, which
->    needs further discussion.
->  - Collect Reviews/Acks from Eric & Marc
-> 
-> Changes since V2:
->  - Drop "refactoring of host page table helpers" and restrict the IPA size
->    to make sure stage2 doesn't use more page table levels than that of the host.
->  - Load VTCR for TLB operations on behalf of the VM (Pointed-by: James Morse)
->  - Split a couple of patches to make them easier to review.
->  - Fall back to normal (non-concatenated) entry level page table support if
->    possible.
->  - Bump the IOCTL number
-> 
-> Changes since V1:
->  - Change the userspace API for configuring VM to encode the IPA
->    size in the VM type.  (suggested by Christoffer)
->  - Expose the IPA limit on the host via ioctl on /dev/kvm
->  - Handle 52bit addresses in PAR & HPFAR
->  - Drop patch changing the life time of stage2 PGD
->  - Rename macros for 48-to-52 bit conversion for GIC ITS BASER.
->    (suggested by Christoffer)
->  - Split virtio PFN check patches and address comments.
-> 
-> 
-> Kristina Martsenko (1):
->   vgic: Add support for 52bit guest physical address
-> 
-> Suzuki K Poulose (17):
->   kvm: arm/arm64: Fix stage2_flush_memslot for 4 level page table
->   kvm: arm/arm64: Remove spurious WARN_ON
->   kvm: arm64: Add helper for loading the stage2 setting for a VM
->   arm64: Add a helper for PARange to physical shift conversion
->   kvm: arm64: Clean up VTCR_EL2 initialisation
->   kvm: arm/arm64: Allow arch specific configurations for VM
->   kvm: arm64: Configure VTCR_EL2 per VM
->   kvm: arm/arm64: Prepare for VM specific stage2 translations
->   kvm: arm64: Prepare for dynamic stage2 page table layout
->   kvm: arm64: Make stage2 page table layout dynamic
->   kvm: arm64: Dynamic configuration of VTTBR mask
->   kvm: arm64: Configure VTCR_EL2.SL0 per VM
->   kvm: arm64: Switch to per VM IPA limit
->   kvm: arm64: Add 52bit support for PAR to HPFAR conversoin
->   kvm: arm64: Set a limit on the IPA size
->   kvm: arm64: Limit the minimum number of page table levels
->   kvm: arm64: Allow tuning the physical address size for VM
-> 
->  Documentation/virtual/kvm/api.txt             |  31 +++
->  arch/arm/include/asm/kvm_arm.h                |   3 +-
->  arch/arm/include/asm/kvm_host.h               |   7 +
->  arch/arm/include/asm/kvm_mmu.h                |  15 +-
->  arch/arm/include/asm/stage2_pgtable.h         |  50 ++--
->  arch/arm64/include/asm/cpufeature.h           |  20 ++
->  arch/arm64/include/asm/kvm_arm.h              | 157 +++++++++---
->  arch/arm64/include/asm/kvm_asm.h              |   2 -
->  arch/arm64/include/asm/kvm_host.h             |  16 +-
->  arch/arm64/include/asm/kvm_hyp.h              |  10 +
->  arch/arm64/include/asm/kvm_mmu.h              |  42 +++-
->  arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 ----
->  arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 ---
->  arch/arm64/include/asm/stage2_pgtable.h       | 236 +++++++++++++-----
->  arch/arm64/kvm/hyp/Makefile                   |   1 -
->  arch/arm64/kvm/hyp/s2-setup.c                 |  90 -------
->  arch/arm64/kvm/hyp/switch.c                   |   4 +-
->  arch/arm64/kvm/hyp/tlb.c                      |   4 +-
->  arch/arm64/kvm/reset.c                        | 103 ++++++++
->  include/linux/irqchip/arm-gic-v3.h            |   5 +
->  include/uapi/linux/kvm.h                      |  10 +
->  virt/kvm/arm/arm.c                            |   9 +-
->  virt/kvm/arm/mmu.c                            | 120 ++++-----
->  virt/kvm/arm/vgic/vgic-its.c                  |  36 +--
->  virt/kvm/arm/vgic/vgic-kvm-device.c           |   2 +-
->  virt/kvm/arm/vgic/vgic-mmio-v3.c              |   2 -
->  26 files changed, 648 insertions(+), 408 deletions(-)
->  delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
->  delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
->  delete mode 100644 arch/arm64/kvm/hyp/s2-setup.c
-> 
-> kvmtool changes:
-> 
-> Suzuki K Poulose (4):
->   kvmtool: Allow backends to run checks on the KVM device fd
->   kvmtool: arm64: Add support for guest physical address size
->   kvmtool: arm64: Switch memory layout
->   kvmtool: arm: Add support for creating VM with PA size
-> 
->  arm/aarch32/include/kvm/kvm-arch.h        |  6 ++--
->  arm/aarch64/include/kvm/kvm-arch.h        | 15 ++++++++--
->  arm/aarch64/include/kvm/kvm-config-arch.h |  5 +++-
->  arm/include/arm-common/kvm-arch.h         | 17 ++++++++----
->  arm/include/arm-common/kvm-config-arch.h  |  1 +
->  arm/kvm.c                                 | 34 ++++++++++++++++++++++-
->  include/kvm/kvm.h                         |  4 +++
->  kvm.c                                     |  2 ++
->  8 files changed, 71 insertions(+), 13 deletions(-)
-> 
+Ok, mind if I break the line in a separate patch before ? (my git
+pre-commit hook runs checkpatch and it complains and prevent to commit
+the patch because of the line length (94)).
 
-Feel free to add
-Tested-by: Eric Auger <eric.auger@redhat.com>
+>>                 if (latency_req > interactivity_req)
+>>                         latency_req = interactivity_req;
+>>         }
+>> diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
+>> index 04f1321..f30954c 100644
+>> --- a/include/linux/sched/stat.h
+>> +++ b/include/linux/sched/stat.h
+>> @@ -20,7 +20,6 @@ extern unsigned long nr_running(void);
+>>  extern bool single_task_running(void);
+>>  extern unsigned long nr_iowait(void);
+>>  extern unsigned long nr_iowait_cpu(int cpu);
+>> -extern void get_iowait_load(unsigned long *nr_waiters, unsigned long *load);
+>>
+>>  static inline int sched_info_on(void)
+>>  {
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index b88a145..5605f03 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -2873,25 +2873,12 @@ unsigned long long nr_context_switches(void)
+>>
+>>         return sum;
+>>  }
+>> -/*
+>> - * Consumers of these two interfaces, like for example the cpufreq menu
+>> - * governor are using nonsensical data. Boosting frequency for a CPU that has
+>> - * IO-wait which might not even end up running the task when it does become
+>> - * runnable.
+>> - */
+> 
+> Doesn't the comment still apply to nr_iowait_cpu()?
 
-I tested this series with QEMU, using cold plugged 4GB PC-DIMM at 2TB on
-a Gigabyte machine. The VM is created with 43 IPA bits. I ran memtester
-on guest at 2TB using "memtester -p 20000000000 1G 1" and it succeeds.
+The comment is very confusing. I talks about a cpufreq menu governor and
+boosting frequency. I don't see this function used in the cpufreq
+framework but in:
 
-Thanks
+kernel/time/tick-sched.c
+fs/proc/stat.c
+drivers/cpuidle/governors/menu.c
 
-Eric
+The comment is irrelevant as the remaining function is used for
+statistics in addition to the perf multiplier. It does exactly what the
+function name is.
+
+>>  unsigned long nr_iowait_cpu(int cpu)
+>>  {
+>>         return atomic_read(&cpu_rq(cpu)->nr_iowait);
+>>  }
+>>
+>> -void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
+>> -{
+>> -       struct rq *rq = this_rq();
+>> -       *nr_waiters = atomic_read(&rq->nr_iowait);
+>> -       *load = rq->load.weight;
+>> -}
+>> -
+>>  /*
+>>   * IO-wait accounting, and how its mostly bollocks (on SMP).
+>>   *
+>> --
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
