@@ -2,238 +2,245 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9961C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB08C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63AD22098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3273F21473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:44:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hin/hrrQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AD22098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PoDEM/Ox"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3273F21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeJDOeT (ORCPT
+        id S1727536AbeJDOgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:34:19 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34725 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeJDOeT (ORCPT
+        Thu, 4 Oct 2018 10:36:43 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40942 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727287AbeJDOgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:34:19 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z4-v6so8746095wrb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:42:23 -0700 (PDT)
+        Thu, 4 Oct 2018 10:36:43 -0400
+Received: by mail-pf1-f196.google.com with SMTP id s5-v6so2958949pfj.7;
+        Thu, 04 Oct 2018 00:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+3jnIbu0V272vA/+ZsYlslEHmE6GhIp6KPEwTTEGjsk=;
-        b=Hin/hrrQVqPBkwPHlwr8JN8H2LNlB1uFgrzOUjAHMARGey2vKLUaurn0roaJeZqNbO
-         8zHxI9dLsTqimVNecome89PSYKoW1ZcPQNfSm4ZB0prZuUcHQxzp4OQR55d+UP8VlKnc
-         OM7WQt96RiGmxUGW2kuyCBrtTKndRaziQgbxs=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=V/cjcwKqdpIhShvhmcz3D6xUgXmpSUckG5S0Jqxf5EI=;
+        b=PoDEM/Oxf7jx/NRmAxCDtFElMOTzR/D+uCFbsj1bQOHzuTcXqGXgevbBNZn+6kvAXz
+         zbkj6OSOsNz1WvKk0qA5N4la3J+3q5nvUn06emaqEf17Bo8oTkWl9VCd0AWgIcah6sCt
+         ropY73OxEiGq49MF8mo6GOygDiHuN/bqr5CY5The9mF9vyuUnS0X3RJgU5YNVK81a10z
+         xRmXdnWjHqIFuS+maChDD3aa12GLetrHuI/Yl1UQczsSi2ErycJk9xf/E8pLqBMqhuQk
+         Zjp0Vc6WL1MAA8X8ayTn72S197l5gr8GPv8T80fcxA9kw+riYJBMwOg+78rYgDuP/svB
+         GV8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+3jnIbu0V272vA/+ZsYlslEHmE6GhIp6KPEwTTEGjsk=;
-        b=A3InboV84RfaDz/x/MIXJ0EJbOKsGQKTd86wHFozDmGS2STzGfdYgfWLVM8x0BWDuk
-         5TU0Ni07uWEmE6sEv+N+DxqPmHSIt+5K0NyshcJ9a/Lwsr0iUChtQc4BzpCcvVtmwc4N
-         NlexocxAFCVArfngEKdCrE5X/1zJB3/7Mg9ohRGBg/JTIknroZYtmZq13J5hrY6YItXa
-         iiJ2Of+bCpllROcM2vAG6RAho5Vwo8hDW7XL+bwxpqMCQiifJhsv2gtp4iRmZblw/pfY
-         8fcPOgaQW+LcD9QhV2z6B6AAf/VI+vUoa78TUvGq+UPbX8oTKHQaLA2AQKWI3j0PXNHK
-         yZ0Q==
-X-Gm-Message-State: ABuFfohHmSvBjmguRthTmsD9Wdc7TaiJpdILh10GTbppRF1RByeQPDNE
-        iCJ0tN7mSBs/Z62JTfM87/++RQ==
-X-Google-Smtp-Source: ACcGV62Dx3fCocFJyZUUnJMqFJqyy3+5DGePYT6KFF4gbDEYrB0pOsxlK3qR3UtyxmP9EIVyz0s/rA==
-X-Received: by 2002:adf:f6c4:: with SMTP id y4-v6mr1973961wrp.79.1538638942782;
-        Thu, 04 Oct 2018 00:42:22 -0700 (PDT)
-Received: from localhost.localdomain (225.182.88.92.rev.sfr.net. [92.88.182.225])
-        by smtp.gmail.com with ESMTPSA id t82-v6sm651579wme.30.2018.10.04.00.42.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 04 Oct 2018 00:42:22 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rafael@kernel.org
-Cc:     rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@android.com>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Alex Shi <alex.shi@linaro.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] cpuidle/drivers/menu: Remove get_loadavg in the performance multiplier
-Date:   Thu,  4 Oct 2018 09:42:07 +0200
-Message-Id: <1538638927-26846-2-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538638927-26846-1-git-send-email-daniel.lezcano@linaro.org>
-References: <1538638927-26846-1-git-send-email-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V/cjcwKqdpIhShvhmcz3D6xUgXmpSUckG5S0Jqxf5EI=;
+        b=W0YlTtlfAEx0kRiIBtC/zVPGYPYtPcFIiY4e22Oa1hCIL2+2Gel5R/SCYlDW8PEQkq
+         LCOi1Yg3nJPm3l6Pku1nbs8J31yzEYzEdWNruSVuBGw30Zmjvgyih2CQNuvAg6He4X5/
+         zyBJcx0TGY5SmVUWkZBclyaGofULo1DlpdOxiChChSZU6j9FnTF28Jq4t1DT0vX72E6z
+         i/1Q3fXmRlX3p2HM06kKX0ejOQVOWVoRgErL14ndgupszVH6sUVvpiwUFhNf0HsxRFzy
+         drFHfg9Yqi7JrUY1mlGRyFUrFDgDHGV+MCSKpzhpJBfLcRMMDnByO+QEJGr5Pb8Krsyk
+         FCDA==
+X-Gm-Message-State: ABuFfoinsd8yeBsblH4df+gFhIyLs52Ee8O0SP0FN0EHd/rGHqhiwV1L
+        wUwvkDE+43X1LUlk7p/vRL0=
+X-Google-Smtp-Source: ACcGV63NfK68KFdFwyJzc8wJbQPpVUpmHEsDAP3cuqja1hI8T/BZbH4amybX5Jx5P99K1lk8hqsVEA==
+X-Received: by 2002:a63:3cc:: with SMTP id 195-v6mr4685025pgd.262.1538639087196;
+        Thu, 04 Oct 2018 00:44:47 -0700 (PDT)
+Received: from localhost ([175.223.49.70])
+        by smtp.gmail.com with ESMTPSA id y10-v6sm5050123pgi.85.2018.10.04.00.44.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 00:44:45 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 16:44:42 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     rostedt@goodmis.org, Petr Mladek <pmladek@suse.com>,
+        stable@vger.kernel.org, Alexander.Levin@microsoft.com,
+        akpm@linux-foundation.org, byungchul.park@lge.com,
+        dave.hansen@intel.com, hannes@cmpxchg.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181004074442.GA12879@jagdpanzerIV>
+References: <20180927194601.207765-1-wonderfly@google.com>
+ <20181001152324.72a20bea@gandalf.local.home>
+ <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
+ <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
+ <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
+ <20181002212327.7aab0b79@vmware.local.home>
+ <20181003091400.rgdjpjeaoinnrysx@pathway.suse.cz>
+ <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
+ <20181003133704.43a58cf5@gandalf.local.home>
+ <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function get_loadavg() returns almost always zero. To be more
-precise, statistically speaking for a total of 1023379 times passing
-in the function, the load is equal to zero 1020728 times, greater than
-100, 610 times, the remaining is between 0 and 5.
+On (10/03/18 11:37), Daniel Wang wrote:
+> When `softlockup_panic` is set (which is what my original repro had and
+> what we use in production), without the backport patch, the expected panic
+> would hit a seemingly deadlock. So even when the machine is configured
+> to reboot immediately after the panic (kernel.panic=-1), it just hangs there
+> with an incomplete backtrace. With your patch, the deadlock doesn't happen
+> and the machine reboots successfully.
+> 
+> This was and still is the issue this thread is trying to fix. The last
+> log snippet
+> was from an "experiment" that I did in order to understand what's really
+> happening. So far the speculation has been that the panic path was trying
+> to get a lock held by a backtrace dumping thread, but there is not enough
+> evidence which thread is holding the lock and how it uses it. So I set
+> `softlockup_panic` to 0, to get panic out of the equation. Then I saw that one
+> CPU was indeed holding the console lock, trying to write something out. If
+> the panic was to hit while it's doing that, we might get a deadlock.
 
-In 2011, the get_loadavg() was removed from the Android tree because
-of the above [1]. At this time, the load was:
+Hmm, console_sem state is ignored when we flush logbuf, so it's OK to
+have it locked when we declare panic():
 
-unsigned long this_cpu_load(void)
+void console_flush_on_panic(void)
 {
-        struct rq *this = this_rq();
-        return this->cpu_load[0];
+	/*
+	 * If someone else is holding the console lock, trylock will fail
+	 * and may_schedule may be set.  Ignore and proceed to unlock so
+	 * that messages are flushed out.  As this can be called from any
+	 * context and we don't want to get preempted while flushing,
+	 * ensure may_schedule is cleared.
+	 */
+	console_trylock();
+	console_may_schedule = 0;
+	console_unlock();
 }
 
-In 2014, the code was changed by commit 372ba8cb46b2 (cpuidle: menu: Lookup CPU
-runqueues less) and the load is:
+Things are not so simple with uart_port lock. Generally speaking we
+should deadlock when we NMI panic() kills the system while one of the
+CPUs holds uart_port lock.
 
-void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
+8250 has sort of a workaround for this scenario:
+
+serial8250_console_write()
 {
-        struct rq *rq = this_rq();
-        *nr_waiters = atomic_read(&rq->nr_iowait);
-        *load = rq->load.weight;
+	if (port->sysrq)
+		locked = 0;
+	else if (oops_in_progress)
+		locked = spin_trylock_irqsave(&port->lock, flags);
+	else
+		spin_lock_irqsave(&port->lock, flags);
+
+	...
+	uart_console_write(port, s, count, serial8250_console_putchar);
+	...
+
+	if (locked)
+		spin_unlock_irqrestore(&port->lock, flags);
 }
 
-with the same result.
+Note, spin_trylock_irqsave() path.
+So, as long as we are in sysrq or oops_in_progress, uart_port lock state
+is sort of ignored.
 
-Both measurements show using the load in this code path does no matter
-anymore. Removing it.
+Looking at your backtraces:
 
-[1] https://android.googlesource.com/kernel/common/+/4dedd9f124703207895777ac6e91dacde0f7cc17
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Colin Cross <ccross@android.com>
-Cc: Ramesh Thomas <ramesh.thomas@intel.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/cpuidle/governors/menu.c | 26 +++++++-------------------
- include/linux/sched/stat.h       |  1 -
- kernel/sched/core.c              | 13 -------------
- 3 files changed, 7 insertions(+), 33 deletions(-)
+[  348.058207] NMI backtrace for cpu 8
+[  348.058207] CPU: 8 PID: 1700 Comm: dd Tainted: G           O L  4.14.73 #18
+[  348.058214]  <IRQ>
+[  348.058214]  wait_for_xmitr+0x2c/0xb0
+[  348.058215]  serial8250_console_putchar+0x1c/0x40
+[  348.058215]  ? wait_for_xmitr+0xb0/0xb0
+[  348.058215]  uart_console_write+0x33/0x70
+[  348.058216]  serial8250_console_write+0xe2/0x2b0
+[  348.058216]  ? msg_print_text+0xa6/0x110
+[  348.058216]  console_unlock+0x306/0x4a0
+[  348.058217]  wake_up_klogd_work_func+0x55/0x60
+[  348.058217]  irq_work_run_list+0x50/0x80
+[  348.058217]  smp_irq_work_interrupt+0x3f/0xe0
+[  348.058218]  irq_work_interrupt+0x7d/0x90
+---
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index e26a409..066b01f 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -135,11 +135,6 @@ struct menu_device {
- #define LOAD_INT(x) ((x) >> FSHIFT)
- #define LOAD_FRAC(x) LOAD_INT(((x) & (FIXED_1-1)) * 100)
- 
--static inline int get_loadavg(unsigned long load)
--{
--	return LOAD_INT(load) * 10 + LOAD_FRAC(load) / 10;
--}
--
- static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters)
- {
- 	int bucket = 0;
-@@ -173,18 +168,10 @@ static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters
-  * to be, the higher this multiplier, and thus the higher
-  * the barrier to go to an expensive C state.
-  */
--static inline int performance_multiplier(unsigned long nr_iowaiters, unsigned long load)
-+static inline int performance_multiplier(unsigned long nr_iowaiters)
- {
--	int mult = 1;
--
--	/* for higher loadavg, we are more reluctant */
--
--	mult += 2 * get_loadavg(load);
--
--	/* for IO wait tasks (per cpu!) we add 5x each */
--	mult += 10 * nr_iowaiters;
--
--	return mult;
-+	/* for IO wait tasks (per cpu!) we add 10x each */
-+	return 1 + 10 * nr_iowaiters;
- }
- 
- static DEFINE_PER_CPU(struct menu_device, menu_devices);
-@@ -290,7 +277,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	int idx;
- 	unsigned int interactivity_req;
- 	unsigned int expected_interval;
--	unsigned long nr_iowaiters, cpu_load;
-+	unsigned long nr_iowaiters;
- 	ktime_t delta_next;
- 
- 	if (data->needs_update) {
-@@ -307,7 +294,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	/* determine the expected residency time, round up */
- 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
- 
--	get_iowait_load(&nr_iowaiters, &cpu_load);
-+	nr_iowaiters = nr_iowait_cpu(dev->cpu);
- 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
- 
- 	/*
-@@ -359,7 +346,8 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 		 * Use the performance multiplier and the user-configurable
- 		 * latency_req to determine the maximum exit latency.
- 		 */
--		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-+		interactivity_req = data->predicted_us /
-+			performance_multiplier(nr_iowaiters);
- 		if (latency_req > interactivity_req)
- 			latency_req = interactivity_req;
- 	}
-diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
-index 04f1321..f30954c 100644
---- a/include/linux/sched/stat.h
-+++ b/include/linux/sched/stat.h
-@@ -20,7 +20,6 @@ extern unsigned long nr_running(void);
- extern bool single_task_running(void);
- extern unsigned long nr_iowait(void);
- extern unsigned long nr_iowait_cpu(int cpu);
--extern void get_iowait_load(unsigned long *nr_waiters, unsigned long *load);
- 
- static inline int sched_info_on(void)
- {
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b88a145..5605f03 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2873,25 +2873,12 @@ unsigned long long nr_context_switches(void)
- 
- 	return sum;
- }
--/*
-- * Consumers of these two interfaces, like for example the cpufreq menu
-- * governor are using nonsensical data. Boosting frequency for a CPU that has
-- * IO-wait which might not even end up running the task when it does become
-- * runnable.
-- */
- 
- unsigned long nr_iowait_cpu(int cpu)
- {
- 	return atomic_read(&cpu_rq(cpu)->nr_iowait);
- }
- 
--void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
--{
--	struct rq *rq = this_rq();
--	*nr_waiters = atomic_read(&rq->nr_iowait);
--	*load = rq->load.weight;
--}
--
- /*
-  * IO-wait accounting, and how its mostly bollocks (on SMP).
-  *
--- 
-2.7.4
 
+Now... the problem. A theory, in fact.
+panic() sets oops_in_progress back to zero - bust_spinlocks(0) -  too soon.
+
+When we do console_flush_on_panic() we ignore console_sem state and go
+to the 8250 driver - serial8250_console_write(). But at this point
+oops_in_progress is zero, so we endup in spin_lock_irqsave(&port->lock, flags).
+
+If the port->lock was already locked, then this is your deadlock. We
+can't emergency_restart() because the panic() CPU stuck spinning on
+port->lock in serial8250_console_write(), so it never returns from
+console_flush_on_panic() and there is no progress.
+
+---
+
+void panic(const char *fmt, ...)
+{
+....
+	bust_spinlocks(0);
+
+	/*
+	 * We may have ended up stopping the CPU holding the lock (in
+	 * smp_send_stop()) while still having some valuable data in the console
+	 * buffer.  Try to acquire the lock then release it regardless of the
+	 * result.  The release will also print the buffers out.  Locks debug
+	 * should be disabled to avoid reporting bad unlock balance when
+	 * panic() is not being callled from OOPS.
+	 */
+	debug_locks_off();
+	console_flush_on_panic();
+
+	if (!panic_blink)
+		panic_blink = no_blink;
+
+	if (panic_timeout > 0) {
+		/*
+		 * Delay timeout seconds before rebooting the machine.
+		 * We can't use the "normal" timers since we just panicked.
+		 */
+		pr_emerg("Rebooting in %d seconds..\n", panic_timeout);
+
+		for (i = 0; i < panic_timeout * 1000; i += PANIC_TIMER_STEP) {
+			touch_nmi_watchdog();
+			if (i >= i_next) {
+				i += panic_blink(state ^= 1);
+				i_next = i + 3600 / PANIC_BLINK_SPD;
+			}
+			mdelay(PANIC_TIMER_STEP);
+		}
+	}
+	if (panic_timeout != 0) {
+		/*
+		 * This will not be a clean reboot, with everything
+		 * shutting down.  But if there is a chance of
+		 * rebooting the system it will be rebooted.
+		 */
+		emergency_restart();
+	}
+---
+
+
+So... Just an idea. Can you try a very dirty hack? Forcibly increase
+oops_in_progress in panic() before console_flush_on_panic(), so 8250
+serial8250_console_write() will use spin_trylock_irqsave() and maybe
+avoid deadlock.
+
+	-ss
