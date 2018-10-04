@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E03C64EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5011C64EBC
 	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B328821486
+	by mail.kernel.org (Postfix) with ESMTP id 782132087D
 	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 21:28:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B328821486
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782132087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbeJEEXb (ORCPT
+        id S1728156AbeJEEXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 00:23:31 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:52966 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbeJEEXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 5 Oct 2018 00:23:17 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:52942 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726075AbeJEEXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 00:23:15 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g8BA2-0002Yj-PM; Thu, 04 Oct 2018 15:28:03 -0600
+        id 1g8BA2-0002Yd-PL; Thu, 04 Oct 2018 15:28:01 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g8B9y-0001ev-Aj; Thu, 04 Oct 2018 15:27:50 -0600
+        id 1g8B9x-0001ed-NH; Thu, 04 Oct 2018 15:27:49 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
@@ -48,8 +48,8 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Jens Axboe <axboe@kernel.dk>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu,  4 Oct 2018 15:27:42 -0600
-Message-Id: <20181004212747.6301-9-logang@deltatee.com>
+Date:   Thu,  4 Oct 2018 15:27:36 -0600
+Message-Id: <20181004212747.6301-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181004212747.6301-1-logang@deltatee.com>
 References: <20181004212747.6301-1-logang@deltatee.com>
@@ -58,7 +58,7 @@ Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v9 08/13] IB/core: Ensure we map P2P memory correctly in rdma_rw_ctx_[init|destroy]()
+Subject: [PATCH v9 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem stats
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,56 +66,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to use PCI P2P memory the pci_p2pmem_map_sg() function must be
-called to map the correct PCI bus address.
+Add a sysfs group to display statistics about P2P memory that is
+registered in each PCI device.
 
-To do this, check the first page in the scatter list to see if it is P2P
-memory or not. At the moment, scatter lists that contain P2P memory must
-be homogeneous so if the first page is P2P the entire SGL should be P2P.
+Attributes in the group display the total amount of P2P memory, the
+amount available and whether it is published or not.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/infiniband/core/rw.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-pci | 24 +++++++++++
+ drivers/pci/p2pdma.c                    | 54 +++++++++++++++++++++++++
+ 2 files changed, 78 insertions(+)
 
-diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
-index 683e6d11a564..d22c4a2ebac6 100644
---- a/drivers/infiniband/core/rw.c
-+++ b/drivers/infiniband/core/rw.c
-@@ -12,6 +12,7 @@
-  */
- #include <linux/moduleparam.h>
- #include <linux/slab.h>
-+#include <linux/pci-p2pdma.h>
- #include <rdma/mr_pool.h>
- #include <rdma/rw.h>
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 44d4b2be92fd..8bfee557e50e 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -323,3 +323,27 @@ Description:
  
-@@ -280,7 +281,11 @@ int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 	struct ib_device *dev = qp->pd->device;
- 	int ret;
- 
--	ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
-+	if (is_pci_p2pdma_page(sg_page(sg)))
-+		ret = pci_p2pdma_map_sg(dev->dma_device, sg, sg_cnt, dir);
-+	else
-+		ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+ 		This is similar to /sys/bus/pci/drivers_autoprobe, but
+ 		affects only the VFs associated with a specific PF.
 +
- 	if (!ret)
- 		return -ENOMEM;
- 	sg_cnt = ret;
-@@ -602,7 +607,9 @@ void rdma_rw_ctx_destroy(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		break;
- 	}
++What:		/sys/bus/pci/devices/.../p2pmem/size
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the total amount of memory that the device
++		provides (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/available
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the amount of memory that has not been
++		allocated (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/published
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains a '1' if the memory has been published for
++		use outside the driver that owns the device.
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+index c32cab20dd73..526c638579d1 100644
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -24,6 +24,54 @@ struct pci_p2pdma {
+ 	bool p2pmem_published;
+ };
  
--	ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
-+	/* P2PDMA contexts do not need to be unmapped */
-+	if (!is_pci_p2pdma_page(sg_page(sg)))
-+		ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
++static ssize_t size_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t size = 0;
++
++	if (pdev->p2pdma->pool)
++		size = gen_pool_size(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", size);
++}
++static DEVICE_ATTR_RO(size);
++
++static ssize_t available_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t avail = 0;
++
++	if (pdev->p2pdma->pool)
++		avail = gen_pool_avail(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", avail);
++}
++static DEVICE_ATTR_RO(available);
++
++static ssize_t published_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%d\n",
++			pdev->p2pdma->p2pmem_published);
++}
++static DEVICE_ATTR_RO(published);
++
++static struct attribute *p2pmem_attrs[] = {
++	&dev_attr_size.attr,
++	&dev_attr_available.attr,
++	&dev_attr_published.attr,
++	NULL,
++};
++
++static const struct attribute_group p2pmem_group = {
++	.attrs = p2pmem_attrs,
++	.name = "p2pmem",
++};
++
+ static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
+ {
+ 	struct pci_p2pdma *p2p =
+@@ -59,6 +107,7 @@ static void pci_p2pdma_release(void *data)
+ 	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
+ 
+ 	gen_pool_destroy(pdev->p2pdma->pool);
++	sysfs_remove_group(&pdev->dev.kobj, &p2pmem_group);
+ 	pdev->p2pdma = NULL;
  }
- EXPORT_SYMBOL(rdma_rw_ctx_destroy);
  
+@@ -87,9 +136,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ 
+ 	pdev->p2pdma = p2p;
+ 
++	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
++	if (error)
++		goto out_pool_destroy;
++
+ 	return 0;
+ 
+ out_pool_destroy:
++	pdev->p2pdma = NULL;
+ 	gen_pool_destroy(p2p->pool);
+ out:
+ 	devm_kfree(&pdev->dev, p2p);
 -- 
 2.19.0
 
