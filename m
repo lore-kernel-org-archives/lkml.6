@@ -2,120 +2,135 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBA0C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2F1C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F04032082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F212083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:41:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEZfuzVa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F04032082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrybSpAI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F212083F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeJDXbg (ORCPT
+        id S1727687AbeJDXfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:31:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44473 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeJDXbg (ORCPT
+        Thu, 4 Oct 2018 19:35:06 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53277 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbeJDXfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:31:36 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r9-v6so3496314pff.11
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 09:37:33 -0700 (PDT)
+        Thu, 4 Oct 2018 19:35:05 -0400
+Received: by mail-wm1-f67.google.com with SMTP id b19-v6so9681055wme.3;
+        Thu, 04 Oct 2018 09:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oYBDn/KT3xdhLUzEiALjmYwJpmU0XeamIlHQgugLRj4=;
-        b=hEZfuzVaOvedfQtr9ExBcl+MwsCGUsReERt5w69LLIwRtV5DHd7YtCS53O7Y6qoUr/
-         uxILygk9wgsGrTujldRFr0bbyUDT/bw/BvqV7wJOAneJUl/bUVM4M+VbBdFtpifyTeGE
-         6iqeURaVa25rxL2OsDXP/avgv83s85z2o0zqitUubnHmOw+RDoaoryKxwSIiB/VSEeOB
-         m+NqrAinN/2V0mhVe8DhmX/j005zLuoQRo+F+VYLlU1WD67RWANK/oqlac3HUxJASEuZ
-         860VCtNkFLUPj9msRb+qA5jCCujn0iBPdpWVQk17BLn8Zvyi/k5EHA0p32brYfHmESKb
-         uaaw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=P05siEmlZJdLv9lbBRxqmpdEf/LWQheaYzzXcNHz/T4=;
+        b=QrybSpAIEZVtpurJRLovts6VJlZT78dU+/N5YTJX9QYtGxBW24vOg/5efM7QVPqa9o
+         FDNTytUH6HV5YaKF2Zq+t5z/AMz64u1e752jsYvbsjm1+eCF+Fv+hRxbuEf4z/O/oNQW
+         Bi8h7Ey+O949saMU3vR/2+rW8kBmftWRX40bPLQ3KaO5IE4+rn6b1GmxaaEcc4xlkLAO
+         bnYM2yh9y8M0fqWtHp3d181z51oHLrzo29eYiCPg6Jz1wT03uYqVbJowqZ6UPYYkV+i0
+         dBad9RmhxW05o9ryPH+3tYRvEGiMSS7TfpfJHQOYllGIHdciOBPGUDvycZ7FBaLy1EVv
+         95OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oYBDn/KT3xdhLUzEiALjmYwJpmU0XeamIlHQgugLRj4=;
-        b=TROc1dtJuNhGLuyOY18XGfsmdDLrLJHfQ/ncUHNUOR5HFEo/O5DlMdJMyZrELpLc62
-         7MnXKo9n+crcH8phjF5JcLP1nQVDsJvfFc0ra+VBIFiW6iwaYGNWiZPepdAGxMibFepG
-         Yn1FkuF7OHvgF0avTg/LxHqyDv5CuqVzSrxW/nVNTapBrQ1+vOTYlm3WETlLHILrB5Wq
-         EQQVa2NS4IbVyzvCpkXvdKv5jqmnG0Z7BcruVVJVjMHVDp1KyrCvW8tv7TF5KL1ETnBX
-         ohUkKTp5Ke5MQTgNB2Og1Ux9ycMrAJogG74VrQGBl7PRDmGIR3UiUFvdv391fhJiQoxc
-         ePeQ==
-X-Gm-Message-State: ABuFfogEAQQPlFfSOWtJZUp3odT6pVbqdhFt1WGYx0/Ovi+FVsLRwM1a
-        wIY/QaNukEMXVtYDEr7t3dM=
-X-Google-Smtp-Source: ACcGV61/gg7/FtqLrVLgVh9JlbhSMZuwdDx5ggjz9zVSJiKBHOmawjDNuuYyGwCmP3k/5WMJrcSaPA==
-X-Received: by 2002:a65:4d03:: with SMTP id i3-v6mr6466989pgt.239.1538671052878;
-        Thu, 04 Oct 2018 09:37:32 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id j5-v6sm5309201pgm.79.2018.10.04.09.37.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 09:37:32 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 22:07:26 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>
-Cc:     NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v6 3/3] staging: mt7621-mmc: Remove #if 0 blocks in dbg.h
-Message-ID: <8d069e464e83a0376e0ae412823c8e7fd478967b.1538670306.git.nishadkamdar@gmail.com>
-References: <cover.1538670306.git.nishadkamdar@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=P05siEmlZJdLv9lbBRxqmpdEf/LWQheaYzzXcNHz/T4=;
+        b=i+87oguqaro+gnFRgynEiI8/Sc2TL4rgf16QIblaDAT+48/GP9ncmrdbOI9+6ohsEU
+         8NWwg2rCvh1/iZKuD+uH0dbbDzad6v5E5FrXWlGTmj/Hczda4zKJ6YffdqSOLVqJrfrp
+         j8Brvevb037phfZDzLiCzpPlTIc+KeONeJAl299SjITcutll7/bpAqAyNDnH93iuVjEm
+         Q2dYAkaAWrgTj/w+hwsNXNWptUV+bAe8KHDsn71UZeCmDTRaaWdr0yIC8bQ7QDnCXmjJ
+         ZYvdpEGROvggU3uOiabign7TQ2Zj5d0YiLTintYxb/SGLl4zqLaHNhw6SDkldhlhnMbW
+         5jXQ==
+X-Gm-Message-State: ABuFfogl4sTshNWh6QsM40lAA+bhGGHMi/Y6+yvEKYmZV625KRdf12KI
+        ZW/07YRFLN6YcAKUF2muC04=
+X-Google-Smtp-Source: ACcGV61BVhMk263DfjROebFXiNd9xckaYdrkWRokeOBeT/iBJiyT+zBi887ZztqHJOHnn1AFehSQRA==
+X-Received: by 2002:a1c:a9ce:: with SMTP id s197-v6mr5185799wme.82.1538671260099;
+        Thu, 04 Oct 2018 09:41:00 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm2806953wmc.38.2018.10.04.09.40.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 09:40:59 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ariel Elior <Ariel.Elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Dept-EngEverestLinuxL2@cavium.com,
+        Tomer Tayar <Tomer.Tayar@cavium.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v2] qed: Avoid implicit enum conversion in qed_ooo_submit_tx_buffers
+Date:   Thu,  4 Oct 2018 09:39:20 -0700
+Message-Id: <20181004163919.13972-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181004000912.22242-1-natechancellor@gmail.com>
+References: <20181004000912.22242-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1538670306.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes #if 0 code blocks and usages of
-functions defined in the #if 0 blocks in dbg.h.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+drivers/net/ethernet/qlogic/qed/qed_ll2.c:799:32: warning: implicit
+conversion from enumeration type 'enum core_tx_dest' to different
+enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
+                tx_pkt.tx_dest = p_ll2_conn->tx_dest;
+                               ~ ~~~~~~~~~~~~^~~~~~~
+1 warning generated.
+
+Fix this by using a switch statement to convert between the enumerated
+values since they are not 1 to 1, which matches how the rest of the
+driver handles this conversion.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Suggested-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/staging/mt7621-mmc/dbg.h | 15 ---------------
- 1 file changed, 15 deletions(-)
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 4ab9f10dccc2..89acf590ed11 100644
---- a/drivers/staging/mt7621-mmc/dbg.h
-+++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -91,23 +91,8 @@ enum msdc_dbg {
- 
- extern unsigned int sd_debug_zone[4];
- #define TAG "msdc"
--#if 0 /* +++ chhung */
--#define BUG_ON(x) \
--do { \
--	if (x) { \
--		printk("[BUG] %s LINE:%d FILE:%s\n", #x, __LINE__, __FILE__); \
--		while (1)						\
--			;						\
--	} \
--} while (0)
--#endif /* end of +++ */
--
- void msdc_debug_proc_init(void);
- 
--#if 0 /* --- chhung */
--void msdc_init_gpt(void);
--extern void GPT_GetCounter64(UINT32 *cntL32, UINT32 *cntH32);
--#endif /* end of --- */
- u32 msdc_time_calc(u32 old_L32, u32 old_H32, u32 new_L32, u32 new_H32);
- void msdc_performance(u32 opcode, u32 sizes, u32 bRx, u32 ticks);
- 
+v1 -> v2:
+
+* Use an explicit switch statement to convert between the enumerated
+  types like the rest of the driver, as suggested by Tomer.
+
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index da13117a604a..aa633381aa47 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -796,7 +796,18 @@ qed_ooo_submit_tx_buffers(struct qed_hwfn *p_hwfn,
+ 		tx_pkt.vlan = p_buffer->vlan;
+ 		tx_pkt.bd_flags = bd_flags;
+ 		tx_pkt.l4_hdr_offset_w = l4_hdr_offset_w;
+-		tx_pkt.tx_dest = p_ll2_conn->tx_dest;
++		switch (p_ll2_conn->tx_dest) {
++		case CORE_TX_DEST_NW:
++			tx_pkt.tx_dest = QED_LL2_TX_DEST_NW;
++			break;
++		case CORE_TX_DEST_LB:
++			tx_pkt.tx_dest = QED_LL2_TX_DEST_LB;
++			break;
++		case CORE_TX_DEST_DROP:
++		default:
++			tx_pkt.tx_dest = QED_LL2_TX_DEST_DROP;
++			break;
++		}
+ 		tx_pkt.first_frag = first_frag;
+ 		tx_pkt.first_frag_len = p_buffer->packet_length;
+ 		tx_pkt.cookie = p_buffer;
 -- 
-2.17.1
+2.19.0
 
