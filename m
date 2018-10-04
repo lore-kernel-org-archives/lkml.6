@@ -2,100 +2,79 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B0FC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E989FC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC8F20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:03:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdC899Ki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC8F20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B9E4B2087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:05:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E4B2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbeJDX5K (ORCPT
+        id S1727788AbeJDX7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:57:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43330 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbeJDX5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:57:10 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01EDF2147C
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 17:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538672582;
-        bh=ol8BHC63Ir3s0RKsDIqa25WPm1fThf+YjqMxf1oWjOo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GdC899KiS21jVyEHghYNKi3IKyckyj9wm2YkHDiinh/FWCRsupEG6JDKpPI0y+OEq
-         GU6YnwMvluEcRtyRvLV72RFpr1lG9zCiwCUsoRays7PnUwObMdl+VXNMXZO0NsPJW8
-         N9YA+ipIQcUmR/NTlt6BT+DijZf1PGFMVb9jEfF4=
-Received: by mail-wr1-f53.google.com with SMTP id w5-v6so10737932wrt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 10:03:01 -0700 (PDT)
-X-Gm-Message-State: ABuFfojcckdndQarsSqi5+A4lHGsACHYoESGuU6daDYEgvcO6BjieZ9d
-        bJRD8FI6IVzVI/ivZv6LLmuLplQwpDsF2Vr8GBPXEw==
-X-Google-Smtp-Source: ACcGV61G37sjPsIyGkqT8CZvYYRkwbny8YTrHzxVaMgPNSj33jYP3CLOx3Wrgt9AN37ewn9Tu+Vg8bDczGMknijSv/Y=
-X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr5516838wra.95.1538672580381;
- Thu, 04 Oct 2018 10:03:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181004045948.129142-1-namit@vmware.com> <72B0B378-9515-47C4-8937-9F1E823DD236@amacapital.net>
- <CE9C4B9C-3B11-45D0-812A-F074D687084D@vmware.com>
-In-Reply-To: <CE9C4B9C-3B11-45D0-812A-F074D687084D@vmware.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 4 Oct 2018 10:02:48 -0700
-X-Gmail-Original-Message-ID: <CALCETrVkE9eV0b2-wfq4Y9iK+YVJ4JBL7_rk_A8-7EhtuBbncA@mail.gmail.com>
-Message-ID: <CALCETrVkE9eV0b2-wfq4Y9iK+YVJ4JBL7_rk_A8-7EhtuBbncA@mail.gmail.com>
-Subject: Re: [RFC] x86/cpu_entry_area: move part of it back to fixmap
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 4 Oct 2018 19:59:43 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51942 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeJDX7m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:59:42 -0400
+Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D48E111693739;
+        Thu,  4 Oct 2018 09:58:45 -0700 (PDT)
+Date:   Thu, 04 Oct 2018 09:58:45 -0700 (PDT)
+Message-Id: <20181004.095845.964782412753569093.davem@davemloft.net>
+To:     natechancellor@gmail.com
+Cc:     Ariel.Elior@cavium.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ndesaulniers@google.com,
+        Dept-EngEverestLinuxL2@cavium.com, Tomer.Tayar@cavium.com
+Subject: Re: [PATCH v2] qed: Avoid implicit enum conversion in
+ qed_ooo_submit_tx_buffers
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181004163919.13972-1-natechancellor@gmail.com>
+References: <20181004000912.22242-1-natechancellor@gmail.com>
+        <20181004163919.13972-1-natechancellor@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 04 Oct 2018 09:58:46 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 9:31 AM Nadav Amit <namit@vmware.com> wrote:
->
-> at 7:11 AM, Andy Lutomirski <luto@amacapital.net> wrote:
->
-> >
-> >
-> > On Oct 3, 2018, at 9:59 PM, Nadav Amit <namit@vmware.com> wrote:
-> >
-> >> This RFC proposes to return part of the entry-area back to the fixmap =
-to
-> >> improve system-call performance. Currently, since the entry-area is
-> >> mapped far (more than 2GB) away from the kernel text, an indirect bran=
-ch
-> >> is needed to jump from the trampoline into the kernel. Due to Spectre
-> >> v2, vulnerable CPUs need to use a retpoline, which introduces an
-> >> overhead of >20 cycles.
-> >
-> > That retpoline is gone in -tip. Can you see how your code stacks up aga=
-inst -tip?  If it=E2=80=99s enough of a win to justify the added complexity=
-, we can try it.
-> >
-> > You can see some pros and cons in the changelog:
-> >
-> > https://git.kernel.org/tip/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6
->
-> Err.. That=E2=80=99s what I get for not following lkml. Very nice discuss=
-ion.
-> Based on it, I may be able to do an additional micro-optimizations or
-> two. Let me give it a try.
->
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Thu,  4 Oct 2018 09:39:20 -0700
 
-I think you should at least try to benchmark your code against mine,
-since you more or less implemented the alternative I suggested. :)
+> Clang warns when one enumerated type is implicitly converted to another.
+> 
+> drivers/net/ethernet/qlogic/qed/qed_ll2.c:799:32: warning: implicit
+> conversion from enumeration type 'enum core_tx_dest' to different
+> enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
+>                 tx_pkt.tx_dest = p_ll2_conn->tx_dest;
+>                                ~ ~~~~~~~~~~~~^~~~~~~
+> 1 warning generated.
+> 
+> Fix this by using a switch statement to convert between the enumerated
+> values since they are not 1 to 1, which matches how the rest of the
+> driver handles this conversion.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/125
+> Suggested-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+> 
+> v1 -> v2:
+> 
+> * Use an explicit switch statement to convert between the enumerated
+>   types like the rest of the driver, as suggested by Tomer.
+
+Applied to net-next.
