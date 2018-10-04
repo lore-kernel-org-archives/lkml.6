@@ -2,120 +2,112 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72B5C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6ACC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 660C22082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A6B2082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:20:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEjywRi+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660C22082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UsgFeTC6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oXSU5dQc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A6B2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeJDWMU (ORCPT
+        id S1727732AbeJDWOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:12:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727381AbeJDWMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:12:20 -0400
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 4 Oct 2018 18:14:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56522 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbeJDWOS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 18:14:18 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1C3C860D78; Thu,  4 Oct 2018 15:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538666433;
+        bh=9u0xT07ld+lLcCLWyAte72i16dsJNMbUZTZQZzOxcTA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UsgFeTC6NRYYz5BOK4j+M8h1beskr5Nmgj04MmJlRH+duihxuc8Z4+kxZxb8dVWGr
+         0l/KxWXVrOECcTIC4CYdVCKc99k6jAUrJLk4FCdzt23/cQJiKGkvIArWXzRP5v/89A
+         oKLIWgfTpjR4914qY451DdblO49BBfrHEy5hIsNg=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A42020877;
-        Thu,  4 Oct 2018 15:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538666315;
-        bh=ClNXtFf5uL9odpA5AthxKQO+zYY14Q9Bkhn1hBpbFGQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KEjywRi+5gfg0Eyy8UDQV3u7gM1Isa6a0FxdVqMic8S5kc4TkwRKIswPeLO49oKjG
-         rcvVNhjjSBo/MhYTHoZgPeaeOmj9ot70skPMo/S+CIcaaJvYlRK3d6NcFhI3tU8eCL
-         LQKInfcaSmF8MoF8MOaBlqEkWkNVjt4gvHbeuz7Y=
-Received: by mail-qt1-f182.google.com with SMTP id u34-v6so10277782qth.3;
-        Thu, 04 Oct 2018 08:18:35 -0700 (PDT)
-X-Gm-Message-State: ABuFfogzNttZ3pjuqS07RxjIHz44RxIHdjHtpqfqLzUKQZY8r1pEHZKs
-        y69VOuQsK2X+3RnoxRYAuwBZVzVMPht0X7B+oQ==
-X-Google-Smtp-Source: ACcGV63qHE0zPuvozJ5SQi8pLk1L2zrYf7sW7Llp/LLcvnpETYyskjjNwyPmv53/jfj0qsKBqseEHrr/xBKGyXptsyw=
-X-Received: by 2002:a0c:b5d3:: with SMTP id o19-v6mr5858374qvf.218.1538666314607;
- Thu, 04 Oct 2018 08:18:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180627045234.27403-1-rnayak@codeaurora.org> <20180627045234.27403-3-rnayak@codeaurora.org>
- <20180703223554.GA32313@rob-hp-laptop> <20180704055757.4li26b6poxllmh2k@vireshk-i7>
- <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org> <CAL_JsqJe+m4hD3nxQDjOT1JzRoSMXppy1r6APV1w=NtgCr-X_A@mail.gmail.com>
- <271db7b1-f65b-f42d-b00b-9362429b3749@codeaurora.org> <CAL_JsqJQypZbeZRa2u2+nM96p0ZHMHgDSpMbXqZx6zn+OiZSrw@mail.gmail.com>
- <20181004083637.xlz26rpn4qtsvdk7@vireshk-i7>
-In-Reply-To: <20181004083637.xlz26rpn4qtsvdk7@vireshk-i7>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 4 Oct 2018 10:18:22 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKSiT15sn_jXy0FRp_YG5XbkREUeHf-98A61iN-TKxWpQ@mail.gmail.com>
-Message-ID: <CAL_JsqKSiT15sn_jXy0FRp_YG5XbkREUeHf-98A61iN-TKxWpQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] dt-bindings: power: Add qcom rpm power domain
- driver bindings
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D769E60D2D;
+        Thu,  4 Oct 2018 15:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538666432;
+        bh=9u0xT07ld+lLcCLWyAte72i16dsJNMbUZTZQZzOxcTA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oXSU5dQcrYmkeASDfhyj+Pw90s0f74NBsO2tSBO7ehp3+GfBwzC9f+WXNfHlY72Dd
+         C1m4CTnmlAGbZ2EbQyBbxcQD55yfztExBsGewGb56vQ5sxSSLjABVn07NvRgvHDN0L
+         ThoIMu4VifvWfNE5dr+FCKGCY0csJ6rYFrhIyNHA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D769E60D2D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sudeep.holla@arm.com, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, linux-acpi@vger.kernel.org,
+        jeremy.linton@arm.com
+Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v4 0/2] PPTT handle Handle architecturally unknown cache types
+Date:   Thu,  4 Oct 2018 09:20:04 -0600
+Message-Id: <1538666406-7504-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 3:36 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 25-09-18, 14:43, Rob Herring wrote:
-> > On Tue, Sep 25, 2018 at 5:25 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> > >
-> > > Hi Rob,
-> > >
-> > > []...
-> > > >>>>> +   rpmhpd_opp_table: opp-table {
-> > > >>>>> +           compatible = "operating-points-v2-qcom-level";
-> > > >>>>> +
-> > > >>>>> +           rpmhpd_opp_ret: opp1 {
-> > > >>>>> +                   qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-> > > >>>>> +           };
-> > > >>>>
-> > > >>>> I don't see the point in using the OPP binding here when you aren't
-> > > >>>> using *any* of the properties from it.
-> > > >>>
-> > > >>> Yeah, that's the case for now. But there are cases (as Stephen
-> > > >>> mentioned earlier [1]) where the voltage values (and maybe other
-> > > >>> values like current, etc) would be known and filled in DT. And that's
-> > > >>> why we all agreed to use OPP tables for PM domains as well, as these
-> > > >>> are really "operating performance points" of these PM domains.
-> > > >>
-> > > >> Rob, are you fine with these bindings then?
-> > > >
-> > > > Okay, my only thought is whether we should just use 'reg' here, or do
-> > > > we need 'level' for anything else and should make it common?
-> > >
-> > > I am not quite sure I understood what you are suggesting here :(
-> >
-> > You could use the  'reg' property instead of 'qcom,level'. Any reason
-> > not to do that?
->
-> They can use any property which uniquely identifies the OPP nodes in
-> the table. Though I never thought we can use 'reg' property in such a
-> way. I always thought it must be related to registers somehow :)
+The ARM Architecture Reference Manual allows for caches to be "invisible" and
+thus not specified in the system registers under some scenarios such as if the
+cache cannot be managed by set/way operations.
 
-That's almost certainly where the name originates from back in the
-90s. I view 'reg' as how you identify or address a device. This can be
-channels of something like an ADC.
+However, such caches may be specified in the ACPI PPTT table for workload
+performance/scheduling optimizations.
 
-It's perhaps a stretch for OPP nodes as they aren't really a device,
-but if the levels are part of the h/w then perhaps reg is a good
-match.
+Currently such caches can cause an error in lscpu -
 
-Rob
+lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
+file or directory
+
+and result in no output, providing a poor user experience.  lstopo is also
+affected as such caches are not included in the output.
+
+Address these issues by attempting to be a little more discerning about when
+cache information is provided to userspace, and also utilize all sources for
+cache information when possible.
+
+[v4]
+-Collected all current tags and ammended to individual patches
+-Removed PPTT_CHECKED_ATTRIBUTES
+
+[v3]
+-removed valid flag in PPTT
+-Added Jeremy Linton's reviewed-by
+
+[v2]
+-Updated cacheinfo per Sudeep's suggestion
+-Integrated the PPTT fix into existing PPTT code per Sudeep's suggestion
+
+Jeffrey Hugo (2):
+  drivers: base: cacheinfo: Do not populate sysfs for unknown cache
+    types
+  ACPI/PPTT: Handle architecturally unknown cache types
+
+ drivers/acpi/pptt.c      | 15 +++++++++++----
+ drivers/base/cacheinfo.c |  2 ++
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
