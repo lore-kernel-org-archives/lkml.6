@@ -2,139 +2,89 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8462C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1406CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 560E220854
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:50:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PM2pQMyR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560E220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D3F3620854
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:50:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F3620854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeJEFqI (ORCPT
+        id S1728028AbeJEFqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 01:46:08 -0400
-Received: from mail-qt1-f172.google.com ([209.85.160.172]:40049 "EHLO
-        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeJEFqI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 01:46:08 -0400
-Received: by mail-qt1-f172.google.com with SMTP id b4-v6so3824881qtc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 15:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=XsbPcEyEJjcO4uITc8Dq3kksV84DDqEE7Up8Qjxbiu0=;
-        b=PM2pQMyRsImTqI3Hmz6KlljMoJNC7Ym3wpv3kJElFkQ4yqIpGpAMUswWNu6+xa2Qya
-         w1jHpHT/Ls71nf4HhIDhjc3EEjX+tVa4uygkQVEJIpLZGSboaMk4Hi3gZ8du+/zCZrO2
-         0euH6BPeAwGjd11DAxaqCJXBoism/wKONRci6kUAa4+dtgzsF44WeP1WKke338AsJXj8
-         Kd/8F0UMPfzddIaKMCieZUuJwTlHVtogt89IN8BOsVW3BdjviCmcsdm15TDCrIpL4bD8
-         VOddEkNSwvIeSx/dh83E9NmUvshkXQIdVlP2w9l8TIjCOr5S+NwqV6m1VZd9I37amItt
-         /W7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=XsbPcEyEJjcO4uITc8Dq3kksV84DDqEE7Up8Qjxbiu0=;
-        b=r80fm+P38zGub7Txgr6kMfHGa4kGahe+s2Y71APBcFcKCqtrPy6U83WKz3pnCRR8lN
-         XgsydBTOcIklrgpjHhHFZJ44c9rIfE3jMXu4b5CxGehNCGKJqyjiIxcYaW/m8+lmfWZG
-         1EHfGkSMrkG8Q8COWBRXO3hJ8WctZj7kfn+tqbgW5BmurSBcNnM5Y+oVPVyZddwI9Flx
-         KX0sMNarihjqeLSoa0NWVApSkY+srfUsTXfMvvUrMJMelEyqx9YwkzhalNMoBFMTArA9
-         UUtWSeNjyVwGJkldgK2cf3CE7Hn2y1+6jPIbgEnOL3pt8h2evz3JKzIvHjmKk/8Hty5k
-         +TiA==
-X-Gm-Message-State: ABuFfoixEZAyHB23R4wTsTRMpmzJz9eW4+4qcd0iU+SmfVNCNq2bCpN4
-        IDY7hFplHfis3nDdvWOmSjOK3nPeQSHWMNX9TG8=
-X-Google-Smtp-Source: ACcGV62iFbu6MTFInjlyEYAWbD/V0UsWB4g9w66VyGzK+t/1NeFf6Mbw89UVjRHBO/hPGHrYMqFGepDJzyScTHFygoE=
-X-Received: by 2002:ac8:65cd:: with SMTP id t13-v6mr4018128qto.260.1538693430601;
- Thu, 04 Oct 2018 15:50:30 -0700 (PDT)
+        Fri, 5 Oct 2018 01:46:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57382 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbeJEFqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 01:46:16 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 95CF8C059B78;
+        Thu,  4 Oct 2018 22:50:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A9ACE1700B;
+        Thu,  4 Oct 2018 22:50:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87a7nttm5o.fsf@notabene.neil.brown.name>
+References: <87a7nttm5o.fsf@notabene.neil.brown.name> <153861496327.30373.10501882399296347125.stgit@noble> <153861471803.30373.6184444014227748848.stgit@noble> <28763.1538662213@warthog.procyon.org.uk>
+To:     NeilBrown <neilb@suse.com>
+Cc:     dhowells@redhat.com, "J. Bruce Fields" <bfields@fieldses.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, linux-nfs@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-afs@lists.infradead.org, coda@cs.cmu.edu,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 1/3] VFS: introduce MAY_ACT_AS_OWNER
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 5 Oct 2018 08:50:19 +1000
-Message-ID: <CAPM=9tyQkPpELE8C6Fcg7icLNO0b_vsWRMDJgyy_5NCveNuEjQ@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.19-rc7 (part 2)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2792.1538693434.1@warthog.procyon.org.uk>
+Date:   Thu, 04 Oct 2018 23:50:34 +0100
+Message-ID: <2793.1538693434@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 04 Oct 2018 22:50:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Greg,
+NeilBrown <neilb@suse.com> wrote:
 
-I was meant to take today off so sent the pull yesterday, but some
-more stuff came in and I'd rather not sit on it,
+> Thanks for the review.
+> As afs doesn't use the generic xattr code and doesn't call
+> setattr_prepare(), this is all largely irrelevant for afs.
 
-Two fixes for amdgpu:
-one corrects a use of process->mm
-one fix for display code race condition that can result in a crash
+Yeah - there's no xattr support yet.
 
-Two core fixes:
-One for a use-after-free in the leasing code
-One for a cma/fbdev crash.
+> afs_permission() will probably only get MAY_ACT_AS_OWNER passed when
+> someone uses fcntl(F_SETFL) to set the O_NOATIME flag.
 
-Thanks,
-Dave.
+There's no atime in AFS.
 
-drm-fixes-2018-10-05:
-amdgpu and two core fixes
-The following changes since commit d8938c981f58ee344687b7910a611ac345960045=
-:
+> Currently a permission test based on UID is performed which, as you say,
+> is wrong.  My patch simply preserved this current (wrong) behaviour.
+> Shall I change it to always allow access, like with NFS?
 
-  Merge branch 'drm-tda9950-fixes' of
-git://git.armlinux.org.uk/~rmk/linux-arm into drm-fixes (2018-10-04
-10:32:14 +1000)
+You have to have an appropriate key to be able to do anything not granted to
+anonymous with the server.  If the server says your key (or lack thereof) is
+allowed to do something, you can do it; if it does not, you can't.
 
-are available in the Git repository at:
+> Probably O_NOATIME is ignored, in which case f_op->check_flags should
+> probably report -EINVAL (???) ... or might that cause a regression?
 
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-10-05
+No atime.  I just ignore things like O_NOATIME.  You will be able to query the
+filesystem with fsinfo() hopefully soon to find out if there is an atime and
+if you can disable it.
 
-for you to fetch changes up to bdf800c6fdf5674999bc0228d5040cc0ae218fa8:
-
-  Merge branch 'drm-fixes-4.19' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes (2018-10-05
-08:39:35 +1000)
-
-----------------------------------------------------------------
-amdgpu and two core fixes
-
-----------------------------------------------------------------
-Dave Airlie (2):
-      Merge tag 'drm-misc-fixes-2018-10-04' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge branch 'drm-fixes-4.19' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-
-Felix Kuehling (1):
-      drm/amdkfd: Fix incorrect use of process->mm
-
-Jann Horn (1):
-      drm: fix use-after-free read in drm_mode_create_lease_ioctl()
-
-Noralf Tr=C3=B8nnes (1):
-      drm/cma-helper: Fix crash in fbdev error path
-
-Shirish S (1):
-      drm/amd/display: Signal hw_done() after waiting for flip_done()
-
- .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  | 37 +++++++++++++++++-=
-----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 10 ++++--
- drivers/gpu/drm/drm_client.c                       | 35 ++++++++++++++----=
---
- drivers/gpu/drm/drm_fb_cma_helper.c                |  4 ++-
- drivers/gpu/drm/drm_fb_helper.c                    |  4 ++-
- drivers/gpu/drm/drm_lease.c                        |  6 ++--
- include/drm/drm_client.h                           |  5 +--
- 7 files changed, 75 insertions(+), 26 deletions(-)
+Davod
