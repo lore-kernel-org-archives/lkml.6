@@ -2,47 +2,48 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E059FC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39ABFC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FAC320877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:54:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FAC320877
+	by mail.kernel.org (Postfix) with ESMTP id F135320877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 19:56:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F135320877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbeJECsz (ORCPT
+        id S1727607AbeJECuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 22:48:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51555 "EHLO mail.bootlin.com"
+        Thu, 4 Oct 2018 22:50:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51664 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbeJECsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:48:55 -0400
+        id S1727489AbeJECuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 22:50:54 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7642A207F3; Thu,  4 Oct 2018 21:54:06 +0200 (CEST)
+        id 5BBB3207F3; Thu,  4 Oct 2018 21:56:05 +0200 (CEST)
 Received: from localhost (LFbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 46668206FF;
-        Thu,  4 Oct 2018 21:54:06 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 21:54:06 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2B836206FF;
+        Thu,  4 Oct 2018 21:56:05 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 21:56:05 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Giulio Benetti <giulio.benetti@micronovasrl.com>
 Cc:     David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drm/sun4i: tcon: fix check of tcon->panel null
- pointer
-Message-ID: <20181004195406.prjuko556tnuau2u@flea>
+Subject: Re: [PATCH v2 2/2] drm/sun4i: tcon: prevent tcon->panel dereference
+ if null
+Message-ID: <20181004195605.txvbkshvxklyzxyb@flea>
 References: <9a545739-eed5-7af1-3b75-108bdd3427a2@micronovasrl.com>
  <20181003142458.33120-1-giulio.benetti@micronovasrl.com>
+ <20181003142458.33120-2-giulio.benetti@micronovasrl.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="opjbizbyovgucput"
+        protocol="application/pgp-signature"; boundary="p6k4kmrvnmdrrg4l"
 Content-Disposition: inline
-In-Reply-To: <20181003142458.33120-1-giulio.benetti@micronovasrl.com>
+In-Reply-To: <20181003142458.33120-2-giulio.benetti@micronovasrl.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,28 +51,22 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---opjbizbyovgucput
+--p6k4kmrvnmdrrg4l
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 03, 2018 at 04:24:58PM +0200, Giulio Benetti wrote:
+> If using tcon with VGA,
 
-On Wed, Oct 03, 2018 at 04:24:57PM +0200, Giulio Benetti wrote:
-> At the moment, the check of tcon->panel to be valid is wrong. IS_ERR()
-> has been used, but that macro doesn't check if tcon->panel pointer is
-> null or not, but check if tcon->panel is between -1 and -4095(MAX_ERRNO).
->=20
-> Remove IS_ERR() from tcon->panel checking and let "if (tcon->panel)" as
-> condition to check if it's a pointer not null.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+We don't have support for VGA at the moment. Or are you talking about
+using a VGA bridge?
 
-The commit log should be improved. The issue isn't really with the
-IS_ERR macro as you suggest, but that what is returned by
-of_drm_find_panel, and thus stored in tcon->panel. is not an error
-pointer in the first place but a NULL pointer on error. So the check
-doesn't check for the proper thing.
+> tcon->panel will be null(0), this will cause segmentation fault when
+> trying to dereference tcon->panel->connector.
+
+It's not a segmentation fault, but a null pointer dereference. And
+that case will also happen with bridges.
 
 Maxime
 
@@ -80,24 +75,24 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---opjbizbyovgucput
+--p6k4kmrvnmdrrg4l
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu2b90ACgkQ0rTAlCFN
-r3SECg/8C8s1dR1+g7QU0KMFTa1z6f1VKKe7qQV1le5xEG4b9NdltxS3NNjg70bn
-mAushukubUMuhx01QT1cio8X7ANl605+2m1UGzVsHqLXayv+gW2DtfAx1TLvQgDp
-tTQG+EG/vmplrs2pI4n0LBHfetQmWbT3wjqcTV/XzFHqOQMOD3Bs7Ig0hq+9FTPJ
-xSMcVvHVhHpB6yNdixoXPTeziIuv9ywnRd/0BoafMmM1KV4acfsAfLOYbGR3uvGF
-hl8MoDbGZwXlmvplM//HI96P7qmy9YJun4hXnkJ17IeC1tHWUbEb8TLEhuesTFfN
-92TKoNO1ZI44Hfjsl52dgVrFTGMdMxdGxvNFX9kNsBIVLgvynwQfQ4CL2JKISvbp
-QSg1Kc5U4O55TX6fm4vJoXvCeFccCB1R2HLnk6ygmysvp/4p3Mm3srKMeVnqQw0Y
-REOjWt7dqX17d3RTn4Tg+c1vlTzuBPeO7iwRK0hSencm06epl4Ym0Eyaxdv3Imjh
-qrSXlHfvqdKpKV/xrvLFnsHIyGvNkmle/vYFI55XADO3ii3PSvd8OkrY0lgVwd6U
-h1tN2povQz2XtnplXK0cX6YZN98QZ5gxgzRj832Lbxp5aNy+9KMRNVgELCtEbiJe
-/8yYGnbHV0Qn5BwRxBVlh/8Nja1FNZN6aMSxhp0fEBjJKGTwHFk=
-=spN4
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu2cFQACgkQ0rTAlCFN
+r3TSxw/8Dziy1NiInMstE2LiZhh8Lwqi77TDLFHYbY0jmc86gPC3nQ+HHAldfF3d
+HYWS7ubeG8FkNnyg4327nGC2pR3iSmWXhNWQlqPx9rggDANSAT/Nv7fo0ZbValL4
+iyacp43k4hrWhSpZuPsAvFq349Qh06HsGsQkU/3tS/uTa2hntW1170eA3s+re+BW
+I2R+DDzRkzkwgNjUTHFW/vG4iG6hlzZbmsi9FgIOg3jNKXNAniveLGOQNICfra62
+DdHh3RxGhRjkuqFt8snOM/Y4MkC0BnadnEwyCRBVg9KAfQe0BQv7p3EyGr8n6QW6
+ExOjK3HxsWCDYOcnrqR9AvbuYIZGzMOSUkUBKInar2yY3UFXmd/QGG6dT6hjJS7I
+8qMExOjZkRN5/oHpMYb93gF3MfW3Z63nfaHCcRPitNnlvANBo36nZqvXHLiVxlZf
+dNJbw0p1v+mhPNPiIMmnBQiL17xwUqSC/R69U8XXY3FbPBAGGqu6VZORtv2isbKC
+AJA3mAZGJfIiNr8YJytHU4GTazN/9cUQhLBz+XE8d3W63B8oZSbmPwUc26NK5W7h
+eCezPgMWjxUYX/orSkiocW9NXRUcIDhBSOnq8wlzb6cIAMX00Nz4bFo/2+BHAgn4
+Ujpmxecr5cS/Gyc7f+e3zXJ/GkzXrFgRrTudPq0xS6VqZfoO/tk=
+=JJRK
 -----END PGP SIGNATURE-----
 
---opjbizbyovgucput--
+--p6k4kmrvnmdrrg4l--
