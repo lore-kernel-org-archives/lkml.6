@@ -6,64 +6,78 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4132C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821B8C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B36E421470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36E421470
+	by mail.kernel.org (Postfix) with ESMTP id 51E9021470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E9021470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbeJDNGX (ORCPT
+        id S1727599AbeJDNGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:06:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:38533 "EHLO ozlabs.org"
+        Thu, 4 Oct 2018 09:06:24 -0400
+Received: from ozlabs.org ([203.11.71.1]:56065 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727461AbeJDNGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:06:22 -0400
+        id S1727537AbeJDNGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 09:06:23 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 42QjKF4NXnz9s8T; Thu,  4 Oct 2018 16:14:41 +1000 (AEST)
+        id 42QjKH73vwz9sj3; Thu,  4 Oct 2018 16:14:42 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 8a03e81cb14712f986c5d5fa42a30ff2cbe3237c
-In-Reply-To: <20180926122430.13924-1-msuchanek@suse.de>
-To:     Michal Suchanek <msuchanek@suse.de>,
+X-powerpc-patch-commit: c3ff2a5193fa61b1b284cfb1d79628814ed0e95a
+In-Reply-To: <8e81b0647fea15e533a73ad4e9063c059fdfc6df.1537987712.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michal Suchanek <msuchanek@suse.de>,
-        Haren Myneni <haren@linux.vnet.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Subject: Re: powerpc/64s: consolidate MCE counter increment.
-Message-Id: <42QjKF4NXnz9s8T@ozlabs.org>
-Date:   Thu,  4 Oct 2018 16:14:41 +1000 (AEST)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [v5,1/2] powerpc/32: add stack protector support
+Message-Id: <42QjKH73vwz9sj3@ozlabs.org>
+Date:   Thu,  4 Oct 2018 16:14:42 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-26 at 12:24:30 UTC, Michal Suchanek wrote:
-> The code in machine_check_exception excludes 64s hvmode when
-> incrementing the MCE counter only to call opal_machine_check to
-> increment it specifically for this case.
+On Thu, 2018-09-27 at 07:05:53 UTC, Christophe Leroy wrote:
+> This functionality was tentatively added in the past
+> (commit 6533b7c16ee5 ("powerpc: Initial stack protector
+> (-fstack-protector) support")) but had to be reverted
+> (commit f2574030b0e3 ("powerpc: Revert the initial stack
+> protector support") because of GCC implementing it differently
+> whether it had been built with libc support or not.
 > 
-> Remove the exclusion and special case.
+> Now, GCC offers the possibility to manually set the
+> stack-protector mode (global or tls) regardless of libc support.
 > 
-> Fixes: a43c1590426c ("powerpc/pseries: Flush SLB contents on SLB MCE
-> 		errors.")
+> This time, the patch selects HAVE_STACKPROTECTOR only if
+> -mstack-protector-guard=tls is supported by GCC.
 > 
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> On PPC32, as register r2 points to current task_struct at
+> all time, the stack_canary located inside task_struct can be
+> used directly by using the following GCC options:
+> -mstack-protector-guard=tls
+> -mstack-protector-guard-reg=r2
+> -mstack-protector-guard-offset=offsetof(struct task_struct, stack_canary))
+> 
+> The protector is disabled for prom_init and bootx_init as
+> it is too early to handle it properly.
+> 
+>  $ echo CORRUPT_STACK > /sys/kernel/debug/provoke-crash/DIRECT
+> [  134.943666] Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: lkdtm_CORRUPT_STACK+0x64/0x64
+> [  134.943666]
+> [  134.955414] CPU: 0 PID: 283 Comm: sh Not tainted 4.18.0-s3k-dev-12143-ga3272be41209 #835
+> [  134.963380] Call Trace:
+> [  134.965860] [c6615d60] [c001f76c] panic+0x118/0x260 (unreliable)
+> [  134.971775] [c6615dc0] [c001f654] panic+0x0/0x260
+> [  134.976435] [c6615dd0] [c032c368] lkdtm_CORRUPT_STACK_STRONG+0x0/0x64
+> [  134.982769] [c6615e00] [ffffffff] 0xffffffff
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/8a03e81cb14712f986c5d5fa42a30f
+https://git.kernel.org/powerpc/c/c3ff2a5193fa61b1b284cfb1d79628
 
 cheers
