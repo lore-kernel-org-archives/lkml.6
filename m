@@ -2,154 +2,134 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30E3C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0407CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2422098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:59:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2422098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id B62CC21470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:00:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62CC21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeJDNvB (ORCPT
+        id S1727444AbeJDNwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:51:01 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:26876 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727172AbeJDNvB (ORCPT
+        Thu, 4 Oct 2018 09:52:20 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:34818 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbeJDNwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:51:01 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 02C14E7C3
-        for <linux-kernel@vger.kernel.org>; Thu,  4 Oct 2018 01:59:14 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7xbNg8p4nSjJA7xbNggvvo; Thu, 04 Oct 2018 01:59:14 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:48038 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g7xbN-002uTW-8u; Thu, 04 Oct 2018 01:59:13 -0500
-Date:   Thu, 4 Oct 2018 08:59:11 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Hannes Reinecke <hare@suse.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embededdor.com>
-Subject: [PATCH] scsi: aic7xxx: mark expected switch fall-throughs
-Message-ID: <20181004065641.GA11681@embeddedor.com>
+        Thu, 4 Oct 2018 09:52:20 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g7xcb-0002dV-Bc from Jiada_Wang@mentor.com ; Thu, 04 Oct 2018 00:00:29 -0700
+Received: from [172.30.112.170] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 4 Oct 2018 00:00:26 -0700
+Subject: Re: [alsa-devel] [PATCH linux-next v2 9/9] ASoC: rsnd: add busif
+ property to dai stream
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181003090136.4556-1-jiada_wang@mentor.com>
+ <87va6ipkaz.wl-kuninori.morimoto.gx@renesas.com>
+ <557e63d1-dbb7-4232-b53e-4a5499024180@mentor.com>
+ <87pnwqpeni.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <a5712f6a-a61b-f6c4-4f3d-a6d4a60bcfab@mentor.com>
+Date:   Thu, 4 Oct 2018 16:00:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g7xbN-002uTW-8u
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:48038
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <87pnwqpeni.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Hi Morimoto-san
 
-Addresses-Coverity-ID: 114961 ("Missing break in switch")
-Addresses-Coverity-ID: 114962 ("Missing break in switch")
-Addresses-Coverity-ID: 114963 ("Missing break in switch")
-Addresses-Coverity-ID: 114964 ("Missing break in switch")
-Addresses-Coverity-ID: 114965 ("Missing break in switch")
-Addresses-Coverity-ID: 114966 ("Missing break in switch")
-Addresses-Coverity-ID: 114967 ("Missing break in switch")
-Addresses-Coverity-ID: 114968 ("Missing break in switch")
-Addresses-Coverity-ID: 114969 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/scsi/aic7xxx/aic7xxx_core.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index f3362f4..5fe5384 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -4920,24 +4920,30 @@ ahc_fini_scbdata(struct ahc_softc *ahc)
- 		}
- 		ahc_dma_tag_destroy(ahc, scb_data->sg_dmat);
- 	}
-+		/* fall through */
- 	case 6:
- 		ahc_dmamap_unload(ahc, scb_data->sense_dmat,
- 				  scb_data->sense_dmamap);
-+		/* fall through */
- 	case 5:
- 		ahc_dmamem_free(ahc, scb_data->sense_dmat, scb_data->sense,
- 				scb_data->sense_dmamap);
- 		ahc_dmamap_destroy(ahc, scb_data->sense_dmat,
- 				   scb_data->sense_dmamap);
-+		/* fall through */
- 	case 4:
- 		ahc_dma_tag_destroy(ahc, scb_data->sense_dmat);
-+		/* fall through */
- 	case 3:
- 		ahc_dmamap_unload(ahc, scb_data->hscb_dmat,
- 				  scb_data->hscb_dmamap);
-+		/* fall through */
- 	case 2:
- 		ahc_dmamem_free(ahc, scb_data->hscb_dmat, scb_data->hscbs,
- 				scb_data->hscb_dmamap);
- 		ahc_dmamap_destroy(ahc, scb_data->hscb_dmat,
- 				   scb_data->hscb_dmamap);
-+		/* fall through */
- 	case 1:
- 		ahc_dma_tag_destroy(ahc, scb_data->hscb_dmat);
- 		break;
-@@ -6002,8 +6008,8 @@ ahc_search_qinfifo(struct ahc_softc *ahc, int target, char channel,
- 				if ((scb->flags & SCB_ACTIVE) == 0)
- 					printk("Inactive SCB in Waiting List\n");
- 				ahc_done(ahc, scb);
--				/* FALLTHROUGH */
- 			}
-+				/* fall through  */
- 			case SEARCH_REMOVE:
- 				next = ahc_rem_wscb(ahc, next, prev);
- 				break;
-@@ -7008,8 +7014,8 @@ ahc_download_instr(struct ahc_softc *ahc, u_int instrptr, uint8_t *dconsts)
- 		}
- 		address -= address_offset;
- 		fmt3_ins->address = address;
--		/* FALLTHROUGH */
- 	}
-+		/* fall through */
- 	case AIC_OP_OR:
- 	case AIC_OP_AND:
- 	case AIC_OP_XOR:
-@@ -7035,7 +7041,7 @@ ahc_download_instr(struct ahc_softc *ahc, u_int instrptr, uint8_t *dconsts)
- 			fmt1_ins->opcode = AIC_OP_AND;
- 			fmt1_ins->immediate = 0xff;
- 		}
--		/* FALLTHROUGH */
-+		/* fall through */
- 	case AIC_OP_ROL:
- 		if ((ahc->features & AHC_ULTRA2) != 0) {
- 			int i, count;
--- 
-2.7.4
+Thanks for your comments
+
+
+On 2018/10/04 12:43, Kuninori Morimoto wrote:
+> Hi Jiada
+>
+> Thank you for your feedback
+>
+>>>> in GEN3 SSI may use different BUSIF for data transfer,
+>>>> this patch adds busif property to each dai stream,
+>>>> to indicate the BUSIF used by playback/capture stream.
+>>>>
+>>>> Also adds rsnd_ssi_select_busif() to automatically select
+>>>> BUSIF (currently only BUSIF0 is selected)
+>>>>
+>>>> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+>>>> ---
+> (snip)
+>>> And this patch selects it on runtime (= hw_param) ?
+>> Because, in order to automatically determine BUSIF number,
+>> information like SSI mode (non-Split/Split/Ex-Split), runtime channel,
+>> are required
+>> (in our internal implementation, SSI mode is selected by kctrl)
+>> because of this, in this patch, BUSIF is selected on runtime
+>>
+>>> But, I think we can/should select it on probe timing from DT connection.
+>>> Am I misunderstanding ?
+>> with the above reasoning, BUSIF is selected on runtime.
+>> what do you think?
+> I have no objection that you are customizing your kernel locally.
+> But, upstreaming kernel based on it is not acceptable for me.
+> I'm not sure detail of your local implementation, but I don't think we
+> need to select SSI mode by kctrl.
+> If my understanding was correct, it can also be selected automatically somehow.
+> Or, am I misunderstanding ?
+SSI can work in following modes
+1. Basic Mode: (channel 1, 2, 4, 6, 8, 16)
+2. TDM Extended Mode: (channel 6, 8)
+3. TDM Split Mode: (channel 1, 2)
+4. TDM Ex-Split mode: (Channel 2, 4, 6, 8, 10)
+
+for example user asks dai-link0 to playback 2ch audio stream,
+driver can't determine which mode to work, as it can be Basic mode, 
+Split mode or Ex-Split mode.
+
+> I could understand what you want to do, and yes, I can agree that we want/need
+> to have it on upstream. Thank you very much to indicating it to me.
+> But we need to consider more how to implement it.
+> Especially, it is related to DT bindings.
+> As you already know, if it is implemented on upstream kernel, we need to keep
+> compatibility in the future, and it is very difficult.
+Yes, I agree with you, upstream need to consider lots of things
+>
+> So, my opinions for BUSIFn support are
+> 	- SSI mode should be selected automatically
+can you give me your idea, how to automatically determine working mode,
+when user plays 2 channel stream on playback dai-link
+> 	- BUSIFn connection should be selected on DT
+since which BUSIFx is used during audio data transfer, is not 
+consideration of user,
+I think your previous suggestion, (automatically select BUSIFx) makes 
+more sense
+
+Thanks,
+Jiada
+> 	  (I think we don't want random sound output position ?)
+> 	  - To select it, we need to have new "ssiu" DT seetings,
+> 	    or parse sound card. Maybe adding ssiu is realistic.
+>
+>
+> Best regards
+> ---
+> Kuninori Morimoto
 
