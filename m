@@ -2,123 +2,153 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2E9C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1D1C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23472213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:59:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoL3oMtm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23472213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 45AB32098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45AB32098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeJDPvu (ORCPT
+        id S1727852AbeJDPw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:51:50 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:47096 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbeJDPvu (ORCPT
+        Thu, 4 Oct 2018 11:52:27 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44247 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727483AbeJDPw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:51:50 -0400
-Received: by mail-io1-f67.google.com with SMTP id t7-v6so7255101ioj.13
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=r4VNbATbQ5kZn2OxeCNaB7p0jOKYvrX1PmER4NvD2pQ=;
-        b=hoL3oMtmt00fWNWthGEbW4rXHuj8yh8oX0b5ipvFLeg0gAwA7YzLCg0gz1/kVdYPZp
-         hs2R3p/rJFqLjIhBCxjV6OWk9DHjVOid/H0G/fAveB2urXsVifLOyVSfyUJOGt6vhvmA
-         MbpmitPqBJRJ7uoXDszp5w6rl+5svQXncYdlI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=r4VNbATbQ5kZn2OxeCNaB7p0jOKYvrX1PmER4NvD2pQ=;
-        b=VOdEqFPRZR16KaVbFQQdJsE3o+DlyX03S9aT6J068Y9dJkHfB1ziji303+FycfcRjZ
-         VkjxASamLETDqwmxyeaG83CWdqxABBj5hCEXG20f8MJdM5Xq0QlXhMS10sU7QxyLV7ls
-         ZDbcI0O5JlRpbJejO5OUKKlOyNkHkPm7tbgiVvuk5JMkd7IyHTH3rGFBM7hGv7ERMjN8
-         Fl8CAYn1efxY1ZV4KYJCm8J4aIt8ejUahgVEfqNLnkTvA9nB1xZGWslhX/b8k8e/BkPq
-         By9ElxqXef/PKzk2Tcq6F69RKw0WX7oiTP8NGzeVz0TtmM0guu/V7ST5rVf7/z2lyUCp
-         +3bQ==
-X-Gm-Message-State: ABuFfoiuLOLUQ5yds495zYu/JHAHGRsq+2cB2UmlTMmzKn45mrfQHo9a
-        DK7iQft5Rai0iQbyt8m+Sc+AatDNxxm42VC4Mmxweg==
-X-Google-Smtp-Source: ACcGV62mfmF8iRWtBoMrGMu6CySjffU9GMc+gmPVrmDU9XvWAfqcYMWdUfcVKJi2Ss3kmPcu1thukgC2Osk6fCKV/Zw=
-X-Received: by 2002:a6b:203:: with SMTP id 3-v6mr3648801ioc.131.1538643574106;
- Thu, 04 Oct 2018 01:59:34 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 01:58:53 -0700 (PDT)
-In-Reply-To: <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
-References: <20181003143824.13059-1-ulf.hansson@linaro.org> <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 4 Oct 2018 10:58:53 +0200
-Message-ID: <CAPDyKFq0GLs2AMA+6b-Khf+4kGxzVCTvtehp-YmwV2h=_SP4=g@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM) (a subset)
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 4 Oct 2018 11:52:26 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1g7zUH-0000su-Bp; Thu, 04 Oct 2018 11:00:01 +0200
+Message-ID: <1538643596.3515.5.camel@pengutronix.de>
+Subject: Re: [PATCH 4/4] PCI: imx: Add PME_Turn_Off support
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 04 Oct 2018 10:59:56 +0200
+In-Reply-To: <1cf53d188657bba7df06ad417eb2a65160238196.1538423063.git.leonard.crestez@nxp.com>
+References: <cover.1538423063.git.leonard.crestez@nxp.com>
+         <1cf53d188657bba7df06ad417eb2a65160238196.1538423063.git.leonard.crestez@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 October 2018 at 10:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Wed, Oct 3, 2018 at 4:39 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>
->> I have digested the review comments so far, including a recent offlist chat
->> with with Lorenzo Pieralisi around the debatable PSCI changes. More or less I
->> have a plan for how to move forward.
->>
->> However, to avoid re-posting non-changed patches over and over again, I decided
->> to withhold the more debatable part from this v9, hence this is not the complete
->> series to make things play. In v9, I have just included the trivial changes,
->> which are either already acked/reviewed or hopefully can be rather soon/easily.
->>
->> My hope is to get this queued for v4.20, to move things forward. I know it's
->> late, but there are more or less nothing new here since v8.
->
-> I have no problems with the first three patches in this series, so I
-> can apply them right away.  Do you want me to do that?
+Am Montag, den 01.10.2018, 22:53 +0300 schrieb Leonard Crestez:
+> When the root complex suspends it must send a PME_Turn_Off TLP.
+> Implement this by asserting the "turnoff" reset.
+> 
+> On imx7d this is functionality is part of the SRC and exposed through
+> the linux reset-controller subsystem. On imx6 equivalent bits are in the
+> IOMUXC GPR area which the imx6-pcie driver accesses directly.
+> 
+> This is only for imx7d right now but it's deliberately implemented as an
+> optional reset, ignoring the chip variant:
+> * Older dtbs won't have this reset so it will be ignored.
+> * Future chips might also expose this as a reset controller.
+> 
+> For example imx8m (not yet supported) has the exact same
+> PCIE_CTRL_APPS_TURNOFF bit in the same location.
+> 
+> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 6ba16fd1373c..13cb1a200442 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -50,10 +50,11 @@ struct imx6_pcie {
+> > >  	struct clk		*pcie_inbound_axi;
+> > >  	struct clk		*pcie;
+> > >  	struct regmap		*iomuxc_gpr;
+> > >  	struct reset_control	*pciephy_reset;
+> > >  	struct reset_control	*apps_reset;
+> > > +	struct reset_control	*turnoff_reset;
+> >  	enum imx6_pcie_variants variant;
+> > >  	u32			tx_deemph_gen1;
+> > >  	u32			tx_deemph_gen2_3p5db;
+> > >  	u32			tx_deemph_gen2_6db;
+> > >  	u32			tx_swing_full;
+> @@ -812,10 +813,16 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+> >  	default:
+> >  		dev_err(dev, "ltssm_disable not supported\n");
+> >  	}
+>  }
+>  
+> +static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+> +{
+> > +	reset_control_assert(imx6_pcie->turnoff_reset);
+> +	reset_control_deassert(imx6_pcie->turnoff_reset);
 
-Yes, please.
+I'm a bit surprised to see no timing requirements here. I would have
+expected that there is a minimum time from asserting the reset, so the
+turnoff message gets transmitted to the EP before the clocks are
+stopped.
 
->
-> As for the rest, the cpuidle driver patch looks OK to me, but the
-> PSCI-related ones need ACKs.
+Regards,
+Lucas
 
-For some yes, but I think you can go ahead with a few more.
-
-Patch 4, 5 is already acked/reviewed.
-
-Patch 6 should be fine (if you are okay with it else wait for an ack
-from Daniel)
-
-Patch 7 and 8 should be fine. They were suggested by Mark.
-
-Patch 9 and 10 needs acks.
-
-Patch 11 has been acked, but depends on the other PSCI changes.
-
-Kind regards
-Uffe
+> +}
+> +
+>  static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+>  {
+> >  	clk_disable_unprepare(imx6_pcie->pcie);
+> >  	clk_disable_unprepare(imx6_pcie->pcie_phy);
+> >  	clk_disable_unprepare(imx6_pcie->pcie_bus);
+> @@ -832,10 +839,11 @@ static int imx6_pcie_suspend_noirq(struct device *dev)
+> >  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>  
+> >  	if (imx6_pcie->variant != IMX7D)
+> >  		return 0;
+>  
+> > +	imx6_pcie_pm_turnoff(imx6_pcie);
+> >  	imx6_pcie_clk_disable(imx6_pcie);
+> >  	imx6_pcie_ltssm_disable(dev);
+>  
+> >  	return 0;
+>  }
+> @@ -959,10 +967,17 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+> >  		break;
+> >  	default:
+> >  		break;
+> >  	}
+>  
+> > +	/* Grab turnoff reset */
+> > +	imx6_pcie->turnoff_reset = devm_reset_control_get_optional_exclusive(dev, "turnoff");
+> > +	if (IS_ERR(imx6_pcie->turnoff_reset)) {
+> > +		dev_err(dev, "Failed to get TURNOFF reset control\n");
+> > +		return PTR_ERR(imx6_pcie->turnoff_reset);
+> > +	}
+> +
+> >  	/* Grab GPR config register range */
+> >  	imx6_pcie->iomuxc_gpr =
+> >  		 syscon_regmap_lookup_by_compatible("fsl,imx6q-iomuxc-gpr");
+> >  	if (IS_ERR(imx6_pcie->iomuxc_gpr)) {
+> >  		dev_err(dev, "unable to find iomuxc registers\n");
