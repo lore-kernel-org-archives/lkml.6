@@ -2,181 +2,78 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC7DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26ACC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6A12082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:25:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E6A12082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 515A820854
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 23:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515A820854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbeJEGUw (ORCPT
+        id S1727580AbeJEG3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 02:20:52 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54226 "EHLO ale.deltatee.com"
+        Fri, 5 Oct 2018 02:29:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58514 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbeJEGUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 02:20:51 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8CzP-00044W-6F; Thu, 04 Oct 2018 17:25:04 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8CzO-0000tx-8g; Thu, 04 Oct 2018 17:25:02 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Doug Meyer <dmeyer@gigaio.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-Date:   Thu,  4 Oct 2018 17:24:59 -0600
-Message-Id: <20181004232459.3421-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, logang@deltatee.com, dmeyer@gigaio.com, bhelgaas@google.com, kurt.schwemmer@microsemi.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH] PCI: Fix Switchtec DMA aliasing quirk dmesg noise
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1725998AbeJEG3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 02:29:52 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68AAF32B66D;
+        Thu,  4 Oct 2018 23:34:03 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28F6C6836F;
+        Thu,  4 Oct 2018 23:33:58 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        "David Airlie" <airlied@linux.ie>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        linux-kernel@vger.kernel.org, "Sean Paul" <sean@poorly.run>,
+        "Gustavo Padovan" <gustavo@padovan.org>,
+        "Sean Paul" <seanpaul@chromium.org>,
+        "Ben Skeggs" <bskeggs@redhat.com>,
+        "Ilia Mirkin" <imirkin@alum.mit.edu>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, "Lyude Paul" <lyude@redhat.com>,
+        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH v3 0/5] Fix legacy DPMS changes with MST
+Date:   Thu,  4 Oct 2018 19:33:45 -0400
+Message-Id: <20181004233353.5388-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 04 Oct 2018 23:34:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the Switchtec quirk runs on all endpoints in the Switch
-which includes all the upstream and downstream ports. Seeing these
-other functions do not contain BARs the quirk fails when trying to
-map the BAR and prints the error "Cannot iomap Switchtec device".
-The user will see a few of these useless and scary errors, one for
-each port in the switch.
+Next version of https://patchwork.freedesktop.org/series/49877/
 
-At most, the quirk should only run on either a management endpoint
-(class=PCI_CLASS_MEMORY_OTHER) or an NTB endpoint
-(PCI_CLASS_BRIDGE_OTHER). However, seeing the quirk is useless except
-in NTB applications, we will only run it when the class is
-PCI_CLASS_BRIDGE_OTHER.
+This fixes some rather silly bugs regarding DPMS On->Off changes failing
+for connectors which were just recently destroyed.
 
-Thus, switch to using DECLARE_PCI_FIXUP_CLASS_FINAL and clean up
-the list with a define (so we don't have to change as much code if
-we ever have to adjust the list).
+Lyude Paul (5):
+  drm/atomic_helper: Disallow new modesets on unregistered connectors
+  drm/nouveau: Fix nv50_mstc->best_encoder()
+  drm/i915: Leave intel_conn->mst_port set, use mst_port_gone instead
+  drm/i915: Skip vcpi allocation for MSTB ports that are gone
+  drm/i915: Fix intel_dp_mst_best_encoder()
 
-Reported-by: Stephen  Bates <sbates@raithlin.com>
-Cc: Doug Meyer <dmeyer@gigaio.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-Fixes: ad281ecf1c7d ("PCI: Add DMA alias quirk for Microsemi Switchtec NTB")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/pci/quirks.c | 90 +++++++++++++++++---------------------------
- 1 file changed, 34 insertions(+), 56 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c     | 21 ++++++++++++++++-
+ drivers/gpu/drm/i915/intel_dp_mst.c     | 31 ++++++++++++++-----------
+ drivers/gpu/drm/i915/intel_drv.h        |  6 +++++
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 14 ++++-------
+ 4 files changed, 47 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 6bc27b7fd452..853c9cfa2a41 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -5057,59 +5057,37 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
- 	pci_iounmap(pdev, mmio);
- 	pci_disable_device(pdev);
- }
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8531,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8532,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8533,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8534,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8535,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8536,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8543,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8544,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8545,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8546,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8551,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8552,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8553,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8554,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8555,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8556,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8561,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8562,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8563,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8564,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8565,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8566,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8571,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8572,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8573,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8574,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8575,
--			quirk_switchtec_ntb_dma_alias);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8576,
--			quirk_switchtec_ntb_dma_alias);
-+
-+#define SWITCHTEC_QUIRK(vid) \
-+	DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI, vid, \
-+		PCI_CLASS_BRIDGE_OTHER, 8, quirk_switchtec_ntb_dma_alias)
-+SWITCHTEC_QUIRK(0x8531);  //PFX 24xG3
-+SWITCHTEC_QUIRK(0x8532);  //PFX 32xG3
-+SWITCHTEC_QUIRK(0x8533);  //PFX 48xG3
-+SWITCHTEC_QUIRK(0x8534);  //PFX 64xG3
-+SWITCHTEC_QUIRK(0x8535);  //PFX 80xG3
-+SWITCHTEC_QUIRK(0x8536);  //PFX 96xG3
-+SWITCHTEC_QUIRK(0x8541);  //PSX 24xG3
-+SWITCHTEC_QUIRK(0x8542);  //PSX 32xG3
-+SWITCHTEC_QUIRK(0x8543);  //PSX 48xG3
-+SWITCHTEC_QUIRK(0x8544);  //PSX 64xG3
-+SWITCHTEC_QUIRK(0x8545);  //PSX 80xG3
-+SWITCHTEC_QUIRK(0x8546);  //PSX 96xG3
-+SWITCHTEC_QUIRK(0x8551);  //PAX 24XG3
-+SWITCHTEC_QUIRK(0x8552);  //PAX 32XG3
-+SWITCHTEC_QUIRK(0x8553);  //PAX 48XG3
-+SWITCHTEC_QUIRK(0x8554);  //PAX 64XG3
-+SWITCHTEC_QUIRK(0x8555);  //PAX 80XG3
-+SWITCHTEC_QUIRK(0x8556);  //PAX 96XG3
-+SWITCHTEC_QUIRK(0x8561);  //PFXL 24XG3
-+SWITCHTEC_QUIRK(0x8562);  //PFXL 32XG3
-+SWITCHTEC_QUIRK(0x8563);  //PFXL 48XG3
-+SWITCHTEC_QUIRK(0x8564);  //PFXL 64XG3
-+SWITCHTEC_QUIRK(0x8565);  //PFXL 80XG3
-+SWITCHTEC_QUIRK(0x8566);  //PFXL 96XG3
-+SWITCHTEC_QUIRK(0x8571);  //PFXI 24XG3
-+SWITCHTEC_QUIRK(0x8572);  //PFXI 32XG3
-+SWITCHTEC_QUIRK(0x8573);  //PFXI 48XG3
-+SWITCHTEC_QUIRK(0x8574);  //PFXI 64XG3
-+SWITCHTEC_QUIRK(0x8575);  //PFXI 80XG3
-+SWITCHTEC_QUIRK(0x8576);  //PFXI 96XG3
 -- 
-2.19.0
+2.17.1
 
