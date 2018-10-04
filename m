@@ -2,136 +2,227 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C805C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3072DC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50BCA21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o6XaFakR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BCA21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C05EB21473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05EB21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbeJDPMO (ORCPT
+        id S1727394AbeJDPMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:12:14 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37698 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeJDPMO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:12:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u12-v6so8844473wrr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:20:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kyEeTjaTExqJyJMJXTMGlCOUVx6p7HnXFrjwKusRlYE=;
-        b=o6XaFakR7hDHTK7UVRkJmqmFUq3R5oTyFUnlawwO5hRilcNVxALnVT/0alVo8xaFMA
-         9vxQCoFHAnZZKaG4htbVQHtDdjMfemkN8L2dPZlA8q6tVdQvzkLZB4yVfibqKzFYkNWg
-         zN+dOc67t1HyIjxegvT68r99BIUP+yoQzI4ZUIv77/BPyL0FynoFbikYMTqi8771oOpX
-         T2GN9eJA+DnvNKrpt5moqJwal2oeOmvCRLZhL3F+snEkzXeh4YV6dOH9SFTcM3qCiioz
-         X/7HIjY9VyjWXzsHAUeeRNVNoXMJTxuc7+iHuJIEZ8JGBJ59jfKu4X1DHQn4YLh5/s52
-         mJaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kyEeTjaTExqJyJMJXTMGlCOUVx6p7HnXFrjwKusRlYE=;
-        b=sVrzWtfpOOQpCEkT8T/4UHQwTg+jeCgj5fvVUPNT7+Mmw87+S4cIbHVhWJwGtilAHG
-         /YT9LPcQZa/QZJhW8q3ntMtcuF3ZGrm6U5zvwpNJ1gkuA98BvxBk+21VfwY0s3jXM29w
-         lNtYvTmg9da/mLvH0cHUJ/FyKT11gPy9ec/kI0HDdU67j6Y9j8D9fKGzev+EPVBF2EY7
-         3c3M+L1fraIzHAQGJyducfBp1ElCRctJh5y+Df8zYeDAmWsz4NcWLMJql8x86aDAubzn
-         //4qHGS45LFCYMlCZOq3E9K7SSfvokCP0+3ckGc0iLdqtoQBIifEQheAP4ZzxFGrnyIg
-         lM7w==
-X-Gm-Message-State: ABuFfohPtd9IfkOfN89GX/WCILZJ2dFbvkHHSosH6ch5YjFx8zyKQeqJ
-        7fu0AVjMLX/4BX7suj/Ljv3Amkyy
-X-Google-Smtp-Source: ACcGV63bP4spcyGEXda3HUZi/6z79JmEjz3mSd/QoEQupQSWJmpmvvkK2m2pZbbJWNcJLP4aGU5mzg==
-X-Received: by 2002:a5d:4589:: with SMTP id p9-v6mr4022064wrq.122.1538641207226;
-        Thu, 04 Oct 2018 01:20:07 -0700 (PDT)
-Received: from [192.168.0.19] (ip1f12fd1c.dynamic.kabel-deutschland.de. [31.18.253.28])
-        by smtp.gmail.com with ESMTPSA id z69-v6sm3732325wmz.18.2018.10.04.01.20.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 01:20:06 -0700 (PDT)
-Subject: Re: [PATCH 2/3] staging: rtl8188eu: cleanup array declaration - style
-To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20181003204359.30676-1-straube.linux@gmail.com>
- <20181003204359.30676-2-straube.linux@gmail.com>
- <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <87089eae-3cf2-8cea-b381-6e721b87ce94@gmail.com>
-Date:   Thu, 4 Oct 2018 10:20:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 4 Oct 2018 11:12:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:2389 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbeJDPMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:12:54 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Qm6k0clfz9ttCM;
+        Thu,  4 Oct 2018 10:20:46 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 2Wnz-K94dzA7; Thu,  4 Oct 2018 10:20:46 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Qm6k05Dpz9ttBv;
+        Thu,  4 Oct 2018 10:20:46 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6C3458B90B;
+        Thu,  4 Oct 2018 10:20:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 99vJ-2qz5Eka; Thu,  4 Oct 2018 10:20:48 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8393E8B907;
+        Thu,  4 Oct 2018 10:20:47 +0200 (CEST)
+Subject: Re: [RFC PATCH v3 1/7] book3s/64: avoid circular header inclusion in
+ mmu-hash.h
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <cover.1538396658.git.christophe.leroy@c-s.fr>
+ <c95148024873842459472bbcc0dd0e65607fd43b.1538396658.git.christophe.leroy@c-s.fr>
+ <20181003142400.490fd38a@roar.ozlabs.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <bed3d788-6633-6eef-30ea-bdfa374e0216@c-s.fr>
+Date:   Thu, 4 Oct 2018 10:20:47 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
+In-Reply-To: <20181003142400.490fd38a@roar.ozlabs.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/18 11:30 PM, Joe Perches wrote:
-> On Wed, 2018-10-03 at 22:43 +0200, Michael Straube wrote:
->> Cleanup array declaration to clear two 'line over 80 characters'
->> checkpatch warnings and improve readability.
-> []
->> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-> []
->> @@ -3836,24 +3836,20 @@ Following are the initialization functions for WiFi MLME
->>   *****************************************************************************/
->>   
->>   static struct mlme_handler mlme_sta_tbl[] = {
->> -	{WIFI_ASSOCREQ,		"OnAssocReq",	&OnAssocReq},
->> -	{WIFI_ASSOCRSP,		"OnAssocRsp",	&OnAssocRsp},
->> -	{WIFI_REASSOCREQ,	"OnReAssocReq",	&OnAssocReq},
->> -	{WIFI_REASSOCRSP,	"OnReAssocRsp",	&OnAssocRsp},
->> -	{WIFI_PROBEREQ,		"OnProbeReq",	&OnProbeReq},
->> -	{WIFI_PROBERSP,		"OnProbeRsp",		&OnProbeRsp},
->> -
->> -	/*----------------------------------------------------------
->> -					below 2 are reserved
->> -	-----------------------------------------------------------*/
->> -	{0,					"DoReserved",		&DoReserved},
->> -	{0,					"DoReserved",		&DoReserved},
->> -	{WIFI_BEACON,		"OnBeacon",		&OnBeacon},
->> -	{WIFI_ATIM,			"OnATIM",		&OnAtim},
->> -	{WIFI_DISASSOC,		"OnDisassoc",		&OnDisassoc},
->> -	{WIFI_AUTH,			"OnAuth",		&OnAuthClient},
->> -	{WIFI_DEAUTH,		"OnDeAuth",		&OnDeAuth},
->> -	{WIFI_ACTION,		"OnAction",		&OnAction},
->> +	{WIFI_ASSOCREQ,	  "OnAssocReq",	  &OnAssocReq},
->> +	{WIFI_ASSOCRSP,	  "OnAssocRsp",	  &OnAssocRsp},
->> +	{WIFI_REASSOCREQ, "OnReAssocReq", &OnAssocReq},
->> +	{WIFI_REASSOCRSP, "OnReAssocRsp", &OnAssocRsp},
->> +	{WIFI_PROBEREQ,	  "OnProbeReq",	  &OnProbeReq},
->> +	{WIFI_PROBERSP,	  "OnProbeRsp",	  &OnProbeRsp},
->> +	{0,		  "DoReserved",	  &DoReserved},
->> +	{0,		  "DoReserved",	  &DoReserved},
->> +	{WIFI_BEACON,	  "OnBeacon",	  &OnBeacon},
->> +	{WIFI_ATIM,	  "OnATIM",	  &OnAtim},
->> +	{WIFI_DISASSOC,	  "OnDisassoc",	  &OnDisassoc},
->> +	{WIFI_AUTH,	  "OnAuth",	  &OnAuthClient},
->> +	{WIFI_DEAUTH,	  "OnDeAuth",	  &OnDeAuth},
->> +	{WIFI_ACTION,	  "OnAction",	  &OnAction},
->>   };
+
+
+Le 03/10/2018 à 06:24, Nicholas Piggin a écrit :
+> On Mon,  1 Oct 2018 12:30:19 +0000 (UTC)
+> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 > 
-> Perhaps const here too, and as well, the struct
-> declaration could use const char * instead of char *
->
+>> When activating CONFIG_THREAD_INFO_IN_TASK, linux/sched.h
+>> includes asm/current.h. This generates a circular dependency.
+>> To avoid that, asm/processor.h shall not be included in mmu-hash.h
+>>
+>> In order to do that, this patch moves into a new header called
+>> asm/task_size.h the information from asm/processor.h requires by
+>> mmu-hash.h
+> 
+> Doesn't look like you use this header in 32-bit code. Put task_size.h
+> in asm/64/ maybe?
 
-Just to be sure, it should be
+There is no asm/64/ dir at the time being, only book3s/64/ and nohash/64/
 
-static const struct mlme_handler mlme_sta_tbl[] = {
+I'm thinking about leaving it in asm/ but renaming it task_size_user64.h
 
-?
+Christophe
+
+> 
+> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+> 
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/include/asm/book3s/64/mmu-hash.h |  2 +-
+>>   arch/powerpc/include/asm/processor.h          | 34 +---------------------
+>>   arch/powerpc/include/asm/task_size.h          | 42 +++++++++++++++++++++++++++
+>>   arch/powerpc/kvm/book3s_hv_hmi.c              |  1 +
+>>   4 files changed, 45 insertions(+), 34 deletions(-)
+>>   create mode 100644 arch/powerpc/include/asm/task_size.h
+>>
+>> diff --git a/arch/powerpc/include/asm/book3s/64/mmu-hash.h b/arch/powerpc/include/asm/book3s/64/mmu-hash.h
+>> index bbeaf6adf93c..7788e35f19f0 100644
+>> --- a/arch/powerpc/include/asm/book3s/64/mmu-hash.h
+>> +++ b/arch/powerpc/include/asm/book3s/64/mmu-hash.h
+>> @@ -23,7 +23,7 @@
+>>    */
+>>   #include <asm/book3s/64/pgtable.h>
+>>   #include <asm/bug.h>
+>> -#include <asm/processor.h>
+>> +#include <asm/task_size.h>
+>>   #include <asm/cpu_has_feature.h>
+>>   
+>>   /*
+>> diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
+>> index 350c584ca179..353879db3e98 100644
+>> --- a/arch/powerpc/include/asm/processor.h
+>> +++ b/arch/powerpc/include/asm/processor.h
+>> @@ -101,40 +101,8 @@ void release_thread(struct task_struct *);
+>>   #endif
+>>   
+>>   #ifdef CONFIG_PPC64
+>> -/*
+>> - * 64-bit user address space can have multiple limits
+>> - * For now supported values are:
+>> - */
+>> -#define TASK_SIZE_64TB  (0x0000400000000000UL)
+>> -#define TASK_SIZE_128TB (0x0000800000000000UL)
+>> -#define TASK_SIZE_512TB (0x0002000000000000UL)
+>> -#define TASK_SIZE_1PB   (0x0004000000000000UL)
+>> -#define TASK_SIZE_2PB   (0x0008000000000000UL)
+>> -/*
+>> - * With 52 bits in the address we can support
+>> - * upto 4PB of range.
+>> - */
+>> -#define TASK_SIZE_4PB   (0x0010000000000000UL)
+>>   
+>> -/*
+>> - * For now 512TB is only supported with book3s and 64K linux page size.
+>> - */
+>> -#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
+>> -/*
+>> - * Max value currently used:
+>> - */
+>> -#define TASK_SIZE_USER64		TASK_SIZE_4PB
+>> -#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
+>> -#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
+>> -#else
+>> -#define TASK_SIZE_USER64		TASK_SIZE_64TB
+>> -#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
+>> -/*
+>> - * We don't need to allocate extended context ids for 4K page size, because
+>> - * we limit the max effective address on this config to 64TB.
+>> - */
+>> -#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
+>> -#endif
+>> +#include <asm/task_size.h>
+>>   
+>>   /*
+>>    * 32-bit user address space is 4GB - 1 page
+>> diff --git a/arch/powerpc/include/asm/task_size.h b/arch/powerpc/include/asm/task_size.h
+>> new file mode 100644
+>> index 000000000000..ca45638617b0
+>> --- /dev/null
+>> +++ b/arch/powerpc/include/asm/task_size.h
+>> @@ -0,0 +1,42 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef _ASM_POWERPC_TASK_SIZE_H
+>> +#define _ASM_POWERPC_TASK_SIZE_H
+>> +
+>> +#ifdef CONFIG_PPC64
+>> +/*
+>> + * 64-bit user address space can have multiple limits
+>> + * For now supported values are:
+>> + */
+>> +#define TASK_SIZE_64TB  (0x0000400000000000UL)
+>> +#define TASK_SIZE_128TB (0x0000800000000000UL)
+>> +#define TASK_SIZE_512TB (0x0002000000000000UL)
+>> +#define TASK_SIZE_1PB   (0x0004000000000000UL)
+>> +#define TASK_SIZE_2PB   (0x0008000000000000UL)
+>> +/*
+>> + * With 52 bits in the address we can support
+>> + * upto 4PB of range.
+>> + */
+>> +#define TASK_SIZE_4PB   (0x0010000000000000UL)
+>> +
+>> +/*
+>> + * For now 512TB is only supported with book3s and 64K linux page size.
+>> + */
+>> +#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
+>> +/*
+>> + * Max value currently used:
+>> + */
+>> +#define TASK_SIZE_USER64		TASK_SIZE_4PB
+>> +#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
+>> +#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
+>> +#else
+>> +#define TASK_SIZE_USER64		TASK_SIZE_64TB
+>> +#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
+>> +/*
+>> + * We don't need to allocate extended context ids for 4K page size, because
+>> + * we limit the max effective address on this config to 64TB.
+>> + */
+>> +#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
+>> +#endif
+>> +
+>> +#endif /* CONFIG_PPC64 */
+>> +#endif /* _ASM_POWERPC_TASK_SIZE_H */
+>> diff --git a/arch/powerpc/kvm/book3s_hv_hmi.c b/arch/powerpc/kvm/book3s_hv_hmi.c
+>> index e3f738eb1cac..64b5011475c7 100644
+>> --- a/arch/powerpc/kvm/book3s_hv_hmi.c
+>> +++ b/arch/powerpc/kvm/book3s_hv_hmi.c
+>> @@ -24,6 +24,7 @@
+>>   #include <linux/compiler.h>
+>>   #include <asm/paca.h>
+>>   #include <asm/hmi.h>
+>> +#include <asm/processor.h>
+>>   
+>>   void wait_for_subcore_guest_exit(void)
+>>   {
+>> -- 
+>> 2.13.3
+>>
