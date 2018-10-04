@@ -2,137 +2,109 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D85C9C00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26405C00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 03:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9031213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:58:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9031213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CC922214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 03:00:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC922214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeJDJtH (ORCPT
+        id S1727370AbeJDJvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 05:49:07 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42118 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727312AbeJDJtG (ORCPT
+        Thu, 4 Oct 2018 05:51:45 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:55806 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbeJDJvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 05:49:06 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w942vxZI008539
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 19:57:59 -0700
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mw8fs89dn-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 19:57:59 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.11) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 3 Oct
- 2018 19:57:54 -0700
-Received: by devbig007.ftw2.facebook.com (Postfix, from userid 572438)  id
- 16AAE760B52; Wed,  3 Oct 2018 19:57:51 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Alexei Starovoitov <ast@kernel.org>
-Smtp-Origin-Hostname: devbig007.ftw2.facebook.com
-To:     "David S . Miller" <davem@davemloft.net>
-CC:     <daniel@iogearbox.net>, <luto@amacapital.net>,
-        <viro@zeniv.linux.org.uk>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH bpf-next 3/6] tools/bpf: sync uapi/bpf.h
-Date:   Wed, 3 Oct 2018 19:57:47 -0700
-Message-ID: <20181004025750.498303-4-ast@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181004025750.498303-1-ast@kernel.org>
-References: <20181004025750.498303-1-ast@kernel.org>
-X-FB-Internal: Safe
+        Thu, 4 Oct 2018 05:51:45 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g7tsQ-0006yb-Mw from Jiada_Wang@mentor.com ; Wed, 03 Oct 2018 20:00:34 -0700
+Received: from [172.30.112.170] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 3 Oct 2018 20:00:31 -0700
+Subject: Re: [PATCH linux-next v2 8/9] ASoC: rsnd: ssi: Request dedicated dma
+ channels for busif0 to 7
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181003090122.4508-1-jiada_wang@mentor.com>
+ <87woqyplnr.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <7d213396-a56e-e83d-7d0b-7edf49911b41@mentor.com>
+Date:   Thu, 4 Oct 2018 12:00:29 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-04_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <87woqyplnr.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync uapi/bpf.h from kernel into tools
+Hi Morimoto-san
 
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
----
- tools/include/uapi/linux/bpf.h | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index f9187b41dff6..c0df8dd99edc 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -154,6 +154,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_LIRC_MODE2,
- 	BPF_PROG_TYPE_SK_REUSEPORT,
- 	BPF_PROG_TYPE_FLOW_DISSECTOR,
-+	BPF_PROG_TYPE_FILE_FILTER,
- };
- 
- enum bpf_attach_type {
-@@ -175,6 +176,7 @@ enum bpf_attach_type {
- 	BPF_CGROUP_UDP6_SENDMSG,
- 	BPF_LIRC_MODE2,
- 	BPF_FLOW_DISSECTOR,
-+	BPF_CGROUP_FILE_OPEN,
- 	__MAX_BPF_ATTACH_TYPE
- };
- 
-@@ -2215,6 +2217,18 @@ union bpf_attr {
-  *		pointer that was returned from bpf_sk_lookup_xxx\ ().
-  *	Return
-  *		0 on success, or a negative error in case of failure.
-+ *
-+ * int bpf_get_file_path(struct bpf_file_info *file, char *buf, u32 size_of_buf)
-+ * 	Description
-+ * 		Reconstruct the full path of *file* and store it into *buf* of
-+ * 		*size_of_buf*. The *size_of_buf* must be strictly positive.
-+ * 		On success, the helper makes sure that the *buf* is NUL-terminated.
-+ * 		On failure, it is filled with string "(error)".
-+ * 		This helper should only be used for debugging.
-+ * 		'char *path' should never be used for permission checks.
-+ * 	Return
-+ * 		0 on success, or a negative error in case of failure.
-+ *
-  */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -2303,7 +2317,8 @@ union bpf_attr {
- 	FN(skb_ancestor_cgroup_id),	\
- 	FN(sk_lookup_tcp),		\
- 	FN(sk_lookup_udp),		\
--	FN(sk_release),
-+	FN(sk_release),			\
-+	FN(get_file_path),
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-  * function eBPF program intends to call
-@@ -2896,4 +2911,15 @@ struct bpf_flow_keys {
- 	};
- };
- 
-+struct bpf_file_info {
-+	__u64 inode;
-+	__u32 dev_major;
-+	__u32 dev_minor;
-+	__u32 fs_magic;
-+	__u32 mnt_id;
-+	__u32 nlink;
-+	__u32 mode;	/* file mode S_ISDIR, S_ISLNK, 0755, etc */
-+	__u32 flags;	/* open flags O_RDWR, O_CREAT, etc */
-+};
-+
- #endif /* _UAPI__LINUX_BPF_H__ */
--- 
-2.17.1
+On 2018/10/04 10:12, Kuninori Morimoto wrote:
+> Hi Jiada
+>
+> Thank you for your patch
+>
+>> Currently ssi driver only request dma channel for SSI_0,
+>> which is used to transfer data to/from busif0.
+>>
+>> But in GEN3 busif1 to busif7 also maybe used, dedicated dma channels
+>> are requested for data transfer through these busif.
+>>
+>> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+>> ---
+> (snip)
+>> +	if (rsnd_ssi_use_busif(io)) {
+>> +		if (is_play)
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "rxu");
+>> +		else
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "txu");
+>> +
+>> +		if (rsnd_is_gen3(priv)) {
+>> +			/*
+>> +			 * Gen3 supports to use all available BUSIF
+>> +			 */
+>> +			int busif = rsnd_ssi_get_busif(io);
+>> +
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "%s%d", name, busif);
+>> +		}
+> I think unspecified GenX is better idea.
+> For example, we might want to have same setting on Gen2 in the future.
+> (and this is not Gen3 HW specific feature
+>   But yes, we have SW side reason)
+>
+> How about like this ?
+> We can keep compatibility, and both Gen2/Gen3 can use it.
+>
+> 	if (rsnd_ssi_use_busif(io)) {
+> 		/*
+> 		 * 1) try to find txu%d/rxu%d first
+> 		 * 2) If can't find it, try to find old txu/rxu
+> 		 */
+> 	}
+I think this is a good idea, by doing so,
+in case GEN2 DT also starts to support different BUSIF,
+then no driver side change is required.
+
+I will update accordingly in next version
+
+Thanks,
+Jiada
 
