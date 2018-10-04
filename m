@@ -2,243 +2,114 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E009C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167A8C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C330F2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:51:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C330F2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D220D2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:51:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIvIY9hl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D220D2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeJDUov (ORCPT
+        id S1728011AbeJDUow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 4 Oct 2018 16:44:52 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34475 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbeJDUov (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 4 Oct 2018 16:44:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727283AbeJDUou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:44:50 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0400C03D474;
-        Thu,  4 Oct 2018 13:51:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF7662010D7A;
-        Thu,  4 Oct 2018 13:51:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next 6/9] rxrpc: Use IPv4 addresses throught the IPv6
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 04 Oct 2018 14:51:22 +0100
-Message-ID: <153866108263.27255.7238999208758575702.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153866103101.27255.4710558896251591679.stgit@warthog.procyon.org.uk>
-References: <153866103101.27255.4710558896251591679.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+Received: by mail-lj1-f195.google.com with SMTP id f8-v6so8465468ljk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 06:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=UVfjx/J81Asw8N+3qCIoCNsFmK4yPA5krqUhqaSEz24=;
+        b=CIvIY9hlO6VBkbfcmsN+cNJv/KAnUA/JxZ/53VCQPDxn7n18ZJaX+iLAg+aL94tZ55
+         ZVp+dXJbMBgZ88RbeHXLbVvix9Sf0rEUJnI8UXMSXLuKDsiv3FfxLnTrwhGUzk6K83ex
+         IX1qx6wDjH1lYlqp116BBaePtqpQR/6zaNocAOCI8gbRwaA9PPBq6PJXtoGyXyoWZgGb
+         wbGyy8rNgO1vUzqEl0SoSsz8ish0NAaIb5mMPsjhwQ8k62bt8FnUEAoFCuQyoWpC2SY+
+         9Iga2IFr7DMYIbgDUT9/BR9YaLlDz9/aa1HLiSxi39S9EKecHVYva/QONK5G4tipiYRR
+         wT4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=UVfjx/J81Asw8N+3qCIoCNsFmK4yPA5krqUhqaSEz24=;
+        b=eBnP8ERGfi7cEzhyfzwCShxqol6HGF7z8gzO28IWZNCchGADHCk4r52EQIMbhAjT2e
+         ZvPq3YyKrPlXfF83yYf6IozDDvq6AbAZUuFXahLl5OT1AxUkvhCkyOeENpMqusbG83Rj
+         BaQwB3pdvMDE2nStyU6V1mE1Ta+mjYuWaJllgSlmF3bs/Ayz8CjxrW8kRn7kBuOM7PVB
+         10BdHUZc20NSNzrf8V8rVI1tilxEuicI+vdFrZdUGcBz5gWmT9iyLnzReyWeNRdLzCw4
+         +mN6c8aDe/G0G9LXI4j9o10sGifADpdW2AtugNRLk2NnN0/gcoAf89e/ZWAJQbXgbira
+         /neA==
+X-Gm-Message-State: ABuFfog4jcDNO1q1HtYUfdinMVtANAQyhTGrQs6xoT8E2psPZE2mG+O6
+        GZUJJ77TztFQ/DRLHwfWwP8=
+X-Google-Smtp-Source: ACcGV61paGLXHOltImhbsumXYoCIkVbeU6syiASQ8TgmKJYcpnuz4sIh0Sg5PRNWEqJ0BabyET4E4Q==
+X-Received: by 2002:a2e:3006:: with SMTP id w6-v6mr1607051ljw.146.1538661086253;
+        Thu, 04 Oct 2018 06:51:26 -0700 (PDT)
+Received: from z50.localnet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
+        by smtp.gmail.com with ESMTPSA id k9-v6sm172612lje.51.2018.10.04.06.51.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 06:51:25 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
+Date:   Thu, 04 Oct 2018 15:52:57 +0200
+Message-ID: <7546835.d2Xs8Qh0bZ@z50>
+In-Reply-To: <20181003160634.147dd95c@bbrezillon>
+References: <20180719081508.5dafebde@bbrezillon> <4278198.vlhjLe5TOR@z50> <20181003160634.147dd95c@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 04 Oct 2018 13:51:26 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AF_RXRPC opens an IPv6 socket through which to send and receive network
-packets, both IPv6 and IPv4.  It currently turns AF_INET addresses into
-AF_INET-as-AF_INET6 addresses based on an assumption that this was
-necessary; on further inspection of the code, however, it turns out that
-the IPv6 code just farms packets aimed at AF_INET addresses out to the IPv4
-code.
+Hi Boris,
 
-Fix AF_RXRPC to use AF_INET addresses directly when given them.
+On Wednesday, October 3, 2018 4:06:34 PM CEST Boris Brezillon wrote:
+> On Wed, 03 Oct 2018 15:55:25 +0200
+> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+>   
+> > > > 
+> > > > Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
+> > > > nand_wait_ready(),  
+> > > 
+> > > I don't remember what the ams-delta ->dev_ready()/->waitfunc() hooks
+> > > are doing, but is shouldn't be too hard to replace them by an
+> > > ams_delta_wait_ready() func.  
+> > 
+> > Default nand_wait() is used as ->waitfunc(), and ->dev_ready() returns R/B 
+> > GPIO pin status.
+> 
+> Okay. Then it might make sense to provide a generic helper to poll a
+> gpio.
+> 
+> void nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod)
+> {
+> 	...
+> }
 
-Fixes: 7b674e390e51 ("rxrpc: Fix IPv6 support")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+How about a still more generic helper which accepts dev_ready() callback as an 
+argument?
 
- fs/afs/addr_list.c      |   29 +++++++++++++++--------------
- net/rxrpc/af_rxrpc.c    |    3 ++-
- net/rxrpc/conn_object.c |    5 +++--
- net/rxrpc/peer_event.c  |   12 +++++++-----
- net/rxrpc/utils.c       |   19 +++++--------------
- 5 files changed, 32 insertions(+), 36 deletions(-)
+Thanks,
+Janusz
 
-diff --git a/fs/afs/addr_list.c b/fs/afs/addr_list.c
-index 89374de4785c..55a756c60746 100644
---- a/fs/afs/addr_list.c
-+++ b/fs/afs/addr_list.c
-@@ -232,7 +232,7 @@ struct afs_addr_list *afs_dns_query(struct afs_cell *cell, time64_t *_expiry)
-  */
- void afs_merge_fs_addr4(struct afs_addr_list *alist, __be32 xdr, u16 port)
- {
--	struct sockaddr_in6 *p;
-+	struct sockaddr_rxrpc *srx;
- 	u32 addr = ntohl(xdr);
- 	int i;
- 
-@@ -240,9 +240,9 @@ void afs_merge_fs_addr4(struct afs_addr_list *alist, __be32 xdr, u16 port)
- 		return;
- 
- 	for (i = 0; i < alist->nr_ipv4; i++) {
--		struct sockaddr_in6 *a = &alist->addrs[i].transport.sin6;
--		u32 a_addr = ntohl(a->sin6_addr.s6_addr32[3]);
--		u16 a_port = ntohs(a->sin6_port);
-+		struct sockaddr_in *a = &alist->addrs[i].transport.sin;
-+		u32 a_addr = ntohl(a->sin_addr.s_addr);
-+		u16 a_port = ntohs(a->sin_port);
- 
- 		if (addr == a_addr && port == a_port)
- 			return;
-@@ -257,12 +257,11 @@ void afs_merge_fs_addr4(struct afs_addr_list *alist, __be32 xdr, u16 port)
- 			alist->addrs + i,
- 			sizeof(alist->addrs[0]) * (alist->nr_addrs - i));
- 
--	p = &alist->addrs[i].transport.sin6;
--	p->sin6_port		  = htons(port);
--	p->sin6_addr.s6_addr32[0] = 0;
--	p->sin6_addr.s6_addr32[1] = 0;
--	p->sin6_addr.s6_addr32[2] = htonl(0xffff);
--	p->sin6_addr.s6_addr32[3] = xdr;
-+	srx = &alist->addrs[i];
-+	srx->transport_len = sizeof(srx->transport.sin);
-+	srx->transport.sin.sin_family = AF_INET;
-+	srx->transport.sin.sin_port = htons(port);
-+	srx->transport.sin.sin_addr.s_addr = xdr;
- 	alist->nr_ipv4++;
- 	alist->nr_addrs++;
- }
-@@ -272,7 +271,7 @@ void afs_merge_fs_addr4(struct afs_addr_list *alist, __be32 xdr, u16 port)
-  */
- void afs_merge_fs_addr6(struct afs_addr_list *alist, __be32 *xdr, u16 port)
- {
--	struct sockaddr_in6 *p;
-+	struct sockaddr_rxrpc *srx;
- 	int i, diff;
- 
- 	if (alist->nr_addrs >= alist->max_addrs)
-@@ -296,9 +295,11 @@ void afs_merge_fs_addr6(struct afs_addr_list *alist, __be32 *xdr, u16 port)
- 			alist->addrs + i,
- 			sizeof(alist->addrs[0]) * (alist->nr_addrs - i));
- 
--	p = &alist->addrs[i].transport.sin6;
--	p->sin6_port = htons(port);
--	memcpy(&p->sin6_addr, xdr, 16);
-+	srx = &alist->addrs[i];
-+	srx->transport_len = sizeof(srx->transport.sin6);
-+	srx->transport.sin6.sin6_family = AF_INET6;
-+	srx->transport.sin6.sin6_port = htons(port);
-+	memcpy(&srx->transport.sin6.sin6_addr, xdr, 16);
- 	alist->nr_addrs++;
- }
- 
-diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
-index ac44d8afffb1..2fdd276f6842 100644
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -97,7 +97,8 @@ static int rxrpc_validate_address(struct rxrpc_sock *rx,
- 	    srx->transport_len > len)
- 		return -EINVAL;
- 
--	if (srx->transport.family != rx->family)
-+	if (srx->transport.family != rx->family &&
-+	    srx->transport.family == AF_INET && rx->family != AF_INET6)
- 		return -EAFNOSUPPORT;
- 
- 	switch (srx->transport.family) {
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index 885dae829f4a..fb856a1ccda8 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -89,8 +89,9 @@ struct rxrpc_connection *rxrpc_find_connection_rcu(struct rxrpc_local *local,
- 	if (rxrpc_extract_addr_from_skb(local, &srx, skb) < 0)
- 		goto not_found;
- 
--	/* We may have to handle mixing IPv4 and IPv6 */
--	if (srx.transport.family != local->srx.transport.family) {
-+	if (srx.transport.family != local->srx.transport.family &&
-+	    (srx.transport.family == AF_INET &&
-+	     local->srx.transport.family != AF_INET6)) {
- 		pr_warn_ratelimited("AF_RXRPC: Protocol mismatch %u not %u\n",
- 				    srx.transport.family,
- 				    local->srx.transport.family);
-diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
-index f3e6fc670da2..81a7869325a6 100644
---- a/net/rxrpc/peer_event.c
-+++ b/net/rxrpc/peer_event.c
-@@ -47,6 +47,8 @@ static struct rxrpc_peer *rxrpc_lookup_peer_icmp_rcu(struct rxrpc_local *local,
- 	 */
- 	switch (srx->transport.family) {
- 	case AF_INET:
-+		srx->transport_len = sizeof(srx->transport.sin);
-+		srx->transport.family = AF_INET;
- 		srx->transport.sin.sin_port = serr->port;
- 		switch (serr->ee.ee_origin) {
- 		case SO_EE_ORIGIN_ICMP:
-@@ -70,20 +72,20 @@ static struct rxrpc_peer *rxrpc_lookup_peer_icmp_rcu(struct rxrpc_local *local,
- 
- #ifdef CONFIG_AF_RXRPC_IPV6
- 	case AF_INET6:
--		srx->transport.sin6.sin6_port = serr->port;
- 		switch (serr->ee.ee_origin) {
- 		case SO_EE_ORIGIN_ICMP6:
- 			_net("Rx ICMP6");
-+			srx->transport.sin6.sin6_port = serr->port;
- 			memcpy(&srx->transport.sin6.sin6_addr,
- 			       skb_network_header(skb) + serr->addr_offset,
- 			       sizeof(struct in6_addr));
- 			break;
- 		case SO_EE_ORIGIN_ICMP:
- 			_net("Rx ICMP on v6 sock");
--			srx->transport.sin6.sin6_addr.s6_addr32[0] = 0;
--			srx->transport.sin6.sin6_addr.s6_addr32[1] = 0;
--			srx->transport.sin6.sin6_addr.s6_addr32[2] = htonl(0xffff);
--			memcpy(srx->transport.sin6.sin6_addr.s6_addr + 12,
-+			srx->transport_len = sizeof(srx->transport.sin);
-+			srx->transport.family = AF_INET;
-+			srx->transport.sin.sin_port = serr->port;
-+			memcpy(&srx->transport.sin.sin_addr,
- 			       skb_network_header(skb) + serr->addr_offset,
- 			       sizeof(struct in_addr));
- 			break;
-diff --git a/net/rxrpc/utils.c b/net/rxrpc/utils.c
-index e801171fa351..017adaa54e90 100644
---- a/net/rxrpc/utils.c
-+++ b/net/rxrpc/utils.c
-@@ -25,20 +25,11 @@ int rxrpc_extract_addr_from_skb(struct rxrpc_local *local,
- 
- 	switch (ntohs(skb->protocol)) {
- 	case ETH_P_IP:
--		if (local->srx.transport.family == AF_INET6) {
--			srx->transport_type = SOCK_DGRAM;
--			srx->transport_len = sizeof(srx->transport.sin6);
--			srx->transport.sin6.sin6_family = AF_INET6;
--			srx->transport.sin6.sin6_port = udp_hdr(skb)->source;
--			srx->transport.sin6.sin6_addr.s6_addr32[2] = htonl(0xffff);
--			srx->transport.sin6.sin6_addr.s6_addr32[3] = ip_hdr(skb)->saddr;
--		} else {
--			srx->transport_type = SOCK_DGRAM;
--			srx->transport_len = sizeof(srx->transport.sin);
--			srx->transport.sin.sin_family = AF_INET;
--			srx->transport.sin.sin_port = udp_hdr(skb)->source;
--			srx->transport.sin.sin_addr.s_addr = ip_hdr(skb)->saddr;
--		}
-+		srx->transport_type = SOCK_DGRAM;
-+		srx->transport_len = sizeof(srx->transport.sin);
-+		srx->transport.sin.sin_family = AF_INET;
-+		srx->transport.sin.sin_port = udp_hdr(skb)->source;
-+		srx->transport.sin.sin_addr.s_addr = ip_hdr(skb)->saddr;
- 		return 0;
- 
- #ifdef CONFIG_AF_RXRPC_IPV6
 
