@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5994C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869C0C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4F5920652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:02:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4F5920652
+	by mail.kernel.org (Postfix) with ESMTP id 31C3520652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:03:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C3520652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbeJDQzV (ORCPT
+        id S1728044AbeJDQzt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:55:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47883 "EHLO
+        Thu, 4 Oct 2018 12:55:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50245 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeJDQzU (ORCPT
+        with ESMTP id S1727311AbeJDQzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:55:20 -0400
+        Thu, 4 Oct 2018 12:55:49 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94A21q92701337
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94A2X4K2701490
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 4 Oct 2018 03:02:01 -0700
+        Thu, 4 Oct 2018 03:02:33 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94A216p2701334;
-        Thu, 4 Oct 2018 03:02:01 -0700
-Date:   Thu, 4 Oct 2018 03:02:01 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94A2XwE2701483;
+        Thu, 4 Oct 2018 03:02:33 -0700
+Date:   Thu, 4 Oct 2018 03:02:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Nadav Amit <tipbot@zytor.com>
-Message-ID: <tip-c06c4d8090513f2974dfdbed2ac98634357ac475@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, keescook@chromium.org, luto@amacapital.net,
-        namit@vmware.com, sparse@chrisli.org, hpa@zytor.com,
-        dvlasenk@redhat.com, mingo@kernel.org, bp@alien8.de,
-        torvalds@linux-foundation.org, jpoimboe@redhat.com,
-        brgerst@gmail.com
-Reply-To: brgerst@gmail.com, bp@alien8.de, torvalds@linux-foundation.org,
-          jpoimboe@redhat.com, hpa@zytor.com, sparse@chrisli.org,
-          dvlasenk@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          keescook@chromium.org, namit@vmware.com, luto@amacapital.net
-In-Reply-To: <20181003213100.189959-4-namit@vmware.com>
-References: <20181003213100.189959-4-namit@vmware.com>
+Message-ID: <tip-9e1725b410594911cc5981b6c7b4cea4ec054ca8@git.kernel.org>
+Cc:     namit@vmware.com, tglx@linutronix.de, brgerst@gmail.com,
+        hpa@zytor.com, torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        dvlasenk@redhat.com, JBeulich@suse.com, bp@alien8.de,
+        peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, luto@amacapital.net,
+        keescook@chromium.org
+Reply-To: jpoimboe@redhat.com, dvlasenk@redhat.com,
+          torvalds@linux-foundation.org, JBeulich@suse.com,
+          brgerst@gmail.com, hpa@zytor.com, namit@vmware.com,
+          tglx@linutronix.de, mingo@kernel.org, luto@amacapital.net,
+          keescook@chromium.org, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, bp@alien8.de
+In-Reply-To: <20181003213100.189959-5-namit@vmware.com>
+References: <20181003213100.189959-5-namit@vmware.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/objtool: Use asm macros to work around GCC
- inlining bugs
-Git-Commit-ID: c06c4d8090513f2974dfdbed2ac98634357ac475
+Subject: [tip:x86/build] x86/refcount: Work around GCC inlining bug
+Git-Commit-ID: 9e1725b410594911cc5981b6c7b4cea4ec054ca8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,14 +64,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c06c4d8090513f2974dfdbed2ac98634357ac475
-Gitweb:     https://git.kernel.org/tip/c06c4d8090513f2974dfdbed2ac98634357ac475
+Commit-ID:  9e1725b410594911cc5981b6c7b4cea4ec054ca8
+Gitweb:     https://git.kernel.org/tip/9e1725b410594911cc5981b6c7b4cea4ec054ca8
 Author:     Nadav Amit <namit@vmware.com>
-AuthorDate: Wed, 3 Oct 2018 14:30:53 -0700
+AuthorDate: Wed, 3 Oct 2018 14:30:54 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 4 Oct 2018 11:24:58 +0200
+CommitDate: Thu, 4 Oct 2018 11:24:59 +0200
 
-x86/objtool: Use asm macros to work around GCC inlining bugs
+x86/refcount: Work around GCC inlining bug
 
 As described in:
 
@@ -80,133 +80,191 @@ As described in:
 GCC's inlining heuristics are broken with common asm() patterns used in
 kernel code, resulting in the effective disabling of inlining.
 
-In the case of objtool the resulting borkage can be significant, since all the
-annotations of objtool are discarded during linkage and never inlined,
-yet GCC bogusly considers most functions affected by objtool annotations
-as 'too large'.
-
 The workaround is to set an assembly macro and call it from the inline
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction. (Which it isn't, but that's the best we can get.)
 
-This increases the kernel size slightly:
+This patch allows GCC to inline simple functions such as __get_seccomp_filter().
 
-      text     data     bss      dec     hex filename
-  18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-  18140970 10225412 2957312 31323694 1ddf62e ./vmlinux after (+829)
+To no-one's surprise the result is that GCC performs more aggressive (read: correct)
+inlining decisions in these senarios, which reduces the kernel size and presumably
+also speeds it up:
 
-The number of static text symbols (i.e. non-inlined functions) is reduced:
+      text     data     bss      dec     hex  filename
+  18140970 10225412 2957312 31323694 1ddf62e  ./vmlinux before
+  18140140 10225284 2957312 31322736 1ddf270  ./vmlinux after (-958)
 
-  Before:  40321
-  After:   40302 (-19)
+16 fewer static text symbols:
+
+   Before: 40302
+    After: 40286 (-16)
+
+these got inlined instead.
+
+Functions such as kref_get(), free_user(), fuse_file_get() now get inlined. Hurray!
 
 [ mingo: Rewrote the changelog. ]
 
 Tested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Christopher Li <sparse@chrisli.org>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-sparse@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181003213100.189959-4-namit@vmware.com
+Link: http://lkml.kernel.org/r/20181003213100.189959-5-namit@vmware.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/macros.S |  2 ++
- include/linux/compiler.h | 56 +++++++++++++++++++++++++++++++++++++-----------
- 2 files changed, 45 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/refcount.h | 74 +++++++++++++++++++++++++----------------
+ arch/x86/kernel/macros.S        |  1 +
+ 2 files changed, 46 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cfc1c7d1a6eb..cee28c3246dc 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -5,3 +5,5 @@
-  * commonly used. The macros are precompiled into assmebly file which is later
-  * assembled together with each compiled file.
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index 19b90521954c..c92909da0686 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -4,6 +4,41 @@
+  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+  * PaX/grsecurity.
   */
 +
-+#include <linux/compiler.h>
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 681d866efb1e..1921545c6351 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -99,22 +99,13 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-  * unique, to convince GCC not to merge duplicate inline asm statements.
-  */
- #define annotate_reachable() ({						\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.reachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("ANNOTATE_REACHABLE counter=%c0"			\
-+		     : : "i" (__COUNTER__));				\
- })
- #define annotate_unreachable() ({					\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.unreachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("ANNOTATE_UNREACHABLE counter=%c0"			\
-+		     : : "i" (__COUNTER__));				\
- })
--#define ASM_UNREACHABLE							\
--	"999:\n\t"							\
--	".pushsection .discard.unreachable\n\t"				\
--	".long 999b - .\n\t"						\
--	".popsection\n\t"
- #else
- #define annotate_reachable()
- #define annotate_unreachable()
-@@ -299,6 +290,45 @@ static inline void *offset_to_ptr(const int *off)
- 	return (void *)((unsigned long)off + *off);
- }
- 
++#ifdef __ASSEMBLY__
++
++#include <asm/asm.h>
++#include <asm/bug.h>
++
++.macro REFCOUNT_EXCEPTION counter:req
++	.pushsection .text..refcount
++111:	lea \counter, %_ASM_CX
++112:	ud2
++	ASM_UNREACHABLE
++	.popsection
++113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
++.endm
++
++/* Trigger refcount exception if refcount result is negative. */
++.macro REFCOUNT_CHECK_LT_ZERO counter:req
++	js 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++/* Trigger refcount exception if refcount result is zero or negative. */
++.macro REFCOUNT_CHECK_LE_ZERO counter:req
++	jz 111f
++	REFCOUNT_CHECK_LT_ZERO counter="\counter"
++.endm
++
++/* Trigger refcount exception unconditionally. */
++.macro REFCOUNT_ERROR counter:req
++	jmp 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
 +#else /* __ASSEMBLY__ */
 +
-+#ifdef __KERNEL__
-+#ifndef LINKER_SCRIPT
-+
-+#ifdef CONFIG_STACK_VALIDATION
-+.macro ANNOTATE_UNREACHABLE counter:req
-+\counter:
-+	.pushsection .discard.unreachable
-+	.long \counter\()b -.
-+	.popsection
-+.endm
-+
-+.macro ANNOTATE_REACHABLE counter:req
-+\counter:
-+	.pushsection .discard.reachable
-+	.long \counter\()b -.
-+	.popsection
-+.endm
-+
-+.macro ASM_UNREACHABLE
-+999:
-+	.pushsection .discard.unreachable
-+	.long 999b - .
-+	.popsection
-+.endm
-+#else /* CONFIG_STACK_VALIDATION */
-+.macro ANNOTATE_UNREACHABLE counter:req
-+.endm
-+
-+.macro ANNOTATE_REACHABLE counter:req
-+.endm
-+
-+.macro ASM_UNREACHABLE
-+.endm
-+#endif /* CONFIG_STACK_VALIDATION */
-+
-+#endif /* LINKER_SCRIPT */
-+#endif /* __KERNEL__ */
- #endif /* __ASSEMBLY__ */
+ #include <linux/refcount.h>
+ #include <asm/bug.h>
  
- #ifndef __optimize
+@@ -15,34 +50,11 @@
+  * central refcount exception. The fixup address for the exception points
+  * back to the regular execution flow in .text.
+  */
+-#define _REFCOUNT_EXCEPTION				\
+-	".pushsection .text..refcount\n"		\
+-	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+-	"112:\t" ASM_UD2 "\n"				\
+-	ASM_UNREACHABLE					\
+-	".popsection\n"					\
+-	"113:\n"					\
+-	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+-
+-/* Trigger refcount exception if refcount result is negative. */
+-#define REFCOUNT_CHECK_LT_ZERO				\
+-	"js 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+-
+-/* Trigger refcount exception if refcount result is zero or negative. */
+-#define REFCOUNT_CHECK_LE_ZERO				\
+-	"jz 111f\n\t"					\
+-	REFCOUNT_CHECK_LT_ZERO
+-
+-/* Trigger refcount exception unconditionally. */
+-#define REFCOUNT_ERROR					\
+-	"jmp 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+ 
+ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: "ir" (i)
+ 		: "cc", "cx");
+@@ -51,7 +63,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ static __always_inline void refcount_inc(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -59,7 +71,7 @@ static __always_inline void refcount_inc(refcount_t *r)
+ static __always_inline void refcount_dec(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0\n\t"
+-		REFCOUNT_CHECK_LE_ZERO
++		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -67,13 +79,15 @@ static __always_inline void refcount_dec(refcount_t *r)
+ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+-	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
++				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				  r->refs.counter, "er", i, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+-	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
++				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				 r->refs.counter, "%0", e, "cx");
+ }
+ 
+@@ -91,7 +105,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 		/* Did we try to increment from/to an undesirable state? */
+ 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+-			asm volatile(REFCOUNT_ERROR
++			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+ 				     : : [counter] "m" (r->refs.counter)
+ 				     : "cc", "cx");
+ 			break;
+@@ -107,4 +121,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+ 	return refcount_add_not_zero(1, r);
+ }
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index cee28c3246dc..f1fe1d570365 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -7,3 +7,4 @@
+  */
+ 
+ #include <linux/compiler.h>
++#include <asm/refcount.h>
