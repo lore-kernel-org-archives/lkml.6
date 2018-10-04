@@ -2,167 +2,251 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C5DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012A0C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 119DB20877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:45:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RqJzMwaz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 119DB20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A454320684
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:46:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A454320684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbeJDTis (ORCPT
+        id S1727505AbeJDTkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:38:48 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36942 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbeJDTis (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:38:48 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 185-v6so8929231wmt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 05:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=tLiabrwTuzPUxUuYWAFygrrj583OqVF22kIbu/fsv+s=;
-        b=RqJzMwaz2SLJEBrKV7ceweoT1AUUuJzKGP/jM7Kfv1B/L1Jf6xKKzEuK6SU5HQjvnX
-         0PvyPhjRLYG09d5BJcAZJPfJSb4LUJkTMQ94Xck2Jm9R7+jTSVWkuebYvR80eg8IjUUB
-         Om4JqvyJbQrBTLFORaM7IYFv2wxOaeucQUMBY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tLiabrwTuzPUxUuYWAFygrrj583OqVF22kIbu/fsv+s=;
-        b=laSWBBAQvyoxeutojC7lvrga4NttJRqubdVJBd/Tjzr3xE2vTaU4WvKECZ/Z3VW80c
-         HfUKO0aj58qgWjOTCyBR3BHk0qRD+zKs1zkxHPVaxGrDxYHeaovDZu83pDxfLNVDLxLY
-         rVI33evusxxIB6bNWePlvqyOa3pQaTO05cZDNXO8gNGquOKO2uz/LTo5eJy9FcmWzVT2
-         TEIuK6/wk+mCnacOStkd1sUBmpamn4vmAZi/nitIKWG21wV/dRJKMi7ksxh6v5Pb1Yc1
-         xROwYNxLr6WiIe02zYnQPMQ+fBBiWg5E50adaycKy6Rg5vNgveMsHGPrNYeIsx36C2ID
-         w1vQ==
-X-Gm-Message-State: ABuFfoi0qKZHO3E8VMpxPgUCHK6MNxSc3dljVQGI33Ltbv09HDCiGr+A
-        qQGwGaaFkvq2SpmyZahvXAuiug==
-X-Google-Smtp-Source: ACcGV63vfbB+QYtcT8lyzyP7PppNfET+/WSpni/M191oyfdjkv1TU02Pmvae5jkw/tjQDkKW8wy5xw==
-X-Received: by 2002:a1c:cc8:: with SMTP id 191-v6mr4489230wmm.55.1538657138260;
-        Thu, 04 Oct 2018 05:45:38 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id b5-v6sm2499585wrs.62.2018.10.04.05.45.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 05:45:37 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 13:45:35 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v2] kdb: Use strscpy with destination buffer size
-Message-ID: <20181004124535.narksjioip7zo7ha@holly.lan>
-References: <20180920125914.17920-1-prarit@redhat.com>
- <9192af58-7966-c023-8b19-5b291839a228@linaro.org>
- <78793735-c2ce-62f6-d745-5fc06a17beb1@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <78793735-c2ce-62f6-d745-5fc06a17beb1@redhat.com>
-User-Agent: NeoMutt/20180716
+        Thu, 4 Oct 2018 15:40:01 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:32902 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbeJDTkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:40:01 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 01E53BFDF8;
+        Thu,  4 Oct 2018 14:46:51 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 6E7EEC0FE9; Thu,  4 Oct 2018 14:46:51 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 58D06C0C7A;
+        Thu,  4 Oct 2018 14:46:48 +0200 (CEST)
+Message-ID: <f1fa989b372b514f0a7534057de80b0c453cc8a3.camel@paulk.fr>
+Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
+ decoder interface
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Thu, 04 Oct 2018 14:47:15 +0200
+In-Reply-To: <20181004081119.102575-1-acourbot@chromium.org>
+References: <20181004081119.102575-1-acourbot@chromium.org>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-l7yD+FRf9c6VTMlKiqgB"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 08:25:30AM -0400, Prarit Bhargava wrote:
-> On 10/02/2018 11:53 AM, Daniel Thompson wrote:
-> > On 20/09/2018 13:59, Prarit Bhargava wrote:
-> >> gcc 8.1.0 warns with:
-> >>
-> >> kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
-> >> kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound
-> >> depends on the length of the source argument [-Wstringop-overflow=]
-> >>       strncpy(prefix_name, name, strlen(name)+1);
-> >>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >> kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
-> >>
-> >> Use strscpy() with the destination buffer size, and use ellipses when
-> >> displaying truncated symbols.
-> >>
-> >> v2: Use strscpy()
-> >>
-> >> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> >> Cc: Jonathan Toppins <jtoppins@redhat.com>
-> >> Cc: Jason Wessel <jason.wessel@windriver.com>
-> >> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> >> Cc: kgdb-bugreport@lists.sourceforge.net
-> >> ---
-> >>   kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
-> >>   kernel/debug/kdb/kdb_private.h |  2 +-
-> >>   kernel/debug/kdb/kdb_support.c | 10 +++++-----
-> >>   3 files changed, 15 insertions(+), 12 deletions(-)
-> >>
-> >> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-> >> index ed5d34925ad0..6a4b41484afe 100644
-> >> --- a/kernel/debug/kdb/kdb_io.c
-> >> +++ b/kernel/debug/kdb/kdb_io.c
-> >> @@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
-> >>       int count;
-> >>       int i;
-> >>       int diag, dtab_count;
-> >> -    int key;
-> >> +    int key, buf_size, ret;
-> >>           diag = kdbgetintenv("DTABCOUNT", &dtab_count);
-> >> @@ -336,9 +336,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
-> >>           else
-> >>               p_tmp = tmpbuffer;
-> >>           len = strlen(p_tmp);
-> >> -        count = kallsyms_symbol_complete(p_tmp,
-> >> -                         sizeof(tmpbuffer) -
-> >> -                         (p_tmp - tmpbuffer));
-> >> +        buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
-> >> +        count = kallsyms_symbol_complete(p_tmp, buf_size);
-> >>           if (tab == 2 && count > 0) {
-> >>               kdb_printf("\n%d symbols are found.", count);
-> >>               if (count > dtab_count) {
-> >> @@ -350,9 +349,13 @@ static char *kdb_read(char *buffer, size_t bufsize)
-> >>               }
-> >>               kdb_printf("\n");
-> >>               for (i = 0; i < count; i++) {
-> >> -                if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
-> >> +                ret = kallsyms_symbol_next(p_tmp, i, buf_size);
-> >> +                if (WARN_ON(!ret))
-> >>                       break;
-> > I'm getting confused by having two different branches on ret.
-> > 
-> > Don't get a WARN_ON() when ret == -E2BIG?
-> > 
-> > 
-> 
-> Should we WARN on a really long symbol?  I don't think we should as we're
-> handling that by truncating the output and adding ellipses below.
 
-It's OK. You describe the behaviour I expect but I was misreading the
-code (not realizing that kallsyms_symbol_next() had not become a 0 on
-success success function).
+--=-l7yD+FRf9c6VTMlKiqgB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-However after reviewing the code (properly this time) I wonder if the
-WARN_ON() should be improved to match the return value for the function:
+Hi,
 
-  WARN_ON(ret >= 0 && ret < len)
+Here are a few minor suggestion about H.264 controls.
 
-That said, checking the symbol length is pretty paranoid and getting
-close to nitpicking so I'll leave it up to you and, with or without, the
-change:
+Le jeudi 04 octobre 2018 =C3=A0 17:11 +0900, Alexandre Courbot a =C3=A9crit=
+ :
+> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documen=
+tation/media/uapi/v4l/extended-controls.rst
+> index a9252225b63e..9d06d853d4ff 100644
+> --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> @@ -810,6 +810,31 @@ enum v4l2_mpeg_video_bitrate_mode -
+>      otherwise the decoder expects a single frame in per buffer.
+>      Applicable to the decoder, all codecs.
+> =20
+> +.. _v4l2-mpeg-h264:
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_SPS``
+> +    Instance of struct v4l2_ctrl_h264_sps, containing the SPS of to use =
+with
+> +    the next queued frame. Applicable to the H.264 stateless decoder.
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_PPS``
+> +    Instance of struct v4l2_ctrl_h264_pps, containing the PPS of to use =
+with
+> +    the next queued frame. Applicable to the H.264 stateless decoder.
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX``
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+For consistency with MPEG-2 and upcoming JPEG, I think we should call
+this "H264_QUANTIZATION".
 
+> +    Instance of struct v4l2_ctrl_h264_scaling_matrix, containing the sca=
+ling
+> +    matrix to use when decoding the next queued frame. Applicable to the=
+ H.264
+> +    stateless decoder.
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM``
 
-Daniel.
+Ditto with "H264_SLICE_PARAMS".
+
+> +    Array of struct v4l2_ctrl_h264_slice_param, containing at least as m=
+any
+> +    entries as there are slices in the corresponding ``OUTPUT`` buffer.
+> +    Applicable to the H.264 stateless decoder.
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM``
+> +    Instance of struct v4l2_ctrl_h264_decode_param, containing the high-=
+level
+> +    decoding parameters for a H.264 frame. Applicable to the H.264 state=
+less
+> +    decoder.
+
+Since we require all the macroblocks to decode one frame to be held in
+the same OUTPUT buffer, it probably doesn't make sense to keep
+DECODE_PARAM and SLICE_PARAM distinct.
+
+I would suggest merging both in "SLICE_PARAMS", similarly to what I
+have proposed for H.265: https://patchwork.kernel.org/patch/10578023/
+
+What do you think?
+
+Cheers,
+
+Paul
+
+>  ``V4L2_CID_MPEG_VIDEO_H264_VUI_SAR_ENABLE (boolean)``
+>      Enable writing sample aspect ratio in the Video Usability
+>      Information. Applicable to the H264 encoder.
+> diff --git a/Documentation/media/uapi/v4l/pixfmt-compressed.rst b/Documen=
+tation/media/uapi/v4l/pixfmt-compressed.rst
+> index a86b59f770dd..a03637fda8f9 100644
+> --- a/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> +++ b/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> @@ -35,6 +35,42 @@ Compressed Formats
+>        - ``V4L2_PIX_FMT_H264``
+>        - 'H264'
+>        - H264 video elementary stream with start codes.
+> +    * .. _V4L2-PIX-FMT-H264-SLICE:
+> +
+> +      - ``V4L2_PIX_FMT_H264_SLICE``
+> +      - 'H264'
+> +      - H264 parsed slice data, as extracted from the H264 bitstream.
+> +        This format is adapted for stateless video decoders using the M2=
+M and
+> +        Request APIs.
+> +
+> +        ``OUTPUT`` buffers must contain all the macroblock slices of a g=
+iven
+> +        frame, i.e. if a frame requires several macroblock slices to be =
+entirely
+> +        decoded, then all these slices must be provided. In addition, th=
+e
+> +        following metadata controls must be set on the request for each =
+frame:
+> +
+> +        V4L2_CID_MPEG_VIDEO_H264_SPS
+> +           Instance of struct v4l2_ctrl_h264_sps, containing the SPS of =
+to use
+> +           with the frame.
+> +
+> +        V4L2_CID_MPEG_VIDEO_H264_PPS
+> +           Instance of struct v4l2_ctrl_h264_pps, containing the PPS of =
+to use
+> +           with the frame.
+> +
+> +        V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX
+> +           Instance of struct v4l2_ctrl_h264_scaling_matrix, containing =
+the
+> +           scaling matrix to use when decoding the frame.
+> +
+> +        V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM
+> +           Array of struct v4l2_ctrl_h264_slice_param, containing at lea=
+st as
+> +           many entries as there are slices in the corresponding ``OUTPU=
+T``
+> +           buffer.
+> +
+> +        V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM
+> +           Instance of struct v4l2_ctrl_h264_decode_param, containing th=
+e
+> +           high-level decoding parameters for a H.264 frame.
+> +
+> +        See the :ref:`associated Codec Control IDs <v4l2-mpeg-h264>` for=
+ the
+> +        format of these controls.
+>      * .. _V4L2-PIX-FMT-H264-NO-SC:
+> =20
+>        - ``V4L2_PIX_FMT_H264_NO_SC``
+> @@ -67,10 +103,20 @@ Compressed Formats
+>        - MPEG-2 parsed slice data, as extracted from the MPEG-2 bitstream=
+.
+>  	This format is adapted for stateless video decoders that implement a
+>  	MPEG-2 pipeline (using the Memory to Memory and Media Request APIs).
+> -	Metadata associated with the frame to decode is required to be passed
+> -	through the ``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS`` control and
+> -	quantization matrices can optionally be specified through the
+> -	``V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION`` control.
+> +
+> +        ``OUTPUT`` buffers must contain all the macroblock slices of a g=
+iven
+> +        frame, i.e. if a frame requires several macroblock slices to be =
+entirely
+> +        decoded, then all these slices must be provided. In addition, th=
+e
+> +        following metadata controls must be set on the request for each =
+frame:
+> +
+> +        V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS
+> +          Slice parameters (one per slice) for the current frame.
+> +
+> +        Optional controls:
+> +
+> +        V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION
+> +          Quantization matrices for the current frame.
+> +
+>  	See the :ref:`associated Codec Control IDs <v4l2-mpeg-mpeg2>`.
+>  	Buffers associated with this pixel format must contain the appropriate
+>  	number of macroblocks to decode a full corresponding frame.
+
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-l7yD+FRf9c6VTMlKiqgB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlu2C9MACgkQhP3B6o/u
+lQyF8g/7BcJzpArDhXm3SdS567/6MloaMKK6coAlzMCGLKNJ5K4ncI8FxHhuPVHa
+UKRgxVFC1tHSleBRBCx35g8Nzf2TA9DTmlz/9gOP6/3jnQtznIB2kcrlGeZlKgxx
+L+gtjy3HNJwhiofw+i22e/GDRp41udey9zlZgbk95tgufovhMRy9VwUQH9mLICh2
+x/jw4tVpkinvlaksCZsKKFNIdRhSS//UTn8tvUxQ9AUAgVndTCDumzpwxAkY8YyU
+jZ1f3cqOZd998huACwzGsd4FBXmulhTAr0kHh29mQ4Nq93BvvAvebaIf1VI6jaol
+WyoihZa+MdsGZKWSIK1BYzmURqGjCcfsvG8idndwf0jhGD61FnEi8PwSmw5Ntabf
+rnojKCJFNogGrd4gBiwoOtLNUccpqFFpGB//fJxQtTz/FZDxHhUkO5LnbbwdGTlK
+b2lZQU3v4cv5Sxipkc9g/UhpU4AMujF+61H7fXAITHrfRycJCXuF9wHSenIeMDqt
+S0UbY6apLod3E7UVaK8wH9qHwI3D5qJ4KKgWeK4PyBg8j0/k/kDvkQ3497h0S0X9
+Ltpn616vZepxdlwqxp8KsTFmsBkqJMyvQ8KObUihf99FipAr9P41hZb1AqkYTgBG
+853GfpTPOIkP7v+c3atdGbJXdgL1kHrXpCvunSDuA+uN4v/qSDU=
+=1x/v
+-----END PGP SIGNATURE-----
+
+--=-l7yD+FRf9c6VTMlKiqgB--
+
