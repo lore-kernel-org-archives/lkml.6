@@ -2,141 +2,110 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31ADEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA36C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD0A620877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 687B62083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fgj/Gt4q";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W5BRbqD7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0A620877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yq0QH2fB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687B62083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbeJEBWP (ORCPT
+        id S1728103AbeJEBZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:22:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41874 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbeJEBWO (ORCPT
+        Thu, 4 Oct 2018 21:25:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40202 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeJEBZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:22:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7635E60BE8; Thu,  4 Oct 2018 18:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538677666;
-        bh=JWvSM42PiT9OEfLKlK3iMamWi3yLC4q1BdBb4WnMSR4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fgj/Gt4qO1qDrWO/j759j3N6S5nQ5psG1gC4tSFcPB1u3q5dN5v/45QKCkpKx4Ha9
-         G/KfSFPrZtiwsWPMqgIWbsD1xufZQrh/gDuZY5gaUHOMzNrgZ47f1Ahyfmn0tG/Zvk
-         adsYA/Zb12fo6Hzk9ZnwoUehzvx/irev1ODQZ33s=
-Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B50D460BE8;
-        Thu,  4 Oct 2018 18:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538677665;
-        bh=JWvSM42PiT9OEfLKlK3iMamWi3yLC4q1BdBb4WnMSR4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W5BRbqD7nM1d1SizNAaQP8xNjDuvEl9+OcrAoXCJTYjjdar9ZKnQnDRKnsGERAbVJ
-         lvR4oVVhEDWrfl+/Azo+BkxLo8AM2S10u42KPpEEJtgqV8z+em5drzxJ0GTEyMV9Sl
-         lF6ljdXJPwSFFLKllsVRexnpFwCv4WR0OBDoViPA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B50D460BE8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH v3 0/6] Add support for PDC Global on SDM845 SoCs
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        p.zabel@pengutronix.de
-Cc:     mka@chromium.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <20180829191215.10071-1-sibis@codeaurora.org>
- <20180903193647.GJ3456@tuxbook-pro>
-From:   Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <2ae729fe-321b-0918-a06c-d04e43b47101@codeaurora.org>
-Date:   Thu, 4 Oct 2018 23:57:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 21:25:20 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d2-v6so6550902wro.7;
+        Thu, 04 Oct 2018 11:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=T1mOpapRi8jQJ2qCRWXCOELE8hBhRpR4XTT5VOWFWWc=;
+        b=Yq0QH2fBRqiDeMPRJGX2nwA+0qwBS8b+yVWy6l52h+Z3P3Y6xDh6BHLnlfaW2/+gW1
+         kObC9CzKx/eX0wehuMi2fg3+hAxK2IRWFBuIJegPz3SezAV0O3JPMjNPcEoMQpRTG51d
+         +y7gNGZvTnhjnrrLd7TNLDESRQFUrab0QuEQJtoEEwenyOcOIBkVOFwfyCPLDyMN1NUd
+         ZenqCJRk/8ZLHXVMzldnzdJR3sfS7BymRUBBwFb9RaLcDp45+bjuxzK6+uA9QI2F9Yz0
+         SYRYqlCTF2rECqPK6acXXeGSXRncrq5OP1jGc/Auxmf8iO+dSdKifdfjY4oAoboTE+jV
+         YyFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=T1mOpapRi8jQJ2qCRWXCOELE8hBhRpR4XTT5VOWFWWc=;
+        b=kWTY18M1H184+/8hCLfTQ0WMSV73wthSJuITERwZ7TvRHw0qYrqPU64MlmDyqVO810
+         iT7jcZrzz2j45QPLGl24jplzhjepE4s+dqtkWOCChrptdH1/LidXec06sas6iHa78xs5
+         H6uOW77NtXrn9+eKjAygdhPb+c39emS2wNlQQyIlMshJGAoOtk+cUzoYDzSbgqt56UC1
+         dnWsFJp9EgKle2lfCDsil45BlkpJx6zLZ23Lvi++IZ4+9ziBqTefjMYSYYZHtfjFVXwI
+         0Psll0TeDGcLunEvDcGuK6JW3Hx8YvRxGFFeKlliUFcI6I2hYhdsCli7NhA1zRKV2Xpn
+         FC0g==
+X-Gm-Message-State: ABuFfogikHZbTOjVLAufWvDEztilUOjVXZWc4tJtGAcPofEJ7fw5RJwo
+        hYEqfomiDzGh6wwPcknVgvs=
+X-Google-Smtp-Source: ACcGV62rd051ATFp2YnMqIozNXITbRqh2fzJhf+hD9EqY+EJj8BnMNQuecGcwVQSQh1tVP6uU9qH2g==
+X-Received: by 2002:a5d:6a8d:: with SMTP id s13-v6mr5426096wru.44.1538677849863;
+        Thu, 04 Oct 2018 11:30:49 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm4640182wrt.76.2018.10.04.11.30.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 11:30:49 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 11:30:47 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: -Wswitch Clang warnings in drivers/scsi
+Message-ID: <20181004183047.GA1885@flashbox>
 MIME-Version: 1.0
-In-Reply-To: <20180903193647.GJ3456@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Phillip,
+Hi SCSI folks,
 
-Will the PDC driver make the cut for reset/next this time for the
-4.20rc?
+In an effort to get the kernel building warning free with Clang, we've
+come across an interesting occurrence in a few scsi drivers:
 
-On 09/04/2018 01:06 AM, Bjorn Andersson wrote:
-> On Wed 29 Aug 12:12 PDT 2018, Sibi Sankar wrote:
-> 
->> This patch series add support for PDC Global (Power Domain Controller)
->> on SDM845 SoCs and adds pdc reset lines assert/deassert to remoteproc
->> Q6v5 modem-pil. The first two patches adds PDC Global reset driver to
->> control reset signals of Modem, Compute, Display, GPU, Debug, AOP,
->> Sensors, Audio, SP and APPS. The last four patches (cleans up)/adds pdc
->> reset lines to q6v5 bindings and asserts/deasserts in modem start/stop
->> path.
->>
->> V3:
->>    refactored pdc reset driver to remove unused layer of indirection
->>    as suggested by Matthias
->>    Other minor fixes suggested by Matthias/Bjorn
->>
->> V2:
->>    Incorporated Philipp/Bjorn/Rob suggestions
->>    Renamed reset binding to pdc-global.txt
->>    replaced offset with #define of register name
->>    replaced with devm_reset_control_get_exclusive()
->>    Separted dt binding from the drivers
->>
->> Sibi Sankar (6):
->>    dt-bindings: reset: Add PDC Global binding for SDM845 SoCs
->>    reset: qcom: PDC Global (Power Domain Controller) reset controller
-> 
-> Philipp, there's no compile time dependencies between the PDC and
-> remoteproc patches in this series. Will you take these two through your
-> tree and I'll take the remaining four through the remoteproc tree?
-> 
-> Regards,
-> Bjorn
-> 
->>    dt-bindings: remoteproc: qcom: Remove additional definition tag
->>    dt-bindings: remoteproc: Add PDC reset binding for Q6V5 PIL
->>    remoteproc: qcom: q6v5-pil: Explicitly get mss_restart line
->>    remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
->>
->>   .../bindings/remoteproc/qcom,q6v5.txt         |   8 +-
->>   .../bindings/reset/qcom,pdc-global.txt        |  52 ++++++++
->>   drivers/remoteproc/qcom_q6v5_pil.c            |  31 ++++-
->>   drivers/reset/Kconfig                         |   9 ++
->>   drivers/reset/Makefile                        |   1 +
->>   drivers/reset/reset-qcom-pdc.c                | 124 ++++++++++++++++++
->>   include/dt-bindings/reset/qcom,sdm845-pdc.h   |  20 +++
->>   7 files changed, 237 insertions(+), 8 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
->>   create mode 100644 drivers/reset/reset-qcom-pdc.c
->>   create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
->>
->> -- 
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
-> 
+drivers/scsi/hpsa.c:6533:7: warning: overflow converting case value to switch condition type (2148024833 to 18446744071562609153) [-Wswitch]
+        case CCISS_GETPCIINFO:
+             ^
+./include/uapi/linux/cciss_ioctl.h:65:26: note: expanded from macro 'CCISS_GETPCIINFO'
+#define CCISS_GETPCIINFO _IOR(CCISS_IOC_MAGIC, 1, cciss_pci_info_struct)
+                         ^
+./include/uapi/asm-generic/ioctl.h:86:28: note: expanded from macro '_IOR'
+#define _IOR(type,nr,size)      _IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(size)))
+                                ^
+./include/uapi/asm-generic/ioctl.h:70:2: note: expanded from macro '_IOC'
+        (((dir)  << _IOC_DIRSHIFT) | \
+        ^
 
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I see this warning in drivers/scsi/hpsa.c and drivers/scsi/smartpqi/smartpqi_init.c
+on an arm64 allyesconfig build and it has also been reported in a couple of files in
+drivers/scsi/cxlflash.
+
+As the warning states, there is an overflow because the switch statement's value is of
+type int but the switch value is greater than INT_MAX. I did a brief sweep of the tree
+and it seems that all uses of _IOC in switch statement values either are small enough
+to fit into size int or the value is of size unsigned int.
+
+I am unsure of the implications of using a smaller _IOC value or converting all ioctls
+to expect a cmd of type unsigned int (especially since that has userspace implications)
+but I didn't see any negative ioctl commands. Some clarity and insight would be
+appreciated.
+
+Thank you for your time,
+Nathan
