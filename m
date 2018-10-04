@@ -2,73 +2,77 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E1FC00449
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAF8C00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC40213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F09721479
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 00:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1UiJINU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC40213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FAzNdVeh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F09721479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeJDHAF (ORCPT
+        id S1727206AbeJDHFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 03:00:05 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33582 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeJDHAF (ORCPT
+        Thu, 4 Oct 2018 03:05:30 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45986 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbeJDHFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 03:00:05 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y140-v6so355774wmd.0;
-        Wed, 03 Oct 2018 17:09:25 -0700 (PDT)
+        Thu, 4 Oct 2018 03:05:30 -0400
+Received: by mail-pf1-f193.google.com with SMTP id a23-v6so2431652pfi.12
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 17:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tb3R41wl20clZlH+Lc9pp7bzGmfrXUQ2YG61xEliRdA=;
-        b=X1UiJINUtJkEy9KU2UOOnwBtFVnBFj+IT5a4lAHafEfclmQQQDSKsbEY8f47ArNVV8
-         kMfA0Nw7kej4IMs1EJhs0T+s9uukXfVzJ+hK6TkycTLKhaFuoQ1sLTLb7ibg460gMc1t
-         qm5WqxdcfSrQbY6tpS9gTxzAAGOuNXybu22Xo40p+pLCfgvm2YtB7TXc+Jv0JDkOF0YH
-         4juoo/Wf3bL50mIVIGvzFLYv6bKZR9bJWS5JRx5/tm7BP1LyfkW2rnNyZNKVQlPAq8RQ
-         zG26I1aoKdWD5CP7smtzh0wv4OHy1K7lS0vN1onRhn/zgzkHvXqNOk0549SK32QAUl4K
-         k+cw==
+        bh=pew+TlToS4X8xcH8taZB7koK5NQKzPZUZeU6FAJeCtc=;
+        b=FAzNdVehXaJF0OF6K5KwFqLDUtM8w8oZZnQ1xhNV65IQEXWkdHX8kpSaLXwdSpR0ae
+         Q3xlZnct7AX1rVlS+NCXeXTYdWlsQMa2b8kj1qpH9Y3uUVabc+RwjPkuc1Xj4wkcm8oE
+         F/m9e9VOmhA1m9qMU9+Z6i1MGLCe7HMnetdSQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tb3R41wl20clZlH+Lc9pp7bzGmfrXUQ2YG61xEliRdA=;
-        b=uNwb4xGaUzTb1e02L47K7/OpSUOuHC2XteBoSHVhMV9qLu//1R2VBUDw63ED7V3K+c
-         8bQIj5RfC7nyhlgdVyXR/iKz76oQJSNCN4RmqsbwprFieOGGUAoGhDzHxc0wd0SVsKVT
-         5cz03h6clHLk3VVb5rUrYnh5gMqUyUlPd3OTmC7HODJY9hiyrxaNQ9VsriLFWD2FeEAi
-         +YFl1LbGJtrYw398JF+XMqkPJlyIJZkYW/0pr2yZsNfq6pZ656YBrxkTXxOfE1JPSB9I
-         E4gJluF3tun2TyiWj79mImrY5xd13Cv8aEJrjgpbLt8ULQhJcblJiN7y46APyuEETu7p
-         dcAQ==
-X-Gm-Message-State: ABuFfogGIxuklJefIVXjMayuwOpKQWA/ZRXF/0vqrnAIKDvj4CzBVD7P
-        MViVi4pvkJUkHnfqwEZnX18=
-X-Google-Smtp-Source: ACcGV63xu8TTBjXV2BaRIblQHCkDECUUO8cncnlHZ2Fo5Ub74NLtuoG+acEpG2cMIG9zOxmmd1wo9g==
-X-Received: by 2002:a1c:58f:: with SMTP id 137-v6mr2936557wmf.37.1538611764159;
-        Wed, 03 Oct 2018 17:09:24 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id y7-v6sm2064524wmy.27.2018.10.03.17.09.23
+        bh=pew+TlToS4X8xcH8taZB7koK5NQKzPZUZeU6FAJeCtc=;
+        b=ALF4QpIqRK7moW0c+pxAat4YFdKVD3W/tE7dwf5ICQ3yreZfl1cHBi+dfChgwlODfv
+         GODnUwILT9W9LxqpRPPQ9gQOcqfT2+A3hLvT9MyvHkUb1j9d6IGd5rhWB/xDAh2Tl/Ed
+         Bif0aVoDitqRxJKxAnGnCnsN6oP2Ma+eFjqFIkxMDJirOejxbUFPjheduFQl5pNmnSvv
+         lJRALdzS+2F2cSujgZXWgWcYhqzZDGu4fM7Jx0DereDQlP57qgBwJR+l+98p6FSno1Rj
+         7J8HrgPBBArJQv6+cd4bLjQlWfa6O9e/VCsApzsTEGRmQni2CNwGAmxiwBnivZwc4L/y
+         xT6Q==
+X-Gm-Message-State: ABuFfoiag5JPMyMD/9oPywutS27iXdRoNlY+d91u1C50/G7I6dnYpJSd
+        li+u2F6UnPTjKspIj8S57I0EWA==
+X-Google-Smtp-Source: ACcGV618mN9kEegZlkUgYDrJvsABsuzEM4e87n4Gu/Y3rlfmyI5l8LdFZ/WSiT3Xg6dijNEkplR9TQ==
+X-Received: by 2002:a62:cf04:: with SMTP id b4-v6mr4066486pfg.224.1538612090060;
+        Wed, 03 Oct 2018 17:14:50 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id b81-v6sm6497051pfm.96.2018.10.03.17.14.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 17:09:23 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] qed: Remove unneeded enumerated type core_tx_dest
-Date:   Wed,  3 Oct 2018 17:09:12 -0700
-Message-Id: <20181004000912.22242-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Wed, 03 Oct 2018 17:14:49 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v5 0/2] arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
+Date:   Wed,  3 Oct 2018 17:14:30 -0700
+Message-Id: <20181004001432.21218-1-mka@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,149 +80,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another.
+This series adds a channel for the die temperature to the QCOM SPMI
+PMIC5 ADC. It also fixes an example in the DT documentation.
 
-drivers/net/ethernet/qlogic/qed/qed_ll2.c:799:32: warning: implicit
-conversion from enumeration type 'enum core_tx_dest' to different
-enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
-                tx_pkt.tx_dest = p_ll2_conn->tx_dest;
-                               ~ ~~~~~~~~~~~~^~~~~~~
-1 warning generated.
+The die temperature is going to be used by the temperature alarm driver
+(https://lore.kernel.org/patchwork/project/lkml/list/?series=361416).
 
-These enumerated types are not 1 to 1:
+The former name of the series was "arm64: dts: qcom: pm8998: Add ADC
+node and die temperature channel"
+(https://patchwork.kernel.org/project/linux-arm-msm/list/?series=17165),
+2 of the 3 patches of this series already landed in Andy's tree, hence
+the new name.
 
-/* Light L2 TX Destination */
-enum core_tx_dest {
-    CORE_TX_DEST_NW,
-    CORE_TX_DEST_LB,
-    CORE_TX_DEST_RESERVED,
-    CORE_TX_DEST_DROP,
-    MAX_CORE_TX_DEST
-};
+Matthias Kaehlcke (2):
+  dt-bindings: iio: vadc: Update example to include unit address for
+    node 'usb-id-nopull'
+  arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
 
-enum qed_ll2_tx_dest {
-    QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the Network */
-    QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the Loopback */
-    QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
-    QED_LL2_TX_DEST_MAX
-};
+ Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 2 +-
+ arch/arm64/boot/dts/qcom/pm8998.dtsi                         | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-Fix this conversion warning by adding CORE_TX_DEST_DROP to
-qed_ll2_tx_dest and converting all values of core_tx_dest to
-the equivalent value in qed_ll2_tx_dest so that there is no
-conversion warning or functional change.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-I'm by no means married to the name of the new enum value, it could even
-be CORE_TX_DEST_DROP (didn't know if that was going to set anyone off or
-not) but this is the cleanest solution to the warning in my opinion but
-I'm open to other opinions.
-
- drivers/net/ethernet/qlogic/qed/qed_hsi.h |  9 ---------
- drivers/net/ethernet/qlogic/qed/qed_ll2.c | 16 ++++++++--------
- drivers/net/ethernet/qlogic/qed/qed_ll2.h |  2 +-
- include/linux/qed/qed_ll2_if.h            |  1 +
- 4 files changed, 10 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_hsi.h b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-index 15b4cd317f14..c2ce8428c413 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-@@ -331,15 +331,6 @@ struct core_tx_bd {
- #define CORE_TX_BD_TX_DST_SHIFT			14
- };
- 
--/* Light L2 TX Destination */
--enum core_tx_dest {
--	CORE_TX_DEST_NW,
--	CORE_TX_DEST_LB,
--	CORE_TX_DEST_RESERVED,
--	CORE_TX_DEST_DROP,
--	MAX_CORE_TX_DEST
--};
--
- /* Ramrod data for tx queue start ramrod */
- struct core_tx_start_ramrod_data {
- 	struct regpair pbl_base_addr;
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-index da13117a604a..741185a62e84 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -1345,13 +1345,13 @@ int qed_ll2_acquire_connection(void *cxt, struct qed_ll2_acquire_data *data)
- 
- 	switch (data->input.tx_dest) {
- 	case QED_LL2_TX_DEST_NW:
--		p_ll2_info->tx_dest = CORE_TX_DEST_NW;
-+		p_ll2_info->tx_dest = QED_LL2_TX_DEST_NW;
- 		break;
- 	case QED_LL2_TX_DEST_LB:
--		p_ll2_info->tx_dest = CORE_TX_DEST_LB;
-+		p_ll2_info->tx_dest = QED_LL2_TX_DEST_LB;
- 		break;
- 	case QED_LL2_TX_DEST_DROP:
--		p_ll2_info->tx_dest = CORE_TX_DEST_DROP;
-+		p_ll2_info->tx_dest = QED_LL2_TX_DEST_DROP_CORE;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -1684,7 +1684,7 @@ qed_ll2_prepare_tx_packet_set_bd(struct qed_hwfn *p_hwfn,
- 	u16 prod_idx = qed_chain_get_prod_idx(p_tx_chain);
- 	struct core_tx_bd *start_bd = NULL;
- 	enum core_roce_flavor_type roce_flavor;
--	enum core_tx_dest tx_dest;
-+	enum qed_ll2_tx_dest tx_dest;
- 	u16 bd_data = 0, frag_idx;
- 
- 	roce_flavor = (pkt->qed_roce_flavor == QED_LL2_ROCE) ? CORE_ROCE
-@@ -1692,16 +1692,16 @@ qed_ll2_prepare_tx_packet_set_bd(struct qed_hwfn *p_hwfn,
- 
- 	switch (pkt->tx_dest) {
- 	case QED_LL2_TX_DEST_NW:
--		tx_dest = CORE_TX_DEST_NW;
-+		tx_dest = QED_LL2_TX_DEST_NW;
- 		break;
- 	case QED_LL2_TX_DEST_LB:
--		tx_dest = CORE_TX_DEST_LB;
-+		tx_dest = QED_LL2_TX_DEST_LB;
- 		break;
- 	case QED_LL2_TX_DEST_DROP:
--		tx_dest = CORE_TX_DEST_DROP;
-+		tx_dest = QED_LL2_TX_DEST_DROP_CORE;
- 		break;
- 	default:
--		tx_dest = CORE_TX_DEST_LB;
-+		tx_dest = QED_LL2_TX_DEST_LB;
- 		break;
- 	}
- 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.h b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
-index 1a5c1ae01474..e676bbaf55c9 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
-@@ -119,7 +119,7 @@ struct qed_ll2_info {
- 	u8 queue_id;
- 	u8 tx_stats_id;
- 	bool b_active;
--	enum core_tx_dest tx_dest;
-+	enum qed_ll2_tx_dest tx_dest;
- 	u8 tx_stats_en;
- 	bool main_func_queue;
- 	struct qed_ll2_rx_queue rx_queue;
-diff --git a/include/linux/qed/qed_ll2_if.h b/include/linux/qed/qed_ll2_if.h
-index 5eb022953aca..1b260e73943c 100644
---- a/include/linux/qed/qed_ll2_if.h
-+++ b/include/linux/qed/qed_ll2_if.h
-@@ -65,6 +65,7 @@ enum qed_ll2_tx_dest {
- 	QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the Network */
- 	QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the Loopback */
- 	QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
-+	QED_LL2_TX_DEST_DROP_CORE, /* CORE_TX_DEST_DROP value */
- 	QED_LL2_TX_DEST_MAX
- };
- 
 -- 
-2.19.0
+2.19.0.605.g01d371f741-goog
 
