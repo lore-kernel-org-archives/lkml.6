@@ -2,93 +2,105 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9E5C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F47FC65BA7
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7F120854
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:26:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fa9rxh6S";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FWoIZS4W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7F120854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E414B2087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 22:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E414B2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbeJEFWN (ORCPT
+        id S1727456AbeJEFZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 01:22:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54102 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeJEFWM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 01:22:12 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F37F860BF7; Thu,  4 Oct 2018 22:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538692002;
-        bh=bCKBjiLJ8rNaNJYhQNqP2ZYuAhl5owxFi+wSbXrycas=;
-        h=Subject:From:To:References:Date:In-Reply-To:From;
-        b=Fa9rxh6S1//JnKBUUdUw5XZjVkjMXmVWDxUnMZkDFM70r52c/ZK39Lkj/d1kMWCNp
-         rSNQ2ON4XgUlphMnsW6/l9Qny5V8U5aQ4yYrZ+pv9XH+OdlzVXl+cyVaHpFu7yRcdu
-         KhZlkdCpFtAHiQgxpfugezo23A9lx8Gd+2jOKMfw=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EF6116076A;
-        Thu,  4 Oct 2018 22:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538692001;
-        bh=bCKBjiLJ8rNaNJYhQNqP2ZYuAhl5owxFi+wSbXrycas=;
-        h=Subject:From:To:References:Date:In-Reply-To:From;
-        b=FWoIZS4Wt0qcSFUvQYZMoHUsLZyEIGnOutasSnK906ql18MWcd37h4GuO0Oj0OoqW
-         PEDGJOTcZ2Z9Hn1S0GTVr2+WuGadcvkrIrcybSY6eEQpdyqA5K08YdneUnR8D42vfp
-         oVDW1GS5wrA1IW2MrCwbKrsu1/dFT4lPn4VEgZpY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF6116076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v4 3/3] gpiolib: Show correct direction from the beginning
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@kernel.org>, swboyd@chromium.org,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
- <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org>
-Message-ID: <da760bcf-4716-e685-1ce4-1dbc6eb7c272@codeaurora.org>
-Date:   Thu, 4 Oct 2018 16:26:40 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 5 Oct 2018 01:25:03 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:53820 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbeJEFZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 01:25:03 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1g8C7W-0003NZ-B4; Thu, 04 Oct 2018 16:29:23 -0600
+To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20181004212747.6301-1-logang@deltatee.com>
+ <20181004212747.6301-14-logang@deltatee.com>
+ <a3af4bda-0b73-c964-c7d6-5d59f0710768@grimberg.me>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <2bcc0927-83ab-1bf2-d584-aebd5274cefa@deltatee.com>
+Date:   Thu, 4 Oct 2018 16:29:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <a3af4bda-0b73-c964-c7d6-5d59f0710768@grimberg.me>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v9 13/13] nvmet: Optionally use PCI P2P memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/2/2018 9:21 AM, Jeffrey Hugo wrote:
-> On 10/2/2018 8:08 AM, Ricardo Ribalda Delgado wrote:
->> Current code assumes that the direction is input if direction_input
->> function is set.
->> This might not be the case on GPIOs with programmable direction.
->>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+
+
+On 2018-10-04 4:20 p.m., Sagi Grimberg wrote:
+>> +static inline struct device *nvmet_ns_dev(struct nvmet_ns *ns)
+>> +{
+>> +	return disk_to_dev(ns->bdev->bd_disk);
+>> +}
 > 
-> I'll try to get this series tested on QDF2400 by the end of the week. 
+> This needs to handle non bdev namespaces.
 
-1-2/3 (v3) and 3/3 (v4) still fails.  Same issue.  Attempting to access 
-config registers for GPIO 0 when the OS is not allowed to do that.
+As it's coded now the helper never gets called unless ns->bdev is not
+null. But in general, yes you are right, we should probably return NULL
+if ns->bdev is NULL.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> And this?
+> --
+> diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
+> index ef286b72d958..3d12f5f4568d 100644
+> --- a/drivers/nvme/target/fc.c
+> +++ b/drivers/nvme/target/fc.c
+> @@ -2280,6 +2280,7 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport 
+> *tgtport,
+>          fod->req.cmd = &fod->cmdiubuf.sqe;
+>          fod->req.rsp = &fod->rspiubuf.cqe;
+>          fod->req.port = tgtport->pe->port;
+> +       fod->req.p2p_client = tgtport->dev;
+> 
+>          /* clear any response payload */
+>          memset(&fod->rspiubuf, 0, sizeof(fod->rspiubuf));
+> --
+
+Sure, I guess that makes sense. I've never tried it with fc hardware but
+I assume there's no reason it wouldn't work.
+
+I'll queue these changes up for a v10.
+
+Logan
