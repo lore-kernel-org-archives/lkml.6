@@ -2,72 +2,45 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F212BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58405C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE072098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:53:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="biJlksrc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AvCOeO+6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE072098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 272B42098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:54:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272B42098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeJDQqW (ORCPT
+        id S1727953AbeJDQq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:46:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47420 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbeJDQqW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:46:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 42C0860C86; Thu,  4 Oct 2018 09:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538646833;
-        bh=alRNw4uLZ2UGbKsmh6rMlj4pOiV6ckDyOJdfMdDVDG8=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=biJlksrcOVxU3bYgiwM4gi82mtDuxL5p7QbKz9Vcm1dJyGpU468qkO9nHqh6f0wPT
-         tTMx0/0EuQcSYRtcP0R+P2I3aXwC8/tq7SQZYjGkpHydfWAWeIwkjGz8FORRS8DCER
-         NY5KP9pu+EQMn4xP2aLHNIAEkujQuBxY2GJ3UD5w=
-Received: from x230.qca.qualcomm.com (85-76-114-39-nat.elisa-mobile.fi [85.76.114.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 50C3F60C6A;
-        Thu,  4 Oct 2018 09:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538646832;
-        bh=alRNw4uLZ2UGbKsmh6rMlj4pOiV6ckDyOJdfMdDVDG8=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=AvCOeO+6M8fnp5zb42FbrWz+GgkOsx5QXw+7JjPmk1U/8lo3P66kLMVBwkA0dXViE
-         x/Rof3CCg8390/H+Zqwo7UX7Ohfn+3LiUY52tTlMov4wQ8InHO3LHuThARo9UOquR5
-         Q09fEyYYtaQD4OQ/03THco1BgWRO0T08JaqYMHBI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50C3F60C6A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Vladis Dronov <vdronov@redhat.com>
-Cc:     David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] net: arp, ipv6: handle special case of tap device
-References: <20180926093018.6646-1-vdronov@redhat.com>
-        <20180929.114023.1370133506922372520.davem@davemloft.net>
-        <1615981257.17285278.1538393552487.JavaMail.zimbra@redhat.com>
-        <20181002.222540.1948082296309410659.davem@davemloft.net>
-        <2058134821.17788321.1538573112620.JavaMail.zimbra@redhat.com>
-Date:   Thu, 04 Oct 2018 12:53:46 +0300
-In-Reply-To: <2058134821.17788321.1538573112620.JavaMail.zimbra@redhat.com>
-        (Vladis Dronov's message of "Wed, 3 Oct 2018 09:25:12 -0400 (EDT)")
-Message-ID: <87muru2g2d.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 4 Oct 2018 12:46:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33636 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727557AbeJDQq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:46:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9F3C7A9;
+        Thu,  4 Oct 2018 02:53:59 -0700 (PDT)
+Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55A6B3F5D3;
+        Thu,  4 Oct 2018 02:53:59 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Lukas Braun <koomi@moshbit.net>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Ralph Palutke <ralph.palutke@fau.de>
+Subject: Re: [PATCH v2] KVM: arm/arm64: Check memslot bounds before mapping hugepages
+References: <20180926151135.16083-1-koomi@moshbit.net>
+Date:   Thu, 04 Oct 2018 10:53:57 +0100
+In-Reply-To: <20180926151135.16083-1-koomi@moshbit.net> (Lukas Braun's message
+        of "Wed, 26 Sep 2018 17:11:35 +0200")
+Message-ID: <87ftxmhway.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,34 +48,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vladis Dronov <vdronov@redhat.com> writes:
+Hi Lukas,
 
->> From: "David Miller" <davem@davemloft.net>
->> Sent: Wednesday, October 3, 2018 7:25:40 AM
->>
->> > Probably, this functionality is already used by some userspace, so I
->> > believe, I cannot just remove TUNSETLINK ioctl.
->> 
->> Who uses it, how do they use it, and what do they sanely expect about
->> the link layer header properties of a tap device which has had ->type
->> changed?
->
-> Honestly, I have no idea. I was working on a syzkaller bug report and
-> found that the reason for that bug was TUNSETLINK ioctl.
->
-> This ioctl was introduced 13 years ago with ff4cc3ac93e1d and it says:
->
->> For use with
->> wireless and other networking types it should be possible to set the
->> ARP type via an ioctl.
->
-> , that's all. Let me try to prepare a patch that sets dev->addr_len and
-> dev->broadcast according to dev->type. I would probably need an advise
-> what other fields must be adjusted too.
->
-> Otherwise, we can just to remove the TUNSETLINK ioctl.
+Lukas Braun <koomi@moshbit.net> writes:
 
-Let's add linux-wireless in case someone there knows about the ioctl.
+> Userspace can create a memslot with memory backed by (transparent)
+> hugepages, but with bounds that do not align with hugepages.
+> In that case, we cannot map the entire region in the guest as hugepages
+> without exposing additional host memory to the guest and potentially
+> interfering with other memslots.
+> Consequently, this patch adds a bounds check when populating guest page
+> tables and forces the creation of regular PTEs if mapping an entire
+> hugepage would violate the memslots bounds.
+>
+> Signed-off-by: Lukas Braun <koomi@moshbit.net>
+> ---
+>
+> Hi everyone,
+>
+> for v2, in addition to writing the condition the way Marc suggested, I
+> moved the whole check so it also catches the problem when the hugepage
+> was allocated explicitly, not only for THPs.
 
--- 
-Kalle Valo
+Ok, that makes sense. Memslot bounds could exceed for hugetlbfs pages as
+well.
+
+> The second line is quite long, but splitting it up would make things
+> rather ugly IMO, so I left it as it is.
+
+Let's try to do better - user_mem_abort() is quite hard to follow as it
+is.
+
+>
+>
+> Regards,
+> Lukas
+>
+>
+>  virt/kvm/arm/mmu.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index ed162a6c57c5..ba77339e23ec 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1500,7 +1500,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  		return -EFAULT;
+>  	}
+>  
+> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+> +	if ((fault_ipa & S2_PMD_MASK) < (memslot->base_gfn << PAGE_SHIFT) ||
+> +	    ALIGN(fault_ipa, S2_PMD_SIZE) >= ((memslot->base_gfn + memslot->npages) << PAGE_SHIFT)) {
+> +		/* PMD entry would map something outside of the memslot */
+> +		force_pte = true;
+> +	} else if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+>  		hugetlb = true;
+>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>  	} else {
+
+For the purpose of this fix, using a helper to check whether the mapping
+fits in the memslot makes things clearer (imo) (untested patch below) -
+
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index ed162a6c57c5..8bca141eb45e 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1466,6 +1466,18 @@ static void kvm_send_hwpoison_signal(unsigned long address,
+        send_sig_info(SIGBUS, &info, current);
+ }
+ 
++static bool mapping_in_memslot(struct kvm_memory_slot *memslot,
++                        phys_addr_t fault_ipa, unsigned long mapping_size)
++{
++ gfn_t start_gfn = (fault_ipa & ~(mapping_size - 1)) >> PAGE_SHIFT;
++ gfn_t end_gfn = ALIGN(fault_ipa, mapping_size) >> PAGE_SHIFT;
++
++ WARN_ON(!is_power_of_2(mapping_size));
++
++ return memslot->base_gfn <= start_gfn &&
++         end_gfn < memslot->base_gfn + memslot->npages;
++}
++
+ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+                          struct kvm_memory_slot *memslot, unsigned long hva,
+                          unsigned long fault_status)
+@@ -1480,7 +1492,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+        kvm_pfn_t pfn;
+        pgprot_t mem_type = PAGE_S2;
+        bool logging_active = memslot_is_logging(memslot);
+-   unsigned long flags = 0;
++ unsigned long vma_pagesize, flags = 0;
+ 
+        write_fault = kvm_is_write_fault(vcpu);
+        exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+@@ -1500,7 +1512,15 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+                return -EFAULT;
+        }
+ 
+-   if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
++ vma_pagesize = vma_kernel_pagesize(vma);
++ /* Is the mapping contained in the memslot? */
++ if (!mapping_in_memslot(memslot, fault_ipa, vma_pagesize)) {
++         /* memslot should be aligned to page size */
++         vma_pagesize = PAGE_SIZE;
++         force_pte = true;
++ }
++
++ if (vma_pagesize == PMD_SIZE && !logging_active) {
+                hugetlb = true;
+                gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+        } else {
+
+Thoughts?
