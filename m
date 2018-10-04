@@ -2,72 +2,65 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B53C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 612D8C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CAA62064E
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:29:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CAA62064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 08AA42098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:29:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AA42098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeJDRWP (ORCPT
+        id S1727600AbeJDRWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 13:22:15 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34687 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727030AbeJDRWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:22:15 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A122FE9E7858F;
-        Thu,  4 Oct 2018 18:29:34 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Thu, 4 Oct 2018
- 18:29:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <james.smart@broadcom.com>, <dick.kennedy@broadcom.com>,
-        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] scsi: lpfc: use correct maxch in lpfc_debugfs_nvmestat_data
-Date:   Thu, 4 Oct 2018 18:29:09 +0800
-Message-ID: <20181004102909.12308-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 4 Oct 2018 13:22:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60787 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727030AbeJDRWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 13:22:20 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5D577209D6; Thu,  4 Oct 2018 12:29:40 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 32D8B207F3;
+        Thu,  4 Oct 2018 12:29:30 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 12:29:30 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] rtc: cmos: Fix non-ACPI (non-x86) platform support
+Message-ID: <20181004102930.GQ4088@piout.net>
+References: <alpine.LFD.2.21.1810020122330.20762@eddie.linux-mips.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.21.1810020122330.20762@eddie.linux-mips.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'maxch' should be used rather than 'phba->cfg_nvme_io_channel'
+On 02/10/2018 02:08:37+0100, Maciej W. Rozycki wrote:
+> Hi,
+> 
+>  This mini patch series fixes issues introduced recently for non-ACPI 
+> platforms using `rtc-cmos'.  Please see individual change descriptions for 
+> details.
+> 
+>  These have been run-time verified with the DECstation (arch/mips/dec).  
+> Please apply.
+> 
 
-Fixes:66a210ffb877 ("scsi: lpfc: Add per io channel NVME IO statistics")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/lpfc/lpfc_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Both applied, thanks!
 
-diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-index aec5b10..fe1ec0e 100644
---- a/drivers/scsi/lpfc/lpfc_debugfs.c
-+++ b/drivers/scsi/lpfc/lpfc_debugfs.c
-@@ -923,7 +923,7 @@ lpfc_debugfs_nvmestat_data(struct lpfc_vport *vport, char *buf, int size)
- 			maxch = 32;
- 		totin = 0;
- 		totout = 0;
--		for (i = 0; i < phba->cfg_nvme_io_channel; i++) {
-+		for (i = 0; i < maxch; i++) {
- 			cstat = &lport->cstat[i];
- 			tot = atomic_read(&cstat->fc4NvmeIoCmpls);
- 			totin += tot;
+>   Maciej
+
 -- 
-2.7.0
-
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
