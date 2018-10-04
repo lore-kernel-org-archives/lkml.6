@@ -5,76 +5,91 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA68CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF1C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83EB42083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:08:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83EB42083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id B19EE2083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:09:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19EE2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbeJEDD1 (ORCPT
+        id S1727771AbeJEDD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:03:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45287 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbeJEDD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:03:26 -0400
-Received: from hanvin-mobl2.amr.corp.intel.com (jfdmzpr05-ext.jf.intel.com [134.134.139.74])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w94K8PTg2869502
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 4 Oct 2018 13:08:26 -0700
-Subject: Re: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
-To:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181003213100.189959-5-namit@vmware.com> <20181004075755.GA3353@gmail.com>
- <20181004083333.GA9802@gmail.com>
- <10D29A50-C352-4407-A824-0C3C06CD8592@zytor.com>
- <A5DED74C-A95A-48D8-AF68-39E23696385F@vmware.com>
- <36D6F606-6922-4057-B1F8-2B30993962AE@zytor.com>
- <20181004091651.GB21151@gmail.com>
- <df1bddc1-e71b-dbd8-a24f-01a46d462a79@zytor.com>
- <C521E791-673E-4256-9B94-243A72ACF1E7@vmware.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <b66a2657-6ad0-6126-f308-be8d70f714c1@zytor.com>
-Date:   Thu, 4 Oct 2018 13:08:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <C521E791-673E-4256-9B94-243A72ACF1E7@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 4 Oct 2018 23:03:58 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40311 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727444AbeJEDD6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 23:03:58 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s5-v6so3910147pfj.7;
+        Thu, 04 Oct 2018 13:09:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=828Vwuzv9z3xgzCoJykZprfmqgh9ENoEERPPFWqIA88=;
+        b=sC+K/R79ebCjQs1FlbvNyHWYWORnCiEqnMpiRDNkSLDD/J+v23FP3tanVrM+7xNy9u
+         jyTqEkUT8DFz9FtCi+rcV7SIEQnIEzLa7pOxsbdqaURIkqdXA+hQJCaEs24ZbAd7i88S
+         qoGoTF/v1wP3XU3MPzAXiSUYWkniwOq9xpMmCUl+XN5jQaHbIzJN4mqye28Wx1lhTlp9
+         wN2F6If9lfAuyK5ZWoVY72pKWV80mY2moiEYdfpPcMHNzbypYkdb4QeceKoTLztWSzCb
+         +mR2gWZMMtYHzrHmP/MIoEYyPvuwxnCFqnz77DVDh5LQjecMbN+2SauYHeP36A9XgqT6
+         wfyw==
+X-Gm-Message-State: ABuFfohK9lWiv8FCmJJDslkNd79QgAbHsR4F4/E9pOJsDBWljgF+oKyk
+        C/bhfLwU/fWrR6vUqTFzMLg=
+X-Google-Smtp-Source: ACcGV61Vq4XTm3LXEYO745k0tJvU832P7ap507Ytw0xN6WPnjTo/IN8ag6pTgrfQXruVhiJOImRSqg==
+X-Received: by 2002:a62:1095:: with SMTP id 21-v6mr8257039pfq.227.1538683748430;
+        Thu, 04 Oct 2018 13:09:08 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id w127-v6sm7843726pfd.112.2018.10.04.13.09.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 13:09:07 -0700 (PDT)
+Message-ID: <1538683746.230807.9.camel@acm.org>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
+        Mel Gorman <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Thu, 04 Oct 2018 13:09:06 -0700
+In-Reply-To: <20181004202553.71c2599c@alans-desktop>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+         <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+         <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+         <1538582091.205649.20.camel@acm.org>
+         <20181004202553.71c2599c@alans-desktop>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/18 13:05, Nadav Amit wrote:
-> 
-> Funny. Immediate-patching is what I was playing with when I encountered the
-> gcc issue. Performance got worse instead of improving (or at least staying
-> the same), because inlining got crazy.
-> 
-> Anyhow, wait for my soon-to-be-sent RFC in which I define a macro called
-> “call” (to reduce the retpoline overhead) before you talk about damage to
-> the eyes.
-> 
+On Thu, 2018-10-04 at 20:25 +-0100, Alan Cox wrote:
++AD4 +AD4 I agree with Jens that it's best to leave it to the Linux distributors to
++AD4 +AD4 select a default I/O scheduler.
++AD4 
++AD4 That assumes such a thing exists. The kernel knows what devices it is
++AD4 dealing with. The kernel 'default' ought to be 'whatever is usually best
++AD4 for this device'. A distro cannot just pick a correct single default
++AD4 because NVME and USB sticks are both normal and rather different in needs.
 
-Doing it well is *hard*, as I discovered.  The actual patch is much,
-much, larger.
+Which I/O scheduler works best also depends which workload the user will run.
+BFQ has significant advantages for interactive workloads like video replay
+with concurrent background I/O but probably slows down kernel builds. That's
+why I'm not sure whether the kernel should select the default I/O scheduler.
 
-	-hpa
-
-
+Bart.
