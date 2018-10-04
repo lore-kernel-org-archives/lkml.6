@@ -2,85 +2,114 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81725C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 911D3C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48AFF206B2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:24:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48AFF206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=green-communications.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4EEF0206B2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:26:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EEF0206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeJDXSb (ORCPT
+        id S1727639AbeJDXUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:18:31 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:60435 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbeJDXSb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:18:31 -0400
-Received: from evilbit.green-communications.fr ([92.154.77.116]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.184]) with ESMTPSA (Nemesis)
- id 1MplsZ-1fN9cJ1Y57-00qCmk; Thu, 04 Oct 2018 18:23:58 +0200
-Received: from evilbit.green-communications.fr ([92.154.77.116]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.184]) with ESMTPSA (Nemesis)
- id 1MplsZ-1fN9cJ1Y57-00qCmk; Thu, 04 Oct 2018 18:23:58 +0200
-From:   Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC UGLY 2/2] arm: Re-enable interrupts after shutting down non-boot CPUs.
-Date:   Thu,  4 Oct 2018 18:23:39 +0200
-Message-Id: <20181004162339.19493-3-nicolas.cavallari@green-communications.fr>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181004162339.19493-1-nicolas.cavallari@green-communications.fr>
-References: <20181004162339.19493-1-nicolas.cavallari@green-communications.fr>
+        Thu, 4 Oct 2018 19:20:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:61092 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727415AbeJDXUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:20:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 09:26:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,340,1534834800"; 
+   d="scan'208";a="97435716"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2018 09:26:02 -0700
+Subject: Re: [PATCH i2c-next v5 2/5] i2c: Add support for 'timeout-ms' and
+ '#retries' OF properties
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20181003223107.16133-1-jae.hyun.yoo@linux.intel.com>
+ <20181003223107.16133-3-jae.hyun.yoo@linux.intel.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <1832adbf-fa95-ccfc-00e5-63568059bcd1@linux.intel.com>
+Date:   Thu, 4 Oct 2018 09:26:02 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:J2JJBOXLdWMTs9GeNXaIdK09iynujUFT7O/BQ0rcpZcevf/zkBd
- UPTpP4CYXjzE5Fxhg0DOKrkos6gywaJWj30LtLiomZRiGcWy1v9mOiGEHT0hkGZnNKWjLlL
- uXHBMdPAhDR6DG+8r7Hg3veElYti3tcp+nNHFkkjX6FaP3byrQzjWTV+z5tMjO05gwyp8hB
- CH2eBRDIZTcto1Rmno2Sw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eee4qCK3uFs=:2xKKoZlHsAFg8KRt33XJg0
- kEMZxQ/eKOfjjmeNSkzn4zviSnXhbyTZeikZDPtrkuV2466t0E88l0DqOZUdySiNMuxCzd8/t
- 7JXyaBK5mY7u7MuuihhNtGLAK+CzuDkACMQHWGnkwwLGuzbQh1gaycYTXGvH1zBPlft12rS/B
- R4R/T+f18BK2q79NQ1VEEhNbOT6AT0jQcw2KMmBLiGvM2Vm+QXmHpgMYJ0rwpr4n10BndGQe2
- ozqatkiGkVUHB0+IhTteyD2Qp9Y+nZqqaW7SbwQUXtO4G3WKHV0jchVsn3uKypHMvZoVfNJFy
- 9OYKlYhYNVFsdAR8adT2vsas73PuivD6688kEl5hYOY/y6aUoBTuXGTBfJW/e5D15bz1r3qAb
- Mv7b9By9jMKhg4CasjV2fIIOCNgfKkYGTYPWr2VO8Ep+j48qUET2vXm5rMhQWnywm7gE7sRRN
- eSQnHcVGfYbv9zt+KSREfspZeA7OHxpcceDYH1NMuhytU6ay7Kui9HsW9Tblav4+Ta0dDXUyf
- rOy2M5jr1ZoGkUgqvLtVD90/8Kp2+d1gBN6qMCFUOaf2nVJW7wQmTqj1pXnPp0z5UI/tyy3Cg
- V40R41KpNAOOFLI1r+XroPnqROMKF5dy3EzFn9FwGe/uvjqYj9c83XNeZbibcZ+lvl2ttR8Ns
- 8O000r516DASE1JD7+h2gehJpMdskYl54uLLUNBrWevtR+mmvowMMv5Z6AsCRxPnR+LQ=
+In-Reply-To: <20181003223107.16133-3-jae.hyun.yoo@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some system power controller are behind bus like i2c, whose
-controller driver requires interrupts to work.
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -1214,6 +1214,7 @@ EXPORT_SYMBOL_GPL(i2c_handle_smbus_host_notify);
+>   static int i2c_register_adapter(struct i2c_adapter *adap)
+>   {
+>   	int res = -EINVAL;
+> +	u32 timeout_ms;
 
-Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
----
- arch/arm/kernel/reboot.c | 1 +
- 1 file changed, 1 insertion(+)
+Will change it to:
 
-diff --git a/arch/arm/kernel/reboot.c b/arch/arm/kernel/reboot.c
-index 3b2aa9a9fe26..2773068c0d67 100644
---- a/arch/arm/kernel/reboot.c
-+++ b/arch/arm/kernel/reboot.c
-@@ -140,6 +140,7 @@ void machine_restart(char *cmd)
- {
- 	local_irq_disable();
- 	smp_send_stop();
-+	local_irq_enable();
- 
- 	if (arm_pm_restart)
- 		arm_pm_restart(reboot_mode, cmd);
--- 
-2.19.0
+u32 timeout_ms = 0;
 
+>   
+>   	/* Can't register until after driver model init */
+>   	if (WARN_ON(!is_registered)) {
+> @@ -1239,8 +1240,21 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+>   	INIT_LIST_HEAD(&adap->userspace_clients);
+>   
+>   	/* Set default timeout to 1 second if not already set */
+> -	if (adap->timeout == 0)
+> -		adap->timeout = HZ;
+> +	if (adap->timeout == 0) {
+> +		if (adap->dev.of_node)
+> +			res = of_property_read_u32(adap->dev.of_node,
+> +						   "timeout-ms",
+> +						   &timeout_ms);
+> +		if (res)
+> +			timeout_ms = 0;
+> +
+
+Also, it should be:
+
+if (adap->dev.of_node)
+	of_property_read_u32(adap->dev.of_node, "timeout-ms",
+			     &timeout_ms);
+
+Will submit a new patch set.
+
+Thanks,
+Jae
+
+> +		adap->timeout = timeout_ms ? msecs_to_jiffies(timeout_ms) : HZ;
+> +	}
+> +
+> +	/* Set retries value if it has the OF property */
+> +	if (adap->dev.of_node)
+> +		of_property_read_u32(adap->dev.of_node, "#retries",
+> +				     &adap->retries);
+>   
+>   	/* register soft irqs for Host Notify */
+>   	res = i2c_setup_host_notify_irq_domain(adap);
+> 
