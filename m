@@ -2,230 +2,160 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232F6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77932C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D476F2083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:43:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D476F2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 329152083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 16:43:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329152083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeJDXhU (ORCPT
+        id S1727807AbeJDXh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 19:37:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40068 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727526AbeJDXhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:37:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B22917A9;
-        Thu,  4 Oct 2018 09:43:15 -0700 (PDT)
-Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AFEE3F5B3;
-        Thu,  4 Oct 2018 09:43:12 -0700 (PDT)
-Date:   Thu, 4 Oct 2018 17:43:56 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc:     robin.murphy@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        guohanjun@huawei.com, john.garry@huawei.com, pabba@codeaurora.org,
-        vkilari@codeaurora.org, rruigrok@codeaurora.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        neil.m.leeder@gmail.com
-Subject: Re: [PATCH v3 1/3] acpi: arm64: add iort support for PMCG
-Message-ID: <20181004164356.GA16278@red-moon>
-References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
- <20180921150803.25444-2-shameerali.kolothum.thodi@huawei.com>
+        Thu, 4 Oct 2018 19:37:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39554 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727526AbeJDXh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 19:37:57 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C1588723D9;
+        Thu,  4 Oct 2018 16:43:52 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-3.gru2.redhat.com [10.97.112.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 77B2D9E8C9;
+        Thu,  4 Oct 2018 16:43:51 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id DEDEB105143;
+        Thu,  4 Oct 2018 13:37:17 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id w94Gb6hF028089;
+        Thu, 4 Oct 2018 13:37:06 -0300
+Date:   Thu, 4 Oct 2018 13:37:05 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI
+ support
+Message-ID: <20181004163705.GA25129@amt.cnet>
+References: <20180914125006.349747096@linutronix.de>
+ <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
+ <20181003190026.GB21381@amt.cnet>
+ <CALCETrXwEDGNry=9KKvWyc7Eot3eEDifkJ234igDLrea2mVfuA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180921150803.25444-2-shameerali.kolothum.thodi@huawei.com>
+In-Reply-To: <CALCETrXwEDGNry=9KKvWyc7Eot3eEDifkJ234igDLrea2mVfuA@mail.gmail.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 04 Oct 2018 16:43:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 04:08:01PM +0100, Shameer Kolothum wrote:
-> From: Neil Leeder <nleeder@codeaurora.org>
+On Wed, Oct 03, 2018 at 03:32:08PM -0700, Andy Lutomirski wrote:
+> On Wed, Oct 3, 2018 at 12:01 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> >
+> > On Tue, Oct 02, 2018 at 10:15:49PM -0700, Andy Lutomirski wrote:
+> > > Hi Vitaly, Paolo, Radim, etc.,
+> > >
+> > > On Fri, Sep 14, 2018 at 5:52 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > >
+> > > > Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
+> > > > implementation, which extended the clockid switch case and added yet
+> > > > another slightly different copy of the same code.
+> > > >
+> > > > Especially the extended switch case is problematic as the compiler tends to
+> > > > generate a jump table which then requires to use retpolines. If jump tables
+> > > > are disabled it adds yet another conditional to the existing maze.
+> > > >
+> > > > This series takes a different approach by consolidating the almost
+> > > > identical functions into one implementation for high resolution clocks and
+> > > > one for the coarse grained clock ids by storing the base data for each
+> > > > clock id in an array which is indexed by the clock id.
+> > > >
+> > >
+> > > I was trying to understand more of the implications of this patch
+> > > series, and I was again reminded that there is an entire extra copy of
+> > > the vclock reading code in arch/x86/kvm/x86.c.  And the purpose of
+> > > that code is very, very opaque.
+> > >
+> > > Can one of you explain what the code is even doing?  From a couple of
+> > > attempts to read through it, it's a whole bunch of
+> > > probably-extremely-buggy code that,
+> >
+> > Yes, probably.
+> >
+> > > drumroll please, tries to atomically read the TSC value and the time.  And decide whether the
+> > > result is "based on the TSC".
+> >
+> > I think "based on the TSC" refers to whether TSC clocksource is being
+> > used.
+> >
+> > > And then synthesizes a TSC-to-ns
+> > > multiplier and shift, based on *something other than the actual
+> > > multiply and shift used*.
+> > >
+> > > IOW, unless I'm totally misunderstanding it, the code digs into the
+> > > private arch clocksource data intended for the vDSO, uses a poorly
+> > > maintained copy of the vDSO code to read the time (instead of doing
+> > > the sane thing and using the kernel interfaces for this), and
+> > > propagates a totally made up copy to the guest.
+> >
+> > I posted kernel interfaces for this, and it was suggested to
+> > instead write a "in-kernel user of pvclock data".
+> >
+> > If you can get kernel interfaces to replace that, go for it. I prefer
+> > kernel interfaces as well.
+> >
+> > >  And gets it entirely
+> > > wrong when doing nested virt, since, unless there's some secret in
+> > > this maze, it doesn't acutlaly use the scaling factor from the host
+> > > when it tells the guest what to do.
+> > >
+> > > I am really, seriously tempted to send a patch to simply delete all
+> > > this code.
+> >
+> > If your patch which deletes the code gets the necessary features right,
+> > sure, go for it.
+> >
+> > > The correct way to do it is to hook
+> >
+> > Can you expand on the correct way to do it?
+> >
+> > > And I don't see how it's even possible to pass kvmclock correctly to
+> > > the L2 guest when L0 is hyperv.  KVM could pass *hyperv's* clock, but
+> > > L1 isn't notified when the data structure changes, so how the heck is
+> > > it supposed to update the kvmclock structure?
+> >
+> > I don't parse your question.
 > 
-> Add support for the SMMU Performance Monitor Counter Group
-> information from ACPI. This is in preparation for its use
-> in the SMMUv3 PMU driver.
-> 
-> Signed-off-by: Neil Leeder <nleeder@codeaurora.org>
-> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
->  drivers/acpi/arm64/iort.c | 78 +++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 66 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index 08f26db..b979c86 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -356,7 +356,8 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
->  	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
->  		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
->  		    node->type == ACPI_IORT_NODE_PCI_ROOT_COMPLEX ||
-> -		    node->type == ACPI_IORT_NODE_SMMU_V3) {
-> +		    node->type == ACPI_IORT_NODE_SMMU_V3 ||
-> +		    node->type == ACPI_IORT_NODE_PMCG) {
->  			*id_out = map->output_base;
->  			return parent;
->  		}
-> @@ -394,6 +395,8 @@ static int iort_get_id_mapping_index(struct acpi_iort_node *node)
->  		}
->  
->  		return smmu->id_mapping_index;
-> +	case ACPI_IORT_NODE_PMCG:
-> +		return 0;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1309,6 +1312,50 @@ static bool __init arm_smmu_is_coherent(struct acpi_iort_node *node)
->  	return smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK;
->  }
->  
-> +static void __init arm_smmu_common_dma_configure(struct device *dev,
-> +						enum dev_dma_attr attr)
-> +{
-> +	/* We expect the dma masks to be equivalent for all SMMUs set-ups */
-> +	dev->dma_mask = &dev->coherent_dma_mask;
-> +
-> +	/* Configure DMA for the page table walker */
-> +	acpi_dma_configure(dev, attr);
-> +}
+> Let me ask it more intelligently: when the "reenlightenment" IRQ
+> happens, what tells KVM to do its own update for its guests?
 
-It looks like we can't get rid of this acpi_dma_configure() call
-given that the platform device we create has no ACPI companion
-(and I am not looking forward to fabricating one to make the
-code homogeneous :)).
+Update of what, and why it needs to update anything from IRQ? 
 
-Still, having two methods per IORT node type (dev_is_coherent() and
-dev_dma_configure()) does not make much sense, we can merge it into one
-I think.
+The update i can think of is from host kernel clocksource, 
+which there is a notifier for.
 
-Thanks,
-Lorenzo
 
-> +static int __init arm_smmu_v3_pmcg_count_resources(struct acpi_iort_node *node)
-> +{
-> +	struct acpi_iort_pmcg *pmcg;
-> +
-> +	/* Retrieve PMCG specific data */
-> +	pmcg = (struct acpi_iort_pmcg *)node->node_data;
-> +
-> +	/*
-> +	 * There are always 2 memory resources.
-> +	 * If the overflow_gsiv is present then add that for a total of 3.
-> +	 */
-> +	return pmcg->overflow_gsiv ? 3 : 2;
-> +}
-> +
-> +static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
-> +					       struct acpi_iort_node *node)
-> +{
-> +	struct acpi_iort_pmcg *pmcg;
-> +
-> +	/* Retrieve PMCG specific data */
-> +	pmcg = (struct acpi_iort_pmcg *)node->node_data;
-> +
-> +	res[0].start = pmcg->page0_base_address;
-> +	res[0].end = pmcg->page0_base_address + SZ_4K - 1;
-> +	res[0].flags = IORESOURCE_MEM;
-> +	res[1].start = pmcg->page1_base_address;
-> +	res[1].end = pmcg->page1_base_address + SZ_4K - 1;
-> +	res[1].flags = IORESOURCE_MEM;
-> +
-> +	if (pmcg->overflow_gsiv)
-> +		acpi_iort_register_irq(pmcg->overflow_gsiv, "overflow",
-> +				       ACPI_EDGE_SENSITIVE, &res[2]);
-> +}
-> +
->  struct iort_dev_config {
->  	const char *name;
->  	int (*dev_init)(struct acpi_iort_node *node);
-> @@ -1318,6 +1365,8 @@ struct iort_dev_config {
->  				     struct acpi_iort_node *node);
->  	void (*dev_set_proximity)(struct device *dev,
->  				    struct acpi_iort_node *node);
-> +	void (*dev_dma_configure)(struct device *dev,
-> +					enum dev_dma_attr attr);
->  };
->  
->  static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
-> @@ -1326,23 +1375,34 @@ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
->  	.dev_count_resources = arm_smmu_v3_count_resources,
->  	.dev_init_resources = arm_smmu_v3_init_resources,
->  	.dev_set_proximity = arm_smmu_v3_set_proximity,
-> +	.dev_dma_configure = arm_smmu_common_dma_configure,
->  };
->  
->  static const struct iort_dev_config iort_arm_smmu_cfg __initconst = {
->  	.name = "arm-smmu",
->  	.dev_is_coherent = arm_smmu_is_coherent,
->  	.dev_count_resources = arm_smmu_count_resources,
-> -	.dev_init_resources = arm_smmu_init_resources
-> +	.dev_init_resources = arm_smmu_init_resources,
-> +	.dev_dma_configure = arm_smmu_common_dma_configure,
-> +};
-> +
-> +static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
-> +	.name = "arm-smmu-v3-pmu",
-> +	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
-> +	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
->  };
->  
->  static __init const struct iort_dev_config *iort_get_dev_cfg(
->  			struct acpi_iort_node *node)
->  {
-> +
->  	switch (node->type) {
->  	case ACPI_IORT_NODE_SMMU_V3:
->  		return &iort_arm_smmu_v3_cfg;
->  	case ACPI_IORT_NODE_SMMU:
->  		return &iort_arm_smmu_cfg;
-> +	case ACPI_IORT_NODE_PMCG:
-> +		return &iort_arm_smmu_v3_pmcg_cfg;
->  	default:
->  		return NULL;
->  	}
-> @@ -1398,12 +1458,6 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
->  	if (ret)
->  		goto dev_put;
->  
-> -	/*
-> -	 * We expect the dma masks to be equivalent for
-> -	 * all SMMUs set-ups
-> -	 */
-> -	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-> -
->  	fwnode = iort_get_fwnode(node);
->  
->  	if (!fwnode) {
-> @@ -1413,11 +1467,11 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
->  
->  	pdev->dev.fwnode = fwnode;
->  
-> -	attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
-> +	if (ops->dev_dma_configure) {
-> +		attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
->  			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
-> -
-> -	/* Configure DMA for the page table walker */
-> -	acpi_dma_configure(&pdev->dev, attr);
-> +		ops->dev_dma_configure(&pdev->dev, attr);
-> +	}
->  
->  	iort_set_device_domain(&pdev->dev, node);
->  
-> -- 
-> 2.7.4
-> 
-> 
