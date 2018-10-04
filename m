@@ -2,148 +2,200 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBE2C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 039F1C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 127FA2082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:27:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RT/zZoID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 127FA2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id B2C7721470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:27:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C7721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeJDUUT (ORCPT
+        id S1727765AbeJDUVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:20:19 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56490 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbeJDUUT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:20:19 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w94DQtUd034144;
-        Thu, 4 Oct 2018 08:26:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538659615;
-        bh=GDXwjCNTID0IvHwglAz4GPWyhAy/bhG7BIv1S2DstWY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RT/zZoIDEF99NOoaU1fkbXFyldhN/RA2pDLXbJ4U0oUELy3uwD+wmZYH6Iau9KQvF
-         c1bGqSdRXediSsfHgb671KzJVJxYmwoXBSVoCySPwzxJqzJmP9iutumWFzO1ygNsXP
-         ndUn+XiGj4OlchhsRAtyD0XU2m5czWtVxtAYX99A=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94DQtBp004948;
-        Thu, 4 Oct 2018 08:26:55 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 4 Oct
- 2018 08:26:55 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 4 Oct 2018 08:26:55 -0500
-Received: from [172.22.163.235] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w94DQtQq008161;
-        Thu, 4 Oct 2018 08:26:55 -0500
-Subject: Re: [RFC PATCH v2 2/9] dt-bindings: ti-lmu: Remove LM3697
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lee.jones@linaro.org>,
-        <linux-omap@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20180928182954.25446-1-dmurphy@ti.com>
- <20180928182954.25446-3-dmurphy@ti.com> <20181002072827.GA19677@amd>
- <fef2c612-ac35-126e-669e-335fb3075f64@ti.com> <20181003130154.GA20418@amd>
- <f4ed1450-6c99-e4c6-0092-f355ab3278f7@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <e14aeedb-e58b-f3e0-72f6-2bfb04a29e3c@ti.com>
-Date:   Thu, 4 Oct 2018 08:26:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 16:21:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51886 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727367AbeJDUVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:21:12 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 161F5C0467C0;
+        Thu,  4 Oct 2018 13:27:54 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-200-44.brq.redhat.com [10.40.200.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 279AD66082;
+        Thu,  4 Oct 2018 13:27:42 +0000 (UTC)
+Date:   Thu, 4 Oct 2018 15:28:11 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v4 6/9] x86/cet/ibt: Add arch_prctl functions for IBT
+Message-ID: <20181004132811.GJ32759@asgard.redhat.com>
+References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
+ <20180921150553.21016-7-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <f4ed1450-6c99-e4c6-0092-f355ab3278f7@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921150553.21016-7-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 04 Oct 2018 13:27:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+On Fri, Sep 21, 2018 at 08:05:50AM -0700, Yu-cheng Yu wrote:
+> Update ARCH_CET_STATUS and ARCH_CET_DISABLE to include Indirect
+> Branch Tracking features.
+> 
+> Introduce:
+> 
+> arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
+>     Enable the Indirect Branch Tracking legacy code bitmap.
+> 
+>     The parameter 'addr' is a pointer to a user buffer.
+>     On returning to the caller, the kernel fills the following:
+> 
+>     *addr = IBT bitmap base address
+>     *(addr + 1) = IBT bitmap size
 
-On 10/03/2018 03:46 PM, Jacek Anaszewski wrote:
-> On 10/03/2018 03:01 PM, Pavel Machek wrote:
->> On Wed 2018-10-03 07:24:23, Dan Murphy wrote:
->>> Hello
->>>
->>> On 10/02/2018 02:28 AM, Pavel Machek wrote:
->>>> On Fri 2018-09-28 13:29:47, Dan Murphy wrote:
->>>>> Remove support for the LM3697 LED device
->>>>> from the ti-lmu.  The LM3697 will be supported
->>>>> via a stand alone LED driver.
->>>>>
->>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>
->>>> NAK, for reasons I explained before. Please add it to the patch so
->>>> that it does not get applied by mistake. Ouch and AFAICT Rob was not
->>>> happy with this either.
->>>>
->>>> Yes, you are creating new drivers, ok; but that does _not_ mean you
->>>> should create new binding.
->>>
->>> I am copying my comment here on the review of this original binding for
->>> records
->>>
->>> I found the review or at least the reference for the ti-lmu.txt binding.
->>>
->>> https://lore.kernel.org/patchwork/patch/764180/
->>>
->>> Does not appear that the binding was sent to the device tree mail list.
->>> (Maybe that email list did not exist in Feb 2017).
->>
->> Quick google shows:
->>
->> https://lwn.net/Articles/666023/
-> 
-> This link refreshed my memory and allowed me to recall Milo's patch set
-> from the end of 2015, and the related discussion. I had an impression
-> that I had had some request regarding the bindings but there was no
-> follow-up.
-> 
-> I've googled that thread [0] and it proved I was right [1].
-> 
-> From Milo's messages we can infer that there will be next
-> version of the patch set and it appeared but over a year later [2],
-> and without the leds-lm3633 driver and related bindings, and without
-> drivers/video/backlight/ti-lmu-backlight-core.c.
-> 
-> Patch set gets merged despite dangling DT references.
-> 
-> Dan, I propose you to resend the patch removing the bindings from
-> MFD, and explain the rationale in the patch below commit message
-> after "---" .
-> 
->> Now can we stop this nonsense? If there is a problem with the binding,
->> submit patches to fix the problem.
-> 
-> [0]
-> https://lore.kernel.org/lkml/1448521025-2796-1-git-send-email-milo.kim@ti.com/
-> [1] https://lore.kernel.org/lkml/56656468.8020300@samsung.com/
-> [2]
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1341860.html
-> 
+Again, some structure with a size field would be better from
+UAPI/extensibility standpoint.
 
-Sounds good I will clean this up and submit a v3 non-RFC edition
+One additional point: "size" in the structure from kernel should have
+structure size expected by kernel, and at least providing there "0" from
+user space shouldn't lead to failure (in fact, it is possible to provide
+structure size back to userspace even if buffer is too small, along
+with error).
 
-Dan
+> 
+> Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/include/uapi/asm/prctl.h |  1 +
+>  arch/x86/kernel/cet_prctl.c       | 38 ++++++++++++++++++++++++++++++-
+>  arch/x86/kernel/process.c         |  1 +
+>  3 files changed, 39 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
+> index 3aec1088e01d..31d2465f9caf 100644
+> --- a/arch/x86/include/uapi/asm/prctl.h
+> +++ b/arch/x86/include/uapi/asm/prctl.h
+> @@ -18,5 +18,6 @@
+>  #define ARCH_CET_DISABLE	0x3002
+>  #define ARCH_CET_LOCK		0x3003
+>  #define ARCH_CET_ALLOC_SHSTK	0x3004
+> +#define ARCH_CET_LEGACY_BITMAP	0x3005
 
--- 
-------------------
-Dan Murphy
+It would probably be nice to have mention of an architecture in these
+definitions ("ARCH_X86_CET_"...), but it's likely too late.
+
+>  
+>  #endif /* _ASM_X86_PRCTL_H */
+> diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
+> index c4b7c19f5040..df47b5ebc3f4 100644
+> --- a/arch/x86/kernel/cet_prctl.c
+> +++ b/arch/x86/kernel/cet_prctl.c
+> @@ -20,6 +20,8 @@ static int handle_get_status(unsigned long arg2)
+>  
+>  	if (current->thread.cet.shstk_enabled)
+>  		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
+> +	if (current->thread.cet.ibt_enabled)
+> +		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
+>  
+>  	shstk_base = current->thread.cet.shstk_base;
+>  	shstk_size = current->thread.cet.shstk_size;
+> @@ -49,9 +51,35 @@ static int handle_alloc_shstk(unsigned long arg2)
+>  	return 0;
+>  }
+>  
+> +static int handle_bitmap(unsigned long arg2)
+> +{
+> +	unsigned long addr, size;
+> +
+> +	if (current->thread.cet.ibt_enabled) {
+> +		int err;
+> +
+> +		err  = cet_setup_ibt_bitmap();
+> +		if (err)
+> +			return err;
+> +
+> +		addr = current->thread.cet.ibt_bitmap_addr;
+> +		size = current->thread.cet.ibt_bitmap_size;
+> +	} else {
+> +		addr = 0;
+> +		size = 0;
+> +	}
+> +
+> +	if (put_user(addr, (unsigned long __user *)arg2) ||
+> +	    put_user(size, (unsigned long __user *)arg2 + 1))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+>  int prctl_cet(int option, unsigned long arg2)
+>  {
+> -	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
+> +	    !cpu_feature_enabled(X86_FEATURE_IBT))
+
+This check is repeated many times, it is probably worth defining
+something like cpu_x86_cet_enabled() or something like that.
+Besides, early introduction of the macro would allow avoiding all these
+changes over the code in IBT patches, only macro definition has
+to be changed that way.
+
+> @@ -73,6 +103,12 @@ int prctl_cet(int option, unsigned long arg2)
+>  	case ARCH_CET_ALLOC_SHSTK:
+>  		return handle_alloc_shstk(arg2);
+>  
+> +	/*
+> +	 * Allocate legacy bitmap and return address & size to user.
+> +	 */
+> +	case ARCH_CET_LEGACY_BITMAP:
+> +		return handle_bitmap(arg2);
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index ac0ea9c7e89f..aea15a9b6a3e 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -797,6 +797,7 @@ long do_arch_prctl_common(struct task_struct *task, int option,
+>  	case ARCH_CET_DISABLE:
+>  	case ARCH_CET_LOCK:
+>  	case ARCH_CET_ALLOC_SHSTK:
+> +	case ARCH_CET_LEGACY_BITMAP:
+>  		return prctl_cet(option, cpuid_enabled);
+>  	}
+
+I wonder, whether this duplication is really needed for CET-related
+arch_prctl commands, why not just call them from do_arch_prctl_common?
