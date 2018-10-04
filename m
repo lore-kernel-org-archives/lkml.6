@@ -2,86 +2,147 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03709C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAA7C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8F22147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:43:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Nn22gchn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB8F22147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DB9F213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:47:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB9F213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeJDPfa (ORCPT
+        id S1727322AbeJDPj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:35:30 -0400
-Received: from 8bytes.org ([81.169.241.247]:33924 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726857AbeJDPfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:35:30 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id B2E1E345; Thu,  4 Oct 2018 10:43:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1538642598; bh=Dzfuf26mksisVVIFmA4NBA/y4HXmc3fmhZ+czV6QpNY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Nn22gchnUhc8lyRznvtNoXj5vHJAQFJ6YZ2kUmA09ht8JFV/ySM83GgvPiXvZcM5b
-         5OQ5g+rpSIY0snAeyRaaDTNtIPx7wmmUjLCg/003rEgINDoKkJOcUOooz0cb3dIdas
-         s+6hRQzASnOl1654km8RRxQaZmAPs62jM2SeXUkAp/j0MnhGatu/5tq8JM9u5M3FBg
-         ZRnVc2s6lo9yXcUKq7JOWAjjCIod0uJJ/N6jVYCFUBgW3iFasrdoRmRTnO+MzFRdHH
-         toT9MPwSyp6Zafr7ZzqYZElfEoa0eVIhWFKAE9nxw3Ns6fWgH337YKq0qH0euWf59H
-         ch/ZFmHOLOzbA==
-Date:   Thu, 4 Oct 2018 10:43:18 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Paul Menzel <pmenzel@molgen.mpg.de>, linux-mm@kvack.org,
-        x86@kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: x86/mm: Found insecure W+X mapping at address (ptrval)/0xc00a0000
-Message-ID: <20181004084318.GB3630@8bytes.org>
-References: <e75fa739-4bcc-dc30-2606-25d2539d2653@molgen.mpg.de>
- <alpine.DEB.2.21.1809191004580.1468@nanos.tec.linutronix.de>
- <0922cc1b-ed51-06e9-df81-57fd5aa8e7de@molgen.mpg.de>
- <alpine.DEB.2.21.1809210045220.1434@nanos.tec.linutronix.de>
- <c8da5778-3957-2fab-69ea-42f872a5e396@molgen.mpg.de>
- <alpine.DEB.2.21.1809281653270.2004@nanos.tec.linutronix.de>
- <20181003212255.GB28361@zn.tnic>
- <20181004080321.GA3630@8bytes.org>
- <20181004081429.GB1864@zn.tnic>
+        Thu, 4 Oct 2018 11:39:28 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46499 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbeJDPj2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:39:28 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o21so8082095otb.13;
+        Thu, 04 Oct 2018 01:47:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FUcNDFNEXzpZU7Lc+/TIANbIHhSVFBO8QEjgt1OrT5w=;
+        b=Sm9BwK63WyK8d3EDS5uxBbp6ytYkbXK0oJA3P8o18Dw3EJNvzS1PrsdAPNrL6I7Grp
+         r1cSFnSAylcmRrsVV8Wn54O6ZFuC00/A7ppF0f+uT9PPjFpAHRJFA1tkXg8CGF282Ofc
+         SBFaO7A81oMqWs0C5Ri8zlXNPREE7zULATI7F6Kb0XdfRqkDKuL6rhuX8Ifh+4rcLzoO
+         nH5Zb3dz7cguXnwRE6jw/LywrtmV6v7zY5Dhk16t7DkRE1xsOUAA34CmSOXhxsC5uO8B
+         d25aqcX5UWWqQ/b2RL4ykSdpMPUsVsAOwSLne4/0n9/j5rtoASxG+TZMfX/No9QdLgr3
+         D/Wg==
+X-Gm-Message-State: ABuFfoj+/KgCuw98Ms/xtwpapHY6pVe8FU0kgzW7CvFxXmMDFEjj7vmQ
+        dK0PUvN2/5oDpaw4xJ/7zOyjCoeAV1/DG2hP3D0=
+X-Google-Smtp-Source: ACcGV61jSZpXMb8vKHvp1FHlMNetfXeFl8vett+TGEkY/qIdoEosjrg85G3NrwQTcfhXkLGbd6qq0guIpoBVmT5oZM4=
+X-Received: by 2002:a9d:7303:: with SMTP id e3-v6mr2863225otk.124.1538642835775;
+ Thu, 04 Oct 2018 01:47:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004081429.GB1864@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1538638927-26846-1-git-send-email-daniel.lezcano@linaro.org>
+ <1538638927-26846-2-git-send-email-daniel.lezcano@linaro.org>
+ <CAJZ5v0iLAtfo0w=BE-G+YW1WAxXsAdveiRvNhBSkpVPsd+TC9A@mail.gmail.com> <4541426c-8c73-7fe6-b3b6-9707861564ce@linaro.org>
+In-Reply-To: <4541426c-8c73-7fe6-b3b6-9707861564ce@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 4 Oct 2018 10:47:04 +0200
+Message-ID: <CAJZ5v0i+TMAeaMp8D8qGph1VZKg0L23RsqdPMEQ0xHhpTCHgQA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cpuidle/drivers/menu: Remove get_loadavg in the
+ performance multiplier
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Colin Cross <ccross@android.com>,
+        Ramesh Thomas <ramesh.thomas@intel.com>,
+        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Alex Shi <alex.shi@linaro.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 10:14:38AM +0200, Borislav Petkov wrote:
-> So looking at this, BIOS_BEGIN and BIOS_END is the same range as the ISA
-> range:
-> 
-> #define ISA_START_ADDRESS       0x000a0000
-> #define ISA_END_ADDRESS         0x00100000
-> 
-> #define BIOS_BEGIN              0x000a0000
-> #define BIOS_END                0x00100000
-> 
-> 
-> and I did try marking the ISA range RO in mark_rodata_ro() but the
-> machine wouldn't boot after. So I'm guessing BIOS needs to write there
-> some crap.
+On Thu, Oct 4, 2018 at 10:40 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 04/10/2018 10:22, Rafael J. Wysocki wrote:
+> > On Thu, Oct 4, 2018 at 9:42 AM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
 
-Yeah, that's what I also found out back then, the region needs to be WX.
-So we can either leave with the warning, as we know it is harmless and
-where it comes from or implement an exception in the checking code for
-that region.
+[cut]
 
-Regards,
+> >> -               interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+> >> +               interactivity_req = data->predicted_us /
+> >> +                       performance_multiplier(nr_iowaiters);
+> >
+> > I wouldn't break this line.
+>
+> Ok, mind if I break the line in a separate patch before ? (my git
+> pre-commit hook runs checkpatch and it complains and prevent to commit
+> the patch because of the line length (94)).
 
-	Joerg
+OK, just keep it the way it is, then.  I can remove the line break
+before applying the patch easily enough. :-)
+
+> >>                 if (latency_req > interactivity_req)
+> >>                         latency_req = interactivity_req;
+> >>         }
+> >> diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
+> >> index 04f1321..f30954c 100644
+> >> --- a/include/linux/sched/stat.h
+> >> +++ b/include/linux/sched/stat.h
+> >> @@ -20,7 +20,6 @@ extern unsigned long nr_running(void);
+> >>  extern bool single_task_running(void);
+> >>  extern unsigned long nr_iowait(void);
+> >>  extern unsigned long nr_iowait_cpu(int cpu);
+> >> -extern void get_iowait_load(unsigned long *nr_waiters, unsigned long *load);
+> >>
+> >>  static inline int sched_info_on(void)
+> >>  {
+> >> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> >> index b88a145..5605f03 100644
+> >> --- a/kernel/sched/core.c
+> >> +++ b/kernel/sched/core.c
+> >> @@ -2873,25 +2873,12 @@ unsigned long long nr_context_switches(void)
+> >>
+> >>         return sum;
+> >>  }
+> >> -/*
+> >> - * Consumers of these two interfaces, like for example the cpufreq menu
+> >> - * governor are using nonsensical data. Boosting frequency for a CPU that has
+> >> - * IO-wait which might not even end up running the task when it does become
+> >> - * runnable.
+> >> - */
+> >
+> > Doesn't the comment still apply to nr_iowait_cpu()?
+>
+> The comment is very confusing. I talks about a cpufreq menu governor and
+> boosting frequency.
+
+So it should be talking about the *cpuidle* menu governor and
+preferring shallow idle state selection.
+
+I guess I'll send a patch to update it. :-)
+
+> I don't see this function used in the cpufreq framework but in:
+>
+> kernel/time/tick-sched.c
+> fs/proc/stat.c
+> drivers/cpuidle/governors/menu.c
+>
+> The comment is irrelevant as the remaining function is used for
+> statistics in addition to the perf multiplier. It does exactly what the
+> function name is.
+
+Which is my point.  It shouldn't be dropped entirely, but updated IMO.
