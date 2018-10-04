@@ -2,384 +2,135 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9742C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EB7C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986EC2098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986EC2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id D98702087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 17:23:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zv2N+9rC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98702087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeJEAR3 (ORCPT
+        id S1728175AbeJEARc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:17:29 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40411 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727523AbeJEAR1 (ORCPT
+        Thu, 4 Oct 2018 20:17:32 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42877 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJEARb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:17:27 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03276;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CzPhl00_1538673759;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzPhl00_1538673759)
-          by smtp.aliyun-inc.com(10.147.40.7);
-          Fri, 05 Oct 2018 01:22:39 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, anurup.m@huawei.com,
-        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
-        zhangshaokun@hisilicon.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V10 3/8] irqchip: add C-SKY APB bus interrupt controller
-Date:   Fri,  5 Oct 2018 01:22:23 +0800
-Message-Id: <4e249a83fe479e49589cbdf9040641ef788c1d43.1538672812.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1538672812.git.ren_guo@c-sky.com>
-References: <cover.1538672812.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1538672812.git.ren_guo@c-sky.com>
-References: <cover.1538672812.git.ren_guo@c-sky.com>
+        Thu, 4 Oct 2018 20:17:31 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i4-v6so3452002pgq.9;
+        Thu, 04 Oct 2018 10:23:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sLULkqA1O4VYeaSIJXhfRZfuYd49LHUeuW9B1+EGfwk=;
+        b=Zv2N+9rCg/BsW6vnpGcdQIZojWMyOOHXX49ycwSPgtCEcac8PBHCwPku78t0bY2ZzY
+         NhpNlFPL3g7So1TL2NjwSRobuJMzXpnyATDCy7AQMcXmL/t9O8swSVYn83gKVa1fn0qj
+         rKGRdzOuiKDSiLex0Fq3KjJiaYebjiT0sfy8YaDBU839HHWYMwyGNEgUc/qIO4u10Ke5
+         iJ1FEeXUQPHjUvPMYr6UJMLKwLXzFWBy0CP/l7CShRBfBS/UWOKHYBoOpZ8Rto/Mwfak
+         sLOBxNpSZZWvwQ7EHwYzBWKqNxHuLy0Hn+GoJEkKnC8eRglT2gm6u6ji4Ja21h+DKc6b
+         tWPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=sLULkqA1O4VYeaSIJXhfRZfuYd49LHUeuW9B1+EGfwk=;
+        b=W6q1esoG4oZbtPHb1kfMBWW+9Qejk6yEDd8vDNc9q8YgFoPRC7AXSuuW5WYoSPf0Bz
+         CHkdIQJMVIInNg6UEnNEzNkDkfC5OnWRsukF+VjBhsDFgWzNIaus9Gf27zqupnJy8p2a
+         d0L0AYNMFt2SNns7QrhrKgxEfWrR1ZXzzAVQw2svUmNDlghp/vFLSDqdvN0qT9vgu1tM
+         YJ/NALR+6z+i9iseOtf+oh7/78OM5ZPwUg3NQS2hkXAKMsQ//267GmcY+7q/4gX63eK5
+         d1xLA1MOq9YFQzebUeWXM3bNNHGm4ux3u+LQZfQl6ZElTdpHQUwnkd4+/BQ537lBr2N5
+         hXdQ==
+X-Gm-Message-State: ABuFfojUmCQ+0ZqqDySbsfMvMl8fkyuJqCbfazt9mqfc3nUQCpE+VBuI
+        dnhKsKTmLJfiJuRRFiopzvU=
+X-Google-Smtp-Source: ACcGV62k3uhO4Wz7wIoxp28Hlrb/CCvEteurni5TAhyuLv+Pgmd7T5wJRlFJrK0pU6jROjjIklgqfw==
+X-Received: by 2002:a63:cd45:: with SMTP id a5-v6mr6726105pgj.43.1538673797699;
+        Thu, 04 Oct 2018 10:23:17 -0700 (PDT)
+Received: from [10.67.50.87] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id 62-v6sm8063326pgc.58.2018.10.04.10.23.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 10:23:16 -0700 (PDT)
+Subject: Re: [PATCH 9/9] ARM: bcm63138: Enable SATA AHCI and PHY
+To:     linux-kernel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Ray Jui <ray.jui@broadcom.com>, Tejun Heo <tj@kernel.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com
+References: <20180920191646.18198-1-f.fainelli@gmail.com>
+ <20180920191646.18198-13-f.fainelli@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <0ac69ef8-21fb-7005-4eac-b00bf46870b9@gmail.com>
+Date:   Thu, 4 Oct 2018 10:23:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180920191646.18198-13-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - irq-csky-apb-intc is a simple SOC interrupt controller which is
-   used in a lot of C-SKY CPU SOC products.
+On 09/20/2018 12:16 PM, Florian Fainelli wrote:
+> The Broadcom BCM963138DVT board has an eSATA port which is fully
+> functional, turn on the AHCI controller and the companion SATA PHY.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Changelog:
- - pass checkpatch.pl.
- - use "bool ret" instead of "int ret"
- - add support-pulse-signal in irq-csky-apb-intc.c
- - change name with upstream feed-back
- - add INTC_IFR to clear irq-pending
- - remove CSKY_VECIRQ_LEGENCY
- - change to generic irq chip framework
- - add License and Copyright
- - use irq_domain_add_linear instead of leagcy
-
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- drivers/irqchip/Kconfig             |   8 ++
- drivers/irqchip/Makefile            |   1 +
- drivers/irqchip/irq-csky-apb-intc.c | 274 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 283 insertions(+)
- create mode 100644 drivers/irqchip/irq-csky-apb-intc.c
-
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 8103f6f..41cdca0 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -380,6 +380,14 @@ config CSKY_MPINTC
- 	  In fact it's not mmio map in hw and it use ld/st to visit the
- 	  controller's register inside CPU.
- 
-+config CSKY_APB_INTC
-+	bool "C-SKY APB Interrupt Controller"
-+	depends on CSKY
-+	help
-+	  Say yes here to enable C-SKY APB interrupt controller driver used
-+	  by C-SKY single core SOC system. It use mmio map apb-bus to visit
-+	  the controller's register.
-+
- endmenu
- 
- config SIFIVE_PLIC
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 6b739ea..72eaf53 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -88,4 +88,5 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
- obj-$(CONFIG_NDS32)			+= irq-ativic32.o
- obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
- obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
-+obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
-new file mode 100644
-index 0000000..2543bab
---- /dev/null
-+++ b/drivers/irqchip/irq-csky-apb-intc.c
-@@ -0,0 +1,274 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/module.h>
-+#include <linux/irqdomain.h>
-+#include <linux/irqchip.h>
-+#include <linux/irq.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <asm/irq.h>
-+
-+#define INTC_IRQS		64
-+
-+#define CK_INTC_ICR		0x00
-+#define CK_INTC_PEN31_00	0x14
-+#define CK_INTC_PEN63_32	0x2c
-+#define CK_INTC_NEN31_00	0x10
-+#define CK_INTC_NEN63_32	0x28
-+#define CK_INTC_SOURCE		0x40
-+#define CK_INTC_DUAL_BASE	0x100
-+
-+#define GX_INTC_PEN31_00	0x00
-+#define GX_INTC_PEN63_32	0x04
-+#define GX_INTC_NEN31_00	0x40
-+#define GX_INTC_NEN63_32	0x44
-+#define GX_INTC_NMASK31_00	0x50
-+#define GX_INTC_NMASK63_32	0x54
-+#define GX_INTC_SOURCE		0x60
-+
-+static void __iomem *reg_base;
-+static struct irq_domain *root_domain;
-+
-+static int nr_irq = INTC_IRQS;
-+
-+/*
-+ * When controller support pulse signal, the PEN_reg will hold on signal
-+ * without software trigger.
-+ *
-+ * So, to support pulse signal we need to clear IFR_reg and the address of
-+ * IFR_offset is NEN_offset - 8.
-+ */
-+static void irq_ck_mask_set_bit(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
-+	unsigned long ifr = ct->regs.mask - 8;
-+	u32 mask = d->mask;
-+
-+	irq_gc_lock(gc);
-+	*ct->mask_cache |= mask;
-+	irq_reg_writel(gc, *ct->mask_cache, ct->regs.mask);
-+	irq_reg_writel(gc, irq_reg_readl(gc, ifr) & ~mask, ifr);
-+	irq_gc_unlock(gc);
-+}
-+
-+static void __init ck_set_gc(struct device_node *node, void __iomem *reg_base,
-+			     u32 mask_reg, u32 irq_base)
-+{
-+	struct irq_chip_generic *gc;
-+
-+	gc = irq_get_domain_generic_chip(root_domain, irq_base);
-+	gc->reg_base = reg_base;
-+	gc->chip_types[0].regs.mask = mask_reg;
-+	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-+	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-+
-+	if (of_find_property(node, "csky,support-pulse-signal", NULL))
-+		gc->chip_types[0].chip.irq_unmask = irq_ck_mask_set_bit;
-+}
-+
-+static inline u32 build_channel_val(u32 idx, u32 magic)
-+{
-+	u32 res;
-+
-+	/*
-+	 * Set the same index for each channel
-+	 */
-+	res = idx | (idx << 8) | (idx << 16) | (idx << 24);
-+
-+	/*
-+	 * Set the channel magic number in descending order.
-+	 * The magic is 0x00010203 for ck-intc
-+	 * The magic is 0x03020100 for gx6605s-intc
-+	 */
-+	return res | magic;
-+}
-+
-+static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
-+{
-+	u32 i;
-+
-+	/* Setup 64 channel slots */
-+	for (i = 0; i < INTC_IRQS; i += 4)
-+		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
-+}
-+
-+static int __init
-+ck_intc_init_comm(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	if (parent) {
-+		pr_err("C-SKY Intc not a root irq controller\n");
-+		return -EINVAL;
-+	}
-+
-+	reg_base = of_iomap(node, 0);
-+	if (!reg_base) {
-+		pr_err("C-SKY Intc unable to map: %p.\n", node);
-+		return -EINVAL;
-+	}
-+
-+	root_domain = irq_domain_add_linear(node, nr_irq,
-+					    &irq_generic_chip_ops, NULL);
-+	if (!root_domain) {
-+		pr_err("C-SKY Intc irq_domain_add failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
-+			"csky_intc", handle_level_irq,
-+			IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0);
-+	if (ret) {
-+		pr_err("C-SKY Intc irq_alloc_gc failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static inline bool handle_irq_perbit(struct pt_regs *regs, u32 hwirq,
-+				     u32 irq_base)
-+{
-+	u32 irq;
-+
-+	if (hwirq == 0)
-+		return 0;
-+
-+	while (hwirq) {
-+		irq = __ffs(hwirq);
-+		hwirq &= ~BIT(irq);
-+		handle_domain_irq(root_domain, irq_base + irq, regs);
-+	}
-+
-+	return 1;
-+}
-+
-+/* gx6605s 64 irqs interrupt controller */
-+static void gx_irq_handler(struct pt_regs *regs)
-+{
-+	bool ret;
-+
-+	do {
-+		ret  = handle_irq_perbit(regs,
-+				readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
-+		ret |= handle_irq_perbit(regs,
-+				readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
-+	} while (ret);
-+}
-+
-+static int __init
-+gx_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Initial enable reg to disable all interrupts
-+	 */
-+	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
-+	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
-+
-+	/*
-+	 * Initial mask reg with all unmasked, because we only use enalbe reg
-+	 */
-+	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
-+	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
-+
-+	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
-+
-+	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0);
-+	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 32);
-+
-+	set_handle_irq(gx_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
-+
-+/*
-+ * C-SKY simple 64 irqs interrupt controller, dual-together could support 128
-+ * irqs.
-+ */
-+static void ck_irq_handler(struct pt_regs *regs)
-+{
-+	bool ret;
-+	void __iomem *reg_pen_lo = reg_base + CK_INTC_PEN31_00;
-+	void __iomem *reg_pen_hi = reg_base + CK_INTC_PEN63_32;
-+
-+	do {
-+		/* handle 0 - 31 irqs */
-+		ret  = handle_irq_perbit(regs, readl_relaxed(reg_pen_lo), 0);
-+		ret |= handle_irq_perbit(regs, readl_relaxed(reg_pen_hi), 32);
-+
-+		if (nr_irq == INTC_IRQS)
-+			continue;
-+
-+		/* handle 64 - 127 irqs */
-+		ret |= handle_irq_perbit(regs,
-+			readl_relaxed(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
-+		ret |= handle_irq_perbit(regs,
-+			readl_relaxed(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
-+	} while (ret);
-+}
-+
-+static int __init
-+ck_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
-+	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
-+
-+	/* Enable irq intc */
-+	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
-+
-+	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
-+	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
-+
-+	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
-+
-+	set_handle_irq(ck_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ck_intc, "csky,apb-intc", ck_intc_init);
-+
-+static int __init
-+ck_dual_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	/* dual-apb-intc up to 128 irq sources*/
-+	nr_irq = INTC_IRQS * 2;
-+
-+	ret = ck_intc_init(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
-+	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
-+
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
-+
-+	setup_irq_channel(0x00010203,
-+			  reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ck_dual_intc, "csky,dual-apb-intc", ck_dual_intc_init);
+Applied to devicetree/next
 -- 
-2.7.4
-
+Florian
