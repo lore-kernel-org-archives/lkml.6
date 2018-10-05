@@ -2,157 +2,128 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3421C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6340AC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88441208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E74F5208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZXgn7fuE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88441208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FX/aQtQz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74F5208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbeJEV5E (ORCPT
+        id S1729028AbeJEV6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:57:04 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38635 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbeJEV5E (ORCPT
+        Fri, 5 Oct 2018 17:58:05 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35478 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbeJEV6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:57:04 -0400
-Received: by mail-it1-f195.google.com with SMTP id i76-v6so3118859ita.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 07:57:59 -0700 (PDT)
+        Fri, 5 Oct 2018 17:58:04 -0400
+Received: by mail-qk1-f195.google.com with SMTP id v68-v6so1068294qka.2;
+        Fri, 05 Oct 2018 07:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=V4YLpmN1ofx8DjUCcCAnT+gAIrUFV0ZMrcyHc8ddDec=;
-        b=ZXgn7fuEJtYwPH0irwGdjeVH05CiPo8ulTk2CpFffZxoOIsiGslSYaA7PpIIFhUGdF
-         M07qXl6lHhIkN/cVH6/sdTd6llU96GiOj55w6YAkiSqRve2u8yyYXWbgOtpHrCX/rx8q
-         ObqL3Le6C7+F3y7Btb8vgiZVFtBKuAM1QRPrE=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0d9EFpe84FWSO06SrTvE6byMS5RJi7bikEbiiCe+uXk=;
+        b=FX/aQtQzifkMDsPwEE6fWGL40nrT0cnCwcdy7pCYyHxE74ZKEkOSlQ5rOLxPQdEb4O
+         ukm8vqtMQvDaZKhqquEvGaUdw9KRYvBQM/swtpS9Z7WdzJgPjuv/NkfOnYlorha0tLsO
+         rhk0vXzRviybyAyrM6r/X+37YPsknIL7dkxLHQUxKtitOqoBVwOoumacaIbe3eFK0s1g
+         AQk8XtT2eOyQrOcEdMrD5RzTA4f8pSrf5r81Tm20EMXnZizq3qBX17YadMm+Xs6vPFq1
+         YGvsBAowaeQaL6eiX7wQRRJHg9uR+j4dijBpMf3EaZ6gzL5UUdY+UChX+/WjBP6CmNR3
+         tIDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=V4YLpmN1ofx8DjUCcCAnT+gAIrUFV0ZMrcyHc8ddDec=;
-        b=abpJH94H41p+1McWn9xMwfrp5nhEqS1w3KUnmbcsBxMMzTeQrfqmaFpc7clspkqpJI
-         pjQM06aa8BhVdF1WOiAzd7tk5cIVMaz/cC3atfesaCpvddiDj8J1BUimqjGYAbJ0KRHu
-         AKCcCVtOKUpHFvGaqhb5jbqOTmi+9CBX0l3CzUX+j3Uki2NMSAEFTP26wPkxRrsOODql
-         olS3533EYwwTfwyO/80dFGxN2Htj42aWJW5ANo9ZlhT9Gj/J/Gpr5GxhS9Lt2+QdxVPF
-         OJnJkYQD7xUeWnTTFkK6wzJII/vVUnXLDqvQOUqFj7X/WxffxjmWyHp/BFbQrWStwwUz
-         Vo2A==
-X-Gm-Message-State: ABuFfojVtFXEAQMIy4SeS9vHReM/yy2yPzDWdSzdWflN1JJnMJtIW6c9
-        z7xtQ3omD9rVQzuT35+EKnqDOJN0rycZ9FUnboHmcw==
-X-Google-Smtp-Source: ACcGV61fI6T1mVjH8VaplyzCQ9+AO2HQKBQpRu1GqT92cysWo1aqjDQRziYqmpkRL6Y0uoisfWvYPoRX1kWeQkQzhdM=
-X-Received: by 2002:a24:a10b:: with SMTP id y11-v6mr4679847ite.148.1538751479033;
- Fri, 05 Oct 2018 07:57:59 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0d9EFpe84FWSO06SrTvE6byMS5RJi7bikEbiiCe+uXk=;
+        b=UwuWSyZF5Z7YdIKI3GjZaKmN17bAal5VIU4SelJ0SEAeMpEn5bQ0+tNMhXFCRbXvS7
+         VEreCPbI6ZoWPXnu+p9PQIh4QyUDAg1fTBSEKIbutAu6kHT6lTH+aE5CgFSN+DCJH3Oo
+         bRlH6InWxsYQSHyhpeAdHby/jSvYpGcNkwcQ8NCeOR9BkwO31AuPkKht7nciue5I6E9N
+         RaRIGDeMi6rD467cqlz0s/SuApdQ66jgZh7aBb1TGXH9FDibZSmd/Xe8ZgydaQwEFtXQ
+         dmAMGmyM0Ig0wW+0i6yNCaoY+mjy+Hr8ESNVeZVwPod8ba8Mn+CqontU9XSEt8lGTP+a
+         4gvQ==
+X-Gm-Message-State: ABuFfohtS0RwTKzklPeHNhqS7DRETbQHmqD6Cuqx/ckeWvNG7AhdOUuZ
+        J56jfONF1/sN7HAzKNdcU866jeTV
+X-Google-Smtp-Source: ACcGV604Zz7Fv4UuPGE5rVatqMqHRrDWbVpxc7aSqrvCvEiEJAYgxJvmNtMS+FP/M+Jm/WHE4kSJag==
+X-Received: by 2002:ae9:e20b:: with SMTP id c11-v6mr9020106qkc.220.1538751539160;
+        Fri, 05 Oct 2018 07:58:59 -0700 (PDT)
+Received: from localhost.localdomain ([168.181.50.235])
+        by smtp.gmail.com with ESMTPSA id 144-v6sm4102564qkk.63.2018.10.05.07.58.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 07:58:58 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 36367180EDD; Fri,  5 Oct 2018 11:58:55 -0300 (-03)
+Date:   Fri, 5 Oct 2018 11:58:55 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     syzbot <syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com
+Subject: Re: KASAN: use-after-free Read in sctp_id2assoc
+Message-ID: <20181005145855.GB6761@localhost.localdomain>
+References: <0000000000007e767d05776336da@google.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Fri, 5 Oct 2018 07:57:57 -0700 (PDT)
-In-Reply-To: <20181005141433.GS19272@hirez.programming.kicks-ass.net>
-References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
- <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 5 Oct 2018 16:57:57 +0200
-Message-ID: <CAKv+Gu-Gkf2jJ+Nn65pT=HDH6S8wceuXU_RrDpatc=biNx9ROA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Richard Weinberger <richard@nod.at>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000007e767d05776336da@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 October 2018 at 16:14, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Fri, Oct 05, 2018 at 10:13:25AM +0200, Ard Biesheuvel wrote:
->> diff --git a/include/linux/ffp.h b/include/linux/ffp.h
->> new file mode 100644
->> index 000000000000..8fc3b4c9b38f
->> --- /dev/null
->> +++ b/include/linux/ffp.h
->> @@ -0,0 +1,43 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +
->> +#ifndef __LINUX_FFP_H
->> +#define __LINUX_FFP_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/compiler.h>
->> +
->> +#ifdef CONFIG_HAVE_ARCH_FFP
->> +#include <asm/ffp.h>
->> +#else
->> +
->> +struct ffp {
->> +     void    (**fn)(void);
->> +     void    (*default_fn)(void);
->> +};
->> +
->> +#define DECLARE_FFP(_fn, _def)                                               \
->> +     extern typeof(_def) *_fn;                                       \
->> +     extern struct ffp const __ffp_ ## _fn
->> +
->> +#define DEFINE_FFP(_fn, _def)                                                \
->> +     typeof(_def) *_fn = &_def;                                      \
->> +     struct ffp const __ffp_ ## _fn                                  \
->> +             = { (void(**)(void))&_fn, (void(*)(void))&_def };       \
->> +     EXPORT_SYMBOL(__ffp_ ## _fn)
->> +
->> +static inline void ffp_set_target(const struct ffp *m, void *new_fn)
->> +{
->> +     WRITE_ONCE(*m->fn, new_fn);
->> +}
->> +
->> +static inline void ffp_reset_target(const struct ffp *m)
->> +{
->> +     WRITE_ONCE(*m->fn, m->default_fn);
->> +}
->> +
->> +#endif
->> +
->> +#define SET_FFP(_fn, _new)   ffp_set_target(&__ffp_ ## _fn, _new)
->> +#define RESET_FFP(_fn)               ffp_reset_target(&__ffp_ ## _fn)
->> +
->> +#endif
->
-> I don't understand this interface. There is no wrapper for the call
-> site, so how are we going to patch all call-sites when you update the
-> target?
+On Thu, Oct 04, 2018 at 01:48:03AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    4e6d47206c32 tls: Add support for inplace records encryption
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13834b81400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e569aa5632ebd436
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd55d7aec49d48e49a
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
+> 
+> netlink: 'syz-executor1': attribute type 1 has an invalid length.
+> ==================================================================
+> BUG: KASAN: use-after-free in sctp_id2assoc+0x3a7/0x3e0
+> net/sctp/socket.c:276
+> Read of size 8 at addr ffff880195b3eb20 by task syz-executor2/15454
+> 
+> CPU: 1 PID: 15454 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #242
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  sctp_id2assoc+0x3a7/0x3e0 net/sctp/socket.c:276
 
-This is the generic implementation, and in this case, it is just a
-function pointer which gets dereferenced and called indirectly at each
-call site.
+I'm not seeing yet how this could happen.
+All sockopts here are serialized by sock_lock.
+do_peeloff here would create another socket, but the issue was
+triggered before that.
+The same function that freed this memory, also removes the entry from
+idr mapping, so this entry shouldn't be there anymore.
 
-In the arch specific implementations (for ones where it matters, see
-2/9), it is more like a PLT entry, which gets called from each call
-site, and which can be patched to point to another function.
+I have only two theories so far:
+- an issue with IDR/RCU.
+- something else happened that just the call stacks are not revealing.
 
-So we replace a single indirect call with a direct call plus a direct jump.
