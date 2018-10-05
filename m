@@ -2,189 +2,96 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC52AC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB17DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90DBF21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE56208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:09:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7nvxWu2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90DBF21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="uHvQAjjC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE56208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeJFFGF (ORCPT
+        id S1727317AbeJFFKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 01:06:05 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35049 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbeJFFGE (ORCPT
+        Sat, 6 Oct 2018 01:10:16 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40728 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeJFFKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 01:06:04 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f8-v6so7420193plb.2;
-        Fri, 05 Oct 2018 15:05:23 -0700 (PDT)
+        Sat, 6 Oct 2018 01:10:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d2-v6so10510201wro.7
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 15:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PVEJtjXI2NaRGaZjIWcz0ezrWOGuYSY5NnsmnlZ+Xaw=;
-        b=Y7nvxWu2Vjr5QG6zovxKZITKV397w2F+DEHzf6WQ4cMrD6K0JO8LIDjwtI5KuzGz00
-         p+glJfGMcTnN4MSHxh44OnFnYvrCVB+hF3xI10RGmMQegn8a9XAv6dVANIyVel9zleqh
-         CSTGH4oTQAt1EGU4K7QA2CdYftReAD6/xFUJyWV3Mi6X9A8S7+ywtWQYbPjT2ZosDEUh
-         Pe60yWT3PNyBFyv/ofipAboNYUA1mKr7xWf/mMj6UKXwMG6GWXpfd7sTem3PyYJA/8Kc
-         3nykfD+lb9yvAc6RXIvFhDwzx6acwv5LsYvp13JLUpFpEOGyncwEkArCEvp9oK1DknEU
-         1O7A==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lvPfx0aEmiY+IQxRq8EXo/Che3Aud79iC/Wa0J7xcRM=;
+        b=uHvQAjjCYMcooY7TYnF8LKqybiV2kfSlNGB7Kzh1ItpmHQnlsDnCzt39pdIFnc1uj7
+         KGU8D9m/eYtxdfn/LjW0550KknH8qrFoLwxcGJ/PUB94u/9jIlEmvuig4+Caw2FDwR8A
+         msVidIiXxP7SewRDf0gADvl6fEROYIMaKIFwu8vgA6ihn0vQPE9eTaVySqNYoKT45UV7
+         HY1CFqVdolMHPlY8yi0Fb3HlO7zsyDLnnN+5PciyRnSkjDOzCGefBoYbd4ZO8+stNBNn
+         QcoQKnHMy+Ca7VE/9uA8NRgdbxobFETMtKYADKPwxNH4yXKDmtVq0L55C1k0WmuNz5vh
+         9p1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PVEJtjXI2NaRGaZjIWcz0ezrWOGuYSY5NnsmnlZ+Xaw=;
-        b=Y3/v+v4U0eNtJEW2l0Bn2egmgAUa5fDxUqmn2PzduGRMO2qdO5NJRDj4bzwIa5buMx
-         84vcPIQC+qEyCcoIlRTmcLvXwbA8yXL+t+k37TzzKykYy8MlES8lnz6U3cJLf11HxrQZ
-         ErdI9+CWbwfH3p8s9ddEGq87ZFMOVw4sLE7cCgwUkZWzf63F4H0Bzt/LTXUUPaSp3rRJ
-         RpkH36TRfPt+9fcVSjmD8RUj4W0qRaEmZbdn027Fh3S4oyg55YPEf6jn+CO06Km1HPfA
-         YHAQAvmJlenG3pubzffhCmXYd1TTPtotLnkYkDMW60Lm9IgjGfD6cZI7/7sa4+TJ1urZ
-         algA==
-X-Gm-Message-State: ABuFfoh2scFWrJ1AHJNG69ZIJ3nIC2f//FmR6d6Ut65ja3oPyvgE4Yhc
-        yq1k+sc3XlkFwSHlsOT5GgQ=
-X-Google-Smtp-Source: ACcGV60b4PH2MfGcr9848s5Yz2uEMhmZTfUrK0Fr5TJwbcxAAvDzSUw2fNuxjehyvTW79iyCi12P7w==
-X-Received: by 2002:a17:902:4583:: with SMTP id n3-v6mr13610062pld.255.1538777122621;
-        Fri, 05 Oct 2018 15:05:22 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::4:fc91])
-        by smtp.gmail.com with ESMTPSA id z70-v6sm11622239pgd.64.2018.10.05.15.05.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 15:05:21 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 15:05:20 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, daniel@iogearbox.net,
-        luto@amacapital.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH bpf-next 1/6] bpf: introduce BPF_PROG_TYPE_FILE_FILTER
-Message-ID: <20181005220518.747ri4q34obrnaoc@ast-mbp.dhcp.thefacebook.com>
-References: <20181004025750.498303-1-ast@kernel.org>
- <20181004025750.498303-2-ast@kernel.org>
- <20181005044659.GU32577@ZenIV.linux.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lvPfx0aEmiY+IQxRq8EXo/Che3Aud79iC/Wa0J7xcRM=;
+        b=YB3KH9PyOsBz4m9Oj3WfPJTw83rpR9lKFjHUGhHclLtmffB3rxPoal1oBGquvGB8gh
+         KVYJrOnRhs2cLWG7Gzb492CmZHWbyoFKjM00N/pfw0Yi4m7I0XAnxyK7sR8vNUsLHU5Y
+         0hp9ZRNBIYld9C1daS4Xymri8q/SRkpAu3sfsM4t+IvLvtbauxn26yTrGy/FA0p9Ctol
+         2tBSH8DTYtoTX888CPngePuHR8dJPgTGyRmXyyVw1ih7AasrNyNKQrAcqcTQb9YPJ4oY
+         ogHw22yNr0QWIiYZjH5+wwFYTxffxCrmz9nJZrLcv1Ytc6TO0Dkrec5tFkd8BaqJZAvN
+         LyjA==
+X-Gm-Message-State: ABuFfogMav3g62Vmke1FTx4gtuKW8n5VbB0Ivaah626XrPFjckM1EXUS
+        pxvzyv3UbpGDD06UpAJxbcyhbeCh8rFAhMwcH24z8Q==
+X-Google-Smtp-Source: ACcGV60e/iboR58P/LprS6j3L0ynzON6PFHfjebUqfDiV1t7qMvCN4+OuT5pVtbFcSJDqEmrFEfs9QHDKdc/YZ7Ysl8=
+X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr9583415wra.95.1538777372157;
+ Fri, 05 Oct 2018 15:09:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005044659.GU32577@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180223
+References: <20181004025750.498303-1-ast@kernel.org> <20181004025750.498303-2-ast@kernel.org>
+ <20181005044659.GU32577@ZenIV.linux.org.uk> <20181005220518.747ri4q34obrnaoc@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20181005220518.747ri4q34obrnaoc@ast-mbp.dhcp.thefacebook.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 5 Oct 2018 15:09:20 -0700
+Message-ID: <CALCETrVURVaqJChL=RwZPe74+JfX-6Zzp9kLR9-mLiownSOexQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/6] bpf: introduce BPF_PROG_TYPE_FILE_FILTER
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 05:46:59AM +0100, Al Viro wrote:
-> On Wed, Oct 03, 2018 at 07:57:45PM -0700, Alexei Starovoitov wrote:
->  
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/bpf.h>
-> >  #include <linux/bpf-cgroup.h>
-> >  #include <net/sock.h>
-> > +#include <../fs/mount.h>
-> 
-> No.
+On Fri, Oct 5, 2018 at 3:05 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Fri, Oct 05, 2018 at 05:46:59AM +0100, Al Viro wrote:
+>
+> > Another problem is your direct poking in ->i_ino.  It's not
+> > something directly exposed to userland at the moment and it should
+> > not become such.
+>
+> The patch is not making i_ino directly exposed.
+> Only 'struct bpf_file_info' is exposed to user space / bpf programs.
 
-I've considered splitting cgroup_file_filter_ctx_access() into
-separate .c inside fs/ directory, but it felt odd to move just that
-function whereas the rest of the bpf bits are in kernel/bpf/
-only to avoid doing this "../fs/" hack.
-How about calling this new file fs/bpf_file_filter.c ?
+I think Al is saying that the valie of i_ino is not something that
+user code is permitted to know regardless of how you format it because
+it may or may not actually match the value returned by stat().
+Another way of saying that is that your patch is digging into an
+internal data structure and is doing it wrong.
 
-> > +	struct file *file = NULL;
-> > +	struct inode *inode;
-> > +	struct super_block *sb;
-> > +	struct mount *mnt;
-> 
-> Fuck, no.
-> 
-> > +	case offsetof(struct bpf_file_info, mnt_id):
-> > +		/* dst = real_mount(file->f_path.mnt)->mnt_id */
-> > +		mnt = real_mount(LD_1(file->f_path.mnt));
-> > +		LD_n(mnt->mnt_id);
-> 
-> NAK.  Anything in struct mount is private to just a couple of
-> files in fs/*.c.  Don't do that.  And keep in mind that internal
-> details can and will be changed at zero notice, so be careful
-> with adding such stuff.
-
-yes. The internal details of file and inode structs can and will change.
-Just like all the sk_buff internals that are exposed to bpf
-via the same context rewriting mechanism.
-See commit 9bac3d6d548e ("bpf: allow extended BPF programs access skb fields")
-that exposed first 4 fields out of sk_buff to bpf progs via
-'struct __sk_buff'.
-Other fields were exposed later. Some of them are not even from sk_buff.
-For networking programs 'struct __sk_buff' is the context.
-For this new file_filter programs 'struct bpf_file_info' is the context.
-That's the only thing bpf side can see.
-
-> Another problem is your direct poking in ->i_ino.  It's not
-> something directly exposed to userland at the moment and it should
-> not become such.
-
-The patch is not making i_ino directly exposed.
-Only 'struct bpf_file_info' is exposed to user space / bpf programs.
-
-In 'struct bpf_file_info' the field is called '__u64 inode'.
-That is the abi.
-The kernel side stays with 'unsigned long i_ino;' field.
-Its size is different on 32/64 architectures, but to bpf progs
-it's always seen as '__u64 inode'.
-If in the future the kernel decides to change 'i_ino' to be u64,
-nothing will change on bpf side.
-
-> Filesystem has every right to have ->getattr()
-> set ->ino (== ->st_ino value) in whichever way it likes; 
-
-Essentially what cgroup_file_filter_ctx_access() is doing
-is the same as generic_fillattr() + cp_statx() work, but via
-on the fly rewriting of bpf instructions during
-loading of bpf program.
-
-See my other reply to Andy where I argued that certain
-fields like uid/gid probably don't make sense to expose
-to bpf via ctx rewriter mechanism and instead they can be
-done via new bpf_get_file_statx() helper.
-That's future work.
-
-> the same
-> goes for ->dev.
-
-Notice how single kernel field file->f_inode->i_sb->s_dev
-is exposed to bpf via two fields dev_major and dev_minor
-inside 'struct bpf_file_info'.
-For dev_minor the ctx rewriting is done as:
-+       case offsetof(struct bpf_file_info, dev_minor):
-+               /* dst = file->f_inode->i_sb->s_dev */
-+               inode = LD_1(file->f_inode);
-+               sb = LD_n(inode->i_sb);
-+               LD_n(sb->s_dev);
-+               *insn++ = BPF_ALU32_IMM(BPF_AND, si->dst_reg, MINORMASK);
-+               break;
-
-If the last AND instruction was not there, the whole 's_dev' field
-would have been exposed to bpf side and that would be questionable
-design choice, since s_dev has kernel internal encoding of major/minor.
-Instead the AND instruction is masking minor bits.
-So above ctx rewriting for 'dev_minor' field is equivalent
-to line
-  stat->dev = inode->i_sb->s_dev;
-from generic_fillattr()
-plus another line
-  tmp.stx_dev_minor = MINOR(stat->dev);
-from cp_statx()
-
-This way the kernel internal field 's_dev' is split into
-two dev_major/dev_minor bpf visible fields.
-
-The end result is that no new kernel information is exposed.
-The same information is seen via statx.
-
+--Andy
