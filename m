@@ -2,99 +2,153 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD01C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4E8C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBBF9208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 323B4208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRuI5zpY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBBF9208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KU5s3bBy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N1K3eYRl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323B4208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbeJEXRW (ORCPT
+        id S1730409AbeJEXRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:17:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730347AbeJEXRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:17:20 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        Fri, 5 Oct 2018 19:17:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50772 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730347AbeJEXRZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:17:25 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E378660C67; Fri,  5 Oct 2018 16:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538756280;
+        bh=jz3qw9RDsrEcd7fAVaj7VEtNs9pDSKtUdoUSu2jwhYk=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=KU5s3bByH71iwN6MWTblzigE3ze4EQueN2tbt8U48cTJYscnFYcmTQ8Dtx07zjC5e
+         dDaAnnn/bwZElbMo5AR0oz0QzuIw+iRzCYP0Xz4mg0CpyBkpFfNdKMQLQ4k3fU5isq
+         6yjjvO4MOVeeAeAyFmBlHyyPxEwiWJdr4LFrhIVs=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EFAC2148C;
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B157460C67;
         Fri,  5 Oct 2018 16:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756276;
-        bh=vKwKDWIZ0q/gQNePD7wOuYMcZVTLhN8jOSNZyuiPzx4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oRuI5zpYx7KAnSo7dtf3JPeLTAvkIPcEbEvAPYnHwcLwN9dWb8qcRrKyxlc7EC+Zz
-         c70Ojhw75LrQOXkwsgTK94QSyxFvpGy9bIkiiUGL0ngNlYbPFgt6HCI+P7bX79E9kg
-         ed3boMy4xK4xfZctoQ9qNHRXUtx1l5ahzihbGkFk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Whitcroft <apw@canonical.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 5/6] floppy: Do not copy a kernel pointer to user memory in FDGETPRM ioctl
-Date:   Fri,  5 Oct 2018 12:17:49 -0400
-Message-Id: <20181005161750.20823-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161750.20823-1-sashal@kernel.org>
-References: <20181005161750.20823-1-sashal@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538756277;
+        bh=jz3qw9RDsrEcd7fAVaj7VEtNs9pDSKtUdoUSu2jwhYk=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=N1K3eYRlbrUJMTa6SakErc9y6UFeMjCZlTthiPFJuxauj+TnlpN1yOc1b5s3ej1yV
+         w9qdhbhh6rSogj5WwEGmRAeJMcVMQXvMD5fNB55Bj9FNVsirwzess7MzRqCiu5IS56
+         /+hTxQChZIPZxT/OVjWOM8NS62vdz2DIE4PDdHOw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B157460C67
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Timur Tabi <timur@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+ <20181005065300.22882-3-ricardo.ribalda@gmail.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <8d10f9b4-7ea9-7d27-478a-39982ba49587@codeaurora.org>
+Date:   Fri, 5 Oct 2018 10:17:55 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181005065300.22882-3-ricardo.ribalda@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Whitcroft <apw@canonical.com>
+On 10/5/2018 12:53 AM, Ricardo Ribalda Delgado wrote:
+> Current code assumes that the direction is input if direction_input
+> function is set.
+> This might not be the case on GPIOs with programmable direction.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>   drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
+>   1 file changed, 13 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 907019b67a58..e016b22658ff 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1349,20 +1349,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>   
+>   	spin_unlock_irqrestore(&gpio_lock, flags);
+>   
+> -	for (i = 0; i < chip->ngpio; i++) {
+> -		struct gpio_desc *desc = &gdev->descs[i];
+> -
+> -		desc->gdev = gdev;
+> -
+> -		/* REVISIT: most hardware initializes GPIOs as inputs (often
+> -		 * with pullups enabled) so power usage is minimized. Linux
+> -		 * code should set the gpio direction first thing; but until
+> -		 * it does, and in case chip->get_direction is not set, we may
+> -		 * expose the wrong direction in sysfs.
+> -		 */
+> -		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
+> -	}
+> -
+>   #ifdef CONFIG_PINCTRL
+>   	INIT_LIST_HEAD(&gdev->pin_ranges);
+>   #endif
+> @@ -1391,6 +1377,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>   	if (status)
+>   		goto err_remove_chip;
+>   
+> +	for (i = 0; i < chip->ngpio; i++) {
+> +		struct gpio_desc *desc = &gdev->descs[i];
+> +
+> +		desc->gdev = gdev;
+> +
+> +		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
+> +			desc->flags = !chip->get_direction(chip, i) ?
+> +					(1 << FLAG_IS_OUT) : 0;
+> +		else
+> +			desc->flags = !chip->direction_input ?
+> +					(1 << FLAG_IS_OUT) : 0;
+> +	}
+> +
+>   	acpi_gpiochip_add(chip);
+>   
+>   	machine_gpiochip_add(chip);
+> 
 
-[ Upstream commit 65eea8edc315589d6c993cf12dbb5d0e9ef1fe4e ]
+We have a successful boot this time.
 
-The final field of a floppy_struct is the field "name", which is a pointer
-to a string in kernel memory.  The kernel pointer should not be copied to
-user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
-including this "name" field.  This pointer cannot be used by the user
-and it will leak a kernel address to user-space, which will reveal the
-location of kernel code and data and undermine KASLR protection.
+Timur I see:
+ubuntu@ubuntu:~$ dmesg | grep gpio
+[    7.388887] gpiochip_find_base: found new base at 362
+[    7.433186] gpio gpiochip0: (QCOM8002:00): added GPIO chardev (254:0)
+[    7.433218] gpiochip_setup_dev: registered GPIOs 362 to 511 on 
+device: gpiochip0 (QCOM8002:00)
+[    7.433222] gpio gpiochip0: (QCOM8002:00): created GPIO range 0->149 
+==> QCOM8002:00 PIN 0->149
 
-Model this code after the compat ioctl which copies the returned data
-to a previously cleared temporary structure on the stack (excluding the
-name pointer) and copy out to userspace from there.  As we already have
-an inparam union with an appropriate member and that memory is already
-cleared even for read only calls make use of that as a temporary store.
+Looks like the driver is initing just fine to me.  Is setting up the 
+jumpers and running gpio-test warranted?
 
-Based on an initial patch by Brian Belleville.
-
-CVE-2018-7755
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
-
-Broke up long line.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/block/floppy.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 56d46ffb08e1..f824836d2e7a 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3459,6 +3459,9 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
- 					  (struct floppy_struct **)&outparam);
- 		if (ret)
- 			return ret;
-+		memcpy(&inparam.g, outparam,
-+				offsetof(struct floppy_struct, name));
-+		outparam = &inparam.g;
- 		break;
- 	case FDMSGON:
- 		UDP->flags |= FTD_MSG;
 -- 
-2.17.1
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
