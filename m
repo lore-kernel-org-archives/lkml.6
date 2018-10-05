@@ -2,235 +2,130 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3F7C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 241E7C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B640120875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0BC820875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:04:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="YJUI4yGZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B640120875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVkQSWrA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BC820875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbeJFCDk (ORCPT
+        id S1729232AbeJFCEc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:03:40 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56122 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728733AbeJFCDj (ORCPT
+        Fri, 5 Oct 2018 22:04:32 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36117 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbeJFCEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:03:39 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w95IsX0S010384
-        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 12:03:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=hkBNM/ZLALjahi1XOFBhclHCAj/UbflIVsYQ5yPacnQ=;
- b=YJUI4yGZH96WqPe75S+jdpJVXgCPfhpsHoN6lfQ4860AottreXxqau/Je8K31S5VY4o1
- 0GAQqA9t54cKNe/JfCy4ttpgJEQPCpm3n1kraV02seGQ8HKSP6KQKOk32kXtP0LkV6Je
- ULGSVrch8nXlqOYm4JRtUD2DQXgix9Ta49E= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2mxaxsgjnm-10
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 12:03:35 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.24) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct
- 2018 12:03:05 -0700
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
- 2A80623AE78C; Fri,  5 Oct 2018 12:02:54 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
-        "Justin . Lee1 @ Dell . com" <Justin.Lee1@Dell.com>,
-        "joel @ jms . id . au" <joel@jms.id.au>,
-        "linux-aspeed @ lists . ozlabs . org" <linux-aspeed@lists.ozlabs.org>,
-        Sai Dasari <sdasari@fb.com>,
-        "christian @ cmd . nu" <christian@cmd.nu>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH net-next 2/2] net/ncsi: Add NCSI Mellanox OEM command
-Date:   Fri, 5 Oct 2018 12:02:46 -0700
-Message-ID: <20181005190247.988206-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Fri, 5 Oct 2018 22:04:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f18-v6so5134305pgv.3;
+        Fri, 05 Oct 2018 12:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IxNzpZfrzf04aYB260LV+RsW+idnvKy2G4n6HkUa5Hw=;
+        b=DVkQSWrANzQVEbIxB0Nlcx7OLj3wGT7nho/daPWb/qgY8XmmDOCiZ2HhYLGObgLlXb
+         nYHR4tdV3WiXB4V3mlPY+Sx5DXoFCwYTGMkSZfqql0ut03o9CXI2yvzgi4gb5jFv5wal
+         ycFjyEpjMO0Fl1c+ajYfx4s+FldyTa2HmrBGi7utt66hccZ5oP9rVjRA1ZL9bmxc8uym
+         qKGpKZVKaerFJCP2N6De3p4PGkGigAFP+0hkiW+ogoieb8/i6p+xY4ZiHX3faHdPoyYM
+         FBYdXEx487K2J6VD9APzzm0tjdswYvpMi/kNJKrx5KB+LPtt+5wm+bctuWrlZ4NWj1OX
+         ec0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IxNzpZfrzf04aYB260LV+RsW+idnvKy2G4n6HkUa5Hw=;
+        b=KLVXQu00Rx8TULz3ugwYWPOmMh6awx6pIpeT6LD2hnrIx9vmBzAS4nQAGgd3Z2XK6T
+         BZH1Z/NJQD3Cv2fGhn7DFajx7eWE854gC/ch2ja7ekcg2mNN6jp3GBSkYhpu0+jWUFb5
+         Pys8xExm5D54kppwsiTzq2eOVIuVVQJUSG+EYScAzzGGF1NsHfcjoEqpHzZcnFvzg3GG
+         a/Inz1W/UCRTp4UknJRBgyJAvGZf8cx/9iWjuvMKeBfCVkyuezY+33nhkV/lLC4rCHRL
+         80zJz6rYdt1Op+bbdu42dj1uFe5rQyqH08jb/7B19egEVtWEEf1gImcV9NTLixrHumkd
+         +5Kg==
+X-Gm-Message-State: ABuFfojDX0yi2qQ2w5frTeidQfEKnVySRnsOJmk9mksuAMbI1oaQ+vjz
+        Ohh9UXERm6jLb6Y2vgrMpyk=
+X-Google-Smtp-Source: ACcGV62yVMH0Ns+v8EkrWDksh8GtzkzM9J+zqUJnswaNs+zHA4lj5w4Stj2v9nfb+nDIDPwk4Te+ig==
+X-Received: by 2002:a62:d841:: with SMTP id e62-v6mr13285662pfg.60.1538766268846;
+        Fri, 05 Oct 2018 12:04:28 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id y128-v6sm11691843pfb.56.2018.10.05.12.04.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 12:04:28 -0700 (PDT)
+Subject: Re: [PATCH 15/16] of: unittest: initialize args before calling
+ of_irq_parse_one()
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>
+References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
+ <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
+ <CAL_Jsq+dqRr54_WAdBQ88sJytAuLL=U9kF_Xbj5rJv4PVn9gQg@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <d251f99e-6618-f1d2-814f-7aaffb8f499f@gmail.com>
+Date:   Fri, 5 Oct 2018 12:04:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CAL_Jsq+dqRr54_WAdBQ88sJytAuLL=U9kF_Xbj5rJv4PVn9gQg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds OEM Mellanox commands and response handling. It also
-defines OEM Get MAC Address handler to get and configure the device.
+On 10/05/18 07:53, Rob Herring wrote:
+> On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
+>>
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> Callers of of_irq_parse_one() blindly use the pointer args.np
+>> without checking whether of_irq_parse_one() had an error and
+>> thus did not set the value of args.np.  Initialize args to
+>> zero so that using the format "%pOF" to show the value of
+>> args.np will show "(null)" when of_irq_parse_one() has an
+>> error and does not set args.np instead of trying to
+>> dereference a random value.
+>>
+>> Reported-by: Guenter Roeck <linux@roeck-us.net>
+>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>> ---
+>>  drivers/of/unittest.c | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> Does this need to be part of this series?
 
-ncsi_oem_gma_handler_mlx: This handler send NCSI mellanox command for
-getting mac address.
-ncsi_rsp_handler_oem_mlx: This handles response received for all
-mellanox OEM commands.
-ncsi_rsp_handler_oem_mlx_gma: This handles get mac address response and
-set it to device.
+I do not know if it could be independently applied before the
+rest of the series (I have not tested that).  I included it
+in the series because the series has so many other changes to
+unittest.c.
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- net/ncsi/internal.h    |  5 +++++
- net/ncsi/ncsi-manage.c | 24 +++++++++++++++++++++++-
- net/ncsi/ncsi-pkt.h    |  9 +++++++++
- net/ncsi/ncsi-rsp.c    | 41 ++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 77 insertions(+), 2 deletions(-)
+If you want me to break this out, I will remove it from this
+series and resend it after the rest of the series has been
+pulled to mainline (and rebase on the new mainline).
 
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index 45883b32790e..d4558628a991 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -73,10 +73,15 @@ enum {
- #define NCSI_OEM_MFR_BCM_ID             0x113d
- /* Broadcom specific OEM Command */
- #define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
-+/* Mellanox specific OEM Command */
-+#define NCSI_OEM_MLX_CMD_GMA            0x00   /* CMD ID for Get MAC */
-+#define NCSI_OEM_MLX_CMD_GMA_PARAM      0x1b   /* Parameter for GMA  */
- /* OEM Command payload lengths*/
- #define NCSI_OEM_BCM_CMD_GMA_LEN        12
-+#define NCSI_OEM_MLX_CMD_GMA_LEN        8
- /* Mac address offset in OEM response */
- #define BCM_MAC_ADDR_OFFSET             28
-+#define MLX_MAC_ADDR_OFFSET             8
- 
- 
- struct ncsi_channel_version {
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index e5bfd9245b5d..38aef27d2e67 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -658,12 +658,34 @@ static void ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
- 			   nca->type);
- }
- 
-+static void ncsi_oem_gma_handler_mlx(struct ncsi_cmd_arg *nca)
-+{
-+	int ret = 0;
-+	unsigned char data[NCSI_OEM_MLX_CMD_GMA_LEN];
-+
-+	nca->payload = NCSI_OEM_MLX_CMD_GMA_LEN;
-+
-+	memset(data, 0, NCSI_OEM_MLX_CMD_GMA_LEN);
-+	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_MLX_ID);
-+	data[5] = NCSI_OEM_MLX_CMD_GMA;
-+	data[6] = NCSI_OEM_MLX_CMD_GMA_PARAM;
-+
-+	nca->data = data;
-+
-+	ret = ncsi_xmit_cmd(nca);
-+	if (ret)
-+		netdev_err(nca->ndp->ndev.dev,
-+			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
-+			   nca->type);
-+}
-+
- /* OEM Command handlers initialization */
- static struct ncsi_oem_gma_handler {
- 	unsigned int	mfr_id;
- 	void		(*handler)(struct ncsi_cmd_arg *nca);
- } ncsi_oem_gma_handlers[] = {
--	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
-+	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm },
-+	{ NCSI_OEM_MFR_MLX_ID, ncsi_oem_gma_handler_mlx }
- };
- 
- #endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
-diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
-index 4d3f06be38bd..2a6d83a596c9 100644
---- a/net/ncsi/ncsi-pkt.h
-+++ b/net/ncsi/ncsi-pkt.h
-@@ -165,6 +165,15 @@ struct ncsi_rsp_oem_pkt {
- 	unsigned char           data[];      /* Payload data      */
- };
- 
-+/* Mellanox Response Data */
-+struct ncsi_rsp_oem_mlx_pkt {
-+	unsigned char           cmd_rev;     /* Command Revision  */
-+	unsigned char           cmd;         /* Command ID        */
-+	unsigned char           param;       /* Parameter         */
-+	unsigned char           optional;    /* Optional data     */
-+	unsigned char           data[];      /* Data              */
-+};
-+
- /* Broadcom Response Data */
- struct ncsi_rsp_oem_bcm_pkt {
- 	unsigned char           ver;         /* Payload Version   */
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index bc20f7036579..a6f5a59eb6ef 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -596,6 +596,45 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
- 	return 0;
- }
- 
-+/* Response handler for Mellanox command Get Mac Address */
-+static int ncsi_rsp_handler_oem_mlx_gma(struct ncsi_request *nr)
-+{
-+	struct ncsi_rsp_oem_pkt *rsp;
-+	struct ncsi_dev_priv *ndp = nr->ndp;
-+	struct net_device *ndev = ndp->ndev.dev;
-+	int ret = 0;
-+	const struct net_device_ops *ops = ndev->netdev_ops;
-+	struct sockaddr saddr;
-+
-+	/* Get the response header */
-+	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-+
-+	saddr.sa_family = ndev->type;
-+	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-+	memcpy(saddr.sa_data, &rsp->data[MLX_MAC_ADDR_OFFSET], ETH_ALEN);
-+	ret = ops->ndo_set_mac_address(ndev, &saddr);
-+	if (ret < 0)
-+		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
-+
-+	return ret;
-+}
-+
-+/* Response handler for Mellanox card */
-+static int ncsi_rsp_handler_oem_mlx(struct ncsi_request *nr)
-+{
-+	struct ncsi_rsp_oem_pkt *rsp;
-+	struct ncsi_rsp_oem_mlx_pkt *mlx;
-+
-+	/* Get the response header */
-+	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-+	mlx = (struct ncsi_rsp_oem_mlx_pkt *)(rsp->data);
-+
-+	if (mlx->cmd == NCSI_OEM_MLX_CMD_GMA &&
-+	    mlx->param == NCSI_OEM_MLX_CMD_GMA_PARAM)
-+		return ncsi_rsp_handler_oem_mlx_gma(nr);
-+	return 0;
-+}
-+
- /* Response handler for Broadcom command Get Mac Address */
- static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
- {
-@@ -640,7 +679,7 @@ static struct ncsi_rsp_oem_handler {
- 	unsigned int	mfr_id;
- 	int		(*handler)(struct ncsi_request *nr);
- } ncsi_rsp_oem_handlers[] = {
--	{ NCSI_OEM_MFR_MLX_ID, NULL },
-+	{ NCSI_OEM_MFR_MLX_ID, ncsi_rsp_handler_oem_mlx },
- 	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
- };
- 
--- 
-2.17.1
+This patch is not fixing a known failure case - the current
+test data does not trigger the problem.  The recent patch
+from  Guenter that you already accepted fixes the known failure
+case, so this patch is not urgent.  The same is true about the
+other cases Guenter pointed out that this patch should fix.
 
+-Frank
