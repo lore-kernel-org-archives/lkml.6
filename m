@@ -2,138 +2,148 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B98C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BFCC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A60120834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:53:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3dF5Hd/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A60120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9208320834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:54:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9208320834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbeJENu1 (ORCPT
+        id S1727879AbeJENv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 09:50:27 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33116 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbeJENu0 (ORCPT
+        Fri, 5 Oct 2018 09:51:57 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40433 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727025AbeJENv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:50:26 -0400
-Received: by mail-lf1-f67.google.com with SMTP id o21-v6so8602605lfe.0;
-        Thu, 04 Oct 2018 23:53:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JDv7+lrfVHx6crNgWoKYdtCEXUNPEwDIMvB3Aq/NiOY=;
-        b=U3dF5Hd/6yXGlzsw+OcTsxfReqrXFy2yFJ4m7PNFNgqz8tkeIIinx6jtyS/YSYmWhI
-         Z58awvvaAm41fqxDObeJCrZ3yyOYK7MumxMJ63HD/juPrXX+nYcS8xd46+KNp8K6oQdF
-         SLPAbv+Q5UGX93RU6grtxZBn5pHR787GemwqZkgA4z0jNXpS09gWoyeqzxQTwYZ/zEVH
-         NUP1pC5HR/4R0ut1XaiKx2LosCF/OHMauiG/y/IwYlZz0NBiqiONXh29Sx0roZxFgQeU
-         J7xfzcmoetuIztvZhXowmnnhJ6a1qfQhZxZO6U0Y04Jav05Do2MqhlfmB5/gwVOfea8t
-         UJgg==
+        Fri, 5 Oct 2018 09:51:57 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w67so11701974ota.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 23:54:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JDv7+lrfVHx6crNgWoKYdtCEXUNPEwDIMvB3Aq/NiOY=;
-        b=XdpcML8vGKau12Ukl9ozl5SwGcJR+mpiFsub8xbl+iCo1tyZ2GrQUBAV5HU2oVv4AE
-         kN13BCzxgHboxWIHZQQ8cxQR3+uiXsvtf8LXqrCXvQ+hVdy87Y1K7S8al4QS+9ojuwGf
-         +ca0wvCj1otV30yt64Rkj5/+uP2+wtwI5slWIGJak0tcWze95H1WXW8i302uHKkJN1kD
-         j9ZpvMR808lF2amleRisiEez7lomD+uhxCQq5QFlnx7UrP3bK3blyA54yCw0gt0Mz8tE
-         NuO0KS5X640tqoxB/NszY+Y7r/ugwjom1kRhCBbFCVoYpNR8tHJyBJtYGcw56rii3KG2
-         NpXw==
-X-Gm-Message-State: ABuFfoiYXYb+cBoozPOGC2Y4qu62m08HeMNC+BbmgrC5jA4YKb/YwCGd
-        3a6iKPFMQBMSD+KpQnonWKA=
-X-Google-Smtp-Source: ACcGV61KRnBQS0qflgMGeYEwS3+PckOqyS5OfVGo/+rttSWA6v0S2DGKO04UChvRE78kC1pGH/DxiA==
-X-Received: by 2002:a19:ea57:: with SMTP id i84-v6mr5582566lfh.91.1538722387064;
-        Thu, 04 Oct 2018 23:53:07 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm1608871ljg.32.2018.10.04.23.53.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 23:53:04 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
-Date:   Fri,  5 Oct 2018 08:53:00 +0200
-Message-Id: <20181005065300.22882-3-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
-References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ErgCZiuWQWMwXPiAm/q4OdvjWtbS4JkYZ6UuJ/yrSi8=;
+        b=sUlMeL3zDRHRiwiIkYk34OxB8Ju60FWClAxk1i9H+yNMJ+drPoSlhFFOHERRFojS0i
+         rNFryc6qFmRUnvqqWvYUYiTC/b2qkRKTav3bGkmRzVEvJ7a3QmvL20CVjE4ZxDEgLjYN
+         ib1dgbgCo1VGwYdhJy1NJVn4DaOJUtXHR16ccU43Nq2dq8qo4+jOO+VCg9BrBIluve9Z
+         ddfAWMm3tJSG+s4MDtlrcLDul+Nc14bKcHXE93kA+R1T7/Q/uit/o2x6D/fY3FpVLB0Q
+         R5D8WqCE1pZYS5Xv5iY++T0+asCP/TX8IKPXWATd6RuBOXmpZxBaQm2Mle31DBd1V5CX
+         WRzg==
+X-Gm-Message-State: ABuFfoioHZs4bluPY5wMUnPgUmCix4d4eQoTNLz+mynED5Kp1m8dp6qA
+        CDlOwejfTHqb5MH/q+edrEJpQ7oIrnlqpN+OQy0=
+X-Google-Smtp-Source: ACcGV61DWwIo9+Rd9XZCXA71Wc7XWvtiWiNdg9vdcLFqVwrYoQCNI+x14cihhVj4cQAAEXyXpufqCweV66U5AxG3ZM8=
+X-Received: by 2002:a9d:4c90:: with SMTP id m16mr1162123otf.124.1538722478981;
+ Thu, 04 Oct 2018 23:54:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181004143750.30880-1-jani.nikula@intel.com>
+In-Reply-To: <20181004143750.30880-1-jani.nikula@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 5 Oct 2018 08:54:27 +0200
+Message-ID: <CAJZ5v0iOR=PLHWtuJDVSsjpeTp_BLsheRM_dR_AL00hN-6bUhQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sysfs: constify sysfs create/remove files harder
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current code assumes that the direction is input if direction_input
-function is set.
-This might not be the case on GPIOs with programmable direction.
+On Thu, Oct 4, 2018 at 4:38 PM Jani Nikula <jani.nikula@intel.com> wrote:
+>
+> Let the passed in array be const (and thus placed in rodata) instead of
+> a mutable array of const pointers.
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+I'm not sure if the changes guarantee what you want.  If I'm not
+mistaken, they just mean that the function itself cannot modify either
+the pointer passed to it, or the contents of the array pointed to by
+that pointer.  They don't imply the location of the array itself,
+though.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 907019b67a58..e016b22658ff 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1349,20 +1349,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 
--	for (i = 0; i < chip->ngpio; i++) {
--		struct gpio_desc *desc = &gdev->descs[i];
--
--		desc->gdev = gdev;
--
--		/* REVISIT: most hardware initializes GPIOs as inputs (often
--		 * with pullups enabled) so power usage is minimized. Linux
--		 * code should set the gpio direction first thing; but until
--		 * it does, and in case chip->get_direction is not set, we may
--		 * expose the wrong direction in sysfs.
--		 */
--		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
--	}
--
- #ifdef CONFIG_PINCTRL
- 	INIT_LIST_HEAD(&gdev->pin_ranges);
- #endif
-@@ -1391,6 +1377,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (status)
- 		goto err_remove_chip;
- 
-+	for (i = 0; i < chip->ngpio; i++) {
-+		struct gpio_desc *desc = &gdev->descs[i];
-+
-+		desc->gdev = gdev;
-+
-+		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-+			desc->flags = !chip->get_direction(chip, i) ?
-+					(1 << FLAG_IS_OUT) : 0;
-+		else
-+			desc->flags = !chip->direction_input ?
-+					(1 << FLAG_IS_OUT) : 0;
-+	}
-+
- 	acpi_gpiochip_add(chip);
- 
- 	machine_gpiochip_add(chip);
--- 
-2.19.0
+As for the changes:
 
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> ---
+>  fs/sysfs/file.c       | 4 ++--
+>  include/linux/sysfs.h | 8 ++++----
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+> index 0a7252aecfa5..bb71db63c99c 100644
+> --- a/fs/sysfs/file.c
+> +++ b/fs/sysfs/file.c
+> @@ -334,7 +334,7 @@ int sysfs_create_file_ns(struct kobject *kobj, const struct attribute *attr,
+>  }
+>  EXPORT_SYMBOL_GPL(sysfs_create_file_ns);
+>
+> -int sysfs_create_files(struct kobject *kobj, const struct attribute **ptr)
+> +int sysfs_create_files(struct kobject *kobj, const struct attribute * const *ptr)
+>  {
+>         int err = 0;
+>         int i;
+> @@ -493,7 +493,7 @@ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr)
+>         return ret;
+>  }
+>
+> -void sysfs_remove_files(struct kobject *kobj, const struct attribute **ptr)
+> +void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *ptr)
+>  {
+>         int i;
+>         for (i = 0; ptr[i]; i++)
+> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> index 987cefa337de..786816cf4aa5 100644
+> --- a/include/linux/sysfs.h
+> +++ b/include/linux/sysfs.h
+> @@ -234,7 +234,7 @@ int __must_check sysfs_create_file_ns(struct kobject *kobj,
+>                                       const struct attribute *attr,
+>                                       const void *ns);
+>  int __must_check sysfs_create_files(struct kobject *kobj,
+> -                                  const struct attribute **attr);
+> +                                  const struct attribute * const *attr);
+>  int __must_check sysfs_chmod_file(struct kobject *kobj,
+>                                   const struct attribute *attr, umode_t mode);
+>  struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
+> @@ -243,7 +243,7 @@ void sysfs_unbreak_active_protection(struct kernfs_node *kn);
+>  void sysfs_remove_file_ns(struct kobject *kobj, const struct attribute *attr,
+>                           const void *ns);
+>  bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr);
+> -void sysfs_remove_files(struct kobject *kobj, const struct attribute **attr);
+> +void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *attr);
+>
+>  int __must_check sysfs_create_bin_file(struct kobject *kobj,
+>                                        const struct bin_attribute *attr);
+> @@ -342,7 +342,7 @@ static inline int sysfs_create_file_ns(struct kobject *kobj,
+>  }
+>
+>  static inline int sysfs_create_files(struct kobject *kobj,
+> -                                   const struct attribute **attr)
+> +                                   const struct attribute * const *attr)
+>  {
+>         return 0;
+>  }
+> @@ -377,7 +377,7 @@ static inline bool sysfs_remove_file_self(struct kobject *kobj,
+>  }
+>
+>  static inline void sysfs_remove_files(struct kobject *kobj,
+> -                                    const struct attribute **attr)
+> +                                    const struct attribute * const *attr)
+>  {
+>  }
+>
+> --
+> 2.11.0
+>
