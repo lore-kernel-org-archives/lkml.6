@@ -2,347 +2,182 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CC7C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C642CC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E8A21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:07:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E8A21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 890B92084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:08:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="EJivZJHy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 890B92084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbeJEWGy (ORCPT
+        id S1728411AbeJEWHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:06:54 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:50822 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbeJEWGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:06:54 -0400
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 5FAAE498B3;
-        Fri,  5 Oct 2018 17:07:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id f0UDbB4oMwaa; Fri,  5 Oct 2018 17:07:41 +0200 (CEST)
-Date:   Sat, 6 Oct 2018 01:07:28 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
-        Tycho Andersen <tycho@tycho.ws>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
- resolution
-Message-ID: <20181005150728.mgqnpkbukpeu3bsm@ryuk>
-References: <20180929103453.12025-1-cyphar@cyphar.com>
- <20180929131534.24472-1-cyphar@cyphar.com>
- <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
- <20181004162611.vdlujbdguvagalpt@ryuk>
- <CAG48ez2u--Wac7d9n3idC92Pd-M40QzYtR6FKR8PAYr=VQHUBQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oh4knwbqqdaenl7c"
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2u--Wac7d9n3idC92Pd-M40QzYtR6FKR8PAYr=VQHUBQ@mail.gmail.com>
+        Fri, 5 Oct 2018 18:07:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34581 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbeJEWHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:07:18 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g12-v6so4888542pgs.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 08:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=alDE5Hfszt+ScKCD3O8u014AQQo/tXWyhSxaRXEN6Ok=;
+        b=EJivZJHyA5UUFgWMSowXL2LfrP1RKeHAoJS+LjY0JkvqHRZHu47bN7GLA+X3Pyh/Pp
+         uGqX9EROhLmH6wI8LWSqODJgJMe387TJqgq9vUHti3BSgbhI3nUkpAkecJIVsTtrbDbX
+         bynb5vA2ByZWlbUQJSlzFQiH4jz4oyd9n7rFSfjjP8XH7H1IRWg9muqJYanUnQch6Pqg
+         cIvci/cf1oUT9FijZ0jU7cCUtAsmB2McZetaQT8tVTMdVwYMf2DWgxuSV3nPKSQuxbT2
+         sJ3duHEbE8fefCH/G5ZpIE/eorKz7m51r0SjWSQqPiuNB7DtSfC6y/QJQ4V5l2OYDAbk
+         a6Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=alDE5Hfszt+ScKCD3O8u014AQQo/tXWyhSxaRXEN6Ok=;
+        b=MZBpiWf9XIAgH4c10Ira/ploO0thPYpr89L3fgY106kH34sswi04B+LFjQeQfMQ0rt
+         1NOoSbnh2q1ghep7pxnPOJPEvSzUta9EvjH+/cFpKo56XYxKp9f2VfgnAYClWS/nacLD
+         FT9+NU/1D3cYayj09x3dk9UkhAXVYDSWMYpgzYF2ryfwz1/iLqLN9t4Pg9VCWJSePsez
+         pmmfsBMgxPAbsFmmKXpSWGsTuda4LGm+6tRcXOPwyObYup2T+WEOK0yzjrJaOtJImEKa
+         g6RsLnQ1zMh78oICl7A6tLgyQHoESrq3fxoGNgsalgGFFgQVzknEKD31ZZ243y+QVaSE
+         wqHA==
+X-Gm-Message-State: ABuFfohIuSzT2GNOgsGAfQf/VPhQ3aXO3q/Rj4fat7EGCeAZBv9eReSE
+        3tAY/7YzTz/X2nVBMmoi3oi6J9tsQ9Y=
+X-Google-Smtp-Source: ACcGV61oFol6DB+3pV0XWXDGXdkyjNx6hoBZ/3VrUbUTilciFnn58ROyk4r4Mj9ywTfuiJqpiBqF9w==
+X-Received: by 2002:a62:18a:: with SMTP id 132-v6mr12403308pfb.207.1538752090767;
+        Fri, 05 Oct 2018 08:08:10 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:d01e:eb5d:f949:e221? ([2601:646:c200:7429:d01e:eb5d:f949:e221])
+        by smtp.gmail.com with ESMTPSA id v63-v6sm9761718pgd.69.2018.10.05.08.08.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 08:08:09 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <20181005141433.GS19272@hirez.programming.kicks-ass.net>
+Date:   Fri, 5 Oct 2018 08:08:08 -0700
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9E0E08C8-0DFC-4E50-A4FA-73208835EF9E@amacapital.net>
+References: <20181005081333.15018-1-ard.biesheuvel@linaro.org> <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net>
+To:     Peter Zijlstra <peterz@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---oh4knwbqqdaenl7c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2018-10-04, Jann Horn <jannh@google.com> wrote:
-> On Thu, Oct 4, 2018 at 6:26 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > On 2018-09-29, Jann Horn <jannh@google.com> wrote:
-> > > You attempt to open "C/../../etc/passwd" under the root "/A/B".
-> > > Something else concurrently moves /A/B/C to /A/C. This can result in
-> > > the following:
-> > >
-> > > 1. You start the path walk and reach /A/B/C.
-> > > 2. The other process moves /A/B/C to /A/C. Your path walk is now at /=
-A/C.
-> > > 3. Your path walk follows the first ".." up into /A. This is outside
-> > > the process root, but you never actually encountered the process root,
-> > > so you don't notice.
-> > > 4. Your path walk follows the second ".." up to /. Again, this is
-> > > outside the process root, but you don't notice.
-> > > 5. Your path walk walks down to /etc/passwd, and the open completes
-> > > successfully. You now have an fd pointing outside your chroot.
-> >
-> > I've been playing with this and I have the following patch, which
-> > according to my testing protects against attacks where ".." skips over
-> > nd->root. It abuses __d_path to figure out if nd->path can be resolved
-> > from nd->root (obviously a proper version of this patch would refactor
-> > __d_path so it could be used like this -- and would not return
-> > -EMULTIHOP).
-> >
-> > I've also attached my reproducer. With it, I was seeing fairly constant
-> > breakouts before this patch and after it I didn't see a single breakout
-> > after running it overnight. Obviously this is not conclusive, but I'm
-> > hoping that it can show what my idea for protecting against ".." was.
-> >
-> > Does this patch make sense? Or is there something wrong with it that I'm
-> > not seeing?
-> >
-> > --8<-------------------------------------------------------------------
-> >
-> > There is a fairly easy-to-exploit race condition with chroot(2) (and
-> > thus by extension AT_THIS_ROOT and AT_BENEATH) where a rename(2) of a
-> > path can be used to "skip over" nd->root and thus escape to the
-> > filesystem above nd->root.
-> >
-> >   thread1 [attacker]:
-> >     for (;;)
-> >       renameat2(AT_FDCWD, "/a/b/c", AT_FDCWD, "/a/d", RENAME_EXCHANGE);
-> >   thread2 [victim]:
-> >     for (;;)
-> >       openat(dirb, "b/c/../../etc/shadow", O_THISROOT);
-> >
-> > With fairly significant regularity, thread2 will resolve to
-> > "/etc/shadow" rather than "/a/b/etc/shadow". With this patch, such cases
-> > will be detected during ".." resolution (which is the weak point of
-> > chroot(2) -- since walking *into* a subdirectory tautologically cannot
-> > result in you walking *outside* nd->root).
-> >
-> > The use of __d_path here might seem suspect, however we don't mind if a
-> > path is moved from within the chroot to outside the chroot and we
-> > incorrectly decide it is safe (because at that point we are still within
-> > the set of files which were accessible at the beginning of resolution).
-> > However, we can fail resolution on the next path component if it remains
-> > outside of the root. A path which has always been outside nd->root
-> > during resolution will never be resolveable from nd->root and thus will
-> > always be blocked.
-> >
-> > DO NOT MERGE: Currently this code returns -EMULTIHOP in this case,
-> >               purely as a debugging measure (so that you can see that
-> >               the protection actually does something). Obviously in the
-> >               proper patch this will return -EXDEV.
-> >
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> >  fs/namei.c | 32 ++++++++++++++++++++++++++++++--
-> >  1 file changed, 30 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 6f995e6de6b1..c8349693d47b 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -53,8 +53,8 @@
-> >   * The new code replaces the old recursive symlink resolution with
-> >   * an iterative one (in case of non-nested symlink chains).  It does
-> >   * this with calls to <fs>_follow_link().
-> > - * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > - * replaced with a single function lookup_dentry() that can handle all
-> > + * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > + * replaced with a single function lookup_dentry() that can handle all
-> >   * the special cases of the former code.
-> >   *
-> >   * With the new dcache, the pathname is stored at each inode, at least=
- as
-> > @@ -1375,6 +1375,20 @@ static int follow_dotdot_rcu(struct nameidata *n=
-d)
-> >                                 return -EXDEV;
-> >                         break;
-> >                 }
-> > +               if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROO=
-T))) {
-> > +                       char *pathbuf, *pathptr;
-> > +
-> > +                       pathbuf =3D kmalloc(PATH_MAX, GFP_ATOMIC);
-> > +                       if (!pathbuf)
-> > +                               return -ECHILD;
-> > +                       pathptr =3D __d_path(&nd->path, &nd->root, path=
-buf, PATH_MAX);
-> > +                       kfree(pathbuf);
-> > +                       if (IS_ERR_OR_NULL(pathptr)) {
-> > +                               if (!pathptr)
-> > +                                       pathptr =3D ERR_PTR(-EMULTIHOP);
-> > +                               return PTR_ERR(pathptr);
-> > +                       }
-> > +               }
+> On Oct 5, 2018, at 7:14 AM, Peter Zijlstra <peterz@infradead.org> wrote:
 >=20
-> One somewhat problematic thing about this approach is that if someone
-> tries to lookup
-> "a/a/a/a/a/a/a/a/a/a/[...]/../../../../../../../../../.." for some
-> reason, you'll have quadratic runtime: For each "..", you'll have to
-> walk up to the root.
+>> On Fri, Oct 05, 2018 at 10:13:25AM +0200, Ard Biesheuvel wrote:
+>> diff --git a/include/linux/ffp.h b/include/linux/ffp.h
+>> new file mode 100644
+>> index 000000000000..8fc3b4c9b38f
+>> --- /dev/null
+>> +++ b/include/linux/ffp.h
+>> @@ -0,0 +1,43 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +#ifndef __LINUX_FFP_H
+>> +#define __LINUX_FFP_H
+>> +
+>> +#include <linux/types.h>
+>> +#include <linux/compiler.h>
+>> +
+>> +#ifdef CONFIG_HAVE_ARCH_FFP
+>> +#include <asm/ffp.h>
+>> +#else
+>> +
+>> +struct ffp {
+>> +    void    (**fn)(void);
+>> +    void    (*default_fn)(void);
+>> +};
+>> +
+>> +#define DECLARE_FFP(_fn, _def)                        \
+>> +    extern typeof(_def) *_fn;                    \
+>> +    extern struct ffp const __ffp_ ## _fn
+>> +
+>> +#define DEFINE_FFP(_fn, _def)                        \
+>> +    typeof(_def) *_fn =3D &_def;                    \
+>> +    struct ffp const __ffp_ ## _fn                    \
+>> +        =3D { (void(**)(void))&_fn, (void(*)(void))&_def };    \
+>> +    EXPORT_SYMBOL(__ffp_ ## _fn)
+>> +
+>> +static inline void ffp_set_target(const struct ffp *m, void *new_fn)
+>> +{
+>> +    WRITE_ONCE(*m->fn, new_fn);
+>> +}
+>> +
+>> +static inline void ffp_reset_target(const struct ffp *m)
+>> +{
+>> +    WRITE_ONCE(*m->fn, m->default_fn);
+>> +}
+>> +
+>> +#endif
+>> +
+>> +#define SET_FFP(_fn, _new)    ffp_set_target(&__ffp_ ## _fn, _new)
+>> +#define RESET_FFP(_fn)        ffp_reset_target(&__ffp_ ## _fn)
+>> +
+>> +#endif
+>=20
+> I don't understand this interface. There is no wrapper for the call
+> site, so how are we going to patch all call-sites when you update the
+> target?
 
-What if we took rename_lock (call it nd->r_seq) at the start of the
-resolution, and then only tried the __d_path-style check
+I=E2=80=99m also confused.
 
-  if (read_seqretry(&rename_lock, nd->r_seq) ||
-      read_seqretry(&mount_lock, nd->m_seq))
-	  /* do the __d_path lookup. */
+Anyway, we have patchable functions on x86. They=E2=80=99re called PVOPs, an=
+d they=E2=80=99re way overcomplicated.
 
-That way you would only hit the slow path if there were concurrent
-renames or mounts *and* you are doing a path resolution with
-AT_THIS_ROOT or AT_BENEATH. I've attached a modified patch that does
-this (and after some testing it also appears to work).
+I=E2=80=99ve proposed a better way that should generate better code, be more=
+ portable, and be more maintainable.  It goes like this.
 
-I'm not sure if there's a way to always avoid the quadratic lookup
-without (significantly and probably unreasonably) changing how dcache
-invalidation works. And obviously using this slow path if there was
-_any_ rename on the _entire_ system is suboptimal, but I think it is a
-significant improvement.
+To call the function, you literally just call  the default implementation.  I=
+t *might* be necessary to call a nonexistent wrapper to avoid annoying optim=
+izations. At build time, the kernel is built with relocations, so the object=
+ files contain relocation entries for the call. We collect these entries int=
+o a table. If we=E2=80=99re using the =E2=80=9Cnonexistent wrapper=E2=80=9D a=
+pproach, we can link in a .S or linker script to alias them to the default i=
+mplementation.
 
-Another possibility is to expand on Andy's suggestion to use
-/proc/$pid/root, and instead require AT_THIS_ROOT to use the root of a
-namespace as its dirfd (I'm not sure if there's a trivial way to detect
-this though). This wouldn't help with AT_BENEATH, but it should protect
-against ".." shenanigans without any ".." handling changes. (This is
-less ideal because it requires a container process, but it is another
-way of dealing with the issue.)
+To patch them, we just patch them. It can=E2=80=99t necessarily be done conc=
+urrently because nothing forces the right alignment. But we can do it at boo=
+t time and module load time. (Maybe we can patch at runtime on architectures=
+ with appropriate instruction alignment.  Or we ask gcc for an extension to a=
+lign calls to a function.)
 
----
- fs/namei.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 6f995e6de6b1..12c9be175cb4 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -493,7 +493,7 @@ struct nameidata {
- 	struct path	root;
- 	struct inode	*inode; /* path.dentry.d_inode */
- 	unsigned int	flags;
--	unsigned	seq, m_seq;
-+	unsigned	seq, m_seq, r_seq;
- 	int		last_type;
- 	unsigned	depth;
- 	int		total_link_count;
-@@ -1375,6 +1375,27 @@ static int follow_dotdot_rcu(struct nameidata *nd)
- 				return -EXDEV;
- 			break;
- 		}
-+		if (unlikely((nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT)) &&
-+			     (read_seqretry(&rename_lock, nd->r_seq) ||
-+			      read_seqretry(&mount_lock, nd->m_seq)))) {
-+			char *pathbuf, *pathptr;
-+
-+			nd->r_seq =3D read_seqbegin(&rename_lock);
-+			/* Cannot take m_seq here. */
-+
-+			pathbuf =3D kmalloc(PATH_MAX, GFP_ATOMIC);
-+			if (!pathbuf)
-+				return -ECHILD;
-+			pathptr =3D __d_path(&nd->path, &nd->root, pathbuf, PATH_MAX);
-+			kfree(pathbuf);
-+			if (IS_ERR_OR_NULL(pathptr)) {
-+				int error =3D PTR_ERR_OR_ZERO(pathptr);
-+
-+				if (!error)
-+					error =3D nd_jump_root(nd);
-+				return error;
-+			}
-+		}
- 		if (nd->path.dentry !=3D nd->path.mnt->mnt_root) {
- 			struct dentry *old =3D nd->path.dentry;
- 			struct dentry *parent =3D old->d_parent;
-@@ -1510,6 +1531,27 @@ static int follow_dotdot(struct nameidata *nd)
- 				return -EXDEV;
- 			break;
- 		}
-+		if (unlikely((nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT)) &&
-+			     (read_seqretry(&rename_lock, nd->r_seq) ||
-+			      read_seqretry(&mount_lock, nd->m_seq)))) {
-+			char *pathbuf, *pathptr;
-+
-+			nd->r_seq =3D read_seqbegin(&rename_lock);
-+			/* Cannot take m_seq here. */
-+
-+			pathbuf =3D kmalloc(PATH_MAX, GFP_KERNEL);
-+			if (!pathbuf)
-+				return -ENOMEM;
-+			pathptr =3D __d_path(&nd->path, &nd->root, pathbuf, PATH_MAX);
-+			kfree(pathbuf);
-+			if (IS_ERR_OR_NULL(pathptr)) {
-+				int error =3D PTR_ERR_OR_ZERO(pathptr);
-+
-+				if (!error)
-+					error =3D nd_jump_root(nd);
-+				return error;
-+			}
-+		}
- 		if (nd->path.dentry !=3D nd->path.mnt->mnt_root) {
- 			int ret =3D path_parent_directory(&nd->path);
- 			if (ret)
-@@ -2269,6 +2311,9 @@ static const char *path_init(struct nameidata *nd, un=
-signed flags)
- 	nd->last_type =3D LAST_ROOT; /* if there are only slashes... */
- 	nd->flags =3D flags | LOOKUP_JUMPED | LOOKUP_PARENT;
- 	nd->depth =3D 0;
-+	nd->m_seq =3D read_seqbegin(&mount_lock);
-+	nd->r_seq =3D read_seqbegin(&rename_lock);
-+
- 	if (flags & LOOKUP_ROOT) {
- 		struct dentry *root =3D nd->root.dentry;
- 		struct inode *inode =3D root->d_inode;
-@@ -2279,7 +2324,6 @@ static const char *path_init(struct nameidata *nd, un=
-signed flags)
- 		if (flags & LOOKUP_RCU) {
- 			nd->seq =3D __read_seqcount_begin(&nd->path.dentry->d_seq);
- 			nd->root_seq =3D nd->seq;
--			nd->m_seq =3D read_seqbegin(&mount_lock);
- 		} else {
- 			path_get(&nd->path);
- 		}
-@@ -2290,7 +2334,6 @@ static const char *path_init(struct nameidata *nd, un=
-signed flags)
- 	nd->path.mnt =3D NULL;
- 	nd->path.dentry =3D NULL;
-=20
--	nd->m_seq =3D read_seqbegin(&mount_lock);
- 	if (unlikely(flags & (LOOKUP_CHROOT | LOOKUP_XDEV))) {
- 		error =3D dirfd_path_init(nd);
- 		if (unlikely(error))
---=20
-2.19.0
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---oh4knwbqqdaenl7c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlu3fjAACgkQnhiqJn3b
-jbSTfw//cFzBBCEdluqIcPeMw8ANpTy3DdtjEtEOPy/DcE4z++lDYLO5jGhSyg8e
-gdpEaNiiRS3BbSjxUqU9BD2EO8cg6DWtiOdAZfuJo2YKZlK/uuKnm/q+4eGSahYm
-aHKmDdT4OqMBZR20Cguxkz2lt8DtIGBbw6OZVtgyMZlplpAmVmSj1E+YjIZFhGVe
-ACr+goArC+WEuGzQiTP1fxqpi91wjpuec4HGeJTP9/296Gr8DkLVUZuZrDx7uOG3
-0dznSloj6HSkvqAjam7pfyMm4W5xMgvy8WLod6lpIeM1CY577VoDnysJIYBIGRpS
-TApxgka9VRQGd/7qukLH5ZIAmJfFVDmOpDfxUSamXdWwFM7521L3WJdombcGS2w7
-3NvZW3Ig0O4ekek1rtjRGIUDJ6sZG0PNwokJz93aiMdkp8LTwM3VtbSCPOOAOFab
-609ktJefCzqVSj3qmj43lKoB8rinEDMOVcqKna9AisJSTiYXYODrbR5MrQTUV6le
-fLKF2UIwF4qToDnOn9o2TczI/XRZa8RCtcb3xeXGc2VL6caOQQv7puNximQLRN2H
-tR79LaoTbEBxNmtHZOFlm0Xt3/2ExV/gHP1KE8QFka+kZqB0iImYo9n7+rka2bEZ
-Sftv6wwZ2Z37aoO3xdhkhCAvIOQgujuWFRj1PVOWReJ1WtcgZSk=
-=jMHa
------END PGP SIGNATURE-----
-
---oh4knwbqqdaenl7c--
+Most of the machinery already exists: this is roughly how the module loader r=
+esolves calls outside of a module.=
