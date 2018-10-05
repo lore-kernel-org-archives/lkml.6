@@ -2,151 +2,89 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212A8C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B8AC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3A14208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3nLEPVs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A14208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F3009208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3009208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbeJEXYH (ORCPT
+        id S1729658AbeJEXYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:24:07 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36790 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729459AbeJEXOS (ORCPT
+        Fri, 5 Oct 2018 19:24:10 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:34194 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728849AbeJEXYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:18 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a8-v6so2436048wmf.1;
-        Fri, 05 Oct 2018 09:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KsOXf+04nO1i9Fx25nBAdv1HqIVCeXklXULnIBURjDc=;
-        b=A3nLEPVspuqH/lNpAXDWSReVi3ylY83PHg1ZrZor1Mcmcr1e6unO8BuOHUWqCIM4oO
-         vmGtTH1Q46ScgCEwpi7pJYedcazbXEQaJPvdKkZV5F0+MZpeV0ngi7A72lyCWZB8SCHm
-         qY8XiOiTmSTGk6XGswoFRImOxoz9xKk41tmZW6D2IcGdaTH4vEcobuIAqU7lU5/0KByJ
-         WEzFjSAWlFX5GFUl5wdwtR5NoEtikv71EplGp1qjrGSxcg5QzDVQ0A2aq2ZUv6C0zwya
-         01XkWT7cwjGFU6Zs8LBKLsK3yO5PtuWXrj8p92WfWmKvoOdLnWgCkC0QOYLTAeoEz5PC
-         J4Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KsOXf+04nO1i9Fx25nBAdv1HqIVCeXklXULnIBURjDc=;
-        b=MOG47iXlFGyWGE2KiNUQxRDx987U8WcRoydzG1ufl669ShScNWQUXaxQ2AFhXbEXii
-         PLT3XrCXYffYOOFKJ/jVEJp9XR+AWZ9ATKVx19uQKb7HXvl6MwyHXXCP2Ikqq2JskUCD
-         NL/plXonOQjAXsbjI8KleiMQY+8cLGHidNGCRBBH+JYyswGp0ahHZZUPWxv3453X2V39
-         xMavDooPiqAokI7uKcfsdP24M+BOcmloNG3H9rYE3EhBvYham4aA1F9NE8Or0wjZgJee
-         qYwuuIa8HPEikmZ1iHPz8kaO2zDvmUmh3QHcg9yumBpp5l72b51Pz7RFs1I+jfVIhxUV
-         /BNA==
-X-Gm-Message-State: ABuFfojTrd6BBpz2OfwJ5wBFuXNEd+8kgSKH86gJHxQ1cmhgJeaFMZUF
-        7ext/LNJnOqm2Q3njTAe4Xc=
-X-Google-Smtp-Source: ACcGV62pIxWj5DU4Ny8CV4AYV/Eq30vpA3Xuq/GabYIY8IO8f0J9xPXtbQNKCsnlMETskSh5qxQz2A==
-X-Received: by 2002:a1c:6655:: with SMTP id a82-v6mr4906931wmc.10.1538756093620;
-        Fri, 05 Oct 2018 09:14:53 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g186-v6sm2726696wmf.19.2018.10.05.09.14.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 09:14:53 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 18:14:50 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>, stable@vger.kernel.org,
-        Thiago Macieira <thiago.macieira@intel.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 0/5] perf/urgent fixes
-Message-ID: <20181005161450.GA73272@gmail.com>
-References: <20181005161012.18475-1-acme@kernel.org>
+        Fri, 5 Oct 2018 19:24:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 84C8B60A3592;
+        Fri,  5 Oct 2018 18:24:43 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id q6DABu4H239c; Fri,  5 Oct 2018 18:24:43 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 34FC560A357F;
+        Fri,  5 Oct 2018 18:24:43 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id DUUgsbLgRoBf; Fri,  5 Oct 2018 18:24:43 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id E904D60A0E1A;
+        Fri,  5 Oct 2018 18:24:42 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH AUTOSEL 3.18 6/6] ubifs: Check for name being NULL while mounting
+Date:   Fri, 05 Oct 2018 18:24:42 +0200
+Message-ID: <4196827.3PtsAkI51k@blindfold>
+In-Reply-To: <20181005161750.20823-6-sashal@kernel.org>
+References: <20181005161750.20823-1-sashal@kernel.org> <20181005161750.20823-6-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005161012.18475-1-acme@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sasha,
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+Am Freitag, 5. Oktober 2018, 18:17:50 CEST schrieb Sasha Levin:
+> From: Richard Weinberger <richard@nod.at>
+> 
+> [ Upstream commit 37f31b6ca4311b94d985fb398a72e5399ad57925 ]
+> 
+> The requested device name can be NULL or an empty string.
+> Check for that and refuse to continue. UBIFS has to do this manually
+> since we cannot use mount_bdev(), which checks for this condition.
+> 
+> Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+> Reported-by: syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 5d05dfd13f20b01a3cd5d293058baa7d5c1583b6:
-> 
->   Merge tag 'perf-urgent-for-mingo-4.19-20180918' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-09-19 13:25:35 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.19-20181005
-> 
-> for you to fetch changes up to 7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf:
-> 
->   perf record: Use unmapped IP for inline callchain cursors (2018-10-05 11:18:09 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes:
-> 
-> - Fix the build on Clear Linux, coping with redundant declarations of
->   function prototypes in python3 header files by adding
->   -Wno-redundant-decls to build with PYTHON=python3 (Arnaldo Carvalho de Melo)
-> 
-> - Fixes for processing inline frames in backtraces using DWARF based
->   unwinding (Milian Wolff)
-> 
-> - Cope with bad DWARF info for function names for inline frames,not
->   trying to demangle this symbol. Problem reported with rust but
->   reproduced as well with C++. Problem reported to the libbpf
->   maintainers (Milian Wolff)
-> 
-> - Fix python export to postgresql and sqlite code (Adrian Hunter)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Adrian Hunter (2):
->       perf script python: Fix export-to-postgresql.py occasional failure
->       perf script python: Fix export-to-sqlite.py sample columns
-> 
-> Arnaldo Carvalho de Melo (1):
->       perf python: Use -Wno-redundant-decls to build with PYTHON=python3
-> 
-> Milian Wolff (2):
->       perf report: Don't try to map ip to invalid map
->       perf record: Use unmapped IP for inline callchain cursors
-> 
->  tools/perf/scripts/python/export-to-postgresql.py | 9 +++++++++
->  tools/perf/scripts/python/export-to-sqlite.py     | 6 +++++-
->  tools/perf/util/machine.c                         | 8 +++++---
->  tools/perf/util/setup.py                          | 2 +-
->  4 files changed, 20 insertions(+), 5 deletions(-)
+I'm not sure whether it makes sense to apply this patch to stable.
+1. You need to be the real root to hit this code path.
+2. Access is read-only, for an attacker it is useless.
 
-Pulled into tip:perf/urgent, thanks a lot Arnaldo!
+If we look at the code:
+        if (name[0] != 'u' || name[1] != 'b' || name[2] != 'i')
+                return ERR_PTR(-EINVAL);
 
-	Ingo
+        /* ubi:NAME method */
+        if ((name[3] == ':' || name[3] == '!') && name[4] != '\0')
+
+name can be NULL, so we access just a few bytes.
+
+Thanks,
+//richard
+
+
