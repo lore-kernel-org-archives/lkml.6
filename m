@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1ED5C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD6FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A1F2098A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71A1F2098A
+	by mail.kernel.org (Postfix) with ESMTP id 6250921477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6250921477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbeJEX6k (ORCPT
+        id S1729190AbeJEX6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:58:40 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38909 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729108AbeJEX6j (ORCPT
+        Fri, 5 Oct 2018 19:58:43 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42331 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729108AbeJEX6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:58:39 -0400
-Received: by mail-oi1-f193.google.com with SMTP id u197-v6so10958781oif.5;
-        Fri, 05 Oct 2018 09:59:03 -0700 (PDT)
+        Fri, 5 Oct 2018 19:58:42 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w81-v6so10931016oiw.9;
+        Fri, 05 Oct 2018 09:59:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZC8t4Idln4S7ORmFnf/SrAK5cNn1ZboPvxmN3CleSFM=;
-        b=rCnvtB//zHL6iyIAh70mnURLnKIT5XgTpUsOEHSXBzP89jSIhj0+RIOnLoU1ch4tYA
-         2vy9bCI6vBQzg1Gwnw8v/fZN+4ycDJ7dtw82RYYfO9ZI3IOfJDeQ27nd+U9rmm/txS/c
-         46S1lX8D4Ni9rqAxSvgLVdmKuQ1TAJpMiGoKEgMxWfnXvLgHTahTqOClFJfA2JHB/6dW
-         cN68P3lW4rOJGgDaZ8KZg9pkMeyIesWaPhEpiEE7MuNQeGjEgy4s9P/zv+bEZKn8af5x
-         S7pn5zqtiBCmncHRnRCRqqHrxDoL2pETUcGVVE8kBAD3IHZzC5vxufA3x2aZWZ7vivZS
-         g7+w==
-X-Gm-Message-State: ABuFfohllbe9lqzWVKGwx83Q1a1+NVs4jsH6UgctVQiOE/Z76/DjJ6QV
-        NBrtPPl/YLEOqBGLjNn0zobPFRbjZg==
-X-Google-Smtp-Source: ACcGV62M2mlM92INfgpASuKJASzQEEL6UnrUwH1838TJLcnTB7H/a/G3Pyx6m096L5IlPwjcj3bRtA==
-X-Received: by 2002:aca:f341:: with SMTP id r62-v6mr5554485oih.230.1538758742731;
-        Fri, 05 Oct 2018 09:59:02 -0700 (PDT)
+         :references;
+        bh=mtTL2n+za36SdkRTg7E72YsIYoFfcWaRYH/h28h8iuc=;
+        b=nYi/oVfpKAqZQz6MWYyukJYkJY7u4F5tfnHEMC2JQe+XJdCZM6R6ztsi88S6U3Yk1y
+         AN+WOOi6tKrCpEMQiPVrz36dF89dXHS6EawNu11LYAFdukBHBlLv8BWyVXbXGjPyYD2d
+         FL1WDK/41g3/BViKsN293MTFatE3YeqUy8ddFbJ6gCadsa5VZKM92/kZDz6etGZIOnPr
+         pibCLxHZT+7nyl2EwMfn29URo3mDjVoVR5qx4BMplKYWLyFsdkhqQAIc6WaoSlBpCnPu
+         OE+t25h1YMYrbVkTvhZif+Ale6fre7te5ZJG+OZn24gd3Y1lAA+KKWPyE8gZ2hZfQuA7
+         QsXQ==
+X-Gm-Message-State: ABuFfojagQR37ILbtoLwi37swXZHTBt9rs7xlyv5FsOSfwwsAUja3NSP
+        0b1+L28ISW5wMvw0nUkWJuczhcQWHA==
+X-Google-Smtp-Source: ACcGV60BDLX8KtOES3un97imZHpPnq6mXTZnbumE/V2o7Ns5+cBG5Vc8I8ylUEkuzMxNiZ+Qlo0x5Q==
+X-Received: by 2002:aca:f342:: with SMTP id r63-v6mr6246368oih.6.1538758746338;
+        Fri, 05 Oct 2018 09:59:06 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id u63-v6sm2904328ota.75.2018.10.05.09.59.01
+        by smtp.googlemail.com with ESMTPSA id u63-v6sm2904328ota.75.2018.10.05.09.59.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 09:59:02 -0700 (PDT)
+        Fri, 05 Oct 2018 09:59:05 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
@@ -58,659 +58,477 @@ Cc:     Grant Likely <glikely@secretlab.ca>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 09/36] dt-bindings: Convert trivial-devices.txt to json-schema
-Date:   Fri,  5 Oct 2018 11:58:21 -0500
-Message-Id: <20181005165848.3474-10-robh@kernel.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 11/36] dt-bindings: timer: Convert ARM timer bindings to json-schema
+Date:   Fri,  5 Oct 2018 11:58:23 -0500
+Message-Id: <20181005165848.3474-12-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
 References: <20181005165848.3474-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert trivial-devices.txt to DT schema format using json-schema.
+Convert ARM timers to DT schema format using json-schema.
 
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/trivial-devices.txt   | 201 ---------
- .../devicetree/bindings/trivial-devices.yaml  | 414 ++++++++++++++++++
- 2 files changed, 414 insertions(+), 201 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/trivial-devices.txt
- create mode 100644 Documentation/devicetree/bindings/trivial-devices.yaml
+ .../bindings/timer/arm,arch_timer.txt         | 112 ----------------
+ .../bindings/timer/arm,arch_timer.yaml        | 103 +++++++++++++++
+ .../bindings/timer/arm,arch_timer_mmio.yaml   | 120 ++++++++++++++++++
+ .../bindings/timer/arm,global_timer.txt       |  27 ----
+ .../bindings/timer/arm,global_timer.yaml      |  46 +++++++
+ 5 files changed, 269 insertions(+), 139 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/arm,arch_timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
+ create mode 100644 Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/timer/arm,global_timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/arm,global_timer.yaml
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
+diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer.txt b/Documentation/devicetree/bindings/timer/arm,arch_timer.txt
 deleted file mode 100644
-index 763a2808a95c..000000000000
---- a/Documentation/devicetree/bindings/trivial-devices.txt
+index 68301b77e854..000000000000
+--- a/Documentation/devicetree/bindings/timer/arm,arch_timer.txt
 +++ /dev/null
-@@ -1,201 +0,0 @@
--This is a list of trivial i2c devices that have simple device tree
--bindings, consisting only of a compatible field, an address and
--possibly an interrupt line.
+@@ -1,112 +0,0 @@
+-* ARM architected timer
 -
--If a device needs more specific bindings, such as properties to
--describe some aspect of it, there needs to be a specific binding
--document for it just like any other devices.
+-ARM cores may have a per-core architected timer, which provides per-cpu timers,
+-or a memory mapped architected timer, which provides up to 8 frames with a
+-physical and optional virtual timer per frame.
+-
+-The per-core architected timer is attached to a GIC to deliver its
+-per-processor interrupts via PPIs. The memory mapped timer is attached to a GIC
+-to deliver its interrupts via SPIs.
+-
+-** CP15 Timer node properties:
+-
+-- compatible : Should at least contain one of
+-	"arm,armv7-timer"
+-	"arm,armv8-timer"
+-
+-- interrupts : Interrupt list for secure, non-secure, virtual and
+-  hypervisor timers, in that order.
+-
+-- clock-frequency : The frequency of the main counter, in Hz. Should be present
+-  only where necessary to work around broken firmware which does not configure
+-  CNTFRQ on all CPUs to a uniform correct value. Use of this property is
+-  strongly discouraged; fix your firmware unless absolutely impossible.
+-
+-- always-on : a boolean property. If present, the timer is powered through an
+-  always-on power domain, therefore it never loses context.
+-
+-- fsl,erratum-a008585 : A boolean property. Indicates the presence of
+-  QorIQ erratum A-008585, which says that reading the counter is
+-  unreliable unless the same value is returned by back-to-back reads.
+-  This also affects writes to the tval register, due to the implicit
+-  counter read.
+-
+-- hisilicon,erratum-161010101 : A boolean property. Indicates the
+-  presence of Hisilicon erratum 161010101, which says that reading the
+-  counters is unreliable in some cases, and reads may return a value 32
+-  beyond the correct value. This also affects writes to the tval
+-  registers, due to the implicit counter read.
+-
+-** Optional properties:
+-
+-- arm,cpu-registers-not-fw-configured : Firmware does not initialize
+-  any of the generic timer CPU registers, which contain their
+-  architecturally-defined reset values. Only supported for 32-bit
+-  systems which follow the ARMv7 architected reset values.
+-
+-- arm,no-tick-in-suspend : The main counter does not tick when the system is in
+-  low-power system suspend on some SoCs. This behavior does not match the
+-  Architecture Reference Manual's specification that the system counter "must
+-  be implemented in an always-on power domain."
 -
 -
--Compatible		Vendor / Chip
--==========		=============
--abracon,abb5zes3		AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
--ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
--ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
--adi,adt7461		+/-1C TDM Extended Temp Range I.C
--adt7461			+/-1C TDM Extended Temp Range I.C
--adi,adt7473		+/-1C TDM Extended Temp Range I.C
--adi,adt7475		+/-1C TDM Extended Temp Range I.C
--adi,adt7476		+/-1C TDM Extended Temp Range I.C
--adi,adt7490		+/-1C TDM Extended Temp Range I.C
--adi,adxl345		Three-Axis Digital Accelerometer
--adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
--ams,iaq-core		AMS iAQ-Core VOC Sensor
--amstaos,tsl2571		AMS/TAOS ALS and proximity sensor
--amstaos,tsl2671		AMS/TAOS ALS and proximity sensor
--amstaos,tmd2671		AMS/TAOS ALS and proximity sensor
--amstaos,tsl2771		AMS/TAOS ALS and proximity sensor
--amstaos,tmd2771		AMS/TAOS ALS and proximity sensor
--amstaos,tsl2572		AMS/TAOS ALS and proximity sensor
--amstaos,tsl2672		AMS/TAOS ALS and proximity sensor
--amstaos,tmd2672		AMS/TAOS ALS and proximity sensor
--amstaos,tsl2772		AMS/TAOS ALS and proximity sensor
--amstaos,tmd2772		AMS/TAOS ALS and proximity sensor
--at,24c08		i2c serial eeprom  (24cxx)
--atmel,at97sc3204t	i2c trusted platform module (TPM)
--capella,cm32181		CM32181: Ambient Light Sensor
--capella,cm3232		CM3232: Ambient Light Sensor
--cirrus,cs42l51		Cirrus Logic CS42L51 audio codec
--dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
--dallas,ds1631		High-Precision Digital Thermometer
--dallas,ds1672		Dallas DS1672 Real-time Clock
--dallas,ds1682		Total-Elapsed-Time Recorder with Alarm
--dallas,ds1775		Tiny Digital Thermometer and Thermostat
--dallas,ds3232		Extremely Accurate I²C RTC with Integrated Crystal and SRAM
--dallas,ds4510		CPU Supervisor with Nonvolatile Memory and Programmable I/O
--dallas,ds75		Digital Thermometer and Thermostat
--devantech,srf02		Devantech SRF02 ultrasonic ranger in I2C mode
--devantech,srf08		Devantech SRF08 ultrasonic ranger
--devantech,srf10		Devantech SRF10 ultrasonic ranger
--dlg,da9053		DA9053: flexible system level PMIC with multicore support
--dlg,da9063		DA9063: system PMIC for quad-core application processors
--domintech,dmard09	DMARD09: 3-axis Accelerometer
--domintech,dmard10	DMARD10: 3-axis Accelerometer
--epson,rx8010		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
--epson,rx8581		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
--emmicro,em3027		EM Microelectronic EM3027 Real-time Clock
--fsl,mag3110		MAG3110: Xtrinsic High Accuracy, 3D Magnetometer
--fsl,mma7660		MMA7660FC: 3-Axis Orientation/Motion Detection Sensor
--fsl,mma8450		MMA8450Q: Xtrinsic Low-power, 3-axis Xtrinsic Accelerometer
--fsl,mpl3115		MPL3115: Absolute Digital Pressure Sensor
--fsl,mpr121		MPR121: Proximity Capacitive Touch Sensor Controller
--fsl,sgtl5000		SGTL5000: Ultra Low-Power Audio Codec
--gmt,g751		G751: Digital Temperature Sensor and Thermal Watchdog with Two-Wire Interface
--infineon,slb9635tt	Infineon SLB9635 (Soft-) I2C TPM (old protocol, max 100khz)
--infineon,slb9645tt	Infineon SLB9645 I2C TPM (new protocol, max 400khz)
--infineon,tlv493d-a1b6	Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
--isil,isl1208		Intersil ISL1208 Low Power RTC with Battery Backed SRAM
--isil,isl1218		Intersil ISL1218 Low Power RTC with Battery Backed SRAM
--isil,isl12022		Intersil ISL12022 Real-time Clock
--isil,isl29028		Intersil ISL29028 Ambient Light and Proximity Sensor
--isil,isl29030		Intersil ISL29030 Ambient Light and Proximity Sensor
--maxim,ds1050		5 Bit Programmable, Pulse-Width Modulator
--maxim,max1237		Low-Power, 4-/12-Channel, 2-Wire Serial, 12-Bit ADCs
--maxim,max6621		PECI-to-I2C translator for PECI-to-SMBus/I2C protocol conversion
--maxim,max6625		9-Bit/12-Bit Temperature Sensors with I²C-Compatible Serial Interface
--mcube,mc3230		mCube 3-axis 8-bit digital accelerometer
--memsic,mxc6225		MEMSIC 2-axis 8-bit digital accelerometer
--microchip,mcp4017-502	Microchip 7-bit Single I2C Digital POT (5k)
--microchip,mcp4017-103	Microchip 7-bit Single I2C Digital POT (10k)
--microchip,mcp4017-503	Microchip 7-bit Single I2C Digital POT (50k)
--microchip,mcp4017-104	Microchip 7-bit Single I2C Digital POT (100k)
--microchip,mcp4018-502	Microchip 7-bit Single I2C Digital POT (5k)
--microchip,mcp4018-103	Microchip 7-bit Single I2C Digital POT (10k)
--microchip,mcp4018-503	Microchip 7-bit Single I2C Digital POT (50k)
--microchip,mcp4018-104	Microchip 7-bit Single I2C Digital POT (100k)
--microchip,mcp4019-502	Microchip 7-bit Single I2C Digital POT (5k)
--microchip,mcp4019-103	Microchip 7-bit Single I2C Digital POT (10k)
--microchip,mcp4019-503	Microchip 7-bit Single I2C Digital POT (50k)
--microchip,mcp4019-104	Microchip 7-bit Single I2C Digital POT (100k)
--microchip,mcp4531-502	Microchip 7-bit Single I2C Digital Potentiometer (5k)
--microchip,mcp4531-103	Microchip 7-bit Single I2C Digital Potentiometer (10k)
--microchip,mcp4531-503	Microchip 7-bit Single I2C Digital Potentiometer (50k)
--microchip,mcp4531-104	Microchip 7-bit Single I2C Digital Potentiometer (100k)
--microchip,mcp4532-502	Microchip 7-bit Single I2C Digital Potentiometer (5k)
--microchip,mcp4532-103	Microchip 7-bit Single I2C Digital Potentiometer (10k)
--microchip,mcp4532-503	Microchip 7-bit Single I2C Digital Potentiometer (50k)
--microchip,mcp4532-104	Microchip 7-bit Single I2C Digital Potentiometer (100k)
--microchip,mcp4541-502	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4541-103	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4541-503	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4541-104	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4542-502	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4542-103	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4542-503	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4542-104	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4551-502	Microchip 8-bit Single I2C Digital Potentiometer (5k)
--microchip,mcp4551-103	Microchip 8-bit Single I2C Digital Potentiometer (10k)
--microchip,mcp4551-503	Microchip 8-bit Single I2C Digital Potentiometer (50k)
--microchip,mcp4551-104	Microchip 8-bit Single I2C Digital Potentiometer (100k)
--microchip,mcp4552-502	Microchip 8-bit Single I2C Digital Potentiometer (5k)
--microchip,mcp4552-103	Microchip 8-bit Single I2C Digital Potentiometer (10k)
--microchip,mcp4552-503	Microchip 8-bit Single I2C Digital Potentiometer (50k)
--microchip,mcp4552-104	Microchip 8-bit Single I2C Digital Potentiometer (100k)
--microchip,mcp4561-502	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4561-103	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4561-503	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4561-104	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4562-502	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4562-103	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4562-503	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4562-104	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4631-502	Microchip 7-bit Dual I2C Digital Potentiometer (5k)
--microchip,mcp4631-103	Microchip 7-bit Dual I2C Digital Potentiometer (10k)
--microchip,mcp4631-503	Microchip 7-bit Dual I2C Digital Potentiometer (50k)
--microchip,mcp4631-104	Microchip 7-bit Dual I2C Digital Potentiometer (100k)
--microchip,mcp4632-502	Microchip 7-bit Dual I2C Digital Potentiometer (5k)
--microchip,mcp4632-103	Microchip 7-bit Dual I2C Digital Potentiometer (10k)
--microchip,mcp4632-503	Microchip 7-bit Dual I2C Digital Potentiometer (50k)
--microchip,mcp4632-104	Microchip 7-bit Dual I2C Digital Potentiometer (100k)
--microchip,mcp4641-502	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4641-103	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4641-503	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4641-104	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4642-502	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4642-103	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4642-503	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4642-104	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4651-502	Microchip 8-bit Dual I2C Digital Potentiometer (5k)
--microchip,mcp4651-103	Microchip 8-bit Dual I2C Digital Potentiometer (10k)
--microchip,mcp4651-503	Microchip 8-bit Dual I2C Digital Potentiometer (50k)
--microchip,mcp4651-104	Microchip 8-bit Dual I2C Digital Potentiometer (100k)
--microchip,mcp4652-502	Microchip 8-bit Dual I2C Digital Potentiometer (5k)
--microchip,mcp4652-103	Microchip 8-bit Dual I2C Digital Potentiometer (10k)
--microchip,mcp4652-503	Microchip 8-bit Dual I2C Digital Potentiometer (50k)
--microchip,mcp4652-104	Microchip 8-bit Dual I2C Digital Potentiometer (100k)
--microchip,mcp4661-502	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4661-103	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4661-503	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4661-104	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
--microchip,mcp4662-502	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
--microchip,mcp4662-103	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
--microchip,mcp4662-503	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
--microchip,mcp4662-104	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
--microchip,tc654		PWM Fan Speed Controller With Fan Fault Detection
--microchip,tc655		PWM Fan Speed Controller With Fan Fault Detection
--microcrystal,rv3029	Real Time Clock Module with I2C-Bus
--miramems,da226		MiraMEMS DA226 2-axis 14-bit digital accelerometer
--miramems,da280		MiraMEMS DA280 3-axis 14-bit digital accelerometer
--miramems,da311		MiraMEMS DA311 3-axis 12-bit digital accelerometer
--national,lm63		Temperature sensor with integrated fan control
--national,lm75		I2C TEMP SENSOR
--national,lm80		Serial Interface ACPI-Compatible Microprocessor System Hardware Monitor
--national,lm85		Temperature sensor with integrated fan control
--national,lm92		±0.33°C Accurate, 12-Bit + Sign Temperature Sensor and Thermal Window Comparator with Two-Wire Interface
--nuvoton,npct501		i2c trusted platform module (TPM)
--nuvoton,npct601		i2c trusted platform module (TPM2)
--nuvoton,w83773g		Nuvoton Temperature Sensor
--nxp,pca9556		Octal SMBus and I2C registered interface
--nxp,pca9557		8-bit I2C-bus and SMBus I/O port with reset
--nxp,pcf2127		Real-time clock
--nxp,pcf2129		Real-time clock
--nxp,pcf8523		Real-time Clock
--nxp,pcf8563		Real-time clock/calendar
--nxp,pcf85063		Tiny Real-Time Clock
--oki,ml86v7667		OKI ML86V7667 video decoder
--ovti,ov5642		OV5642: Color CMOS QSXGA (5-megapixel) Image Sensor with OmniBSI and Embedded TrueFocus
--pericom,pt7c4338	Real-time Clock Module
--plx,pex8648		48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
--pulsedlight,lidar-lite-v2	Pulsedlight LIDAR range-finding sensor
--ricoh,r2025sd		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,r2221tl		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rs5c372a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rs5c372b		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rv5c386		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rv5c387a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--samsung,24ad0xd1	S524AD0XF1 (128K/256K-bit Serial EEPROM for Low Power)
--sgx,vz89x		SGX Sensortech VZ89X Sensors
--sii,s35390a		2-wire CMOS real-time clock
--silabs,si7020		Relative Humidity and Temperature Sensors
--skyworks,sky81452	Skyworks SKY81452: Six-Channel White LED Driver with Touch Panel Bias Supply
--st,24c256		i2c serial eeprom  (24cxx)
--taos,tsl2550		Ambient Light Sensor with SMBUS/Two Wire Serial Interface
--ti,ads7828		8-Channels, 12-bit ADC
--ti,ads7830		8-Channels, 8-bit ADC
--ti,amc6821		Temperature Monitoring and Fan Control
--ti,tsc2003		I2C Touch-Screen Controller
--ti,tmp102		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
--ti,tmp103		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
--ti,tmp275		Digital Temperature Sensor
--winbond,w83793		Winbond/Nuvoton H/W Monitor
--winbond,wpct301		i2c trusted platform module (TPM)
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+-Example:
+-
+-	timer {
+-		compatible = "arm,cortex-a15-timer",
+-			     "arm,armv7-timer";
+-		interrupts = <1 13 0xf08>,
+-			     <1 14 0xf08>,
+-			     <1 11 0xf08>,
+-			     <1 10 0xf08>;
+-		clock-frequency = <100000000>;
+-	};
+-
+-** Memory mapped timer node properties:
+-
+-- compatible : Should at least contain "arm,armv7-timer-mem".
+-
+-- clock-frequency : The frequency of the main counter, in Hz. Should be present
+-  only when firmware has not configured the MMIO CNTFRQ registers.
+-
+-- reg : The control frame base address.
+-
+-Note that #address-cells, #size-cells, and ranges shall be present to ensure
+-the CPU can address a frame's registers.
+-
+-A timer node has up to 8 frame sub-nodes, each with the following properties:
+-
+-- frame-number: 0 to 7.
+-
+-- interrupts : Interrupt list for physical and virtual timers in that order.
+-  The virtual timer interrupt is optional.
+-
+-- reg : The first and second view base addresses in that order. The second view
+-  base address is optional.
+-
+-- status : "disabled" indicates the frame is not available for use. Optional.
+-
+-Example:
+-
+-	timer@f0000000 {
+-		compatible = "arm,armv7-timer-mem";
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges;
+-		reg = <0xf0000000 0x1000>;
+-		clock-frequency = <50000000>;
+-
+-		frame@f0001000 {
+-			frame-number = <0>
+-			interrupts = <0 13 0x8>,
+-				     <0 14 0x8>;
+-			reg = <0xf0001000 0x1000>,
+-			      <0xf0002000 0x1000>;
+-		};
+-
+-		frame@f0003000 {
+-			frame-number = <1>
+-			interrupts = <0 15 0x8>;
+-			reg = <0xf0003000 0x1000>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
 new file mode 100644
-index 000000000000..a17278a44699
+index 000000000000..733ae2254c65
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -0,0 +1,414 @@
++++ b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
+@@ -0,0 +1,103 @@
 +# SPDX-License-Identifier: None
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/bindings/trivial-devices.yaml#
++$id: http://devicetree.org/schemas/bindings/arm,arch_timer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Trivial I2C and SPI devices that have simple device tree bindings
++title: ARM architected timer
 +
 +maintainers:
-+  - Rob Herring <robh@kernel.org>
++  - Marc Zyngier <marc.zyngier@arm.com>
++  - Mark Rutland <mark.rutland@arm.com>
++description: |+
++  ARM cores may have a per-core architected timer, which provides per-cpu timers,
++  or a memory mapped architected timer, which provides up to 8 frames with a
++  physical and optional virtual timer per frame.
 +
-+description: |
-+  This is a list of trivial I2C and SPI devices that have simple device tree
-+  bindings, consisting only of a compatible field, an address and possibly an
-+  interrupt line.
-+
-+  If a device needs more specific bindings, such as properties to
-+  describe some aspect of it, there needs to be a specific binding
-+  document for it just like any other devices.
++  The per-core architected timer is attached to a GIC to deliver its
++  per-processor interrupts via PPIs. The memory mapped timer is attached to a GIC
++  to deliver its interrupts via SPIs.
 +
 +properties:
-+  reg:
-+    maxItems: 1
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - arm,cortex-a15-timer
++          - enum:
++              - arm,armv7-timer
++      - items:
++          - enum:
++            - arm,armv7-timer
++      - items:
++          - enum:
++            - arm,armv8-timer
++
 +  interrupts:
-+    maxItems: 1
++    items:
++      - description: secure timer irq
++      - description: non-secure timer irq
++      - description: virtual timer irq
++      - description: hypervisor timer irq
++
++  clock-frequency:
++    description: The frequency of the main counter, in Hz. Should be present
++      only where necessary to work around broken firmware which does not configure
++      CNTFRQ on all CPUs to a uniform correct value. Use of this property is
++      strongly discouraged; fix your firmware unless absolutely impossible.
++
++  always-on:
++    type: boolean
++    description: If present, the timer is powered through an always-on power
++      domain, therefore it never loses context.
++
++  fsl,erratum-a008585:
++    type: boolean
++    description: Indicates the presence of QorIQ erratum A-008585, which says
++      that reading the counter is unreliable unless the same value is returned
++      by back-to-back reads. This also affects writes to the tval register, due
++      to the implicit counter read.
++
++  hisilicon,erratum-161010101:
++    type: boolean
++    description: Indicates the presence of Hisilicon erratum 161010101, which
++      says that reading the counters is unreliable in some cases, and reads may
++      return a value 32 beyond the correct value. This also affects writes to
++      the tval registers, due to the implicit counter read.
++
++  arm,cpu-registers-not-fw-configured:
++    type: boolean
++    description: Firmware does not initialize any of the generic timer CPU
++      registers, which contain their architecturally-defined reset values. Only
++      supported for 32-bit systems which follow the ARMv7 architected reset
++      values.
++
++  arm,no-tick-in-suspend:
++    type: boolean
++    description: The main counter does not tick when the system is in
++      low-power system suspend on some SoCs. This behavior does not match the
++      Architecture Reference Manual's specification that the system counter "must
++      be implemented in an always-on power domain."
++
++required:
++  - compatible
++
++oneOf:
++  - required:
++      - interrupts
++  - required:
++      - interrupts-extended
++
++examples:
++  - |
++    timer {
++      compatible = "arm,cortex-a15-timer",
++             "arm,armv7-timer";
++      interrupts = <1 13 0xf08>,
++             <1 14 0xf08>,
++             <1 11 0xf08>,
++             <1 10 0xf08>;
++      clock-frequency = <100000000>;
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+new file mode 100644
+index 000000000000..34c8ecfea2a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+@@ -0,0 +1,120 @@
++# SPDX-License-Identifier: None
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/arm,arch_timer_mmio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM memory mapped architected timer
++
++maintainers:
++  - Marc Zyngier <marc.zyngier@arm.com>
++  - Mark Rutland <mark.rutland@arm.com>
++
++description: |+
++  ARM cores may have a memory mapped architected timer, which provides up to 8
++  frames with a physical and optional virtual timer per frame.
++
++  The memory mapped timer is attached to a GIC to deliver its interrupts via SPIs.
++
++properties:
 +  compatible:
 +    items:
 +      - enum:
-+            # AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
-+          - abracon,abb5zes3
-+            # SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
-+          - ad,ad7414
-+            # ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
-+          - ad,adm9240
-+            # +/-1C TDM Extended Temp Range I.C
-+          - adi,adt7461
-+            # +/-1C TDM Extended Temp Range I.C
-+          - adt7461
-+            # +/-1C TDM Extended Temp Range I.C
-+          - adi,adt7473
-+            # +/-1C TDM Extended Temp Range I.C
-+          - adi,adt7475
-+            # +/-1C TDM Extended Temp Range I.C
-+          - adi,adt7476
-+            # +/-1C TDM Extended Temp Range I.C
-+          - adi,adt7490
-+            # Three-Axis Digital Accelerometer
-+          - adi,adxl345
-+            # Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
-+          - adi,adxl346
-+            # AMS iAQ-Core VOC Sensor
-+          - ams,iaq-core
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tsl2571
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tsl2671
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tmd2671
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tsl2771
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tmd2771
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tsl2572
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tsl2672
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tmd2672
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tsl2772
-+            # AMS/TAOS ALS and proximity sensor
-+          - amstaos,tmd2772
-+            # i2c serial eeprom  (24cxx)
-+          - at,24c08
-+            # i2c trusted platform module (TPM)
-+          - atmel,at97sc3204t
-+            # CM32181: Ambient Light Sensor
-+          - capella,cm32181
-+            # CM3232: Ambient Light Sensor
-+          - capella,cm3232
-+            # Cirrus Logic CS42L51 audio codec
-+          - cirrus,cs42l51
-+            # I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
-+          - dallas,ds1374
-+            # High-Precision Digital Thermometer
-+          - dallas,ds1631
-+            # Dallas DS1672 Real-time Clock
-+          - dallas,ds1672
-+            # Total-Elapsed-Time Recorder with Alarm
-+          - dallas,ds1682
-+            # Tiny Digital Thermometer and Thermostat
-+          - dallas,ds1775
-+            # Extremely Accurate I²C RTC with Integrated Crystal and SRAM
-+          - dallas,ds3232
-+            # CPU Supervisor with Nonvolatile Memory and Programmable I/O
-+          - dallas,ds4510
-+            # Digital Thermometer and Thermostat
-+          - dallas,ds75
-+            # Devantech SRF02 ultrasonic ranger in I2C mode
-+          - devantech,srf02
-+            # Devantech SRF08 ultrasonic ranger
-+          - devantech,srf08
-+            # Devantech SRF10 ultrasonic ranger
-+          - devantech,srf10
-+            # DA9053: flexible system level PMIC with multicore support
-+          - dlg,da9053
-+            # DA9063: system PMIC for quad-core application processors
-+          - dlg,da9063
-+            # DMARD09: 3-axis Accelerometer
-+          - domintech,dmard09
-+            # DMARD10: 3-axis Accelerometer
-+          - domintech,dmard10
-+            # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
-+          - epson,rx8010
-+            # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
-+          - epson,rx8581
-+            # EM Microelectronic EM3027 Real-time Clock
-+          - emmicro,em3027
-+            # MAG3110: Xtrinsic High Accuracy, 3D Magnetometer
-+          - fsl,mag3110
-+            # MMA7660FC: 3-Axis Orientation/Motion Detection Sensor
-+          - fsl,mma7660
-+            # MMA8450Q: Xtrinsic Low-power, 3-axis Xtrinsic Accelerometer
-+          - fsl,mma8450
-+            # MPL3115: Absolute Digital Pressure Sensor
-+          - fsl,mpl3115
-+            # MPR121: Proximity Capacitive Touch Sensor Controller
-+          - fsl,mpr121
-+            # SGTL5000: Ultra Low-Power Audio Codec
-+          - fsl,sgtl5000
-+            # G751: Digital Temperature Sensor and Thermal Watchdog with Two-Wire Interface
-+          - gmt,g751
-+            # Infineon SLB9635 (Soft-) I2C TPM (old protocol, max 100khz)
-+          - infineon,slb9635tt
-+            # Infineon SLB9645 I2C TPM (new protocol, max 400khz)
-+          - infineon,slb9645tt
-+            # Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
-+          - infineon,tlv493d-a1b6
-+            # Intersil ISL1208 Low Power RTC with Battery Backed SRAM
-+          - isil,isl1208
-+            # Intersil ISL1218 Low Power RTC with Battery Backed SRAM
-+          - isil,isl1218
-+            # Intersil ISL12022 Real-time Clock
-+          - isil,isl12022
-+            # Intersil ISL29028 Ambient Light and Proximity Sensor
-+          - isil,isl29028
-+            # Intersil ISL29030 Ambient Light and Proximity Sensor
-+          - isil,isl29030
-+            # 5 Bit Programmable, Pulse-Width Modulator
-+          - maxim,ds1050
-+            # Low-Power, 4-/12-Channel, 2-Wire Serial, 12-Bit ADCs
-+          - maxim,max1237
-+            # PECI-to-I2C translator for PECI-to-SMBus/I2C protocol conversion
-+          - maxim,max6621
-+            # 9-Bit/12-Bit Temperature Sensors with I²C-Compatible Serial Interface
-+          - maxim,max6625
-+            # mCube 3-axis 8-bit digital accelerometer
-+          - mcube,mc3230
-+            # MEMSIC 2-axis 8-bit digital accelerometer
-+          - memsic,mxc6225
-+            # Microchip 7-bit Single I2C Digital POT (5k)
-+          - microchip,mcp4017-502
-+            # Microchip 7-bit Single I2C Digital POT (10k)
-+          - microchip,mcp4017-103
-+            # Microchip 7-bit Single I2C Digital POT (50k)
-+          - microchip,mcp4017-503
-+            # Microchip 7-bit Single I2C Digital POT (100k)
-+          - microchip,mcp4017-104
-+            # Microchip 7-bit Single I2C Digital POT (5k)
-+          - microchip,mcp4018-502
-+            # Microchip 7-bit Single I2C Digital POT (10k)
-+          - microchip,mcp4018-103
-+            # Microchip 7-bit Single I2C Digital POT (50k)
-+          - microchip,mcp4018-503
-+            # Microchip 7-bit Single I2C Digital POT (100k)
-+          - microchip,mcp4018-104
-+            # Microchip 7-bit Single I2C Digital POT (5k)
-+          - microchip,mcp4019-502
-+            # Microchip 7-bit Single I2C Digital POT (10k)
-+          - microchip,mcp4019-103
-+            # Microchip 7-bit Single I2C Digital POT (50k)
-+          - microchip,mcp4019-503
-+            # Microchip 7-bit Single I2C Digital POT (100k)
-+          - microchip,mcp4019-104
-+            # Microchip 7-bit Single I2C Digital Potentiometer (5k)
-+          - microchip,mcp4531-502
-+            # Microchip 7-bit Single I2C Digital Potentiometer (10k)
-+          - microchip,mcp4531-103
-+            # Microchip 7-bit Single I2C Digital Potentiometer (50k)
-+          - microchip,mcp4531-503
-+            # Microchip 7-bit Single I2C Digital Potentiometer (100k)
-+          - microchip,mcp4531-104
-+            # Microchip 7-bit Single I2C Digital Potentiometer (5k)
-+          - microchip,mcp4532-502
-+            # Microchip 7-bit Single I2C Digital Potentiometer (10k)
-+          - microchip,mcp4532-103
-+            # Microchip 7-bit Single I2C Digital Potentiometer (50k)
-+          - microchip,mcp4532-503
-+            # Microchip 7-bit Single I2C Digital Potentiometer (100k)
-+          - microchip,mcp4532-104
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4541-502
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4541-103
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4541-503
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4541-104
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4542-502
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4542-103
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4542-503
-+            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4542-104
-+            # Microchip 8-bit Single I2C Digital Potentiometer (5k)
-+          - microchip,mcp4551-502
-+            # Microchip 8-bit Single I2C Digital Potentiometer (10k)
-+          - microchip,mcp4551-103
-+            # Microchip 8-bit Single I2C Digital Potentiometer (50k)
-+          - microchip,mcp4551-503
-+            # Microchip 8-bit Single I2C Digital Potentiometer (100k)
-+          - microchip,mcp4551-104
-+            # Microchip 8-bit Single I2C Digital Potentiometer (5k)
-+          - microchip,mcp4552-502
-+            # Microchip 8-bit Single I2C Digital Potentiometer (10k)
-+          - microchip,mcp4552-103
-+            # Microchip 8-bit Single I2C Digital Potentiometer (50k)
-+          - microchip,mcp4552-503
-+            # Microchip 8-bit Single I2C Digital Potentiometer (100k)
-+          - microchip,mcp4552-104
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4561-502
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4561-103
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4561-503
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4561-104
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4562-502
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4562-103
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4562-503
-+            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4562-104
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (5k)
-+          - microchip,mcp4631-502
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (10k)
-+          - microchip,mcp4631-103
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (50k)
-+          - microchip,mcp4631-503
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (100k)
-+          - microchip,mcp4631-104
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (5k)
-+          - microchip,mcp4632-502
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (10k)
-+          - microchip,mcp4632-103
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (50k)
-+          - microchip,mcp4632-503
-+            # Microchip 7-bit Dual I2C Digital Potentiometer (100k)
-+          - microchip,mcp4632-104
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4641-502
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4641-103
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4641-503
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4641-104
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4642-502
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4642-103
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4642-503
-+            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4642-104
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (5k)
-+          - microchip,mcp4651-502
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (10k)
-+          - microchip,mcp4651-103
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (50k)
-+          - microchip,mcp4651-503
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (100k)
-+          - microchip,mcp4651-104
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (5k)
-+          - microchip,mcp4652-502
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (10k)
-+          - microchip,mcp4652-103
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (50k)
-+          - microchip,mcp4652-503
-+            # Microchip 8-bit Dual I2C Digital Potentiometer (100k)
-+          - microchip,mcp4652-104
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4661-502
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4661-103
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4661-503
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4661-104
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
-+          - microchip,mcp4662-502
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
-+          - microchip,mcp4662-103
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
-+          - microchip,mcp4662-503
-+            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
-+          - microchip,mcp4662-104
-+            # PWM Fan Speed Controller With Fan Fault Detection
-+          - microchip,tc654
-+            # PWM Fan Speed Controller With Fan Fault Detection
-+          - microchip,tc655
-+            # Real Time Clock Module with I2C-Bus
-+          - microcrystal,rv3029
-+            # MiraMEMS DA226 2-axis 14-bit digital accelerometer
-+          - miramems,da226
-+            # MiraMEMS DA280 3-axis 14-bit digital accelerometer
-+          - miramems,da280
-+            # MiraMEMS DA311 3-axis 12-bit digital accelerometer
-+          - miramems,da311
-+            # Temperature sensor with integrated fan control
-+          - national,lm63
-+            # I2C TEMP SENSOR
-+          - national,lm75
-+            # Serial Interface ACPI-Compatible Microprocessor System Hardware Monitor
-+          - national,lm80
-+            # Temperature sensor with integrated fan control
-+          - national,lm85
-+            # ±0.33°C Accurate, 12-Bit + Sign Temperature Sensor and Thermal Window Comparator with Two-Wire Interface
-+          - national,lm92
-+            # i2c trusted platform module (TPM)
-+          - nuvoton,npct501
-+            # i2c trusted platform module (TPM2)
-+          - nuvoton,npct601
-+            # Nuvoton Temperature Sensor
-+          - nuvoton,w83773g
-+            # Octal SMBus and I2C registered interface
-+          - nxp,pca9556
-+            # 8-bit I2C-bus and SMBus I/O port with reset
-+          - nxp,pca9557
-+            # Real-time clock
-+          - nxp,pcf2127
-+            # Real-time clock
-+          - nxp,pcf2129
-+            # Real-time Clock
-+          - nxp,pcf8523
-+            # Real-time clock/calendar
-+          - nxp,pcf8563
-+            # Tiny Real-Time Clock
-+          - nxp,pcf85063
-+            # OKI ML86V7667 video decoder
-+          - oki,ml86v7667
-+            # OV5642: Color CMOS QSXGA (5-megapixel) Image Sensor with OmniBSI and Embedded TrueFocus
-+          - ovti,ov5642
-+            # Real-time Clock Module
-+          - pericom,pt7c4338
-+            # 48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
-+          - plx,pex8648
-+            # Pulsedlight LIDAR range-finding sensor
-+          - pulsedlight,lidar-lite-v2
-+            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+          - ricoh,r2025sd
-+            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+          - ricoh,r2221tl
-+            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+          - ricoh,rs5c372a
-+            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+          - ricoh,rs5c372b
-+            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+          - ricoh,rv5c386
-+            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+          - ricoh,rv5c387a
-+            # S524AD0XF1 (128K/256K-bit Serial EEPROM for Low Power)
-+          - samsung,24ad0xd1
-+            # SGX Sensortech VZ89X Sensors
-+          - sgx,vz89x
-+            # 2-wire CMOS real-time clock
-+          - sii,s35390a
-+            # Relative Humidity and Temperature Sensors
-+          - silabs,si7020
-+            # Skyworks SKY81452: Six-Channel White LED Driver with Touch Panel Bias Supply
-+          - skyworks,sky81452
-+            # i2c serial eeprom  (24cxx)
-+          - st,24c256
-+            # Ambient Light Sensor with SMBUS/Two Wire Serial Interface
-+          - taos,tsl2550
-+            # 8-Channels, 12-bit ADC
-+          - ti,ads7828
-+            # 8-Channels, 8-bit ADC
-+          - ti,ads7830
-+            # Temperature Monitoring and Fan Control
-+          - ti,amc6821
-+            # I2C Touch-Screen Controller
-+          - ti,tsc2003
-+            # Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
-+          - ti,tmp102
-+            # Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
-+          - ti,tmp103
-+            # Digital Temperature Sensor
-+          - ti,tmp275
-+            # Winbond/Nuvoton H/W Monitor
-+          - winbond,w83793
-+            # i2c trusted platform module (TPM)
-+          - winbond,wpct301
++        - arm,armv7-timer-mem
++
++  reg:
++    maxItems: 1
++    description: The control frame base address
++
++  '#address-cells':
++    enum: [1, 2]
++
++  '#size-cells':
++    const: 1
++
++  clock-frequency:
++    description: The frequency of the main counter, in Hz. Should be present
++      only where necessary to work around broken firmware which does not configure
++      CNTFRQ on all CPUs to a uniform correct value. Use of this property is
++      strongly discouraged; fix your firmware unless absolutely impossible.
++
++  always-on:
++    type: boolean
++    description: If present, the timer is powered through an always-on power
++      domain, therefore it never loses context.
++
++  arm,cpu-registers-not-fw-configured:
++    type: boolean
++    description: Firmware does not initialize any of the generic timer CPU
++      registers, which contain their architecturally-defined reset values. Only
++      supported for 32-bit systems which follow the ARMv7 architected reset
++      values.
++
++  arm,no-tick-in-suspend:
++    type: boolean
++    description: The main counter does not tick when the system is in
++      low-power system suspend on some SoCs. This behavior does not match the
++      Architecture Reference Manual's specification that the system counter "must
++      be implemented in an always-on power domain."
++
++patternProperties:
++  '^frame@[0-9a-z]*$':
++    description: A timer node has up to 8 frame sub-nodes, each with the following properties.
++    properties:
++      frame-number:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 7
++
++      interrupts:
++        minItems: 1
++        maxItems: 2
++        items:
++          - description: physical timer irq
++          - description: virtual timer irq
++
++      reg :
++        minItems: 1
++        maxItems: 2
++        items:
++          - description: 1st view base address
++          - description: 2nd optional view base address
++
++    required:
++      - frame-number
++      - interrupts
++      - reg
 +
 +required:
 +  - compatible
 +  - reg
++  - '#address-cells'
++  - '#size-cells'
 +
++examples:
++  - |
++    timer@f0000000 {
++      compatible = "arm,armv7-timer-mem";
++      #address-cells = <1>;
++      #size-cells = <1>;
++      ranges;
++      reg = <0xf0000000 0x1000>;
++      clock-frequency = <50000000>;
++
++      frame@f0001000 {
++        frame-number = <0>;
++        interrupts = <0 13 0x8>,
++               <0 14 0x8>;
++        reg = <0xf0001000 0x1000>,
++              <0xf0002000 0x1000>;
++      };
++
++      frame@f0003000 {
++        frame-number = <1>;
++        interrupts = <0 15 0x8>;
++        reg = <0xf0003000 0x1000>;
++      };
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/timer/arm,global_timer.txt b/Documentation/devicetree/bindings/timer/arm,global_timer.txt
+deleted file mode 100644
+index bdae3a818793..000000000000
+--- a/Documentation/devicetree/bindings/timer/arm,global_timer.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-
+-* ARM Global Timer
+-	Cortex-A9 are often associated with a per-core Global timer.
+-
+-** Timer node required properties:
+-
+-- compatible : should contain
+-	     * "arm,cortex-a5-global-timer" for Cortex-A5 global timers.
+-	     * "arm,cortex-a9-global-timer" for Cortex-A9 global
+-	         timers or any compatible implementation. Note: driver
+-	         supports versions r2p0 and above.
+-
+-- interrupts : One interrupt to each core
+-
+-- reg : Specify the base address and the size of the GT timer
+-	register window.
+-
+-- clocks : Should be phandle to a clock.
+-
+-Example:
+-
+-	timer@2c000600 {
+-		compatible = "arm,cortex-a9-global-timer";
+-		reg = <0x2c000600 0x20>;
+-		interrupts = <1 13 0xf01>;
+-		clocks = <&arm_periph_clk>;
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/arm,global_timer.yaml b/Documentation/devicetree/bindings/timer/arm,global_timer.yaml
+new file mode 100644
+index 000000000000..09090f677387
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/arm,global_timer.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: None
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/arm,global_timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM Global Timer
++
++maintainers:
++  - Stuart Menefy <stuart.menefy@st.com>
++
++description:
++  Cortex-A9 are often associated with a per-core Global timer.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - arm,cortex-a5-global-timer
++          - arm,cortex-a9-global-timer
++
++    description: driver supports versions r2p0 and above.
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++examples:
++  - |
++    timer@2c000600 {
++      compatible = "arm,cortex-a9-global-timer";
++      reg = <0x2c000600 0x20>;
++      interrupts = <1 13 0xf01>;
++      clocks = <&arm_periph_clk>;
++    };
 +...
 -- 
 2.17.1
