@@ -2,171 +2,211 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9018C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CCCC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984CE20834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:51:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984CE20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C03920834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:51:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="Q8xLVqmu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C03920834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbeJENsi (ORCPT
+        id S1727856AbeJENtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 09:48:38 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:50592 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbeJENsh (ORCPT
+        Fri, 5 Oct 2018 09:49:13 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40116 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbeJENtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:48:37 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g8JxH-00054o-S5; Fri, 05 Oct 2018 00:51:19 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g8Jx1-0005ds-WD; Fri, 05 Oct 2018 00:51:19 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <87h8idv6nw.fsf@xmission.com>
-        <20180925171906.19683-2-ebiederm@xmission.com>
-        <20181005060611.GA19061@gmail.com>
-Date:   Fri, 05 Oct 2018 08:50:51 +0200
-In-Reply-To: <20181005060611.GA19061@gmail.com> (Andrei Vagin's message of
-        "Thu, 4 Oct 2018 23:06:13 -0700")
-Message-ID: <878t3cc2es.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 5 Oct 2018 09:49:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z204-v6so794029wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 23:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4rTiDMhrNIVz3kNhO6rNZIxtTCiB8NL5jDSncByUcJc=;
+        b=Q8xLVqmuCDmjbdRqFEkaL4HLE8sGrvIhhhI70NZyswWREgC8eT/QNor1IZbXm6amcH
+         WeVAsu3Ehri48QkGsqhDgCXLtV8otkoto+OQtCgHUUxmF7EdgxPQW+NyiT6p+X3sXkQ8
+         mmU20h5BUk09bN3nNv5b0sl8wmT6cSTOPKENZIx4CoBSVBk6kE9mCtOgt8NJQ5E4LgFF
+         VgA8rN7jqWIm3Cq4kXNuspRGzQU1GcJuPqw8HYtKl/F/gvNzNma7PHsgcsfGi1DP+5MP
+         armwKSbJaFLqbuASXCL/y+FSTmp+rXMBEzdpAsrNIlS02AAYP4noQko72QaLrfJdmSqP
+         P8Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4rTiDMhrNIVz3kNhO6rNZIxtTCiB8NL5jDSncByUcJc=;
+        b=MEt+yjm04M3VQ3y06oFSkpi7qCinHaWqLvTLgIS2VtEh08wYtt0kfTOOjD26x6LVyL
+         rXlFLS0qYRjWcGyrggrDzsOb4zLrO+XgNk1v/8CQHe1JGgzLYNG83I3vKLLmcwB8YiQV
+         amRLgAsTXU6gdJpobvZXxMbdMXPa1vCGWXxw+KQfmY7ESBfbLLF26P+iO4vQj3zeObr9
+         wNadar/SHeUcni8cgNTBOP7fHXffxdN8pjFt+5WguKc8gPzaI2WoQfPyF4yfgWRYeuCT
+         APgCq+VopKBoNJHtPA9Bi2LuZJxoOiR33XyuA1HitvDmVqCkuDSED18GQxgyWwrpqG+b
+         KYEw==
+X-Gm-Message-State: ABuFfoj/b4hcrGZ2suUIgx6uNjq5T1DdcqXUUXqLdpkNvNkqCSmGyFkH
+        XK8NbvUH4LZwimhdi+XRA52P7A==
+X-Google-Smtp-Source: ACcGV60NvkRQjO8sylLQFoOuQNpqKnf7HGrfnH43itUnrd5Gh/AQ4llnpxGLRhmhr6WzaKPlDlopIA==
+X-Received: by 2002:a1c:dc0a:: with SMTP id t10-v6mr6783014wmg.105.1538722313242;
+        Thu, 04 Oct 2018 23:51:53 -0700 (PDT)
+Received: from localhost (jirka.pirko.cz. [84.16.102.26])
+        by smtp.gmail.com with ESMTPSA id 62-v6sm8487227wra.48.2018.10.04.23.51.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Oct 2018 23:51:52 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 08:46:37 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Chas Williams <3chas3@gmail.com>
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        Jan Blunck <jblunck@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+Subject: Re: [PATCH] team: set IFF_SLAVE on team ports
+Message-ID: <20181005064637.GA3061@nanopsycho.orion>
+References: <20150710064147.GA2204@nanopsycho.orion>
+ <c674e681-9f7f-85c2-a578-a246d1ec9f45@gmail.com>
+ <20180930071414.GF2209@nanopsycho.orion>
+ <20180930113805.3b8e62a1@shemminger-XPS-13-9360>
+ <20180930093452.GG2209@nanopsycho.orion>
+ <b3cf1799-7ee2-47b3-e9ed-98e41ae56853@gmail.com>
+ <20181002111215.GA2222@nanopsycho>
+ <d87d05cd-bd35-4551-4c6c-44409b92dd5b@gmail.com>
+ <20181003104436.GB2222@nanopsycho>
+ <526bd655-5816-69dd-ac75-bdd4f85f1ce9@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g8Jx1-0005ds-WD;;;mid=<878t3cc2es.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18wd0mkbE5FO84R47u405DfzW4q+NGHqvc=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [REVIEW][PATCH 2/6] signal: Fail sigqueueinfo if si_signo != sig
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <526bd655-5816-69dd-ac75-bdd4f85f1ce9@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrei Vagin <avagin@gmail.com> writes:
+Wed, Oct 03, 2018 at 07:30:06PM CEST, 3chas3@gmail.com wrote:
+>
+>
+>On 10/03/18 06:44, Jiri Pirko wrote:
+>> Tue, Oct 02, 2018 at 11:20:25PM CEST, 3chas3@gmail.com wrote:
+>> > 
+>> > 
+>> > On 10/02/18 07:12, Jiri Pirko wrote:
+>> > > Mon, Oct 01, 2018 at 04:06:16PM CEST, 3chas3@gmail.com wrote:
+>> > > > 
+>> > > > 
+>> > > > On 09/30/18 05:34, Jiri Pirko wrote:
+>> > > > > Sun, Sep 30, 2018 at 11:38:05AM CEST, stephen@networkplumber.org wrote:
+>> > > > > > On Sun, 30 Sep 2018 09:14:14 +0200
+>> > > > > > Jiri Pirko <jiri@resnulli.us> wrote:
+>> > > > > > 
+>> > > > > > > Thu, Sep 27, 2018 at 04:04:26PM CEST, 3chas3@gmail.com wrote:
+>> > > > > > > > 
+>> > > > > > > > 
+>> > > > > > > > On 07/10/15 02:41, Jiri Pirko wrote:
+>> > > > > > > > > Thu, Jul 09, 2015 at 05:36:55PM CEST, jblunck@infradead.org wrote:
+>> > > > > > > > > > On Thu, Jul 9, 2015 at 12:07 PM, Jiri Pirko <jiri@resnulli.us> wrote:
+>> > > > > > > > > > > Thu, Jul 09, 2015 at 11:58:34AM CEST, jblunck@infradead.org wrote:
+>> > > > > > > > > > > > The code in net/ipv6/addrconf.c:addrconf_notify() tests for IFF_SLAVE to
+>> > > > > > > > > > > > decide if it should start the address configuration. Since team ports
+>> > > > > > > > > > > > shouldn't get link-local addresses assigned lets set IFF_SLAVE when linking
+>> > > > > > > > > > > > a port to the team master.
+>> > > > > > > > > > > 
+>> > > > > > > > > > > I don't want to use IFF_SLAVE in team. Other master-slave devices are
+>> > > > > > > > > > > not using that as well, for example bridge, ovs, etc.
+>> > > > > > > > > > 
+>> > > > > > > > > > Maybe they need to get fixed too. I've used that flag because it is
+>> > > > > > > > > > documented as
+>> > > > > > > > > > a "slave of a load balancer" which describes what a team port is.
+>> > > > > > > > > > 
+>> > > > > > > > > > > I think that this should be fixed in addrconf_notify. It should lookup
+>> > > > > > > > > > > if there is a master on top and bail out in that case.
+>> > > > > > > > > > 
+>> > > > > > > > > > There are other virtual interfaces that have a master assigned and want to
+>> > > > > > > > > > participate in IPv6 address configuration.
+>> > > > > > > > > 
+>> > > > > > > > > Can you give me an example?
+>> > > > > > > > 
+>> > > > > > > > I would like to revisit this patch (yes, I know it has been a while).  I
+>> > > > > > > > believe the VRF implementation uses master to group the interfaces under
+>> > > > > > > > a single interface.
+>> > > > > > > > 
+>> > > > > > > > I don't see a reason not to use IFF_SLAVE since team and bonding are fairly
+>> > > > > > > > similar.
+>> > > > > > > 
+>> > > > > > > Again, why do you need team port to have IFF_SLAVE flag? What do you
+>> > > > > > > want to achieve
+>> > > > > > 
+>> > > > > > Without setting this flag IPv6 will try and make a link specific address.
+>> > > 
+>> > > You are talking about addrconf_notify() right? Easy to fix to check
+>> > > something more convenient. Like netif_is_lag_port() if you want to avoid
+>> > > it for bond/team. netif_is_ovs_port(), netif_is_bridge_port() etc. Lot's
+>> > > of helpers to cover this.
+>> > 
+>> > OK, IPv6 should probably be using this.
+>> > 
+>> > > 
+>> > > 
+>> > > 
+>> > > > > 
+>> > > > > Why is it not an issue with bridge, ovs, and other master-slave devices?
+>> > > > > 
+>> > > > 
+>> > > > It very well might be an issue for bridge and ovs.  Other master-slave
+>> > > > devices include the existing VRF implementation in the kernel and those slave
+>> > > > interfaces will certainly want to use IPv6.
+>> > > > 
+>> > > > However, IFF_SLAVE has a specific meaning:
+>> > > > 
+>> > > > ./include/uapi/linux/if.h: * @IFF_SLAVE: slave of a load balancer. Volatile.
+>> > > 
+>> > > I know that some userspace apps are using this flag to determine a
+>> > > "bonding slave". I don't think that they care much about eql...
+>> > > 
+>> > > 
+>> > > > 
+>> > > > The bonding driver is not the only user:
+>> > > > 
+>> > > > ./drivers/net/eql.c:#define eql_is_slave(dev)	((dev->flags & IFF_SLAVE) ==
+>> > > > IFF_SLAVE)
+>> > > > ./drivers/net/eql.c:	slave->dev->flags &= ~IFF_SLAVE;
+>> > > > ./drivers/net/eql.c:		slave->dev->flags |= IFF_SLAVE;
+>> > > > 
+>> > > > The team driver would like to use this same flag since it is a load balancer
+>> > > > as well.  The side effect of not assigning IPv6 is a bonus. The fact that
+>> > > 
+>> > > No, please leave IFF_SLAVE as it is. Both kernel and userspace have
+>> > > their clear indications right now about the master/slave relationships.
+>> > 
+>> > The team driver does create a master/slave relationship.  The team slaves are
+>> > literally slaves of the master device.  It's not clear to me
+>> > why you we can't mark the slaves of the team master as actually being
+>> > slave interfaces?
+>> 
+>> So? IFF_SLAVE flag serves a different purpose. That's it. Team does not
+>> need it, bridge does not need it, macvlan does not need it, etc.
+>
+>I agree.  But team *is* a load balancer.  Why can't team mark its slave
+>interfaces as IFF_SLAVE?  They are literally slaves of a load balancer which
+>is the exact meaning of the IFF_SLAVE flag.
 
-> On Tue, Sep 25, 2018 at 07:19:02PM +0200, Eric W. Biederman wrote:
->> The kernel needs to validate that the contents of struct siginfo make
->> sense as siginfo is copied into the kernel, so that the proper union
->> members can be put in the appropriate locations.  The field si_signo
->> is a fundamental part of that validation.  As such changing the
->> contents of si_signo after the validation make no sense and can result
->> in nonsense values in the kernel.
->
-> Accoding to the man page, the user should not set si_signo, it has to be set
-> by kernel.
+I described that multiple times, don't want to repeat myself. Please
+read the thread again.
 
-I wanted to say look at copy_siginfo_from_user32 it uses si_signo and it
-has always done so.  But before I got to fixing copy_siginfo_from_user32
-only looked at si_code.  This is one of the areas where we deliberately
-slightly changed the KABI.  To start looking an signo instead of magic
-kernel internal si_code values.
-
-So yes.  Looking at si_signo instead of the passed in signo appears to
-be a regression all of the way around (except for ptrace) where that
-value is not present.  So I will see if I can figure out how to refactor
-the code to accomplish that.
-
-I am travelling for the next couple of days so I won't be able to get to
-this for a bit.
-
-I am thinking I will need two version of copy_siginfo_from user now.
-One for ptrace and one for rt_sgiqueueinfo.  Sigh.
-
-> $ man 2 rt_sigqueueinfo
->
->     The uinfo argument specifies the data to accompany  the  signal.   This
->        argument  is  a  pointer to a structure of type siginfo_t, described in
->        sigaction(2) (and defined  by  including  <sigaction.h>).   The  caller
->        should set the following fields in this structure:
->
->        si_code
->               This  must  be  one of the SI_* codes in the Linux kernel source
->               file include/asm-generic/siginfo.h, with  the  restriction  that
->               the  code  must  be  negative (i.e., cannot be SI_USER, which is
->               used by the kernel to indicate a signal  sent  by  kill(2))  and
->               cannot  (since  Linux  2.6.39) be SI_TKILL (which is used by the
->               kernel to indicate a signal sent using tgkill(2)).
->
->        si_pid This should be set to a process ID, typically the process ID  of
->               the sender.
->
->        si_uid This  should  be set to a user ID, typically the real user ID of
->               the sender.
->
->        si_value
->               This field contains the user data to accompany the signal.   For
->               more information, see the description of the last (union sigval)
->               argument of sigqueue(3).
->
->        Internally, the kernel sets the si_signo field to the  value  specified
->        in  sig,  so that the receiver of the signal can also obtain the signal
->        number via that field.
 >
 >> 
->> As such simply fail if someone is silly enough to set si_signo out of
->> sync with the signal number passed to sigqueueinfo.
 >> 
->> I don't expect a problem as glibc's sigqueue implementation sets
->> "si_signo = sig" and CRIU just returns to the kernel what the kernel
->> gave to it.
->> 
->> If there is some application that calls sigqueueinfo directly that has
->> a problem with this added sanity check we can revisit this when we see
->> what kind of crazy that application is doing.
->
->
-> I already know two "applications" ;)
->
-> https://github.com/torvalds/linux/blob/master/tools/testing/selftests/ptrace/peeksiginfo.c
-> https://github.com/checkpoint-restore/criu/blob/master/test/zdtm/static/sigpending.c
->
-> Disclaimer: I'm the author of both of them.
->
->> 
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> ---
->>  kernel/signal.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->> 
->> diff --git a/kernel/signal.c b/kernel/signal.c
->> index 7b49c31d3fdb..e445b0a63faa 100644
->> --- a/kernel/signal.c
->> +++ b/kernel/signal.c
->> @@ -3306,7 +3306,8 @@ static int do_rt_sigqueueinfo(pid_t pid, int sig, siginfo_t *info)
->>  	    (task_pid_vnr(current) != pid))
->>  		return -EPERM;
->>  
->> -	info->si_signo = sig;
->> +	if (info->si_signo != sig)
->> +		return -EINVAL;
->>  
->>  	/* POSIX.1b doesn't mention process groups.  */
->>  	return kill_proc_info(sig, info, pid);
->> @@ -3354,7 +3355,8 @@ static int do_rt_tgsigqueueinfo(pid_t tgid, pid_t pid, int sig, siginfo_t *info)
->>  	    (task_pid_vnr(current) != pid))
->>  		return -EPERM;
->>  
->> -	info->si_signo = sig;
->> +	if (info->si_signo != sig)
->> +		return -EINVAL;
->>  
->>  	return do_send_specific(tgid, pid, sig, info);
->>  }
+>> > 
+>> > > 
+>> > > 
+>> > > > bridges and ovs are also likely broken is a different issue.  Should there be
+>> > > > a another flag that says "layer 2 only"?  Very possibly, but that is
+>> > > > something all these interfaces should be using to include bonding, team, eql,
+>> > > > obs, bridge etc.  That's not a reasonable objection to labeling the team
+>> > > > slave as slaves since they are literally slaves of a load balancer.
+>> > > > 
+>> > > > 
+>> > > > 
