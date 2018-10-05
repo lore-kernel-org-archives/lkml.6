@@ -2,120 +2,125 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9614AC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF548C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD4F2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F6522084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:40:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4fw5pRZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AD4F2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="paTKd4nJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6522084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbeJEUg5 (ORCPT
+        id S1728715AbeJEUjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:36:57 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52031 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727701AbeJEUg5 (ORCPT
+        Fri, 5 Oct 2018 16:39:05 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45436 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727701AbeJEUjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:36:57 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 143-v6so1910056wmf.1;
-        Fri, 05 Oct 2018 06:38:10 -0700 (PDT)
+        Fri, 5 Oct 2018 16:39:05 -0400
+Received: by mail-lf1-f67.google.com with SMTP id m80-v6so9365826lfi.12;
+        Fri, 05 Oct 2018 06:40:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AK6EzRMfaUabjqoYDvuZwU1hNBWygeF3CXtM6oIARAU=;
-        b=V4fw5pRZwFnS7+9akPGvQviwOA97TEu23OyA6xURDRXNCEpN1sJH0GWjGeJyp7bQ5C
-         ELOk6jkXsBcOJ5ZX1x/5gBJkIi97589PRD9vWOZEhODq+AXRLD6egbT5yiIkaOBOiswi
-         piC+ZNUOvj1g32JSCuGhqpRhm7hfeaRUJSKKh8Nkl7pJAtVmYonWCmYAqyCSVpqfOWQO
-         XIaY3TZahti4B7B5p2Od9kH1oEmn44XDChfrnZpMxzofsBp6c+I6uVACaR4cpd869Fid
-         kQggwVLfDEx0KpQ6QgOwLS3FWUumoCzN3WrwHrnOPeJ3Gq2oE/MByrL4oLqJAdtdffbn
-         jYlw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iOxL1Fw89+j4myCcc8niw3QsDsss42c4mJhRtaCwo6c=;
+        b=paTKd4nJIJ5ossp55X9awCP8dD/W9EL2N9cNJAqxmsxKwkEgUfY7bJnCj/TpQ+WQ5S
+         bS/dZZ4dz35l6SNxcB+GoGZbZDp9IwiaSA9FGQh2BWMhw4s1jdACzaqsXzZK9uJVYMgc
+         Dw1zjBcqvIhCyJDqCgaAcn48bBJ2zdoeooMPYjpOUrAGQSZP7ChRnzYiEgWCRHMUCJ55
+         rlajRk6hOu/d27zwhqoEu2YvfWfFhPP/akgsFKliJqY25zxhZKStCDVE6GbvIzPQjTS1
+         Qhw9GP2FKPL2TiuFnphhD06VfjqvTwRS0cv5blYLcJb3K6ixFDWPrIojVSymAzMweC6g
+         5nRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AK6EzRMfaUabjqoYDvuZwU1hNBWygeF3CXtM6oIARAU=;
-        b=KfOkfAv69+hncgymFABBZ8gK5s4asMPuO29IPE1dD5OCqr7sB70HB+5K2xtEIYCY6i
-         7hOyaiKQyYlot1OqgKKabycitC9fMdkobRpc+nQ9BJ9DMt5PN8bbY+ZYW13+EaUH/Z+k
-         y+vxznEDVMytgjPeHDGeAYeQ5IoehBdDgtMhG3Y5ZFObEFzNKnXD/uCPlJuZByPPR5Vo
-         CA9MWd98b73xggkosgs1SceVehLcgZlqT5J9ZuXjOCdkZCeHGhWCM8lwYkCrfx1498x1
-         WXETuTOqMBfxQQ/4bDjIluV/ZxUnq/FGoZaYOLMpuoGBy7D6v7GVs90sOgd9aULjc3WS
-         DAwA==
-X-Gm-Message-State: ABuFfohft8Zsnsxm9TbbNgJk8ySKXBU1kIELb4F+4dkomJGX5IEUzYDb
-        1KhuoZA8aZXKH49Cudz/JCoHViWcl0lspjiHIXw=
-X-Google-Smtp-Source: ACcGV63VObnJ2eOxo4OjLpmDeg+gDfVa/2wwReYj13Cf7cmz1F4aDUgaHs6aDtIgpPYlIBRl/kjhEzyy9QNaDLQkfOs=
-X-Received: by 2002:a1c:8fcc:: with SMTP id r195-v6mr8178820wmd.44.1538746689285;
- Fri, 05 Oct 2018 06:38:09 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iOxL1Fw89+j4myCcc8niw3QsDsss42c4mJhRtaCwo6c=;
+        b=derC0WqY3X6cpluTRoQRV5XHnnUArPWMy5n7WTkCxAZ+dWe2ld+1IxtlUFQiUgZ6X5
+         UWGkj+VGYVL3LkUAFHijiO9jP0LBIPs/XqzLbVR+NlGV33H8iJ9aSHJkG4BL7Y3A+YjJ
+         lSwqhJfeitYmKY7hL/Nkn9Jv/7l+mHy2j7DxTBfbIimq/l0gc+oKQelvsabKI+THK/0J
+         7OtwLiFHPCdTTGDzEBw6dSncf55YZJH+9aDC34+qnht+dqQTsGtp0wwVXvLspoFqWw/t
+         iPhL6hSMHlPExWajWaS4z/bgLP/j+V9Nosig7BLPmgNqf2/El+zeRgv2D0Bf9p72NkQc
+         R/MA==
+X-Gm-Message-State: ABuFfohQHGMcTQPgZbG0qSVJ62uYiTRVi+5iVOHj90R4agabVYpC12EH
+        Zj8LeLZlpmIrYSRTy1bwylU=
+X-Google-Smtp-Source: ACcGV60VylheG7d+dgases/TbrY4hHoV32+YWUANObz/Vile8wpPBAd0zbyOA55v4D3PgTlAhX6dMA==
+X-Received: by 2002:a19:4acd:: with SMTP id x196-v6mr7002972lfa.130.1538746815295;
+        Fri, 05 Oct 2018 06:40:15 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id p24-v6sm1815567ljg.57.2018.10.05.06.40.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 06:40:14 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g8QL0-0008SF-NS; Fri, 05 Oct 2018 15:40:14 +0200
+Date:   Fri, 5 Oct 2018 15:40:14 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+        pados@pados.hu, Loic Poulain <loic.poulain@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio
+ support
+Message-ID: <20181005134014.GH3774@localhost>
+References: <20180930122703.7115-1-johan@kernel.org>
+ <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAKv+Gu-ZMR7zEAKv6_2tyD3OqnjVugOzKHzBEXW3pQs5W-SvLw@mail.gmail.com>
- <20181002033908.324yhwqaohfsq65d@gondor.apana.org.au> <CAHmME9piX1kbUhOBcUKVdecr45EjxuruxYuMTepfXVvRrkVmyg@mail.gmail.com>
- <CAKv+Gu8fr_qADiTJH05nVWF7Yi3U722nfKJsMaRE9CP3YjNBbg@mail.gmail.com>
- <CAHmME9r6-DHLwePQGBGcnPUZuZgZ2GtSUX9arsWzLqhKxd=uDA@mail.gmail.com>
- <20181003064951.GC745@sol.localdomain> <CAHmME9ogY=v2Le85+_=-m++RwAzwiUmKyNzx6N2y9Ht-J7xBcQ@mail.gmail.com>
-In-Reply-To: <CAHmME9ogY=v2Le85+_=-m++RwAzwiUmKyNzx6N2y9Ht-J7xBcQ@mail.gmail.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Fri, 5 Oct 2018 15:37:57 +0200
-Message-ID: <CAFLxGvw154vyOziRKuFf5-XTa1NcQm5ZVmgUy3=F79k=Rw2dvA@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     ebiggers@kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 3:14 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Wed, Oct 3, 2018 at 8:49 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> > It's not really about the name, though.  It's actually about the whole way of
-> > thinking about the submission.  Is it a new special library with its own things
-> > going on, or is it just some crypto helper functions?  It's really just the
-> > latter, but you've been presenting it as the former
->
-> No, it really is its own thing with important differences from the
-> present crypto api. Zinc's focus is on simplicity and clarity. To the
-> extent that we're at all tangled with the current crypto api, the goal
-> is to untangle as much as possible. It intends to be a small and
-> lightweight set of routines, whose relationships are obvious, and with
-> this direct and to the point organization, as well as work with the larger
-> cryptography community and with academia to invite collaboration. With
-> this comes a different way of maintaining it, with higher standards
-> and a preference for different implementations than the current
-> situation. With Zinc, you have an obvious series of C function calls
-> composing the whole thing, without complicated indirection. It's
-> something that could be trivially lifted out into a userspace library,
-> and used broadly, for example -- something I'll probably do at some
-> point. That's a bit of a design change to the current crypto api, and
-> sprinkling some direct function calls within the current crypto api's
-> complicated enterprise situation would only kick the can further down
-> the road, as much complexity would still remain. The goal is to move
-> away from behemoth enterprise APIs, and large and complex codebases to
-> a simple and direct way of doing things. This desire to untangle, to
-> start from a simpler base, and to generally do things differently
-> means it will go into lib/zinc/ and include/zinc/ and have different
-> maintainers.
+On Mon, Oct 01, 2018 at 11:43:55AM +0200, Linus Walleij wrote:
+> On Sun, Sep 30, 2018 at 2:29 PM Johan Hovold <johan@kernel.org> wrote:
 
-So we will have two competing crypo stacks in the kernel?
+> > Linus, we finally got around to adding gpio support for FTDI devices;
+> > see commit
+> >
+> >         ba93cc7da896 ("USB: serial: ftdi_sio: implement GPIO support for FT-X devices")
+> >
+> > in my usb-next branch (and linux-next).
+> 
+> This is good news, I think it's a pretty neat way for people to get
+> a few inexpensive GPIOs from their serial adapters.
+> 
+> > The gpiolib warnings and inability to use the legacy sysfs interface
+> > prevents us from setting the line names however as someone is bound to
+> > plugin more than one of these devices at some point. I think we
+> > discussed this issue with the name space and hotpluggable devices a few
+> > years ago, but looks like this topic may need to be revisited.
+> 
+> Hm I guess the right long-term fix is to allow per-gpiochip unique
+> names rather than enforcing globally unique names.
 
-Having a lightweight crypto API is a good thing but I really don't like the idea
-of having zinc parallel to the existing crypto stack.
-And I strongly vote that Herbert Xu shall remain the maintainer of the whole
-crypto system (including zinc!) in the kernel.
+Indeed.
 
--- 
+> The idea is to make it possible for userspace to look up a GPIO
+> on a chip by name, so if the gpiochip has a unique name,
+> and the line name is unique on that chip it should be good
+> enough.
+
+I haven't really had time do dig into this again, but is this also an
+issue with the chardev interface? I thought this was one of the things
+you wanted to get right with the new interface, so hopefully that's
+already taken care of.
+
+If the flat name space is only an issue with the legacy interface we
+might get away with simply not using the line names in sysfs when a new
+chip flag is set (unless we can resue .can_sleep, but there seems to be
+some i2c devices already using line names).
+
 Thanks,
-//richard
+Johan
