@@ -2,150 +2,125 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67256C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F66DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE1F20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:05:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOIregMK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE1F20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DA56320875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA56320875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeJFCFX (ORCPT
+        id S1729223AbeJFCHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:05:23 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41761 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbeJFCFW (ORCPT
+        Fri, 5 Oct 2018 22:07:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52601 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeJFCHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:05:22 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 23-v6so5116176pgc.8;
-        Fri, 05 Oct 2018 12:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3HTBvu58ZNyGkfrsmTNBqBt87evYFmC8Rpuq9N1D3wI=;
-        b=EOIregMKQu+33n0sHNY0wCTHcKHvhocE1w1Clno0FS5JSGGHKXgxesfvYdkhsvHT2a
-         Pvoiv0t7UPsdqUo4UFJrZipdhe1ltgScYhG5OV3tXacLtK6NKozL6PMam2qC64QOYwPk
-         ZhfGyh4Ueqw1VcPsta7JaaTg8QgcCFtlUIGBmqdnPYORwPKn3p1We6TtFzWwyByhtOF/
-         +sfXLPbVAi6qhS2tyUHWuaOYBdV1IUEGrldgBpe0t4X4uuWEUhsPDxGyxL7nQC0Y3Ogd
-         OGF/tAsjn6jQOZOlixopkwLbbAhv0nfRJm+Im5oHkfoFzxKu/xz8P7Gd13TFYyz35IH/
-         3QpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3HTBvu58ZNyGkfrsmTNBqBt87evYFmC8Rpuq9N1D3wI=;
-        b=VIpO4WlXsBNx0/Dv4S88ahooht1vWhqpLfwfP/jnhMtYar4P6CeOHAgKmeLGnYgItd
-         gg3z56qSeu8c5oY9igA0z7gZxVnBn916lfh060YqMnMfI4QXlkbdefvcF2vKyM4Lnjda
-         JJij4Ho9b88eFbToAiTOMF2hG2WOlthi3NhUMlTY8i/EKW+uC0wrNCM2qrz8KcF3BUgw
-         70R2gzvHB6zu7nMCQOE7NG7J4n9ix3klypuilJIZFZQiHXzwtPRCmxAQmWu+cgCVJL0o
-         yTok9FeA/n4VRkh4yCi88ys120rs3PIhgnRR9esMa+T2vCl7CBQjz3/AYzKzo4XsljG5
-         nAmQ==
-X-Gm-Message-State: ABuFfoj3W0vQ7L1A9qtgQAEvpRTjJo7MhxKp4yMQvLA4a4POR+NCmh3T
-        sR9PbjX6KSWfwn8ThHOfMg4=
-X-Google-Smtp-Source: ACcGV61FJ6xqpXrddVBWkJLzNtHUb6mKo53sYqHxng4McHJV1oqV83LZXwTst57IUhp2+ExTW/Q6Ug==
-X-Received: by 2002:a63:d749:: with SMTP id w9-v6mr11186265pgi.415.1538766319166;
-        Fri, 05 Oct 2018 12:05:19 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id n79-v6sm18760638pfk.19.2018.10.05.12.05.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 12:05:18 -0700 (PDT)
-Subject: Re: [PATCH 15/16] of: unittest: initialize args before calling
- of_irq_parse_one()
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>
-References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
- <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
- <7fc4b9da-5fdf-11c9-e168-ccb2d960adea@roeck-us.net>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <3c6fe77f-5fe6-0289-9480-7c98cdf81a43@gmail.com>
-Date:   Fri, 5 Oct 2018 12:05:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 5 Oct 2018 22:07:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w95J6qNY3256709
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 5 Oct 2018 12:06:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w95J6qvq3256706;
+        Fri, 5 Oct 2018 12:06:52 -0700
+Date:   Fri, 5 Oct 2018 12:06:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-99c19e6a8fe4a95fa0dac191207a1d40461b1604@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        luto@kernel.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, luto@kernel.org
+In-Reply-To: <3c05644d010b72216aa286a6d20b5078d5fae5cd.1538762487.git.luto@kernel.org>
+References: <3c05644d010b72216aa286a6d20b5078d5fae5cd.1538762487.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/vdso] x86/vdso: Rearrange do_hres() to improve code
+ generation
+Git-Commit-ID: 99c19e6a8fe4a95fa0dac191207a1d40461b1604
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <7fc4b9da-5fdf-11c9-e168-ccb2d960adea@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/05/18 06:26, Guenter Roeck wrote:
-> On 10/04/2018 09:12 PM, frowand.list@gmail.com wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> Callers of of_irq_parse_one() blindly use the pointer args.np
->> without checking whether of_irq_parse_one() had an error and
->> thus did not set the value of args.np.  Initialize args to
->> zero so that using the format "%pOF" to show the value of
->> args.np will show "(null)" when of_irq_parse_one() has an
->> error and does not set args.np instead of trying to
->> dereference a random value.
->>
->> Reported-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> The same problem exists when of_parse_phandle_with_args() reports an error.
+Commit-ID:  99c19e6a8fe4a95fa0dac191207a1d40461b1604
+Gitweb:     https://git.kernel.org/tip/99c19e6a8fe4a95fa0dac191207a1d40461b1604
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Fri, 5 Oct 2018 11:02:43 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 5 Oct 2018 21:03:23 +0200
 
-Thanks, I'll add a fix for that.
+x86/vdso: Rearrange do_hres() to improve code generation
 
--Frank
+vgetcyc() is full of barriers, so fetching values out of the vvar
+page before vgetcyc() for use after vgetcyc() results in poor code
+generation.  Put vgetcyc() first to avoid this problem.
 
-> 
-> Guenter
-> 
->> ---
->>   drivers/of/unittest.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
->> index 6d80f474c8f2..b61a33f30a56 100644
->> --- a/drivers/of/unittest.c
->> +++ b/drivers/of/unittest.c
->> @@ -780,7 +780,7 @@ static void __init of_unittest_parse_interrupts(void)
->>       for (i = 0; i < 4; i++) {
->>           bool passed = true;
->>   -        args.args_count = 0;
->> +        memset(&args, 0, sizeof(args));
->>           rc = of_irq_parse_one(np, i, &args);
->>             passed &= !rc;
->> @@ -801,7 +801,7 @@ static void __init of_unittest_parse_interrupts(void)
->>       for (i = 0; i < 4; i++) {
->>           bool passed = true;
->>   -        args.args_count = 0;
->> +        memset(&args, 0, sizeof(args));
->>           rc = of_irq_parse_one(np, i, &args);
->>             /* Test the values from tests-phandle.dtsi */
->> @@ -854,6 +854,7 @@ static void __init of_unittest_parse_interrupts_extended(void)
->>       for (i = 0; i < 7; i++) {
->>           bool passed = true;
->>   +        memset(&args, 0, sizeof(args));
->>           rc = of_irq_parse_one(np, i, &args);
->>             /* Test the values from tests-phandle.dtsi */
->>
-> 
-> 
+Also, pull the tv_sec division into the loop and put all the ts
+writes together.  The old code wrote ts->tv_sec on each iteration
+before the syscall fallback check and then added in the offset
+afterwards, which forced the compiler to pointlessly copy base->sec
+to ts->tv_sec on each iteration.  The new version seems to generate
+sensible code.
 
+Saves several cycles.  With this patch applied, the result is faster
+than before the clock_gettime() rewrite.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/3c05644d010b72216aa286a6d20b5078d5fae5cd.1538762487.git.luto@kernel.org
+
+---
+ arch/x86/entry/vdso/vclock_gettime.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index 18c8a78d1ec9..007b3fe9d727 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -142,23 +142,27 @@ notrace static inline u64 vgetcyc(int mode)
+ notrace static int do_hres(clockid_t clk, struct timespec *ts)
+ {
+ 	struct vgtod_ts *base = &gtod->basetime[clk];
+-	u64 cycles, last, ns;
++	u64 cycles, last, sec, ns;
+ 	unsigned int seq;
+ 
+ 	do {
+ 		seq = gtod_read_begin(gtod);
+-		ts->tv_sec = base->sec;
++		cycles = vgetcyc(gtod->vclock_mode);
+ 		ns = base->nsec;
+ 		last = gtod->cycle_last;
+-		cycles = vgetcyc(gtod->vclock_mode);
+ 		if (unlikely((s64)cycles < 0))
+ 			return vdso_fallback_gettime(clk, ts);
+ 		if (cycles > last)
+ 			ns += (cycles - last) * gtod->mult;
+ 		ns >>= gtod->shift;
++		sec = base->sec;
+ 	} while (unlikely(gtod_read_retry(gtod, seq)));
+ 
+-	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	/*
++	 * Do this outside the loop: a race inside the loop could result
++	 * in __iter_div_u64_rem() being extremely slow.
++	 */
++	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+ 	ts->tv_nsec = ns;
+ 
+ 	return 0;
