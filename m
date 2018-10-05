@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A028C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9F1C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30FAE206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30FAE206B2
+	by mail.kernel.org (Postfix) with ESMTP id 1D14B2087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:44:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D14B2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbeJETmS (ORCPT
+        id S1728812AbeJETmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 15:42:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:28567 "EHLO mga09.intel.com"
+        Fri, 5 Oct 2018 15:42:39 -0400
+Received: from mga09.intel.com ([134.134.136.24]:28570 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728632AbeJETmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 15:42:17 -0400
+        id S1728687AbeJETmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 15:42:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 05:43:41 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 05:43:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,344,1534834800"; 
-   d="scan'208";a="97687826"
+   d="scan'208";a="97687814"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 05 Oct 2018 05:43:38 -0700
+  by orsmga002.jf.intel.com with ESMTP; 05 Oct 2018 05:43:33 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 15/16] lib: Add memcat_p(): paste 2 pointer arrays together
-Date:   Fri,  5 Oct 2018 15:43:05 +0300
-Message-Id: <20181005124306.54870-16-alexander.shishkin@linux.intel.com>
+Subject: [GIT PULL 12/16] stm class: Update documentation to match the new identification rules
+Date:   Fri,  5 Oct 2018 15:43:02 +0300
+Message-Id: <20181005124306.54870-13-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
 References: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
@@ -49,247 +49,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a helper to paste 2 pointer arrays together, useful for merging
-various types of attribute arrays. There are a few places in the kernel
-tree where this is open coded, and I just added one more in the STM class.
-
-The naming is inspired by memset_p() and memcat(), and partial credit for
-it goes to Andy Shevchenko.
-
-This patch adds the function wrapped in a type-enforcing macro and a test
-module.
+The rules and order of identification of trace sources against the
+"stp-policy" have changed; update the documentation to reflect that.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- include/linux/string.h |   7 +++
- lib/Kconfig.debug      |   8 +++
- lib/Makefile           |   1 +
- lib/string.c           |  31 +++++++++++
- lib/test_memcat_p.c    | 115 +++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 162 insertions(+)
- create mode 100644 lib/test_memcat_p.c
+ Documentation/trace/stm.rst | 36 +++++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 4a5a0eb7df51..27d0482e5e05 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -131,6 +131,13 @@ static inline void *memset_p(void **p, void *v, __kernel_size_t n)
- 		return memset64((uint64_t *)p, (uintptr_t)v, n);
- }
+diff --git a/Documentation/trace/stm.rst b/Documentation/trace/stm.rst
+index 2c22ddb7fd3e..944994fd6368 100644
+--- a/Documentation/trace/stm.rst
++++ b/Documentation/trace/stm.rst
+@@ -53,12 +53,30 @@ under "user" directory from the example above and this new rule will
+ be used for trace sources with the id string of "user/dummy".
  
-+extern void **__memcat_p(void **a, void **b);
-+#define memcat_p(a, b) ({					\
-+	BUILD_BUG_ON_MSG(!__same_type(*(a), *(b)),		\
-+			 "type mismatch in memcat_p()");	\
-+	(typeof(*a) *)__memcat_p((void **)(a), (void **)(b));	\
-+})
+ Trace sources have to open the stm class device's node and write their
+-trace data into its file descriptor. In order to identify themselves
+-to the policy, they need to do a STP_POLICY_ID_SET ioctl on this file
+-descriptor providing their id string. Otherwise, they will be
+-automatically allocated a master/channel pair upon first write to this
+-file descriptor according to the "default" rule of the policy, if such
+-exists.
++trace data into its file descriptor.
 +
- #ifndef __HAVE_ARCH_MEMCPY
- extern void * memcpy(void *,const void *,__kernel_size_t);
- #endif
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 613316724c6a..177e21006359 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1965,6 +1965,14 @@ config TEST_DEBUG_VIRTUAL
++In order to find an appropriate policy node for a given trace source,
++several mechanisms can be used. First, a trace source can explicitly
++identify itself by calling an STP_POLICY_ID_SET ioctl on the character
++device's file descriptor, providing their id string, before they write
++any data there. Secondly, if they chose not to perform the explicit
++identification (because you may not want to patch existing software
++to do this), they can just start writing the data, at which point the
++stm core will try to find a policy node with the name matching the
++task's name (e.g., "syslogd") and if one exists, it will be used.
++Thirdly, if the task name can't be found among the policy nodes, the
++catch-all entry "default" will be used, if it exists. This entry also
++needs to be created and configured by the system administrator or
++whatever tools are taking care of the policy configuration. Finally,
++if all the above steps failed, the write() to an stm file descriptor
++will return a error (EINVAL).
++
++Previously, if no policy nodes were found for a trace source, the stm
++class would silently fall back to allocating the first available
++contiguous range of master/channels from the beginning of the device's
++master/channel range. The new requirement for a policy node to exist
++will help programmers and sysadmins identify gaps in configuration
++and have better control over the un-identified sources.
  
- 	  If unsure, say N.
+ Some STM devices may allow direct mapping of the channel mmio regions
+ to userspace for zero-copy writing. One mappable page (in terms of
+@@ -92,9 +110,9 @@ allocated for the device according to the policy configuration. If
+ there's a node in the root of the policy directory that matches the
+ stm_source device's name (for example, "console"), this node will be
+ used to allocate master and channel numbers. If there's no such policy
+-node, the stm core will pick the first contiguous chunk of channels
+-within the first available master. Note that the node must exist
+-before the stm_source device is connected to its stm device.
++node, the stm core will use the catch-all entry "default", if one
++exists. If neither policy nodes exist, the write() to stm_source_link
++will return an error.
  
-+config TEST_MEMCAT_P
-+	tristate "Test memcat_p() helper function"
-+	help
-+	  Test the memcat_p() helper for correctly merging two
-+	  pointer arrays together.
-+
-+	  If unsure, say N.
-+
- endif # RUNTIME_TESTING_MENU
- 
- config MEMTEST
-diff --git a/lib/Makefile b/lib/Makefile
-index ca3f7ebb900d..c2588a2d7b1e 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -71,6 +71,7 @@ obj-$(CONFIG_TEST_UUID) += test_uuid.o
- obj-$(CONFIG_TEST_PARMAN) += test_parman.o
- obj-$(CONFIG_TEST_KMOD) += test_kmod.o
- obj-$(CONFIG_TEST_DEBUG_VIRTUAL) += test_debug_virtual.o
-+obj-$(CONFIG_TEST_MEMCAT_P) += test_memcat_p.o
- 
- ifeq ($(CONFIG_DEBUG_KOBJECT),y)
- CFLAGS_kobject.o += -DDEBUG
-diff --git a/lib/string.c b/lib/string.c
-index 2c0900a5d51a..453f35994eb6 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -27,6 +27,7 @@
- #include <linux/export.h>
- #include <linux/bug.h>
- #include <linux/errno.h>
-+#include <linux/slab.h>
- 
- #include <asm/byteorder.h>
- #include <asm/word-at-a-time.h>
-@@ -890,6 +891,36 @@ void *memscan(void *addr, int c, size_t size)
- EXPORT_SYMBOL(memscan);
- #endif
- 
-+/*
-+ * Merge two NULL-terminated pointer arrays into a newly allocated
-+ * array, which is also NULL-terminated. Nomenclature is inspired by
-+ * memset_p() and memcat() found elsewhere in the kernel source tree.
-+ */
-+void **__memcat_p(void **a, void **b)
-+{
-+	void **p = a, **new;
-+	int nr;
-+
-+	/* count the elements in both arrays */
-+	for (nr = 0, p = a; *p; nr++, p++)
-+		;
-+	for (p = b; *p; nr++, p++)
-+		;
-+	/* one for the NULL-terminator */
-+	nr++;
-+
-+	new = kmalloc_array(nr, sizeof(void *), GFP_KERNEL);
-+	if (!new)
-+		return NULL;
-+
-+	/* nr -> last index; p points to NULL in b[] */
-+	for (nr--; nr >= 0; nr--, p = p == b ? &a[nr] : p - 1)
-+		new[nr] = *p;
-+
-+	return new;
-+}
-+EXPORT_SYMBOL_GPL(__memcat_p);
-+
- #ifndef __HAVE_ARCH_STRSTR
- /**
-  * strstr - Find the first substring in a %NUL terminated string
-diff --git a/lib/test_memcat_p.c b/lib/test_memcat_p.c
-new file mode 100644
-index 000000000000..2b163a749ecb
---- /dev/null
-+++ b/lib/test_memcat_p.c
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test cases for memcat_p() in lib/string.c
-+ */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-+
-+struct test_struct {
-+	int		num;
-+	unsigned int	magic;
-+};
-+
-+#define MAGIC		0xf00ff00f
-+/* Size of each of the NULL-terminated input arrays */
-+#define INPUT_MAX	128
-+/* Expected number of non-NULL elements in the output array */
-+#define EXPECT		(INPUT_MAX * 2 - 2)
-+
-+static int __init test_memcat_p_init(void)
-+{
-+	struct test_struct **in0, **in1, **out, **p;
-+	int err = -ENOMEM, i, r, total = 0;
-+
-+	in0 = kcalloc(INPUT_MAX, sizeof(*in0), GFP_KERNEL);
-+	if (!in0)
-+		return err;
-+
-+	in1 = kcalloc(INPUT_MAX, sizeof(*in1), GFP_KERNEL);
-+	if (!in1)
-+		goto err_free_in0;
-+
-+	for (i = 0, r = 1; i < INPUT_MAX - 1; i++) {
-+		in0[i] = kmalloc(sizeof(**in0), GFP_KERNEL);
-+		if (!in0[i])
-+			goto err_free_elements;
-+
-+		in1[i] = kmalloc(sizeof(**in1), GFP_KERNEL);
-+		if (!in1[i]) {
-+			kfree(in0[i]);
-+			goto err_free_elements;
-+		}
-+
-+		/* lifted from test_sort.c */
-+		r = (r * 725861) % 6599;
-+		in0[i]->num = r;
-+		in1[i]->num = -r;
-+		in0[i]->magic = MAGIC;
-+		in1[i]->magic = MAGIC;
-+	}
-+
-+	in0[i] = in1[i] = NULL;
-+
-+	out = memcat_p(in0, in1);
-+	if (!out)
-+		goto err_free_all_elements;
-+
-+	err = -EINVAL;
-+	for (i = 0, p = out; *p && (i < INPUT_MAX * 2 - 1); p++, i++) {
-+		total += (*p)->num;
-+
-+		if ((*p)->magic != MAGIC) {
-+			pr_err("test failed: wrong magic at %d: %u\n", i,
-+			       (*p)->magic);
-+			goto err_free_out;
-+		}
-+	}
-+
-+	if (total) {
-+		pr_err("test failed: expected zero total, got %d\n", total);
-+		goto err_free_out;
-+	}
-+
-+	if (i != EXPECT) {
-+		pr_err("test failed: expected output size %d, got %d\n",
-+		       EXPECT, i);
-+		goto err_free_out;
-+	}
-+
-+	for (i = 0; i < INPUT_MAX - 1; i++)
-+		if (out[i] != in0[i] || out[i + INPUT_MAX - 1] != in1[i]) {
-+			pr_err("test failed: wrong element order at %d\n", i);
-+			goto err_free_out;
-+		}
-+
-+	err = 0;
-+	pr_info("test passed\n");
-+
-+err_free_out:
-+	kfree(out);
-+err_free_all_elements:
-+	i = INPUT_MAX;
-+err_free_elements:
-+	for (i--; i >= 0; i--) {
-+		kfree(in1[i]);
-+		kfree(in0[i]);
-+	}
-+
-+	kfree(in1);
-+err_free_in0:
-+	kfree(in0);
-+
-+	return err;
-+}
-+
-+static void __exit test_memcat_p_exit(void)
-+{
-+}
-+
-+module_init(test_memcat_p_init);
-+module_exit(test_memcat_p_exit);
-+
-+MODULE_LICENSE("GPL");
+ stm_console
+ ===========
 -- 
 2.19.0
 
