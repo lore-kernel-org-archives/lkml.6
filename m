@@ -2,105 +2,253 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F8BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 433D1C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D4B2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:39:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GjoDU+AR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D4B2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id F1BC0213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:42:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BC0213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJEMgO (ORCPT
+        id S1727684AbeJEMjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 08:36:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:53663 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbeJEMgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 08:36:13 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42RJTk04XNz9s7W;
-        Fri,  5 Oct 2018 15:39:05 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538717946;
-        bh=QaKSWpYakEq13gVuchNEHyCjc8ncUz6QWuuEEakN+XQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GjoDU+ARHcwQOp73zFBZyQtlRTK22xPZ7gNXRKFPjie9e/1qJJbm5+KuQY9depLZd
-         9UKewC/L/r2WjH9ZIGqY9/CQpfoCy5uod2WicswTckrU5623uDGvlxDY8ZlZkxxLDE
-         VRqXBN/p/iH6Dw7ClPceQbQeKLdlv9o3rxFk62tV5JZwgAD16ffvFpCFlV9EGhZWnE
-         3cNZjRuNTZvsTb0DH0zj9t4t7+DYg90MYG2z6nRxDZhPva4cm1NUpUVcAelJDW8QFT
-         vJSYCPFBNXilSe3MAhYziH4Fbsu73xb8vMOLZbrAIQTnuVCGXys0WT1gNWcp6wwcrj
-         ALwfkVYPhc56w==
-Date:   Fri, 5 Oct 2018 15:39:05 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linus PPC <linuxppc-dev@lists.ozlabs.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: Tree for Oct 4
-Message-ID: <20181005153905.126a005e@canb.auug.org.au>
-In-Reply-To: <01c4a73c-7901-2fbb-8f87-95ff21dc5126@roeck-us.net>
-References: <20181004183449.36bcc93b@canb.auug.org.au>
-        <20181004134644.GA9130@roeck-us.net>
-        <CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
-        <20181005094445.4d0b68bc@canb.auug.org.au>
-        <01c4a73c-7901-2fbb-8f87-95ff21dc5126@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WI7YS39RX_FlyJjOQWG/6Eg"; protocol="application/pgp-signature"
+        Fri, 5 Oct 2018 08:39:53 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:41433 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727558AbeJEMjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 08:39:53 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CzcxDTN_1538718153;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzcxDTN_1538718153)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Fri, 05 Oct 2018 13:42:33 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Cc:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V7 05/20] csky: System Call
+Date:   Fri,  5 Oct 2018 13:41:47 +0800
+Message-Id: <36464adeb406b0e3110eb76ecbd644743e819d61.1538715563.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WI7YS39RX_FlyJjOQWG/6Eg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch adds files related to syscall.
 
-Hi Guenter,
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ arch/csky/include/asm/syscall.h     | 71 +++++++++++++++++++++++++++++++++++++
+ arch/csky/include/asm/syscalls.h    | 15 ++++++++
+ arch/csky/include/uapi/asm/unistd.h | 10 ++++++
+ arch/csky/kernel/syscall.c          | 43 ++++++++++++++++++++++
+ arch/csky/kernel/syscall_table.c    | 14 ++++++++
+ 5 files changed, 153 insertions(+)
+ create mode 100644 arch/csky/include/asm/syscall.h
+ create mode 100644 arch/csky/include/asm/syscalls.h
+ create mode 100644 arch/csky/include/uapi/asm/unistd.h
+ create mode 100644 arch/csky/kernel/syscall.c
+ create mode 100644 arch/csky/kernel/syscall_table.c
 
-On Thu, 4 Oct 2018 18:33:02 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Most of the boot failures are hopefully fixed with
-> https://lore.kernel.org/patchwork/patch/995254/
+diff --git a/arch/csky/include/asm/syscall.h b/arch/csky/include/asm/syscall.h
+new file mode 100644
+index 0000000..926a64a
+--- /dev/null
++++ b/arch/csky/include/asm/syscall.h
+@@ -0,0 +1,71 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASM_SYSCALL_H
++#define __ASM_SYSCALL_H
++
++#include <linux/sched.h>
++#include <linux/err.h>
++#include <abi/regdef.h>
++
++static inline int
++syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
++{
++	return regs_syscallid(regs);
++}
++
++static inline void
++syscall_rollback(struct task_struct *task, struct pt_regs *regs)
++{
++	regs->a0 = regs->orig_a0;
++}
++
++static inline long
++syscall_get_error(struct task_struct *task, struct pt_regs *regs)
++{
++	unsigned long error = regs->a0;
++
++	return IS_ERR_VALUE(error) ? error : 0;
++}
++
++static inline long
++syscall_get_return_value(struct task_struct *task, struct pt_regs *regs)
++{
++	return regs->a0;
++}
++
++static inline void
++syscall_set_return_value(struct task_struct *task, struct pt_regs *regs,
++		int error, long val)
++{
++	regs->a0 = (long) error ?: val;
++}
++
++static inline void
++syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
++		      unsigned int i, unsigned int n, unsigned long *args)
++{
++	BUG_ON(i + n > 6);
++	if (i == 0) {
++		args[0] = regs->orig_a0;
++		args++;
++		i++;
++		n--;
++	}
++	memcpy(args, &regs->a1 + i * sizeof(regs->a1), n * sizeof(args[0]));
++}
++
++static inline void
++syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
++		      unsigned int i, unsigned int n, const unsigned long *args)
++{
++	BUG_ON(i + n > 6);
++	if (i == 0) {
++		regs->orig_a0 = args[0];
++		args++;
++		i++;
++		n--;
++	}
++	memcpy(&regs->a1 + i * sizeof(regs->a1), args, n * sizeof(regs->a0));
++}
++
++#endif	/* __ASM_SYSCALL_H */
+diff --git a/arch/csky/include/asm/syscalls.h b/arch/csky/include/asm/syscalls.h
+new file mode 100644
+index 0000000..5d48e5e
+--- /dev/null
++++ b/arch/csky/include/asm/syscalls.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef __ASM_CSKY_SYSCALLS_H
++#define __ASM_CSKY_SYSCALLS_H
++
++#include <asm-generic/syscalls.h>
++
++long sys_cacheflush(void __user *, unsigned long, int);
++
++long sys_set_thread_area(unsigned long addr);
++
++long sys_csky_fadvise64_64(int fd, int advice, loff_t offset, loff_t len);
++
++#endif /* __ASM_CSKY_SYSCALLS_H */
+diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
+new file mode 100644
+index 0000000..16ed71e
+--- /dev/null
++++ b/arch/csky/include/uapi/asm/unistd.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#define __ARCH_WANT_SYS_CLONE
++#include <asm-generic/unistd.h>
++
++#define __NR_set_thread_area	(__NR_arch_specific_syscall + 0)
++__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
++#define __NR_cacheflush		(__NR_arch_specific_syscall + 4)
++__SYSCALL(__NR_cacheflush, sys_cacheflush)
+diff --git a/arch/csky/kernel/syscall.c b/arch/csky/kernel/syscall.c
+new file mode 100644
+index 0000000..3d30e58
+--- /dev/null
++++ b/arch/csky/kernel/syscall.c
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/syscalls.h>
++
++SYSCALL_DEFINE1(set_thread_area, unsigned long, addr)
++{
++	struct thread_info *ti = task_thread_info(current);
++	struct pt_regs *reg = current_pt_regs();
++
++	reg->tls = addr;
++	ti->tp_value = addr;
++
++	return 0;
++}
++
++SYSCALL_DEFINE6(mmap2,
++	unsigned long, addr,
++	unsigned long, len,
++	unsigned long, prot,
++	unsigned long, flags,
++	unsigned long, fd,
++	off_t, offset)
++{
++	if (unlikely(offset & (~PAGE_MASK >> 12)))
++		return -EINVAL;
++
++	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
++			       offset >> (PAGE_SHIFT - 12));
++}
++
++/*
++ * for abiv1 the 64bits args should be even th, So we need mov the advice
++ * forward.
++ */
++SYSCALL_DEFINE4(csky_fadvise64_64,
++	int, fd,
++	int, advice,
++	loff_t, offset,
++	loff_t, len)
++{
++	return ksys_fadvise64_64(fd, offset, len, advice);
++}
+diff --git a/arch/csky/kernel/syscall_table.c b/arch/csky/kernel/syscall_table.c
+new file mode 100644
+index 0000000..a0c238c
+--- /dev/null
++++ b/arch/csky/kernel/syscall_table.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/syscalls.h>
++#include <asm/syscalls.h>
++
++#undef __SYSCALL
++#define __SYSCALL(nr, call)[nr] = (call),
++
++#define sys_fadvise64_64 sys_csky_fadvise64_64
++void * const sys_call_table[__NR_syscalls] __page_aligned_data = {
++	[0 ... __NR_syscalls - 1] = sys_ni_syscall,
++#include <asm/unistd.h>
++};
+-- 
+2.7.4
 
-I have added that commit to linux-next today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WI7YS39RX_FlyJjOQWG/6Eg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2+PkACgkQAVBC80lX
-0GxQzAgApaFroQMOF/b1oY8XdG0dDLNLqqOUPOKS294M4YJFl+hqZzB7UYdIYX1Y
-PMZG8dwYDTQZuwvs3RVTsazCV3tWCvNgjk1VhvkUITwHQMmecDauMXwMr+chePgs
-lsjwmnU+e6KojE7M4XdEFKeVhLxdK0LKmeBF6Nv5hYFvverfxl4ABRz4u7m1nxhg
-ra4lUBWYjk7j/vbcKkMDU5PHhEZgfa/CQmDmR1idbv4Ceb1Z/EOo+G9v+fkgRZDk
-PRH5B57R5x4ibDKbzWXwwtF2fbC1RYmGtkjioOTRQBk9avjxcpOgjn98oCNlHCUG
-gd95XlVy2O22aLaUrl300VeJ/d7mpA==
-=S9O9
------END PGP SIGNATURE-----
-
---Sig_/WI7YS39RX_FlyJjOQWG/6Eg--
