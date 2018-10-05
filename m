@@ -2,108 +2,163 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B66CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D522C64EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89292084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD2D20684
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:59:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B16fUGvl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89292084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G3IXlW0J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD2D20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeJEIvX (ORCPT
+        id S1727193AbeJEI4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 04:51:23 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37972 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbeJEIvW (ORCPT
+        Fri, 5 Oct 2018 04:56:04 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36200 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbeJEI4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 04:51:22 -0400
-Received: by mail-io1-f67.google.com with SMTP id e2-v6so7827262ioh.5;
-        Thu, 04 Oct 2018 18:54:56 -0700 (PDT)
+        Fri, 5 Oct 2018 04:56:03 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y11-v6so2902569plt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 18:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=szS8KVKMZYV6FEFvfDkQbxQrnMKZSsq9dCjT56XrX6I=;
-        b=B16fUGvlWwHFu5qbvNceBJ8E5x9TF8Dz7kRUnFSCTtVfodI/cZGRKG74BuWrwoLiD4
-         WXGjxR2M0/2eTCPgEQkHlgXnj4HuMAzuOchMFIq5sTkN9tq5USZfwOl9u+YPZEMkHbG9
-         S1b5Edomj0DX3BUbqF/HtYYlsNWWw/alnr1AVt12AVkVK3xCBKhmuHT6pyD8hnSzb19y
-         BJ65Wg8vmNhpIRO54g1w6OYScIOuvnXDiCqqgYKiMv3oX8M6lIRmr/B+/hLdm8UhiIEj
-         EE1WF78hWXSBKbn6uQNVeNDvCniXkhyOysKDrTNPloD7ohjy3AlzaUn2CoFu5cU4W+Px
-         qI6A==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c8WYS60pMXYaIH2cJoE+xgzFFDKfDQtT42NBS2ouWJw=;
+        b=G3IXlW0J4mWSTzPQjPuhV2ytBAJosY3f4GNL4WOf0I6J0JHYKqRFANxhZlQFdDiGcL
+         DBymHnDryZcdGAfSptbfw99DSGCtKacaJBGekThmNqQxCR/cziPA29vtBfgfjkaftls3
+         jZq1IpRoOjooZpDrhlXwXpjltVDYHBgJv+EXY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=szS8KVKMZYV6FEFvfDkQbxQrnMKZSsq9dCjT56XrX6I=;
-        b=fyZo+MXnBk1WzZvNO+3Ox8P6sFvpIAfQk9LhAipX0mf+Jaa+UiNbCEJ4n+Qgs068OE
-         BjR0Zx6TDKFDgPSTP8E8RIp4IlgN0d3VgbDKh00SJLDdeqL+nW0j0h88lFVLtNX6AWSv
-         E9AAh7bxY8OA1pAyHzEn92Y27hb95Bn4Uh6vkE+07qHiUe1TdudY/PayVqNv6khvi5GD
-         eZslx8Dc+Gd1XhplCyRI1b7saRrc30TzptkTl82Z6d13JUrgOKfuDw5gYX4ztVbvcgAo
-         85CbsjWWaGMQy+rayGXYh4yo58YFLNdqBHS6CL++bF0o2vdygRX63g5q7vI7ksdr3R+7
-         Gr5g==
-X-Gm-Message-State: ABuFfoggQZjpWCVvAfAYnKDv6j2aAFbW0HFcZHDvwVIiLmWCab92Iwxe
-        R0w6Zwv0tvVfeW1EmhDWvmTuU22BIY9maN7WXx8=
-X-Google-Smtp-Source: ACcGV61ybVrBsOJPF1JVg0lR5B4ySiqfGp9zwFKL+TNTdtnTcQMQGnDG7AQlMqMwqybyNxJ2eAhO1V2cIp9tuyKnzi4=
-X-Received: by 2002:a6b:c652:: with SMTP id w79-v6mr6002492iof.142.1538704496338;
- Thu, 04 Oct 2018 18:54:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c8WYS60pMXYaIH2cJoE+xgzFFDKfDQtT42NBS2ouWJw=;
+        b=dDicY2NEeqdTPagUUiI6/o3NQJ7dWdZYLT5nwxE57YY9KEbh8AcK/JSf+DmQXBqWsP
+         AusnN4v2K5AQ2p4Te9nQcVPgKErI56ljbaG3NYHjqcgYtUsWQXjUrA5Oz8iYd4FdivJ4
+         PlCa6qC/Yiqc9knQ7rf5qG2N94bGZ8Jl/wEcBeq0iK9eZLQi6syyQomggfeASN/K+twC
+         XNHz+uA4HxrC6Te0shnUUZ9mSwdwey0JdbZZTOffypGqTk6apTmr0ll8k+OcP0EBI3VG
+         eZJiZgZc8C2h5wB5egaehQmrmf+F1+zXa0jPVEVVgQwl7pDQES3fQCZMfEosBAZVmeDE
+         UIUA==
+X-Gm-Message-State: ABuFfoiWBZ6yx60SNTig7Jfwo04BZMsATCp5SHsnoTgsCZ4xmfAG1tGM
+        zl8QkEKFYlwkB+OT2s8evRTK0Q==
+X-Google-Smtp-Source: ACcGV62hS2xlmE7f6YNwlroGO7Gv/UoVyQJccvdoLyLukQViXvvxy8ObOfzj60teSnxmyQPzFzqyWQ==
+X-Received: by 2002:a17:902:70c3:: with SMTP id l3-v6mr9135140plt.185.1538704776669;
+        Thu, 04 Oct 2018 18:59:36 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id n17-v6sm10607204pfj.84.2018.10.04.18.59.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 18:59:35 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     Ryan Case <ryandcase@chromium.org>, linux-arm-msm@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sdm845: Add qspi (quad SPI) node
+Date:   Thu,  4 Oct 2018 18:59:02 -0700
+Message-Id: <20181005015902.134192-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-References: <1538579279-11614-1-git-send-email-laoar.shao@gmail.com> <9863d8b1-7249-e5ec-0400-4007798e69e2@gmail.com>
-In-Reply-To: <9863d8b1-7249-e5ec-0400-4007798e69e2@gmail.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Fri, 5 Oct 2018 09:54:20 +0800
-Message-ID: <CALOAHbDRaH0rVb5cmvKendtrkEEwpfn5cnc5q1yZ49Oj0wTi2w@mail.gmail.com>
-Subject: Re: [PATCH net-next] inet: do not set backlog if listen fails
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 11:41 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
->
-> On 10/03/2018 08:07 AM, Yafang Shao wrote:
-> > These two backlog members are not necessary set in inet_csk_listen_start().
-> > Regarding sk_max_ack_backlog, it will be set in the caller inet_listen
-> > and dccp_listen_start.
-> > Regraing sk_ack_backlog, it is better to put it together with
-> > sk_max_ack_backlog in the same function and only set on success.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > ---
-> >  net/dccp/proto.c                | 1 +
-> >  net/ipv4/af_inet.c              | 1 +
-> >  net/ipv4/inet_connection_sock.c | 3 ---
-> >  3 files changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-> > index 875858c..34d48cd 100644
-> > --- a/net/dccp/proto.c
-> > +++ b/net/dccp/proto.c
-> > @@ -959,6 +959,7 @@ int inet_dccp_listen(struct socket *sock, int backlog)
-> >               err = dccp_listen_start(sk, backlog);
-> >               if (err)
-> >                       goto out;
-> > +             sk->sk_ack_backlog = 0;
->
->
-> This is racy, remember that dccp and tcp have lockless listeners.
->
-> Do not change sk_ack_backlog after a TCP/DCCP socket is ready to accept new flows.
+This adds the Quad SPI controller to the main sdm845 device tree file.
+Boards will be expected to assign the proper pinctrl depending on how
+many chip selects they have hooked up and how many data lines.
 
-Understood. Thanks for your explanation.
+This depends on commit 48735597f7bd ("clk: qcom: Add qspi (Quad SPI)
+clock defines for sdm845 to header") to add the needed defines.  It
+also shouldn't land until the patch ("dt-bindings: spi: Qualcomm Quad
+SPI(QSPI) documentation") [1] lands.
+
+[1] https://lkml.kernel.org/r/20181002214709.162330-1-ryandcase@chromium.org
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 47 ++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index b72bdb0a31a5..cfc96262e8dd 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -822,6 +822,41 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 
++			qspi_clk: qspi-clk {
++				pinmux {
++					pins = "gpio95";
++					function = "qspi_clk";
++				};
++			};
++
++			qspi_cs0: qspi-cs0 {
++				pinmux {
++					pins = "gpio90";
++					function = "qspi_cs";
++				};
++			};
++
++			qspi_cs1: qspi-cs1 {
++				pinmux {
++					pins = "gpio89";
++					function = "qspi_cs";
++				};
++			};
++
++			qspi_data01: qspi-data01 {
++				pinmux-data {
++					pins = "gpio91", "gpio92";
++					function = "qspi_data";
++				};
++			};
++
++			qspi_data12: qspi-data12 {
++				pinmux-data {
++					pins = "gpio93", "gpio94";
++					function = "qspi_data";
++				};
++			};
++
+ 			qup_i2c0_default: qup-i2c0-default {
+ 				pinmux {
+ 					pins = "gpio0", "gpio1";
+@@ -1070,6 +1105,18 @@
+ 			};
+ 		};
+ 
++		qspi: qspi@88df000 {
++			compatible = "qcom,sdm845-qspi", "qcom,qspi-v1";
++			reg = <0x88df000 0x600>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
++				 <&gcc GCC_QSPI_CORE_CLK>;
++			clock-names = "iface", "core";
++			status = "disabled";
++		};
++
+ 		usb_1_hsphy: phy@88e2000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+ 			reg = <0x88e2000 0x400>;
+-- 
+2.19.0.605.g01d371f741-goog
+
