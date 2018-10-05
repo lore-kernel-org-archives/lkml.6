@@ -2,287 +2,161 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BADC9C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC0FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFE72084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:02:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m01qciC3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFE72084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DF90B2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:08:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF90B2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeJEK7W (ORCPT
+        id S1727147AbeJELFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 06:59:22 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35467 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbeJEK7V (ORCPT
+        Fri, 5 Oct 2018 07:05:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43724 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726826AbeJELFJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 06:59:21 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v133-v6so4136185pgb.2;
-        Thu, 04 Oct 2018 21:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=06kpAZHYKZG3hvFobEbSnj6k7+UsR1Ngfd/d8YfSvoY=;
-        b=m01qciC3ihAX+OJYOJUHMVZJQUb2OHYOl4hJWZhhGfRtUaRe254M9NSR7MWq6eEnLG
-         3GJ7RN5fBskGy+1f8TmRo+9gfRF67uw/W12/9wx9Drwc+DuODH/LzLuYvFTALPEOIdJm
-         UivOvTtzO9HBgq64T3dNE0dHrY++PBEqS22Od1A91UQ7A41uKNmYrdbRh8pyNj5SFb3g
-         nx4xsnG5ZQkbLsX0kYGEnrUpCvOSZ3ichQNQlcmLOOgHnzA2MLQ+qkcuAVhyWeTT79oq
-         EntOuw16DUkfTFAEZIcyIG4X+oXC28W5cK02kdFQZZiHBtPEGi8rIm65CCDC/WvM5wnE
-         t/hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=06kpAZHYKZG3hvFobEbSnj6k7+UsR1Ngfd/d8YfSvoY=;
-        b=lrsUWemuCZwMe/XpvZH/djZYE3cTjKs0VWKRBCw99PXwShePTCcQXupDbvG3/V6pD+
-         a7dPYDu2YS6tsVKnBqtkcYoPnjEU5Y6bI5tL+h9bfHmPlZXmHKah005xV+ChQegcpNJC
-         hklA5ajDlUAtCuQBXRyT8zqZWBJj5zd1rD2hgJG68OW1gscFVe0ysshSMHk3eaUMRMpX
-         kX3J6NNpXOZgWiljtA6zBD8d0mnGBob8wOIBWEuSasLLcZ82rwjDZj69XN3z7y6CJ6lh
-         OoWagkv789BiujI/9H00snfGpu1Hl5w2Fif3jL+xCv1i+BwR61nIwrloeFa2KlM7tC6a
-         UO7g==
-X-Gm-Message-State: ABuFfojeixfas35rbts73CJrydjsrDKcMAD3p04VhB9ry4zMJxAbMHyc
-        uIE53tZlxKSLrQkKXy5q4f8=
-X-Google-Smtp-Source: ACcGV60bqr96u2KQwI/dbT7TXLTzDOPCI3TbVohRWSQxZcY4mSWa2YztvMFams7Dx3hHS7DAC3Xfpw==
-X-Received: by 2002:a65:668d:: with SMTP id b13-v6mr8326568pgw.163.1538712153246;
-        Thu, 04 Oct 2018 21:02:33 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id c2-v6sm8787899pfo.107.2018.10.04.21.02.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 21:02:32 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>
-Subject: [PATCH v2 3/3] infiniband/mm: convert to the new put_user_page[s]() calls
-Date:   Thu,  4 Oct 2018 21:02:25 -0700
-Message-Id: <20181005040225.14292-4-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181005040225.14292-1-jhubbard@nvidia.com>
-References: <20181005040225.14292-1-jhubbard@nvidia.com>
+        Fri, 5 Oct 2018 07:05:09 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95447Zh081635
+        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 00:08:19 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mx0hwgbs4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 00:08:19 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 5 Oct 2018 00:08:17 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 5 Oct 2018 00:08:13 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9548CkY28442710
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 5 Oct 2018 04:08:12 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B05C7B2065;
+        Fri,  5 Oct 2018 00:06:21 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E2F8B205F;
+        Fri,  5 Oct 2018 00:06:21 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.210.4])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Oct 2018 00:06:21 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 5502616C1CED; Thu,  4 Oct 2018 21:08:12 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 21:08:12 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     NeilBrown <neilb@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH - resend] VFS: use synchronize_rcu_expedited() in
+ namespace_unlock()
+Reply-To: paulmck@linux.ibm.com
+References: <87y3nyd4pu.fsf@notabene.neil.brown.name>
+ <20171026122743.GX3659@linux.vnet.ibm.com>
+ <b8a1a898-850c-cc7a-2574-1bfd15cc9888@redhat.com>
+ <20171127144125.GF3624@linux.vnet.ibm.com>
+ <87induxd3u.fsf@notabene.neil.brown.name>
+ <87tvm1rxme.fsf@notabene.neil.brown.name>
+ <20181005014002.GS32577@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005014002.GS32577@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18100504-0040-0000-0000-0000047B7BA9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009824; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01098052; UDB=6.00567916; IPR=6.00878092;
+ MB=3.00023621; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-05 04:08:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100504-0041-0000-0000-00000883882B
+Message-Id: <20181005040812.GT2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810050041
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+On Fri, Oct 05, 2018 at 02:40:02AM +0100, Al Viro wrote:
+> On Fri, Oct 05, 2018 at 11:27:37AM +1000, NeilBrown wrote:
+> > 
+> > The synchronize_rcu() in namespace_unlock() is called every time
+> > a filesystem is unmounted.  If a great many filesystems are mounted,
+> > this can cause a noticable slow-down in, for example, system shutdown.
+> > 
+> > The sequence:
+> >   mkdir -p /tmp/Mtest/{0..5000}
+> >   time for i in /tmp/Mtest/*; do mount -t tmpfs tmpfs $i ; done
+> >   time umount /tmp/Mtest/*
+> > 
+> > on a 4-cpu VM can report 8 seconds to mount the tmpfs filesystems, and
+> > 100 seconds to unmount them.
+> > 
+> > Boot the same VM with 1 CPU and it takes 18 seconds to mount the
+> > tmpfs filesystems, but only 36 to unmount.
+> > 
+> > If we change the synchronize_rcu() to synchronize_rcu_expedited()
+> > the umount time on a 4-cpu VM drop to 0.6 seconds
+> > 
+> > I think this 200-fold speed up is worth the slightly high system
+> > impact of using synchronize_rcu_expedited().
+> > 
+> > Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> (from general rcu perspective)
+> > Signed-off-by: NeilBrown <neilb@suse.com>
+> > ---
+> > 
+> > I posted this last October, then again last November (cc:ing Linus)
+> > Paul is happy enough with it, but no other response.
+> > I'm hoping it can get applied this time....
+> 
+> Umm...  IIRC, the last one got sidetracked on the other thing in the series...
+> <checks> that was s_anon stuff.  I can live with this one; FWIW, what kind
+> of load would trigger the impact of the change?  Paul?
 
-For code that retains pages via get_user_pages*(),
-release those pages via the new put_user_page(),
-instead of put_page().
+You lost me with "what kind of load would trigger the impact of the
+change?", but if you are asking about the downside, that would be IPIs
+sent from each call to synchronize_rcu_expedited().  But people with
+things like real-time workloads that therefore don't like those IPIs
+have a number of options:
 
-This prepares for eventually fixing the problem described
-in [1], and is following a plan listed in [2], [3], [4].
+1.	Boot with rcupdate.rcu_normal=1, which converts all calls to
+	synchronize_rcu_expedited() to synchronize_rcu().  This of
+	course loses the performance gain, but this can be a good
+	tradeoff for real-time workloads.
 
-[1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+2.	Build with CONFIG_NO_HZ_FULL=y and boot with nohz_full= to
+	cover the CPUs running your real-time workload.  Then
+	as long as there is only one runnable usermode task per
+	nohz_full CPU, synchronize_rcu_expedited() will avoid sending
+	IPIs to any of the nohz_full CPUs.
 
-[2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
-    Proposed steps for fixing get_user_pages() + DMA problems.
+3.	Don't do unmounts while your real-time application is running.
 
-[3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
-    Bounce buffers (otherwise [2] is not really viable).
+Probably other options as well, but those are the ones that come
+immediately to mind.
 
-[4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
-    Follow-up discussions.
+If I missed the point of your question, please help me understand
+what you are asking for.
 
-CC: Doug Ledford <dledford@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Mike Marciniszyn <mike.marciniszyn@intel.com>
-CC: Dennis Dalessandro <dennis.dalessandro@intel.com>
-CC: Christian Benvenuti <benve@cisco.com>
-
-CC: linux-rdma@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-mm@kvack.org
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- drivers/infiniband/core/umem.c              |  2 +-
- drivers/infiniband/core/umem_odp.c          |  2 +-
- drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
- drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
- drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
- drivers/infiniband/hw/qib/qib_user_sdma.c   |  8 ++++----
- drivers/infiniband/hw/usnic/usnic_uiom.c    |  2 +-
- 7 files changed, 18 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index a41792dbae1f..9430d697cb9f 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -60,7 +60,7 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
- 		page = sg_page(sg);
- 		if (!PageDirty(page) && umem->writable && dirty)
- 			set_page_dirty_lock(page);
--		put_page(page);
-+		put_user_page(page);
- 	}
- 
- 	sg_free_table(&umem->sg_head);
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 6ec748eccff7..6227b89cf05c 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -717,7 +717,7 @@ int ib_umem_odp_map_dma_pages(struct ib_umem *umem, u64 user_virt, u64 bcnt,
- 					ret = -EFAULT;
- 					break;
- 				}
--				put_page(local_page_list[j]);
-+				put_user_page(local_page_list[j]);
- 				continue;
- 			}
- 
-diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
-index e341e6dcc388..99ccc0483711 100644
---- a/drivers/infiniband/hw/hfi1/user_pages.c
-+++ b/drivers/infiniband/hw/hfi1/user_pages.c
-@@ -121,13 +121,10 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
- void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
- 			     size_t npages, bool dirty)
- {
--	size_t i;
--
--	for (i = 0; i < npages; i++) {
--		if (dirty)
--			set_page_dirty_lock(p[i]);
--		put_page(p[i]);
--	}
-+	if (dirty)
-+		put_user_pages_dirty_lock(p, npages);
-+	else
-+		put_user_pages(p, npages);
- 
- 	if (mm) { /* during close after signal, mm can be NULL */
- 		down_write(&mm->mmap_sem);
-diff --git a/drivers/infiniband/hw/mthca/mthca_memfree.c b/drivers/infiniband/hw/mthca/mthca_memfree.c
-index cc9c0c8ccba3..b8b12effd009 100644
---- a/drivers/infiniband/hw/mthca/mthca_memfree.c
-+++ b/drivers/infiniband/hw/mthca/mthca_memfree.c
-@@ -481,7 +481,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
- 
- 	ret = pci_map_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
- 	if (ret < 0) {
--		put_page(pages[0]);
-+		put_user_page(pages[0]);
- 		goto out;
- 	}
- 
-@@ -489,7 +489,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
- 				 mthca_uarc_virt(dev, uar, i));
- 	if (ret) {
- 		pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--		put_page(sg_page(&db_tab->page[i].mem));
-+		put_user_page(sg_page(&db_tab->page[i].mem));
- 		goto out;
- 	}
- 
-@@ -555,7 +555,7 @@ void mthca_cleanup_user_db_tab(struct mthca_dev *dev, struct mthca_uar *uar,
- 		if (db_tab->page[i].uvirt) {
- 			mthca_UNMAP_ICM(dev, mthca_uarc_virt(dev, uar, i), 1);
- 			pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--			put_page(sg_page(&db_tab->page[i].mem));
-+			put_user_page(sg_page(&db_tab->page[i].mem));
- 		}
- 	}
- 
-diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
-index 16543d5e80c3..1a5c64c8695f 100644
---- a/drivers/infiniband/hw/qib/qib_user_pages.c
-+++ b/drivers/infiniband/hw/qib/qib_user_pages.c
-@@ -40,13 +40,10 @@
- static void __qib_release_user_pages(struct page **p, size_t num_pages,
- 				     int dirty)
- {
--	size_t i;
--
--	for (i = 0; i < num_pages; i++) {
--		if (dirty)
--			set_page_dirty_lock(p[i]);
--		put_page(p[i]);
--	}
-+	if (dirty)
-+		put_user_pages_dirty_lock(p, num_pages);
-+	else
-+		put_user_pages(p, num_pages);
- }
- 
- /*
-diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c b/drivers/infiniband/hw/qib/qib_user_sdma.c
-index 926f3c8eba69..14f94d823907 100644
---- a/drivers/infiniband/hw/qib/qib_user_sdma.c
-+++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
-@@ -266,7 +266,7 @@ static void qib_user_sdma_init_frag(struct qib_user_sdma_pkt *pkt,
- 	pkt->addr[i].length = len;
- 	pkt->addr[i].first_desc = first_desc;
- 	pkt->addr[i].last_desc = last_desc;
--	pkt->addr[i].put_page = put_page;
-+	pkt->addr[i].put_page = put_user_page;
- 	pkt->addr[i].dma_mapped = dma_mapped;
- 	pkt->addr[i].page = page;
- 	pkt->addr[i].kvaddr = kvaddr;
-@@ -321,7 +321,7 @@ static int qib_user_sdma_page_to_frags(const struct qib_devdata *dd,
- 		 * the caller can ignore this page.
- 		 */
- 		if (put) {
--			put_page(page);
-+			put_user_page(page);
- 		} else {
- 			/* coalesce case */
- 			kunmap(page);
-@@ -635,7 +635,7 @@ static void qib_user_sdma_free_pkt_frag(struct device *dev,
- 			kunmap(pkt->addr[i].page);
- 
- 		if (pkt->addr[i].put_page)
--			put_page(pkt->addr[i].page);
-+			put_user_page(pkt->addr[i].page);
- 		else
- 			__free_page(pkt->addr[i].page);
- 	} else if (pkt->addr[i].kvaddr) {
-@@ -710,7 +710,7 @@ static int qib_user_sdma_pin_pages(const struct qib_devdata *dd,
- 	/* if error, return all pages not managed by pkt */
- free_pages:
- 	while (i < j)
--		put_page(pages[i++]);
-+		put_user_page(pages[i++]);
- 
- done:
- 	return ret;
-diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
-index 9dd39daa602b..0f607f31c262 100644
---- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-+++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-@@ -91,7 +91,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
- 			pa = sg_phys(sg);
- 			if (!PageDirty(page) && dirty)
- 				set_page_dirty_lock(page);
--			put_page(page);
-+			put_user_page(page);
- 			usnic_dbg("pa: %pa\n", &pa);
- 		}
- 		kfree(chunk);
--- 
-2.19.0
+							Thanx, Paul
 
