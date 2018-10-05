@@ -6,153 +6,180 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F93C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA3BC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B795206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:19:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B795206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9190920834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:20:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9190920834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wand.net.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeJFATa (ORCPT
+        id S1728848AbeJFATk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:19:30 -0400
-Received: from mga05.intel.com ([192.55.52.43]:54979 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727966AbeJFAT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:19:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 10:19:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
-   d="scan'208";a="86048877"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Oct 2018 10:19:40 -0700
-Received: from orsmsx153.amr.corp.intel.com (10.22.226.247) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 5 Oct 2018 10:19:39 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.23]) by
- ORSMSX153.amr.corp.intel.com ([169.254.12.185]) with mapi id 14.03.0319.002;
- Fri, 5 Oct 2018 10:19:39 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jannh@google.com" <jannh@google.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>
-CC:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v7 3/4] vmalloc: Add debugfs modfraginfo
-Thread-Topic: [PATCH v7 3/4] vmalloc: Add debugfs modfraginfo
-Thread-Index: AQHUWc8eQ9enqMql8ESVQm18tY+emKURYXGA
-Date:   Fri, 5 Oct 2018 17:19:38 +0000
-Message-ID: <1538760091.3560.137.camel@intel.com>
-References: <1538429927-17834-1-git-send-email-rick.p.edgecombe@intel.com>
-         <1538429927-17834-4-git-send-email-rick.p.edgecombe@intel.com>
-In-Reply-To: <1538429927-17834-4-git-send-email-rick.p.edgecombe@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.168]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2276DF74EE4D434A8529207459C400CB@intel.com>
-Content-Transfer-Encoding: base64
+        Fri, 5 Oct 2018 20:19:40 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41397 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727966AbeJFATj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:19:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id 23-v6so6005307qkh.8;
+        Fri, 05 Oct 2018 10:19:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LrkVWQizy5vQIraI8/9WMpZhXQvk091qqfexNWXI9OI=;
+        b=N/G5XM+HrRSz6LNZg9rPdm7iinlureWeWjEP1lvgPYF89c5zBPpss8JmgF3stq40vm
+         vITEAg4lX7GgUY/KNl3hk5ZHC6J2YN2PE5JBkY7qG5C7YB8aUcdGNjVB0yPj0wYbTBu/
+         6pl3qWkFQhldgyTMWk6PW7r495o0onTjbRYzZdO/mV5UIpeJTfZB88scnEkABu06cQuB
+         XbM9SjlwblHPSLiTXcMH0+K75Wp8313DSDmrVw/vX6pt7ZkoAKibNsfLIHU2rV3Oegz9
+         bi+CNcaXHximOF0zG3XDR/K5Bc19MRN2JCvee4HuUKs9DiydMGOokEaigObMUCBXJG7j
+         J0zQ==
+X-Gm-Message-State: ABuFfojmLNnHIDmb8Ey8wqjI6o5SmVuqPenezsXwiOSDUqbFBDusYY1V
+        Idh80hZ1nAou4Bi9yTndkrMM/8ZtGrq3HdRq/oc=
+X-Google-Smtp-Source: ACcGV61ky1047xH4fwfIQ/zOwitKK7X/+hLb753EtFru7AueaZaoDPW6xDrlDJd+ZpTraiFSXlSgko/b9Xm+Hp0uBsQ=
+X-Received: by 2002:a37:a215:: with SMTP id l21-v6mr9891383qke.101.1538759998278;
+ Fri, 05 Oct 2018 10:19:58 -0700 (PDT)
 MIME-Version: 1.0
+References: <20181005161526.843924-1-arnd@arndb.de>
+In-Reply-To: <20181005161526.843924-1-arnd@arndb.de>
+From:   Joe Stringer <joe@wand.net.nz>
+Date:   Fri, 5 Oct 2018 10:19:47 -0700
+Message-ID: <CAOftzPg0POeTg+A2-fZM-A78sQf0r1saj23AhV6Ge7yBJGDHBw@mail.gmail.com>
+Subject: Re: [PATCH] bpf: fix building without CONFIG_INET
+To:     arnd@arndb.de
+Cc:     ast@kernel.org, daniel@iogearbox.net,
+        David Miller <davem@davemloft.net>,
+        john fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        makita.toshiaki@lab.ntt.co.jp, brakmo@fb.com, rdna@fb.com,
+        Jesper Brouer <brouer@redhat.com>,
+        jakub.kicinski@netronome.com, m.xhonneux@gmail.com,
+        dsahern@gmail.com, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rm9yIGEgcHJldmlvdXMgdmVyc2lvbiBiZWZvcmUgbWFraW5nIGFza2VkIGZvciBjb3JyZWN0aW9u
-cywgdGhpcyB3YXM6DQoNClJldmlld2VkLWJ5OiBLZWVzIENvb2sgPGtlZXNjb29rQGNocm9taXVt
-Lm9yZz4NCg0KT24gTW9uLCAyMDE4LTEwLTAxIGF0IDE0OjM4IC0wNzAwLCBSaWNrIEVkZ2Vjb21i
-ZSB3cm90ZToNCj4gQWRkIGRlYnVnZnMgZmlsZSAibW9kZnJhZ2luZm8iIGZvciBwcm92aWRpbmcg
-aW5mbyBvbiBtb2R1bGUgc3BhY2UNCj4gZnJhZ21lbnRhdGlvbi4NCj4gVGhpcyBjYW4gYmUgdXNl
-ZCBmb3IgZGV0ZXJtaW5pbmcgaWYgbG9hZGFibGUgbW9kdWxlIHJhbmRvbWl6YXRpb24gaXMgY2F1
-c2luZw0KPiBhbnkNCj4gcHJvYmxlbXMgZm9yIGV4dHJlbWUgbW9kdWxlIGxvYWRpbmcgc2l0dWF0
-aW9ucywgbGlrZSBodWdlIG51bWJlcnMgb2YgbW9kdWxlcw0KPiBvcg0KPiBleHRyZW1lbHkgbGFy
-Z2UgbW9kdWxlcy4NCj4gDQo+IFNhbXBsZSBvdXRwdXQgd2hlbiBLQVNMUiBpcyBlbmFibGVkIGFu
-ZCBYODZfNjQgaXMgY29uZmlndXJlZDoNCj4gCUxhcmdlc3QgZnJlZSBzcGFjZToJODk3OTEyIGtC
-DQo+IAnCoMKgVG90YWwgZnJlZSBzcGFjZToJMTAyNTQyNCBrQg0KPiBBbGxvY2F0aW9ucyBpbiBi
-YWNrdXAgYXJlYToJMA0KPiANCj4gU2FtcGxlIG91dHB1dCB3aGVuIGp1c3QgWDg2XzY0Og0KPiAJ
-TGFyZ2VzdCBmcmVlIHNwYWNlOgk4OTc5MTIga0INCj4gCcKgwqBUb3RhbCBmcmVlIHNwYWNlOgkx
-MDI1NDI0IGtCDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBSaWNrIEVkZ2Vjb21iZSA8cmljay5wLmVk
-Z2Vjb21iZUBpbnRlbC5jb20+DQo+IC0tLQ0KPiDCoG1tL3ZtYWxsb2MuYyB8IDk4DQo+ICsrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQ0K
-PiDCoDEgZmlsZSBjaGFuZ2VkLCA5NyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvbW0vdm1hbGxvYy5jIGIvbW0vdm1hbGxvYy5jDQo+IGluZGV4IDE5NTQ0
-NTguLjFiM2MzZGEgMTAwNjQ0DQo+IC0tLSBhL21tL3ZtYWxsb2MuYw0KPiArKysgYi9tbS92bWFs
-bG9jLmMNCj4gQEAgLTE4LDYgKzE4LDcgQEANCj4gwqAjaW5jbHVkZSA8bGludXgvaW50ZXJydXB0
-Lmg+DQo+IMKgI2luY2x1ZGUgPGxpbnV4L3Byb2NfZnMuaD4NCj4gwqAjaW5jbHVkZSA8bGludXgv
-c2VxX2ZpbGUuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9kZWJ1Z2ZzLmg+DQo+IMKgI2luY2x1ZGUg
-PGxpbnV4L2RlYnVnb2JqZWN0cy5oPg0KPiDCoCNpbmNsdWRlIDxsaW51eC9rYWxsc3ltcy5oPg0K
-PiDCoCNpbmNsdWRlIDxsaW51eC9saXN0Lmg+DQo+IEBAIC0zNiw2ICszNywxMiBAQA0KPiDCoCNp
-bmNsdWRlIDxhc20vdGxiZmx1c2guaD4NCj4gwqAjaW5jbHVkZSA8YXNtL3NobXBhcmFtLmg+DQo+
-IMKgDQo+ICsjaWZkZWYgQ09ORklHX1g4Ng0KPiArI2luY2x1ZGUgPGFzbS9wYWdlX3R5cGVzLmg+
-DQo+ICsjaW5jbHVkZSA8YXNtL3NldHVwLmg+DQo+ICsjaW5jbHVkZSA8YXNtL2thc2xyX21vZHVs
-ZXMuaD4NCj4gKyNlbmRpZg0KPiArDQo+IMKgI2luY2x1ZGUgImludGVybmFsLmgiDQo+IMKgDQo+
-IMKgc3RydWN0IHZmcmVlX2RlZmVycmVkIHsNCj4gQEAgLTI5MTksNyArMjkyNiw5NiBAQCBzdGF0
-aWMgaW50IF9faW5pdCBwcm9jX3ZtYWxsb2NfaW5pdCh2b2lkKQ0KPiDCoAkJcHJvY19jcmVhdGVf
-c2VxKCJ2bWFsbG9jaW5mbyIsIDA0MDAsIE5VTEwsICZ2bWFsbG9jX29wKTsNCj4gwqAJcmV0dXJu
-IDA7DQo+IMKgfQ0KPiAtbW9kdWxlX2luaXQocHJvY192bWFsbG9jX2luaXQpOw0KPiArI2VsaWYg
-ZGVmaW5lZChDT05GSUdfREVCVUdfRlMpDQo+ICtzdGF0aWMgaW50IF9faW5pdCBwcm9jX3ZtYWxs
-b2NfaW5pdCh2b2lkKQ0KPiArew0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArI2VuZGlmDQo+IMKg
-DQo+ICsjaWYgZGVmaW5lZChDT05GSUdfREVCVUdfRlMpICYmIGRlZmluZWQoQ09ORklHX1JBTkRP
-TUlaRV9GSU5FX01PRFVMRSkNCj4gK3N0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBpc19pbl9i
-YWNrdXAodW5zaWduZWQgbG9uZyBhZGRyKQ0KPiArew0KPiArCXJldHVybiBhZGRyID49IE1PRFVM
-RVNfVkFERFIgKyBnZXRfbW9kdWxlc19yYW5kX2xlbigpOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMg
-aW50IG1vZHVsZWZyYWdpbmZvX2RlYnVnX3Nob3coc3RydWN0IHNlcV9maWxlICptLCB2b2lkICp2
-KQ0KPiArew0KPiArCXVuc2lnbmVkIGxvbmcgbGFzdF9lbmQgPSBNT0RVTEVTX1ZBRERSOw0KPiAr
-CXVuc2lnbmVkIGxvbmcgdG90YWxfZnJlZSA9IDA7DQo+ICsJdW5zaWduZWQgbG9uZyBsYXJnZXN0
-X2ZyZWUgPSAwOw0KPiArCXVuc2lnbmVkIGxvbmcgYmFja3VwX2NudCA9IDA7DQo+ICsJdW5zaWdu
-ZWQgbG9uZyBnYXA7DQo+ICsJc3RydWN0IHZtYXBfYXJlYSAqcHJldiwgKmN1ciA9IE5VTEw7DQo+
-ICsNCj4gKwlzcGluX2xvY2soJnZtYXBfYXJlYV9sb2NrKTsNCj4gKw0KPiArCWlmICghcHZtX2Zp
-bmRfbmV4dF9wcmV2KE1PRFVMRVNfVkFERFIsICZjdXIsICZwcmV2KSB8fCAhY3VyKQ0KPiArCQln
-b3RvIGRvbmU7DQo+ICsNCj4gKwlmb3IgKDsgY3VyLT52YV9lbmQgPD0gTU9EVUxFU19FTkQ7IGN1
-ciA9IGxpc3RfbmV4dF9lbnRyeShjdXIsIGxpc3QpKQ0KPiB7DQo+ICsJCS8qIERvbid0IGNvdW50
-IGFyZWFzIHRoYXQgYXJlIG1hcmtlZCB0byBiZSBsYXppbHkgZnJlZWQgKi8NCj4gKwkJaWYgKCEo
-Y3VyLT5mbGFncyAmIFZNX0xBWllfRlJFRSkpIHsNCj4gKwkJCWlmIChrYXNscl9tb2RfcmFuZG9t
-aXplX2VhY2hfbW9kdWxlKCkpDQo+ICsJCQkJYmFja3VwX2NudCArPSBpc19pbl9iYWNrdXAoY3Vy
-LT52YV9zdGFydCk7DQo+ICsJCQlnYXAgPSBjdXItPnZhX3N0YXJ0IC0gbGFzdF9lbmQ7DQo+ICsJ
-CQlpZiAoZ2FwID4gbGFyZ2VzdF9mcmVlKQ0KPiArCQkJCWxhcmdlc3RfZnJlZSA9IGdhcDsNCj4g
-KwkJCXRvdGFsX2ZyZWUgKz0gZ2FwOw0KPiArCQkJbGFzdF9lbmQgPSBjdXItPnZhX2VuZDsNCj4g
-KwkJfQ0KPiArDQo+ICsJCWlmIChsaXN0X2lzX2xhc3QoJmN1ci0+bGlzdCwgJnZtYXBfYXJlYV9s
-aXN0KSkNCj4gKwkJCWJyZWFrOw0KPiArCX0NCj4gKw0KPiArZG9uZToNCj4gKwlnYXAgPSAoTU9E
-VUxFU19FTkQgLSBsYXN0X2VuZCk7DQo+ICsJaWYgKGdhcCA+IGxhcmdlc3RfZnJlZSkNCj4gKwkJ
-bGFyZ2VzdF9mcmVlID0gZ2FwOw0KPiArCXRvdGFsX2ZyZWUgKz0gZ2FwOw0KPiArDQo+ICsJc3Bp
-bl91bmxvY2soJnZtYXBfYXJlYV9sb2NrKTsNCj4gKw0KPiArCXNlcV9wcmludGYobSwgIlx0TGFy
-Z2VzdCBmcmVlIHNwYWNlOlx0JWx1IGtCXG4iLCBsYXJnZXN0X2ZyZWUgLw0KPiAxMDI0KTsNCj4g
-KwlzZXFfcHJpbnRmKG0sICJcdMKgwqBUb3RhbCBmcmVlIHNwYWNlOlx0JWx1IGtCXG4iLCB0b3Rh
-bF9mcmVlIC8gMTAyNCk7DQo+ICsNCj4gKwlpZiAoa2FzbHJfbW9kX3JhbmRvbWl6ZV9lYWNoX21v
-ZHVsZSgpKQ0KPiArCQlzZXFfcHJpbnRmKG0sICJBbGxvY2F0aW9ucyBpbiBiYWNrdXAgYXJlYTpc
-dCVsdVxuIiwNCj4gYmFja3VwX2NudCk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0K
-PiArc3RhdGljIGludCBwcm9jX21vZHVsZV9mcmFnX2RlYnVnX29wZW4oc3RydWN0IGlub2RlICpp
-bm9kZSwgc3RydWN0IGZpbGUNCj4gKmZpbGUpDQo+ICt7DQo+ICsJcmV0dXJuIHNpbmdsZV9vcGVu
-KGZpbGUsIG1vZHVsZWZyYWdpbmZvX2RlYnVnX3Nob3csIE5VTEwpOw0KPiArfQ0KPiArDQo+ICtz
-dGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBkZWJ1Z19tb2R1bGVfZnJhZ19vcGVy
-YXRpb25zID0gew0KPiArCS5vcGVuwqDCoMKgwqDCoMKgwqA9IHByb2NfbW9kdWxlX2ZyYWdfZGVi
-dWdfb3BlbiwNCj4gKwkucmVhZMKgwqDCoMKgwqDCoMKgPSBzZXFfcmVhZCwNCj4gKwkubGxzZWVr
-wqDCoMKgwqDCoD0gc2VxX2xzZWVrLA0KPiArCS5yZWxlYXNlwqDCoMKgwqA9IHNpbmdsZV9yZWxl
-YXNlLA0KPiArfTsNCj4gKw0KPiArc3RhdGljIHZvaWQgX19pbml0IGRlYnVnX21vZGZyYWdfaW5p
-dCh2b2lkKQ0KPiArew0KPiArCWRlYnVnZnNfY3JlYXRlX2ZpbGUoIm1vZGZyYWdpbmZvIiwgMDQw
-MCwgTlVMTCwgTlVMTCwNCj4gKwkJCSZkZWJ1Z19tb2R1bGVfZnJhZ19vcGVyYXRpb25zKTsNCj4g
-K30NCj4gKyNlbGlmIGRlZmluZWQoQ09ORklHX0RFQlVHX0ZTKSB8fCBkZWZpbmVkKENPTkZJR19Q
-Uk9DX0ZTKQ0KPiArc3RhdGljIHZvaWQgX19pbml0IGRlYnVnX21vZGZyYWdfaW5pdCh2b2lkKQ0K
-PiArew0KPiArfQ0KPiDCoCNlbmRpZg0KPiDCoA0KPiArI2lmIGRlZmluZWQoQ09ORklHX0RFQlVH
-X0ZTKSB8fCBkZWZpbmVkKENPTkZJR19QUk9DX0ZTKQ0KPiArc3RhdGljIGludCBfX2luaXQgaW5m
-b192bWFsbG9jX2luaXQodm9pZCkNCj4gK3sNCj4gKwlwcm9jX3ZtYWxsb2NfaW5pdCgpOw0KPiAr
-CWRlYnVnX21vZGZyYWdfaW5pdCgpOw0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArDQo+ICttb2R1
-bGVfaW5pdChpbmZvX3ZtYWxsb2NfaW5pdCk7DQo+ICsjZW5kaWY=
+On Fri, 5 Oct 2018 at 09:16, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The newly added TCP and UDP handling fails to link when CONFIG_INET
+> is disabled:
+>
+> net/core/filter.o: In function `sk_lookup':
+> filter.c:(.text+0x7ff8): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x7ffc): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x8020): undefined reference to `__inet_lookup_established'
+> filter.c:(.text+0x8058): undefined reference to `__inet_lookup_listener'
+> filter.c:(.text+0x8068): undefined reference to `udp_table'
+> filter.c:(.text+0x8070): undefined reference to `udp_table'
+> filter.c:(.text+0x808c): undefined reference to `__udp4_lib_lookup'
+> net/core/filter.o: In function `bpf_sk_release':
+> filter.c:(.text+0x82e8): undefined reference to `sock_gen_put'
+>
+> The compiler can optimize it out and avoid those references for
+> the most part, but we are missing a few steps here:
+>
+> - sk_lookup() should always have been marked 'static', this also
+>   avoids a warning about a missing prototype when building with
+>   'make W=1'.
+> - The BPF_CALL_x() macro needs a little change to allow marking
+>   the unneeded BPF call as 'static' and having the compiler
+>   drop them.
+> - The reference to the bpf_func_proto must be made conditional.
+>
+> Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+
+Thanks for the fix.
+
+>  include/linux/filter.h |  2 +-
+>  net/core/filter.c      | 18 +++++++++++-------
+>  2 files changed, 12 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/filter.h b/include/linux/filter.h
+> index 6791a0ac0139..d9ec9d908bbe 100644
+> --- a/include/linux/filter.h
+> +++ b/include/linux/filter.h
+> @@ -428,9 +428,9 @@ struct sock_reuseport;
+>                   u64, __ur_3, u64, __ur_4, u64, __ur_5)
+>
+>  #define BPF_CALL_x(x, name, ...)                                              \
+> +       u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));         \
+>         static __always_inline                                                 \
+>         u64 ____##name(__BPF_MAP(x, __BPF_DECL_ARGS, __BPF_V, __VA_ARGS__));   \
+> -       u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));         \
+>         u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__))          \
+>         {                                                                      \
+>                 return ____##name(__BPF_MAP(x,__BPF_CAST,__BPF_N,__VA_ARGS__));\
+
+For what it's worth, other similar cases in net/core/filter.c avoid
+this by just wrapping the relevant sections of the code in the #ifdef
+as well.
+
+Might be a bit simpler to follow that style (only checked with make
+M=net/core W=1):
+
+$ git di
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 30c6b2d3ef16..4bbc6567fcb8 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -4817,8 +4817,9 @@ static const struct bpf_func_proto
+bpf_lwt_seg6_adjust_srh_proto = {
+};
+#endif /* CONFIG_IPV6_SEG6_BPF */
+
+-struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
+-                      struct sk_buff *skb, u8 family, u8 proto)
++#ifdef CONFIG_INET
++static struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
++                             struct sk_buff *skb, u8 family, u8 proto)
+{
+       int dif = skb->dev->ifindex;
+       bool refcounted = false;
+@@ -4951,6 +4952,7 @@ static const struct bpf_func_proto
+bpf_sk_release_proto = {
+       .ret_type       = RET_INTEGER,
+       .arg1_type      = ARG_PTR_TO_SOCKET,
+};
++#endif /* CONFIG_INET */
+
+bool bpf_helper_changes_pkt_data(void *func)
+{
+@@ -5158,12 +5160,14 @@ tc_cls_act_func_proto(enum bpf_func_id
+func_id, const struct bpf_prog *prog)
+       case BPF_FUNC_skb_ancestor_cgroup_id:
+               return &bpf_skb_ancestor_cgroup_id_proto;
+#endif
++#ifdef CONFIG_INET
+       case BPF_FUNC_sk_lookup_tcp:
+               return &bpf_sk_lookup_tcp_proto;
+       case BPF_FUNC_sk_lookup_udp:
+               return &bpf_sk_lookup_udp_proto;
+       case BPF_FUNC_sk_release:
+               return &bpf_sk_release_proto;
++#endif
+       default:
+               return bpf_base_func_proto(func_id);
+       }
+@@ -5264,12 +5268,14 @@ sk_skb_func_proto(enum bpf_func_id func_id,
+const struct bpf_prog *prog)
+               return &bpf_sk_redirect_hash_proto;
+       case BPF_FUNC_get_local_storage:
+               return &bpf_get_local_storage_proto;
++#ifdef CONFIG_INET
+       case BPF_FUNC_sk_lookup_tcp:
+               return &bpf_sk_lookup_tcp_proto;
+       case BPF_FUNC_sk_lookup_udp:
+               return &bpf_sk_lookup_udp_proto;
+       case BPF_FUNC_sk_release:
+               return &bpf_sk_release_proto;
++#endif
+       default:
+               return bpf_base_func_proto(func_id);
+       }
