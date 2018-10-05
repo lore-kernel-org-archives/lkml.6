@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3DAC65BBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFF9C65BBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530D72084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530D72084D
+	by mail.kernel.org (Postfix) with ESMTP id 7760321473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7760321473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbeJFBeV (ORCPT
+        id S1729112AbeJFBe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:34:21 -0400
-Received: from mga03.intel.com ([134.134.136.65]:7685 "EHLO mga03.intel.com"
+        Fri, 5 Oct 2018 21:34:27 -0400
+Received: from mga09.intel.com ([134.134.136.24]:6360 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbeJFBeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:34:21 -0400
+        id S1728044AbeJFBe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:34:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 11:34:25 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 11:34:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
-   d="scan'208";a="263223682"
+   d="scan'208";a="263223706"
 Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.166])
-  by orsmga005.jf.intel.com with ESMTP; 05 Oct 2018 11:34:24 -0700
-Subject: [workqueue/driver-core PATCH 4/5] driver core: Attach devices on
- CPU local to device node
+  by orsmga005.jf.intel.com with ESMTP; 05 Oct 2018 11:34:30 -0700
+Subject: [workqueue/driver-core PATCH 5/5] PM core: Use new
+ async_schedule_dev command
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     tj@kernel.org, gregkh@linuxfoundation.org,
         akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
         jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
         alexander.h.duyck@linux.intel.com
-Date:   Fri, 05 Oct 2018 11:34:24 -0700
-Message-ID: <20181005183424.8790.66813.stgit@localhost.localdomain>
+Date:   Fri, 05 Oct 2018 11:34:30 -0700
+Message-ID: <20181005183430.8790.75055.stgit@localhost.localdomain>
 In-Reply-To: <20181005183239.8790.28631.stgit@localhost.localdomain>
 References: <20181005183239.8790.28631.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -52,36 +52,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes it so that we call the asynchronous probe routines on a
-CPU local to the device node. By doing this we should be able to improve
-our initialization time significantly as we can avoid having to access the
-device from a remote node which may introduce higher latency.
+This change makes it so that we use the device specific version of the
+async_schedule commands to defer various tasks related to power management.
+By doing this we should see a slight improvement in performance as any
+device that is sensitive to latency/locality in the setup will now be
+initializing on the node closest to the device.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/base/dd.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/power/main.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 5ba366c1cb83..81472dc44a70 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -826,7 +826,7 @@ static int __device_attach(struct device *dev, bool allow_async)
- 			 */
- 			dev_dbg(dev, "scheduling asynchronous probe\n");
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 3f68e2919dc5..8495d9b1e9d0 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -726,7 +726,7 @@ void dpm_noirq_resume_devices(pm_message_t state)
+ 		reinit_completion(&dev->power.completion);
+ 		if (is_async(dev)) {
  			get_device(dev);
--			async_schedule(__device_attach_async_helper, dev);
-+			async_schedule_dev(__device_attach_async_helper, dev);
- 		} else {
- 			pm_request_idle(dev);
+-			async_schedule(async_resume_noirq, dev);
++			async_schedule_dev(async_resume_noirq, dev);
  		}
-@@ -927,7 +927,7 @@ static int __driver_attach(struct device *dev, void *data)
- 		if (!dev->driver) {
+ 	}
+ 
+@@ -883,7 +883,7 @@ void dpm_resume_early(pm_message_t state)
+ 		reinit_completion(&dev->power.completion);
+ 		if (is_async(dev)) {
  			get_device(dev);
- 			dev_set_drvdata(dev, drv);
--			async_schedule(__driver_attach_async_helper, dev);
-+			async_schedule_dev(__driver_attach_async_helper, dev);
+-			async_schedule(async_resume_early, dev);
++			async_schedule_dev(async_resume_early, dev);
  		}
- 		device_unlock(dev);
+ 	}
+ 
+@@ -1047,7 +1047,7 @@ void dpm_resume(pm_message_t state)
+ 		reinit_completion(&dev->power.completion);
+ 		if (is_async(dev)) {
+ 			get_device(dev);
+-			async_schedule(async_resume, dev);
++			async_schedule_dev(async_resume, dev);
+ 		}
+ 	}
+ 
+@@ -1366,7 +1366,7 @@ static int device_suspend_noirq(struct device *dev)
+ 
+ 	if (is_async(dev)) {
+ 		get_device(dev);
+-		async_schedule(async_suspend_noirq, dev);
++		async_schedule_dev(async_suspend_noirq, dev);
  		return 0;
+ 	}
+ 	return __device_suspend_noirq(dev, pm_transition, false);
+@@ -1569,7 +1569,7 @@ static int device_suspend_late(struct device *dev)
+ 
+ 	if (is_async(dev)) {
+ 		get_device(dev);
+-		async_schedule(async_suspend_late, dev);
++		async_schedule_dev(async_suspend_late, dev);
+ 		return 0;
+ 	}
+ 
+@@ -1830,7 +1830,7 @@ static int device_suspend(struct device *dev)
+ 
+ 	if (is_async(dev)) {
+ 		get_device(dev);
+-		async_schedule(async_suspend, dev);
++		async_schedule_dev(async_suspend, dev);
+ 		return 0;
+ 	}
+ 
 
