@@ -2,97 +2,86 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635F1C64EBC
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 833C2C64EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18AD820834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:37:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GGQl0k65"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AD820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 41B7420834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:40:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B7420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbeJEIeD (ORCPT
+        id S1727198AbeJEIgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 04:34:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:59891 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726844AbeJEIeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 04:34:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42RC765GRhz9s55;
-        Fri,  5 Oct 2018 11:37:38 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538703458;
-        bh=ftvUqutCmcKAVqRxOanyK3tNoJVdj2r3FbSvtDQ5ZNQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GGQl0k65DG/IsqKt7AqgHUmpDiBtL4VWRkTOgnUn9sbXxQmC6ktH7DGwZB7zrnzuR
-         krT6pZLU8uqxklYrdkNwFU/QXDa4HEyVFA8z+JJv/i9r0hRKyfaT7o2IHMKEiUZyKY
-         BmCx0TOJA+SFICi8f+SR1zjf52T28hPL3nZSytS93+C9Xh72dy92lV8akjp7VRsUQ8
-         biRI3dzAisBagpJGSDnepSRi9vvsiVyUgcm9MItgFVagCeog/fmSDOHeMJbLqzZ9oy
-         B8kLeAiT3VXkBHxCRvrXd032+UoSEHpHdcHdIP/H/tujUlH9PmQyt+b0uEJ2PLGCtJ
-         GDu4dnin940Cg==
-Date:   Fri, 5 Oct 2018 11:37:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: linux-next: build failure after merge of the drm-msm tree
-Message-ID: <20181005113738.2b7e4e1d@canb.auug.org.au>
+        Fri, 5 Oct 2018 04:36:32 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34510 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726844AbeJEIgc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 04:36:32 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g8F62-00069i-D4; Fri, 05 Oct 2018 01:40:02 +0000
+Date:   Fri, 5 Oct 2018 02:40:02 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        paulmck@linux.vnet.ibm.com, Florian Weimer <fweimer@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH - resend] VFS: use synchronize_rcu_expedited() in
+ namespace_unlock()
+Message-ID: <20181005014002.GS32577@ZenIV.linux.org.uk>
+References: <87y3nyd4pu.fsf@notabene.neil.brown.name>
+ <20171026122743.GX3659@linux.vnet.ibm.com>
+ <b8a1a898-850c-cc7a-2574-1bfd15cc9888@redhat.com>
+ <20171127144125.GF3624@linux.vnet.ibm.com>
+ <87induxd3u.fsf@notabene.neil.brown.name>
+ <87tvm1rxme.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Oz9kFV2PSTN=zeTbT2o+FQo"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tvm1rxme.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Oz9kFV2PSTN=zeTbT2o+FQo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 05, 2018 at 11:27:37AM +1000, NeilBrown wrote:
+> 
+> The synchronize_rcu() in namespace_unlock() is called every time
+> a filesystem is unmounted.  If a great many filesystems are mounted,
+> this can cause a noticable slow-down in, for example, system shutdown.
+> 
+> The sequence:
+>   mkdir -p /tmp/Mtest/{0..5000}
+>   time for i in /tmp/Mtest/*; do mount -t tmpfs tmpfs $i ; done
+>   time umount /tmp/Mtest/*
+> 
+> on a 4-cpu VM can report 8 seconds to mount the tmpfs filesystems, and
+> 100 seconds to unmount them.
+> 
+> Boot the same VM with 1 CPU and it takes 18 seconds to mount the
+> tmpfs filesystems, but only 36 to unmount.
+> 
+> If we change the synchronize_rcu() to synchronize_rcu_expedited()
+> the umount time on a 4-cpu VM drop to 0.6 seconds
+> 
+> I think this 200-fold speed up is worth the slightly high system
+> impact of using synchronize_rcu_expedited().
+> 
+> Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> (from general rcu perspective)
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+> 
+> I posted this last October, then again last November (cc:ing Linus)
+> Paul is happy enough with it, but no other response.
+> I'm hoping it can get applied this time....
 
-Hi Rob,
-
-After merging the drm-msm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-arm-linux-gnueabi-ld: drivers/gpu/drm/msm/adreno/a6xx_gpu.o: in function `a=
-6xx_gpu_busy':
-a6xx_gpu.c:(.text+0x70): undefined reference to `__aeabi_uldivmod'
-
-Caused by commit
-
-  a2c3c0a54d4c ("drm/msm/a6xx: Add devfreq support for a6xx")
-
-I have used the drm-msm tree from next-20181004 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Oz9kFV2PSTN=zeTbT2o+FQo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2wGIACgkQAVBC80lX
-0Gxidgf+Ppqa+xCk9sv5wXIDA+911gYtrofBmnT5373qGExkr4Bwip1FDBXh0vTp
-6Wx9POoVrR2OZoBhlWHKKyN7uLdMfpEEMncw+zh1rnZJehRey3b6O/0FM3PLkFxf
-BEYGpp2X7+MbKVQM6w2OXcWMxYoJKMEdAV/+g/61kwOj3cu5K3P6E/QzNR+KJgOm
-58nrml7s/Yu7arwYh8hteTRvpzb53fDx/htmvpREFCEjK/xn559r/BYN3ZYoKhvz
-UO5tEqwR0/Sb3K/9udguObknzZwiE0zjfPV1nOQSZAW4zhMRIricXTRAG4S+6xtW
-XxRHKqYF9iR3ArN1jUoBoavG9o6Hpg==
-=tWOy
------END PGP SIGNATURE-----
-
---Sig_/Oz9kFV2PSTN=zeTbT2o+FQo--
+Umm...  IIRC, the last one got sidetracked on the other thing in the series...
+<checks> that was s_anon stuff.  I can live with this one; FWIW, what kind
+of load would trigger the impact of the change?  Paul?
