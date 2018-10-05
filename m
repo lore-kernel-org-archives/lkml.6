@@ -2,103 +2,98 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C67EEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B63C64EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C10F20854
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:50:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="aSNanqPY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C10F20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 176292084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:52:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 176292084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbeJEIqi (ORCPT
+        id S1727179AbeJEItN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 04:46:38 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40334 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbeJEIqi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 04:46:38 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 1-v6so6044160plv.7
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 18:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PLzqjhrd/hviNj2aRoQB7KJohhgS1IQRcvo/+tI+tGo=;
-        b=aSNanqPY41Rw1bghUJ+hr1PwtEZt9PFXAYHc5EfyWzwdtF8zk+hDmBwvkvOKCBDy4V
-         VZFsQyLyOoZLVt2dL2aL05qMw3261lXq0BfOGSMNoNkYSuzodKtyPI1pPsfpsKTh7KaK
-         YqTIghIL68cItdOb/AiYFIIew5cCaPJS0wEFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PLzqjhrd/hviNj2aRoQB7KJohhgS1IQRcvo/+tI+tGo=;
-        b=bLvWR/G6e+bYid6Ho9WH0vQXXu6pTGdIP5FB+n2P814ZBjhX4cFdTMHaTVmoxf7PjS
-         EADixwvtgZCQFy8nIQdJas8W/jRcd2YCVE7nbYMafioVb9apq2bWUHiYpStQpFdAbgvj
-         qJNj2kfduElgF77hfWCYYiIPAppxwbP3JQfjgJlc9vDZaiTj/Cilz0e7ThkalQwTJqI/
-         Pj04Lc8SqESWOI8vaROYjvNbBLF2gW8QETMx+av3o1EjB6YCnsPhxZUjRlF3J6BgyMer
-         xgt32JzLGfTgcHqapdHcnnFJ/vmtxot60Rg95BiJL6vU/O/T1vzi4e11ZEMwCleQF0rR
-         MnNA==
-X-Gm-Message-State: ABuFfoj0HtJZoAzzQOZlXpuP2aLoGr5CiZp1TtM91vugziHKE+Pee2k1
-        OXC/65vV6asfnMDr+ryqt5lQ+X0+r44=
-X-Google-Smtp-Source: ACcGV61ZP8VxYqsriiV43bcOSPyyqcnV00SPu22uHJ7cFqxfZP7jnmuNm6VwPSCExsyovds99hMtyQ==
-X-Received: by 2002:a17:902:850b:: with SMTP id bj11-v6mr9380502plb.107.1538704211709;
-        Thu, 04 Oct 2018 18:50:11 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id j5-v6sm6086758pgm.79.2018.10.04.18.50.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 18:50:10 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        tkjos@google.com, gregkh@linuxfoundation.org
-Subject: [PATCH] MAINTAINERS: Add me to Android drivers
-Date:   Thu,  4 Oct 2018 18:49:52 -0700
-Message-Id: <20181005014952.255266-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Fri, 5 Oct 2018 04:49:13 -0400
+Received: from shell.v3.sk ([90.176.6.54]:38027 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeJEItM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 04:49:12 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 114B5BC4F6;
+        Fri,  5 Oct 2018 03:52:44 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id zSz1O_34FL_n; Fri,  5 Oct 2018 03:52:41 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 537DEBC4FE;
+        Fri,  5 Oct 2018 03:52:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3ipGyA2x_tmj; Fri,  5 Oct 2018 03:52:40 +0200 (CEST)
+Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 97EC6BC4F6;
+        Fri,  5 Oct 2018 03:52:40 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>, stable@vger.kernel.org
+Subject: [PATCH] power: supply: olpc_battery: correct the temperature units
+Date:   Fri,  5 Oct 2018 03:52:30 +0200
+Message-Id: <20181005015230.373962-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am one of the main engineers working on ashmem. I have been fixing
-bugs in the driver and have been involved in the memfd conversion
-discussions and sending patches about that. I also have an understanding
-of the binder driver and was involved with some of the development on
-finer grained locking. So I would like to be added to the MAINTAINERS
-file for android drivers for review and maintenance of ashmem and other
-Android drivers.
+According to [1] and [2], the temperature values are in tenths of degree
+Celsius. Exposing the Celsius value makes the battery appear on fire:
 
-Cc: tkjos@google.com
-Cc: gregkh@linuxfoundation.org
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+  $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
+  ...
+      temperature:         236.9 degrees C
+
+Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
+
+[1] include/linux/power_supply.h
+[2] Documentation/power/power_supply_class.txt
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/supply/olpc_battery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 544cac829cf4..d639c4d04438 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -894,6 +894,7 @@ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- M:	Arve Hjønnevåg <arve@android.com>
- M:	Todd Kjos <tkjos@android.com>
- M:	Martijn Coenen <maco@android.com>
-+M:	Joel Fernandes <joel@joelfernandes.org>
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
- L:	devel@driverdev.osuosl.org
- S:	Supported
--- 
-2.19.0.605.g01d371f741-goog
+diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/o=
+lpc_battery.c
+index 6da79ae14860..5a97e42a3547 100644
+--- a/drivers/power/supply/olpc_battery.c
++++ b/drivers/power/supply/olpc_battery.c
+@@ -428,14 +428,14 @@ static int olpc_bat_get_property(struct power_suppl=
+y *psy,
+ 		if (ret)
+ 			return ret;
+=20
+-		val->intval =3D (s16)be16_to_cpu(ec_word) * 100 / 256;
++		val->intval =3D (s16)be16_to_cpu(ec_word) * 10 / 256;
+ 		break;
+ 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
+ 		ret =3D olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
+ 		if (ret)
+ 			return ret;
+=20
+-		val->intval =3D (int)be16_to_cpu(ec_word) * 100 / 256;
++		val->intval =3D (int)be16_to_cpu(ec_word) * 10 / 256;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
+ 		ret =3D olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
+--=20
+2.19.0
 
