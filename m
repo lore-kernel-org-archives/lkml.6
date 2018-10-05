@@ -2,67 +2,79 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD32C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46310C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D8121473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D8121473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 079FB21473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:56:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079FB21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbeJFEzj (ORCPT
+        id S1729047AbeJFE4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:55:39 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:46990 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbeJFEzi (ORCPT
+        Sat, 6 Oct 2018 00:56:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47923 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbeJFE4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:55:38 -0400
-Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6699E13ADF96A;
-        Fri,  5 Oct 2018 14:54:59 -0700 (PDT)
-Date:   Fri, 05 Oct 2018 14:54:58 -0700 (PDT)
-Message-Id: <20181005.145458.746711951646640462.davem@davemloft.net>
-To:     vijaykhemka@fb.com
-Cc:     sam@mendozajonas.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Justin.Lee1@Dell.com, joel@jms.id.au,
-        linux-aspeed@lists.ozlabs.org, sdasari@fb.com, christian@cmd.nu
-Subject: Re: [PATCH net-next] net/ncsi: Add NCSI OEM command support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181005174602.828803-1-vijaykhemka@fb.com>
-References: <20181005174602.828803-1-vijaykhemka@fb.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 05 Oct 2018 14:54:59 -0700 (PDT)
+        Sat, 6 Oct 2018 00:56:54 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g8Y4w-0007qH-LI; Fri, 05 Oct 2018 21:56:10 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Sriram R <srirrama@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ath10k: fix out of bound read on array ath10k_rates
+Date:   Fri,  5 Oct 2018 22:56:09 +0100
+Message-Id: <20181005215609.13935-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vijay Khemka <vijaykhemka@fb.com>
-Date: Fri, 5 Oct 2018 10:46:01 -0700
+From: Colin Ian King <colin.king@canonical.com>
 
-> This patch adds OEM commands and response handling. It also defines OEM
-> command and response structure as per NCSI specification along with its
-> handlers.
-> 
-> ncsi_cmd_handler_oem: This is a generic command request handler for OEM
-> commands
-> ncsi_rsp_handler_oem: This is a generic response handler for OEM commands
-> 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> Reviewed-by: Justin Lee <justin.lee1@dell.com>
-> Reviewed-by: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+An out-of-bounds read on array ath10k_rates is occurring because
+the maximum number of elements is currently based on the size of
+the array and not the number of elements in the array. Fix this
+by using ARRAY_SIZE instead of sizeof.
 
-Applied.
+Detected by CoverityScan, CID#1473918 ("Out-of-bounds read")
+
+Fixes: f279294e9ee2 ("ath10k: add support for configuring management packet rate")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath10k/mac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 3933dd96da55..3564676e74e3 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -164,7 +164,7 @@ static int ath10k_mac_get_rate_hw_value(int bitrate)
+ 	if (ath10k_mac_bitrate_is_cck(bitrate))
+ 		hw_value_prefix = WMI_RATE_PREAMBLE_CCK << 6;
+ 
+-	for (i = 0; i < sizeof(ath10k_rates); i++) {
++	for (i = 0; i < ARRAY_SIZE(ath10k_rates); i++) {
+ 		if (ath10k_rates[i].bitrate == bitrate)
+ 			return hw_value_prefix | ath10k_rates[i].hw_value;
+ 	}
+-- 
+2.17.1
+
