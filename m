@@ -6,64 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A9CC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB64C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D820F2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:51:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D820F2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C42E42084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:52:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42E42084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbeJEWvB (ORCPT
+        id S1728984AbeJEWvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:51:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:17683 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727746AbeJEWvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:51:01 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2B14E811BF;
-        Fri,  5 Oct 2018 15:51:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 111886BC31;
-        Fri,  5 Oct 2018 15:51:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <alpine.LRH.2.21.1810040520570.16168@namei.org>
-References: <alpine.LRH.2.21.1810040520570.16168@namei.org> <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <153618449119.7946.11025480207548147086.stgit@warthog.procyon.org.uk>
-To:     James Morris <jmorris@namei.org>
-Cc:     dhowells@redhat.com, denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/22] KEYS: Provide software public key query function
+        Fri, 5 Oct 2018 18:51:23 -0400
+Received: from www62.your-server.de ([213.133.104.62]:41268 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbeJEWvX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:51:23 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g8SOR-0002ub-I4; Fri, 05 Oct 2018 17:51:55 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g8SOR-000HJa-Cy; Fri, 05 Oct 2018 17:51:55 +0200
+Subject: Re: linux-next: Tree for Oct 5 (net/core/filter.c)
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, joe@wand.net.nz
+References: <20181005163943.3f8d4f32@canb.auug.org.au>
+ <51ea61d3-032b-f316-4a61-b63ab208d8d4@infradead.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <e5a04d2f-df44-4616-5621-23d7738353d6@iogearbox.net>
+Date:   Fri, 5 Oct 2018 17:51:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22417.1538754702.1@warthog.procyon.org.uk>
-Date:   Fri, 05 Oct 2018 16:51:42 +0100
-Message-ID: <22418.1538754702@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 05 Oct 2018 15:51:44 +0000 (UTC)
+In-Reply-To: <51ea61d3-032b-f316-4a61-b63ab208d8d4@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.1/25009/Fri Oct  5 14:48:12 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
+[ +Joe ]
 
-> > +	if (strcmp(encoding, "raw") == 0) {
-> > +		strcpy(alg_name, pkey->pkey_algo);
-> > +		return 0;
-> > +	}
+On 10/05/2018 05:42 PM, Randy Dunlap wrote:
+> On 10/4/18 11:39 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20181004:
+>>
 > 
-> Can encoding here also be NULL to indicate raw? per patch 01:
+> on i386 or x86_64:
+> 
+> net/core/filter.o: In function `bpf_sk_release':
+> filter.c:(.text+0x3c5c): undefined reference to `sock_gen_put'
+> net/core/filter.o: In function `sk_lookup':
+> filter.c:(.text+0x79a5): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x79bc): undefined reference to `__inet_lookup_established'
+> filter.c:(.text+0x79eb): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x79f3): undefined reference to `__inet_lookup_listener'
+> filter.c:(.text+0x7a14): undefined reference to `udp_table'
+> filter.c:(.text+0x7a26): undefined reference to `__udp4_lib_lookup'
+> 
+> 
+> Full randconfig file is attached.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> 
 
-Ummm...  By the letter of the documentation, yes, though in practice it isn't
-(it is defaulted to "raw") in the keyctl interface.  I wonder if it would be
-better to require it to say "raw" and never be NULL.
-
-David
