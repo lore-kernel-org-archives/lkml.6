@@ -2,102 +2,81 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08757C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1684C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55AF2054F
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55AF2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BD5A82098A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD5A82098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbeJEOif (ORCPT
+        id S1728477AbeJEOj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:38:35 -0400
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:47281 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727830AbeJEOif (ORCPT
+        Fri, 5 Oct 2018 10:39:27 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:47020 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbeJEOj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:38:35 -0400
-X-Greylist: delayed 1218 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Oct 2018 10:38:35 EDT
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id A512F40238061
-        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 01:27:12 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8KPsgKn5gBcCX8KPsgesJS; Fri, 05 Oct 2018 02:20:52 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:32938 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g8KPr-002ehE-Ug; Fri, 05 Oct 2018 02:20:52 -0500
-Date:   Fri, 5 Oct 2018 09:20:50 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Samuel Ortiz <sameo@linux.intel.com>
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] NFC: pn533: mark expected switch fall-throughs
-Message-ID: <20181005072050.GA12182@embeddedor.com>
+        Fri, 5 Oct 2018 10:39:27 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o21so11523580otb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 00:41:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=97/kGLrdnBlyFhgI04CyxK7uBCCHJshpKqXLUVCfu1w=;
+        b=Tkzm6+kIO1uAFSClqsGPhn26aG76PvHT/vCl/6bB7N2AI+cmyyg4Cv9pG0n+EbOuvq
+         mVSmyehQlPrHXYIcOvFtOe9TauvnYoXpLaWtPL87M3goWmV3GJDomVJkN/F8RstcHTOy
+         R8z3GZM7LrOfiFjr5JgmCZaOvInZEbqDaJR+kzEhBt4+zI0L2Fjq7GbWGOtI1klm3dsP
+         OoRW2t8mq/PWomRIOvh8nmChX0TC3vQzsOpYwOQuvFAHgUB0bXLSPa8lOdGNitgCG7z0
+         D0Op2wVFoMpMfTYseReg9Exz3zvZZZHOwcilVdOIRyh2V9DBzYxUdyAycamvAZklk9Py
+         U8Lg==
+X-Gm-Message-State: ABuFfoicgxPsm/CUaKZpK0Y8M0X2OPCaSvSyJo9fISeDpL+Qa2Hi6FuG
+        UcZYd8evaIbbNmb0xPqMJkf2SnWEIVSeremeQHAu1A==
+X-Google-Smtp-Source: ACcGV62jaghBzJVsrDIeRoAP/yPZOcy4/Ih7OzVftCdUCdi1k4aXDKkt1mkdP+a4MQLBkykcIiNhyJZRe2tEvWjKO5s=
+X-Received: by 2002:a9d:2af:: with SMTP id 44-v6mr5459517otl.244.1538725317664;
+ Fri, 05 Oct 2018 00:41:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g8KPr-002ehE-Ug
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:32938
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20181004143750.30880-1-jani.nikula@intel.com> <CAJZ5v0iOR=PLHWtuJDVSsjpeTp_BLsheRM_dR_AL00hN-6bUhQ@mail.gmail.com>
+ <87lg7cq1z6.fsf@intel.com>
+In-Reply-To: <87lg7cq1z6.fsf@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 5 Oct 2018 09:41:46 +0200
+Message-ID: <CAJZ5v0j_UEWxN5GzeL-1Ju6sw0pYmepWAu6xN5vANTkq3NgtXg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sysfs: constify sysfs create/remove files harder
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Fri, Oct 5, 2018 at 9:36 AM Jani Nikula <jani.nikula@intel.com> wrote:
+>
+> On Fri, 05 Oct 2018, "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+> > On Thu, Oct 4, 2018 at 4:38 PM Jani Nikula <jani.nikula@intel.com> wrote:
+> >>
+> >> Let the passed in array be const (and thus placed in rodata) instead of
+> >> a mutable array of const pointers.
+> >
+> > I'm not sure if the changes guarantee what you want.  If I'm not
+> > mistaken, they just mean that the function itself cannot modify either
+> > the pointer passed to it, or the contents of the array pointed to by
+> > that pointer.  They don't imply the location of the array itself,
+> > though.
+>
+> I mean, this change allows the caller to add the appropriate const
+> qualifiers to the array definition, allowing the placement in
+> rodata. Can't do that withouth the extra const in the function.
 
-Addresses-Coverity-ID: 1230487 ("Missing break in switch")
-Addresses-Coverity-ID: 1230488 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/nfc/pn533/pn533.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
-index a0cc1cc..5961f14 100644
---- a/drivers/nfc/pn533/pn533.c
-+++ b/drivers/nfc/pn533/pn533.c
-@@ -2147,6 +2147,7 @@ static int pn533_transceive(struct nfc_dev *nfc_dev,
- 
- 			break;
- 		}
-+		/* fall through */
- 	default:
- 		/* jumbo frame ? */
- 		if (skb->len > PN533_CMD_DATAEXCH_DATA_MAXLEN) {
-@@ -2273,6 +2274,7 @@ static void pn533_wq_mi_recv(struct work_struct *work)
- 
- 			break;
- 		}
-+		/* fall through */
- 	default:
- 		skb_put_u8(skb, 1); /*TG*/
- 
--- 
-2.7.4
-
+I figured that out, but the changelog is a bit unclear.  If you said
+"Allow ..." instead of "Let ...", it would be somewhat clearer IMO.
+:-)
