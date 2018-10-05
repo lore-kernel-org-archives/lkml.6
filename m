@@ -2,75 +2,101 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF52AC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61619C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED7720652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:35:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="PmshtX+G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED7720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 1054220652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1054220652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeJEReJ (ORCPT
+        id S1727809AbeJERhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:34:09 -0400
-Received: from 8bytes.org ([81.169.241.247]:57114 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbeJEReJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:34:09 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 867EC338; Fri,  5 Oct 2018 12:35:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1538735756; bh=wCQgjmC7zxKcsS3i6AH/w3Mkwc9I+iZAobQLVdFOeOY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PmshtX+GvMmALd/UmRjaz3C7gNXZX8yTv9evAetx8AIga8gmJ0DvMQqFuTz2bQLi5
-         8qpKZd0u9HpkFDczfLO67Fodm04sV/58XiqyTUQnIG3PiZ8ZSMHiIJj3RGq3/4AdTp
-         OdPbIV8poavtab2m7oLi7fGIMovuPSbSg5aH7YWrst0VeWuT5ebEHYUXungGXPEwP6
-         M9kdORfWU2Bm6Ts3C/BAPdtyXYRNO+qs2qTMli/f7hIwcP5HIusLWdYNb5NiPie9om
-         mDsaP3PGzksfrQI+dmQWs3r+dOgNTX5Z4qwJv/N8i3uAL6haWaOTbETCNxHJN7pHf4
-         hE+bVqTcp05EA==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     iommu@lists.linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH] iommu/amd: Move iommu_init_pci() to .init section
-Date:   Fri,  5 Oct 2018 12:35:54 +0200
-Message-Id: <1538735754-1865-1-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 5 Oct 2018 13:37:24 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13194 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727354AbeJERhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 13:37:24 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6D2078A2F4FC5;
+        Fri,  5 Oct 2018 18:39:06 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 5 Oct 2018 18:39:00 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        David Hildenbrand <david@redhat.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] powerpc/powernv: Fix debugfs_simple_attr.cocci warnings
+Date:   Fri, 5 Oct 2018 10:50:31 +0000
+Message-ID: <1538736631-99728-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+for debugfs files.
 
-The function is only called from another __init function, so
-it should be moved to .init too.
+Semantic patch information:
+Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+imposes some significant overhead as compared to
+DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/iommu/amd_iommu_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/memtrace.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 84b3e4445d46..9c3d610e1e19 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -1709,7 +1709,7 @@ static const struct attribute_group *amd_iommu_groups[] = {
- 	NULL,
- };
+diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+index 84d038e..0cb6548 100644
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -311,8 +311,8 @@ static int memtrace_enable_get(void *data, u64 *val)
+ 	return 0;
+ }
  
--static int iommu_init_pci(struct amd_iommu *iommu)
-+static int __init iommu_init_pci(struct amd_iommu *iommu)
+-DEFINE_SIMPLE_ATTRIBUTE(memtrace_init_fops, memtrace_enable_get,
+-					memtrace_enable_set, "0x%016llx\n");
++DEFINE_DEBUGFS_ATTRIBUTE(memtrace_init_fops, memtrace_enable_get,
++			 memtrace_enable_set, "0x%016llx\n");
+ 
+ static int memtrace_init(void)
  {
- 	int cap_ptr = iommu->cap_ptr;
- 	u32 range, misc, low, high;
--- 
-2.13.7
+@@ -321,8 +321,8 @@ static int memtrace_init(void)
+ 	if (!memtrace_debugfs_dir)
+ 		return -1;
+ 
+-	debugfs_create_file("enable", 0600, memtrace_debugfs_dir,
+-			    NULL, &memtrace_init_fops);
++	debugfs_create_file_unsafe("enable", 0600, memtrace_debugfs_dir, NULL,
++				   &memtrace_init_fops);
+ 
+ 	return 0;
+ }
+
+
 
