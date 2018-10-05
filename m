@@ -2,187 +2,113 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F119C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92C0C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C652084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C652084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A116721477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:44:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="poOBzOY8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A116721477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbeJFAnm (ORCPT
+        id S1729190AbeJFAoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:43:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43234 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729119AbeJFAnl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:43:41 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95HdNoL001896
-        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 13:43:55 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mxaevp5db-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 13:43:55 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 5 Oct 2018 18:43:53 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 5 Oct 2018 18:43:50 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w95HhmZR61079676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 5 Oct 2018 17:43:48 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 718D511C058;
-        Fri,  5 Oct 2018 20:43:24 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA13911C04C;
-        Fri,  5 Oct 2018 20:43:20 +0100 (BST)
-Received: from swastik.in.ibm.com (unknown [9.124.221.60])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  5 Oct 2018 20:43:20 +0100 (BST)
-From:   Nayna Jain <nayna@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        Eric Richter <erichte@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v5 5/5] x86/ima: define arch_get_ima_policy() for x86
-Date:   Fri,  5 Oct 2018 23:10:15 +0530
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
-References: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18100517-0008-0000-0000-0000027B88DD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100517-0009-0000-0000-000021E4B4D4
-Message-Id: <20181005174015.21939-6-nayna@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810050174
+        Fri, 5 Oct 2018 20:44:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbeJFAoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:44:06 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64673214AB
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 17:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538761460;
+        bh=O9q3VnBXuU3U2B2KsI93KQt4N0OimsBG8KXQ5BMVg/M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=poOBzOY8+7zG9Bi3bRYKw8J+IBJeOv5yaPvl/QkFFe1t4QfSEVgBiKIk381j6Wclh
+         LUE/4iWIaIfErmp8knn7T7hMyDlKERt4juMLdUWdA/k+ShycbQ0b80p+Gzb5XFy8fi
+         065jVb/L5nGtU/ValqOuwCwJ9unuFBZn8XGQxc84=
+Received: by mail-wm1-f46.google.com with SMTP id 193-v6so2658737wme.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 10:44:20 -0700 (PDT)
+X-Gm-Message-State: ABuFfohoJo/Y5UCWhoqm8tMwKXuf3aYDoRoJ5EKrxkAO7/n6F6iUE0hQ
+        WFuZZLlK1kdyMTGYKL4CZy7zw3v/inzTyAWrRTfgRw==
+X-Google-Smtp-Source: ACcGV63ADM++7G3vmAGudX89A7S4EWFuJ4tukYwkNJ51Np7eV0VnQQINbMsaeej8UbH5GNKpzZqsd1W6fMHPsHKRwUE=
+X-Received: by 2002:a1c:9355:: with SMTP id v82-v6mr8430319wmd.128.1538761458721;
+ Fri, 05 Oct 2018 10:44:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
+ <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net>
+ <9E0E08C8-0DFC-4E50-A4FA-73208835EF9E@amacapital.net> <CAKv+Gu9z503ZJXcsG+9Ys240BZiB-+GB=kNY4VGWpjvdzN4JtA@mail.gmail.com>
+ <CALCETrWaewXsdJsf3SocgZ0ggnvZk86L+5-LWPRbjdnG2mB7jw@mail.gmail.com>
+ <CAKv+Gu-oHBtgGbWXJu6+z4+BNhBZyY5VvF_v6cJJUGk_5YX1eQ@mail.gmail.com>
+ <CALCETrU=fm+ZG4WZJfG-5GwL7kv5_GS1aZYu=L42d5BuSbhJDQ@mail.gmail.com>
+ <CAKv+Gu8eHPEsUbkhN=61z9FvhdCo2e3VOdemp4g0bzdO1EJFYQ@mail.gmail.com>
+ <CALCETrVMBULVP9qEQDVuisxAMzdheM1qQ97AZFs-xcO0eaXiiA@mail.gmail.com> <CAHmME9pgJ_2GGDUVsbQXcNRfh3yACqFG+5uemFRMZkb8LdH95g@mail.gmail.com>
+In-Reply-To: <CAHmME9pgJ_2GGDUVsbQXcNRfh3yACqFG+5uemFRMZkb8LdH95g@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 5 Oct 2018 10:44:07 -0700
+X-Gmail-Original-Message-ID: <CALCETrWjCY2Wceiqu99C+g5RdnrZuRujYO_+jBvuJFRB1LTG4w@mail.gmail.com>
+Message-ID: <CALCETrWjCY2Wceiqu99C+g5RdnrZuRujYO_+jBvuJFRB1LTG4w@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Richter <erichte@linux.ibm.com>
+On Fri, Oct 5, 2018 at 10:38 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> On Fri, Oct 5, 2018 at 7:29 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > (None of this is to say that I disagree with Jason, though -- I'm not
+> > entirely convinced that this makes sense for Zinc.  But maybe it can
+> > be done in a way that makes everyone happy.)
+>
+> Zinc indeed will continue to push in the simpler and more minimal
+> direction. Down the line I'm open to trying and benching a few
+> different ways of going about it with dynamic patching -- something
+> that will be pretty easy to experiment with given the lean structure
+> of Zinc -- but for the initial merge I intend to do it the way it is,
+> which is super fast and pretty straightforward to follow.
+>
 
-On x86, there are two methods of verifying a kexec'ed kernel image
-signature being loaded via the kexec_file_load syscall - an architecture
-specific implementaton or a IMA KEXEC_KERNEL_CHECK appraisal rule. Neither
-of these methods verify the kexec'ed kernel image signature being loaded
-via the kexec_load syscall.
+I *think* the only change to Zinc per se would be that the calls like
+chacha20_simd() would be static calls or patchable functions or
+whatever we want to call them.  And there could be a debugfs to
+override the default selection.
 
-Secure boot enabled systems require kexec images to be signed. Therefore,
-this patch loads an IMA KEXEC_KERNEL_CHECK policy rule on secure boot
-enabled systems not configured with CONFIG_KEXEC_VERIFY_SIG enabled.
-
-When IMA_APPRAISE_BOOTPARAM is configured, different IMA appraise modes
-(eg. fix, log) can be specified on the boot command line, allowing unsigned
-or invalidly signed kernel images to be kexec'ed. This patch permits
-enabling IMA_APPRAISE_BOOTPARAM or IMA_ARCH_POLICY, but not both.
-
-Signed-off-by: Eric Richter <erichte@linux.ibm.com>
-- Removed the policy KEXEC_ORIG_KERNEL_CHECK which was defined to
-  disable the kexec_load syscall.
-- arch_get_ima_policy() uses arch_ima_get_secureboot() to get secureboot
-  state
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
----
- arch/x86/kernel/ima_arch.c     | 18 ++++++++++++++++++
- include/linux/ima.h            |  4 ++++
- security/integrity/ima/Kconfig | 10 +++++++++-
- 3 files changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index bb5a88d2b271..245976e49a55 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -15,3 +15,21 @@ bool arch_ima_get_secureboot(void)
- 	else
- 		return false;
- }
-+
-+/* arch rules for audit and user mode */
-+static const char * const sb_arch_rules[] = {
-+#ifndef CONFIG_KEXEC_VERIFY_SIG
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	NULL
-+};
-+
-+#ifdef CONFIG_IMA_ARCH_POLICY
-+const char * const *arch_get_ima_policy(void)
-+{
-+	if (arch_ima_get_secureboot())
-+		return sb_arch_rules;
-+	return NULL;
-+}
-+#endif
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 350fa957f8a6..dabd3abdf671 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -39,10 +39,14 @@ static inline bool arch_ima_get_secureboot(void)
- }
- #endif
- 
-+#if defined(CONFIG_X86) && defined(CONFIG_IMA_ARCH_POLICY)
-+extern const char * const *arch_get_ima_policy(void);
-+#else
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
- }
-+#endif
- 
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 13b446328dda..a18f8c6d13b5 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -157,6 +157,14 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_ARCH_POLICY
-+        bool "Enable loading an IMA architecture specific policy"
-+        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+        default n
-+        help
-+          This option enables loading an IMA architecture specific policy
-+          based on run time secure boot flags.
-+
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
- 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-@@ -217,7 +225,7 @@ config IMA_APPRAISE_REQUIRE_POLICY_SIGS
- 
- config IMA_APPRAISE_BOOTPARAM
- 	bool "ima_appraise boot parameter"
--	depends on IMA_APPRAISE
-+	depends on IMA_APPRAISE && !IMA_ARCH_POLICY
- 	default y
- 	help
- 	  This option enables the different "ima_appraise=" modes
--- 
-2.13.6
-
+Ard, I don't think that sticking this in udev rules makes sense.  The
+kernel has bascially complete information as to what the right choice
+is, and that will change over time as the implementation gets tuned,
+and the udev rules will never get updated in sync.
