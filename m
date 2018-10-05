@@ -2,194 +2,112 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9190C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEBCC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F482205C9
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF65C2064A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCjD4u9L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F482205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXIYtc0t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF65C2064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeJFBBC (ORCPT
+        id S1728789AbeJFBCf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33914 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 21:02:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbeJFBBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:01:02 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727941AbeJFBCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:02:34 -0400
+Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43512214C2
-        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 18:01:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2537D2064A;
+        Fri,  5 Oct 2018 18:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538762472;
-        bh=mu5NgnhwcBDogvrb3TYThtKFmNUUWGyoW1uh1XmVZcs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bCjD4u9L0vSic4sBpQ8Ht5wKnBMC6i/KCelyeOgvCsGUj9HxjsaT2vRwHBwEEgNki
-         FiurOQDvrusn/Y+FgDpQJwWt7JBotqa4dqZwI3Pffhd9Tp4kYxj/ejO7Me/w121BJf
-         BIg2EQcpykvj8yA68XOvG7L6RVkC/X9zPhvsxkTQ=
-Received: by mail-wm1-f41.google.com with SMTP id 206-v6so2635508wmb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:01:12 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiarHIbIbyzsaOgJ21t/Sf7+5DW5+RBoaeNUvKkM17tTgWaha9C
-        eN3xWWm1JHkXUGTy+O5lQ4ROYCYnJFa5Oo0C13FnRA==
-X-Google-Smtp-Source: ACcGV63lelnILluiu5cNDyOMHE2LUkUJYewQrkQmxVhMfkPssZQvbAoMaqLMg0bwA+X/o6TeUY5Am+ef59g+cPF6Qzc=
-X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr8665998wmf.19.1538762470521;
- Fri, 05 Oct 2018 11:01:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
- <20181005133705.GA4588@zx2c4.com> <CAKv+Gu-f4uKBF=gtFcNJEeoC2L4qShX0+3p7kVhjTn0tR+3Gng@mail.gmail.com>
- <CALCETrVxv1fHt6WE4ZpvVEwtfsKQ19gRrhhA40zwCXGMk+DTLQ@mail.gmail.com> <CAKv+Gu_fFvoXmWscnx=dF7ovc2qXJgBnDte3Z8Co9Y4TzDfwbQ@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_fFvoXmWscnx=dF7ovc2qXJgBnDte3Z8Co9Y4TzDfwbQ@mail.gmail.com>
+        s=default; t=1538762565;
+        bh=an+GhQYi9c/4jQ9PQutGRBz/WGwZmlIjwEqUrUgvL2c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mXIYtc0t3HoTi5aMslcJWgUPoLBL3lifhDTMWz4y8OlWwHiE29RnY1j4lz//Y0m0n
+         DSi1SS/lDvggjucnkMl0XwVYNr6tDlGwI59yCpxhylxTVOnHHc4BDz4ZE8KiA9s0HS
+         kVp9Nm/WKOc6xgdIKuo5bJfviDQCfYLofIknEYf4=
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 5 Oct 2018 11:00:58 -0700
-X-Gmail-Original-Message-ID: <CALCETrXv5vYxV+R4xAiKXMgHYeeDE5y4_Oj8Jx6pFiFq5+tXOQ@mail.gmail.com>
-Message-ID: <CALCETrXv5vYxV+R4xAiKXMgHYeeDE5y4_Oj8Jx6pFiFq5+tXOQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/9] patchable function pointers for pluggable crypto routines
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>, Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Richard Weinberger <richard@nod.at>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     x86@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH v2] x86/vdso: Rearrange do_hres() to improve code generation
+Date:   Fri,  5 Oct 2018 11:02:43 -0700
+Message-Id: <3c05644d010b72216aa286a6d20b5078d5fae5cd.1538762487.git.luto@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 10:28 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> On 5 October 2018 at 19:26, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Fri, Oct 5, 2018 at 10:15 AM Ard Biesheuvel
-> > <ard.biesheuvel@linaro.org> wrote:
-> >>
-> >> On 5 October 2018 at 15:37, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >> ...
-> >> > Therefore, I think this patch goes in exactly the wrong direction. I
-> >> > mean, if you want to introduce dynamic patching as a means for making
-> >> > the crypto API's dynamic dispatch stuff not as slow in a post-spectre
-> >> > world, sure, go for it; that may very well be a good idea. But
-> >> > presenting it as an alternative to Zinc very widely misses the point and
-> >> > serves to prolong a series of bad design choices, which are now able to
-> >> > be rectified by putting energy into Zinc instead.
-> >> >
-> >>
-> >> This series has nothing to do with dynamic dispatch: the call sites
-> >> call crypto functions using ordinary function calls (although my
-> >> example uses CRC-T10DIF), and these calls are redirected via what is
-> >> essentially a PLT entry, so that we can supsersede those routines at
-> >> runtime.
-> >
-> > If you really want to do it PLT-style, then just do:
-> >
-> > extern void whatever_func(args);
-> >
-> > Call it like:
-> > whatever_func(args here);
-> >
-> > And rig up something to emit asm like:
-> >
-> > GLOBAL(whatever_func)
-> >   jmpq default_whatever_func
-> > ENDPROC(whatever_func)
-> >
-> > Architectures without support can instead do:
-> >
-> > void whatever_func(args)
-> > {
-> >   READ_ONCE(patchable_function_struct_for_whatever_func->ptr)(args);
-> > }
-> >
-> > and patch the asm function for basic support.  It will be slower than
-> > necessary, but maybe the relocation trick could be used on top of this
-> > to redirect the call to whatever_func directly to the target for
-> > architectures that want to squeeze out the last bit of performance.
-> > This might actually be the best of all worlds: easy implementation on
-> > all architectures, no inline asm, and the totally non-magical version
-> > works with okay performance.
-> >
-> > (Is this what your code is doing?  I admit I didn't follow all the way
-> > through all the macros.)
->
-> Basically
+vgetcyc() is full of barriers, so fetching values out of the vvar
+page before vgetcyc() for use after vgetcyc() results in poor code
+generation.  Put vgetcyc() first to avoid this problem.
 
-Adding Josh Poimboeuf.
+Also, pull the tv_sec division into the loop and put all the ts
+writes together.  The old code wrote ts->tv_sec on each iteration
+before the syscall fallback check and then added in the offset
+afterwards, which forced the compiler to pointlessly copy base->sec
+to ts->tv_sec on each iteration.  The new version seems to generate
+sensible code.
 
-Here's a sketch of how this could work for better performance.  For a
-static call "foo" that returns void and takes no arguments, the
-generic implementation does something like this:
+Saves several cycles.  With this patch applied, the result is faster
+than before the clock_gettime() rewrite.
 
-extern void foo(void);
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
 
-struct static_call {
-  void (*target)(void);
+v2: Fix the obvious race -- this doesn't appear to affect performance
+    Thanks, tglx, for noticing it.
 
-  /* arch-specific part containing an array of struct static_call_site */
-};
+arch/x86/entry/vdso/vclock_gettime.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-void foo(void)
-{
-  READ_ONCE(__static_call_foo->target)();
-}
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index 18c8a78d1ec9..007b3fe9d727 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -142,23 +142,27 @@ notrace static inline u64 vgetcyc(int mode)
+ notrace static int do_hres(clockid_t clk, struct timespec *ts)
+ {
+ 	struct vgtod_ts *base = &gtod->basetime[clk];
+-	u64 cycles, last, ns;
++	u64 cycles, last, sec, ns;
+ 	unsigned int seq;
+ 
+ 	do {
+ 		seq = gtod_read_begin(gtod);
+-		ts->tv_sec = base->sec;
++		cycles = vgetcyc(gtod->vclock_mode);
+ 		ns = base->nsec;
+ 		last = gtod->cycle_last;
+-		cycles = vgetcyc(gtod->vclock_mode);
+ 		if (unlikely((s64)cycles < 0))
+ 			return vdso_fallback_gettime(clk, ts);
+ 		if (cycles > last)
+ 			ns += (cycles - last) * gtod->mult;
+ 		ns >>= gtod->shift;
++		sec = base->sec;
+ 	} while (unlikely(gtod_read_retry(gtod, seq)));
+ 
+-	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	/*
++	 * Do this outside the loop: a race inside the loop could result
++	 * in __iter_div_u64_rem() being extremely slow.
++	 */
++	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+ 	ts->tv_nsec = ns;
+ 
+ 	return 0;
+-- 
+2.17.1
 
-Arch code overrides it to:
-
-GLOBAL(foo)
-  jmpq *__static_call_foo(%rip)
-ENDPROC(foo)
-
-and some extra asm to emit a static_call_site object saying that the
-address "foo" is a jmp/call instruction where the operand is at offset
-1 into the instruction.  (Or whatever the offset is.)
-
-The patch code is like:
-
-void set_static_call(struct static_call *call, void *target)
-{
-  /* take a spinlock? */
-  WRITE_ONCE(call->target, target);
-  arch_set_static_call(call, target);
-}
-
-and the arch code patches the call site if needed.
-
-On x86, an even better implementation would have objtool make a bunch
-of additional static_call_site objects for each call to foo, and
-arch_set_static_call() would update all of them, too.  Using
-text_poke_bp() if needed, and "if needed" can maybe be clever and
-check the alignment of the instruction.  I admit that I never actually
-remember the full rules for atomically patching an instruction on x86
-SMP.  (Hmm.  This will be really epically slow.  Maybe we don't care.
-Or we could finally optimize text_poke, etc to take a list of pokes to
-do and do them as a batch.  But that's not a prerequisite for the rest
-of this.)
-
-What do you all think?
