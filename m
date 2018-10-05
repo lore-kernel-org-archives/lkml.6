@@ -2,80 +2,91 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C526C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFCEC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B0E2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B0E2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E32B208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:55:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E32B208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbeJEWyK (ORCPT
+        id S1728910AbeJEWyY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:54:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:18504 "EHLO mga01.intel.com"
+        Fri, 5 Oct 2018 18:54:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:62794 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbeJEWyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:54:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 08:54:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
-   d="scan'208";a="269804779"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Oct 2018 08:53:21 -0700
-Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
-        by linux.intel.com (Postfix) with ESMTP id 7189058038C;
-        Fri,  5 Oct 2018 08:53:19 -0700 (PDT)
-Subject: Re: [PATCH v9 2/3]: perf record: enable asynchronous trace writing
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@lge.com
-References: <ded47c34-9e92-6bd2-9522-a927a7237011@linux.intel.com>
- <5ed78452-ff2b-dfe5-ec29-888971cb4b55@linux.intel.com>
- <20181005071615.GC3768@sejong>
- <dc944fcf-cbb6-9b88-bc1c-606eb027a6ac@linux.intel.com>
- <20181005084854.GE3768@sejong>
- <4ee1c347-674b-ac61-65cf-55fb71a7cc2b@linux.intel.com>
- <20181005105557.GF3768@sejong>
- <c5129bc1-1e69-0fcc-c552-9bda51886bcf@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <558ec0ad-7083-e4ed-e6bb-9b90c86b20bf@linux.intel.com>
-Date:   Fri, 5 Oct 2018 18:53:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727572AbeJEWyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:54:24 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CD8DBC0B1B2C;
+        Fri,  5 Oct 2018 15:55:06 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1FDCE825EA;
+        Fri,  5 Oct 2018 15:55:06 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 131F04F279; Fri,  5 Oct 2018 17:55:05 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 17:55:05 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Christophe de Dinechin <cdupontd@redhat.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, kvm@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>, virtio-dev@redhat.com,
+        dri-devel@lists.freedesktop.org,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v2] virtio-gpu: add VIRTIO_GPU_F_EDID feature
+Message-ID: <20181005155505.phmi65hvu2rkulkm@sirius.home.kraxel.org>
+References: <20181005125154.19824-1-kraxel@redhat.com>
+ <1BA83F18-87E5-4B01-A2D9-01777078B637@redhat.com>
+ <20181005144127.GE31561@phenom.ffwll.local>
+ <2CB183E2-B7ED-481C-9899-CA908558D39F@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <c5129bc1-1e69-0fcc-c552-9bda51886bcf@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2CB183E2-B7ED-481C-9899-CA908558D39F@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 05 Oct 2018 15:55:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 05.10.2018 14:50, Alexey Budankov wrote:<SNIP>
-> 
-> According to docs [1] ftruncate() does not advance file pos 
-> which is essential here.
-> 
+  Hi,
 
-Ideally, the both lseek() syscalls in every loop iteration can be
-replaced by the only two syscalls just before and after the loop and
-advancing *in-flight* off file pos value at perf_mmap__aio_push() 
-after every successful record__aio_pushfn().
+> >>> +/* VIRTIO_GPU_RESP_OK_EDID */
+> >>> +struct virtio_gpu_resp_edid {
+> >>> +	struct virtio_gpu_ctrl_hdr hdr;
+> >>> +	__le32 scanout;
+> >>> +	__le32 size;
+> >>> +	__u8 edid[1024];
+> >> 
+> >> Wouldn’t it be enough to stick to EDID 2.0 (256 bytes)?
+> >> 
+> >> If not, maybe add comment to explain why you chose 1024.
+> > 
+> > EDID in the wild can be up to 512 bytes.
+> 
+> Does this return a physical EDID? I thought it would be made-up by virtio-gpu.
 
-Thanks,
-Alexey
+Well, edid has extensions, so it can become pretty large in theory, and
+I've figured it would be a good idea to leave some room just in case.
+It should be a rather infrequent operation, so the unused buffer space
+should not hurt much.
+
+Yes, it will be a edid generated by qemu.  The current generator code will
+use at most 256 bytes.
+
+cheers,
+  Gerd
+
