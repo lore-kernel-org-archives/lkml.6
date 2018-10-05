@@ -2,235 +2,379 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF5FC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23444C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098D02084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE1292084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:27:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cn+G1K3l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098D02084D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCZuYQXR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1292084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeJFBYg (ORCPT
+        id S1728572AbeJFB12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:24:36 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52628 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbeJFBYf (ORCPT
+        Fri, 5 Oct 2018 21:27:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39915 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727966AbeJFB11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:24:35 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 189-v6so2690023wmw.2;
-        Fri, 05 Oct 2018 11:24:40 -0700 (PDT)
+        Fri, 5 Oct 2018 21:27:27 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q8-v6so2757875wmq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=nJHtwDGPMK+DNseX6lCgFcyo56i96iEzAFLsgkEiJYs=;
-        b=Cn+G1K3l8M8kmeZC1AJNQwv1SGRQf4gFkST+hIDYuwm1CivpKqFPMRm2jDNJdg3kNF
-         KQtJi+BW6zYSYAcX9YcDkMgtZgnfmnXYlXAbhsDOonnKjaL+Wo0Pco6Aliz4ii91ZvtY
-         lDCNCLfCy6iUkTrceyRWuZQFRGzWZsktQjEEZyHnl7liPK72b6Lz+b6KVApuZFalpsBO
-         LAF3X3MOG8P6vZmKb+wla6m4+LbQMLBvd6VbqkoCjGWNKVtU6BRVDosxaU6Gnw6serwh
-         ynkV/Q4g7jx4NhZoLutaBC2NKf8NsORHJwyqSRHnqMNUmkVJjOVE+FEI2et8/7Z/BJOy
-         dhmA==
+        h=from:to:cc:subject:date:message-id;
+        bh=xqofnWwor1EvxVWbzKL8zC1n8cw4hN731oEOzhq77YU=;
+        b=lCZuYQXRtsb838MXz/Ravq9vDp6s/Wf/+Il9oDiDo2IezuMNw4L+CnnX7epWpecwmu
+         QJFXo1CSGdF2Dtzk8IUw1PvY20CrMmNeEVISDG0HPG9x+sBKQCSUSceWF5L3SJrrtFha
+         gHNf50NaxyvSFGNibeJwMzEwZTolmnY2ptsBTm09gI08ir1JskadiSa005FdbyBJNH0e
+         gVkJlTjlVV1VQBDA89kGVEqs4L61fJbWxrBp2+b0KK7mvPWKjpBvidRzEhPNcxdXFjdz
+         GMlIfslDS3+YAbZTEZq+Iim4xJhWz7A5IvU1heOYugrT0MyhIx9SWkjILoYWvkjV/ToG
+         Qo0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=nJHtwDGPMK+DNseX6lCgFcyo56i96iEzAFLsgkEiJYs=;
-        b=RA4fFSXpcW/ZO9Oj9+ZDdO2Bxf8+HV0lUlUpClTqOpgu5lttf0pvCAVFKvlEjzhefX
-         8meABjvWVOO10a59BSJ0kWAHTjt3lzhyFpz0qa/rFZFKsciAzrdPxCOIjLGmawxYrjKm
-         nEfqt/UFVcl9m32wV285Gr7fXVMbGS9xFUAylHDbmANhTI1CF3zxu37Ewstkv4WaTnox
-         rBBIrCvb3QKVtkUG1N3mzCDgojpel/tS14iXRTd20SWNz5ISlNn1D29e9dgyQfAAia+x
-         j2BP85shjG7Eos0mluW9As32/wJ71sNW0Z6nEa7LRVlc9FVXiVSO15+UFkB4MeF9Mqzm
-         JIpA==
-X-Gm-Message-State: ABuFfoiqOhsGXHfCubC9wxBGe2yeNIHY2Mv75ZsyPPOAyKuWwtHzenJ1
-        Nb9HIdWWv0GYrDMK054KjMk=
-X-Google-Smtp-Source: ACcGV618AdBnwQnoD1K8SWZtMp94M9Ozu4R03/C7zKx/ZiKaN4oTQOn6XMX3BhJe/7oox2KV/NE/bw==
-X-Received: by 2002:a1c:6c09:: with SMTP id h9-v6mr8241077wmc.95.1538763879578;
-        Fri, 05 Oct 2018 11:24:39 -0700 (PDT)
-Received: from [172.16.8.139] (host-89-243-172-161.as13285.net. [89.243.172.161])
-        by smtp.gmail.com with ESMTPSA id g186-v6sm3226083wmf.19.2018.10.05.11.24.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 11:24:38 -0700 (PDT)
-Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE
- [ver #12]
-To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
- <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
-Date:   Fri, 5 Oct 2018 19:24:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xqofnWwor1EvxVWbzKL8zC1n8cw4hN731oEOzhq77YU=;
+        b=X1QPUZcKI4n+GG6gPs/F7HsccPOE/11gqZyHry80Boxc4DmjT0u2icDsKq2lSs8u7p
+         mNDOkjBd+Y6YMzrr+HyFLeEppeEb6XlwLlRoZ4Fl1louxIQfp99Jf4aDsLd44aKWCnI0
+         YmF8zKpgV9xOmfpimmO/saM08ESLBrF4FDdtJvsjjndmzaZzXs1HxdJEcPTloKXTfhdA
+         eEMhVeNwqJNiTbGxDyF0qd+pErlqCZQv0yg2PJWARDLKZ5Ushv1uO9z6jaGMgLKhJsTa
+         4czVSfvBe1wIX3Hz9MlXbDT/3qiId3VKWEIS6OGP9PSCUT4JpLxKKY6YYamE0iXJnGWU
+         RwUg==
+X-Gm-Message-State: ABuFfoi3fvU9RfWC/PgOfNmNLjIfLIUvE0NNIe2Ki4IZw4Iruy8g3RO2
+        4PTj/SbPZlEYlkOxtPbZdFlkrQAUH7Q=
+X-Google-Smtp-Source: ACcGV610js4P/WguzEjsZ2xf3/NiRPcvPHba8mHySldNghA5mQ+oGNAbx0wd0rtTsb9cyzD7kDVgLg==
+X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr8610899wmq.14.1538764050790;
+        Fri, 05 Oct 2018 11:27:30 -0700 (PDT)
+Received: from osboxes.localdomain (bzq-109-65-231-165.red.bezeqint.net. [109.65.231.165])
+        by smtp.googlemail.com with ESMTPSA id w192-v6sm2020335wmf.33.2018.10.05.11.27.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 05 Oct 2018 11:27:30 -0700 (PDT)
+From:   Carmeli Tamir <carmeli.tamir@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Carmeli Tamir <carmeli.tamir@gmail.com>
+Subject: [PATCH] STAGING/EMXX_UDC: emxx_udc.c: Fixed all meaningful sparse errors: 1. Added static to udc_controller 2. Added mising __iomem modifier to handle p_regs 3. Added missing le16_to_cpu
+Date:   Fri,  5 Oct 2018 14:27:18 -0400
+Message-Id: <1538764038-96838-1-git-send-email-carmeli.tamir@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/09/2018 17:30, David Howells wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
->
-> Allow a detached tree created by open_tree(..., OPEN_TREE_CLONE) to be
-> attached by move_mount(2).
->
-> If by the time of final fput() of OPEN_TREE_CLONE-opened file its tree is
-> not detached anymore, it won't be dissolved.  move_mount(2) is adjusted
-> to handle detached source.
->
-> That gives us equivalents of mount --bind and mount --rbind.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
->
->   fs/namespace.c |   26 ++++++++++++++++++++------
->   1 file changed, 20 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index dd38141b1723..caf5c55ef555 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1785,8 +1785,10 @@ void dissolve_on_fput(struct vfsmount *mnt)
->   {
->   	namespace_lock();
->   	lock_mount_hash();
-> -	mntget(mnt);
-> -	umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
-> +	if (!real_mount(mnt)->mnt_ns) {
-> +		mntget(mnt);
-> +		umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
-> +	}
->   	unlock_mount_hash();
->   	namespace_unlock();
->   }
-> @@ -2393,6 +2395,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
->   	struct mount *old;
->   	struct mountpoint *mp;
->   	int err;
-> +	bool attached;
->   
->   	mp = lock_mount(new_path);
->   	err = PTR_ERR(mp);
-> @@ -2403,10 +2406,19 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
->   	p = real_mount(new_path->mnt);
->   
->   	err = -EINVAL;
-> -	if (!check_mnt(p) || !check_mnt(old))
-> +	/* The mountpoint must be in our namespace. */
-> +	if (!check_mnt(p))
-> +		goto out1;
-> +	/* The thing moved should be either ours or completely unattached. */
-> +	if (old->mnt_ns && !check_mnt(old))
->   		goto out1;
->   
-> -	if (!mnt_has_parent(old))
-> +	attached = mnt_has_parent(old);
-> +	/*
-> +	 * We need to allow open_tree(OPEN_TREE_CLONE) followed by
-> +	 * move_mount(), but mustn't allow "/" to be moved.
-> +	 */
-> +	if (old->mnt_ns && !attached)
->   		goto out1;
->   
->   	if (old->mnt.mnt_flags & MNT_LOCKED)
+Signed-off-by: Tamir Carmeli <carmeli.tamir@gmail.com>
+---
+ drivers/staging/emxx_udc/Makefile   |  2 +-
+ drivers/staging/emxx_udc/emxx_udc.c | 69 +++++++++++++++++++------------------
+ drivers/staging/emxx_udc/emxx_udc.h |  2 +-
+ 3 files changed, 38 insertions(+), 35 deletions(-)
 
-Hi
-
-I replied last time to wonder about the MNT_UMOUNT mnt_flag. So I've 
-tested it now :-), on David's current tree (commit 5581f4935add).
-
-The modified do_move_mount() allows re-attaching something that was 
-lazy-unmounted. But the lazy unmount sets MNT_UMOUNT. And this flag is 
-not cleared when the mount is re-attached.
-
-I wasn't sure what effect this would have. Luckily it showed up straight 
-away, when I tried to unmount again. It causes a soft lockup.
-
-Debug printk:
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 4dfe7e23b7ee..ac8de9191cfe 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2472,6 +2472,10 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
-  	if (old->mnt.mnt_flags & MNT_LOCKED)
-  		goto out1;
-  
-+	pr_info("mnt_flags=%x umount=%x\n",
-+	        (unsigned) old->mnt.mnt_flags,
-+	        (unsigned) !!(old->mnt.mnt_flags & MNT_UMOUNT);
-+
-  	if (old_path->dentry != old_path->mnt->mnt_root)
-  		goto out1;
-
-Testing:
-
-# mount -ttmpfs tmp /mnt
-# cd /mnt
-# umount .
-umount: /mnt: target is busy.
-# umount -l .
-# mount --move . /mnt
-[  577.773804] mnt_flags=8000020 umount=1
-
-Double-check the flags after the mount is re-attached:
-
-# mount --move . /mnt
-[  610.891311] mnt_flags=8000020 umount=1
-mount: /mnt: mount(2) system call failed: Too many levels of symbolic links.
-
-The bug:
-
-# cd
-# umount /mnt
-[  656.229099] watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [umount:1457]
-[  656.230231] Modules linked in: xt_CHECKSUM(E) ipt_MASQUERADE(E) tun(E) bridge(E) stp(E) llc(E) ip6t_rpfilter(E) ip6t_REJECT(E) nf_reject_ipv6(E) xt_conntrack(E) devlink(E) ip6table_nat(E) nf_nat_ipv6(E) ip6table_mangle(E) ip6table_raw(E) ip6table_security(E) iptable_nat(E) nf_nat_ipv4(E) nf_nat(E) nf_conntrack(E) nf_defrag_ipv6(E) libcrc32c(E) nf_defrag_ipv4(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ip6table_filter(E) ip6_tables(E) snd_hda_codec_generic(E) snd_hda_intel(E) snd_hda_codec(E) snd_hwdep(E) snd_hda_core(E) snd_seq(E) snd_seq_device(E) snd_pcm(E) joydev(E) crc32_pclmul(E) snd_timer(E) snd(E) ghash_clmulni_intel(E) crct10dif_pclmul(E) virtio_balloon(E) soundcore(E) serio_raw(E) crc32c_intel(E) qxl(E) virtio_console(E) virtio_net(E) net_failover(E) failover(E) drm_kms_helper(E)
-[  656.242150]  ttm(E) drm(E) qemu_fw_cfg(E) pata_acpi(E) ata_generic(E)
-[  656.243333] CPU: 0 PID: 1457 Comm: umount Tainted: G            E     4.19.0-rc3+ #7
-[  656.244767] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180531_142017-buildhw-08.phx2.fedoraproject.org-1.fc28 04/01/2014
-[  656.247038] RIP: 0010:pin_kill+0x128/0x140
-[  656.247789] Code: f2 5a 00 48 8b 44 24 20 48 39 c5 0f 84 6f ff ff ff 48 89 df e8 e9 4a 5b 00 8b 43 18 85 c0 7e b3 c6 03 00 fb 66 0f 1f 44 00 00 <e9> 51 ff ff ff e8 be 11 dd ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00
-[  656.250738] RSP: 0018:ffffa58040f93e30 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-[  656.251984] RAX: 0000000000000000 RBX: ffff971a6b16dc30 RCX: dead000000000200
-[  656.253183] RDX: 0000000000000001 RSI: ffffa58040f93dd0 RDI: ffff971a6b16dc30
-[  656.254484] RBP: ffffa58040f93e50 R08: 000000000000067d R09: 000000000000067d
-[  656.255838] R10: 0000000000000000 R11: 0000000000000000 R12: ffff971a6b2b1800
-[  656.257181] R13: ffff971a6b16db88 R14: 0000000000000000 R15: ffff971a6b16db50
-[  656.258530] FS:  00007fc7bac88fc0(0000) GS:ffff971ad9600000(0000) knlGS:0000000000000000
-[  656.260079] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  656.261165] CR2: 00007fc7ba8704c7 CR3: 000000002d22c001 CR4: 00000000003606f0
-[  656.262506] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  656.263690] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  656.265329] Call Trace:
-[  656.267958]  ? finish_wait+0x80/0x80
-[  656.269083]  group_pin_kill+0x1a/0x30
-[  656.269989]  namespace_unlock+0x6f/0x80
-[  656.270652]  ksys_umount+0x220/0x420
-[  656.271393]  __x64_sys_umount+0x12/0x20
-[  656.272249]  do_syscall_64+0x5b/0x160
-[  656.272988]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  656.273942] RIP: 0033:0x7fc7b9cd9117
-[  656.274630] Code: ed 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 59 ed 2b 00 f7 d8 64 89 01 48
-[  656.278886] RSP: 002b:00007ffe0a557498 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-[  656.281518] RAX: ffffffffffffffda RBX: 0000556bab8bd420 RCX: 00007fc7b9cd9117
-[  656.283138] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000556bab8bd600
-[  656.284757] RBP: 0000000000000000 R08: 0000556bab8bd620 R09: 00007ffe0a555d00
-[  656.286367] R10: 0000000000000000 R11: 0000000000000246 R12: 0000556bab8bd600
-[  656.288408] R13: 00007fc7baa7f1a4 R14: 0000000000000000 R15: 00007ffe0a557708
+diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+index 3e51476..83eb430 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.c
++++ b/drivers/staging/emxx_udc/emxx_udc.c
+@@ -56,25 +56,25 @@ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *, struct nbu2ss_ep *);
+ 
+ /*===========================================================================*/
+ /* Global */
+-struct nbu2ss_udc udc_controller;
++static struct nbu2ss_udc udc_controller;
+ 
+ /*-------------------------------------------------------------------------*/
+ /* Read */
+-static inline u32 _nbu2ss_readl(void *address)
++static inline u32 _nbu2ss_readl(void __iomem *address)
+ {
+ 	return __raw_readl(address);
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /* Write */
+-static inline void _nbu2ss_writel(void *address, u32 udata)
++static inline void _nbu2ss_writel(void __iomem *address, u32 udata)
+ {
+ 	__raw_writel(udata, address);
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /* Set Bit */
+-static inline void _nbu2ss_bitset(void *address, u32 udata)
++static inline void _nbu2ss_bitset(void __iomem *address, u32 udata)
+ {
+ 	u32	reg_dt = __raw_readl(address) | (udata);
+ 
+@@ -83,7 +83,7 @@ static inline void _nbu2ss_bitset(void *address, u32 udata)
+ 
+ /*-------------------------------------------------------------------------*/
+ /* Clear Bit */
+-static inline void _nbu2ss_bitclr(void *address, u32 udata)
++static inline void _nbu2ss_bitclr(void __iomem *address, u32 udata)
+ {
+ 	u32	reg_dt = __raw_readl(address) & ~(udata);
+ 
+@@ -135,6 +135,7 @@ static void _nbu2ss_ep0_complete(struct usb_ep *_ep, struct usb_request *_req)
+ {
+ 	u8		recipient;
+ 	u16		selector;
++	u16		wIndex;
+ 	u32		test_mode;
+ 	struct usb_ctrlrequest	*p_ctrl;
+ 	struct nbu2ss_udc *udc;
+@@ -149,10 +150,11 @@ static void _nbu2ss_ep0_complete(struct usb_ep *_ep, struct usb_request *_req)
+ 			/*-------------------------------------------------*/
+ 			/* SET_FEATURE */
+ 			recipient = (u8)(p_ctrl->bRequestType & USB_RECIP_MASK);
+-			selector  = p_ctrl->wValue;
++			selector  = le16_to_cpu(p_ctrl->wValue);
+ 			if ((recipient == USB_RECIP_DEVICE) &&
+ 			    (selector == USB_DEVICE_TEST_MODE)) {
+-				test_mode = (u32)(p_ctrl->wIndex >> 8);
++				wIndex = le16_to_cpu(p_ctrl->wIndex);
++				test_mode = (u32)(wIndex >> 8);
+ 				_nbu2ss_set_test_mode(udc, test_mode);
+ 			}
+ 		}
+@@ -184,7 +186,7 @@ static u32 _nbu2ss_get_begin_ram_address(struct nbu2ss_udc *udc)
+ 	u32		num, buf_type;
+ 	u32		data, last_ram_adr, use_ram_size;
+ 
+-	struct ep_regs *p_ep_regs;
++	struct ep_regs __iomem *p_ep_regs;
+ 
+ 	last_ram_adr = (D_RAM_SIZE_CTRL / sizeof(u32)) * 2;
+ 	use_ram_size = 0;
+@@ -377,7 +379,7 @@ static void _nbu2ss_ep_dma_exit(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+ {
+ 	u32		num;
+ 	u32		data;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs __iomem	*preg = udc->p_regs;
+ 
+ 	if (udc->vbus_active == 0)
+ 		return;		/* VBUS OFF */
+@@ -408,7 +410,7 @@ static void _nbu2ss_ep_dma_exit(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+ /* Abort DMA */
+ static void _nbu2ss_ep_dma_abort(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+ {
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs __iomem *preg = udc->p_regs;
+ 
+ 	_nbu2ss_bitclr(&preg->EP_DCR[ep->epnum - 1].EP_DCR1, DCR1_EPN_REQEN);
+ 	mdelay(DMA_DISABLE_TIME);	/* DCR1_EPN_REQEN Clear */
+@@ -426,7 +428,7 @@ static void _nbu2ss_ep_in_end(
+ {
+ 	u32		data;
+ 	u32		num;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs __iomem *preg = udc->p_regs;
+ 
+ 	if (length >= sizeof(u32))
+ 		return;
+@@ -817,7 +819,7 @@ static int _nbu2ss_out_dma(
+ 	u32		burst = 1;
+ 	u32		data;
+ 	int		result = -EINVAL;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs __iomem	*preg = udc->p_regs;
+ 
+ 	if (req->dma_flag)
+ 		return 1;		/* DMA is forwarded */
+@@ -880,7 +882,7 @@ static int _nbu2ss_epn_out_pio(
+ 	union usb_reg_access	temp_32;
+ 	union usb_reg_access	*p_buf_32;
+ 	int		result = 0;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs __iomem	*preg = udc->p_regs;
+ 
+ 	if (req->dma_flag)
+ 		return 1;		/* DMA is forwarded */
+@@ -964,7 +966,7 @@ static int _nbu2ss_epn_out_transfer(
+ 	u32		num;
+ 	u32		i_recv_length;
+ 	int		result = 1;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	if (ep->epnum == 0)
+ 		return -EINVAL;
+@@ -1026,7 +1028,7 @@ static int _nbu2ss_in_dma(
+ 	u32		i_write_length;
+ 	u32		data;
+ 	int		result = -EINVAL;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	if (req->dma_flag)
+ 		return 1;		/* DMA is forwarded */
+@@ -1101,7 +1103,7 @@ static int _nbu2ss_epn_in_pio(
+ 	union usb_reg_access	temp_32;
+ 	union usb_reg_access	*p_buf_32 = NULL;
+ 	int		result = 0;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	if (req->dma_flag)
+ 		return 1;		/* DMA is forwarded */
+@@ -1317,7 +1319,7 @@ static void _nbu2ss_set_endpoint_stall(
+ 	u8		num, epnum;
+ 	u32		data;
+ 	struct nbu2ss_ep *ep;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	if ((ep_adrs == 0) || (ep_adrs == 0x80)) {
+ 		if (bstall) {
+@@ -1380,7 +1382,7 @@ static struct usb_device_descriptor device_desc = {
+ 	.bMaxPacketSize0      = 64,
+ 	.idVendor             = cpu_to_le16(0x0409),
+ 	.idProduct            = cpu_to_le16(0xfff0),
+-	.bcdDevice            = 0xffff,
++	.bcdDevice            = cpu_to_le16(0xffff),
+ 	.iManufacturer        = 0x00,
+ 	.iProduct             = 0x00,
+ 	.iSerialNumber        = 0x00,
+@@ -1440,7 +1442,7 @@ static int _nbu2ss_get_ep_stall(struct nbu2ss_udc *udc, u8 ep_adrs)
+ {
+ 	u8		epnum;
+ 	u32		data = 0, bit_data;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	epnum = ep_adrs & ~USB_ENDPOINT_DIR_MASK;
+ 	if (epnum == 0) {
+@@ -1468,8 +1470,8 @@ static inline int _nbu2ss_req_feature(struct nbu2ss_udc *udc, bool bset)
+ {
+ 	u8	recipient = (u8)(udc->ctrl.bRequestType & USB_RECIP_MASK);
+ 	u8	direction = (u8)(udc->ctrl.bRequestType & USB_DIR_IN);
+-	u16	selector  = udc->ctrl.wValue;
+-	u16	wIndex    = udc->ctrl.wIndex;
++	u16	selector  = le16_to_cpu(udc->ctrl.wValue);
++	u16	wIndex    = le16_to_cpu(udc->ctrl.wIndex);
+ 	u8	ep_adrs;
+ 	int	result = -EOPNOTSUPP;
+ 
+@@ -1535,7 +1537,7 @@ static void _nbu2ss_epn_set_stall(
+ 	u32	regdata;
+ 	int	limit_cnt = 0;
+ 
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	if (ep->direct == USB_DIR_IN) {
+ 		for (limit_cnt = 0
+@@ -1568,7 +1570,8 @@ static int std_req_get_status(struct nbu2ss_udc *udc)
+ 	if ((udc->ctrl.wValue != 0x0000) || (direction != USB_DIR_IN))
+ 		return result;
+ 
+-	length = min_t(u16, udc->ctrl.wLength, sizeof(status_data));
++	length =
++		min_t(u16, le16_to_cpu(udc->ctrl.wLength), sizeof(status_data));
+ 
+ 	switch (recipient) {
+ 	case USB_RECIP_DEVICE:
+@@ -1584,8 +1587,8 @@ static int std_req_get_status(struct nbu2ss_udc *udc)
+ 		break;
+ 
+ 	case USB_RECIP_ENDPOINT:
+-		if (0x0000 == (udc->ctrl.wIndex & 0xFF70)) {
+-			ep_adrs = (u8)(udc->ctrl.wIndex & 0xFF);
++		if (0x0000 == (le16_to_cpu(udc->ctrl.wIndex) & 0xFF70)) {
++			ep_adrs = (u8)(le16_to_cpu(udc->ctrl.wIndex) & 0xFF);
+ 			result = _nbu2ss_get_ep_stall(udc, ep_adrs);
+ 
+ 			if (result > 0)
+@@ -1625,7 +1628,7 @@ static int std_req_set_feature(struct nbu2ss_udc *udc)
+ static int std_req_set_address(struct nbu2ss_udc *udc)
+ {
+ 	int		result = 0;
+-	u32		wValue = udc->ctrl.wValue;
++	u32		wValue = le16_to_cpu(udc->ctrl.wValue);
+ 
+ 	if ((udc->ctrl.bRequestType != 0x00)	||
+ 	    (udc->ctrl.wIndex != 0x0000)	||
+@@ -1647,7 +1650,7 @@ static int std_req_set_address(struct nbu2ss_udc *udc)
+ /*-------------------------------------------------------------------------*/
+ static int std_req_set_configuration(struct nbu2ss_udc *udc)
+ {
+-	u32 config_value = (u32)(udc->ctrl.wValue & 0x00ff);
++	u32 config_value = (u32)(le16_to_cpu(udc->ctrl.wValue) & 0x00ff);
+ 
+ 	if ((udc->ctrl.wIndex != 0x0000)	||
+ 	    (udc->ctrl.wLength != 0x0000)	||
+@@ -1943,7 +1946,7 @@ static inline void _nbu2ss_epn_in_int(
+ 	int	result = 0;
+ 	u32	status;
+ 
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem *preg = udc->p_regs;
+ 
+ 	if (req->dma_flag)
+ 		return;		/* DMA is forwarded */
+@@ -2038,7 +2041,7 @@ static inline void _nbu2ss_epn_out_dma_int(
+ 	u32		num;
+ 	u32		dmacnt, ep_dmacnt;
+ 	u32		mpkt;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs	__iomem  *preg = udc->p_regs;
+ 
+ 	num = ep->epnum - 1;
+ 
+@@ -2214,7 +2217,7 @@ static int _nbu2ss_pullup(struct nbu2ss_udc *udc, int is_on)
+ /*-------------------------------------------------------------------------*/
+ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+ {
+-	struct fc_regs	*p = udc->p_regs;
++	struct fc_regs __iomem	*p = udc->p_regs;
+ 
+ 	if (udc->vbus_active == 0)
+ 		return;
+@@ -2432,7 +2435,7 @@ static irqreturn_t _nbu2ss_udc_irq(int irq, void *_udc)
+ 	u32	epnum, int_bit;
+ 
+ 	struct nbu2ss_udc	*udc = (struct nbu2ss_udc *)_udc;
+-	struct fc_regs	*preg = udc->p_regs;
++	struct fc_regs __iomem *preg = udc->p_regs;
+ 
+ 	if (gpio_get_value(VBUS_VALUE) == 0) {
+ 		_nbu2ss_writel(&preg->USB_INT_STA, ~USB_INT_STA_RW);
+@@ -2831,7 +2834,7 @@ static int nbu2ss_ep_fifo_status(struct usb_ep *_ep)
+ 	struct nbu2ss_ep	*ep;
+ 	struct nbu2ss_udc	*udc;
+ 	unsigned long		flags;
+-	struct fc_regs		*preg;
++	struct fc_regs __iomem *preg;
+ 
+ 	if (!_ep) {
+ 		pr_err("%s, bad param\n", __func__);
+@@ -3216,7 +3219,7 @@ static int nbu2ss_drv_probe(struct platform_device *pdev)
+ 				  0, driver_name, udc);
+ 
+ 	/* IO Memory */
+-	udc->p_regs = (struct fc_regs *)mmio_base;
++	udc->p_regs = (struct fc_regs __iomem *)mmio_base;
+ 
+ 	/* USB Function Controller Interrupt */
+ 	if (status != 0) {
+diff --git a/drivers/staging/emxx_udc/emxx_udc.h b/drivers/staging/emxx_udc/emxx_udc.h
+index 8337e38c..e28a74d 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.h
++++ b/drivers/staging/emxx_udc/emxx_udc.h
+@@ -582,7 +582,7 @@ struct nbu2ss_udc {
+ 
+ 	u32		curr_config;	/* Current Configuration Number */
+ 
+-	struct fc_regs		*p_regs;
++	struct fc_regs __iomem *p_regs;
+ };
+ 
+ /* USB register access structure */
+-- 
+2.7.4
 
