@@ -2,180 +2,136 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A4AC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E2AC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A9B208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A9B208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 6105F2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:56:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6105F2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbeJEPxD (ORCPT
+        id S1728738AbeJEPyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:53:03 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33624 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbeJEPxC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:53:02 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e206so7068297vsd.0;
-        Fri, 05 Oct 2018 01:55:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GrWov/l/OjpiCdqJJ7K6egXCU9G1/zgrl4TFJVgYDfA=;
-        b=gfJ2KA/zQyQCALPkOOcTMtM9+DEW/Nh5vQT3coGQcgh/v/oboxu9Rq3iB6xl4o2JMg
-         WQLOyIraQf2pevj4ImiS0eTdh5/hhSvQHuWi6sSBvQsg99GWvBey7wGE9AMnQPZLSAs6
-         /KUPi8BzxYbsEuMsploNWV/gts9wKxi448KrZwF7wET5d6V/BWz1hh+RyMJqrBnDcSit
-         dwZotedBJvxaX/Ub3t5hnVjl+LQB1jvMK3dEZ0PY1T0MxGLZj2j4aZgc6KoMBtnRuZyK
-         g7DSO5qxCbAHCN9GWynQR7yGSG3nEBZpePUwB/m2ieyiaI7yvE5om5ksMQBbfCrEcoWQ
-         oQpA==
-X-Gm-Message-State: ABuFfoiuDn9DzYFluSQno0s5R3gfrFMkP3lqZZBq43oIfQJ6oypGY5nk
-        Cu+WeDNLamRK+wx/Hlnf+wtF6+C5HvhDQe+YfeA=
-X-Google-Smtp-Source: ACcGV62XA51B25wZR70TbGEFzpE4UJHSbYcFHxg2OEQDopwIOtpna/a0aR7wzEc90MEur51BWxCV/0oILPeyCJJbw0w=
-X-Received: by 2002:a67:e015:: with SMTP id c21mr3666257vsl.63.1538729715568;
- Fri, 05 Oct 2018 01:55:15 -0700 (PDT)
+        Fri, 5 Oct 2018 11:54:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37616 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728012AbeJEPyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:54:43 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CEBEC30026D5;
+        Fri,  5 Oct 2018 08:56:56 +0000 (UTC)
+Received: from [10.36.116.131] (ovpn-116-131.ams2.redhat.com [10.36.116.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C452268DA3;
+        Fri,  5 Oct 2018 08:56:54 +0000 (UTC)
+Subject: Re: [PATCH v1 0/2] KVM: s390: Tracing APCB changes
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com, pasic@linux.ibm.com
+References: <7d147350-4284-8e01-d1fa-0795d2da85c1@de.ibm.com>
+ <1538728270-10340-1-git-send-email-pmorel@linux.ibm.com>
+ <20181005104420.62792eed.cohuck@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
+ 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
+ xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
+ jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
+ s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
+ m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
+ MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
+ z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
+ dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
+ UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
+ 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
+ uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
+ 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
+ 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
+ xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
+ 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
+ hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
+ u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
+ gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
+ rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
+ BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
+ KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
+ NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
+ YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
+ lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
+ qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
+ C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
+ W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
+ TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
+ +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <1eaf8e02-aafc-6357-43aa-b5f940ca7a11@redhat.com>
+Date:   Fri, 5 Oct 2018 10:56:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180927180038.24599-1-geert+renesas@glider.be> <1538648094.14153.8.camel@pengutronix.de>
-In-Reply-To: <1538648094.14153.8.camel@pengutronix.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 5 Oct 2018 10:55:04 +0200
-Message-ID: <CAMuHMdV_qb8qDFJ1VT6FYYkHK73tjbp2hOUShaOEhezPWg+VDg@mail.gmail.com>
-Subject: Re: [PATCH v2] reset: Exclusive resets must be dedicated to a single
- hardware block
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181005104420.62792eed.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 05 Oct 2018 08:56:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+On 05/10/2018 10:44, Cornelia Huck wrote:
+> On Fri,  5 Oct 2018 10:31:08 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> In the first patch we define kvm_arch_crypto_set_masks,
+>> a new function to centralize the setup the APCB masks
+>> inside the CRYCB SIE satelite and add KVM_EVENT() to
+>> kvm_arch_crypto_set_masks and kvm_arch_crypto_clear_masks.
+>>
+>> In the second patch we replace the vfio_ap_mdev_copy_masks()
+>> by the new kvm_arch_crypto_set_masks() function.
+>>
+>>
+>> Pierre Morel (2):
+>>   KVM: s390: Tracing APCB changes
+>>   s390: vfio-ap: setup APCB mask using KVM dedicated function
+>>
+>>  arch/s390/include/asm/kvm_host.h  |  2 ++
+>>  arch/s390/kvm/kvm-s390.c          | 41 +++++++++++++++++++++++++++++++++++++++
+>>  drivers/s390/crypto/vfio_ap_ops.c | 33 +++----------------------------
+>>  3 files changed, 46 insertions(+), 30 deletions(-)
+>>
+> 
+> I like this version better: it moves the mask-setting next to the
+> mask-clearing, and, as a bonus, adds a trace event for clearing as
+> well :)
+> 
 
-On Thu, Oct 4, 2018 at 12:15 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> Thank you for the patch. I'd still like to hear the device tree
-> maintainers' (added to Cc:) opinion on parsing the whole DT for "resets"
-> phandle properties to find shared resets like this.
->
-> On Thu, 2018-09-27 at 20:00 +0200, Geert Uytterhoeven wrote:
-> > In some SoCs multiple hardware blocks may share a reset control.
-> > The reset control API for shared resets will only assert such a reset
-> > when the drivers for all hardware blocks agree.
-> > The exclusive reset control API still allows to assert such a reset, but
-> > that impacts all other hardware blocks sharing the reset.
-> >
-> > While the kernel doc comments clearly state that the API for shared
-> > resets applies to reset controls which are shared between hardware
-> > blocks, the exact meaning of exclusive resets is not documented.
-> > Fix the semantic ambiguity with respect to exclusive access vs.
-> > exclusive reset lines by:
-> >   1. Clarifying that exclusive resets really are intended for use with
-> >      reset controls which are dedicated to a single hardware block,
-> >   2. Ensuring that obtaining an exclusive reset control will fail if the
-> >      reset is shared by multiple hardware blocks, for both DT-based and
-> >      lookup-based reset controls.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > This is v2 of "[RFC] reset: Add support for dedicated reset controls":
-> >   - Fix wrong variable in __reset_is_dedicated() loop,
-> >   - Add missing of_node_put() in __of_reset_is_dedicated(),
-> >   - Document that exclusive reset controls imply they are dedicated to a
-> >     single hardware block,
-> >   - Drop new dedicated flag and new API reset_control_get_dedicated(),
-> >     as exclusive already implies dedicated,
-> >   - Rename {__of_,}reset_is_dedicated() to {__of_,}reset_is_exclusive(),
-> >   - Reword description.
-> >
-> > Note: Exclusive lookup-based reset controls were not tested.
-> > ---
-> >  drivers/reset/core.c  | 58 +++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/reset.h |  5 +++-
-> >  2 files changed, 62 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> > index 225e34c56b94a2e3..2f5b61226c7964eb 100644
-> > --- a/drivers/reset/core.c
-> > +++ b/drivers/reset/core.c
-> > @@ -459,6 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
-> >       kref_put(&rstc->refcnt, __reset_control_release);
-> >  }
-> >
-> > +static bool __of_reset_is_exclusive(const struct device_node *node,
-> > +                                 const struct of_phandle_args args)
-
-Oops, this should take *args, not args.
-
-> > +{
-> > +     struct of_phandle_args args2;
-> > +     struct device_node *node2;
-> > +     int index, ret;
-> > +     bool eq;
->
-> I suppose it is very unlikely to get false positives where an arbitrary
-> node contains a "resets" property that looks like a proper phandle to an
-> actual reset-controller node.
-> Are we allowed though to scan the whole tree for "resets" properties
-> regardless of the nodes' bindings or compatible properties like this?
-
-Given "resets" is a more-or-less standard property, I'd say yes.
-Especially given of_parse_phandle_with_args() does verify that the target
-node has #reset-cells, and that the number of parameters matches that.
-
-> > +     for_each_node_with_property(node2, "resets") {
-> > +             if (node == node2)
-> > +                     continue;
-> > +
-> > +             for (index = 0; ; index++) {
-> > +                     ret = of_parse_phandle_with_args(node2, "resets",
-> > +                                                      "#reset-cells", index,
-> > +                                                      &args2);
-> > +                     if (ret)
-> > +                             break;
-> > +
-> > +                     eq = (args2.np == args.np &&
-> > +                           args2.args_count == args.args_count &&
-> > +                           !memcmp(args2.args, args.args,
-> > +                                   args.args_count * sizeof(args.args[0])));
-
-As there's at least one other function in -next that compares of_phandle_args,
-I will add a helper of_phandle_args_eq().
-
-> > +                     of_node_put(args2.np);
-> > +                     if (eq)
->
-> Emitting a loud warning here could be very helpful if it contains
-> both the reset controller node and the reset index, as well as the
-> consumer nodes: node and node2.
-
-Indeed, will do, also for lookup resets.
-
-We already have of_print_phandle_args(), but that is a bit inflexible.
-Adding support for "%pOFa" looks like the modern thing to do.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Yes, more code but looks cleaner to me.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+
+David / dhildenb
