@@ -2,135 +2,98 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCDEC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59793C65BAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D40208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D40208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 16F73208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBIAd69f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F73208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbeJEXQN (ORCPT
+        id S1729665AbeJEXWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:13 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:32874 "EHLO ale.deltatee.com"
+        Fri, 5 Oct 2018 19:22:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729963AbeJEXQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:12 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8SmU-0008D2-45; Fri, 05 Oct 2018 10:16:47 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8SmR-0000eX-VZ; Fri, 05 Oct 2018 10:16:44 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>
-Date:   Fri,  5 Oct 2018 10:16:38 -0600
-Message-Id: <20181005161642.2462-2-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181005161642.2462-1-logang@deltatee.com>
-References: <20181005161642.2462-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, sbates@raithlin.com, palmer@sifive.com, aou@eecs.berkeley.edu, hch@lst.de, logang@deltatee.com, akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com, osalvador@suse.de
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 1/5] mm/sparse: add common helper to mark all memblocks present
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1729974AbeJEXQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:13 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57A1B214DA;
+        Fri,  5 Oct 2018 16:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538756209;
+        bh=sVmTB1JdlSndcv5v8WWmn0N3IvuDTfaxErybjA5HYw4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PBIAd69f3WmJC4gYvXoIWBPgWvqB3jTxTkdmNSezmk0NMYbNTaZq5rmydGJWOC4Zi
+         DgUuKYnoMPE6H+zpLEMlUFe1jTFHmNWWCkA5mnSm9RsMwQIYZQNCMbpSu3XTm5rt3N
+         nOkEuZqcKnzhc2DslkHVquQTpBIg7YFzD3nqwgjY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 16/23] net: macb: disable scatter-gather for macb on sama5d3
+Date:   Fri,  5 Oct 2018 12:16:27 -0400
+Message-Id: <20181005161634.20631-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
+References: <20181005161634.20631-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Presently the arches arm64, arm, sh have a function which loops through
-each memblock and calls memory present. riscv will require a similar
-function.
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Introduce a common memblocks_present() function that can be used by
-all the arches. Subsequent patches will cleanup the arches that
-make use of this.
+[ Upstream commit eb4ed8e2d7fecb5f40db38e4498b9ee23cddf196 ]
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Oscar Salvador <osalvador@suse.de>
+Create a new configuration for the sama5d3-macb new compatibility string.
+This configuration disables scatter-gather because we experienced lock down
+of the macb interface of this particular SoC under very high load.
+
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/linux/mmzone.h |  6 ++++++
- mm/sparse.c            | 15 +++++++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/net/ethernet/cadence/macb_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 1e22d96734e0..a10fc3c18b07 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -794,6 +794,12 @@ void memory_present(int nid, unsigned long start, unsigned long end);
- static inline void memory_present(int nid, unsigned long start, unsigned long end) {}
- #endif
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index dfef4ec167c1..d90539c8065c 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3301,6 +3301,13 @@ static const struct macb_config at91sam9260_config = {
+ 	.init = macb_init,
+ };
  
-+#if defined(CONFIG_SPARSEMEM) && defined(CONFIG_HAVE_MEMBLOCK)
-+void memblocks_present(void);
-+#else
-+static inline void memblocks_present(void) {}
-+#endif
++static const struct macb_config sama5d3macb_config = {
++	.caps = MACB_CAPS_SG_DISABLED
++	      | MACB_CAPS_USRIO_HAS_CLKEN | MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII,
++	.clk_init = macb_clk_init,
++	.init = macb_init,
++};
 +
- #ifdef CONFIG_HAVE_MEMORYLESS_NODES
- int local_memory_node(int node_id);
- #else
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 10b07eea9a6e..109159574208 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -5,6 +5,7 @@
- #include <linux/mm.h>
- #include <linux/slab.h>
- #include <linux/mmzone.h>
-+#include <linux/memblock.h>
- #include <linux/bootmem.h>
- #include <linux/compiler.h>
- #include <linux/highmem.h>
-@@ -238,6 +239,20 @@ void __init memory_present(int nid, unsigned long start, unsigned long end)
- 	}
- }
- 
-+#ifdef CONFIG_HAVE_MEMBLOCK
-+void __init memblocks_present(void)
-+{
-+	struct memblock_region *reg;
-+
-+	for_each_memblock(memory, reg) {
-+		int nid = memblock_get_region_node(reg);
-+
-+		memory_present(nid, memblock_region_memory_base_pfn(reg),
-+			       memblock_region_memory_end_pfn(reg));
-+	}
-+}
-+#endif
-+
- /*
-  * Subtle, we encode the real pfn into the mem_map such that
-  * the identity pfn - section_mem_map will return the actual
+ static const struct macb_config pc302gem_config = {
+ 	.caps = MACB_CAPS_SG_DISABLED | MACB_CAPS_GIGABIT_MODE_AVAILABLE,
+ 	.dma_burst_length = 16,
+@@ -3368,6 +3375,7 @@ static const struct of_device_id macb_dt_ids[] = {
+ 	{ .compatible = "cdns,gem", .data = &pc302gem_config },
+ 	{ .compatible = "atmel,sama5d2-gem", .data = &sama5d2_config },
+ 	{ .compatible = "atmel,sama5d3-gem", .data = &sama5d3_config },
++	{ .compatible = "atmel,sama5d3-macb", .data = &sama5d3macb_config },
+ 	{ .compatible = "atmel,sama5d4-gem", .data = &sama5d4_config },
+ 	{ .compatible = "cdns,at91rm9200-emac", .data = &emac_config },
+ 	{ .compatible = "cdns,emac", .data = &emac_config },
 -- 
-2.19.0
+2.17.1
 
