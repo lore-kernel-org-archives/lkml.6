@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A4FC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFE0C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA6720652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:28:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA6720652
+	by mail.kernel.org (Postfix) with ESMTP id CFD4A20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:28:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD4A20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeJEP0B (ORCPT
+        id S1728485AbeJEP0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:26:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42203 "EHLO
+        Fri, 5 Oct 2018 11:26:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35171 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbeJEP0B (ORCPT
+        with ESMTP id S1728389AbeJEP0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:26:01 -0400
+        Fri, 5 Oct 2018 11:26:31 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w958RvEa3071662
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w958SYT93071711
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 5 Oct 2018 01:27:57 -0700
+        Fri, 5 Oct 2018 01:28:34 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w958Rvhj3071659;
-        Fri, 5 Oct 2018 01:27:57 -0700
-Date:   Fri, 5 Oct 2018 01:27:57 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w958SXo33071707;
+        Fri, 5 Oct 2018 01:28:33 -0700
+Date:   Fri, 5 Oct 2018 01:28:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-89fe0a1f1c694a3b0b3cfa8c0952d603753f36df@git.kernel.org>
-Cc:     mingo@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        luto@kernel.org, peterz@infradead.org
-Reply-To: peterz@infradead.org, luto@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-          torvalds@linux-foundation.org
-In-Reply-To: <3a7438f5fb2422ed881683d2ccffd7f987b2dc44.1538689401.git.luto@kernel.org>
-References: <3a7438f5fb2422ed881683d2ccffd7f987b2dc44.1538689401.git.luto@kernel.org>
+Message-ID: <tip-bcc4a62a73cb65327d7268fbfa3a786d603f52dc@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, luto@kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        peterz@infradead.org, hpa@zytor.com
+Reply-To: peterz@infradead.org, hpa@zytor.com,
+          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+          luto@kernel.org, tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <f66f53d81150bbad47d7b282c9207a71a3ce1c16.1538689401.git.luto@kernel.org>
+References: <f66f53d81150bbad47d7b282c9207a71a3ce1c16.1538689401.git.luto@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/vdso] x86/vdso: Remove "memory" clobbers in the vDSO
- syscall fallbacks
-Git-Commit-ID: 89fe0a1f1c694a3b0b3cfa8c0952d603753f36df
+Subject: [tip:x86/vdso] x86/vdso: Document vgtod_ts better
+Git-Commit-ID: bcc4a62a73cb65327d7268fbfa3a786d603f52dc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,53 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  89fe0a1f1c694a3b0b3cfa8c0952d603753f36df
-Gitweb:     https://git.kernel.org/tip/89fe0a1f1c694a3b0b3cfa8c0952d603753f36df
+Commit-ID:  bcc4a62a73cb65327d7268fbfa3a786d603f52dc
+Gitweb:     https://git.kernel.org/tip/bcc4a62a73cb65327d7268fbfa3a786d603f52dc
 Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Thu, 4 Oct 2018 14:44:43 -0700
+AuthorDate: Thu, 4 Oct 2018 14:44:45 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Fri, 5 Oct 2018 10:12:18 +0200
 
-x86/vdso: Remove "memory" clobbers in the vDSO syscall fallbacks
+x86/vdso: Document vgtod_ts better
 
-When a vDSO clock function falls back to the syscall, no special
-barriers or ordering is needed, and the syscall fallbacks don't
-clobber any memory that is not explicitly listed in the asm
-constraints.  Remove the "memory" clobber.
-
-This causes minor changes to the generated code, but otherwise has
-no obvious performance impact.  I think it's nice to have, though,
-since it may help the optimizer in the future.
+After reading do_hres() and do_course() and scratching my head a
+bit, I figured out why the arithmetic is strange.  Document it.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/3a7438f5fb2422ed881683d2ccffd7f987b2dc44.1538689401.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/f66f53d81150bbad47d7b282c9207a71a3ce1c16.1538689401.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/vdso/vclock_gettime.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/vgtod.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index b7ccbff26a3f..18c8a78d1ec9 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -45,7 +45,7 @@ notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
- 	long ret;
- 	asm ("syscall" : "=a" (ret), "=m" (*ts) :
- 	     "0" (__NR_clock_gettime), "D" (clock), "S" (ts) :
--	     "memory", "rcx", "r11");
-+	     "rcx", "r11");
- 	return ret;
- }
+diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
+index d17b092b9f1b..69d05c6d47f5 100644
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -13,6 +13,15 @@ typedef u64 gtod_long_t;
+ typedef unsigned long gtod_long_t;
+ #endif
  
-@@ -62,7 +62,7 @@ notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*ts)
- 		: "0" (__NR_clock_gettime), [clock] "g" (clock), "c" (ts)
--		: "memory", "edx");
-+		: "edx");
- 	return ret;
- }
- 
++/*
++ * There is one of these objects in the vvar page for each
++ * vDSO-accelerated clockid.  For high-resolution clocks, this encodes
++ * the time corresponding to vsyscall_gtod_data.cycle_last.  For coarse
++ * clocks, this encodes the actual time.
++ *
++ * To confuse the reader, for high-resolution clocks, nsec is left-shifted
++ * by vsyscall_gtod_data.shift.
++ */
+ struct vgtod_ts {
+ 	u64		sec;
+ 	u64		nsec;
