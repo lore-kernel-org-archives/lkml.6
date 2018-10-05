@@ -2,363 +2,143 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D4DC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A61C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2FAD20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:47:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2FAD20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 375CC20875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:51:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5sCKCtD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 375CC20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbeJEMo4 (ORCPT
+        id S1727599AbeJEMsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 08:44:56 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36011 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726979AbeJEMo4 (ORCPT
+        Fri, 5 Oct 2018 08:48:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40945 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeJEMsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 08:44:56 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0743753|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03291;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CzctW0R_1538718431;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzctW0R_1538718431)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Fri, 05 Oct 2018 13:47:11 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
-        robh+dt@kernel.org, tglx@linutronix.de
-Cc:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
-        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V7 16/20] csky: SMP support
-Date:   Fri,  5 Oct 2018 13:41:58 +0800
-Message-Id: <6f899d910260f6191816a42a83431e3e2362667e.1538715563.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
-References: <cover.1538715563.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
-References: <cover.1538715563.git.ren_guo@c-sky.com>
+        Fri, 5 Oct 2018 08:48:12 -0400
+Received: by mail-lj1-f193.google.com with SMTP id r83-v6so10494693ljr.7
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 22:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gIgBsJgITCialaB2v+GU0Fc6nzO65o16U8AsPvywMGQ=;
+        b=S5sCKCtDA8z9oGefRw0baclbjwRlYpjU20Ug11UveVm0JQa0nvcvXxEYWz2F3jg4ru
+         n3VSVQNuha2rX6MPVpFxnlFIzQE1lFs8vKKzE10eDSj+dLhVE+BY/YNJL5wKE6Ys8tbt
+         1Jy8VW5P47umnbrEpr5a8u52QjGblEIWmiBmGUmZeAJGJVHix9wf/xMxXruqbjLHRzLe
+         aNMyrOy+f+foCatcoS/0LLuWf0ZV4cHwW4jEOcuodCKoG43nyXIjfrJn3LA/7BTzney1
+         vYbpBElPCTpXyc6KOf3IJn59McUo7LEM3/FG+nuCnq2UwN6hdSI/Pbw2iC4jE+MZFRYw
+         eNZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gIgBsJgITCialaB2v+GU0Fc6nzO65o16U8AsPvywMGQ=;
+        b=jzcSni4rK2S+wnNftSbTsF/eiHX+PFx4+dSrt+tTYpKd6/BMjQ3pqWWspxnWbY2WfA
+         WV6Pd8PqhtOsUPfYUJt67/dU4XsX8ktDhmQRIYqKA4WZz+VgpjLT4EIpXFLigcj2yCJO
+         t1w+gaLKZEi5U0Llsda83LwOqEPaZf1APkGswKdoUcvn6z0UteLm4FXINQS1w03kFDYR
+         a4jk1XZKuL6VYUO+1nkvPeMieKRqxHecXb8b/IEExzxAaDfxNXlqkLoOkFMxNZ5/T0sC
+         vBRsJrmlJR5zZwkEt0zoNCN4BMSYgmgO0w1ukT1NsOfPatTVzSGfqxDyfYJY86lA/KZR
+         8K2g==
+X-Gm-Message-State: ABuFfoiHdPdbOwMkWJcS3D+DvmtoldtmitbToIqhyLb1xo7UDKlBOOd1
+        J4u/XYG5AKkbkHGN0JP2hVEyBZZ6vCOWiY2snfk=
+X-Google-Smtp-Source: ACcGV63fxqmuP+GYsbGOmYQb6cbBAN4girYk2To14eFlKZvDrDH7kA2qEaYWhXJwyWwHir+tot55cQh3ZRpghHjG2QE=
+X-Received: by 2002:a2e:91d3:: with SMTP id u19-v6mr5956682ljg.64.1538718661663;
+ Thu, 04 Oct 2018 22:51:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
+ <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
+ <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
+ <20181004123400.GC30658@n2100.armlinux.org.uk> <CAFqt6zZPOM17QwmcWKF3F1gqkJm=2PxvuJ3naWuRXZGHc2HrEQ@mail.gmail.com>
+ <20181004181736.GB20842@bombadil.infradead.org> <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
+ <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
+In-Reply-To: <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Fri, 5 Oct 2018 11:20:49 +0530
+Message-ID: <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
+        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
+        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
+        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
+        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
+        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds boot, ipi, hotplug code for SMP.
+On Fri, Oct 5, 2018 at 1:16 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Hi Souptick,
+>
+> On Thu, Oct 4, 2018 at 8:49 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > On Thu, Oct 4, 2018 at 11:47 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > I think this is a bad plan.  What we should rather do is examine the current
+> > > users of vm_insert_page() and ask "What interface would better replace
+> > > vm_insert_page()?"
+> > >
+> > > As I've said to you before, I believe the right answer is to have a
+> > > vm_insert_range() which takes an array of struct page pointers.  That
+> > > fits the majority of remaining users.
+> >
+> > Ok, but it will take some time.
+> > Is it a good idea to introduce the final vm_fault_t patch and then
+> > start working on vm_insert_range as it will be bit time consuming ?
+> >
+>
+> Well, why is there a rush? Development should be done in a patch
+> series or a tree, and submitted as a whole, instead of sending partial
+> patches.
 
-Changelog:
- - csky: remove irq_mapping from smp.c
-   There are some feedbacks from irqchip, and we need to adjust
-   "smp.c & smp.h" to match the csky_mp_timer modification.
- - Move IPI_IRQ define into drivers/irqchip/csky_mpintc.c, because it's a
-   interrupt controller specific.
- - Bugfix request_irq with IPI_IRQ, we must use irq_mapping return value
-   not directly use IPI_IRQ. The modification also involves csky_mp_intc.
+Not in hurry, will do it in a patch series :-)
+>
+> Also, not sure if you saw my comments/review: if the interface is not
+> going to change, why the name change? Why can't we simply keep using
+> vm_insert_page?
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- arch/csky/include/asm/smp.h |  30 ++++++
- arch/csky/kernel/smp.c      | 248 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 278 insertions(+)
- create mode 100644 arch/csky/include/asm/smp.h
- create mode 100644 arch/csky/kernel/smp.c
+yes, changing the name without changing the interface is a
+bad approach and this can't be taken. As Matthew mentioned,
+"vm_insert_range() which takes an array of struct page pointers.
+That fits the majority of remaining users" would be a better approach
+to fit this use case.
 
-diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
-new file mode 100644
-index 0000000..d77f582
---- /dev/null
-+++ b/arch/csky/include/asm/smp.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_CSKY_SMP_H
-+#define __ASM_CSKY_SMP_H
-+
-+#include <linux/cpumask.h>
-+#include <linux/irqreturn.h>
-+#include <linux/threads.h>
-+
-+#ifdef CONFIG_SMP
-+
-+void __init setup_smp(void);
-+
-+void __init setup_smp_ipi(void);
-+
-+void __init enable_smp_ipi(void);
-+
-+void arch_send_call_function_ipi_mask(struct cpumask *mask);
-+
-+void arch_send_call_function_single_ipi(int cpu);
-+
-+void __init set_send_ipi(void (*func)(const unsigned long *));
-+
-+void __init set_ipi_irq_mapping(int (*func)(void));
-+
-+#define raw_smp_processor_id()	(current_thread_info()->cpu)
-+
-+#endif /* CONFIG_SMP */
-+
-+#endif /* __ASM_CSKY_SMP_H */
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-new file mode 100644
-index 0000000..841cf72
---- /dev/null
-+++ b/arch/csky/kernel/smp.c
-@@ -0,0 +1,248 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/sched.h>
-+#include <linux/kernel_stat.h>
-+#include <linux/notifier.h>
-+#include <linux/cpu.h>
-+#include <linux/percpu.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/of.h>
-+#include <linux/sched/task_stack.h>
-+#include <linux/sched/mm.h>
-+#include <asm/irq.h>
-+#include <asm/traps.h>
-+#include <asm/sections.h>
-+#include <asm/mmu_context.h>
-+#include <asm/pgalloc.h>
-+
-+static struct {
-+	unsigned long bits ____cacheline_aligned;
-+} ipi_data[NR_CPUS] __cacheline_aligned;
-+
-+enum ipi_message_type {
-+	IPI_EMPTY,
-+	IPI_RESCHEDULE,
-+	IPI_CALL_FUNC,
-+	IPI_MAX
-+};
-+
-+static irqreturn_t handle_ipi(int irq, void *dev)
-+{
-+	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
-+
-+	while (true) {
-+		unsigned long ops;
-+
-+		ops = xchg(pending_ipis, 0);
-+		if (ops == 0)
-+			return IRQ_HANDLED;
-+
-+		if (ops & (1 << IPI_RESCHEDULE))
-+			scheduler_ipi();
-+
-+		if (ops & (1 << IPI_CALL_FUNC))
-+			generic_smp_call_function_interrupt();
-+
-+		BUG_ON((ops >> IPI_MAX) != 0);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void (*send_arch_ipi)(const unsigned long *mask);
-+
-+void __init set_send_ipi(void (*func)(const unsigned long *))
-+{
-+	if (send_arch_ipi)
-+		return;
-+
-+	send_arch_ipi = func;
-+}
-+
-+static void
-+send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
-+{
-+	int i;
-+
-+	for_each_cpu(i, to_whom)
-+		set_bit(operation, &ipi_data[i].bits);
-+
-+	smp_mb();
-+	send_arch_ipi(cpumask_bits(to_whom));
-+}
-+
-+void arch_send_call_function_ipi_mask(struct cpumask *mask)
-+{
-+	send_ipi_message(mask, IPI_CALL_FUNC);
-+}
-+
-+void arch_send_call_function_single_ipi(int cpu)
-+{
-+	send_ipi_message(cpumask_of(cpu), IPI_CALL_FUNC);
-+}
-+
-+static void ipi_stop(void *unused)
-+{
-+	while (1);
-+}
-+
-+void smp_send_stop(void)
-+{
-+	on_each_cpu(ipi_stop, NULL, 1);
-+}
-+
-+void smp_send_reschedule(int cpu)
-+{
-+	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
-+}
-+
-+void *__cpu_up_stack_pointer[NR_CPUS];
-+void *__cpu_up_task_pointer[NR_CPUS];
-+
-+void __init smp_prepare_boot_cpu(void)
-+{
-+}
-+
-+void __init smp_prepare_cpus(unsigned int max_cpus)
-+{
-+}
-+
-+static int ipi_dummy_dev;
-+static int ipi_irq;
-+
-+void __init enable_smp_ipi(void)
-+{
-+	enable_percpu_irq(ipi_irq, 0);
-+}
-+
-+static int (*arch_ipi_irq_mapping)(void);
-+
-+void __init set_ipi_irq_mapping(int (*func)(void))
-+{
-+	if (arch_ipi_irq_mapping)
-+		return;
-+
-+	arch_ipi_irq_mapping = func;
-+}
-+
-+void __init setup_smp_ipi(void)
-+{
-+	int rc;
-+
-+	ipi_irq = arch_ipi_irq_mapping();
-+	if (ipi_irq == 0)
-+		panic("%s IRQ mapping failed\n", __func__);
-+
-+	rc = request_percpu_irq(ipi_irq, handle_ipi, "IPI Interrupt",
-+				&ipi_dummy_dev);
-+	if (rc)
-+		panic("%s IRQ request failed\n", __func__);
-+
-+	enable_smp_ipi();
-+}
-+
-+void __init setup_smp(void)
-+{
-+	struct device_node *node = NULL;
-+	int cpu;
-+
-+	while ((node = of_find_node_by_type(node, "cpu"))) {
-+		if (!of_device_is_available(node))
-+			continue;
-+
-+		if (of_property_read_u32(node, "reg", &cpu))
-+			continue;
-+
-+		if (cpu >= NR_CPUS)
-+			continue;
-+
-+		set_cpu_possible(cpu, true);
-+		set_cpu_present(cpu, true);
-+	}
-+}
-+
-+extern void _start_smp_secondary(void);
-+
-+volatile unsigned int secondary_hint;
-+volatile unsigned int secondary_ccr;
-+volatile unsigned int secondary_stack;
-+
-+int __cpu_up(unsigned int cpu, struct task_struct *tidle)
-+{
-+	unsigned int tmp;
-+
-+	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
-+
-+	secondary_hint = mfcr("cr31");
-+
-+	secondary_ccr  = mfcr("cr18");
-+
-+	/* Flush dcache */
-+	mtcr("cr17", 0x22);
-+
-+	/* Enable cpu in SMP reset ctrl reg */
-+	tmp = mfcr("cr<29, 0>");
-+	tmp |= 1 << cpu;
-+	mtcr("cr<29, 0>", tmp);
-+
-+	/* Wait for the cpu online */
-+	while (!cpu_online(cpu));
-+
-+	secondary_stack = 0;
-+
-+	return 0;
-+}
-+
-+void __init smp_cpus_done(unsigned int max_cpus)
-+{
-+}
-+
-+int setup_profiling_timer(unsigned int multiplier)
-+{
-+	return -EINVAL;
-+}
-+
-+void csky_start_secondary(void)
-+{
-+	struct mm_struct *mm = &init_mm;
-+	unsigned int cpu = smp_processor_id();
-+
-+	mtcr("cr31", secondary_hint);
-+	mtcr("cr18", secondary_ccr);
-+
-+	mtcr("vbr", vec_base);
-+
-+	flush_tlb_all();
-+	write_mmu_pagemask(0);
-+	TLBMISS_HANDLER_SETUP_PGD(swapper_pg_dir);
-+	TLBMISS_HANDLER_SETUP_PGD_KERNEL(swapper_pg_dir);
-+
-+	asid_cache(smp_processor_id()) = ASID_FIRST_VERSION;
-+
-+#ifdef CONFIG_CPU_HAS_FPU
-+	init_fpu();
-+#endif
-+
-+	enable_smp_ipi();
-+
-+	mmget(mm);
-+	mmgrab(mm);
-+	current->active_mm = mm;
-+	cpumask_set_cpu(cpu, mm_cpumask(mm));
-+
-+	notify_cpu_starting(cpu);
-+	set_cpu_online(cpu, true);
-+
-+	pr_info("CPU%u Online: %s...\n", cpu, __func__);
-+
-+	local_irq_enable();
-+	preempt_disable();
-+	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
-+}
--- 
-2.7.4
+But yes, we can't keep vm_insert_page and vmf_insert_page together
+as it doesn't guarantee  that future drivers will not use vm_insert_page
+in #PF context ( which will generate new errno to VM_FAULT_CODE).
 
+Any further comment form others on vm_Insert_range() approach ?
