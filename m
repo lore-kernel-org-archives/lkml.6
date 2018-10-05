@@ -2,326 +2,156 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD44C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740A2C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2CD208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:55:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNTKJ5px"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2CD208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 30AB02084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:58:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30AB02084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbeJEWzM (ORCPT
+        id S1728539AbeJEW5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:55:12 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37607 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728970AbeJEWzM (ORCPT
+        Fri, 5 Oct 2018 18:57:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:43783 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbeJEW5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:55:12 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o13-v6so13156341otl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 08:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ryo7SsTtyQiVWhgwZQip6OGwjVNU2KZ/nkMdnpriWSM=;
-        b=VNTKJ5pxpdzzKyPCwsG8eexUzcvbqjTKx2whTJqCD/cRAbgoIlwv1abqpTpv1n3BDm
-         HvL5CMc/JExC6IYqueHOWF/r7x7RxXD3wXUkUTVnqEQXEnJiZfxQnDt14UaRjlTfz0rh
-         I9DLZgclN9155owOMYlo+FsyTOj6aWQZVmN9pEkiAh1LRR3oXKayrX+ZwUiHgA5lqAJa
-         KF+MtWTuDnX17volVh3Lwva0xC2my5Ua2QsBya1pS2MqObMbE6cisJS/QNOnZk6SZJRu
-         Cji0DrCgqQdSdsKMhmeXHewsRyq0KpHSQSRSpNq9nrbBArAuq80h9cb3iosANHAryunY
-         TxPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ryo7SsTtyQiVWhgwZQip6OGwjVNU2KZ/nkMdnpriWSM=;
-        b=hcU7BOywc56rTw9tBNyt0eaeFsKztOQ1Rf1RP/KBEWdMg/5n6QWQv98WQoDPkqNMsw
-         ttwiD2OP1MkBndNVrV1a4IaqGcnCPZuntwkEqT8vxt6vR7KJkW40hcRoiFc/3lq8sTGB
-         ARnwjrspZkAA2Zi+b8olNos6/mAv+nFwrgqeRjhCGuCK6MuGIXVhva6t8P67NhMrebih
-         vc07WBCpekvc/4yKv/Q4VMtA4nHOQSj5nLh0uCZuOkU45Pb4kNUwY5WXK7wCsdEtBNtJ
-         7vv0VfQIgyIHgI5j65yV5Dp5ok0lrEhARvdUzh7YD4aYMi5axoXENNtDBBQshg7q6rsP
-         Uqtg==
-X-Gm-Message-State: ABuFfojtzy2GD6UUUjpGx+AmNG+/nP7WjlYFm+CIfE/ywppSsoZVTLhe
-        SZFjQYFbM5EsIZg8AiaEXnl1XmesmdNY1ZBkWNItRQ==
-X-Google-Smtp-Source: ACcGV63cvPz2KWeXlIkRUmkAZOjrMshsQOy0a/qE8yq8JFhsmG+gvsJCpDbKgYHtwPzn0oNksYJQD4mEIQPpS4o3bIY=
-X-Received: by 2002:a9d:2117:: with SMTP id i23mr6627147otb.230.1538754953560;
- Fri, 05 Oct 2018 08:55:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180929103453.12025-1-cyphar@cyphar.com> <20180929131534.24472-1-cyphar@cyphar.com>
- <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
- <20181004162611.vdlujbdguvagalpt@ryuk> <CAG48ez2u--Wac7d9n3idC92Pd-M40QzYtR6FKR8PAYr=VQHUBQ@mail.gmail.com>
- <20181005150728.mgqnpkbukpeu3bsm@ryuk>
-In-Reply-To: <20181005150728.mgqnpkbukpeu3bsm@ryuk>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 5 Oct 2018 17:55:26 +0200
-Message-ID: <CAG48ez3FG0axt92F=+vDe1Q=kj-YngmCgFqDET7E2xCE1mOgeg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path resolution
-To:     cyphar@cyphar.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     jlayton@kernel.org, Bruce Fields <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
-        Tycho Andersen <tycho@tycho.ws>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 5 Oct 2018 18:57:33 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1McpeM-1fYZhF22R0-00a0PW; Fri, 05 Oct 2018 17:57:27 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1McpeM-1fYZhF22R0-00a0PW; Fri, 05 Oct 2018 17:57:27 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mtd@lists.infradead.org, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        marek.vasut@gmail.com, richard@nod.at, ard.biesheuvel@linaro.org,
+        Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Coly Li <colyli@suse.de>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] lib/bch: fix possible stack overrun
+Date:   Fri,  5 Oct 2018 17:56:51 +0200
+Message-Id: <20181005155723.199954-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:pOcFM6ICKhVc1maX2EgSY+b1pjMwb31Udh6lxeuNmWc/c8rqj82
+ cpZg5F/WsR9C97bywn8c5+fcuU4irr3hgo2UjU35UMfyFIU1rnq8ARSbPwiBhEC6OCJF3FS
+ sKDx0DApYjz3XEu0Ih474klDh24JGyro+0exRmfCQvG578d1oNWaXUeknASaxaDoo0IDRUr
+ Ww5Yhkf6f6nwhA3j5Pt0w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:aW9u17qqDwk=:uui/6FHVh6Ty4a2QF1LU9e
+ DbDlaLOfhYAp4SkhPGMoPj2bqeLjKE6Ng5kGYU3Ju13GDdaPvvXzxhA2ctAOFDSChTiJKn3pO
+ fxplKEI4bjB/3AgMXfP/cT7wU5YOpA2MZDpnL5clqXEU2zO69VGHg2d1aXaqvniFDd1Cbq3g0
+ LhmixcJeTjoDBnACXDPsBpH4eFZ6tw1YDjQ1+SiX3E0FLzhrKLYsMq4RlivA/jHGFQUeRMcu8
+ RlevoDgVr0auxJjVfMJNuw5Tw0EtOJNEZml+7Y6pxOkBlFuF2HdlhhTWlKDQCfc0iGPDwP8hk
+ NQaGOrnqDIaMrhzJ2UmfvJgN+blAYKvVkX+172YSdebIICocq2CYPBuxKfKZQ5QIykXcxbcI3
+ Dwk7KN/fJQL/RAfE+ntEMaD8NWMQg+URZ63TxLX4Td5csPvgBeXa0o1G5Fpf6kGm2yWeo49Ja
+ 0UrYdBl2ZvLvPRqfaGhNVLFUOuWaleCK1OaEYYawT/VLHJ2kxDehpJrN2j2XCrs/YaXI5wjd+
+ UBXIO2FhC18aoeqqPVKfjSCw63aIdv9SOEwnqd8dbw6OG7bh13njFUCRFVPkcOb/kRxj2lO09
+ /W0sijMyUbcfrEbSD/tF3fpW6RNRmYeAri8HwSMHzzs00lpSJpenUIRcSLlXaT4lRsKfeqO6c
+ pqHgNQgAifyG5zdFQhgeMQtjSzRTPuW0QJXCzD9DYFChthBSc6KIbAJ1NjjbnsXsKLno=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 5:07 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2018-10-04, Jann Horn <jannh@google.com> wrote:
-> > On Thu, Oct 4, 2018 at 6:26 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > > On 2018-09-29, Jann Horn <jannh@google.com> wrote:
-> > > > You attempt to open "C/../../etc/passwd" under the root "/A/B".
-> > > > Something else concurrently moves /A/B/C to /A/C. This can result in
-> > > > the following:
-> > > >
-> > > > 1. You start the path walk and reach /A/B/C.
-> > > > 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
-> > > > 3. Your path walk follows the first ".." up into /A. This is outside
-> > > > the process root, but you never actually encountered the process root,
-> > > > so you don't notice.
-> > > > 4. Your path walk follows the second ".." up to /. Again, this is
-> > > > outside the process root, but you don't notice.
-> > > > 5. Your path walk walks down to /etc/passwd, and the open completes
-> > > > successfully. You now have an fd pointing outside your chroot.
-> > >
-> > > I've been playing with this and I have the following patch, which
-> > > according to my testing protects against attacks where ".." skips over
-> > > nd->root. It abuses __d_path to figure out if nd->path can be resolved
-> > > from nd->root (obviously a proper version of this patch would refactor
-> > > __d_path so it could be used like this -- and would not return
-> > > -EMULTIHOP).
-> > >
-> > > I've also attached my reproducer. With it, I was seeing fairly constant
-> > > breakouts before this patch and after it I didn't see a single breakout
-> > > after running it overnight. Obviously this is not conclusive, but I'm
-> > > hoping that it can show what my idea for protecting against ".." was.
-> > >
-> > > Does this patch make sense? Or is there something wrong with it that I'm
-> > > not seeing?
-> > >
-> > > --8<-------------------------------------------------------------------
-> > >
-> > > There is a fairly easy-to-exploit race condition with chroot(2) (and
-> > > thus by extension AT_THIS_ROOT and AT_BENEATH) where a rename(2) of a
-> > > path can be used to "skip over" nd->root and thus escape to the
-> > > filesystem above nd->root.
-> > >
-> > >   thread1 [attacker]:
-> > >     for (;;)
-> > >       renameat2(AT_FDCWD, "/a/b/c", AT_FDCWD, "/a/d", RENAME_EXCHANGE);
-> > >   thread2 [victim]:
-> > >     for (;;)
-> > >       openat(dirb, "b/c/../../etc/shadow", O_THISROOT);
-> > >
-> > > With fairly significant regularity, thread2 will resolve to
-> > > "/etc/shadow" rather than "/a/b/etc/shadow". With this patch, such cases
-> > > will be detected during ".." resolution (which is the weak point of
-> > > chroot(2) -- since walking *into* a subdirectory tautologically cannot
-> > > result in you walking *outside* nd->root).
-> > >
-> > > The use of __d_path here might seem suspect, however we don't mind if a
-> > > path is moved from within the chroot to outside the chroot and we
-> > > incorrectly decide it is safe (because at that point we are still within
-> > > the set of files which were accessible at the beginning of resolution).
-> > > However, we can fail resolution on the next path component if it remains
-> > > outside of the root. A path which has always been outside nd->root
-> > > during resolution will never be resolveable from nd->root and thus will
-> > > always be blocked.
-> > >
-> > > DO NOT MERGE: Currently this code returns -EMULTIHOP in this case,
-> > >               purely as a debugging measure (so that you can see that
-> > >               the protection actually does something). Obviously in the
-> > >               proper patch this will return -EXDEV.
-> > >
-> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > ---
-> > >  fs/namei.c | 32 ++++++++++++++++++++++++++++++--
-> > >  1 file changed, 30 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 6f995e6de6b1..c8349693d47b 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -53,8 +53,8 @@
-> > >   * The new code replaces the old recursive symlink resolution with
-> > >   * an iterative one (in case of non-nested symlink chains).  It does
-> > >   * this with calls to <fs>_follow_link().
-> > > - * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > > - * replaced with a single function lookup_dentry() that can handle all
-> > > + * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > > + * replaced with a single function lookup_dentry() that can handle all
-> > >   * the special cases of the former code.
-> > >   *
-> > >   * With the new dcache, the pathname is stored at each inode, at least as
-> > > @@ -1375,6 +1375,20 @@ static int follow_dotdot_rcu(struct nameidata *nd)
-> > >                                 return -EXDEV;
-> > >                         break;
-> > >                 }
-> > > +               if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT))) {
-> > > +                       char *pathbuf, *pathptr;
-> > > +
-> > > +                       pathbuf = kmalloc(PATH_MAX, GFP_ATOMIC);
-> > > +                       if (!pathbuf)
-> > > +                               return -ECHILD;
-> > > +                       pathptr = __d_path(&nd->path, &nd->root, pathbuf, PATH_MAX);
-> > > +                       kfree(pathbuf);
-> > > +                       if (IS_ERR_OR_NULL(pathptr)) {
-> > > +                               if (!pathptr)
-> > > +                                       pathptr = ERR_PTR(-EMULTIHOP);
-> > > +                               return PTR_ERR(pathptr);
-> > > +                       }
-> > > +               }
-> >
-> > One somewhat problematic thing about this approach is that if someone
-> > tries to lookup
-> > "a/a/a/a/a/a/a/a/a/a/[...]/../../../../../../../../../.." for some
-> > reason, you'll have quadratic runtime: For each "..", you'll have to
-> > walk up to the root.
->
-> What if we took rename_lock (call it nd->r_seq) at the start of the
-> resolution, and then only tried the __d_path-style check
->
->   if (read_seqretry(&rename_lock, nd->r_seq) ||
->       read_seqretry(&mount_lock, nd->m_seq))
->           /* do the __d_path lookup. */
->
-> That way you would only hit the slow path if there were concurrent
-> renames or mounts *and* you are doing a path resolution with
-> AT_THIS_ROOT or AT_BENEATH. I've attached a modified patch that does
-> this (and after some testing it also appears to work).
+The previous patch introduced very large kernel stack usage and a Makefile
+change to hide the warning about it.
 
-Yeah, I think that might do the job.
+From what I can tell, a number of things went wrong here:
 
-> I'm not sure if there's a way to always avoid the quadratic lookup
-> without (significantly and probably unreasonably) changing how dcache
-> invalidation works. And obviously using this slow path if there was
-> _any_ rename on the _entire_ system is suboptimal, but I think it is a
-> significant improvement.
+- The BCH_MAX_T constant was set to the maximum value for 'n',
+  not the maximum for 't', which is much smaller.
 
-Yeah, I think this is much better.
+- The stack usage is actually larger than the entire kernel stack
+  on some architectures that can use 4KB stacks (m68k, sh, c6x), which
+  leads to an immediate overrun.
 
-> Another possibility is to expand on Andy's suggestion to use
-> /proc/$pid/root, and instead require AT_THIS_ROOT to use the root of a
-> namespace as its dirfd (I'm not sure if there's a trivial way to detect
-> this though). This wouldn't help with AT_BENEATH, but it should protect
-> against ".." shenanigans without any ".." handling changes. (This is
-> less ideal because it requires a container process, but it is another
-> way of dealing with the issue.)
+- The justification in the patch description claimed that nothing
+  changed, however that is not the case even without the two points above:
+  the configuration is machine specific, and most boards  never use the
+  maximum BCH_ECC_WORDS() length but instead have something much smaller.
+  That maximum would only apply to machines that use both the maximum
+  block size and the maximum ECC strength.
 
-(For container usecases, but not for a web server that uses AT_BENEATH.)
+The largest value for 't' that I could find is '32', which in turn leads
+to a 60 byte array instead of 2048 bytes. With that changed, the warning
+can be enabled again.
 
-> ---
->  fs/namei.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 46 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 6f995e6de6b1..12c9be175cb4 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -493,7 +493,7 @@ struct nameidata {
->         struct path     root;
->         struct inode    *inode; /* path.dentry.d_inode */
->         unsigned int    flags;
-> -       unsigned        seq, m_seq;
-> +       unsigned        seq, m_seq, r_seq;
->         int             last_type;
->         unsigned        depth;
->         int             total_link_count;
-> @@ -1375,6 +1375,27 @@ static int follow_dotdot_rcu(struct nameidata *nd)
->                                 return -EXDEV;
->                         break;
->                 }
-> +               if (unlikely((nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT)) &&
-> +                            (read_seqretry(&rename_lock, nd->r_seq) ||
-> +                             read_seqretry(&mount_lock, nd->m_seq)))) {
-> +                       char *pathbuf, *pathptr;
-> +
-> +                       nd->r_seq = read_seqbegin(&rename_lock);
-> +                       /* Cannot take m_seq here. */
-> +
-> +                       pathbuf = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +                       if (!pathbuf)
-> +                               return -ECHILD;
-> +                       pathptr = __d_path(&nd->path, &nd->root, pathbuf, PATH_MAX);
-> +                       kfree(pathbuf);
+Fixes: 02361bc77888 ("lib/bch: Remove VLA usage")
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Please review carefully to ensure my logic is correct. I spent a
+long time trying to understand what is going on here, but I'm not
+too familiar with this algorithm, and it's possible I still got it
+wrong as well.
+In particular, I'm not 100% sure if '32' is the maximum ECC strength
+we can support, or if a larger one (which?) might be possible.
+---
+ lib/Makefile |  1 -
+ lib/bch.c    | 10 ++++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-You're doing this check before actually looking up the parent, right?
-So as long as I don't trigger the "path_equal(&nd->path, &nd->root)"
-check that you do for O_BENEATH, escaping up by one level is possible,
-right? You should probably move this check so that it happens after
-following "..".
+diff --git a/lib/Makefile b/lib/Makefile
+index 8c9647fa271a..12c479dd46e0 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -122,7 +122,6 @@ obj-$(CONFIG_ZLIB_INFLATE) += zlib_inflate/
+ obj-$(CONFIG_ZLIB_DEFLATE) += zlib_deflate/
+ obj-$(CONFIG_REED_SOLOMON) += reed_solomon/
+ obj-$(CONFIG_BCH) += bch.o
+-CFLAGS_bch.o := $(call cc-option,-Wframe-larger-than=4500)
+ obj-$(CONFIG_LZO_COMPRESS) += lzo/
+ obj-$(CONFIG_LZO_DECOMPRESS) += lzo/
+ obj-$(CONFIG_LZ4_COMPRESS) += lz4/
+diff --git a/lib/bch.c b/lib/bch.c
+index 7b0f2006698b..3ef1a3467e7b 100644
+--- a/lib/bch.c
++++ b/lib/bch.c
+@@ -79,20 +79,19 @@
+ #define GF_T(_p)               (CONFIG_BCH_CONST_T)
+ #define GF_N(_p)               ((1 << (CONFIG_BCH_CONST_M))-1)
+ #define BCH_MAX_M              (CONFIG_BCH_CONST_M)
++#define BCH_MAX_T	       (CONFIG_BCH_CONST_T)
+ #else
+ #define GF_M(_p)               ((_p)->m)
+ #define GF_T(_p)               ((_p)->t)
+ #define GF_N(_p)               ((_p)->n)
+-#define BCH_MAX_M              15
++#define BCH_MAX_M              15 /* 2KB */
++#define BCH_MAX_T              32 /* 32 bit correction */
+ #endif
+ 
+-#define BCH_MAX_T              (((1 << BCH_MAX_M) - 1) / BCH_MAX_M)
+-
+ #define BCH_ECC_WORDS(_p)      DIV_ROUND_UP(GF_M(_p)*GF_T(_p), 32)
+ #define BCH_ECC_BYTES(_p)      DIV_ROUND_UP(GF_M(_p)*GF_T(_p), 8)
+ 
+ #define BCH_ECC_MAX_WORDS      DIV_ROUND_UP(BCH_MAX_M * BCH_MAX_T, 32)
+-#define BCH_ECC_MAX_BYTES      DIV_ROUND_UP(BCH_MAX_M * BCH_MAX_T, 8)
+ 
+ #ifndef dbg
+ #define dbg(_fmt, args...)     do {} while (0)
+@@ -202,6 +201,9 @@ void encode_bch(struct bch_control *bch, const uint8_t *data,
+ 	const uint32_t * const tab3 = tab2 + 256*(l+1);
+ 	const uint32_t *pdata, *p0, *p1, *p2, *p3;
+ 
++	if (WARN_ON(r_bytes > sizeof(r)))
++		return;
++
+ 	if (ecc) {
+ 		/* load ecc parity bytes into internal 32-bit buffer */
+ 		load_ecc8(bch, bch->ecc_buf, ecc);
+-- 
+2.18.0
 
-(Also: I assume that you're going to get rid of that memory allocation
-in a future version.)
-
-> +                       if (IS_ERR_OR_NULL(pathptr)) {
-> +                               int error = PTR_ERR_OR_ZERO(pathptr);
-> +
-> +                               if (!error)
-> +                                       error = nd_jump_root(nd);
-> +                               return error;
-> +                       }
-> +               }
->                 if (nd->path.dentry != nd->path.mnt->mnt_root) {
->                         struct dentry *old = nd->path.dentry;
->                         struct dentry *parent = old->d_parent;
-> @@ -1510,6 +1531,27 @@ static int follow_dotdot(struct nameidata *nd)
->                                 return -EXDEV;
->                         break;
->                 }
-> +               if (unlikely((nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT)) &&
-> +                            (read_seqretry(&rename_lock, nd->r_seq) ||
-> +                             read_seqretry(&mount_lock, nd->m_seq)))) {
-> +                       char *pathbuf, *pathptr;
-> +
-> +                       nd->r_seq = read_seqbegin(&rename_lock);
-> +                       /* Cannot take m_seq here. */
-> +
-> +                       pathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
-> +                       if (!pathbuf)
-> +                               return -ENOMEM;
-> +                       pathptr = __d_path(&nd->path, &nd->root, pathbuf, PATH_MAX);
-> +                       kfree(pathbuf);
-> +                       if (IS_ERR_OR_NULL(pathptr)) {
-> +                               int error = PTR_ERR_OR_ZERO(pathptr);
-> +
-> +                               if (!error)
-> +                                       error = nd_jump_root(nd);
-> +                               return error;
-> +                       }
-> +               }
-
-Same problem as in the RCU case above.
-
->                 if (nd->path.dentry != nd->path.mnt->mnt_root) {
->                         int ret = path_parent_directory(&nd->path);
->                         if (ret)
-> @@ -2269,6 +2311,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
->         nd->last_type = LAST_ROOT; /* if there are only slashes... */
->         nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
->         nd->depth = 0;
-> +       nd->m_seq = read_seqbegin(&mount_lock);
-> +       nd->r_seq = read_seqbegin(&rename_lock);
-
-This means that now, attempting to perform a lookup while something is
-holding the rename_lock will spin on the lock. I don't know whether
-that's a problem in practice though. Does anyone on this thread know
-whether this is problematic?
