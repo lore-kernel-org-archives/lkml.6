@@ -2,284 +2,231 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8552BC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671C9C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD42208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD42208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 3133A208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3133A208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbeJEMmj (ORCPT
+        id S1727813AbeJEMmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 08:42:39 -0400
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:7145 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727179AbeJEMmi (ORCPT
+        Fri, 5 Oct 2018 08:42:42 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58731 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727179AbeJEMml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 08:42:38 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 05 Oct 2018 15:15:27 +0930
-Received: from discord.disaster.area ([192.168.1.111])
-        by dastard with esmtp (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1g8IvW-0003Ct-Lu; Fri, 05 Oct 2018 15:45:26 +1000
-Received: from dave by discord.disaster.area with local (Exim 4.91)
-        (envelope-from <david@fromorbit.com>)
-        id 1g8IvW-0005bZ-Kq; Fri, 05 Oct 2018 15:45:26 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH] writeback: fix range_cyclic writeback vs writepages deadlock
-Date:   Fri,  5 Oct 2018 15:45:26 +1000
-Message-Id: <20181005054526.21507-1-david@fromorbit.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 5 Oct 2018 08:42:41 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03290;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CzcxFOM_1538718299;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzcxFOM_1538718299)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Fri, 05 Oct 2018 13:44:59 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Cc:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V7 09/20] csky: VDSO and rt_sigreturn
+Date:   Fri,  5 Oct 2018 13:41:51 +0800
+Message-Id: <14bc5d01bfb0695175f9b1a8dc39a44f1e369feb.1538715563.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+This patch adds files related to VDSO and our VDSO only support
+rt_sigreturn.
 
-We've recently seen a workload on XFS filesystems with a repeatable
-deadlock between background writeback and a multi-process
-application doing concurrent writes and fsyncs to a small range of a
-file.
-
-range_cyclic
-writeback		Process 1		Process 2
-
-xfs_vm_writepages
-  write_cache_pages
-    writeback_index = 2
-    cycled = 0
-    ....
-    find page 2 dirty
-    lock Page 2
-    ->writepage
-      page 2 writeback
-      page 2 clean
-      page 2 added to bio
-    no more pages
-			write()
-			locks page 1
-			dirties page 1
-			locks page 2
-			dirties page 1
-			fsync()
-			....
-			xfs_vm_writepages
-			write_cache_pages
-			  start index 0
-			  find page 1 towrite
-			  lock Page 1
-			  ->writepage
-			    page 1 writeback
-			    page 1 clean
-			    page 1 added to bio
-			  find page 2 towrite
-			  lock Page 2
-			  page 2 is writeback
-			  <blocks>
-						write()
-						locks page 1
-						dirties page 1
-						fsync()
-						....
-						xfs_vm_writepages
-						write_cache_pages
-						  start index 0
-
-    !done && !cycled
-      sets index to 0, restarts lookup
-    find page 1 dirty
-						  find page 1 towrite
-						  lock Page 1
-						  page 1 is writeback
-						  <blocks>
-
-    lock Page 1
-    <blocks>
-
-DEADLOCK because:
-
-	- process 1 needs page 2 writeback to complete to make
-	  enough progress to issue IO pending for page 1
-	- writeback needs page 1 writeback to complete so process 2
-	  can progress and unlock the page it is blocked on, then it
-	  can issue the IO pending for page 2
-	- process 2 can't make progress until process 1 issues IO
-	  for page 1
-
-The underlying cause of the problem here is that range_cyclic
-writeback is processing pages in descending index order as we
-hold higher index pages in a structure controlled from above
-write_cache_pages(). The write_cache_pages() caller needs to
-be able to submit these pages for IO before write_cache_pages
-restarts writeback at mapping index 0 to avoid wcp inverting the
-page lock/writeback wait order.
-
-generic_writepages() is not susceptible to this bug as it has no
-private context held across write_cache_pages() - filesystems using
-this infrastructure always submit pages in ->writepage immediately
-and so there is no problem with range_cyclic going back to mapping
-index 0.
-
-However:
-	mpage_writepages() has a private bio context,
-	exofs_writepages() has page_collect
-	fuse_writepages() has fuse_fill_wb_data
-	nfs_writepages() has nfs_pageio_descriptor
-	xfs_vm_writepages() has xfs_writepage_ctx
-
-All of these ->writepages implementations can hold pages under
-writeback in their private structures until write_cache_pages()
-returns, and hence they are all susceptible to this deadlock.
-
-Also worth noting is that ext4 has it's own bastardised version of
-write_cache_pages() and so it /may/ have an equivalent deadlock. I
-looked at the code long enough to understand that it has a similar
-retry loop for range_cyclic writeback reaching the end of the file
-and then promptly ran away before my eyes bled too much.  I'll leave
-it for the ext4 developers to determine if their code is actually
-has this deadlock and how to fix it if it has.
-
-There's a few ways I can see avoid this deadlock. There's probably
-more, but these are the first I've though of:
-
-1. get rid of range_cyclic altogether
-
-2. range_cyclic always stops at EOF, and we start again from
-writeback index 0 on the next call into write_cache_pages()
-
-2a. wcp also returns EAGAIN to ->writepages implementations to
-indicate range cyclic has hit EOF. writepages implementations can
-then flush the current context and call wpc again to continue. i.e.
-lift the retry into the ->writepages implementation
-
-3. range_cyclic uses trylock_page() rather than lock_page(), and it
-skips pages it can't lock without blocking. It will already do this
-for pages under writeback, so this seems like a no-brainer
-
-3a. all non-WB_SYNC_ALL writeback uses trylock_page() to avoid
-blocking as per pages under writeback.
-
-I don't think #1 is an option - range_cyclic prevents frequently
-dirtied lower file offset from starving background writeback of
-rarely touched higher file offsets.
-
-#2 is simple, and I don't think it will have any impact on
-performance as going back to the start of the file implies an
-immediate seek. We'll have exactly the same number of seeks if we
-switch writeback to another inode, and then come back to this one
-later and restart from index 0.
-
-#2a is pretty much "status quo without the deadlock". Moving the
-retry loop up into the wcp caller means we can issue IO on the
-pending pages before calling wcp again, and so avoid locking or
-waiting on pages in the wrong order. I'm not convinced we need to do
-this given that we get the same thing from #2 on the next writeback
-call from the writeback infrastructure.
-
-#3 is really just a band-aid - it doesn't fix the access/wait
-inversion problem, just prevents it from becoming a deadlock
-situation. I'd prefer we fix the inversion, not sweep it under the
-carpet like this.
-
-#3a is really an optimisation that just so happens to include the
-band-aid fix of #3.
-
-So it seems that the simplest way to fix this issue is to implement
-solution #2
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.de>
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- mm/page-writeback.c | 33 +++++++++++++++------------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ arch/csky/abiv1/inc/abi/vdso.h | 17 +++++++++
+ arch/csky/abiv2/inc/abi/vdso.h | 23 +++++++++++
+ arch/csky/include/asm/vdso.h   | 12 ++++++
+ arch/csky/kernel/vdso.c        | 86 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 138 insertions(+)
+ create mode 100644 arch/csky/abiv1/inc/abi/vdso.h
+ create mode 100644 arch/csky/abiv2/inc/abi/vdso.h
+ create mode 100644 arch/csky/include/asm/vdso.h
+ create mode 100644 arch/csky/kernel/vdso.c
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 84ae9bf5858a..439a304a6c92 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2149,6 +2149,13 @@ EXPORT_SYMBOL(tag_pages_for_writeback);
-  * not miss some pages (e.g., because some other process has cleared TOWRITE
-  * tag we set). The rule we follow is that TOWRITE tag can be cleared only
-  * by the process clearing the DIRTY tag (and submitting the page for IO).
-+ *
-+ * To avoid deadlocks between range_cyclic writeback and callers that hold
-+ * pages in PageWriteback to aggregate IO until write_cache_pages() returns,
-+ * we do not loop back to the start of the file. Doing so causes a page
-+ * lock/page writeback access order inversion - we should only ever lock
-+ * multiple pages in ascending page->index order, and looping back to the start
-+ * of the file violates that rule and causes deadlocks.
-  */
- int write_cache_pages(struct address_space *mapping,
- 		      struct writeback_control *wbc, writepage_t writepage,
-@@ -2162,7 +2169,6 @@ int write_cache_pages(struct address_space *mapping,
- 	pgoff_t index;
- 	pgoff_t end;		/* Inclusive */
- 	pgoff_t done_index;
--	int cycled;
- 	int range_whole = 0;
- 	int tag;
- 
-@@ -2170,23 +2176,17 @@ int write_cache_pages(struct address_space *mapping,
- 	if (wbc->range_cyclic) {
- 		writeback_index = mapping->writeback_index; /* prev offset */
- 		index = writeback_index;
--		if (index == 0)
--			cycled = 1;
--		else
--			cycled = 0;
- 		end = -1;
- 	} else {
- 		index = wbc->range_start >> PAGE_SHIFT;
- 		end = wbc->range_end >> PAGE_SHIFT;
- 		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
- 			range_whole = 1;
--		cycled = 1; /* ignore range_cyclic tests */
- 	}
- 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
- 		tag = PAGECACHE_TAG_TOWRITE;
- 	else
- 		tag = PAGECACHE_TAG_DIRTY;
--retry:
- 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
- 		tag_pages_for_writeback(mapping, index, end);
- 	done_index = index;
-@@ -2272,17 +2272,14 @@ int write_cache_pages(struct address_space *mapping,
- 		pagevec_release(&pvec);
- 		cond_resched();
- 	}
--	if (!cycled && !done) {
--		/*
--		 * range_cyclic:
--		 * We hit the last page and there is more work to be done: wrap
--		 * back to the start of the file
--		 */
--		cycled = 1;
--		index = 0;
--		end = writeback_index - 1;
--		goto retry;
--	}
+diff --git a/arch/csky/abiv1/inc/abi/vdso.h b/arch/csky/abiv1/inc/abi/vdso.h
+new file mode 100644
+index 0000000..14352f5
+--- /dev/null
++++ b/arch/csky/abiv1/inc/abi/vdso.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
-+	/*
-+	 * If we hit the last page and there is more work to be done: wrap
-+	 * back the index back to the start of the file for the next
-+	 * time we are called.
-+	 */
-+	if (wbc->range_cyclic && !done)
-+		done_index = 0;
- 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
- 		mapping->writeback_index = done_index;
- 
++#include <linux/uaccess.h>
++
++static inline int setup_vdso_page(unsigned short *ptr)
++{
++	int err = 0;
++
++	/* movi r1, 127 */
++	err |= __put_user(0x67f1, ptr + 0);
++	/* addi r1, (139 - 127) */
++	err |= __put_user(0x20b1, ptr + 1);
++	/* trap 0 */
++	err |= __put_user(0x0008, ptr + 2);
++
++	return err;
++}
+diff --git a/arch/csky/abiv2/inc/abi/vdso.h b/arch/csky/abiv2/inc/abi/vdso.h
+new file mode 100644
+index 0000000..b60d4a0
+--- /dev/null
++++ b/arch/csky/abiv2/inc/abi/vdso.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ABI_CSKY_VDSO_H
++#define __ABI_CSKY_VDSO_H
++
++#include <linux/uaccess.h>
++
++static inline int setup_vdso_page(unsigned short *ptr)
++{
++	int err = 0;
++
++	/* movi r7, 173 */
++	err |= __put_user(0xea07, ptr);
++	err |= __put_user(0x008b,      ptr+1);
++
++	/* trap 0 */
++	err |= __put_user(0xc000,   ptr+2);
++	err |= __put_user(0x2020,   ptr+3);
++
++	return err;
++}
++
++#endif /* __ABI_CSKY_STRING_H */
+diff --git a/arch/csky/include/asm/vdso.h b/arch/csky/include/asm/vdso.h
+new file mode 100644
+index 0000000..d963d69
+--- /dev/null
++++ b/arch/csky/include/asm/vdso.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASM_CSKY_VDSO_H
++#define __ASM_CSKY_VDSO_H
++
++#include <abi/vdso.h>
++
++struct csky_vdso {
++	unsigned short rt_signal_retcode[4];
++};
++
++#endif /* __ASM_CSKY_VDSO_H */
+diff --git a/arch/csky/kernel/vdso.c b/arch/csky/kernel/vdso.c
+new file mode 100644
+index 0000000..60ff7ad
+--- /dev/null
++++ b/arch/csky/kernel/vdso.c
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/sched.h>
++#include <linux/mm.h>
++#include <linux/init.h>
++#include <linux/binfmts.h>
++#include <linux/elf.h>
++#include <linux/vmalloc.h>
++#include <linux/unistd.h>
++#include <linux/uaccess.h>
++
++#include <asm/vdso.h>
++#include <asm/cacheflush.h>
++
++static struct page *vdso_page;
++
++static int __init init_vdso(void)
++{
++	struct csky_vdso *vdso;
++	int err = 0;
++
++	vdso_page = alloc_page(GFP_KERNEL);
++	if (!vdso_page)
++		panic("Cannot allocate vdso");
++
++	vdso = vmap(&vdso_page, 1, 0, PAGE_KERNEL);
++	if (!vdso)
++		panic("Cannot map vdso");
++
++	clear_page(vdso);
++
++	err = setup_vdso_page(vdso->rt_signal_retcode);
++	if (err)
++		panic("Cannot set signal return code, err: %x.", err);
++
++	dcache_wb_range((unsigned long)vdso, (unsigned long)vdso + 16);
++
++	vunmap(vdso);
++
++	return 0;
++}
++subsys_initcall(init_vdso);
++
++int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++{
++	int ret;
++	unsigned long addr;
++	struct mm_struct *mm = current->mm;
++
++	down_write(&mm->mmap_sem);
++
++	addr = get_unmapped_area(NULL, STACK_TOP, PAGE_SIZE, 0, 0);
++	if (IS_ERR_VALUE(addr)) {
++		ret = addr;
++		goto up_fail;
++	}
++
++	ret = install_special_mapping(
++			mm,
++			addr,
++			PAGE_SIZE,
++			VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			&vdso_page);
++	if (ret)
++		goto up_fail;
++
++	mm->context.vdso = (void *)addr;
++
++up_fail:
++	up_write(&mm->mmap_sem);
++	return ret;
++}
++
++const char *arch_vma_name(struct vm_area_struct *vma)
++{
++	if (vma->vm_mm == NULL)
++		return NULL;
++
++	if (vma->vm_start == (long)vma->vm_mm->context.vdso)
++		return "[vdso]";
++	else
++		return NULL;
++}
 -- 
-2.17.0
+2.7.4
 
