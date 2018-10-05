@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14393C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA3DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14AF21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14AF21473
+	by mail.kernel.org (Postfix) with ESMTP id 67D652098A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67D652098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbeJFAEO (ORCPT
+        id S1729270AbeJFAEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 5 Oct 2018 20:04:14 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53819 "EHLO huawei.com"
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53820 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728021AbeJFAEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:04:13 -0400
+        id S1728900AbeJFAEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:04:14 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1F04CD57AB9FD;
+        by Forcepoint Email with ESMTP id 241F1FB978EA1;
         Sat,  6 Oct 2018 01:04:34 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 6 Oct 2018 01:04:28 +0800
+ 14.3.399.0; Sat, 6 Oct 2018 01:04:25 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 2/6] net: hns3: Clear mac vlan table entries when unload driver or function reset
-Date:   Fri, 5 Oct 2018 18:03:25 +0100
-Message-ID: <20181005170329.6512-3-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>,
+        Zhongzhu Liu <liuzhongzhu@huawei.com>
+Subject: [PATCH net-next 1/6] net: hns3: Remove the default mask configuration for mac vlan table
+Date:   Fri, 5 Oct 2018 18:03:24 +0100
+Message-ID: <20181005170329.6512-2-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181005170329.6512-1-salil.mehta@huawei.com>
 References: <20181005170329.6512-1-salil.mehta@huawei.com>
@@ -51,117 +52,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-In original codes, the mac vlan table entries are not cleared when
-unload hns3 driver. The dirty mac vlan table entries will make the
-result of looking up mac vlan table being unexpected.
+The default mask configuration has been done by firmware, so the driver
+doesn't need to do it any more.
 
-When doing core reset or global reset, the firmware will clear all
-the tables for driver, and driver shouldn't send any commands to
-firmware during reset. But when doing function reset, the driver
-needs to clear the tables itself.
-
-This patch clears the mac vlan table entries for each client when
-unload driver or reset.
-
+Signed-off-by: Zhongzhu Liu <liuzhongzhu@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 45 +++++++++++++++----------
- 1 file changed, 28 insertions(+), 17 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 10 -------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 32 ----------------------
+ 2 files changed, 42 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index c269256..d8b8ccf 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -21,6 +21,7 @@
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index e5e66b2..26fda05 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -177,7 +177,6 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_MAC_VLAN_INSERT	    = 0x1003,
+ 	HCLGE_OPC_MAC_ETHTYPE_ADD	    = 0x1010,
+ 	HCLGE_OPC_MAC_ETHTYPE_REMOVE	= 0x1011,
+-	HCLGE_OPC_MAC_VLAN_MASK_SET	= 0x1012,
  
- static void hns3_clear_all_ring(struct hnae3_handle *h);
- static void hns3_force_clear_all_rx_ring(struct hnae3_handle *h);
-+static void hns3_remove_hw_addr(struct net_device *netdev);
+ 	/* Multicast linear table commands */
+ 	HCLGE_OPC_MTA_MAC_MODE_CFG	    = 0x1020,
+@@ -591,15 +590,6 @@ struct hclge_mac_vlan_tbl_entry_cmd {
+ 	u8      rsv2[6];
+ };
  
- static const char hns3_driver_name[] = "hns3";
- const char hns3_driver_version[] = VERMAGIC_STRING;
-@@ -3155,15 +3156,6 @@ static void hns3_init_mac_addr(struct net_device *netdev, bool init)
- 
+-#define HCLGE_VLAN_MASK_EN_B		0
+-struct hclge_mac_vlan_mask_entry_cmd {
+-	u8 rsv0[2];
+-	u8 vlan_mask;
+-	u8 rsv1;
+-	u8 mac_mask[6];
+-	u8 rsv2[14];
+-};
+-
+ #define HCLGE_MAC_MGR_MASK_VLAN_B		BIT(0)
+ #define HCLGE_MAC_MGR_MASK_MAC_B		BIT(1)
+ #define HCLGE_MAC_MGR_MASK_ETHERTYPE_B		BIT(2)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 21ca4af..0106c1b 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1939,36 +1939,11 @@ static int hclge_get_autoneg(struct hnae3_handle *handle)
+ 	return hdev->hw.mac.autoneg;
  }
  
--static void hns3_uninit_mac_addr(struct net_device *netdev)
+-static int hclge_set_default_mac_vlan_mask(struct hclge_dev *hdev,
+-					   bool mask_vlan,
+-					   u8 *mac_mask)
 -{
--	struct hns3_nic_priv *priv = netdev_priv(netdev);
--	struct hnae3_handle *h = priv->ae_handle;
+-	struct hclge_mac_vlan_mask_entry_cmd *req;
+-	struct hclge_desc desc;
+-	int status;
 -
--	if (h->ae_algo->ops->rm_uc_addr)
--		h->ae_algo->ops->rm_uc_addr(h, netdev->dev_addr);
+-	req = (struct hclge_mac_vlan_mask_entry_cmd *)desc.data;
+-	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_MAC_VLAN_MASK_SET, false);
+-
+-	hnae3_set_bit(req->vlan_mask, HCLGE_VLAN_MASK_EN_B,
+-		      mask_vlan ? 1 : 0);
+-	ether_addr_copy(req->mac_mask, mac_mask);
+-
+-	status = hclge_cmd_send(&hdev->hw, &desc, 1);
+-	if (status)
+-		dev_err(&hdev->pdev->dev,
+-			"Config mac_vlan_mask failed for cmd_send, ret =%d\n",
+-			status);
+-
+-	return status;
 -}
 -
- static int hns3_restore_fd_rules(struct net_device *netdev)
+ static int hclge_mac_init(struct hclge_dev *hdev)
  {
- 	struct hnae3_handle *h = hns3_get_handle(netdev);
-@@ -3296,6 +3288,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
- 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae3_handle *handle = &hdev->vport[0].nic;
+ 	struct net_device *netdev = handle->kinfo.netdev;
+ 	struct hclge_mac *mac = &hdev->hw.mac;
+-	u8 mac_mask[ETH_ALEN] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+ 	struct hclge_vport *vport;
+ 	int mtu;
  	int ret;
+@@ -2011,13 +1986,6 @@ static int hclge_mac_init(struct hclge_dev *hdev)
+ 		}
+ 	}
  
-+	hns3_remove_hw_addr(netdev);
-+
- 	if (netdev->reg_state != NETREG_UNINITIALIZED)
- 		unregister_netdev(netdev);
- 
-@@ -3319,8 +3313,6 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
- 
- 	priv->ring_data = NULL;
- 
--	hns3_uninit_mac_addr(netdev);
+-	ret = hclge_set_default_mac_vlan_mask(hdev, true, mac_mask);
+-	if (ret) {
+-		dev_err(&hdev->pdev->dev,
+-			"set default mac_vlan_mask fail ret=%d\n", ret);
+-		return ret;
+-	}
 -
- 	free_netdev(netdev);
- }
- 
-@@ -3392,6 +3384,25 @@ static void hns3_recover_hw_addr(struct net_device *ndev)
- 		hns3_nic_mc_sync(ndev, ha->addr);
- }
- 
-+static void hns3_remove_hw_addr(struct net_device *netdev)
-+{
-+	struct netdev_hw_addr_list *list;
-+	struct netdev_hw_addr *ha, *tmp;
-+
-+	hns3_nic_uc_unsync(netdev, netdev->dev_addr);
-+
-+	/* go through and unsync uc_addr entries to the device */
-+	list = &netdev->uc;
-+	list_for_each_entry_safe(ha, tmp, &list->list, list)
-+		hns3_nic_uc_unsync(netdev, ha->addr);
-+
-+	/* go through and unsync mc_addr entries to the device */
-+	list = &netdev->mc;
-+	list_for_each_entry_safe(ha, tmp, &list->list, list)
-+		if (ha->refcount > 1)
-+			hns3_nic_mc_unsync(netdev, ha->addr);
-+}
-+
- static void hns3_clear_tx_ring(struct hns3_enet_ring *ring)
- {
- 	while (ring->next_to_clean != ring->next_to_use) {
-@@ -3637,14 +3648,14 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
- 	if (ret)
- 		netdev_err(netdev, "uninit ring error\n");
- 
--	hns3_uninit_mac_addr(netdev);
--
--	/* it is cumbersome for hardware to pick-and-choose rules for deletion
--	 * from TCAM. Hence, for function reset software intervention is
--	 * required to delete the rules
-+	/* it is cumbersome for hardware to pick-and-choose entries for deletion
-+	 * from table space. Hence, for function reset software intervention is
-+	 * required to delete the entries
- 	 */
--	if (hns3_dev_ongoing_func_reset(ae_dev))
-+	if (hns3_dev_ongoing_func_reset(ae_dev)) {
-+		hns3_remove_hw_addr(netdev);
- 		hns3_del_all_fd_rules(netdev, false);
-+	}
- 
- 	return ret;
- }
+ 	if (netdev)
+ 		mtu = netdev->mtu;
+ 	else
 -- 
 2.7.4
 
