@@ -2,140 +2,86 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB0BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA16C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 689FC2098A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:28:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="BM13Ne8c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689FC2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 1C72F208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:29:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C72F208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbeJEOZa (ORCPT
+        id S1728368AbeJEO1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:25:30 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35270 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728046AbeJEOZa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:25:30 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y19-v6so10797158edd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 00:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KQ1GeMVz2juF99OWvXYc8Hv1KZu82su4MZuApU1kMGE=;
-        b=BM13Ne8cvZXBjtOSUfHejJAf0LMMenia7Jr5T1XTN/epN8LcNRJS0gzq3KH1/mbZoz
-         wur3yBIqt9Id9WXtMvIBXZ16x5zrDAtyKH1I4Hm0vPu9vF6XFIUbkjA5uCOWC4gXlCIk
-         NvTo2RAWJNwRpQQ6MI7mXcoAKFGQt5Xu1VhY8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=KQ1GeMVz2juF99OWvXYc8Hv1KZu82su4MZuApU1kMGE=;
-        b=HfKBmfo9tH5wY0A8LLr4xIIEE0zFvFmPfvsE0Ky2xrzCWPLqMRKlD3dYbJs9zxDtbe
-         fc8SaSPuwgDjAK4IpCUQj+HXuvsz3SQ8IE/AwCZ4yYfFqQQI5kgBbHzzViXyxUmaZzhK
-         GEEO2yuwMQwi2KL0HQyA6WNXtv+vqWrq5MEaNWzoIILjryZtIT5iA5oNv7PG34BHtB5n
-         wnmvaoQWgzbr98abgtZgJ79Ee5LeBQpONsuXxLo0lKq8GYTrHAq4DR0OO8LXc2EjewuD
-         lvh3bgI9jUSmrmD7CFjWJBkCQdPPCn/7ZE0yGQvjgI989CQDZg5+zeVdHarxpljfaCNd
-         BwLg==
-X-Gm-Message-State: ABuFfojm9abaOAYckMIQp8JyV1FVhF9Xa4bX6VCYRikZkVVQzXLaBNNV
-        8R/dgeN3uLAfx9C36+p+hV7iGQ==
-X-Google-Smtp-Source: ACcGV62r6d9JS6guhz3TOxITry4myReTbQ3hxoPbDM1XHt5fks+8RPbx/WadwwPBUXiIl4pU43GKDA==
-X-Received: by 2002:a50:a2a6:: with SMTP id 35-v6mr12681674edm.276.1538724483518;
-        Fri, 05 Oct 2018 00:28:03 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm2123227edi.68.2018.10.05.00.28.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 00:28:02 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 09:28:00 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        stable@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] drm/i915: Fix intel_dp_mst_best_encoder()
-Message-ID: <20181005072800.GX31561@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>, stable@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-References: <20181005002956.7317-1-lyude@redhat.com>
- <20181005002956.7317-6-lyude@redhat.com>
+        Fri, 5 Oct 2018 10:27:19 -0400
+Received: from mga01.intel.com ([192.55.52.88]:17798 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727768AbeJEO1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 10:27:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 00:29:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,343,1534834800"; 
+   d="scan'208";a="85926053"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Oct 2018 00:29:46 -0700
+Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
+        by linux.intel.com (Postfix) with ESMTP id 417F75801E6;
+        Fri,  5 Oct 2018 00:29:44 -0700 (PDT)
+Subject: Re: [PATCH v9 1/3]: perf util: map data buffer for preserving
+ collected data
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+References: <ded47c34-9e92-6bd2-9522-a927a7237011@linux.intel.com>
+ <785396a7-1004-5705-f336-6bf73f981f44@linux.intel.com>
+ <20181005062323.GB3768@sejong>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b7e3f9be-152c-b038-96fa-3792a84b9347@linux.intel.com>
+Date:   Fri, 5 Oct 2018 10:29:43 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005002956.7317-6-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181005062323.GB3768@sejong>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 08:29:54PM -0400, Lyude Paul wrote:
-> Currently, i915 appears to rely on blocking modesets on
-> no-longer-present MSTB ports by simply returning NULL for
-> ->best_encoder(), which in turn causes any new atomic commits that don't
-> disable the CRTC to fail. This is wrong however, since we still want to
-> allow userspace to disable CRTCs on no-longer-present MSTB ports by
-> changing the DPMS state to off and this still requires that we retrieve
-> an encoder.
-> 
-> So, fix this by always returning a valid encoder regardless of the state
-> of the MST port.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: stable@vger.kernel.org
-> 
-> Changes since v1:
-> - Remove mst atomic helper, since this got replaced with a much simpler
->   solution
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+Hi,
 
-With the obvious rebase onto my bikeshed for patch 3:
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  drivers/gpu/drm/i915/intel_dp_mst.c | 2 --
->  1 file changed, 2 deletions(-)
+On 05.10.2018 9:23, Namhyung Kim wrote:
+<SNIP>
+> On Wed, Oct 03, 2018 at 07:01:26PM +0300, Alexey Budankov wrote:
+<SNIP>
+>> +#ifdef HAVE_AIO_SUPPORT
+>> +	map->nr_cblocks = mp->nr_cblocks;
+>> +	if (map->nr_cblocks) {
+>> +		map->data = malloc(perf_mmap__mmap_len(map));
+>> +		if (!map->data) {
+>> +			pr_debug2("failed to allocate data buffer, error %d\n",
+>> +					errno);
 > 
-> diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-> index a366f32b048a..daade60c5714 100644
-> --- a/drivers/gpu/drm/i915/intel_dp_mst.c
-> +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-> @@ -407,8 +407,6 @@ static struct drm_encoder *intel_mst_atomic_best_encoder(struct drm_connector *c
->  	struct intel_dp *intel_dp = intel_connector->mst_port;
->  	struct intel_crtc *crtc = to_intel_crtc(state->crtc);
->  
-> -	if (intel_connector->mst_port_gone)
-> -		return NULL;
->  	return &intel_dp->mst_encoders[crtc->pipe]->base.base;
->  }
->  
-> -- 
-> 2.17.1
-> 
+> I guess the error code is not very useful than the message.  But in
+> this case it's probably ENOMEM so we can simply omit it.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Possibly like this:
+			pr_debug2("failed to allocate data buffer, error %d: %s\n",
+					errno, strerror(errno));
+would be more informative.
+
+Thanks,
+Alexey
