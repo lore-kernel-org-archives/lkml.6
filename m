@@ -2,211 +2,111 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CCCC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BEFC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C03920834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2382E20834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:52:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="Q8xLVqmu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C03920834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzw7wKRA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2382E20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbeJENtN (ORCPT
+        id S1727953AbeJENt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 09:49:13 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40116 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727711AbeJENtM (ORCPT
+        Fri, 5 Oct 2018 09:49:56 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46168 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727025AbeJENt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:49:12 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z204-v6so794029wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 23:51:54 -0700 (PDT)
+        Fri, 5 Oct 2018 09:49:56 -0400
+Received: by mail-lf1-f66.google.com with SMTP id z144-v6so65972lff.13;
+        Thu, 04 Oct 2018 23:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4rTiDMhrNIVz3kNhO6rNZIxtTCiB8NL5jDSncByUcJc=;
-        b=Q8xLVqmuCDmjbdRqFEkaL4HLE8sGrvIhhhI70NZyswWREgC8eT/QNor1IZbXm6amcH
-         WeVAsu3Ehri48QkGsqhDgCXLtV8otkoto+OQtCgHUUxmF7EdgxPQW+NyiT6p+X3sXkQ8
-         mmU20h5BUk09bN3nNv5b0sl8wmT6cSTOPKENZIx4CoBSVBk6kE9mCtOgt8NJQ5E4LgFF
-         VgA8rN7jqWIm3Cq4kXNuspRGzQU1GcJuPqw8HYtKl/F/gvNzNma7PHsgcsfGi1DP+5MP
-         armwKSbJaFLqbuASXCL/y+FSTmp+rXMBEzdpAsrNIlS02AAYP4noQko72QaLrfJdmSqP
-         P8Qw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jt1XDUkDJwjd+wVG3yNiiUeavAxUfRp14JEm3JIWDV4=;
+        b=mzw7wKRA24PHiDL0fygryCgGa3/JsjOchyQ6MuwFNdSPtUd3D8Zw3Xa+LZtHEWpMWa
+         hvYYLvLPa91hYtiz/BaRWrbNHRQKbGoJZRC98FtPtwwWkp7YzPCFxAcyMgYdYOw+6ccp
+         oVg9h0u0SedeaZ8JFjhqLX7nLEFGFGivCtBLbbFmS3rOrDl6g1uSP/Mr8d3WnTTp4La4
+         mYQunDjJ20nYfWk6W1cTUywndUAybb4ZJ8ssoVI1JnaxYYyEUk+wWgt+WGVdW0QsHGF5
+         HFhQ4vMFeuSPGuYBKwZtEwBIna34T66cfHqNsHsB+nsWZ7toV6pdmeNTEr/AaClXS3OW
+         hdAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4rTiDMhrNIVz3kNhO6rNZIxtTCiB8NL5jDSncByUcJc=;
-        b=MEt+yjm04M3VQ3y06oFSkpi7qCinHaWqLvTLgIS2VtEh08wYtt0kfTOOjD26x6LVyL
-         rXlFLS0qYRjWcGyrggrDzsOb4zLrO+XgNk1v/8CQHe1JGgzLYNG83I3vKLLmcwB8YiQV
-         amRLgAsTXU6gdJpobvZXxMbdMXPa1vCGWXxw+KQfmY7ESBfbLLF26P+iO4vQj3zeObr9
-         wNadar/SHeUcni8cgNTBOP7fHXffxdN8pjFt+5WguKc8gPzaI2WoQfPyF4yfgWRYeuCT
-         APgCq+VopKBoNJHtPA9Bi2LuZJxoOiR33XyuA1HitvDmVqCkuDSED18GQxgyWwrpqG+b
-         KYEw==
-X-Gm-Message-State: ABuFfoj/b4hcrGZ2suUIgx6uNjq5T1DdcqXUUXqLdpkNvNkqCSmGyFkH
-        XK8NbvUH4LZwimhdi+XRA52P7A==
-X-Google-Smtp-Source: ACcGV60NvkRQjO8sylLQFoOuQNpqKnf7HGrfnH43itUnrd5Gh/AQ4llnpxGLRhmhr6WzaKPlDlopIA==
-X-Received: by 2002:a1c:dc0a:: with SMTP id t10-v6mr6783014wmg.105.1538722313242;
-        Thu, 04 Oct 2018 23:51:53 -0700 (PDT)
-Received: from localhost (jirka.pirko.cz. [84.16.102.26])
-        by smtp.gmail.com with ESMTPSA id 62-v6sm8487227wra.48.2018.10.04.23.51.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 23:51:52 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 08:46:37 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Chas Williams <3chas3@gmail.com>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Jan Blunck <jblunck@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
-Subject: Re: [PATCH] team: set IFF_SLAVE on team ports
-Message-ID: <20181005064637.GA3061@nanopsycho.orion>
-References: <20150710064147.GA2204@nanopsycho.orion>
- <c674e681-9f7f-85c2-a578-a246d1ec9f45@gmail.com>
- <20180930071414.GF2209@nanopsycho.orion>
- <20180930113805.3b8e62a1@shemminger-XPS-13-9360>
- <20180930093452.GG2209@nanopsycho.orion>
- <b3cf1799-7ee2-47b3-e9ed-98e41ae56853@gmail.com>
- <20181002111215.GA2222@nanopsycho>
- <d87d05cd-bd35-4551-4c6c-44409b92dd5b@gmail.com>
- <20181003104436.GB2222@nanopsycho>
- <526bd655-5816-69dd-ac75-bdd4f85f1ce9@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jt1XDUkDJwjd+wVG3yNiiUeavAxUfRp14JEm3JIWDV4=;
+        b=I1y3Hx6Kz7JzarQ2NWt363GnPxC9Rz9TmXeNQy6BG5ilQTMYnoSfGkuDWuc78YySav
+         PzLXo1Btgh5wHFHFSsy6EtHqF3wioDu+MkizJmE5ecelY3YCUDwEr7Yill4uh23BubQN
+         ayBXS9IWNxYEunu7tVUcvryrEkD2BNHW9IIXo0puJe5xpA915KPg6wEKVWvkgFQ9UJGR
+         JI8p00SM342PfWmWjH+fLILD38j3y4uAAbp773ILOQTyL3Fbx+B8mYPtsiDG5XPpRqPw
+         S08BhX7nxcYOZXn27xVECfR9PBgVQP7PjR66l464I4tWN++jr0wMa85jqjJeAoJucdDM
+         kIew==
+X-Gm-Message-State: ABuFfogEu9BmE8dduodpRS0gGWvAnNAHLOwOkFiJS9TKnL1ESIVQqch7
+        MxCTvktbdtHdzwdVIxxCUBGPKE2nXsVGAFeCQN0=
+X-Google-Smtp-Source: ACcGV61et6KjDNUGkjYfqMmFovNGlFDlehTto44c+dNdzdBH+6uFBLSYPZc2js40ezZCzdTYQEVMDg8diVUdXl1kEuc=
+X-Received: by 2002:a19:d408:: with SMTP id l8-v6mr5980703lfg.25.1538722357206;
+ Thu, 04 Oct 2018 23:52:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <526bd655-5816-69dd-ac75-bdd4f85f1ce9@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
+ <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org> <da760bcf-4716-e685-1ce4-1dbc6eb7c272@codeaurora.org>
+In-Reply-To: <da760bcf-4716-e685-1ce4-1dbc6eb7c272@codeaurora.org>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Fri, 5 Oct 2018 08:52:20 +0200
+Message-ID: <CAPybu_1qqdffE4K2BonCV0X_eYY+or6NSK9Bbco9A68N9aasVw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] gpiolib: Show correct direction from the beginning
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Timur Tabi <timur@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, Oct 03, 2018 at 07:30:06PM CEST, 3chas3@gmail.com wrote:
+Hi
+On Fri, Oct 5, 2018 at 12:26 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
 >
+> On 10/2/2018 9:21 AM, Jeffrey Hugo wrote:
+> > On 10/2/2018 8:08 AM, Ricardo Ribalda Delgado wrote:
+> >> Current code assumes that the direction is input if direction_input
+> >> function is set.
+> >> This might not be the case on GPIOs with programmable direction.
+> >>
+> >> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> >
+> > I'll try to get this series tested on QDF2400 by the end of the week.
 >
->On 10/03/18 06:44, Jiri Pirko wrote:
->> Tue, Oct 02, 2018 at 11:20:25PM CEST, 3chas3@gmail.com wrote:
->> > 
->> > 
->> > On 10/02/18 07:12, Jiri Pirko wrote:
->> > > Mon, Oct 01, 2018 at 04:06:16PM CEST, 3chas3@gmail.com wrote:
->> > > > 
->> > > > 
->> > > > On 09/30/18 05:34, Jiri Pirko wrote:
->> > > > > Sun, Sep 30, 2018 at 11:38:05AM CEST, stephen@networkplumber.org wrote:
->> > > > > > On Sun, 30 Sep 2018 09:14:14 +0200
->> > > > > > Jiri Pirko <jiri@resnulli.us> wrote:
->> > > > > > 
->> > > > > > > Thu, Sep 27, 2018 at 04:04:26PM CEST, 3chas3@gmail.com wrote:
->> > > > > > > > 
->> > > > > > > > 
->> > > > > > > > On 07/10/15 02:41, Jiri Pirko wrote:
->> > > > > > > > > Thu, Jul 09, 2015 at 05:36:55PM CEST, jblunck@infradead.org wrote:
->> > > > > > > > > > On Thu, Jul 9, 2015 at 12:07 PM, Jiri Pirko <jiri@resnulli.us> wrote:
->> > > > > > > > > > > Thu, Jul 09, 2015 at 11:58:34AM CEST, jblunck@infradead.org wrote:
->> > > > > > > > > > > > The code in net/ipv6/addrconf.c:addrconf_notify() tests for IFF_SLAVE to
->> > > > > > > > > > > > decide if it should start the address configuration. Since team ports
->> > > > > > > > > > > > shouldn't get link-local addresses assigned lets set IFF_SLAVE when linking
->> > > > > > > > > > > > a port to the team master.
->> > > > > > > > > > > 
->> > > > > > > > > > > I don't want to use IFF_SLAVE in team. Other master-slave devices are
->> > > > > > > > > > > not using that as well, for example bridge, ovs, etc.
->> > > > > > > > > > 
->> > > > > > > > > > Maybe they need to get fixed too. I've used that flag because it is
->> > > > > > > > > > documented as
->> > > > > > > > > > a "slave of a load balancer" which describes what a team port is.
->> > > > > > > > > > 
->> > > > > > > > > > > I think that this should be fixed in addrconf_notify. It should lookup
->> > > > > > > > > > > if there is a master on top and bail out in that case.
->> > > > > > > > > > 
->> > > > > > > > > > There are other virtual interfaces that have a master assigned and want to
->> > > > > > > > > > participate in IPv6 address configuration.
->> > > > > > > > > 
->> > > > > > > > > Can you give me an example?
->> > > > > > > > 
->> > > > > > > > I would like to revisit this patch (yes, I know it has been a while).  I
->> > > > > > > > believe the VRF implementation uses master to group the interfaces under
->> > > > > > > > a single interface.
->> > > > > > > > 
->> > > > > > > > I don't see a reason not to use IFF_SLAVE since team and bonding are fairly
->> > > > > > > > similar.
->> > > > > > > 
->> > > > > > > Again, why do you need team port to have IFF_SLAVE flag? What do you
->> > > > > > > want to achieve
->> > > > > > 
->> > > > > > Without setting this flag IPv6 will try and make a link specific address.
->> > > 
->> > > You are talking about addrconf_notify() right? Easy to fix to check
->> > > something more convenient. Like netif_is_lag_port() if you want to avoid
->> > > it for bond/team. netif_is_ovs_port(), netif_is_bridge_port() etc. Lot's
->> > > of helpers to cover this.
->> > 
->> > OK, IPv6 should probably be using this.
->> > 
->> > > 
->> > > 
->> > > 
->> > > > > 
->> > > > > Why is it not an issue with bridge, ovs, and other master-slave devices?
->> > > > > 
->> > > > 
->> > > > It very well might be an issue for bridge and ovs.  Other master-slave
->> > > > devices include the existing VRF implementation in the kernel and those slave
->> > > > interfaces will certainly want to use IPv6.
->> > > > 
->> > > > However, IFF_SLAVE has a specific meaning:
->> > > > 
->> > > > ./include/uapi/linux/if.h: * @IFF_SLAVE: slave of a load balancer. Volatile.
->> > > 
->> > > I know that some userspace apps are using this flag to determine a
->> > > "bonding slave". I don't think that they care much about eql...
->> > > 
->> > > 
->> > > > 
->> > > > The bonding driver is not the only user:
->> > > > 
->> > > > ./drivers/net/eql.c:#define eql_is_slave(dev)	((dev->flags & IFF_SLAVE) ==
->> > > > IFF_SLAVE)
->> > > > ./drivers/net/eql.c:	slave->dev->flags &= ~IFF_SLAVE;
->> > > > ./drivers/net/eql.c:		slave->dev->flags |= IFF_SLAVE;
->> > > > 
->> > > > The team driver would like to use this same flag since it is a load balancer
->> > > > as well.  The side effect of not assigning IPv6 is a bonus. The fact that
->> > > 
->> > > No, please leave IFF_SLAVE as it is. Both kernel and userspace have
->> > > their clear indications right now about the master/slave relationships.
->> > 
->> > The team driver does create a master/slave relationship.  The team slaves are
->> > literally slaves of the master device.  It's not clear to me
->> > why you we can't mark the slaves of the team master as actually being
->> > slave interfaces?
->> 
->> So? IFF_SLAVE flag serves a different purpose. That's it. Team does not
->> need it, bridge does not need it, macvlan does not need it, etc.
+> 1-2/3 (v3) and 3/3 (v4) still fails.  Same issue.  Attempting to access
+> config registers for GPIO 0 when the OS is not allowed to do that.
 >
->I agree.  But team *is* a load balancer.  Why can't team mark its slave
->interfaces as IFF_SLAVE?  They are literally slaves of a load balancer which
->is the exact meaning of the IFF_SLAVE flag.
 
-I described that multiple times, don't want to repeat myself. Please
-read the thread again.
+I think that I might found the bug. if gpio-reserved-ranges was
+present the initialization was lost.
 
->
->> 
->> 
->> > 
->> > > 
->> > > 
->> > > > bridges and ovs are also likely broken is a different issue.  Should there be
->> > > > a another flag that says "layer 2 only"?  Very possibly, but that is
->> > > > something all these interfaces should be using to include bonding, team, eql,
->> > > > obs, bridge etc.  That's not a reasonable objection to labeling the team
->> > > > slave as slaves since they are literally slaves of a load balancer.
->> > > > 
->> > > > 
->> > > > 
+Can you try with v5
+
+Thanks for your help
+
+> --
+> Jeffrey Hugo
+> Qualcomm Datacenter Technologies as an affiliate of Qualcomm
+> Technologies, Inc.
+> Qualcomm Technologies, Inc. is a member of the
+> Code Aurora Forum, a Linux Foundation Collaborative Project.
+
+
+
+-- 
+Ricardo Ribalda
