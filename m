@@ -2,157 +2,111 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5183BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6CBC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F09B020875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:14:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="UFWbQcbW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F09B020875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 0781B20875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:15:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0781B20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeJEOMI (ORCPT
+        id S1728221AbeJEOMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:12:08 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39733 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbeJEOMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:12:07 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h4-v6so10743917edi.6
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 00:14:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X9OUUPlPUIYd359pCrRelujMeGdy2teGRul9Hg6ZvQ0=;
-        b=UFWbQcbWoIXgm82NeLiC6TyIjiMbLOXMsfkugusDRjourRVkl+VMV1WN+PaVWNvj9s
-         PaDpbYfOaYL1eAV0b4V0Rujx2wnmtEvIPYDC1Gmj9VoL8FclYmj0Pk8TWpE/gPPc2sue
-         TXdasSsN2viiJZj8zMVlbToX3voMwH32kEMcA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=X9OUUPlPUIYd359pCrRelujMeGdy2teGRul9Hg6ZvQ0=;
-        b=uAvxaeUMLz9QnKrPpccleE9BBmAL5+jEK2Gb3JAg9b8szzKJoz914Dsds3yGwUAwpi
-         6HDp5+FjUy8Q38gtwcTUiLzUBw4KKPXDew2OLbavod1QrWUZ8rO+3OdsoJHW2SnK1VBU
-         33bN5lLQ6exxXWrllp0LgZhJpnADdN8BpQBQIPxZnbmcIDqrrdpAQS0/rM+FXdImkmGY
-         Ul0TdxBTDmLonZTwxNcIXmaEIv5kKIm0fOSKX2zXQgd2JMiebrTxSMl4mpR3NjU6RvxW
-         A+ouOvpOvPZiKpWGoICI6R5GNUQbKrU1WWyR4poiZUgbSQXKbYJkd/xiQGH1zIsYmwVn
-         6zJg==
-X-Gm-Message-State: ABuFfohaxvBfS6bHNaJs6382QgIewLAW6IY2iLVh0527M2V4hjHBBOLk
-        L21j8FSR5HJIPnBm73KWC9KhKg==
-X-Google-Smtp-Source: ACcGV602WQTL/znw/FlMwD2w4wFEQ8jxaOOo+x9tP7yBS5Z8iT8QcaCM8mHSB6KqcpSYQYYALNvEYQ==
-X-Received: by 2002:a17:906:6812:: with SMTP id k18-v6mr10090737ejr.47.1538723683180;
-        Fri, 05 Oct 2018 00:14:43 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d23-v6sm2026355eds.47.2018.10.05.00.14.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 00:14:42 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 09:14:40 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Thierry Reding <treding@nvidia.com>,
+        Fri, 5 Oct 2018 10:12:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50818 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727036AbeJEOMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 10:12:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6B476ABDC;
+        Fri,  5 Oct 2018 07:14:57 +0000 (UTC)
+Date:   Fri, 05 Oct 2018 09:14:57 +0200
+Message-ID: <s5hmurskgpa.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Nicolas Herochao <nicolas@herochao.de>
+Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] drm/nouveau: Fix nv50_mstc->best_encoder()
-Message-ID: <20181005071440.GU31561@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>, stable@vger.kernel.org,
-        Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org
-References: <20181005002956.7317-1-lyude@redhat.com>
- <20181005002956.7317-3-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005002956.7317-3-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: Re: [PATCH] ALSA: usb-audio: update quirk for B&W PX to remove microphone
+In-Reply-To: <f1db1306-7156-7d0e-7b71-b8b1b43e840f@herochao.de>
+References: <20181004144205.18153-1-nicolas@herochao.de>
+        <s5h7eixl9d9.wl-tiwai@suse.de>
+        <f1db1306-7156-7d0e-7b71-b8b1b43e840f@herochao.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 08:29:51PM -0400, Lyude Paul wrote:
-> As mentioned in the previous commit, we currently prevent new modesets
-> on recently-removed MST connectors by returning no encoder from our
-> ->best_encoder() callback once the MST port has disappeared. This is
-> wrong however, because it prevents legacy modesetting users from being
-> able to disable CRTCs on MST connectors after the connector's respective
-> topology has disappeared.
+On Fri, 05 Oct 2018 00:31:47 +0200,
+Nicolas Herochao wrote:
 > 
-> So, fix this by instead by just always returning a valid encoder.
+> Hey, Thanks for the quick response
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: stable@vger.kernel.org
+> Am 04.10.18 um 22:55 CEST schrieb Takashi Iwai:
 > 
-> Changes since v2:
-> - Remove usage of atomic MST helper for now, since that got replaced
->   with a much simpler solution
+> > On Thu, 04 Oct 2018 16:42:05 +0200,
+> > Nicolas Huaman wrote:
+> >> A quirk in snd-usb-audio was added to automate setting sample rate to
+> >> 4800k and remove the previously exposed nonfunctional microphone for
+> >> the Bowers & Wilkins PX:
+> >> commit 240a8af929c7c57dcde28682725b29cf8474e8e5
+> >> https://lore.kernel.org/patchwork/patch/919689/
+> >>
+> >> However the headphones where updated shortly after that to remove the
+> >> unintentional microphone functionality. I guess because of this the
+> >> headphones now crash when connecting them via USB while the quirk is
+> >> active. Dmesg:
+> >>
+> >> snd-usb-audio: probe of 2-3:1.0 failed with error -22
+> >> usb 2-3: 2:1: cannot get min/max values for control 2 (id 2)
+> >>
+> >> This patch removes the microfone and allows the headphones to connect
+> >> and work out of the box. It is based on the current mainline kernel
+> >>   and successfully applied an tested on my machine (4.18.10.arch1-1).
+> >>
+> >> Signed-off-by: Nicolas Huaman <nicolas@herochao.de>
+> > Thanks, that looks much better now, and I can apply it.
+> >
+> > But just to be sure: is any quirk required after the firmware update
+> > on this device at all?  What happens if you remove the whole quirk?
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Yes, the sample-rate problem is still present. I initially tried
+> disabling the quirk, but then I needed to set the default sample rate
+> of pulse to 48k again for the headphones to play sound, which is why I
+> wanted to find out how to fix it completely.
+> 
+> This problem doesn't appear on windows (I think windows defaults to
+> 48k?). Perhaps that's the reason why it wasn't patched in a firmware
+> update up until now.
+> 
+> > If this modified quirk is still mandatory, I'll happily apply the
+> > patch.
+> >
+> >
+> > thanks,
+> >
+> > Takashi
+> 
+> The headphones I got already had the fixed firmware version, but even
+> older headphones can be updated using Android, IOS or Windows.
+> 
+> My Fix corrects detection for headphones with all Firmware after
+> February 2018, so I think this quirk probably presents the best
+> solution for now, especially since the nonfunctional microphone of
+> older Firmware appeared on all platforms.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Fair enough, I merged the patch now.
+Thanks!
 
-> ---
->  drivers/gpu/drm/nouveau/dispnv50/disp.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> index 5691dfa1db6f..63a23a80f279 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> @@ -843,22 +843,16 @@ nv50_mstc_atomic_best_encoder(struct drm_connector *connector,
->  {
->  	struct nv50_head *head = nv50_head(connector_state->crtc);
->  	struct nv50_mstc *mstc = nv50_mstc(connector);
-> -	if (mstc->port) {
-> -		struct nv50_mstm *mstm = mstc->mstm;
-> -		return &mstm->msto[head->base.index]->encoder;
-> -	}
-> -	return NULL;
-> +
-> +	return &mstc->mstm->msto[head->base.index]->encoder;
->  }
->  
->  static struct drm_encoder *
->  nv50_mstc_best_encoder(struct drm_connector *connector)
->  {
->  	struct nv50_mstc *mstc = nv50_mstc(connector);
-> -	if (mstc->port) {
-> -		struct nv50_mstm *mstm = mstc->mstm;
-> -		return &mstm->msto[0]->encoder;
-> -	}
-> -	return NULL;
-> +
-> +	return &mstc->mstm->msto[0]->encoder;
->  }
->  
->  static enum drm_mode_status
-> -- 
-> 2.17.1
-> 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Takashi
