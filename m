@@ -2,35 +2,35 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60429C65BBF
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CB3C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB1B21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB1B21473
+	by mail.kernel.org (Postfix) with ESMTP id 4181220644
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4181220644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729254AbeJFEqF (ORCPT
+        id S1729220AbeJFEqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:46:05 -0400
-Received: from mga03.intel.com ([134.134.136.65]:29597 "EHLO mga03.intel.com"
+        Sat, 6 Oct 2018 00:46:04 -0400
+Received: from mga03.intel.com ([134.134.136.65]:29594 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729093AbeJFEp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:45:57 -0400
+        id S1729104AbeJFEp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 00:45:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 14:45:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,346,1534834800"; 
-   d="scan'208";a="75773050"
+   d="scan'208";a="75773026"
 Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Oct 2018 14:45:13 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 05 Oct 2018 14:45:09 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Brendan Higgins <brendanhiggins@google.com>,
         Wolfram Sang <wsa@the-dreams.de>,
@@ -46,12 +46,10 @@ Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         James Feist <james.feist@linux.intel.com>,
         Vernon Mauery <vernon.mauery@linux.intel.com>,
         Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH i2c-next v7 4/5] i2c: aspeed: Remove hard-coded bus timeout value setting
-Date:   Fri,  5 Oct 2018 14:45:06 -0700
-Message-Id: <20181005214507.26315-5-jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH i2c-next v7 0/5] i2c: aspeed: Add bus idle waiting logic for multi-master use cases
+Date:   Fri,  5 Oct 2018 14:45:02 -0700
+Message-Id: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com>
-References: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,27 +57,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit removes hard-coded bus timeout value setting so that
-it can be set by i2c-core-base.
+In multi-master environment, this driver's master cannot know
+exactly when peer master sends data to this driver's slave so a
+case can be happened that this master tries to send data through
+the master_xfer function but slave data from peer master is still
+being processed by this driver. To prevent state corruption in the
+case, this patch adds checking code if any slave operation is
+ongoing and it waits up to the bus timeout duration before starting
+a master_xfer operation.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Joel Stanley <joel@jms.id.au>
----
- drivers/i2c/busses/i2c-aspeed.c | 1 -
- 1 file changed, 1 deletion(-)
+To support this change, it introduces changes on i2c-core-base to
+make that able to read the bus timeout and master transfer retries
+count values from device tree properties.
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index 8dc9161ced38..833b6b6a4c7e 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -930,7 +930,6 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
- 	init_completion(&bus->cmd_complete);
- 	bus->adap.owner = THIS_MODULE;
- 	bus->adap.retries = 0;
--	bus->adap.timeout = 5 * HZ;
- 	bus->adap.algo = &aspeed_i2c_algo;
- 	bus->adap.dev.parent = &pdev->dev;
- 	bus->adap.dev.of_node = pdev->dev.of_node;
+Please review this patch set.
+
+Thanks,
+
+-Jae
+
+Changes since v6:
+- Changed the 'timeout-ms' property name to 'bus-timeout-ms'.
+
+Changes since v5:
+- Changed using of property reading API to device_property_read_u32.
+
+Changes since v4:
+- Moved the property reading code into i2c-base-core and changed the
+  property name to 'timeout-ms'. Also, added '#retries' property reading
+  code.
+- Changed bus busy checking logic to make that check slave_state instead
+  of 'Transfer Mode State Machine' reg value.
+
+Changes since v3:
+- Changed the property name to 'timeout' and made it use the
+  default setting in i2c-core when not specified.
+
+Changes since v2:
+- Changed the property name to 'aspeed,timeout' and made it to
+  update the adapter's timeout configuration.
+
+Changes since v1:
+- Changed define names of timeout related.
+
+Jae Hyun Yoo (5):
+  dt-bindings: i2c: Add 'bus-timeout-ms' and '#retries' properties as
+    common optional
+  i2c: core: Add support reading of 'bus-timeout-ms' and '#retries'
+    properties
+  dt-bindings: i2c: aspeed: Add 'bus-timeout-ms' property as an optional
+    property
+  i2c: aspeed: Remove hard-coded bus timeout value setting
+  i2c: aspeed: Add bus idle waiting logic for multi-master use cases
+
+ .../devicetree/bindings/i2c/i2c-aspeed.txt    |  3 ++
+ Documentation/devicetree/bindings/i2c/i2c.txt |  6 +++
+ drivers/i2c/busses/i2c-aspeed.c               | 54 +++++++++++++------
+ drivers/i2c/i2c-core-base.c                   | 12 ++++-
+ 4 files changed, 57 insertions(+), 18 deletions(-)
+
 -- 
 2.19.0
 
