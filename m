@@ -2,44 +2,46 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044EDC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5160DC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B640A206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B640A206B2
+	by mail.kernel.org (Postfix) with ESMTP id 1D57D206B2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D57D206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbeJETlr (ORCPT
+        id S1728422AbeJETlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 15:41:47 -0400
+        Fri, 5 Oct 2018 15:41:50 -0400
 Received: from mga06.intel.com ([134.134.136.31]:8943 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727701AbeJETlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 15:41:47 -0400
+        id S1727701AbeJETlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 15:41:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 05:43:14 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 05:43:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,344,1534834800"; 
-   d="scan'208";a="97687768"
+   d="scan'208";a="97687774"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 05 Oct 2018 05:43:12 -0700
+  by orsmga002.jf.intel.com with ESMTP; 05 Oct 2018 05:43:14 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 00/16] stm class: Updates for 4.20
-Date:   Fri,  5 Oct 2018 15:42:50 +0300
-Message-Id: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
+Subject: [GIT PULL 01/16] stm class: Rework policy node fallback
+Date:   Fri,  5 Oct 2018 15:42:51 +0300
+Message-Id: <20181005124306.54870-2-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
+References: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,86 +49,246 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Currently, if no matching policy node can be found for a trace source,
+we'll try to use "default" policy node, then, if that doesn't exist,
+we'll pick the first node, in order of creation. If that also fails,
+we'll allocate M/C range from the beginning of the device's M/C range.
 
-These are the STM device class updates for the char-misc-next. No
-dependencies in this patchset, it can be either pulled directly or
-applied, the individual patches follow.
+This makes it difficult to know which node (if any) was used in any
+particular case.
 
-These are basically the MIPI SyS-T protocol and all the necessary
-infrastructure changes.
+In order to make things more deterministic, the new order is as follows:
+  * if they supply ID string, use that and nothing else,
+  * if they are a task, use their task name (comm),
+  * use "default", if it exists,
+  * return failure, to let them know there is no suitable rule.
 
-These were aired previously; they also address review comments from
-Mathieu, who also gave his Tested-By for the series. Also I received
-a Reviewed-By from Andy for the memcat_p() stuff, like you asked.
+This should provide enough convenience with the "default" catch-all node,
+while not leaving *everything* to chance. As a side effect, this relaxes
+the requirement of using ioctl() for identification with the possibility of
+using task names as policy nodes.
 
-As usual, these are aiaiai-clean (sparse/smatch/coccinelle/cppcheck).
-Please consider pulling or applying. Thanks!
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/hwtracing/stm/core.c   | 85 ++++++++++++++++++++--------------
+ drivers/hwtracing/stm/policy.c | 12 ++---
+ drivers/hwtracing/stm/stm.h    |  2 -
+ 3 files changed, 55 insertions(+), 44 deletions(-)
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/stm-for-greg-20181005
-
-for you to fetch changes up to b493be37ccb3f7fc64c3bd52fcdee067013d6b22:
-
-  stm class: Use memcat_p() (2018-10-05 14:59:08 +0300)
-
-----------------------------------------------------------------
-stm class: Updates for 4.20
-
-These are:
-  * infrastructure changes to introduce the concept of "protocol driver"
-  * factoring out the existing framing pattern into a protocol driver
-  * adding a new protocol driver for MIPI SyS-T protocol
-  * documentation updates
-  * adding a helper to paste 2 pointer arrays together: memcat_p()
-
-----------------------------------------------------------------
-Alexander Shishkin (16):
-      stm class: Rework policy node fallback
-      stm class: Clarify configfs root type/operations names
-      stm class: Clean up stp_configfs_init
-      stm class: Introduce framing protocol drivers
-      stm class: Add a helper for writing data packets
-      stm class: Factor out default framing protocol
-      stm class: Switch over to the protocol driver
-      stm class: Add MIPI SyS-T protocol support
-      stm class: p_sys-t: Add support for CLOCKSYNC packets
-      stm class: p_sys-t: Document the configfs interface
-      stm class: Document the MIPI SyS-T protocol usage
-      stm class: Update documentation to match the new identification rules
-      stm class: SPDX-ify the documentation
-      stm class: heartbeat: Fix whitespace
-      lib: Add memcat_p(): paste 2 pointer arrays together
-      stm class: Use memcat_p()
-
- .../ABI/testing/configfs-stp-policy-p_sys-t        |  41 +++
- Documentation/trace/stm.rst                        |  38 +-
- Documentation/trace/sys-t.rst                      |  62 ++++
- drivers/hwtracing/stm/Kconfig                      |  29 ++
- drivers/hwtracing/stm/Makefile                     |   6 +
- drivers/hwtracing/stm/core.c                       | 292 +++++++++++++---
- drivers/hwtracing/stm/heartbeat.c                  |   2 +-
- drivers/hwtracing/stm/p_basic.c                    |  48 +++
- drivers/hwtracing/stm/p_sys-t.c                    | 382 +++++++++++++++++++++
- drivers/hwtracing/stm/policy.c                     | 147 ++++++--
- drivers/hwtracing/stm/stm.h                        |  56 ++-
- include/linux/string.h                             |   7 +
- lib/Kconfig.debug                                  |   8 +
- lib/Makefile                                       |   1 +
- lib/string.c                                       |  31 ++
- lib/test_memcat_p.c                                | 115 +++++++
- 16 files changed, 1164 insertions(+), 101 deletions(-)
- create mode 100644 Documentation/ABI/testing/configfs-stp-policy-p_sys-t
- create mode 100644 Documentation/trace/sys-t.rst
- create mode 100644 drivers/hwtracing/stm/p_basic.c
- create mode 100644 drivers/hwtracing/stm/p_sys-t.c
- create mode 100644 lib/test_memcat_p.c
-
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 10bcb5d73f90..17198e79df3e 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -293,15 +293,15 @@ static int stm_output_assign(struct stm_device *stm, unsigned int width,
+ 	if (width > stm->data->sw_nchannels)
+ 		return -EINVAL;
+ 
+-	if (policy_node) {
+-		stp_policy_node_get_ranges(policy_node,
+-					   &midx, &mend, &cidx, &cend);
+-	} else {
+-		midx = stm->data->sw_start;
+-		cidx = 0;
+-		mend = stm->data->sw_end;
+-		cend = stm->data->sw_nchannels - 1;
+-	}
++	/* We no longer accept policy_node==NULL here */
++	if (WARN_ON_ONCE(!policy_node))
++		return -EINVAL;
++
++	/*
++	 * Also, the caller holds reference to policy_node, so it won't
++	 * disappear on us.
++	 */
++	stp_policy_node_get_ranges(policy_node, &midx, &mend, &cidx, &cend);
+ 
+ 	spin_lock(&stm->mc_lock);
+ 	spin_lock(&output->lock);
+@@ -405,19 +405,30 @@ static int stm_char_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-static int stm_file_assign(struct stm_file *stmf, char *id, unsigned int width)
++static int
++stm_assign_first_policy(struct stm_device *stm, struct stm_output *output,
++			char **ids, unsigned int width)
+ {
+-	struct stm_device *stm = stmf->stm;
+-	int ret;
++	struct stp_policy_node *pn;
++	int err, n;
+ 
+-	stmf->policy_node = stp_policy_node_lookup(stm, id);
++	/*
++	 * On success, stp_policy_node_lookup() will return holding the
++	 * configfs subsystem mutex, which is then released in
++	 * stp_policy_node_put(). This allows the pdrv->output_open() in
++	 * stm_output_assign() to serialize against the attribute accessors.
++	 */
++	for (n = 0, pn = NULL; ids[n] && !pn; n++)
++		pn = stp_policy_node_lookup(stm, ids[n]);
+ 
+-	ret = stm_output_assign(stm, width, stmf->policy_node, &stmf->output);
++	if (!pn)
++		return -EINVAL;
+ 
+-	if (stmf->policy_node)
+-		stp_policy_node_put(stmf->policy_node);
++	err = stm_output_assign(stm, width, pn, output);
+ 
+-	return ret;
++	stp_policy_node_put(pn);
++
++	return err;
+ }
+ 
+ static ssize_t notrace stm_write(struct stm_data *data, unsigned int master,
+@@ -455,16 +466,21 @@ static ssize_t stm_char_write(struct file *file, const char __user *buf,
+ 		count = PAGE_SIZE - 1;
+ 
+ 	/*
+-	 * if no m/c have been assigned to this writer up to this
+-	 * point, use "default" policy entry
++	 * If no m/c have been assigned to this writer up to this
++	 * point, try to use the task name and "default" policy entries.
+ 	 */
+ 	if (!stmf->output.nr_chans) {
+-		err = stm_file_assign(stmf, "default", 1);
++		char comm[sizeof(current->comm)];
++		char *ids[] = { comm, "default", NULL };
++
++		get_task_comm(comm, current);
++
++		err = stm_assign_first_policy(stmf->stm, &stmf->output, ids, 1);
+ 		/*
+ 		 * EBUSY means that somebody else just assigned this
+ 		 * output, which is just fine for write()
+ 		 */
+-		if (err && err != -EBUSY)
++		if (err)
+ 			return err;
+ 	}
+ 
+@@ -550,6 +566,7 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
+ {
+ 	struct stm_device *stm = stmf->stm;
+ 	struct stp_policy_id *id;
++	char *ids[] = { NULL, NULL };
+ 	int ret = -EINVAL;
+ 	u32 size;
+ 
+@@ -582,7 +599,9 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
+ 	    id->width > PAGE_SIZE / stm->data->sw_mmiosz)
+ 		goto err_free;
+ 
+-	ret = stm_file_assign(stmf, id->id, id->width);
++	ids[0] = id->id;
++	ret = stm_assign_first_policy(stmf->stm, &stmf->output, ids,
++				      id->width);
+ 	if (ret)
+ 		goto err_free;
+ 
+@@ -818,8 +837,8 @@ EXPORT_SYMBOL_GPL(stm_unregister_device);
+ static int stm_source_link_add(struct stm_source_device *src,
+ 			       struct stm_device *stm)
+ {
+-	char *id;
+-	int err;
++	char *ids[] = { NULL, "default", NULL };
++	int err = -ENOMEM;
+ 
+ 	mutex_lock(&stm->link_mutex);
+ 	spin_lock(&stm->link_lock);
+@@ -833,19 +852,13 @@ static int stm_source_link_add(struct stm_source_device *src,
+ 	spin_unlock(&stm->link_lock);
+ 	mutex_unlock(&stm->link_mutex);
+ 
+-	id = kstrdup(src->data->name, GFP_KERNEL);
+-	if (id) {
+-		src->policy_node =
+-			stp_policy_node_lookup(stm, id);
+-
+-		kfree(id);
+-	}
+-
+-	err = stm_output_assign(stm, src->data->nr_chans,
+-				src->policy_node, &src->output);
++	ids[0] = kstrdup(src->data->name, GFP_KERNEL);
++	if (!ids[0])
++		goto fail_detach;
+ 
+-	if (src->policy_node)
+-		stp_policy_node_put(src->policy_node);
++	err = stm_assign_first_policy(stm, &src->output, ids,
++				      src->data->nr_chans);
++	kfree(ids[0]);
+ 
+ 	if (err)
+ 		goto fail_detach;
+diff --git a/drivers/hwtracing/stm/policy.c b/drivers/hwtracing/stm/policy.c
+index 3fd07e275b34..15d35d891643 100644
+--- a/drivers/hwtracing/stm/policy.c
++++ b/drivers/hwtracing/stm/policy.c
+@@ -392,7 +392,7 @@ static struct configfs_subsystem stp_policy_subsys = {
+ static struct stp_policy_node *
+ __stp_policy_node_lookup(struct stp_policy *policy, char *s)
+ {
+-	struct stp_policy_node *policy_node, *ret;
++	struct stp_policy_node *policy_node, *ret = NULL;
+ 	struct list_head *head = &policy->group.cg_children;
+ 	struct config_item *item;
+ 	char *start, *end = s;
+@@ -400,10 +400,6 @@ __stp_policy_node_lookup(struct stp_policy *policy, char *s)
+ 	if (list_empty(head))
+ 		return NULL;
+ 
+-	/* return the first entry if everything else fails */
+-	item = list_entry(head->next, struct config_item, ci_entry);
+-	ret = to_stp_policy_node(item);
+-
+ next:
+ 	for (;;) {
+ 		start = strsep(&end, "/");
+@@ -449,13 +445,17 @@ stp_policy_node_lookup(struct stm_device *stm, char *s)
+ 
+ 	if (policy_node)
+ 		config_item_get(&policy_node->group.cg_item);
+-	mutex_unlock(&stp_policy_subsys.su_mutex);
++	else
++		mutex_unlock(&stp_policy_subsys.su_mutex);
+ 
+ 	return policy_node;
+ }
+ 
+ void stp_policy_node_put(struct stp_policy_node *policy_node)
+ {
++	lockdep_assert_held(&stp_policy_subsys.su_mutex);
++
++	mutex_unlock(&stp_policy_subsys.su_mutex);
+ 	config_item_put(&policy_node->group.cg_item);
+ }
+ 
+diff --git a/drivers/hwtracing/stm/stm.h b/drivers/hwtracing/stm/stm.h
+index 923571adc6f4..e5df08ae59cf 100644
+--- a/drivers/hwtracing/stm/stm.h
++++ b/drivers/hwtracing/stm/stm.h
+@@ -57,7 +57,6 @@ struct stm_output {
+ 
+ struct stm_file {
+ 	struct stm_device	*stm;
+-	struct stp_policy_node	*policy_node;
+ 	struct stm_output	output;
+ };
+ 
+@@ -71,7 +70,6 @@ struct stm_source_device {
+ 	struct stm_device __rcu	*link;
+ 	struct list_head	link_entry;
+ 	/* one output per stm_source device */
+-	struct stp_policy_node	*policy_node;
+ 	struct stm_output	output;
+ };
+ 
 -- 
 2.19.0
 
