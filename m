@@ -2,152 +2,168 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF84C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95101C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63EC9208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EC9208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B9842084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9842084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbeJEPrQ (ORCPT
+        id S1728707AbeJEPr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:47:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48208 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 11:47:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:47738 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbeJEPrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:47:15 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9421243A2E;
-        Fri,  5 Oct 2018 08:49:31 +0000 (UTC)
-Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F58269FC6;
-        Fri,  5 Oct 2018 08:49:27 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 10:49:25 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, david@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com
-Subject: Re: [PATCH v1 1/2] KVM: s390: Tracing APCB changes
-Message-ID: <20181005104925.04a1f3ef.cohuck@redhat.com>
-In-Reply-To: <1538728270-10340-2-git-send-email-pmorel@linux.ibm.com>
-References: <7d147350-4284-8e01-d1fa-0795d2da85c1@de.ibm.com>
-        <1538728270-10340-1-git-send-email-pmorel@linux.ibm.com>
-        <1538728270-10340-2-git-send-email-pmorel@linux.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 05 Oct 2018 08:49:31 +0000 (UTC)
+        id S1728682AbeJEPr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:47:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4546F80D;
+        Fri,  5 Oct 2018 01:49:44 -0700 (PDT)
+Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1050A3F5B3;
+        Fri,  5 Oct 2018 01:49:40 -0700 (PDT)
+From:   Kristina Martsenko <kristina.martsenko@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 01/17] arm64: add pointer authentication register bits
+Date:   Fri,  5 Oct 2018 09:47:38 +0100
+Message-Id: <20181005084754.20950-2-kristina.martsenko@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181005084754.20950-1-kristina.martsenko@arm.com>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  5 Oct 2018 10:31:09 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+From: Mark Rutland <mark.rutland@arm.com>
 
-> kvm_arch_crypto_set_masks is a new function to centralize
-> the setup the APCB masks inside the CRYCB SIE satelite.
+The ARMv8.3 pointer authentication extension adds:
 
-s/satelite/satellite/
+* New fields in ID_AA64ISAR1 to report the presence of pointer
+  authentication functionality.
 
-> 
-> To trace APCB mask changes, we add KVM_EVENT() tracing to
-> both kvm_arch_crypto_set_masks and kvm_arch_crypto_clear_masks.
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  arch/s390/include/asm/kvm_host.h |  2 ++
->  arch/s390/kvm/kvm-s390.c         | 41 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 36d3531..22aa4da 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -861,6 +861,8 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
->  				 struct kvm_async_pf *work);
->  
->  void kvm_arch_crypto_clear_masks(struct kvm *kvm);
-> +void kvm_arch_crypto_set_masks(struct kvm *kvm, unsigned long *apm,
-> +			       unsigned long *aqm, unsigned long *adm);
->  
->  extern int sie64a(struct kvm_s390_sie_block *, u64 *);
->  extern char sie_exit;
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index d3ea721..e871e5a 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -2057,6 +2057,46 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
->  		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->  }
->  
-> +void kvm_arch_crypto_set_masks(struct kvm *kvm, unsigned long *apm,
-> +			       unsigned long *aqm, unsigned long *adm)
-> +{
-> +	struct kvm_s390_crypto_cb *crycb = kvm->arch.crypto.crycb;
-> +
-> +	mutex_lock(&kvm->lock);
-> +	kvm_s390_vcpu_block_all(kvm);
-> +
-> +	switch (kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK) {
-> +	case CRYCB_FORMAT2: /* APCB1 use 256 bits */
-> +		memcpy(crycb->apcb1.apm, apm, 32);
-> +		VM_EVENT(kvm, 3, "SET CRYCB: apm %016lx %016lx %016lx %016lx",
-> +			 apm[0], apm[1], apm[2], apm[3]);
-> +		memcpy(crycb->apcb1.aqm, aqm, 32);
-> +		VM_EVENT(kvm, 3, "SET CRYCB: aqm %016lx %016lx %016lx %016lx",
-> +			 aqm[0], aqm[1], aqm[2], aqm[3]);
-> +		memcpy(crycb->apcb1.adm, adm, 32);
-> +		VM_EVENT(kvm, 3, "SET CRYCB: adm %016lx %016lx %016lx %016lx",
-> +			 adm[0], adm[1], adm[2], adm[3]);
-> +		break;
-> +	case CRYCB_FORMAT1:
-> +	case CRYCB_FORMAT0: /* Fall through both use APCB0 */
-> +		memcpy(crycb->apcb0.apm, apm, 8);
-> +		memcpy(crycb->apcb0.aqm, aqm, 2);
-> +		memcpy(crycb->apcb0.adm, adm, 2);
-> +		VM_EVENT(kvm, 3, "SET CRYCB: apm %016lx aqm %04x adm %04x",
-> +			 apm[0], *((unsigned short *)aqm),
-> +			 *((unsigned short *)adm));
-> +		break;
-> +	default:	/* Can not happen */
-> +		break;
-> +	}
-> +
-> +	/* recreate the shadow crycb for each vcpu */
-> +	kvm_s390_sync_request_broadcast(kvm, KVM_REQ_VSIE_RESTART);
-> +	kvm_s390_vcpu_unblock_all(kvm);
-> +	mutex_unlock(&kvm->lock);
+* New control bits in SCTLR_ELx to enable this functionality.
 
+* New system registers to hold the keys necessary for this
+  functionality.
 
-The locking and requests makes me wonder if we missed them before...
-were they simply not needed for the prior use case (mdev group
-notifier)?
+* A new ESR_ELx.EC code used when the new instructions are affected by
+  configurable traps
 
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_arch_crypto_set_masks);
-> +
->  void kvm_arch_crypto_clear_masks(struct kvm *kvm)
->  {
->  	mutex_lock(&kvm->lock);
-> @@ -2067,6 +2107,7 @@ void kvm_arch_crypto_clear_masks(struct kvm *kvm)
->  	memset(&kvm->arch.crypto.crycb->apcb1, 0,
->  	       sizeof(kvm->arch.crypto.crycb->apcb1));
->  
-> +	VM_EVENT(kvm, 3, "%s", "CLR CRYCB:");
->  	/* recreate the shadow crycb for each vcpu */
->  	kvm_s390_sync_request_broadcast(kvm, KVM_REQ_VSIE_RESTART);
->  	kvm_s390_vcpu_unblock_all(kvm);
+This patch adds the relevant definitions to <asm/sysreg.h> and
+<asm/esr.h> for these, to be used by subsequent patches.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/esr.h    |  3 ++-
+ arch/arm64/include/asm/sysreg.h | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index ce70c3ffb993..022785162281 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -30,7 +30,8 @@
+ #define ESR_ELx_EC_CP14_LS	(0x06)
+ #define ESR_ELx_EC_FP_ASIMD	(0x07)
+ #define ESR_ELx_EC_CP10_ID	(0x08)
+-/* Unallocated EC: 0x09 - 0x0B */
++#define ESR_ELx_EC_PAC		(0x09)
++/* Unallocated EC: 0x0A - 0x0B */
+ #define ESR_ELx_EC_CP14_64	(0x0C)
+ /* Unallocated EC: 0x0d */
+ #define ESR_ELx_EC_ILL		(0x0E)
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index c1470931b897..343b7a3c59e0 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -171,6 +171,19 @@
+ #define SYS_TTBR1_EL1			sys_reg(3, 0, 2, 0, 1)
+ #define SYS_TCR_EL1			sys_reg(3, 0, 2, 0, 2)
+ 
++#define SYS_APIAKEYLO_EL1		sys_reg(3, 0, 2, 1, 0)
++#define SYS_APIAKEYHI_EL1		sys_reg(3, 0, 2, 1, 1)
++#define SYS_APIBKEYLO_EL1		sys_reg(3, 0, 2, 1, 2)
++#define SYS_APIBKEYHI_EL1		sys_reg(3, 0, 2, 1, 3)
++
++#define SYS_APDAKEYLO_EL1		sys_reg(3, 0, 2, 2, 0)
++#define SYS_APDAKEYHI_EL1		sys_reg(3, 0, 2, 2, 1)
++#define SYS_APDBKEYLO_EL1		sys_reg(3, 0, 2, 2, 2)
++#define SYS_APDBKEYHI_EL1		sys_reg(3, 0, 2, 2, 3)
++
++#define SYS_APGAKEYLO_EL1		sys_reg(3, 0, 2, 3, 0)
++#define SYS_APGAKEYHI_EL1		sys_reg(3, 0, 2, 3, 1)
++
+ #define SYS_ICC_PMR_EL1			sys_reg(3, 0, 4, 6, 0)
+ 
+ #define SYS_AFSR0_EL1			sys_reg(3, 0, 5, 1, 0)
+@@ -419,9 +432,13 @@
+ #define SYS_ICH_LR15_EL2		__SYS__LR8_EL2(7)
+ 
+ /* Common SCTLR_ELx flags. */
++#define SCTLR_ELx_ENIA	(1 << 31)
++#define SCTLR_ELx_ENIB	(1 << 30)
++#define SCTLR_ELx_ENDA	(1 << 27)
+ #define SCTLR_ELx_EE    (1 << 25)
+ #define SCTLR_ELx_IESB	(1 << 21)
+ #define SCTLR_ELx_WXN	(1 << 19)
++#define SCTLR_ELx_ENDB	(1 << 13)
+ #define SCTLR_ELx_I	(1 << 12)
+ #define SCTLR_ELx_SA	(1 << 3)
+ #define SCTLR_ELx_C	(1 << 2)
+@@ -515,11 +532,24 @@
+ #define ID_AA64ISAR0_AES_SHIFT		4
+ 
+ /* id_aa64isar1 */
++#define ID_AA64ISAR1_GPI_SHIFT		28
++#define ID_AA64ISAR1_GPA_SHIFT		24
+ #define ID_AA64ISAR1_LRCPC_SHIFT	20
+ #define ID_AA64ISAR1_FCMA_SHIFT		16
+ #define ID_AA64ISAR1_JSCVT_SHIFT	12
++#define ID_AA64ISAR1_API_SHIFT		8
++#define ID_AA64ISAR1_APA_SHIFT		4
+ #define ID_AA64ISAR1_DPB_SHIFT		0
+ 
++#define ID_AA64ISAR1_APA_NI		0x0
++#define ID_AA64ISAR1_APA_ARCHITECTED	0x1
++#define ID_AA64ISAR1_API_NI		0x0
++#define ID_AA64ISAR1_API_IMP_DEF	0x1
++#define ID_AA64ISAR1_GPA_NI		0x0
++#define ID_AA64ISAR1_GPA_ARCHITECTED	0x1
++#define ID_AA64ISAR1_GPI_NI		0x0
++#define ID_AA64ISAR1_GPI_IMP_DEF	0x1
++
+ /* id_aa64pfr0 */
+ #define ID_AA64PFR0_CSV3_SHIFT		60
+ #define ID_AA64PFR0_CSV2_SHIFT		56
+-- 
+2.11.0
 
