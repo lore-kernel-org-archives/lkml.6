@@ -2,106 +2,105 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29712C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6B4C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF134208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:26:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ocux4ypY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF134208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 209C5213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209C5213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbeJEVZk (ORCPT
+        id S1728890AbeJEVZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:25:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52110 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 17:25:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727968AbeJEVZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:25:39 -0400
-Received: from localhost (unknown [171.76.113.63])
+        id S1727968AbeJEVZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 17:25:57 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49D822084D;
-        Fri,  5 Oct 2018 14:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538749602;
-        bh=NeoU8WHoJ1ouTUceAiqMFtJ5GQB4armtRjXQ7aBClis=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ocux4ypYD3JmJoR2VMPLAPI+fFwoC+ycLg5lkmQaoXX09LuYK9tTuX2DI5XGItBgp
-         p3bA0nfTR/BqeJIqS6t8aOWMdUbFYcIySbrUtMDlBjpgCay6sUE/Yt9xVvtBDWVM4c
-         0Np/831H5rLO6Uc2HfQNMzzxRJNxPOGbTucMLCLg=
-Date:   Fri, 5 Oct 2018 19:56:34 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Alan Brady <alan.brady@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Shannon Nelson <shannon.nelson@oracle.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] XXX PCI/AER: remove unused variables
-Message-ID: <20181005142634.GL2372@vkoul-mobl>
-References: <20181002210426.2447078-1-arnd@arndb.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B462087D;
+        Fri,  5 Oct 2018 14:27:00 +0000 (UTC)
+Date:   Fri, 5 Oct 2018 10:26:58 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sched/rt : return accurate release rq lock info
+Message-ID: <20181005102658.38ecde83@gandalf.local.home>
+In-Reply-To: <1538778131-44406-1-git-send-email-peng.hao2@zte.com.cn>
+References: <1538778131-44406-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002210426.2447078-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-10-18, 23:02, Arnd Bergmann wrote:
-> A couple of files now contain a function with a return
-> code variable that is no longer used:
+On Sat, 6 Oct 2018 06:22:11 +0800
+Peng Hao <peng.hao2@zte.com.cn> wrote:
+
+> find_lock_lowest_rq may or not releease rq lock when return
+> lowest_rq=NULL, but it is fuzzy.
+> If not releasing rq lock, it is unnecessary to re-call
+> pick_next_pushable_task.
+> When CONFIG_PREEMPT=n, not releasing rq lock and return
+> lowest_rq=null frequently happens in a simple test case:
+> Four different rt priority tasks run on limited two cpus.
+> Thanks for Steven Rostedt's advice.
 > 
-> drivers/net/ethernet/sfc/efx.c: In function 'efx_io_slot_reset':
-> drivers/net/ethernet/sfc/efx.c:3824:6: error: unused variable 'rc' [-Werror=unused-variable]
->   int rc;
->       ^~
-> drivers/net/ethernet/sfc/falcon/efx.c: In function 'ef4_io_slot_reset':
-> Oza Pawandeep <poza@codeaurora.org>
-> drivers/net/ethernet/sfc/falcon/efx.c:3163:6: error: unused variable 'rc' [-Werror=unused-variable]
->   int rc;
->       ^~
-> drivers/net/ethernet/intel/ixgbe/ixgbe_main.c: In function 'ixgbe_io_slot_reset':
-> drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:11143:6: error: unused variable 'err' [-Werror=unused-variable]
->   int err;
->       ^~~
-> drivers/net/ethernet/intel/i40e/i40e_main.c: In function 'i40e_pci_error_slot_reset':
-> drivers/net/ethernet/intel/i40e/i40e_main.c:14555:6: error: unused variable 'err' [-Werror=unused-variable]
->   int err;
-> 
-> drivers/dma/ioat/init.c: In function 'ioat_pcie_error_slot_reset':
-> drivers/dma/ioat/init.c:1255:6: error: unused variable 'err' [-Werror=unused-variable]
->   int err;
-> 
-> This removes all the ones I found during randconfig build testing.
-> 
-> Fixes: 6dcde3e574b2 ("XXX PCI/AER: Remove pci_cleanup_aer_uncorrect_error_status() calls")
-> Cc: Oza Pawandeep <poza@codeaurora.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 > ---
->  drivers/dma/ioat/init.c                       | 1 -
+>  kernel/sched/rt.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 2e2955a..be0fc43 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1754,7 +1754,7 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+>  				     !task_on_rq_queued(task))) {
+>  
+>  				double_unlock_balance(rq, lowest_rq);
+> -				lowest_rq = NULL;
+> +				lowest_rq = RETRY_TASK;
+>  				break;
+>  			}
+>  		}
+> @@ -1830,7 +1830,9 @@ static int push_rt_task(struct rq *rq)
+>  
+>  	/* find_lock_lowest_rq locks the rq if found */
+>  	lowest_rq = find_lock_lowest_rq(next_task, rq);
+> -	if (!lowest_rq) {
+> +	if (!lowest_rq)
+> +		goto out;
+> +	if (lowest_rq == RETRY_TASK) {
 
-For this:
+This probably makes no difference, and can be blown off as just a
+preference, but should this be:
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
--- 
-~Vinod
+	if (!lowest_rq) {
+		goto out;
+	} else if (lowest_rq == RETRY_TASK) {
+
+The logic is the same regardless, so it's really just a matter of taste.
+
+That said:
+
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+
+
+>  		struct task_struct *task;
+>  		/*
+>  		 * find_lock_lowest_rq releases rq->lock
+
