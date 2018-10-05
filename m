@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00049C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A20C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC00B21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0147208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/J6plMs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC00B21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WO93Xsbp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0147208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbeJEXYt (ORCPT
+        id S1729564AbeJEXYt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 5 Oct 2018 19:24:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51522 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729366AbeJEXOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:11 -0400
+        id S1729408AbeJEXOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9893021477;
-        Fri,  5 Oct 2018 16:14:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 732D4213A2;
+        Fri,  5 Oct 2018 16:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756089;
-        bh=LnChYOON3Bp/2uKugcBK1OYhryCavDpuG9TeHhDdWAI=;
+        s=default; t=1538756090;
+        bh=V4P8Z6PIHWq+paeyYf6EJvXY2xXWSPnuCEdHmNR9Hm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I/J6plMsoMn6WhFo3kXBW30fwpHw5e4OjHflrq+GO35QvQ/mGa5NjLd6D8mxlLXPp
-         FT4ImHbhjKXB7+2mkw+hKl4bCvVuWrJF3Fv3PiW8n9Lm4kMr68vBA6cwIxd0rOk4vc
-         Qb2V0X/7j6QS7ynMVn6hrZWOrTP+eDXSVoTvXbGQ=
+        b=WO93XsbpJjE4o5nM8MFFSo1FMlgdfdaA5ViEAgJ4Sluu+corjHYzidl+r0k3L0D/5
+         Ie/Z7bamazkztKE3UpEjCcKafjc635rkwqCJswi9o62Sv+wD/65LBgARXs6KYmTvMM
+         5LIuIeGCs5uiucbxDpKhuRL2P/anFK0BccY1ie/c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Yu Zhao <yuzhao@google.com>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 26/48] scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
-Date:   Fri,  5 Oct 2018 12:14:02 -0400
-Message-Id: <20181005161424.20521-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 27/48] sound: enable interrupt after dma buffer initialization
+Date:   Fri,  5 Oct 2018 12:14:03 -0400
+Message-Id: <20181005161424.20521-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -53,38 +52,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit cbe3fd39d223f14b1c60c80fe9347a3dd08c2edb ]
+[ Upstream commit b61749a89f826eb61fc59794d9e4697bd246eb61 ]
 
-We should first do the le16_to_cpu endian conversion and then apply the
-FCP_CMD_LENGTH_MASK mask.
+In snd_hdac_bus_init_chip(), we enable interrupt before
+snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
+been acquired and irq handler uses the dma buffer, kernel may crash
+when interrupt comes in.
 
-Fixes: 5f35509db179 ("qla2xxx: Terminate exchange if corrupted")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Quinn Tran <Quinn.Tran@cavium.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fix the problem by postponing enabling irq after dma buffer
+initialization. And warn once on null dma buffer pointer during the
+initialization.
+
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/qla2xxx/qla_target.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/hda/hdac_controller.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index fecf96f0225c..199d3ba1916d 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -374,8 +374,8 @@ struct atio_from_isp {
- static inline int fcpcmd_is_corrupted(struct atio *atio)
+diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
+index 560ec0986e1a..11057d9f84ec 100644
+--- a/sound/hda/hdac_controller.c
++++ b/sound/hda/hdac_controller.c
+@@ -40,6 +40,8 @@ static void azx_clear_corbrp(struct hdac_bus *bus)
+  */
+ void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
  {
- 	if (atio->entry_type == ATIO_TYPE7 &&
--	    (le16_to_cpu(atio->attr_n_length & FCP_CMD_LENGTH_MASK) <
--	    FCP_CMD_LENGTH_MIN))
-+	    ((le16_to_cpu(atio->attr_n_length) & FCP_CMD_LENGTH_MASK) <
-+	     FCP_CMD_LENGTH_MIN))
- 		return 1;
- 	else
- 		return 0;
++	WARN_ON_ONCE(!bus->rb.area);
++
+ 	spin_lock_irq(&bus->reg_lock);
+ 	/* CORB set up */
+ 	bus->corb.addr = bus->rb.addr;
+@@ -479,13 +481,15 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
+ 	/* reset controller */
+ 	azx_reset(bus, full_reset);
+ 
+-	/* initialize interrupts */
++	/* clear interrupts */
+ 	azx_int_clear(bus);
+-	azx_int_enable(bus);
+ 
+ 	/* initialize the codec command I/O */
+ 	snd_hdac_bus_init_cmd_io(bus);
+ 
++	/* enable interrupts after CORB/RIRB buffers are initialized above */
++	azx_int_enable(bus);
++
+ 	/* program the position buffer */
+ 	if (bus->use_posbuf && bus->posbuf.addr) {
+ 		snd_hdac_chip_writel(bus, DPLBASE, (u32)bus->posbuf.addr);
 -- 
 2.17.1
 
