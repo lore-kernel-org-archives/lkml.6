@@ -2,88 +2,86 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA77C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC368C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E032087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA677208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKYq0ew8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E032087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bsjh2JZ8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA677208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbeJEXUz (ORCPT
+        id S1729597AbeJEXVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:20:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54796 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:21:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729687AbeJEXQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:35 -0400
+        id S1728694AbeJEXQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 937F82147D;
-        Fri,  5 Oct 2018 16:17:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C155D214C2;
+        Fri,  5 Oct 2018 16:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756232;
-        bh=dUqxByOtpEmfhfg2CqzKiGWGpkOI9hVZSvv0QQs83SY=;
+        s=default; t=1538756216;
+        bh=B5OQ20cjaXdg/d5p6M2E0eje05drUq/x1+KvA2k4kec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gKYq0ew8D0F7SygWwmzidAPglinKRv5zi9yukXkF0CW05gwku13fvYIrE/M3TKYXy
-         EXfwPsMQQuFp3BEYi42aICWT1gJb9tEIps4TR2tB4BWfjo2dpB4gOYg+z5EgUo75Qn
-         k8j86xGGn/813QBH2CG76gUN6WneNKRuOqmaM3OQ=
+        b=Bsjh2JZ8D6uLovWnFgiAvGYsVyDyfHCyk4fw3x1P89I+dIVqiahupz7c4eGyxlsLB
+         cPJUyVwgU0yINnTTl7OZGy72Ze8rdLoR/ihwj81kViIhFLFn3yfRKCExIF4rJVlZ2c
+         3iIkn3POX5ucd2gLmjopWHxqOokslWIMnBFKtvak=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Richard Weinberger <richard@nod.at>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 07/14] scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
-Date:   Fri,  5 Oct 2018 12:16:57 -0400
-Message-Id: <20181005161704.20704-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 23/23] ubifs: Check for name being NULL while mounting
+Date:   Fri,  5 Oct 2018 12:16:34 -0400
+Message-Id: <20181005161634.20631-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161704.20704-1-sashal@kernel.org>
-References: <20181005161704.20704-1-sashal@kernel.org>
+In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
+References: <20181005161634.20631-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Richard Weinberger <richard@nod.at>
 
-[ Upstream commit cbe3fd39d223f14b1c60c80fe9347a3dd08c2edb ]
+[ Upstream commit 37f31b6ca4311b94d985fb398a72e5399ad57925 ]
 
-We should first do the le16_to_cpu endian conversion and then apply the
-FCP_CMD_LENGTH_MASK mask.
+The requested device name can be NULL or an empty string.
+Check for that and refuse to continue. UBIFS has to do this manually
+since we cannot use mount_bdev(), which checks for this condition.
 
-Fixes: 5f35509db179 ("qla2xxx: Terminate exchange if corrupted")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Quinn Tran <Quinn.Tran@cavium.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+Reported-by: syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/qla2xxx/qla_target.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ubifs/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index 0824a8164a24..07ea4fcf4f88 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -440,8 +440,8 @@ struct atio_from_isp {
- static inline int fcpcmd_is_corrupted(struct atio *atio)
- {
- 	if (atio->entry_type == ATIO_TYPE7 &&
--	    (le16_to_cpu(atio->attr_n_length & FCP_CMD_LENGTH_MASK) <
--	    FCP_CMD_LENGTH_MIN))
-+	    ((le16_to_cpu(atio->attr_n_length) & FCP_CMD_LENGTH_MASK) <
-+	     FCP_CMD_LENGTH_MIN))
- 		return 1;
- 	else
- 		return 0;
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index e1cd3dcf5a03..ad827cf642fe 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -1930,6 +1930,9 @@ static struct ubi_volume_desc *open_ubi(const char *name, int mode)
+ 	int dev, vol;
+ 	char *endptr;
+ 
++	if (!name || !*name)
++		return ERR_PTR(-EINVAL);
++
+ 	/* First, try to open using the device node path method */
+ 	ubi = ubi_open_volume_path(name, mode);
+ 	if (!IS_ERR(ubi))
 -- 
 2.17.1
 
