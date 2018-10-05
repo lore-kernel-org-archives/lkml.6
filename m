@@ -2,120 +2,124 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 156E4C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ACBC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B222E208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:46:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="g5AM9pTO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B222E208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 18AE6208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:47:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AE6208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbeJFGri (ORCPT
+        id S1729343AbeJFGsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 02:47:38 -0400
-Received: from imap.thunk.org ([74.207.234.97]:34918 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726538AbeJFGri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 02:47:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=T8FQ87fMp5GojQ36irhU2jJohsZXo68+DssC+p+hm5Y=; b=g5AM9pTOJLMJJRrpo2NMETCNGV
-        s3LXZvcUQW3sZbW62lQkaXA0+dX+zcxH1Nev4CL0LcKG1IiBKI120piZDYLE+I7ElDHzOil9VuT93
-        inG6QDAV2GrwnM8yrJDC9fv0vDT5GKiVVbAVxy2pe3dOE5mAwwglvvlOFCWD07HkXVmM=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1g8Znh-0006HE-31; Fri, 05 Oct 2018 23:46:29 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 588AB7A523F; Fri,  5 Oct 2018 19:46:28 -0400 (EDT)
-Date:   Fri, 5 Oct 2018 19:46:28 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
-Subject: Re: [PATCH RFC 0/5] rcu doc updates for whatisRCU and checklist
-Message-ID: <20181005234628.GB2548@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
-References: <20181005231815.170433-1-joel@joelfernandes.org>
+        Sat, 6 Oct 2018 02:48:14 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:58486 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726538AbeJFGsO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 02:48:14 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g8ZoI-0006VV-Hr; Fri, 05 Oct 2018 23:47:06 +0000
+Date:   Sat, 6 Oct 2018 00:47:06 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>
+Subject: Re: [PATCH bpf-next 1/6] bpf: introduce BPF_PROG_TYPE_FILE_FILTER
+Message-ID: <20181005234706.GX32577@ZenIV.linux.org.uk>
+References: <20181004025750.498303-1-ast@kernel.org>
+ <20181004025750.498303-2-ast@kernel.org>
+ <20181005044659.GU32577@ZenIV.linux.org.uk>
+ <20181005220518.747ri4q34obrnaoc@ast-mbp.dhcp.thefacebook.com>
+ <CALCETrVURVaqJChL=RwZPe74+JfX-6Zzp9kLR9-mLiownSOexQ@mail.gmail.com>
+ <20181005222752.l5da54rpww6tlyfy@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181005231815.170433-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181005222752.l5da54rpww6tlyfy@ast-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 04:18:09PM -0700, Joel Fernandes (Google) wrote:
+On Fri, Oct 05, 2018 at 03:27:54PM -0700, Alexei Starovoitov wrote:
+> On Fri, Oct 05, 2018 at 03:09:20PM -0700, Andy Lutomirski wrote:
+> > On Fri, Oct 5, 2018 at 3:05 PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Fri, Oct 05, 2018 at 05:46:59AM +0100, Al Viro wrote:
+> > >
+> > > > Another problem is your direct poking in ->i_ino.  It's not
+> > > > something directly exposed to userland at the moment and it should
+> > > > not become such.
+> > >
+> > > The patch is not making i_ino directly exposed.
+> > > Only 'struct bpf_file_info' is exposed to user space / bpf programs.
+> > 
+> > I think Al is saying that the valie of i_ino is not something that
+> > user code is permitted to know regardless of how you format it because
+> > it may or may not actually match the value returned by stat().
+> > Another way of saying that is that your patch is digging into an
+> > internal data structure and is doing it wrong.
 > 
-> Here are this week's rcu doc updates based on combing through whatisRCU and
-> checklists. Hopefully you agree with them. I left several old _bh and _sched
-> API references as is, since I don't think its a good idea to remove them till
-> the APIs themselves are removed, however I did remove several of them as well
-> (like in the first patch in this series) since I feel its better to "encourage"
-> new users not to use the old API.
+> several fs implementation I've looked at just do generic_fillattr()
+> for these fields. Are you saying some FS don't use inode->i_ino at all?
+> And it's bogus, hence shouldn't be read?
 
-Hi Joel,
+Bloody wonderful...  "Several instances use a library function and do not
+override that part of its results; ergo, let's assume that all of them
+do the same".
 
-As it so happens, I just recently wrote my first RCU patch[1] (file
-systems, especially on-disk data structures, generally tend not to be
-good candidates for RCU semantics).
+generic_fillattr() is a library function.  In a lot of cases this is all
+->getattr() instance needs to do.  And yes, use of ->i_dev and ->i_ino
+to intialize ->st_dev and ->st_ino happens to be the default.  However,
+this is entirely up to the filesystem in question.  These fields are
+fs-private; whether to use them for stat(2) (or anything userland-visible,
+really) or to calculate some other value is up to individual filesystem.
 
-[1] http://patchwork.ozlabs.org/patch/979779/
+FWIW, finding which instances do that is as simple as
+grep -n '[-]>[[:space:]]*ino[[:space:]]*=' `git grep -l -w generic_fillattr`
+on the plausible theory that ->getattr() instances will be using that helper
+at least for some of the fields.  Discarding fs/stat.c, where generic_fillattr()
+itself lives, we are left with
+fs/ceph/inode.c:558:            if (realm->ino == ci->i_vino.ino)
+fs/ceph/inode.c:2268:           stat->ino = ceph_translate_ino(inode->i_sb, inode->i_ino);
+fs/cifs/inode.c:2067:   stat->ino = CIFS_I(inode)->uniqueid;
+fs/fat/file.c:410:              stat->ino = fat_i_pos_read(MSDOS_SB(inode->i_sb), inode);
+fs/fuse/dir.c:866:      stat->ino = attr->ino;
+fs/fuse/dir.c:954:              stat->ino = fi->orig_ino;
+fs/nfs/inode.c:841:     stat->ino = nfs_compat_user_ino64(NFS_FILEID(inode));
+Trivial examination shows that all matches except the first one *are* in ->getattr()
+instances of the filesystems in question or are called from such.
 
-So if you are working on improving RCU documentation, I thought I
-would give two comments on the RCU docs from the perspective of a
-developer trying to use RCU for the first time.
+And no, it's not that each of those filesystems does not use inode->i_ino at all.
+There's a bunch of library helpers in fs/*.c that happen to use the value filesystem
+has seen fit to store there.  Whether to use those helpers or not, what to store in
+that field, etc. is, again, entirely up to the filesystem in question.
+generic_fillattr() is one of those, that's all there is to it.
 
-* whatisRCU is great, but one the example in Section 3 uses
-  rcu_dereference_protected() without explaining it.  Given that using
-  that function seems to be considered best practice, maybe a few more
-  words there would be in order?  That function isn't mentioned in
-  rcu.txt either, BTW.
+That's precisely why I really do not like the idea of hooks poking in the internals
+of kernel data structures.  Especially since not even "it's not visible outside of
+a subsystem-internal header" appears to slow you down.
 
-* lockdep.txt *does* explain what rcu_dereference_protected() does,
-  but it doesn't really describe lockdep_is_held().  You can mostly
-  figure it out from context, but it wasn't obvious to me what locks
-  it could be used against, and in the case of a rw_semaphore, whether
-  it applied to shared as well as exclusive locks.  That's a lockdep
-  abstraction, and not a RCU abstraction, but lockdep isn't
-  particularly well documented, so I ended up spending 20-30 minutes
-  or so looking at the lockdep implementation before I was sure it
-  actually worked the way I thought it was going to.
+The same goes for tracepoints, etc. - turning random details of implementation into
+a carved in stone ABI is actively harmful.
 
-Anyway, I was going to put submitting a patch to improve whatisRCU on
-my (vastly over-long) TODO list, but when I saw your patch set, I
-couldn't resist trying to see if I could fob it off on you.  If you
-don't think that's fair (and it probably isn't really), just let me
-know, and I'll put it back on my todo list.  :-)
+NAK.
 
-Cheers,
-
-					- Ted
+PS: If anything, visibility to hooks should be opt-in.  Sure, we can start actively hiding
+the things, but that's a winless arms race  - even if we bloody went and encrypted the
+private stuff, you'd still be able to pull decryption key from where it would be accessed
+by legitimate users, etc.  Нахуй нам это надо?
