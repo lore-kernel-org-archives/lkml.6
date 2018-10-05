@@ -2,191 +2,258 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A07BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A612C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72832084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:47:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="criQz7ar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72832084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 50D5E2087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:48:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D5E2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbeJEUqm (ORCPT
+        id S1728755AbeJEUrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:46:42 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39736 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728485AbeJEUqm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:46:42 -0400
-Received: by mail-it1-f195.google.com with SMTP id w200-v6so2770692itc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 06:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=k6ZeblyyPZv+ruxOP2cA8B6uM+ewR1uksgYFqy+Agc4=;
-        b=criQz7arVy+RYju/Zfn4XXyIa9DlyCmH+QjCBvQgKGQ/PEHKSnThXYYe9AAHZjgrG4
-         O07tT2N8iELSMKKhYfO8oB2SfSIk2noxi8Lx96a5ful/gzd7vGmWWnZ/h1pNbmRxAAS0
-         +z+kLgLL9DmxyD8TTyYojOXkvP+2C7LqkZD5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=k6ZeblyyPZv+ruxOP2cA8B6uM+ewR1uksgYFqy+Agc4=;
-        b=PSWKJVOOwnDp+6kBwgVjjzKUd1+Zs+WEf6V3unD2DLHbzCFZUpGB0T2urokZZnW1XN
-         AylJ5TOoGKn/q9OvregUVc+UTyAuNqVf7KBwGY6obe77bSpTlvsb3aDEK/EOIojruYeN
-         b8hqS1RVv/TuDgE8qDBNVbF12SvC3FqslWfyz+ZFKDEW+pZITsJgULEsiYVCJpqpwcDE
-         GZKvyVpFeeovcX2hIhaN9cqgcjtnLB31Ly4TQtn3NLPBylI+XgYqpPTGkOOoNtwbFm46
-         /xVvWnZcH/ekqgywmEPsXu+XrxB3NCsW90wcu7ajWK4h/XdWzyV2rl3Jub3xSUSHtcAM
-         m6bQ==
-X-Gm-Message-State: ABuFfoimPu0ofBm1PorHvLhNeV5uMWLXd6xUZuUsLAa+gAqUduz6vuNf
-        T/CNmBw7kT6is8ZSLeJhFWMdq9EMHcd4TBLVIe3c6Q==
-X-Google-Smtp-Source: ACcGV63+dqoFKRl+zQi6d36SZTi3jl9UOxmvZpAliP7O5ufdzBcE7LM42sTtN5dCgKHTiEAPissKRGLrh2dKMzkwsW4=
-X-Received: by 2002:a24:8045:: with SMTP id g66-v6mr8958725itd.45.1538747273351;
- Fri, 05 Oct 2018 06:47:53 -0700 (PDT)
+        Fri, 5 Oct 2018 16:47:21 -0400
+Received: from mga18.intel.com ([134.134.136.126]:39480 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728278AbeJEUrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:47:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 06:48:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,344,1534834800"; 
+   d="scan'208";a="268739988"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 05 Oct 2018 06:48:32 -0700
+Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
+        by linux.intel.com (Postfix) with ESMTP id DDE9858038C;
+        Fri,  5 Oct 2018 06:48:29 -0700 (PDT)
+Subject: [PATCH v9 1/3]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <4ac4d7ca-c37f-e29b-3d1a-1e1ee31013bc@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <9a4e765c-09b9-fdac-2981-21db35e8226a@linux.intel.com>
+Date:   Fri, 5 Oct 2018 16:48:28 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Fri, 5 Oct 2018 06:47:12 -0700 (PDT)
-In-Reply-To: <1538745782-27446-3-git-send-email-ludovic.Barre@st.com>
-References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com> <1538745782-27446-3-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 5 Oct 2018 15:47:12 +0200
-Message-ID: <CAPDyKFogS_74csmZm5_M3D-JFNn_8fi2sxcHpRwVxZOqZhndVg@mail.gmail.com>
-Subject: Re: [PATCH V5 02/24] mmc: mmci: create common mmci_dma_setup/release
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4ac4d7ca-c37f-e29b-3d1a-1e1ee31013bc@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 October 2018 at 15:22, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> This patch creates a common mmci_dma_setup/release which calls
-> dma_setup/release callbacks of mmci_host_ops and manages
-> common features like use_dma... If there is a fallbacks to
-> pio mode, dma functions must check use_dma.
->
-> error management:
-> -mmci_dmae_setup fail if Tx and Rx dma channels are not defined
-> -qcom_dma_setup fail if one of both dma channels is not defined,
->  Qcom has no specific resource to release, just mmci dmae resource.
+The map->data buffer is used to preserve map->base profiling data 
+for writing to disk. AIO map->cblock is used to queue corresponding 
+map->data buffer for asynchronous writing.
 
-Makes perfect sense!
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v10:
+ - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap()
+ - adjusted error reporting by using %m
+Changes in v9:
+  - implemented NO_AIO and HAVE_AIO_SUPPORT defines to cover cases of 
+    libc implementations without Posix AIO API support
+Changes in v7:
+  - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+  - adjusted setting of priorities for cblocks;
+ Changes in v5:
+  - reshaped layout of data structures;
+  - implemented --aio option;
+ Changes in v4:
+  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
+ Changes in v2:
+  - converted zalloc() to calloc() for allocation of mmap_aio array,
+  - cleared typo and adjusted fallback branch code;
+---
+ tools/perf/Makefile.config |  5 +++++
+ tools/perf/Makefile.perf   |  7 ++++++-
+ tools/perf/util/evlist.c   |  4 +++-
+ tools/perf/util/mmap.c     | 48 +++++++++++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/mmap.h     | 11 +++++++++++
+ 5 files changed, 72 insertions(+), 3 deletions(-)
 
-[...]
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f6d1a03c7523..2e90f4ce9214 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -355,6 +355,11 @@ endif # NO_LIBELF
+ 
+ ifeq ($(feature-glibc), 1)
+   CFLAGS += -DHAVE_GLIBC_SUPPORT
++  ifndef NO_AIO
++    ifndef BIONIC
++        CFLAGS += -DHAVE_AIO_SUPPORT
++    endif
++  endif
+ endif
+ 
+ ifdef NO_DWARF
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 92514fb3689f..7becc6a72cf2 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -97,8 +97,13 @@ include ../scripts/utilities.mak
+ # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
+ # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
+ # llvm-config is not in $PATH.
+-
++#
+ # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
++#
++# Define NO_AIO if you do not want support of Posix AIO based trace
++# streaming for record mode. Currently Posix AIO trace streaming is
++# supported only when linking with glibc.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index be440df29615..af2f8c965d7a 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1029,7 +1029,9 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+ 	struct mmap_params mp;
+-
++#ifdef HAVE_AIO_SUPPORT
++	mp.nr_cblocks = 0;
++#endif
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+ 	if (!evlist->mmap)
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index cdb95b3a1213..db8f16f8a363 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -153,8 +153,19 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ {
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
++static void perf_mmap__aio_munmap(struct perf_mmap *map)
++{
++	if (map->data)
++		zfree(&map->data);
++}
++#endif
++
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++#ifdef HAVE_AIO_SUPPORT
++	perf_mmap__aio_munmap(map);
++#endif
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -164,8 +175,40 @@ void perf_mmap__munmap(struct perf_mmap *map)
+ 	auxtrace_mmap__munmap(&map->auxtrace_mmap);
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
++static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
++{
++	int delta_max;
++
++	map->nr_cblocks = mp->nr_cblocks;
++	if (map->nr_cblocks) {
++		map->data = malloc(perf_mmap__mmap_len(map));
++		if (!map->data) {
++			pr_debug2("failed to allocate data buffer, error %m\n");
++			return -1;
++		}
++		/*
++		 * Use cblock.aio_fildes value different from -1
++		 * to denote started aio write operation on the
++		 * cblock so it requires explicit record__aio_sync()
++		 * call prior the cblock may be reused again.
++		 */
++		map->cblock.aio_fildes = -1;
++		/*
++		 * Allocate cblock with max priority delta to
++		 * have faster aio write system calls.
++		 */
++		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++		map->cblock.aio_reqprio = delta_max;
++	}
++
++	return 0;
++}
++#endif
++
+ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu)
+ {
++	int rc = 0;
+ 	/*
+ 	 * The last one will be done at perf_mmap__consume(), so that we
+ 	 * make sure we don't prevent tools from consuming every last event in
+@@ -197,7 +240,10 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
+ 
+-	return 0;
++#ifdef HAVE_AIO_SUPPORT
++	rc = perf_mmap__aio_mmap(map, mp);
++#endif
++	return rc;
+ }
+ 
+ static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index e603314dc792..1b63b6cc7cf9 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,9 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#ifdef HAVE_AIO_SUPPORT
++#include <aio.h>
++#endif
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -26,6 +29,11 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++#ifdef HAVE_AIO_SUPPORT
++	void 		 *data;
++	struct aiocb	 cblock;
++	int		 nr_cblocks;
++#endif
+ };
+ 
+ /*
+@@ -59,6 +67,9 @@ enum bkw_mmap_state {
+ struct mmap_params {
+ 	int			    prot, mask;
+ 	struct auxtrace_mmap_params auxtrace_mp;
++#ifdef HAVE_AIO_SUPPORT
++	int			    nr_cblocks;
++#endif
+ };
+ 
+ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu);
 
-> +void mmci_dma_setup(struct mmci_host *host)
-> +{
-> +       if (!host->ops || !host->ops->dma_setup)
-> +               return;
-> +
-> +       if (host->ops->dma_setup(host)) {
-> +               mmci_dma_release(host);
-
-Please remove this and let the variants clean up themselves. That
-makes it more straight forward.
-
-> +               return;
-> +       }
-> +
-> +       host->use_dma = true;
-> +}
-> +
-
-[...]
-
-> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-> index 01e6c6b..9b0a960 100644
-> --- a/drivers/mmc/host/mmci.h
-> +++ b/drivers/mmc/host/mmci.h
-> @@ -273,7 +273,8 @@ struct variant_data {
->
->  /* mmci variant callbacks */
->  struct mmci_host_ops {
-> -       void (*dma_setup)(struct mmci_host *host);
-> +       int (*dma_setup)(struct mmci_host *host);
-> +       void (*dma_release)(struct mmci_host *host);
->  };
->
->  struct mmci_host_next {
-> @@ -323,6 +324,7 @@ struct mmci_host {
->         unsigned int            size;
->         int (*get_rx_fifocnt)(struct mmci_host *h, u32 status, int remain);
->
-> +       u8                      use_dma:1;
->  #ifdef CONFIG_DMA_ENGINE
->         /* DMA stuff */
->         struct dma_chan         *dma_current;
-> @@ -336,3 +338,14 @@ struct mmci_host {
->  #endif
->  };
->
-> +#ifdef CONFIG_DMA_ENGINE
-> +void mmci_variant_init(struct mmci_host *host);
-> +#else
-> +static inline void mmci_variant_init(struct mmci_host *host)
-> +{
-> +}
-> +#endif
-
-This can be kept in mmci.c instead.
-
-> +
-> +int mmci_dmae_setup(struct mmci_host *host);
-> +void mmci_dmae_release(struct mmci_host *host);
-> +
-> diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-> index be3fab5..aa070a9 100644
-> --- a/drivers/mmc/host/mmci_qcom_dml.c
-> +++ b/drivers/mmc/host/mmci_qcom_dml.c
-> @@ -119,19 +119,22 @@ static int of_get_dml_pipe_index(struct device_node *np, const char *name)
->  }
->
->  /* Initialize the dml hardware connected to SD Card controller */
-> -static void qcom_dma_setup(struct mmci_host *host)
-> +static int qcom_dma_setup(struct mmci_host *host)
->  {
->         u32 config;
->         void __iomem *base;
->         int consumer_id, producer_id;
->         struct device_node *np = host->mmc->parent->of_node;
->
-> +       if (mmci_dmae_setup(host))
-> +               return -EINVAL;
-> +
->         consumer_id = of_get_dml_pipe_index(np, "tx");
->         producer_id = of_get_dml_pipe_index(np, "rx");
->
->         if (producer_id < 0 || consumer_id < 0) {
->                 host->variant->qcom_dml = false;
-> -               return;
-> +               return -EINVAL;
-
-This relies on error handling to be done by mmci_dma_setup(), which as
-stated, feels a bit wrong.
-
-I would rather just call mmci_dmae_realease() here, before returning -EINVAL.
-
-[...]
-
-Otherwise, this looks good to me now.
-
-Kind regards
-Uffe
