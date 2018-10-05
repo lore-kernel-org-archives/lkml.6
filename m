@@ -2,146 +2,212 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E6AC65BB9
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA14C65BB9
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 629452054F
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:13:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629452054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C293821473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:13:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yk9jyO1G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C293821473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbeJFBMx (ORCPT
+        id S1728802AbeJFBM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:12:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:9291 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728042AbeJFBMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:12:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 11:13:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
-   d="scan'208";a="238841799"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga004.jf.intel.com with ESMTP; 05 Oct 2018 11:12:23 -0700
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-References: <cover.1537920575.git.tim.c.chen@linux.intel.com>
- <ae3fb86f74de2001ddab477579afd813bca9baa9.1537920575.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1810021949450.1435@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: [Patch v2 4/4] x86/speculation: Add prctl to control indirect
- branch speculation per process
-Message-ID: <5a558b4e-e241-2ab8-3653-b25dc014b78d@linux.intel.com>
-Date:   Fri, 5 Oct 2018 11:12:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Fri, 5 Oct 2018 21:12:56 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39721 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbeJFBMy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:12:54 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p1-v6so8546004ljg.6
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aFsDYgBglL/1P1wMwgpHMxzXFsKg0WwG6VaGB2Fv/5A=;
+        b=Yk9jyO1GxmeGuyd5jQ6z01V3ntVGNpvVy2bWwSF+a3EFZKqDkb0kA+ep7wCnvi/r+u
+         OWP51a+El4W8Ruga7W5LTLw0dH6zQO5nTL0h8E+0CS090OYoYRw7SxsRMsB5m5TgUFgx
+         YI3FJOJYhBR92SG73GQdGo5SMuZTtk6H9nCg0wdT+azkaSmdgI1eGHRA19/nYZE/dVkf
+         smVnSw3SgVFa/tRsbYk0z7GphsYU3FD0AarYZwaeGjuJxd/xVickhTMtIUlXEregTs5X
+         p+RmQBr9mCcdiH3rvSFtc7CQTndb5SlLpgUvJyKa70hTTC2xtKLiK4I/D7sSTyUpxF4n
+         /6SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aFsDYgBglL/1P1wMwgpHMxzXFsKg0WwG6VaGB2Fv/5A=;
+        b=MyA+UzZJM5RiWmJNH9GDxVYSHrRYIQRXxFB9jrsRbDnOlnjl2LIFWuDAwTvhXjt+31
+         MKqO5bb8my41Sd/MNR2+SCd5mf+OOr7Zy2u34KuUZgZJJU2kYFiF2F9eBxfqqdYNbZXt
+         H8qshvEjsYxvbRrnwROhLNqZlzAk34YPla9a5msQMGi+U+UpXM0m2hkQGKIhh2tF9zQZ
+         9oxk4DfjNVXBGI2gAXjoLi9D79irRKHqMO6f0Y5OKbaqDQ7zJotM2yTlaBAAjGRLxZTn
+         M/9A5MDAuq4NmGgqhiiGH8Ron9yNG4XWlhP5FqQZU4iJJo1PkAcXg2jpnsX8vywIWEp6
+         AP6A==
+X-Gm-Message-State: ABuFfohJSYc83yar6J+TwhIgNLCGrnIf3aPU8x9eGRZ6vjCZDt57YjFN
+        AyCnXMtXMiGNwztMs0W7GBs20A9s4fV2MVcAbMM=
+X-Google-Smtp-Source: ACcGV61QA4P8Odg2S/8sLKiLkr4EmLMZ4/lSZ+hMn0RCSeyOe+yKQDlF+oyT4MtWSekveYBJsKU92FzeQ9yIJ2OCt8I=
+X-Received: by 2002:a2e:86ca:: with SMTP id n10-v6mr8941593ljj.90.1538763180242;
+ Fri, 05 Oct 2018 11:13:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810021949450.1435@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181004142942.11887-1-ricardo.ribalda@gmail.com>
+ <20181004142942.11887-2-ricardo.ribalda@gmail.com> <20181005002125.12fd229f@bbrezillon>
+ <CAPybu_26HST5xGfhE6MoVTRZok_gfDqN=ZOAesuEMVskdrCpLA@mail.gmail.com>
+ <20181005090811.6b7e9957@bbrezillon> <CAPybu_38xH2Cv+eONQmEJ1i6k=oiQM=WrcwOFR29LbtRvWfKXA@mail.gmail.com>
+ <20181005103730.57d52e3c@bbrezillon> <CAPybu_1RMcro3xLNW5mbybYdObCTq=QwXgk+RT6hcmRGTh6s7A@mail.gmail.com>
+ <20181005121235.7e64b64a@bbrezillon> <CAPybu_0TbeN+-F6zwN8XOMuY1EpgE6GRi=ExDx6O3Yun9kXjYQ@mail.gmail.com>
+ <20181005141057.0f1b0a9b@bbrezillon> <CAPybu_0OZR==4k5nxVRZ-1NjPEXLQsun7QhnYds8dPndreUjcQ@mail.gmail.com>
+ <20181005165234.468d2397@bbrezillon> <CAPybu_1cd9aJN9mC9m36Gd_fhU5UnfLH9EtU0h8BvJCZchOV_A@mail.gmail.com>
+ <20181005182931.172b8f1c@bbrezillon>
+In-Reply-To: <20181005182931.172b8f1c@bbrezillon>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Fri, 5 Oct 2018 20:12:43 +0200
+Message-ID: <CAPybu_01Bn5qmv91Pc-DExCAMheJyGYxiSvmGDUGiSxBA+S0DQ@mail.gmail.com>
+Subject: Re: [PATCH v10 10/10] mtd: maps: gpio-addr-flash: Add support for
+ device-tree devices
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/02/2018 10:58 AM, Thomas Gleixner wrote:
-> On Tue, 25 Sep 2018, Tim Chen wrote:
->>  
->> +void arch_set_dumpable(struct task_struct *tsk, struct mm_struct *mm, int value)
->> +{
->> +	if (!static_branch_unlikely(&spectre_v2_app_lite))
->> +		return;
->> +	if (!static_cpu_has(X86_FEATURE_STIBP))
->> +		return;
->> +
->> +	if ((unsigned) value != SUID_DUMP_USER) {
-> 
-> First of all we use unsigned int and not unsigned, Aside of that why is the
-> argument not unsigned int right away?
+Hi Boris
+On Fri, Oct 5, 2018 at 6:29 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+>
+> On Fri, 5 Oct 2018 17:40:44 +0200
+> Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+>
+> > Hi Boris
+> > On Fri, Oct 5, 2018 at 4:52 PM Boris Brezillon
+> > <boris.brezillon@bootlin.com> wrote:
+> > >
+> > > On Fri, 5 Oct 2018 16:06:57 +0200
+> > > Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+> > >
+> > > > Hi again Boris
+> > > >
+> > > >
+> > > > On Fri, Oct 5, 2018 at 2:10 PM Boris Brezillon
+> > > > <boris.brezillon@bootlin.com> wrote:
+> > > > >
+> > > > > On Fri, 5 Oct 2018 14:04:52 +0200
+> > > > > Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+> > > > >
+> > > > > > Hi Boris
+> > > > > > On Fri, Oct 5, 2018 at 12:12 PM Boris Brezillon
+> > > > > > <boris.brezillon@bootlin.com> wrote:
+> > > > > > >
+> > > > > > > On Fri, 5 Oct 2018 11:54:18 +0200
+> > > > > > > Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+> > > > > > >
+> > > > > > > > Hi Boris
+> > > > > > > >
+> > > > > > > > Just seen that  you already did the rebase at
+> > > > > > > > https://github.com/bbrezillon/linux-0day/commits/mtd/physmap-cleanup
+> > > > > > > >
+> > > > > > > > Thanks for that.
+> > > > > > > >
+> > > > > > > > I am about to test it in real hw (unless you want me wait)
+> > > > > > >
+> > > > > > > Sure, go ahead and test it.
+> > > > > > >
+> > > > > > > Thanks,
+> > > > > > >
+> > > > > > > Boris
+> > > > > > I had to change this on your patchset to have it working on hw:
+> > > > > > https://pastebin.com/78A7yhJ9
+> > > > > >
+> > > > > > If you send the patchset to the mailing list I can review it patch by patch.
+> > > > > >
+> > > > > > Also
+> > > > > > mtd: maps: Prepare merging of physmap and physmap_of
+> > > > > >
+> > > > > > I do not think that can be bisected. (Not sure, I have to test it)
+> > > > >
+> > > > > Okay, I'll have a look.
+> > > > >
+> > > > > >
+> > > > > > I add the diff to the mail, but gmail will probably scramble the
+> > > > > > lines(yes I know I have to use other mail client)
+> > > > >
+> > > > > The diff looks good, I'll fix that an send a push a new version.
+> > > >
+> > > > Also fix on physmap_flash_remove
+> > > >
+> > > > physmap_data->exit(dev); must be called BEFORE
+> > > > map_destroy(info->mtds[i]);
+> > >
+> > > Hm, that's weird. That shouldn't happen. Do you have a non-NULL
+> > > ->exit()? Can you detail why you think ->exit() call is the cause of
+> > > this OOPS?
+> > >
+> >
+> > No idea.  It was crashing at:
+> > https://github.com/bbrezillon/linux-0day/blob/mtd/physmap-cleanup/drivers/mtd/chips/cfi_cmdset_0002.c#L2839
+> > cfi_cmdset_0002.c seesm to play with cfi->chips on its reset callback
+> >
+> > I added some printfs:
+> >
+> > if (!cfi),
+> > if (!chip)
+> > if (!cfi->chips)
+> >
+> > sometimes it crashed on one place, sometimes in another :S. Reading
+> > back our patch it seemed more logical (semantically :P) to
+> > destroy after exit and not the other way around.
+>
+> Actually no, it makes more sense to call ->exit() after destroying the
+> maps, because the platform-specific ->exit() implem might release
+> resources that are used during the destroy_map() operation. Another
+> reason to keep it in this order is that operations in the remove path
+> should be in the reverse order of those done in the probe path, and
+> ->init() is definitely called before map_probe().
+>
+
+I think I know what might be the issue. on cfi_cmdset_002.c
+cfi_amdstd_reset can be called in parrallel to cfi_amdstd_destroy.
+
+maybe we should call
+unregister_reboot_notifier(&mtd->reboot_notifier);
+before
+cfi_amdstd_reset(mtd)
+
+need to try that on real hw with some strategical printfs :P. But that
+will ahve to wait til Monday
+
+Cheers
 
 
-The original set_dumpable passes suid_dumpable, which was
-exposed via /proc/sys/fs/suid_dumpable and defined as int.
-It will make sense to define suid_dumpable as an unsigned int instead.
+> >
+> > I made that change and it stopped OOPsing at reboot.
+>
+> Maybe it's just a side effect, especially since I'm pretty sure your
+> physmap_data->exit() is NULL (assuming you do use DT to declare your
+> flash).
+>
+> >
+> > Havent had the time to dig deeper. But if it does not break anything
+> > on your side to invert destroy and exit please do so. It was not
+> > oopsing with my patchset.
+>
+> I'd like to understand what's happening before doing this change. As I
+> said, I fear this reordering just hides something else.
 
-Would you like me to redefine suid_dumpable as unsigned int
-in sysctl.c in the patch revision as a separate clean up patch?
 
-Thanks.
 
-Tim
+-- 
+Ricardo Ribalda
