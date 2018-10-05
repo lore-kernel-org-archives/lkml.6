@@ -2,131 +2,144 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CADC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4E4C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C752F208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E1072084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:52:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeOw5gzB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C752F208E7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mix7lz5T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1072084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeJEPuG (ORCPT
+        id S1728798AbeJEPu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:50:06 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45897 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728433AbeJEPuG (ORCPT
+        Fri, 5 Oct 2018 11:50:27 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33325 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbeJEPu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:50:06 -0400
-Received: by mail-qt1-f194.google.com with SMTP id e10-v6so1906426qtq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 01:52:20 -0700 (PDT)
+        Fri, 5 Oct 2018 11:50:26 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d4-v6so4781290pfn.0;
+        Fri, 05 Oct 2018 01:52:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PJWHjNXWemoMUJn75+cUAAvlfbLu23chzrXcnTQoDqM=;
-        b=VeOw5gzB/nAC6zeqj/iQMfHnPqlvhFclvss5eCp6bD8wKSgIafZvbf69yZwv9N0hwt
-         FmqglPGYn5RUbzMSPjtcMAUDRFIMRxY5QYOoVcQ1eTAqL++MQRC5+3L2p4AJNQlnDUU1
-         ktGU6OfoABTAtNHAD//1jTAZu5ZurwLNlMuTjHV7UYjfTaeRcVpO0VeqRb53F8MEaFSa
-         lapMPwwLGV1Ug29Ok4PLe4VrQxZIxgbxYVuLHFF7uy4T+fyaCHWU5RJ9bgAJXbsq9jnV
-         NpGDP4wdPH9dKlK8UEvUe0e12XOmcRr83IJm8uJbf9EV7Ttb9intRxhjRHJH9oxyCQQF
-         K/lw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q6KQNhXaM4LDZO9ZIxVZz/FIgzZuUejeInKdsfelKB0=;
+        b=mix7lz5TK33gFKhPsZDgCZknhWUrIf9fVve4Ba8yGGYu7WxnjpxhFtnNMPr0kKooH5
+         AT5OAfuWmWItIB8NJONgPluPDLA2Z0wb3qlc+S4QZZEIP2KMGwhCCRQ3H26FIJJe8d93
+         H/blRqBb6RYC3rpV2YZ4nUs/3sh5RbZeeRO6muihyr3XKcs2PJoYVFTxvE+OYMDOlaLy
+         BopTVy203jhRSGHv0trL8ONLcTKZ5RgBRIBzKs9l0G83i04VvowH3keuggwe8lx5KPtp
+         ouh6RSgJpQ/q5EfwmXYVFq85U1tKwAlocXCOargo5U/3H3e00OQHcbo3jgpKJJxSbb+K
+         F/yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PJWHjNXWemoMUJn75+cUAAvlfbLu23chzrXcnTQoDqM=;
-        b=ZagNJOftyLtori0GklsbpFbjnh8yEuYRW4QHl1jHEc+DthqHKQmA7lTMNznyMkknpM
-         me+ml7Q/0GiL88SO/bk2y8pjTLVRXmNAaNJA7qUKTGGYLVNSDERD8Upx1RK6qxRnA3D6
-         B3SxpaaSSFosJg/8/cE3YaeiHuZSgZSYlSDXSVMrl5Y/6tVPV97FDR/0mffnZPXZ6kZP
-         Zqy/1fkqBNSVA4LUR5HR1BW1MYPRHksICxklt0ZfgdcdBPpq2s7CYxxD5f77F9fXATLD
-         w43j511dNw507AnY/TV0SxwWgr1toI6NCgIkD8BP7dM/pbKChRQ4y3RpWBq2VG/6U0hT
-         J3Pg==
-X-Gm-Message-State: ABuFfojyLVDBTsP6EKbnuin4UzzKeaGrS/4aQGZlffLR9MddD0ppSB89
-        qWcVEd3/49ajNyQcpE6Fcf0ZzDbDD9W+Cv1edH8=
-X-Google-Smtp-Source: ACcGV61I+XpPLtRQ5/hjxUlXyAp0BC1t5Wap5hc3EStiqekiUER0dzD0UOmCdJsu5w6pGzLAx2IbY5Mhr5iaE6MhbsI=
-X-Received: by 2002:ac8:34ce:: with SMTP id x14-v6mr8596923qtb.115.1538729540503;
- Fri, 05 Oct 2018 01:52:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q6KQNhXaM4LDZO9ZIxVZz/FIgzZuUejeInKdsfelKB0=;
+        b=g8LXE16V3t+3dtAhBc5KakqKio3p7H1NhdoYYHZY6PMw4/8aU4eTCvX4mrfXnP3kBr
+         j2P1a3/fvw9VTDyI/o6dbVzSOW7Oq8SGD4e04uiQHOeNzsP0rh2/OLii8LmeJwKXlnzz
+         UetzeER1N6W6aagHTmwvu3GK9qD+xrCFqxsWTAIMoJnLwGkpjeIxAWQ7CrGImKsTts+2
+         eUykezk53suWtZnhxkVUCBhDpkzm3+LDyQczNeaCIOcKhQkNudQU32b/Zk3EqtNF9Pm5
+         f9dxVNgjkaFqEDwf6DcazwMTzM80UhUqhrDhufaIML2e/XINR9Q/OQc2em18fNRM3rQ2
+         7C0w==
+X-Gm-Message-State: ABuFfoiBcZr4euvGOmj8cPW4PSivER289VkWJExrKhcAUWmooZPIcxol
+        kcJe4RyDVedvuN1g9Zmx//njC/9qNtu5rg==
+X-Google-Smtp-Source: ACcGV61RyrtIguVJPBCjB+yWkxncwSLTIwqpR/cdxk69xwSWbnkbuH2pIA9ee/AMdif7RjYBypCEzA==
+X-Received: by 2002:a62:21d1:: with SMTP id o78-v6mr10696410pfj.235.1538729560385;
+        Fri, 05 Oct 2018 01:52:40 -0700 (PDT)
+Received: from localhost ([82.102.30.219])
+        by smtp.gmail.com with ESMTPSA id z26-v6sm1245748pfh.77.2018.10.05.01.52.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 01:52:39 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 01:52:35 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        H Hartley Sweeten <hartleys@visionengravers.com>,
+        Mika Westerberg <mika.westerberg@iki.fi>
+Subject: Re: [PATCH] spi: spi-ep93xx: Change dir type in
+ ep93xx_spi_dma_{finish,prepare}
+Message-ID: <20181005085235.GA2106@localhost>
+References: <20181004023926.15847-1-natechancellor@gmail.com>
+ <20181004103247.GC6412@sirena.org.uk>
+ <20181005082844.GT2302@lahna.fi.intel.com>
 MIME-Version: 1.0
-References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
- <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
- <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
- <20181004123400.GC30658@n2100.armlinux.org.uk> <CAFqt6zZPOM17QwmcWKF3F1gqkJm=2PxvuJ3naWuRXZGHc2HrEQ@mail.gmail.com>
- <20181004181736.GB20842@bombadil.infradead.org> <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
- <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com> <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
-In-Reply-To: <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 5 Oct 2018 10:52:09 +0200
-Message-ID: <CANiq72kVJn7985EET067Dgj+z0dwb0x2MTUnREMWKCVU6=WnJA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux@armlinux.org.uk,
-        Robin van der Gracht <robin@protonic.nl>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Dave Airlie <airlied@linux.ie>, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
-        mhocko@suse.com, Dan Williams <dan.j.williams@intel.com>,
-        kirill.shutemov@linux.intel.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
-        riel@redhat.com, minchan@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, ying.huang@intel.com,
-        Andi Kleen <ak@linux.intel.com>, rppt@linux.vnet.ibm.com,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
-        mcgrof@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005082844.GT2302@lahna.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Souptick,
+On Fri, Oct 05, 2018 at 11:28:44AM +0300, Mika Westerberg wrote:
+> Hi,
+> 
+> On Thu, Oct 04, 2018 at 11:32:47AM +0100, Mark Brown wrote:
+> > On Wed, Oct 03, 2018 at 07:39:26PM -0700, Nathan Chancellor wrote:
+> > > Clang warns when one enumerated type is implicitly converted to another.
+> > > 
+> > > drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
+> > > enumeration type 'enum dma_transfer_direction' to different enumeration
+> > 
+> > Please remember to CC driver maintainers and authors on patch
+> > submissions so they can review things, copying in Hartley and Mika.
+> 
+> Thanks for copying me.
+> 
+> > > type 'enum dma_data_direction' [-Wenum-conversion]
+> > >         nents = dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
+> > >                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+> > > ./include/linux/dma-mapping.h:428:58: note: expanded from macro
+> > > 'dma_map_sg'
+> > > \#define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
+> > >                                ~~~~~~~~~~~~~~~~          ^
+> > > drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
+> > > enumeration type 'enum dma_transfer_direction' to different enumeration
+> > > type 'enum dma_data_direction' [-Wenum-conversion]
+> > >                 dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
+> > >                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+> > > ./include/linux/dma-mapping.h:429:62: note: expanded from macro
+> > > 'dma_unmap_sg'
+> > > \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
+> > >                                  ~~~~~~~~~~~~~~~~~~          ^
+> > > drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
+> > > enumeration type 'enum dma_transfer_direction' to different enumeration
+> > > type 'enum dma_data_direction' [-Wenum-conversion]
+> > >         dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
+> > >         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+> > > ./include/linux/dma-mapping.h:429:62: note: expanded from macro
+> > > 'dma_unmap_sg'
+> > > \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
+> > >                                  ~~~~~~~~~~~~~~~~~~          ^
+> > > 3 warnings generated.
+> > > 
+> > > dma_{,un}map_sg expects an enum of type dma_data_direction but this
+> > > driver uses dma_transfer_direction for everything. Converting to
+> > > dma_data_direction would be desirable but there are a few shared
+> > > structures that expect dma_transfer_direction so it is just simpler to
+> > > change the parameter here. dma_transfer_direction and dma_data_direction
+> > > are different sizes but this driver only uses the 1 and 2 values which
+> > > mean the same thing so this change is safe.
+> 
+> I would rather do the conversion than passing "int" to the function even
+> if both enums happen to have same value now. I would be surprised if
+> there is no helper function already for the conversion :)
 
-On Fri, Oct 5, 2018 at 7:51 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Fri, Oct 5, 2018 at 1:16 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> >
-> > Also, not sure if you saw my comments/review: if the interface is not
-> > going to change, why the name change? Why can't we simply keep using
-> > vm_insert_page?
->
-> yes, changing the name without changing the interface is a
-> bad approach and this can't be taken. As Matthew mentioned,
-> "vm_insert_range() which takes an array of struct page pointers.
-> That fits the majority of remaining users" would be a better approach
-> to fit this use case.
->
-> But yes, we can't keep vm_insert_page and vmf_insert_page together
-> as it doesn't guarantee  that future drivers will not use vm_insert_page
-> in #PF context ( which will generate new errno to VM_FAULT_CODE).
->
+Hi Mika,
 
-Maybe I am hard of thinking, but aren't you planning to remove
-vm_insert_page with these changes? If yes, why you can't use the keep
-vm_insert_page name? In other words, keep returning what the drivers
-expect?
+I will go ahead and spin up a v3 in the morning for review and copy you
+and Hartley, thanks for the comments!
 
-Cheers,
-Miguel
+Nathan
