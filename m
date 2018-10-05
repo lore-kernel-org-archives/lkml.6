@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CF5C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F22BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA79208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04C59208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aB/pc7f8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA79208E7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Txvvydwn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C59208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeJELLJ (ORCPT
+        id S1727765AbeJELLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 07:11:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36259 "EHLO
+        Fri, 5 Oct 2018 07:11:11 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37729 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbeJELLI (ORCPT
+        with ESMTP id S1727599AbeJELLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 07:11:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f18-v6so4143846pgv.3;
-        Thu, 04 Oct 2018 21:14:17 -0700 (PDT)
+        Fri, 5 Oct 2018 07:11:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c10-v6so4139188pgq.4;
+        Thu, 04 Oct 2018 21:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CCjwtqQtCAOwIXfabE6A59py+g67jCSp+upDI4OtmXg=;
-        b=aB/pc7f8FxZc7uvWjU1rnHCfgnfN0z8C3vWsTvXR9xDr0ZaXu3l+aKzPSrD4J/PtBZ
-         g6Nuvdx+FJHvQzlFn43EqB/Z0MzHmEKcv1sd7dlaF3rQKM0RC8DzbbXZ7AYmPTj0YgP7
-         JaNzyAfaTGpL3cArYhv5Hh70vUMvjcEmFJ84jyhunUzqBjEFYxl6x84NDxj7okW3QMqC
-         YeTjxPW8riexKDFWU3ZxE+A+p0Xfw+CoXkCmw+TbQsh7MqEXC4l5jCGSIC+Ldz5whgSA
-         Yt2TKSKwgjN0TIYIlZPyDhu4d4r4EkSPrEFm8W/G3FlffIMGXsztEQkdK2uW60nMD21l
-         HzeA==
+        bh=TSvuFcg8dSVKckHCq64beWOdH/WxX+9HQwnn/E0dljs=;
+        b=Txvvydwn/k63hOxYlZwYdwaQIAjsth2Jaw4zbDNdTvqPzUBK/bEWuzmAxECzPr/rYB
+         5ee7eBaNw1FbEYKkJ4M/WHi1t1nNCDk5vVrtbTuzDmVpBWywMHZMCbtMkyDjKD+IEShv
+         Fshm8YpT/NObVTDG3rnXVe9X1gblxeezdCDtpJNZ6XLbQc01eR7O2FLjyBGIcN4G6a+V
+         WHIFJ4Mp/4B0eZ2NxalIRlvpGQaQx8112Pd0FQJX3TymYYILDXlRQ1T4QgysP/e8XVsX
+         dikNHoa/BUjMAwOGD35MjuM2ynoK/ZjKzfpqn+GqHfMZZUmhddS/DuBQPxc4FUro5AW8
+         rA3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CCjwtqQtCAOwIXfabE6A59py+g67jCSp+upDI4OtmXg=;
-        b=pf0K7/0B4FRTkRjJbey/XkZeO63U6OYcr31EvAd0kL1iEU+DpC6N2MUeby8MglynDd
-         9BvVky8F7rmonMVh54lfYtGFiI2/+2jLnd1/WrEnH8Y59y0TX4meNqpVD4hvHvXmwfCr
-         AEhA/aT5JPH/a4H8P456MC6ca1pYdfIFRIOBgH7HMC93nRlD5kwbT8UfgaZ0xp0Uzr9o
-         v9NyLaAhgAGi3gwUqZWjDWhkniADfQZcyKcId7zjDD14EkxBmEDHfAW3CE+oH+REiW3s
-         zxP1bYPdzEELCqF9z41U1+lhhDqVdQylhoVNdXqXImeHXAKghTYKfdsPBXYGCK97Xh8T
-         cJtg==
-X-Gm-Message-State: ABuFfogQaIgJobBafBEuYgMe++uQONxZkOv288fW7DBwc5kz6y0TVCN6
-        8bOZG7+LR2+/fD2QEj4pZGxUpdNJ
-X-Google-Smtp-Source: ACcGV61470fq1TFoZi6jkEm12Z57jOx/YB0UTtMISFtSwg/fGVSHpMljSvPiU4o8Onwg3riTLIACxg==
-X-Received: by 2002:a63:6203:: with SMTP id w3-v6mr8425138pgb.53.1538712857052;
-        Thu, 04 Oct 2018 21:14:17 -0700 (PDT)
+        bh=TSvuFcg8dSVKckHCq64beWOdH/WxX+9HQwnn/E0dljs=;
+        b=SuZgAzny+5lna4E2tbMo68bcvWM6rMw4s+n5tBBOOH/4t7VQjjmE/2ajjpdyS7tsYw
+         IA07TR8bFLGT+RCir4Fb9FEOaeyKAyO6N8zwfx6xSd6ehRgiOAOJA6XgTkp58nUBdtum
+         l6l1LxSyRxzHzMrNevZhiasCwu1IMh2QoNs+bSgOpp+QVGYfpKHayjAbiPUd60CK4/5x
+         ZXFt6MtBEptInqFPEQG/gAVSvZrIV4sijoQvYd2oPieeUQBc863jQFH4LcfqiRhRNjsD
+         TU0qL7UZZJPk9T+rc8FiC80HM1yIzJqme7EQ/nBvHg+ygn52bOl8NlDKuFbAgPf4Fk+c
+         wAxA==
+X-Gm-Message-State: ABuFfogUqeeLfEgJOWHAHoHOgPj6m6JuCFu9K7c9iM+sMAselSgIV1uv
+        mS10ci9Le9BVqad9G2Z2KI0=
+X-Google-Smtp-Source: ACcGV60Nq66DYWpjLNnNkOqwngvmQOK1t9t7z+KD3D9MvbeI/Z+r0dGjkV540jzK0as9aN/rEEhBDw==
+X-Received: by 2002:a63:eb07:: with SMTP id t7-v6mr8409158pgh.441.1538712859586;
+        Thu, 04 Oct 2018 21:14:19 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm277975pfn.9.2018.10.04.21.14.15
+        by smtp.gmail.com with ESMTPSA id n63-v6sm277975pfn.9.2018.10.04.21.14.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 04 Oct 2018 21:14:16 -0700 (PDT)
+        Thu, 04 Oct 2018 21:14:19 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH 04/16] powerpc/pseries: add of_node_put() in dlpar_detach_node()
-Date:   Thu,  4 Oct 2018 21:12:35 -0700
-Message-Id: <1538712767-30394-5-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH 06/16] of: overlay: do not duplicate properties from overlay for new nodes
+Date:   Thu,  4 Oct 2018 21:12:37 -0700
+Message-Id: <1538712767-30394-7-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
 References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
@@ -81,38 +81,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-"of: overlay: add missing of_node_get() in __of_attach_node_sysfs"
-added a missing of_node_get() to __of_attach_node_sysfs().  This
-results in a refcount imbalance for nodes attached with
-dlpar_attach_node().  The calling sequence from dlpar_attach_node()
-to __of_attach_node_sysfs() is:
+When allocating a new node, add_changeset_node() was duplicating the
+properties from the respective node in the overlay instead of
+allocating a node with no properties.
 
-   dlpar_attach_node()
-      of_attach_node()
-         __of_attach_node_sysfs()
+When this patch is applied the errors reported by the devictree
+unittest from patch "of: overlay: add tests to validate kfrees from
+overlay removal" will no longer occur.  These error messages are of
+the form:
+
+   "OF: ERROR: ..."
+
+and the unittest results will change from:
+
+   ### dt-test ### end of unittest - 203 passed, 7 failed
+
+to
+
+   ### dt-test ### end of unittest - 210 passed, 0 failed
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
+ drivers/of/overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-***** UNTESTED.  I need people with the affected PowerPC systems
-*****            (systems that dynamically allocate and deallocate
-*****            devicetree nodes) to test this patch.
-
- arch/powerpc/platforms/pseries/dlpar.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
-index a0b20c03f078..e3010b14aea5 100644
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -272,6 +272,8 @@ int dlpar_detach_node(struct device_node *dn)
- 	if (rc)
- 		return rc;
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 0b0904f44bc7..c113186e222c 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -393,7 +393,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			break;
  
-+	of_node_put(dn);
-+
- 	return 0;
- }
+ 	if (!tchild) {
+-		tchild = __of_node_dup(node, node_kbasename);
++		tchild = __of_node_dup(NULL, node_kbasename);
+ 		if (!tchild)
+ 			return -ENOMEM;
  
 -- 
 Frank Rowand <frank.rowand@sony.com>
