@@ -2,104 +2,182 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7B5C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0061EC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5291206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5291206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D894206B2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:41:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="RhdUuVFK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D894206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeJEVi1 convert rfc822-to-8bit (ORCPT
+        id S1728910AbeJEVkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:38:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47621 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728361AbeJEVi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:38:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2A7C620CFE; Fri,  5 Oct 2018 16:39:24 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D2A0F2090A;
-        Fri,  5 Oct 2018 16:39:13 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 16:39:14 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v2] mtd: rawnand: denali: set SPARE_AREA_SKIP_BYTES
- register to 8 if unset
-Message-ID: <20181005163914.5262e46d@xps13>
-In-Reply-To: <1538108161-6174-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1538108161-6174-1-git-send-email-yamada.masahiro@socionext.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 5 Oct 2018 17:40:32 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38054 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728522AbeJEVkc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 17:40:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c1-v6so11857274ede.5
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 07:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=5Q+ZFwsRQJmnJZPIyqJs32iI+vIHdCsgJCC9YYOqrls=;
+        b=RhdUuVFKVQn+Z6znNDflHxRjFjoaAt7H4hkIe9bKRT+mt+KrUwVWJtiAO8chS7BJOL
+         traUK4nmyTzCk0V9fQLLebYvi9Jz0L06go7UhVNpK29POgOFCfOXPKaVnpa2eBqtTX9Z
+         kxdE5J0KFZm1Idyuo9W+ssnw3dvKpURjJi5O0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=5Q+ZFwsRQJmnJZPIyqJs32iI+vIHdCsgJCC9YYOqrls=;
+        b=BXATOa87ggRVT/MNSHxMkHPIQsaOpJbc+lMJb11UssLLrzZCSEjlmQOsPT+90/vuM+
+         mC3wDaQtp9LkrNIaEatxxCgZIJfigIuUWBfsnhjgiL0vIDKx9bJbuFDSfura+ZDhrXm+
+         Zw189z0FcCmT04oqq0xXqpNZRjcv7XcNhP1bwzqbp67CvJOqhJ+Y9LWDanJphKhSkukX
+         Fij+cUgVjmeG1MEel44CJHJiNhYXlyepJ/FXIh8K/K+zeuI2KW7RBa/S9Jjclo6zl4k7
+         FgnZ97Pxicd8AU7SS2PP7zFivcFwvR4FtooFQItwikuBXwOTJevqV4qK0h1FUvMEIT48
+         7cgw==
+X-Gm-Message-State: ABuFfojCLY5ZSRoHMaBfcK5Pqa+xIZnHiIZbEiG6cMu7nvD6Uw+H+cFT
+        IXMIgFU8I78zfNYrCtpLDjgnyw==
+X-Google-Smtp-Source: ACcGV60m9sc+Z/XUbC+VXXL4HaLTEggK/k6RFcYryYe05RtbhgChxVM1YCPfsnBZCxA323Q8K223hg==
+X-Received: by 2002:aa7:c5c5:: with SMTP id h5-v6mr14268415eds.27.1538750489947;
+        Fri, 05 Oct 2018 07:41:29 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id 18-v6sm251862edt.34.2018.10.05.07.41.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 07:41:29 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 16:41:27 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Christophe de Dinechin <cdupontd@redhat.com>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, kvm@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>, virtio-dev@redhat.com,
+        dri-devel@lists.freedesktop.org,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v2] virtio-gpu: add VIRTIO_GPU_F_EDID feature
+Message-ID: <20181005144127.GE31561@phenom.ffwll.local>
+Mail-Followup-To: Christophe de Dinechin <cdupontd@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>, kvm@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>, virtio-dev@redhat.com,
+        dri-devel@lists.freedesktop.org,
+        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>
+References: <20181005125154.19824-1-kraxel@redhat.com>
+ <1BA83F18-87E5-4B01-A2D9-01777078B637@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1BA83F18-87E5-4B01-A2D9-01777078B637@redhat.com>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+On Fri, Oct 05, 2018 at 04:38:11PM +0200, Christophe de Dinechin wrote:
+> 
+> 
+> > On 5 Oct 2018, at 14:51, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> > 
+> > The feature allows the guest request an EDID blob (describing monitor
+> > capabilities) for a given scanout (aka virtual monitor connector).
+> > 
+> > It brings a new command message, which has just a scanout field (beside
+> > the standard virtio-gpu header) and a response message which carries the
+> > EDID data.
+> > 
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > ---
+> > include/uapi/linux/virtio_gpu.h | 17 +++++++++++++++++
+> > 1 file changed, 17 insertions(+)
+> > 
+> > diff --git a/include/uapi/linux/virtio_gpu.h b/include/uapi/linux/virtio_gpu.h
+> > index f43c3c6171..1cef1ff339 100644
+> > --- a/include/uapi/linux/virtio_gpu.h
+> > +++ b/include/uapi/linux/virtio_gpu.h
+> > @@ -41,6 +41,7 @@
+> > #include <linux/types.h>
+> > 
+> > #define VIRTIO_GPU_F_VIRGL 0
+> > +#define VIRTIO_GPU_F_EDID  1
+> > 
+> > enum virtio_gpu_ctrl_type {
+> > 	VIRTIO_GPU_UNDEFINED = 0,
+> > @@ -56,6 +57,7 @@ enum virtio_gpu_ctrl_type {
+> > 	VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING,
+> > 	VIRTIO_GPU_CMD_GET_CAPSET_INFO,
+> > 	VIRTIO_GPU_CMD_GET_CAPSET,
+> > +	VIRTIO_GPU_CMD_GET_EDID,
+> > 
+> > 	/* 3d commands */
+> > 	VIRTIO_GPU_CMD_CTX_CREATE = 0x0200,
+> > @@ -76,6 +78,7 @@ enum virtio_gpu_ctrl_type {
+> > 	VIRTIO_GPU_RESP_OK_DISPLAY_INFO,
+> > 	VIRTIO_GPU_RESP_OK_CAPSET_INFO,
+> > 	VIRTIO_GPU_RESP_OK_CAPSET,
+> > +	VIRTIO_GPU_RESP_OK_EDID,
+> > 
+> > 	/* error responses */
+> > 	VIRTIO_GPU_RESP_ERR_UNSPEC = 0x1200,
+> > @@ -291,6 +294,20 @@ struct virtio_gpu_resp_capset {
+> > 	__u8 capset_data[];
+> > };
+> > 
+> > +/* VIRTIO_GPU_CMD_GET_EDID */
+> > +struct virtio_gpu_get_edid {
+> > +	struct virtio_gpu_ctrl_hdr hdr;
+> > +	__le32 scanout;
+> > +};
+> > +
+> > +/* VIRTIO_GPU_RESP_OK_EDID */
+> > +struct virtio_gpu_resp_edid {
+> > +	struct virtio_gpu_ctrl_hdr hdr;
+> > +	__le32 scanout;
+> > +	__le32 size;
+> > +	__u8 edid[1024];
+> 
+> Wouldn’t it be enough to stick to EDID 2.0 (256 bytes)?
+> 
+> If not, maybe add comment to explain why you chose 1024.
 
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Fri, 28 Sep
-2018 13:16:01 +0900:
+EDID in the wild can be up to 512 bytes.
+-Daniel
 
-> NAND devices need additional data area (OOB) for error correction,
-> but it is also used for Bad Block Marker (BBM).  In many cases, the
-> first byte in OOB is used for BBM, but the location actually depends
-> on chip vendors.  The NAND controller should preserve the precious
-> BBM to keep track of bad blocks.
 > 
-> In Denali IP, the SPARE_AREA_SKIP_BYTES register is used to specify
-> the number of bytes to skip from the start of OOB.  The ECC engine
-> will automatically skip the specified number of bytes when it gets
-> access to OOB area.
+> > +};
+> > +
+> > #define VIRTIO_GPU_EVENT_DISPLAY (1 << 0)
+> > 
+> > struct virtio_gpu_config {
+> > -- 
+> > 2.9.3
+> > 
 > 
-> The same value for SPARE_AREA_SKIP_BYTES should be used between
-> firmware and the operating system if you intend to use the NAND
-> device across the control hand-off.
-> 
-> In fact, the current denali.c code expects firmware to have already
-> set the SPARE_AREA_SKIP_BYTES register, then reads the value out.
-> 
-> If no firmware (or bootloader) has initialized the controller, the
-> register value is zero, which is the default after power-on-reset.
-> In other words, the Linux driver cannot initialize the controller
-> by itself.
-> 
-> Some possible solutions are:
-> 
->  [1] Add a DT property to specify the skipped bytes in OOB
->  [2] Associate the preferred value with compatible
->  [3] Hard-code the default value in the driver
-> 
-> My first attempt was [1], but in the review process, [3] was suggested
-> as a counter-implementation.
-> (https://lore.kernel.org/patchwork/patch/983055/)
-> 
-> The default value 8 was chosen to match to the boot ROM of the UniPhier
-> platform.  The preferred value may vary by platform.  If so, please
-> trade up to a different solution.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Applied to nand/next.
-
-
-Thanks,
-Miquèl
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
