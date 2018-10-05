@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9C2C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B42C65BAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB4032084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 450F72084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="odRMov8M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4032084D
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GhZEERj2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450F72084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeJEXqb (ORCPT
+        id S1728897AbeJEXqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:46:31 -0400
-Received: from mail-he1eur01on0057.outbound.protection.outlook.com ([104.47.0.57]:37568
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Fri, 5 Oct 2018 19:46:32 -0400
+Received: from mail-eopbgr20085.outbound.protection.outlook.com ([40.107.2.85]:23280
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728515AbeJEXqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:46:30 -0400
+        id S1727572AbeJEXqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:46:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=taLyTTU6p6aX6fiJhylc41eg1676KTxn7puQ+Gq6u48=;
- b=odRMov8MJ9lgxlOHxwUp+0euT4uChBZFKECOC9IU95PNndOgdXbD/NYQi8eNJmC2YEdSIiArIH/afCoE+8wy0xszgT1/ELoyupeYkkgBO3ubNomvtCzpc3scdKiCghW62dRlFx9VJF31GgH83ndwEmcHaSDOK3FRcL2rNaSJDUc=
+ bh=QttvTdhbL3H01gTfrmSm4sPsxHPWTx6BQpBHN4YbI84=;
+ b=GhZEERj26aSUfG3sZTKFjnXSvtfvgLOGiF0H5VUfxFRTaEPhFFuNjqO4H6B6zku77y+Z1EnqB/pL10feH6I1urdHEghjiL3WCOuDnwDURAxS/Qstncsz8OqJQiIuC8rF8FIka97wSucWz3pRZdoFvPSqSnlPQP5hxvvUj4GsnCM=
 Received: from AM4PR0401MB2354.eurprd04.prod.outlook.com (10.165.45.135) by
- AM4PR0401MB1940.eurprd04.prod.outlook.com (10.166.130.154) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.21; Fri, 5 Oct 2018 16:46:53 +0000
+ AM4PR0401MB2017.eurprd04.prod.outlook.com (10.166.131.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.26; Fri, 5 Oct 2018 16:46:56 +0000
 Received: from AM4PR0401MB2354.eurprd04.prod.outlook.com
  ([fe80::b18e:798b:a9c9:bc72]) by AM4PR0401MB2354.eurprd04.prod.outlook.com
  ([fe80::b18e:798b:a9c9:bc72%7]) with mapi id 15.20.1207.018; Fri, 5 Oct 2018
- 16:46:53 +0000
+ 16:46:56 +0000
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
@@ -49,12 +49,11 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Horia Geanta <horia.geanta@nxp.com>,
         Roy Pledge <roy.pledge@nxp.com>,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH 1/4] bus: fsl-mc: move fsl_mc_command struct in a uapi header
-Thread-Topic: [PATCH 1/4] bus: fsl-mc: move fsl_mc_command struct in a uapi
- header
-Thread-Index: AQHUXMsFdCkV89146EqV66+wLFhJ+w==
-Date:   Fri, 5 Oct 2018 16:46:53 +0000
-Message-ID: <4451dafc0622cc5d22fe732a792cb00bb52b8ab0.1538757337.git.ioana.ciornei@nxp.com>
+Subject: [PATCH 4/4] bus: fsl-mc: add bus rescan attribute
+Thread-Topic: [PATCH 4/4] bus: fsl-mc: add bus rescan attribute
+Thread-Index: AQHUXMsGdmRxkj/X0kKtuikuCggnyA==
+Date:   Fri, 5 Oct 2018 16:46:56 +0000
+Message-ID: <2ff883c0a0c617a11d8df5a18a76c6f5a90fcd10.1538757338.git.ioana.ciornei@nxp.com>
 References: <cover.1538757337.git.ioana.ciornei@nxp.com>
 In-Reply-To: <cover.1538757337.git.ioana.ciornei@nxp.com>
 Accept-Language: en-US
@@ -69,127 +68,166 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [86.34.165.90]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM4PR0401MB1940;6:p1UUyBccC2qf3+XqkhDaqzjCufnff35N6BgoKzEaE/tXyZWeC3WPVuTT5186khZCtrY8VpR4jUDYZwvz9C/JV5Vmjqm1IypJnFd5YGaXRPCqd3VjRe2bFdYMiskL+4wyKFQR39I9xLmbtPDVlZZnO5NeAuQkOLpL4ltyAEz+CNCrna3Z++83UJ3W7Te3u6eGhKQ1lGv45Yjiq12P0wjftG12eLvAm6E6WS3VVmGwXkso6TAmWB9kom5o+VSMA755Pe9S8jAy9g4/qLxcJASTZLAXUWaksN5mYJoaEpHA20UwVNKFPhBbdcCH/mBT38VeCDGoX7Q7LCSxZYl+imKK4S639cx7ZBWP9OREgUtC6j+TV2F76zvJr1AxucZ+YwTop3JrzIMybp5a3Lxqq4qtJki4mwTFeKgPFDKjtUv6BA4eftFs4jK3qS/B1M5ijhQvqvOfWqE6RZQ9Jrnx9vwd2Q==;5:5ZAon71m6N2RmNt60xNdQwM0XTThcqwu054QVDAAo8u8n/XPpN+Xn0T9HBhuWsxvE00u+j7iPNn8hWgknekUPrzXodmz3zLtNlo9zs8aCMNY9c4pciVwoyyM8Ch6llPF/MMlRTuT4H4yjt54otjUAv3P99jzalNblYqbUcAqsp4=;7:EPK5T5LvDDDW25DTJ0Sq0gQCSDwofgyishpNnhWBjz0Lv6CRhNAskPfUXJapcZV3NVQr5464YzNaypsZ4AdWlHeDEaM3RrvZRlHNVWlC92eqP82HBW79UFl9C0HiU4V8QyOXTz7bxyPDRroSZE4/n2Un4wdVqYFc22AlIPDV2mr7MQQ+Hiktms+R3o4ufUjaFmu0z4lezPDw/+WE4w0KgC80IGPIDV8xAJN7N7aEappEHXZl9ScndgeYDwYwyWJD
-x-ms-office365-filtering-correlation-id: b9bd2873-2ccf-4182-03c3-08d62ae2275e
+x-microsoft-exchange-diagnostics: 1;AM4PR0401MB2017;6:nV/lxsEaDCgkM5DXskPlzuLfLPtskp2HfN24rxSxQhy2jtl6MnAFTOc2nsbQZPzmThujpiYYkr4atfFfHcfRxWJ76of8BSdscqeVsvB+XhEU3Buv8THAQzviwCt/rDDPoShz0Wt1J7gFbNX8CQXyywlN1OWMrnGoptUYbjzzzgBAPhAphF7CPg4PdjYsxJuocuTzftAtQ/d299SJAfrVRT9WbCwNWqNVX+am7T5v5/FBjTc3UICFlmS3B2skrAEpkaqaIpIES8JbQwyt79Z4xzkF1K91xbXWyEXYBcsS5ATNg7/BQiH7i6OUdmndU+TiYqSxxpQgo6oXBWCai3xY2Cl9MTNjtMECoM6VanGc7fSeEKLee2rAJZ3qB5/w8ET7NRVmbfPyXBHXiStWHZ6kq4Ene1KCDTw/Fl14iOTz6VV3HPhGuqw6GJ7oYmTBVORUupbnvL4yWhM1z4rG3ONW5w==;5:qwbyvSIu7akWDSbBQVKPtjs8/rgPU6AOq98N773nqr2Af0CeLsjZKvRAMnka+PaXfsVXrAFmbzZXQ1jGiR8SY6jgLew8Y96S0qi4N25EiP9wgMssFbkvJKj5ffrpb8FNxGYJ1UqlxVVdDZaSEmfTi4I3YpcbTLG5qvnV3j3t60g=;7:6dWcEdBzgBW7vVvA4DrPPPbe6Fbld1p0JBf2pMSiWBNerxw1TqUbQV8PlB2IY23+eEAe0vyIxPBuVjlXlSkuOIEHNIXAW0OYYvf6hw1Wb22UDvPimwdku432zdKL5/H9ayks8Gd8qU/iXH0fcHv3B3UvjVeWnz2SSOr+xQt1uX2nqKlpZndFkOo2STyX2672AO43q9Ep9Ij6fw7vRpEB/1vNMVgMA0F+zn/ahvjgCfHQChA5YYtDX0XodyvDFx0x
+x-ms-office365-filtering-correlation-id: a3c2e792-93c8-4792-f07d-08d62ae2290f
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB1940;
-x-ms-traffictypediagnostic: AM4PR0401MB1940:
-x-microsoft-antispam-prvs: <AM4PR0401MB19402B3C74BC590DBF26DB44E0EB0@AM4PR0401MB1940.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB2017;
+x-ms-traffictypediagnostic: AM4PR0401MB2017:
+x-microsoft-antispam-prvs: <AM4PR0401MB201760B43A2B27DBF1E544D0E0EB0@AM4PR0401MB2017.eurprd04.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:AM4PR0401MB1940;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB1940;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991048);SRVR:AM4PR0401MB2017;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB2017;
 x-forefront-prvs: 0816F1D86E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(366004)(199004)(189003)(575784001)(97736004)(316002)(6512007)(6306002)(68736007)(53936002)(81166006)(11346002)(86362001)(8676002)(186003)(446003)(476003)(486006)(2616005)(44832011)(102836004)(5250100002)(8936002)(6436002)(81156014)(26005)(7736002)(305945005)(256004)(6486002)(2900100001)(2501003)(105586002)(966005)(106356001)(52116002)(6506007)(2906002)(99286004)(76176011)(71200400001)(71190400001)(54906003)(110136005)(14454004)(6116002)(3846002)(386003)(4326008)(25786009)(5660300001)(66066001)(118296001)(6636002)(36756003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB1940;H:AM4PR0401MB2354.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(366004)(136003)(189003)(199004)(50944005)(6436002)(966005)(6512007)(316002)(5250100002)(14454004)(102836004)(305945005)(118296001)(186003)(7736002)(25786009)(6306002)(2900100001)(71200400001)(71190400001)(53936002)(36756003)(4326008)(2501003)(26005)(478600001)(2906002)(86362001)(54906003)(486006)(2616005)(476003)(68736007)(105586002)(106356001)(6116002)(3846002)(6636002)(110136005)(446003)(11346002)(44832011)(8676002)(81156014)(81166006)(99286004)(97736004)(14444005)(5660300001)(6486002)(8936002)(66066001)(256004)(6506007)(386003)(52116002)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB2017;H:AM4PR0401MB2354.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: lhFnd+hKuuJ2HWz0HvZj7SiLHfbFXKGZ+WU7nrw/CWMESLi973KtQiMUCP7/f8dS+1/KfBp3/IADJxMWwtBL0ZyAUEUKND7bLxRmJAcUvuWM9WBV1uTM094X7oEiIjUOF76hrIEixSE4yZHe1K6XGjkeNm205bzlA/iEjrt4eq+fcXQAodvElx+K+Gc8Bh+t9IAPcpjgXjx57F6sne65Euway9S4UAmek4iYFN8ruT6fdqbAtdOxDgow0zdv684taC+auy6zoZLloBH4p99vd4qk8q9UAG+3RP8CP6Mu+4VczFHyhSYYfF0aK6HAzJofoHiuHACdufQq0/FBrx6HurQtJmnU+4VWl+/ogs6rMuM=
+x-microsoft-antispam-message-info: ykPuU5PZ6m5gIvagHC0IetWKflAAHNSYznZ8rh13zPxkPlTN28YDa5a1pBgPhMZKBGWGqHmUXtTAT0aThiU82FNacXOtXSRaOY/lAJn4l9w/3UywRgRYOOV5yll4xgw+OcDzBqo4DG/4VHqO/Pb5c75bLJdYMQ0XXA+6o7KPqq6CxKzhx73RWtUw6QoySt4+/9FuAIqWnVyMlwVpfQRbF2K01VN7l9CfiyVAOm+cLwYKSxT29dSvK5ykOnfQxBoAnY8kWDT9NMchb+eXnwz25PyS/5j6NGyoKTz/XZR/8q2d2GyQfny9A/GRzp71zEvMWeggrdCI3qXNrxPhECWbdGG8s8VQ0jImqncFx/k6Gl4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9bd2873-2ccf-4182-03c3-08d62ae2275e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2018 16:46:53.4233
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3c2e792-93c8-4792-f07d-08d62ae2290f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2018 16:46:56.3452
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB1940
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB2017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define "struct fsl_mc_command" as a structure that can cross the
-user/kernel boundary.
+Introduce the rescan attribute as a bus attribute to
+synchronize the fsl-mc bus objects and the MC firmware.
+
+To rescan the fsl-mc bus, e.g.,
+echo 1 > /sys/bus/fsl-mc/rescan
 
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
 Depends on:
- https://lkml.org/lkml/2018/10/2/593
+ https://lkml.org/lkml/2018/10/1/747
 
- MAINTAINERS                 |  1 +
- include/linux/fsl/mc.h      |  8 +-------
- include/uapi/linux/fsl_mc.h | 25 +++++++++++++++++++++++++
- 3 files changed, 27 insertions(+), 7 deletions(-)
- create mode 100644 include/uapi/linux/fsl_mc.h
+ Documentation/ABI/stable/sysfs-bus-fsl-mc | 10 ++++++++
+ drivers/bus/fsl-mc/dprc-driver.c          |  4 +--
+ drivers/bus/fsl-mc/fsl-mc-bus.c           | 41 +++++++++++++++++++++++++++=
+++++
+ drivers/bus/fsl-mc/fsl-mc-private.h       |  2 ++
+ 4 files changed, 55 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b22e7fd..0ee7e17 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12022,6 +12022,7 @@ S:	Maintained
- F:	drivers/bus/fsl-mc/
- F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
- F:	Documentation/networking/dpaa2/overview.rst
-+F:	include/uapi/linux/fsl_mc.h
-=20
- QT1010 MEDIA DRIVER
- M:	Antti Palosaari <crope@iki.fi>
-diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-index 96c54bb..c015bed 100644
---- a/include/linux/fsl/mc.h
-+++ b/include/linux/fsl/mc.h
-@@ -12,6 +12,7 @@
- #include <linux/device.h>
- #include <linux/mod_devicetable.h>
- #include <linux/interrupt.h>
-+#include <uapi/linux/fsl_mc.h>
-=20
- #define FSL_MC_VENDOR_FREESCALE	0x1957
-=20
-@@ -198,8 +199,6 @@ struct fsl_mc_device {
- #define to_fsl_mc_device(_dev) \
- 	container_of(_dev, struct fsl_mc_device, dev)
-=20
--#define MC_CMD_NUM_OF_PARAMS	7
--
- struct mc_cmd_header {
- 	u8 src_id;
- 	u8 flags_hw;
-@@ -209,11 +208,6 @@ struct mc_cmd_header {
- 	__le16 cmd_id;
- };
-=20
--struct fsl_mc_command {
--	__le64 header;
--	__le64 params[MC_CMD_NUM_OF_PARAMS];
--};
--
- enum mc_cmd_status {
- 	MC_CMD_STATUS_OK =3D 0x0, /* Completed successfully */
- 	MC_CMD_STATUS_READY =3D 0x1, /* Ready to be processed */
-diff --git a/include/uapi/linux/fsl_mc.h b/include/uapi/linux/fsl_mc.h
-new file mode 100644
-index 0000000..6c19cfc
---- /dev/null
-+++ b/include/uapi/linux/fsl_mc.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * Management Complex (MC) userspace public interface
-+ *
-+ * Copyright 2018 NXP
-+ *
-+ */
-+#ifndef _UAPI_FSL_MC_H_
-+#define _UAPI_FSL_MC_H_
+diff --git a/Documentation/ABI/stable/sysfs-bus-fsl-mc b/Documentation/ABI/=
+stable/sysfs-bus-fsl-mc
+index f2f14f4..97c541a 100644
+--- a/Documentation/ABI/stable/sysfs-bus-fsl-mc
++++ b/Documentation/ABI/stable/sysfs-bus-fsl-mc
+@@ -7,3 +7,13 @@ Description:	Writing a non-zero value to this attribute wi=
+ll
+ 		synchronize the objects under dprc.X and the
+ 		Management Complex firmware.
+ Users:		Userspace drivers and management tools
 +
-+#include <linux/types.h>
++What:		/sys/bus/fsl-mc/rescan
++Date:		October 2018
++KernelVersion:	4.20
++Contact:	Ioana Ciornei <ioana.ciornei@nxp.com>
++Description:	Writing a non-zero value to this attribute will
++		force a rescan of fsl-mc bus in the system and
++		synchronize the objects under fsl-mc bus and the
++		Management Complex firmware.
++Users:		Userspace drivers and management tools
+diff --git a/drivers/bus/fsl-mc/dprc-driver.c b/drivers/bus/fsl-mc/dprc-dri=
+ver.c
+index dadc2f3..5a5a6f6 100644
+--- a/drivers/bus/fsl-mc/dprc-driver.c
++++ b/drivers/bus/fsl-mc/dprc-driver.c
+@@ -214,8 +214,8 @@ static void dprc_add_new_devices(struct fsl_mc_device *=
+mc_bus_dev,
+  * populated before they can get allocation requests from probe callbacks
+  * of the device drivers for the non-allocatable devices.
+  */
+-static int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
+-			     unsigned int *total_irq_count)
++int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
++		      unsigned int *total_irq_count)
+ {
+ 	int num_child_objects;
+ 	int dprc_get_obj_failures;
+diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bu=
+s.c
+index 5f862f1..badb9af 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-bus.c
++++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+@@ -144,11 +144,52 @@ static ssize_t modalias_show(struct device *dev, stru=
+ct device_attribute *attr,
+=20
+ ATTRIBUTE_GROUPS(fsl_mc_dev);
+=20
++static int scan_fsl_mc_bus(struct device *dev, void *data)
++{
++	struct fsl_mc_device *root_mc_dev;
++	struct fsl_mc_bus *root_mc_bus;
 +
-+#define MC_CMD_NUM_OF_PARAMS	7
++	if (!fsl_mc_is_root_dprc(dev))
++		goto exit;
 +
-+/**
-+ * struct fsl_mc_command - Management Complex (MC) command structure
-+ * @header: MC command header
-+ * @params: MC command parameters
-+ */
-+struct fsl_mc_command {
-+	__le64 header;
-+	__le64 params[MC_CMD_NUM_OF_PARAMS];
++	root_mc_dev =3D to_fsl_mc_device(dev);
++	root_mc_bus =3D to_fsl_mc_bus(root_mc_dev);
++	mutex_lock(&root_mc_bus->scan_mutex);
++	dprc_scan_objects(root_mc_dev, NULL);
++	mutex_unlock(&root_mc_bus->scan_mutex);
++
++exit:
++	return 0;
++}
++
++static ssize_t rescan_store(struct bus_type *bus,
++			    const char *buf, size_t count)
++{
++	unsigned long val;
++
++	if (kstrtoul(buf, 0, &val) < 0)
++		return -EINVAL;
++
++	if (val)
++		bus_for_each_dev(bus, NULL, NULL, scan_fsl_mc_bus);
++
++	return count;
++}
++static BUS_ATTR_WO(rescan);
++
++static struct attribute *fsl_mc_bus_attrs[] =3D {
++	&bus_attr_rescan.attr,
++	NULL,
 +};
 +
-+#endif /* _UAPI_FSL_MC_H_ */
++ATTRIBUTE_GROUPS(fsl_mc_bus);
++
+ struct bus_type fsl_mc_bus_type =3D {
+ 	.name =3D "fsl-mc",
+ 	.match =3D fsl_mc_bus_match,
+ 	.uevent =3D fsl_mc_bus_uevent,
+ 	.dev_groups =3D fsl_mc_dev_groups,
++	.bus_groups =3D fsl_mc_bus_groups,
+ };
+ EXPORT_SYMBOL_GPL(fsl_mc_bus_type);
+=20
+diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-m=
+c-private.h
+index 16902f9..ab22347 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-private.h
++++ b/drivers/bus/fsl-mc/fsl-mc-private.h
+@@ -545,6 +545,8 @@ int __must_check fsl_mc_device_add(struct fsl_mc_obj_de=
+sc *obj_desc,
+=20
+ void dprc_driver_exit(void);
+=20
++int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
++		      unsigned int *total_irq_count);
+ int __init fsl_mc_allocator_driver_init(void);
+=20
+ void fsl_mc_allocator_driver_exit(void);
 --=20
 1.9.1
 
