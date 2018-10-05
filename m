@@ -2,860 +2,208 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF46C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ABCC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 807672098A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:05:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35FA420834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:08:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=boo.tc header.i=@boo.tc header.b="tQ66YXlC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jnq3jNef"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807672098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=boo.tc
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="rYJsoTpj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35FA420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbeJFAEu (ORCPT
+        id S1728711AbeJFAHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:04:50 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:40509 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727958AbeJFAEt (ORCPT
+        Fri, 5 Oct 2018 20:07:38 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37237 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbeJFAHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:04:49 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id E0AAB95D;
-        Fri,  5 Oct 2018 13:05:10 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 05 Oct 2018 13:05:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=boo.tc; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=n
-        zJYIYKipVbG9WvFXsoVRowHsAnBk0exQ2TVmiH/RRw=; b=tQ66YXlCxLZjcVwrH
-        srH5sslf+APrwD0ZtEyjw+5rttTVXQbxHzXUaWt4HzuTjOErhKLT9Wj3Jfre38LJ
-        l5iCafPjS67kJO81cE45YkY7yzPD01B5nXJTVkyFuPdhP+8757gaTOmnJYRLkLlK
-        yzj7ORoSyrTrk+LzSB14KtRHl4mLW8nD07MX+G40Bj+pBIsDZ5Hqm7jQLEUcAl0Z
-        EBcESiFboiEg/4cZ2w9U19yCKdI9S/CK1gofxOhqKRSQSnvFcFpXxgDPDb9EcDDb
-        O8ssVKsCcePJcjFu1xDHRJODaKi0doreaSEoNCZJpMelneVBhbgHb9UGUAUXHHnK
-        SypvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=nzJYIYKipVbG9WvFXsoVRowHsAnBk0exQ2TVmiH/R
-        Rw=; b=Jnq3jNefqmshGNVg51HP//+cNnkS75Do7Rhq/anUfMeBRNbHIbxOFW+BE
-        nX6ds8cdyAyVpFPXIAtk1l9qE1Fiw5GTSe77xokSkQmh49MSFl346dM5Qy6G6Aby
-        dnqBtOPLURLXkK+0dIUg9G1TA2bzOu1taIC2b7Rfr9yoRK1o/DTfteeCvfdzdPsD
-        qzftyVz+4njgKIwwm8eKpr3KB+r8O973cmOYGfcZd6jy1BrXwUfQfUjBboz5t56x
-        a8O9Rkj/rWsnKQ5BQ/JT3DRhICH0rMAtnWe+VXiK10IdFO4DxGYHyutd3pMtLCYQ
-        kQGlJookS4mmBDIuvv9sUKsdkd12A==
-X-ME-Sender: <xms:xZm3W6UR66NbYI-1pVvAnANQZISJsv-tEuIvmJmiXnsayzmR74WakA>
-X-ME-Proxy: <xmx:xZm3W9ocAaSRHDKWgxo9kfNAlUNFutePPQ3hsQdqDXGlHhANI3tyNA>
-    <xmx:xZm3W_0apq3GQ2BKfdjTOR8_27pG4ksWNN_aVdDGSClfKbcDJJKCZg>
-    <xmx:xZm3W8AUD5u3Jai2Gn8j2SkJYj9jPdpJ5lk1sBrYJgi0T9qD0-oDvQ>
-    <xmx:xZm3W3fT1hzJn6I_dkl7lUCcQu-GD_ldYKE8_xtWsLIpM0sPlZ5jUg>
-    <xmx:xZm3WxjfwArjDcAUqtpda48VNsTWIVqqkek8SvAYARv_86jG12Tdxw>
-    <xmx:xpm3W1s3Gab5GLDFJefTDCJZTJ9rgYoUJMA3jcpk-TYbXYecicBFNg>
-Received: from [81.187.55.88] (ripley.boo.tc [81.187.55.88])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 97406E4A43;
-        Fri,  5 Oct 2018 13:05:08 -0400 (EDT)
-Subject: Re: Hard lockup in blk_mq_free_request() / wbt_done() / wake_up_all()
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-References: <9788e0e6-a448-bf85-1f41-88f42dc0071d@boo.tc>
- <ac2c7156-f405-4047-564d-816159d5968b@kernel.dk>
- <7080a91c-8d9a-6305-2b67-dc27a374327a@boo.tc>
- <d8ba8949-259a-c0c0-d476-710bcf69c266@kernel.dk>
- <9c444ab8-2e50-c42a-dae1-86954358218e@boo.tc>
- <7dbe184d-5660-7b64-8027-bf4f82625ff2@I-love.SAKURA.ne.jp>
-From:   Chris Boot <bootc@boo.tc>
-Openpgp: id=846753CB19213142C56DC918F5C83C05D9CEEEEE
-Autocrypt: addr=bootc@boo.tc; prefer-encrypt=mutual;
- keydata= xsFNBFL1FNgBEADf8jZGW5tZWPDpyx7oWq8L7KD9a2YM5bp48LJ9tXYEVD+j3EIJH3DlYMOh
- Lif5+XkMaHNAakXSbo41Sjf3ArYOz+ZNvpR3ln/kqYv/ntgbAstlWuWLxGJbjJuLxjSh1eU5
- jn+XAr0OvQMO9DiwBN3Ocm5B6tkUNhasxOmdlAxef0FsK7Y5bbqxVjC5/3DHqbmDiJvdof4q
- 1z5SEpuzKLn5xmdU+kANurZekp0JqgprS8gSmDV3fpJa7gTmcX11ArAV4TbI5CmJgnv3u6Nf
- k8E6oLk7wDs6mKzutS1MMVtaWpOMYqbM8q/QFI+ICf5SGmvpvOTvgIxAC80RWTYaxZn0g6sQ
- BhnByDcXFk/YYncmbHBYRJBbb+Y5lRGJMiv7KIp0BzDHO2zcDqvAiC2mtEl+iDOC06vqMD+t
- YRMkjtDsHbB7TCEeFmeSrQddLfoce04cnl3AyY22Vp2J2GsfobdX2Jw1drBou9cUN7shpuCU
- cqcGEvpT6mRd6uIzbFNXkWp0wiQPKUzDJXlh/GiROtM/468Bbj9JsiIIv183iKw6fQJtMg5c
- B34/GuEFfbfrqPNNO2ElEX6DcsnRZp3Vq+SMM+dDWXYSF1MJt52tT+deHGgzXj+NMHWU/K5X
- DWGcxtpM8QbFFwxTl2B5k2jjL61IhCnPpJSQZhzhXRuei04uaQARAQABzRlDaHJpcyBCb290
- IDxib290Y0Bib28udGM+wsGXBBMBCgBBAhsDBQkJNRFnBQsJCAcDBRUKCQgLBRYDAgEAAh4B
- AheAFiEEhGdTyxkhMULFbckY9cg8BdnO7u4FAlnvVCECGQEACgkQ9cg8BdnO7u7HjhAAkug/
- zY8fezVbbJr3qaNp/PtLi6a5V2zWCY9rsKach3C5oPsbdQs3Y6Lu8y79RcTjVkuwA+K6kB7J
- Jw/ScoN3+a+cPCnegE5G+fup7wXeQFBO62VGFDjS3+fyLJ/EV0ou04BIo65i1vwev3F6WUBJ
- X3FULUsIACI1b29RqIGQPcnxmZar5X0yCsoSKUEPHvrNgqhty9nVbugIIhsn0CRfN1oOCWwj
- skW2GH7fAF3enaNfoEJgijwVK5WBHNpj9AbDZIscpY2GaQKHD9sYC3efJMNllUXeA92CNilt
- T+sZWnEmz9I2Kt6M85N2MRuZ/Zoa9bPphVyhsVoTdG28yBk+XkUm2aCR2R27WmmzDH06LMt/
- k52m+v5sYygy9LURyWyLGcE7HMXGQCjnbWziezSwQN8uj/cqqmIk/Z2PJmHPqeQOUsZIQelM
- 7ykM/JX1AUo6Bk7y/JvzD49Ry3Qn8disN4bL1WhuaxKWH7kHC6ivHZag7oPKGGI/SPK9NddD
- CchQzrwrNS2C0Ik5Gp81WKNFaE2WDa2BanMaaKP7reSvD2abjThZ51YyyEhPSOIEf0HU5/dy
- VIMOgMtaFcRx7InV4fSfqQTM/JRzbUTb2DfeVV5HMIK5+VuCsLq0GRG03fWvfyuA841SvwaI
- 7MXwoAX1dbSzkdIvNveUQ6k1pPb99xvOwU0EUvf4ogEQAKkdFtOZUfNQIWGAuJfYOTnoLqqC
- kre6E0kw18DpXlH97O+6lKPLB679pKMfzh7uwVlkIjWwc0gQPxQvmKv6PbkflAMzr7FtofNj
- fMi1eaGdSlRAbo2K1EQTukVTtnkPFOd+Xgp74Gq+Ebr73qO3on04wvM6NzzBdLh+QEWxj4WC
- Jv6/Eh3BWiyOTAS3qyL1pZiqorrXhmBu4WvoaR2+AgasOVV1d0+flmbj7OQIieQtORLadyyH
- 7a/c/Q+h+9Dabt6BNT2IdOMEkMm61tdOCsqg2MgsgTyU8FjSnJE+cws/H1W1aufCldD47dpN
- bJHawl7WEVYYoABuApvXTi6DLNWql0v0ownhNwVKZb3zs/AdkoDRjYb9YSQ/WIPcNtiGrr3p
- 6xeIKr93EuqZWtWvtpF5DqoJ7FNqN5wQEmOlpj7igQ0r9M3tTQQJg0j6MtCdbo9ZUXtZmjxi
- 8mdpAz0of8qabgSiPhFuFgHDnqGtRmVgKCY1vD6esmA+wfZnbGaU0tmQQpr2Cdbx11vnfhj/
- LTObPBYy+ciJlPoXebC1/AsxANbLpjAtQUNWtXAS1NRFSuI1GtQ7RskqPS11uoRMhLkDy0aE
- 51QIQs3UWuTy591UGH8MwlNIy6pTjFCyRXeM2dynPzCECqOnZfyeuQ/dsiWInmDNRD1auGGE
- F+Faf11dABEBAAHCwXwEGAEKACYCGwwWIQSEZ1PLGSExQsVtyRj1yDwF2c7u7gUCWZGyMgUJ
- CTItiwAKCRD1yDwF2c7u7sh/D/9mUNxy53KqTgRJ/X2kDjXbM3Ca4t7rT3yWzkXlEyOABPpf
- C0sff4MIP/tFlF7hf3uFzOui+nxg3ryIB1nEn3cmPax0M/rGmTyUt+plNIDNGV54SfqKE5gY
- Hd70OTixlDt2s227RlL82DIaRhQ7avpiikBuKKdx8DAwOEVuqKqdLxPKAdQQ81F2K2upOhD7
- ooT/6m1ZveGebdbNxLjUAGWh/HbY5+0eetb/UUmdLCd6eFdbEzkJm8C4FHOGTqFxbAF4Naw4
- pM0KjDijzRLMxqzWIpEpnK8JQKu0LPeTEcbHNXLuhesRWFR4hcF/meOzgppVo5frg07lYbhg
- VAFG3FV/smVWqQsv2/4GJoN//RmLx53eBUbjP8Xhp1OhI8LoIKEtGxfwZTW3khK+M6o0DOy6
- nG1+9F5JSQDSjSyX0rk0ktiN+dYseOXVeSdowYKlfdavrdaZqSgh7CPUjMOIOBcwKnbi2cx2
- vVIk8TzHv2xm+mP5mtxK4As5wBlxoYV5zwjggzu/LeK39Ql3WhFYOWcqmu8882wdqzVnE54y
- UEFBzGv6Yp3cZmGXbHbxNmATFtCcmjbyP7vNvViFx0taEVNbKH+9Td21OgcUVlOeHfnKRGnt
- IWDtg8XMVU5KvpXEKaCM2S8c6bJ1LiBa/hLV5t2OGqXYxh4OeDugprQBF9EsMA==
-Message-ID: <296ff5ef-6d50-d895-2ba2-5c824e96c44b@boo.tc>
-Date:   Fri, 5 Oct 2018 18:05:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 5 Oct 2018 20:07:37 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y11-v6so3546501wrd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 10:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=omVygbcTYdT0JG/mGBY8WXc3C5dFkxVGFhiTfz0WKgk=;
+        b=rYJsoTpjPm+/2EBVbSEcOp9WHCpZoMcJ9X4KgF6vzj7ecr6zGAWZRqmgl8BzRBhJpL
+         tlBSlLqTdzBUopx51Jxw5EXzQDWztqIQDVHMCZgMCAAkvgXoUBqbTjLsjX0CqBYQkWv4
+         SF5HqTERhaJJ2rIbFXnwSt28s+/SB+D9aa+LBC4ps8FooznxfYUORhOliRnWl9+xGykL
+         75B1SwXtAo2FyZ4aXtK2Au2tl/9s3yfhmSy1ExoXo0iTCauPsTk9g+Hcn76THDqK0qSR
+         Lj0nYDf4gYxb/99LoPfzAqfsiZiXw9nmD+8WkruErFv3Cr4EJc+dr3/si4Qye2q5OMyv
+         8vZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=omVygbcTYdT0JG/mGBY8WXc3C5dFkxVGFhiTfz0WKgk=;
+        b=Md9DbNm1VJm6uvBZ3oeCWgTTAGvf43zJ5azMmEOhGz9xjV6yI5T0TG5vzR4FszYd41
+         buA60B1VDFZh/sv8Q5mCxMqBoYm4CsUU5oj6S12+fDQ00RxFbueDFsBbRY2p17HhwEXd
+         ux8TVZgxD3vv2ftl6ceBeC5IeSt86gKBf+0+k5+DUMILo0TbF+U8nHfW100VX6FnmQjj
+         8+yi0EQ1CxYbzeRqBodIzH/KDir8ACV70xWhl3r/hvBhxv6CEBARQs10SY5VQKUL72g9
+         0J/d4pZPHMy5g8o9VU9JVgnwyIbYjF5lX2786HXIgBJksx2gI15oNUS5aXrv2HNdmKof
+         LKrA==
+X-Gm-Message-State: ABuFfohwcBMLj1SQ57b4Bh3dj9JdgHeGIoyzQ95vfG7een5zS+KWlyfy
+        DL6ur7cFSdoagD4H3TS8vvtW5VX3lv6hI1kGOKYgKQ==
+X-Google-Smtp-Source: ACcGV62X5ZnFm0HuSz8wH/UW6fi45YL2teet8czwGUJoELbMulwCJy3EcCIJBegqdO0Lq7IEGz/z8TeIfZhZ4vOS3dM=
+X-Received: by 2002:adf:82e3:: with SMTP id 90-v6mr8552145wrc.131.1538759278792;
+ Fri, 05 Oct 2018 10:07:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7dbe184d-5660-7b64-8027-bf4f82625ff2@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20180921150553.21016-1-yu-cheng.yu@intel.com> <20180921150553.21016-4-yu-cheng.yu@intel.com>
+ <20181003195702.GF32759@asgard.redhat.com> <fc2f98ab46240c0498bdf4d7458b4373c1f02bf8.camel@intel.com>
+ <5BF3AE8F-CC2A-4160-9FF6-FEA171A76371@amacapital.net> <aa5a061c159471f410d677af6a609793906cece1.camel@intel.com>
+In-Reply-To: <aa5a061c159471f410d677af6a609793906cece1.camel@intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 5 Oct 2018 10:07:46 -0700
+Message-ID: <CALCETrXVdYsJsVy=QWruDYdRc6wb44b=0J3OK3zjR_fT1fQH7w@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 3/9] x86/cet/ibt: Add IBT legacy code bitmap
+ allocation function
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     Eugene Syromiatnikov <esyr@redhat.com>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/06/2018 14:12, Tetsuo Handa wrote:
-> On 2018/06/20 21:45, Chris Boot wrote:
->> Hi Jens,
->>
->> I got an opportunity yesterday to do some testing. I can't get this
->> system to crash with blk-mq disabled, or with blk-mq enabled but wbt
->> disabled. I have a reproducer workload I can launch against the system
->> and it seems to crash reliably with this, but I doubt I can share it
->> with you.
->>
->> I do, however, have a task state dump (SysRq+T) that I managed to get
->> out of the server once it started locking up. It's pretty large, so I
->> uploaded it to my Dropbox for now:
->>
->> https://www.dropbox.com/s/fyo1ab6mmcqk8fq/crash-1.log.gz?dl=0
->>
->> Hope this helps!
-> 
-> I'm not familiar with block layer, but checking Workqueue entries in SysRq-t.
-> blk_mq_timeout_work was stuck at RCU synchronization and wb_workfn was
-> stuck at wbt_wait() ?
-[snip]
-> 
-> Impossible to tell whether these threads made progress over time.
-> Please try https://akari.osdn.jp/capturing-kernel-messages.html#Tips5 .
-> 
-> But synchronize_rcu() in blk_mq_timeout_work() seems to be removed by
-> commit 12f5b93145450c75 ("blk-mq: Remove generation seqeunce") which went to
-> 4.18-rc1. Thus, trying to reproduce with latest linux.git would be helpful.
+On Fri, Oct 5, 2018 at 10:03 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> On Fri, 2018-10-05 at 09:28 -0700, Andy Lutomirski wrote:
+> > > On Oct 5, 2018, at 9:13 AM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote=
+:
+> > >
+> > > > On Wed, 2018-10-03 at 21:57 +0200, Eugene Syromiatnikov wrote:
+> > > > > On Fri, Sep 21, 2018 at 08:05:47AM -0700, Yu-cheng Yu wrote:
+> > > > > Indirect branch tracking provides an optional legacy code bitmap
+> > > > > that indicates locations of non-IBT compatible code.  When set,
+> > > > > each bit in the bitmap represents a page in the linear address is
+> > > > > legacy code.
+> > > > >
+> > > > > We allocate the bitmap only when the application requests it.
+> > > > > Most applications do not need the bitmap.
+> > > > >
+> > > > > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > > > > ---
+> > > > > arch/x86/kernel/cet.c | 45 ++++++++++++++++++++++++++++++++++++++=
++++++
+> > > > > 1 file changed, 45 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> > > > > index 6adfe795d692..a65d9745af08 100644
+> > > > > --- a/arch/x86/kernel/cet.c
+> > > > > +++ b/arch/x86/kernel/cet.c
+> > > > > @@ -314,3 +314,48 @@ void cet_disable_ibt(void)
+> > > > >    wrmsrl(MSR_IA32_U_CET, r);
+> > > > >    current->thread.cet.ibt_enabled =3D 0;
+> > > > > }
+> > > > > +
+> > > > > +int cet_setup_ibt_bitmap(void)
+> > > > > +{
+> > > > > +    u64 r;
+> > > > > +    unsigned long bitmap;
+> > > > > +    unsigned long size;
+> > > > > +
+> > > > > +    if (!cpu_feature_enabled(X86_FEATURE_IBT))
+> > > > > +        return -EOPNOTSUPP;
+> > > > > +
+> > > > > +    if (!current->thread.cet.ibt_bitmap_addr) {
+> > > > > +        /*
+> > > > > +         * Calculate size and put in thread header.
+> > > > > +         * may_expand_vm() needs this information.
+> > > > > +         */
+> > > > > +        size =3D TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
+> > > >
+> > > > TASK_SIZE_MAX is likely needed here, as an application can easily s=
+witch
+> > > > between long an 32-bit protected mode.  And then the case of a CPU =
+that
+> > > > doesn't support 5LPT.
+> > >
+> > > If we had calculated bitmap size from TASK_SIZE_MAX, all 32-bit apps =
+would
+> > > have
+> > > failed the allocation for bitmap size > TASK_SIZE.  Please see values=
+ below,
+> > > which is printed from the current code.
+> > >
+> > > Yu-cheng
+> > >
+> > >
+> > > x64:
+> > > TASK_SIZE_MAX    =3D 0000 7fff ffff f000
+> > > TASK_SIZE    =3D 0000 7fff ffff f000
+> > > bitmap size    =3D 0000 0000 ffff ffff
+> > >
+> > > x32:
+> > > TASK_SIZE_MAX    =3D 0000 7fff ffff f000
+> > > TASK_SIZE    =3D 0000 0000 ffff e000
+> > > bitmap size    =3D 0000 0000 0001 ffff
+> > >
+> >
+> > I haven=E2=80=99t followed all the details here, but I have a general p=
+olicy of
+> > objecting to any new use of TASK_SIZE. If you really really need to dep=
+end on
+> > 32-bitness in new code, please figure out what exactly you mean by =E2=
+=80=9C32-bit=E2=80=9D
+> > and use an explicit check.
+>
+> The explicit check would be:
+>
+> test_thread_flag(TIF_ADDR32) ? IA32_PAGE_OFFSET : TASK_SIZE_MAX
+>
+> which is the same as TASK_SIZE.
 
-Hi Tetuso, Jens,
+But this is only ever done in response to a syscall, right?  So
+wouldn't in_compat_syscall() be the right check?
 
-I upgraded the kernel on my affected system to a 4.18.6 kernel (Debian's
-4.18.6-1~bpo9+1 in stretch-backports) and ran my test suite again. I'm
-sorry to report that the issue occurred once more.
+Also, this whole thing makes me extremely nervous.  The MSR only
+contains the start address, not the size, right?  So what prevents
+some goof from causing the CPU to read way past the end of the bitmap
+if the bitmap is short because the kernel thought it was supposed to
+be 32-bit?
 
-Logs below, it's all I managed to get out of it before my session locked up.
+I'm inclined to suggest something awful-ish: always allocate the
+bitmap as though it's for a 64-bit process, and just let it be at a
+high address.  And add a syscall or arch_prctl() to manipulate it for
+the benefit of 32-bit programs that can't address it directly.
 
-[Oct 5 17:56] INFO: rcu_sched self-detected stall on CPU
-[  +0.003914] INFO: rcu_sched detected stalls on CPUs/tasks:
-[  +0.001271] 	82-....: (1 GPs behind) idle=47a/0/3 softirq=60148/60149
-fqs=2234
-[  +0.012840] 	
-[  +0.000007] 	82-....: (1 GPs behind) idle=47a/0/3 softirq=60148/60149
-fqs=2235
-[  +0.000002]  (t=5255 jiffies g=82048 c=82047 q=35803)
-[  +0.008936] 	
-[  +0.000003] NMI backtrace for cpu 82
-[  +0.000005] (detected by 87, t=5257 jiffies, g=82048, c=82047, q=35803)
-[  +0.001598] CPU: 82 PID: 0 Comm: swapper/82 Not tainted
-4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000001] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000001] Call Trace:
-[  +0.000004]  <IRQ>
-[  +0.000011]  dump_stack+0x5c/0x7b
-[  +0.000005]  nmi_cpu_backtrace+0x89/0x90
-[  +0.000007]  ? lapic_can_unplug_cpu+0xa0/0xa0
-[  +0.000002]  nmi_trigger_cpumask_backtrace+0xf5/0x130
-[  +0.000007]  rcu_dump_cpu_stacks+0x9b/0xcb
-[  +0.000003]  rcu_check_callbacks+0x79a/0x8e0
-[  +0.000007]  ? sched_clock_cpu+0xc/0xa0
-[  +0.000005]  ? tick_sched_do_timer+0x60/0x60
-[  +0.000005]  update_process_times+0x28/0x50
-[  +0.000003]  tick_sched_handle+0x22/0x60
-[  +0.000002]  tick_sched_timer+0x37/0x70
-[  +0.000002]  __hrtimer_run_queues+0xfc/0x270
-[  +0.000003]  hrtimer_interrupt+0x101/0x240
-[  +0.000004]  smp_apic_timer_interrupt+0x6a/0x130
-[  +0.000002]  apic_timer_interrupt+0xf/0x20
-[  +0.000006] RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x20
-[  +0.000001] Code: 8b 00 a8 08 74 0b 65 81 25 d8 6b 11 48 ff ff ff 7f
-44 89 e0 5b 5d 41 5c c3 0f 1f 44 00 00 c6 07 00 0f 1f 40 00 48 89 f7 57
-9d <0f> 1f 44 00 00 c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 c6 07
-[  +0.000030] RSP: 0000:ffff8bfdffc83de8 EFLAGS: 00000202 ORIG_RAX:
-ffffffffffffff13
-[  +0.000002] RAX: 00000000ff72b790 RBX: ffff8bedf5807768 RCX:
-dead000000000200
-[  +0.000001] RDX: ffffa8cc4fa87410 RSI: 0000000000000202 RDI:
-0000000000000202
-[  +0.000001] RBP: 00000000ff72b790 R08: ffff8bedf5807770 R09:
-000003fffff00000
-[  +0.000001] R10: 0000000000000052 R11: 0000000000000001 R12:
-0000000000000202
-[  +0.000001] R13: 0000000000000003 R14: 0000000000000000 R15:
-0000000000000000
-[  +0.000001]  ? apic_timer_interrupt+0xa/0x20
-[  +0.000006]  __wake_up_common_lock+0x89/0xc0
-[  +0.000007]  rwb_wake_all+0x30/0x40
-[  +0.000003]  scale_up.part.25+0x24/0x40
-[  +0.000002]  wb_timer_fn+0x295/0x430
-[  +0.000007]  ? blk_mq_tag_update_depth+0x110/0x110
-[  +0.000001]  call_timer_fn+0x2b/0x120
-[  +0.000003]  run_timer_softirq+0x1d3/0x410
-[  +0.000002]  ? enqueue_hrtimer+0x3a/0x90
-[  +0.000002]  ? __hrtimer_run_queues+0x12c/0x270
-[  +0.000002]  __do_softirq+0x10d/0x2a6
-[  +0.000006]  irq_exit+0xb6/0xc0
-[  +0.000003]  smp_apic_timer_interrupt+0x74/0x130
-[  +0.000001]  apic_timer_interrupt+0xf/0x20
-[  +0.000001]  </IRQ>
-[  +0.000008] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-[  +0.000001] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-[  +0.000028] RSP: 0000:ffffa8cc4c7cbe78 EFLAGS: 00000246 ORIG_RAX:
-ffffffffffffff13
-[  +0.000002] RAX: ffff8bfdffca1b80 RBX: 0000000000000001 RCX:
-000000000000001f
-[  +0.000001] RDX: 00000237c552d9f0 RSI: 0000000040000219 RDI:
-0000000000000000
-[  +0.000000] RBP: ffff8bfdffcaaf78 R08: 00000000ffffffff R09:
-0000000000000008
-[  +0.000001] R10: 00000000000000a9 R11: 00000000000000c2 R12:
-ffffffffb88b3a78
-[  +0.000001] R13: 0000000000000001 R14: 0000000000000001 R15:
-00000237c55130a6
-[  +0.000004]  ? cpuidle_enter_state+0x95/0x2b0
-[  +0.000004]  do_idle+0x204/0x270
-[  +0.000003]  cpu_startup_entry+0x6f/0x80
-[  +0.000002]  start_secondary+0x1a4/0x1f0
-[  +0.000005]  secondary_startup_64+0xa5/0xb0
-[  +0.000058] Sending NMI from CPU 87 to CPUs 82:
-[  +0.000163] NMI backtrace for cpu 82
-[  +0.000001] CPU: 82 PID: 0 Comm: swapper/82 Not tainted
-4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000000] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000001] RIP: 0010:try_to_wake_up+0x49/0x4a0
-[  +0.000000] Code: 41 89 d5 31 ed 48 83 ec 28 65 48 8b 04 25 28 00 00
-00 48 89 44 24 20 31 c0 e8 b3 48 65 00 49 89 c6 48 8b 43 10 41 85 c7 75
-30 <4c> 89 f6 4c 89 e7 e8 4c 47 65 00 48 8b 4c 24 20 65 48 33 0c 25 28
-[  +0.000014] RSP: 0000:ffff8bfdffc83ab0 EFLAGS: 00000046
-[  +0.000001] RAX: 0000000080200000 RBX: ffff8c1b0a3a3b00 RCX:
-ffff8c1dfbb3bb00
-[  +0.000001] RDX: 0000000000000000 RSI: 0000000000000069 RDI:
-ffff8c1b0a3a3b00
-[  +0.000000] RBP: 0000000000000001 R08: 0000000000000069 R09:
-0000000000000052
-[  +0.000001] R10: 0000000000000052 R11: 0000000000000000 R12:
-ffff8c1b0a3a424c
-[  +0.000001] R13: 0000000000000000 R14: 0000000000000046 R15:
-0000000000021b80
-[  +0.000001] FS:  0000000000000000(0000) GS:ffff8bfdffc80000(0000)
-knlGS:0000000000000000
-[  +0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000001] CR2: 0000559c8105f094 CR3: 000000260e20a002 CR4:
-00000000003606e0
-[  +0.000000] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[  +0.000001] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000000] Call Trace:
-[  +0.000000]  <IRQ>
-[  +0.000001]  autoremove_wake_function+0x11/0x50
-[  +0.000000]  __wake_up_common+0x96/0x180
-[  +0.000000]  __wake_up_common_lock+0x7c/0xc0
-[  +0.000001]  irq_work_run_list+0x50/0x80
-[  +0.000000]  ? tick_sched_do_timer+0x60/0x60
-[  +0.000001]  update_process_times+0x3b/0x50
-[  +0.000000]  tick_sched_handle+0x22/0x60
-[  +0.000000]  tick_sched_timer+0x37/0x70
-[  +0.000001]  __hrtimer_run_queues+0xfc/0x270
-[  +0.000000]  hrtimer_interrupt+0x101/0x240
-[  +0.000000]  smp_apic_timer_interrupt+0x6a/0x130
-[  +0.000001]  apic_timer_interrupt+0xf/0x20
-[  +0.000000] RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x20
-[  +0.000001] Code: 8b 00 a8 08 74 0b 65 81 25 d8 6b 11 48 ff ff ff 7f
-44 89 e0 5b 5d 41 5c c3 0f 1f 44 00 00 c6 07 00 0f 1f 40 00 48 89 f7 57
-9d <0f> 1f 44 00 00 c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 c6 07
-[  +0.000018] RSP: 0000:ffff8bfdffc83de8 EFLAGS: 00000202 ORIG_RAX:
-ffffffffffffff13
-[  +0.000001] RAX: 00000000ff72b790 RBX: ffff8bedf5807768 RCX:
-dead000000000200
-[  +0.000001] RDX: ffffa8cc4fa87410 RSI: 0000000000000202 RDI:
-0000000000000202
-[  +0.000000] RBP: 00000000ff72b790 R08: ffff8bedf5807770 R09:
-000003fffff00000
-[  +0.000001] R10: 0000000000000052 R11: 0000000000000001 R12:
-0000000000000202
-[  +0.000000] R13: 0000000000000003 R14: 0000000000000000 R15:
-0000000000000000
-[  +0.000001]  ? apic_timer_interrupt+0xa/0x20
-[  +0.000000]  __wake_up_common_lock+0x89/0xc0
-[  +0.000000]  rwb_wake_all+0x30/0x40
-[  +0.000001]  scale_up.part.25+0x24/0x40
-[  +0.000000]  wb_timer_fn+0x295/0x430
-[  +0.000000]  ? blk_mq_tag_update_depth+0x110/0x110
-[  +0.000001]  call_timer_fn+0x2b/0x120
-[  +0.000000]  run_timer_softirq+0x1d3/0x410
-[  +0.000001]  ? enqueue_hrtimer+0x3a/0x90
-[  +0.000000]  ? __hrtimer_run_queues+0x12c/0x270
-[  +0.000000]  __do_softirq+0x10d/0x2a6
-[  +0.000001]  irq_exit+0xb6/0xc0
-[  +0.000000]  smp_apic_timer_interrupt+0x74/0x130
-[  +0.000000]  apic_timer_interrupt+0xf/0x20
-[  +0.000001]  </IRQ>
-[  +0.000000] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-[  +0.000000] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-[  +0.000014] RSP: 0000:ffffa8cc4c7cbe78 EFLAGS: 00000246 ORIG_RAX:
-ffffffffffffff13
-[  +0.000001] RAX: ffff8bfdffca1b80 RBX: 0000000000000001 RCX:
-000000000000001f
-[  +0.000000] RDX: 00000237c552d9f0 RSI: 0000000040000219 RDI:
-0000000000000000
-[  +0.000001] RBP: ffff8bfdffcaaf78 R08: 00000000ffffffff R09:
-0000000000000008
-[  +0.000000] R10: 00000000000000a9 R11: 00000000000000c2 R12:
-ffffffffb88b3a78
-[  +0.000001] R13: 0000000000000001 R14: 0000000000000001 R15:
-00000237c55130a6
-[  +0.000000]  ? cpuidle_enter_state+0x95/0x2b0
-[  +0.000000]  do_idle+0x204/0x270
-[  +0.000001]  cpu_startup_entry+0x6f/0x80
-[  +0.000000]  start_secondary+0x1a4/0x1f0
-[  +0.000001]  secondary_startup_64+0xa5/0xb0
-[Oct 5 17:57] watchdog: BUG: soft lockup - CPU#82 stuck for 23s!
-[swapper/82:0]
-[  +0.007179] Modules linked in: ipt_MASQUERADE nf_conntrack_netlink
-nfnetlink xfrm_user xfrm_algo iptable_nat nf_conntrack_ipv4
-nf_defrag_ipv4 nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack
-nf_nat nf_conntrack br_netfilter bridge stp llc overlay nfsv3
-rpcsec_gss_krb5 nfsv4 dns_resolver nfs fscache bonding intel_rapl
-sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel
-iTCO_wdt kvm iTCO_vendor_support irqbypass crct10dif_pclmul crc32_pclmul
-ghash_clmulni_intel intel_cstate intel_uncore xfs intel_rapl_perf
-libcrc32c pcspkr ast ttm drm_kms_helper tpm_tis tpm_tis_core drm tpm
-mei_me sg joydev mei i2c_algo_bit ioatdma lpc_ich evdev wmi rng_core
-acpi_pad pcc_cpufreq button nfsd auth_rpcgss nfs_acl ipmi_si lockd
-ipmi_poweroff grace ipmi_devintf ipmi_msghandler sunrpc ip_tables
-x_tables autofs4
-[  +0.000066]  ext4 crc16 mbcache jbd2 crc32c_generic fscrypto ecb
-dm_mod sd_mod hid_generic usbhid hid crc32c_intel aesni_intel aes_x86_64
-crypto_simd cryptd glue_helper nvme nvme_core ahci libahci ehci_pci
-ehci_hcd libata megaraid_sas scsi_mod usbcore i2c_i801 ixgbe usb_common
-dca mdio
-[  +0.000030] CPU: 82 PID: 0 Comm: swapper/82 Not tainted
-4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000001] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000013] RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x20
-[  +0.000001] Code: 8b 00 a8 08 74 0b 65 81 25 d8 6b 11 48 ff ff ff 7f
-44 89 e0 5b 5d 41 5c c3 0f 1f 44 00 00 c6 07 00 0f 1f 40 00 48 89 f7 57
-9d <0f> 1f 44 00 00 c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 c6 07
-[  +0.000029] RSP: 0000:ffff8bfdffc83de8 EFLAGS: 00000202 ORIG_RAX:
-ffffffffffffff13
-[  +0.000002] RAX: 00000000fec2e7a2 RBX: ffff8bedf5807768 RCX:
-dead000000000200
-[  +0.000001] RDX: ffffa8cc6028b410 RSI: 0000000000000202 RDI:
-0000000000000202
-[  +0.000001] RBP: 00000000fec2e7a2 R08: ffff8bedf5807770 R09:
-0000000000000052
-[  +0.000001] R10: 0000000000000052 R11: 0000000000000001 R12:
-0000000000000202
-[  +0.000001] R13: 0000000000000003 R14: 0000000000000000 R15:
-0000000000000000
-[  +0.000002] FS:  0000000000000000(0000) GS:ffff8bfdffc80000(0000)
-knlGS:0000000000000000
-[  +0.000001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000002] CR2: 0000559c8105f094 CR3: 000000260e20a002 CR4:
-00000000003606e0
-[  +0.000001] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[  +0.000001] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000000] Call Trace:
-[  +0.000004]  <IRQ>
-[  +0.000008]  __wake_up_common_lock+0x89/0xc0
-[  +0.000009]  rwb_wake_all+0x30/0x40
-[  +0.000003]  scale_up.part.25+0x24/0x40
-[  +0.000003]  wb_timer_fn+0x295/0x430
-[  +0.000008]  ? blk_mq_tag_update_depth+0x110/0x110
-[  +0.000007]  call_timer_fn+0x2b/0x120
-[  +0.000003]  run_timer_softirq+0x1d3/0x410
-[  +0.000002]  ? enqueue_hrtimer+0x3a/0x90
-[  +0.000002]  ? __hrtimer_run_queues+0x12c/0x270
-[  +0.000004]  __do_softirq+0x10d/0x2a6
-[  +0.000006]  irq_exit+0xb6/0xc0
-[  +0.000002]  smp_apic_timer_interrupt+0x74/0x130
-[  +0.000003]  apic_timer_interrupt+0xf/0x20
-[  +0.000002]  </IRQ>
-[  +0.000009] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-[  +0.000001] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-[  +0.000028] RSP: 0000:ffffa8cc4c7cbe78 EFLAGS: 00000246 ORIG_RAX:
-ffffffffffffff13
-[  +0.000002] RAX: ffff8bfdffca1b80 RBX: 0000000000000001 RCX:
-000000000000001f
-[  +0.000001] RDX: 00000237c552d9f0 RSI: 0000000040000219 RDI:
-0000000000000000
-[  +0.000001] RBP: ffff8bfdffcaaf78 R08: 00000000ffffffff R09:
-0000000000000008
-[  +0.000001] R10: 00000000000000a9 R11: 00000000000000c2 R12:
-ffffffffb88b3a78
-[  +0.000001] R13: 0000000000000001 R14: 0000000000000001 R15:
-00000237c55130a6
-[  +0.000004]  ? cpuidle_enter_state+0x95/0x2b0
-[  +0.000008]  do_idle+0x204/0x270
-[  +0.000003]  cpu_startup_entry+0x6f/0x80
-[  +0.000005]  start_secondary+0x1a4/0x1f0
-[  +0.000005]  secondary_startup_64+0xa5/0xb0
+>
+> Or, do we want a new macro?
+>
+> #define IBT_BITMAP_SIZE (test_thread_flag(TIF_ADDR32) ? \
+>         (IA32_PAGE_OFFSET / PAGE_SIZE / BITS_PER_BYTE) : \
+>         (TASK_SIZE_MAX / PAGE_SIZE / BITS_PER_BYTE))
 
-Message from syslogd@talisker at Oct  5 17:57:15 ...
- kernel:[ 2484.753810] watchdog: BUG: soft lockup - CPU#82 stuck for
-23s! [swapper/82:0]
-[ +26.628991] INFO: rcu_sched detected stalls on CPUs/tasks:
-[  +0.005528] 	44-...0: (1 GPs behind) idle=42e/0/1
-softirq=100999/101000 fqs=2209
-[  +0.007504] 	(detected by 60, t=5255 jiffies, g=82049, c=82048, q=42045)
-[  +0.006727] Sending NMI from CPU 60 to CPUs 44:
-[  +0.001017] NMI watchdog: Watchdog detected hard LOCKUP on cpu 44
-[  +0.000000] Modules linked in: ipt_MASQUERADE nf_conntrack_netlink
-nfnetlink xfrm_user xfrm_algo iptable_nat nf_conntrack_ipv4
-nf_defrag_ipv4 nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack
-nf_nat nf_conntrack br_netfilter bridge stp llc overlay nfsv3
-rpcsec_gss_krb5 nfsv4 dns_resolver nfs fscache bonding intel_rapl
-sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel
-iTCO_wdt kvm iTCO_vendor_support irqbypass crct10dif_pclmul crc32_pclmul
-ghash_clmulni_intel intel_cstate intel_uncore xfs intel_rapl_perf
-libcrc32c pcspkr ast ttm drm_kms_helper tpm_tis tpm_tis_core drm tpm
-mei_me sg joydev mei i2c_algo_bit ioatdma lpc_ich evdev wmi rng_core
-acpi_pad pcc_cpufreq button nfsd auth_rpcgss nfs_acl ipmi_si lockd
-ipmi_poweroff grace ipmi_devintf ipmi_msghandler sunrpc ip_tables
-x_tables autofs4
-[  +0.000036]  ext4 crc16 mbcache jbd2 crc32c_generic fscrypto ecb
-dm_mod sd_mod hid_generic usbhid hid crc32c_intel aesni_intel aes_x86_64
-crypto_simd cryptd glue_helper nvme nvme_core ahci libahci ehci_pci
-ehci_hcd libata megaraid_sas scsi_mod usbcore i2c_i801 ixgbe usb_common
-dca mdio
-[  +0.000015] CPU: 44 PID: 0 Comm: swapper/44 Tainted: G             L
-  4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000001] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000001] RIP: 0010:try_to_wake_up+0x3b4/0x4a0
-[  +0.000000] Code: 44 24 0c 0f 84 5a fe ff ff 49 8b 8c 2f 78 09 00 00
-48 8b 11 eb 1c f6 c2 08 75 57 48 89 d6 48 89 d0 48 83 ce 08 f0 48 0f b1
-31 <48> 39 c2 74 43 48 89 c2 f7 c2 00 00 20 00 75 dc 44 89 c7 44 89 04
-[  +0.000022] RSP: 0018:ffff8c1dfee83c88 EFLAGS: 00000046
-[  +0.000001] RAX: 0000000080200000 RBX: ffff8bedf328c9c0 RCX:
-ffff8c0dfc2d8000
-[  +0.000000] RDX: 0000000080200000 RSI: 0000000080200008 RDI:
-ffff8bedf328c9f0
-[  +0.000001] RBP: ffff8c0dff700000 R08: 0000000000000020 R09:
-000000000000002c
-[  +0.000000] R10: 000000000000002c R11: 0000000000000001 R12:
-ffff8bedf328d10c
-[  +0.000000] R13: 0000000000000000 R14: 0000000000000046 R15:
-0000000000021b80
-[  +0.000001] FS:  0000000000000000(0000) GS:ffff8c1dfee80000(0000)
-knlGS:0000000000000000
-[  +0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000001] CR2: 00007fe833e00810 CR3: 000000260e20a004 CR4:
-00000000003606e0
-[  +0.000000] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-
-Message from syslogd@talisker at Oct  5 17:57:42 ...
- kernel:[ 2511.411044] NMI watchdog: Watchdog detected hard LOCKUP on cpu 44
-[  +0.000001] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000000] Call Trace:
-[  +0.000000]  <IRQ>
-[  +0.000001]  ? __wake_up_common+0x96/0x180
-[  +0.000000]  autoremove_wake_function+0x11/0x50
-[  +0.000001]  __wake_up_common+0x96/0x180
-[  +0.000000]  __wake_up_common_lock+0x7c/0xc0
-[  +0.000000]  wbt_done+0x4b/0x80
-[  +0.000001]  blk_mq_free_request+0xae/0x150
-[  +0.000000]  scsi_end_request+0x95/0x1e0 [scsi_mod]
-[  +0.000000]  scsi_io_completion+0x404/0x6a0 [scsi_mod]
-[  +0.000001]  blk_mq_complete_request+0x9c/0x100
-[  +0.000000]  complete_cmd_fusion+0x23a/0x4a0 [megaraid_sas]
-[  +0.000001]  megasas_isr_fusion+0x36/0x180 [megaraid_sas]
-[  +0.000000]  __handle_irq_event_percpu+0x81/0x190
-[  +0.000001]  handle_irq_event_percpu+0x30/0x80
-[  +0.000000]  handle_irq_event+0x3c/0x60
-[  +0.000000]  handle_edge_irq+0x94/0x1f0
-[  +0.000001]  handle_irq+0x1f/0x30
-[  +0.000000]  do_IRQ+0x49/0xd0
-[  +0.000000]  common_interrupt+0xf/0xf
-[  +0.000001]  </IRQ>
-[  +0.000000] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-[  +0.000000] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-[  +0.000014] RSP: 0018:ffffa8cc4c69be78 EFLAGS: 00000246 ORIG_RAX:
-ffffffffffffffdd
-[  +0.000001] RAX: ffff8c1dfeea1b80 RBX: 0000000000000002 RCX:
-000000000000001f
-[  +0.000001] RDX: 00000243d61ca5da RSI: 0000000040000219 RDI:
-0000000000000000
-[  +0.000001] RBP: ffff8c1dfeeaaf78 R08: 00000000ffffffff R09:
-0000000000000008
-[  +0.000000] R10: 00000000000000c0 R11: 00000000000000de R12:
-ffffffffb88b3ad8
-[  +0.000001] R13: 0000000000000002 R14: 0000000000000002 R15:
-00000243d61bae85
-[  +0.000000]  ? cpuidle_enter_state+0x95/0x2b0
-[  +0.000001]  do_idle+0x204/0x270
-[  +0.000000]  cpu_startup_entry+0x6f/0x80
-[  +0.000000]  start_secondary+0x1a4/0x1f0
-[  +0.000001]  secondary_startup_64+0xa5/0xb0
-[  +0.000000] NMI backtrace for cpu 44
-[  +0.000001] CPU: 44 PID: 0 Comm: swapper/44 Tainted: G             L
-  4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000000] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000001] RIP: 0010:__list_del_entry_valid+0x28/0x90
-[  +0.000000] Code: 00 00 48 8b 07 48 b9 00 01 00 00 00 00 ad de 48 8b
-57 08 48 39 c8 74 26 48 b9 00 02 00 00 00 00 ad de 48 39 ca 74 2b 48 8b
-12 <48> 39 d7 75 34 48 8b 50 08 48 39 d7 75 3c b8 01 00 00 00 c3 48 89
-[  +0.000013] RSP: 0018:ffff8c1dfee83ce0 EFLAGS: 00000002
-[  +0.000001] RAX: ffffa8cc604ef410 RBX: ffffa8cc604db3f8 RCX:
-dead000000000200
-[  +0.000001] RDX: ffffa8cc604db410 RSI: 0000000000000046 RDI:
-ffffa8cc604db410
-[  +0.000000] RBP: 0000000000000001 R08: 0000000000000057 R09:
-000000000000002c
-[  +0.000001] R10: 000000000000002c R11: 0000000000000001 R12:
-ffffa8cc604db410
-[  +0.000000] R13: ffff8bedf5807770 R14: 0000000000000000 R15:
-ffffa8cc604ef3f8
-[  +0.000000] FS:  0000000000000000(0000) GS:ffff8c1dfee80000(0000)
-knlGS:0000000000000000
-[  +0.000001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000000] CR2: 00007fe833e00810 CR3: 000000260e20a004 CR4:
-00000000003606e0
-[  +0.000001] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[  +0.000000] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000001] Call Trace:
-[  +0.000000]  <IRQ>
-[  +0.000000]  autoremove_wake_function+0x2a/0x50
-[  +0.000001]  __wake_up_common+0x96/0x180
-[  +0.000000]  __wake_up_common_lock+0x7c/0xc0
-[  +0.000000]  wbt_done+0x4b/0x80
-[  +0.000001]  blk_mq_free_request+0xae/0x150
-[  +0.000000]  scsi_end_request+0x95/0x1e0 [scsi_mod]
-[  +0.000000]  scsi_io_completion+0x404/0x6a0 [scsi_mod]
-[  +0.000001]  blk_mq_complete_request+0x9c/0x100
-[  +0.000000]  complete_cmd_fusion+0x23a/0x4a0 [megaraid_sas]
-[  +0.000001]  megasas_isr_fusion+0x36/0x180 [megaraid_sas]
-[  +0.000000]  __handle_irq_event_percpu+0x81/0x190
-[  +0.000000]  handle_irq_event_percpu+0x30/0x80
-[  +0.000001]  handle_irq_event+0x3c/0x60
-[  +0.000000]  handle_edge_irq+0x94/0x1f0
-[  +0.000001]  handle_irq+0x1f/0x30
-[  +0.000000]  do_IRQ+0x49/0xd0
-[  +0.000000]  common_interrupt+0xf/0xf
-[  +0.000001]  </IRQ>
-[  +0.000000] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-[  +0.000000] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-[  +0.000014] RSP: 0018:ffffa8cc4c69be78 EFLAGS: 00000246 ORIG_RAX:
-ffffffffffffffdd
-[  +0.000001] RAX: ffff8c1dfeea1b80 RBX: 0000000000000002 RCX:
-000000000000001f
-[  +0.000000] RDX: 00000243d61ca5da RSI: 0000000040000219 RDI:
-0000000000000000
-[  +0.000001] RBP: ffff8c1dfeeaaf78 R08: 00000000ffffffff R09:
-0000000000000008
-[  +0.000000] R10: 00000000000000c0 R11: 00000000000000de R12:
-ffffffffb88b3ad8
-[  +0.000001] R13: 0000000000000002 R14: 0000000000000002 R15:
-00000243d61bae85
-[  +0.000000]  ? cpuidle_enter_state+0x95/0x2b0
-[  +0.000001]  do_idle+0x204/0x270
-[  +0.000000]  cpu_startup_entry+0x6f/0x80
-[  +0.000001]  start_secondary+0x1a4/0x1f0
-[  +0.000000]  secondary_startup_64+0xa5/0xb0
-[Oct 5 17:58] watchdog: BUG: soft lockup - CPU#99 stuck for 23s!
-[sshd:41460]
-[  +0.007028] Modules linked in: ipt_MASQUERADE nf_conntrack_netlink
-nfnetlink xfrm_user xfrm_algo iptable_nat nf_conntrack_ipv4
-nf_defrag_ipv4 nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack
-nf_nat nf_conntrack br_netfilter bridge stp llc overlay nfsv3
-rpcsec_gss_krb5 nfsv4 dns_resolver nfs fscache bonding intel_rapl
-sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel
-iTCO_wdt kvm iTCO_vendor_support irqbypass crct10dif_pclmul crc32_pclmul
-ghash_clmulni_intel intel_cstate intel_uncore xfs intel_rapl_perf
-libcrc32c pcspkr ast ttm drm_kms_helper tpm_tis tpm_tis_core drm tpm
-mei_me sg joydev mei i2c_algo_bit ioatdma lpc_ich evdev wmi rng_core
-acpi_pad pcc_cpufreq button nfsd auth_rpcgss nfs_acl ipmi_si lockd
-ipmi_poweroff grace ipmi_devintf ipmi_msghandler sunrpc ip_tables
-x_tables autofs4
-[  +0.000080]  ext4 crc16 mbcache jbd2 crc32c_generic fscrypto ecb
-dm_mod sd_mod hid_generic usbhid hid crc32c_intel aesni_intel aes_x86_64
-crypto_simd cryptd glue_helper nvme nvme_core ahci libahci ehci_pci
-ehci_hcd libata megaraid_sas scsi_mod usbcore i2c_i801 ixgbe usb_common
-dca mdio
-[  +0.000035] CPU: 99 PID: 41460 Comm: sshd Tainted: G             L
-4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000001] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000011] RIP: 0010:smp_call_function_many+0x209/0x260
-[  +0.000001] Code: a4 5c 00 3b 05 8c 55 01 01 0f 83 7e fe ff ff 48 63
-d0 48 8b 0b 48 03 0c d5 00 b7 6c b8 8b 51 18 83 e2 01 74 0a f3 90 8b 51
-18 <83> e2 01 75 f6 eb c8 0f b6 4c 24 14 48 83 c4 18 4c 89 ea 5b 4c 89
-[  +0.000040] RSP: 0018:ffffa8cc61843c10 EFLAGS: 00000202 ORIG_RAX:
-ffffffffffffff13
-[  +0.000003] RAX: 000000000000002c RBX: ffff8c1dff1e2ac0 RCX:
-ffff8c1dfeea7d80
-[  +0.000001] RDX: 0000000000000003 RSI: 0000000000000000 RDI:
-ffff8c1dff1e2ac8
-[  +0.000002] RBP: ffff8c1dff1e2ac8 R08: 0000000000000000 R09:
-ffff8c1dff1e2b08
-[  +0.000001] R10: ffff8c1dff1e2ac8 R11: ffffa8cc61843d40 R12:
-ffffffffb786b200
-
-Message from syslogd@talisker at Oct  5 17:58:15 ...
- kernel:[ 2544.790801] watchdog: BUG: soft lockup - CPU#99 stuck for
-23s! [sshd:41460]
-[  +0.000001] R13: 0000000000000000 R14: 0000000000000001 R15:
-0000000000000200
-[  +0.000003] FS:  00007f3e734bed40(0000) GS:ffff8c1dff1c0000(0000)
-knlGS:0000000000000000
-[  +0.000001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000002] CR2: 00007f3e71647300 CR3: 0000003b6223e003 CR4:
-00000000003606e0
-[  +0.000001] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[  +0.000002] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000001] Call Trace:
-[  +0.000010]  ? load_new_mm_cr3+0xe0/0xe0
-[  +0.000002]  on_each_cpu+0x28/0x60
-[  +0.000004]  flush_tlb_kernel_range+0x48/0x90
-[  +0.000007]  __purge_vmap_area_lazy+0x4d/0xc0
-[  +0.000003]  vm_unmap_aliases+0xf5/0x130
-[  +0.000003]  change_page_attr_set_clr+0xcb/0x440
-[  +0.000004]  set_memory_ro+0x26/0x30
-[  +0.000008]  bpf_prog_select_runtime+0x2d/0x110
-[  +0.000006]  bpf_prepare_filter+0x3af/0x3f0
-[  +0.000004]  bpf_prog_create_from_user+0xb9/0x110
-[  +0.000004]  ? hardlockup_detector_perf_cleanup+0x80/0x80
-[  +0.000002]  do_seccomp+0x289/0x6c0
-[  +0.000004]  __x64_sys_prctl+0x162/0x4b0
-[  +0.000007]  do_syscall_64+0x55/0x110
-[  +0.000008]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  +0.000003] RIP: 0033:0x7f3e7164730a
-[  +0.000000] Code: 48 8b 0d 91 fb 2a 00 f7 d8 64 89 01 48 83 c8 ff c3
-66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 9d 00 00 00 0f
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 5e fb 2a 00 f7 d8 64 89 01 48
-[  +0.000041] RSP: 002b:00007ffdc84f6a58 EFLAGS: 00000246 ORIG_RAX:
-000000000000009d
-[  +0.000002] RAX: ffffffffffffffda RBX: 00005601c5718da0 RCX:
-00007f3e7164730a
-[  +0.000001] RDX: 00005601c4d1af50 RSI: 0000000000000002 RDI:
-0000000000000016
-[  +0.000001] RBP: 00005601c571b590 R08: 0000000000000000 R09:
-0000000000000005
-[  +0.000002] R10: 00007f3e7164730a R11: 0000000000000246 R12:
-0000000000000000
-[  +0.000001] R13: 0000000000000016 R14: 0000000000000000 R15:
-00007ffdc84f6ea0
-[ +27.993133] watchdog: BUG: soft lockup - CPU#99 stuck for 23s!
-[sshd:41460]
-[  +0.007011] Modules linked in: ipt_MASQUERADE nf_conntrack_netlink
-nfnetlink xfrm_user xfrm_algo iptable_nat nf_conntrack_ipv4
-nf_defrag_ipv4 nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack
-nf_nat nf_conntrack br_netfilter bridge stp llc overlay nfsv3
-rpcsec_gss_krb5 nfsv4 dns_resolver nfs fscache bonding intel_rapl
-sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel
-iTCO_wdt kvm iTCO_vendor_support irqbypass crct10dif_pclmul crc32_pclmul
-ghash_clmulni_intel intel_cstate intel_uncore xfs intel_rapl_perf
-libcrc32c pcspkr ast ttm drm_kms_helper tpm_tis tpm_tis_core drm tpm
-mei_me sg joydev mei i2c_algo_bit ioatdma lpc_ich evdev wmi rng_core
-acpi_pad pcc_cpufreq button nfsd auth_rpcgss nfs_acl ipmi_si lockd
-ipmi_poweroff grace ipmi_devintf ipmi_msghandler sunrpc ip_tables
-x_tables autofs4
-[  +0.000051]  ext4 crc16 mbcache jbd2 crc32c_generic fscrypto ecb
-dm_mod sd_mod hid_generic usbhid hid crc32c_intel aesni_intel aes_x86_64
-crypto_simd cryptd glue_helper nvme nvme_core ahci libahci ehci_pci
-ehci_hcd libata megaraid_sas scsi_mod usbcore i2c_i801 ixgbe usb_common
-dca mdio
-[  +0.000024] CPU: 99 PID: 41460 Comm: sshd Tainted: G             L
-4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000002] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000004] RIP: 0010:smp_call_function_many+0x209/0x260
-
-Message from syslogd@talisker at Oct  5 17:58:43 ...
- kernel:[ 2572.791275] watchdog: BUG: soft lockup - CPU#99 stuck for
-23s! [sshd:41460]
-[  +0.000000] Code: a4 5c 00 3b 05 8c 55 01 01 0f 83 7e fe ff ff 48 63
-d0 48 8b 0b 48 03 0c d5 00 b7 6c b8 8b 51 18 83 e2 01 74 0a f3 90 8b 51
-18 <83> e2 01 75 f6 eb c8 0f b6 4c 24 14 48 83 c4 18 4c 89 ea 5b 4c 89
-[  +0.000041] RSP: 0018:ffffa8cc61843c10 EFLAGS: 00000202 ORIG_RAX:
-ffffffffffffff13
-[  +0.000003] RAX: 000000000000002c RBX: ffff8c1dff1e2ac0 RCX:
-ffff8c1dfeea7d80
-[  +0.000001] RDX: 0000000000000003 RSI: 0000000000000000 RDI:
-ffff8c1dff1e2ac8
-[  +0.000001] RBP: ffff8c1dff1e2ac8 R08: 0000000000000000 R09:
-ffff8c1dff1e2b08
-[  +0.000001] R10: ffff8c1dff1e2ac8 R11: ffffa8cc61843d40 R12:
-ffffffffb786b200
-[  +0.000000] R13: 0000000000000000 R14: 0000000000000001 R15:
-0000000000000200
-[  +0.000002] FS:  00007f3e734bed40(0000) GS:ffff8c1dff1c0000(0000)
-knlGS:0000000000000000
-[  +0.000001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000001] CR2: 00007f3e71647300 CR3: 0000003b6223e003 CR4:
-00000000003606e0
-[  +0.000001] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[  +0.000001] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000001] Call Trace:
-[  +0.000004]  ? load_new_mm_cr3+0xe0/0xe0
-[  +0.000002]  on_each_cpu+0x28/0x60
-[  +0.000002]  flush_tlb_kernel_range+0x48/0x90
-[  +0.000004]  __purge_vmap_area_lazy+0x4d/0xc0
-[  +0.000002]  vm_unmap_aliases+0xf5/0x130
-[  +0.000002]  change_page_attr_set_clr+0xcb/0x440
-[  +0.000003]  set_memory_ro+0x26/0x30
-[  +0.000003]  bpf_prog_select_runtime+0x2d/0x110
-[  +0.000003]  bpf_prepare_filter+0x3af/0x3f0
-[  +0.000003]  bpf_prog_create_from_user+0xb9/0x110
-[  +0.000003]  ? hardlockup_detector_perf_cleanup+0x80/0x80
-[  +0.000002]  do_seccomp+0x289/0x6c0
-[  +0.000003]  __x64_sys_prctl+0x162/0x4b0
-[  +0.000003]  do_syscall_64+0x55/0x110
-[  +0.000003]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  +0.000002] RIP: 0033:0x7f3e7164730a
-[  +0.000001] Code: 48 8b 0d 91 fb 2a 00 f7 d8 64 89 01 48 83 c8 ff c3
-66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 9d 00 00 00 0f
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 5e fb 2a 00 f7 d8 64 89 01 48
-[  +0.000040] RSP: 002b:00007ffdc84f6a58 EFLAGS: 00000246 ORIG_RAX:
-000000000000009d
-[  +0.000002] RAX: ffffffffffffffda RBX: 00005601c5718da0 RCX:
-00007f3e7164730a
-[  +0.000002] RDX: 00005601c4d1af50 RSI: 0000000000000002 RDI:
-0000000000000016
-[  +0.000001] RBP: 00005601c571b590 R08: 0000000000000000 R09:
-0000000000000005
-[  +0.000001] R10: 00007f3e7164730a R11: 0000000000000246 R12:
-0000000000000000
-[  +0.000002] R13: 0000000000000016 R14: 0000000000000000 R15:
-00007ffdc84f6ea0
-[  +1.612805] INFO: rcu_sched detected stalls on CPUs/tasks:
-[  +0.005546] 	44-...0: (1 GPs behind) idle=42e/0/1
-softirq=100999/101000 fqs=8947
-[  +0.007499] 	(detected by 62, t=21010 jiffies, g=82049, c=82048, q=45933)
-[  +0.006817] Sending NMI from CPU 62 to CPUs 44:
-[  +0.001015] NMI backtrace for cpu 44
-[  +0.000001] CPU: 44 PID: 0 Comm: swapper/44 Tainted: G             L
-  4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-[  +0.000000] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-3.0a 05/30/2017
-[  +0.000001] RIP: 0010:enqueue_task_fair+0x73/0x850
-[  +0.000000] Code: 01 00 00 f6 83 88 04 00 00 02 0f 85 4d 07 00 00 48
-85 ed 74 4a 44 8b 93 c0 00 00 00 45 85 d2 74 14 e9 8a 00 00 00 44 8b 4d
-40 <41> bc 01 00 00 00 45 85 c9 75 7b 48 8b 9d 58 01 00 00 44 89 e2 48
-[  +0.000015] RSP: 0018:ffff8c1dfee83bf0 EFLAGS: 00000086
-[  +0.000001] RAX: 0000000000000000 RBX: ffff8c1df8c3d200 RCX:
-0000000000000000
-[  +0.000001] RDX: 0000000000000001 RSI: ffff8c1df8c3d230 RDI:
-ffff8c1353b45918
-[  +0.000000] RBP: ffff8c1df8c3ce00 R08: ffff8c1353b45900 R09:
-0000000000000001
-[  +0.000001] R10: 000000000000031f R11: 0000000000000001 R12:
-0000000000000009
-[  +0.000000] R13: ffffffffb7d81220 R14: 0000000000000046 R15:
-0000000000021b80
-[  +0.000001] FS:  0000000000000000(0000) GS:ffff8c1dfee80000(0000)
-knlGS:0000000000000000
-[  +0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000001] CR2: 00007fe833e00810 CR3: 000000260e20a004 CR4:
-00000000003606e0
-[  +0.000000] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[  +0.000001] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[  +0.000000] Call Trace:
-[  +0.000000]  <IRQ>
-[  +0.000001]  ? check_preempt_wakeup+0x103/0x250
-[  +0.000000]  ttwu_do_activate+0x44/0x80
-[  +0.000000]  try_to_wake_up+0x1ce/0x4a0
-[  +0.000001]  ? __wake_up_common+0x96/0x180
-[  +0.000000]  autoremove_wake_function+0x11/0x50
-[  +0.000001]  __wake_up_common+0x96/0x180
-[  +0.000000]  __wake_up_common_lock+0x7c/0xc0
-[  +0.000000]  wbt_done+0x4b/0x80
-[  +0.000001]  blk_mq_free_request+0xae/0x150
-[  +0.000000]  scsi_end_request+0x95/0x1e0 [scsi_mod]
-[  +0.000001]  scsi_io_completion+0x404/0x6a0 [scsi_mod]
-[  +0.000000]  blk_mq_complete_request+0x9c/0x100
-[  +0.000000]  complete_cmd_fusion+0x23a/0x4a0 [megaraid_sas]
-[  +0.000001]  megasas_isr_fusion+0x36/0x180 [megaraid_sas]
-[  +0.000000]  __handle_irq_event_percpu+0x81/0x190
-[  +0.000000]  handle_irq_event_percpu+0x30/0x80
-[  +0.000001]  handle_irq_event+0x3c/0x60
-[  +0.000000]  handle_edge_irq+0x94/0x1f0
-[  +0.000001]  handle_irq+0x1f/0x30
-[  +0.000000]  do_IRQ+0x49/0xd0
-[  +0.000000]  common_interrupt+0xf/0xf
-[  +0.000001]  </IRQ>
-[  +0.000000] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-[  +0.000000] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-[  +0.000014] RSP: 0018:ffffa8cc4c69be78 EFLAGS: 00000246 ORIG_RAX:
-ffffffffffffffdd
-[  +0.000001] RAX: ffff8c1dfeea1b80 RBX: 0000000000000002 RCX:
-000000000000001f
-[  +0.000001] RDX: 00000243d61ca5da RSI: 0000000040000219 RDI:
-0000000000000000
-[  +0.000000] RBP: ffff8c1dfeeaaf78 R08: 00000000ffffffff R09:
-0000000000000008
-[  +0.000001] R10: 00000000000000c0 R11: 00000000000000de R12:
-ffffffffb88b3ad8
-[  +0.000000] R13: 0000000000000002 R14: 0000000000000002 R15:
-00000243d61bae85
-[  +0.000001]  ? cpuidle_enter_state+0x95/0x2b0
-[  +0.000000]  do_idle+0x204/0x270
-[  +0.000000]  cpu_startup_entry+0x6f/0x80
-[  +0.000001]  start_secondary+0x1a4/0x1f0
-[  +0.000000]  secondary_startup_64+0xa5/0xb0
-
--- 
-Chris Boot
-bootc@boo.tc
+No.  I don't like hiding magic like this in a macro that looks like a const=
+ant.
