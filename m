@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B42C65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E586AC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450F72084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87874208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:47:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GhZEERj2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450F72084D
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cwp+tyEQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87874208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeJEXqc (ORCPT
+        id S1728958AbeJEXqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:46:32 -0400
-Received: from mail-eopbgr20085.outbound.protection.outlook.com ([40.107.2.85]:23280
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        Fri, 5 Oct 2018 19:46:35 -0400
+Received: from mail-he1eur01on0057.outbound.protection.outlook.com ([104.47.0.57]:37568
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727572AbeJEXqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:46:32 -0400
+        id S1728341AbeJEXqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:46:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QttvTdhbL3H01gTfrmSm4sPsxHPWTx6BQpBHN4YbI84=;
- b=GhZEERj26aSUfG3sZTKFjnXSvtfvgLOGiF0H5VUfxFRTaEPhFFuNjqO4H6B6zku77y+Z1EnqB/pL10feH6I1urdHEghjiL3WCOuDnwDURAxS/Qstncsz8OqJQiIuC8rF8FIka97wSucWz3pRZdoFvPSqSnlPQP5hxvvUj4GsnCM=
+ bh=h3LJkaKyKi+2Xz/Z+dIrMWMDUtMWQ2c3ZQXSgw3SI2Y=;
+ b=Cwp+tyEQJ6jdVAPX3r9SGXPrSbQyAaPyYMpn1Utl0j+LzI1rndFsVLEuInHQP+im0mW5GtsBjbkfmwNpt9y+B4ufhob0y4Mn3sIKq0SYr1JNKpkJcmt7ySYXm3UcOpD6HbPJrrGUrJpWpPj4rnGB14M6J/t6IRQ91EmUaAheUj8=
 Received: from AM4PR0401MB2354.eurprd04.prod.outlook.com (10.165.45.135) by
- AM4PR0401MB2017.eurprd04.prod.outlook.com (10.166.131.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.26; Fri, 5 Oct 2018 16:46:56 +0000
+ AM4PR0401MB1940.eurprd04.prod.outlook.com (10.166.130.154) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.21; Fri, 5 Oct 2018 16:46:54 +0000
 Received: from AM4PR0401MB2354.eurprd04.prod.outlook.com
  ([fe80::b18e:798b:a9c9:bc72]) by AM4PR0401MB2354.eurprd04.prod.outlook.com
  ([fe80::b18e:798b:a9c9:bc72%7]) with mapi id 15.20.1207.018; Fri, 5 Oct 2018
- 16:46:56 +0000
+ 16:46:54 +0000
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
@@ -49,11 +49,11 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Horia Geanta <horia.geanta@nxp.com>,
         Roy Pledge <roy.pledge@nxp.com>,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH 4/4] bus: fsl-mc: add bus rescan attribute
-Thread-Topic: [PATCH 4/4] bus: fsl-mc: add bus rescan attribute
-Thread-Index: AQHUXMsGdmRxkj/X0kKtuikuCggnyA==
-Date:   Fri, 5 Oct 2018 16:46:56 +0000
-Message-ID: <2ff883c0a0c617a11d8df5a18a76c6f5a90fcd10.1538757338.git.ioana.ciornei@nxp.com>
+Subject: [PATCH 2/4] bus: fsl-mc: add fsl-mc userspace support
+Thread-Topic: [PATCH 2/4] bus: fsl-mc: add fsl-mc userspace support
+Thread-Index: AQHUXMsFbR2jX4lHJE+dzMaMy5YSlw==
+Date:   Fri, 5 Oct 2018 16:46:54 +0000
+Message-ID: <b1b4c641b9dfa994ae77d8243ea78625f35656f5.1538757337.git.ioana.ciornei@nxp.com>
 References: <cover.1538757337.git.ioana.ciornei@nxp.com>
 In-Reply-To: <cover.1538757337.git.ioana.ciornei@nxp.com>
 Accept-Language: en-US
@@ -68,166 +68,436 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [86.34.165.90]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM4PR0401MB2017;6:nV/lxsEaDCgkM5DXskPlzuLfLPtskp2HfN24rxSxQhy2jtl6MnAFTOc2nsbQZPzmThujpiYYkr4atfFfHcfRxWJ76of8BSdscqeVsvB+XhEU3Buv8THAQzviwCt/rDDPoShz0Wt1J7gFbNX8CQXyywlN1OWMrnGoptUYbjzzzgBAPhAphF7CPg4PdjYsxJuocuTzftAtQ/d299SJAfrVRT9WbCwNWqNVX+am7T5v5/FBjTc3UICFlmS3B2skrAEpkaqaIpIES8JbQwyt79Z4xzkF1K91xbXWyEXYBcsS5ATNg7/BQiH7i6OUdmndU+TiYqSxxpQgo6oXBWCai3xY2Cl9MTNjtMECoM6VanGc7fSeEKLee2rAJZ3qB5/w8ET7NRVmbfPyXBHXiStWHZ6kq4Ene1KCDTw/Fl14iOTz6VV3HPhGuqw6GJ7oYmTBVORUupbnvL4yWhM1z4rG3ONW5w==;5:qwbyvSIu7akWDSbBQVKPtjs8/rgPU6AOq98N773nqr2Af0CeLsjZKvRAMnka+PaXfsVXrAFmbzZXQ1jGiR8SY6jgLew8Y96S0qi4N25EiP9wgMssFbkvJKj5ffrpb8FNxGYJ1UqlxVVdDZaSEmfTi4I3YpcbTLG5qvnV3j3t60g=;7:6dWcEdBzgBW7vVvA4DrPPPbe6Fbld1p0JBf2pMSiWBNerxw1TqUbQV8PlB2IY23+eEAe0vyIxPBuVjlXlSkuOIEHNIXAW0OYYvf6hw1Wb22UDvPimwdku432zdKL5/H9ayks8Gd8qU/iXH0fcHv3B3UvjVeWnz2SSOr+xQt1uX2nqKlpZndFkOo2STyX2672AO43q9Ep9Ij6fw7vRpEB/1vNMVgMA0F+zn/ahvjgCfHQChA5YYtDX0XodyvDFx0x
-x-ms-office365-filtering-correlation-id: a3c2e792-93c8-4792-f07d-08d62ae2290f
+x-microsoft-exchange-diagnostics: 1;AM4PR0401MB1940;6:38JCA2rl2RX0ZjH7wiz0mnAhxzq1i+qeYZW7cHjdUeeypKZ3/VOvvEzPovwvfvoCfocbg2lR4vg2v9qjJJxKIB/mRoik6S9K+FxIwVs6MgJtRdwoVm1RPGUgw21oCwyJiUAZDWbpInLtqEufwssPWnHE1TmLSBVa3nWhRvvBchIyeIEgkcn6iuoKGpZyoASRWMDQbr28ZLWImQjJcwB0TZpz71SyfO4AMHAfb7ot6+jZ4wNMropimW+ftBE/GbjN+VLsub51aN3ZpxYeSWV5ubtOjd7E+iLOHjFslgEoMkLXqV4KoyvR1Ecd44OVTiBGrR4lDMm32lzUeiuqamgwbzvx9BBaPsTTx06gb4C2PynARmInjmbLjhB0uZWcP3TLf86KIJcVrvnFfyPGU7VASCebwigXRQQuf5xFyHfpT3+v1K4/H4QEYL9770QwUKeyyF5WBaw+roU26hwyN5FKSQ==;5:26pgGnxL+bVON3pbGqSCfclBBk0Ao5/U21N6GJ2xaEnY3CzdpKxWDMG7VbbzIhH8jrtOXpJz8/IfwOgR/FhHQOXoZszDKZG6SFSrPLmUiIOY4nIFKsX5wFxXRApQICrI8d98eyaTyQQjvtDI26cybt8cVb2HaxGdntd1CiOmHiw=;7:qo+qep+ROCksznEbYlltxz0eGEQ8tN02nRCkRd4k+iEXIdmBo2cZKxNZX/a32DqWG22+S36tPtDP5mBPq60sbTwesKBnDSADTo9M4SAIMjSXLGHGTlwiYUAh1qfNr6ulEbGiFJwrL2QkxpuGpViGh7i694FoRUg6ZB4qV7hDGbuTgPvjrzhTYOROnWGpbXgOzmJ9tJQoNnh0PfO/fg2wOeOD/2l1SlLmDOfATiGN3WxX56ffeB/zup+dwbigFWpK
+x-ms-office365-filtering-correlation-id: c59a913b-c57a-4354-1124-08d62ae227ed
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB2017;
-x-ms-traffictypediagnostic: AM4PR0401MB2017:
-x-microsoft-antispam-prvs: <AM4PR0401MB201760B43A2B27DBF1E544D0E0EB0@AM4PR0401MB2017.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB1940;
+x-ms-traffictypediagnostic: AM4PR0401MB1940:
+x-microsoft-antispam-prvs: <AM4PR0401MB194095585B2E89355579D232E0EB0@AM4PR0401MB1940.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(278428928389397)(35073007944872)(275809806118684)(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991048);SRVR:AM4PR0401MB2017;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB2017;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:AM4PR0401MB1940;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB1940;
 x-forefront-prvs: 0816F1D86E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(366004)(136003)(189003)(199004)(50944005)(6436002)(966005)(6512007)(316002)(5250100002)(14454004)(102836004)(305945005)(118296001)(186003)(7736002)(25786009)(6306002)(2900100001)(71200400001)(71190400001)(53936002)(36756003)(4326008)(2501003)(26005)(478600001)(2906002)(86362001)(54906003)(486006)(2616005)(476003)(68736007)(105586002)(106356001)(6116002)(3846002)(6636002)(110136005)(446003)(11346002)(44832011)(8676002)(81156014)(81166006)(99286004)(97736004)(14444005)(5660300001)(6486002)(8936002)(66066001)(256004)(6506007)(386003)(52116002)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB2017;H:AM4PR0401MB2354.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(366004)(199004)(189003)(575784001)(97736004)(316002)(6512007)(68736007)(53936002)(81166006)(11346002)(86362001)(8676002)(186003)(446003)(476003)(486006)(2616005)(44832011)(102836004)(5250100002)(8936002)(6436002)(81156014)(26005)(7736002)(305945005)(256004)(14444005)(6486002)(2900100001)(2501003)(105586002)(106356001)(52116002)(6506007)(2906002)(99286004)(76176011)(71200400001)(71190400001)(4744004)(54906003)(110136005)(14454004)(6116002)(3846002)(386003)(4326008)(25786009)(5660300001)(66066001)(118296001)(6636002)(36756003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB1940;H:AM4PR0401MB2354.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: ykPuU5PZ6m5gIvagHC0IetWKflAAHNSYznZ8rh13zPxkPlTN28YDa5a1pBgPhMZKBGWGqHmUXtTAT0aThiU82FNacXOtXSRaOY/lAJn4l9w/3UywRgRYOOV5yll4xgw+OcDzBqo4DG/4VHqO/Pb5c75bLJdYMQ0XXA+6o7KPqq6CxKzhx73RWtUw6QoySt4+/9FuAIqWnVyMlwVpfQRbF2K01VN7l9CfiyVAOm+cLwYKSxT29dSvK5ykOnfQxBoAnY8kWDT9NMchb+eXnwz25PyS/5j6NGyoKTz/XZR/8q2d2GyQfny9A/GRzp71zEvMWeggrdCI3qXNrxPhECWbdGG8s8VQ0jImqncFx/k6Gl4=
+x-microsoft-antispam-message-info: gm7cZv+BWORH0KuWnZeV/Fxv4O568uEG4Ow3MG4PWa6JMASdTL05JRcpAkqZ2uhzmIqmd0K4vEtkLAYrQHuyC9A4DlC4NQZ/Zku6SoL1Mqy1I6FiTHV+05dIMo36NWWzmgXkg/ra41rdu2uiFRzOj7aJbsS3YggA5V2zfhHEs3SZbdVaMQBwwtRNwn/U5aobypKrsyuTcKIMc09KZaFE7T3gFjz4aqoIh0ummdNrS+roP2l3dkxFdbA5jmv18z/3Oi3ZStX+lkn/pShxc0G0cTZJ5fHGPhGHzYRs8eYZsmzaeI4Csjv7PPD6YHKbEHCeu8UWLXggMvnSM+WzY9ofFSePZDStF2AzwWLgq8Edr54=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3c2e792-93c8-4792-f07d-08d62ae2290f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2018 16:46:56.3452
+X-MS-Exchange-CrossTenant-Network-Message-Id: c59a913b-c57a-4354-1124-08d62ae227ed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2018 16:46:54.3764
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB2017
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB1940
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the rescan attribute as a bus attribute to
-synchronize the fsl-mc bus objects and the MC firmware.
+Adding userspace support for the MC (Management Complex) means exporting
+an ioctl capable device file representing the root resource container.
 
-To rescan the fsl-mc bus, e.g.,
-echo 1 > /sys/bus/fsl-mc/rescan
+This new functionality in the fsl-mc bus driver intends to provide
+userspace applications an interface to interact with the MC firmware.
+
+Commands that are composed in userspace are sent to the MC firmware
+through the FSL_MC_SEND_MC_COMMAND ioctl.  By default the implicit MC
+I/O portal is used for this operation, but if the implicit one is busy,
+a dynamic portal is allocated and then freed upon execution.
 
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
-Depends on:
- https://lkml.org/lkml/2018/10/1/747
-
- Documentation/ABI/stable/sysfs-bus-fsl-mc | 10 ++++++++
- drivers/bus/fsl-mc/dprc-driver.c          |  4 +--
- drivers/bus/fsl-mc/fsl-mc-bus.c           | 41 +++++++++++++++++++++++++++=
+ Documentation/ioctl/ioctl-number.txt |   1 +
+ drivers/bus/fsl-mc/Kconfig           |   7 ++
+ drivers/bus/fsl-mc/Makefile          |   3 +
+ drivers/bus/fsl-mc/fsl-mc-bus.c      |  12 +++
+ drivers/bus/fsl-mc/fsl-mc-private.h  |  41 ++++++++
+ drivers/bus/fsl-mc/fsl-mc-uapi.c     | 175 +++++++++++++++++++++++++++++++=
 ++++
- drivers/bus/fsl-mc/fsl-mc-private.h       |  2 ++
- 4 files changed, 55 insertions(+), 2 deletions(-)
+ include/uapi/linux/fsl_mc.h          |   9 ++
+ 7 files changed, 248 insertions(+)
+ create mode 100644 drivers/bus/fsl-mc/fsl-mc-uapi.c
 
-diff --git a/Documentation/ABI/stable/sysfs-bus-fsl-mc b/Documentation/ABI/=
-stable/sysfs-bus-fsl-mc
-index f2f14f4..97c541a 100644
---- a/Documentation/ABI/stable/sysfs-bus-fsl-mc
-+++ b/Documentation/ABI/stable/sysfs-bus-fsl-mc
-@@ -7,3 +7,13 @@ Description:	Writing a non-zero value to this attribute wi=
-ll
- 		synchronize the objects under dprc.X and the
- 		Management Complex firmware.
- Users:		Userspace drivers and management tools
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioc=
+tl-number.txt
+index 13a7c99..b29a213 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -171,6 +171,7 @@ Code  Seq#(hex)	Include File		Comments
+ 'R'	00-1F	linux/random.h		conflict!
+ 'R'	01	linux/rfkill.h		conflict!
+ 'R'	C0-DF	net/bluetooth/rfcomm.h
++'R'	E0	uapi/linux/fsl_mc.h
+ 'S'	all	linux/cdrom.h		conflict!
+ 'S'	80-81	scsi/scsi_ioctl.h	conflict!
+ 'S'	82-FF	scsi/scsi.h		conflict!
+diff --git a/drivers/bus/fsl-mc/Kconfig b/drivers/bus/fsl-mc/Kconfig
+index c23c77c..cde6f40 100644
+--- a/drivers/bus/fsl-mc/Kconfig
++++ b/drivers/bus/fsl-mc/Kconfig
+@@ -14,3 +14,10 @@ config FSL_MC_BUS
+ 	  architecture.  The fsl-mc bus driver handles discovery of
+ 	  DPAA2 objects (which are represented as Linux devices) and
+ 	  binding objects to drivers.
 +
-+What:		/sys/bus/fsl-mc/rescan
-+Date:		October 2018
-+KernelVersion:	4.20
-+Contact:	Ioana Ciornei <ioana.ciornei@nxp.com>
-+Description:	Writing a non-zero value to this attribute will
-+		force a rescan of fsl-mc bus in the system and
-+		synchronize the objects under fsl-mc bus and the
-+		Management Complex firmware.
-+Users:		Userspace drivers and management tools
-diff --git a/drivers/bus/fsl-mc/dprc-driver.c b/drivers/bus/fsl-mc/dprc-dri=
-ver.c
-index dadc2f3..5a5a6f6 100644
---- a/drivers/bus/fsl-mc/dprc-driver.c
-+++ b/drivers/bus/fsl-mc/dprc-driver.c
-@@ -214,8 +214,8 @@ static void dprc_add_new_devices(struct fsl_mc_device *=
-mc_bus_dev,
-  * populated before they can get allocation requests from probe callbacks
-  * of the device drivers for the non-allocatable devices.
-  */
--static int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
--			     unsigned int *total_irq_count)
-+int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
-+		      unsigned int *total_irq_count)
- {
- 	int num_child_objects;
- 	int dprc_get_obj_failures;
++config FSL_MC_UAPI_SUPPORT
++	bool "Management Complex (MC) userspace support"
++	depends on FSL_MC_BUS
++	help
++	  Provides userspace support for creating/destroying/configuring
++	  DPAA2 objects in the Management Complex.
+diff --git a/drivers/bus/fsl-mc/Makefile b/drivers/bus/fsl-mc/Makefile
+index 3c518c7..4ae292a 100644
+--- a/drivers/bus/fsl-mc/Makefile
++++ b/drivers/bus/fsl-mc/Makefile
+@@ -16,3 +16,6 @@ mc-bus-driver-objs :=3D fsl-mc-bus.o \
+ 		      fsl-mc-allocator.o \
+ 		      fsl-mc-msi.o \
+ 		      dpmcp.o
++
++# MC userspace support
++obj-$(CONFIG_FSL_MC_UAPI_SUPPORT) +=3D fsl-mc-uapi.o
 diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bu=
 s.c
-index 5f862f1..badb9af 100644
+index 5d8266c..5f862f1 100644
 --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
 +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -144,11 +144,52 @@ static ssize_t modalias_show(struct device *dev, stru=
-ct device_attribute *attr,
+@@ -792,6 +792,7 @@ static int fsl_mc_bus_probe(struct platform_device *pde=
+v)
+ 	struct fsl_mc *mc;
+ 	struct fsl_mc_device *mc_bus_dev =3D NULL;
+ 	struct fsl_mc_io *mc_io =3D NULL;
++	struct fsl_mc_bus *mc_bus =3D NULL;
+ 	int container_id;
+ 	phys_addr_t mc_portal_phys_addr;
+ 	u32 mc_portal_size;
+@@ -863,9 +864,18 @@ static int fsl_mc_bus_probe(struct platform_device *pd=
+ev)
+ 	if (error < 0)
+ 		goto error_cleanup_mc_io;
 =20
- ATTRIBUTE_GROUPS(fsl_mc_dev);
++	mc_bus =3D to_fsl_mc_bus(mc_bus_dev);
++	error =3D fsl_mc_uapi_create_device_file(mc_bus);
++	if (error < 0)
++		goto error_cleanup_device;
++
+ 	mc->root_mc_bus_dev =3D mc_bus_dev;
++
+ 	return 0;
 =20
-+static int scan_fsl_mc_bus(struct device *dev, void *data)
++error_cleanup_device:
++	fsl_mc_device_remove(mc_bus_dev);
++
+ error_cleanup_mc_io:
+ 	fsl_destroy_mc_io(mc_io);
+ 	return error;
+@@ -878,10 +888,12 @@ static int fsl_mc_bus_probe(struct platform_device *p=
+dev)
+ static int fsl_mc_bus_remove(struct platform_device *pdev)
+ {
+ 	struct fsl_mc *mc =3D platform_get_drvdata(pdev);
++	struct fsl_mc_bus *mc_bus =3D to_fsl_mc_bus(mc->root_mc_bus_dev);
+=20
+ 	if (!fsl_mc_is_root_dprc(&mc->root_mc_bus_dev->dev))
+ 		return -EINVAL;
+=20
++	fsl_mc_uapi_remove_device_file(mc_bus);
+ 	fsl_mc_device_remove(mc->root_mc_bus_dev);
+=20
+ 	fsl_destroy_mc_io(mc->root_mc_bus_dev->mc_io);
+diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-m=
+c-private.h
+index ea11b4f..16902f9 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-private.h
++++ b/drivers/bus/fsl-mc/fsl-mc-private.h
+@@ -10,6 +10,8 @@
+=20
+ #include <linux/fsl/mc.h>
+ #include <linux/mutex.h>
++#include <linux/ioctl.h>
++#include <linux/miscdevice.h>
+=20
+ /*
+  * Data Path Management Complex (DPMNG) General API
+@@ -492,6 +494,24 @@ struct fsl_mc_resource_pool {
+ };
+=20
+ /**
++ * struct fsl_mc_uapi - information associated with a device file
++ * @misc: struct miscdevice linked to the root dprc
++ * @device: newly created device in /dev
++ * @mutex: mutex lock to serialize the open/release operations
++ * @local_instance_in_use: local MC I/O instance in use or not
++ * @dynamic_instance_count: number of dynamically created MC I/O instances
++ * @static_mc_io: pointer to the static MC I/O object
++ */
++struct fsl_mc_uapi {
++	struct miscdevice misc;
++	struct device *device;
++	struct mutex mutex; /* serialize open/release operations */
++	u32 local_instance_in_use;
++	u32 dynamic_instance_count;
++	struct fsl_mc_io *static_mc_io;
++};
++
++/**
+  * struct fsl_mc_bus - logical bus that corresponds to a physical DPRC
+  * @mc_dev: fsl-mc device for the bus device itself.
+  * @resource_pools: array of resource pools (one pool per resource type)
+@@ -500,6 +520,7 @@ struct fsl_mc_resource_pool {
+  * @irq_resources: Pointer to array of IRQ objects for the IRQ pool
+  * @scan_mutex: Serializes bus scanning
+  * @dprc_attr: DPRC attributes
++ * @uapi_misc: struct that abstracts the interaction with userspace
+  */
+ struct fsl_mc_bus {
+ 	struct fsl_mc_device mc_dev;
+@@ -507,6 +528,7 @@ struct fsl_mc_bus {
+ 	struct fsl_mc_device_irq *irq_resources;
+ 	struct mutex scan_mutex;    /* serializes bus scanning */
+ 	struct dprc_attributes dprc_attr;
++	struct fsl_mc_uapi uapi_misc;
+ };
+=20
+ #define to_fsl_mc_bus(_mc_dev) \
+@@ -561,4 +583,23 @@ int __must_check fsl_create_mc_io(struct device *dev,
+=20
+ bool fsl_mc_is_root_dprc(struct device *dev);
+=20
++#ifdef CONFIG_FSL_MC_UAPI_SUPPORT
++
++int fsl_mc_uapi_create_device_file(struct fsl_mc_bus *mc_bus);
++
++void fsl_mc_uapi_remove_device_file(struct fsl_mc_bus *mc_bus);
++
++#else
++
++static inline int fsl_mc_uapi_create_device_file(struct fsl_mc_bus *mc_bus=
+)
 +{
-+	struct fsl_mc_device *root_mc_dev;
-+	struct fsl_mc_bus *root_mc_bus;
-+
-+	if (!fsl_mc_is_root_dprc(dev))
-+		goto exit;
-+
-+	root_mc_dev =3D to_fsl_mc_device(dev);
-+	root_mc_bus =3D to_fsl_mc_bus(root_mc_dev);
-+	mutex_lock(&root_mc_bus->scan_mutex);
-+	dprc_scan_objects(root_mc_dev, NULL);
-+	mutex_unlock(&root_mc_bus->scan_mutex);
-+
-+exit:
 +	return 0;
 +}
 +
-+static ssize_t rescan_store(struct bus_type *bus,
-+			    const char *buf, size_t count)
++static inline void fsl_mc_uapi_remove_device_file(struct fsl_mc_bus *mc_bu=
+s)
 +{
-+	unsigned long val;
-+
-+	if (kstrtoul(buf, 0, &val) < 0)
-+		return -EINVAL;
-+
-+	if (val)
-+		bus_for_each_dev(bus, NULL, NULL, scan_fsl_mc_bus);
-+
-+	return count;
 +}
-+static BUS_ATTR_WO(rescan);
 +
-+static struct attribute *fsl_mc_bus_attrs[] =3D {
-+	&bus_attr_rescan.attr,
-+	NULL,
++#endif
++
+ #endif /* _FSL_MC_PRIVATE_H_ */
+diff --git a/drivers/bus/fsl-mc/fsl-mc-uapi.c b/drivers/bus/fsl-mc/fsl-mc-u=
+api.c
+new file mode 100644
+index 0000000..388e646
+--- /dev/null
++++ b/drivers/bus/fsl-mc/fsl-mc-uapi.c
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Management Complex (MC) userspace support
++ *
++ * Copyright 2018 NXP
++ *
++ */
++
++#include <linux/slab.h>
++#include <linux/fs.h>
++#include <linux/uaccess.h>
++#include <linux/miscdevice.h>
++
++#include "fsl-mc-private.h"
++
++static int fsl_mc_uapi_send_command(unsigned long arg,
++				    struct fsl_mc_io *mc_io)
++{
++	struct fsl_mc_command mc_cmd;
++	int error;
++
++	error =3D copy_from_user(&mc_cmd, (void __user *)arg, sizeof(mc_cmd));
++	if (error)
++		return -EFAULT;
++
++	error =3D mc_send_command(mc_io, &mc_cmd);
++	if (error)
++		return error;
++
++	error =3D copy_to_user((void __user *)arg, &mc_cmd, sizeof(mc_cmd));
++	if (error)
++		return -EFAULT;
++
++	return 0;
++}
++
++static int fsl_mc_uapi_dev_open(struct inode *inode, struct file *filep)
++{
++	struct fsl_mc_device *root_mc_device;
++	struct fsl_mc_uapi *mc_uapi;
++	struct fsl_mc_bus *mc_bus;
++	struct fsl_mc_io *dynamic_mc_io;
++	int error;
++
++	mc_uapi =3D container_of(filep->private_data, struct fsl_mc_uapi, misc);
++	mc_bus =3D container_of(mc_uapi, struct fsl_mc_bus, uapi_misc);
++	root_mc_device =3D &mc_bus->mc_dev;
++
++	mutex_lock(&mc_uapi->mutex);
++
++	if (!mc_uapi->local_instance_in_use) {
++		filep->private_data =3D mc_uapi->static_mc_io;
++		mc_uapi->local_instance_in_use =3D true;
++	} else {
++		error =3D fsl_mc_portal_allocate(root_mc_device, 0,
++					       &dynamic_mc_io);
++		if (error) {
++			pr_err("Could not allocate MC portal\n");
++			goto error_portal_allocate;
++		}
++
++		mc_uapi->dynamic_instance_count++;
++		filep->private_data =3D dynamic_mc_io;
++	}
++
++	mutex_unlock(&mc_uapi->mutex);
++
++	return 0;
++
++error_portal_allocate:
++	mutex_unlock(&mc_uapi->mutex);
++
++	return error;
++}
++
++static int fsl_mc_uapi_dev_release(struct inode *inode, struct file *filep=
+)
++{
++	struct fsl_mc_device *root_mc_device;
++	struct fsl_mc_uapi *mc_uapi;
++	struct fsl_mc_bus *mc_bus;
++	struct fsl_mc_io *mc_io;
++
++	mc_io =3D filep->private_data;
++	root_mc_device =3D container_of(mc_io->dev, struct fsl_mc_device, dev);
++	mc_bus =3D to_fsl_mc_bus(root_mc_device);
++	mc_uapi =3D &mc_bus->uapi_misc;
++
++	mutex_lock(&mc_uapi->mutex);
++
++	if (WARN_ON(!mc_uapi->local_instance_in_use &&
++		    mc_uapi->dynamic_instance_count =3D=3D 0)) {
++		mutex_unlock(&mc_uapi->mutex);
++		return -EINVAL;
++	}
++
++	if (mc_io =3D=3D mc_uapi->static_mc_io) {
++		mc_uapi->local_instance_in_use =3D false;
++	} else {
++		fsl_mc_portal_free(mc_io);
++		mc_uapi->dynamic_instance_count--;
++	}
++
++	filep->private_data =3D  NULL;
++	mutex_unlock(&mc_uapi->mutex);
++
++	return 0;
++}
++
++static long fsl_mc_uapi_dev_ioctl(struct file *file,
++				  unsigned int cmd,
++				  unsigned long arg)
++{
++	int error;
++
++	switch (cmd) {
++	case FSL_MC_SEND_MC_COMMAND:
++		error =3D fsl_mc_uapi_send_command(arg, file->private_data);
++		break;
++	default:
++		pr_err("%s: unexpected ioctl call number\n", __func__);
++		error =3D -EINVAL;
++	}
++
++	return error;
++}
++
++static const struct file_operations fsl_mc_uapi_dev_fops =3D {
++	.owner =3D THIS_MODULE,
++	.open =3D fsl_mc_uapi_dev_open,
++	.release =3D fsl_mc_uapi_dev_release,
++	.unlocked_ioctl =3D fsl_mc_uapi_dev_ioctl,
 +};
 +
-+ATTRIBUTE_GROUPS(fsl_mc_bus);
++int fsl_mc_uapi_create_device_file(struct fsl_mc_bus *mc_bus)
++{
++	struct fsl_mc_device *mc_dev =3D &mc_bus->mc_dev;
++	struct fsl_mc_uapi *mc_uapi =3D &mc_bus->uapi_misc;
++	int error;
 +
- struct bus_type fsl_mc_bus_type =3D {
- 	.name =3D "fsl-mc",
- 	.match =3D fsl_mc_bus_match,
- 	.uevent =3D fsl_mc_bus_uevent,
- 	.dev_groups =3D fsl_mc_dev_groups,
-+	.bus_groups =3D fsl_mc_bus_groups,
++	mc_uapi->misc.minor =3D MISC_DYNAMIC_MINOR;
++	mc_uapi->misc.name =3D dev_name(&mc_dev->dev);
++	mc_uapi->misc.fops =3D &fsl_mc_uapi_dev_fops;
++
++	error =3D misc_register(&mc_uapi->misc);
++	if (error)
++		return -EPROBE_DEFER;
++
++	error =3D fsl_mc_portal_allocate(mc_dev, 0, &mc_uapi->static_mc_io);
++	if (error) {
++		pr_err("%s: cannot allocate MC portal\n", __func__);
++		goto error_alloc_static_io;
++	}
++
++	mutex_init(&mc_uapi->mutex);
++
++	return 0;
++
++error_alloc_static_io:
++	misc_deregister(&mc_uapi->misc);
++
++	return error;
++}
++
++void fsl_mc_uapi_remove_device_file(struct fsl_mc_bus *mc_bus)
++{
++	struct fsl_mc_uapi *mc_uapi =3D &mc_bus->uapi_misc;
++
++	if (WARN_ON(mc_uapi->local_instance_in_use))
++		return;
++
++	if (WARN_ON(mc_uapi->dynamic_instance_count !=3D 0))
++		return;
++
++	misc_deregister(&mc_uapi->misc);
++}
+diff --git a/include/uapi/linux/fsl_mc.h b/include/uapi/linux/fsl_mc.h
+index 6c19cfc..4989c1b 100644
+--- a/include/uapi/linux/fsl_mc.h
++++ b/include/uapi/linux/fsl_mc.h
+@@ -16,10 +16,19 @@
+  * struct fsl_mc_command - Management Complex (MC) command structure
+  * @header: MC command header
+  * @params: MC command parameters
++ *
++ * Used by FSL_MC_SEND_MC_COMMAND
+  */
+ struct fsl_mc_command {
+ 	__le64 header;
+ 	__le64 params[MC_CMD_NUM_OF_PARAMS];
  };
- EXPORT_SYMBOL_GPL(fsl_mc_bus_type);
 =20
-diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-m=
-c-private.h
-index 16902f9..ab22347 100644
---- a/drivers/bus/fsl-mc/fsl-mc-private.h
-+++ b/drivers/bus/fsl-mc/fsl-mc-private.h
-@@ -545,6 +545,8 @@ int __must_check fsl_mc_device_add(struct fsl_mc_obj_de=
-sc *obj_desc,
-=20
- void dprc_driver_exit(void);
-=20
-+int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
-+		      unsigned int *total_irq_count);
- int __init fsl_mc_allocator_driver_init(void);
-=20
- void fsl_mc_allocator_driver_exit(void);
++#define FSL_MC_SEND_CMD_IOCTL_TYPE	'R'
++#define FSL_MC_SEND_CMD_IOCTL_SEQ	0xE0
++
++#define FSL_MC_SEND_MC_COMMAND \
++	_IOWR(FSL_MC_SEND_CMD_IOCTL_TYPE, FSL_MC_SEND_CMD_IOCTL_SEQ, \
++	struct fsl_mc_command)
++
+ #endif /* _UAPI_FSL_MC_H_ */
 --=20
 1.9.1
 
