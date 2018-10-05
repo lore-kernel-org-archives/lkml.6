@@ -2,91 +2,92 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C1BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6A6C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45E3208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:51:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45E3208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B9ADD208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:52:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9ADD208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbeJEPst (ORCPT
+        id S1728727AbeJEPtu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:48:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:48126 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728608AbeJEPss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:48:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C49E616A3;
-        Fri,  5 Oct 2018 01:51:03 -0700 (PDT)
-Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F75B3F5B3;
-        Fri,  5 Oct 2018 01:51:00 -0700 (PDT)
-From:   Kristina Martsenko <kristina.martsenko@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC 17/17] arm64: compile the kernel with ptrauth -msign-return-address
-Date:   Fri,  5 Oct 2018 09:47:54 +0100
-Message-Id: <20181005084754.20950-18-kristina.martsenko@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181005084754.20950-1-kristina.martsenko@arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+        Fri, 5 Oct 2018 11:49:50 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26061 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728433AbeJEPtu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:49:50 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-116-ZPlNGJbGODec3sk-zLYafg-1; Fri, 05 Oct 2018 09:52:02 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 5 Oct 2018 09:52:02 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 5 Oct 2018 09:52:02 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
+Subject: RE: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
+Thread-Topic: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
+Thread-Index: AQHUXIYZ0gwSLziKwUSuxurlLKTixKUQV4pg
+Date:   Fri, 5 Oct 2018 08:52:02 +0000
+Message-ID: <08b190b9dabd4625ae3d636b88b43ccb@AcuMS.aculab.com>
+References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
+ <20181005083313.2088252-1-arnd@arndb.de>
+In-Reply-To: <20181005083313.2088252-1-arnd@arndb.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: ZPlNGJbGODec3sk-zLYafg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compile all functions with two ptrauth instructions: paciasp in the
-prologue to sign the return address, and autiasp in the epilogue to
-authenticate the return address. This should help protect the kernel
-against attacks using return-oriented programming.
+From: Arnd Bergmann
+> Sent: 05 October 2018 09:33
+> 
+> Building any configuration with 'make W=1' produces a warning:
+> 
+> kernel/bounds.c:16:6: warnign: no previous prototype for 'foo' [-Wmissing-prototypes]
+> 
+> When also passing -Werror, this prevents us from building any
+> other files. Nobody ever calls the function, but we can't make
+> it 'static' either since we want the compiler output.
+> 
+> Calling it 'main' instead however avoids the warning, because gcc
+> does not insist on having a declaration for main.
 
-CONFIG_ARM64_PTR_AUTH enables pointer auth for both userspace and the
-kernel.
+Ugg.
+main() might be special in other ways too.
+It wouldn't surprise me if some linkers don't do special stuff for it.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
----
- arch/arm64/Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
+What is wrong with just putting and extra "void foo(void);" before
+the function?
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 106039d25e2f..dbcd43ea99d8 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -56,6 +56,10 @@ KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
- KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
- KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
- 
-+ifeq ($(CONFIG_ARM64_PTR_AUTH),y)
-+KBUILD_CFLAGS	+= -msign-return-address=all
-+endif
-+
- ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
- KBUILD_CPPFLAGS	+= -mbig-endian
- CHECKFLAGS	+= -D__AARCH64EB__
--- 
-2.11.0
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
