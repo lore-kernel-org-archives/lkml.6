@@ -2,153 +2,140 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A65C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB96C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346FF208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:02:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346FF208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 1E9D9208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:03:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Agx2kubD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9D9208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728605AbeJFFDE (ORCPT
+        id S1728583AbeJFFEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 01:03:04 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:53080 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725772AbeJFFDE (ORCPT
+        Sat, 6 Oct 2018 01:04:10 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41621 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeJFFEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 01:03:04 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id C231F634C8B;
-        Sat,  6 Oct 2018 01:02:21 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1g8YAv-0000js-J9; Sat, 06 Oct 2018 01:02:21 +0300
-Date:   Sat, 6 Oct 2018 01:02:21 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        jacopo@jmondi.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 1/3] [media] imx214: device tree binding
-Message-ID: <20181005220221.luriq43w3yvstmw3@valkosipuli.retiisi.org.uk>
-References: <20181005215750.6047-1-ricardo.ribalda@gmail.com>
+        Sat, 6 Oct 2018 01:04:09 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 23-v6so5279128pgc.8;
+        Fri, 05 Oct 2018 15:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Mx8OKx5bkkUbswk/e64BN04GCgYQ2hRTHcHxGOMLwf4=;
+        b=Agx2kubDpUE5oRgDggDnvEfuBmr9VWhyO8lWdKtFaVzJ52bECwHA6LqmBLci9qmr56
+         7f0/Cz+pq3rPo98CMeMT/KhiWCR8KjWbgiKRSVRh0re+bMY5fXDHKg4VDO7yDc9ZUtz3
+         Wkabe6IsBcV8CfietkE5Wcyz9evpufhIXN/xWjlYhFPqolfq9DKatz1e6NbDvHvIGnhl
+         blZMWkPRDvoVN5IJxssaI+Fnrx32af5vbkV1/ywoRzDCsUwjLth9mLan4BMLPpP54GEN
+         qsg8qvBW3kyP0ug+iZF1KzVvJDuG5P6+bEQaq/71qOzzuRiPwoiCeMsdIWbl0D23iT32
+         e0Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Mx8OKx5bkkUbswk/e64BN04GCgYQ2hRTHcHxGOMLwf4=;
+        b=q9Z4qttHKKfa3LK+dzkCMawAVdsMvqKLQcth6oHVyRVdxngt/Lw5XdzJkivVNKTBAL
+         14hOgGoZGaMdm6rhNhjcczUhLrFkS8FekHQMiTvPqXaWLRNbwtZYsuo/AdOsUnc5otmd
+         2+67Fy588x65wYbqPOSs7rHgzKblKLtCk+aWeiXQksQb+rQ5Hgu6sTAocvnH77vVdtQi
+         Qhu44vH+luaDjiK/UpXAW/fuTYAYXhc5F91uKiRJALDN9tFExwiA5KnLB+q9FR+RVLaD
+         uJHFMPrYv2ody+Jt/f2eh0sFkGFyJ0OhBRGr2SowYmqI5F2XFgZVT/T9+mpevcC44evM
+         f4sw==
+X-Gm-Message-State: ABuFfojfx291WCvxf/X7ezNLm+Hg+X0OP7DjzUqjuzgeLhMqcWD2wiNE
+        HlpXhungNBzQbtZaCMHpEsk=
+X-Google-Smtp-Source: ACcGV620wq/iIce6dD8WTlr8AsB2iKotNQ6AGShwn9UOWwUDGZcFMzHDKCxf1gXVdozFcxhmqrFNZA==
+X-Received: by 2002:a62:8559:: with SMTP id u86-v6mr13927462pfd.32.1538777008079;
+        Fri, 05 Oct 2018 15:03:28 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id q2-v6sm31610145pfc.17.2018.10.05.15.03.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 15:03:27 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 15:03:25 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH] KVM: X86: Add missing KVM_AMD dependency
+Message-ID: <20181005220325.GA24365@roeck-us.net>
+References: <1538765165-19177-1-git-send-email-linux@roeck-us.net>
+ <749a21f9-ad88-af0e-bed7-b505ac57568d@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181005215750.6047-1-ricardo.ribalda@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <749a21f9-ad88-af0e-bed7-b505ac57568d@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
-
-On Fri, Oct 05, 2018 at 11:57:50PM +0200, Ricardo Ribalda Delgado wrote:
-> Document bindings for imx214 camera sensor
+On Fri, Oct 05, 2018 at 10:41:55PM +0200, Paolo Bonzini wrote:
+> On 05/10/2018 20:46, Guenter Roeck wrote:
+> > Analysis shows that commit 59414c9892208 ("KVM: SVM: Add support for
+> > KVM_SEV_LAUNCH_START command") added a dependency of KVM_AMD on
+> > CRYPTO_DEV_CCP_DD if CRYPTO_DEV_SP_PSP is enabled: If CRYPTO_DEV_CCP_DD
+> > is built as module, KVM_AMD must be built as module as well.
+> > 
+> > Fixes: 59414c9892208 ("KVM: SVM: Add support for KVM_SEV_LAUNCH_START command")
+> > Cc: Brijesh Singh <brijesh.singh@amd.com>
+> > Cc: Borislav Petkov <bp@suse.de>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Cc: devicetree@vger.kernel.org
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> Changelog from v8:
+> This should be handled by
 > 
-> Rob Herring:
-> -rename file
-> -Move address to reg
-> -rename name on example
-> -Patch author
-> 
-> Sakari Ailus:
-> -should->shall
-> 
->  .../bindings/media/i2c/sony,imx214.txt        | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-> new file mode 100644
-> index 000000000000..2744773070c5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-> @@ -0,0 +1,53 @@
-> +* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
-> +
-> +The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
-> +an active array size of 4224H x 3200V. It is programmable through an I2C
-> +interface.
-> +Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
-> +throughput of 1.2Gbps/lane.
-> +
-> +
-> +Required Properties:
-> +- compatible: Shall be "sony,imx214".
-> +- reg: I2C bus address of the device. Depending on how the sensor is wired,
-> +       it shall be <0x10> or <0x1a>;
-> +- enable-gpios: GPIO descriptor for the enable pin.
-> +- vdddo-supply: Chip digital IO regulator (1.8V).
-> +- vdda-supply: Chip analog regulator (2.7V).
-> +- vddd-supply: Chip digital core regulator (1.12V).
-> +- clocks: Reference to the xclk clock.
-> +- clock-names:  Shall be "xclk".
-
-It could be that this was already discussed earlier but I missed that ---
-clock frequency. Apologies for that. How does the driver know what to ask?
-If you expect assigned-clock-rate or such, then I think it should be
-explicitly said here.
-
-You also have a single clock, so do you need clock-names?
-
-> +
-> +Optional Properties:
-> +- flash-leds: See ../video-interfaces.txt
-> +- lens-focus: See ../video-interfaces.txt
-> +
-> +The imx214 device node shall contain one 'port' child node with
-> +an 'endpoint' subnode. For further reading on port node refer to
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +Required Properties on endpoint:
-> +- data-lanes: check ../video-interfaces.txt
-> +- link-frequencies: check ../video-interfaces.txt
-> +- remote-endpoint: check ../video-interfaces.txt
-> +
-> +Example:
-> +
-> +	camera-sensor@1a {
-> +		compatible = "sony,imx214";
-> +		reg = <0x1a>;
-> +		vdddo-supply = <&pm8994_lvs1>;
-> +		vddd-supply = <&camera_vddd_1v12>;
-> +		vdda-supply = <&pm8994_l17>;
-> +		lens-focus = <&ad5820>;
-> +		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
-> +		clocks = <&mmcc CAMSS_MCLK0_CLK>;
-> +		clock-names = "xclk";
-> +		port {
-> +			imx214_ep: endpoint {
-> +				data-lanes = <1 2 3 4>;
-> +				link-frequencies = /bits/ 64 <480000000>;
-> +				remote-endpoint = <&csiphy0_ep>;
-> +			};
-> +		};
-> +	};
-> -- 
-> 2.19.0
+> config KVM_AMD_SEV
+>         def_bool y
+>         bool "AMD Secure Encrypted Virtualization (SEV) support"
+>         depends on KVM_AMD && X86_64
+>         depends on CRYPTO_DEV_SP_PSP && !(KVM_AMD=y && CRYPTO_DEV_CCP_DD=m)
+>         ---help---
+>         Provides support for launching Encrypted VMs on AMD processors.
 > 
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Unfortunately it doesn't. It disables KVM_AMD_SEV, but that doesn't prevent
+the calls.
+
+> Maybe this works as well?  I haven't tested it yet:
+> 
+
+I am sure there are many possible solutions. I would personally prefer one
+that enforces KVM_AMD=m with CRYPTO_DEV_CCP_DD=m, but that is just me.
+
+Thanks,
+Guenter
+
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 89c4c5aa15f1..55f10b17d044 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -441,9 +441,13 @@ static inline bool svm_sev_enabled(void)
+> 
+>  static inline bool sev_guest(struct kvm *kvm)
+>  {
+> +#ifdef CONFIG_KVM_AMD_SEV
+>  	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+> 
+>  	return sev->active;
+> +#else
+> +	return false;
+> +#endif
+>  }
+> 
+>  static inline int sev_get_asid(struct kvm *kvm)
+> 
+> Thanks,
+> 
+> Paolo
