@@ -2,117 +2,114 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4794C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB76C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFAA620652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:49:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAA620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id DC57C20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC57C20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeJEQrM (ORCPT
+        id S1728038AbeJEQrw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 12:47:12 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39107 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbeJEQrM (ORCPT
+        Fri, 5 Oct 2018 12:47:52 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52474 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbeJEQrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 12:47:12 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 868E980879; Fri,  5 Oct 2018 11:49:10 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 11:49:09 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181005094909.GB17069@amd>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
- <CACRpkdYG2Y=rspbZ_o=H3REXTEfOcaiqEyQD4kzO=G=d63V3yA@mail.gmail.com>
+        Fri, 5 Oct 2018 12:47:52 -0400
+Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id c01a0ac78b522896; Fri, 5 Oct 2018 11:49:51 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-acpi@vger.kernel.org, lenb@kernel.org, tglx@linutronix.de,
+        rafael@kernel.org, indou.takao@jp.fujitsu.com
+Subject: Re: [PATCH v3] acpi/processor: Fix the return value of acpi_processor_ids_walk()
+Date:   Fri, 05 Oct 2018 11:46:49 +0200
+Message-ID: <2335374.IdaxaSRSxG@aspire.rjw.lan>
+In-Reply-To: <20180824025126.19231-1-douly.fnst@cn.fujitsu.com>
+References: <20180824025126.19231-1-douly.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5I6of5zJg18YgZEa"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYG2Y=rspbZ_o=H3REXTEfOcaiqEyQD4kzO=G=d63V3yA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Friday, August 24, 2018 4:51:26 AM CEST Dou Liyang wrote:
+> ACPI driver should make sure all the processor IDs in their ACPI Namespace
+> are unique. the driver performs a depth-first walk of the namespace tree
+> and calls the acpi_processor_ids_walk() to check the duplicate IDs.
+> 
+> But, the acpi_processor_ids_walk() mistakes the return value. If a
+> processor is checked, it returns true which causes the walk break
+> immediately, and other processors will never be checked.
+> 
+> Repace the value with AE_OK which is the standard acpi_status value.
+> And don't abort the namespace walk even on error.
+> 
+> Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
+> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+> ---
+> Changelog:
+>   v2 --> v3:
+>    - Fix a compiler error reported by LKP
+>   v1 --> v2:
+>    - Fix the check against duplicate IDs suggested by Rafael.
+>   
+>   Now，the duplicate IDs only be found in Ivb42 machine, and we have added this check at 
+>   linux-4.9. But, we introduced a bug in linux-4.12 by commit 8c8cb30f49b8.
+> 
+>   For resolving the bug, firstly, I removed the check[1]. because Linux will compare
+>   the coming ID with present processors when it hot-added a physical CPU and will avoid
+>   using duplicate IDs.
+> 
+>   But, seems we should consider all the possible processors. So, with this patch, All
+>   the processors with the same IDs will never be hot-plugged.
+> 
+> [1] https://lkml.org/lkml/2018/5/28/213
+> ---
+>  drivers/acpi/acpi_processor.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+> index 449d86d39965..fc447410ae4d 100644
+> --- a/drivers/acpi/acpi_processor.c
+> +++ b/drivers/acpi/acpi_processor.c
+> @@ -643,7 +643,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+>  
+>  	status = acpi_get_type(handle, &acpi_type);
+>  	if (ACPI_FAILURE(status))
+> -		return false;
+> +		return status;
+>  
+>  	switch (acpi_type) {
+>  	case ACPI_TYPE_PROCESSOR:
+> @@ -663,11 +663,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+>  	}
+>  
+>  	processor_validated_ids_update(uid);
+> -	return true;
+> +	return AE_OK;
+>  
+>  err:
+> +	/* Exit on error, but don't abort the namespace walk */
+>  	acpi_handle_info(handle, "Invalid processor object\n");
+> -	return false;
+> +	return AE_OK;
+>  
+>  }
+>  
+> 
 
---5I6of5zJg18YgZEa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-Hi!
 
-> On another hand, the users of embedded devices, mentioned by Linus,
-> > should already know what scheduler to choose because dealing with
-> > embedded world assumes the person can decide this on their own, or with
-> > the help of abovementioned udev scripts and/or Documentation/ as a
-> > reference point.
-> >
-> > So I see no obstacles here, and the choice to rely on udev by default
-> > sounds reasonable.
-> >
->=20
-> I am sorry but I do not agree with this.
->=20
-> There are several historical precedents where we have
-> concluded that just "have the kernel do the right thing
-> by default" is the way to go.
-
-Kernel should do the right thing by default, I agree with Linus W.
-
-Having reasonable defaults is useful; yes, my desktop has udev etc,
-but I still want reasonable scheduler when doing fsck in
-init=3D/bin/bash.
-
-Plus, I update kernels more often than distros, and I run various
-embedded stuff.
-
-Kernel should just provide reasonable defaults.
-
-And yes, we have "ionice" command and yes, it would be nice if it
-worked by default...
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---5I6of5zJg18YgZEa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlu3M5UACgkQMOfwapXb+vJ6eACfcuqmLHOP0/KPd0GVpLGns0P0
-WcIAoJmlmzUGDFB4GFpMdVF0osheZdbP
-=pxio
------END PGP SIGNATURE-----
-
---5I6of5zJg18YgZEa--
