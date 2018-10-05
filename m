@@ -2,255 +2,169 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C0C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFFEC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2F52087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC5F2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:17:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTySl17o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2F52087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="SVu1DX80"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC5F2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbeJEWQW (ORCPT
+        id S1728633AbeJEWQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbeJEWQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:16:22 -0400
-Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A6EA2084D;
-        Fri,  5 Oct 2018 15:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538752632;
-        bh=XQlPBL5t9aJ3r48RKmEeViCFziv42vK6Afw2TwbTLR8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YTySl17osIQ6+Mwm6L5C/mD/APHFrkP1fYGyuyTGVzr/7a5iNQ1ASj0KZzivEEzCM
-         KT05F1zY5XzlMbtHYknbF2ARueW83r94ll4Bib0DptSSux0mTRIdgykQUUtsb3Uj8S
-         ff3YJb+ZMhIxEfKWmyK3TYoA1S/zTp2WqoqoxEWc=
-Subject: Re: [PATCH] reset: socfpga: add an early reset driver for SoCFPGA
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     marex@denx.de, linux-kernel@vger.kernel.org
-References: <1537195830-25759-1-git-send-email-dinguyen@kernel.org>
- <1538646836.14153.4.camel@pengutronix.de>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- xsFNBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
- Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
- yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
- c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
- smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
- K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
- yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
- LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
- 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
- 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABzSFEaW5oIE5ndXll
- biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz7CwXgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
- CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
- AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
- twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
- cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
- NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
- n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
- yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
- Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
- m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
- ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
- zsFNBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
- 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
- cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
- xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
- 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
- UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
- 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
- rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
- eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
- prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABwsFfBBgBAgAJBQJR
- J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
- 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
- d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
- K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
- oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
- 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
- 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
- cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
- Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
- JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <04f701c1-8f1c-ee99-6797-cfbe769ebbc7@kernel.org>
-Date:   Fri, 5 Oct 2018 10:17:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 5 Oct 2018 18:16:39 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43856 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728333AbeJEWQj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:16:39 -0400
+Received: by mail-io1-f67.google.com with SMTP id y10-v6so10921238ioa.10
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 08:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pnZcB3x/Ybuygz3ZsoAWJteQ2tTf5rFeELXa4bfOkAU=;
+        b=SVu1DX80po4blOvtD2APxJAuo5MTsFofRZndd2ZSyvxu6li3E3MANzCvw1Ojn2+Qxc
+         6ZvHeFYBiBwVDrQ5OVVQMIbPa7oj35UuLWc0Xl/qm/i7m+wdVlmrbx9Bnl3lFJIREV9S
+         gur1/HWrarAQsN7cgaIorhCwtmsZhqh0dCJRhwT2PCt4+jHtqFmzJODNDBTLvAkRi5Gz
+         xCl5LUIn8TXty2q0AnlP7JMkH5YvFvdSRPkJ0x55Nj6L73fzzertGCrzRkW/5F+bnp22
+         C6Q0UpDgLCbAm86Oj7guV3lf/HmtInq60gxlX3KNDDXPqet2IxRYVJ6KDW8eIkz5Jbat
+         PkPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pnZcB3x/Ybuygz3ZsoAWJteQ2tTf5rFeELXa4bfOkAU=;
+        b=hJabLiHOY8FQ4+EsY0K1a4EntZNiFEfuUZ+T6m7pCZAmJAB9ILxhmQuuKNcp76Kmuq
+         +WThbCfGqtRaF3wkpyc1ZGxmrJz29S1hQNKzcWHgiQQHqd2BWoh1C2UTtBocX+3oeXD5
+         4FY17m3hXSejGrZY+xTEPhMAUr5Z9MuzwYvI9hAZYgbm+WedBHndUCeudwgzclUl+vyR
+         B2r1x90AUb+rnZH6gGoNw1Ng4JMbbwxgJ/zGzWoWtNFcH8TrlQU3+gHb7aggH6z3M8IA
+         z6zefvKKdl0cmGlGPk3SG7iMf4SUZG9PWtNbMdiR3IyIUSAeNAOduriDuE7xtSnCS/oU
+         DYNQ==
+X-Gm-Message-State: ABuFfoil+dgWF2kIwv9OM3x2VWkeplc2xoIW7NlDj4ZqPjUBynydJJ+g
+        ifPhqGI8l+RB8XNgrKUZbi5t3w==
+X-Google-Smtp-Source: ACcGV63XY0WuUlKzS/0Tg4uCNOmtmhc5L95hnGy9KXgUl+y2o1H/TWnyc3akoUJYrGl+vUw0hJVLAg==
+X-Received: by 2002:a6b:5b16:: with SMTP id v22-v6mr7902112ioh.177.1538752649833;
+        Fri, 05 Oct 2018 08:17:29 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id p1sm879712itk.11.2018.10.05.08.17.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 08:17:28 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g8Rr4-0005b9-TN; Fri, 05 Oct 2018 09:17:26 -0600
+Date:   Fri, 5 Oct 2018 09:17:26 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     john.hubbard@gmail.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 2/3] mm: introduce put_user_page[s](), placeholder
+ versions
+Message-ID: <20181005151726.GA20776@ziepe.ca>
+References: <20181005040225.14292-1-jhubbard@nvidia.com>
+ <20181005040225.14292-3-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1538646836.14153.4.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005040225.14292-3-jhubbard@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 04, 2018 at 09:02:24PM -0700, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> Introduces put_user_page(), which simply calls put_page().
+> This provides a way to update all get_user_pages*() callers,
+> so that they call put_user_page(), instead of put_page().
+> 
+> Also introduces put_user_pages(), and a few dirty/locked variations,
+> as a replacement for release_pages(), for the same reasons.
+> These may be used for subsequent performance improvements,
+> via batching of pages to be released.
+> 
+> This prepares for eventually fixing the problem described
+> in [1], and is following a plan listed in [2], [3], [4].
+> 
+> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+> 
+> [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
+>     Proposed steps for fixing get_user_pages() + DMA problems.
+> 
+> [3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
+>     Bounce buffers (otherwise [2] is not really viable).
+> 
+> [4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
+>     Follow-up discussions.
+> 
+> CC: Matthew Wilcox <willy@infradead.org>
+> CC: Michal Hocko <mhocko@kernel.org>
+> CC: Christopher Lameter <cl@linux.com>
+> CC: Jason Gunthorpe <jgg@ziepe.ca>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Jan Kara <jack@suse.cz>
+> CC: Al Viro <viro@zeniv.linux.org.uk>
+> CC: Jerome Glisse <jglisse@redhat.com>
+> CC: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>  include/linux/mm.h | 42 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a61ebe8ad4ca..1a9aae7c659f 100644
+> +++ b/include/linux/mm.h
+> @@ -137,6 +137,8 @@ extern int overcommit_ratio_handler(struct ctl_table *, int, void __user *,
+>  				    size_t *, loff_t *);
+>  extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
+>  				    size_t *, loff_t *);
+> +int set_page_dirty(struct page *page);
+> +int set_page_dirty_lock(struct page *page);
+>  
+>  #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
+>  
+> @@ -943,6 +945,44 @@ static inline void put_page(struct page *page)
+>  		__put_page(page);
+>  }
+>  
+> +/* Placeholder version, until all get_user_pages*() callers are updated. */
+> +static inline void put_user_page(struct page *page)
+> +{
+> +	put_page(page);
+> +}
+> +
+> +/* For get_user_pages*()-pinned pages, use these variants instead of
+> + * release_pages():
+> + */
+> +static inline void put_user_pages_dirty(struct page **pages,
+> +					unsigned long npages)
+> +{
+> +	while (npages) {
+> +		set_page_dirty(pages[npages]);
+> +		put_user_page(pages[npages]);
+> +		--npages;
+> +	}
+> +}
 
+Shouldn't these do the !PageDirty(page) thing?
 
-On 10/04/2018 04:53 AM, Philipp Zabel wrote:
-> Hi Dinh,
-> 
-> On Mon, 2018-09-17 at 09:50 -0500, Dinh Nguyen wrote:
->> Create a separate reset driver that uses the reset operations in reset-simple.
->> The reset driver for the SoCFPGA platform needs to register early in order to
->> be able bring online timers that needed early in the kernel bootup.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
->>  arch/arm/mach-socfpga/socfpga.c |  4 ++
->>  drivers/reset/Kconfig           |  7 ++++
->>  drivers/reset/Makefile          |  1 +
->>  drivers/reset/reset-simple.c    | 17 ---------
->>  drivers/reset/reset-socfpga.c   | 85 +++++++++++++++++++++++++++++++++++++++++
->>  5 files changed, 97 insertions(+), 17 deletions(-)
->>  create mode 100644 drivers/reset/reset-socfpga.c
->>
->> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
->> index dde14f7..cc64576 100644
->> --- a/arch/arm/mach-socfpga/socfpga.c
->> +++ b/arch/arm/mach-socfpga/socfpga.c
->> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
->>  void __iomem *sdr_ctl_base_addr;
->>  unsigned long socfpga_cpu1start_addr;
->>  
->> +extern void __init socfpga_reset_init(void);
->> +
->>  void __init socfpga_sysmgr_init(void)
->>  {
->>  	struct device_node *np;
->> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
->>  
->>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
->>  		socfpga_init_ocram_ecc();
->> +	socfpga_reset_init();
->>  }
->>  
->>  static void __init socfpga_arria10_init_irq(void)
->> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
->>  		socfpga_init_arria10_l2_ecc();
->>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
->>  		socfpga_init_arria10_ocram_ecc();
->> +	socfpga_reset_init();
->>  }
->>  
->>  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 13d28fd..dcc5f1d 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -119,6 +119,13 @@ config RESET_STM32MP157
->>  	help
->>  	  This enables the RCC reset controller driver for STM32 MPUs.
->>  
->> +config RESET_SOCFPGA
->> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
->> +	default ARCH_SOCFPGA
->> +	select RESET_SIMPLE
->> +	help
->> +	  This enables the reset driver for SoCFPGA.
->> +
->>  config RESET_SUNXI
->>  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
->>  	default ARCH_SUNXI
->> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
->> index 4243c38..d09bb41 100644
->> --- a/drivers/reset/Makefile
->> +++ b/drivers/reset/Makefile
->> @@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->>  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
->>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
->> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
->>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
->>  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
->>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
->> diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
->> index a91107f..483824f 100644
->> --- a/drivers/reset/reset-simple.c
->> +++ b/drivers/reset/reset-simple.c
->> @@ -106,21 +106,12 @@ struct reset_simple_devdata {
->>  	bool status_active_low;
->>  };
->>  
->> -#define SOCFPGA_NR_BANKS	8
->> -
->> -static const struct reset_simple_devdata reset_simple_socfpga = {
->> -	.reg_offset = 0x10,
-> 
-> Before, the default reg_offset for DTs missing the altr,modrst-offset
-> property was 0x10 ...
-> 
->> -	.nr_resets = SOCFPGA_NR_BANKS * 32,
->> -	.status_active_low = true,
->> -};
->> -
-> [...]
->> +static int a10_reset_init(struct device_node *np)
->> +{
->> +	struct reset_simple_data *data;
->> +	struct resource res;
->> +	resource_size_t size;
->> +	int ret;
->> +	u32 reg_offset = 0;
-> 
-> ... now it is 0x0.
-> I think this should be
-> 
-> 	u32 reg_offset = 0x10;
-> 
-> to avoid breaking SocFPGA with ancient device trees.
-> 
->> +
->> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	ret = of_address_to_resource(np, 0, &res);
->> +	if (ret)
->> +		goto err_alloc;
->> +
->> +	size = resource_size(&res);
->> +	if (!request_mem_region(res.start, size, np->name)) {
->> +		ret = -EBUSY;
->> +		goto err_alloc;
->> +	}
->> +
->> +	data->membase = ioremap(res.start, size);
->> +	if (!data->membase) {
->> +		ret = -ENOMEM;
->> +		goto err_alloc;
->> +	}
->> +
->> +	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
->> +		pr_warn("missing altr,modrst-offset property, assuming 0x0\n");
->> +	data->membase += reg_offset;
->> +
->> +	spin_lock_init(&data->lock);
->> +
->> +	data->rcdev.owner = THIS_MODULE;
->> +	data->rcdev.nr_resets = 32 * 8;
-> 
-> Could we keep the SOCFPGA_NR_BANKS #define to reduce the amount of magic
-> numbers?
-> 
-> I can make both changes when applying if you want.
-> 
-
-If you don't mind, that would be great!
-
-Thanks,
-Dinh
+Jason
