@@ -2,126 +2,161 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C322C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FE7C65BAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0060521473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:31:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0060521473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id EBAB9208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAB9208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbeJEWaK (ORCPT
+        id S1728661AbeJEWaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43372 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 18:30:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49841 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbeJEWaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:30:10 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B08C020834;
-        Fri,  5 Oct 2018 15:30:57 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 11:30:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        Colin Patrick McCabe <cmccabe@alumni.cmu.edu>
-Subject: Re: [PATCH v3] tools/lib/traceevent: Replace str_error_r() with an
- open coded implementation
-Message-ID: <20181005113056.55b23c31@gandalf.local.home>
-In-Reply-To: <20181002175539.2ac894c7@gandalf.local.home>
-References: <20181002175539.2ac894c7@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726082AbeJEWaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:30:18 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DD8E52074F; Fri,  5 Oct 2018 17:31:03 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AF60520734;
+        Fri,  5 Oct 2018 17:31:03 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 17:31:04 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 12/12] arm64: dts: allwinner: bananapi-m64: Bananapi
+ S070WV20-CT16 DSI panel
+Message-ID: <20181005153104.xxv5vxinvawz3hic@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-13-jagan@amarulasolutions.com>
+ <20180927171747.wqdt5eiwktyyoefz@flea>
+ <CAMty3ZBb25EBF85oGYZFMGkW1F8DwojfwWp=UKhoTrJZmQkjZQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xdzysu2lcfowgjtf"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBb25EBF85oGYZFMGkW1F8DwojfwWp=UKhoTrJZmQkjZQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Oct 2018 17:55:39 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> While working on having PowerTop use libtracevent as a shared object
-> library, Tzvetomir hit "str_error_r not defined". This was added by commit
-> c3cec9e68f12d ("tools lib traceevent: Use str_error_r()") because
-> strerror_r() has two definitions, where one is GNU specific, and the other
-> is XSI complient. The strerror_r() is in a wrapper str_error_r() to keep the
-> code from having to worry about which compiler is being used.
-> 
-> The problem is that str_error_r() is external to libtraceevent, and not part
-> of the library. If it is used as a shared object then the tools using it
-> will need to define that function. I do not want that function defined in
-> libtraceevent itself, as it is out of scope for that library.
-> 
-> As there's only a single instance of this call, I replaced it with an open
-> coded algorithm that uses sys_nerr and sys_errlist error array with
-> strncpy() to place the error message in the given buffer. We don't need to
-> worry about the errors that strerror_r() returns. If the buffer isn't big
-> enough, we simply truncate it.
-> 
-> The sys_nerr and sys_errlist idea was found here:
-> 
->   http://www.club.cc.cmu.edu/~cmccabe/blog_strerror.html
-> 
-> Cc: Colin Patrick McCabe <cmccabe@alumni.cmu.edu>
-> Reported-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
-> Changes since v2:
-> 
->   Use sys_nerr and sys_errlist idea.
-> 
->  tools/lib/traceevent/event-parse.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-> index 7980fc6c3bac..d23d10bc5314 100644
-> --- a/tools/lib/traceevent/event-parse.c
-> +++ b/tools/lib/traceevent/event-parse.c
-> @@ -18,7 +18,6 @@
->  #include <errno.h>
->  #include <stdint.h>
->  #include <limits.h>
-> -#include <linux/string.h>
->  #include <linux/time64.h>
->  
->  #include <netinet/in.h>
-> @@ -6215,7 +6214,13 @@ int tep_strerror(struct tep_handle *pevent __maybe_unused,
->  	const char *msg;
->  
->  	if (errnum >= 0) {
-> -		str_error_r(errnum, buf, buflen);
-> +		if (buflen > 0) {
-> +			if (errnum < sys_nerr)
-> +				strncpy(buf, sys_errlist[errnum], buflen);
-> +			else
-> +				snprintf(buf, buflen, "Unknown error %d", errnum);
-> +			buf[buflen - 1] = 0;
-> +		}
+--xdzysu2lcfowgjtf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bah, I now get warnings that sys_nerr and sys_errlist are deprecated.
+On Thu, Oct 04, 2018 at 09:33:59PM +0530, Jagan Teki wrote:
+> On Thu, Sep 27, 2018 at 10:47 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Thu, Sep 27, 2018 at 05:18:50PM +0530, Jagan Teki wrote:
+> > > This patch add support for Bananapi S070WV20-CT16 DSI panel to
+> > > BPI-M64 board.
+> > >
+> > > DSI panel connected via board DSI port with,
+> > > - DC1SW as AVDD supply
+> > > - DCDC1 as DVDD supply
+> > > - PD6 gpio for reset pin
+> > > - PD5 gpio for backlight enable pin
+> > > - PD7 gpio for backlight vdd supply
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42 +++++++++++++++++=
+++
+> > >  1 file changed, 42 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dt=
+s b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> > > index ef1c90401bb2..c0be949be68d 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> > > @@ -45,6 +45,7 @@
+> > >  #include "sun50i-a64.dtsi"
+> > >
+> > >  #include <dt-bindings/gpio/gpio.h>
+> > > +#include <dt-bindings/pwm/pwm.h>
+> > >
+> > >  / {
+> > >       model =3D "BananaPi-M64";
+> > > @@ -56,6 +57,24 @@
+> > >               serial1 =3D &uart1;
+> > >       };
+> > >
+> > > +     vdd_bl: regulator@0 {
+> > > +             compatible =3D "regulator-fixed";
+> > > +             regulator-name =3D "bl-3v3";
+> > > +             regulator-min-microvolt =3D <3300000>;
+> > > +             regulator-max-microvolt =3D <3300000>;
+> > > +             gpio =3D <&pio 3 7 GPIO_ACTIVE_HIGH>; /* PD7 */
+> > > +             enable-active-high;
+> > > +     };
+> > > +
+> > > +     backlight_dsi: backlight-dsi {
+> > > +             compatible =3D "pwm-backlight";
+> > > +             pwms =3D <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
+> > > +             brightness-levels =3D <0 10 20 30 40 50 60 70 80 90 100=
+>;
+> >
+> > The brightness levels should be increasing linearly from a user point
+> > of view. Usually, with a PWM backlight, a quadratic rule works much
+> > better.
+>=20
+> Does that mean, 0 40 80 ...
 
-OK, so going back to just using the racy strerror() should be good
-enough, as this incompatibility with strerror_r() is a disaster!
+No, that means 1 2 4 8 16 32 etc..
 
--- Steve
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
->  		return 0;
->  	}
->  
+--xdzysu2lcfowgjtf
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu3g7cACgkQ0rTAlCFN
+r3Sw9g/+J1ltTpyEpyVxRuutEOOe7lCdxJS7qNYR35GQw7Q66wh+mzC+eaY5D5qK
+BsBIzsSGMR9cGqQroY/SxahVJlk3dgzsVRQYvekaWIyoiVeMAHEGOtCJ1JH7X10K
+/y3FfD9Gruj+yuTdbEF1or3tEN8wvFMBNVCUO6Pa6r83jo6J1LKF7cYp3Jt+tbmo
+mbKwWxpZ1mKfFRxJ44kw6Uz6h96ljeEIscfsiopEjmCPlg94vMAuGRwcYHnvZrqy
+5Ig0OSlrdPMVz0PS27dF/JTVTJu+f+FbOP0ZWbXcZylswVWCKCxQjNhmGpYz5xLB
+lodS+b++sx/hCBVZCWmFJwfJfocMcdRU16bpPgCsMoDSg/3AJIdys9gWob/T0klR
+LMHTQkCUj9ZpvkIv+Vf211u5KsFlQzay1FnItm5RwfVW8jF7KIF/+PHj99QR3UFu
+qOx93gUDIrUWQv96/wnPyEmEnqjRH8sw5EIk0XzcZTyRQ9nUW9npv99Rn8dOeoXc
+cwsNNlIitQqjIIT0URmiOnRbz98hEggqxzIusMUj3w37IzHqdTGHdJlhWkK+UCHO
+j/Htn8yUs914Y+/y6W5NLH/3cW3epsblGwQxn8B0/TjLWSIEfxB1n0KH6phKRmgg
+3Dm1x2T6MkSEGEDfv+J4/K1YuDLkguI8ICSQ+le3PbI+XtikdmA=
+=lZdS
+-----END PGP SIGNATURE-----
+
+--xdzysu2lcfowgjtf--
