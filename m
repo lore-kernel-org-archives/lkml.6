@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C068C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80472C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C824E2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C824E2087D
+	by mail.kernel.org (Postfix) with ESMTP id 4F7ED20834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7ED20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbeJEUWp (ORCPT
+        id S1728762AbeJEUWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:22:45 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:21289 "EHLO
+        Fri, 5 Oct 2018 16:22:50 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:44826 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728473AbeJEUWo (ORCPT
+        by vger.kernel.org with ESMTP id S1728473AbeJEUWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:22:44 -0400
+        Fri, 5 Oct 2018 16:22:48 -0400
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DIid0003593;
-        Fri, 5 Oct 2018 15:23:35 +0200
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DIhuH003584;
+        Fri, 5 Oct 2018 15:23:24 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mv4kdbjh8-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mv4kdbjgm-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Oct 2018 15:23:35 +0200
+        Fri, 05 Oct 2018 15:23:24 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 66A8D31;
-        Fri,  5 Oct 2018 13:23:34 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 23CC93A;
+        Fri,  5 Oct 2018 13:23:24 +0000 (GMT)
 Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4580E2C92;
-        Fri,  5 Oct 2018 13:23:34 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 003EB2C92;
+        Fri,  5 Oct 2018 13:23:23 +0000 (GMT)
 Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
  (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:34 +0200
+ 15:23:23 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:33 +0200
+ 15:23:23 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -53,9 +53,9 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 11/24] mmc: mmci: add set_clk/pwrreg callbacks
-Date:   Fri, 5 Oct 2018 15:22:49 +0200
-Message-ID: <1538745782-27446-12-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V5 01/24] mmc: mmci: Change struct members from bool to u8
+Date:   Fri, 5 Oct 2018 15:22:39 +0200
+Message-ID: <1538745782-27446-2-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
 References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
@@ -71,81 +71,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds set_clkreg and set_pwrreg callbacks
-at mmci_host_ops to allow to call specific variant.
-extends visibility of mmci_write_clk/pwrreg functions
-to be used into specific file variant.
+Recent versions of checkpatch have a new warning based on a documented
+preference of Linus to not use bool in structures due to wasted space and
+the size of bool is implementation dependent.  For more information, see
+the email thread at https://lkml.org/lkml/2017/11/21/384
+
+fix checkpatch --strict issues:
+-CHECK: Avoid using bool structure members because of possible alignment
+ issues - see: https://lkml.org/lkml/2017/11/21/384
+-WARNING: Avoid using bool as bitfield. Prefer bool bitfields as
+ unsigned int or u<8|16|32>
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c | 16 ++++++++++++----
- drivers/mmc/host/mmci.h |  5 +++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ drivers/mmc/host/mmci.h | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 0444aba..e5cd199 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -251,7 +251,7 @@ static void mmci_reg_delay(struct mmci_host *host)
- /*
-  * This must be called with host->lock held
-  */
--static void mmci_write_clkreg(struct mmci_host *host, u32 clk)
-+void mmci_write_clkreg(struct mmci_host *host, u32 clk)
- {
- 	if (host->clk_reg != clk) {
- 		host->clk_reg = clk;
-@@ -262,7 +262,7 @@ static void mmci_write_clkreg(struct mmci_host *host, u32 clk)
- /*
-  * This must be called with host->lock held
-  */
--static void mmci_write_pwrreg(struct mmci_host *host, u32 pwr)
-+void mmci_write_pwrreg(struct mmci_host *host, u32 pwr)
- {
- 	if (host->pwr_reg != pwr) {
- 		host->pwr_reg = pwr;
-@@ -1565,8 +1565,16 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 
- 	spin_lock_irqsave(&host->lock, flags);
- 
--	mmci_set_clkreg(host, ios->clock);
--	mmci_write_pwrreg(host, pwr);
-+	if (host->ops && host->ops->set_clkreg)
-+		host->ops->set_clkreg(host, ios->clock);
-+	else
-+		mmci_set_clkreg(host, ios->clock);
-+
-+	if (host->ops && host->ops->set_pwrreg)
-+		host->ops->set_pwrreg(host, pwr);
-+	else
-+		mmci_write_pwrreg(host, pwr);
-+
- 	mmci_reg_delay(host);
- 
- 	spin_unlock_irqrestore(&host->lock, flags);
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index f103465..e4bb527 100644
+index 21aaf9a..01e6c6b 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -284,6 +284,8 @@ struct mmci_host_ops {
- 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
- 	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
- 	void (*dma_error)(struct mmci_host *host);
-+	void (*set_clkreg)(struct mmci_host *host, unsigned int desired);
-+	void (*set_pwrreg)(struct mmci_host *host, unsigned int pwr);
- };
+@@ -248,24 +248,24 @@ struct variant_data {
+ 	unsigned int		data_cmd_enable;
+ 	unsigned int		datactrl_mask_ddrmode;
+ 	unsigned int		datactrl_mask_sdio;
+-	bool			st_sdio;
+-	bool			st_clkdiv;
+-	bool			blksz_datactrl16;
+-	bool			blksz_datactrl4;
++	u8			st_sdio:1;
++	u8			st_clkdiv:1;
++	u8			blksz_datactrl16:1;
++	u8			blksz_datactrl4:1;
+ 	u32			pwrreg_powerup;
+ 	u32			f_max;
+-	bool			signal_direction;
+-	bool			pwrreg_clkgate;
+-	bool			busy_detect;
++	u8			signal_direction:1;
++	u8			pwrreg_clkgate:1;
++	u8			busy_detect:1;
+ 	u32			busy_dpsm_flag;
+ 	u32			busy_detect_flag;
+ 	u32			busy_detect_mask;
+-	bool			pwrreg_nopower;
+-	bool			explicit_mclk_control;
+-	bool			qcom_fifo;
+-	bool			qcom_dml;
+-	bool			reversed_irq_handling;
+-	bool			mmcimask1;
++	u8			pwrreg_nopower:1;
++	u8			explicit_mclk_control:1;
++	u8			qcom_fifo:1;
++	u8			qcom_dml:1;
++	u8			reversed_irq_handling:1;
++	u8			mmcimask1:1;
+ 	u32			start_err;
+ 	u32			opendrain;
+ 	void (*init)(struct mmci_host *host);
+@@ -290,7 +290,7 @@ struct mmci_host {
+ 	struct mmc_data		*data;
+ 	struct mmc_host		*mmc;
+ 	struct clk		*clk;
+-	bool			singleirq;
++	u8			singleirq:1;
  
- struct mmci_host {
-@@ -344,6 +346,9 @@ static inline void mmci_variant_init(struct mmci_host *host)
- }
+ 	spinlock_t		lock;
+ 
+@@ -304,7 +304,7 @@ struct mmci_host {
+ 	u32			datactrl_reg;
+ 	u32			busy_status;
+ 	u32			mask1_reg;
+-	bool			vqmmc_enabled;
++	u8			vqmmc_enabled:1;
+ 	struct mmci_platform_data *plat;
+ 	struct mmci_host_ops	*ops;
+ 	struct variant_data	*variant;
+@@ -330,7 +330,7 @@ struct mmci_host {
+ 	struct dma_chan		*dma_tx_channel;
+ 	struct dma_async_tx_descriptor	*dma_desc_current;
+ 	struct mmci_host_next	next_data;
+-	bool			dma_in_progress;
++	u8			dma_in_progress:1;
+ 
+ #define dma_inprogress(host)	((host)->dma_in_progress)
  #endif
- 
-+void mmci_write_clkreg(struct mmci_host *host, u32 clk);
-+void mmci_write_pwrreg(struct mmci_host *host, u32 pwr);
-+
- int mmci_dmae_prep_data(struct mmci_host *host, struct mmc_data *data,
- 			bool next);
- void mmci_dmae_unprep_data(struct mmci_host *host, struct mmc_data *data,
 -- 
 2.7.4
 
