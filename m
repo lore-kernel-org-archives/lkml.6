@@ -2,81 +2,203 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B620C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9E8C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50CE9208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50CE9208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2626B213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2626B213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbeJFCcQ (ORCPT
+        id S1728974AbeJFCcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:32:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58983 "EHLO mail.bootlin.com"
+        Fri, 5 Oct 2018 22:32:31 -0400
+Received: from mga02.intel.com ([134.134.136.20]:33883 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728147AbeJFCcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:32:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 706E320731; Fri,  5 Oct 2018 21:32:04 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 31C2220701;
-        Fri,  5 Oct 2018 21:32:04 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 21:32:03 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 10/10] mtd: maps: gpio-addr-flash: Add support for
- device-tree devices
-Message-ID: <20181005213203.247c369f@bbrezillon>
-In-Reply-To: <CAPybu_01Bn5qmv91Pc-DExCAMheJyGYxiSvmGDUGiSxBA+S0DQ@mail.gmail.com>
-References: <20181004142942.11887-1-ricardo.ribalda@gmail.com>
-        <20181004142942.11887-2-ricardo.ribalda@gmail.com>
-        <20181005002125.12fd229f@bbrezillon>
-        <CAPybu_26HST5xGfhE6MoVTRZok_gfDqN=ZOAesuEMVskdrCpLA@mail.gmail.com>
-        <20181005090811.6b7e9957@bbrezillon>
-        <CAPybu_38xH2Cv+eONQmEJ1i6k=oiQM=WrcwOFR29LbtRvWfKXA@mail.gmail.com>
-        <20181005103730.57d52e3c@bbrezillon>
-        <CAPybu_1RMcro3xLNW5mbybYdObCTq=QwXgk+RT6hcmRGTh6s7A@mail.gmail.com>
-        <20181005121235.7e64b64a@bbrezillon>
-        <CAPybu_0TbeN+-F6zwN8XOMuY1EpgE6GRi=ExDx6O3Yun9kXjYQ@mail.gmail.com>
-        <20181005141057.0f1b0a9b@bbrezillon>
-        <CAPybu_0OZR==4k5nxVRZ-1NjPEXLQsun7QhnYds8dPndreUjcQ@mail.gmail.com>
-        <20181005165234.468d2397@bbrezillon>
-        <CAPybu_1cd9aJN9mC9m36Gd_fhU5UnfLH9EtU0h8BvJCZchOV_A@mail.gmail.com>
-        <20181005182931.172b8f1c@bbrezillon>
-        <CAPybu_01Bn5qmv91Pc-DExCAMheJyGYxiSvmGDUGiSxBA+S0DQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1728147AbeJFCca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 22:32:30 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 12:32:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
+   d="scan'208";a="89552462"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
+  by orsmga003.jf.intel.com with ESMTP; 05 Oct 2018 12:32:20 -0700
+Date:   Fri, 5 Oct 2018 12:32:20 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/9] x86/kvm/nVMX: introduce source data cache for
+ kvm_init_shadow_ept_mmu()
+Message-ID: <20181005193220.GC13957@linux.intel.com>
+References: <20181001142010.21132-1-vkuznets@redhat.com>
+ <20181001142010.21132-8-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001142010.21132-8-vkuznets@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 5 Oct 2018 20:12:43 +0200
-Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+On Mon, Oct 01, 2018 at 04:20:08PM +0200, Vitaly Kuznetsov wrote:
+> MMU re-initialization is expensive, in particular,
+> update_permission_bitmask() and update_pkru_bitmask() are.
+> 
+> Cache the data used to setup shadow EPT MMU and avoid full re-init when
+> it is unchanged.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-> 
-> I think I know what might be the issue. on cfi_cmdset_002.c
-> cfi_amdstd_reset can be called in parrallel to cfi_amdstd_destroy.
-> 
-> maybe we should call
-> unregister_reboot_notifier(&mtd->reboot_notifier);
-> before
-> cfi_amdstd_reset(mtd)
-> 
-> need to try that on real hw with some strategical printfs :P. But that
-> will ahve to wait til Monday
+Nit below, otherwise:
 
-No problem, nothing urgent here. Have a nice weekend.
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+
+> ---
+> Changes since v2:
+> - Preserve mmu_role.base in kvm_calc_shadow_ept_root_page_role()
+>   [Sean Christopherson]
+> - Rename kvm_calc_mmu_role_common() -> kvm_calc_mmu_role_ext() to
+>   support the change.
+> ---
+>  arch/x86/include/asm/kvm_host.h | 14 +++++++++
+>  arch/x86/kvm/mmu.c              | 53 +++++++++++++++++++++++----------
+>  2 files changed, 52 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 1821b0215230..87ddaa1579e7 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -274,7 +274,21 @@ union kvm_mmu_page_role {
+>  };
+>  
+>  union kvm_mmu_extended_role {
+> +/*
+> + * This structure complements kvm_mmu_page_role caching everything needed for
+> + * MMU configuration. If nothing in both these structures changed, MMU
+> + * re-configuration can be skipped. @valid bit is set on first usage so we don't
+> + * treat all-zero structure as valid data.
+> + */
+>  	u32 word;
+> +	struct {
+> +		unsigned int valid:1;
+> +		unsigned int execonly:1;
+> +		unsigned int cr4_pse:1;
+> +		unsigned int cr4_pke:1;
+> +		unsigned int cr4_smap:1;
+> +		unsigned int cr4_smep:1;
+> +	};
+>  };
+>  
+>  union kvm_mmu_role {
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index 60c916286bf4..d303f722d671 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -4708,6 +4708,20 @@ static void paging32E_init_context(struct kvm_vcpu *vcpu,
+>  	paging64_init_context_common(vcpu, context, PT32E_ROOT_LEVEL);
+>  }
+>  
+> +static union kvm_mmu_extended_role kvm_calc_mmu_role_ext(struct kvm_vcpu *vcpu)
+> +{
+> +	union kvm_mmu_extended_role ext = {0};
+> +
+> +	ext.cr4_smep = kvm_read_cr4_bits(vcpu, X86_CR4_SMEP) != 0;
+> +	ext.cr4_smap = kvm_read_cr4_bits(vcpu, X86_CR4_SMAP) != 0;
+> +	ext.cr4_pse = !!is_pse(vcpu);
+> +	ext.cr4_pke = kvm_read_cr4_bits(vcpu, X86_CR4_PKE) != 0;
+
+These can all be !!kvm_read_cr4_bits(), a la the is_pse() line, which
+coincidentally is a wrapper to kvm_read_cr4_bits(vcpu, X86_CR4_PSE).
+And I think technically even the "!!" can be omitted, though bitwise
+unions are definitely not my area of expertise.
+
+> +
+> +	ext.valid = 1;
+> +
+> +	return ext;
+> +}
+> +
+>  static union kvm_mmu_page_role
+>  kvm_calc_tdp_mmu_root_page_role(struct kvm_vcpu *vcpu)
+>  {
+> @@ -4814,19 +4828,23 @@ void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_init_shadow_mmu);
+>  
+> -static union kvm_mmu_page_role
+> -kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty)
+> +static union kvm_mmu_role
+> +kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty,
+> +				   bool execonly)
+>  {
+> -	union kvm_mmu_page_role role = vcpu->arch.mmu->mmu_role.base;
+> +	union kvm_mmu_role role;
+>  
+> -	/* Role is inherited from root_mmu */
+> -	role.word = vcpu->arch.root_mmu.base_role.word;
+> +	/* Base role is inherited from root_mmu */
+> +	role.base.word = vcpu->arch.root_mmu.mmu_role.base.word;
+> +	role.ext = kvm_calc_mmu_role_ext(vcpu);
+>  
+> -	role.level = PT64_ROOT_4LEVEL;
+> -	role.direct = false;
+> -	role.ad_disabled = !accessed_dirty;
+> -	role.guest_mode = true;
+> -	role.access = ACC_ALL;
+> +	role.base.level = PT64_ROOT_4LEVEL;
+> +	role.base.direct = false;
+> +	role.base.ad_disabled = !accessed_dirty;
+> +	role.base.guest_mode = true;
+> +	role.base.access = ACC_ALL;
+> +
+> +	role.ext.execonly = execonly;
+>  
+>  	return role;
+>  }
+> @@ -4835,10 +4853,16 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
+>  			     bool accessed_dirty, gpa_t new_eptp)
+>  {
+>  	struct kvm_mmu *context = vcpu->arch.mmu;
+> -	union kvm_mmu_page_role root_page_role =
+> -		kvm_calc_shadow_ept_root_page_role(vcpu, accessed_dirty);
+> +	union kvm_mmu_role new_role =
+> +		kvm_calc_shadow_ept_root_page_role(vcpu, accessed_dirty,
+> +						   execonly);
+> +
+> +	__kvm_mmu_new_cr3(vcpu, new_eptp, new_role.base, false);
+> +
+> +	new_role.base.word &= mmu_base_role_mask.word;
+> +	if (new_role.as_u64 == context->mmu_role.as_u64)
+> +		return;
+>  
+> -	__kvm_mmu_new_cr3(vcpu, new_eptp, root_page_role, false);
+>  	context->shadow_root_level = PT64_ROOT_4LEVEL;
+>  
+>  	context->nx = true;
+> @@ -4850,8 +4874,7 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
+>  	context->update_pte = ept_update_pte;
+>  	context->root_level = PT64_ROOT_4LEVEL;
+>  	context->direct_map = false;
+> -	context->mmu_role.base.word =
+> -		root_page_role.word & mmu_base_role_mask.word;
+> +	context->mmu_role.as_u64 = new_role.as_u64;
+>  
+>  	update_permission_bitmask(vcpu, context, true);
+>  	update_pkru_bitmask(vcpu, context, true);
+> -- 
+> 2.17.1
+> 
