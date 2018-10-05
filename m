@@ -2,788 +2,284 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360B4C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8552BC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9BC520875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BC520875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BD42208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:45:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD42208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeJEMmd (ORCPT
+        id S1727768AbeJEMmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 08:42:33 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:50641 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727179AbeJEMmd (ORCPT
+        Fri, 5 Oct 2018 08:42:39 -0400
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:7145 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727179AbeJEMmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 08:42:33 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.Czct6UZ_1538718305;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Czct6UZ_1538718305)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Fri, 05 Oct 2018 13:45:05 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
-        robh+dt@kernel.org, tglx@linutronix.de
-Cc:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
-        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V7 11/20] csky: Atomic operations
-Date:   Fri,  5 Oct 2018 13:41:53 +0800
-Message-Id: <343d5d408f3346c5de6db7e0cc98719bcd65d337.1538715563.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
-References: <cover.1538715563.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
-References: <cover.1538715563.git.ren_guo@c-sky.com>
+        Fri, 5 Oct 2018 08:42:38 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail07.adl2.internode.on.net with ESMTP; 05 Oct 2018 15:15:27 +0930
+Received: from discord.disaster.area ([192.168.1.111])
+        by dastard with esmtp (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1g8IvW-0003Ct-Lu; Fri, 05 Oct 2018 15:45:26 +1000
+Received: from dave by discord.disaster.area with local (Exim 4.91)
+        (envelope-from <david@fromorbit.com>)
+        id 1g8IvW-0005bZ-Kq; Fri, 05 Oct 2018 15:45:26 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH] writeback: fix range_cyclic writeback vs writepages deadlock
+Date:   Fri,  5 Oct 2018 15:45:26 +1000
+Message-Id: <20181005054526.21507-1-david@fromorbit.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds atomic, cmpxchg, spinlock files.
+From: Dave Chinner <dchinner@redhat.com>
 
-Changlog:
- - SMP supported
- - ticklock supported
- - queue-rwlock supported
+We've recently seen a workload on XFS filesystems with a repeatable
+deadlock between background writeback and a multi-process
+application doing concurrent writes and fsyncs to a small range of a
+file.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+range_cyclic
+writeback		Process 1		Process 2
+
+xfs_vm_writepages
+  write_cache_pages
+    writeback_index = 2
+    cycled = 0
+    ....
+    find page 2 dirty
+    lock Page 2
+    ->writepage
+      page 2 writeback
+      page 2 clean
+      page 2 added to bio
+    no more pages
+			write()
+			locks page 1
+			dirties page 1
+			locks page 2
+			dirties page 1
+			fsync()
+			....
+			xfs_vm_writepages
+			write_cache_pages
+			  start index 0
+			  find page 1 towrite
+			  lock Page 1
+			  ->writepage
+			    page 1 writeback
+			    page 1 clean
+			    page 1 added to bio
+			  find page 2 towrite
+			  lock Page 2
+			  page 2 is writeback
+			  <blocks>
+						write()
+						locks page 1
+						dirties page 1
+						fsync()
+						....
+						xfs_vm_writepages
+						write_cache_pages
+						  start index 0
+
+    !done && !cycled
+      sets index to 0, restarts lookup
+    find page 1 dirty
+						  find page 1 towrite
+						  lock Page 1
+						  page 1 is writeback
+						  <blocks>
+
+    lock Page 1
+    <blocks>
+
+DEADLOCK because:
+
+	- process 1 needs page 2 writeback to complete to make
+	  enough progress to issue IO pending for page 1
+	- writeback needs page 1 writeback to complete so process 2
+	  can progress and unlock the page it is blocked on, then it
+	  can issue the IO pending for page 2
+	- process 2 can't make progress until process 1 issues IO
+	  for page 1
+
+The underlying cause of the problem here is that range_cyclic
+writeback is processing pages in descending index order as we
+hold higher index pages in a structure controlled from above
+write_cache_pages(). The write_cache_pages() caller needs to
+be able to submit these pages for IO before write_cache_pages
+restarts writeback at mapping index 0 to avoid wcp inverting the
+page lock/writeback wait order.
+
+generic_writepages() is not susceptible to this bug as it has no
+private context held across write_cache_pages() - filesystems using
+this infrastructure always submit pages in ->writepage immediately
+and so there is no problem with range_cyclic going back to mapping
+index 0.
+
+However:
+	mpage_writepages() has a private bio context,
+	exofs_writepages() has page_collect
+	fuse_writepages() has fuse_fill_wb_data
+	nfs_writepages() has nfs_pageio_descriptor
+	xfs_vm_writepages() has xfs_writepage_ctx
+
+All of these ->writepages implementations can hold pages under
+writeback in their private structures until write_cache_pages()
+returns, and hence they are all susceptible to this deadlock.
+
+Also worth noting is that ext4 has it's own bastardised version of
+write_cache_pages() and so it /may/ have an equivalent deadlock. I
+looked at the code long enough to understand that it has a similar
+retry loop for range_cyclic writeback reaching the end of the file
+and then promptly ran away before my eyes bled too much.  I'll leave
+it for the ext4 developers to determine if their code is actually
+has this deadlock and how to fix it if it has.
+
+There's a few ways I can see avoid this deadlock. There's probably
+more, but these are the first I've though of:
+
+1. get rid of range_cyclic altogether
+
+2. range_cyclic always stops at EOF, and we start again from
+writeback index 0 on the next call into write_cache_pages()
+
+2a. wcp also returns EAGAIN to ->writepages implementations to
+indicate range cyclic has hit EOF. writepages implementations can
+then flush the current context and call wpc again to continue. i.e.
+lift the retry into the ->writepages implementation
+
+3. range_cyclic uses trylock_page() rather than lock_page(), and it
+skips pages it can't lock without blocking. It will already do this
+for pages under writeback, so this seems like a no-brainer
+
+3a. all non-WB_SYNC_ALL writeback uses trylock_page() to avoid
+blocking as per pages under writeback.
+
+I don't think #1 is an option - range_cyclic prevents frequently
+dirtied lower file offset from starving background writeback of
+rarely touched higher file offsets.
+
+#2 is simple, and I don't think it will have any impact on
+performance as going back to the start of the file implies an
+immediate seek. We'll have exactly the same number of seeks if we
+switch writeback to another inode, and then come back to this one
+later and restart from index 0.
+
+#2a is pretty much "status quo without the deadlock". Moving the
+retry loop up into the wcp caller means we can issue IO on the
+pending pages before calling wcp again, and so avoid locking or
+waiting on pages in the wrong order. I'm not convinced we need to do
+this given that we get the same thing from #2 on the next writeback
+call from the writeback infrastructure.
+
+#3 is really just a band-aid - it doesn't fix the access/wait
+inversion problem, just prevents it from becoming a deadlock
+situation. I'd prefer we fix the inversion, not sweep it under the
+carpet like this.
+
+#3a is really an optimisation that just so happens to include the
+band-aid fix of #3.
+
+So it seems that the simplest way to fix this issue is to implement
+solution #2
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.de>
 ---
- arch/csky/include/asm/atomic.h         | 212 +++++++++++++++++++++++++
- arch/csky/include/asm/cmpxchg.h        |  73 +++++++++
- arch/csky/include/asm/spinlock.h       | 274 +++++++++++++++++++++++++++++++++
- arch/csky/include/asm/spinlock_types.h |  37 +++++
- arch/csky/kernel/atomic.S              |  87 +++++++++++
- 5 files changed, 683 insertions(+)
- create mode 100644 arch/csky/include/asm/atomic.h
- create mode 100644 arch/csky/include/asm/cmpxchg.h
- create mode 100644 arch/csky/include/asm/spinlock.h
- create mode 100644 arch/csky/include/asm/spinlock_types.h
- create mode 100644 arch/csky/kernel/atomic.S
+ mm/page-writeback.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
-diff --git a/arch/csky/include/asm/atomic.h b/arch/csky/include/asm/atomic.h
-new file mode 100644
-index 0000000..e369d73
---- /dev/null
-+++ b/arch/csky/include/asm/atomic.h
-@@ -0,0 +1,212 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_CSKY_ATOMIC_H
-+#define __ASM_CSKY_ATOMIC_H
-+
-+#include <linux/version.h>
-+#include <asm/cmpxchg.h>
-+#include <asm/barrier.h>
-+
-+#ifdef CONFIG_CPU_HAS_LDSTEX
-+
-+#define __atomic_add_unless __atomic_add_unless
-+static inline int __atomic_add_unless(atomic_t *v, int a, int u)
-+{
-+	unsigned long tmp, ret;
-+
-+	smp_mb();
-+
-+	asm volatile (
-+	"1:	ldex.w		%0, (%3) \n"
-+	"	mov		%1, %0   \n"
-+	"	cmpne		%0, %4   \n"
-+	"	bf		2f	 \n"
-+	"	add		%0, %2   \n"
-+	"	stex.w		%0, (%3) \n"
-+	"	bez		%0, 1b   \n"
-+	"2:				 \n"
-+		: "=&r" (tmp), "=&r" (ret)
-+		: "r" (a), "r"(&v->counter), "r"(u)
-+		: "memory");
-+
-+	if (ret != u)
-+		smp_mb();
-+
-+	return ret;
-+}
-+
-+#define ATOMIC_OP(op, c_op)						\
-+static inline void atomic_##op(int i, atomic_t *v)			\
-+{									\
-+	unsigned long tmp;						\
-+									\
-+	asm volatile (							\
-+	"1:	ldex.w		%0, (%2) \n"				\
-+	"	" #op "		%0, %1   \n"				\
-+	"	stex.w		%0, (%2) \n"				\
-+	"	bez		%0, 1b   \n"				\
-+		: "=&r" (tmp)						\
-+		: "r" (i), "r"(&v->counter)				\
-+		: "memory");						\
-+}
-+
-+#define ATOMIC_OP_RETURN(op, c_op)					\
-+static inline int atomic_##op##_return(int i, atomic_t *v)		\
-+{									\
-+	unsigned long tmp, ret;						\
-+									\
-+	smp_mb();							\
-+	asm volatile (							\
-+	"1:	ldex.w		%0, (%3) \n"				\
-+	"	" #op "		%0, %2   \n"				\
-+	"	mov		%1, %0   \n"				\
-+	"	stex.w		%0, (%3) \n"				\
-+	"	bez		%0, 1b   \n"				\
-+		: "=&r" (tmp), "=&r" (ret)				\
-+		: "r" (i), "r"(&v->counter)				\
-+		: "memory");						\
-+	smp_mb();							\
-+									\
-+	return ret;							\
-+}
-+
-+#define ATOMIC_FETCH_OP(op, c_op)					\
-+static inline int atomic_fetch_##op(int i, atomic_t *v)			\
-+{									\
-+	unsigned long tmp, ret;						\
-+									\
-+	smp_mb();							\
-+	asm volatile (							\
-+	"1:	ldex.w		%0, (%3) \n"				\
-+	"	mov		%1, %0   \n"				\
-+	"	" #op "		%0, %2   \n"				\
-+	"	stex.w		%0, (%3) \n"				\
-+	"	bez		%0, 1b   \n"				\
-+		: "=&r" (tmp), "=&r" (ret)				\
-+		: "r" (i), "r"(&v->counter)				\
-+		: "memory");						\
-+	smp_mb();							\
-+									\
-+	return ret;							\
-+}
-+
-+#else /* CONFIG_CPU_HAS_LDSTEX */
-+
-+#include <linux/irqflags.h>
-+
-+#define __atomic_add_unless __atomic_add_unless
-+static inline int __atomic_add_unless(atomic_t *v, int a, int u)
-+{
-+	unsigned long tmp, ret, flags;
-+
-+	raw_local_irq_save(flags);
-+
-+	asm volatile (
-+	"	ldw		%0, (%3) \n"
-+	"	mov		%1, %0   \n"
-+	"	cmpne		%0, %4   \n"
-+	"	bf		2f	 \n"
-+	"	add		%0, %2   \n"
-+	"	stw		%0, (%3) \n"
-+	"2:				 \n"
-+		: "=&r" (tmp), "=&r" (ret)
-+		: "r" (a), "r"(&v->counter), "r"(u)
-+		: "memory");
-+
-+	raw_local_irq_restore(flags);
-+
-+	return ret;
-+}
-+
-+#define ATOMIC_OP(op, c_op)						\
-+static inline void atomic_##op(int i, atomic_t *v)			\
-+{									\
-+	unsigned long tmp, flags;					\
-+									\
-+	raw_local_irq_save(flags);					\
-+									\
-+	asm volatile (							\
-+	"	ldw		%0, (%2) \n"				\
-+	"	" #op "		%0, %1   \n"				\
-+	"	stw		%0, (%2) \n"				\
-+		: "=&r" (tmp)						\
-+		: "r" (i), "r"(&v->counter)				\
-+		: "memory");						\
-+									\
-+	raw_local_irq_restore(flags);					\
-+}
-+
-+#define ATOMIC_OP_RETURN(op, c_op)					\
-+static inline int atomic_##op##_return(int i, atomic_t *v)		\
-+{									\
-+	unsigned long tmp, ret, flags;					\
-+									\
-+	raw_local_irq_save(flags);					\
-+									\
-+	asm volatile (							\
-+	"	ldw		%0, (%3) \n"				\
-+	"	" #op "		%0, %2   \n"				\
-+	"	stw		%0, (%3) \n"				\
-+	"	mov		%1, %0   \n"				\
-+		: "=&r" (tmp), "=&r" (ret)				\
-+		: "r" (i), "r"(&v->counter)				\
-+		: "memory");						\
-+									\
-+	raw_local_irq_restore(flags);					\
-+									\
-+	return ret;							\
-+}
-+
-+#define ATOMIC_FETCH_OP(op, c_op)					\
-+static inline int atomic_fetch_##op(int i, atomic_t *v)			\
-+{									\
-+	unsigned long tmp, ret, flags;					\
-+									\
-+	raw_local_irq_save(flags);					\
-+									\
-+	asm volatile (							\
-+	"	ldw		%0, (%3) \n"				\
-+	"	mov		%1, %0   \n"				\
-+	"	" #op "		%0, %2   \n"				\
-+	"	stw		%0, (%3) \n"				\
-+		: "=&r" (tmp), "=&r" (ret)				\
-+		: "r" (i), "r"(&v->counter)				\
-+		: "memory");						\
-+									\
-+	raw_local_irq_restore(flags);					\
-+									\
-+	return ret;							\
-+}
-+
-+#endif /* CONFIG_CPU_HAS_LDSTEX */
-+
-+#define atomic_add_return atomic_add_return
-+ATOMIC_OP_RETURN(add, +)
-+#define atomic_sub_return atomic_sub_return
-+ATOMIC_OP_RETURN(sub, -)
-+
-+#define atomic_fetch_add atomic_fetch_add
-+ATOMIC_FETCH_OP(add, +)
-+#define atomic_fetch_sub atomic_fetch_sub
-+ATOMIC_FETCH_OP(sub, -)
-+#define atomic_fetch_and atomic_fetch_and
-+ATOMIC_FETCH_OP(and, &)
-+#define atomic_fetch_or atomic_fetch_or
-+ATOMIC_FETCH_OP(or, |)
-+#define atomic_fetch_xor atomic_fetch_xor
-+ATOMIC_FETCH_OP(xor, ^)
-+
-+#define atomic_and atomic_and
-+ATOMIC_OP(and, &)
-+#define atomic_or atomic_or
-+ATOMIC_OP(or, |)
-+#define atomic_xor atomic_xor
-+ATOMIC_OP(xor, ^)
-+
-+#undef ATOMIC_FETCH_OP
-+#undef ATOMIC_OP_RETURN
-+#undef ATOMIC_OP
-+
-+#include <asm-generic/atomic.h>
-+
-+#endif /* __ASM_CSKY_ATOMIC_H */
-diff --git a/arch/csky/include/asm/cmpxchg.h b/arch/csky/include/asm/cmpxchg.h
-new file mode 100644
-index 0000000..8922453
---- /dev/null
-+++ b/arch/csky/include/asm/cmpxchg.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_CSKY_CMPXCHG_H
-+#define __ASM_CSKY_CMPXCHG_H
-+
-+#ifdef CONFIG_CPU_HAS_LDSTEX
-+#include <asm/barrier.h>
-+
-+extern void __bad_xchg(void);
-+
-+#define __xchg(new, ptr, size)					\
-+({								\
-+	__typeof__(ptr) __ptr = (ptr);				\
-+	__typeof__(new) __new = (new);				\
-+	__typeof__(*(ptr)) __ret;				\
-+	unsigned long tmp;					\
-+	switch (size) {						\
-+	case 4:							\
-+		smp_mb();					\
-+		asm volatile (					\
-+		"1:	ldex.w		%0, (%3) \n"		\
-+		"	mov		%1, %2   \n"		\
-+		"	stex.w		%1, (%3) \n"		\
-+		"	bez		%1, 1b   \n"		\
-+			: "=&r" (__ret), "=&r" (tmp)		\
-+			: "r" (__new), "r"(__ptr)		\
-+			:);					\
-+		smp_mb();					\
-+		break;						\
-+	default:						\
-+		__bad_xchg();					\
-+	}							\
-+	__ret;							\
-+})
-+
-+#define xchg(ptr, x)	(__xchg((x), (ptr), sizeof(*(ptr))))
-+
-+#define __cmpxchg(ptr, old, new, size)				\
-+({								\
-+	__typeof__(ptr) __ptr = (ptr);				\
-+	__typeof__(new) __new = (new);				\
-+	__typeof__(new) __tmp;					\
-+	__typeof__(old) __old = (old);				\
-+	__typeof__(*(ptr)) __ret;				\
-+	switch (size) {						\
-+	case 4:							\
-+		smp_mb();					\
-+		asm volatile (					\
-+		"1:	ldex.w		%0, (%3) \n"		\
-+		"	cmpne		%0, %4   \n"		\
-+		"	bt		2f       \n"		\
-+		"	mov		%1, %2   \n"		\
-+		"	stex.w		%1, (%3) \n"		\
-+		"	bez		%1, 1b   \n"		\
-+		"2:				 \n"		\
-+			: "=&r" (__ret), "=&r" (__tmp)		\
-+			: "r" (__new), "r"(__ptr), "r"(__old)	\
-+			:);					\
-+		smp_mb();					\
-+		break;						\
-+	default:						\
-+		__bad_xchg();					\
-+	}							\
-+	__ret;							\
-+})
-+
-+#define cmpxchg(ptr, o, n) \
-+	(__cmpxchg((ptr), (o), (n), sizeof(*(ptr))))
-+#else
-+#include <asm-generic/cmpxchg.h>
-+#endif
-+
-+#endif /* __ASM_CSKY_CMPXCHG_H */
-diff --git a/arch/csky/include/asm/spinlock.h b/arch/csky/include/asm/spinlock.h
-new file mode 100644
-index 0000000..0474603
---- /dev/null
-+++ b/arch/csky/include/asm/spinlock.h
-@@ -0,0 +1,274 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_CSKY_SPINLOCK_H
-+#define __ASM_CSKY_SPINLOCK_H
-+
-+#include <linux/spinlock_types.h>
-+#include <asm/barrier.h>
-+
-+#ifdef CONFIG_QUEUED_RWLOCKS
-+
-+/*
-+ * Ticket-based spin-locking.
-+ */
-+static inline void arch_spin_lock(arch_spinlock_t *lock)
-+{
-+	arch_spinlock_t lockval;
-+	u32 ticket_next = 1 << TICKET_NEXT;
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%2) \n"
-+		"	mov		%1, %0	 \n"
-+		"	add		%0, %3	 \n"
-+		"	stex.w		%0, (%2) \n"
-+		"	bez		%0, 1b   \n"
-+		: "=&r" (tmp), "=&r" (lockval)
-+		: "r"(p), "r"(ticket_next)
-+		: "cc");
-+
-+	while (lockval.tickets.next != lockval.tickets.owner)
-+		lockval.tickets.owner = READ_ONCE(lock->tickets.owner);
-+
-+	smp_mb();
-+}
-+
-+static inline int arch_spin_trylock(arch_spinlock_t *lock)
-+{
-+	u32 tmp, contended, res;
-+	u32 ticket_next = 1 << TICKET_NEXT;
-+	u32 *p = &lock->lock;
-+
-+	do {
-+		asm volatile (
-+		"	ldex.w		%0, (%3)   \n"
-+		"	movi		%2, 1	   \n"
-+		"	rotli		%1, %0, 16 \n"
-+		"	cmpne		%1, %0     \n"
-+		"	bt		1f         \n"
-+		"	movi		%2, 0	   \n"
-+		"	add		%0, %0, %4 \n"
-+		"	stex.w		%0, (%3)   \n"
-+		"1:				   \n"
-+		: "=&r" (res), "=&r" (tmp), "=&r" (contended)
-+		: "r"(p), "r"(ticket_next)
-+		: "cc");
-+	} while (!res);
-+
-+	if (!contended)
-+		smp_mb();
-+
-+	return !contended;
-+}
-+
-+static inline void arch_spin_unlock(arch_spinlock_t *lock)
-+{
-+	smp_mb();
-+	lock->tickets.owner++;
-+}
-+
-+static inline int arch_spin_value_unlocked(arch_spinlock_t lock)
-+{
-+	return lock.tickets.owner == lock.tickets.next;
-+}
-+
-+static inline int arch_spin_is_locked(arch_spinlock_t *lock)
-+{
-+	return !arch_spin_value_unlocked(READ_ONCE(*lock));
-+}
-+
-+static inline int arch_spin_is_contended(arch_spinlock_t *lock)
-+{
-+	struct __raw_tickets tickets = READ_ONCE(lock->tickets);
-+
-+	return (tickets.next - tickets.owner) > 1;
-+}
-+#define arch_spin_is_contended	arch_spin_is_contended
-+
-+#include <asm/qrwlock.h>
-+
-+/* See include/linux/spinlock.h */
-+#define smp_mb__after_spinlock()	smp_mb()
-+
-+#else /* CONFIG_QUEUED_RWLOCKS */
-+
-+/*
-+ * Test-and-set spin-locking.
-+ */
-+static inline void arch_spin_lock(arch_spinlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	bnez		%0, 1b   \n"
-+		"	movi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+	smp_mb();
-+}
-+
-+static inline void arch_spin_unlock(arch_spinlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	smp_mb();
-+	asm volatile (
-+		"	movi		%0, 0    \n"
-+		"	stw		%0, (%1) \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+}
-+
-+static inline int arch_spin_trylock(arch_spinlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	bnez		%0, 2f   \n"
-+		"	movi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		"	movi		%0, 0    \n"
-+		"2:				 \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+
-+	if (!tmp)
-+		smp_mb();
-+
-+	return !tmp;
-+}
-+
-+#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
-+
-+/*
-+ * read lock/unlock/trylock
-+ */
-+static inline void arch_read_lock(arch_rwlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	blz		%0, 1b   \n"
-+		"	addi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+	smp_mb();
-+}
-+
-+static inline void arch_read_unlock(arch_rwlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	smp_mb();
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	subi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+}
-+
-+static inline int arch_read_trylock(arch_rwlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	blz		%0, 2f   \n"
-+		"	addi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		"	movi		%0, 0    \n"
-+		"2:				 \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+
-+	if (!tmp)
-+		smp_mb();
-+
-+	return !tmp;
-+}
-+
-+/*
-+ * write lock/unlock/trylock
-+ */
-+static inline void arch_write_lock(arch_rwlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	bnez		%0, 1b   \n"
-+		"	subi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+	smp_mb();
-+}
-+
-+static inline void arch_write_unlock(arch_rwlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	smp_mb();
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	movi		%0, 0    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+}
-+
-+static inline int arch_write_trylock(arch_rwlock_t *lock)
-+{
-+	u32 *p = &lock->lock;
-+	u32 tmp;
-+
-+	asm volatile (
-+		"1:	ldex.w		%0, (%1) \n"
-+		"	bnez		%0, 2f   \n"
-+		"	subi		%0, 1    \n"
-+		"	stex.w		%0, (%1) \n"
-+		"	bez		%0, 1b   \n"
-+		"	movi		%0, 0    \n"
-+		"2:				 \n"
-+		: "=&r" (tmp)
-+		: "r"(p)
-+		: "cc");
-+
-+	if (!tmp)
-+		smp_mb();
-+
-+	return !tmp;
-+}
-+
-+#endif /* CONFIG_QUEUED_RWLOCKS */
-+#endif /* __ASM_CSKY_SPINLOCK_H */
-diff --git a/arch/csky/include/asm/spinlock_types.h b/arch/csky/include/asm/spinlock_types.h
-new file mode 100644
-index 0000000..88b8243
---- /dev/null
-+++ b/arch/csky/include/asm/spinlock_types.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_CSKY_SPINLOCK_TYPES_H
-+#define __ASM_CSKY_SPINLOCK_TYPES_H
-+
-+#ifndef __LINUX_SPINLOCK_TYPES_H
-+# error "please don't include this file directly"
-+#endif
-+
-+#define TICKET_NEXT	16
-+
-+typedef struct {
-+	union {
-+		u32 lock;
-+		struct __raw_tickets {
-+			/* little endian */
-+			u16 owner;
-+			u16 next;
-+		} tickets;
-+	};
-+} arch_spinlock_t;
-+
-+#define __ARCH_SPIN_LOCK_UNLOCKED	{ { 0 } }
-+
-+#ifdef CONFIG_QUEUED_RWLOCKS
-+#include <asm-generic/qrwlock_types.h>
-+
-+#else /* CONFIG_NR_CPUS > 2 */
-+
-+typedef struct {
-+	u32 lock;
-+} arch_rwlock_t;
-+
-+#define __ARCH_RW_LOCK_UNLOCKED		{ 0 }
-+
-+#endif /* CONFIG_QUEUED_RWLOCKS */
-+#endif /* __ASM_CSKY_SPINLOCK_TYPES_H */
-diff --git a/arch/csky/kernel/atomic.S b/arch/csky/kernel/atomic.S
-new file mode 100644
-index 0000000..d2357c8
---- /dev/null
-+++ b/arch/csky/kernel/atomic.S
-@@ -0,0 +1,87 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/linkage.h>
-+#include <abi/entry.h>
-+
-+.text
-+
-+/*
-+ * int csky_cmpxchg(int oldval, int newval, int *ptr)
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 84ae9bf5858a..439a304a6c92 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2149,6 +2149,13 @@ EXPORT_SYMBOL(tag_pages_for_writeback);
+  * not miss some pages (e.g., because some other process has cleared TOWRITE
+  * tag we set). The rule we follow is that TOWRITE tag can be cleared only
+  * by the process clearing the DIRTY tag (and submitting the page for IO).
 + *
-+ * If *ptr != oldval && return 1,
-+ * else *ptr = newval return 0.
-+ */
-+#ifdef CONFIG_CPU_HAS_LDSTEX
-+ENTRY(csky_cmpxchg)
-+	USPTOKSP
-+	mfcr	a3, epc
-+	INCTRAP	a3
++ * To avoid deadlocks between range_cyclic writeback and callers that hold
++ * pages in PageWriteback to aggregate IO until write_cache_pages() returns,
++ * we do not loop back to the start of the file. Doing so causes a page
++ * lock/page writeback access order inversion - we should only ever lock
++ * multiple pages in ascending page->index order, and looping back to the start
++ * of the file violates that rule and causes deadlocks.
+  */
+ int write_cache_pages(struct address_space *mapping,
+ 		      struct writeback_control *wbc, writepage_t writepage,
+@@ -2162,7 +2169,6 @@ int write_cache_pages(struct address_space *mapping,
+ 	pgoff_t index;
+ 	pgoff_t end;		/* Inclusive */
+ 	pgoff_t done_index;
+-	int cycled;
+ 	int range_whole = 0;
+ 	int tag;
+ 
+@@ -2170,23 +2176,17 @@ int write_cache_pages(struct address_space *mapping,
+ 	if (wbc->range_cyclic) {
+ 		writeback_index = mapping->writeback_index; /* prev offset */
+ 		index = writeback_index;
+-		if (index == 0)
+-			cycled = 1;
+-		else
+-			cycled = 0;
+ 		end = -1;
+ 	} else {
+ 		index = wbc->range_start >> PAGE_SHIFT;
+ 		end = wbc->range_end >> PAGE_SHIFT;
+ 		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
+ 			range_whole = 1;
+-		cycled = 1; /* ignore range_cyclic tests */
+ 	}
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+ 		tag = PAGECACHE_TAG_TOWRITE;
+ 	else
+ 		tag = PAGECACHE_TAG_DIRTY;
+-retry:
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+ 		tag_pages_for_writeback(mapping, index, end);
+ 	done_index = index;
+@@ -2272,17 +2272,14 @@ int write_cache_pages(struct address_space *mapping,
+ 		pagevec_release(&pvec);
+ 		cond_resched();
+ 	}
+-	if (!cycled && !done) {
+-		/*
+-		 * range_cyclic:
+-		 * We hit the last page and there is more work to be done: wrap
+-		 * back to the start of the file
+-		 */
+-		cycled = 1;
+-		index = 0;
+-		end = writeback_index - 1;
+-		goto retry;
+-	}
 +
-+	subi    sp, 8
-+	stw     a3, (sp, 0)
-+	mfcr    a3, epsr
-+	stw     a3, (sp, 4)
-+
-+	psrset	ee
-+1:
-+	ldex	a3, (a2)
-+	cmpne	a0, a3
-+	bt16	2f
-+	mov	a3, a1
-+	stex	a3, (a2)
-+	bez	a3, 1b
-+2:
-+	sync.is
-+	mvc	a0
-+	ldw	a3, (sp, 0)
-+	mtcr	a3, epc
-+	ldw     a3, (sp, 4)
-+	mtcr	a3, epsr
-+	addi	sp, 8
-+	KSPTOUSP
-+	rte
-+END(csky_cmpxchg)
-+#else
-+ENTRY(csky_cmpxchg)
-+	USPTOKSP
-+	mfcr	a3, epc
-+	INCTRAP	a3
-+
-+	subi    sp, 8
-+	stw     a3, (sp, 0)
-+	mfcr    a3, epsr
-+	stw     a3, (sp, 4)
-+
-+	psrset	ee
-+1:
-+	ldw	a3, (a2)
-+	cmpne	a0, a3
-+	bt16	3f
-+2:
-+	stw	a1, (a2)
-+3:
-+	mvc	a0
-+	ldw	a3, (sp, 0)
-+	mtcr	a3, epc
-+	ldw     a3, (sp, 4)
-+	mtcr	a3, epsr
-+	addi	sp, 8
-+	KSPTOUSP
-+	rte
-+END(csky_cmpxchg)
-+
-+/*
-+ * Called from tlbmodified exception
-+ */
-+ENTRY(csky_cmpxchg_fixup)
-+	mfcr	a0, epc
-+	lrw	a1, 2b
-+	cmpne	a1, a0
-+	bt	1f
-+	subi	a1, (2b - 1b)
-+	stw	a1, (sp, LSAVE_PC)
-+1:
-+	rts
-+END(csky_cmpxchg_fixup)
-+#endif
++	/*
++	 * If we hit the last page and there is more work to be done: wrap
++	 * back the index back to the start of the file for the next
++	 * time we are called.
++	 */
++	if (wbc->range_cyclic && !done)
++		done_index = 0;
+ 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+ 		mapping->writeback_index = done_index;
+ 
 -- 
-2.7.4
+2.17.0
 
