@@ -2,267 +2,172 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2D3C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519EEC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 361FF2064A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EB7521473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT7RgJNB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 361FF2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cmccabe.xyz header.i=@cmccabe.xyz header.b="Ys20RMFd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h1fM4kx4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB7521473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmccabe.xyz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbeJEX0j (ORCPT
+        id S1729435AbeJEX0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:26:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729047AbeJEXN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:13:58 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9D4620834;
-        Fri,  5 Oct 2018 16:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756075;
-        bh=pg/zq5uVsx/WLdOsEb2kywynth0JDFD3XUDmA5N/z7w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iT7RgJNBYYpU5YXQeYqQ4ty8kMBnRkRVAmmeyx119w6j0/2iMEFNiDxdM2RogDGVR
-         vMFlhWf02mXa4XWXgQjoLmd0vdgwW7wwgzOqgmK1XsnN6yVRsOX5iWOl7BOd5n8BAI
-         uXTEqkG+1ZEvgv6rzoRd25eS0ZeQKFNdU8nGDBHc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 10/48] selftests: add headers_install to lib.mk
-Date:   Fri,  5 Oct 2018 12:13:46 -0400
-Message-Id: <20181005161424.20521-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
-References: <20181005161424.20521-1-sashal@kernel.org>
+        Fri, 5 Oct 2018 19:26:45 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:45765 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729047AbeJEX0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:26:43 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6BAB12076C;
+        Fri,  5 Oct 2018 12:27:17 -0400 (EDT)
+Received: from web6 ([10.202.2.216])
+  by compute3.internal (MEProxy); Fri, 05 Oct 2018 12:27:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmccabe.xyz; h=
+        message-id:from:to:cc:mime-version:content-transfer-encoding
+        :content-type:date:in-reply-to:references:subject; s=fm1; bh=4En
+        BePvNDWk4jCDuF7t+MX8c3GMuZy/PJXIomGtFkDI=; b=Ys20RMFdNEDfMj3RgPd
+        keBA3wmd61WVMrA9InthngGWMgZ2jEGsio9MQmgbxRVE+E2rjqfcV2+v3CjL8zyg
+        rDZCWS6t1REf5XLW5o7QQYEgbYNuLayqY6n06N7E6Dw5Gc1rEnLym10xhMJcCccr
+        AMArJ+EJf4axB5dZXbWg7i49zT7s3z7+71szFTjgSRHPJ+9sYGjeZN3daH01LaVp
+        Y1DWDyUNzy4MEG6P2MQShNrtubwCVQBGibla5E4mhKGyM4jESBLMgCQOU7i9njcZ
+        T1DcDY26Zj/h259hmna4LnsPDcK3ZGLWhtM+uwC2ldBEeJTZiNAJaP4wFGwsqFWE
+        2mw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=4EnBePvNDWk4jCDuF7t+MX8c3GMuZy/PJXIomGtFk
+        DI=; b=h1fM4kx4gtvMd+rSRpzp61EWJo8LXnRb3Erc87Rsy5q94LeeNo3SUVRSS
+        pt+Bfs5k5tsVn2UgsyA81rkChEcvdIf1EGYs03VgAFQNPd0XmIpTalGN0IRmIOBw
+        YsQ247XIgCf2NhfymtMQbUPlUOoS8uCjMaQQ2X6j+eYHuDESdBWdq6FcnapPaBOf
+        qKFn8jjmdF2gZkc9w/R0CPyqqg5hbvOlJN7EQvoPsQYMKwaFDXPZC2Loh53PQhNY
+        k4H+WhFWEjL0WXHgbd2zP+IyQTRF+4rR70PGWfFksh4HMFV/51e02neVqO2Wn6yf
+        Nz7KCs4fGyU/rGy9Mc5a/gV1GLOqw==
+X-ME-Sender: <xms:5JC3WyOU_3QiwlRK3H7PsBxw45KI6UKUBSCmctzJbU7EZZskLXa_3Q>
+X-ME-Proxy: <xmx:5JC3W-NOl3eWC3ApG_5Zea-rZTFk18I31rXZl_Xzg5AOdDK4-MLywg>
+    <xmx:5JC3W9eOcCIg5o_xqyC8__4MlQ6yVhwlfM2iiLh-xZKo-gRKMgd3Sw>
+    <xmx:5JC3W2zzFX9WCk-ycIxBCzIaIYXj2MeUK7vv5HU_3LL63aQJGd5d-A>
+    <xmx:5JC3W3YL4goDQ0IPB3XPLb2OaP3icS3CQo7i3JXCPh5UhQZXU29q6Q>
+    <xmx:5JC3W52ZezACDie8gmtjZmebeEd2O7m8BsURdNTouIaS8-X9NrjAAg>
+    <xmx:5ZC3W_F4GJlTYl5FdpO_heeM1gCLaVLRvUPVc7F3A7Iaic04v1U7Jw>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id AEED9422C; Fri,  5 Oct 2018 12:27:16 -0400 (EDT)
+Message-Id: <1538756836.4131485.1532106896.50BF1EF3@webmail.messagingengine.com>
+From:   Colin McCabe <colin@cmccabe.xyz>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-929b9749
+Date:   Fri, 05 Oct 2018 09:27:16 -0700
+In-Reply-To: <20181005113056.55b23c31@gandalf.local.home>
+References: <20181002175539.2ac894c7@gandalf.local.home>
+ <20181005113056.55b23c31@gandalf.local.home>
+Subject: Re: [PATCH v3] tools/lib/traceevent: Replace str_error_r() with an open
+ coded implementation
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
+Hmm.  Did you consider setting the ifdefs you can set to always get the POSIX version of strerror_r?
 
-[ Upstream commit b2d35fa5fc80c27e868e393dcab4c94a0d71737f ]
+best,
+Colin
 
-If the kernel headers aren't installed we can't build all the tests.
-Add a new make target rule 'khdr' in the file lib.mk to generate the
-kernel headers and that gets include for every test-dir Makefile that
-includes lib.mk If the testdir in turn have its own sub-dirs the
-top_srcdir needs to be set to the linux-rootdir to be able to generate
-the kernel headers.
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- Makefile                                           | 14 +-------------
- scripts/subarch.include                            | 13 +++++++++++++
- tools/testing/selftests/android/Makefile           |  2 +-
- tools/testing/selftests/android/ion/Makefile       |  2 ++
- tools/testing/selftests/futex/functional/Makefile  |  1 +
- tools/testing/selftests/gpio/Makefile              |  7 ++-----
- tools/testing/selftests/kvm/Makefile               |  7 ++-----
- tools/testing/selftests/lib.mk                     | 12 ++++++++++++
- tools/testing/selftests/net/Makefile               |  1 +
- .../selftests/networking/timestamping/Makefile     |  1 +
- tools/testing/selftests/vm/Makefile                |  4 ----
- 11 files changed, 36 insertions(+), 28 deletions(-)
- create mode 100644 scripts/subarch.include
+On Fri, Oct 5, 2018, at 08:30, Steven Rostedt wrote:
+> On Tue, 2 Oct 2018 17:55:39 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > While working on having PowerTop use libtracevent as a shared object
+> > library, Tzvetomir hit "str_error_r not defined". This was added by commit
+> > c3cec9e68f12d ("tools lib traceevent: Use str_error_r()") because
+> > strerror_r() has two definitions, where one is GNU specific, and the other
+> > is XSI complient. The strerror_r() is in a wrapper str_error_r() to keep the
+> > code from having to worry about which compiler is being used.
+> > 
+> > The problem is that str_error_r() is external to libtraceevent, and not part
+> > of the library. If it is used as a shared object then the tools using it
+> > will need to define that function. I do not want that function defined in
+> > libtraceevent itself, as it is out of scope for that library.
+> > 
+> > As there's only a single instance of this call, I replaced it with an open
+> > coded algorithm that uses sys_nerr and sys_errlist error array with
+> > strncpy() to place the error message in the given buffer. We don't need to
+> > worry about the errors that strerror_r() returns. If the buffer isn't big
+> > enough, we simply truncate it.
+> > 
+> > The sys_nerr and sys_errlist idea was found here:
+> > 
+> >   http://www.club.cc.cmu.edu/~cmccabe/blog_strerror.html
+> > 
+> > Cc: Colin Patrick McCabe <cmccabe@alumni.cmu.edu>
+> > Reported-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> > Changes since v2:
+> > 
+> >   Use sys_nerr and sys_errlist idea.
+> > 
+> >  tools/lib/traceevent/event-parse.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+> > index 7980fc6c3bac..d23d10bc5314 100644
+> > --- a/tools/lib/traceevent/event-parse.c
+> > +++ b/tools/lib/traceevent/event-parse.c
+> > @@ -18,7 +18,6 @@
+> >  #include <errno.h>
+> >  #include <stdint.h>
+> >  #include <limits.h>
+> > -#include <linux/string.h>
+> >  #include <linux/time64.h>
+> >  
+> >  #include <netinet/in.h>
+> > @@ -6215,7 +6214,13 @@ int tep_strerror(struct tep_handle *pevent __maybe_unused,
+> >  	const char *msg;
+> >  
+> >  	if (errnum >= 0) {
+> > -		str_error_r(errnum, buf, buflen);
+> > +		if (buflen > 0) {
+> > +			if (errnum < sys_nerr)
+> > +				strncpy(buf, sys_errlist[errnum], buflen);
+> > +			else
+> > +				snprintf(buf, buflen, "Unknown error %d", errnum);
+> > +			buf[buflen - 1] = 0;
+> > +		}
+> 
+> Bah, I now get warnings that sys_nerr and sys_errlist are deprecated.
+> 
+> OK, so going back to just using the racy strerror() should be good
+> enough, as this incompatibility with strerror_r() is a disaster!
+> 
+> -- Steve
+> 
+> 
+> >  		return 0;
+> >  	}
+> >  
+> 
 
-diff --git a/Makefile b/Makefile
-index 466e07af8473..f1076175e2b3 100644
---- a/Makefile
-+++ b/Makefile
-@@ -298,19 +298,7 @@ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
- KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
- export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
- 
--# SUBARCH tells the usermode build what the underlying arch is.  That is set
--# first, and if a usermode build is happening, the "ARCH=um" on the command
--# line overrides the setting of ARCH below.  If a native build is happening,
--# then ARCH is assigned, getting whatever value it gets normally, and
--# SUBARCH is subsequently ignored.
--
--SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
--				  -e s/sun4u/sparc64/ \
--				  -e s/arm.*/arm/ -e s/sa110/arm/ \
--				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
--				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
--				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
--				  -e s/riscv.*/riscv/)
-+include scripts/subarch.include
- 
- # Cross compiling and selecting different set of gcc/bin-utils
- # ---------------------------------------------------------------------------
-diff --git a/scripts/subarch.include b/scripts/subarch.include
-new file mode 100644
-index 000000000000..650682821126
---- /dev/null
-+++ b/scripts/subarch.include
-@@ -0,0 +1,13 @@
-+# SUBARCH tells the usermode build what the underlying arch is.  That is set
-+# first, and if a usermode build is happening, the "ARCH=um" on the command
-+# line overrides the setting of ARCH below.  If a native build is happening,
-+# then ARCH is assigned, getting whatever value it gets normally, and
-+# SUBARCH is subsequently ignored.
-+
-+SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-+				  -e s/sun4u/sparc64/ \
-+				  -e s/arm.*/arm/ -e s/sa110/arm/ \
-+				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-+				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-+				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
-+				  -e s/riscv.*/riscv/)
-diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/selftests/android/Makefile
-index 72c25a3cb658..d9a725478375 100644
---- a/tools/testing/selftests/android/Makefile
-+++ b/tools/testing/selftests/android/Makefile
-@@ -6,7 +6,7 @@ TEST_PROGS := run.sh
- 
- include ../lib.mk
- 
--all:
-+all: khdr
- 	@for DIR in $(SUBDIRS); do		\
- 		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
- 		mkdir $$BUILD_TARGET  -p;	\
-diff --git a/tools/testing/selftests/android/ion/Makefile b/tools/testing/selftests/android/ion/Makefile
-index e03695287f76..88cfe88e466f 100644
---- a/tools/testing/selftests/android/ion/Makefile
-+++ b/tools/testing/selftests/android/ion/Makefile
-@@ -10,6 +10,8 @@ $(TEST_GEN_FILES): ipcsocket.c ionutils.c
- 
- TEST_PROGS := ion_test.sh
- 
-+KSFT_KHDR_INSTALL := 1
-+top_srcdir = ../../../../..
- include ../../lib.mk
- 
- $(OUTPUT)/ionapp_export: ionapp_export.c ipcsocket.c ionutils.c
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index ff8feca49746..ad1eeb14fda7 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -18,6 +18,7 @@ TEST_GEN_FILES := \
- 
- TEST_PROGS := run.sh
- 
-+top_srcdir = ../../../../..
- include ../../lib.mk
- 
- $(TEST_GEN_FILES): $(HEADERS)
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 1bbb47565c55..4665cdbf1a8d 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -21,11 +21,8 @@ endef
- CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
- LDLIBS += -lmount -I/usr/include/libmount
- 
--$(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
-+$(BINARIES):| khdr
-+$(BINARIES): ../../../gpio/gpio-utils.o
- 
- ../../../gpio/gpio-utils.o:
- 	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
--
--../../../../usr/include/linux/gpio.h:
--	make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
--
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index d9d00319b07c..bcb69380bbab 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -32,9 +32,6 @@ $(LIBKVM_OBJ): $(OUTPUT)/%.o: %.c
- $(OUTPUT)/libkvm.a: $(LIBKVM_OBJ)
- 	$(AR) crs $@ $^
- 
--$(LINUX_HDR_PATH):
--	make -C $(top_srcdir) headers_install
--
--all: $(STATIC_LIBS) $(LINUX_HDR_PATH)
-+all: $(STATIC_LIBS)
- $(TEST_GEN_PROGS): $(STATIC_LIBS)
--$(TEST_GEN_PROGS) $(LIBKVM_OBJ): | $(LINUX_HDR_PATH)
-+$(STATIC_LIBS):| khdr
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 17ab36605a8e..0a8e75886224 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -16,8 +16,20 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
- TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
- TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
- 
-+top_srcdir ?= ../../../..
-+include $(top_srcdir)/scripts/subarch.include
-+ARCH		?= $(SUBARCH)
-+
- all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
- 
-+.PHONY: khdr
-+khdr:
-+	make ARCH=$(ARCH) -C $(top_srcdir) headers_install
-+
-+ifdef KSFT_KHDR_INSTALL
-+$(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES):| khdr
-+endif
-+
- .ONESHELL:
- define RUN_TEST_PRINT_RESULT
- 	TEST_HDR_MSG="selftests: "`basename $$PWD`:" $$BASENAME_TEST";	\
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 663e11e85727..d515dabc6b0d 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -15,6 +15,7 @@ TEST_GEN_FILES += udpgso udpgso_bench_tx udpgso_bench_rx
- TEST_GEN_PROGS = reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
- TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict
- 
-+KSFT_KHDR_INSTALL := 1
- include ../lib.mk
- 
- $(OUTPUT)/reuseport_bpf_numa: LDFLAGS += -lnuma
-diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
-index a728040edbe1..14cfcf006936 100644
---- a/tools/testing/selftests/networking/timestamping/Makefile
-+++ b/tools/testing/selftests/networking/timestamping/Makefile
-@@ -5,6 +5,7 @@ TEST_PROGS := hwtstamp_config rxtimestamp timestamping txtimestamp
- 
- all: $(TEST_PROGS)
- 
-+top_srcdir = ../../../../..
- include ../../lib.mk
- 
- clean:
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index fdefa2295ddc..58759454b1d0 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -25,10 +25,6 @@ TEST_PROGS := run_vmtests
- 
- include ../lib.mk
- 
--$(OUTPUT)/userfaultfd: ../../../../usr/include/linux/kernel.h
- $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
- 
- $(OUTPUT)/mlock-random-test: LDLIBS += -lcap
--
--../../../../usr/include/linux/kernel.h:
--	make -C ../../../.. headers_install
--- 
-2.17.1
 
+C.
