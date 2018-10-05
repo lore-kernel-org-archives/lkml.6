@@ -2,104 +2,154 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EEFC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A5BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55EBF206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:18:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55EBF206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 168C520834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168C520834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbeJEUQi (ORCPT
+        id S1728458AbeJEUW1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:16:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36618 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727701AbeJEUQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:16:38 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qKcZs9XAuORd; Fri,  5 Oct 2018 15:17:56 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D6D431EC02B2;
-        Fri,  5 Oct 2018 15:17:55 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 15:17:51 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/olpc: Fix build error with CONFIG_MFD_CS5535=m
-Message-ID: <20181005131750.GA5366@zn.tnic>
-References: <20181004160808.307738-1-lkundrak@v3.sk>
+        Fri, 5 Oct 2018 16:22:27 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57433 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727701AbeJEUW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:22:27 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DK31D002319;
+        Fri, 5 Oct 2018 15:23:34 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mu1bkc6v5-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 05 Oct 2018 15:23:34 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7B26638;
+        Fri,  5 Oct 2018 13:23:33 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4F44B2CC5;
+        Fri,  5 Oct 2018 13:23:33 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
+ 15:23:33 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
+ 15:23:32 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V5 10/24] mmc: mmci: add validate_data callback
+Date:   Fri, 5 Oct 2018 15:22:48 +0200
+Message-ID: <1538745782-27446-11-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
+References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181004160808.307738-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 06:08:08PM +0200, Lubomir Rintel wrote:
-> On OLPC XO-1 we're discovering the RTC via device tree from the arch
-> initcall. Don't let the PC platform register another one from its
-> device initcall, it's not going to work:
+From: Ludovic Barre <ludovic.barre@st.com>
 
-Btw, a build fix ontop:
+This patch adds validate_data callback at mmci_host_ops
+to check specific constraints of variant.
+Move mmci_validate_data function to regroup mmci_host_ops interfaces.
 
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
-From: Borislav Petkov <bp@suse.de>
-Date: Fri, 5 Oct 2018 15:13:07 +0200
+ drivers/mmc/host/mmci.c | 39 +++++++++++++++++++++------------------
+ drivers/mmc/host/mmci.h |  1 +
+ 2 files changed, 22 insertions(+), 18 deletions(-)
 
-When building a 32-bit config which has the above MFD item as module
-but OLPC_XO1_PM is enabled =y - which is bool, btw - the kernel fails
-building with:
-
-  ld: arch/x86/platform/olpc/olpc-xo1-pm.o: in function `xo1_pm_remove':
-  /home/boris/kernel/linux/arch/x86/platform/olpc/olpc-xo1-pm.c:159: undefined reference to `mfd_cell_disable'
-  ld: arch/x86/platform/olpc/olpc-xo1-pm.o: in function `xo1_pm_probe':
-  /home/boris/kernel/linux/arch/x86/platform/olpc/olpc-xo1-pm.c:133: undefined reference to `mfd_cell_enable'
-  make: *** [Makefile:1030: vmlinux] Error 1
-
-Force MFD_CS5535 to y if OLPC_XO1_PM is enabled.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Lubomir Rintel <lkundrak@v3.sk>
-Cc: x86@kernel.org
----
- arch/x86/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..285b5d6a5ea5 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2742,8 +2742,7 @@ config OLPC
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 657ec84..0444aba 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -233,24 +233,6 @@ static int mmci_card_busy(struct mmc_host *mmc)
+ 	return busy;
+ }
  
- config OLPC_XO1_PM
- 	bool "OLPC XO-1 Power Management"
--	depends on OLPC && MFD_CS5535 && PM_SLEEP
--	select MFD_CORE
-+	depends on OLPC && MFD_CS5535=y && PM_SLEEP
- 	---help---
- 	  Add support for poweroff and suspend of the OLPC XO-1 laptop.
+-/*
+- * Validate mmc prerequisites
+- */
+-static int mmci_validate_data(struct mmci_host *host,
+-			      struct mmc_data *data)
+-{
+-	if (!data)
+-		return 0;
+-
+-	if (!is_power_of_2(data->blksz)) {
+-		dev_err(mmc_dev(host->mmc),
+-			"unsupported block size (%d bytes)\n", data->blksz);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+ static void mmci_reg_delay(struct mmci_host *host)
+ {
+ 	/*
+@@ -388,6 +370,27 @@ void mmci_dma_setup(struct mmci_host *host)
+ 	host->use_dma = true;
+ }
  
++/*
++ * Validate mmc prerequisites
++ */
++static int mmci_validate_data(struct mmci_host *host,
++			      struct mmc_data *data)
++{
++	if (!data)
++		return 0;
++
++	if (!is_power_of_2(data->blksz)) {
++		dev_err(mmc_dev(host->mmc),
++			"unsupported block size (%d bytes)\n", data->blksz);
++		return -EINVAL;
++	}
++
++	if (host->ops && host->ops->validate_data)
++		return host->ops->validate_data(host, data);
++
++	return 0;
++}
++
+ int mmci_prep_data(struct mmci_host *host, struct mmc_data *data, bool next)
+ {
+ 	int err;
+diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+index 45aad99..f103465 100644
+--- a/drivers/mmc/host/mmci.h
++++ b/drivers/mmc/host/mmci.h
+@@ -273,6 +273,7 @@ struct variant_data {
+ 
+ /* mmci variant callbacks */
+ struct mmci_host_ops {
++	int (*validate_data)(struct mmci_host *host, struct mmc_data *data);
+ 	int (*prep_data)(struct mmci_host *host, struct mmc_data *data,
+ 			 bool next);
+ 	void (*unprep_data)(struct mmci_host *host, struct mmc_data *data,
 -- 
-2.19.0.271.gfe8321ec057f
+2.7.4
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
