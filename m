@@ -2,73 +2,47 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C346C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E48C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6E42084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D969213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:03:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="SlL3OU5i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6E42084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WY08ASR/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D969213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbeJEXCT (ORCPT
+        id S1728762AbeJEXCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:02:19 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:39303 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbeJEXCT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:02:19 -0400
-Received: by mail-yw1-f68.google.com with SMTP id v1-v6so5438225ywv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 09:02:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bhKjJ/dq4sh4AlTmKfdT6x+iVsKpjPdYbo2RGcYzJCE=;
-        b=SlL3OU5izPZvIMDO/h7vlAfgORSl8L7v/PO+QTzRHdx6sMIW1TPmM4TT0ogDj1bcE5
-         HDkAXHLK0zIxkmrUc7IBWkrw52Q81DrS3EBrtgXzNZXI+1KlQWBIiTztIcYdDM3IFxYk
-         CIm/zS5h9WYCTe/9toVBEy0hggbYDoTWpAwmS8g+lHcznHU8IrUpIjHx7wRscDz8Onho
-         k+NDebVJKgePUHv8YB3X+aobNXLnYAHBi2hfkiPFv4agRiUQMEuMOWXsKKTPyl8N7+46
-         bVDzTjghPWqyCRKKxrbL9MVL9tJ2zXg6uLewgSIXqdOnT6BoyoTkJw3pBSak6CY7HNh5
-         RZdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bhKjJ/dq4sh4AlTmKfdT6x+iVsKpjPdYbo2RGcYzJCE=;
-        b=aWai91h4jWctCNJfo9v9A+CXu5Bu1yvIvtwB1pGj1tiPLLppDESlfM98Q4cHcI4OAb
-         Xz+Iq1gP50S3ChHfT9I4rvFKceo1d+nqoYgLacqvmH6yy8s0mS7xmf72ZOKSaxqZK/j3
-         bMgwuI0bJav2rceQic4PS1mTLfLTcyKHMUe0wkKK/15UlOnr3J8A86DqoppjFNAT44vx
-         kUUVdrgo2mwkrocV74FoZ2FjzajBFZkUNF/ffU1aVUHk9R1qpP4D2P85i8ODv18mzYgN
-         ouEaILJZ8UinIHoMtXJrYNtwYeot4GWGaa78hNq5U42M/g+rxlzTeJNVHUGUyaDacHS0
-         9cDQ==
-X-Gm-Message-State: ABuFfojymJqcBzDbP+UZgdewBQUfwzBdG/g9dDwX9rCXp3X9EhCVUjds
-        dN2YFRGzsxe8ZWqd9cXo3+U9Cg==
-X-Google-Smtp-Source: ACcGV620X8a9+7kYVdqxCggBL0UrV5sO3dT1Hzr3S9Rai3FlFRI8+LEnKUix20MffCOD2OCiIdgurA==
-X-Received: by 2002:a0d:e081:: with SMTP id j123-v6mr6742288ywe.267.1538755378648;
-        Fri, 05 Oct 2018 09:02:58 -0700 (PDT)
-Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id x133-v6sm2392116ywg.66.2018.10.05.09.02.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 09:02:58 -0700 (PDT)
-From:   Sean Paul <sean@poorly.run>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Sean Paul <sean@poorly.run>, Dave Airlie <arlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Add Maxime Ripard as drm-misc maintainer
-Date:   Fri,  5 Oct 2018 12:02:22 -0400
-Message-Id: <20181005160256.200162-1-sean@poorly.run>
+        Fri, 5 Oct 2018 19:02:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726082AbeJEXCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:02:43 -0400
+Received: from localhost (unknown [104.132.1.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43D922084D;
+        Fri,  5 Oct 2018 16:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538755403;
+        bh=DcnMmqnDnnbUpxBfJ/U+Mhr+mjQppLS+z/6gFVmPxMs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WY08ASR/35cCH4Q0OJkrTVPJXeeBu+LTjc9kBdVZ2F4QV/P2QDyMP2nU6FYK31Qzd
+         LVve+Vsfjrd0YMoBuKQ1OBXKzFNtTBUfppCg1ksTizaVLW0LHHantxnIHnngPF3yqa
+         lMF0SLJKDIDQ9G4+13bqsy3wMqF3Watber8/nC44=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: allow to mount, if quota is failed
+Date:   Fri,  5 Oct 2018 09:03:22 -0700
+Message-Id: <20181005160322.42871-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -77,37 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unfortunately Gustavo has decided to step down as drm-misc maintainer to
-focus on other projects. Thanks Gustavo for your dedication and hard work!
+Since we can use the filesystem without quotas till next boot.
 
-Fortunately for us, we have a wealth of people qualified to assume a
--misc maintainer role. Maxime has done an outstanding job with sun4i and
-in the community in general. I'm really excited that he agreed to take
-on this responsibility and I look forward to working with him!
-
-Cc: Dave Airlie <arlied@linux.ie>
-Cc: Gustavo Padovan <gustavo@padovan.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard  <maxime.ripard@bootlin.com>
-Signed-off-by: Sean Paul <sean@poorly.run>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/super.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 94c1fef3279b..da8507d401b3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4755,8 +4755,8 @@ F:	include/uapi/drm/
- F:	include/linux/vga*
- 
- DRM DRIVERS AND MISC GPU PATCHES
--M:	Gustavo Padovan <gustavo@padovan.org>
- M:	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-+M:	Maxime Ripard  <maxime.ripard@bootlin.com>
- M:	Sean Paul <sean@poorly.run>
- W:	https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
- S:	Maintained
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 94eb7b55fc49..b3991e99a626 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3288,11 +3288,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* Enable quota usage during mount */
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
+ 		err = f2fs_enable_quotas(sb);
+-		if (err) {
++		if (err)
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Cannot turn on quotas: error %d", err);
+-			goto free_sysfs;
+-		}
+ 	}
+ #endif
+ 	/* if there are nt orphan nodes free them */
+@@ -3393,9 +3391,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * falls into an infinite loop in f2fs_sync_meta_pages().
+ 	 */
+ 	truncate_inode_pages_final(META_MAPPING(sbi));
+-#ifdef CONFIG_QUOTA
+-free_sysfs:
+-#endif
+ 	f2fs_unregister_sysfs(sbi);
+ free_root_inode:
+ 	dput(sb->s_root);
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.19.0.605.g01d371f741-goog
 
