@@ -3,86 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB64C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C526C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42E42084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42E42084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id E0B0E2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:54:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B0E2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbeJEWvX (ORCPT
+        id S1728778AbeJEWyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:51:23 -0400
-Received: from www62.your-server.de ([213.133.104.62]:41268 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbeJEWvX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:51:23 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g8SOR-0002ub-I4; Fri, 05 Oct 2018 17:51:55 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g8SOR-000HJa-Cy; Fri, 05 Oct 2018 17:51:55 +0200
-Subject: Re: linux-next: Tree for Oct 5 (net/core/filter.c)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, joe@wand.net.nz
-References: <20181005163943.3f8d4f32@canb.auug.org.au>
- <51ea61d3-032b-f316-4a61-b63ab208d8d4@infradead.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <e5a04d2f-df44-4616-5621-23d7738353d6@iogearbox.net>
-Date:   Fri, 5 Oct 2018 17:51:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Fri, 5 Oct 2018 18:54:10 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18504 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727572AbeJEWyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:54:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 08:54:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
+   d="scan'208";a="269804779"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Oct 2018 08:53:21 -0700
+Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
+        by linux.intel.com (Postfix) with ESMTP id 7189058038C;
+        Fri,  5 Oct 2018 08:53:19 -0700 (PDT)
+Subject: Re: [PATCH v9 2/3]: perf record: enable asynchronous trace writing
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+References: <ded47c34-9e92-6bd2-9522-a927a7237011@linux.intel.com>
+ <5ed78452-ff2b-dfe5-ec29-888971cb4b55@linux.intel.com>
+ <20181005071615.GC3768@sejong>
+ <dc944fcf-cbb6-9b88-bc1c-606eb027a6ac@linux.intel.com>
+ <20181005084854.GE3768@sejong>
+ <4ee1c347-674b-ac61-65cf-55fb71a7cc2b@linux.intel.com>
+ <20181005105557.GF3768@sejong>
+ <c5129bc1-1e69-0fcc-c552-9bda51886bcf@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <558ec0ad-7083-e4ed-e6bb-9b90c86b20bf@linux.intel.com>
+Date:   Fri, 5 Oct 2018 18:53:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <51ea61d3-032b-f316-4a61-b63ab208d8d4@infradead.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <c5129bc1-1e69-0fcc-c552-9bda51886bcf@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/25009/Fri Oct  5 14:48:12 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ +Joe ]
-
-On 10/05/2018 05:42 PM, Randy Dunlap wrote:
-> On 10/4/18 11:39 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20181004:
->>
+Hi,
+On 05.10.2018 14:50, Alexey Budankov wrote:<SNIP>
 > 
-> on i386 or x86_64:
-> 
-> net/core/filter.o: In function `bpf_sk_release':
-> filter.c:(.text+0x3c5c): undefined reference to `sock_gen_put'
-> net/core/filter.o: In function `sk_lookup':
-> filter.c:(.text+0x79a5): undefined reference to `tcp_hashinfo'
-> filter.c:(.text+0x79bc): undefined reference to `__inet_lookup_established'
-> filter.c:(.text+0x79eb): undefined reference to `tcp_hashinfo'
-> filter.c:(.text+0x79f3): undefined reference to `__inet_lookup_listener'
-> filter.c:(.text+0x7a14): undefined reference to `udp_table'
-> filter.c:(.text+0x7a26): undefined reference to `__udp4_lib_lookup'
-> 
-> 
-> Full randconfig file is attached.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> According to docs [1] ftruncate() does not advance file pos 
+> which is essential here.
 > 
 
+Ideally, the both lseek() syscalls in every loop iteration can be
+replaced by the only two syscalls just before and after the loop and
+advancing *in-flight* off file pos value at perf_mmap__aio_push() 
+after every successful record__aio_pushfn().
+
+Thanks,
+Alexey
