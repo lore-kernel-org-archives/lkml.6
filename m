@@ -2,90 +2,162 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1ACC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DACC65BA9
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 897302084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:24:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gi+DDpld"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897302084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 0DA902084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA902084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbeJERWn (ORCPT
+        id S1727941AbeJER0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:22:43 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52202 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbeJERWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:22:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZYX+zoljw6FLZWp7ebzRfQsxvvNeDL1RIUspnNkZTiE=; b=gi+DDpldXv8v6IJcxUdjqlDe/
-        3yP7alK0ecgSMeZfbBNgf15PYa7qx0IzqrGyOGgrud0PyOHaE1zRikp4tzFsd5Igrhrb6QyRsXZRT
-        B6BEOmgpEseoZoZM+Yi+HSPlvQ49oap1LKmcHQPD15miN0+/v+vujbq2MfPVECaO8RWdg=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:50927)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g8NHS-0003Td-ND; Fri, 05 Oct 2018 11:24:22 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g8NHM-00089u-Vk; Fri, 05 Oct 2018 11:24:17 +0100
-Date:   Fri, 5 Oct 2018 11:24:13 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Manjeet Pawar <manjeet.p@samsung.com>
-Cc:     ebiederm@xmission.com, arnd@arndb.de, akpm@linux-foundation.org,
-        mhiramat@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        pankaj.m@samsung.com, a.sahrawat@samsung.com,
-        Rohit Thapliyal <r.thapliyal@samsung.com>
-Subject: Re: [PATCH] traps:Recover undefined user instruction on ARM
-Message-ID: <20181005102412.GI30658@n2100.armlinux.org.uk>
-References: <CGME20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba@epcas5p3.samsung.com>
- <20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba~anUhv_CDP0965009650epcas5p34@epcas5p3.samsung.com>
+        Fri, 5 Oct 2018 13:26:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:49580 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727535AbeJER0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 13:26:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8E4480D;
+        Fri,  5 Oct 2018 03:28:23 -0700 (PDT)
+Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 474C33F5A0;
+        Fri,  5 Oct 2018 03:28:21 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 11:29:06 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] PCI: imx: Add PME_Turn_Off support
+Message-ID: <20181005102906.GA25651@red-moon>
+References: <cover.1538670431.git.leonard.crestez@nxp.com>
+ <37d60fe2119361381a6a81f439fa1c3ad29db45e.1538670431.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba~anUhv_CDP0965009650epcas5p34@epcas5p3.samsung.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <37d60fe2119361381a6a81f439fa1c3ad29db45e.1538670431.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 10:15:57AM +0530, Manjeet Pawar wrote:
-> From: Rohit Thapliyal <r.thapliyal@samsung.com> 
+On Thu, Oct 04, 2018 at 04:34:30PM +0000, Leonard Crestez wrote:
+> When the root complex suspends it must send a PME_Turn_Off TLP.
+> Implement this by asserting the "turnoff" reset.
 > 
-> During user undefined instruction exception, the arm exception
-> handler currently results in application crash through SIGILL.
-> The bad instruction can be due to ddr/hardware issue.
-> For such cases, exception trap handler could try to recover the corrupted
-> text by clearing pagetable entry of undefined instruction pc and trying to fetch
-> the instruction opcode by generating major page fault.
-> Resulting in loading the page with correct instruction from mapped file.
-> If there is no error in root filesystem i.e. the opcode is intact
-> in file, then filemap fault shall be able to recover
-> the instruction and continue execution normally instead of crashing.
+> On imx7d this functionality is part of the SRC and exposed through the
+> linux reset-controller subsystem. On imx6 equivalent bits are in the
+> IOMUXC GPR area which the imx6-pcie driver accesses directly.
 
-For the reasons others have pointed out in previous replies, I will not
-merge this patch or anything similar to this for mainline.  The only
-sane solution to the above problem is to fix the hardware or the
-hardware timings so that DDR access is reliable.
+Nit: I am merging the series, please define what SRC and GPR are so
+that I can update the commit log accordingly, it must be clear to
+anyone reading it.
 
-Sorry.
+Thanks,
+Lorenzo
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> This is only for imx7d right now but it's deliberately implemented as an
+> optional reset, ignoring the chip variant:
+> * Older dtbs won't have this reset so it will be ignored.
+> * Future chips might also expose this as a reset controller.
+> 
+> For example imx8m (not yet supported) has the exact same
+> PCIE_CTRL_APPS_TURNOFF bit in the same location.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 6ba16fd1373c..2bf80f1ad852 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -50,10 +50,11 @@ struct imx6_pcie {
+>  	struct clk		*pcie_inbound_axi;
+>  	struct clk		*pcie;
+>  	struct regmap		*iomuxc_gpr;
+>  	struct reset_control	*pciephy_reset;
+>  	struct reset_control	*apps_reset;
+> +	struct reset_control	*turnoff_reset;
+>  	enum imx6_pcie_variants variant;
+>  	u32			tx_deemph_gen1;
+>  	u32			tx_deemph_gen2_3p5db;
+>  	u32			tx_deemph_gen2_6db;
+>  	u32			tx_swing_full;
+> @@ -812,10 +813,25 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+>  	default:
+>  		dev_err(dev, "ltssm_disable not supported\n");
+>  	}
+>  }
+>  
+> +static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+> +{
+> +	reset_control_assert(imx6_pcie->turnoff_reset);
+> +	reset_control_deassert(imx6_pcie->turnoff_reset);
+> +
+> +	/*
+> +	 * Components with an upstream port must respond to
+> +	 * PME_Turn_Off with PME_TO_Ack but we can't check.
+> +	 *
+> +	 * The standard recommends a 1-10ms timeout after which to
+> +	 * proceed anyway as if acks were received.
+> +	 */
+> +	usleep_range(1000, 10000);
+> +}
+> +
+>  static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+>  {
+>  	clk_disable_unprepare(imx6_pcie->pcie);
+>  	clk_disable_unprepare(imx6_pcie->pcie_phy);
+>  	clk_disable_unprepare(imx6_pcie->pcie_bus);
+> @@ -832,10 +848,11 @@ static int imx6_pcie_suspend_noirq(struct device *dev)
+>  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>  
+>  	if (imx6_pcie->variant != IMX7D)
+>  		return 0;
+>  
+> +	imx6_pcie_pm_turnoff(imx6_pcie);
+>  	imx6_pcie_clk_disable(imx6_pcie);
+>  	imx6_pcie_ltssm_disable(dev);
+>  
+>  	return 0;
+>  }
+> @@ -959,10 +976,17 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  		break;
+>  	default:
+>  		break;
+>  	}
+>  
+> +	/* Grab turnoff reset */
+> +	imx6_pcie->turnoff_reset = devm_reset_control_get_optional_exclusive(dev, "turnoff");
+> +	if (IS_ERR(imx6_pcie->turnoff_reset)) {
+> +		dev_err(dev, "Failed to get TURNOFF reset control\n");
+> +		return PTR_ERR(imx6_pcie->turnoff_reset);
+> +	}
+> +
+>  	/* Grab GPR config register range */
+>  	imx6_pcie->iomuxc_gpr =
+>  		 syscon_regmap_lookup_by_compatible("fsl,imx6q-iomuxc-gpr");
+>  	if (IS_ERR(imx6_pcie->iomuxc_gpr)) {
+>  		dev_err(dev, "unable to find iomuxc registers\n");
+> -- 
+> 2.17.1
+> 
