@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BA5C65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30452C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 711392148C
+	by mail.kernel.org (Postfix) with ESMTP id DFF36214C5
 	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqRPRHtz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711392148C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgoK9kv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF36214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729617AbeJEXOZ (ORCPT
+        id S1729637AbeJEXO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51932 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbeJEXOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:24 -0400
+        id S1729619AbeJEXOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C21C214AB;
-        Fri,  5 Oct 2018 16:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A7802148C;
+        Fri,  5 Oct 2018 16:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756101;
-        bh=xjRvu9qt8z0ovIDk7nHgbpv/i1xMxd3LrxZuIrNJxKs=;
+        s=default; t=1538756103;
+        bh=/Q5mGiTXee/WGa68FlT0Hs51sM1/v5W1ypfmyAcshFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mqRPRHtz/2iZ2qcaKGU1XM3jUJKQWJCAdaxCuLHcJo00/dzwAiwnOdd4/5CoSWKu1
-         6RrlYumS3oIvbxeGDBBMn0NjGfjcl3K63wuCr47fxpgOiO3BM7O1anq3cexLRMxLEZ
-         mooDLN+mw91TSRQi6mvx8lZZtdP+xgtn1Pm60gj4=
+        b=tgoK9kv7d9g2zvhASzFAvMI1VhFCpuVQI234Z7RsYZdGPC5lpD2FyiyIoOvHzHolH
+         1uWe2lfTVGdiLdhXSY3BULn4+rV5RDixsdIdYArYef+2UpQAx03PlsHmofDwt5uqW/
+         wAT6E5I2N4IWFYozJg4emJTsW6BOunncQ2g8Noyc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Simon Detheridge <s@sd.ai>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 40/48] clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail
-Date:   Fri,  5 Oct 2018 12:14:16 -0400
-Message-Id: <20181005161424.20521-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 42/48] pinctrl: cannonlake: Fix gpio base for GPP-E
+Date:   Fri,  5 Oct 2018 12:14:18 -0400
+Message-Id: <20181005161424.20521-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -55,79 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Simon Detheridge <s@sd.ai>
 
-[ Upstream commit b1e3454d39f992e5409cd19f97782185950df6e7 ]
+[ Upstream commit 8e2aac333785f91ff74e219a1e78e6bdc1ef2c41 ]
 
-Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the
-firmware") causes all unclaimed PMC clocks on Cherry Trail devices to be on
-all the time, resulting on the device not being able to reach S0i2 or S0i3
-when suspended.
+The gpio base for GPP-E was set incorrectly to 258 instead of 256,
+preventing the touchpad working on my Tong Fang GK5CN5Z laptop.
 
-The reason for this commit is that on some Bay Trail / Cherry Trail devices
-the ethernet controller uses pmc_plt_clk_4. This commit adds an "ether_clk"
-alias, so that the relevant ethernet drivers can try to (optionally) use
-this, without needing X86 specific code / hacks, thus fixing ethernet on
-these devices without breaking S0i3 support.
-
-This commit uses clkdev_hw_create() to create the alias, mirroring the code
-for the already existing "mclk" alias for pmc_plt_clk_3.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=196861
-Cc: Johannes Stezenbach <js@sig21.net>
-Cc: Carlo Caione <carlo@endlessm.com>
-Reported-by: Johannes Stezenbach <js@sig21.net>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=200787
+Signed-off-by: Simon Detheridge <s@sd.ai>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/clk/x86/clk-pmc-atom.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/pinctrl/intel/pinctrl-cannonlake.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index 08ef69945ffb..75151901ff7d 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -55,6 +55,7 @@ struct clk_plt_data {
- 	u8 nparents;
- 	struct clk_plt *clks[PMC_CLK_NUM];
- 	struct clk_lookup *mclk_lookup;
-+	struct clk_lookup *ether_clk_lookup;
+diff --git a/drivers/pinctrl/intel/pinctrl-cannonlake.c b/drivers/pinctrl/intel/pinctrl-cannonlake.c
+index 6243e7d95e7e..d36afb17f5e4 100644
+--- a/drivers/pinctrl/intel/pinctrl-cannonlake.c
++++ b/drivers/pinctrl/intel/pinctrl-cannonlake.c
+@@ -382,7 +382,7 @@ static const struct intel_padgroup cnlh_community1_gpps[] = {
+ static const struct intel_padgroup cnlh_community3_gpps[] = {
+ 	CNL_GPP(0, 155, 178, 192),		/* GPP_K */
+ 	CNL_GPP(1, 179, 202, 224),		/* GPP_H */
+-	CNL_GPP(2, 203, 215, 258),		/* GPP_E */
++	CNL_GPP(2, 203, 215, 256),		/* GPP_E */
+ 	CNL_GPP(3, 216, 239, 288),		/* GPP_F */
+ 	CNL_GPP(4, 240, 248, CNL_NO_GPIO),	/* SPI */
  };
- 
- /* Return an index in parent table */
-@@ -351,11 +352,20 @@ static int plt_clk_probe(struct platform_device *pdev)
- 		goto err_unreg_clk_plt;
- 	}
- 
-+	data->ether_clk_lookup = clkdev_hw_create(&data->clks[4]->hw,
-+						  "ether_clk", NULL);
-+	if (!data->ether_clk_lookup) {
-+		err = -ENOMEM;
-+		goto err_drop_mclk;
-+	}
-+
- 	plt_clk_free_parent_names_loop(parent_names, data->nparents);
- 
- 	platform_set_drvdata(pdev, data);
- 	return 0;
- 
-+err_drop_mclk:
-+	clkdev_drop(data->mclk_lookup);
- err_unreg_clk_plt:
- 	plt_clk_unregister_loop(data, i);
- 	plt_clk_unregister_parents(data);
-@@ -369,6 +379,7 @@ static int plt_clk_remove(struct platform_device *pdev)
- 
- 	data = platform_get_drvdata(pdev);
- 
-+	clkdev_drop(data->ether_clk_lookup);
- 	clkdev_drop(data->mclk_lookup);
- 	plt_clk_unregister_loop(data, PMC_CLK_NUM);
- 	plt_clk_unregister_parents(data);
 -- 
 2.17.1
 
