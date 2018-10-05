@@ -2,311 +2,234 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4ADC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEACC65BBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 393C920875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5952E21473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="B+zq3Sdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 393C920875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jP3WnrDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5952E21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbeJFCDA (ORCPT
+        id S1729323AbeJFCDE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:03:00 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55914 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728044AbeJFCDA (ORCPT
+        Fri, 5 Oct 2018 22:03:04 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46870 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729246AbeJFCDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:03:00 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w95IsWHe010376
-        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 12:02:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=+R5tnqvfL0JkuArkxvT2S2WfVXVys1ZspkYvHtL98K0=;
- b=B+zq3SdrPuZ4AfIqHRQuFFuoauUp5NMl8HGbEuHcnoDcl7nehbenGAsa/QHPY3J60OgN
- M8g+qvQin1MIoo/GUq8PyzQugp+h9IJZiWlE7X75+0IZ54iNgzSQyw/O3U3k8l1GrUAK
- xB5Y5e6MB2Q6T+6bbCrjs3oNGErcPgUHOIc= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2mxaxsgjkx-3
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 12:02:57 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.17) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct
- 2018 12:02:02 -0700
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
- 954B423AE71E; Fri,  5 Oct 2018 12:02:00 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
-        "Justin . Lee1 @ Dell . com" <Justin.Lee1@Dell.com>,
-        "joel @ jms . id . au" <joel@jms.id.au>,
-        "linux-aspeed @ lists . ozlabs . org" <linux-aspeed@lists.ozlabs.org>,
-        Sai Dasari <sdasari@fb.com>,
-        "christian @ cmd . nu" <christian@cmd.nu>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH net-next 1/2] net/ncsi: Add NCSI Broadcom OEM command
-Date:   Fri, 5 Oct 2018 12:01:26 -0700
-Message-ID: <20181005190126.983734-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Fri, 5 Oct 2018 22:03:03 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d8-v6so14884626qtk.13;
+        Fri, 05 Oct 2018 12:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u9cPvj9b42s+dO43aDqVHK+FB/+nSNmyU4f60k0debg=;
+        b=jP3WnrDjDLoFoIHBgfreAGoxXKlCeEu8RjzHrphmfma67sKvhhZPRUIvwxT3GshMUt
+         rIIUuKg4pXMFm+Ui23fBJByK5JQd2ri4bOt0srmF5VT8OoP9faPvhQJ4o8DpyLfYYr99
+         1fkI38cSMHePvjQbiD0BB5agg4+iEYye68w1Wu+wdzEif81sE47/6LCPGljAxFbsu8N2
+         xn3Cv+9w23i3IAd+tjsRmv66bhUvcLKCI5wfCZewbsYrZQUq90J3HYjHWImVfSwfkC6T
+         f+bSl3qdfsEtL9wIiFZ4mZc+jiFnBV7eyzoeOPUhvOZXVeIDM+pqiExviw1PWxI6h8t+
+         GnkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u9cPvj9b42s+dO43aDqVHK+FB/+nSNmyU4f60k0debg=;
+        b=buQB5spwYtwqdS06a2JwND2Vt4WyfXi7OmmpTSZU1mVjSWb5Wmrp/vS3tTPPGvJjJu
+         wN45j28AcZSIP9VSJmWQ1vXQdTU1/lbHG6w0nr/eV+OP5UBBNyZFaxRmVLceEmDHvI/V
+         cVibn5Q1hmilLFjOcnal9BWmVpPaFeLACfzQiFeNCwe9A87rdmSdC7isEE/zH1Zc5ud3
+         ZBx0JRQS5o4NelgJR4wu1gsPbyZtjWwhEvDwy6hhClUvdQF5j/H2YUEXaH5ZloJBmYbT
+         CNhADUIl3GjYjPjvHm9EXIqzHoxlJrrCzUzFMjfEeDSMHtJShzpgVmv1FsH192hBnZHr
+         jdgA==
+X-Gm-Message-State: ABuFfogSMfK/AQAJpqI2a4ksQ6FEFjtN3A01CLaP0H3nDrY8ERBe9jJy
+        pwr8xLnmjlZKSZE5GJngReXoRANRPpmQIlOGQTkAvQ==
+X-Google-Smtp-Source: ACcGV62q8psoKTjuNITqnfoIbTiVGCGU8NK/8KGCmaTKw6KIRGvnUxytRLktVnQUFS4APuWSJ6WwboF0kuoZROwZNzs=
+X-Received: by 2002:aed:2259:: with SMTP id o25-v6mr10715700qtc.13.1538766179618;
+ Fri, 05 Oct 2018 12:02:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20181005161526.843924-1-arnd@arndb.de>
+In-Reply-To: <20181005161526.843924-1-arnd@arndb.de>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Fri, 5 Oct 2018 12:02:48 -0700
+Message-ID: <CAPhsuW7pg9Wp5am3Kc1t3UoAG1=EYzUeq8E2k7Pmv8yGu9JaEQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: fix building without CONFIG_INET
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        makita.toshiaki@lab.ntt.co.jp, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Mathieu Xhonneux <m.xhonneux@gmail.com>, dsahern@gmail.com,
+        Networking <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds OEM Broadcom commands and response handling. It also
-defines OEM Get MAC Address handler to get and configure the device.
+On Fri, Oct 5, 2018 at 9:18 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The newly added TCP and UDP handling fails to link when CONFIG_INET
+> is disabled:
+>
+> net/core/filter.o: In function `sk_lookup':
+> filter.c:(.text+0x7ff8): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x7ffc): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x8020): undefined reference to `__inet_lookup_established'
+> filter.c:(.text+0x8058): undefined reference to `__inet_lookup_listener'
+> filter.c:(.text+0x8068): undefined reference to `udp_table'
+> filter.c:(.text+0x8070): undefined reference to `udp_table'
+> filter.c:(.text+0x808c): undefined reference to `__udp4_lib_lookup'
+> net/core/filter.o: In function `bpf_sk_release':
+> filter.c:(.text+0x82e8): undefined reference to `sock_gen_put'
+>
+> The compiler can optimize it out and avoid those references for
+> the most part, but we are missing a few steps here:
+>
+> - sk_lookup() should always have been marked 'static', this also
+>   avoids a warning about a missing prototype when building with
+>   'make W=1'.
+> - The BPF_CALL_x() macro needs a little change to allow marking
+>   the unneeded BPF call as 'static' and having the compiler
+>   drop them.
+> - The reference to the bpf_func_proto must be made conditional.
+>
+> Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/linux/filter.h |  2 +-
+>  net/core/filter.c      | 18 +++++++++++-------
+>  2 files changed, 12 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/filter.h b/include/linux/filter.h
+> index 6791a0ac0139..d9ec9d908bbe 100644
+> --- a/include/linux/filter.h
+> +++ b/include/linux/filter.h
+> @@ -428,9 +428,9 @@ struct sock_reuseport;
+>                   u64, __ur_3, u64, __ur_4, u64, __ur_5)
+>
+>  #define BPF_CALL_x(x, name, ...)                                              \
+> +       u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));         \
+>         static __always_inline                                                 \
+>         u64 ____##name(__BPF_MAP(x, __BPF_DECL_ARGS, __BPF_V, __VA_ARGS__));   \
+> -       u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));         \
+>         u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__))          \
+>         {                                                                      \
+>                 return ____##name(__BPF_MAP(x,__BPF_CAST,__BPF_N,__VA_ARGS__));\
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index 30c6b2d3ef16..dd5fe021f44c 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -4817,7 +4817,7 @@ static const struct bpf_func_proto bpf_lwt_seg6_adjust_srh_proto = {
+>  };
+>  #endif /* CONFIG_IPV6_SEG6_BPF */
+>
+> -struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
+> +static struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
+>                        struct sk_buff *skb, u8 family, u8 proto)
+>  {
+>         int dif = skb->dev->ifindex;
+> @@ -4902,13 +4902,13 @@ bpf_sk_lookup(struct sk_buff *skb, struct bpf_sock_tuple *tuple, u32 len,
+>         return (unsigned long) sk;
+>  }
+>
+> -BPF_CALL_5(bpf_sk_lookup_tcp, struct sk_buff *, skb,
+> +static BPF_CALL_5(bpf_sk_lookup_tcp, struct sk_buff *, skb,
+>            struct bpf_sock_tuple *, tuple, u32, len, u64, netns_id, u64, flags)
+>  {
+>         return bpf_sk_lookup(skb, tuple, len, IPPROTO_TCP, netns_id, flags);
+>  }
 
-ncsi_oem_gma_handler_bcm: This handler send NCSI broadcom command for
-getting mac address.
-ncsi_rsp_handler_oem_bcm: This handles response received for all
-broadcom OEM commands.
-ncsi_rsp_handler_oem_bcm_gma: This handles get mac address response and
-set it to device.
+BPF_CALL_x() has static already (before this patch). We should not
+need change that
+for all the BPF_CALL_?(). Joe's version looks better to me.
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- net/ncsi/Kconfig       |  6 ++++
- net/ncsi/internal.h    |  8 +++++
- net/ncsi/ncsi-manage.c | 70 +++++++++++++++++++++++++++++++++++++++++-
- net/ncsi/ncsi-pkt.h    |  8 +++++
- net/ncsi/ncsi-rsp.c    | 42 ++++++++++++++++++++++++-
- 5 files changed, 132 insertions(+), 2 deletions(-)
+Thanks,
+Song
 
-diff --git a/net/ncsi/Kconfig b/net/ncsi/Kconfig
-index 08a8a6031fd7..7f2b46108a24 100644
---- a/net/ncsi/Kconfig
-+++ b/net/ncsi/Kconfig
-@@ -10,3 +10,9 @@ config NET_NCSI
- 	  support. Enable this only if your system connects to a network
- 	  device via NCSI and the ethernet driver you're using supports
- 	  the protocol explicitly.
-+config NCSI_OEM_CMD_GET_MAC
-+	bool "Get NCSI OEM MAC Address"
-+	depends on NET_NCSI
-+	---help---
-+	  This allows to get MAC address from NCSI firmware and set them back to
-+		controller.
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index 3d0a33b874f5..45883b32790e 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -71,6 +71,13 @@ enum {
- /* OEM Vendor Manufacture ID */
- #define NCSI_OEM_MFR_MLX_ID             0x8119
- #define NCSI_OEM_MFR_BCM_ID             0x113d
-+/* Broadcom specific OEM Command */
-+#define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
-+/* OEM Command payload lengths*/
-+#define NCSI_OEM_BCM_CMD_GMA_LEN        12
-+/* Mac address offset in OEM response */
-+#define BCM_MAC_ADDR_OFFSET             28
-+
- 
- struct ncsi_channel_version {
- 	u32 version;		/* Supported BCD encoded NCSI version */
-@@ -240,6 +247,7 @@ enum {
- 	ncsi_dev_state_probe_dp,
- 	ncsi_dev_state_config_sp	= 0x0301,
- 	ncsi_dev_state_config_cis,
-+	ncsi_dev_state_config_oem_gma,
- 	ncsi_dev_state_config_clear_vids,
- 	ncsi_dev_state_config_svf,
- 	ncsi_dev_state_config_ev,
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index 091284760d21..e5bfd9245b5d 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -635,6 +635,39 @@ static int set_one_vid(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc,
- 	return 0;
- }
- 
-+#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
-+
-+/* NCSI OEM Command APIs */
-+static void ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
-+{
-+	int ret = 0;
-+	unsigned char data[NCSI_OEM_BCM_CMD_GMA_LEN];
-+
-+	nca->payload = NCSI_OEM_BCM_CMD_GMA_LEN;
-+
-+	memset(data, 0, NCSI_OEM_BCM_CMD_GMA_LEN);
-+	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_BCM_ID);
-+	data[5] = NCSI_OEM_BCM_CMD_GMA;
-+
-+	nca->data = data;
-+
-+	ret = ncsi_xmit_cmd(nca);
-+	if (ret)
-+		netdev_err(nca->ndp->ndev.dev,
-+			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
-+			   nca->type);
-+}
-+
-+/* OEM Command handlers initialization */
-+static struct ncsi_oem_gma_handler {
-+	unsigned int	mfr_id;
-+	void		(*handler)(struct ncsi_cmd_arg *nca);
-+} ncsi_oem_gma_handlers[] = {
-+	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
-+};
-+
-+#endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
-+
- static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
- {
- 	struct ncsi_dev *nd = &ndp->ndev;
-@@ -643,9 +676,10 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
- 	struct ncsi_channel *nc = ndp->active_channel;
- 	struct ncsi_channel *hot_nc = NULL;
- 	struct ncsi_cmd_arg nca;
-+	struct ncsi_oem_gma_handler *nch = NULL;
- 	unsigned char index;
- 	unsigned long flags;
--	int ret;
-+	int ret, i;
- 
- 	nca.ndp = ndp;
- 	nca.req_flags = NCSI_REQ_FLAG_EVENT_DRIVEN;
-@@ -685,6 +719,40 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
- 			goto error;
- 		}
- 
-+#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
-+		nd->state = ncsi_dev_state_config_oem_gma;
-+		break;
-+	case ncsi_dev_state_config_oem_gma:
-+		nca.type = NCSI_PKT_CMD_OEM;
-+		nca.package = np->id;
-+		nca.channel = nc->id;
-+		ndp->pending_req_num = 1;
-+
-+		/* Check for manufacturer id and Find the handler */
-+		for (i = 0; i < ARRAY_SIZE(ncsi_oem_gma_handlers); i++) {
-+			if (ncsi_oem_gma_handlers[i].mfr_id ==
-+					nc->version.mf_id) {
-+				if (ncsi_oem_gma_handlers[i].handler)
-+					nch = &ncsi_oem_gma_handlers[i];
-+				else
-+					nch = NULL;
-+
-+				break;
-+			}
-+		}
-+
-+		if (!nch) {
-+			netdev_err(ndp->ndev.dev, "No handler available for GMA with MFR-ID (0x%x)\n",
-+				   nc->version.mf_id);
-+			nd->state = ncsi_dev_state_config_clear_vids;
-+			schedule_work(&ndp->work);
-+			break;
-+		}
-+
-+		/* Get Mac address from NCSI device */
-+		nch->handler(&nca);
-+#endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
-+
- 		nd->state = ncsi_dev_state_config_clear_vids;
- 		break;
- 	case ncsi_dev_state_config_clear_vids:
-diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
-index 0f2087c8d42a..4d3f06be38bd 100644
---- a/net/ncsi/ncsi-pkt.h
-+++ b/net/ncsi/ncsi-pkt.h
-@@ -165,6 +165,14 @@ struct ncsi_rsp_oem_pkt {
- 	unsigned char           data[];      /* Payload data      */
- };
- 
-+/* Broadcom Response Data */
-+struct ncsi_rsp_oem_bcm_pkt {
-+	unsigned char           ver;         /* Payload Version   */
-+	unsigned char           type;        /* OEM Command type  */
-+	__be16                  len;         /* Payload Length    */
-+	unsigned char           data[];      /* Cmd specific Data */
-+};
-+
- /* Get Link Status */
- struct ncsi_rsp_gls_pkt {
- 	struct ncsi_rsp_pkt_hdr rsp;        /* Response header   */
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index d66b34749027..bc20f7036579 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -596,12 +596,52 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
- 	return 0;
- }
- 
-+/* Response handler for Broadcom command Get Mac Address */
-+static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
-+{
-+	struct ncsi_rsp_oem_pkt *rsp;
-+	struct ncsi_dev_priv *ndp = nr->ndp;
-+	struct net_device *ndev = ndp->ndev.dev;
-+	int ret = 0;
-+	const struct net_device_ops *ops = ndev->netdev_ops;
-+	struct sockaddr saddr;
-+
-+	/* Get the response header */
-+	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-+
-+	saddr.sa_family = ndev->type;
-+	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-+	memcpy(saddr.sa_data, &rsp->data[BCM_MAC_ADDR_OFFSET], ETH_ALEN);
-+	/* Increase mac address by 1 for BMC's address */
-+	saddr.sa_data[ETH_ALEN - 1]++;
-+	ret = ops->ndo_set_mac_address(ndev, &saddr);
-+	if (ret < 0)
-+		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
-+
-+	return ret;
-+}
-+
-+/* Response handler for Broadcom card */
-+static int ncsi_rsp_handler_oem_bcm(struct ncsi_request *nr)
-+{
-+	struct ncsi_rsp_oem_pkt *rsp;
-+	struct ncsi_rsp_oem_bcm_pkt *bcm;
-+
-+	/* Get the response header */
-+	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-+	bcm = (struct ncsi_rsp_oem_bcm_pkt *)(rsp->data);
-+
-+	if (bcm->type == NCSI_OEM_BCM_CMD_GMA)
-+		return ncsi_rsp_handler_oem_bcm_gma(nr);
-+	return 0;
-+}
-+
- static struct ncsi_rsp_oem_handler {
- 	unsigned int	mfr_id;
- 	int		(*handler)(struct ncsi_request *nr);
- } ncsi_rsp_oem_handlers[] = {
- 	{ NCSI_OEM_MFR_MLX_ID, NULL },
--	{ NCSI_OEM_MFR_BCM_ID, NULL }
-+	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
- };
- 
- /* Response handler for OEM command */
--- 
-2.17.1
-
+>
+> -static const struct bpf_func_proto bpf_sk_lookup_tcp_proto = {
+> +static const __maybe_unused struct bpf_func_proto bpf_sk_lookup_tcp_proto = {
+>         .func           = bpf_sk_lookup_tcp,
+>         .gpl_only       = false,
+>         .pkt_access     = true,
+> @@ -4920,13 +4920,13 @@ static const struct bpf_func_proto bpf_sk_lookup_tcp_proto = {
+>         .arg5_type      = ARG_ANYTHING,
+>  };
+>
+> -BPF_CALL_5(bpf_sk_lookup_udp, struct sk_buff *, skb,
+> +static BPF_CALL_5(bpf_sk_lookup_udp, struct sk_buff *, skb,
+>            struct bpf_sock_tuple *, tuple, u32, len, u64, netns_id, u64, flags)
+>  {
+>         return bpf_sk_lookup(skb, tuple, len, IPPROTO_UDP, netns_id, flags);
+>  }
+>
+> -static const struct bpf_func_proto bpf_sk_lookup_udp_proto = {
+> +static const __maybe_unused struct bpf_func_proto bpf_sk_lookup_udp_proto = {
+>         .func           = bpf_sk_lookup_udp,
+>         .gpl_only       = false,
+>         .pkt_access     = true,
+> @@ -4938,14 +4938,14 @@ static const struct bpf_func_proto bpf_sk_lookup_udp_proto = {
+>         .arg5_type      = ARG_ANYTHING,
+>  };
+>
+> -BPF_CALL_1(bpf_sk_release, struct sock *, sk)
+> +static BPF_CALL_1(bpf_sk_release, struct sock *, sk)
+>  {
+>         if (!sock_flag(sk, SOCK_RCU_FREE))
+>                 sock_gen_put(sk);
+>         return 0;
+>  }
+>
+> -static const struct bpf_func_proto bpf_sk_release_proto = {
+> +static const __maybe_unused struct bpf_func_proto bpf_sk_release_proto = {
+>         .func           = bpf_sk_release,
+>         .gpl_only       = false,
+>         .ret_type       = RET_INTEGER,
+> @@ -5158,12 +5158,14 @@ tc_cls_act_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>         case BPF_FUNC_skb_ancestor_cgroup_id:
+>                 return &bpf_skb_ancestor_cgroup_id_proto;
+>  #endif
+> +#ifdef CONFIG_INET
+>         case BPF_FUNC_sk_lookup_tcp:
+>                 return &bpf_sk_lookup_tcp_proto;
+>         case BPF_FUNC_sk_lookup_udp:
+>                 return &bpf_sk_lookup_udp_proto;
+>         case BPF_FUNC_sk_release:
+>                 return &bpf_sk_release_proto;
+> +#endif
+>         default:
+>                 return bpf_base_func_proto(func_id);
+>         }
+> @@ -5264,12 +5266,14 @@ sk_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>                 return &bpf_sk_redirect_hash_proto;
+>         case BPF_FUNC_get_local_storage:
+>                 return &bpf_get_local_storage_proto;
+> +#ifdef CONFIG_INET
+>         case BPF_FUNC_sk_lookup_tcp:
+>                 return &bpf_sk_lookup_tcp_proto;
+>         case BPF_FUNC_sk_lookup_udp:
+>                 return &bpf_sk_lookup_udp_proto;
+>         case BPF_FUNC_sk_release:
+>                 return &bpf_sk_release_proto;
+> +#endif
+>         default:
+>                 return bpf_base_func_proto(func_id);
+>         }
+> --
+> 2.18.0
+>
