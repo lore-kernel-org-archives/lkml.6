@@ -2,97 +2,143 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F07C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97DFC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDAE020875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:35:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MjfxL+nt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZNDq3Dse"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAE020875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F8C120875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:36:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8C120875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeJEPdR (ORCPT
+        id S1728674AbeJEPdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:33:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46150 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeJEPdR (ORCPT
+        Fri, 5 Oct 2018 11:33:47 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:57233 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbeJEPdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:33:17 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BDBE36024C; Fri,  5 Oct 2018 08:35:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538728535;
-        bh=h/f1mnxffZIaVy9cMlH2+sYSjz0bzAtVGQXcz4qZ7Gw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=MjfxL+ntGongYV8e9RJFPnCuX8nH6z04+PruBiIvoA8EthNYKBaNBL4agvoWX1hxd
-         Kz/IqGKMoU9V8MpxfTG4yzM2ovkQJo3r4Ua7PlpUUYyM32P8zMR9AFABsV05lflePU
-         979/u6otna9ju+SjV8+54R8DzgwXFNzMAXZJKDHg=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DD504601A0;
-        Fri,  5 Oct 2018 08:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538728534;
-        bh=h/f1mnxffZIaVy9cMlH2+sYSjz0bzAtVGQXcz4qZ7Gw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=ZNDq3Dseb6J6dQd+e2EfiJuLfyCGijyUKqdJL0s7TZFf7rx0g/1vJMA0UdKpD38j7
-         129a724L3yZe5jiEfhf1CJrckHDD5NgJguHrQrvu0FIfyOP/KCTBSUAkP60VHkit1P
-         VjcIECGSK+8gQLtUy7L2dlNOdyDgDNXR3h0IY5uc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD504601A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 5 Oct 2018 11:33:47 -0400
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w958Y9WO001157;
+        Fri, 5 Oct 2018 17:34:09 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
+ Fri, 05 Oct 2018 17:34:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
+Received: from [192.168.1.2] (199.247.151.153.ap.dti.ne.jp [153.151.247.199])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w958Y8C8001147
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 5 Oct 2018 17:34:09 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH v2] arm64: dts: rockchip: add spdif sound node for rock64
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20180917122633.31401-1-katsuhiro@katsuster.net>
+ <CAGb2v64gTj7766o+6-BZkqKy=cDv9bqLcKHOzj-BiJOtjQMSyQ@mail.gmail.com>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <9b54c5e6-f705-c792-1f41-c33c3403baa9@katsuster.net>
+Date:   Fri, 5 Oct 2018 17:34:08 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 08/16] zd1211rw: Replace spin_is_locked() with lockdep
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181003053902.6910-9-ldr709@gmail.com>
-References: <20181003053902.6910-9-ldr709@gmail.com>
-To:     Lance Roy <ldr709@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Lance Roy <ldr709@gmail.com>, Daniel Drake <dsd@gentoo.org>,
-        Ulrich Kunitz <kune@deine-taler.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181005083535.BDBE36024C@smtp.codeaurora.org>
-Date:   Fri,  5 Oct 2018 08:35:35 +0000 (UTC)
+In-Reply-To: <CAGb2v64gTj7766o+6-BZkqKy=cDv9bqLcKHOzj-BiJOtjQMSyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lance Roy <ldr709@gmail.com> wrote:
+Hello,
 
-> lockdep_assert_held() is better suited to checking locking requirements,
-> since it won't get confused when someone else holds the lock. This is
-> also a step towards possibly removing spin_is_locked().
+Sorry for late, thank you for your comments.
+
+On 2018年10月03日 18:53, Chen-Yu Tsai wrote:
+> Hi,
 > 
-> Signed-off-by: Lance Roy <ldr709@gmail.com>
-> Cc: Daniel Drake <dsd@gentoo.org>
-> Cc: Ulrich Kunitz <kune@deine-taler.de>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: <linux-wireless@vger.kernel.org>
-> Cc: <netdev@vger.kernel.org>
+> On Mon, Sep 17, 2018 at 8:28 PM Katsuhiro Suzuki
+> <katsuhiro@katsuster.net> wrote:
+>>
+>> This patch adds sound card node for rock64. Currently we can support
+>> S/PDIF only. It seems the lack of codec driver of rk3328 to enable
+>> analog audio out.
+>>
+>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>> ---
+>>   .../arm64/boot/dts/rockchip/rk3328-rock64.dts | 29 +++++++++++++++++++
+>>   1 file changed, 29 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+>> index 5852061e497b..9ee4f57557f3 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+>> @@ -62,6 +62,23 @@
+>>                  regulator-min-microvolt = <5000000>;
+>>                  regulator-max-microvolt = <5000000>;
+>>          };
+>> +
+>> +       sound {
+>> +               compatible = "audio-graph-card";
+>> +               label = "rockchip,rk3328";
+> 
+> I understand that this patch has been merged. However, seeing this label
+> I wonder how this works when the analog codec and HDMI audio out are added,
+> and how userspace is supposed to select an output.
+> 
 
-Patch applied to wireless-drivers-next.git, thanks.
+I don't know detail of HDMI audio of RK3328, but maybe it has cpu or 
+codec DAIs. The audio-graph-card is supporting to use multiple DAIs on
+a card. This is same as simple-audio-card.
 
-209e957b467b zd1211rw: Replace spin_is_locked() with lockdep
+For example, add I2S0 device as hw:X,0
+(and move SPDIF to hw:X,0 -> hw:X,1)
 
--- 
-https://patchwork.kernel.org/patch/10624325/
+sound {
+	compatible = "audio-graph-card";
+	label = "rockchip,rk3328";
+	dais = <&i2s0_p0
+		&spdif_p0>;
+};
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+&i2s0 {
+	status = "okay";
+	#sound-dai-cells = <0>;
 
+	i2s0_p0: port {
+		i2s0_p0_0: endpoint {
+			dai-format = "i2s";
+			remote-endpoint = <&some_codec_abcd>;
+		};
+	};
+};
+
+We should write special card driver for RK3328 sound if audio-graph-card
+is not enough to deal with HDMI audio.
+
+
+> On the side, it seems that extra codecs, such as the rock64 add-on board,
+> are easier dealt with by adding a separate simple-audio-card node to couple
+> the codec and i2s nodes.
+
+I think multiple DAIs on single card and single DAI on multiple cards
+are both OK to work. But I cannot decide the way for this issue.
+
+
+> 
+> ChenYu
+> 
+
+Regards,
+--
+Katsuhiro Suzuki
