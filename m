@@ -2,47 +2,46 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5481C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396F5C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA4120834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DA4120834
+	by mail.kernel.org (Postfix) with ESMTP id F376F20834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F376F20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbeJEUWz (ORCPT
+        id S1728859AbeJEUXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:22:55 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34114 "EHLO
+        Fri, 5 Oct 2018 16:23:00 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3582 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728473AbeJEUWx (ORCPT
+        by vger.kernel.org with ESMTP id S1728814AbeJEUW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:22:53 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DJ4MG012095;
-        Fri, 5 Oct 2018 15:23:33 +0200
+        Fri, 5 Oct 2018 16:22:59 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DIi8R003594;
+        Fri, 5 Oct 2018 15:23:36 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mv4mjkj19-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mv4kdbjhf-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Oct 2018 15:23:33 +0200
+        Fri, 05 Oct 2018 15:23:36 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 776763A;
-        Fri,  5 Oct 2018 13:23:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 51D062CC5;
-        Fri,  5 Oct 2018 13:23:32 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:32 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6921F31;
+        Fri,  5 Oct 2018 13:23:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4A4932CBE;
+        Fri,  5 Oct 2018 13:23:35 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
+ 15:23:35 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:31 +0200
+ 15:23:34 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -54,9 +53,9 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 09/24] mmc: mmci: add dma_error callback
-Date:   Fri, 5 Oct 2018 15:22:47 +0200
-Message-ID: <1538745782-27446-10-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V5 12/24] mmc: mmci: add datactrl block size variant property
+Date:   Fri, 5 Oct 2018 15:22:50 +0200
+Message-ID: <1538745782-27446-13-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
 References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
@@ -72,126 +71,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds dma_error callback at mmci_host_ops
-to allow to call specific variant.
+This patch allows to define a datactrl block size
+by variant, requested by STM32 sdmmc variant.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c          | 26 +++++++++++++++-----------
- drivers/mmc/host/mmci.h          |  2 ++
- drivers/mmc/host/mmci_qcom_dml.c |  1 +
- 3 files changed, 18 insertions(+), 11 deletions(-)
+ drivers/mmc/host/mmci.c | 13 +++++++++++--
+ drivers/mmc/host/mmci.h |  2 ++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 2d88f8c..657ec84 100644
+index e5cd199..aeefb6d 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -465,6 +465,15 @@ void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
- 		host->ops->dma_finalize(host, data);
- }
- 
-+void mmci_dma_error(struct mmci_host *host)
-+{
-+	if (!host->use_dma)
-+		return;
-+
-+	if (host->ops && host->ops->dma_error)
-+		host->ops->dma_error(host);
-+}
-+
- static void
- mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
- {
-@@ -627,11 +636,11 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
- 		     mmc_get_dma_dir(data));
- }
- 
--static void mmci_dma_data_error(struct mmci_host *host)
-+void mmci_dmae_error(struct mmci_host *host)
- {
- 	struct mmci_dmae_priv *dmae = host->dma_priv;
- 
--	if (!host->use_dma || !dma_inprogress(host))
-+	if (!dma_inprogress(host))
- 		return;
- 
- 	dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
-@@ -668,7 +677,7 @@ void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data)
- 	 * contiguous buffers.  On TX, we'll get a FIFO underrun error.
+@@ -51,6 +51,7 @@ static struct variant_data variant_arm = {
+ 	.fifosize		= 16 * 4,
+ 	.fifohalfsize		= 8 * 4,
+ 	.datalength_bits	= 16,
++	.datactrl_blocksz	= 11,
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.reversed_irq_handling	= true,
+@@ -64,6 +65,7 @@ static struct variant_data variant_arm_extended_fifo = {
+ 	.fifosize		= 128 * 4,
+ 	.fifohalfsize		= 64 * 4,
+ 	.datalength_bits	= 16,
++	.datactrl_blocksz	= 11,
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
+@@ -77,6 +79,7 @@ static struct variant_data variant_arm_extended_fifo_hwfc = {
+ 	.fifohalfsize		= 64 * 4,
+ 	.clkreg_enable		= MCI_ARM_HWFCEN,
+ 	.datalength_bits	= 16,
++	.datactrl_blocksz	= 11,
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
+@@ -91,6 +94,7 @@ static struct variant_data variant_u300 = {
+ 	.clkreg_enable		= MCI_ST_U300_HWFCEN,
+ 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
+ 	.datalength_bits	= 16,
++	.datactrl_blocksz	= 11,
+ 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
+ 	.st_sdio			= true,
+ 	.pwrreg_powerup		= MCI_PWR_ON,
+@@ -110,6 +114,7 @@ static struct variant_data variant_nomadik = {
+ 	.clkreg			= MCI_CLK_ENABLE,
+ 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
+ 	.datalength_bits	= 24,
++	.datactrl_blocksz	= 11,
+ 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
+ 	.st_sdio		= true,
+ 	.st_clkdiv		= true,
+@@ -132,6 +137,7 @@ static struct variant_data variant_ux500 = {
+ 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
+ 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
+ 	.datalength_bits	= 24,
++	.datactrl_blocksz	= 11,
+ 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
+ 	.st_sdio		= true,
+ 	.st_clkdiv		= true,
+@@ -159,6 +165,7 @@ static struct variant_data variant_ux500v2 = {
+ 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
+ 	.datactrl_mask_ddrmode	= MCI_DPSM_ST_DDRMODE,
+ 	.datalength_bits	= 24,
++	.datactrl_blocksz	= 11,
+ 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
+ 	.st_sdio		= true,
+ 	.st_clkdiv		= true,
+@@ -186,6 +193,7 @@ static struct variant_data variant_stm32 = {
+ 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
+ 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
+ 	.datalength_bits	= 24,
++	.datactrl_blocksz	= 11,
+ 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
+ 	.st_sdio		= true,
+ 	.st_clkdiv		= true,
+@@ -207,6 +215,7 @@ static struct variant_data variant_qcom = {
+ 	.data_cmd_enable	= MCI_CPSM_QCOM_DATCMD,
+ 	.blksz_datactrl4	= true,
+ 	.datalength_bits	= 24,
++	.datactrl_blocksz	= 11,
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 208000000,
+ 	.explicit_mclk_control	= true,
+@@ -1855,13 +1864,13 @@ static int mmci_probe(struct amba_device *dev,
+ 	/*
+ 	 * Block size can be up to 2048 bytes, but must be a power of two.
  	 */
- 	if (status & MCI_RXDATAAVLBLMASK) {
--		mmci_dma_data_error(host);
-+		mmci_dma_error(host);
- 		if (!data->error)
- 			data->error = -EIO;
- 	} else if (!data->host_cookie) {
-@@ -848,18 +857,13 @@ static struct mmci_host_ops mmci_variant_ops = {
- 	.dma_release = mmci_dmae_release,
- 	.dma_start = mmci_dmae_start,
- 	.dma_finalize = mmci_dmae_finalize,
-+	.dma_error = mmci_dmae_error,
- };
+-	mmc->max_blk_size = 1 << 11;
++	mmc->max_blk_size = 1 << variant->datactrl_blocksz;
  
- void mmci_variant_init(struct mmci_host *host)
- {
- 	host->ops = &mmci_variant_ops;
- }
--#else
--/* Blank functions if the DMA engine is not available */
--static inline void mmci_dma_data_error(struct mmci_host *host)
--{
--}
--
- #endif
+ 	/*
+ 	 * Limit the number of blocks transferred so that we don't overflow
+ 	 * the maximum request size.
+ 	 */
+-	mmc->max_blk_count = mmc->max_req_size >> 11;
++	mmc->max_blk_count = mmc->max_req_size >> variant->datactrl_blocksz;
  
- static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
-@@ -1031,7 +1035,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
- 		u32 remain, success;
+ 	spin_lock_init(&host->lock);
  
- 		/* Terminate the DMA transfer */
--		mmci_dma_data_error(host);
-+		mmci_dma_error(host);
- 
- 		/*
- 		 * Calculate how far we are into the transfer.  Note that
-@@ -1177,7 +1181,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
- 	if ((!sbc && !cmd->data) || cmd->error) {
- 		if (host->data) {
- 			/* Terminate the DMA transfer */
--			mmci_dma_data_error(host);
-+			mmci_dma_error(host);
- 
- 			mmci_stop_data(host);
- 		}
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 49274cb..45aad99 100644
+index e4bb527..3e7b729a 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -282,6 +282,7 @@ struct mmci_host_ops {
- 	void (*dma_release)(struct mmci_host *host);
- 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
- 	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
-+	void (*dma_error)(struct mmci_host *host);
- };
- 
- struct mmci_host {
-@@ -351,3 +352,4 @@ int mmci_dmae_setup(struct mmci_host *host);
- void mmci_dmae_release(struct mmci_host *host);
- int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl);
- void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data);
-+void mmci_dmae_error(struct mmci_host *host);
-diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-index 9725762..a669190 100644
---- a/drivers/mmc/host/mmci_qcom_dml.c
-+++ b/drivers/mmc/host/mmci_qcom_dml.c
-@@ -190,6 +190,7 @@ static struct mmci_host_ops qcom_variant_ops = {
- 	.dma_release = mmci_dmae_release,
- 	.dma_start = mmci_dmae_start,
- 	.dma_finalize = mmci_dmae_finalize,
-+	.dma_error = mmci_dmae_error,
- };
- 
- void qcom_variant_init(struct mmci_host *host)
+@@ -217,6 +217,7 @@ struct mmci_host;
+  * @blksz_datactrl4: true if Block size is at b4..b16 position in datactrl
+  *		     register
+  * @datactrl_mask_sdio: SDIO enable mask in datactrl register
++ * @datactrl_blksz: block size in power of two
+  * @pwrreg_powerup: power up value for MMCIPOWER register
+  * @f_max: maximum clk frequency supported by the controller.
+  * @signal_direction: input/out direction of bus signals can be indicated
+@@ -248,6 +249,7 @@ struct variant_data {
+ 	unsigned int		data_cmd_enable;
+ 	unsigned int		datactrl_mask_ddrmode;
+ 	unsigned int		datactrl_mask_sdio;
++	unsigned int		datactrl_blocksz;
+ 	u8			st_sdio:1;
+ 	u8			st_clkdiv:1;
+ 	u8			blksz_datactrl16:1;
 -- 
 2.7.4
 
