@@ -2,238 +2,117 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225A0C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAC2C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1C4C21477
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAC5720875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:00:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="COZmMJ3j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C4C21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RX0zh0Dr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC5720875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeJEOzp (ORCPT
+        id S1727955AbeJEO6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:55:45 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36252 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbeJEOzp (ORCPT
+        Fri, 5 Oct 2018 10:58:12 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:44039 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbeJEO6M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:55:45 -0400
-Received: by mail-it1-f195.google.com with SMTP id c85-v6so1567966itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 00:58:12 -0700 (PDT)
+        Fri, 5 Oct 2018 10:58:12 -0400
+Received: by mail-wr1-f51.google.com with SMTP id 63-v6so12511275wra.11;
+        Fri, 05 Oct 2018 01:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Sr2OqXWaIEdKx0yssianahuki0f82fZgdzSpIMK7NxM=;
-        b=COZmMJ3j0jr9xPEad6Y+IxQd0S1aVKN0hT1DGZhmVXfi2frQUk0SRx6UdXFeEF5scf
-         D4gaGaQBRcP08pQV/ozReh0Ad7RK1rFQwXnjSwWC6MsYLfyi2OzAPtKCWkIP11oLNy3/
-         uOYtnRo3AIGJYrgshRXR/NVaLF1krivsqqerg=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=I5oPy4mjIGt4RwQFWBs7Us1KKgazopWF7Za8lYqm7+Q=;
+        b=RX0zh0DreQUnpsOr7D2kGN3wlUOxdp/7Tfw/60176t+fme6XXe76p6ThurPy8hVgQC
+         QRW2H2ufbl6puHDcRGKpl51VeDdhEMTSIvJj+zN+tzZptSH66jzfg2h628hTqPVSzKgU
+         Dv4ueKHDMEyF1DQV0in1r6DaGYKKRqpQ/MhZrLPk6EjBPcjhokdTvWmONDY6ln4cziII
+         gFoHEAXu/1dJGP7FE4GrHnjfyKs0Ev2gYbOmotrCnhvwcZWPCsbL5epvNm4nfZk58kGM
+         utR3XN/odOpjxn7VaI4uOZ2jfK2Ce2znWqYt4VtY9y/WxzcJg0C8EVDfNF9JgaUwy5kL
+         n4Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Sr2OqXWaIEdKx0yssianahuki0f82fZgdzSpIMK7NxM=;
-        b=e2XHbxADqUAiQFOIwdRfxV74qzDNKvx9oJTGcuTWSTSslI0wHAq0vB1y9Bh+TrfS2m
-         863+dWd5IA7XG8x54Pd1zu+Ep69ocT2hWDcPydVP8BrzmWVLRz3lty46vMPIfcdqw02K
-         e5Yt8HUZis1HDhWbbsw0ZvWUvlswqWhG65BNyTNYMfBHzIKqe162qYUwOzF0Fapa214d
-         JQRH5a7shQZVkviZHpIyGJg80Ekw9MDcJ+LUwf2Lb3tyfUKpjS0cLcxrPANALVuIX5Mw
-         0RMBaiQzvhqtqL6ENILFbQzSKC92UN1f2p42A59woum7Yp+Xc0qKK3AzbotNta3S3fOl
-         Y9mw==
-X-Gm-Message-State: ABuFfogc6x21dwnJZaeVqDzDwtfhUtQ2Kvkg65VEqyE5NMIttUbXyjq6
-        4kS0FY6OuuF0WAVqkd5zlG61B0oxaTdLFkb+dsUnIQ==
-X-Google-Smtp-Source: ACcGV63QDxK/UsqYR9uqv7g4Kw1b+Aoqoq9pQDWwpkDS559NZnJgFkZ55DAUIIX0uGIIKhQ95mTpOQzP05UBFvfX0KQ=
-X-Received: by 2002:a02:590:: with SMTP id 16-v6mr8067384jal.70.1538726292258;
- Fri, 05 Oct 2018 00:58:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <1538642563-22465-1-git-send-email-narmstrong@baylibre.com>
- <20181004100958.GI31561@phenom.ffwll.local> <0ef7fa13-ce77-f8a5-f5f3-6568be3d6145@baylibre.com>
- <CAKMK7uHxiDF3z19cMBb0o2o4Ev0DFJkhMR7Ny6U2776Ry4oc=A@mail.gmail.com> <8e980de4-5a52-8f3d-fba2-734617e40d1b@baylibre.com>
-In-Reply-To: <8e980de4-5a52-8f3d-fba2-734617e40d1b@baylibre.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 5 Oct 2018 09:58:00 +0200
-Message-ID: <CAKMK7uE71OeOdDPb+5-cs9bByD-unYPxBV_R1t+4A0Nb4H6CAw@mail.gmail.com>
-Subject: Re: [PATCH] drm/meson: fix max mode_config height/width
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=I5oPy4mjIGt4RwQFWBs7Us1KKgazopWF7Za8lYqm7+Q=;
+        b=ATIMtZ3XHKUXZOSQOV2w5UyZLky+vWZpJKN0sv/9ASEL7bMvOztYzEy93Pdyu1IdpX
+         jKtWHf3xA0nEPI6jAmFEbpc/OokWlZmEA76NIr1U4mls2CnhB25n4uu69iqLpuKps+LY
+         o3iurOlXWwPtt4XfOfaiYDozY6vLbKIOKUXzz7kKrQBuywfQtgrExaYO2a8+7VAgfoXO
+         nKmgmHGYuemnUadDONTSO3lRxSOxckYE59LO2z83NwZzFX0gMtDACu4pG0D6/yJGKZE3
+         QO3qlh3VF1rYMEwLgRyv4faAuZRseIzD7zJHG2qUiyeLbHnC1+FG0EsgrEXh3TgoYKmH
+         jlhA==
+X-Gm-Message-State: ABuFfogsUfgTx6trzYaZYj1qTbghw8Upxhbf75p0f4DT0HLm8XI8LzWH
+        R/66fXTpn+joFV23LnNK8v0V81Ov
+X-Google-Smtp-Source: ACcGV614vgpE4cqFqzSp6G6S4/sZVldmxUHnHMffdF5FUYiLUoERLGkmeiK/1b3WjzHhgmqBCtmE2A==
+X-Received: by 2002:a5d:4c90:: with SMTP id z16-v6mr6797183wrs.239.1538726437475;
+        Fri, 05 Oct 2018 01:00:37 -0700 (PDT)
+Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.gmail.com with ESMTPSA id c184-v6sm1015118wma.15.2018.10.05.01.00.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 01:00:36 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     gregkh@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM changes for 4.19-rc7
+Date:   Fri,  5 Oct 2018 10:00:33 +0200
+Message-Id: <1538726433-17221-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 9:39 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> On 04/10/2018 20:10, Daniel Vetter wrote:
-> > On Thu, Oct 4, 2018 at 5:05 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >>
-> >> On 04/10/2018 12:09, Daniel Vetter wrote:
-> >>> On Thu, Oct 04, 2018 at 10:42:43AM +0200, Neil Armstrong wrote:
-> >>>> The mode_config max_width/max_height determines the maximum framebuffer
-> >>>> size the pixel reader can handle. But the values were set thinking they
-> >>>> were determining the maximum screen dimensions.
-> >>>>
-> >>>> This patch changes the values to the maximum height/width the CANVAS block
-> >>>> can handle rounded to some coherent values.
-> >>>>
-> >>>> Fixes: a41e82e6c457 ("drm/meson: Add support for components")
-> >>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> >>>
-> >>> It's both. Grep for all the callers of ->fill_modes and you'll see that
-> >>> this limit is also used to filter max screen sizes.
-> >>>
-> >>> If you want to change this, then I think we need a new
-> >>> mode_config.fb_max_width/height, which if non-zero, would extend the limit
-> >>> for fbs.
-> >>>
-> >>> There's also the problem that if you extend this for fbs, then there's no
-> >>> check anymore in the atomic_commit paths (or legacy modeset), so that
-> >>> needs to be addressed somehow too.
-> >>
-> >> What about adding optionals mode_config.fb_max_width/height and update
-> >> drm_internal_framebuffer_create() to use these if non-0 or fallback
-> >> to the mode_config max_width/max_height.
-> >
-> > That's what I meant. Except you also need to then fix the gap you've
-> > opened in atomic_check, and validate the mode size against
-> > mode_config.max_width/height.
->
-> OK, won't this be enough ?
-> --- a/include/drm/drm_mode_config.h
-> +++ b/include/drm/drm_mode_config.h
-> @@ -333,6 +333,8 @@ struct drm_mode_config_funcs {
->   * @min_height: minimum fb pixel height on this device
->   * @max_width: maximum fb pixel width on this device
->   * @max_height: maximum fb pixel height on this device
-> + * @max_fb_width: maximum fb buffer width if differs from max_width
-> + * @max_fb_height: maximum fb buffer height if differs from max_height
->   * @funcs: core driver provided mode setting functions
->   * @fb_base: base address of the framebuffer
->   * @poll_enabled: track polling support for this device
-> @@ -508,6 +510,7 @@ struct drm_mode_config {
->
->         int min_width, min_height;
->         int max_width, max_height;
-> +       int max_fb_width, max_fb_height;
->         const struct drm_mode_config_funcs *funcs;
->         resource_size_t fb_base;
->
-> --- a/drivers/gpu/drm/drm_framebuffer.c
-> +++ b/drivers/gpu/drm/drm_framebuffer.c
-> @@ -283,14 +283,20 @@ drm_internal_framebuffer_create(struct drm_device *dev,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       if ((config->min_width > r->width) || (r->width > config->max_width)) {
-> +       if ((config->min_width > r->width) ||
-> +           (!config->max_fb_width && r->width > config->max_width) ||
-> +           (config->max_fb_width && r->width > config->max_fb_width)) {
->                 DRM_DEBUG_KMS("bad framebuffer width %d, should be >= %d && <= %d\n",
-> -                         r->width, config->min_width, config->max_width);
-> +                         r->width, config->min_width, config->max_fb_width ?
-> +                         config->max_fb_width : config->max_width);
->                 return ERR_PTR(-EINVAL);
->         }
-> -       if ((config->min_height > r->height) || (r->height > config->max_height)) {
-> +       if ((config->min_height > r->height) ||
-> +           (!config->max_fb_height && r->height > config->max_height) ||
-> +           (config->max_fb_height && r->height > config->max_fb_height)) {
->                 DRM_DEBUG_KMS("bad framebuffer height %d, should be >= %d && <= %d\n",
-> -                         r->height, config->min_height, config->max_height);
-> +                         r->height, config->min_height, config->max_fb_height ?
-> +                         config->max_fb_height : config->max_height);
->                 return ERR_PTR(-EINVAL);
->         }
->
-> and in the driver :
->
-> +       drm->mode_config.max_width = 4096;
-> +       drm->mode_config.max_height = 3840;
-> +       drm->mode_config.max_fb_width = 16384;
-> +       drm->mode_config.max_fb_height = 8192;
->
-> With this I leave the mode filtering intact.
+Greg,
 
-Not enough. See
-https://dri.freedesktop.org/docs/drm/gpu/drm-kms-helpers.html#c.drm_connector_helper_funcs
-and scroll down to mode_valid. You need to filter modes both in the
-detect paths, and the atomic_check paths.
+The following changes since commit a27fb6d983c7b5bb0129ae4d7a7c81758173bfab:
 
-Detect is explicitly filtered out, but atomic_check was only
-implicitly filtered, through the max fb size checks. Ok, you could
-light up a mode that's bigger than max fb, but in practice, no
-userspace ever did that. But with your code we're missing crucial
-validation now, and userspace could fall over that. What I think we
-need is to add mode filter against mode_config.max_width/height in
-drm_atomic_helper_check_modeset(). Probably best to stuff that into
-the mode_valid() function.
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2018-09-21 16:21:42 +0200)
 
-Cheers, Daniel
->
-> Neil
->
->
-> > -Daniel
-> >
-> >>
-> >> Neil
-> >>
-> >>>
-> >>> Bunch of igt to make sure we're not missing anything would be sweet on
-> >>> top, e.g. e.g. trying to set a mode over the limit and making sure it
-> >>> fails.
-> >>>
-> >>> Cheers, Daniel
-> >>>
-> >>>> ---
-> >>>>  drivers/gpu/drm/meson/meson_drv.c | 4 ++--
-> >>>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> >>>> index d344312..2e29968 100644
-> >>>> --- a/drivers/gpu/drm/meson/meson_drv.c
-> >>>> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> >>>> @@ -243,8 +243,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
-> >>>>              goto free_drm;
-> >>>>
-> >>>>      drm_mode_config_init(drm);
-> >>>> -    drm->mode_config.max_width = 3840;
-> >>>> -    drm->mode_config.max_height = 2160;
-> >>>> +    drm->mode_config.max_width = 16384;
-> >>>> +    drm->mode_config.max_height = 8192;
-> >>>>      drm->mode_config.funcs = &meson_mode_config_funcs;
-> >>>>
-> >>>>      /* Hardware Initialization */
-> >>>> --
-> >>>> 2.7.4
-> >>>>
-> >>>> _______________________________________________
-> >>>> dri-devel mailing list
-> >>>> dri-devel@lists.freedesktop.org
-> >>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >>>
-> >>
-> >> _______________________________________________
-> >> dri-devel mailing list
-> >> dri-devel@lists.freedesktop.org
-> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >
-> >
-> >
->
+are available in the git repository at:
 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to cc906f07d7d569a30bb6f0baf8f80b2968353dc9:
+
+  Merge tag 'kvm-ppc-fixes-4.19-3' of git://git.kernel.org/pub/scm/linux/kernel/git/paulus/powerpc into kvm-master (2018-10-05 09:39:53 +0200)
+
+----------------------------------------------------------------
+
+x86 and PPC bugfixes, mostly introduced in 4.19-rc1.
+
+----------------------------------------------------------------
+Liran Alon (3):
+      KVM: nVMX: Do not expose MPX VMX controls when guest MPX disabled
+      KVM: x86: Do not use kvm_x86_ops->mpx_supported() directly
+      KVM: nVMX: Fix emulation of VM_ENTRY_LOAD_BNDCFGS
+
+Paolo Bonzini (4):
+      KVM: x86: never trap MSR_KERNEL_GS_BASE
+      KVM: VMX: hide flexpriority from guest when disabled at the module level
+      kvm: nVMX: fix entry with pending interrupt if APICv is enabled
+      Merge tag 'kvm-ppc-fixes-4.19-3' of git://git.kernel.org/.../paulus/powerpc into kvm-master
+
+Paul Mackerras (1):
+      KVM: PPC: Book3S HV: Avoid crash from THP collapse during radix page fault
+
+Sean Christopherson (2):
+      KVM: x86: fix L1TF's MMIO GFN calculation
+      KVM: VMX: check for existence of secondary exec controls before accessing
+
+Stefan Raspl (1):
+      tools/kvm_stat: cut down decimal places in update interval dialog
+
+ arch/powerpc/kvm/book3s_64_mmu_radix.c |  10 +++
+ arch/x86/kvm/mmu.c                     |  24 +++++-
+ arch/x86/kvm/vmx.c                     | 137 ++++++++++++++++++---------------
+ arch/x86/kvm/x86.c                     |   2 +-
+ tools/kvm/kvm_stat/kvm_stat            |   2 +-
+ 5 files changed, 108 insertions(+), 67 deletions(-)
