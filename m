@@ -6,50 +6,53 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 158BCC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E52C65BD0
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C370A21477
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:06:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C370A21477
+	by mail.kernel.org (Postfix) with ESMTP id BBD2021473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD2021473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbeJFGHC (ORCPT
+        id S1729093AbeJFGHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 02:07:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54254 "EHLO
+        Sat, 6 Oct 2018 02:07:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbeJFGHC (ORCPT
+        with ESMTP id S1728088AbeJFGHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 02:07:02 -0400
+        Sat, 6 Oct 2018 02:07:14 -0400
 Received: from localhost (unknown [104.153.224.168])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D41E8566E;
-        Fri,  5 Oct 2018 23:06:08 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 16:06:00 -0700
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3C44566E;
+        Fri,  5 Oct 2018 23:06:20 +0000 (UTC)
+Date:   Fri, 5 Oct 2018 16:06:13 -0700
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] sound fixes for 4.19-rc7
-Message-ID: <20181005230600.GA22896@kroah.com>
-References: <s5h4le07mcq.wl-tiwai@suse.de>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] locking fixes
+Message-ID: <20181005230613.GB22896@kroah.com>
+References: <20181005093647.GA52472@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <s5h4le07mcq.wl-tiwai@suse.de>
+In-Reply-To: <20181005093647.GA52472@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 11:51:17AM +0200, Takashi Iwai wrote:
+On Fri, Oct 05, 2018 at 11:36:47AM +0200, Ingo Molnar wrote:
 > Greg,
 > 
-> please pull sound fixes for v4.19-rc7 from:
+> Please pull the latest locking-urgent-for-linus git tree from:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.19-rc7
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
 
 Now merged, thanks.
 
