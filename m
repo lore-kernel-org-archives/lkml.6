@@ -2,118 +2,90 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8304EC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1ACC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0DB2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0DB2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
+	by mail.kernel.org (Postfix) with ESMTP id 897302084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:24:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gi+DDpld"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897302084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbeJERUt (ORCPT
+        id S1727878AbeJERWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:20:49 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:48739 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbeJERUt (ORCPT
+        Fri, 5 Oct 2018 13:22:43 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52202 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbeJERWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:20:49 -0400
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:61192 helo=[192.168.10.175])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1g8NFl-0004Ol-Qi; Fri, 05 Oct 2018 12:22:37 +0200
-Subject: Re: [PATCH] drm/imx: move 'legacyfb_depth' definition out of #ifdef
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>, tzimmermann@suse.de,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181002205836.2323084-1-arnd@arndb.de>
- <123f7e1c-8f2b-5797-de16-650ec01d0b24@tronnes.org>
- <20181003161326.GD31561@phenom.ffwll.local>
- <CAK8P3a1gKxXEthLvUxSxOrt6+1qzZE9Jba+vH_qFepv3KXba9g@mail.gmail.com>
- <CAKMK7uFn=u+04=HQvzkSNdE8_9p=3eX14-h=0nOJ7QKPJSrdmw@mail.gmail.com>
- <af5994a3-5739-ed7f-4374-85e9d19d2408@tronnes.org>
- <CAK8P3a1fzr9kX4kNcAnM4ZPh_-Kp61326zrbhDjHyPJJrJq=OQ@mail.gmail.com>
- <20181004193543.GQ31561@phenom.ffwll.local>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <6b77a97b-59d6-a881-b7ab-baf14c4dc482@tronnes.org>
-Date:   Fri, 5 Oct 2018 12:22:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 5 Oct 2018 13:22:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZYX+zoljw6FLZWp7ebzRfQsxvvNeDL1RIUspnNkZTiE=; b=gi+DDpldXv8v6IJcxUdjqlDe/
+        3yP7alK0ecgSMeZfbBNgf15PYa7qx0IzqrGyOGgrud0PyOHaE1zRikp4tzFsd5Igrhrb6QyRsXZRT
+        B6BEOmgpEseoZoZM+Yi+HSPlvQ49oap1LKmcHQPD15miN0+/v+vujbq2MfPVECaO8RWdg=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:50927)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1g8NHS-0003Td-ND; Fri, 05 Oct 2018 11:24:22 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1g8NHM-00089u-Vk; Fri, 05 Oct 2018 11:24:17 +0100
+Date:   Fri, 5 Oct 2018 11:24:13 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Manjeet Pawar <manjeet.p@samsung.com>
+Cc:     ebiederm@xmission.com, arnd@arndb.de, akpm@linux-foundation.org,
+        mhiramat@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        pankaj.m@samsung.com, a.sahrawat@samsung.com,
+        Rohit Thapliyal <r.thapliyal@samsung.com>
+Subject: Re: [PATCH] traps:Recover undefined user instruction on ARM
+Message-ID: <20181005102412.GI30658@n2100.armlinux.org.uk>
+References: <CGME20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba@epcas5p3.samsung.com>
+ <20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba~anUhv_CDP0965009650epcas5p34@epcas5p3.samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20181004193543.GQ31561@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba~anUhv_CDP0965009650epcas5p34@epcas5p3.samsung.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 05, 2018 at 10:15:57AM +0530, Manjeet Pawar wrote:
+> From: Rohit Thapliyal <r.thapliyal@samsung.com> 
+> 
+> During user undefined instruction exception, the arm exception
+> handler currently results in application crash through SIGILL.
+> The bad instruction can be due to ddr/hardware issue.
+> For such cases, exception trap handler could try to recover the corrupted
+> text by clearing pagetable entry of undefined instruction pc and trying to fetch
+> the instruction opcode by generating major page fault.
+> Resulting in loading the page with correct instruction from mapped file.
+> If there is no error in root filesystem i.e. the opcode is intact
+> in file, then filemap fault shall be able to recover
+> the instruction and continue execution normally instead of crashing.
 
-Den 04.10.2018 21.35, skrev Daniel Vetter:
-> On Thu, Oct 04, 2018 at 05:04:21PM +0200, Arnd Bergmann wrote:
->> On Thu, Oct 4, 2018 at 4:43 PM Noralf Trønnes <noralf@tronnes.org> wrote:
->>> Den 04.10.2018 09.48, skrev Daniel Vetter:
->>>> On Wed, Oct 3, 2018 at 9:51 PM Arnd Bergmann <arnd@arndb.de> wrote:
->>>>> On Wed, Oct 3, 2018 at 6:13 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->>>>>> On Wed, Oct 03, 2018 at 05:49:32PM +0200, Noralf Trønnes wrote:
->>>>>>> Den 02.10.2018 22.58, skrev Arnd Bergmann:
->>>>>>>> The variable is now referenced unconditionally, but still
->>>>>>>> declared in an #ifdef:
->>>>>>>>
->>>>>>>> drivers/gpu/drm/imx/imx-drm-core.c: In function 'imx_drm_bind':
->>>>>>>> drivers/gpu/drm/imx/imx-drm-core.c:264:6: error: 'legacyfb_depth' undeclared (first use in this function); did you mean 'lockdep_depth'?
->>>>>>>>
->>>>>>>> Remove the #ifdef so it can always be accessed.
->>>>>>>>
->>>>>>>> Fixes: f53705fd9803 ("drm/imx: Use drm_fbdev_generic_setup()")
->>>>>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>>>>>>> ---
->>>>>>> I've already applied the previous one you sent:
->>>>>>> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=064b06bbf117f8b5e64a5143e970d5a1cf602fd6
->>>>>>>
->>>>>>> Not sure when it reaches linux-next now that we are past rc6.
->>>>>> Only once we're past -rc1.
->>>>> Can we revert f53705fd9803 in linux-next then to prevent the regression from
->>>>> making it into 4.20?
->>>> Probably simpler to cherry pick the fix from drm-misc-next to
->>>> drm-misc-next-fixes. Noralf, can you pls do that?
->>> Would this be the correct procudure:
->>>
->>>       dim update-branches
->>>       dim create-workdir drm-misc-next-fixes
->>>       <build>
->>>       CONFIG_DRM_FBDEV_EMULATION=n
->>>       <build will break>
->>>       git cherry-pick 064b06bbf117f8b5e64a5143e970d5a1cf602fd6
->>>       <build passes>
->>>       dim push-branch drm-misc-next-fixes
->>>
->>> I read that cherry picking creates a new commit with a new hash.
->>> But since you ask me to do this, I assume git will handle this when
->>> branches are merged?
->> The git history will show both commit IDs, which is a bit ugly but
->> ok if it's rare enough. There is a chance for creating a conflict if the
->> backport changes context, or one branch contains extra changes
->> that touch the same lines, but usually this is not a problem.
-> +1, and your recipe looks good too. drm-intel works entirely on these
-> cherry-picks, and we've done it a few times in drm-misc too. Having to
-> cherry-pick is one of the downsides of group maintainership, since you
-> really can't rebase trees at will. Definitely not the -next queue.
+For the reasons others have pointed out in previous replies, I will not
+merge this patch or anything similar to this for mainline.  The only
+sane solution to the above problem is to fix the hardware or the
+hardware timings so that DDR access is reliable.
 
-The patch is now in drm-misc-next-fixes.
-Thanks for helping me fix this fallout.
+Sorry.
 
-Noralf.
-
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
