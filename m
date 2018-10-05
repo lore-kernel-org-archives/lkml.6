@@ -2,154 +2,108 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D94C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42223C65BBE
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB0F21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:55:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB0F21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0484D213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:55:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rHVeWN1U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0484D213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbeJFDz6 (ORCPT
+        id S1729190AbeJFDz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 23:55:58 -0400
-Received: from mga06.intel.com ([134.134.136.31]:1454 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbeJFDz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 23:55:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 13:55:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,346,1534834800"; 
-   d="scan'208";a="263254396"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.132])
-  by orsmga005.jf.intel.com with ESMTP; 05 Oct 2018 13:55:28 -0700
-From:   thor.thayer@linux.intel.com
-To:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-        aisheng.dong@nxp.com, sboyd@kernel.org
-Cc:     vivek.gautam@codeaurora.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv4 1/2] arm64: dts: stratix10: Add Stratix10 SMMU support
-Date:   Fri,  5 Oct 2018 15:56:59 -0500
-Message-Id: <1538773020-27784-2-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538773020-27784-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1538773020-27784-1-git-send-email-thor.thayer@linux.intel.com>
+        Fri, 5 Oct 2018 23:55:59 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36445 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbeJFDz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 23:55:59 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34-v6so15280087qth.3;
+        Fri, 05 Oct 2018 13:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v+pb5d9zHeFESKORGf2Uf3DDrXJWJO+Z9Eh3VLscf7A=;
+        b=rHVeWN1UoXlHDDdiWfnioepptpbbyfD/CRS52JKJOocZ3s1sZqRsSEAoWPwU6E91r0
+         hEmXePwI6e6eWHwytq8wX4dCtBla0mW7pO/kAXZusQ/gvWAmWW3QmRnL5wlphtDMCAtK
+         fizHo3RiFwovdUIVzq5bj+Nol0KNCttlCAWAoiW/ed4ViHYBi/hEvsCy6iiAY7HpqyXf
+         HENqU/mECnHzI9BIWOHeMVwpKyO+65z+CKYjYHMq0KaHG9MbS+VSovjocPaIyGxvUw+x
+         SlGifA6b9h0CX3W87jKhxTDw8NyLVj5uMZ26ajG+XVue+LoLJ/BRHF1WCPaTKcc+2LYS
+         Lrxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v+pb5d9zHeFESKORGf2Uf3DDrXJWJO+Z9Eh3VLscf7A=;
+        b=qVJ+Dp4Tg/d3OjG6SlLfjrRdHiMOLk9xCQQTKS3rEEuHbPkEiUnUo5vsFNXSYVtHMJ
+         ttHssqQsrvfVAXUCohcDEgB9q+uMug/Rdtq8oA+rwqNJRssV7TrncvxZqtD6p40wMpKk
+         B3b2EU8WQUMQ2ZczDZFb9l/obVc+uiu7Vs3SYE4j77hkIYF5Juxwutx6Y1fi2fXCvUp9
+         KIZ4toUekvdjhtnhpco1Dwm78vfIjrlmSpt/3xHfoyKCc1bInMQYdEfC00cGvrcrcsJO
+         jbeQ4uRK7KTtJp7e7IvPLrWz2pjl482VbVoS53GRdphLqm/snBUOJsbJcg2XCaN88VS2
+         hB9g==
+X-Gm-Message-State: ABuFfoiT6JGqsf2dxz3U8FFGQDjZ+HEwIIqC2ss29/HpBK8FygaAog+2
+        aO9YvFbJDXUwcf5kgGX1LvE=
+X-Google-Smtp-Source: ACcGV60oenxTY4Parc9elUzGRVl5/Y0F+UGMvD2XQWuC3e4fYSeEq+QGFiLuCQJSThse3EjanP7Yzw==
+X-Received: by 2002:ac8:3775:: with SMTP id p50-v6mr10588278qtb.220.1538772932516;
+        Fri, 05 Oct 2018 13:55:32 -0700 (PDT)
+Received: from gandalf.middle.earth.net (pool-173-48-133-32.bstnma.fios.verizon.net. [173.48.133.32])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm4503088qtu.90.2018.10.05.13.55.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 13:55:31 -0700 (PDT)
+From:   "George G. Davis" <ggdavisiv@gmail.com>
+X-Google-Original-From: "George G. Davis" <george_davis@mentor.com>
+Date:   Fri, 5 Oct 2018 16:55:29 -0400
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "George G. Davis" <george_davis@mentor.com>
+Subject: Re: [PATCH] i2c: core: squelch error: uninitialized symbol 'ret'
+Message-ID: <20181005205529.GA3332@gandalf.middle.earth.net>
+References: <20181005161826.2455-1-george_davis@mentor.com>
+ <20181005162841.wy4uyespwcvffkpc@ninjato>
+ <20181005164520.GA2617@gandalf.middle.earth.net>
+ <20181005174301.GA964@kunai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005174301.GA964@kunai>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On Fri, Oct 05, 2018 at 07:43:01PM +0200, Wolfram Sang wrote:
+> 
+> > Feel free to ignore if this is a topic already discussed in other
+> > threads. To be honest, I did not search the mailing list to determine if
+> > this particular issue was already discussed.  
+> 
+> Not this particular issue, but in general we usually don't change
+> working code to silence false positives in code checkers.
 
-Add SMMU support to the Stratix10 Device Tree which
-includes adding the SMMU node and adding IOMMU stream
-ids to the SMMU peripherals.
+Ok.
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v4  Add clock-name since clk_bulk_get() needs name
-    for clock.
-v3  Remove bindings changes since not adding new structure.
-    Remove new compatible string - use default "arm,mmu-500"
-v2  Add bindings changes and compatible string for SOCFPGA.
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 29 +++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+> But thanks for letting me know this is a false positive!
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index d033da401c26..f58f7601ab88 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -137,6 +137,7 @@
- 			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
- 			clock-names = "stmmaceth";
-+			iommus = <&smmu 1>;
- 			status = "disabled";
- 		};
- 
-@@ -150,6 +151,7 @@
- 			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
- 			clock-names = "stmmaceth";
-+			iommus = <&smmu 2>;
- 			status = "disabled";
- 		};
- 
-@@ -163,6 +165,7 @@
- 			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
- 			clock-names = "stmmaceth";
-+			iommus = <&smmu 3>;
- 			status = "disabled";
- 		};
- 
-@@ -273,6 +276,7 @@
- 			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
- 				 <&clkmgr STRATIX10_SDMMC_CLK>;
- 			clock-names = "biu", "ciu";
-+			iommus = <&smmu 5>;
- 			status = "disabled";
- 		};
- 
-@@ -307,6 +311,29 @@
- 			altr,modrst-offset = <0x20>;
- 		};
- 
-+		smmu: iommu@fa000000 {
-+			compatible = "arm,mmu-500", "arm,smmu-v2";
-+			reg = <0xfa000000 0x40000>;
-+			#global-interrupts = <2>;
-+			#iommu-cells = <1>;
-+			clocks = <&clkmgr STRATIX10_L4_MAIN_CLK>;
-+			clock-names = "iommu";
-+			interrupt-parent = <&intc>;
-+			interrupts = <0 128 4>,	/* Global Secure Fault */
-+				<0 129 4>, /* Global Non-secure Fault */
-+				/* Non-secure Context Interrupts (32) */
-+				<0 138 4>, <0 139 4>, <0 140 4>, <0 141 4>,
-+				<0 142 4>, <0 143 4>, <0 144 4>, <0 145 4>,
-+				<0 146 4>, <0 147 4>, <0 148 4>, <0 149 4>,
-+				<0 150 4>, <0 151 4>, <0 152 4>, <0 153 4>,
-+				<0 154 4>, <0 155 4>, <0 156 4>, <0 157 4>,
-+				<0 158 4>, <0 159 4>, <0 160 4>, <0 161 4>,
-+				<0 162 4>, <0 163 4>, <0 164 4>, <0 165 4>,
-+				<0 166 4>, <0 167 4>, <0 168 4>, <0 169 4>;
-+			stream-match-mask = <0x7ff0>;
-+			status = "disabled";
-+		};
-+
- 		spi0: spi@ffda4000 {
- 			compatible = "snps,dw-apb-ssi";
- 			#address-cells = <1>;
-@@ -416,6 +443,7 @@
- 			resets = <&rst USB0_RESET>, <&rst USB0_OCP_RESET>;
- 			reset-names = "dwc2", "dwc2-ecc";
- 			clocks = <&clkmgr STRATIX10_USB_CLK>;
-+			iommus = <&smmu 6>;
- 			status = "disabled";
- 		};
- 
-@@ -428,6 +456,7 @@
- 			resets = <&rst USB1_RESET>, <&rst USB1_OCP_RESET>;
- 			reset-names = "dwc2", "dwc2-ecc";
- 			clocks = <&clkmgr STRATIX10_USB_CLK>;
-+			iommus = <&smmu 7>;
- 			status = "disabled";
- 		};
- 
--- 
-2.7.4
+No worries. Thanks for having a look.
 
+> BTW next time CC Dan Carpenter, he might be interested to fix the issue
+> in smatch.
+
+I'll try to remember this in the future.
+
+Thanks again!
+
+--
+Regards,
+George
