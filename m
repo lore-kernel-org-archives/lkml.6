@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF484C65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D25C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ABCF2148C
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD4D3214C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjamBQME"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ABCF2148C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YG5bT/gz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4D3214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbeJEXRE (ORCPT
+        id S1730272AbeJEXRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:17:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55440 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:17:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728519AbeJEXRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:17:04 -0400
+        id S1728519AbeJEXRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:17:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27554214C1;
-        Fri,  5 Oct 2018 16:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16616214C3;
+        Fri,  5 Oct 2018 16:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756260;
-        bh=g85A6c+yJLTRvdx3id8M2xrTJ71IsPVqEnkWXBEhvB4=;
+        s=default; t=1538756261;
+        bh=mREfsZig+VL81srNjz9zMXi8F6TgzFKbqZO5WmfCyww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjamBQMEZBBhEV/DqOHpMM1cxJ51kZuq8HlcB4Fap1IqZo5M3bGt8uL7DSxCXcm+p
-         +nBuYQ5GQ4DlN2VPWAJcbnzu1fGdQwH4fysnao8UcpXRzf+IUr0u6mldHJyt44HF8T
-         ozKAmT2SX20z2tP0wAaZNJgg1ToQeIy2ttzA8IfY=
+        b=YG5bT/gzmh6SviS4x6gwdFAqjBL3x18LwV+zFj1NikJfJkvFQGCnTk6PAlNoa3B3O
+         focvi7pLYh+BBkOA0NxmT0gFsst5Ig927nfdorDlXcek66M4jvnRy2QbaowyEcU9oX
+         dLh5fTJnBhSuAns4vrkPuUe6FBkXx9+Eoi6n4g1c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Danny Smith <danny.smith@axis.com>, Danny Smith <dannys@axis.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Lei Yang <Lei.Yang@windriver.com>, Shuah Khan <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 02/11] ASoC: sigmadsp: safeload should not have lower byte limit
-Date:   Fri,  5 Oct 2018 12:17:27 -0400
-Message-Id: <20181005161736.20765-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 03/11] selftests/efivarfs: add required kernel configs
+Date:   Fri,  5 Oct 2018 12:17:28 -0400
+Message-Id: <20181005161736.20765-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161736.20765-1-sashal@kernel.org>
 References: <20181005161736.20765-1-sashal@kernel.org>
@@ -52,35 +51,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Danny Smith <danny.smith@axis.com>
+From: Lei Yang <Lei.Yang@windriver.com>
 
-[ Upstream commit 5ea752c6efdf5aa8a57aed816d453a8f479f1b0a ]
+[ Upstream commit 53cf59d6c0ad3edc4f4449098706a8f8986258b6 ]
 
-Fixed range in safeload conditional to allow safeload to up to 20 bytes,
-without a lower limit.
+add config file
 
-Signed-off-by: Danny Smith <dannys@axis.com>
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/codecs/sigmadsp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/testing/selftests/efivarfs/config | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 tools/testing/selftests/efivarfs/config
 
-diff --git a/sound/soc/codecs/sigmadsp.c b/sound/soc/codecs/sigmadsp.c
-index d53680ac78e4..6df158669420 100644
---- a/sound/soc/codecs/sigmadsp.c
-+++ b/sound/soc/codecs/sigmadsp.c
-@@ -117,8 +117,7 @@ static int sigmadsp_ctrl_write(struct sigmadsp *sigmadsp,
- 	struct sigmadsp_control *ctrl, void *data)
- {
- 	/* safeload loads up to 20 bytes in a atomic operation */
--	if (ctrl->num_bytes > 4 && ctrl->num_bytes <= 20 && sigmadsp->ops &&
--	    sigmadsp->ops->safeload)
-+	if (ctrl->num_bytes <= 20 && sigmadsp->ops && sigmadsp->ops->safeload)
- 		return sigmadsp->ops->safeload(sigmadsp, ctrl->addr, data,
- 			ctrl->num_bytes);
- 	else
+diff --git a/tools/testing/selftests/efivarfs/config b/tools/testing/selftests/efivarfs/config
+new file mode 100644
+index 000000000000..4e151f1005b2
+--- /dev/null
++++ b/tools/testing/selftests/efivarfs/config
+@@ -0,0 +1 @@
++CONFIG_EFIVAR_FS=y
 -- 
 2.17.1
 
