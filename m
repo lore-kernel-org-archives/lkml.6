@@ -2,126 +2,246 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB415C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE83DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A35A2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:55:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A35A2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 56784208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:57:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWfElCBa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56784208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbeJEVyy (ORCPT
+        id S1728970AbeJEV4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:54:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38380 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 17:56:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbeJEVyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:54:54 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728139AbeJEV4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 17:56:21 -0400
+Received: from localhost (unknown [171.76.113.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BC462C0624CB;
-        Fri,  5 Oct 2018 14:55:49 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BA6743FDE;
-        Fri,  5 Oct 2018 14:55:47 +0000 (UTC)
-Subject: Re: [PATCH v4 0/3] fs/dcache: Track # of negative dentries
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <1536773742-32687-1-git-send-email-longman@redhat.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7054d7fe-5385-c743-b2ea-595e5988799f@redhat.com>
-Date:   Fri, 5 Oct 2018 10:55:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E5DD2087D;
+        Fri,  5 Oct 2018 14:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538751436;
+        bh=Ix187GGKnCEDlKhxWBFXrPisDyj/oL7GiNM1QlZRNUU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QWfElCBaHR7yMwBGMpTzjVVCQfe+MnPXcyqS+aXL10QG2Gk9rkWRSYO7NLmQF0/FO
+         ZjRUUwuIvrC8UMqqqv+nI1Wl5q0p+z5kApORWuV4ZR0qqPri80XzYfporocen0bQ5M
+         iGr20pQGG/hoOrNwV2+vv/z+C9v038va16LxHzKk=
+Date:   Fri, 5 Oct 2018 20:27:06 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     dmaengine@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/2] dmaengine: uniphier-mdmac: add UniPhier MIO DMAC
+ driver
+Message-ID: <20181005145706.GM2372@vkoul-mobl>
+References: <1536799869-10643-1-git-send-email-yamada.masahiro@socionext.com>
+ <1536799869-10643-3-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <1536773742-32687-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 05 Oct 2018 14:55:50 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536799869-10643-3-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 01:35 PM, Waiman Long wrote:
->  v3->v4:
->   - Drop patch 4 as it is just a minor optimization.
->   - Add a cc:stable tag to patch 1.
->   - Clean up some comments in patch 3.
->
->  v2->v3:
->   - With confirmation that the dummy array in dentry_stat structure
->     was never a replacement of a previously used field, patch 3 is now
->     reverted back to use one of dummy field as the negative dentry count
->     instead of adding a new field.
->
->  v1->v2:
->   - Clarify what the new nr_dentry_negative per-cpu counter is tracking
->     and open-code the increment and decrement as suggested by Dave Chinner.
->   - Append the new nr_dentry_negative count as the 7th element of dentry-state
->     instead of replacing one of the dummy entries.
->   - Remove patch "fs/dcache: Make negative dentries easier to be
->     reclaimed" for now as I need more time to think about what
->     to do with it.
->   - Add 2 more patches to address issues found while reviewing the
->     dentry code.
->   - Add another patch to change the conditional branch of
->     nr_dentry_negative accounting to conditional move so as to reduce
->     the performance impact of the accounting code.
->
-> This patchset addresses 2 issues found in the dentry code and adds a
-> new nr_dentry_negative per-cpu counter to track the total number of
-> negative dentries in all the LRU lists.
->
-> Patch 1 fixes a bug in the accounting of nr_dentry_unused in
-> shrink_dcache_sb().
->
-> Patch 2 removes the ____cacheline_aligned_in_smp tag from super_block
-> LRU lists.
->
-> Patch 3 adds the new nr_dentry_negative per-cpu counter.
->
-> Various filesystem related tests were run and no statistically
-> significant changes in performance outside of the possible noise range
-> was observed.
->
-> Waiman Long (3):
->   fs/dcache: Fix incorrect nr_dentry_unused accounting in
->     shrink_dcache_sb()
->   fs: Don't need to put list_lru into its own cacheline
->   fs/dcache: Track & report number of negative dentries
->
->  Documentation/sysctl/fs.txt | 26 ++++++++++++++++----------
->  fs/dcache.c                 | 38 +++++++++++++++++++++++++++++++++-----
->  include/linux/dcache.h      |  7 ++++---
->  include/linux/fs.h          |  9 +++++----
->  4 files changed, 58 insertions(+), 22 deletions(-)
->
-Any comments on these patches. The first one actually is a bug fix.
+On 13-09-18, 09:51, Masahiro Yamada wrote:
 
-Cheers,
-Longman
+> +#define UNIPHIER_MDMAC_CH_IRQ_STAT	0x010	// current hw status (RO)
+> +#define UNIPHIER_MDMAC_CH_IRQ_REQ	0x014	// latched STAT (WOC)
+> +#define UNIPHIER_MDMAC_CH_IRQ_EN	0x018	// IRQ enable mask
+> +#define UNIPHIER_MDMAC_CH_IRQ_DET	0x01c	// REQ & EN (RO)
+> +#define   UNIPHIER_MDMAC_CH_IRQ__ABORT		BIT(13)
+> +#define   UNIPHIER_MDMAC_CH_IRQ__DONE		BIT(1)
 
+why notation if UNIPHIER_MDMAC_CH_IRQ__FOO ?
+
+> +#define UNIPHIER_MDMAC_CH_SRC_MODE	0x020	// mode of source
+> +#define UNIPHIER_MDMAC_CH_DEST_MODE	0x024	// mode of destination
+> +#define   UNIPHIER_MDMAC_CH_MODE__ADDR_INC	(0 << 4)
+> +#define   UNIPHIER_MDMAC_CH_MODE__ADDR_DEC	(1 << 4)
+> +#define   UNIPHIER_MDMAC_CH_MODE__ADDR_FIXED	(2 << 4)
+> +#define UNIPHIER_MDMAC_CH_SRC_ADDR	0x028	// source address
+> +#define UNIPHIER_MDMAC_CH_DEST_ADDR	0x02c	// destination address
+> +#define UNIPHIER_MDMAC_CH_SIZE		0x030	// transfer bytes
+
+Please use /* comment */ style for these
+
+> +/* mc->vc.lock must be held by caller */
+> +static struct uniphier_mdmac_desc *__uniphier_mdmac_next_desc(
+> +						struct uniphier_mdmac_chan *mc)
+
+this can be made to look better by:
+
+static struct uniphier_mdmac_desc *
+__uniphier_mdmac_next_desc(struct uniphier_mdmac_chan *mc)
+
+Btw why leading __ for function name here and other places?
+
+> +{
+> +	struct virt_dma_desc *vd;
+> +
+> +	vd = vchan_next_desc(&mc->vc);
+> +	if (!vd) {
+> +		mc->md = NULL;
+> +		return NULL;
+> +	}
+> +
+> +	list_del(&vd->node);
+> +
+> +	mc->md = to_uniphier_mdmac_desc(vd);
+> +
+> +	return mc->md;
+> +}
+> +
+> +/* mc->vc.lock must be held by caller */
+> +static void __uniphier_mdmac_handle(struct uniphier_mdmac_chan *mc,
+> +				    struct uniphier_mdmac_desc *md)
+
+please align this to previous line opening brace (hint checkpatch with
+--strict option will give you the warning)
+
+> +static irqreturn_t uniphier_mdmac_interrupt(int irq, void *dev_id)
+> +{
+> +	struct uniphier_mdmac_chan *mc = dev_id;
+> +	struct uniphier_mdmac_desc *md;
+> +	irqreturn_t ret = IRQ_HANDLED;
+> +	u32 irq_stat;
+> +
+> +	spin_lock(&mc->vc.lock);
+> +
+> +	irq_stat = readl(mc->reg_ch_base + UNIPHIER_MDMAC_CH_IRQ_DET);
+> +
+> +	/*
+> +	 * Some channels share a single interrupt line. If the IRQ status is 0,
+> +	 * this is probably triggered by a different channel.
+> +	 */
+> +	if (!irq_stat) {
+> +		ret = IRQ_NONE;
+> +		goto out;
+> +	}
+> +
+> +	/* write 1 to clear */
+> +	writel(irq_stat, mc->reg_ch_base + UNIPHIER_MDMAC_CH_IRQ_REQ);
+> +
+> +	/*
+> +	 * UNIPHIER_MDMAC_CH_IRQ__DONE interrupt is asserted even when the DMA
+> +	 * is aborted.  To distinguish the normal completion and the abort,
+                     ^^^^
+double space..
+
+> +static int uniphier_mdmac_config(struct dma_chan *chan,
+> +				 struct dma_slave_config *config)
+> +{
+> +	/* Nothing in struct dma_slave_config is configurable. */
+> +	return 0;
+> +}
+
+I dont think config callback is mandatory, so we can drop this
+
+> +static enum dma_status uniphier_mdmac_tx_status(struct dma_chan *chan,
+> +						dma_cookie_t cookie,
+> +						struct dma_tx_state *txstate)
+> +{
+> +	struct virt_dma_chan *vc;
+> +	struct virt_dma_desc *vd;
+> +	struct uniphier_mdmac_chan *mc;
+> +	struct uniphier_mdmac_desc *md = NULL;
+> +	enum dma_status stat;
+> +	unsigned long flags;
+> +
+> +	stat = dma_cookie_status(chan, cookie, txstate);
+> +	/* Return immediately if we do not need to compute the residue. */
+> +	if (stat == DMA_COMPLETE || !txstate)
+> +		return stat;
+> +
+> +	vc = to_virt_chan(chan);
+> +
+> +	spin_lock_irqsave(&vc->lock, flags);
+> +
+> +	mc = to_uniphier_mdmac_chan(vc);
+> +
+> +	if (mc->md && mc->md->vd.tx.cookie == cookie)
+> +		md = mc->md;
+> +
+> +	if (!md) {
+> +		vd = vchan_find_desc(vc, cookie);
+> +		if (vd)
+> +			md = to_uniphier_mdmac_desc(vd);
+> +	}
+
+in both of these cases you are calling __uniphier_mdmac_get_residue()
+which reads the register and updates. But I think you should read
+register only in the first case when descriptor is submitted and not in
+latter case when descriptor is queued
+
+> +static int uniphier_mdmac_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct uniphier_mdmac_device *mdev;
+> +	struct dma_device *ddev;
+> +	struct resource *res;
+> +	int nr_chans, ret, i;
+> +
+> +	nr_chans = platform_irq_count(pdev);
+> +	if (nr_chans < 0)
+> +		return nr_chans;
+> +
+> +	ret = dma_set_mask(dev, DMA_BIT_MASK(32));
+> +	if (ret)
+> +		return ret;
+> +
+> +	mdev = devm_kzalloc(dev, struct_size(mdev, channels, nr_chans),
+> +			    GFP_KERNEL);
+> +	if (!mdev)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	mdev->reg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(mdev->reg_base))
+> +		return PTR_ERR(mdev->reg_base);
+> +
+> +	mdev->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(mdev->clk)) {
+> +		dev_err(dev, "failed to get clock\n");
+> +		return PTR_ERR(mdev->clk);
+> +	}
+> +
+> +	ret = clk_prepare_enable(mdev->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ddev = &mdev->ddev;
+> +	ddev->dev = dev;
+> +	dma_cap_set(DMA_PRIVATE, ddev->cap_mask);
+> +	ddev->src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_UNDEFINED);
+> +	ddev->dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_UNDEFINED);
+
+undefined?
+
+> +static int uniphier_mdmac_remove(struct platform_device *pdev)
+> +{
+> +	struct uniphier_mdmac_device *mdev = platform_get_drvdata(pdev);
+> +
+> +	of_dma_controller_free(pdev->dev.of_node);
+> +	dma_async_device_unregister(&mdev->ddev);
+> +	clk_disable_unprepare(mdev->clk);
+
+at this point your irq is registered and can be fired, the tasklets are
+not killed :(
+-- 
+~Vinod
