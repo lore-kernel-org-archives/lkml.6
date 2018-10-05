@@ -2,134 +2,126 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3644DC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350ECC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBBC21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1D3220834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:36:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcDDUumB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBBC21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWYH5gi5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D3220834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeJFAba (ORCPT
+        id S1728721AbeJFAgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:31:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbeJFAba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:31:30 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51763213A2;
-        Fri,  5 Oct 2018 17:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538760707;
-        bh=yjr3rJd5n7kwy89yTMmB1oPgrPRMWhCND6814p+FZUs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fcDDUumB+qUsKyf0KYt3azj1S4oq8+T96BrmhwuNVFLlnEMB9O8WOs2GjpT0hkoKU
-         PGQErqzpAAUzEHKWCjzzQf7hoJGHYtc9UVUnoNyBtazFkO3gBXOo3wL1ZRjqNDCcvx
-         U3shgFYeZ6jllzmhgzk79s5W5EHDUnaNfpL1msCA=
-Date:   Fri, 5 Oct 2018 12:31:45 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Thomas Tai <thomas.tai@oracle.com>, poza@codeaurora.org,
-        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/12] error handling and pciehp maintenance
-Message-ID: <20181005173145.GL120535@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180918235848.26694-1-keith.busch@intel.com>
- <20181004214015.GK120535@bhelgaas-glaptop.roam.corp.google.com>
- <20181004221137.GB21834@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004221137.GB21834@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 5 Oct 2018 20:36:40 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37305 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbeJFAgk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:36:40 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 185-v6so2663690wmt.2;
+        Fri, 05 Oct 2018 10:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=LdxhiLR3tttAUka/LOfx19DBAfwKEQ7KWriNfOyE2pw=;
+        b=WWYH5gi51fRlY+M8KDNR89l3yT3WCbr15sI7RTaeEiT7U5VgFbeyux9pSsp4rElSBc
+         UeOFvnZhUEeovyUYrVRav8poZDmGnzJBN7rtBQhnD5gDulwI0PN/4XncRW1qgI3mtZqa
+         OlhdyIY/tCdlYOZmvfZOGIgeAIx9KNvE9Z5b2jhKdCwbKzIaeMp9hxHIjjqxCUzL3VBs
+         ekUDFKnZpiy8+0NyerA3PLU6MrqSmuXWYglaLWcpfTSdHAC90c1TA5nEZ1nyRrE5HZEf
+         KCStIUPrsOXZoRJR6t6E+NIjr3WUUWgFpmR+aD60Ch7ev6jqQoyzM1EkzQx+hN9oitDQ
+         YK9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=LdxhiLR3tttAUka/LOfx19DBAfwKEQ7KWriNfOyE2pw=;
+        b=jKRzaINCBilEFypDfTjYOGKWCJW/8y4xi39isnZdwRsJHLgYdWrtSM1nhmT13K4GnF
+         8aqpM+R3LvaHELRkQc+QzZ2Uc3ocN6YerI8jEeA1P9rJaBie75jC0WhO/M8cZEBGp3ib
+         zPHVGQHoiic8BdVcRb8VPEY2pDwtl1IfaUhA4N25CE74OmL/dvj9AR8scmFCqe5d1s65
+         GLVAEF8Y2IOZOXhaUAmNeta4IQ4VRgWYlJvm7cxKp25afxVn2rM3KqU+sTC3iNsQKRZD
+         Cv6JgRFeOOCP3i3DEqo/MtKRyWnLNtJSUWRJdvV/oBTrGD9+K+8NhokKFVY38jc0QCxk
+         ZGFg==
+X-Gm-Message-State: ABuFfog5OiqqiE9zQ+eKGUTmoBuc07WqADJqVW71h+S03hwoILo5J3mg
+        Uu+tqKF+M2WyrGd+rYeOy9U=
+X-Google-Smtp-Source: ACcGV61sGXwBB9/lj8aLOl42X2hXSacOgqiyhfyBNavvPGVxOcKHDYAdxK7pOTrolifJkmOAekdYWg==
+X-Received: by 2002:a1c:b58e:: with SMTP id e136-v6mr8142008wmf.114.1538761014580;
+        Fri, 05 Oct 2018 10:36:54 -0700 (PDT)
+Received: from localhost.localdomain (generic-nat1.unisi.it. [193.205.5.2])
+        by smtp.gmail.com with ESMTPSA id t2-v6sm8763269wrr.7.2018.10.05.10.36.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 10:36:53 -0700 (PDT)
+From:   ektor5 <ek5.chimenti@gmail.com>
+Cc:     hverkuil@xs4all.nl, luca.pisani@udoo.org, jose.abreu@synopsys.com,
+        sean@mess.org, sakari.ailus@linux.intel.com,
+        ektor5 <ek5.chimenti@gmail.com>, jacopo@jmondi.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v2 0/2] Add SECO Boards CEC device driver
+Date:   Fri,  5 Oct 2018 19:33:57 +0200
+Message-Id: <cover.1538760098.git.ek5.chimenti@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <cover.1538474121.git.ek5.chimenti@gmail.com>
+References: <cover.1538474121.git.ek5.chimenti@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc arm64 folks, LKML: This conversation is about this patch:
+This series of patches aims to add CEC functionalities to SECO
+devices, in particular UDOO X86.
 
-  https://lore.kernel.org/linux-pci/20180918235848.26694-3-keith.busch@intel.com
+The communication is achieved via Braswell SMBus (i2c-i801) to the
+onboard STM32 microcontroller that handles the CEC signals. The driver
+use direct access to the PCI addresses, due to the limitations of the
+specific driver in presence of ACPI calls.
 
-which fixes some PCIe AER error injection bugs, but also makes the error
-injector dependent on DYNAMIC_FTRACE_WITH_REGS, which not all arches
-support.  Note that this question is only about the error *injection*
-module used for testing.  It doesn't affect AER support itself.]
+The basic functionalities are tested with success with cec-ctl and
+cec-compliance.
 
-On Thu, Oct 04, 2018 at 04:11:37PM -0600, Keith Busch wrote:
-> On Thu, Oct 04, 2018 at 04:40:15PM -0500, Bjorn Helgaas wrote:
-> > On Tue, Sep 18, 2018 at 05:58:36PM -0600, Keith Busch wrote:
-> > > I ran into a lot of trouble testing error handling, and this series is
-> > > just trying to simplify some things. The first 4 fix up aer_inject, and
-> > > the rest are cleanup to make better use of kernel APIs.
-> > > 
-> > > Keith Busch (12):
-> > >   PCI: Set PCI bus accessors to noinline
-> > >   PCI/AER: Covertly inject errors
-> > >   PCI/AER: Reuse existing service device lookup
-> > >   PCI/AER: Abstract AER interrupt handling
-> > >   PCI/AER: Remove dead code
-> > >   PCI/AER: Remove error source from aer struct
-> > >   PCI/AER: Use kfifo for tracking events
-> > >   PCI/AER: Use kfifo helper inserting locked elements
-> > >   PCI/AER: Don't read upstream ports below fatal errors
-> > >   PCI/AER: Use threaded IRQ for bottom half
-> > >   PCI/AER: Use managed resource allocations
-> > >   PCI/pciehp: Use device managed allocations
-> > > 
-> > >  drivers/pci/access.c              |   4 +-
-> > >  drivers/pci/hotplug/pciehp_core.c |  14 +-
-> > >  drivers/pci/hotplug/pciehp_hpc.c  |  48 ++----
-> > >  drivers/pci/pcie/Kconfig          |   2 +-
-> > >  drivers/pci/pcie/aer.c            | 219 ++++++---------------------
-> > >  drivers/pci/pcie/aer_inject.c     | 306 ++++++++++++++++++++------------------
-> > >  drivers/pci/pcie/portdrv.h        |   4 -
-> > >  drivers/pci/pcie/portdrv_core.c   |   1 +
-> > >  8 files changed, 227 insertions(+), 371 deletions(-)
-> > 
-> > Thanks a lot for doing this!  I applied these to pci/hotplug for
-> > v4.20, except for "PCI/AER: Don't read upstream ports below fatal
-> > errors", which seems to be already there via another posting, and
-> > "PCI/pciehp: Use device managed allocations", which needs a few
-> > tweaks.
-> 
-> Sounds good, and thanks for applying!
-> 
-> In case this went unnoticed, patch 2's aer_inject using ftrace hooks
-> to pci config accessors is really cool and fixes several kernel crashes
-> I encountered, but it may not work on every architecture. I'm not sure
-> how widely aer_inject is used, so maybe there are no concerns with the
-> DYNAMIC_FTRACE_WITH_REGS dependency, but I just want to reemphasize that
-> dependency in case there are valid objections.
+v2:
+ - Removed useless debug prints
+ - Added DMI && PCI to dependences
+ - Removed useless ifdefs
+ - Renamed all irda references to ir
+ - Fixed SPDX clause
+ - Several style fixes
 
-Oh, indeed, I hadn't noticed this arch dependency.  AFAICT, the new
-DYNAMIC_FTRACE_WITH_REGS dependency means aer_inject will work only
-on these arches:
+Ettore Chimenti (2):
+  media: add SECO cec driver
+  seco-cec: add Consumer-IR support
 
-  arm		# if (!XIP_KERNEL) && !CPU_ENDIAN_BE32 && MMU
-  powerpc	# if PPC64 && CPU_LITTLE_ENDIAN
-  riscv		# ARCH_RV64I only
-  s390
-  x86
+ MAINTAINERS                                |   6 +
+ drivers/media/platform/Kconfig             |  22 +
+ drivers/media/platform/Makefile            |   2 +
+ drivers/media/platform/seco-cec/Makefile   |   1 +
+ drivers/media/platform/seco-cec/seco-cec.c | 829 +++++++++++++++++++++
+ drivers/media/platform/seco-cec/seco-cec.h | 141 ++++
+ 6 files changed, 1001 insertions(+)
+ create mode 100644 drivers/media/platform/seco-cec/Makefile
+ create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
+ create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
 
-Notably missing is arm64, which has DYNAMIC_FTRACE but not
-DYNAMIC_FTRACE_WITH_REGS.
+-- 
+2.18.0
 
-Bjorn
