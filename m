@@ -2,78 +2,137 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03022C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC35C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA452064A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rm4nKBEs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA452064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9BBDE208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BBDE208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeJEX0D (ORCPT
+        id S1729698AbeJEX0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:26:03 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:55093 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729024AbeJEX0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:26:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=KQNvv/QjVtmklrfAfcDBdwfZIaye7B00llWXEbjNqMw=;
-        b=rm4nKBEssQIs3Q74z0odUTm5h6QzXljTTnghU48fkZ2CeyUsoW97rS/IisRwjmJ6LdvbMhW3OKcoj14uuehPSLYPvlQDE1hxtt7Yyfbl1S4IoOQ+jtv9GIVQ+kwGKvMxp/0sxhm5FnewkPgGB0PAVXO+SEC68RexDXDFKJZn+IM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1g8Svt-0005Xz-8s; Fri, 05 Oct 2018 18:26:29 +0200
-Date:   Fri, 5 Oct 2018 18:26:29 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jason Cooper <jason@lakedaemon.net>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: orion: avoid VLA in orion_mpp_conf
-Message-ID: <20181005162629.GJ4730@lunn.ch>
-References: <20181005161601.875388-1-arnd@arndb.de>
+        Fri, 5 Oct 2018 19:26:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48375 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727878AbeJEX0K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:26:10 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w95GOrO63209018
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 5 Oct 2018 09:24:53 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w95GOrkT3209015;
+        Fri, 5 Oct 2018 09:24:53 -0700
+Date:   Fri, 5 Oct 2018 09:24:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-1be3f247c2882a82279cbcf43717581ea943b692@git.kernel.org>
+Cc:     luto@kernel.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        bp@alien8.de, tglx@linutronix.de, dave.hansen@linux.intel.com,
+        keescook@chromium.org, jroedel@suse.de, peterz@infradead.org,
+        mingo@kernel.org, arnd@arndb.de, toshi.kani@hpe.com, hpa@zytor.com
+Reply-To: bp@alien8.de, tglx@linutronix.de, akpm@linux-foundation.org,
+          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+          luto@kernel.org, toshi.kani@hpe.com, hpa@zytor.com,
+          arnd@arndb.de, mingo@kernel.org, jroedel@suse.de,
+          peterz@infradead.org, dave.hansen@linux.intel.com,
+          keescook@chromium.org
+In-Reply-To: <20181005161333.765973-1-arnd@arndb.de>
+References: <20181005161333.765973-1-arnd@arndb.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/mm: Avoid VLA in pgd_alloc()
+Git-Commit-ID: 1be3f247c2882a82279cbcf43717581ea943b692
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181005161601.875388-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 06:15:49PM +0200, Arnd Bergmann wrote:
-> Testing randconfig builds found an instance of a VLA that was
-> missed when determining that we have removed them all:
-> 
-> arch/arm/plat-orion/mpp.c: In function 'orion_mpp_conf':
-> arch/arm/plat-orion/mpp.c:31:2: error: ISO C90 forbids variable length array 'mpp_ctrl' [-Werror=vla]
-> 
-> This one is fairly straightforward: we know what all three
-> callers are, and the maximum length is not very long.
-> 
-> Fixes: 68664695ae57 ("Makefile: Globally enable VLA warning")
-> Cc: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Commit-ID:  1be3f247c2882a82279cbcf43717581ea943b692
+Gitweb:     https://git.kernel.org/tip/1be3f247c2882a82279cbcf43717581ea943b692
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Fri, 5 Oct 2018 18:13:16 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 5 Oct 2018 18:16:55 +0200
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+x86/mm: Avoid VLA in pgd_alloc()
 
-Hi Arnd
+Turning on -Wvla found a new VLA usage:
 
-Do you want this to go via the mvebu tree? Or you can take it direct
-into arm-soc. There have not been any patches to orion5x, dove or
-mv78xx0 for a long time, so there won't be any merge conflicts.
+  arch/x86/mm/pgtable.c: In function 'pgd_alloc':
+  include/linux/build_bug.h:29:45: error: ISO C90 forbids variable length array 'u_pmds' [-Werror=vla]
+  arch/x86/mm/pgtable.c:190:34: note: in expansion of macro 'static_cpu_has'
+   #define PREALLOCATED_USER_PMDS  (static_cpu_has(X86_FEATURE_PTI) ? \
+                                    ^~~~~~~~~~~~~~
+  arch/x86/mm/pgtable.c:431:16: note: in expansion of macro 'PREALLOCATED_USER_PMDS'
+    pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
+                ^~~~~~~~~~~~~~~~~~~~~~
 
-Thanks
+Use the actual size of the array that is used for X86_FEATURE_PTI
+instead of the variable size.
 
-    Andrew
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Toshi Kani <toshi.kani@hpe.com>
+Fixes: 68664695ae57 ("Makefile: Globally enable VLA warning")
+Fixes: f59dbe9ca670 ("x86/pgtable/pae: Use separate kernel PMDs for user page-table")
+Link: http://lkml.kernel.org/r/20181005161333.765973-1-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/mm/pgtable.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 089e78c4effd..386b43e3e0ac 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -189,6 +189,7 @@ static void pgd_dtor(pgd_t *pgd)
+  */
+ #define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
+ 					KERNEL_PGD_PTRS : 0)
++#define MAX_PREALLOCATED_USER_PMDS KERNEL_PGD_PTRS
+ 
+ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ {
+@@ -211,6 +212,7 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ /* No need to prepopulate any pagetable entries in non-PAE modes. */
+ #define PREALLOCATED_PMDS	0
+ #define PREALLOCATED_USER_PMDS	 0
++#define MAX_PREALLOCATED_USER_PMDS 0
+ #endif	/* CONFIG_X86_PAE */
+ 
+ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+@@ -428,8 +430,8 @@ static inline void _pgd_free(pgd_t *pgd)
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd;
+-	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
+-	pmd_t *pmds[PREALLOCATED_PMDS];
++	pmd_t *u_pmds[MAX_PREALLOCATED_USER_PMDS];
++	pmd_t *pmds[MAX_PREALLOCATED_USER_PMDS];
+ 
+ 	pgd = _pgd_alloc();
+ 
