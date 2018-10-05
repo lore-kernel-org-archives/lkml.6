@@ -2,167 +2,90 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BE7C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC21BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A6B2064E
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:49:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TV6mOQiV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A6B2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F7812064E
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:51:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7812064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeJERsH (ORCPT
+        id S1728099AbeJERuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:48:07 -0400
-Received: from mail-qt1-f176.google.com ([209.85.160.176]:36211 "EHLO
-        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbeJERsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:48:07 -0400
-Received: by mail-qt1-f176.google.com with SMTP id u34-v6so13250886qth.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 03:49:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4/WC9PR0SsRfsVv/Ruor5wKfCcU9I0tyzAaQtBCuP/U=;
-        b=TV6mOQiVDUHO3O/yKwRI1H90B5I5k7NUut/BiIm8rpOvkmdUbhLXoaM6zyNW/dezuM
-         UjvpQhoF6vnhmImEGrjsYs6DTjWZj6pXf1/tEWpz1W5ozTEzcgJLsaojlJ3CEQt+LBcQ
-         xSrxhI0T3P/j8wHTPl6Ey19PsIbPReL+0yfMwe+qr8rYWfBGSet5pp7NccPiECU7E7nC
-         dEa5BDBU9LBHqeMBWPAxRPirlFF6LI1/q90o/rMhYvw1h6nMMRBWDiD7qQa/U0qel32Y
-         LC0U5+U2Pm0Htw/3vi6TnI5WqNldudeVBrNsZbBRFPJ8yqOxO1RyiWEIsuOcOfKxDyX1
-         pSyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4/WC9PR0SsRfsVv/Ruor5wKfCcU9I0tyzAaQtBCuP/U=;
-        b=rdV8mRp/Dw70KmmuQiVJZPlOSTKxJl7LbpuCZyoY/A8xkxsMUDdCSYDRnYm/VWr3yk
-         QGztV753siMy4FJ3tQcFhik7N1tq409HyRNjuQKXW6iepYxTXhtaqjIFI5AWmlS8g/od
-         gSSHczNiYVsxtlXFp23YuVngJpBqvAEDoq85ZQwKdvC9vneoljoB7brj14+iX8u8snHD
-         ECGoWc9VDtDA7e6zJO8hIJc6kryuRCY7XX2PRTecoABlswbQxLORIzlAcKGJObjCOFCW
-         2EXu1OS4dhhl/myaaBDmmOaZvXSWaW08aqB6UTXIztH+wTgVi+bQTGHG/YDsU0hOnfdJ
-         31Ew==
-X-Gm-Message-State: ABuFfogQIFVEBi3OYF3MikD8NfSkCGEqe1OSOhEFUTFvOzBe8g1WMeqX
-        1UYDVluTsrcx6ZlqDT4cBlsGB6hGg52DlyWZYaM=
-X-Google-Smtp-Source: ACcGV62QUdWVdvDIp0c7zpbBp/3LtJ4FbjSm31obIvKB44t1Xb1sU5z3G1KAk7q2LSH6HBFkqNdmoNZt/bUu+F3nGTk=
-X-Received: by 2002:a0c:aedd:: with SMTP id n29-v6mr8830842qvd.10.1538736592274;
- Fri, 05 Oct 2018 03:49:52 -0700 (PDT)
+        Fri, 5 Oct 2018 13:50:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47789 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727581AbeJERuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 13:50:10 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 85F504585B483;
+        Fri,  5 Oct 2018 18:51:47 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 5 Oct 2018 18:51:42 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mali DP Maintainers <malidp@foss.arm.com>,
+        David Airlie <airlied@linux.ie>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/arm/malidp: remove set but not used variable 'afbc_superblock_size'
+Date:   Fri, 5 Oct 2018 11:03:13 +0000
+Message-ID: <1538737393-112861-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
- <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
- <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
- <20181004123400.GC30658@n2100.armlinux.org.uk> <CAFqt6zZPOM17QwmcWKF3F1gqkJm=2PxvuJ3naWuRXZGHc2HrEQ@mail.gmail.com>
- <20181004181736.GB20842@bombadil.infradead.org> <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
- <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
- <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
- <CANiq72kVJn7985EET067Dgj+z0dwb0x2MTUnREMWKCVU6=WnJA@mail.gmail.com> <CAFqt6zZ4sPjtb5BaDfwc5tZv+vMj6ao3NJZ_3quX9AH5pCMwJg@mail.gmail.com>
-In-Reply-To: <CAFqt6zZ4sPjtb5BaDfwc5tZv+vMj6ao3NJZ_3quX9AH5pCMwJg@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 5 Oct 2018 12:49:41 +0200
-Message-ID: <CANiq72m9u1PL9X+dPNLxgkhvttj=4ijLyM2sFex=Kws7wswKzw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux@armlinux.org.uk,
-        Robin van der Gracht <robin@protonic.nl>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Dave Airlie <airlied@linux.ie>, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
-        mhocko@suse.com, Dan Williams <dan.j.williams@intel.com>,
-        kirill.shutemov@linux.intel.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
-        riel@redhat.com, minchan@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, ying.huang@intel.com,
-        Andi Kleen <ak@linux.intel.com>, rppt@linux.vnet.ibm.com,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
-        mcgrof@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Souptick,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Fri, Oct 5, 2018 at 12:01 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> The final goal is to remove vm_insert_page by converting it to
-> vmf_insert_page. But to do that we have to first introduce the
-> new API which is similar to vm_insert_page  (for non #PF). I tried this by
-> introducing vm_insert_kmem_page ( * identical as vm_insert_page
-> except API name *) in this patch. But this looks like a bad approach.
+drivers/gpu/drm/arm/malidp_drv.c: In function 'malidp_verify_afbc_framebuffer_size':
+drivers/gpu/drm/arm/malidp_drv.c:318:6: warning:
+ variable 'afbc_superblock_size' set but not used [-Wunused-but-set-variable]
+  u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
 
-We are going in circles here. That you want to convert vm_insert_page
-to vmf_insert_page for the PF case is fine and understood. However,
-you don't *need* to introduce a new name for the remaining non-PF
-cases if the function is going to be the exact same thing as before.
-You say "The final goal is to remove vm_insert_page", but you haven't
-justified *why* you need to remove that name.
+It never used since be introduced in
+commit 3dae1c0919d8 ("drm/arm/malidp: Implemented the size validation for AFBC framebuffers")
 
-Now, if we want to rename the function for some reason (e.g. avoid
-confusion with vmf_insert_page), that is fine but is another topic. It
-may be or not a good idea, but it is orthogonal to the vmf_ work.
-Matthew, on this regard, told you that you shouldn't duplicate
-functions. If you want a rename, do so; but don't copy the code. In
-other words: nobody said introducing the vm_insert_kmem_page name is a
-bad idea -- what Matthew told you is that *duplicating* vm_insert_page
-just for that is bad.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/arm/malidp_drv.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Further, you are copying the code (if I understand your thought
-process) because you want to change the callers of non-PF first, and
-then do the "full conversion from vm_* to vmf_*". However, that is
-confusing, because there is no need to change non-PF callers of
-vm_insert_page since they don't care about the new vmf_* functions.
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index 9021485..1b0ede6 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -315,7 +315,7 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 	int n_superblocks = 0;
+ 	const struct drm_format_info *info;
+ 	struct drm_gem_object *objs = NULL;
+-	u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
++	u32 afbc_superblock_height = 0;
+ 	u32 afbc_superblock_width = 0, afbc_size = 0;
+ 
+ 	switch (mode_cmd->modifier[0] & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
+@@ -333,9 +333,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 	n_superblocks = (mode_cmd->width / afbc_superblock_width) *
+ 		(mode_cmd->height / afbc_superblock_height);
+ 
+-	afbc_superblock_size = info->cpp[0] * afbc_superblock_width *
+-		afbc_superblock_height;
+-
+ 	afbc_size = ALIGN(n_superblocks * AFBC_HEADER_SIZE, 128);
+ 
+ 	if (mode_cmd->width * info->cpp[0] != mode_cmd->pitches[0]) {
 
-Instead, the proper way of doing this is:
-
-  1. Introduce the vmf_* API
-  2. Change all PF-users users to that (leaving all non-PF ones
-untouched!) -- if this is too big, you can split this patch into
-several patches, one per subsystem, etc.
-  3. Remove the vm_* functions (except the ones that are still used in
-non-PF contexts, e.g. vm_insert_page)
-
-Then, optionally, if you want to rename the function for the remaining
-non-PF users:
-
-  4. Rename vm_insert_page (justifying why the current name is
-confusing *on its own merits*).
-
-Otherwise, if you want to pursue Matthew's idea:
-
-  4. Introduce the vm_insert_range (possibly leveraging
-vm_insert_page, or not; you have to see what is best).
-  5. Replace those callers that can take advantage of vm_insert_range
-  6. Remove vm_insert_page and replace callers with vm_insert_range
-(only if it is not worth to keep vm_insert_range, again justifying it
-*on its own merits*)
-
-As you see, these are all logical step-by-step improvements, without
-duplicating functions temporarily, leaving temporary changes or
-changing current callers to new APIs for unrelated reasons (i.e. no
-need to introduce vm_insert_kmem_page simply to do a "conversion" to
-vmf_).
-
-Cheers,
-Miguel
