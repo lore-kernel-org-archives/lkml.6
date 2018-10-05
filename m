@@ -2,109 +2,145 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEA8C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36134C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9D520652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9D520652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D6F6120652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:29:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sy2YUz5G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F6120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeJEP0p (ORCPT
+        id S1728582AbeJEP0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:26:45 -0400
-Received: from mga12.intel.com ([192.55.52.136]:45132 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728433AbeJEP0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:26:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 01:29:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,343,1534834800"; 
-   d="scan'208";a="89401936"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga003.jf.intel.com with SMTP; 05 Oct 2018 01:28:45 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 05 Oct 2018 11:28:44 +0300
-Date:   Fri, 5 Oct 2018 11:28:44 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        H Hartley Sweeten <hartleys@visionengravers.com>,
-        Mika Westerberg <mika.westerberg@iki.fi>
-Subject: Re: [PATCH] spi: spi-ep93xx: Change dir type in
- ep93xx_spi_dma_{finish,prepare}
-Message-ID: <20181005082844.GT2302@lahna.fi.intel.com>
-References: <20181004023926.15847-1-natechancellor@gmail.com>
- <20181004103247.GC6412@sirena.org.uk>
+        Fri, 5 Oct 2018 11:26:51 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39789 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728314AbeJEP0u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:26:50 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h4-v6so10912081edi.6;
+        Fri, 05 Oct 2018 01:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3ZykCFsSAqISXq95VMxS4hLe38R1c0cyqZgh6Vovx48=;
+        b=Sy2YUz5Gfg5urD7bZszp0p4NuhcwDJw8oa7roFJnGorpbD9EKNm+U3w+bGzjN7iPt4
+         Qg05KBa2tu2XHKkE+Ki7BbaqaoA8Dr3iXKzMx2EPF4big0qkWCbF7nl2RljUHYIANZWx
+         PxH1uZu/qZFO8+vd/LAgKmE+IVpiH0HwjLSkKPY8pQGPlaNNtxE+y96guj2J0M5rTjX5
+         n3M8xTESWcM8aZELnKnbyu8sUahQjr5eyLmRS8scIQ6vha7BefN7+yfenztElmNp/Qvv
+         6d5SE76yfLjM5d1bucwxEqigxKRJG8sjqP/UUB75x9CNmLQwuoj/pfrhDFwvMAuR6ed4
+         ZWFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=3ZykCFsSAqISXq95VMxS4hLe38R1c0cyqZgh6Vovx48=;
+        b=YWtywoH3wEOWIZGYeV8jA6PeUIWXhwbcPOGC3fdyVLKk5YHHphdBIoo83qxe+UHJPD
+         5cErDs2nS6ivvInaMMpf1fBAO0mw4UCINOH7UmTesIlZJj6T3mDQISUEOHPpfUVogVjZ
+         zauX9zTq5jUPP9Lwnz907t50ESakMvS67T0TBY5PeMTnVBfqutTeM/HrBbISvGSECMrP
+         nsmWDX1a2bA5nnlUBAAwWBt2nijiE8ttMFQDbqXS2nxNNowk27gS5gAAOjMZBfW/VmeI
+         i97K+eoPsue/m7vmwcdYX/oahey/tBFmq0QYtQ9rgHZSbrimc5Z81Kr3DQ3PthbDth0K
+         QSeQ==
+X-Gm-Message-State: ABuFfog8peBt7T7oQ6cm8PihzFdyIRFp1p4Qq1FYYV+4u1IJChVhyPLt
+        iOe7TwPnE6BIfEXoD72GVASu+2E3
+X-Google-Smtp-Source: ACcGV6130CA1GiQHt7r3cT3nZrcGZfmuHePqapcrHXoeXUG/Ic0NGA98TjMMXmXEtAcBaeVSMgurmQ==
+X-Received: by 2002:a50:8465:: with SMTP id 92-v6mr12706916edp.97.1538728149695;
+        Fri, 05 Oct 2018 01:29:09 -0700 (PDT)
+Received: from ziggy.stardust ([37.223.143.164])
+        by smtp.gmail.com with ESMTPSA id dv2-v6sm681949ejb.10.2018.10.05.01.29.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 01:29:08 -0700 (PDT)
+Subject: Re: [PATCH 0/4] Add MT7623 dts bindings documentation
+To:     robh+dt@kernel.org, mark.rutland@arm.com, joro@8bytes.org,
+        arnd@arndb.de
+Cc:     rick.chang@mediatek.com, bin.liu@mediatek.com, mchehab@kernel.org,
+        sboyd@codeaurora.org, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, weiyi.lu@mediatek.com,
+        ryder.lee@mediatek.com, yong.wu@mediatek.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20181003090912.30501-1-matthias.bgg@gmail.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <add6ddc9-2eff-9413-de55-003acfeb2ffb@gmail.com>
+Date:   Fri, 5 Oct 2018 10:29:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004103247.GC6412@sirena.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181003090912.30501-1-matthias.bgg@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Thu, Oct 04, 2018 at 11:32:47AM +0100, Mark Brown wrote:
-> On Wed, Oct 03, 2018 at 07:39:26PM -0700, Nathan Chancellor wrote:
-> > Clang warns when one enumerated type is implicitly converted to another.
-> > 
-> > drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
-> > enumeration type 'enum dma_transfer_direction' to different enumeration
+
+On 03/10/2018 11:09, Matthias Brugger wrote:
+> Mediateks MT7623 SoC shares most of its component with MT2701.
+> This series adds devicetree documentation for all the devices.
 > 
-> Please remember to CC driver maintainers and authors on patch
-> submissions so they can review things, copying in Hartley and Mika.
+> It applies cleanly against linux next, so I don't expect any merge
+> conflicts if this is taken by Arnd through the arm-soc tree for v4.20
+> 
+> 
 
-Thanks for copying me.
-
-> > type 'enum dma_data_direction' [-Wenum-conversion]
-> >         nents = dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-> >                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> > ./include/linux/dma-mapping.h:428:58: note: expanded from macro
-> > 'dma_map_sg'
-> > \#define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
-> >                                ~~~~~~~~~~~~~~~~          ^
-> > drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
-> > enumeration type 'enum dma_transfer_direction' to different enumeration
-> > type 'enum dma_data_direction' [-Wenum-conversion]
-> >                 dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-> >                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> > ./include/linux/dma-mapping.h:429:62: note: expanded from macro
-> > 'dma_unmap_sg'
-> > \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
-> >                                  ~~~~~~~~~~~~~~~~~~          ^
-> > drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
-> > enumeration type 'enum dma_transfer_direction' to different enumeration
-> > type 'enum dma_data_direction' [-Wenum-conversion]
-> >         dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-> >         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> > ./include/linux/dma-mapping.h:429:62: note: expanded from macro
-> > 'dma_unmap_sg'
-> > \#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
-> >                                  ~~~~~~~~~~~~~~~~~~          ^
-> > 3 warnings generated.
-> > 
-> > dma_{,un}map_sg expects an enum of type dma_data_direction but this
-> > driver uses dma_transfer_direction for everything. Converting to
-> > dma_data_direction would be desirable but there are a few shared
-> > structures that expect dma_transfer_direction so it is just simpler to
-> > change the parameter here. dma_transfer_direction and dma_data_direction
-> > are different sizes but this driver only uses the 1 and 2 values which
-> > mean the same thing so this change is safe.
-
-I would rather do the conversion than passing "int" to the function even
-if both enums happen to have same value now. I would be surprised if
-there is no helper function already for the conversion :)
+For completeness, I merged the whole series to v4.19-next/dts32
