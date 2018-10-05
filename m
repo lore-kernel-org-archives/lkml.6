@@ -2,151 +2,137 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B51CC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9F2C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413352084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:48:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 006752084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:49:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFoPL//G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413352084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SNyww/+v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 006752084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbeJEUrp (ORCPT
+        id S1728876AbeJEUrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:47:45 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39095 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbeJEUrp (ORCPT
+        Fri, 5 Oct 2018 16:47:51 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45319 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728422AbeJEUrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:47:45 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w14-v6so6896430plp.6;
-        Fri, 05 Oct 2018 06:48:56 -0700 (PDT)
+        Fri, 5 Oct 2018 16:47:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q5-v6so13617214wrw.12
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 06:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H7YnJzaX46oHsg1DO42jtw2RZc1ROIEqIp+2fQXgjAM=;
-        b=bFoPL//GZW9DIzuobqBjBuTYPUhPABNfmOLpBZFyctgLTdAOu5semAlChTqTFwI6iI
-         ZGiZrybYgOb5xfnS0WXUmJ3DkXsGrtwMUGRRr2Cybx7jtLRzgAl14maRPV1vd+ejH7jK
-         rMKCmqU/kAAPb4MNg5DRgz1S51NOguuXuumIrs7h1ZSeL1c55Wz6yDSfpVE9f6mku4WY
-         9kMAjoqCdzwTgqUFIzOYX7Dqs7z8UzhSfoF3/Z8vjza54OhgK+OEXoepCWRe5zNfnC7M
-         rg4L/w2uwLq4rXMcuilLxZNhaVKE9B9wuEpEmU2ee4wIU+COxdxfQF7m/uXyaH/hE0Q6
-         9/OA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pFowR5rZv27Byo7MG/rb8vt4PHkizLtRCIAEAUNAVvc=;
+        b=SNyww/+v2rOWzp3wWlNE2GMDOY2kfILfEMUec9joURmjgU94IBUPrWzgwPtwwe+NxP
+         ZUlvOALV23Dpx1eKrKl+Upbx/yNKJs6wQQq9ruuWqUeDx/57QYjI9QJ31EWg8X+sb4+7
+         8BSbCxcO9EKGpY2fBN8ATf0fh2w4niAF5XPDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H7YnJzaX46oHsg1DO42jtw2RZc1ROIEqIp+2fQXgjAM=;
-        b=XX5hI+APom3VB8lkeohg8EJTynEx2SP4WCn4bwqnDLCYQ7fIox7ToQacic8TzqxZIS
-         XE1n37DFZqtPM0GqPlB4N8u3lRaAI9+XKPF+qnCPUczi1Myc8qDVm8jKO+O07ugkR+Tr
-         w/tnp5PI+EL3+PAvqOEFTVvHS9fmWjh+BgT47gjWZ2p9165ATtti75Ah45UlAwrgV2io
-         MYCE1NcLmPhIk0Iir3RhMOo9wQbbBR8ogX5wD8VV57YYHAmbSBMgL3Uiq/3tjmmkCxjf
-         WVRssLVEcc5SWsX/SiK2+iK43rDvjG8VEPc9/hXu7D8pLNiBc0nEncozLg7ZAez0EINx
-         R/fg==
-X-Gm-Message-State: ABuFfoh7mg29aIQnw9wVaRQSTBaM2VZ9mvjxCHI3yYY3oXB2VI853bN3
-        b/a/waJjT0tFXvycsWSnqvex7PIg
-X-Google-Smtp-Source: ACcGV63jt2pgmiO/AJiGhnPLM40RaVj+hOGJUJhv6HT7uauh3P0QtRJ6hYrBQSrYYhUh+WkRrlk2cw==
-X-Received: by 2002:a17:902:b213:: with SMTP id t19-v6mr11973373plr.51.1538747336525;
-        Fri, 05 Oct 2018 06:48:56 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id f22-v6sm12626455pff.29.2018.10.05.06.48.54
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pFowR5rZv27Byo7MG/rb8vt4PHkizLtRCIAEAUNAVvc=;
+        b=OBvw/gdxJNyTFQqMOHuvLiVvZHQlPRUp7fp++rlPCYDjnbo5WjSaR354iYkKVxmdsA
+         bLrcVPrPPNl1Tf1/PSzXNxw8TTrRIs715Tcv7NvF0RW7sLm8By6A+95csfiMd4PqnTkw
+         y2nMAizK0YfAsEMwGfCT3FpvjKKb65FMC5T4pqjgx1M1X72Qe84to2Xkg8uJhE6+ZDog
+         jdWj4KHGUG8WABikaKlBuhH2rBk+rPruwaPwK+qX2eSFT2Pxnfq3WtZD019vIXAI58kU
+         RQSiMER/+V2bFwLCIcAHBrh4gu3YQU8Xj1298NKCxkoc7o0/e8B2EghNTMhWW1lZO/rZ
+         sdAw==
+X-Gm-Message-State: ABuFfoi4zYiRMYVQAyjWQz0fH0H2wt/8rkL8KMPRqyPR6q5OxdW7Q24A
+        8vOIN/56clFVSsdWw5nMbW1w0A==
+X-Google-Smtp-Source: ACcGV60eT7U7YchbZbAhGxRyh0wz86d0uWROmjD29HU1S/kidLt61PBbV1NY0KCsLeH7XM23NJNlzA==
+X-Received: by 2002:a5d:4a12:: with SMTP id m18-v6mr8458434wrq.278.1538747340967;
+        Fri, 05 Oct 2018 06:49:00 -0700 (PDT)
+Received: from [192.168.0.40] (151.240.136.77.rev.sfr.net. [77.136.240.151])
+        by smtp.googlemail.com with ESMTPSA id 20-v6sm2453909wml.10.2018.10.05.06.48.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 06:48:55 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 06:48:54 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Oct 5
-Message-ID: <20181005134854.GA17709@roeck-us.net>
-References: <20181005163943.3f8d4f32@canb.auug.org.au>
+        Fri, 05 Oct 2018 06:49:00 -0700 (PDT)
+Subject: Re: [PATCH V10 5/8] clocksource: add C-SKY SMP timer
+To:     Guo Ren <ren_guo@c-sky.com>, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, anurup.m@huawei.com,
+        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
+        zhangshaokun@hisilicon.com, jhogan@kernel.org,
+        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1538672812.git.ren_guo@c-sky.com>
+ <76f127a22faf8f110f102ee3534792b2b84a7d78.1538672812.git.ren_guo@c-sky.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <4ec284a4-0cff-91b8-bd0a-6eb578b28432@linaro.org>
+Date:   Fri, 5 Oct 2018 15:48:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005163943.3f8d4f32@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <76f127a22faf8f110f102ee3534792b2b84a7d78.1538672812.git.ren_guo@c-sky.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 04:39:43PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 04/10/2018 19:22, Guo Ren wrote:
+> This timer is used by SMP system and use mfcr/mtcr instruction
+> to access the regs.
 > 
-> Changes since 20181004:
+> Changelog:
+>  - Add rollback for timer_of_cleanup.
+>  - Use request_percpu_irq separate from time_of.
+>  - Remove #define CPUHP_AP_CSKY_TIMER_STARTING.
+>  - Add CPUHP_AP_CSKY_TIMER_STARTING in cpuhotplug.h.
+>  - Support csky mp timer alpha version.
+>  - Just use low-counter with 32bit width as clocksource.
+>  - Coding convention with upstream feed-back.
 > 
-> I added a supplied patch to the dma-mapping tree to fix overnight boot
-> problems.
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  drivers/clocksource/Kconfig         |  10 +++
+>  drivers/clocksource/Makefile        |   1 +
+>  drivers/clocksource/timer-mp-csky.c | 173 ++++++++++++++++++++++++++++++++++++
+>  include/linux/cpuhotplug.h          |   1 +
+>  4 files changed, 185 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-mp-csky.c
 > 
-> I added a supplied patch to the nfs tree to fix an overnight build
-> problem.
-> 
-> The nfsd tree gained a build failure due to an interaction with the nfs
-> tree for which I applied a merge fix patch. And another build failure
-> so I used the version from next-20181004.
-> 
-> The bpf-next tree lost its build failure.
-> 
-> The drm-msm tree gained a build failure, so I used the version from
-> next-20181004.
-> 
-> The tty tree lost its build failure.
-> 
-> The slave-dma tree lost its build failure.
-> 
-> The akpm-current tree gained a conflict against the btrfs-kdave tree.
-> 
-> The akpm tree gained a build failure due to an interaction with the
-> powerpc tree for which I added a merge fix patch.
-> 
-> Non-merge commits (relative to Linus' tree): 8415
->  8136 files changed, 377585 insertions(+), 173429 deletions(-)
-> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a11f4ba..826a2e8 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -620,4 +620,14 @@ config RISCV_TIMER
+>  	  is accessed via both the SBI and the rdcycle instruction.  This is
+>  	  required for all RISC-V systems.
+>  
+> +config CSKY_MP_TIMER
+> +	bool "SMP Timer for the C-SKY platform"
+> +	depends on CSKY
+> +	select TIMER_OF
+> +	help
+> +	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
+> +	  system.
+> +	  csky,mptimer is not only used in SMP system, it also could be used
+> +	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
 
-Build results:
-	total: 135 pass: 129 fail: 6
-Failed builds: 
-	mips:allmodconfig 
-	powerpc:ppc6xx_defconfig
-	s390:defconfig 
-	s390:allmodconfig 
-	s390:allnoconfig 
-	sparc32:allmodconfig 
-Qemu test results:
-	total: 318 pass: 315 fail: 3
-Failed tests: 
-	s390:defconfig:initrd 
-	s390:defconfig:virtio-blk-ccw:rootfs 
-	s390:defconfig:scsi[virtio-ccw]:rootfs
 
----
-mips:allmodconfig, powerpc:ppc6xx_defconfig;
+... COMPILE_TEST :)
 
-net/sunrpc/auth_gss/gss_krb5_seal.c: In function 'gss_seq_send64_fetch_and_inc':
-net/sunrpc/auth_gss/gss_krb5_seal.c:144:3: error:
-	implicit declaration of function 'cmpxchg64'
 
----
-s390:
 
-s390-linux-ld:./arch/s390/kernel/vmlinux.lds:41: syntax error
 
-qemu tests also affected. Fixed with:
 
-https://lore.kernel.org/patchwork/patch/993576/
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
----
-sparc32:allmodconfig:
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-Various "relocation truncated to fit" errors. Also seen in mainline.
-It is probably time to drop the build.
-
----
-
-Guenter
