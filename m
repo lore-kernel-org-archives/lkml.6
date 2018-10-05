@@ -2,169 +2,105 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E667C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A915DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1E02087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1E02087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 622BD20875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622BD20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeJETIK (ORCPT
+        id S1728388AbeJETJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 15:08:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42516 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 15:09:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42037 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbeJETIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 15:08:10 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 60081307D868;
-        Fri,  5 Oct 2018 12:09:43 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1184308BDA1;
-        Fri,  5 Oct 2018 12:09:38 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 83E0316E2C; Fri,  5 Oct 2018 14:09:34 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] drm/bochs: add edid support.
-Date:   Fri,  5 Oct 2018 14:09:34 +0200
-Message-Id: <20181005120934.21959-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 05 Oct 2018 12:09:43 +0000 (UTC)
+        id S1727558AbeJETJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 15:09:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C37EC2074F; Fri,  5 Oct 2018 14:10:57 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 51D6320701;
+        Fri,  5 Oct 2018 14:10:57 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 14:10:57 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 10/10] mtd: maps: gpio-addr-flash: Add support for
+ device-tree devices
+Message-ID: <20181005141057.0f1b0a9b@bbrezillon>
+In-Reply-To: <CAPybu_0TbeN+-F6zwN8XOMuY1EpgE6GRi=ExDx6O3Yun9kXjYQ@mail.gmail.com>
+References: <20181004142942.11887-1-ricardo.ribalda@gmail.com>
+        <20181004142942.11887-2-ricardo.ribalda@gmail.com>
+        <20181005002125.12fd229f@bbrezillon>
+        <CAPybu_26HST5xGfhE6MoVTRZok_gfDqN=ZOAesuEMVskdrCpLA@mail.gmail.com>
+        <20181005090811.6b7e9957@bbrezillon>
+        <CAPybu_38xH2Cv+eONQmEJ1i6k=oiQM=WrcwOFR29LbtRvWfKXA@mail.gmail.com>
+        <20181005103730.57d52e3c@bbrezillon>
+        <CAPybu_1RMcro3xLNW5mbybYdObCTq=QwXgk+RT6hcmRGTh6s7A@mail.gmail.com>
+        <20181005121235.7e64b64a@bbrezillon>
+        <CAPybu_0TbeN+-F6zwN8XOMuY1EpgE6GRi=ExDx6O3Yun9kXjYQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent qemu (latest master branch, upcoming 3.1 release) got support
-for EDID data.  This patch adds guest driver support.
+On Fri, 5 Oct 2018 14:04:52 +0200
+Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
 
-EDID support in qemu is not (yet) enabled by default, so please use
-'qemu -device VGA,edid=on' for testing.
+> Hi Boris
+> On Fri, Oct 5, 2018 at 12:12 PM Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> >
+> > On Fri, 5 Oct 2018 11:54:18 +0200
+> > Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+> >  
+> > > Hi Boris
+> > >
+> > > Just seen that  you already did the rebase at
+> > > https://github.com/bbrezillon/linux-0day/commits/mtd/physmap-cleanup
+> > >
+> > > Thanks for that.
+> > >
+> > > I am about to test it in real hw (unless you want me wait)  
+> >
+> > Sure, go ahead and test it.
+> >
+> > Thanks,
+> >
+> > Boris  
+> I had to change this on your patchset to have it working on hw:
+> https://pastebin.com/78A7yhJ9
+> 
+> If you send the patchset to the mailing list I can review it patch by patch.
+> 
+> Also
+> mtd: maps: Prepare merging of physmap and physmap_of
+> 
+> I do not think that can be bisected. (Not sure, I have to test it)
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/bochs/bochs.h     |  1 +
- drivers/gpu/drm/bochs/bochs_hw.c  | 38 ++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/bochs/bochs_kms.c | 18 +++++++++++++++---
- 3 files changed, 54 insertions(+), 3 deletions(-)
+Okay, I'll have a look.
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index e7a69077e4..06b8166efa 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -66,6 +66,7 @@ struct bochs_device {
- 	u16 yres_virtual;
- 	u32 stride;
- 	u32 bpp;
-+	struct edid *edid;
- 
- 	/* drm */
- 	struct drm_device  *dev;
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index cacff73a64..6ce4cdac38 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -69,6 +69,41 @@ static void bochs_hw_set_little_endian(struct bochs_device *bochs)
- #define bochs_hw_set_native_endian(_b) bochs_hw_set_little_endian(_b)
- #endif
- 
-+static int bochs_load_edid(struct bochs_device *bochs)
-+{
-+	uint8_t *blob;
-+	size_t i, len;
-+	uint8_t num_exts;
-+
-+	if (!bochs->mmio)
-+		return -1;
-+
-+	if ((readb(bochs->mmio+0) != 0x00 ||
-+	     readb(bochs->mmio+1) != 0xff))
-+		return -1;
-+
-+	num_exts = readb(bochs->mmio + 126);
-+	len = EDID_LENGTH * (1 + num_exts);
-+	if (len > 0x400 /* vga register offset */)
-+		return -1;
-+
-+	kfree(bochs->edid);
-+	bochs->edid = kmalloc(len, GFP_KERNEL);
-+	blob = (void *)bochs->edid;
-+	for (i = 0; i < len; i++) {
-+		blob[i] = readb(bochs->mmio+i);
-+	}
-+
-+	if (!drm_edid_is_valid(bochs->edid)) {
-+		DRM_ERROR("EDID is not valid, ignoring.\n");
-+		kfree(bochs->edid);
-+		bochs->edid = NULL;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- int bochs_hw_init(struct drm_device *dev)
- {
- 	struct bochs_device *bochs = dev->dev_private;
-@@ -150,6 +185,9 @@ int bochs_hw_init(struct drm_device *dev)
- 	}
- 
- noext:
-+	if (bochs_load_edid(bochs) == 0)
-+		DRM_INFO("Found EDID data blob.\n");
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index 9bc5b438ae..b9931443a7 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -213,10 +213,17 @@ static void bochs_encoder_init(struct drm_device *dev)
- 
- static int bochs_connector_get_modes(struct drm_connector *connector)
- {
--	int count;
-+	struct bochs_device *bochs =
-+		container_of(connector, struct bochs_device, connector);
-+	int count = 0;
- 
--	count = drm_add_modes_noedid(connector, 8192, 8192);
--	drm_set_preferred_mode(connector, defx, defy);
-+	if (bochs->edid)
-+		count = drm_add_edid_modes(connector, bochs->edid);
-+
-+	if (!count) {
-+		count = drm_add_modes_noedid(connector, 8192, 8192);
-+		drm_set_preferred_mode(connector, defx, defy);
-+	}
- 	return count;
- }
- 
-@@ -271,6 +278,11 @@ static void bochs_connector_init(struct drm_device *dev)
- 	drm_connector_helper_add(connector,
- 				 &bochs_connector_connector_helper_funcs);
- 	drm_connector_register(connector);
-+
-+	if (bochs->edid) {
-+		drm_connector_attach_edid_property(connector);
-+		drm_connector_update_edid_property(connector, bochs->edid);
-+	}
- }
- 
- 
--- 
-2.9.3
+> 
+> I add the diff to the mail, but gmail will probably scramble the
+> lines(yes I know I have to use other mail client)
 
+The diff looks good, I'll fix that an send a push a new version.
+
+Thanks,
+
+Boris
