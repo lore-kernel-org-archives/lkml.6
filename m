@@ -2,271 +2,172 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EFFC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE3CC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B321208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:42:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbfR060B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B321208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1634D208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1634D208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeJEQkO (ORCPT
+        id S1727783AbeJEQk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 12:40:14 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52665 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbeJEQkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 12:40:14 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 189-v6so1242599wmw.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 02:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=t5xp1kYsNTGoSaZvBSASdjLWpns39CtUkHgdFqNw26E=;
-        b=CbfR060B2H0hBFr6sqGMRnwCpapyIJEAiES7qujqckQ8kNnZe8JtKgSjvp0ry6zJAm
-         J/94/CpyxAVx8up7Y8VmMB7toZggAWKKRsu8KFcKp06o56wN5t4vTBeQqkC9qo6N9Pb8
-         l6NtQtCv3tmVl5bwCnsHidB6pVGiaNG6ejU7qrKZHRTOcl1WzRnhUXYal9zhAUzxTSWP
-         o+wMnci0/tkR9zGwYGzT8eMVLC1p9EcRxfwIJGgEWZ880iw+3FjMphGBbW6cB5dDyVvs
-         tryo3uBWZyH2gHsKntJv6KLurGEMZGN0IBsluPa0LAVC7OGVB9Dow1R30hdIAL7KRI9n
-         N1Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=t5xp1kYsNTGoSaZvBSASdjLWpns39CtUkHgdFqNw26E=;
-        b=mGzwDGgle81C/d6uAEaRGVcvLMz6ah0/GTYvKtXxQIWHI3YYn85QePUGzbeLc6lQC2
-         qjzfpCL1ADSne3Y3QaSkBqjnzUTpVXoc5vsT7Jvx1M+2JRjePeGYQKbgeNzZAhUkGdyC
-         H5Nkvtswlz89TkcjK0jhH39l+K1/JvbymEQXtP77Kn0FCN2llg8OeuFhZe8WBP/TATa0
-         oMjKz/+H3j/glat8lgw5aQlXoUw26EBev4xnRwFYVkOfdcNytaNDZyHmsI2rRU/yZtCH
-         eSS+cYQ+9JsAA30zR0czzuLIV04YzwCpi1ir3bWHU47mpjjRTtGTd9xmiTn4rKx31JtJ
-         YwTQ==
-X-Gm-Message-State: ABuFfohfk1kRTOzW32ZkG1Mi1Ay5lP/pgy/2cV1zGI+1/TljTwpZs0PS
-        gfVRVxiBsriZ4hHeYkWdysKkMBjk
-X-Google-Smtp-Source: ACcGV63BhG48ET/EUFKlb7sICZrTr2Wh5J3Y/lxlIhJ1OcHfMhoSCHanXwbkeoFsRZBrAdy/m6YYvQ==
-X-Received: by 2002:a1c:96c7:: with SMTP id y190-v6mr7548120wmd.36.1538732534383;
-        Fri, 05 Oct 2018 02:42:14 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x185-v6sm725534wmg.12.2018.10.05.02.42.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 02:42:13 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 11:42:11 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] perf fixes
-Message-ID: <20181005094211.GA52891@gmail.com>
+        Fri, 5 Oct 2018 12:40:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727036AbeJEQk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 12:40:56 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AFC323082A26;
+        Fri,  5 Oct 2018 09:42:58 +0000 (UTC)
+Received: from [10.36.116.131] (ovpn-116-131.ams2.redhat.com [10.36.116.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ADBB52010D0A;
+        Fri,  5 Oct 2018 09:42:56 +0000 (UTC)
+Subject: Re: [PATCH v1 2/2] s390: vfio-ap: setup APCB mask using KVM dedicated
+ function
+To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com, pasic@linux.ibm.com
+References: <7d147350-4284-8e01-d1fa-0795d2da85c1@de.ibm.com>
+ <1538728270-10340-1-git-send-email-pmorel@linux.ibm.com>
+ <1538728270-10340-3-git-send-email-pmorel@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <dee76108-8249-a9ac-ea39-28e22ebe22ad@redhat.com>
+Date:   Fri, 5 Oct 2018 11:42:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1538728270-10340-3-git-send-email-pmorel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 05 Oct 2018 09:42:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 05/10/2018 10:31, Pierre Morel wrote:
+> We replace the vfio_ap_mdev_copy_masks() by the new
+> kvm_arch_crypto_set_masks() to be able to use the standard
+> KVM tracing system.
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c | 33 +++------------------------------
+>  1 file changed, 3 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index a8a9984..f297779 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -726,35 +726,6 @@ static const struct attribute_group *vfio_ap_mdev_attr_groups[] = {
+>  	NULL
+>  };
+>  
+> -static void vfio_ap_mdev_copy_masks(struct ap_matrix_mdev *matrix_mdev)
+> -{
+> -	int nbytes;
+> -	unsigned long *apm, *aqm, *adm;
+> -	struct kvm_s390_crypto_cb *crycb = matrix_mdev->kvm->arch.crypto.crycb;
+> -
+> -	switch (matrix_mdev->kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK) {
+> -	case CRYCB_FORMAT2:
+> -		apm = (unsigned long *)crycb->apcb1.apm;
+> -		aqm = (unsigned long *)crycb->apcb1.aqm;
+> -		adm = (unsigned long *)crycb->apcb1.adm;
+> -		break;
+> -	case CRYCB_FORMAT1:
+> -	case CRYCB_FORMAT0:
+> -	default:
+> -		apm = (unsigned long *)crycb->apcb0.apm;
+> -		aqm = (unsigned long *)crycb->apcb0.aqm;
+> -		adm = (unsigned long *)crycb->apcb0.adm;
+> -		break;
+> -	}
+> -
+> -	nbytes = DIV_ROUND_UP(matrix_mdev->matrix.apm_max + 1, BITS_PER_BYTE);
+> -	memcpy(apm, matrix_mdev->matrix.apm, nbytes);
+> -	nbytes = DIV_ROUND_UP(matrix_mdev->matrix.aqm_max + 1, BITS_PER_BYTE);
+> -	memcpy(aqm, matrix_mdev->matrix.aqm, nbytes);
+> -	nbytes = DIV_ROUND_UP(matrix_mdev->matrix.adm_max + 1, BITS_PER_BYTE);
+> -	memcpy(adm, matrix_mdev->matrix.adm, nbytes);
+> -}
+> -
+>  /**
+>   * vfio_ap_mdev_set_kvm
+>   *
+> @@ -811,7 +782,9 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+>  	if (!matrix_mdev->kvm->arch.crypto.crycbd)
+>  		return NOTIFY_DONE;
+>  
+> -	vfio_ap_mdev_copy_masks(matrix_mdev);
+> +	kvm_arch_crypto_set_masks(matrix_mdev->kvm, matrix_mdev->matrix.apm,
+> +				  matrix_mdev->matrix.aqm,
+> +				  matrix_mdev->matrix.adm);
+>  
+>  	return NOTIFY_OK;
+>  }
+> 
 
-Please pull the latest perf-urgent-for-linus git tree from:
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+-- 
 
-   # HEAD: d7cbbe49a9304520181fb8c9272d1327deec8453 perf/x86/amd/uncore: Set ThreadMask and SliceMask for L3 Cache perf events
+Thanks,
 
-Misc fixes:
-
- - fix a CPU#0 hot unplug bug and a PCI enumeration bug in the x86 Intel uncore PMU driver
- - fix a CPU event enumeration bug in the x86 AMD PMU driver
- - fix a perf ring-buffer corruption bug when using tracepoints
- - fix a PMU unregister locking bug
-
- Thanks,
-
-	Ingo
-
------------------->
-Jiri Olsa (1):
-      perf/ring_buffer: Prevent concurent ring buffer access
-
-Kan Liang (1):
-      perf/x86/intel/uncore: Fix PCI BDF address of M3UPI on SKX
-
-Masayoshi Mizuma (1):
-      perf/x86/intel/uncore: Use boot_cpu_data.phys_proc_id instead of hardcorded physical package ID 0
-
-Natarajan, Janakarajan (1):
-      perf/x86/amd/uncore: Set ThreadMask and SliceMask for L3 Cache perf events
-
-Peter Zijlstra (1):
-      perf/core: Fix perf_pmu_unregister() locking
-
-
- arch/x86/events/amd/uncore.c         | 10 ++++++++++
- arch/x86/events/intel/uncore_snbep.c | 14 +++++++-------
- arch/x86/include/asm/perf_event.h    |  8 ++++++++
- kernel/events/core.c                 | 11 ++++-------
- 4 files changed, 29 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index 981ba5e8241b..8671de126eac 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -36,6 +36,7 @@
- 
- static int num_counters_llc;
- static int num_counters_nb;
-+static bool l3_mask;
- 
- static HLIST_HEAD(uncore_unused_list);
- 
-@@ -209,6 +210,13 @@ static int amd_uncore_event_init(struct perf_event *event)
- 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
- 	hwc->idx = -1;
- 
-+	/*
-+	 * SliceMask and ThreadMask need to be set for certain L3 events in
-+	 * Family 17h. For other events, the two fields do not affect the count.
-+	 */
-+	if (l3_mask)
-+		hwc->config |= (AMD64_L3_SLICE_MASK | AMD64_L3_THREAD_MASK);
-+
- 	if (event->cpu < 0)
- 		return -EINVAL;
- 
-@@ -525,6 +533,7 @@ static int __init amd_uncore_init(void)
- 		amd_llc_pmu.name	  = "amd_l3";
- 		format_attr_event_df.show = &event_show_df;
- 		format_attr_event_l3.show = &event_show_l3;
-+		l3_mask			  = true;
- 	} else {
- 		num_counters_nb		  = NUM_COUNTERS_NB;
- 		num_counters_llc	  = NUM_COUNTERS_L2;
-@@ -532,6 +541,7 @@ static int __init amd_uncore_init(void)
- 		amd_llc_pmu.name	  = "amd_l2";
- 		format_attr_event_df	  = format_attr_event;
- 		format_attr_event_l3	  = format_attr_event;
-+		l3_mask			  = false;
- 	}
- 
- 	amd_nb_pmu.attr_groups	= amd_uncore_attr_groups_df;
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 51d7c117e3c7..c07bee31abe8 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3061,7 +3061,7 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
- 
- void bdx_uncore_cpu_init(void)
- {
--	int pkg = topology_phys_to_logical_pkg(0);
-+	int pkg = topology_phys_to_logical_pkg(boot_cpu_data.phys_proc_id);
- 
- 	if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
- 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
-@@ -3931,16 +3931,16 @@ static const struct pci_device_id skx_uncore_pci_ids[] = {
- 		.driver_data = UNCORE_PCI_DEV_FULL_DATA(21, 5, SKX_PCI_UNCORE_M2PCIE, 3),
- 	},
- 	{ /* M3UPI0 Link 0 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 0, SKX_PCI_UNCORE_M3UPI, 0),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 0),
- 	},
- 	{ /* M3UPI0 Link 1 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 1),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204E),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 2, SKX_PCI_UNCORE_M3UPI, 1),
- 	},
- 	{ /* M3UPI1 Link 2 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 4, SKX_PCI_UNCORE_M3UPI, 2),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 5, SKX_PCI_UNCORE_M3UPI, 2),
- 	},
- 	{ /* end: all zeroes */ }
- };
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 12f54082f4c8..78241b736f2a 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -46,6 +46,14 @@
- #define INTEL_ARCH_EVENT_MASK	\
- 	(ARCH_PERFMON_EVENTSEL_UMASK | ARCH_PERFMON_EVENTSEL_EVENT)
- 
-+#define AMD64_L3_SLICE_SHIFT				48
-+#define AMD64_L3_SLICE_MASK				\
-+	((0xFULL) << AMD64_L3_SLICE_SHIFT)
-+
-+#define AMD64_L3_THREAD_SHIFT				56
-+#define AMD64_L3_THREAD_MASK				\
-+	((0xFFULL) << AMD64_L3_THREAD_SHIFT)
-+
- #define X86_RAW_EVENT_MASK		\
- 	(ARCH_PERFMON_EVENTSEL_EVENT |	\
- 	 ARCH_PERFMON_EVENTSEL_UMASK |	\
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index dcb093e7b377..5a97f34bc14c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8314,6 +8314,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
- 			goto unlock;
- 
- 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-+			if (event->cpu != smp_processor_id())
-+				continue;
- 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
- 				continue;
- 			if (event->attr.config != entry->type)
-@@ -9431,9 +9433,7 @@ static void free_pmu_context(struct pmu *pmu)
- 	if (pmu->task_ctx_nr > perf_invalid_context)
- 		return;
- 
--	mutex_lock(&pmus_lock);
- 	free_percpu(pmu->pmu_cpu_context);
--	mutex_unlock(&pmus_lock);
- }
- 
- /*
-@@ -9689,12 +9689,8 @@ EXPORT_SYMBOL_GPL(perf_pmu_register);
- 
- void perf_pmu_unregister(struct pmu *pmu)
- {
--	int remove_device;
--
- 	mutex_lock(&pmus_lock);
--	remove_device = pmu_bus_running;
- 	list_del_rcu(&pmu->entry);
--	mutex_unlock(&pmus_lock);
- 
- 	/*
- 	 * We dereference the pmu list under both SRCU and regular RCU, so
-@@ -9706,13 +9702,14 @@ void perf_pmu_unregister(struct pmu *pmu)
- 	free_percpu(pmu->pmu_disable_count);
- 	if (pmu->type >= PERF_TYPE_MAX)
- 		idr_remove(&pmu_idr, pmu->type);
--	if (remove_device) {
-+	if (pmu_bus_running) {
- 		if (pmu->nr_addr_filters)
- 			device_remove_file(pmu->dev, &dev_attr_nr_addr_filters);
- 		device_del(pmu->dev);
- 		put_device(pmu->dev);
- 	}
- 	free_pmu_context(pmu);
-+	mutex_unlock(&pmus_lock);
- }
- EXPORT_SYMBOL_GPL(perf_pmu_unregister);
- 
+David / dhildenb
