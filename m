@@ -2,100 +2,124 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AD2C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCACC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39A12147D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39A12147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 50859208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:19:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50859208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbeJEXTB (ORCPT
+        id S1730236AbeJEXTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:19:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36331 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729594AbeJEXTA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:19:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w95GJUhL3206334
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 5 Oct 2018 09:19:30 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w95GJUtE3206331;
-        Fri, 5 Oct 2018 09:19:30 -0700
-Date:   Fri, 5 Oct 2018 09:19:30 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-d005efe18db0b4a123dd92ea8e77e27aee8f99fd@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, jolsa@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org, hpa@zytor.com, acme@redhat.com,
-        adrian.hunter@intel.com
-Reply-To: hpa@zytor.com, acme@redhat.com, adrian.hunter@intel.com,
-          mingo@kernel.org, tglx@linutronix.de, jolsa@redhat.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20180911114504.28516-3-adrian.hunter@intel.com>
-References: <20180911114504.28516-3-adrian.hunter@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script python: Fix export-to-sqlite.py
- sample columns
-Git-Commit-ID: d005efe18db0b4a123dd92ea8e77e27aee8f99fd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 5 Oct 2018 19:19:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:54700 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728967AbeJEXTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:19:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E2F780D;
+        Fri,  5 Oct 2018 09:19:51 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADFEB3F5D3;
+        Fri,  5 Oct 2018 09:19:45 -0700 (PDT)
+Subject: Re: [RFC PATCH 00/10] arch/x86: AMD QoS support
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180924191841.29111-1-babu.moger@amd.com>
+ <20181002170655.GA92941@romley-ivt3.sc.intel.com>
+ <BL0PR12MB2468F1F6EA31332657802C7595E80@BL0PR12MB2468.namprd12.prod.outlook.com>
+ <20181002184614.GC92941@romley-ivt3.sc.intel.com>
+ <2549597a-440c-ab77-2c35-01a648703b9f@amd.com>
+ <20181003185209.GA98542@romley-ivt3.sc.intel.com>
+ <874cdcfb-26fa-2bdb-095d-b1b5a88250b9@amd.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <9500445c-019d-9b77-0b51-48922bf47007@arm.com>
+Date:   Fri, 5 Oct 2018 17:19:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <874cdcfb-26fa-2bdb-095d-b1b5a88250b9@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d005efe18db0b4a123dd92ea8e77e27aee8f99fd
-Gitweb:     https://git.kernel.org/tip/d005efe18db0b4a123dd92ea8e77e27aee8f99fd
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Tue, 11 Sep 2018 14:45:04 +0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 25 Sep 2018 11:37:05 -0300
+Hi guys,
 
-perf script python: Fix export-to-sqlite.py sample columns
+On 03/10/18 21:09, Moger, Babu wrote:
+> On 10/03/2018 01:52 PM, Fenghua Yu wrote:
+>> On Tue, Oct 02, 2018 at 07:16:23PM +0000, Moger, Babu wrote:
+>>> On 10/02/2018 01:46 PM, Fenghua Yu wrote:
+>>>> I don't see the name 'RDT' (Resource Director Technology) in the
+>>>> spec "AMD64 Technology Platform Quality of Service Extensions".
+>>>> Does AMD use the same name 'RDT' as Intel?
+>>>
+>>> No. AMD uses the word "Platform Quality of Service"(or in short QoS) to
+>>> refer this feature.
+>>
+>> Hi, Thomas, Babu, and James,
+>>
+>> Can we use "resctrl" to replace "intel_rdt" and "rdt" in kernel? "resctrl"
+>> is a neutral name and has been used in user interface already. Hopefully
+>> "resctrl" can be acceptable by ARM, AMD, and Intel. We only use "intel_rdt",
+>> "amd_qos", or "arm mpam" for vendor specific code.
+> 
+> Yes. resctrl seems like a reasonable name. >
+>> Can we move all of Intel RDT, AMD QoS, and ARM MPAM code into a generic
 
-With the "branches" export option, not all sample columns are exported.
-However the unwanted columns are not at the end of the tuple, as assumed
-by the code. Fix by taking the first 15 and last 3 values, instead of
-the first 18.
+all? Hmmm... I wanted to keep anything with an ABI implication under /fs/ so its
+definitely the same. Obviously some things are definitely arch specific, e.g.
+writing msr-s in intel_rdt_sched_in().
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180911114504.28516-3-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/scripts/python/export-to-sqlite.py | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-index f827bf77e9d2..e4bb82c8aba9 100644
---- a/tools/perf/scripts/python/export-to-sqlite.py
-+++ b/tools/perf/scripts/python/export-to-sqlite.py
-@@ -440,7 +440,11 @@ def branch_type_table(*x):
- 
- def sample_table(*x):
- 	if branches:
--		bind_exec(sample_query, 18, x)
-+		for xx in x[0:15]:
-+			sample_query.addBindValue(str(xx))
-+		for xx in x[19:22]:
-+			sample_query.addBindValue(str(xx))
-+		do_query_(sample_query)
- 	else:
- 		bind_exec(sample_query, 22, x)
- 
+>> place fs/resctrl where both ARM and X86 code can stay?
+> 
+> Looking at the James patches, I thought he is going in the same(or
+> similar) direction eventually.
+
+Yes, I was trying to name stuff 'resctrl' if its moving to /fs/, and
+resctrl_arch if its arch specific, thus stays where it is. (and the existing
+names if I didn't need to touch it).
+
+The struct names all have rdt in them, I thought it too noisy to change them.
+
+
+
+Thanks,
+
+James
