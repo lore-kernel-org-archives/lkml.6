@@ -2,83 +2,118 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BF1C64EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42A5C64EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2D7320854
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:08:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2D7320854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 75F3F206B2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:18:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RTS6mqsN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F3F206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeJEHEh (ORCPT
+        id S1727354AbeJEHOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 03:04:37 -0400
-Received: from mga11.intel.com ([192.55.52.93]:63004 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbeJEHEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 03:04:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 17:08:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,342,1534834800"; 
-   d="scan'208";a="94760662"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Oct 2018 17:08:25 -0700
-Subject: [PATCH] libnvdimm,
- pmem: Fix badblocks population for 'raw' namespaces
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jacek Zloch <jacek.zloch@intel.com>,
-        Krzysztof Rusocki <krzysztof.rusocki@intel.com>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 04 Oct 2018 16:56:37 -0700
-Message-ID: <153869739732.2904401.10895695693942634646.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Fri, 5 Oct 2018 03:14:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35952 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbeJEHOY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 03:14:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=J1XtDIL3kBelGBNUkkDCrZazDGKBjJVyr73m5/HV1tQ=; b=RTS6mqsN4ys9mvLAflgaTs/QV
+        lJYTxvfRtD2gC/G/vOzcqwVFUV9GeoM8Tw4NUbXkYLBMQQg6CH/SPeW5w38CiRQHqzeHNDdCSRCI1
+        p0vMuj73Z8ydGkd1X1z/xjsEebSPM+0qI1g+oi165TntIG1BzOETT+cxIm+7w/AUxiAI0G9Wb1IC5
+        kO4Jo+XSf7NkCpwLYkkLdwwUh0XbUJUlRs3906R5VGlWWqHr/IxVt1+zTbdPcgmwhUjrCrj+2J1qL
+        WKPYDkhqmShimKED1eLho4Z5qxW/qCEe/fYjUNypXWxCsLlVujllYSQxcYgocvXUbMeHM6n0ScKvX
+        awcL/ObNA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g8Doo-0004Rs-RL; Fri, 05 Oct 2018 00:18:10 +0000
+Subject: Re: [ANN] init-kconfig - easy way to embrace Linux's kconfig
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Sam Ravnborg <sam@ravnborg.org>, Petr Vorel <pvorel@suse.cz>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Felix Fietkau <nbd@nbd.name>, kconfig-sat@googlegroups.com,
+        Ulf Magnusson <ulfalizer@gmail.com>
+References: <20181004200249.GL5238@garbanzo.do-not-panic.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <8487f1e3-248f-8736-90fb-5bbd87b35a44@infradead.org>
+Date:   Thu, 4 Oct 2018 17:18:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181004200249.GL5238@garbanzo.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver is only initializing bb_res in the devm_memremap_pages()
-paths, but the raw namespace case is passing an uninitialized bb_res to
-nvdimm_badblocks_populate().
+On 10/4/18 1:02 PM, Luis Chamberlain wrote:
+> Every now and then a project is born, and they decide to use Linux's
+> kconfig to enable configuration of their project. As it stands we *know*
+> kconfig is now used in at least over 12 different projects [0]. I myself
+> added kconfig to one as well years ago. Even research reveals that
+> kconfig has become one of the leading industrial variability modeling
+> languages [1] [2].
+> 
+> What is often difficult to do though is to start off using kconfig and
+> integrating it into a project. Or updating / syncing to the latest
+> kconfig from upstream Linux.
+> 
+> I had yet another need to use kconfig for another small project so
+> decided to make a clean template others can use and help keep it in sync.
+> This is a passive fork which aims to keep in sync with the Linux
+> kernel's latest kconfig to make it easier to keep up to date and to
+> enable new projects to use and embrace kconfig on their own.  The goal
+> is *not* to fork kconfig and evolve it separately, but rather keep in
+> sync with the evolution of kconfig on Linux to make it easier for
+> projects to use kconfig and also update their own kconfig when needed.
+> 
+> This may also be useful if folks want to test R&D code on a smaller
+> compartamentalized codebase.
+> 
+> If you find this useful and you'd like to help keep it in sync, send
+> patches my way as the kernel's kconfig evolves. The code is up on
+> gitlab [3].
+> 
+> Do we want to document this option on Linux in case folks want to try
+> and embrace kconfig on their own for other projects?
+>   
+> [0] http://www.eng.uwaterloo.ca/~shshe/kconfig_semantics.pdf
+> [1] http://gsd.uwaterloo.ca/sites/default/files/vm-2013-berger.pdf
+> [2] http://gsd.uwaterloo.ca/sites/default/files/ase241-berger_0.pdf
+> [3] https://gitlab.com/mcgrof/init-kconfig
+> 
+>   Luis
+> 
 
-Fixes: e8d513483300 ("memremap: change devm_memremap_pages interface...")
-Cc: <stable@vger.kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Reported-by: Jacek Zloch <jacek.zloch@intel.com>
-Reported-by: Krzysztof Rusocki <krzysztof.rusocki@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/pmem.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hi Luis,
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 6071e2942053..2082ae01b9c8 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -421,9 +421,11 @@ static int pmem_attach_disk(struct device *dev,
- 		addr = devm_memremap_pages(dev, &pmem->pgmap);
- 		pmem->pfn_flags |= PFN_MAP;
- 		memcpy(&bb_res, &pmem->pgmap.res, sizeof(bb_res));
--	} else
-+	} else {
- 		addr = devm_memremap(dev, pmem->phys_addr,
- 				pmem->size, ARCH_MEMREMAP_PMEM);
-+		memcpy(&bb_res, &nsio->res, sizeof(bb_res));
-+	}
- 
- 	/*
- 	 * At release time the queue must be frozen before
+Any crossover with Ulf's recent announcement?
 
+https://lore.kernel.org/lkml/CAFkk2KQ-sC=bAd9fCkOVPNmZn8m+EZfpZtirE+J5VpvW120sxQ@mail.gmail.com/
+
+
+thanx,
+-- 
+~Randy
