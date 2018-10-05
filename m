@@ -2,124 +2,133 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0758DC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF30C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2D232147D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uYs0sVZ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2D232147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 972F7214C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972F7214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbeJEXR6 (ORCPT
+        id S1730436AbeJEXSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:17:58 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:46232 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729530AbeJEXR6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:17:58 -0400
-Received: by mail-qk1-f202.google.com with SMTP id p128-v6so12813053qke.13
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 09:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=cQ9JSSsF2O+YiukHbjWxYbVnwmc9rU5fCIU4mPWxpJI=;
-        b=uYs0sVZ69R9D36DrZ452Zp7wC9xXDCQoIJnzTvqQ8SbsniUC/XqmpyNT0l/m+nQWKC
-         rqi0Ol+kot/wyv/qE6jgxDEVXYSnatnP+X4aArvqiU+mnG1KqEcSbiHw7O/Po0tI3BST
-         WQYpr3BAFG9+FdJlETUbtMMEoqsY+kll5fNL5bw1cB+gI4lWiYHuRFqlMHa6Cv/1gz6c
-         BD76B0I5Fwi2tLmfP6dzYyVo8ohwmCjRRx44NJic6ZeEZExGz0KWAWEn2rMb3unPr++j
-         4Whh8pa1+ybAAQL9JdzRG7e9V3LvWxZfuZb6OKLopxCJYZb7vCo9yrdvLBLq1ouExcyf
-         bXmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=cQ9JSSsF2O+YiukHbjWxYbVnwmc9rU5fCIU4mPWxpJI=;
-        b=q9O2gkV86+TXK9AncfYnXVIWiFiKBeKOMOQn5qdQGOmAPEgSfSOnA6KE1raIeMSikl
-         iMIo3gH5n4Lx6evT5esZu67dUsM0uApARH9AXaKNCDVKAbH873gA4Bsqo6icL81k9siI
-         06qQz3y9RMF+XhnMlVspkBRIVT8rqjkm6EFq+9CoKy+jqBVV76VvnuqaT1XCbvX7Ogbg
-         5tDC1Dtjb74wbxkeTgig07Xl6rwPSb0GEyOnPScwPweb5IhGH6rg0fBvDb9fN8XFFPme
-         VtNJRynakd8wERL3pCC5hf/Lsn/c+w2Gopnvt2Y6wzGpC5EJspTMdTNurI1Fw1Zy/tTg
-         wYiQ==
-X-Gm-Message-State: ABuFfohLcEWPRVEjr+Brb91Gvjvdt2wFYSIHpEZAIhOQperOA3s1fbQ4
-        FfqBL2AWzy9AClsJ4c375LYIAstm1A==
-X-Google-Smtp-Source: ACcGV62q5xA+TqpstgQh+c9L2NoGHvYLPQZVXo4Wb+VVjARN65KyqgBk92+OKsahAFN0S6s2UdwS8pYFRA==
-X-Received: by 2002:a0c:be06:: with SMTP id k6-v6mr8970698qvg.4.1538756313719;
- Fri, 05 Oct 2018 09:18:33 -0700 (PDT)
-Date:   Fri,  5 Oct 2018 18:17:59 +0200
-Message-Id: <20181005161759.177992-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH] bpf: 32-bit RSH verification must truncate input before the
- ALU op
-From:   Jann Horn <jannh@google.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        jannh@google.com
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
+        Fri, 5 Oct 2018 19:18:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40260 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728967AbeJEXSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:18:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 09:18:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
+   d="scan'208";a="86033243"
+Received: from 2b52.sc.intel.com ([143.183.136.147])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Oct 2018 09:18:23 -0700
+Message-ID: <fc2f98ab46240c0498bdf4d7458b4373c1f02bf8.camel@intel.com>
+Subject: Re: [RFC PATCH v4 3/9] x86/cet/ibt: Add IBT legacy code bitmap
+ allocation function
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Fri, 05 Oct 2018 09:13:40 -0700
+In-Reply-To: <20181003195702.GF32759@asgard.redhat.com>
+References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
+         <20180921150553.21016-4-yu-cheng.yu@intel.com>
+         <20181003195702.GF32759@asgard.redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I wrote commit 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification"), I
-assumed that, in order to emulate 64-bit arithmetic with 32-bit logic, it
-is sufficient to just truncate the output to 32 bits; and so I just moved
-the register size coercion that used to be at the start of the function to
-the end of the function.
+On Wed, 2018-10-03 at 21:57 +0200, Eugene Syromiatnikov wrote:
+> On Fri, Sep 21, 2018 at 08:05:47AM -0700, Yu-cheng Yu wrote:
+> > Indirect branch tracking provides an optional legacy code bitmap
+> > that indicates locations of non-IBT compatible code.  When set,
+> > each bit in the bitmap represents a page in the linear address is
+> > legacy code.
+> > 
+> > We allocate the bitmap only when the application requests it.
+> > Most applications do not need the bitmap.
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > ---
+> >  arch/x86/kernel/cet.c | 45 +++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> > index 6adfe795d692..a65d9745af08 100644
+> > --- a/arch/x86/kernel/cet.c
+> > +++ b/arch/x86/kernel/cet.c
+> > @@ -314,3 +314,48 @@ void cet_disable_ibt(void)
+> >  	wrmsrl(MSR_IA32_U_CET, r);
+> >  	current->thread.cet.ibt_enabled = 0;
+> >  }
+> > +
+> > +int cet_setup_ibt_bitmap(void)
+> > +{
+> > +	u64 r;
+> > +	unsigned long bitmap;
+> > +	unsigned long size;
+> > +
+> > +	if (!cpu_feature_enabled(X86_FEATURE_IBT))
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	if (!current->thread.cet.ibt_bitmap_addr) {
+> > +		/*
+> > +		 * Calculate size and put in thread header.
+> > +		 * may_expand_vm() needs this information.
+> > +		 */
+> > +		size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
+> 
+> TASK_SIZE_MAX is likely needed here, as an application can easily switch
+> between long an 32-bit protected mode.  And then the case of a CPU that
+> doesn't support 5LPT.
 
-That assumption is true for almost every op, but not for 32-bit right
-shifts, because those can propagate information towards the least
-significant bit. Fix it by always truncating inputs for 32-bit ops to 32
-bits.
+If we had calculated bitmap size from TASK_SIZE_MAX, all 32-bit apps would have
+failed the allocation for bitmap size > TASK_SIZE.  Please see values below,
+which is printed from the current code.
 
-Also get rid of the coerce_reg_to_size() after the ALU op, since that has
-no effect.
+Yu-cheng
 
-Fixes: 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification")
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Jann Horn <jannh@google.com>
----
- kernel/bpf/verifier.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index bb07e74b34a2..465952a8e465 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2896,6 +2896,15 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
- 	u64 umin_val, umax_val;
- 	u64 insn_bitness = (BPF_CLASS(insn->code) == BPF_ALU64) ? 64 : 32;
- 
-+	if (insn_bitness == 32) {
-+		/* Relevant for 32-bit RSH: Information can propagate towards
-+		 * LSB, so it isn't sufficient to only truncate the output to
-+		 * 32 bits.
-+		 */
-+		coerce_reg_to_size(dst_reg, 4);
-+		coerce_reg_to_size(&src_reg, 4);
-+	}
-+
- 	smin_val = src_reg.smin_value;
- 	smax_val = src_reg.smax_value;
- 	umin_val = src_reg.umin_value;
-@@ -3131,7 +3140,6 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
- 	if (BPF_CLASS(insn->code) != BPF_ALU64) {
- 		/* 32-bit ALU ops are (32,32)->32 */
- 		coerce_reg_to_size(dst_reg, 4);
--		coerce_reg_to_size(&src_reg, 4);
- 	}
- 
- 	__reg_deduce_bounds(dst_reg);
--- 
-2.19.0.605.g01d371f741-goog
+x64:
+TASK_SIZE_MAX	= 0000 7fff ffff f000
+TASK_SIZE	= 0000 7fff ffff f000
+bitmap size	= 0000 0000 ffff ffff
+
+x32:
+TASK_SIZE_MAX	= 0000 7fff ffff f000
+TASK_SIZE	= 0000 0000 ffff e000
+bitmap size	= 0000 0000 0001 ffff
 
