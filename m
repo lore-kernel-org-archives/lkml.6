@@ -2,161 +2,73 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,TVD_SUBJ_WIPE_DEBT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7529FC64EBC
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 02:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AF0C64EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 02:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E842084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 02:30:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLlbeDaP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E842084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F2A8B2064E
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 02:31:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A8B2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbeJEJ0i (ORCPT
+        id S1727444AbeJEJ2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 05:26:38 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34917 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbeJEJ0h (ORCPT
+        Fri, 5 Oct 2018 05:28:19 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:55748 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbeJEJ2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 05:26:37 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j9-v6so11281492otl.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 19:30:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MwZ32FHDFb06cX14HqCqMdNcuvZpEfir/97e6FdgbKE=;
-        b=eLlbeDaPuCmlUcH4kDAkwifQ6ozCMyYvWdb7j9MjwPhIMY59hUWfaA4adnoUEu1Wig
-         IeXeWgoKGZ8sCdr1PNXSN6Lmhmg0LLgmIN5ET2J461sy5+7XWJTV2OVPvNlH49RT2yus
-         TE373TajzYrg5Yr/bL17R1O3ramNAzNbL16IYftbm6S6ws5OTU0APqVLPEDYsCsARLuB
-         To7Bt2Stxat69lDlpVNN9DYvhEq8DrNKkY0E/FDPBU0ynru2Yth8LdOyDNE1fKyz9qay
-         hEYcSY3xo/N3a6echNWjCwytn9e1+2LSS/jyuuxVo06hhiCkN0WdjqMLwpaiQDGLllhf
-         7y8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MwZ32FHDFb06cX14HqCqMdNcuvZpEfir/97e6FdgbKE=;
-        b=ICyf3H+ozb4SKIrtjTOKkwYkQMlWGZurjBEkK1x3mrJABkk7D0hCaF4Yj3cHB+Mfug
-         h5yPvPeLGWgiHy+C6uiePAeOYP8zXFNMbO3A4GLiJmvRiu/O7Fu5p7bewCHroBv/C3BO
-         MnsIqgutwRTAR3Txvyl9peYHhlNthGivIKPV0VGa9gWXz4pu5J8fARJ2DHXn3A2UqwPL
-         D2iKNARJOe2AZ7JYqL765n1BHJTCjlfWZh7HTU1qlE/+uZjIUORPYZbD4R3dT8Vz33Vk
-         M/YpFjS/lEpRTM0lftHkp88tPsxteoiJCu8V+avAqldvPTSV+DSiFT0B93reAGxs8n4f
-         t9fA==
-X-Gm-Message-State: ABuFfohXbnS6Xo1zsM1oYWxA77t2QfDnWw4vQfDj7ScFuHPEt4C20p7s
-        4HkqxQnvEtTc9JsuYhclfBl/A85nOLrmQr+ocOE=
-X-Google-Smtp-Source: ACcGV61mS3b0xdeBDXKkeepwQFEL+LIT1odjzTh8jRTsIOr6PQVIudqD/iqspdWl/k3zfUtyOTqTOdspxpK+cvdUqQc=
-X-Received: by 2002:a9d:63d6:: with SMTP id e22-v6mr5538190otl.233.1538706605551;
- Thu, 04 Oct 2018 19:30:05 -0700 (PDT)
+        Fri, 5 Oct 2018 05:28:18 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1g8Fu0-0007Kn-V8; Fri, 05 Oct 2018 10:31:41 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1g8Fty-00016g-GP; Fri, 05 Oct 2018 10:31:38 +0800
+Date:   Fri, 5 Oct 2018 10:31:38 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        "David S. Miller" <davem@davemloft.net>, ofir.drang@arm.com,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] crypto: add output feedback mode
+Message-ID: <20181005023138.dg22cn4salb3p6zl@gondor.apana.org.au>
+References: <1537449521-16182-1-git-send-email-gilad@benyossef.com>
+ <1537449521-16182-3-git-send-email-gilad@benyossef.com>
+ <CAKv+Gu9T7Z2oV8TEaN8uVdrFxGmmCKLh6ZjDnRnhgCmLwuVf4w@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180918230002.GA7572@WindFlash> <CAK7LNASCai6rPV-ibbKKzm94pr=5Ku_K3r1LY80BGngJWU73FQ@mail.gmail.com>
-In-Reply-To: <CAK7LNASCai6rPV-ibbKKzm94pr=5Ku_K3r1LY80BGngJWU73FQ@mail.gmail.com>
-From:   Leonardo Bras <leobras.c@gmail.com>
-Date:   Thu, 4 Oct 2018 23:29:54 -0300
-Message-ID: <CADvQ+rEagd1PSm-ejA7dSBQgf2MoJ3TMCm+kz-YpsmkVrdGFWg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] kbuild: Optimize tests and remove shadowed local variable.
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9T7Z2oV8TEaN8uVdrFxGmmCKLh6ZjDnRnhgCmLwuVf4w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello David,
+On Fri, Sep 28, 2018 at 12:06:29PM +0200, Ard Biesheuvel wrote:
+> On 20 September 2018 at 15:18, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> > Add a generic version of output feedback mode. We already have support of
+> > several hardware based transformations of this mode and the needed test
+> > vectors but we somehow missed adding a generic software one. Fix this now.
+> >
+> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> 
+> I couldn't find any users of OFB in the kernel. Any idea who is using
+> it and for what?
 
-My name is Leonardo and I am new to kernel development.
+Yes this shouldn't have been accepted however the driver did go
+in with OFB and it's been there for a while so that's why I'm
+making this exception.
 
-Is this patch acceptable? Do it need some rework? The change makes sense?
-Is there a way to better follow the workflow for this patch?
-
-Please let me know if it needs anything.
-
-Best regards,
-
-Leonardo Bras
-
-On Wed, Sep 19, 2018 at 4:11 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> FW: David Howells
->
->
-> 2018-09-19 8:00 GMT+09:00 Leonardo Br=C3=A1s <leobras.c@gmail.com>:
-> > Removes an unnecessary shadowed local variable (start).
-> > Optimize test of isdigit:
-> > - If isalpha returns true, isdigit will return false, so no need to tes=
-t.
-> >
-> > Signed-off-by: Leonardo Br=C3=A1s <leobras.c@gmail.com>
->
->
-> This patch was sent to me, but maybe belong to David's field.
->
-> David, will you take care of this patch?
->
-> https://lore.kernel.org/patchwork/patch/988171/
->
-> I think the commit subject should be changed kbuild: -> ASN.1:
->
->
-> Anyway, this patch looks trivial,
-> FWIW
->
-> Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
->
->
->
->
-> > ---
-> >  scripts/asn1_compiler.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
-> > index c146020fc783..a0056df4e358 100644
-> > --- a/scripts/asn1_compiler.c
-> > +++ b/scripts/asn1_compiler.c
-> > @@ -413,7 +413,7 @@ static void tokenise(char *buffer, char *end)
-> >
-> >                         /* Handle string tokens */
-> >                         if (isalpha(*p)) {
-> > -                               const char **dir, *start =3D p;
-> > +                               const char **dir;
-> >
-> >                                 /* Can be a directive, type name or ele=
-ment
-> >                                  * name.  Find the end of the name.
-> > @@ -454,10 +454,10 @@ static void tokenise(char *buffer, char *end)
-> >
-> >                                 tokens[tix++].token_type =3D TOKEN_TYPE=
-_NAME;
-> >                                 continue;
-> > -                       }
-> >
-> > -                       /* Handle numbers */
-> > -                       if (isdigit(*p)) {
-> > +                       } else if (isdigit(*p)) {
-> > +                               /* Handle numbers */
-> > +
-> >                                 /* Find the end of the number */
-> >                                 q =3D p + 1;
-> >                                 while (q < nl && (isdigit(*q)))
-> > --
-> > 2.19.0
-> >
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
