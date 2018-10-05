@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D37C65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE53C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B122148D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20BCC214C5
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPrtukJb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B122148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXi5rcLc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BCC214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbeJEXOX (ORCPT
+        id S1729602AbeJEXOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51852 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbeJEXOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:22 -0400
+        id S1729411AbeJEXOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD7DC2147D;
-        Fri,  5 Oct 2018 16:14:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C1872148C;
+        Fri,  5 Oct 2018 16:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756099;
-        bh=F2ovFTBFMELtTNmmiilEZa6EiejIvvIH7i96WX5ydyw=;
+        s=default; t=1538756100;
+        bh=BKessHtNfMz1ZoPmhOjIV4xd9CPmOUmZvbLNdXtpqgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPrtukJbV6fMUFbwCDgnnALzto8lKhJoAqf0e3/5u5hYYNq2cWL89J9AqLzEL1yFm
-         K5AlUOXnfe1dlYCEhdvnkBrkQsOMJGckB19QZIWiH4RGGNi950CsFA+dlYFFgya+Vg
-         qb50fiDpm/+TII2EGDlf/59tsvOyE9RWS4AgCIHs=
+        b=WXi5rcLcVY0UCChjllnrXEZ9n+zqlCcaQ9mrLccUQgkTnOHEGMU2njVLFZmM6gpEX
+         D+/ylSYobULMokUog45XA7rqoNYtYTmtZRomN4vXOO/V660PcZWrrKn8czs1NHkaaJ
+         WrdVAe+3/XbrkNoyya5U005ebX4RKXY/BTxm9zUw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Stephen Hemminger <stephen@networkplumber.org>,
         Stephen Hemminger <sthemmin@microsoft.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 38/48] PCI: hv: support reporting serial number as slot information
-Date:   Fri,  5 Oct 2018 12:14:14 -0400
-Message-Id: <20181005161424.20521-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 39/48] hv_netvsc: pair VF based on serial number
+Date:   Fri,  5 Oct 2018 12:14:15 -0400
+Message-Id: <20181005161424.20521-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -55,117 +55,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit a15f2c08c70811f120d99288d81f70d7f3d104f1 ]
+[ Upstream commit 00d7ddba1143623b31bc2c15d18216e2da031b14 ]
 
-The Hyper-V host API for PCI provides a unique "serial number" which
-can be used as basis for sysfs PCI slot table. This can be useful
-for cases where userspace wants to find the PCI device based on
-serial number.
-
-When an SR-IOV NIC is added, the host sends an attach message
-with serial number. The kernel doesn't use the serial number, but
-it is useful when doing the same thing in a userspace driver such
-as the DPDK. By having /sys/bus/pci/slots/N it provides a direct
-way to find the matching PCI device.
-
-There maybe some cases where serial number is not unique such
-as when using GPU's. But the PCI slot infrastructure will handle
-that.
-
-This has a side effect which may also be useful. The common udev
-network device naming policy uses the slot information (rather
-than PCI address).
+Matching network device based on MAC address is problematic
+since a non VF network device can be creted with a duplicate MAC
+address causing confusion and problems.  The VMBus API does provide
+a serial number that is a better matching method.
 
 Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/pci/controller/pci-hyperv.c | 37 +++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/net/hyperv/netvsc.c     |  3 ++
+ drivers/net/hyperv/netvsc_drv.c | 58 +++++++++++++++++++--------------
+ 2 files changed, 36 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index d4d4a55f09f8..c6f375e9cce7 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -89,6 +89,9 @@ static enum pci_protocol_version_t pci_protocol_version;
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index 31c3d77b4733..fe01e141c8f8 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -1203,6 +1203,9 @@ static void netvsc_send_vf(struct net_device *ndev,
  
- #define STATUS_REVISION_MISMATCH 0xC0000059
- 
-+/* space for 32bit serial number as string */
-+#define SLOT_NAME_SIZE 11
-+
- /*
-  * Message Types
-  */
-@@ -494,6 +497,7 @@ struct hv_pci_dev {
- 	struct list_head list_entry;
- 	refcount_t refs;
- 	enum hv_pcichild_state state;
-+	struct pci_slot *pci_slot;
- 	struct pci_function_description desc;
- 	bool reported_missing;
- 	struct hv_pcibus_device *hbus;
-@@ -1457,6 +1461,34 @@ static void prepopulate_bars(struct hv_pcibus_device *hbus)
- 	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ 	net_device_ctx->vf_alloc = nvmsg->msg.v4_msg.vf_assoc.allocated;
+ 	net_device_ctx->vf_serial = nvmsg->msg.v4_msg.vf_assoc.serial;
++	netdev_info(ndev, "VF slot %u %s\n",
++		    net_device_ctx->vf_serial,
++		    net_device_ctx->vf_alloc ? "added" : "removed");
  }
  
-+/*
-+ * Assign entries in sysfs pci slot directory.
-+ *
-+ * Note that this function does not need to lock the children list
-+ * because it is called from pci_devices_present_work which
-+ * is serialized with hv_eject_device_work because they are on the
-+ * same ordered workqueue. Therefore hbus->children list will not change
-+ * even when pci_create_slot sleeps.
+ static  void netvsc_receive_inband(struct net_device *ndev,
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index c0fc30a1f600..6bcb388dcfb8 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -1794,20 +1794,6 @@ static void netvsc_link_change(struct work_struct *w)
+ 	rtnl_unlock();
+ }
+ 
+-static struct net_device *get_netvsc_bymac(const u8 *mac)
+-{
+-	struct net_device_context *ndev_ctx;
+-
+-	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
+-		struct net_device *dev = hv_get_drvdata(ndev_ctx->device_ctx);
+-
+-		if (ether_addr_equal(mac, dev->perm_addr))
+-			return dev;
+-	}
+-
+-	return NULL;
+-}
+-
+ static struct net_device *get_netvsc_byref(struct net_device *vf_netdev)
+ {
+ 	struct net_device_context *net_device_ctx;
+@@ -1936,26 +1922,48 @@ static void netvsc_vf_setup(struct work_struct *w)
+ 	rtnl_unlock();
+ }
+ 
++/* Find netvsc by VMBus serial number.
++ * The PCI hyperv controller records the serial number as the slot.
 + */
-+static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
++static struct net_device *get_netvsc_byslot(const struct net_device *vf_netdev)
 +{
-+	struct hv_pci_dev *hpdev;
-+	char name[SLOT_NAME_SIZE];
-+	int slot_nr;
++	struct device *parent = vf_netdev->dev.parent;
++	struct net_device_context *ndev_ctx;
++	struct pci_dev *pdev;
 +
-+	list_for_each_entry(hpdev, &hbus->children, list_entry) {
-+		if (hpdev->pci_slot)
++	if (!parent || !dev_is_pci(parent))
++		return NULL; /* not a PCI device */
++
++	pdev = to_pci_dev(parent);
++	if (!pdev->slot) {
++		netdev_notice(vf_netdev, "no PCI slot information\n");
++		return NULL;
++	}
++
++	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
++		if (!ndev_ctx->vf_alloc)
 +			continue;
 +
-+		slot_nr = PCI_SLOT(wslot_to_devfn(hpdev->desc.win_slot.slot));
-+		snprintf(name, SLOT_NAME_SIZE, "%u", hpdev->desc.ser);
-+		hpdev->pci_slot = pci_create_slot(hbus->pci_bus, slot_nr,
-+					  name, NULL);
-+		if (!hpdev->pci_slot)
-+			pr_warn("pci_create slot %s failed\n", name);
++		if (ndev_ctx->vf_serial == pdev->slot->number)
++			return hv_get_drvdata(ndev_ctx->device_ctx);
 +	}
++
++	netdev_notice(vf_netdev,
++		      "no netdev found for slot %u\n", pdev->slot->number);
++	return NULL;
 +}
 +
- /**
-  * create_root_hv_pci_bus() - Expose a new root PCI bus
-  * @hbus:	Root PCI bus, as understood by this driver
-@@ -1480,6 +1512,7 @@ static int create_root_hv_pci_bus(struct hv_pcibus_device *hbus)
- 	pci_lock_rescan_remove();
- 	pci_scan_child_bus(hbus->pci_bus);
- 	pci_bus_assign_resources(hbus->pci_bus);
-+	hv_pci_assign_slots(hbus);
- 	pci_bus_add_devices(hbus->pci_bus);
- 	pci_unlock_rescan_remove();
- 	hbus->state = hv_pcibus_installed;
-@@ -1742,6 +1775,7 @@ static void pci_devices_present_work(struct work_struct *work)
- 		 */
- 		pci_lock_rescan_remove();
- 		pci_scan_child_bus(hbus->pci_bus);
-+		hv_pci_assign_slots(hbus);
- 		pci_unlock_rescan_remove();
- 		break;
+ static int netvsc_register_vf(struct net_device *vf_netdev)
+ {
+-	struct net_device *ndev;
+ 	struct net_device_context *net_device_ctx;
+-	struct device *pdev = vf_netdev->dev.parent;
+ 	struct netvsc_device *netvsc_dev;
++	struct net_device *ndev;
+ 	int ret;
  
-@@ -1858,6 +1892,9 @@ static void hv_eject_device_work(struct work_struct *work)
- 	list_del(&hpdev->list_entry);
- 	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
+ 	if (vf_netdev->addr_len != ETH_ALEN)
+ 		return NOTIFY_DONE;
  
-+	if (hpdev->pci_slot)
-+		pci_destroy_slot(hpdev->pci_slot);
-+
- 	memset(&ctxt, 0, sizeof(ctxt));
- 	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
- 	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
+-	if (!pdev || !dev_is_pci(pdev) || dev_is_pf(pdev))
+-		return NOTIFY_DONE;
+-
+-	/*
+-	 * We will use the MAC address to locate the synthetic interface to
+-	 * associate with the VF interface. If we don't find a matching
+-	 * synthetic interface, move on.
+-	 */
+-	ndev = get_netvsc_bymac(vf_netdev->perm_addr);
++	ndev = get_netvsc_byslot(vf_netdev);
+ 	if (!ndev)
+ 		return NOTIFY_DONE;
+ 
 -- 
 2.17.1
 
