@@ -2,141 +2,279 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BDAC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F47C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CAB620875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F2C62084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:52:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWijAGp6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CAB620875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aeqtnjGh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2C62084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeJELMd (ORCPT
+        id S1727532AbeJELty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 07:12:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36152 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbeJELLG (ORCPT
+        Fri, 5 Oct 2018 07:49:54 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:15553 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeJELtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 07:11:06 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y11-v6so3043030plt.3;
-        Thu, 04 Oct 2018 21:14:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XMDnNdUW/sDd17o9F9TmJbiIxv65t1vRquMBQw128TM=;
-        b=FWijAGp6UNxBHqBzov0/qbX2B/wvdSAZrUN0u/24mwyFoVqvS6E3w6ECjRtCldkNBx
-         VjfCXEhuUL1ZYRfX3vFKR8KCpcNATiZE6tj7BsK3/jm651cYEMLN2zAHwDFRr9fUPTC7
-         VfcX6rMEktI6fjjqQniXGoGydN5ZmGb1xZVW2h4ymbrsoihJrBjoCsnEtFvd7mA+/D6M
-         YhiVjmS9NmjLYTo70iEkEMUTbt5/ojx/Y7r3L0I4lufS9WA0SIdb6ox/fEIlzq8VhaAx
-         F1YTJpxZNpQ9zb2bjIueeZmARE3uf91XicaLRsXJ5xoBdCt7gsmyiVqrvRw4/RZb7e+M
-         vQEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XMDnNdUW/sDd17o9F9TmJbiIxv65t1vRquMBQw128TM=;
-        b=nqOeIT10068XUTajtzj2sz9s7pOsFxeYnTYE+ekEwJgUpPUAF2OhZpVGor5zvjrbLW
-         fxfC+qmoubehvozpIY05m2J/Lz92ykqwGJWL16YCO5NOoJb2TB2W6x2iZ2SEwf8ydP6j
-         2FgulFPZzmt90CVwBY5sC1/9QAuFmC4G/BjGO2BbQ9CJzWJeCUCcZe+7FdUlqpVFPS72
-         +PsU7eln5CVUaDMEm6QPebEtmblkYRaXq/JB8cfNz6xpKJWBE41T6KF9114BE8rENtI2
-         UD+JB/q+qToiVNNRt01mkfQMARZr56DD0KtHMoqMhRtwyZXxis+Vj3gVWSi4dyYuS+Ww
-         lhjA==
-X-Gm-Message-State: ABuFfoikzaU1Az+lh8vEYRxfxpAKkD6v25wbzTwFIYUvy5cSjmUVIl0C
-        ACm/14azLxCW1AjpzMY44OM=
-X-Google-Smtp-Source: ACcGV62FRy9PwqCLrqEV60+HHZ3O1e1z0Ny95+n/XrtRw1XEZSWFfXnts+GaZzMFvQ4CWZaGDvB2eQ==
-X-Received: by 2002:a17:902:9893:: with SMTP id s19-v6mr9579926plp.130.1538712855820;
-        Thu, 04 Oct 2018 21:14:15 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm277975pfn.9.2018.10.04.21.14.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 04 Oct 2018 21:14:15 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH 03/16] of: overlay: add missing of_node_get() in __of_attach_node_sysfs
-Date:   Thu,  4 Oct 2018 21:12:34 -0700
-Message-Id: <1538712767-30394-4-git-send-email-frowand.list@gmail.com>
+        Fri, 5 Oct 2018 07:49:53 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181005045250epoutp0342cf46453eeed04d88e4381ab31101cc~anUuHpeQA2500825008epoutp03g
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 04:52:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181005045250epoutp0342cf46453eeed04d88e4381ab31101cc~anUuHpeQA2500825008epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538715170;
+        bh=0uqrntC0FBjiKDUM66TtKKpsYOir1j9GwtIe6LRLN40=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=aeqtnjGhWK3Z3687HNUkGkzWBfjGg5KKgyH21qGkK8rjBL8XxYaxySYQKhuRxef+q
+         JbNX9Hmissvwa0ulVtDG4jWwE+RiAxPeDtCyP1MaZwNq3FirG7J5EiSloi0W5iB/3L
+         uspuN8Uj2K2qGpXm9qawc+diSfpikUzdKxM0SolM=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.40.192]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20181005045249epcas5p13d272d420c94d7f7406f8b6d1c11c2b7~anUtWUpkN1720317203epcas5p11;
+        Fri,  5 Oct 2018 04:52:49 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D0.1F.04167.12EE6BB5; Fri,  5 Oct 2018 13:52:49 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba~anUhv_CDP0965009650epcas5p34;
+        Fri,  5 Oct 2018 04:52:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181005045237epsmtrp13abcb0f1fd344189a14a60a9f4fa70a7~anUhuUnQX3142531425epsmtrp1T;
+        Fri,  5 Oct 2018 04:52:37 +0000 (GMT)
+X-AuditID: b6c32a49-735ff70000001047-16-5bb6ee212f04
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B2.8A.03831.41EE6BB5; Fri,  5 Oct 2018 13:52:36 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.108.92.210]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181005045234epsmtip2e82e2e662fd96a81845bc00ed90e5c81~anUfl38tD0957609576epsmtip2k;
+        Fri,  5 Oct 2018 04:52:34 +0000 (GMT)
+From:   Manjeet Pawar <manjeet.p@samsung.com>
+To:     linux@armlinux.org.uk, ebiederm@xmission.com, arnd@arndb.de,
+        akpm@linux-foundation.org, mhiramat@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     pankaj.m@samsung.com, a.sahrawat@samsung.com,
+        Rohit Thapliyal <r.thapliyal@samsung.com>,
+        Manjeet Pawar <manjeet.p@samsung.com>
+Subject: [PATCH] traps:Recover undefined user instruction on ARM
+Date:   Fri,  5 Oct 2018 10:15:57 +0530
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
-References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29nOzqrFYRV+GZodydAwd8ytk3gDI05YIIQEWayTfjlrN3Y2
+        7QYFTSUxNc0IbwiW1bLEaUu6UCw007SGTuuPJGakqIWKWaPLmUepf8/7vM/7Pg/f9xKYqgQP
+        JnJNNmQ1cQYKXyV1v4zcFr1lxp2pLunbzHifIKa2pRlnflV0yZk/boeccY0NyZiBx7U446l6
+        BpiRgvs4c2vYK2Eab0cwI1MPJUzryKmUNWxzfTNgB4a8GOv/WQFYl/Myznbf8EvZtpsX2NJ2
+        J2DnXKHsNU+RNF1x2JCgR1w2soYhU5Y5O9eUk0ilHdSl6jRaNR1N72Z2UWEmzogSqT3706P3
+        5hqEvFRYHmewC1Q6x/NUTFKC1Wy3oTC9mbclUsiSbbDQsZYdPGfk7aacHVlmYzytVsdqBOUx
+        g7769jhmqY047fs9KLkIxkOLgYKAZBwcvfFBWgxWESryCYBlPqdcLGYB7O5+JROLBQD7+r3S
+        lZGe6UYgNp4BON9XiIvFPIA9DV+xgAont8Oni4VLu9aTfQDOtnwDgQZGOoTFi+oAXkemwLfu
+        O7IAlpJb4fXvBZhoEQpfd1UKPCHgFzj0LdFKMg++G6yUi5I98OrsS5mI18HJV+3LfDCcKBN9
+        IXkJwNHmNolYlAPornHgoioZfnzfKQ8YYGQkbHkcI9IhsKrngUTMuRZe8X+SiLwSdtSv4HDY
+        9LZtGW+ENW86lzOz8K5jeCmQijwKW9+48HIQUv3PoQEAJ9iILLwxB/EaC21C+f9/lQssXWLU
+        vg5Q3b/fA0gCUGuUX8LdmSoZl8efMXoAJDBqvfKQTaCU2dyZs8hq1lntBsR7gEZ4wKtY8IYs
+        s3DXJpuO1sRqterdas1ORktTQcq6kLpMFZnD2dAphCzIujInIRTBF0GacfVT5jmvPdrkn0zy
+        pXZQrVOb0ohps29yMWKgTvft54XIjPaJ1fFpvRWq+pnGTn/GrSPj4akn5nr5+Om80qaOmfPq
+        4ZlHQT/6I2TOswvb77lK839RhZKtGY6xA8cT9CEue9fnotJzdScLBx/EPR8dp5ODeMVQrTe2
+        pkwR9chFSXk9R0dhVp77Cy7gQa2fAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSvK7Iu23RBs+P2Fhc3J1qMWf9GjaL
+        v5OOsVv839bCbrHp8TVWi8u75rBZHJq6l9HiXutaNoul1y8yWSxermZx781WJouN97IdeDzW
+        zFvD6HH52kVmj9+/JjF6bFrVyeZxYsZvFo/NS+o9+rasYvT4vEnOY8qhdpYAzigum5TUnMyy
+        1CJ9uwSujFnLnzIXzFGruPrvClMD41O5LkZODgkBE4lTbxczdjFycQgJ7GaUmHN2KhNEQlKi
+        f91UFghbWGLlv+fsEEWfGCWerPgDVsQmoC2x50cbWEJE4DqjxLofJ8E6mAU6GCVaN7mD2MIC
+        DhLnt61gBbFZBFQlpn1vZe5i5ODgFXCVWHzQDGKBnMTJY5NZJzDyLGBkWMUomVpQnJueW2xY
+        YJiXWq5XnJhbXJqXrpecn7uJERyYWpo7GC8viT/EKMDBqMTDO0FxW7QQa2JZcWXuIUYJDmYl
+        Ed7wEqAQb0piZVVqUX58UWlOavEhRmkOFiVx3qd5xyKFBNITS1KzU1MLUotgskwcnFINjKEB
+        Ly1DO30L027m9DOeWZKtEW4YU1apGZ4s1qukqPO9Y0rWI/aHdV+iUgKe7LNbZ/S2ROjzVaXH
+        J9oisvTTFvEvqwh6NjXAa84dtwmSKnPyt/DstUvb1eX8xO7a85I7Unnnq7+WeYS9Mv7hsSxj
+        4fTKpp3LU0PYFJ8bndSI39+SlfTM5SOHEktxRqKhFnNRcSIAA0lOa0gCAAA=
+Message-Id: <20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba~anUhv_CDP0965009650epcas5p34@epcas5p3.samsung.com>
+X-CMS-MailID: 20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba
+References: <CGME20181005045237epcas5p3bc0ab07cfb8c25ef81188b4614b978ba@epcas5p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Rohit Thapliyal <r.thapliyal@samsung.com> 
 
-There is a matching of_node_put() in __of_detach_node_sysfs()
+During user undefined instruction exception, the arm exception
+handler currently results in application crash through SIGILL.
+The bad instruction can be due to ddr/hardware issue.
+For such cases, exception trap handler could try to recover the corrupted
+text by clearing pagetable entry of undefined instruction pc and trying to fetch
+the instruction opcode by generating major page fault.
+Resulting in loading the page with correct instruction from mapped file.
+If there is no error in root filesystem i.e. the opcode is intact
+in file, then filemap fault shall be able to recover
+the instruction and continue execution normally instead of crashing.
 
-Remove misleading comment from function header comment for
-of_detach_node().
-
-This patch may result in memory leaks from code that directly calls
-the dynamic node add and delete functions directly instead of
-using changesets.
-
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Rohit Thapliyal <r.thapliyal@samsung.com>
+Signed-off-by: Manjeet Pawar <manjeet.p@samsung.com>
 ---
+ arch/arm/kernel/traps.c | 100 +++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 90 insertions(+), 10 deletions(-)
 
-This patch should result in powerpc systems that dynamically
-allocate a node, then later deallocate the node to have a
-memory leak when the node is deallocated.
-
-The next patch in the series will fix the leak.
-
- drivers/of/dynamic.c | 3 ---
- drivers/of/kobj.c    | 4 +++-
- 2 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index b04ee021a891..275c0d7e2268 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -272,9 +272,6 @@ void __of_detach_node(struct device_node *np)
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index badf02c..d971834 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -29,6 +29,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/irq.h>
++#include <linux/rmap.h>
  
- /**
-  * of_detach_node() - "Unplug" a node from the device tree.
-- *
-- * The caller must hold a reference to the node.  The memory associated with
-- * the node is not freed until its refcount goes to zero.
-  */
- int of_detach_node(struct device_node *np)
- {
-diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
-index 7a0a18980b98..c72eef988041 100644
---- a/drivers/of/kobj.c
-+++ b/drivers/of/kobj.c
-@@ -133,6 +133,9 @@ int __of_attach_node_sysfs(struct device_node *np)
- 	}
- 	if (!name)
- 		return -ENOMEM;
-+
-+	of_node_get(np);
-+
- 	rc = kobject_add(&np->kobj, parent, "%s", name);
- 	kfree(name);
- 	if (rc)
-@@ -159,6 +162,5 @@ void __of_detach_node_sysfs(struct device_node *np)
- 		kobject_del(&np->kobj);
- 	}
+ #include <linux/atomic.h>
+ #include <asm/cacheflush.h>
+@@ -51,6 +52,9 @@
+ };
  
--	/* finally remove the kobj_init ref */
- 	of_node_put(np);
+ void *vectors_page;
++#define MAX_UNDEF_RECOVERY_ATTEMPT     NR_CPUS
++static DEFINE_RATELIMIT_STATE(undef_recov_rs, 10 * HZ, NR_CPUS);
++static int undef_recovery_attempt;
+ 
+ #ifdef CONFIG_DEBUG_USER
+ unsigned int user_debug;
+@@ -435,14 +439,9 @@ int call_undef_hook(struct pt_regs *regs, unsigned int instr)
+ 	return fn ? fn(regs, instr) : 1;
  }
+ 
+-asmlinkage void do_undefinstr(struct pt_regs *regs)
++static unsigned int getInstr(void __user *pc, struct pt_regs *regs)
+ {
+-	unsigned int instr;
+-	siginfo_t info;
+-	void __user *pc;
+-
+-	clear_siginfo(&info);
+-	pc = (void __user *)instruction_pointer(regs);
++	unsigned int instr = 0;
+ 
+ 	if (processor_mode(regs) == SVC_MODE) {
+ #ifdef CONFIG_THUMB2_KERNEL
+@@ -472,11 +471,32 @@ asmlinkage void do_undefinstr(struct pt_regs *regs)
+ 			goto die_sig;
+ 		instr = __mem_to_opcode_arm(instr);
+ 	}
++die_sig:
++	return instr;
++}
++
++asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
++{
++	unsigned int instr, instr2;
++	siginfo_t info;
++	void __user *pc;
++	unsigned long addr;
++	struct mm_struct *mm;
++	struct vm_area_struct *vma;
++	pgd_t *pgd;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
++	spinlock_t *ptl;
++	clear_siginfo(&info);
+ 
+-	if (call_undef_hook(regs, instr) == 0)
++	pc = (void __user *)instruction_pointer(regs);
++
++	instr = getInstr(pc, regs);
++
++	if (instr && call_undef_hook(regs, instr) == 0)
+ 		return;
+ 
+-die_sig:
+ #ifdef CONFIG_DEBUG_USER
+ 	if (user_debug & UDBG_UNDEFINED) {
+ 		pr_info("%s (%d): undefined instruction: pc=%p\n",
+@@ -485,7 +505,67 @@ asmlinkage void do_undefinstr(struct pt_regs *regs)
+ 		dump_instr(KERN_INFO, regs);
+ 	}
+ #endif
+-
++	/* Trying to recover an invalid userspace instruction from here */
++	if ((undef_recovery_attempt < MAX_UNDEF_RECOVERY_ATTEMPT) && __ratelimit(&undef_recov_rs)) {
++		addr = (unsigned long) pc;
++		if (processor_mode(regs) == USR_MODE) {
++			struct page *page = NULL;
++
++			mm = current->mm;
++			vma = find_vma(mm, (unsigned long)pc);
++			if (!vma)
++				goto fail_recovery;
++
++			if (!vma->vm_file)
++				goto fail_recovery;
++
++			dump_instr(KERN_ALERT, regs);
++			down_write(&mm->mmap_sem);
++			/* Check first, just in case, recovery already done by some other thread simultaneously */
++			flush_cache_range(vma, vma->vm_start, vma->vm_end);
++			instr2 = getInstr(pc, regs);
++			if (instr != instr2) {
++				up_write(&mm->mmap_sem);
++				return;
++			}
++			pgd = pgd_offset(vma->vm_mm, addr);
++			pud = pud_offset(pgd, addr);
++			if (!pud_present(*pud)) {
++				up_write(&mm->mmap_sem);
++				goto fail_recovery;
++			}
++			pmd = pmd_offset(pud, addr);
++			if (!pmd_present(*pmd)) {
++				up_write(&mm->mmap_sem);
++				goto fail_recovery;
++			}
++			pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
++			if (!pte_present(*pte)) {
++				pte_unmap_unlock(pte, ptl);
++				up_write(&mm->mmap_sem);
++				goto fail_recovery;
++			}
++			page = pte_page(*pte);
++
++			pte_clear(mm, address, pte);
++			pte_unmap_unlock(pte, ptl);
++			pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
++			page_remove_rmap(page, false);
++			put_page(page);
++			pte_unmap_unlock(pte, ptl);
++
++			flush_tlb_range(vma, vma->vm_start, vma->vm_end);
++			up_write(&mm->mmap_sem);
++
++			instr2 = getInstr(pc, regs);
++			dump_instr(KERN_ALERT, regs);
++			if (instr != instr2) {
++				undef_recovery_attempt++;
++				return;
++			}
++		}
++	}
++fail_recovery:
+ 	info.si_signo = SIGILL;
+ 	info.si_errno = 0;
+ 	info.si_code  = ILL_ILLOPC;
 -- 
-Frank Rowand <frank.rowand@sony.com>
+1.9.1
 
