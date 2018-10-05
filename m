@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00F1C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A8FC65BAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9382147D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713F721477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgAL/2P8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9382147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUX/1/d/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713F721477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729309AbeJEXOG (ORCPT
+        id S1729335AbeJEXOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 5 Oct 2018 19:14:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51186 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729242AbeJEXOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:04 -0400
+        id S1729295AbeJEXOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 823392148C;
-        Fri,  5 Oct 2018 16:14:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 218852148D;
+        Fri,  5 Oct 2018 16:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756081;
-        bh=d8aIPMlQK1Ie+KgZr8AkTM4+UW2/LpolW2VGOT/kGbQ=;
+        s=default; t=1538756083;
+        bh=Acp24Y/qNpg5h5uol7Ywa/4dJXI+vM6T1hk/KNtLNlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JgAL/2P8xjF0yOaqfjxxkL+xpNlWlyWp0axw5y3iT98FvHSeK1AZd2zSeHwygiEiv
-         LXe/sn1uXhGr76b61P5Q4rfCNnySe/NHpqGbPioLVlltI2DOMCUGZoO+skBN48SEzs
-         nWUf/haTgdBpqKUm4f7nXFKg42wZg3tzMboAtt2c=
+        b=cUX/1/d/PfNTqHfWZu+wR87Fkc923cKBki5I+sZZqmAA2UKAXFZzMwTrluZpW+DVV
+         FG6NFXWqcnjuKc4xdUZJ6RaMy+n48cul7G2+A8WY35/noibs2xaEDsRFKBVdw3itNM
+         dQdoLu9+CsxaqDvLdAdngnYilhHY6Zc+9QTR3QkY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jay Kamat <jgkamat@fb.com>, Shuah Khan <shuah@kernel.org>,
+Cc:     Johan Hedberg <johan.hedberg@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 17/48] Add tests for memory.oom.group
-Date:   Fri,  5 Oct 2018 12:13:53 -0400
-Message-Id: <20181005161424.20521-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 20/48] Bluetooth: SMP: Fix trying to use non-existent local OOB data
+Date:   Fri,  5 Oct 2018 12:13:56 -0400
+Message-Id: <20181005161424.20521-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -51,302 +52,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jay Kamat <jgkamat@fb.com>
+From: Johan Hedberg <johan.hedberg@intel.com>
 
-[ Upstream commit a987785dcd6c8ae2915460582aebd6481c81eb67 ]
+[ Upstream commit 94f14e4728125f979629b2b020d31cd718191626 ]
 
-Add tests for memory.oom.group for the following cases:
-- Killing all processes in a leaf cgroup, but leaving the
-  parent untouched
-- Killing all processes in a parent and leaf cgroup
-- Keeping processes marked by OOM_SCORE_ADJ_MIN alive when considered
-  for being killed by the group oom killer.
+A remote device may claim that it has received our OOB data, even
+though we never geneated it. Add a new flag to track whether we
+actually have OOB data, and ignore the remote peer's flag if haven't
+generated OOB data.
 
-Signed-off-by: Jay Kamat <jgkamat@fb.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/testing/selftests/cgroup/cgroup_util.c  |  21 ++
- tools/testing/selftests/cgroup/cgroup_util.h  |   1 +
- .../selftests/cgroup/test_memcontrol.c        | 205 ++++++++++++++++++
- 3 files changed, 227 insertions(+)
+ net/bluetooth/smp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
-index 8b644ea39725..e0db048331cb 100644
---- a/tools/testing/selftests/cgroup/cgroup_util.c
-+++ b/tools/testing/selftests/cgroup/cgroup_util.c
-@@ -340,3 +340,24 @@ int is_swap_enabled(void)
+diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+index ae91e2d40056..9752879fdd3a 100644
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -83,6 +83,7 @@ enum {
  
- 	return cnt > 1;
- }
-+
-+int set_oom_adj_score(int pid, int score)
-+{
-+	char path[PATH_MAX];
-+	int fd, len;
-+
-+	sprintf(path, "/proc/%d/oom_score_adj", pid);
-+
-+	fd = open(path, O_WRONLY | O_APPEND);
-+	if (fd < 0)
-+		return fd;
-+
-+	len = dprintf(fd, "%d", score);
-+	if (len < 0) {
-+		close(fd);
-+		return len;
-+	}
-+
-+	close(fd);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/cgroup/cgroup_util.h b/tools/testing/selftests/cgroup/cgroup_util.h
-index fe82a297d4e0..cabd43fd137a 100644
---- a/tools/testing/selftests/cgroup/cgroup_util.h
-+++ b/tools/testing/selftests/cgroup/cgroup_util.h
-@@ -39,3 +39,4 @@ extern int get_temp_fd(void);
- extern int alloc_pagecache(int fd, size_t size);
- extern int alloc_anon(const char *cgroup, void *arg);
- extern int is_swap_enabled(void);
-+extern int set_oom_adj_score(int pid, int score);
-diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
-index cf0bddc9d271..28d321ba311b 100644
---- a/tools/testing/selftests/cgroup/test_memcontrol.c
-+++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-@@ -2,6 +2,7 @@
- #define _GNU_SOURCE
+ struct smp_dev {
+ 	/* Secure Connections OOB data */
++	bool			local_oob;
+ 	u8			local_pk[64];
+ 	u8			local_rand[16];
+ 	bool			debug_key;
+@@ -599,6 +600,8 @@ int smp_generate_oob(struct hci_dev *hdev, u8 hash[16], u8 rand[16])
  
- #include <linux/limits.h>
-+#include <linux/oom.h>
- #include <fcntl.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -202,6 +203,36 @@ static int alloc_pagecache_50M_noexit(const char *cgroup, void *arg)
+ 	memcpy(rand, smp->local_rand, 16);
+ 
++	smp->local_oob = true;
++
  	return 0;
  }
  
-+static int alloc_anon_noexit(const char *cgroup, void *arg)
-+{
-+	int ppid = getppid();
-+
-+	if (alloc_anon(cgroup, arg))
-+		return -1;
-+
-+	while (getppid() == ppid)
-+		sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Wait until processes are killed asynchronously by the OOM killer
-+ * If we exceed a timeout, fail.
-+ */
-+static int cg_test_proc_killed(const char *cgroup)
-+{
-+	int limit;
-+
-+	for (limit = 10; limit > 0; limit--) {
-+		if (cg_read_strcmp(cgroup, "cgroup.procs", "") == 0)
-+			return 0;
-+
-+		usleep(100000);
-+	}
-+	return -1;
-+}
-+
- /*
-  * First, this test creates the following hierarchy:
-  * A       memory.min = 50M,  memory.max = 200M
-@@ -964,6 +995,177 @@ static int test_memcg_sock(const char *root)
- 	return ret;
- }
+@@ -1785,7 +1788,7 @@ static u8 smp_cmd_pairing_req(struct l2cap_conn *conn, struct sk_buff *skb)
+ 	 * successfully received our local OOB data - therefore set the
+ 	 * flag to indicate that local OOB is in use.
+ 	 */
+-	if (req->oob_flag == SMP_OOB_PRESENT)
++	if (req->oob_flag == SMP_OOB_PRESENT && SMP_DEV(hdev)->local_oob)
+ 		set_bit(SMP_FLAG_LOCAL_OOB, &smp->flags);
  
-+/*
-+ * This test disables swapping and tries to allocate anonymous memory
-+ * up to OOM with memory.group.oom set. Then it checks that all
-+ * processes in the leaf (but not the parent) were killed.
-+ */
-+static int test_memcg_oom_group_leaf_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *parent, *child;
-+
-+	parent = cg_name(root, "memcg_test_0");
-+	child = cg_name(root, "memcg_test_0/memcg_test_1");
-+
-+	if (!parent || !child)
-+		goto cleanup;
-+
-+	if (cg_create(parent))
-+		goto cleanup;
-+
-+	if (cg_create(child))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "cgroup.subtree_control", "+memory"))
-+		goto cleanup;
-+
-+	if (cg_write(child, "memory.max", "50M"))
-+		goto cleanup;
-+
-+	if (cg_write(child, "memory.swap.max", "0"))
-+		goto cleanup;
-+
-+	if (cg_write(child, "memory.oom.group", "1"))
-+		goto cleanup;
-+
-+	cg_run_nowait(parent, alloc_anon_noexit, (void *) MB(60));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+	if (!cg_run(child, alloc_anon, (void *)MB(100)))
-+		goto cleanup;
-+
-+	if (cg_test_proc_killed(child))
-+		goto cleanup;
-+
-+	if (cg_read_key_long(child, "memory.events", "oom_kill ") <= 0)
-+		goto cleanup;
-+
-+	if (cg_read_key_long(parent, "memory.events", "oom_kill ") != 0)
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	if (child)
-+		cg_destroy(child);
-+	if (parent)
-+		cg_destroy(parent);
-+	free(child);
-+	free(parent);
-+
-+	return ret;
-+}
-+
-+/*
-+ * This test disables swapping and tries to allocate anonymous memory
-+ * up to OOM with memory.group.oom set. Then it checks that all
-+ * processes in the parent and leaf were killed.
-+ */
-+static int test_memcg_oom_group_parent_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *parent, *child;
-+
-+	parent = cg_name(root, "memcg_test_0");
-+	child = cg_name(root, "memcg_test_0/memcg_test_1");
-+
-+	if (!parent || !child)
-+		goto cleanup;
-+
-+	if (cg_create(parent))
-+		goto cleanup;
-+
-+	if (cg_create(child))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "memory.max", "80M"))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "memory.swap.max", "0"))
-+		goto cleanup;
-+
-+	if (cg_write(parent, "memory.oom.group", "1"))
-+		goto cleanup;
-+
-+	cg_run_nowait(parent, alloc_anon_noexit, (void *) MB(60));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
-+
-+	if (!cg_run(child, alloc_anon, (void *)MB(100)))
-+		goto cleanup;
-+
-+	if (cg_test_proc_killed(child))
-+		goto cleanup;
-+	if (cg_test_proc_killed(parent))
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	if (child)
-+		cg_destroy(child);
-+	if (parent)
-+		cg_destroy(parent);
-+	free(child);
-+	free(parent);
-+
-+	return ret;
-+}
-+
-+/*
-+ * This test disables swapping and tries to allocate anonymous memory
-+ * up to OOM with memory.group.oom set. Then it checks that all
-+ * processes were killed except those set with OOM_SCORE_ADJ_MIN
-+ */
-+static int test_memcg_oom_group_score_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *memcg;
-+	int safe_pid;
-+
-+	memcg = cg_name(root, "memcg_test_0");
-+
-+	if (!memcg)
-+		goto cleanup;
-+
-+	if (cg_create(memcg))
-+		goto cleanup;
-+
-+	if (cg_write(memcg, "memory.max", "50M"))
-+		goto cleanup;
-+
-+	if (cg_write(memcg, "memory.swap.max", "0"))
-+		goto cleanup;
-+
-+	if (cg_write(memcg, "memory.oom.group", "1"))
-+		goto cleanup;
-+
-+	safe_pid = cg_run_nowait(memcg, alloc_anon_noexit, (void *) MB(1));
-+	if (set_oom_adj_score(safe_pid, OOM_SCORE_ADJ_MIN))
-+		goto cleanup;
-+
-+	cg_run_nowait(memcg, alloc_anon_noexit, (void *) MB(1));
-+	if (!cg_run(memcg, alloc_anon, (void *)MB(100)))
-+		goto cleanup;
-+
-+	if (cg_read_key_long(memcg, "memory.events", "oom_kill ") != 3)
-+		goto cleanup;
-+
-+	if (kill(safe_pid, SIGKILL))
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	if (memcg)
-+		cg_destroy(memcg);
-+	free(memcg);
-+
-+	return ret;
-+}
-+
-+
- #define T(x) { x, #x }
- struct memcg_test {
- 	int (*fn)(const char *root);
-@@ -978,6 +1180,9 @@ struct memcg_test {
- 	T(test_memcg_oom_events),
- 	T(test_memcg_swap_max),
- 	T(test_memcg_sock),
-+	T(test_memcg_oom_group_leaf_events),
-+	T(test_memcg_oom_group_parent_events),
-+	T(test_memcg_oom_group_score_events),
- };
- #undef T
+ 	/* SMP over BR/EDR requires special treatment */
+@@ -1967,7 +1970,7 @@ static u8 smp_cmd_pairing_rsp(struct l2cap_conn *conn, struct sk_buff *skb)
+ 	 * successfully received our local OOB data - therefore set the
+ 	 * flag to indicate that local OOB is in use.
+ 	 */
+-	if (rsp->oob_flag == SMP_OOB_PRESENT)
++	if (rsp->oob_flag == SMP_OOB_PRESENT && SMP_DEV(hdev)->local_oob)
+ 		set_bit(SMP_FLAG_LOCAL_OOB, &smp->flags);
  
+ 	smp->prsp[0] = SMP_CMD_PAIRING_RSP;
+@@ -3230,6 +3233,7 @@ static struct l2cap_chan *smp_add_cid(struct hci_dev *hdev, u16 cid)
+ 		return ERR_CAST(tfm_ecdh);
+ 	}
+ 
++	smp->local_oob = false;
+ 	smp->tfm_aes = tfm_aes;
+ 	smp->tfm_cmac = tfm_cmac;
+ 	smp->tfm_ecdh = tfm_ecdh;
 -- 
 2.17.1
 
