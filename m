@@ -2,90 +2,98 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC21BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2229CC65BA9
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7812064E
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7812064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EAB162064E
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB162064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeJERuK (ORCPT
+        id S1728131AbeJERug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:50:10 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47789 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727581AbeJERuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:50:10 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 85F504585B483;
-        Fri,  5 Oct 2018 18:51:47 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 5 Oct 2018 18:51:42 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        David Airlie <airlied@linux.ie>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/arm/malidp: remove set but not used variable 'afbc_superblock_size'
-Date:   Fri, 5 Oct 2018 11:03:13 +0000
-Message-ID: <1538737393-112861-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Fri, 5 Oct 2018 13:50:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:11515 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727581AbeJERug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 13:50:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 03:52:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,344,1534834800"; 
+   d="scan'208";a="97669546"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.74])
+  by orsmga002.jf.intel.com with ESMTP; 05 Oct 2018 03:52:19 -0700
+Date:   Fri, 5 Oct 2018 13:52:19 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     jmorris@namei.org
+Cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for Linux 4.20
+Message-ID: <20181005105219.GA23402@linux.intel.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Hi James,
 
-drivers/gpu/drm/arm/malidp_drv.c: In function 'malidp_verify_afbc_framebuffer_size':
-drivers/gpu/drm/arm/malidp_drv.c:318:6: warning:
- variable 'afbc_superblock_size' set but not used [-Wunused-but-set-variable]
-  u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
+These are the updates to v4.20. The only new feature is non-blocking
+operation for /dev/tpm0.
 
-It never used since be introduced in
-commit 3dae1c0919d8 ("drm/arm/malidp: Implemented the size validation for AFBC framebuffers")
+/Jarkko
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/arm/malidp_drv.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+The following changes since commit 2ecefa0a15fd0ef88b9cd5d15ceb813008136431:
 
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index 9021485..1b0ede6 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -315,7 +315,7 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
- 	int n_superblocks = 0;
- 	const struct drm_format_info *info;
- 	struct drm_gem_object *objs = NULL;
--	u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
-+	u32 afbc_superblock_height = 0;
- 	u32 afbc_superblock_width = 0, afbc_size = 0;
- 
- 	switch (mode_cmd->modifier[0] & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
-@@ -333,9 +333,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
- 	n_superblocks = (mode_cmd->width / afbc_superblock_width) *
- 		(mode_cmd->height / afbc_superblock_height);
- 
--	afbc_superblock_size = info->cpp[0] * afbc_superblock_width *
--		afbc_superblock_height;
--
- 	afbc_size = ALIGN(n_superblocks * AFBC_HEADER_SIZE, 128);
- 
- 	if (mode_cmd->width * info->cpp[0] != mode_cmd->pitches[0]) {
+  keys: Fix the use of the C++ keyword "private" in uapi/linux/keyctl.h (2018-09-28 09:51:51 -0700)
 
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20181005
+
+for you to fetch changes up to e487a0f52301293152a6f8c4e217f2a11dd808e3:
+
+  tpm: Restore functionality to xen vtpm driver. (2018-10-05 13:47:34 +0300)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.20
+
+----------------------------------------------------------------
+Dr. Greg Wettstein (1):
+      tpm: Restore functionality to xen vtpm driver.
+
+Jarkko Sakkinen (1):
+      tpm: fix response size validation in tpm_get_random()
+
+Javier Martinez Canillas (1):
+      tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
+
+Peter Huewe (1):
+      tpm: Make SECURITYFS a weak dependency
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/Kconfig          |   2 +-
+ drivers/char/tpm/tpm-dev-common.c | 147 ++++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |  11 +--
+ drivers/char/tpm/tpm-dev.h        |  18 +++--
+ drivers/char/tpm/tpm-interface.c  |  30 ++++++--
+ drivers/char/tpm/tpm.h            |   2 +
+ drivers/char/tpm/tpm2-cmd.c       |   4 +-
+ drivers/char/tpm/tpmrm-dev.c      |  15 +---
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 9 files changed, 157 insertions(+), 74 deletions(-)
