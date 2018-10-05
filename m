@@ -2,158 +2,97 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A52CDC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F07C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520EE20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDAE020875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:35:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FskZNzoE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520EE20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MjfxL+nt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZNDq3Dse"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAE020875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeJEPco (ORCPT
+        id S1728643AbeJEPdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:32:44 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45911 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeJEPco (ORCPT
+        Fri, 5 Oct 2018 11:33:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46150 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbeJEPdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:32:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q5-v6so12620938wrw.12
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 01:35:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dG+BBDaGfexMW7i2icatFFXI5Kousmiy/58ToeMwKe8=;
-        b=FskZNzoE5SBmbPdsVH/DYtpT0BhwgC657DXM6Iu/3PRGHTOsmleKblQifW/2ILFuG5
-         Es22mwMxQrjzdP56bMKa9RQuKYXozAgbFQjvP9JwvyaLOcOcnAx+I6BTA5JOSYvIX+/H
-         3Z0KXO/TYrT+BaEyPOPtEhKiBMbDYKC0HVKCk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dG+BBDaGfexMW7i2icatFFXI5Kousmiy/58ToeMwKe8=;
-        b=pU5fTGGKZjsEzgMgIC5Y85MQ8D7fjYUIcPonK1hjZKny82BLu1zy8/2g5EUW7GbUaV
-         x3nyHeYNTAeu8dtK1i4AwcNbX4UxfHWTWgQH3qdeA7mM9iEDAqubCgHwesGmrIfD9s9b
-         pbHLfyL+cwYNAoBypbbO5vm4eQ0wg1HrLK2xPPMLAurpBVdOoml3fLV59A/8xJSI1/l0
-         Pa8FihfsslV5aFu/zZ2FaieYzpTTyWVX5rF+b/bEBCv43JdoJpWLiXKU6kjBxSnPYpSR
-         Xj+7iuMHbWkknTzQOOardOUKCUxf7OFD/CAfIDY5iN82Bgds2BmqBHOeym8Stivo5FQy
-         azeg==
-X-Gm-Message-State: ABuFfoiRNwQVzDMjZOhRPZk70GGytALMz7hy0YlbbdWeaN+OCrtG3bKA
-        HcMusxXH+yV7MiMkr24zupOZESvoirY=
-X-Google-Smtp-Source: ACcGV60opTFoWtaXZFsGf+XXb5ReTWK+TljKO6f0QrFpGySJuCUtfBfmbBd1551/kXV8pb5UJ35GnA==
-X-Received: by 2002:a5d:61ca:: with SMTP id q10-v6mr6635089wrv.33.1538728502258;
-        Fri, 05 Oct 2018 01:35:02 -0700 (PDT)
-Received: from [192.168.0.40] (101.142.88.92.rev.sfr.net. [92.88.142.101])
-        by smtp.googlemail.com with ESMTPSA id j2-v6sm7557185wrw.29.2018.10.05.01.35.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 01:35:01 -0700 (PDT)
-Subject: Re: [PATCH 3/6] cpuidle: menu: Get rid of first_idx from
- menu_select()
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <3510260.hvypppS8Bs@aspire.rjw.lan>
- <4130376.2FFt7p4687@aspire.rjw.lan> <20181004145116.GB1881@mai>
- <CAJZ5v0h1Z7MKjq9XY0-tn9U4J3CdycYPbGkM3fjH7-FzaJ=uJA@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b365081f-00bb-ec2a-84b2-48bed1b76c19@linaro.org>
-Date:   Fri, 5 Oct 2018 10:35:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 5 Oct 2018 11:33:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BDBE36024C; Fri,  5 Oct 2018 08:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538728535;
+        bh=h/f1mnxffZIaVy9cMlH2+sYSjz0bzAtVGQXcz4qZ7Gw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=MjfxL+ntGongYV8e9RJFPnCuX8nH6z04+PruBiIvoA8EthNYKBaNBL4agvoWX1hxd
+         Kz/IqGKMoU9V8MpxfTG4yzM2ovkQJo3r4Ua7PlpUUYyM32P8zMR9AFABsV05lflePU
+         979/u6otna9ju+SjV8+54R8DzgwXFNzMAXZJKDHg=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DD504601A0;
+        Fri,  5 Oct 2018 08:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538728534;
+        bh=h/f1mnxffZIaVy9cMlH2+sYSjz0bzAtVGQXcz4qZ7Gw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=ZNDq3Dseb6J6dQd+e2EfiJuLfyCGijyUKqdJL0s7TZFf7rx0g/1vJMA0UdKpD38j7
+         129a724L3yZe5jiEfhf1CJrckHDD5NgJguHrQrvu0FIfyOP/KCTBSUAkP60VHkit1P
+         VjcIECGSK+8gQLtUy7L2dlNOdyDgDNXR3h0IY5uc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD504601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0h1Z7MKjq9XY0-tn9U4J3CdycYPbGkM3fjH7-FzaJ=uJA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 08/16] zd1211rw: Replace spin_is_locked() with lockdep
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181003053902.6910-9-ldr709@gmail.com>
+References: <20181003053902.6910-9-ldr709@gmail.com>
+To:     Lance Roy <ldr709@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Lance Roy <ldr709@gmail.com>, Daniel Drake <dsd@gentoo.org>,
+        Ulrich Kunitz <kune@deine-taler.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181005083535.BDBE36024C@smtp.codeaurora.org>
+Date:   Fri,  5 Oct 2018 08:35:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 19:19, Rafael J. Wysocki wrote:
-> On Thu, Oct 4, 2018 at 4:51 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->>
->> On Tue, Oct 02, 2018 at 11:44:06PM +0200, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Rearrange the code in menu_select() so that the loop over idle states
->>> always starts from 0 and get rid of the first_idx variable.
->>>
->>> While at it, add two empty lines to separate conditional statements
->>> one another.
->>>
->>> No intentional behavior changes.
->>>
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> ---
->>
->> This code is becoming a bit complex to follow :/
->>
->> May be I missed something, but it is not possible to enter the condition without
->> idx != 0, no ? (I meant the condition if ((drv->states[idx].flags &
->> FLAG_POLLING))
+Lance Roy <ldr709@gmail.com> wrote:
+
+> lockdep_assert_held() is better suited to checking locking requirements,
+> since it won't get confused when someone else holds the lock. This is
+> also a step towards possibly removing spin_is_locked().
 > 
-> Not sure what you mean.
+> Signed-off-by: Lance Roy <ldr709@gmail.com>
+> Cc: Daniel Drake <dsd@gentoo.org>
+> Cc: Ulrich Kunitz <kune@deine-taler.de>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: <linux-wireless@vger.kernel.org>
+> Cc: <netdev@vger.kernel.org>
 
-Yes, sorry let me clarify.
+Patch applied to wireless-drivers-next.git, thanks.
 
-I meant the flag polling is always on state[0], so if the flag is set
-then idx == 0.
-
-We have the conditions:
-
-  drv->states[idx].flags & CPUIDLE_FLAG_POLLING
-
-If it is true then idx is zero.
-
-
-Then comes the second condition:
-
-  i == idx + 1
-
-because of the above, idx is zero, then it can become i == 1.
-
-Then the variable assignation:
-
- idx = i can be replaced by idx = 1
-
-
-
-
-
-> We start with idx = -1, i = 0.  If state[0] is enabled, idx becomes 0.
-> 
-> If the target residency or exit latency of state[0] are already beyond
-> the limits, we just bail out and state[0] will be returned.
-> 
-> If not, we go to i = 1, but idx is still 0.  If the target residency
-> of state[1] is beyond predicted_us (which is the interesting case), we
-> check (drv->states[0].flags & FLAG_POLLING) and so on.
-> 
-> Currently, the polling state must be state[0] (if used at all) anyway.
-> 
->> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>
-> 
-> Thanks!
-> 
-
+209e957b467b zd1211rw: Replace spin_is_locked() with lockdep
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+https://patchwork.kernel.org/patch/10624325/
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
