@@ -2,95 +2,181 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D89C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A4BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8592208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:11:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="DqwkF5Yi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8592208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 801A22064E
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:16:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 801A22064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbeJFELb (ORCPT
+        id S1726399AbeJFERG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:11:31 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37375 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbeJFELa (ORCPT
+        Sat, 6 Oct 2018 00:17:06 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.234]:16193 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725761AbeJFERF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:11:30 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j23-v6so5631320pfi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 14:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wGy//HQwhqscXC6lsBjXKnKYPtpcCKQ+qCrfTXP967I=;
-        b=DqwkF5YiyBXVcwfa/GCZ61Vex0ZUV6pvFE5RkYST1ihqFWuagLRXeFRHcM0rhXVdBn
-         XlQxCNhZ52H5euD584o12V0M+UYpNHNHH3u9dk8/wUnqOuvftiqkLIAZYU0TKW0ShMM1
-         T0PaWWo9UeRI/bRAKuV4NOT6hLpPw2QX8fDsk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wGy//HQwhqscXC6lsBjXKnKYPtpcCKQ+qCrfTXP967I=;
-        b=HTBbc+pJez8YC+CU6DL0sCUgN5UzhMG3csJH6FaTNwUBchiYil3E70Ql+xbU/kR2RZ
-         gvCP/CJCUB0itfMnFDu+60odb0xwjjIofZ9Pa29iuiegMRr0S7zblVetYXwfOtWNDXVh
-         N2RmyNF6dxg7759bZ7HI92B8g96n1ZaonxmEDyYdl+NAHpkWmHrNECY+x0rukPanvhXZ
-         C72wr7fSbrxeiOxtTXC98yGij4zn9Ww8CfFADJxmWiWSGiWP1lPJt8lBlrOuVYG8c0E4
-         yqY9Il2tuCIFpXiIEzDSafL2qtbZmqPX94M84hj2MZ+osJDICDDigo/Bw0aTanNoTmlx
-         /L6g==
-X-Gm-Message-State: ABuFfogTkMyK6/cZee08G0FuskJMo+tE9Ezyat0SS5jjhCTfpcA24HR3
-        OLwYVOSYVbbBKs2pVuEAnKD0Mw==
-X-Google-Smtp-Source: ACcGV610KjZudh+bb+PkF25XPlLd6B4+kwpMw1KYqdZ0BUk6LsCl73L0b0XH+JFZY8/to5m2MtsLWQ==
-X-Received: by 2002:a62:808c:: with SMTP id j134-v6mr13483800pfd.47.1538773860245;
-        Fri, 05 Oct 2018 14:11:00 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm12876614pfd.100.2018.10.05.14.10.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 14:10:59 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 14:10:58 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
-        gregkh@linuxfoundation.org, Al Viro <viro@zeniv.linux.org.uk>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH RFC] mm: Add an fs-write seal to memfd
-Message-ID: <20181005211058.GA193964@joelaf.mtv.corp.google.com>
-References: <20181005192727.167933-1-joel@joelfernandes.org>
- <20181005125339.f6febfd3fcfdc69c6f408c50@linux-foundation.org>
+        Sat, 6 Oct 2018 00:17:05 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id EE1BDA052
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 16:16:33 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8XS9gTH0H8YaU8XSQgvkCR; Fri, 05 Oct 2018 16:16:33 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:56102 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g8XS7-001LL9-UC; Fri, 05 Oct 2018 16:16:05 -0500
+Subject: Re: [PATCH] staging/rtlwifi: Fixing formatting warnings.
+To:     Scott Tracy <scott.a.tracy@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20181005205815.GA2624@hax0rtop>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <fe44162d-57de-2f5e-7cfb-ff0a15688c7c@embeddedor.com>
+Date:   Fri, 5 Oct 2018 23:15:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005125339.f6febfd3fcfdc69c6f408c50@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181005205815.GA2624@hax0rtop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g8XS7-001LL9-UC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:56102
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 12:53:39PM -0700, Andrew Morton wrote:
-> On Fri,  5 Oct 2018 12:27:27 -0700 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+
+
+On 10/5/18 10:58 PM, Scott Tracy wrote:
+> Signed-off-by: Scott Tracy <scott.a.tracy@gmail.com>
+> ---
+>  drivers/staging/rtlwifi/core.c  | 5 +++--
+>  drivers/staging/rtlwifi/efuse.c | 5 +++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
 > 
-> > To support the usecase, this patch adds a new F_SEAL_FS_WRITE seal which
-> > prevents any future mmap and write syscalls from succeeding while
-> > keeping the existing mmap active. The following program shows the seal
-> > working in action:
+> diff --git a/drivers/staging/rtlwifi/core.c b/drivers/staging/rtlwifi/core.c
+> index ca37f7511c4d..a36cb44a5388 100644
+> --- a/drivers/staging/rtlwifi/core.c
+> +++ b/drivers/staging/rtlwifi/core.c
+> @@ -1109,7 +1109,7 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
+>  			if (rtlpriv->dm.supp_phymode_switch) {
+>  				if (sta->ht_cap.ht_supported)
+>  					rtl_send_smps_action(hw, sta,
+> -							     IEEE80211_SMPS_STATIC);
+> +							IEEE80211_SMPS_STATIC);
+>  			}
+>  
+>  			if (rtlhal->current_bandtype == BAND_ON_5G) {
+> @@ -1882,7 +1882,8 @@ bool rtl_hal_pwrseqcmdparsing(struct rtl_priv *rtlpriv, u8 cut_version,
+>  				return true;
+>  			default:
+>  				WARN_ONCE(true,
+> -					  "rtlwifi: %s(): Unknown CMD!!\n", __func__);
+> +					 "rtlwifi: %s(): Unknown CMD!!\n",
+> +					  __func__);
+>  				break;
+>  			}
+>  		}
+> diff --git a/drivers/staging/rtlwifi/efuse.c b/drivers/staging/rtlwifi/efuse.c
+> index 1dc71455f270..5b8afdb3e0fe 100644
+> --- a/drivers/staging/rtlwifi/efuse.c
+> +++ b/drivers/staging/rtlwifi/efuse.c
+> @@ -245,7 +245,8 @@ void read_efuse(struct ieee80211_hw *hw, u16 _offset, u16 _size_byte, u8 *pbuf)
+>  	if (!efuse_word)
+>  		goto out;
+>  	for (i = 0; i < EFUSE_MAX_WORD_UNIT; i++) {
+> -		efuse_word[i] = kcalloc(efuse_max_section, sizeof(u16), GFP_ATOMIC);
+> +		efuse_word[i] = kcalloc(efuse_max_section,
+> +					sizeof(u16), GFP_ATOMIC);
+>  		if (!efuse_word[i])
+>  			goto done;
+>  	}
+> @@ -375,7 +376,7 @@ bool efuse_shadow_update_chk(struct ieee80211_hw *hw)
+>  		for (i = 0; i < 8; i = i + 2) {
+>  			if ((rtlefuse->efuse_map[EFUSE_INIT_MAP][base + i] !=
+>  			     rtlefuse->efuse_map[EFUSE_MODIFY_MAP][base + i]) ||
+> -			    (rtlefuse->efuse_map[EFUSE_INIT_MAP][base + i + 1] !=
+> +			   (rtlefuse->efuse_map[EFUSE_INIT_MAP][base + i + 1] !=
+>  			     rtlefuse->efuse_map[EFUSE_MODIFY_MAP][base + i +
+>  								   1])) {
+>  				words_need++;
 > 
-> Please be prepared to create a manpage patch for this one.
 
-Sure, I will do that. thanks,
+Hi,
 
- - Joel
+Please, always add a commit log explaining what exactly are you trying to fix.
 
+Thanks
+--
+Gustavo
