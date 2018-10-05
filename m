@@ -2,75 +2,109 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C8EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30312C64EBC
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA9420645
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:30:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA9420645
+	by mail.kernel.org (Postfix) with ESMTP id 0016620645
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 00:30:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0016620645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbeJEH0P (ORCPT
+        id S1727536AbeJEH0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 03:26:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36033 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 03:26:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44420 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbeJEH0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 03:26:15 -0400
+        id S1726674AbeJEH0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 03:26:18 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A70E4307D857;
-        Fri,  5 Oct 2018 00:30:11 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E65F308AA0E;
+        Fri,  5 Oct 2018 00:30:14 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 36B67675E6;
-        Fri,  5 Oct 2018 00:30:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E5AAB18BAC;
+        Fri,  5 Oct 2018 00:30:11 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org
 Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Jani Nikula <jani.nikula@linux.intel.com>,
-        "David Airlie" <airlied@linux.ie>,
-        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org, "Sean Paul" <sean@poorly.run>,
-        "Gustavo Padovan" <gustavo@padovan.org>,
-        "Sean Paul" <seanpaul@chromium.org>,
-        "Ben Skeggs" <bskeggs@redhat.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, "Lyude Paul" <lyude@redhat.com>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH v4 0/5] Fix legacy DPMS changes with MST
-Date:   Thu,  4 Oct 2018 20:29:49 -0400
-Message-Id: <20181005002956.7317-1-lyude@redhat.com>
+        stable@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/5] drm/atomic_helper: Disallow new modesets on unregistered connectors
+Date:   Thu,  4 Oct 2018 20:29:50 -0400
+Message-Id: <20181005002956.7317-2-lyude@redhat.com>
+In-Reply-To: <20181005002956.7317-1-lyude@redhat.com>
+References: <20181005002956.7317-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 05 Oct 2018 00:30:11 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 05 Oct 2018 00:30:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next version of https://patchwork.freedesktop.org/series/49878/ . No
-changes, except that these patches are against master so hopefully
-intel's CI doesn't get confused this time.
+With the exception of modesets which would switch the DPMS state of a
+connector from on to off, we want to make sure that we disallow all
+modesets which would result in enabling a new monitor or a new mode
+configuration on a monitor if the connector for the display in question
+is no longer registered. This allows us to stop userspace from trying to
+enable new displays on connectors for an MST topology that were just
+removed from the system, without preventing userspace from disabling
+DPMS on those connectors.
 
-Lyude Paul (5):
-  drm/atomic_helper: Disallow new modesets on unregistered connectors
-  drm/nouveau: Fix nv50_mstc->best_encoder()
-  drm/i915: Leave intel_conn->mst_port set, use mst_port_gone instead
-  drm/i915: Skip vcpi allocation for MSTB ports that are gone
-  drm/i915: Fix intel_dp_mst_best_encoder()
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
- drivers/gpu/drm/drm_atomic_helper.c     | 21 ++++++++++++++++-
- drivers/gpu/drm/i915/intel_dp_mst.c     | 31 ++++++++++++++-----------
- drivers/gpu/drm/i915/intel_drv.h        |  6 +++++
- drivers/gpu/drm/nouveau/dispnv50/disp.c | 14 ++++-------
- 4 files changed, 47 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 80be74df7ba6..ce2decfc6826 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -307,6 +307,26 @@ update_connector_routing(struct drm_atomic_state *state,
+ 		return 0;
+ 	}
+ 
++	crtc_state = drm_atomic_get_new_crtc_state(state,
++						   new_connector_state->crtc);
++	/*
++	 * For compatibility with legacy users, we want to make sure that
++	 * we allow DPMS On->Off modesets on unregistered connectors. Modesets
++	 * which would result in anything else must be considered invalid, to
++	 * avoid turning on new displays on dead connectors.
++	 *
++	 * Since the connector can be unregistered at any point during an
++	 * atomic check or commit, this is racy. But that's OK: all we care
++	 * about is ensuring that userspace can't do anything but shut off the
++	 * display on a connector that was destroyed after it's been notified,
++	 * not before.
++	 */
++	if (!READ_ONCE(connector->registered) && crtc_state->active) {
++		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
++				 connector->base.id, connector->name);
++		return -EINVAL;
++	}
++
+ 	funcs = connector->helper_private;
+ 
+ 	if (funcs->atomic_best_encoder)
+@@ -351,7 +371,6 @@ update_connector_routing(struct drm_atomic_state *state,
+ 
+ 	set_best_encoder(state, new_connector_state, new_encoder);
+ 
+-	crtc_state = drm_atomic_get_new_crtc_state(state, new_connector_state->crtc);
+ 	crtc_state->connectors_changed = true;
+ 
+ 	DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] using [ENCODER:%d:%s] on [CRTC:%d:%s]\n",
 -- 
 2.17.1
 
