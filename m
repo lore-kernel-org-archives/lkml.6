@@ -2,49 +2,49 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A61C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DC2C65BAB
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2206F208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2206F208E7
+	by mail.kernel.org (Postfix) with ESMTP id 6F5272098A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:59:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F5272098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbeJEX7G (ORCPT
+        id S1729580AbeJEX7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:59:06 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36984 "EHLO
+        Fri, 5 Oct 2018 19:59:08 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34087 "EHLO
         mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729490AbeJEX7F (ORCPT
+        with ESMTP id S1729525AbeJEX7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:59:05 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o13-v6so13351082otl.4;
-        Fri, 05 Oct 2018 09:59:30 -0700 (PDT)
+        Fri, 5 Oct 2018 19:59:07 -0400
+Received: by mail-ot1-f67.google.com with SMTP id i12-v6so13401498otl.1;
+        Fri, 05 Oct 2018 09:59:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EPIowlgGfyNp5PCTy+WASDW3GgOog5WIid6GP4xkThs=;
-        b=OIQ0q50RnMqlpt9g1CYRSBbpkCL9JFw9gMYTfbizycQukfpYiqLAepYi2tTriFfWF3
-         Gnxk4zqTkxV4+TsGuTtvg3vJa+iP4WNssfnj/6tSjGTRBriD6CjEsdKrW+n14elWBAx5
-         8qu09VQpfpH4KaQP8LGaFcys9L7JPwx8eVsvaNH0XhB9h92nThp82ynPUO3mU1WKd7+Y
-         9dI/bGrZkSEGPXJfMTiF4bkBmYdLbMtXiLYNW84fxfTQfHlmt1p9KwlvMHT/x7My4psx
-         3GTXSVin2B8pujjg8IuGg4u6GzJaljO1gp4OPXUqJC2IAhrT9JdJqYr0vFSPbJida2Gh
-         1cTQ==
-X-Gm-Message-State: ABuFfohz5MtpjhiZS1D0W7mssHzdQyIa+NXz3bW6mZQZHoaPGRP1Xoa6
-        rsxsIH7r+KS8H6sHUz1BcnsgP/auQQ==
-X-Google-Smtp-Source: ACcGV61wICOTSX1mktjaZWKsbA/LAnuWeikthrndY9nTZxQd/27RIr66dGjpyB9m1gGPnDatdsmvOA==
-X-Received: by 2002:a9d:2372:: with SMTP id k47mr6626136otd.98.1538758769842;
-        Fri, 05 Oct 2018 09:59:29 -0700 (PDT)
+        bh=LOORFh/urY2tpLal8351MZgFcixXf0zNiASmMRG8pbs=;
+        b=aO+hPOVThkAQIsD+y0HyFf5XHnpMAnsGwkvXwmgJU1aSZ3I2WmfZnl29L1i5dbzqta
+         e9F5U9ZF9t0BCY9xJWmQkzveY7DSsKSCGdqX8WcqEYRK1NteEI00QJxYQzBx6IPl5H01
+         S/V8IU7e3Ffg+wjMhUZQlY+wrotquFGFD4r+uxuD8AGOTNnEnwzuIH6kwswtfzT1Tc0S
+         AYXAF6NOQkO3ZGzPsDvvFDl934mk85UmqdhR8lI5x9DbFWsnfFvuovEedNFKzhcMLrZS
+         HxGT5ZFyIQpaFFwrcVTGhi8NHt15RHgSdCWV0rLodyHD9/F0PJM0tk2v+uywMb/5eW5l
+         bljA==
+X-Gm-Message-State: ABuFfojUJwfEY7lEl6LBw0ruuv8VP5YKBW7rVX7ABjDTQHyIfFMxtukj
+        UJQzvAe5lnIDDSnsURvwWtdwGKKmaQ==
+X-Google-Smtp-Source: ACcGV60HPR+pbaj1dQFpLhTmerD6pv64ZW1rbM+iqcvjlgNxGUawRGgPsyM+BCdKdKKRH+q0oFNToQ==
+X-Received: by 2002:a9d:308d:: with SMTP id s13mr7264781otc.359.1538758771196;
+        Fri, 05 Oct 2018 09:59:31 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id u63-v6sm2904328ota.75.2018.10.05.09.59.28
+        by smtp.googlemail.com with ESMTPSA id u63-v6sm2904328ota.75.2018.10.05.09.59.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 09:59:29 -0700 (PDT)
+        Fri, 05 Oct 2018 09:59:30 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
@@ -59,11 +59,12 @@ Cc:     Grant Likely <glikely@secretlab.ca>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 28/36] dt-bindings: arm: Convert Rockchip board/soc bindings to json-schema
-Date:   Fri,  5 Oct 2018 11:58:40 -0500
-Message-Id: <20181005165848.3474-29-robh@kernel.org>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc bindings to json-schema
+Date:   Fri,  5 Oct 2018 11:58:41 -0500
+Message-Id: <20181005165848.3474-30-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
 References: <20181005165848.3474-1-robh@kernel.org>
@@ -72,494 +73,380 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert Rockchip SoC bindings to DT schema format using json-schema.
+Convert Renesas SoC bindings to DT schema format using json-schema.
 
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-renesas-soc@vger.kernel.org
 Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/rockchip.txt      | 220 ----------------
- .../devicetree/bindings/arm/rockchip.yaml     | 242 ++++++++++++++++++
- 2 files changed, 242 insertions(+), 220 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/rockchip.txt
- create mode 100644 Documentation/devicetree/bindings/arm/rockchip.yaml
+ .../devicetree/bindings/arm/shmobile.txt      | 143 ------------
+ .../devicetree/bindings/arm/shmobile.yaml     | 205 ++++++++++++++++++
+ 2 files changed, 205 insertions(+), 143 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
 deleted file mode 100644
-index acfd3c773dd0..000000000000
---- a/Documentation/devicetree/bindings/arm/rockchip.txt
+index 619b765e5bee..000000000000
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
 +++ /dev/null
-@@ -1,220 +0,0 @@
--Rockchip platforms device tree bindings
-----------------------------------------
+@@ -1,143 +0,0 @@
+-Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
+---------------------------------------------------------------------
 -
--- 96boards RK3399 Ficus (ROCK960 Enterprise Edition)
--    Required root node properties:
--      - compatible = "vamrs,ficus", "rockchip,rk3399";
+-SoCs:
 -
--- Amarula Vyasa RK3288 board
--    Required root node properties:
--      - compatible = "amarula,vyasa-rk3288", "rockchip,rk3288";
+-  - Emma Mobile EV2
+-    compatible = "renesas,emev2"
+-  - RZ/A1H (R7S72100)
+-    compatible = "renesas,r7s72100"
+-  - SH-Mobile AG5 (R8A73A00/SH73A0)
+-    compatible = "renesas,sh73a0"
+-  - R-Mobile APE6 (R8A73A40)
+-    compatible = "renesas,r8a73a4"
+-  - R-Mobile A1 (R8A77400)
+-    compatible = "renesas,r8a7740"
+-  - RZ/G1H (R8A77420)
+-    compatible = "renesas,r8a7742"
+-  - RZ/G1M (R8A77430)
+-    compatible = "renesas,r8a7743"
+-  - RZ/G1N (R8A77440)
+-    compatible = "renesas,r8a7744"
+-  - RZ/G1E (R8A77450)
+-    compatible = "renesas,r8a7745"
+-  - RZ/G1C (R8A77470)
+-    compatible = "renesas,r8a77470"
+-  - R-Car M1A (R8A77781)
+-    compatible = "renesas,r8a7778"
+-  - R-Car H1 (R8A77790)
+-    compatible = "renesas,r8a7779"
+-  - R-Car H2 (R8A77900)
+-    compatible = "renesas,r8a7790"
+-  - R-Car M2-W (R8A77910)
+-    compatible = "renesas,r8a7791"
+-  - R-Car V2H (R8A77920)
+-    compatible = "renesas,r8a7792"
+-  - R-Car M2-N (R8A77930)
+-    compatible = "renesas,r8a7793"
+-  - R-Car E2 (R8A77940)
+-    compatible = "renesas,r8a7794"
+-  - R-Car H3 (R8A77950)
+-    compatible = "renesas,r8a7795"
+-  - R-Car M3-W (R8A77960)
+-    compatible = "renesas,r8a7796"
+-  - R-Car M3-N (R8A77965)
+-    compatible = "renesas,r8a77965"
+-  - R-Car V3M (R8A77970)
+-    compatible = "renesas,r8a77970"
+-  - R-Car V3H (R8A77980)
+-    compatible = "renesas,r8a77980"
+-  - R-Car E3 (R8A77990)
+-    compatible = "renesas,r8a77990"
+-  - R-Car D3 (R8A77995)
+-    compatible = "renesas,r8a77995"
+-  - RZ/N1D (R9A06G032)
+-    compatible = "renesas,r9a06g032"
 -
--- Asus Tinker board
--    Required root node properties:
--      - compatible = "asus,rk3288-tinker", "rockchip,rk3288";
+-Boards:
 -
--- Kylin RK3036 board:
--    Required root node properties:
--      - compatible = "rockchip,kylin-rk3036", "rockchip,rk3036";
--
--- MarsBoard RK3066 board:
--    Required root node properties:
--      - compatible = "haoyu,marsboard-rk3066", "rockchip,rk3066a";
--
--- bq Curie 2 tablet:
--    Required root node properties:
--      - compatible = "mundoreader,bq-curie2", "rockchip,rk3066a";
--
--- ChipSPARK Rayeager PX2 board:
--    Required root node properties:
--      - compatible = "chipspark,rayeager-px2", "rockchip,rk3066a";
--
--- Radxa Rock board:
--    Required root node properties:
--      - compatible = "radxa,rock", "rockchip,rk3188";
--
--- Radxa Rock2 Square board:
--    Required root node properties:
--      - compatible = "radxa,rock2-square", "rockchip,rk3288";
--
--- Rikomagic MK808 v1 board:
--    Required root node properties:
--      - compatible = "rikomagic,mk808", "rockchip,rk3066a";
--
--- Firefly Firefly-RK3288 board:
--    Required root node properties:
--      - compatible = "firefly,firefly-rk3288", "rockchip,rk3288";
--    or
--      - compatible = "firefly,firefly-rk3288-beta", "rockchip,rk3288";
--
--- Firefly Firefly-RK3288 Reload board:
--    Required root node properties:
--      - compatible = "firefly,firefly-rk3288-reload", "rockchip,rk3288";
--
--- Firefly Firefly-RK3399 board:
--    Required root node properties:
--      - compatible = "firefly,firefly-rk3399", "rockchip,rk3399";
--
--- Firefly roc-rk3328-cc board:
--    Required root node properties:
--      - compatible = "firefly,roc-rk3328-cc", "rockchip,rk3328";
--
--- ChipSPARK PopMetal-RK3288 board:
--    Required root node properties:
--      - compatible = "chipspark,popmetal-rk3288", "rockchip,rk3288";
--
--- Netxeon R89 board:
--    Required root node properties:
--      - compatible = "netxeon,r89", "rockchip,rk3288";
--
--- GeekBuying GeekBox:
--    Required root node properties:
--      - compatible = "geekbuying,geekbox", "rockchip,rk3368";
--
--- Google Bob (Asus Chromebook Flip C101PA):
--    Required root node properties:
--	compatible = "google,bob-rev13", "google,bob-rev12",
--		     "google,bob-rev11", "google,bob-rev10",
--		     "google,bob-rev9", "google,bob-rev8",
--		     "google,bob-rev7", "google,bob-rev6",
--		     "google,bob-rev5", "google,bob-rev4",
--		     "google,bob", "google,gru", "rockchip,rk3399";
--
--- Google Brain (dev-board):
--    Required root node properties:
--      - compatible = "google,veyron-brain-rev0", "google,veyron-brain",
--		     "google,veyron", "rockchip,rk3288";
--
--- Google Gru (dev-board):
--    Required root node properties:
--      - compatible = "google,gru-rev15", "google,gru-rev14",
--		     "google,gru-rev13", "google,gru-rev12",
--		     "google,gru-rev11", "google,gru-rev10",
--		     "google,gru-rev9", "google,gru-rev8",
--		     "google,gru-rev7", "google,gru-rev6",
--		     "google,gru-rev5", "google,gru-rev4",
--		     "google,gru-rev3", "google,gru-rev2",
--		     "google,gru", "rockchip,rk3399";
--
--- Google Jaq (Haier Chromebook 11 and more):
--    Required root node properties:
--      - compatible = "google,veyron-jaq-rev5", "google,veyron-jaq-rev4",
--		     "google,veyron-jaq-rev3", "google,veyron-jaq-rev2",
--		     "google,veyron-jaq-rev1", "google,veyron-jaq",
--		     "google,veyron", "rockchip,rk3288";
--
--- Google Jerry (Hisense Chromebook C11 and more):
--    Required root node properties:
--      - compatible = "google,veyron-jerry-rev7", "google,veyron-jerry-rev6",
--		     "google,veyron-jerry-rev5", "google,veyron-jerry-rev4",
--		     "google,veyron-jerry-rev3", "google,veyron-jerry",
--		     "google,veyron", "rockchip,rk3288";
--
--- Google Kevin (Samsung Chromebook Plus):
--    Required root node properties:
--      - compatible = "google,kevin-rev15", "google,kevin-rev14",
--		     "google,kevin-rev13", "google,kevin-rev12",
--		     "google,kevin-rev11", "google,kevin-rev10",
--		     "google,kevin-rev9", "google,kevin-rev8",
--		     "google,kevin-rev7", "google,kevin-rev6",
--		     "google,kevin", "google,gru", "rockchip,rk3399";
--
--- Google Mickey (Asus Chromebit CS10):
--    Required root node properties:
--      - compatible = "google,veyron-mickey-rev8", "google,veyron-mickey-rev7",
--		     "google,veyron-mickey-rev6", "google,veyron-mickey-rev5",
--		     "google,veyron-mickey-rev4", "google,veyron-mickey-rev3",
--		     "google,veyron-mickey-rev2", "google,veyron-mickey-rev1",
--		     "google,veyron-mickey-rev0", "google,veyron-mickey",
--		     "google,veyron", "rockchip,rk3288";
--
--- Google Minnie (Asus Chromebook Flip C100P):
--    Required root node properties:
--      - compatible = "google,veyron-minnie-rev4", "google,veyron-minnie-rev3",
--		     "google,veyron-minnie-rev2", "google,veyron-minnie-rev1",
--		     "google,veyron-minnie-rev0", "google,veyron-minnie",
--		     "google,veyron", "rockchip,rk3288";
--
--- Google Pinky (dev-board):
--    Required root node properties:
--      - compatible = "google,veyron-pinky-rev2", "google,veyron-pinky",
--		     "google,veyron", "rockchip,rk3288";
--
--- Google Speedy (Asus C201 Chromebook):
--    Required root node properties:
--      - compatible = "google,veyron-speedy-rev9", "google,veyron-speedy-rev8",
--		     "google,veyron-speedy-rev7", "google,veyron-speedy-rev6",
--		     "google,veyron-speedy-rev5", "google,veyron-speedy-rev4",
--		     "google,veyron-speedy-rev3", "google,veyron-speedy-rev2",
--		     "google,veyron-speedy", "google,veyron", "rockchip,rk3288";
--
--- mqmaker MiQi:
--    Required root node properties:
--      - compatible = "mqmaker,miqi", "rockchip,rk3288";
--
--- Phytec phyCORE-RK3288: Rapid Development Kit
--    Required root node properties:
--     - compatible = "phytec,rk3288-pcm-947", "phytec,rk3288-phycore-som", "rockchip,rk3288";
--
--- Pine64 Rock64 board:
--    Required root node properties:
--    - compatible = "pine64,rock64", "rockchip,rk3328";
--
--- Rockchip PX3 Evaluation board:
--    Required root node properties:
--      - compatible = "rockchip,px3-evb", "rockchip,px3", "rockchip,rk3188";
--
--- Rockchip PX5 Evaluation board:
--    Required root node properties:
--      - compatible = "rockchip,px5-evb", "rockchip,px5", "rockchip,rk3368";
--
--- Rockchip RV1108 Evaluation board
--    Required root node properties:
--      - compatible = "rockchip,rv1108-evb", "rockchip,rv1108";
--
--- Rockchip RK3368 evb:
--    Required root node properties:
--      - compatible = "rockchip,rk3368-evb-act8846", "rockchip,rk3368";
--
--- Rockchip R88 board:
--    Required root node properties:
--      - compatible = "rockchip,r88", "rockchip,rk3368";
--
--- Rockchip RK3228 Evaluation board:
--    Required root node properties:
--     - compatible = "rockchip,rk3228-evb", "rockchip,rk3228";
--
--- Rockchip RK3229 Evaluation board:
--     - compatible = "rockchip,rk3229-evb", "rockchip,rk3229";
--
--- Rockchip RK3288 Fennec board:
--    Required root node properties:
--     - compatible = "rockchip,rk3288-fennec", "rockchip,rk3288";
--
--- Rockchip RK3328 evb:
--    Required root node properties:
--      - compatible = "rockchip,rk3328-evb", "rockchip,rk3328";
--
--- Rockchip RK3399 evb:
--    Required root node properties:
--      - compatible = "rockchip,rk3399-evb", "rockchip,rk3399";
--
--- Rockchip RK3399 Sapphire board standalone:
--    Required root node properties:
--      - compatible = "rockchip,rk3399-sapphire", "rockchip,rk3399";
--
--- Rockchip RK3399 Sapphire Excavator board:
--    Required root node properties:
--      - compatible = "rockchip,rk3399-sapphire-excavator", "rockchip,rk3399";
--
--- Theobroma Systems RK3368-uQ7 Haikou Baseboard:
--    Required root node properties:
--      - compatible = "tsd,rk3368-uq7-haikou", "rockchip,rk3368";
--
--- Theobroma Systems RK3399-Q7 Haikou Baseboard:
--    Required root node properties:
--      - compatible = "tsd,rk3399-q7-haikou", "rockchip,rk3399";
--
--- Tronsmart Orion R68 Meta
--    Required root node properties:
--      - compatible = "tronsmart,orion-r68-meta", "rockchip,rk3368";
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+-  - Alt (RTP0RC7794SEB00010S)
+-    compatible = "renesas,alt", "renesas,r8a7794"
+-  - APE6-EVM
+-    compatible = "renesas,ape6evm", "renesas,r8a73a4"
+-  - Atmark Techno Armadillo-800 EVA
+-    compatible = "renesas,armadillo800eva", "renesas,r8a7740"
+-  - Blanche (RTP0RC7792SEB00010S)
+-    compatible = "renesas,blanche", "renesas,r8a7792"
+-  - BOCK-W
+-    compatible = "renesas,bockw", "renesas,r8a7778"
+-  - Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
+-    compatible = "renesas,condor", "renesas,r8a77980"
+-  - Draak (RTP0RC77995SEB0010S)
+-    compatible = "renesas,draak", "renesas,r8a77995"
+-  - Eagle (RTP0RC77970SEB0010S)
+-    compatible = "renesas,eagle", "renesas,r8a77970"
+-  - Ebisu (RTP0RC77990SEB0010S)
+-    compatible = "renesas,ebisu", "renesas,r8a77990"
+-  - Genmai (RTK772100BC00000BR)
+-    compatible = "renesas,genmai", "renesas,r7s72100"
+-  - GR-Peach (X28A-M01-E/F)
+-    compatible = "renesas,gr-peach", "renesas,r7s72100"
+-  - Gose (RTP0RC7793SEB00010S)
+-    compatible = "renesas,gose", "renesas,r8a7793"
+-  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
+-    H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
+-    compatible = "renesas,h3ulcb", "renesas,r8a7795"
+-  - Henninger
+-    compatible = "renesas,henninger", "renesas,r8a7791"
+-  - iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
+-    compatible = "iwave,g23s", "renesas,r8a77470"
+-  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
+-    compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
+-  - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
+-    compatible = "iwave,g22m", "renesas,r8a7745"
+-  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
+-    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
+-  - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
+-    compatible = "iwave,g20m", "renesas,r8a7743"
+-  - Kingfisher (SBEV-RCAR-KF-M03)
+-    compatible = "shimafuji,kingfisher"
+-  - Koelsch (RTP0RC7791SEB00010S)
+-    compatible = "renesas,koelsch", "renesas,r8a7791"
+-  - Kyoto Microcomputer Co. KZM-A9-Dual
+-    compatible = "renesas,kzm9d", "renesas,emev2"
+-  - Kyoto Microcomputer Co. KZM-A9-GT
+-    compatible = "renesas,kzm9g", "renesas,sh73a0"
+-  - Lager (RTP0RC7790SEB00010S)
+-    compatible = "renesas,lager", "renesas,r8a7790"
+-  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
+-    compatible = "renesas,m3ulcb", "renesas,r8a7796"
+-  - Marzen (R0P7779A00010S)
+-    compatible = "renesas,marzen", "renesas,r8a7779"
+-  - Porter (M2-LCDP)
+-    compatible = "renesas,porter", "renesas,r8a7791"
+-  - RSKRZA1 (YR0K77210C000BE)
+-    compatible = "renesas,rskrza1", "renesas,r7s72100"
+-  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
+-    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
+-  - Salvator-X (RTP0RC7795SIPB0010S)
+-    compatible = "renesas,salvator-x", "renesas,r8a7795"
+-  - Salvator-X (RTP0RC7796SIPB0011S)
+-    compatible = "renesas,salvator-x", "renesas,r8a7796"
+-  - Salvator-X (RTP0RC7796SIPB0011S (M3-N))
+-    compatible = "renesas,salvator-x", "renesas,r8a77965"
+-  - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+-    compatible = "renesas,salvator-xs", "renesas,r8a7795"
+-  - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
+-    compatible = "renesas,salvator-xs", "renesas,r8a7796"
+-  - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
+-    compatible = "renesas,salvator-xs", "renesas,r8a77965"
+-  - SILK (RTP0RC7794LCB00011S)
+-    compatible = "renesas,silk", "renesas,r8a7794"
+-  - SK-RZG1E (YR8A77450S000BE)
+-    compatible = "renesas,sk-rzg1e", "renesas,r8a7745"
+-  - SK-RZG1M (YR8A77430S000BE)
+-    compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
+-  - Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
+-    compatible = "renesas,stout", "renesas,r8a7790"
+-  - V3HSK (Y-ASK-RCAR-V3H-WS10)
+-    compatible = "renesas,v3hsk", "renesas,r8a77980"
+-  - V3MSK (Y-ASK-RCAR-V3M-WS10)
+-    compatible = "renesas,v3msk", "renesas,r8a77970"
+-  - Wheat (RTP0RC7792ASKB0000JE)
+-    compatible = "renesas,wheat", "renesas,r8a7792"
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.yaml b/Documentation/devicetree/bindings/arm/shmobile.yaml
 new file mode 100644
-index 000000000000..4b4b892e5af7
+index 000000000000..31009e7fb0ea
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -0,0 +1,242 @@
++++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
+@@ -0,0 +1,205 @@
 +# SPDX-License-Identifier: None
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/bindings/arm/rockchip.yaml#
++$id: http://devicetree.org/schemas/bindings/arm/shmobile.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Rockchip platforms device tree bindings
++title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
 +
 +maintainers:
-+  - Beniamino Galvani <b.galvani@gmail.com>
-+  - Heiko Stuebner <heiko@sntech.de>
++  - Geert Uytterhoeven <geert+renesas@glider.be>
 +
 +properties:
 +  $nodename:
 +    const: '/'
 +  compatible:
 +    oneOf:
-+      - items:
++      - description: Emma Mobile EV2
++        items:
 +          - enum:
-+              - amarula,vyasa-rk3288
-+              - asus,rk3288-tinker
-+              - radxa,rock2-square
-+              - chipspark,popmetal-rk3288
-+              - netxeon,r89
-+              - firefly,firefly-rk3288
-+              - firefly,firefly-rk3288-beta
-+              - firefly,firefly-rk3288-reload
-+              - mqmaker,miqi
-+              - rockchip,rk3288-fennec
-+          - const: rockchip,rk3288
++              - renesas,kzm9d # Kyoto Microcomputer Co. KZM-A9-Dual
++          - const: renesas,emev2
 +
-+      - description: Phytec phyCORE-RK3288 Rapid Development Kit
++      - description:  RZ/A1H (R7S72100)
 +        items:
-+          - const: phytec,rk3288-pcm-947
-+          - const: phytec,rk3288-phycore-som
-+          - const: rockchip,rk3288
++          - enum:
++              - renesas,genmai # Genmai (RTK772100BC00000BR)
++              - renesas,gr-peach # GR-Peach (X28A-M01-E/F)
++              - renesas,rskrza1 # RSKRZA1 (YR0K77210C000BE)
++          - const: renesas,r7s72100
 +
-+      - description: Google Mickey (Asus Chromebit CS10)
++      - description:  SH-Mobile AG5 (R8A73A00/SH73A0)
 +        items:
-+          - const: google,veyron-mickey-rev8
-+          - const: google,veyron-mickey-rev7
-+          - const: google,veyron-mickey-rev6
-+          - const: google,veyron-mickey-rev5
-+          - const: google,veyron-mickey-rev4
-+          - const: google,veyron-mickey-rev3
-+          - const: google,veyron-mickey-rev2
-+          - const: google,veyron-mickey-rev1
-+          - const: google,veyron-mickey-rev0
-+          - const: google,veyron-mickey
-+          - const: google,veyron
-+          - const: rockchip,rk3288
++          - enum:
++              - renesas,kzm9g # Kyoto Microcomputer Co. KZM-A9-GT
++          - const: renesas,sh73a0
 +
-+      - description: Google Minnie (Asus Chromebook Flip C100P)
++      - description:  R-Mobile APE6 (R8A73A40)
 +        items:
-+          - const: google,veyron-minnie-rev4
-+          - const: google,veyron-minnie-rev3
-+          - const: google,veyron-minnie-rev2
-+          - const: google,veyron-minnie-rev1
-+          - const: google,veyron-minnie-rev0
-+          - const: google,veyron-minnie
-+          - const: google,veyron
-+          - const: rockchip,rk3288
++          - enum:
++              - renesas,ape6evm
++          - const: renesas,r8a73a4
 +
-+      - description: Google Pinky (dev-board)
++      - description:  R-Mobile A1 (R8A77400)
 +        items:
-+          - const: google,veyron-pinky-rev2
-+          - const: google,veyron-pinky
-+          - const: google,veyron
-+          - const: rockchip,rk3288
++          - enum:
++              - renesas,armadillo800eva # Atmark Techno Armadillo-800 EVA
++          - const: renesas,r8a7740
 +
-+      - description: Google Speedy (Asus C201 Chromebook)
++      - description:  RZ/G1H (R8A77420)
 +        items:
-+          - const: google,veyron-speedy-rev9
-+          - const: google,veyron-speedy-rev8
-+          - const: google,veyron-speedy-rev7
-+          - const: google,veyron-speedy-rev6
-+          - const: google,veyron-speedy-rev5
-+          - const: google,veyron-speedy-rev4
-+          - const: google,veyron-speedy-rev3
-+          - const: google,veyron-speedy-rev2
-+          - const: google,veyron-speedy
-+          - const: google,veyron
-+          - const: rockchip,rk3288
++          - const: renesas,r8a7742
 +
-+      - description: Google Jaq (Haier Chromebook 11 and more)
++      - description: RZ/G1M (R8A77430)
 +        items:
-+          - const: google,veyron-jaq-rev5
-+          - const: google,veyron-jaq-rev4
-+          - const: google,veyron-jaq-rev3
-+          - const: google,veyron-jaq-rev2
-+          - const: google,veyron-jaq-rev1
-+          - const: google,veyron-jaq
-+          - const: google,veyron
-+          - const: rockchip,rk3288
-+
-+      - description: Google Jerry (Hisense Chromebook C11 and more)
-+        items:
-+          - const: google,veyron-jerry-rev7
-+          - const: google,veyron-jerry-rev6
-+          - const: google,veyron-jerry-rev5
-+          - const: google,veyron-jerry-rev4
-+          - const: google,veyron-jerry-rev3
-+          - const: google,veyron-jerry
-+          - const: google,veyron
-+          - const: rockchip,rk3288
-+
-+      - description: Google Brain (dev-board)
-+        items:
-+          - const: google,veyron-brain-rev0
-+          - const: google,veyron-brain
-+          - const: google,veyron
-+          - const: rockchip,rk3288
++          - enum:
++              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
++              - iwave,g20d
++          - const: iwave,g20m
++          - const: renesas,r8a7743
 +
 +      - items:
 +          - enum:
-+              - rockchip,kylin-rk3036
-+          - const: rockchip,rk3036
++              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
++              - iwave,g20m
++          - const: renesas,r8a7743
 +
-+      - items:
-+          - enum:
-+              - haoyu,marsboard-rk3066
-+              - mundoreader,bq-curie2
-+              - chipspark,rayeager-px2
-+              - rikomagic,mk80
-+          - const: rockchip,rk3066a
-+
-+      - items:
-+          - enum:
-+              - radxa,rock
-+          - const: rockchip,rk3188
-+
-+      - items:
-+          - const: rockchip,px3-evb
-+          - const: rockchip,px3
-+          - const: rockchip,rk3188
-+
-+      - items:
-+          - enum:
-+              - firefly,roc-rk3328-cc
-+              - pine64,rock64
-+              - rockchip,rk3328-evb
-+          - const: rockchip,rk3328
-+
-+      - items:
-+          - enum:
-+              - geekbuying,geekbox
-+              - rockchip,rk3368-evb-act8846
-+              - rockchip,r88
-+              - tsd,rk3368-uq7-haikou
-+              - tronsmart,orion-r68-meta
-+          - const: rockchip,rk3368
-+
-+      - items:
-+          - enum:
-+              - geekbuying,geekbox
-+              - rockchip,rk3368-evb-act8846
-+              - rockchip,r88
-+              - tsd,rk3368-uq7-haikou
-+              - tronsmart,orion-r68-meta
-+          - const: rockchip,rk3368
-+
-+      - items:
-+          - const: rockchip,px5-evb
-+          - const: rockchip,px5
-+          - const: rockchip,rk3368
-+
-+      - items:
-+          - enum:
-+              - firefly,firefly-rk3399
-+              - rockchip,rk3399-evb
-+              - rockchip,rk3399-sapphire
-+              - rockchip,rk3399-sapphire-excavator
-+              - tsd,rk3399-q7-haikou
-+              - vamrs,ficus
-+          - const: rockchip,rk3399
-+
-+      - description: Google Bob (Asus Chromebook Flip C101PA)
++      - description: RZ/G1N (R8A77440)
 +        items:
-+          - const: google,bob-rev13
-+          - const: google,bob-rev12
-+          - const: google,bob-rev11
-+          - const: google,bob-rev10
-+          - const: google,bob-rev9
-+          - const: google,bob-rev8
-+          - const: google,bob-rev7
-+          - const: google,bob-rev6
-+          - const: google,bob-rev5
-+          - const: google,bob-rev4
-+          - const: google,bob
-+          - const: google,gru
-+          - const: rockchip,rk3399
++          - enum:
++              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
++          - const: renesas,r8a7744
 +
-+      - description: Google Gru (dev-board)
++      - description: RZ/G1E (R8A77450)
 +        items:
-+          - const: google,gru-rev15
-+          - const: google,gru-rev14
-+          - const: google,gru-rev13
-+          - const: google,gru-rev12
-+          - const: google,gru-rev11
-+          - const: google,gru-rev10
-+          - const: google,gru-rev9
-+          - const: google,gru-rev8
-+          - const: google,gru-rev7
-+          - const: google,gru-rev6
-+          - const: google,gru-rev5
-+          - const: google,gru-rev4
-+          - const: google,gru-rev3
-+          - const: google,gru-rev2
-+          - const: google,gru
-+          - const: rockchip,rk3399
++          - enum:
++              - iwave,g22m # iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
++              - renesas,sk-rzg1e # SK-RZG1E (YR8A77450S000BE)
++          - const: renesas,r8a7745
++      - items:
++          # iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
++          - const: iwave,g22d
++          - const: iwave,g22m
++          - const: renesas,r8a7745
 +
-+      - description: Google Kevin (Samsung Chromebook Plus)
++      - description: RZ/G1C (R8A77470)
 +        items:
-+          - const: google,kevin-rev15
-+          - const: google,kevin-rev14
-+          - const: google,kevin-rev13
-+          - const: google,kevin-rev12
-+          - const: google,kevin-rev11
-+          - const: google,kevin-rev10
-+          - const: google,kevin-rev9
-+          - const: google,kevin-rev8
-+          - const: google,kevin-rev7
-+          - const: google,kevin-rev6
-+          - const: google,kevin
-+          - const: google,gru
-+          - const: rockchip,rk3399
-+
-+      - items:
 +          - enum:
-+              - rockchip,rv1108-evb
-+          - const: rockchip,rv1108
++              - iwave,g23s #iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
++          - const: renesas,r8a77470
 +
-+      - items:
++      - description: R-Car M1A (R8A77781)
++        items:
 +          - enum:
-+              - rockchip,rk3228-evb
-+          - const: rockchip,rk3228
++              - renesas,bockw
++          - const: renesas,r8a7778
 +
-+      - items:
++      - description: R-Car H1 (R8A77790)
++        items:
 +          - enum:
-+              - rockchip,rk3229-evb
-+          - const: rockchip,rk3229
++              - renesas,marzen # Marzen (R0P7779A00010S)
++              - renesas,stout # Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
++          - const: renesas,r8a7779
++
++      - description: R-Car H2 (R8A77900)
++        items:
++          - enum:
++              - renesas,lager # Lager (RTP0RC7790SEB00010S)
++          - const: renesas,r8a7790
++
++      - description: R-Car M2-W (R8A77910)
++        items:
++          - enum:
++              - renesas,henninger
++              - renesas,koelsch # Koelsch (RTP0RC7791SEB00010S)
++              - renesas,porter # Porter (M2-LCDP)
++          - const: renesas,r8a7791
++
++      - description: R-Car V2H (R8A77920)
++        items:
++          - enum:
++              - renesas,blanche # Blanche (RTP0RC7792SEB00010S)
++              - renesas,wheat # Wheat (RTP0RC7792ASKB0000JE)
++          - const: renesas,r8a7792
++
++      - description: R-Car M2-N (R8A77930)
++        items:
++          - enum:
++              - renesas,gose # Gose (RTP0RC7793SEB00010S)
++          - const: renesas,r8a7793
++
++      - description: R-Car E2 (R8A77940)
++        items:
++          - enum:
++              - renesas,alt # Alt (RTP0RC7794SEB00010S)
++              - renesas,silk # SILK (RTP0RC7794LCB00011S)
++          - const: renesas,r8a7794
++
++      - description: R-Car H3 (R8A77950)
++        items:
++          - enum:
++                # H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
++                # H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
++              - renesas,h3ulcb
++              - renesas,salvator-x # Salvator-X (RTP0RC7795SIPB0010S)
++              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
++          - const: renesas,r8a7795
++
++      - description: R-Car M3-W (R8A77960)
++        items:
++          - enum:
++              - renesas,m3ulcb # M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
++              - renesas,salvator-x # Salvator-X (RTP0RC7796SIPB0011S)
++              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
++          - const: renesas,r8a7796
++
++      - description: Kingfisher (SBEV-RCAR-KF-M03)
++        items:
++          - const: shimafuji,kingfisher
++          - enum:
++              - renesas,h3ulcb
++              - renesas,m3ulcb
++          - enum:
++              - renesas,r8a7795
++              - renesas,r8a7796
++
++      - description: R-Car M3-N (R8A77965)
++        items:
++          - enum:
++              - renesas,salvator-x # Salvator-X (RTP0RC7796SIPB0011S (M3-N))
++              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
++          - const: renesas,r8a77965
++
++      - description: R-Car V3M (R8A77970)
++        items:
++          - enum:
++              - renesas,eagle # Eagle (RTP0RC77970SEB0010S)
++              - renesas,v3msk # V3MSK (Y-ASK-RCAR-V3M-WS10)
++          - const: renesas,r8a77970
++
++      - description: R-Car V3H (R8A77980)
++        items:
++          - enum:
++              - renesas,condor # Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
++              - renesas,v3hsk # V3HSK (Y-ASK-RCAR-V3H-WS10)
++          - const: renesas,r8a77980
++
++      - description: R-Car E3 (R8A77990)
++        items:
++          - enum:
++              - renesas,ebisu # Ebisu (RTP0RC77990SEB0010S)
++          - const: renesas,r8a77990
++
++      - description: R-Car D3 (R8A77995)
++        items:
++          - enum:
++              - renesas,draak # Draak (RTP0RC77995SEB0010S)
++          - const: renesas,r8a77995
++
++      - description: RZ/N1D (R9A06G032)
++        items:
++          - enum:
++              - renesas,rzn1d400-db # RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
++          - const: renesas,r9a06g032
++
 +...
 -- 
 2.17.1
