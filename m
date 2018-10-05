@@ -2,184 +2,272 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA3BC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0732FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9190920834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:20:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9190920834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wand.net.nz
+	by mail.kernel.org (Postfix) with ESMTP id A09D6208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:20:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vaonSauZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09D6208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbeJFATk (ORCPT
+        id S1728853AbeJFAUK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:19:40 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41397 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbeJFATj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:19:39 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 23-v6so6005307qkh.8;
-        Fri, 05 Oct 2018 10:19:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LrkVWQizy5vQIraI8/9WMpZhXQvk091qqfexNWXI9OI=;
-        b=N/G5XM+HrRSz6LNZg9rPdm7iinlureWeWjEP1lvgPYF89c5zBPpss8JmgF3stq40vm
-         vITEAg4lX7GgUY/KNl3hk5ZHC6J2YN2PE5JBkY7qG5C7YB8aUcdGNjVB0yPj0wYbTBu/
-         6pl3qWkFQhldgyTMWk6PW7r495o0onTjbRYzZdO/mV5UIpeJTfZB88scnEkABu06cQuB
-         XbM9SjlwblHPSLiTXcMH0+K75Wp8313DSDmrVw/vX6pt7ZkoAKibNsfLIHU2rV3Oegz9
-         bi+CNcaXHximOF0zG3XDR/K5Bc19MRN2JCvee4HuUKs9DiydMGOokEaigObMUCBXJG7j
-         J0zQ==
-X-Gm-Message-State: ABuFfojmLNnHIDmb8Ey8wqjI6o5SmVuqPenezsXwiOSDUqbFBDusYY1V
-        Idh80hZ1nAou4Bi9yTndkrMM/8ZtGrq3HdRq/oc=
-X-Google-Smtp-Source: ACcGV61ky1047xH4fwfIQ/zOwitKK7X/+hLb753EtFru7AueaZaoDPW6xDrlDJd+ZpTraiFSXlSgko/b9Xm+Hp0uBsQ=
-X-Received: by 2002:a37:a215:: with SMTP id l21-v6mr9891383qke.101.1538759998278;
- Fri, 05 Oct 2018 10:19:58 -0700 (PDT)
+        Fri, 5 Oct 2018 20:20:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbeJFAUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:20:09 -0400
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 866D021480
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 17:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538760028;
+        bh=yHa5GNWe4eWgDoAND23tKtU6dAYIrSWr41bN9khAYLA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vaonSauZSR5XghcWHPSD01CJgsYAAgvE/3D7dGlYqirf0t4nBlBYCOmKXAHA7Xemi
+         OmvGXMIsSl7G+oCLIttdUrNwu0PQ95euKiwG+3IRb2sHNmAyg+NuF7QGDxWsL/9dXH
+         v5G9+Adv+mdgjVlG0SoAZVP/5VePk4ru9+zf81DU=
+Received: by mail-wm1-f43.google.com with SMTP id 185-v6so2624676wmt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 10:20:28 -0700 (PDT)
+X-Gm-Message-State: ABuFfogOc0FxzVFUZe/Dx9CdTJcXf30WrcVnunyDwPWGoI7g6QMB9mzV
+        kbDcOjGKvgj0BeRXyrgolZZInVZrNVxq8iN8EEKnVQ==
+X-Google-Smtp-Source: ACcGV60itmrAZyYdDeu+40nKoYUYDE9COsg0Rq3vh3QXovk2gaJ7jljaNrlmRfqX8c4FBCyh+5R5VJh44rQSm5sWWek=
+X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr8576908wmf.19.1538760026810;
+ Fri, 05 Oct 2018 10:20:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181005161526.843924-1-arnd@arndb.de>
-In-Reply-To: <20181005161526.843924-1-arnd@arndb.de>
-From:   Joe Stringer <joe@wand.net.nz>
-Date:   Fri, 5 Oct 2018 10:19:47 -0700
-Message-ID: <CAOftzPg0POeTg+A2-fZM-A78sQf0r1saj23AhV6Ge7yBJGDHBw@mail.gmail.com>
-Subject: Re: [PATCH] bpf: fix building without CONFIG_INET
-To:     arnd@arndb.de
-Cc:     ast@kernel.org, daniel@iogearbox.net,
-        David Miller <davem@davemloft.net>,
-        john fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        makita.toshiaki@lab.ntt.co.jp, brakmo@fb.com, rdna@fb.com,
-        Jesper Brouer <brouer@redhat.com>,
-        jakub.kicinski@netronome.com, m.xhonneux@gmail.com,
-        dsahern@gmail.com, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
+ <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net>
+ <9E0E08C8-0DFC-4E50-A4FA-73208835EF9E@amacapital.net> <CAKv+Gu9z503ZJXcsG+9Ys240BZiB-+GB=kNY4VGWpjvdzN4JtA@mail.gmail.com>
+ <CALCETrWaewXsdJsf3SocgZ0ggnvZk86L+5-LWPRbjdnG2mB7jw@mail.gmail.com> <CAKv+Gu-oHBtgGbWXJu6+z4+BNhBZyY5VvF_v6cJJUGk_5YX1eQ@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-oHBtgGbWXJu6+z4+BNhBZyY5VvF_v6cJJUGk_5YX1eQ@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 5 Oct 2018 10:20:15 -0700
+X-Gmail-Original-Message-ID: <CALCETrU=fm+ZG4WZJfG-5GwL7kv5_GS1aZYu=L42d5BuSbhJDQ@mail.gmail.com>
+Message-ID: <CALCETrU=fm+ZG4WZJfG-5GwL7kv5_GS1aZYu=L42d5BuSbhJDQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 5 Oct 2018 at 09:16, Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Oct 5, 2018 at 10:11 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
 >
-> The newly added TCP and UDP handling fails to link when CONFIG_INET
-> is disabled:
+> On 5 October 2018 at 18:58, Andy Lutomirski <luto@kernel.org> wrote:
+> > On Fri, Oct 5, 2018 at 8:24 AM Ard Biesheuvel <ard.biesheuvel@linaro.or=
+g> wrote:
+> >>
+> >> On 5 October 2018 at 17:08, Andy Lutomirski <luto@amacapital.net> wrot=
+e:
+> >> >
+> >> >
+> >> >> On Oct 5, 2018, at 7:14 AM, Peter Zijlstra <peterz@infradead.org> w=
+rote:
+> >> >>
+> >> >>> On Fri, Oct 05, 2018 at 10:13:25AM +0200, Ard Biesheuvel wrote:
+> >> >>> diff --git a/include/linux/ffp.h b/include/linux/ffp.h
+> >> >>> new file mode 100644
+> >> >>> index 000000000000..8fc3b4c9b38f
+> >> >>> --- /dev/null
+> >> >>> +++ b/include/linux/ffp.h
+> >> >>> @@ -0,0 +1,43 @@
+> >> >>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >> >>> +
+> >> >>> +#ifndef __LINUX_FFP_H
+> >> >>> +#define __LINUX_FFP_H
+> >> >>> +
+> >> >>> +#include <linux/types.h>
+> >> >>> +#include <linux/compiler.h>
+> >> >>> +
+> >> >>> +#ifdef CONFIG_HAVE_ARCH_FFP
+> >> >>> +#include <asm/ffp.h>
+> >> >>> +#else
+> >> >>> +
+> >> >>> +struct ffp {
+> >> >>> +    void    (**fn)(void);
+> >> >>> +    void    (*default_fn)(void);
+> >> >>> +};
+> >> >>> +
+> >> >>> +#define DECLARE_FFP(_fn, _def)                        \
+> >> >>> +    extern typeof(_def) *_fn;                    \
+> >> >>> +    extern struct ffp const __ffp_ ## _fn
+> >> >>> +
+> >> >>> +#define DEFINE_FFP(_fn, _def)                        \
+> >> >>> +    typeof(_def) *_fn =3D &_def;                    \
+> >> >>> +    struct ffp const __ffp_ ## _fn                    \
+> >> >>> +        =3D { (void(**)(void))&_fn, (void(*)(void))&_def };    \
+> >> >>> +    EXPORT_SYMBOL(__ffp_ ## _fn)
+> >> >>> +
+> >> >>> +static inline void ffp_set_target(const struct ffp *m, void *new_=
+fn)
+> >> >>> +{
+> >> >>> +    WRITE_ONCE(*m->fn, new_fn);
+> >> >>> +}
+> >> >>> +
+> >> >>> +static inline void ffp_reset_target(const struct ffp *m)
+> >> >>> +{
+> >> >>> +    WRITE_ONCE(*m->fn, m->default_fn);
+> >> >>> +}
+> >> >>> +
+> >> >>> +#endif
+> >> >>> +
+> >> >>> +#define SET_FFP(_fn, _new)    ffp_set_target(&__ffp_ ## _fn, _new=
+)
+> >> >>> +#define RESET_FFP(_fn)        ffp_reset_target(&__ffp_ ## _fn)
+> >> >>> +
+> >> >>> +#endif
+> >> >>
+> >> >> I don't understand this interface. There is no wrapper for the call
+> >> >> site, so how are we going to patch all call-sites when you update t=
+he
+> >> >> target?
+> >> >
+> >> > I=E2=80=99m also confused.
+> >> >
+> >> > Anyway, we have patchable functions on x86. They=E2=80=99re called P=
+VOPs, and they=E2=80=99re way overcomplicated.
+> >> >
+> >> > I=E2=80=99ve proposed a better way that should generate better code,=
+ be more portable, and be more maintainable.  It goes like this.
+> >> >
+> >> > To call the function, you literally just call  the default implement=
+ation.  It *might* be necessary to call a nonexistent wrapper to avoid anno=
+ying optimizations. At build time, the kernel is built with relocations, so=
+ the object files contain relocation entries for the call. We collect these=
+ entries into a table. If we=E2=80=99re using the =E2=80=9Cnonexistent wrap=
+per=E2=80=9D approach, we can link in a .S or linker script to alias them t=
+o the default implementation.
+> >> >
+> >> > To patch them, we just patch them. It can=E2=80=99t necessarily be d=
+one concurrently because nothing forces the right alignment. But we can do =
+it at boot time and module load time. (Maybe we can patch at runtime on arc=
+hitectures with appropriate instruction alignment.  Or we ask gcc for an ex=
+tension to align calls to a function.)
+> >> >
+> >> > Most of the machinery already exists: this is roughly how the module=
+ loader resolves calls outside of a module.
+> >>
+> >> Yeah nothing is ever simple on x86 :-(
+> >>
+> >> So are you saying the approach i use in patch #2 (which would
+> >> translate to emitting a jmpq instruction pointing to the default
+> >> implementation, and patching it at runtime to point elsewhere) would
+> >> not fly on x86?
+> >
+> > After getting some more sleep, I'm obviously wrong.  The
+> > text_poke_bp() mechanism will work.  It's just really slow.
+> >
 >
-> net/core/filter.o: In function `sk_lookup':
-> filter.c:(.text+0x7ff8): undefined reference to `tcp_hashinfo'
-> filter.c:(.text+0x7ffc): undefined reference to `tcp_hashinfo'
-> filter.c:(.text+0x8020): undefined reference to `__inet_lookup_established'
-> filter.c:(.text+0x8058): undefined reference to `__inet_lookup_listener'
-> filter.c:(.text+0x8068): undefined reference to `udp_table'
-> filter.c:(.text+0x8070): undefined reference to `udp_table'
-> filter.c:(.text+0x808c): undefined reference to `__udp4_lib_lookup'
-> net/core/filter.o: In function `bpf_sk_release':
-> filter.c:(.text+0x82e8): undefined reference to `sock_gen_put'
+> OK
 >
-> The compiler can optimize it out and avoid those references for
-> the most part, but we are missing a few steps here:
+> > Let me try to summarize some of the issues.  First, when emitting
+> > jumps and calls from inline asm on x86, there are a few considerations
+> > that are annoying:
+> >
+> > 1. Following the x86_64 ABI calling conventions is basically
+> > impossible.  x86_64 requires a 128-byte redzone and 16-byte stack
+> > alignment.  After much discussion a while back, we decided that it was
+> > flat-out impossible on current gcc to get the stack pointer aligned in
+> > a known manner in an inline asm statement.  Instead, if we actually
+> > need alignment, we need to align manually.  Fortunately, the kernel is
+> > built with an override that forces only 8-byte alignment (on *most*
+> > GCC versions).  But for crypto in particular, it sucks extra, since
+> > the crypto code is basically the only thing in the kernel that
+> > actually wants 16-byte alignment.  I don't think this is a huge
+> > problem in practice, but it's annoying.  And the kernel is built
+> > without a redzone.
+> >
+> > 2. On x86_64, depending on config, we either need frame pointers or
+> > ORC.  ORC is no big deal -- it Just Works (tm).  Frame pointers need
+> > extra asm hackery.  It's doable, but it's still annoying.
+> >
+> > 3. Actually getting the asm constraints right to do what a C
+> > programmer expects is distinctly nontrivial.  I just fixed an
+> > extremely longstanding bug in the vDSO code in which the asm
+> > constraints for the syscall fallback were wrong in such a way that GCC
+> > didn't notice that the fallback wrote to its output parameter.
+> > Whoops.
+> >
 >
-> - sk_lookup() should always have been marked 'static', this also
->   avoids a warning about a missing prototype when building with
->   'make W=1'.
-> - The BPF_CALL_x() macro needs a little change to allow marking
->   the unneeded BPF call as 'static' and having the compiler
->   drop them.
-> - The reference to the bpf_func_proto must be made conditional.
+> OK, so the thing I am missing is why this all matters.
 >
-> Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-
-Thanks for the fix.
-
->  include/linux/filter.h |  2 +-
->  net/core/filter.c      | 18 +++++++++++-------
->  2 files changed, 12 insertions(+), 8 deletions(-)
+> Note that the compiler should take care of all of this. It emits a
+> call a function with external linkage having prototype X, and all the
+> inline asm does is emit a jmp to some function having that same
+> prototype, either the default one or the one we patched in.
 >
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index 6791a0ac0139..d9ec9d908bbe 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -428,9 +428,9 @@ struct sock_reuseport;
->                   u64, __ur_3, u64, __ur_4, u64, __ur_5)
->
->  #define BPF_CALL_x(x, name, ...)                                              \
-> +       u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));         \
->         static __always_inline                                                 \
->         u64 ____##name(__BPF_MAP(x, __BPF_DECL_ARGS, __BPF_V, __VA_ARGS__));   \
-> -       u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));         \
->         u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__))          \
->         {                                                                      \
->                 return ____##name(__BPF_MAP(x,__BPF_CAST,__BPF_N,__VA_ARGS__));\
+> Apologies if I am missing something obvious here: as you know, x86 is
+> not my focus in general.
 
-For what it's worth, other similar cases in net/core/filter.c avoid
-this by just wrapping the relevant sections of the code in the #ifdef
-as well.
+The big issue that bothers me isn't the x86-ism so much as the nasty
+interactions with the optimizer.  On x86, we have all of this working.
+It's in arch/x86/include/asm/paravirt_types.h, and it looks roughly
+like:
 
-Might be a bit simpler to follow that style (only checked with make
-M=net/core W=1):
+                        asm volatile(pre                                \
+                                     paravirt_alt(PARAVIRT_CALL)        \
+                                     post                               \
+                                     : call_clbr, ASM_CALL_CONSTRAINT   \
+                                     : paravirt_type(op),               \
+                                       paravirt_clobber(clbr),          \
+                                       ##__VA_ARGS__                    \
+                                     : "memory", "cc" extra_clbr);      \
 
-$ git di
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 30c6b2d3ef16..4bbc6567fcb8 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -4817,8 +4817,9 @@ static const struct bpf_func_proto
-bpf_lwt_seg6_adjust_srh_proto = {
-};
-#endif /* CONFIG_IPV6_SEG6_BPF */
+With some extra magic for the constraints.  And I don't even think
+this is strictly correct -- from very recent experience, telling the
+compiler that "memory" is clobbered and that a bunch of arguments are
+used as numeric inputs may not actually imply that the asm modifies
+the target of pointer arguments.  Checks this lovely bug out:
 
--struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
--                      struct sk_buff *skb, u8 family, u8 proto)
-+#ifdef CONFIG_INET
-+static struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
-+                             struct sk_buff *skb, u8 family, u8 proto)
-{
-       int dif = skb->dev->ifindex;
-       bool refcounted = false;
-@@ -4951,6 +4952,7 @@ static const struct bpf_func_proto
-bpf_sk_release_proto = {
-       .ret_type       = RET_INTEGER,
-       .arg1_type      = ARG_PTR_TO_SOCKET,
-};
-+#endif /* CONFIG_INET */
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=3D=
+x86/vdso-tglx&id=3D715bd9d12f84d8f5cc8ad21d888f9bc304a8eb0b
 
-bool bpf_helper_changes_pkt_data(void *func)
-{
-@@ -5158,12 +5160,14 @@ tc_cls_act_func_proto(enum bpf_func_id
-func_id, const struct bpf_prog *prog)
-       case BPF_FUNC_skb_ancestor_cgroup_id:
-               return &bpf_skb_ancestor_cgroup_id_proto;
-#endif
-+#ifdef CONFIG_INET
-       case BPF_FUNC_sk_lookup_tcp:
-               return &bpf_sk_lookup_tcp_proto;
-       case BPF_FUNC_sk_lookup_udp:
-               return &bpf_sk_lookup_udp_proto;
-       case BPF_FUNC_sk_release:
-               return &bpf_sk_release_proto;
-+#endif
-       default:
-               return bpf_base_func_proto(func_id);
-       }
-@@ -5264,12 +5268,14 @@ sk_skb_func_proto(enum bpf_func_id func_id,
-const struct bpf_prog *prog)
-               return &bpf_sk_redirect_hash_proto;
-       case BPF_FUNC_get_local_storage:
-               return &bpf_get_local_storage_proto;
-+#ifdef CONFIG_INET
-       case BPF_FUNC_sk_lookup_tcp:
-               return &bpf_sk_lookup_tcp_proto;
-       case BPF_FUNC_sk_lookup_udp:
-               return &bpf_sk_lookup_udp_proto;
-       case BPF_FUNC_sk_release:
-               return &bpf_sk_release_proto;
-+#endif
-       default:
-               return bpf_base_func_proto(func_id);
-       }
+As far as I can tell, the whole PVOP infrastructure has the same bug.
+And I don't see how to avoid it generically on x86 or any other
+architecture.  (PeterZ, am I wrong?  Are we really just getting lucky
+that x86 pvop calls actually work?  Or do we not have enough of them
+that take pointers as arguments for this to matter?)
+
+Plus, asm volatile ( ..., "memory" ) is a barrier and makes code
+generation suck.
+
+Whereas, if we use my suggestion the semantics are precisely those of
+any other C function call because, as far as GCC is concerned, it *is*
+a C function call.  So the generated code *is* a function call.
+
+--Andy
