@@ -2,140 +2,144 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65462C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BFAC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377182087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:26:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 377182087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 986CC2087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:26:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uIPECjwy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986CC2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbeJEUZJ (ORCPT
+        id S1728966AbeJEUZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:25:09 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57432 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727733AbeJEUW1 (ORCPT
+        Fri, 5 Oct 2018 16:25:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40055 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727701AbeJEUZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:22:27 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DK31B002319;
-        Fri, 5 Oct 2018 15:23:24 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mu1bkc6uc-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Oct 2018 15:23:24 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 51FCE31;
-        Fri,  5 Oct 2018 13:23:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 24E7C2C92;
-        Fri,  5 Oct 2018 13:23:23 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:23 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:22 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 00/24] mmc: mmci: add sdmmc variant for stm32
-Date:   Fri, 5 Oct 2018 15:22:38 +0200
-Message-ID: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 5 Oct 2018 16:25:09 -0400
+Received: by mail-pf1-f196.google.com with SMTP id s5-v6so5086442pfj.7;
+        Fri, 05 Oct 2018 06:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UqUL9SkpdJz9RMWiehPVKTpihQd+cH0u1dIADWyIUYc=;
+        b=uIPECjwyICsYfVHlBsBAmw3FzqEaxWMs3feoxEhwlDDOIFCSEZIUPg4wQY96HcRxur
+         tVzxAwiinxN/L/N9inR/RwUZBup1Vb4/TLq5eX2tDYJzl+RKrTRoO+5HcwFwpc9sloFf
+         y3y6vC/kVeZ0ZQUJW5Dv3HME5x9cHb7UFuYkkHex8AbFa+iQyI7h304OIzCpNNflHwvL
+         2FMzgQ0iQJkFReTscHJX6rOCRoJKrd8zhpqJA99hMZiR8OOK51ZmBZMTfs9q8ojjRqeP
+         DL9qYIs+vJmvOL8qYILQ8VGcMYACXtwoif28/JpSs4Xh7vK//XRdXuLEa2N+xh4giUCd
+         rNgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UqUL9SkpdJz9RMWiehPVKTpihQd+cH0u1dIADWyIUYc=;
+        b=QbWD9A8RPsizT6LW5l/Am2RWZ9HWsv0M9ru84Bx5HpKYBPr7V/B67eMwWG1Tiz7LFr
+         adNmteSgNXasWFWvIDXfBYrVPe6NdsYjUYXPODaHU1C0UzQRuTkMRHwBLk6xTRt/bnJv
+         a5mZbYfnyDDB0kGPifGGJzWZmKP0zg7pfjMotWjJk2f8etfu7UetzoJOQKYWhM1zwBBV
+         O2lA701H5/HtxzAVtOihzRBVCFl2FbSnZRvtIt7I7KPvMF+MQ8ooboCdK/QZtt10gtrA
+         5u182KMfwKzrZqNm/2j/KQaPWtGQeynghwwyPflNR7YXyRSucBFAO9RJxko5ebvaPDQL
+         yPeg==
+X-Gm-Message-State: ABuFfojlX6Pnh7j3wAWFj8bJLeHOGxfev/pGFFMaR8ocAw4Um2rh2MhP
+        WJNOnViXFnAKKo+M9ApLa1vnryMa
+X-Google-Smtp-Source: ACcGV62Qd2brmznz6MFZ8e7pmOtgaouZpKNpf+oknrajkwogtA+t1wNZRRVtOfv0rEAwmLtQkg1KhQ==
+X-Received: by 2002:a63:1148:: with SMTP id 8-v6mr10397630pgr.172.1538745985550;
+        Fri, 05 Oct 2018 06:26:25 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id n80-v6sm14580331pfh.166.2018.10.05.06.26.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 06:26:24 -0700 (PDT)
+Subject: Re: [PATCH 15/16] of: unittest: initialize args before calling
+ of_irq_parse_one()
+To:     frowand.list@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
+ <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <7fc4b9da-5fdf-11c9-e168-ccb2d960adea@roeck-us.net>
+Date:   Fri, 5 Oct 2018 06:26:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_07:,,
- signatures=0
+In-Reply-To: <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On 10/04/2018 09:12 PM, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> Callers of of_irq_parse_one() blindly use the pointer args.np
+> without checking whether of_irq_parse_one() had an error and
+> thus did not set the value of args.np.  Initialize args to
+> zero so that using the format "%pOF" to show the value of
+> args.np will show "(null)" when of_irq_parse_one() has an
+> error and does not set args.np instead of trying to
+> dereference a random value.
+> 
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 
-The goal of this serie is to add support of sdmmc for stm32.
-Be to able to add this new variant it is needed to do some changes in
-mmci core:
--Internalize specific needs of legacy dmaengine.
--Create and setup dma_priv pointer.
--Create generic callbacks which share some features (like cookie...)
- and call specific needs.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-change v5:
--error management in mmci_dmae_setup and qcom_dma_setup
- mmci_dmae_setup: fail when tx & rx are not defined.
- qcom_dma_setup: faill if one of channels is not defined.
--define mmci_variant_init following CONFIG_DMA_ENGINE state.
--squash dma_setup/dma_release callback.
+The same problem exists when of_parse_phandle_with_args() reports an error.
 
-change v4:
--checkpatch fix bool to u8
--add use_dma variable to fallback to pio mode
--move to optional reset with dt binding note for sdmmc
--separate patch for DT doc
+Guenter
 
-change v3:
--remove __dma_inprogress rename
--remove bad space at end of "st,use-ckin"
-
-change v2:
--rename to mmci_prep/unprep_data
--rename specific dma engine structure to mmci_dmae_next/priv
--follow "_" recommandation
--remove dma prefixe of mmci_dmae_priv fields
-
-Ludovic Barre (24):
-  mmc: mmci: Change struct members from bool to u8
-  mmc: mmci: create common mmci_dma_setup/release
-  mmc: mmci: introduce dma_priv pointer to mmci_host
-  mmc: mmci: merge prepare data functions
-  mmc: mmci: add prepare/unprepare_data callbacks
-  mmc: mmci: add get_next_data callback
-  mmc: mmci: add dma_start callback
-  mmc: mmci: add dma_finalize callback
-  mmc: mmci: add dma_error callback
-  mmc: mmci: add validate_data callback
-  mmc: mmci: add set_clk/pwrreg callbacks
-  mmc: mmci: add datactrl block size variant property
-  mmc: mmci: expand startbiterr to irqmask and error check
-  mmc: mmci: add variant properties to define cpsm & cmdresp bits
-  mmc: mmci: add variant property to define dpsm bit
-  mmc: mmci: add variant property to define irq pio mask
-  mmc: mmci: add variant property to write datactrl before command
-  mmc: mmci: add variant property to not read datacnt
-  dt-bindings: mmci: add optional reset property
-  mmc: mmci: add optional reset property
-  mmc: mmci: add clock divider for stm32 sdmmc
-  mmc: mmci: add stm32 sdmmc registers
-  dt-bindings: mmci: add stm32 sdmmc variant
-  mmc: mmci: add stm32 sdmmc variant
-
- Documentation/devicetree/bindings/mmc/mmci.txt |  11 +
- drivers/mmc/host/Kconfig                       |  10 +
- drivers/mmc/host/Makefile                      |   1 +
- drivers/mmc/host/mmci.c                        | 616 +++++++++++++++++--------
- drivers/mmc/host/mmci.h                        | 186 ++++++--
- drivers/mmc/host/mmci_qcom_dml.c               |  16 +-
- drivers/mmc/host/mmci_stm32_sdmmc.c            | 282 +++++++++++
- 7 files changed, 904 insertions(+), 218 deletions(-)
- create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
-
--- 
-2.7.4
+> ---
+>   drivers/of/unittest.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> index 6d80f474c8f2..b61a33f30a56 100644
+> --- a/drivers/of/unittest.c
+> +++ b/drivers/of/unittest.c
+> @@ -780,7 +780,7 @@ static void __init of_unittest_parse_interrupts(void)
+>   	for (i = 0; i < 4; i++) {
+>   		bool passed = true;
+>   
+> -		args.args_count = 0;
+> +		memset(&args, 0, sizeof(args));
+>   		rc = of_irq_parse_one(np, i, &args);
+>   
+>   		passed &= !rc;
+> @@ -801,7 +801,7 @@ static void __init of_unittest_parse_interrupts(void)
+>   	for (i = 0; i < 4; i++) {
+>   		bool passed = true;
+>   
+> -		args.args_count = 0;
+> +		memset(&args, 0, sizeof(args));
+>   		rc = of_irq_parse_one(np, i, &args);
+>   
+>   		/* Test the values from tests-phandle.dtsi */
+> @@ -854,6 +854,7 @@ static void __init of_unittest_parse_interrupts_extended(void)
+>   	for (i = 0; i < 7; i++) {
+>   		bool passed = true;
+>   
+> +		memset(&args, 0, sizeof(args));
+>   		rc = of_irq_parse_one(np, i, &args);
+>   
+>   		/* Test the values from tests-phandle.dtsi */
+> 
 
