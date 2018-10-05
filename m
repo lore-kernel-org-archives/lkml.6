@@ -2,379 +2,111 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23444C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E083EC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1292084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94CD821473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCZuYQXR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1292084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ugjszM4i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94CD821473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeJFB12 (ORCPT
+        id S1728726AbeJFB2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:27:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39915 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbeJFB11 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:27:27 -0400
-Received: by mail-wm1-f67.google.com with SMTP id q8-v6so2757875wmq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xqofnWwor1EvxVWbzKL8zC1n8cw4hN731oEOzhq77YU=;
-        b=lCZuYQXRtsb838MXz/Ravq9vDp6s/Wf/+Il9oDiDo2IezuMNw4L+CnnX7epWpecwmu
-         QJFXo1CSGdF2Dtzk8IUw1PvY20CrMmNeEVISDG0HPG9x+sBKQCSUSceWF5L3SJrrtFha
-         gHNf50NaxyvSFGNibeJwMzEwZTolmnY2ptsBTm09gI08ir1JskadiSa005FdbyBJNH0e
-         gVkJlTjlVV1VQBDA89kGVEqs4L61fJbWxrBp2+b0KK7mvPWKjpBvidRzEhPNcxdXFjdz
-         GMlIfslDS3+YAbZTEZq+Iim4xJhWz7A5IvU1heOYugrT0MyhIx9SWkjILoYWvkjV/ToG
-         Qo0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xqofnWwor1EvxVWbzKL8zC1n8cw4hN731oEOzhq77YU=;
-        b=X1QPUZcKI4n+GG6gPs/F7HsccPOE/11gqZyHry80Boxc4DmjT0u2icDsKq2lSs8u7p
-         mNDOkjBd+Y6YMzrr+HyFLeEppeEb6XlwLlRoZ4Fl1louxIQfp99Jf4aDsLd44aKWCnI0
-         YmF8zKpgV9xOmfpimmO/saM08ESLBrF4FDdtJvsjjndmzaZzXs1HxdJEcPTloKXTfhdA
-         eEMhVeNwqJNiTbGxDyF0qd+pErlqCZQv0yg2PJWARDLKZ5Ushv1uO9z6jaGMgLKhJsTa
-         4czVSfvBe1wIX3Hz9MlXbDT/3qiId3VKWEIS6OGP9PSCUT4JpLxKKY6YYamE0iXJnGWU
-         RwUg==
-X-Gm-Message-State: ABuFfoi3fvU9RfWC/PgOfNmNLjIfLIUvE0NNIe2Ki4IZw4Iruy8g3RO2
-        4PTj/SbPZlEYlkOxtPbZdFlkrQAUH7Q=
-X-Google-Smtp-Source: ACcGV610js4P/WguzEjsZ2xf3/NiRPcvPHba8mHySldNghA5mQ+oGNAbx0wd0rtTsb9cyzD7kDVgLg==
-X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr8610899wmq.14.1538764050790;
-        Fri, 05 Oct 2018 11:27:30 -0700 (PDT)
-Received: from osboxes.localdomain (bzq-109-65-231-165.red.bezeqint.net. [109.65.231.165])
-        by smtp.googlemail.com with ESMTPSA id w192-v6sm2020335wmf.33.2018.10.05.11.27.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 05 Oct 2018 11:27:30 -0700 (PDT)
-From:   Carmeli Tamir <carmeli.tamir@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Carmeli Tamir <carmeli.tamir@gmail.com>
-Subject: [PATCH] STAGING/EMXX_UDC: emxx_udc.c: Fixed all meaningful sparse errors: 1. Added static to udc_controller 2. Added mising __iomem modifier to handle p_regs 3. Added missing le16_to_cpu
-Date:   Fri,  5 Oct 2018 14:27:18 -0400
-Message-Id: <1538764038-96838-1-git-send-email-carmeli.tamir@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 5 Oct 2018 21:28:33 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:58929 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727966AbeJFB2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:28:33 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id b259e641;
+        Fri, 5 Oct 2018 18:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=Yr6FhUAX3hdxgAc9gx3UpICGflk=; b=ugjszM
+        4i9cFKI8xwsjwj3DyW4iSgnSDA3pKaatZQZT2Q92hOQlFxpR0pvpHT0JCX7chaHQ
+        N39LZuasqYx6nVWq/lSzosdWxURfHC1tAsLKlZli4tg2Y5EVooTJCMtcvvH7SeAn
+        LhEpWIx+IJUBld6ChT8nxmS8lD3DOtl3SAlcTuzTGPmhbIZvupmEZDrmuZLx5QpJ
+        v3Ns0vTSjNFTcz16VC6X8RYmOp5Pmx3w+VraUe31oX6kBBmY3FW6OfhQWMRXWSdh
+        XctnESSltkTsG2O/xnJKztfIMCpBW1r2FvsG0oEY7je9c9Gh2ZVShHa3GmPWrHa5
+        +R72GsKvncZPHGUA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ffbdf639 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Fri, 5 Oct 2018 18:28:10 +0000 (UTC)
+Received: by mail-ot1-f53.google.com with SMTP id o13-v6so13616810otl.4;
+        Fri, 05 Oct 2018 11:28:36 -0700 (PDT)
+X-Gm-Message-State: ABuFfohoNZb6PNcmKaNYv/gmq6lmvIjQpqJsJVOx2xxin9ROi5MWmeee
+        kSGxLdR15DXpU0R4hTn4QU2qhnzLs2M+FkliM0E=
+X-Google-Smtp-Source: ACcGV631o5+SpRnetOz1PNx6GXoSDXAqpvDTjpuTTaiCB8bDUF7THvVfmWweexBN3Ut2FMaW+8Sta9CYHmRZe2Pqj10=
+X-Received: by 2002:a9d:2992:: with SMTP id n18mr881570otb.54.1538764115077;
+ Fri, 05 Oct 2018 11:28:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
+ <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net>
+ <9E0E08C8-0DFC-4E50-A4FA-73208835EF9E@amacapital.net> <CAKv+Gu9z503ZJXcsG+9Ys240BZiB-+GB=kNY4VGWpjvdzN4JtA@mail.gmail.com>
+ <CALCETrWaewXsdJsf3SocgZ0ggnvZk86L+5-LWPRbjdnG2mB7jw@mail.gmail.com>
+ <CAKv+Gu-oHBtgGbWXJu6+z4+BNhBZyY5VvF_v6cJJUGk_5YX1eQ@mail.gmail.com>
+ <CALCETrU=fm+ZG4WZJfG-5GwL7kv5_GS1aZYu=L42d5BuSbhJDQ@mail.gmail.com>
+ <CAKv+Gu8eHPEsUbkhN=61z9FvhdCo2e3VOdemp4g0bzdO1EJFYQ@mail.gmail.com>
+ <CALCETrVMBULVP9qEQDVuisxAMzdheM1qQ97AZFs-xcO0eaXiiA@mail.gmail.com>
+ <CAHmME9pgJ_2GGDUVsbQXcNRfh3yACqFG+5uemFRMZkb8LdH95g@mail.gmail.com> <CALCETrWjCY2Wceiqu99C+g5RdnrZuRujYO_+jBvuJFRB1LTG4w@mail.gmail.com>
+In-Reply-To: <CALCETrWjCY2Wceiqu99C+g5RdnrZuRujYO_+jBvuJFRB1LTG4w@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 5 Oct 2018 20:28:23 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pcQF=FvKRuxnqrJ5R1pvtUVbx3DXvXiUX5HywS2Xgj3A@mail.gmail.com>
+Message-ID: <CAHmME9pcQF=FvKRuxnqrJ5R1pvtUVbx3DXvXiUX5HywS2Xgj3A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, benh@kernel.crashing.org,
+        paulus@samba.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, richard@nod.at,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Tamir Carmeli <carmeli.tamir@gmail.com>
----
- drivers/staging/emxx_udc/Makefile   |  2 +-
- drivers/staging/emxx_udc/emxx_udc.c | 69 +++++++++++++++++++------------------
- drivers/staging/emxx_udc/emxx_udc.h |  2 +-
- 3 files changed, 38 insertions(+), 35 deletions(-)
+Hey Andy,
 
-diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
-index 3e51476..83eb430 100644
---- a/drivers/staging/emxx_udc/emxx_udc.c
-+++ b/drivers/staging/emxx_udc/emxx_udc.c
-@@ -56,25 +56,25 @@ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *, struct nbu2ss_ep *);
- 
- /*===========================================================================*/
- /* Global */
--struct nbu2ss_udc udc_controller;
-+static struct nbu2ss_udc udc_controller;
- 
- /*-------------------------------------------------------------------------*/
- /* Read */
--static inline u32 _nbu2ss_readl(void *address)
-+static inline u32 _nbu2ss_readl(void __iomem *address)
- {
- 	return __raw_readl(address);
- }
- 
- /*-------------------------------------------------------------------------*/
- /* Write */
--static inline void _nbu2ss_writel(void *address, u32 udata)
-+static inline void _nbu2ss_writel(void __iomem *address, u32 udata)
- {
- 	__raw_writel(udata, address);
- }
- 
- /*-------------------------------------------------------------------------*/
- /* Set Bit */
--static inline void _nbu2ss_bitset(void *address, u32 udata)
-+static inline void _nbu2ss_bitset(void __iomem *address, u32 udata)
- {
- 	u32	reg_dt = __raw_readl(address) | (udata);
- 
-@@ -83,7 +83,7 @@ static inline void _nbu2ss_bitset(void *address, u32 udata)
- 
- /*-------------------------------------------------------------------------*/
- /* Clear Bit */
--static inline void _nbu2ss_bitclr(void *address, u32 udata)
-+static inline void _nbu2ss_bitclr(void __iomem *address, u32 udata)
- {
- 	u32	reg_dt = __raw_readl(address) & ~(udata);
- 
-@@ -135,6 +135,7 @@ static void _nbu2ss_ep0_complete(struct usb_ep *_ep, struct usb_request *_req)
- {
- 	u8		recipient;
- 	u16		selector;
-+	u16		wIndex;
- 	u32		test_mode;
- 	struct usb_ctrlrequest	*p_ctrl;
- 	struct nbu2ss_udc *udc;
-@@ -149,10 +150,11 @@ static void _nbu2ss_ep0_complete(struct usb_ep *_ep, struct usb_request *_req)
- 			/*-------------------------------------------------*/
- 			/* SET_FEATURE */
- 			recipient = (u8)(p_ctrl->bRequestType & USB_RECIP_MASK);
--			selector  = p_ctrl->wValue;
-+			selector  = le16_to_cpu(p_ctrl->wValue);
- 			if ((recipient == USB_RECIP_DEVICE) &&
- 			    (selector == USB_DEVICE_TEST_MODE)) {
--				test_mode = (u32)(p_ctrl->wIndex >> 8);
-+				wIndex = le16_to_cpu(p_ctrl->wIndex);
-+				test_mode = (u32)(wIndex >> 8);
- 				_nbu2ss_set_test_mode(udc, test_mode);
- 			}
- 		}
-@@ -184,7 +186,7 @@ static u32 _nbu2ss_get_begin_ram_address(struct nbu2ss_udc *udc)
- 	u32		num, buf_type;
- 	u32		data, last_ram_adr, use_ram_size;
- 
--	struct ep_regs *p_ep_regs;
-+	struct ep_regs __iomem *p_ep_regs;
- 
- 	last_ram_adr = (D_RAM_SIZE_CTRL / sizeof(u32)) * 2;
- 	use_ram_size = 0;
-@@ -377,7 +379,7 @@ static void _nbu2ss_ep_dma_exit(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
- {
- 	u32		num;
- 	u32		data;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs __iomem	*preg = udc->p_regs;
- 
- 	if (udc->vbus_active == 0)
- 		return;		/* VBUS OFF */
-@@ -408,7 +410,7 @@ static void _nbu2ss_ep_dma_exit(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
- /* Abort DMA */
- static void _nbu2ss_ep_dma_abort(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
- {
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs __iomem *preg = udc->p_regs;
- 
- 	_nbu2ss_bitclr(&preg->EP_DCR[ep->epnum - 1].EP_DCR1, DCR1_EPN_REQEN);
- 	mdelay(DMA_DISABLE_TIME);	/* DCR1_EPN_REQEN Clear */
-@@ -426,7 +428,7 @@ static void _nbu2ss_ep_in_end(
- {
- 	u32		data;
- 	u32		num;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs __iomem *preg = udc->p_regs;
- 
- 	if (length >= sizeof(u32))
- 		return;
-@@ -817,7 +819,7 @@ static int _nbu2ss_out_dma(
- 	u32		burst = 1;
- 	u32		data;
- 	int		result = -EINVAL;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs __iomem	*preg = udc->p_regs;
- 
- 	if (req->dma_flag)
- 		return 1;		/* DMA is forwarded */
-@@ -880,7 +882,7 @@ static int _nbu2ss_epn_out_pio(
- 	union usb_reg_access	temp_32;
- 	union usb_reg_access	*p_buf_32;
- 	int		result = 0;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs __iomem	*preg = udc->p_regs;
- 
- 	if (req->dma_flag)
- 		return 1;		/* DMA is forwarded */
-@@ -964,7 +966,7 @@ static int _nbu2ss_epn_out_transfer(
- 	u32		num;
- 	u32		i_recv_length;
- 	int		result = 1;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	if (ep->epnum == 0)
- 		return -EINVAL;
-@@ -1026,7 +1028,7 @@ static int _nbu2ss_in_dma(
- 	u32		i_write_length;
- 	u32		data;
- 	int		result = -EINVAL;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	if (req->dma_flag)
- 		return 1;		/* DMA is forwarded */
-@@ -1101,7 +1103,7 @@ static int _nbu2ss_epn_in_pio(
- 	union usb_reg_access	temp_32;
- 	union usb_reg_access	*p_buf_32 = NULL;
- 	int		result = 0;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	if (req->dma_flag)
- 		return 1;		/* DMA is forwarded */
-@@ -1317,7 +1319,7 @@ static void _nbu2ss_set_endpoint_stall(
- 	u8		num, epnum;
- 	u32		data;
- 	struct nbu2ss_ep *ep;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	if ((ep_adrs == 0) || (ep_adrs == 0x80)) {
- 		if (bstall) {
-@@ -1380,7 +1382,7 @@ static struct usb_device_descriptor device_desc = {
- 	.bMaxPacketSize0      = 64,
- 	.idVendor             = cpu_to_le16(0x0409),
- 	.idProduct            = cpu_to_le16(0xfff0),
--	.bcdDevice            = 0xffff,
-+	.bcdDevice            = cpu_to_le16(0xffff),
- 	.iManufacturer        = 0x00,
- 	.iProduct             = 0x00,
- 	.iSerialNumber        = 0x00,
-@@ -1440,7 +1442,7 @@ static int _nbu2ss_get_ep_stall(struct nbu2ss_udc *udc, u8 ep_adrs)
- {
- 	u8		epnum;
- 	u32		data = 0, bit_data;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	epnum = ep_adrs & ~USB_ENDPOINT_DIR_MASK;
- 	if (epnum == 0) {
-@@ -1468,8 +1470,8 @@ static inline int _nbu2ss_req_feature(struct nbu2ss_udc *udc, bool bset)
- {
- 	u8	recipient = (u8)(udc->ctrl.bRequestType & USB_RECIP_MASK);
- 	u8	direction = (u8)(udc->ctrl.bRequestType & USB_DIR_IN);
--	u16	selector  = udc->ctrl.wValue;
--	u16	wIndex    = udc->ctrl.wIndex;
-+	u16	selector  = le16_to_cpu(udc->ctrl.wValue);
-+	u16	wIndex    = le16_to_cpu(udc->ctrl.wIndex);
- 	u8	ep_adrs;
- 	int	result = -EOPNOTSUPP;
- 
-@@ -1535,7 +1537,7 @@ static void _nbu2ss_epn_set_stall(
- 	u32	regdata;
- 	int	limit_cnt = 0;
- 
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	if (ep->direct == USB_DIR_IN) {
- 		for (limit_cnt = 0
-@@ -1568,7 +1570,8 @@ static int std_req_get_status(struct nbu2ss_udc *udc)
- 	if ((udc->ctrl.wValue != 0x0000) || (direction != USB_DIR_IN))
- 		return result;
- 
--	length = min_t(u16, udc->ctrl.wLength, sizeof(status_data));
-+	length =
-+		min_t(u16, le16_to_cpu(udc->ctrl.wLength), sizeof(status_data));
- 
- 	switch (recipient) {
- 	case USB_RECIP_DEVICE:
-@@ -1584,8 +1587,8 @@ static int std_req_get_status(struct nbu2ss_udc *udc)
- 		break;
- 
- 	case USB_RECIP_ENDPOINT:
--		if (0x0000 == (udc->ctrl.wIndex & 0xFF70)) {
--			ep_adrs = (u8)(udc->ctrl.wIndex & 0xFF);
-+		if (0x0000 == (le16_to_cpu(udc->ctrl.wIndex) & 0xFF70)) {
-+			ep_adrs = (u8)(le16_to_cpu(udc->ctrl.wIndex) & 0xFF);
- 			result = _nbu2ss_get_ep_stall(udc, ep_adrs);
- 
- 			if (result > 0)
-@@ -1625,7 +1628,7 @@ static int std_req_set_feature(struct nbu2ss_udc *udc)
- static int std_req_set_address(struct nbu2ss_udc *udc)
- {
- 	int		result = 0;
--	u32		wValue = udc->ctrl.wValue;
-+	u32		wValue = le16_to_cpu(udc->ctrl.wValue);
- 
- 	if ((udc->ctrl.bRequestType != 0x00)	||
- 	    (udc->ctrl.wIndex != 0x0000)	||
-@@ -1647,7 +1650,7 @@ static int std_req_set_address(struct nbu2ss_udc *udc)
- /*-------------------------------------------------------------------------*/
- static int std_req_set_configuration(struct nbu2ss_udc *udc)
- {
--	u32 config_value = (u32)(udc->ctrl.wValue & 0x00ff);
-+	u32 config_value = (u32)(le16_to_cpu(udc->ctrl.wValue) & 0x00ff);
- 
- 	if ((udc->ctrl.wIndex != 0x0000)	||
- 	    (udc->ctrl.wLength != 0x0000)	||
-@@ -1943,7 +1946,7 @@ static inline void _nbu2ss_epn_in_int(
- 	int	result = 0;
- 	u32	status;
- 
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem *preg = udc->p_regs;
- 
- 	if (req->dma_flag)
- 		return;		/* DMA is forwarded */
-@@ -2038,7 +2041,7 @@ static inline void _nbu2ss_epn_out_dma_int(
- 	u32		num;
- 	u32		dmacnt, ep_dmacnt;
- 	u32		mpkt;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs	__iomem  *preg = udc->p_regs;
- 
- 	num = ep->epnum - 1;
- 
-@@ -2214,7 +2217,7 @@ static int _nbu2ss_pullup(struct nbu2ss_udc *udc, int is_on)
- /*-------------------------------------------------------------------------*/
- static void _nbu2ss_fifo_flush(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
- {
--	struct fc_regs	*p = udc->p_regs;
-+	struct fc_regs __iomem	*p = udc->p_regs;
- 
- 	if (udc->vbus_active == 0)
- 		return;
-@@ -2432,7 +2435,7 @@ static irqreturn_t _nbu2ss_udc_irq(int irq, void *_udc)
- 	u32	epnum, int_bit;
- 
- 	struct nbu2ss_udc	*udc = (struct nbu2ss_udc *)_udc;
--	struct fc_regs	*preg = udc->p_regs;
-+	struct fc_regs __iomem *preg = udc->p_regs;
- 
- 	if (gpio_get_value(VBUS_VALUE) == 0) {
- 		_nbu2ss_writel(&preg->USB_INT_STA, ~USB_INT_STA_RW);
-@@ -2831,7 +2834,7 @@ static int nbu2ss_ep_fifo_status(struct usb_ep *_ep)
- 	struct nbu2ss_ep	*ep;
- 	struct nbu2ss_udc	*udc;
- 	unsigned long		flags;
--	struct fc_regs		*preg;
-+	struct fc_regs __iomem *preg;
- 
- 	if (!_ep) {
- 		pr_err("%s, bad param\n", __func__);
-@@ -3216,7 +3219,7 @@ static int nbu2ss_drv_probe(struct platform_device *pdev)
- 				  0, driver_name, udc);
- 
- 	/* IO Memory */
--	udc->p_regs = (struct fc_regs *)mmio_base;
-+	udc->p_regs = (struct fc_regs __iomem *)mmio_base;
- 
- 	/* USB Function Controller Interrupt */
- 	if (status != 0) {
-diff --git a/drivers/staging/emxx_udc/emxx_udc.h b/drivers/staging/emxx_udc/emxx_udc.h
-index 8337e38c..e28a74d 100644
---- a/drivers/staging/emxx_udc/emxx_udc.h
-+++ b/drivers/staging/emxx_udc/emxx_udc.h
-@@ -582,7 +582,7 @@ struct nbu2ss_udc {
- 
- 	u32		curr_config;	/* Current Configuration Number */
- 
--	struct fc_regs		*p_regs;
-+	struct fc_regs __iomem *p_regs;
- };
- 
- /* USB register access structure */
--- 
-2.7.4
+On Fri, Oct 5, 2018 at 7:44 PM Andy Lutomirski <luto@kernel.org> wrote:
+> I *think* the only change to Zinc per se would be that the calls like
+> chacha20_simd() would be static calls or patchable functions or
+> whatever we want to call them.  And there could be a debugfs to
+> override the default selection.
 
+Yea, right, exactly. It turns out this is really easy to do with the
+way it's structured now. I'd actually experimented considerably with
+using the static keys a while back, but couldn't find any performance
+difference on any platform at all (four ARM microarchitectures, three
+MIPS, various random intel, an old powerpc), so went with the simplest
+solution. But we can certainly play with more elaborate patching
+mechanisms later on and see how those turn out. Also, even with the
+simple bools as we have now, it's quite easy to make all the
+parameters toggle-able.
+
+> Ard, I don't think that sticking this in udev rules makes sense.  The
+> kernel has bascially complete information as to what the right choice
+> is, and that will change over time as the implementation gets tuned,
+> and the udev rules will never get updated in sync.
+
+Yes, I agree with this.
+
+Jason
