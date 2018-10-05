@@ -2,165 +2,143 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC1DC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D089C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF5A208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFAEF21473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:59:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRCwwYQi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF5A208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="W13CNmK1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAEF21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbeJFE6h (ORCPT
+        id S1728341AbeJFFAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:58:37 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38722 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbeJFE6h (ORCPT
+        Sat, 6 Oct 2018 01:00:37 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:45174 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbeJFFAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:58:37 -0400
-Received: by mail-lf1-f65.google.com with SMTP id g89-v6so10354103lfl.5;
-        Fri, 05 Oct 2018 14:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WmDnrjX/gjdwhWCzYUEQjArXFy+yJckph99391iS1dA=;
-        b=GRCwwYQiUW05LsGCiV38M0eXt5iEj15wHEvDqkUX0T8JCQ4nWi5ZIEb3TsQAyoDo+D
-         ALO+MdcSzwOEkFk3S6kCC12NWmNvVCLDvFfg3YpMEUOsnFJlnMrY5AMcayRQyQWQGV18
-         dKFQH/Ev/Xivko15boisIaCISVNl3Kuh19fCqUKfpwae5KH/NpDh39SXMWSvKJQeLjHJ
-         ETeJEo/F0DW9G/vN2SETi7mxkUEVH6SjsF7OpIWqRrTsRgHsLGSa/oxzDcKSdT4qcytl
-         06XGFIfjbZ28TuGL2WQldFfhKn0vn4dOmXzq7MMfuHYStG9wX9vRGESoMaDahhfxGYZn
-         iDnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WmDnrjX/gjdwhWCzYUEQjArXFy+yJckph99391iS1dA=;
-        b=JF1r6mf9Zb8e3/XVN9UVdWP53k5QC/chO/Pic1+VcuMEr8HuB8YLB0PmBQIfQqkJiY
-         7xx4ugKHmgd89ARB+JiE2OyRPtuSrR22oqRhr1sx5XsPtE9HR7f6NXUF7gYXjm+R0Jjo
-         Gt8erv+YzSIMbMZGpSftzX8ERQpxpU6Cd7Y+Nj1LKYjRhUJ4acCtwqv8SGkuoGrC9MGM
-         K8MPVYNuxV5xIjBaHoER6i2xrj4BSvz/lPGVcqMIQpoiaXY0Vb6ubZXpSRSb0oIehSqP
-         5eaxKLM6CFlu6ZrbNedyuAQSpo6lHnmx/ZEnlplnbQSxvpHGTCWTwdIAIDTSVlzd6GYW
-         jT1Q==
-X-Gm-Message-State: ABuFfoj1fRepxWWDv5ihcXoSTQPH2GRPpUK8XNN2WlI9G3sZf09bT7Zg
-        53ggSiPc+cR5M9IQ/jfxPRU=
-X-Google-Smtp-Source: ACcGV608khgOm58VPLY9QgbbRnbx1ZzyyVyoaUVuL8vjTGngXTxQi6qtaVHm/tK+oz2HiHaXWdDprQ==
-X-Received: by 2002:a19:1b14:: with SMTP id b20-v6mr7466793lfb.12.1538776675198;
-        Fri, 05 Oct 2018 14:57:55 -0700 (PDT)
-Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
-        by smtp.gmail.com with ESMTPSA id j73-v6sm2059853lfg.16.2018.10.05.14.57.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 14:57:53 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Rob Herring <robh@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        jacopo@jmondi.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v9 1/3] [media] imx214: device tree binding
-Date:   Fri,  5 Oct 2018 23:57:50 +0200
-Message-Id: <20181005215750.6047-1-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 6 Oct 2018 01:00:36 -0400
+Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
+        by mail.micronovasrl.com (Postfix) with ESMTP id C8D0BB0081B
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 23:59:55 +0200 (CEST)
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
+         h=references:in-reply-to:x-mailer:message-id:date:date:subject
+        :subject:to:from:from; s=dkim; t=1538776795; x=1539640796; bh=6I
+        LxoHv50N8w16qw34Fi8S7zwu/gJ947bOekxAMNcUc=; b=W13CNmK13Lrc0OU+4M
+        Rr4snk15NJ7/P/QnRRYTTWLh6GaqD7y7LncrvX5ScA2XOQXjn5IGWIf+egs4qoFZ
+        UV3ExKyK6tMju8osUyKWcIoka3ZDOSuwN/2ikv18rN6Oj+65mdWBXmzqpbcSwgF/
+        BTKWxYojp9TuwKPOQlO6oL1OE=
+X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
+Received: from mail.micronovasrl.com ([127.0.0.1])
+        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id alGUDreIOXoC for <linux-kernel@vger.kernel.org>;
+        Fri,  5 Oct 2018 23:59:55 +0200 (CEST)
+Received: from ubuntu.localdomain (unknown [192.168.123.60])
+        by mail.micronovasrl.com (Postfix) with ESMTPSA id BB698B000F6;
+        Fri,  5 Oct 2018 23:59:53 +0200 (CEST)
+From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH v3 1/2] drm/sun4i: tcon: fix check of tcon->panel null pointer
+Date:   Fri,  5 Oct 2018 23:59:50 +0200
+Message-Id: <20181005215951.99003-1-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181004195605.txvbkshvxklyzxyb@flea>
+References: <20181004195605.txvbkshvxklyzxyb@flea>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document bindings for imx214 camera sensor
+Since tcon->panel is a pointer returned by of_drm_find_panel() need to
+check if it is not NULL, hence a valid pointer.
+IS_ERR() instead checks return error values, not NULL pointers.
 
-Cc: devicetree@vger.kernel.org
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Substitute "if (!IS_ERR(tcon->panel))" with "if (tcon->panel)".
+
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
-Changelog from v8:
+Changes V1->V2:
+* correct same bug for all same occurences in drm/sun4i folder
 
-Rob Herring:
--rename file
--Move address to reg
--rename name on example
--Patch author
+Changes V2->V3:
+* Improve commit log
 
-Sakari Ailus:
--should->shall
+ drivers/gpu/drm/sun4i/sun4i_lvds.c | 4 ++--
+ drivers/gpu/drm/sun4i/sun4i_rgb.c  | 4 ++--
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
- .../bindings/media/i2c/sony,imx214.txt        | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-new file mode 100644
-index 000000000000..2744773070c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-@@ -0,0 +1,53 @@
-+* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
-+
-+The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
-+an active array size of 4224H x 3200V. It is programmable through an I2C
-+interface.
-+Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
-+throughput of 1.2Gbps/lane.
-+
-+
-+Required Properties:
-+- compatible: Shall be "sony,imx214".
-+- reg: I2C bus address of the device. Depending on how the sensor is wired,
-+       it shall be <0x10> or <0x1a>;
-+- enable-gpios: GPIO descriptor for the enable pin.
-+- vdddo-supply: Chip digital IO regulator (1.8V).
-+- vdda-supply: Chip analog regulator (2.7V).
-+- vddd-supply: Chip digital core regulator (1.12V).
-+- clocks: Reference to the xclk clock.
-+- clock-names:  Shall be "xclk".
-+
-+Optional Properties:
-+- flash-leds: See ../video-interfaces.txt
-+- lens-focus: See ../video-interfaces.txt
-+
-+The imx214 device node shall contain one 'port' child node with
-+an 'endpoint' subnode. For further reading on port node refer to
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+Required Properties on endpoint:
-+- data-lanes: check ../video-interfaces.txt
-+- link-frequencies: check ../video-interfaces.txt
-+- remote-endpoint: check ../video-interfaces.txt
-+
-+Example:
-+
-+	camera-sensor@1a {
-+		compatible = "sony,imx214";
-+		reg = <0x1a>;
-+		vdddo-supply = <&pm8994_lvs1>;
-+		vddd-supply = <&camera_vddd_1v12>;
-+		vdda-supply = <&pm8994_l17>;
-+		lens-focus = <&ad5820>;
-+		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
-+		clocks = <&mmcc CAMSS_MCLK0_CLK>;
-+		clock-names = "xclk";
-+		port {
-+			imx214_ep: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				link-frequencies = /bits/ 64 <480000000>;
-+				remote-endpoint = <&csiphy0_ep>;
-+			};
-+		};
-+	};
+diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/sun4i_lvds.c
+index af7dcb6da351..e7eb0d1e17be 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_lvds.c
++++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
+@@ -75,7 +75,7 @@ static void sun4i_lvds_encoder_enable(struct drm_encoder *encoder)
+ 
+ 	DRM_DEBUG_DRIVER("Enabling LVDS output\n");
+ 
+-	if (!IS_ERR(tcon->panel)) {
++	if (tcon->panel) {
+ 		drm_panel_prepare(tcon->panel);
+ 		drm_panel_enable(tcon->panel);
+ 	}
+@@ -88,7 +88,7 @@ static void sun4i_lvds_encoder_disable(struct drm_encoder *encoder)
+ 
+ 	DRM_DEBUG_DRIVER("Disabling LVDS output\n");
+ 
+-	if (!IS_ERR(tcon->panel)) {
++	if (tcon->panel) {
+ 		drm_panel_disable(tcon->panel);
+ 		drm_panel_unprepare(tcon->panel);
+ 	}
+diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+index bf068da6b12e..f4a22689eb54 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
++++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+@@ -135,7 +135,7 @@ static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
+ 
+ 	DRM_DEBUG_DRIVER("Enabling RGB output\n");
+ 
+-	if (!IS_ERR(tcon->panel)) {
++	if (tcon->panel) {
+ 		drm_panel_prepare(tcon->panel);
+ 		drm_panel_enable(tcon->panel);
+ 	}
+@@ -148,7 +148,7 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
+ 
+ 	DRM_DEBUG_DRIVER("Disabling RGB output\n");
+ 
+-	if (!IS_ERR(tcon->panel)) {
++	if (tcon->panel) {
+ 		drm_panel_disable(tcon->panel);
+ 		drm_panel_unprepare(tcon->panel);
+ 	}
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index c78cd35a1294..e4b3bd0307ef 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -555,7 +555,7 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	 * Following code is a way to avoid quirks all around TCON
+ 	 * and DOTCLOCK drivers.
+ 	 */
+-	if (!IS_ERR(tcon->panel)) {
++	if (tcon->panel) {
+ 		struct drm_panel *panel = tcon->panel;
+ 		struct drm_connector *connector = panel->connector;
+ 		struct drm_display_info display_info = connector->display_info;
 -- 
-2.19.0
+2.17.1
 
