@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC37DC65BBF
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7631AC65BBE
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2321208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:29:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2321208E7
+	by mail.kernel.org (Postfix) with ESMTP id 376CC208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376CC208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbeJFD31 (ORCPT
+        id S1729180AbeJFD3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 23:29:27 -0400
+        Fri, 5 Oct 2018 23:29:36 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:44922 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729001AbeJFD3Z (ORCPT
+        by vger.kernel.org with ESMTP id S1728314AbeJFD3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 23:29:25 -0400
+        Fri, 5 Oct 2018 23:29:24 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 5 Oct 2018 13:29:00 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id DFECD40AB2;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id CF86440834;
         Fri,  5 Oct 2018 13:29:02 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -37,17 +37,14 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         Brian Gerst <brgerst@gmail.com>,
         Denys Vlasenko <dvlasenk@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 3/3] x86/jump-labels: Macrofy inline assembly code to work around GCC inlining bugs
-Date:   Fri, 5 Oct 2018 13:27:18 -0700
-Message-ID: <20181005202718.229565-4-namit@vmware.com>
+Subject: [PATCH 2/3] x86/cpufeature: Macrofy inline assembly code to work around GCC inlining bugs
+Date:   Fri, 5 Oct 2018 13:27:17 -0700
+Message-ID: <20181005202718.229565-3-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005202718.229565-1-namit@vmware.com>
 References: <20181005093108.GA24723@gmail.com>
@@ -69,17 +66,16 @@ GCC's inlining heuristics are broken with common asm() patterns used in
 kernel code, resulting in the effective disabling of inlining.
 
 The workaround is to set an assembly macro and call it from the inline
-assembly block - which is also a minor cleanup for the jump-label code.
+assembly block - which is pretty pointless indirection in the static_cpu_has()
+case, but is worth it to improve overall inlining quality.
 
-As a result the code size is slightly increased, but inlining decisions
-are better:
+The patch slightly increases the kernel size:
 
  text     data     bss      dec     hex  filename
-18163528 10226300 2957312 31347140 1de51c4  ./vmlinux before
-18163608 10227348 2957312 31348268 1de562c  ./vmlinux after (+1128)
+18162879 10226256 2957312 31346447 1de4f0f  ./vmlinux before
+18163528 10226300 2957312 31347140 1de51c4  ./vmlinux after (+693)
 
-And functions such as intel_pstate_adjust_policy_max(),
-kvm_cpu_accept_dm_intr(), kvm_register_readl() are inlined.
+And enables the inlining of function such as free_ldt_pgtables().
 
 Tested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
@@ -88,154 +84,132 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/lkml/20181003213100.189959-11-namit@vmware.com/T/#u
+Link: https://lore.kernel.org/lkml/20181003213100.189959-10-namit@vmware.com/T/#u
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/calling.h          |  2 +-
- arch/x86/include/asm/jump_label.h | 72 ++++++++-----------------------
+ arch/x86/include/asm/cpufeature.h | 82 ++++++++++++++++++-------------
  arch/x86/kernel/macros.S          |  1 +
- 3 files changed, 20 insertions(+), 55 deletions(-)
+ 2 files changed, 48 insertions(+), 35 deletions(-)
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 352e70cd33e8..708b46a54578 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -338,7 +338,7 @@ For 32-bit we have the following conventions - kernel is built with
- .macro CALL_enter_from_user_mode
- #ifdef CONFIG_CONTEXT_TRACKING
- #ifdef HAVE_JUMP_LABEL
--	STATIC_JUMP_IF_FALSE .Lafter_call_\@, context_tracking_enabled, def=0
-+	STATIC_BRANCH_JMP l_yes=.Lafter_call_\@, key=context_tracking_enabled, branch=1
- #endif
- 	call enter_from_user_mode
- .Lafter_call_\@:
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 21efc9d07ed9..a5fb34fe56a4 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -2,19 +2,6 @@
- #ifndef _ASM_X86_JUMP_LABEL_H
- #define _ASM_X86_JUMP_LABEL_H
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index aced6c9290d6..7d442722ef24 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -2,10 +2,10 @@
+ #ifndef _ASM_X86_CPUFEATURE_H
+ #define _ASM_X86_CPUFEATURE_H
  
--#ifndef HAVE_JUMP_LABEL
--/*
-- * For better or for worse, if jump labels (the gcc extension) are missing,
-- * then the entire static branch patching infrastructure is compiled out.
-- * If that happens, the code in here will malfunction.  Raise a compiler
-- * error instead.
-- *
-- * In theory, jump labels and the static branch patching infrastructure
-- * could be decoupled to fix this.
-- */
--#error asm/jump_label.h included on a non-jump-label kernel
--#endif
+-#include <asm/processor.h>
 -
- #define JUMP_LABEL_NOP_SIZE 5
+-#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
++#ifdef __KERNEL__
++#ifndef __ASSEMBLY__
  
- #ifdef CONFIG_X86_64
-@@ -33,15 +20,9 @@
++#include <asm/processor.h>
+ #include <asm/asm.h>
+ #include <linux/bitops.h>
  
- static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+@@ -161,37 +161,10 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+  */
+ static __always_inline __pure bool _static_cpu_has(u16 bit)
  {
--	asm_volatile_goto("1:"
--		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		".long 1b - ., %l[l_yes] - . \n\t"
--		_ASM_PTR "%c0 + %c1 - .\n\t"
--		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
--
-+	asm_volatile_goto("STATIC_BRANCH_NOP l_yes=\"%l[l_yes]\" key=\"%c0\" "
-+			  "branch=\"%c1\""
-+			: :  "i" (key), "i" (branch) : : l_yes);
- 	return false;
- l_yes:
- 	return true;
-@@ -49,14 +30,8 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+-	asm_volatile_goto("1: jmp 6f\n"
+-		 "2:\n"
+-		 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
+-			 "((5f-4f) - (2b-1b)),0x90\n"
+-		 "3:\n"
+-		 ".section .altinstructions,\"a\"\n"
+-		 " .long 1b - .\n"		/* src offset */
+-		 " .long 4f - .\n"		/* repl offset */
+-		 " .word %P[always]\n"		/* always replace */
+-		 " .byte 3b - 1b\n"		/* src len */
+-		 " .byte 5f - 4f\n"		/* repl len */
+-		 " .byte 3b - 2b\n"		/* pad len */
+-		 ".previous\n"
+-		 ".section .altinstr_replacement,\"ax\"\n"
+-		 "4: jmp %l[t_no]\n"
+-		 "5:\n"
+-		 ".previous\n"
+-		 ".section .altinstructions,\"a\"\n"
+-		 " .long 1b - .\n"		/* src offset */
+-		 " .long 0\n"			/* no replacement */
+-		 " .word %P[feature]\n"		/* feature bit */
+-		 " .byte 3b - 1b\n"		/* src len */
+-		 " .byte 0\n"			/* repl len */
+-		 " .byte 0\n"			/* pad len */
+-		 ".previous\n"
+-		 ".section .altinstr_aux,\"ax\"\n"
+-		 "6:\n"
+-		 " testb %[bitnum],%[cap_byte]\n"
+-		 " jnz %l[t_yes]\n"
+-		 " jmp %l[t_no]\n"
+-		 ".previous\n"
++	asm_volatile_goto("STATIC_CPU_HAS bitnum=%[bitnum] "
++			  "cap_byte=\"%[cap_byte]\" "
++			  "feature=%P[feature] t_yes=%l[t_yes] "
++			  "t_no=%l[t_no] always=%P[always]"
+ 		 : : [feature]  "i" (bit),
+ 		     [always]   "i" (X86_FEATURE_ALWAYS),
+ 		     [bitnum]   "i" (1 << (bit & 7)),
+@@ -226,5 +199,44 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ #define CPU_FEATURE_TYPEVAL		boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
+ 					boot_cpu_data.x86_model
  
- static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("1:"
--		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
--		"2:\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		".long 1b - ., %l[l_yes] - . \n\t"
--		_ASM_PTR "%c0 + %c1 - .\n\t"
--		".popsection \n\t"
-+	asm_volatile_goto("STATIC_BRANCH_JMP l_yes=\"%l[l_yes]\" key=\"%c0\" "
-+			  "branch=\"%c1\""
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
-@@ -66,37 +41,26 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
- 
- #else	/* __ASSEMBLY__ */
- 
--.macro STATIC_JUMP_IF_TRUE target, key, def
--.Lstatic_jump_\@:
--	.if \def
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - .Lstatic_jump_after_\@
--.Lstatic_jump_after_\@:
--	.else
--	.byte		STATIC_KEY_INIT_NOP
--	.endif
-+.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
-+.Lstatic_branch_nop_\@:
-+	.byte STATIC_KEY_INIT_NOP
-+.Lstatic_branch_no_after_\@:
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
--	.long		.Lstatic_jump_\@ - ., \target - .
--	_ASM_PTR	\key - .
-+	.long		.Lstatic_branch_nop_\@ - ., \l_yes - .
-+	_ASM_PTR        \key + \branch - .
- 	.popsection
- .endm
- 
--.macro STATIC_JUMP_IF_FALSE target, key, def
--.Lstatic_jump_\@:
--	.if \def
--	.byte		STATIC_KEY_INIT_NOP
--	.else
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - .Lstatic_jump_after_\@
--.Lstatic_jump_after_\@:
--	.endif
-+.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
-+.Lstatic_branch_jmp_\@:
-+	.byte 0xe9
-+	.long \l_yes - .Lstatic_branch_jmp_after_\@
-+.Lstatic_branch_jmp_after_\@:
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
--	.long		.Lstatic_jump_\@ - ., \target - .
--	_ASM_PTR	\key + 1 - .
-+	.long		.Lstatic_branch_jmp_\@ - ., \l_yes - .
-+	_ASM_PTR	\key + \branch - .
- 	.popsection
- .endm
- 
+-#endif /* defined(__KERNEL__) && !defined(__ASSEMBLY__) */
++#else /* __ASSEMBLY__ */
++
++.macro STATIC_CPU_HAS bitnum:req cap_byte:req feature:req t_yes:req t_no:req always:req
++1:
++	jmp 6f
++2:
++	.skip -(((5f-4f) - (2b-1b)) > 0) * ((5f-4f) - (2b-1b)),0x90
++3:
++	.section .altinstructions,"a"
++	.long 1b - .		/* src offset */
++	.long 4f - .		/* repl offset */
++	.word \always		/* always replace */
++	.byte 3b - 1b		/* src len */
++	.byte 5f - 4f		/* repl len */
++	.byte 3b - 2b		/* pad len */
++	.previous
++	.section .altinstr_replacement,"ax"
++4:
++	jmp \t_no
++5:
++	.previous
++	.section .altinstructions,"a"
++	.long 1b - .		/* src offset */
++	.long 0			/* no replacement */
++	.word \feature		/* feature bit */
++	.byte 3b - 1b		/* src len */
++	.byte 0			/* repl len */
++	.byte 0			/* pad len */
++	.previous
++	.section .altinstr_aux,"ax"
++6:
++	testb \bitnum,\cap_byte
++	jnz \t_yes
++	jmp \t_no
++	.previous
++.endm
++
++#endif /* __ASSEMBLY__ */
++
++#endif /* __KERNEL__ */
+ #endif /* _ASM_X86_CPUFEATURE_H */
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index bf8b9c93e255..161c95059044 100644
+index 7baa40d5bf16..bf8b9c93e255 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -13,3 +13,4 @@
+@@ -12,3 +12,4 @@
+ #include <asm/bug.h>
  #include <asm/paravirt.h>
  #include <asm/asm.h>
- #include <asm/cpufeature.h>
-+#include <asm/jump_label.h>
++#include <asm/cpufeature.h>
 -- 
 2.17.1
 
