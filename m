@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9516FC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9E4C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51AA4213A2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAC32208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:17:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZI2EDur"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51AA4213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y6dLwcmg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC32208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbeJEXQr (ORCPT
+        id S1730233AbeJEXQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730193AbeJEXQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 5 Oct 2018 19:16:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730213AbeJEXQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B1A4208E7;
-        Fri,  5 Oct 2018 16:17:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACA76214C2;
+        Fri,  5 Oct 2018 16:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756238;
-        bh=MuTe49lLUIUx1X6PQIOKjKK6XYm4Qsr2TPrnCjldZFM=;
+        s=default; t=1538756237;
+        bh=Dn380Bb7rkRiVI6auTOEJYiceEZkvnYeWRVXYd+zIjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qZI2EDurFfVOsUCaCAmRxHkR56TbSi3Z+TOACl9XaO4IYKbLM/MEi24kjGNb8LfzK
-         FJ+uvV474WFbD/IWUPfaHl4FTSiTnkjaWe7GFWcA5HmNs7HKUYoh7WfT/SmXew8zwY
-         6i1U6G9Q4zlZPCJa3cGUr9HPRdYboE5UT6lOamZc=
+        b=y6dLwcmgdjcGUc8cTUk/yvmh089uQQewOgEXt5XHm7cX2jNF+zPBFDoF4khsG0yWG
+         ph5sOyleTe0sJNpQ5HWrj0/scLNjUmpex9Ocycc91Iz5IjEcMdNP+wFZQYVHsgcyCz
+         w80+67R+SBhXjfk/tn2QHA9S4WTewNz9N4+4TKZI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Richard Weinberger <richard@nod.at>,
+Cc:     Amber Lin <Amber.Lin@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 14/14] ubifs: Check for name being NULL while mounting
-Date:   Fri,  5 Oct 2018 12:17:04 -0400
-Message-Id: <20181005161704.20704-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 13/14] drm/amdgpu: Fix SDMA HQD destroy error on gfx_v7
+Date:   Fri,  5 Oct 2018 12:17:03 -0400
+Message-Id: <20181005161704.20704-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161704.20704-1-sashal@kernel.org>
 References: <20181005161704.20704-1-sashal@kernel.org>
@@ -52,36 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Weinberger <richard@nod.at>
+From: Amber Lin <Amber.Lin@amd.com>
 
-[ Upstream commit 37f31b6ca4311b94d985fb398a72e5399ad57925 ]
+[ Upstream commit caaa4c8a6be2a275bd14f2369ee364978ff74704 ]
 
-The requested device name can be NULL or an empty string.
-Check for that and refuse to continue. UBIFS has to do this manually
-since we cannot use mount_bdev(), which checks for this condition.
+A wrong register bit was examinated for checking SDMA status so it reports
+false failures. This typo only appears on gfx_v7. gfx_v8 checks the correct
+bit.
 
-Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
-Reported-by: syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Amber Lin <Amber.Lin@amd.com>
+Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/ubifs/super.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index 03dda1cbe485..727a9e3fa806 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -1918,6 +1918,9 @@ static struct ubi_volume_desc *open_ubi(const char *name, int mode)
- 	int dev, vol;
- 	char *endptr;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
+index 47951f4775b9..d47c32a18da8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c
+@@ -505,7 +505,7 @@ static int kgd_hqd_sdma_destroy(struct kgd_dev *kgd, void *mqd,
  
-+	if (!name || !*name)
-+		return ERR_PTR(-EINVAL);
-+
- 	/* First, try to open using the device node path method */
- 	ubi = ubi_open_volume_path(name, mode);
- 	if (!IS_ERR(ubi))
+ 	while (true) {
+ 		temp = RREG32(sdma_base_addr + mmSDMA0_RLC0_CONTEXT_STATUS);
+-		if (temp & SDMA0_STATUS_REG__RB_CMD_IDLE__SHIFT)
++		if (temp & SDMA0_RLC0_CONTEXT_STATUS__IDLE_MASK)
+ 			break;
+ 		if (timeout <= 0)
+ 			return -ETIME;
 -- 
 2.17.1
 
