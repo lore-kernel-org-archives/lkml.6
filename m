@@ -2,90 +2,165 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F29C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D51D7C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 506C820875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91F0720875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:38:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T1xDfQE3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MP2sBXHN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 506C820875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJY4hEq3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F0720875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbeJEPf3 (ORCPT
+        id S1728687AbeJEPfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:35:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49422 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727617AbeJEPf3 (ORCPT
+        Fri, 5 Oct 2018 11:35:48 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46011 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728460AbeJEPfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:35:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 466806079C; Fri,  5 Oct 2018 08:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538728667;
-        bh=6AKMlmxU/9Nf58QZlQmS7Yf2P9jtmMrltNBfUO8dnP4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=T1xDfQE39L3KVwOxOgQLXImT33aGSNelocoBhi3z91evHqyhGN45QyzFVl/RE1pRu
-         DhTW9YmGt7YW1323cJy72htD0RilPhJB2ezHJ4QatGiMpoNeTNzUuACQ54scTlmPxE
-         Jwvxf9LaeXskzb6AhNk0PHDHCortEAS+jskRec+w=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 78C246024C;
-        Fri,  5 Oct 2018 08:37:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538728666;
-        bh=6AKMlmxU/9Nf58QZlQmS7Yf2P9jtmMrltNBfUO8dnP4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=MP2sBXHNowm11Wq6tfAM4jhWOFdnS2uXMUkNKlSpOXbpfaiN/QvlFnpCeA2akC0uS
-         g3mzm1ztR9SsAAHatHm4Div3HkgpgdEwH8FEiL2JdIWp3OThOqCw6hPaggtwViqVm7
-         yndCXdRiL5sd0rosCd46gXOWG6ybQBpnVhwRAt9c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78C246024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 5 Oct 2018 11:35:47 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t70-v6so4406948pgd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 01:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cgtDeG/Ehv3U0rCfPAFLUS5QOWH3AAbYdutBmQHtGQE=;
+        b=FJY4hEq3Fk+gI7G/wjn6NSMYM3gJrAfCaO/vEZeB3KOnk7Wjvk1YvXxYrwrccLuyG7
+         p1yQS8WQusQzJlNot6UT86RnpnTuJB7scuyqEe4XlQ15EeFzhoQJOj8AhHKR5I3dMnDc
+         UdEXEw8v70IG0skLTj5aR+WF34GJ/R+Pwv4eXJ2W8LHwnj9T3tQJyvefN7r/syDeSoZZ
+         snRkJDfRvKYLk+fNf+MiAsONfeETcIPwzab8AcUJ/JfKMZKmOVaX2jAFhBEzJQ25OSmz
+         vrFKZxThhJzI4GzDzLmutVIELbO9FQpzQRF22fcsA67ZItQLOihREGDXH2MCb7kd+bxU
+         NOoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cgtDeG/Ehv3U0rCfPAFLUS5QOWH3AAbYdutBmQHtGQE=;
+        b=e6HIZDx+iZYbg4oO00pBfAbR+Xh41zhunmaYiif9PXCE/CihoCYhq65wAF9OB6QSm2
+         zRECr7by4FWaTjGqelNnsPLMeEp8yqYhjQ4vjA6PaXLil939v/o2N6OhAQiBYJezCoFq
+         PLG9BTVKKMkaq0OTb9OF7k2ONdXVXB76sb7md+zDNnbfEODoFW+pN7Str8bL9iOXPfUc
+         8e9gtURL1NmEHKnZnUUdG3tF6bKTO0DIHU7/26ZKT9xnaPCcbdXmJz7Aa6x04UVA7VaV
+         XX7glEyQXQsuqHSN9XqMzprj8+ilUcagq8w8LV8uJ/8poX6hbNpZxZ9bdLOP4LKhA2eV
+         4bOg==
+X-Gm-Message-State: ABuFfohV1Uw6HpoyeblXx7s7AC1HXdewOAgDjn+rS/dwzuR0mjz4pdKl
+        QegsbVebiJr+PzIzUzOuvGj4TBXX
+X-Google-Smtp-Source: ACcGV6016i4ifXARwwP2S3ZgkYl4f4AdJKQ5fb3vEzWqsrehUZh+K4khvf+9Am52cPZEaJctEEoJxQ==
+X-Received: by 2002:a63:9e02:: with SMTP id s2-v6mr4735997pgd.302.1538728685660;
+        Fri, 05 Oct 2018 01:38:05 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id a79-v6sm10598588pfa.124.2018.10.05.01.38.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 01:38:04 -0700 (PDT)
+Subject: Re: [PATCH] amdgpu/gmc : fix compile warning
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Peng Hao <peng.hao2@zte.com.cn>
+Cc:     "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1536919552-116245-1-git-send-email-peng.hao2@zte.com.cn>
+ <20181004185237.GA20667@roeck-us.net>
+ <022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <4772f72c-6018-3556-6324-5f49faa00073@roeck-us.net>
+Date:   Fri, 5 Oct 2018 01:38:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ssb: chipcommon: fix fall-through annotation
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181003120102.GA22824@embeddedor.com>
-References: <20181003120102.GA22824@embeddedor.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Michael Buesch <m@bues.ch>, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181005083747.466806079C@smtp.codeaurora.org>
-Date:   Fri,  5 Oct 2018 08:37:47 +0000 (UTC)
+In-Reply-To: <022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-
-> Replace "Fallthough" with a proper "fall through" annotation.
+On 10/05/2018 01:14 AM, Koenig, Christian wrote:
+> Am 04.10.2018 um 20:52 schrieb Guenter Roeck:
+>> Hi,
+>>
+>> On Fri, Sep 14, 2018 at 06:05:52PM +0800, Peng Hao wrote:
+>>> drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:
+>>>       In function ‘gmc_v8_0_process_interrupt’:
+>>> drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:10:
+>>>       warning: missing braces around initializer [-Wmissing-braces]
+>>>
+>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>> Was there any feedback on this patch ? The problem does affect us,
+>> and we'll need a fix.
 > 
-> This fix is part of the ongoing efforts to enabling
-> -Wimplicit-fallthrough
+> Well as discussed using "{ { 0 } }" is as wrong as using "{ 0 }".
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Acked-by: Michael Buesch <m@bues.ch>
 
-Patch applied to wireless-drivers-next.git, thanks.
+Ah, sorry, I must have missed the discussion.
 
-74aa3586c599 ssb: chipcommon: fix fall-through annotation
+It is for sure not the best solution, but at least it compiles, and it seems
+to be proliferating.
 
--- 
-https://patchwork.kernel.org/patch/10624745/
+$ git grep "{ *{ *0 *} *}" | wc
+     144    1180   11802
+$ git grep "{ *{ *0 *} *}" drivers/gpu/drm/amd/ | wc
+      50     459    5239
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> We should either use only "{ }" or even better make nails with heads and
+> use memset().
+
+I'd rather leave it up to the compiler to decide what is most efficient.
+
+Guenter
+
+> 
+> Christian.
+> 
+>>
+>>> ---
+>>>    drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 2 +-
+>>>    drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 2 +-
+>>>    2 files changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>>> index 9333109..55f4755 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>>> @@ -1444,7 +1444,7 @@ static int gmc_v8_0_process_interrupt(struct amdgpu_device *adev,
+>>>    		gmc_v8_0_set_fault_enable_default(adev, false);
+>>>    
+>>>    	if (printk_ratelimit()) {
+>>> -		struct amdgpu_task_info task_info = { 0 };
+>>> +		struct amdgpu_task_info task_info = { {0} };
+>>>    
+>> I wondered if
+>> 		struct amdgpu_task_info task_info = { };
+>> would be better.
+>>
+>> Thanks,
+>> Guenter
+>>
+>>>    		amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+>>>    
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+>>> index 72f8018..e8b78c5 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+>>> @@ -259,7 +259,7 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_device *adev,
+>>>    	}
+>>>    
+>>>    	if (printk_ratelimit()) {
+>>> -		struct amdgpu_task_info task_info = { 0 };
+>>> +		struct amdgpu_task_info task_info = { {0} };
+>>>    
+>>>    		amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+>>>    
+> 
 
