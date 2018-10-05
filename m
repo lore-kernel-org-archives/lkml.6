@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00661C65BBF
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EACC65BD0
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2B120644
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2B120644
+	by mail.kernel.org (Postfix) with ESMTP id EA63220644
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:45:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA63220644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbeJFEp5 (ORCPT
+        id S1729173AbeJFEp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:45:57 -0400
-Received: from mga01.intel.com ([192.55.52.88]:59988 "EHLO mga01.intel.com"
+        Sat, 6 Oct 2018 00:45:58 -0400
+Received: from mga03.intel.com ([134.134.136.65]:29594 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726839AbeJFEp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:45:56 -0400
+        id S1726839AbeJFEp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 00:45:57 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 14:45:19 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 14:45:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,346,1534834800"; 
-   d="scan'208";a="75773057"
+   d="scan'208";a="75773042"
 Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Oct 2018 14:45:14 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 05 Oct 2018 14:45:12 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Brendan Higgins <brendanhiggins@google.com>,
         Wolfram Sang <wsa@the-dreams.de>,
@@ -46,9 +46,9 @@ Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         James Feist <james.feist@linux.intel.com>,
         Vernon Mauery <vernon.mauery@linux.intel.com>,
         Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH i2c-next v7 5/5] i2c: aspeed: Add bus idle waiting logic for multi-master use cases
-Date:   Fri,  5 Oct 2018 14:45:07 -0700
-Message-Id: <20181005214507.26315-6-jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH i2c-next v7 3/5] dt-bindings: i2c: aspeed: Add 'bus-timeout-ms' property as an optional property
+Date:   Fri,  5 Oct 2018 14:45:05 -0700
+Message-Id: <20181005214507.26315-4-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com>
 References: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com>
@@ -59,120 +59,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In multi-master environment, this driver's master cannot know
-exactly when peer master sends data to this driver's slave so a
-case can be happened that this master tries to send data through
-the master_xfer function but slave data from peer master is still
-being processed by this driver.
-
-To prevent any state corruption in the case, this patch adds
-checking code if any slave operation is ongoing and it waits up to
-the bus timeout duration before starting a master_xfer operation.
+This commit adds 'bus-timeout-ms' property as an optional property
+which can be used for setting the bus timeout value of an adapter.
+With this patch, the bus timeout value can be set through this
+property at the probing time of this module. Still the bus timeout
+value can be set by an I2C_TIMEOUT ioctl on cdev at runtime too.
 
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 ---
- drivers/i2c/busses/i2c-aspeed.c | 53 +++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+ Documentation/devicetree/bindings/i2c/i2c-aspeed.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index 833b6b6a4c7e..8d60d7e5b323 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -12,6 +12,7 @@
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt b/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
+index 8fbd8633a387..ce1f07620368 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
+@@ -17,6 +17,9 @@ Optional Properties:
+ 		  specified
+ - multi-master	: states that there is another master active on this bus.
  
- #include <linux/clk.h>
- #include <linux/completion.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/i2c.h>
-@@ -115,6 +116,9 @@
- /* 0x18 : I2CD Slave Device Address Register   */
- #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
- 
-+/* Busy checking */
-+#define ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US		(10 * 1000)
++- bus-timeout-ms: bus timeout in milliseconds defaults to 1 second when not
++		  specified.
 +
- enum aspeed_i2c_master_state {
- 	ASPEED_I2C_MASTER_INACTIVE,
- 	ASPEED_I2C_MASTER_START,
-@@ -156,6 +160,8 @@ struct aspeed_i2c_bus {
- 	int				cmd_err;
- 	/* Protected only by i2c_lock_bus */
- 	int				master_xfer_result;
-+	/* Multi-master */
-+	bool				multi_master;
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	struct i2c_client		*slave;
- 	enum aspeed_i2c_slave_state	slave_state;
-@@ -596,27 +602,42 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
- 	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
- }
+ Example:
  
-+static int aspeed_i2c_check_bus_busy(struct aspeed_i2c_bus *bus)
-+{
-+	ktime_t timeout;
-+
-+	if (bus->multi_master) {
-+		might_sleep();
-+		timeout = ktime_add_ms(ktime_get(),
-+				       jiffies_to_msecs(bus->adap.timeout));
-+	}
-+
-+	for (;;) {
-+		if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
-+		      ASPEED_I2CD_BUS_BUSY_STS) &&
-+		    bus->slave_state == ASPEED_I2C_SLAVE_STOP)
-+			return 0;
-+		if (!bus->multi_master)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0)
-+			break;
-+		usleep_range((ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US >> 2) + 1,
-+			     ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US);
-+	}
-+
-+	return aspeed_i2c_recover_bus(bus);
-+}
-+
- static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
- 				  struct i2c_msg *msgs, int num)
- {
- 	struct aspeed_i2c_bus *bus = i2c_get_adapdata(adap);
- 	unsigned long time_left, flags;
--	int ret = 0;
- 
--	spin_lock_irqsave(&bus->lock, flags);
--	bus->cmd_err = 0;
--
--	/* If bus is busy, attempt recovery. We assume a single master
--	 * environment.
--	 */
--	if (readl(bus->base + ASPEED_I2C_CMD_REG) & ASPEED_I2CD_BUS_BUSY_STS) {
--		spin_unlock_irqrestore(&bus->lock, flags);
--		ret = aspeed_i2c_recover_bus(bus);
--		if (ret)
--			return ret;
--		spin_lock_irqsave(&bus->lock, flags);
--	}
-+	if (aspeed_i2c_check_bus_busy(bus))
-+		return -EAGAIN;
- 
-+	spin_lock_irqsave(&bus->lock, flags);
- 	bus->cmd_err = 0;
- 	bus->msgs = msgs;
- 	bus->msgs_index = 0;
-@@ -827,7 +848,9 @@ static int aspeed_i2c_init(struct aspeed_i2c_bus *bus,
- 	if (ret < 0)
- 		return ret;
- 
--	if (!of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+	if (of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+		bus->multi_master = true;
-+	else
- 		fun_ctrl_reg |= ASPEED_I2CD_MULTI_MASTER_DIS;
- 
- 	/* Enable Master Mode */
+ i2c {
 -- 
 2.19.0
 
