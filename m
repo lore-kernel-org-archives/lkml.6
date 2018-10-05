@@ -2,210 +2,125 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F35C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FD6C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C22A208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C22A208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8D78D208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gS0Pd6o0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D78D208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbeJEXPn (ORCPT
+        id S1729527AbeJEXOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:15:43 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:43299 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728732AbeJEXPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:15:43 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MHFsE-1fvJbf1zY8-00DHuV; Fri, 05 Oct 2018 18:15:31 +0200
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MHFsE-1fvJbf1zY8-00DHuV; Fri, 05 Oct 2018 18:15:31 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        Lawrence Brakmo <brakmo@fb.com>, Andrey Ignatov <rdna@fb.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Mathieu Xhonneux <m.xhonneux@gmail.com>,
-        David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] bpf: fix building without CONFIG_INET
-Date:   Fri,  5 Oct 2018 18:15:12 +0200
-Message-Id: <20181005161526.843924-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:21p0oYgZ1g/q4chYe+cQfny2c7BghJLZg/1D9f+VxNN2Zz3cTwl
- 9VpPjmyV++j6SvxqOCT+69jwLnrGRAU+E2KBNNef10hIVXFC+Jg5/bjn0j8CNqzOHCFGpAS
- q/XLy87vev/+BRkOrYwPwaVGhuYg38KnUit3UOs8RKgBHJITUPqYVSDzIT1B2PIAvTL62J+
- HcXW3tKFQeF0bEl0R3mkA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:alU/d3z2WcM=:bwAG5nKQjLW9Wr9EZn5Xc9
- KGqTX7S2qDtzxRR1Id1Kw0Tm3ea7KefwIOOPTwukE/EBFe7Fu2bwigk1EOCikWH7160rn3fAX
- XgM1ZvHMNYySxkyGx6mKRRCiDUPeqXmLAGdCO7wYAju2MS4UMLSHY92cuYDJPyZzwl9Uhk4Kw
- fHgxtSWNl+ELRwtL7lANef1kQwW/lRSl4u+e/UeBvauL5XdZcNPAIgg6umcvkZ5VNvTP3D4hM
- 8zZ4pi3I/JpXxLBsJtzbBMncJhAbvBR2FKt33FrUgXr8cahT4mDdV8qm1e6WWplgQcIgCrUlt
- TrghNQZhDth8FnzhV27NkdfFGeRDTKVuGMdX7HLQue9azVY2kifX5iBAuZN+z44OSUm3BQtlX
- c+jn3EvqMUvGM7A/H8Uop/H8zxqrYc4+ZRj9oegU1n1R/A2MHcPOCwll8JQeYlCBpUzDq4p0s
- 2mzVuad/trDmlt9RVsnKDSc4fuexTMZ/t7FbjExnrm4zfi4fTgWVW+U1u1mMvnBiW5wNp6pmI
- 9OwZXv96x2AJSugHDyQuFvDtFHJT+lHx2VrjFY3Z/C+QdDlyK/AFEA4+pRHixiZP0cCNfQxQL
- GxTD8dagZZmmmfrObH01TcaeVH1c255x0lIR/67NTJuCiIW2FQrXBYdAaDaY4M4h9rZuuGlaC
- nFiSGyA8K9FX7Mq6gDzggqHpD6cS8nEePgUxlrrVcOBk9tReZ/NUL151Jemh25QpDanQ=
+        Fri, 5 Oct 2018 19:14:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729488AbeJEXOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:17 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A47E321477;
+        Fri,  5 Oct 2018 16:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538756094;
+        bh=pCIyhhR+5clOQDRFPM79GlDTasw01z/qqT/OMVNjnuE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gS0Pd6o0m4NRzQi9frB2K3e4e4R/WpQ6/3Rr31Y1S5AYEn6r97+cSVntLznhBZ2P4
+         QsVA9sqnoJQO3phBmouSQ4ABK6orCEvk6H3HmiQEPIlHBlGMoJiiOcDW2dnoL8kpHs
+         pgZscGudl0pYjIOtqOeW+vbcVGoB/6cmEcl4jm4M=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Guenter Roeck <linux@roeck-us.net>, Robert Kern <ulteq@web.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 32/48] hwmon: (nct6775) Fix RPM output for fan7 on NCT6796D
+Date:   Fri,  5 Oct 2018 12:14:08 -0400
+Message-Id: <20181005161424.20521-32-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
+References: <20181005161424.20521-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added TCP and UDP handling fails to link when CONFIG_INET
-is disabled:
+From: Guenter Roeck <linux@roeck-us.net>
 
-net/core/filter.o: In function `sk_lookup':
-filter.c:(.text+0x7ff8): undefined reference to `tcp_hashinfo'
-filter.c:(.text+0x7ffc): undefined reference to `tcp_hashinfo'
-filter.c:(.text+0x8020): undefined reference to `__inet_lookup_established'
-filter.c:(.text+0x8058): undefined reference to `__inet_lookup_listener'
-filter.c:(.text+0x8068): undefined reference to `udp_table'
-filter.c:(.text+0x8070): undefined reference to `udp_table'
-filter.c:(.text+0x808c): undefined reference to `__udp4_lib_lookup'
-net/core/filter.o: In function `bpf_sk_release':
-filter.c:(.text+0x82e8): undefined reference to `sock_gen_put'
+[ Upstream commit f6de298806d9cbc63a4907bca34a06162b9d7dce ]
 
-The compiler can optimize it out and avoid those references for
-the most part, but we are missing a few steps here:
+fan7 on NCT6796D does not have a fan count register; it only has an RPM
+register. Switch to using RPM registers to read the fan speed for all
+chips supporting it to solve the problem for good.
 
-- sk_lookup() should always have been marked 'static', this also
-  avoids a warning about a missing prototype when building with
-  'make W=1'.
-- The BPF_CALL_x() macro needs a little change to allow marking
-  the unneeded BPF call as 'static' and having the compiler
-  drop them.
-- The reference to the bpf_func_proto must be made conditional.
-
-Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Robert Kern <ulteq@web.de>
+Cc: Robert Kern <ulteq@web.de>
+Fixes: 81820059a428 ("hwmon: (nct6775) Add support for NCT6796D")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/linux/filter.h |  2 +-
- net/core/filter.c      | 18 +++++++++++-------
- 2 files changed, 12 insertions(+), 8 deletions(-)
+ drivers/hwmon/nct6775.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 6791a0ac0139..d9ec9d908bbe 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -428,9 +428,9 @@ struct sock_reuseport;
- 		  u64, __ur_3, u64, __ur_4, u64, __ur_5)
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index f62f67fe834d..bcbf3114fa84 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -502,7 +502,7 @@ static const s8 NCT6779_BEEP_BITS[] = {
+ 	30, 31 };			/* intrusion0, intrusion1 */
  
- #define BPF_CALL_x(x, name, ...)					       \
-+	u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));	       \
- 	static __always_inline						       \
- 	u64 ____##name(__BPF_MAP(x, __BPF_DECL_ARGS, __BPF_V, __VA_ARGS__));   \
--	u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__));	       \
- 	u64 name(__BPF_REG(x, __BPF_DECL_REGS, __BPF_N, __VA_ARGS__))	       \
- 	{								       \
- 		return ____##name(__BPF_MAP(x,__BPF_CAST,__BPF_N,__VA_ARGS__));\
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 30c6b2d3ef16..dd5fe021f44c 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -4817,7 +4817,7 @@ static const struct bpf_func_proto bpf_lwt_seg6_adjust_srh_proto = {
- };
- #endif /* CONFIG_IPV6_SEG6_BPF */
+ static const u16 NCT6779_REG_FAN[] = {
+-	0x4b0, 0x4b2, 0x4b4, 0x4b6, 0x4b8, 0x4ba, 0x660 };
++	0x4c0, 0x4c2, 0x4c4, 0x4c6, 0x4c8, 0x4ca, 0x660 };
+ static const u16 NCT6779_REG_FAN_PULSES[NUM_FAN] = {
+ 	0x644, 0x645, 0x646, 0x647, 0x648, 0x649 };
  
--struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
-+static struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
- 		       struct sk_buff *skb, u8 family, u8 proto)
- {
- 	int dif = skb->dev->ifindex;
-@@ -4902,13 +4902,13 @@ bpf_sk_lookup(struct sk_buff *skb, struct bpf_sock_tuple *tuple, u32 len,
- 	return (unsigned long) sk;
+@@ -924,6 +924,11 @@ static unsigned int fan_from_reg16(u16 reg, unsigned int divreg)
+ 	return 1350000U / (reg << divreg);
  }
  
--BPF_CALL_5(bpf_sk_lookup_tcp, struct sk_buff *, skb,
-+static BPF_CALL_5(bpf_sk_lookup_tcp, struct sk_buff *, skb,
- 	   struct bpf_sock_tuple *, tuple, u32, len, u64, netns_id, u64, flags)
++static unsigned int fan_from_reg_rpm(u16 reg, unsigned int divreg)
++{
++	return reg;
++}
++
+ static u16 fan_to_reg(u32 fan, unsigned int divreg)
  {
- 	return bpf_sk_lookup(skb, tuple, len, IPPROTO_TCP, netns_id, flags);
- }
+ 	if (!fan)
+@@ -1284,7 +1289,7 @@ static bool is_word_sized(struct nct6775_data *data, u16 reg)
+ 	case nct6795:
+ 	case nct6796:
+ 		return reg == 0x150 || reg == 0x153 || reg == 0x155 ||
+-		  ((reg & 0xfff0) == 0x4b0 && (reg & 0x000f) < 0x0b) ||
++		  (reg & 0xfff0) == 0x4c0 ||
+ 		  reg == 0x402 ||
+ 		  reg == 0x63a || reg == 0x63c || reg == 0x63e ||
+ 		  reg == 0x640 || reg == 0x642 || reg == 0x64a ||
+@@ -3868,7 +3873,7 @@ static int nct6775_probe(struct platform_device *pdev)
+ 		data->ALARM_BITS = NCT6779_ALARM_BITS;
+ 		data->BEEP_BITS = NCT6779_BEEP_BITS;
  
--static const struct bpf_func_proto bpf_sk_lookup_tcp_proto = {
-+static const __maybe_unused struct bpf_func_proto bpf_sk_lookup_tcp_proto = {
- 	.func		= bpf_sk_lookup_tcp,
- 	.gpl_only	= false,
- 	.pkt_access	= true,
-@@ -4920,13 +4920,13 @@ static const struct bpf_func_proto bpf_sk_lookup_tcp_proto = {
- 	.arg5_type	= ARG_ANYTHING,
- };
+-		data->fan_from_reg = fan_from_reg13;
++		data->fan_from_reg = fan_from_reg_rpm;
+ 		data->fan_from_reg_min = fan_from_reg13;
+ 		data->target_temp_mask = 0xff;
+ 		data->tolerance_mask = 0x07;
+@@ -3949,7 +3954,7 @@ static int nct6775_probe(struct platform_device *pdev)
+ 		data->ALARM_BITS = NCT6791_ALARM_BITS;
+ 		data->BEEP_BITS = NCT6779_BEEP_BITS;
  
--BPF_CALL_5(bpf_sk_lookup_udp, struct sk_buff *, skb,
-+static BPF_CALL_5(bpf_sk_lookup_udp, struct sk_buff *, skb,
- 	   struct bpf_sock_tuple *, tuple, u32, len, u64, netns_id, u64, flags)
- {
- 	return bpf_sk_lookup(skb, tuple, len, IPPROTO_UDP, netns_id, flags);
- }
- 
--static const struct bpf_func_proto bpf_sk_lookup_udp_proto = {
-+static const __maybe_unused struct bpf_func_proto bpf_sk_lookup_udp_proto = {
- 	.func		= bpf_sk_lookup_udp,
- 	.gpl_only	= false,
- 	.pkt_access	= true,
-@@ -4938,14 +4938,14 @@ static const struct bpf_func_proto bpf_sk_lookup_udp_proto = {
- 	.arg5_type	= ARG_ANYTHING,
- };
- 
--BPF_CALL_1(bpf_sk_release, struct sock *, sk)
-+static BPF_CALL_1(bpf_sk_release, struct sock *, sk)
- {
- 	if (!sock_flag(sk, SOCK_RCU_FREE))
- 		sock_gen_put(sk);
- 	return 0;
- }
- 
--static const struct bpf_func_proto bpf_sk_release_proto = {
-+static const __maybe_unused struct bpf_func_proto bpf_sk_release_proto = {
- 	.func		= bpf_sk_release,
- 	.gpl_only	= false,
- 	.ret_type	= RET_INTEGER,
-@@ -5158,12 +5158,14 @@ tc_cls_act_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_skb_ancestor_cgroup_id:
- 		return &bpf_skb_ancestor_cgroup_id_proto;
- #endif
-+#ifdef CONFIG_INET
- 	case BPF_FUNC_sk_lookup_tcp:
- 		return &bpf_sk_lookup_tcp_proto;
- 	case BPF_FUNC_sk_lookup_udp:
- 		return &bpf_sk_lookup_udp_proto;
- 	case BPF_FUNC_sk_release:
- 		return &bpf_sk_release_proto;
-+#endif
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-@@ -5264,12 +5266,14 @@ sk_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_sk_redirect_hash_proto;
- 	case BPF_FUNC_get_local_storage:
- 		return &bpf_get_local_storage_proto;
-+#ifdef CONFIG_INET
- 	case BPF_FUNC_sk_lookup_tcp:
- 		return &bpf_sk_lookup_tcp_proto;
- 	case BPF_FUNC_sk_lookup_udp:
- 		return &bpf_sk_lookup_udp_proto;
- 	case BPF_FUNC_sk_release:
- 		return &bpf_sk_release_proto;
-+#endif
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
+-		data->fan_from_reg = fan_from_reg13;
++		data->fan_from_reg = fan_from_reg_rpm;
+ 		data->fan_from_reg_min = fan_from_reg13;
+ 		data->target_temp_mask = 0xff;
+ 		data->tolerance_mask = 0x07;
 -- 
-2.18.0
+2.17.1
 
