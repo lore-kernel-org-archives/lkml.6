@@ -2,190 +2,96 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4650C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1760AC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FCA20652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:43:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FCA20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id D84C220652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:44:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84C220652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeJERl6 (ORCPT
+        id S1728003AbeJERme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:41:58 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56419 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJERl6 (ORCPT
+        Fri, 5 Oct 2018 13:42:34 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44697 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJERme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:41:58 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g8Na9-0004CW-Of; Fri, 05 Oct 2018 12:43:41 +0200
-Message-ID: <1538736221.3545.17.camel@pengutronix.de>
-Subject: Re: [PATCH v4 10/11] media: imx: Allow interweave with top/bottom
- lines swapped
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 05 Oct 2018 12:43:41 +0200
-In-Reply-To: <20181004185401.15751-11-slongerbeam@gmail.com>
-References: <20181004185401.15751-1-slongerbeam@gmail.com>
-         <20181004185401.15751-11-slongerbeam@gmail.com>
+        Fri, 5 Oct 2018 13:42:34 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z21-v6so6806661edb.11;
+        Fri, 05 Oct 2018 03:44:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dn59ahvY5Oo+NEOPS7ht0eD3KbRC2yO+tJ74054lYmQ=;
+        b=OeXj2hM4HHoKm+HwTZXWET/OKeTORV9Mqvp15CFvPxu73cWn65dlTOk791TjWe/vjC
+         Uj3O5CLnR5ycxMcVZtaFOaNZfg+uyTDk0SB/sqzxnbhfin4EQFTLadkUuMHlLqpuM1bv
+         0AkMw5nlq9G/7lWqhG6LRpxJv3BiUkC7zlDTZlPalg2OgDPRZTlj47BKcKc0mN+4Unin
+         0qyP3qP6noRQVkbcwtxPphMCB82vzyMW61+DopcyxJxtCzO7XNNV/fwCPEBj/vtvkrRb
+         iaunGiX7VqCUL0k6UzT2sQGM33AYIarMeKsSNZxdlD+KbmyhSA34fB2G47sRwPOX6Ko1
+         whsA==
+X-Gm-Message-State: ABuFfoguHrwPRLgkwE4kfdTwi3jHkVv9UMddsz6OQytOVJDEI3InmunQ
+        adWBkWP+uWBFkcZR21W52QdGmMKkdfY=
+X-Google-Smtp-Source: ACcGV62c3Ol21qVAtZZJoRECv5pnQXlrnMB9beo2z4FQvjlNHIHFl1jMHhp8ggPZmCRQr583w19IGA==
+X-Received: by 2002:a50:86f0:: with SMTP id 45-v6mr13414008edu.52.1538736259232;
+        Fri, 05 Oct 2018 03:44:19 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id q18-v6sm1340516ejr.8.2018.10.05.03.44.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 03:44:18 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id z4-v6so13055510wrb.1;
+        Fri, 05 Oct 2018 03:44:18 -0700 (PDT)
+X-Received: by 2002:adf:c748:: with SMTP id b8-v6mr7899795wrh.134.1538736258246;
+ Fri, 05 Oct 2018 03:44:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181004122855.22981-1-icenowy@aosc.io>
+In-Reply-To: <20181004122855.22981-1-icenowy@aosc.io>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 5 Oct 2018 18:44:05 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65qEsJ6Pn+_McSZ8Srsu3JKrfyWhKwUuQOwwOCOpBwOBg@mail.gmail.com>
+Message-ID: <CAGb2v65qEsJ6Pn+_McSZ8Srsu3JKrfyWhKwUuQOwwOCOpBwOBg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 00/10] Allwinner H6 USB support
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Thu, Oct 4, 2018 at 8:29 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+> This patchset introduces support for the USB ports (both USB2 and USB3)
+> on the Allwinner H6 SoC.
+>
+> The first 6 PATCHes are the USB2 part, and the latter 4 PATCHes are the
+> USB3 part.
+>
+> PATCH 1, 2, 3, 7, 8 should go through the PHY tree, and the remaining
+> patches should go through the armsoc tree via sunxi tree.
+>
+> Icenowy Zheng (10):
+>   dt-bindings: phy: add binding for Allwinner H6 USB2 PHY
+>   phy: sun4i-usb: add support for missing USB PHY index
+>   phy: sun4i-usb: add support for H6 USB2 PHY
+>   arm64: allwinner: dts: h6: add USB2-related device nodes
+>   arm64: allwinner: dts: h6: add USB Vbus regulator
+>   arm64: allwinner: dts: h6: enable USB2 on Pine H64
+>   dt-bindings: phy: add binding for Allwinner USB3 PHY
+>   phy: allwinner: add phy driver for USB3 PHY on Allwinner H6 SoC
+>   arm64: allwinner: dts: h6: add USB3 device nodes
+>   arm64: allwinner: dts: h6: enable USB3 port on Pine H64
 
-On Thu, 2018-10-04 at 11:54 -0700, Steve Longerbeam wrote:
-> Allow sequential->interlaced interweaving but with top/bottom
-> lines swapped to the output buffer.
-> 
-> This can be accomplished by adding one line length to IDMAC output
-> channel address, with a negative line length for the interlace offset.
-> 
-> This is to allow the seq-bt -> interlaced-bt transformation, where
-> bottom lines are still dominant (older in time) but with top lines
-> first in the interweaved output buffer.
-> 
-> With this support, the CSI can now allow seq-bt at its source pads,
-> e.g. the following transformations are allowed in CSI from sink to
-> source:
-> 
-> seq-tb -> seq-bt
-> seq-bt -> seq-bt
-> alternate -> seq-bt
-> 
-> Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> ---
->  drivers/staging/media/imx/imx-ic-prpencvf.c | 17 +++++++-
->  drivers/staging/media/imx/imx-media-csi.c   | 46 +++++++++++++++++----
->  2 files changed, 53 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
-> index cf76b0432371..1499b0c62d74 100644
-> --- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-> +++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-> @@ -106,6 +106,8 @@ struct prp_priv {
->  	u32 frame_sequence; /* frame sequence counter */
->  	bool last_eof;  /* waiting for last EOF at stream off */
->  	bool nfb4eof;    /* NFB4EOF encountered during streaming */
-> +	u32 interweave_offset; /* interweave line offset to swap
-> +				  top/bottom lines */
-
-We have to store this instead of using vdev->fmt.fmt.bytesperline
-because this potentially is the pre-rotation stride instead?
-
->  	struct completion last_eof_comp;
->  };
->  
-> @@ -235,6 +237,9 @@ static void prp_vb2_buf_done(struct prp_priv *priv, struct ipuv3_channel *ch)
->  	if (ipu_idmac_buffer_is_ready(ch, priv->ipu_buf_num))
->  		ipu_idmac_clear_buffer(ch, priv->ipu_buf_num);
->  
-> +	if (ch == priv->out_ch)
-> +		phys += priv->interweave_offset;
-> +
->  	ipu_cpmem_set_buffer(ch, priv->ipu_buf_num, phys);
->  }
->  
-> @@ -388,6 +393,13 @@ static int prp_setup_channel(struct prp_priv *priv,
->  			(image.pix.width * outcc->bpp) >> 3;
->  	}
->  
-> +	priv->interweave_offset = 0;
-> +
-> +	if (interweave && image.pix.field == V4L2_FIELD_INTERLACED_BT) {
-> +		image.rect.top = 1;
-> +		priv->interweave_offset = image.pix.bytesperline;
-> +	}
-> +
->  	image.phys0 = addr0;
->  	image.phys1 = addr1;
->  
-> @@ -425,7 +437,10 @@ static int prp_setup_channel(struct prp_priv *priv,
->  		ipu_cpmem_set_rotation(channel, rot_mode);
->  
->  	if (interweave)
-> -		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline,
-> +		ipu_cpmem_interlaced_scan(channel,
-> +					  priv->interweave_offset ?
-> +					  -image.pix.bytesperline :
-> +					  image.pix.bytesperline,
->  					  image.pix.pixelformat);
->  
->  	ret = ipu_ic_task_idma_init(priv->ic, channel,
-> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-> index 679295da5dde..592f7d6edec1 100644
-> --- a/drivers/staging/media/imx/imx-media-csi.c
-> +++ b/drivers/staging/media/imx/imx-media-csi.c
-> @@ -114,6 +114,8 @@ struct csi_priv {
->  	u32 frame_sequence; /* frame sequence counter */
->  	bool last_eof;   /* waiting for last EOF at stream off */
->  	bool nfb4eof;    /* NFB4EOF encountered during streaming */
-> +	u32 interweave_offset; /* interweave line offset to swap
-> +				  top/bottom lines */
-
-This doesn't seem necessary. Since there is no rotation here, the offset
-is just vdev->fmt.fmt.pix.bytesperline if interweave_swap is enabled.
-Maybe turn this into a bool interweave_swap?
-
->  	struct completion last_eof_comp;
->  };
->  
-> @@ -286,7 +288,8 @@ static void csi_vb2_buf_done(struct csi_priv *priv)
->  	if (ipu_idmac_buffer_is_ready(priv->idmac_ch, priv->ipu_buf_num))
->  		ipu_idmac_clear_buffer(priv->idmac_ch, priv->ipu_buf_num);
->  
-> -	ipu_cpmem_set_buffer(priv->idmac_ch, priv->ipu_buf_num, phys);
-> +	ipu_cpmem_set_buffer(priv->idmac_ch, priv->ipu_buf_num,
-> +			     phys + priv->interweave_offset);
->  }
->  
->  static irqreturn_t csi_idmac_eof_interrupt(int irq, void *dev_id)
-> @@ -396,10 +399,10 @@ static void csi_idmac_unsetup_vb2_buf(struct csi_priv *priv,
->  static int csi_idmac_setup_channel(struct csi_priv *priv)
->  {
->  	struct imx_media_video_dev *vdev = priv->vdev;
-> +	bool passthrough, interweave, interweave_swap;
->  	const struct imx_media_pixfmt *incc;
->  	struct v4l2_mbus_framefmt *infmt;
->  	struct v4l2_mbus_framefmt *outfmt;
-> -	bool passthrough, interweave;
->  	struct ipu_image image;
->  	u32 passthrough_bits;
->  	u32 passthrough_cycles;
-> @@ -433,6 +436,8 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
->  	 */
->  	interweave = V4L2_FIELD_IS_INTERLACED(image.pix.field) &&
->  		V4L2_FIELD_IS_SEQUENTIAL(outfmt->field);
-> +	interweave_swap = interweave &&
-> +		image.pix.field == V4L2_FIELD_INTERLACED_BT;
-
-Although this could just as well be recalculated in csi_vb2_buf_done.
-Apart from that,
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-regards
-Philipp
+Tested-by: Chen-Yu Tsai <wens@csie.org>
