@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7527BC65BA9
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9646FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4389C2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:23:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4389C2087D
+	by mail.kernel.org (Postfix) with ESMTP id 5BBF320834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:23:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBF320834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeJEUWa (ORCPT
+        id S1728594AbeJEUWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:22:30 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8271 "EHLO
+        Fri, 5 Oct 2018 16:22:31 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57444 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727775AbeJEUW3 (ORCPT
+        by vger.kernel.org with ESMTP id S1728473AbeJEUWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:22:29 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DJ1LT015078;
-        Fri, 5 Oct 2018 15:23:32 +0200
+        Fri, 5 Oct 2018 16:22:30 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DJZhX001823;
+        Fri, 5 Oct 2018 15:23:28 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2msxh73acy-1
+        by mx08-00178001.pphosted.com with ESMTP id 2mu1bkc6up-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Oct 2018 15:23:32 +0200
+        Fri, 05 Oct 2018 15:23:28 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4F3A531;
-        Fri,  5 Oct 2018 13:23:31 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2E9D02C92;
-        Fri,  5 Oct 2018 13:23:31 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:31 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4EEB334;
+        Fri,  5 Oct 2018 13:23:28 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2BA4F2C92;
+        Fri,  5 Oct 2018 13:23:28 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
+ 15:23:27 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:30 +0200
+ 15:23:27 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -53,9 +53,9 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 08/24] mmc: mmci: add dma_finalize callback
-Date:   Fri, 5 Oct 2018 15:22:46 +0200
-Message-ID: <1538745782-27446-9-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V5 05/24] mmc: mmci: add prepare/unprepare_data callbacks
+Date:   Fri, 5 Oct 2018 15:22:43 +0200
+Message-ID: <1538745782-27446-6-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
 References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
@@ -71,102 +71,230 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds dma_finalize callback at mmci_host_ops
-to allow to call specific variant.
+This patch adds prepare/unprepare callbacks to mmci_host_ops.
+Like this mmci_pre/post_request can be generic, mmci_prepare_data
+and mmci_unprepare_data provide common next_cookie management.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c          | 19 ++++++++++++-------
- drivers/mmc/host/mmci.h          |  3 ++-
- drivers/mmc/host/mmci_qcom_dml.c |  1 +
- 3 files changed, 15 insertions(+), 8 deletions(-)
+ drivers/mmc/host/mmci.c          | 101 ++++++++++++++++++++++++++-------------
+ drivers/mmc/host/mmci.h          |   8 ++++
+ drivers/mmc/host/mmci_qcom_dml.c |   2 +
+ 3 files changed, 78 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 6a2966a..2d88f8c 100644
+index be22fa9..9bcd219 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -456,6 +456,15 @@ int mmci_dma_start(struct mmci_host *host, unsigned int datactrl)
- 	return 0;
+@@ -388,6 +388,31 @@ void mmci_dma_setup(struct mmci_host *host)
+ 	host->use_dma = true;
  }
  
-+void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
++int mmci_prep_data(struct mmci_host *host, struct mmc_data *data, bool next)
 +{
-+	if (!host->use_dma)
-+		return;
++	int err;
 +
-+	if (host->ops && host->ops->dma_finalize)
-+		host->ops->dma_finalize(host, data);
++	if (!host->ops || !host->ops->prep_data)
++		return 0;
++
++	err = host->ops->prep_data(host, data, next);
++
++	if (next && !err)
++		data->host_cookie = ++host->next_cookie < 0 ?
++			1 : host->next_cookie;
++
++	return err;
++}
++
++void mmci_unprep_data(struct mmci_host *host, struct mmc_data *data,
++		      int err)
++{
++	if (host->ops && host->ops->unprep_data)
++		host->ops->unprep_data(host, data, err);
++
++	data->host_cookie = 0;
 +}
 +
  static void
  mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
  {
-@@ -635,13 +644,13 @@ static void mmci_dma_data_error(struct mmci_host *host)
- 	mmci_dma_unmap(host, host->data);
+@@ -613,7 +638,7 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
  }
  
--static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
-+void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data)
+ /* prepares DMA channel and DMA descriptor, returns non-zero on failure */
+-static int __mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
++static int _mmci_dmae_prep_data(struct mmci_host *host, struct mmc_data *data,
+ 				struct dma_chan **dma_chan,
+ 				struct dma_async_tx_descriptor **dma_desc)
+ {
+@@ -676,21 +701,24 @@ static int __mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
+ 	return -ENOMEM;
+ }
+ 
+-static inline int mmci_dma_prep_data(struct mmci_host *host,
+-				     struct mmc_data *data,
+-				     bool next)
++int mmci_dmae_prep_data(struct mmci_host *host,
++			struct mmc_data *data,
++			bool next)
  {
  	struct mmci_dmae_priv *dmae = host->dma_priv;
- 	u32 status;
- 	int i;
+ 	struct mmci_dmae_next *nd = &dmae->next_data;
  
--	if (!host->use_dma || !dma_inprogress(host))
-+	if (!dma_inprogress(host))
++	if (!host->use_dma)
++		return -EINVAL;
++
+ 	if (next)
+-		return __mmci_dma_prep_data(host, data, &nd->chan, &nd->desc);
++		return _mmci_dmae_prep_data(host, data, &nd->chan, &nd->desc);
+ 	/* Check if next job is already prepared. */
+ 	if (dmae->cur && dmae->desc_current)
+ 		return 0;
+ 
+ 	/* No job were prepared thus do it now. */
+-	return __mmci_dma_prep_data(host, data, &dmae->cur,
++	return _mmci_dmae_prep_data(host, data, &dmae->cur,
+ 				    &dmae->desc_current);
+ }
+ 
+@@ -703,7 +731,7 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
+ 	if (!host->use_dma)
+ 		return -EINVAL;
+ 
+-	ret = mmci_dma_prep_data(host, host->data, false);
++	ret = mmci_dmae_prep_data(host, host->data, false);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -750,32 +778,13 @@ static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
+ 	next->chan = NULL;
+ }
+ 
+-static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
+-{
+-	struct mmci_host *host = mmc_priv(mmc);
+-	struct mmc_data *data = mrq->data;
+-
+-	if (!host->use_dma || !data)
+-		return;
+-
+-	BUG_ON(data->host_cookie);
+-
+-	if (mmci_validate_data(host, data))
+-		return;
+-
+-	if (!mmci_dma_prep_data(host, data, true))
+-		data->host_cookie = ++host->next_cookie < 0 ?
+-			1 : host->next_cookie;
+-}
++void mmci_dmae_unprep_data(struct mmci_host *host,
++			   struct mmc_data *data, int err)
+ 
+-static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
+-			      int err)
+ {
+-	struct mmci_host *host = mmc_priv(mmc);
+ 	struct mmci_dmae_priv *dmae = host->dma_priv;
+-	struct mmc_data *data = mrq->data;
+ 
+-	if (!host->use_dma || !data || !data->host_cookie)
++	if (!host->use_dma)
  		return;
  
- 	/* Wait up to 1ms for the DMA to complete */
-@@ -838,6 +847,7 @@ static struct mmci_host_ops mmci_variant_ops = {
+ 	mmci_dma_unmap(host, data);
+@@ -799,11 +808,12 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
+ 
+ 		next->desc = NULL;
+ 		next->chan = NULL;
+-		data->host_cookie = 0;
+ 	}
+ }
+ 
+ static struct mmci_host_ops mmci_variant_ops = {
++	.prep_data = mmci_dmae_prep_data,
++	.unprep_data = mmci_dmae_unprep_data,
  	.dma_setup = mmci_dmae_setup,
  	.dma_release = mmci_dmae_release,
- 	.dma_start = mmci_dmae_start,
-+	.dma_finalize = mmci_dmae_finalize,
  };
+@@ -832,11 +842,36 @@ static inline int mmci_dma_start_data(struct mmci_host *host, unsigned int datac
+ 	return -ENOSYS;
+ }
  
- void mmci_variant_init(struct mmci_host *host)
-@@ -846,11 +856,6 @@ void mmci_variant_init(struct mmci_host *host)
- }
- #else
- /* Blank functions if the DMA engine is not available */
--static inline void mmci_dma_finalize(struct mmci_host *host,
--				     struct mmc_data *data)
--{
--}
+-#define mmci_pre_request NULL
+-#define mmci_post_request NULL
 -
- static inline void mmci_dma_data_error(struct mmci_host *host)
+ #endif
+ 
++static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
++{
++	struct mmci_host *host = mmc_priv(mmc);
++	struct mmc_data *data = mrq->data;
++
++	if (!data)
++		return;
++
++	WARN_ON(data->host_cookie);
++
++	if (mmci_validate_data(host, data))
++		return;
++
++	mmci_prep_data(host, data, true);
++}
++
++static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
++			      int err)
++{
++	struct mmci_host *host = mmc_priv(mmc);
++	struct mmc_data *data = mrq->data;
++
++	if (!data || !data->host_cookie)
++		return;
++
++	mmci_unprep_data(host, data, err);
++}
++
+ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
  {
- }
+ 	struct variant_data *variant = host->variant;
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index bbdfa26..49274cb 100644
+index e68be1d..8e7ba8a 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -281,6 +281,7 @@ struct mmci_host_ops {
+@@ -273,6 +273,10 @@ struct variant_data {
+ 
+ /* mmci variant callbacks */
+ struct mmci_host_ops {
++	int (*prep_data)(struct mmci_host *host, struct mmc_data *data,
++			 bool next);
++	void (*unprep_data)(struct mmci_host *host, struct mmc_data *data,
++			    int err);
  	int (*dma_setup)(struct mmci_host *host);
  	void (*dma_release)(struct mmci_host *host);
- 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
-+	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
  };
+@@ -335,6 +339,10 @@ static inline void mmci_variant_init(struct mmci_host *host)
+ }
+ #endif
  
- struct mmci_host {
-@@ -349,4 +350,4 @@ void mmci_dmae_get_next_data(struct mmci_host *host, struct mmc_data *data);
++int mmci_dmae_prep_data(struct mmci_host *host, struct mmc_data *data,
++			bool next);
++void mmci_dmae_unprep_data(struct mmci_host *host, struct mmc_data *data,
++			   int err);
  int mmci_dmae_setup(struct mmci_host *host);
  void mmci_dmae_release(struct mmci_host *host);
- int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl);
--
-+void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data);
+ 
 diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-index ae1c193..9725762 100644
+index aa070a9..029e82d 100644
 --- a/drivers/mmc/host/mmci_qcom_dml.c
 +++ b/drivers/mmc/host/mmci_qcom_dml.c
-@@ -189,6 +189,7 @@ static struct mmci_host_ops qcom_variant_ops = {
+@@ -183,6 +183,8 @@ static int qcom_dma_setup(struct mmci_host *host)
+ }
+ 
+ static struct mmci_host_ops qcom_variant_ops = {
++	.prep_data = mmci_dmae_prep_data,
++	.unprep_data = mmci_dmae_unprep_data,
  	.dma_setup = qcom_dma_setup,
  	.dma_release = mmci_dmae_release,
- 	.dma_start = mmci_dmae_start,
-+	.dma_finalize = mmci_dmae_finalize,
  };
- 
- void qcom_variant_init(struct mmci_host *host)
 -- 
 2.7.4
 
