@@ -2,89 +2,126 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E608C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB415C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39762087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:53:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tl+jE4rM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39762087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A35A2087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A35A2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeJEVwZ (ORCPT
+        id S1728955AbeJEVyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:52:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60908 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 17:54:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38380 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbeJEVwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:52:24 -0400
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728139AbeJEVyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 17:54:54 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B34021479;
-        Fri,  5 Oct 2018 14:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538751201;
-        bh=00zcc7T9LOqqvcw8lccqOwJaFe1MY6VWDH4ECJFlkn0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Tl+jE4rMsSuXm7vxnCkApF5zbU5S1iCkUWnHjuOXM7ME4r5SF+OThrHYbQoomG/3+
-         jNL3AGZ9XjeG95ghbh6wob3L/FurmTViXDIP8suDsFLOXIEGASFxk4u77iRB0ENTK6
-         Xtgvi/FBv3Gaq9ZBEtx8xBIcP/izrBjKwdvGwYF4=
-Received: by mail-qt1-f171.google.com with SMTP id b4-v6so5992327qtc.7;
-        Fri, 05 Oct 2018 07:53:21 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiQPUl/WsSQ/0nQNTI2KgSSra6t9J4ZQSMnlui83WehGIYEyVLd
-        NHvGusPZZUM+UrxKF/1fARQcLvmeiCyudZEvrw==
-X-Google-Smtp-Source: ACcGV61UtYTBgqWR4Mbl1nxSdTwcm9wKf7n/oxaa9XcPPvcWE+aikjffBw8WLByXacL/CLAsjyI6fN7yi6RSp/gnCnI=
-X-Received: by 2002:ac8:2ac9:: with SMTP id c9-v6mr9642544qta.188.1538751200204;
- Fri, 05 Oct 2018 07:53:20 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id BC462C0624CB;
+        Fri,  5 Oct 2018 14:55:49 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BA6743FDE;
+        Fri,  5 Oct 2018 14:55:47 +0000 (UTC)
+Subject: Re: [PATCH v4 0/3] fs/dcache: Track # of negative dentries
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <1536773742-32687-1-git-send-email-longman@redhat.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <7054d7fe-5385-c743-b2ea-595e5988799f@redhat.com>
+Date:   Fri, 5 Oct 2018 10:55:47 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com> <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
-In-Reply-To: <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 5 Oct 2018 09:53:08 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+dqRr54_WAdBQ88sJytAuLL=U9kF_Xbj5rJv4PVn9gQg@mail.gmail.com>
-Message-ID: <CAL_Jsq+dqRr54_WAdBQ88sJytAuLL=U9kF_Xbj5rJv4PVn9gQg@mail.gmail.com>
-Subject: Re: [PATCH 15/16] of: unittest: initialize args before calling of_irq_parse_one()
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1536773742-32687-1-git-send-email-longman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 05 Oct 2018 14:55:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
+On 09/12/2018 01:35 PM, Waiman Long wrote:
+>  v3->v4:
+>   - Drop patch 4 as it is just a minor optimization.
+>   - Add a cc:stable tag to patch 1.
+>   - Clean up some comments in patch 3.
 >
-> From: Frank Rowand <frank.rowand@sony.com>
+>  v2->v3:
+>   - With confirmation that the dummy array in dentry_stat structure
+>     was never a replacement of a previously used field, patch 3 is now
+>     reverted back to use one of dummy field as the negative dentry count
+>     instead of adding a new field.
 >
-> Callers of of_irq_parse_one() blindly use the pointer args.np
-> without checking whether of_irq_parse_one() had an error and
-> thus did not set the value of args.np.  Initialize args to
-> zero so that using the format "%pOF" to show the value of
-> args.np will show "(null)" when of_irq_parse_one() has an
-> error and does not set args.np instead of trying to
-> dereference a random value.
+>  v1->v2:
+>   - Clarify what the new nr_dentry_negative per-cpu counter is tracking
+>     and open-code the increment and decrement as suggested by Dave Chinner.
+>   - Append the new nr_dentry_negative count as the 7th element of dentry-state
+>     instead of replacing one of the dummy entries.
+>   - Remove patch "fs/dcache: Make negative dentries easier to be
+>     reclaimed" for now as I need more time to think about what
+>     to do with it.
+>   - Add 2 more patches to address issues found while reviewing the
+>     dentry code.
+>   - Add another patch to change the conditional branch of
+>     nr_dentry_negative accounting to conditional move so as to reduce
+>     the performance impact of the accounting code.
 >
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> ---
->  drivers/of/unittest.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> This patchset addresses 2 issues found in the dentry code and adds a
+> new nr_dentry_negative per-cpu counter to track the total number of
+> negative dentries in all the LRU lists.
+>
+> Patch 1 fixes a bug in the accounting of nr_dentry_unused in
+> shrink_dcache_sb().
+>
+> Patch 2 removes the ____cacheline_aligned_in_smp tag from super_block
+> LRU lists.
+>
+> Patch 3 adds the new nr_dentry_negative per-cpu counter.
+>
+> Various filesystem related tests were run and no statistically
+> significant changes in performance outside of the possible noise range
+> was observed.
+>
+> Waiman Long (3):
+>   fs/dcache: Fix incorrect nr_dentry_unused accounting in
+>     shrink_dcache_sb()
+>   fs: Don't need to put list_lru into its own cacheline
+>   fs/dcache: Track & report number of negative dentries
+>
+>  Documentation/sysctl/fs.txt | 26 ++++++++++++++++----------
+>  fs/dcache.c                 | 38 +++++++++++++++++++++++++++++++++-----
+>  include/linux/dcache.h      |  7 ++++---
+>  include/linux/fs.h          |  9 +++++----
+>  4 files changed, 58 insertions(+), 22 deletions(-)
+>
+Any comments on these patches. The first one actually is a bug fix.
 
-Does this need to be part of this series?
+Cheers,
+Longman
 
-Rob
