@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A27C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBEDC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB287208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB88021473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6DrIJdJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB287208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2AG9Qr/D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB88021473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbeJEXXN (ORCPT
+        id S1729836AbeJEXQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:23:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53808 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:16:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729881AbeJEXQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:06 -0400
+        id S1728819AbeJEXQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 857582148D;
-        Fri,  5 Oct 2018 16:16:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B9F921486;
+        Fri,  5 Oct 2018 16:16:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756203;
-        bh=r8ZHerqgAVQkAlMFiPZiODUNtwL/Fp0c+naEk+Vi9KU=;
+        s=default; t=1538756198;
+        bh=g85A6c+yJLTRvdx3id8M2xrTJ71IsPVqEnkWXBEhvB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6DrIJdJA/vCntwiu9qGRpNEfU/ZX7ubvu28AWo0ZwCWRyudE0yvH6ofjLI4rdqYr
-         PCECnH8ELBNiHYshHkHrsXYX7ZosNDl/Nb9cqp6zd+O8WgJaxRohedh25FeWbuovxx
-         TGPa3VcpypGvzcMMvAD1q+e7Ndt1HvIhv6HOVlko=
+        b=2AG9Qr/DxrWN3cZHU0FuzFWxxSBCY2E0rpZLJCiYxSMDQj1FRhL1WZk1DGMY6orWR
+         ABwPpcP8vyXHirY8iszMNeACdbnUx9nTf4ZPxktOqwyRROy/TMl60tLVpmfnWOkmej
+         EANzvKjoOCi7JZiKpI/ScpwGS6ras5AfoLntgQMQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hermes Zhang <chenhuiz@axis.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+Cc:     Danny Smith <danny.smith@axis.com>, Danny Smith <dannys@axis.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 08/23] Bluetooth: hci_ldisc: Free rw_semaphore on close
-Date:   Fri,  5 Oct 2018 12:16:19 -0400
-Message-Id: <20181005161634.20631-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/23] ASoC: sigmadsp: safeload should not have lower byte limit
+Date:   Fri,  5 Oct 2018 12:16:14 -0400
+Message-Id: <20181005161634.20631-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
 References: <20181005161634.20631-1-sashal@kernel.org>
@@ -53,58 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hermes Zhang <chenhuiz@axis.com>
+From: Danny Smith <danny.smith@axis.com>
 
-[ Upstream commit e6a57d22f787e73635ce0d29eef0abb77928b3e9 ]
+[ Upstream commit 5ea752c6efdf5aa8a57aed816d453a8f479f1b0a ]
 
-The percpu_rw_semaphore is not currently freed, and this leads to
-a crash when the stale rcu callback is invoked.  DEBUG_OBJECTS
-detects this.
+Fixed range in safeload conditional to allow safeload to up to 20 bytes,
+without a lower limit.
 
- ODEBUG: free active (active state 1) object type: rcu_head hint: (null)
- ------------[ cut here ]------------
- WARNING: CPU: 1 PID: 2024 at debug_print_object+0xac/0xc8
- PC is at debug_print_object+0xac/0xc8
- LR is at debug_print_object+0xac/0xc8
- Call trace:
- [<ffffff80082e2c2c>] debug_print_object+0xac/0xc8
- [<ffffff80082e40b0>] debug_check_no_obj_freed+0x1e8/0x228
- [<ffffff8008191254>] kfree+0x1cc/0x250
- [<ffffff80083cc03c>] hci_uart_tty_close+0x54/0x108
- [<ffffff800832e118>] tty_ldisc_close.isra.1+0x40/0x58
- [<ffffff800832e14c>] tty_ldisc_kill+0x1c/0x40
- [<ffffff800832e3dc>] tty_ldisc_release+0x94/0x170
- [<ffffff8008325554>] tty_release_struct+0x1c/0x58
- [<ffffff8008326400>] tty_release+0x3b0/0x490
- [<ffffff80081a3fe8>] __fput+0x88/0x1d0
- [<ffffff80081a418c>] ____fput+0xc/0x18
- [<ffffff80080c0624>] task_work_run+0x9c/0xc0
- [<ffffff80080a9e24>] do_exit+0x24c/0x8a0
- [<ffffff80080aa4e0>] do_group_exit+0x38/0xa0
- [<ffffff80080aa558>] __wake_up_parent+0x0/0x28
- [<ffffff8008082c00>] el0_svc_naked+0x34/0x38
- ---[ end trace bfe08cbd89098cdf ]---
-
-Signed-off-by: Hermes Zhang <chenhuiz@axis.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Danny Smith <dannys@axis.com>
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/bluetooth/hci_ldisc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/sigmadsp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-index c823914b3a80..30bbe19b4b85 100644
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -539,6 +539,8 @@ static void hci_uart_tty_close(struct tty_struct *tty)
- 	}
- 	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
- 
-+	percpu_free_rwsem(&hu->proto_lock);
-+
- 	kfree(hu);
- }
- 
+diff --git a/sound/soc/codecs/sigmadsp.c b/sound/soc/codecs/sigmadsp.c
+index d53680ac78e4..6df158669420 100644
+--- a/sound/soc/codecs/sigmadsp.c
++++ b/sound/soc/codecs/sigmadsp.c
+@@ -117,8 +117,7 @@ static int sigmadsp_ctrl_write(struct sigmadsp *sigmadsp,
+ 	struct sigmadsp_control *ctrl, void *data)
+ {
+ 	/* safeload loads up to 20 bytes in a atomic operation */
+-	if (ctrl->num_bytes > 4 && ctrl->num_bytes <= 20 && sigmadsp->ops &&
+-	    sigmadsp->ops->safeload)
++	if (ctrl->num_bytes <= 20 && sigmadsp->ops && sigmadsp->ops->safeload)
+ 		return sigmadsp->ops->safeload(sigmadsp, ctrl->addr, data,
+ 			ctrl->num_bytes);
+ 	else
 -- 
 2.17.1
 
