@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA224C65BAB
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C780FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 927F12148C
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 927F12148C
+	by mail.kernel.org (Postfix) with ESMTP id 98FE721477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:58:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FE721477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbeJEX61 (ORCPT
+        id S1728819AbeJEX62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:58:27 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39916 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728160AbeJEX60 (ORCPT
+        Fri, 5 Oct 2018 19:58:28 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42893 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728770AbeJEX62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:58:26 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c20-v6so13345479otl.6;
-        Fri, 05 Oct 2018 09:58:52 -0700 (PDT)
+        Fri, 5 Oct 2018 19:58:28 -0400
+Received: by mail-ot1-f68.google.com with SMTP id h26-v6so13359764otl.9;
+        Fri, 05 Oct 2018 09:58:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=71oY5HWjvjta+vASdeqnC6CknPvTEuU3/FDPawmJ7HI=;
-        b=tUaLnFrZb5US74nXKpOrVjuq/Jy0brkhvUVAP5J5ZUi4HUzLd/G7coRUAPbDZzXMRk
-         Zri7Infk6u2Bbg3tCO+CS3eXRP0/SfjROF4eEctE5S8aD6HVfc9j5XaJisV/dA2DdB1d
-         Gr8lc674xUbUum6ib9IeOmGW+SGyyYjjHbf3vxeOhvifWteujCeDUgxHYfm2xEHZDoi9
-         T6xvPDnevS7IFAXv08gPTkcoEgd0RAk5KVaqCAj56aYPEUjc8PdtMCzmvt8NSXYrc0va
-         IItC57j2s653tIyUbsg5sRcwACcbD0JwC2AK7JBXV1mVtnWO+sXMnGNdptxW5C5TbAO3
-         youA==
-X-Gm-Message-State: ABuFfohCcm+II5l/qXCjMgGRNS93A42ymOa8jBNqBlvKX7WlchDnEcpx
-        N7RriHaJhWqgOlxD9XnZTU5VDMpSbQ==
-X-Google-Smtp-Source: ACcGV6309J0wcTnWnYW9xumd4jiVdJLzbRTItcct9QsNLZtgsD8SvKo6hrlq3RTPwwyyN1C8vgGH4g==
-X-Received: by 2002:a9d:2992:: with SMTP id n18mr661801otb.54.1538758731588;
-        Fri, 05 Oct 2018 09:58:51 -0700 (PDT)
+        bh=nWJ/W+jar+UdXjg1HaxmR9q3z8+XxFV2Te6InmR2rr4=;
+        b=d44uhtnv3WJRolJCk5WkGnfLR8+RItiUlq62aVLgCGODzfkyKooPQrKqLl4kxYjr/S
+         yeULEgxfdULuSp8yz4WFmOal5cWzSeKZaiKTpLzZYxOPtBhH5cx+qe7CSzzsnZlVfrwn
+         ku3F0VxOemJdvHutIDVZJXPUs0723HPp5mwdY1qnJLxVVS1gXsyEv+IffR2YFWNcT1Kd
+         haOObEyAuibc/8F407eE3DM8Xq8D8t4+Kw8sKpoPIi899xjygm9rtqcDubiDDKQp4FE5
+         GzYN/vBhfE+OvIIDoF14b+BtLIp6DzcrnOP5OAfqnMq9CvaREtXKR8aMDv7OfpquijVo
+         J5aA==
+X-Gm-Message-State: ABuFfogyJW4Xg6i56ud6nra5uoo06M/jyWgbWtor/cb7z41Of4DfjyM3
+        yvhkEatXzDqrIj+vGtoClngYerK2JQ==
+X-Google-Smtp-Source: ACcGV60lHex6VH59xUBqeaWpiCR5GUCzV7Jfb0gC6BzRfdvaYewShZLZJcerAuZH8nrmMaEEH60rTA==
+X-Received: by 2002:a9d:76d:: with SMTP id 100mr7220736ote.153.1538758733044;
+        Fri, 05 Oct 2018 09:58:53 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id u63-v6sm2904328ota.75.2018.10.05.09.58.50
+        by smtp.googlemail.com with ESMTPSA id u63-v6sm2904328ota.75.2018.10.05.09.58.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 09:58:51 -0700 (PDT)
+        Fri, 05 Oct 2018 09:58:52 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
@@ -59,11 +59,12 @@ Cc:     Grant Likely <glikely@secretlab.ca>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: [PATCH 01/36] dt-bindings: arm: alpine: Move CPU control related binding to cpu-enable-method/al,alpine-smp
-Date:   Fri,  5 Oct 2018 11:58:13 -0500
-Message-Id: <20181005165848.3474-2-robh@kernel.org>
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH 02/36] dt-bindings: arm: amlogic: Move 'amlogic,meson-gx-ao-secure' binding to its own file
+Date:   Fri,  5 Oct 2018 11:58:14 -0500
+Message-Id: <20181005165848.3474-3-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
 References: <20181005165848.3474-1-robh@kernel.org>
@@ -73,147 +74,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 It is best practice to have 1 binding per file, so board level bindings
-should be separate for various misc SoC bindings. Move the Alpine CPU
-control to al,alpine-smp and we can also remove a cross reference.
+should be separate for various misc SoC bindings.
 
-Cc: Tsahee Zidenberg <tsahee@annapurnalabs.com>
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
 Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-amlogic@lists.infradead.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/al,alpine.txt     | 72 -------------------
- .../arm/cpu-enable-method/al,alpine-smp       | 34 ++++++++-
- 2 files changed, 31 insertions(+), 75 deletions(-)
+ .../devicetree/bindings/arm/amlogic.txt       | 29 -------------------
+ .../amlogic/amlogic,meson-gx-ao-secure.txt    | 28 ++++++++++++++++++
+ 2 files changed, 28 insertions(+), 29 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.txt
 
-diff --git a/Documentation/devicetree/bindings/arm/al,alpine.txt b/Documentation/devicetree/bindings/arm/al,alpine.txt
-index f404a4f9b165..d00debe2e86f 100644
---- a/Documentation/devicetree/bindings/arm/al,alpine.txt
-+++ b/Documentation/devicetree/bindings/arm/al,alpine.txt
-@@ -14,75 +14,3 @@ compatible: must contain "al,alpine"
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.txt b/Documentation/devicetree/bindings/arm/amlogic.txt
+index b5c2b5c35766..2f2d01a00c54 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.txt
++++ b/Documentation/devicetree/bindings/arm/amlogic.txt
+@@ -100,32 +100,3 @@ Board compatible values (alphabetically, grouped by SoC):
+   - "tronsmart,vega-s96" (Meson gxm s912)
  
- 	...
- }
+   - "amlogic,s400" (Meson axg a113d)
 -
--* CPU node:
+-Amlogic Meson Firmware registers Interface
+-------------------------------------------
 -
--The Alpine platform includes cortex-a15 cores.
--enable-method: must be "al,alpine-smp" to allow smp  [1]
+-The Meson SoCs have a register bank with status and data shared with the
+-secure firmware.
 -
--Example:
+-Required properties:
+- - compatible: For Meson GX SoCs, must be "amlogic,meson-gx-ao-secure", "syscon"
 -
--cpus {
--	#address-cells = <1>;
--	#size-cells = <0>;
--	enable-method = "al,alpine-smp";
+-Properties should indentify components of this register interface :
 -
--	cpu@0 {
--		compatible = "arm,cortex-a15";
--		device_type = "cpu";
--		reg = <0>;
--	};
+-Meson GX SoC Information
+-------------------------
+-A firmware register encodes the SoC type, package and revision information on
+-the Meson GX SoCs.
+-If present, the following property should be added :
 -
--	cpu@1 {
--		compatible = "arm,cortex-a15";
--		device_type = "cpu";
--		reg = <1>;
--	};
+-Optional properties:
+-  - amlogic,has-chip-id: If present, the interface gives the current SoC version.
 -
--	cpu@2 {
--		compatible = "arm,cortex-a15";
--		device_type = "cpu";
--		reg = <2>;
--	};
+-Example
+--------
 -
--	cpu@3 {
--		compatible = "arm,cortex-a15";
--		device_type = "cpu";
--		reg = <3>;
--	};
+-ao-secure@140 {
+-	compatible = "amlogic,meson-gx-ao-secure", "syscon";
+-	reg = <0x0 0x140 0x0 0x140>;
+-	amlogic,has-chip-id;
 -};
--
--
--* Alpine CPU resume registers
--
--The CPU resume register are used to define required resume address after
--reset.
--
--Properties:
--- compatible : Should contain "al,alpine-cpu-resume".
--- reg : Offset and length of the register set for the device
--
--Example:
--
--cpu_resume {
--	compatible = "al,alpine-cpu-resume";
--	reg = <0xfbff5ed0 0x30>;
--};
--
--* Alpine System-Fabric Service Registers
--
--The System-Fabric Service Registers allow various operation on CPU and
--system fabric, like powering CPUs off.
--
--Properties:
--- compatible : Should contain "al,alpine-sysfabric-service" and "syscon".
--- reg : Offset and length of the register set for the device
--
--Example:
--
--nb_service {
--        compatible = "al,alpine-sysfabric-service", "syscon";
--        reg = <0xfb070000 0x10000>;
--};
--
--[1] arm/cpu-enable-method/al,alpine-smp
-diff --git a/Documentation/devicetree/bindings/arm/cpu-enable-method/al,alpine-smp b/Documentation/devicetree/bindings/arm/cpu-enable-method/al,alpine-smp
-index c2e0cc5e4cfd..35e5afb6d9ad 100644
---- a/Documentation/devicetree/bindings/arm/cpu-enable-method/al,alpine-smp
-+++ b/Documentation/devicetree/bindings/arm/cpu-enable-method/al,alpine-smp
-@@ -14,7 +14,28 @@ Related properties:	(none)
- 
- Note:
- This enable method requires valid nodes compatible with
--"al,alpine-cpu-resume" and "al,alpine-nb-service"[1].
-+"al,alpine-cpu-resume" and "al,alpine-nb-service".
+diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.txt b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.txt
+new file mode 100644
+index 000000000000..c67d9f48fb91
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.txt
+@@ -0,0 +1,28 @@
++Amlogic Meson Firmware registers Interface
++------------------------------------------
 +
++The Meson SoCs have a register bank with status and data shared with the
++secure firmware.
 +
-+* Alpine CPU resume registers
++Required properties:
++ - compatible: For Meson GX SoCs, must be "amlogic,meson-gx-ao-secure", "syscon"
 +
-+The CPU resume register are used to define required resume address after
-+reset.
++Properties should indentify components of this register interface :
 +
-+Properties:
-+- compatible : Should contain "al,alpine-cpu-resume".
-+- reg : Offset and length of the register set for the device
++Meson GX SoC Information
++------------------------
++A firmware register encodes the SoC type, package and revision information on
++the Meson GX SoCs.
++If present, the following property should be added :
 +
++Optional properties:
++  - amlogic,has-chip-id: If present, the interface gives the current SoC version.
 +
-+* Alpine System-Fabric Service Registers
++Example
++-------
 +
-+The System-Fabric Service Registers allow various operation on CPU and
-+system fabric, like powering CPUs off.
-+
-+Properties:
-+- compatible : Should contain "al,alpine-sysfabric-service" and "syscon".
-+- reg : Offset and length of the register set for the device
-+
- 
- Example:
- 
-@@ -48,5 +69,12 @@ cpus {
- 	};
- };
- 
----
--[1] arm/al,alpine.txt
-+cpu_resume {
-+	compatible = "al,alpine-cpu-resume";
-+	reg = <0xfbff5ed0 0x30>;
-+};
-+
-+nb_service {
-+        compatible = "al,alpine-sysfabric-service", "syscon";
-+        reg = <0xfb070000 0x10000>;
++ao-secure@140 {
++	compatible = "amlogic,meson-gx-ao-secure", "syscon";
++	reg = <0x0 0x140 0x0 0x140>;
++	amlogic,has-chip-id;
 +};
 -- 
 2.17.1
