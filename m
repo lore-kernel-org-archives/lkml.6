@@ -2,111 +2,143 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7281CC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714A9C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347AF2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:58:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347AF2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CDE320875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CDE320875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeJELzm (ORCPT
+        id S1727329AbeJEMAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 07:55:42 -0400
-Received: from namei.org ([65.99.196.166]:35746 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726939AbeJELzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 07:55:42 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w954wDR7011060;
-        Fri, 5 Oct 2018 04:58:13 GMT
-Date:   Fri, 5 Oct 2018 14:58:13 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-In-Reply-To: <CAGXu5j+3HqqBa_ogQqGJYubeZr9uCrbKzEoKO3Or=71e4c_=Gw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1810051449110.2590@namei.org>
-References: <20181002005505.6112-1-keescook@chromium.org> <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com> <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com> <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org> <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
- <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com> <alpine.LRH.2.21.1810040723320.16168@namei.org> <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
- <alpine.LRH.2.21.1810050338470.14095@namei.org> <CAGXu5j+3HqqBa_ogQqGJYubeZr9uCrbKzEoKO3Or=71e4c_=Gw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 5 Oct 2018 08:00:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59484 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeJEMAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 08:00:46 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1g8I0X-0002Fo-Oc; Fri, 05 Oct 2018 04:46:34 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     jikos@kernel.org
+Cc:     benjamin.tissoires@redhat.com, hdegoede@redhat.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH v2] HID: i2c-hid: Add a small delay after sleep command for Raydium touchpanel
+Date:   Fri,  5 Oct 2018 12:46:29 +0800
+Message-Id: <20181005044629.26286-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 4 Oct 2018, Kees Cook wrote:
+Raydium touchpanel (2386:4B33) sometimes does not work in desktop session
+although it works in display manager.
 
-> On Thu, Oct 4, 2018 at 10:49 AM, James Morris <jmorris@namei.org> wrote:
-> > On Wed, 3 Oct 2018, Kees Cook wrote:
-> >> Then someone boots the system with:
-> >>
-> >> selinux=1 security=selinux
-> >>
-> >> In what order does selinux get initialized relative to yama?
-> >> (apparmor, flagged as a "legacy major", would have been disabled by
-> >> the "security=" not matching it.)
-> >
-> > It doesn't, it needs to be specified in one place.
-> >
-> > Distros will need to update boot parameter handling for this kernel
-> > onwards.  Otherwise, we will need to carry this confusing mess forward
-> > forever.
-> 
-> Are you saying that you want to overrule Paul and Stephen about
-> keeping "selinux=1 secuiryt=selinux" working?
+During user logging, the display manager exits, close the HID device,
+then the device gets runtime suspended and powered off. The desktop
+session begins shortly after, opens the HID device, then the device gets
+runtime resumed and powered on.
 
-Not overrule, but convince.
+If the trasition from display manager to desktop sesesion is fast, the
+touchpanel cannot switch from powered off to powered on in short
+timeframe. So add a small delay to workaround the issue.
 
-At least, deprecate selinux=1 and security=X, but not extend it any 
-further.
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v2:
+- Use quirk to only match affected touchpanel
+- Only delay the next power on if the time hasn't elapsed
 
-> > In my most recent suggestion, there is no '!' disablement, just
-> > enablement.  If an LSM is not listed in CONFIG_LSM="", it's not enabled.
-> 
-> And a user would need to specify ALL lsms on the "lsm=" line?
-> 
+ drivers/hid/hid-ids.h              |  3 +++
+ drivers/hid/i2c-hid/i2c-hid-core.c | 19 +++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-Yes, the ones they want enabled.
-
-> What do you think of my latest proposal? It could happily work all
-> three ways: old boot params and security= work ("selinux=1
-> security=selinux" keeps working), individual LSM enable/disable works
-> ("lsm=+loadpin"), and full LSM ordering works
-> ("lsm=each,lsm,in,order,here"):
-> 
-> https://lore.kernel.org/lkml/CAGXu5jJJit8bDNvgXaFkuvFPy7NWtJW2oRWFbG-6iWk0+A1qng@mail.gmail.com/
-> 
-
-I think having something like +yama will still lead to confusion.
-Explicitly stating each enabled LSM in order is totally unambiguous.
-
-If people are moving away from the distro defaults, and there is no 
-high-level interface to manage this, it seems to me there's a deeper 
-issue with the distro.
-
-
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 16342188df19..c1b5f03eb630 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -926,6 +926,9 @@
+ #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3003		0x3003
+ #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3008		0x3008
+ 
++#define I2C_VENDOR_ID_RAYDIUM		0x2386
++#define I2C_PRODUCT_ID_RAYDIUM_4B33	0x4b33
++
+ #define USB_VENDOR_ID_RAZER            0x1532
+ #define USB_DEVICE_ID_RAZER_BLADE_14   0x011D
+ 
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index 4aab96cf0818..3cde7c1b9c33 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -49,6 +49,7 @@
+ #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
+ #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
++#define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
+ 
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -158,6 +159,8 @@ struct i2c_hid {
+ 
+ 	bool			irq_wake_enabled;
+ 	struct mutex		reset_lock;
++
++	unsigned long		sleep_delay;
+ };
+ 
+ static const struct i2c_hid_quirks {
+@@ -172,6 +175,8 @@ static const struct i2c_hid_quirks {
+ 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
+ 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
+ 		I2C_HID_QUIRK_NO_RUNTIME_PM },
++	{ I2C_VENDOR_ID_RAYDIUM, I2C_PRODUCT_ID_RAYDIUM_4B33,
++		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
+ 	{ 0, 0 }
+ };
+ 
+@@ -387,6 +392,7 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
+ {
+ 	struct i2c_hid *ihid = i2c_get_clientdata(client);
+ 	int ret;
++	unsigned long now, delay;
+ 
+ 	i2c_hid_dbg(ihid, "%s\n", __func__);
+ 
+@@ -404,9 +410,22 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
+ 			goto set_pwr_exit;
+ 	}
+ 
++	if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
++	    power_state == I2C_HID_PWR_ON) {
++		now = jiffies;
++		if (time_after(ihid->sleep_delay, now)) {
++			delay = jiffies_to_usecs(ihid->sleep_delay - now);
++			usleep_range(delay, delay + 1);
++		}
++	}
++
+ 	ret = __i2c_hid_command(client, &hid_set_power_cmd, power_state,
+ 		0, NULL, 0, NULL, 0);
+ 
++	if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
++	    power_state == I2C_HID_PWR_SLEEP)
++		ihid->sleep_delay = jiffies + msecs_to_jiffies(20);
++
+ 	if (ret)
+ 		dev_err(&client->dev, "failed to change power setting.\n");
+ 
 -- 
-James Morris
-<jmorris@namei.org>
+2.17.1
 
