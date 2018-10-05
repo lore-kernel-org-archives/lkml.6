@@ -2,125 +2,92 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4BEC65BBF
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC9BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD11208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F249208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:10:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c4vfXGnT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DD11208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="P7+/vWz2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F249208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbeJFEJX (ORCPT
+        id S1726414AbeJFEKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:09:23 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36232 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbeJFEJW (ORCPT
+        Sat, 6 Oct 2018 00:10:53 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45352 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725761AbeJFEKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:09:22 -0400
-Received: by mail-qt1-f196.google.com with SMTP id u34-v6so15317469qth.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 14:08:52 -0700 (PDT)
+        Sat, 6 Oct 2018 00:10:53 -0400
+Received: by mail-ot1-f66.google.com with SMTP id u22so14016392ota.12;
+        Fri, 05 Oct 2018 14:10:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=idZscuqw9ecAbJHiItU7I9Cc6KqieRtAkAaXuBbOCMg=;
-        b=c4vfXGnTRRN2VWYCuDta4MI9HCMPiy6UYcivSbox9PP51k9VEM3Rk9E3bC/usRkTf9
-         TYwlBEpJ4Ahacf92hn25ithhZMkqpl+muZbH+BYMyN76cNlUxs1mqvfiSyBdz9P9CNEz
-         nl4Sh5T1RkLN61rh+dSB/4pCG97VIbPasR8cdTP6PFyK9owKapTsuy9xRiwLYfjPmSuR
-         Xi+LuOmcvmd5i256mvSgDtjNB5j9cvImOy4PJQyNzSyHGQFmrLym61jbGCTIdmMH2IFm
-         4fpTHmhYQHhAXXBVhWtTFG4jTf1HoW6sKhjidVcNZDv8WuZ8yhaCSiVk862aN55NBSYy
-         PeAA==
+        bh=70yR39VTzj5T0z0bdNIjwvBTc2IFMhlfRm2XfClvHdU=;
+        b=P7+/vWz2crgSkGa/r+m0FNI2BNfRXsLKD+QtYPFMcmGVddO7KSJBxUPJphQOf6vDm2
+         LL8uZhZ+1Car6C77qK0BMb0l5vTLddFSwm3j+lGvE2Ndit1nt25X4UigOLzbCS3BRnrl
+         /gWLlFkCLwpDVhwi0km+1PgrwpgeS1QHo3GEMDZWKEOEyDXNFVkIq/BtqWHXrlYUrgXC
+         Q4M1zZw16tFEkDEnBsbbHw2radtME8bCgnxYH8jJ2eGICX3l9VhxqbH+fCDOjHu8JC+3
+         QL5GvqIPD7eWO8PBt9NyteGGFwXGbXLWD3oRme9RJhGw7+a0i0Nkv82G+NfMgWT1+f8Z
+         63sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=idZscuqw9ecAbJHiItU7I9Cc6KqieRtAkAaXuBbOCMg=;
-        b=pImFb5ULP0wEeeqb22QXtpI5PcethVsdLJYf4fIKR0yBxrosg64iwjRwzRvVUctlP6
-         KV/yD/UNAph0ZpNrIy1DtywwA9xHgtKE4ZmZDYidNvMotfA8n4t6ukuBUOjvH6BMIZGp
-         MIcECSzipRScOztEd4DRWUl2ge+IT5O0A7RN3+Q8zIORtlYV5Pyg3cHn18Eadihnh8Yh
-         YqlX/JpFsm5X8mVGh/95N6Jgr9TuxXnifcTriHaam+3SzFmn4f40z4lCo0OT7U4jURnK
-         fnPEx18o5f2OMT5FeSUs/TlFZJYq6oHnyYli7Eo6RshhrOycV266920lz8baD6IXSLYh
-         w8WQ==
-X-Gm-Message-State: ABuFfoj6Xma8bB0ULgk+wbeLYvBYNS4L9cEfc2sd6HONp6m4/LyMEY7D
-        MbMeaZndSaMAK/OZ3m7eZ5wJafF3ynW1/Re7+6yJog==
-X-Google-Smtp-Source: ACcGV60Dk2ZR0QIs8i+0IH5/nzAG9XZP88QG711panyTVQN6TM4UccpBIGdnO84MvSSh8PwVCDRf1Nn4a2HVGl+Qg+s=
-X-Received: by 2002:ac8:33d6:: with SMTP id d22-v6mr11004827qtb.313.1538773732087;
- Fri, 05 Oct 2018 14:08:52 -0700 (PDT)
+        bh=70yR39VTzj5T0z0bdNIjwvBTc2IFMhlfRm2XfClvHdU=;
+        b=RXdKU65ueTRIkf1sdXrUtvYLk0/lhH58bBNSbDEmkRd/4PUur/2q89AwuSqI7CZzM4
+         +Jk2yUwxap3B40jSmFejhbDe3OrB0VTryxdVi3IxeIszY3X7VM9O+mRbd7giDS2OFMeL
+         StSZxx5ndHP6P+092XgGeZsF7cmTriyUCDxdlVqkwN4sDNaTBLDnox+ZPko+BDdpQDXo
+         34HCg1IElH7Ga9jKubjoI7sXuSl4ufuBmmNKgewbhoJh+6Yk0N1DEvA6sAls2UqNxB09
+         dlzur9gA63IgOWMk2Za0EqhH71tf+n3fqnDrIJHmvjsJBJm066bILeqnfO1u/HwgCSAB
+         utHw==
+X-Gm-Message-State: ABuFfoiC569DoUekpc9A00wcjTJkZHVQPP0jI3O39L+MxJS7vK6xHTnS
+        RkUloDay56Vy7Js6qJiXCsJCS6wuz/qwfxG3Suij/chT
+X-Google-Smtp-Source: ACcGV60AO5YOW1AmwOq9m2Rh5ZozAD1BEehEF7/3u3d0sxLj53Vp9unryuG/rPzM5iGQrHlcDnbfWQPVaFhbqNAIOJ0=
+X-Received: by 2002:a9d:624b:: with SMTP id i11mr3150440otk.232.1538773823174;
+ Fri, 05 Oct 2018 14:10:23 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:2a95:0:0:0:0:0 with HTTP; Fri, 5 Oct 2018 14:08:51 -0700 (PDT)
-In-Reply-To: <CAJWu+ooTRUxj2PAiUkgjTLb+VC9OoBpkj9-_ZoC-oCS3owc5Hg@mail.gmail.com>
-References: <20181004195906.201895-1-schuffelen@google.com>
- <20181005143323.ezyd2x6x5ymlb7rg@bars> <CAJWu+ooTRUxj2PAiUkgjTLb+VC9OoBpkj9-_ZoC-oCS3owc5Hg@mail.gmail.com>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Fri, 5 Oct 2018 14:08:51 -0700
-Message-ID: <CAJWu+oqoSsj=50vk-jUTKUVgZ_oj5Vng0bBF605Aw_iWD=W24A@mail.gmail.com>
-Subject: Re: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation device
-To:     Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Cc:     Cody Schuffelen <schuffelen@google.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>
+References: <20181005100903.GA32057@embeddedor.com>
+In-Reply-To: <20181005100903.GA32057@embeddedor.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 5 Oct 2018 23:10:12 +0200
+Message-ID: <CAFBinCDWUO74R_GKBJCmGRNSz=b75zxj4XB8LnYuQjdW9ecGLA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: meson-mx-sdio: mark expected switch fall-through
+To:     gustavo@embeddedor.com
+Cc:     ulf.hansson@linaro.org, carlo@caione.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 2:05 PM, Joel Fernandes <joelaf@google.com> wrote:
-> On Fri, Oct 5, 2018 at 7:33 AM, Sergey Matyukevich
-> <sergey.matyukevich.os@quantenna.com> wrote:
->> Hi Cody,
->>
->>>  drivers/net/wireless/Kconfig     |   7 +
->>>  drivers/net/wireless/Makefile    |   2 +
->>>  drivers/net/wireless/virt_wifi.c | 618 +++++++++++++++++++++++++++++++
->>>  3 files changed, 627 insertions(+)
->>>  create mode 100644 drivers/net/wireless/virt_wifi.c
->>
->> I did a quick check of your patch using checkpatch kernel tool,
->> here is a summary of its output:
->>
->> $ ./scripts/checkpatch.pl --strict test.patch
->> ...
->> total: 165 errors, 428 warnings, 9 checks, 634 lines checked
->>
->> Most part of those complaints is about either whitespaces or code
->> idents. I am not sure whether this is a patch itself or email client.
->> So could you please take a look and run checkpatch on your side.
->>
+On Fri, Oct 5, 2018 at 12:15 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 >
-> Yeah, it could be his email client, weird though because if I pull the
-> patch from the kernel.org archive's mbox though, I don't get any
-> errors except the MAINTAINERS file thing:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 >
-> wget https://lore.kernel.org/lkml/20181004195906.201895-1-schuffelen@google.com/raw
-> -O /tmp/tmp.patch
-> ./scripts/checkpatch.pl --strict /tmp/tmp.patch
+> Notice that in this particular case, I replaced the "fall-through:"
+> comment with a proper "fall through", which is what GCC is
+> expecting to find.
 >
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #167:
-> new file mode 100644
->
-> total: 0 errors, 1 warnings, 0 checks, 634 lines checked
->
+> Addresses-Coverity-ID: 1373880 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-FWIW, the X-Mailer on the patch is: git-send-email 2.19.0.605.g01d371f741-goog
+thank you for taking care of this!
 
-So I am guessing this is some issue with the way the patch was
-generated, or something else. Cody, care to share the steps you used
-to generate and send the patch?
 
-- Joel
+Regards
+Martin
