@@ -2,117 +2,172 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EF1C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC6C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA6052084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 357ED21477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:32:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="rQw2jrcV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA6052084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiZ+idpX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357ED21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeJFB3U (ORCPT
+        id S1728639AbeJFBcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:29:20 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46172 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbeJFB3U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:29:20 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r64-v6so5433099pfb.13
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IkZt82vpS1rScduYRnoiOlaTzLJeeVYDOsLCPujk1AE=;
-        b=rQw2jrcVhGipr7k+wKlzIMWW9v1k+NuAxzR0PJqtWX86aZSJwzQ7hvOQQTSJ4odBLJ
-         FfIUMyTX4wFRw4QLacMV1corWA8GV1Gjk+d/y88V8sQ3iwEMHrr/o+DsAl5pQRk+GxRO
-         Q81r3BGiDwb6Up3nT9Bto0Uo4Z3fp8j+7NsYd/LQyJIJ1FG0wL/vfJuFoGP0Kq+/IZS/
-         xbTG9NO+6GFzW6JUfI2Jnjua0qaKmsaZeAmigirQo8QF2xPFnD3+nOQk9CnKU+JjT4ju
-         +N+bdMEE/JAnl3Q+5cz1HSFIUjmJEPUJOra7ZObB7wXRLqzJzvWX9F2Ln3gbYGWIOnfQ
-         v8CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IkZt82vpS1rScduYRnoiOlaTzLJeeVYDOsLCPujk1AE=;
-        b=JiTgHlJ8sqFJKvDLlWl/64uO1hyDOrAf6oiq0GW5rD+f61kjNyvzuaM8fJyEdowViu
-         8HjyAy4LNnLJVajk1vKXuA0+xY+tpF72ScUxN9XeJG4ixZXdsts+dZQeTGPIFUcv9iIW
-         Q+2GHTsQPCObV3uDu7iFpnc7wf7vCg9Y59weLXjXl65NbmdrluawnqrnsY0vtZsM5TEs
-         RqtHkVcc2bbI0+bIANn/koT3fGGEyhYw9sfGmEuuMlSfArvsR2NDEAX/VRbR0L8g+3SW
-         BVbY6GP3CS+nzEBwhLiij0FRUia0FFDNf7QXecsJdK2cTWRmL8E9eEVkaOb3iiPPXjwH
-         rO+g==
-X-Gm-Message-State: ABuFfogjeqSfZoSUKTeY0UVJJ4aN1n4f1+wMGCRSrxL6q5qVbbkLCFEv
-        F4XUmphjM4V5pIWseUCZXG3D7Q==
-X-Google-Smtp-Source: ACcGV62gMLZrCrfe+nPbN5k1qdw61xEUjCxsM7JA25lpWBZIy2O6fvwBeAD64LDSi+6FIvNNQlGMPQ==
-X-Received: by 2002:a63:a309:: with SMTP id s9-v6mr11273744pge.106.1538764164235;
-        Fri, 05 Oct 2018 11:29:24 -0700 (PDT)
-Received: from vader ([2620:10d:c090:200::5:b418])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm9388572pgk.21.2018.10.05.11.29.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 11:29:23 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 11:29:22 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- btrfs-kdave tree
-Message-ID: <20181005182922.GJ25437@vader>
-References: <20181005154721.4bfde639@canb.auug.org.au>
+        Fri, 5 Oct 2018 21:32:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728044AbeJFBcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:32:47 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83E50214C1;
+        Fri,  5 Oct 2018 18:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538764371;
+        bh=L7aZR9bc4bx416Kcx3JUEW4vGf0RwmDJdJ0uKLgpASM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OiZ+idpX4QxLI1Wnukl67lLVJZRlzobgRIT3DdYu+vZpOcs+5F4sbx5yBgYS1iHme
+         qrKrX42KtQbvdMmuvtM3FC1z33iXHocjtp5JJwmaQ2uEqeghyI/Ow14oZdRDPERZXf
+         QOPeCZQqc88ZZ4+irO2SbHAu3S4ATdnGgSP7AOGM=
+Received: by mail-qt1-f174.google.com with SMTP id l9-v6so14825972qtf.5;
+        Fri, 05 Oct 2018 11:32:51 -0700 (PDT)
+X-Gm-Message-State: ABuFfogpo9puoqE1EtWkRk/29BkV7q/mD5cJ8pt5+nq79YD12Oroggku
+        K/w6BioRG8mkZNFH8Zoonkf3MzldY0fk91SxvA==
+X-Google-Smtp-Source: ACcGV63HX2zbcJlDZAtDgJDXMEzwREemvWoN9VcT34aMnZvXQt0FQ7Z1xKkSE7QN8Ct0AKR4OfbEHGIsu7eP+q5/xEY=
+X-Received: by 2002:ac8:148b:: with SMTP id l11-v6mr10739551qtj.27.1538764370602;
+ Fri, 05 Oct 2018 11:32:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005154721.4bfde639@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-20-robh@kernel.org>
+ <20181005180725.GH5626@piout.net>
+In-Reply-To: <20181005180725.GH5626@piout.net>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 5 Oct 2018 13:32:38 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJBRaNf73feHzG4aYyEMxWso8a7Wt6L0JZJLGWecymoUg@mail.gmail.com>
+Message-ID: <CAL_JsqJBRaNf73feHzG4aYyEMxWso8a7Wt6L0JZJLGWecymoUg@mail.gmail.com>
+Subject: Re: [PATCH 19/36] dt-bindings: arm: Convert Atmel board/soc bindings
+ to json-schema
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 03:47:21PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the akpm-current tree got a conflict in:
-> 
->   include/linux/swap.h
-> 
-> between commit:
-> 
->   0f83d16b8f1f ("mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS")
-> 
-> from the btrfs-kdave tree and commit:
-> 
->   26833300651e ("mm, swap: fix race between swapoff and some swap operations")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+On Fri, Oct 5, 2018 at 1:07 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> Hello,
+>
+> On 05/10/2018 11:58:31-0500, Rob Herring wrote:
+> > diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> > new file mode 100644
+> > index 000000000000..f788315b94fa
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> > @@ -0,0 +1,132 @@
+> > +# SPDX-License-Identifier: None
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bindings/arm/atmel-at91.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Atmel AT91 device tree bindings.
+> > +
+> > +maintainers:
+> > +  - Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > +  - Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+>
+> Jean-Christophe has not been active for years, I'd mention Ludovic
+> instead.
 
-Thanks, Stephen, that looks good.
+Will update. I generated these out of git log. I didn't use
+get_maintainers.pl because it seems lots of files don't have
+maintainers listed (other than Mark and me) and I didn't want to be
+it.
 
-This reminds that Dave suggested that we chould route the two mm patches
-in my series through Andrew's mm tree for 4.20 and get the Btrfs bits in
-for 4.21. Would that make things harder for linux-next? If not, I can
-resend "mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS" and "mm:
-export add_swap_extent()" rebased on mmotm.
+>
+> > +description: |
+> > +  Boards with a SoC of the Atmel AT91 or SMART family shall have the following
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    const: '/'
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - const: atmel,at91rm9200
+> > +      - items:
+> > +          - enum:
+> > +              - olimex,sam9-l9260
+> > +          - enum:
+> > +              - atmel,at91sam9260
+> > +              - atmel,at91sam9261
+> > +              - atmel,at91sam9263
+> > +              - atmel,at91sam9g20
+> > +              - atmel,at91sam9g45
+> > +              - atmel,at91sam9n12
+> > +              - atmel,at91sam9rl
+> > +              - atmel,at91sam9xe
+> > +          - const: atmel,at91sam9
+> > +
+> > +      - items:
+> > +          - enum:
+> > +              - atmel,at91sam9g15
+> > +              - atmel,at91sam9g25
+> > +              - atmel,at91sam9g35
+> > +              - atmel,at91sam9x25
+> > +              - atmel,at91sam9x35
+> > +          - const: atmel,at91sam9x5
+> > +          - const: atmel,at91sam9
+> > +
+> > +      - items:
+> > +          - const: atmel,sama5d27
+> > +          - const: atmel,sama5d2
+> > +          - const: atmel,sama5
+> > +
+> > +      - description: Nattis v2 board with Natte v2 power board
+> > +        items:
+> > +          - const: axentia,nattis-2
+> > +          - const: axentia,natte-2
+> > +          - const: axentia,linea
+>
+> Shouldn't we have the board specific compatibles in a separate file to
+> avoid mixing everything with the SoC compatibles?
+
+You can't validate it that way. I have to say "must be compatible A,
+B, C and in that order" and you can't if A, B, and C are in different
+files. We could do board vendor files, but then we have to duplicate
+the SoC compatibles. I don't think there's any board vendor with
+enough boards to justify that. The only place I've found that the
+compatible lists get kind of messy is when platforms have a variable
+number of compatible strings.
+
+We generally have not split things this way for most platforms except
+i.MX which this series changes. Looks like I forgot to remove the
+axentia.txt for Atmel.
+
+Rob
