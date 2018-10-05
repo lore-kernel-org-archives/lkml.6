@@ -2,166 +2,602 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072BFC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE26BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B27B420875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:47:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GikMCPkm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B27B420875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 77E6920875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E6920875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeJEMoc (ORCPT
+        id S1727848AbeJEMod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 5 Oct 2018 08:44:33 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:42334 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726979AbeJEMoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 5 Oct 2018 08:44:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:58179 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbeJEMoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 08:44:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42RJgG0hCJz9s1c;
-        Fri,  5 Oct 2018 15:47:21 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538718442;
-        bh=K1kuzhafY7PeTK9LuiegoeDAhrkZqU3sZwWgPw/dUZo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GikMCPkmbdl/e3YZf3VPRI/duja0gWiS4A9tWwWcs3nJQbDD0phI70mq2Wp/2zt4N
-         dBxgP5pSzIAl+hy2qgzjRqk4ITMqdGqFMQb+aJg0hPHCqG//82OHudd5rOEEQ4tCT/
-         jASpxADdsKv9Wf/PGqmI1ufaUkeMyxG4q2kUYdkimL3zE3AcCWSA+FkjUaZlTPH8Qj
-         su54Ih0SJLES0vAKrluqk2i49ZfN+56w/RRngREouEpo/FzvkKl742FkqsiZPhV038
-         LQaEGAdmoEcQlIm20Td09DlI9/DF8DOj2V7juV7hk6YGFlpyGEl4tDyQ5Ca79OTAwc
-         jJViCrp2ksRIw==
-Date:   Fri, 5 Oct 2018 15:47:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: linux-next: manual merge of the akpm-current tree with the
- btrfs-kdave tree
-Message-ID: <20181005154721.4bfde639@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i"; protocol="application/pgp-signature"
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.Czd554f_1538718425;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Czd554f_1538718425)
+          by smtp.aliyun-inc.com(10.147.41.143);
+          Fri, 05 Oct 2018 13:47:06 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Cc:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V7 15/20] csky: Debug and Ptrace GDB
+Date:   Fri,  5 Oct 2018 13:41:57 +0800
+Message-Id: <f7be910fc6e78bfb4410e8cb17679d5975986079.1538715563.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch adds arch ptrace implementation, stack dump and bug.h.
 
-Hi all,
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ arch/csky/include/asm/bug.h         |  26 +++
+ arch/csky/include/uapi/asm/ptrace.h | 104 ++++++++++++
+ arch/csky/kernel/dumpstack.c        |  66 ++++++++
+ arch/csky/kernel/ptrace.c           | 314 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 510 insertions(+)
+ create mode 100644 arch/csky/include/asm/bug.h
+ create mode 100644 arch/csky/include/uapi/asm/ptrace.h
+ create mode 100644 arch/csky/kernel/dumpstack.c
+ create mode 100644 arch/csky/kernel/ptrace.c
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+diff --git a/arch/csky/include/asm/bug.h b/arch/csky/include/asm/bug.h
+new file mode 100644
+index 0000000..bd7b323
+--- /dev/null
++++ b/arch/csky/include/asm/bug.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef __ASM_CSKY_BUG_H
++#define __ASM_CSKY_BUG_H
++
++#include <linux/compiler.h>
++#include <linux/const.h>
++#include <linux/types.h>
++
++#define BUG()				\
++do {					\
++	asm volatile ("bkpt\n");	\
++	unreachable();			\
++} while (0)
++
++#define HAVE_ARCH_BUG
++
++#include <asm-generic/bug.h>
++
++struct pt_regs;
++
++void die_if_kernel(char *str, struct pt_regs *regs, int nr);
++void show_regs(struct pt_regs *regs);
++
++#endif /* __ASM_CSKY_BUG_H */
+diff --git a/arch/csky/include/uapi/asm/ptrace.h b/arch/csky/include/uapi/asm/ptrace.h
+new file mode 100644
+index 0000000..f10d02c
+--- /dev/null
++++ b/arch/csky/include/uapi/asm/ptrace.h
+@@ -0,0 +1,104 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef _CSKY_PTRACE_H
++#define _CSKY_PTRACE_H
++
++#ifndef __ASSEMBLY__
++
++struct pt_regs {
++	unsigned long	tls;
++	unsigned long	lr;
++	unsigned long	pc;
++	unsigned long	sr;
++	unsigned long	usp;
++
++	/*
++	 * a0, a1, a2, a3:
++	 * abiv1: r2, r3, r4, r5
++	 * abiv2: r0, r1, r2, r3
++	 */
++	unsigned long	orig_a0;
++	unsigned long	a0;
++	unsigned long	a1;
++	unsigned long	a2;
++	unsigned long	a3;
++
++	/*
++	 * ABIV2: r4 ~ r13
++	 * ABIV1: r6 ~ r14, r1
++	 */
++	unsigned long	regs[10];
++
++#if defined(__CSKYABIV2__)
++	/* r16 ~ r30 */
++	unsigned long	exregs[15];
++
++	unsigned long	rhi;
++	unsigned long	rlo;
++	unsigned long	pad; /* reserved */
++#endif
++};
++
++struct user_fp {
++	unsigned long	vr[96];
++	unsigned long	fcr;
++	unsigned long	fesr;
++	unsigned long	fid;
++	unsigned long	reserved;
++};
++
++/*
++ * Switch stack for switch_to after push pt_regs.
++ *
++ * ABI_CSKYV2: r4 ~ r11, r15 ~ r17, r26 ~ r30;
++ * ABI_CSKYV1: r8 ~ r14, r15;
++ */
++struct  switch_stack {
++#if defined(__CSKYABIV2__)
++	unsigned long   r4;
++	unsigned long   r5;
++	unsigned long   r6;
++	unsigned long   r7;
++	unsigned long   r8;
++	unsigned long   r9;
++	unsigned long   r10;
++	unsigned long   r11;
++#else
++	unsigned long   r8;
++	unsigned long   r9;
++	unsigned long   r10;
++	unsigned long   r11;
++	unsigned long   r12;
++	unsigned long   r13;
++	unsigned long   r14;
++#endif
++	unsigned long   r15;
++#if defined(__CSKYABIV2__)
++	unsigned long   r16;
++	unsigned long   r17;
++	unsigned long   r26;
++	unsigned long   r27;
++	unsigned long   r28;
++	unsigned long   r29;
++	unsigned long   r30;
++#endif
++};
++
++#ifdef __KERNEL__
++
++#define PS_S	0x80000000 /* Supervisor Mode */
++
++#define arch_has_single_step() (1)
++#define current_pt_regs() \
++({ (struct pt_regs *)((char *)current_thread_info() + THREAD_SIZE) - 1; })
++
++#define user_stack_pointer(regs) ((regs)->usp)
++
++#define user_mode(regs) (!((regs)->sr & PS_S))
++#define instruction_pointer(regs) ((regs)->pc)
++#define profile_pc(regs) instruction_pointer(regs)
++
++#endif /* __KERNEL__ */
++#endif /* __ASSEMBLY__ */
++#endif /* _CSKY_PTRACE_H */
+diff --git a/arch/csky/kernel/dumpstack.c b/arch/csky/kernel/dumpstack.c
+new file mode 100644
+index 0000000..a9a03ac
+--- /dev/null
++++ b/arch/csky/kernel/dumpstack.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/ptrace.h>
++
++int kstack_depth_to_print = 48;
++
++void show_trace(unsigned long *stack)
++{
++	unsigned long *endstack;
++	unsigned long addr;
++	int i;
++
++	pr_info("Call Trace:\n");
++	addr = (unsigned long)stack + THREAD_SIZE - 1;
++	endstack = (unsigned long *)(addr & -THREAD_SIZE);
++	i = 0;
++	while (stack + 1 <= endstack) {
++		addr = *stack++;
++		/*
++		 * If the address is either in the text segment of the
++		 * kernel, or in the region which contains vmalloc'ed
++		 * memory, it *may* be the address of a calling
++		 * routine; if so, print it so that someone tracing
++		 * down the cause of the crash will be able to figure
++		 * out the call path that was taken.
++		 */
++		if (__kernel_text_address(addr)) {
++#ifndef CONFIG_KALLSYMS
++			if (i % 5 == 0)
++				pr_cont("\n       ");
++#endif
++			pr_cont(" [<%08lx>] %pS\n", addr, (void *)addr);
++			i++;
++		}
++	}
++	pr_cont("\n");
++}
++
++void show_stack(struct task_struct *task, unsigned long *stack)
++{
++	unsigned long *p;
++	unsigned long *endstack;
++	int i;
++
++	if (!stack) {
++		if (task)
++			stack = (unsigned long *)task->thread.esp0;
++		else
++			stack = (unsigned long *)&stack;
++	}
++	endstack = (unsigned long *)
++		(((unsigned long)stack + THREAD_SIZE - 1) & -THREAD_SIZE);
++
++	pr_info("Stack from %08lx:", (unsigned long)stack);
++	p = stack;
++	for (i = 0; i < kstack_depth_to_print; i++) {
++		if (p + 1 > endstack)
++			break;
++		if (i % 8 == 0)
++			pr_cont("\n       ");
++		pr_cont(" %08lx", *p++);
++	}
++	pr_cont("\n");
++	show_trace(stack);
++}
+diff --git a/arch/csky/kernel/ptrace.c b/arch/csky/kernel/ptrace.c
+new file mode 100644
+index 0000000..34b3025
+--- /dev/null
++++ b/arch/csky/kernel/ptrace.c
+@@ -0,0 +1,314 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/elf.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/mm.h>
++#include <linux/ptrace.h>
++#include <linux/regset.h>
++#include <linux/sched.h>
++#include <linux/signal.h>
++#include <linux/smp.h>
++#include <linux/uaccess.h>
++#include <linux/user.h>
++
++#include <asm/thread_info.h>
++#include <asm/page.h>
++#include <asm/pgtable.h>
++#include <asm/processor.h>
++#include <asm/asm-offsets.h>
++
++#include <abi/regdef.h>
++
++/* sets the trace bits. */
++#define TRACE_MODE_SI      (1 << 14)
++#define TRACE_MODE_RUN     0
++#define TRACE_MODE_MASK    ~(0x3 << 14)
++
++/*
++ * Make sure the single step bit is not set.
++ */
++static void singlestep_disable(struct task_struct *tsk)
++{
++	struct pt_regs *regs;
++
++	regs = task_pt_regs(tsk);
++	regs->sr = (regs->sr & TRACE_MODE_MASK) | TRACE_MODE_RUN;
++}
++
++static void singlestep_enable(struct task_struct *tsk)
++{
++	struct pt_regs *regs;
++
++	regs = task_pt_regs(tsk);
++	regs->sr = (regs->sr & TRACE_MODE_MASK) | TRACE_MODE_SI;
++}
++
++/*
++ * Make sure the single step bit is set.
++ */
++void user_enable_single_step(struct task_struct *child)
++{
++	if (child->thread.esp0 == 0)
++		return;
++	singlestep_enable(child);
++}
++
++void user_disable_single_step(struct task_struct *child)
++{
++	if (child->thread.esp0 == 0)
++		return;
++	singlestep_disable(child);
++}
++
++enum csky_regset {
++	REGSET_GPR,
++	REGSET_FPR,
++};
++
++static int gpr_get(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   void *kbuf, void __user *ubuf)
++{
++	struct pt_regs *regs;
++
++	regs = task_pt_regs(target);
++
++	/* Abiv1 regs->tls is fake and we need sync here. */
++	regs->tls = task_thread_info(target)->tp_value;
++
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
++}
++
++static int gpr_set(struct task_struct *target,
++		    const struct user_regset *regset,
++		    unsigned int pos, unsigned int count,
++		    const void *kbuf, const void __user *ubuf)
++{
++	int ret;
++	struct pt_regs regs;
++
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &regs, 0, -1);
++	if (ret)
++		return ret;
++
++	regs.sr = task_pt_regs(target)->sr;
++
++	task_thread_info(target)->tp_value = regs.tls;
++
++	*task_pt_regs(target) = regs;
++
++	return 0;
++}
++
++static int fpr_get(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   void *kbuf, void __user *ubuf)
++{
++	struct user_fp *regs = (struct user_fp *)&target->thread.user_fp;
++
++#if defined(CONFIG_CPU_HAS_FPUV2) && !defined(CONFIG_CPU_HAS_VDSP)
++	int i;
++	struct user_fp tmp = *regs;
++
++	for (i = 0; i < 16; i++) {
++		tmp.vr[i*4] = regs->vr[i*2];
++		tmp.vr[i*4 + 1] = regs->vr[i*2 + 1];
++	}
++
++	for (i = 0; i < 32; i++)
++		tmp.vr[64 + i] = regs->vr[32 + i];
++
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &tmp, 0, -1);
++#else
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
++#endif
++}
++
++static int fpr_set(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   const void *kbuf, const void __user *ubuf)
++{
++	int ret;
++	struct user_fp *regs = (struct user_fp *)&target->thread.user_fp;
++
++#if defined(CONFIG_CPU_HAS_FPUV2) && !defined(CONFIG_CPU_HAS_VDSP)
++	int i;
++	struct user_fp tmp;
++
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &tmp, 0, -1);
++
++	*regs = tmp;
++
++	for (i = 0; i < 16; i++) {
++		regs->vr[i*2] = tmp.vr[i*4];
++		regs->vr[i*2 + 1] = tmp.vr[i*4 + 1];
++	}
++
++	for (i = 0; i < 32; i++)
++		regs->vr[32 + i] = tmp.vr[64 + i];
++#else
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
++#endif
++
++	return ret;
++}
++
++static const struct user_regset csky_regsets[] = {
++	[REGSET_GPR] = {
++		.core_note_type = NT_PRSTATUS,
++		.n = ELF_NGREG,
++		.size = sizeof(u32),
++		.align = sizeof(u32),
++		.get = &gpr_get,
++		.set = &gpr_set,
++	},
++	[REGSET_FPR] = {
++		.core_note_type = NT_PRFPREG,
++		.n = sizeof(struct user_fp) / sizeof(u32),
++		.size = sizeof(u32),
++		.align = sizeof(u32),
++		.get = &fpr_get,
++		.set = &fpr_set,
++	},
++};
++
++static const struct user_regset_view user_csky_view = {
++	.name = "csky",
++	.e_machine = ELF_ARCH,
++	.regsets = csky_regsets,
++	.n = ARRAY_SIZE(csky_regsets),
++};
++
++const struct user_regset_view *task_user_regset_view(struct task_struct *task)
++{
++	return &user_csky_view;
++}
++
++void ptrace_disable(struct task_struct *child)
++{
++	singlestep_disable(child);
++}
++
++long arch_ptrace(struct task_struct *child, long request,
++		 unsigned long addr, unsigned long data)
++{
++	long ret = -EIO;
++
++	switch (request) {
++	default:
++		ret = ptrace_request(child, request, addr, data);
++		break;
++	}
++
++	return ret;
++}
++
++/*
++ * If process's system calls is traces, do some corresponding handles in this
++ * function before entering system call function and after exiting system call
++ * function.
++ */
++asmlinkage void syscall_trace(int why, struct pt_regs *regs)
++{
++	long saved_why;
++	/*
++	 * Save saved_why, why is used to denote syscall entry/exit;
++	 * why = 0:entry, why = 1: exit
++	 */
++	saved_why = regs->regs[SYSTRACE_SAVENUM];
++	regs->regs[SYSTRACE_SAVENUM] = why;
++
++	ptrace_notify(SIGTRAP | ((current->ptrace & PT_TRACESYSGOOD)
++					? 0x80 : 0));
++
++	/*
++	 * this isn't the same as continuing with a signal, but it will do
++	 * for normal use.  strace only continues with a signal if the
++	 * stopping signal is not SIGTRAP.  -brl
++	 */
++	if (current->exit_code) {
++		send_sig(current->exit_code, current, 1);
++		current->exit_code = 0;
++	}
++
++	regs->regs[SYSTRACE_SAVENUM] = saved_why;
++}
++
++void show_regs(struct pt_regs *fp)
++{
++	unsigned long   *sp;
++	unsigned char   *tp;
++	int	i;
++
++	pr_info("\nCURRENT PROCESS:\n\n");
++	pr_info("COMM=%s PID=%d\n", current->comm, current->pid);
++
++	if (current->mm) {
++		pr_info("TEXT=%08x-%08x DATA=%08x-%08x BSS=%08x-%08x\n",
++		       (int) current->mm->start_code,
++		       (int) current->mm->end_code,
++		       (int) current->mm->start_data,
++		       (int) current->mm->end_data,
++		       (int) current->mm->end_data,
++		       (int) current->mm->brk);
++		pr_info("USER-STACK=%08x  KERNEL-STACK=%08x\n\n",
++		       (int) current->mm->start_stack,
++		       (int) (((unsigned long) current) + 2 * PAGE_SIZE));
++	}
++
++	pr_info("PC: 0x%08lx\n", (long)fp->pc);
++	pr_info("orig_a0: 0x%08lx\n", fp->orig_a0);
++	pr_info("PSR: 0x%08lx\n", (long)fp->sr);
++
++	pr_info("a0: 0x%08lx  a1: 0x%08lx  a2: 0x%08lx  a3: 0x%08lx\n",
++	       fp->a0, fp->a1, fp->a2, fp->a3);
++#if defined(__CSKYABIV2__)
++	pr_info("r4: 0x%08lx  r5: 0x%08lx    r6: 0x%08lx    r7: 0x%08lx\n",
++		fp->regs[0], fp->regs[1], fp->regs[2], fp->regs[3]);
++	pr_info("r8: 0x%08lx  r9: 0x%08lx   r10: 0x%08lx   r11: 0x%08lx\n",
++		fp->regs[4], fp->regs[5], fp->regs[6], fp->regs[7]);
++	pr_info("r12 0x%08lx  r13: 0x%08lx   r15: 0x%08lx\n",
++		fp->regs[8], fp->regs[9], fp->lr);
++	pr_info("r16:0x%08lx   r17: 0x%08lx   r18: 0x%08lx    r19: 0x%08lx\n",
++		fp->exregs[0], fp->exregs[1], fp->exregs[2], fp->exregs[3]);
++	pr_info("r20 0x%08lx   r21: 0x%08lx   r22: 0x%08lx    r23: 0x%08lx\n",
++		fp->exregs[4], fp->exregs[5], fp->exregs[6], fp->exregs[7]);
++	pr_info("r24 0x%08lx   r25: 0x%08lx   r26: 0x%08lx    r27: 0x%08lx\n",
++		fp->exregs[8], fp->exregs[9], fp->exregs[10], fp->exregs[11]);
++	pr_info("r28 0x%08lx   r29: 0x%08lx   r30: 0x%08lx    tls: 0x%08lx\n",
++		fp->exregs[12], fp->exregs[13], fp->exregs[14], fp->tls);
++	pr_info("hi 0x%08lx    lo: 0x%08lx\n",
++		fp->rhi, fp->rlo);
++#else
++	pr_info("r6: 0x%08lx   r7: 0x%08lx   r8: 0x%08lx   r9: 0x%08lx\n",
++		fp->regs[0], fp->regs[1], fp->regs[2], fp->regs[3]);
++	pr_info("r10: 0x%08lx   r11: 0x%08lx   r12: 0x%08lx   r13: 0x%08lx\n",
++		fp->regs[4], fp->regs[5], fp->regs[6], fp->regs[7]);
++	pr_info("r14 0x%08lx   r1: 0x%08lx   r15: 0x%08lx\n",
++		fp->regs[8], fp->regs[9], fp->lr);
++#endif
++
++	pr_info("\nCODE:");
++	tp = ((unsigned char *) fp->pc) - 0x20;
++	tp += ((int)tp % 4) ? 2 : 0;
++	for (sp = (unsigned long *) tp, i = 0; (i < 0x40);  i += 4) {
++		if ((i % 0x10) == 0)
++			pr_cont("\n%08x: ", (int) (tp + i));
++		pr_cont("%08x ", (int) *sp++);
++	}
++	pr_cont("\n");
++
++	pr_info("\nKERNEL STACK:");
++	tp = ((unsigned char *) fp) - 0x40;
++	for (sp = (unsigned long *) tp, i = 0; (i < 0xc0); i += 4) {
++		if ((i % 0x10) == 0)
++			pr_cont("\n%08x: ", (int) (tp + i));
++		pr_cont("%08x ", (int) *sp++);
++	}
++	pr_cont("\n");
++}
+-- 
+2.7.4
 
-  include/linux/swap.h
-
-between commit:
-
-  0f83d16b8f1f ("mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS")
-
-from the btrfs-kdave tree and commit:
-
-  26833300651e ("mm, swap: fix race between swapoff and some swap operation=
-s")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/swap.h
-index 4fff094dbd53,f32f94639b13..000000000000
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@@ -167,14 -167,14 +167,15 @@@ enum=20
-  	SWP_SOLIDSTATE	=3D (1 << 4),	/* blkdev seeks are cheap */
-  	SWP_CONTINUED	=3D (1 << 5),	/* swap_map has count continuation */
-  	SWP_BLKDEV	=3D (1 << 6),	/* its a block device */
- -	SWP_FILE	=3D (1 << 7),	/* set after swap_activate success */
- -	SWP_AREA_DISCARD =3D (1 << 8),	/* single-time swap area discards */
- -	SWP_PAGE_DISCARD =3D (1 << 9),	/* freed swap page-cluster discards */
- -	SWP_STABLE_WRITES =3D (1 << 10),	/* no overwrite PG_writeback pages */
- -	SWP_SYNCHRONOUS_IO =3D (1 << 11),	/* synchronous IO is efficient */
- -	SWP_VALID	=3D (1 << 12),	/* swap is valid to be operated on? */
- +	SWP_ACTIVATED	=3D (1 << 7),	/* set after swap_activate success */
- +	SWP_FS		=3D (1 << 8),	/* swap file goes through fs */
- +	SWP_AREA_DISCARD =3D (1 << 9),	/* single-time swap area discards */
- +	SWP_PAGE_DISCARD =3D (1 << 10),	/* freed swap page-cluster discards */
- +	SWP_STABLE_WRITES =3D (1 << 11),	/* no overwrite PG_writeback pages */
- +	SWP_SYNCHRONOUS_IO =3D (1 << 12),	/* synchronous IO is efficient */
-++	SWP_VALID	=3D (1 << 13),	/* swap is valid to be operated on? */
-  					/* add others here before... */
---	SWP_SCANNING	=3D (1 << 13),	/* refcount in scan_swap_map */
-++	SWP_SCANNING	=3D (1 << 14),	/* refcount in scan_swap_map */
-  };
- =20
-  #define SWAP_CLUSTER_MAX 32UL
-@@@ -297,15 -297,20 +298,15 @@@ struct vma_swap_readahead=20
- =20
-  /* linux/mm/workingset.c */
-  void *workingset_eviction(struct address_space *mapping, struct page *pag=
-e);
-- bool workingset_refault(void *shadow);
-+ void workingset_refault(struct page *page, void *shadow);
-  void workingset_activation(struct page *page);
- =20
- -/* Do not use directly, use workingset_lookup_update */
- -void workingset_update_node(struct radix_tree_node *node);
- -
- -/* Returns workingset_update_node() if the mapping has shadow entries. */
- -#define workingset_lookup_update(mapping)				\
- -({									\
- -	radix_tree_update_node_t __helper =3D workingset_update_node;	\
- -	if (dax_mapping(mapping) || shmem_mapping(mapping))		\
- -		__helper =3D NULL;					\
- -	__helper;							\
- -})
- +/* Only track the nodes of mappings with shadow entries */
- +void workingset_update_node(struct xa_node *node);
- +#define mapping_set_update(xas, mapping) do {				\
- +	if (!dax_mapping(mapping) && !shmem_mapping(mapping))		\
- +		xas_set_update(xas, workingset_update_node);		\
- +} while (0)
- =20
-  /* linux/mm/page_alloc.c */
-  extern unsigned long totalram_pages;
-
---Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2+ukACgkQAVBC80lX
-0Gy9SAf/TRcZunFAOZ6z1fjHrLXEvd2qhdJuSLN1RNhCIi3TpRRqbRLxpDZoT4X2
-Ts1zm85ww2X0Eggz1S4PfsBLIau64FTL74HnHGUxvKU/PHo6PxlqWQmV+klgjdAV
-oRzbe5zshUEWLNvOwmPCsjv2cU53GTmF68JA0PG8/4lJvVlU29pIfEoIdb8BHJBo
-IY9QPxJHHvAg7rnfMSTMOkigHP8e20QkcQOEoBd2nj5Otp0w7kCtnRf6E4tjkN2k
-xLgWhVv9fHx0DrK/FgRTcC6Nlhsa2RPuTPLhVxW3oRufPnZ9FpnSpFt9T96jvjQV
-6pSvHktLBZpvojJQLH4AuxCmFVG8uA==
-=SEmn
------END PGP SIGNATURE-----
-
---Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i--
