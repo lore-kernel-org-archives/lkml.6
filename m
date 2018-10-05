@@ -2,70 +2,100 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E603C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3433C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D48B2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D48B2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8325920875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:02:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8325920875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbeJESxo (ORCPT
+        id S1728387AbeJETBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 14:53:44 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37976 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbeJESxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 14:53:44 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1g8OhO-0008GW-VR; Fri, 05 Oct 2018 13:55:15 +0200
-Date:   Fri, 5 Oct 2018 13:55:14 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 00/11 v3] x86: load FPU registers on return to userland
-Message-ID: <20181005115514.acxsyghmzlhhqjx7@linutronix.de>
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <8ea44ae2bb4844df812ea4c6cb0c00ef12708c51.camel@surriel.com>
+        Fri, 5 Oct 2018 15:01:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:52613 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728164AbeJETBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 15:01:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42RT0P4DZbz9s4s;
+        Fri,  5 Oct 2018 22:02:45 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+In-Reply-To: <20181005161406.73ef8727@canb.auug.org.au>
+References: <20181005161406.73ef8727@canb.auug.org.au>
+Date:   Fri, 05 Oct 2018 22:02:45 +1000
+Message-ID: <87d0sok3dm.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8ea44ae2bb4844df812ea4c6cb0c00ef12708c51.camel@surriel.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-04 12:45:08 [-0400], Rik van Riel wrote:
-> Wait, so any thread can bypass its memory protection
-> keys, even if there is a seccomp filter preventing
-> it from calling the PKRU syscalls?
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Hi Andrew,
+>
+> After merging the akpm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> arch/powerpc/kernel/setup-common.c:36:10: fatal error: linux/bootmem.h: No such file or directory
+>  #include <linux/bootmem.h>
+>           ^~~~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   49353a51a758 ("mm: remove include/linux/bootmem.h")
+>
+> interacting with commit
+>
+>   d90fe2acd9b2 ("powerpc: Wire up memtest")
+>
+> from the powerpc tree.
 
-We have SYS_pkey_alloc +free and SYS_pkey_mprotect. For read/ write of
-the register value, libc is using and opcodes.
+Ah fudge, what are the chances we add a new include of bootmem.h just as
+Mike's removing bootmem.
 
-> Is that intended?
+> I applied the following patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 5 Oct 2018 16:09:34 +1000
+> Subject: [PATCH] powerpc: fix up for removal of linux/bootmem.h
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/powerpc/kernel/setup-common.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+> index 2b56d1f30387..93ee3703b42f 100644
+> --- a/arch/powerpc/kernel/setup-common.c
+> +++ b/arch/powerpc/kernel/setup-common.c
+> @@ -33,7 +33,6 @@
+>  #include <linux/serial_8250.h>
+>  #include <linux/percpu.h>
+>  #include <linux/memblock.h>
+> -#include <linux/bootmem.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/hugetlb.h>
+>  #include <asm/debugfs.h>
 
-Either that or it ended like that because someone failed to attend a
-meeting where this was discussed. Here is something from pkeys(7):
+I could just apply that to my tree. memblock.h is where early_memtest() is
+actually defined anyway.
 
-| Protection  keys  have  the  potential  to  add  a  layer  of security and
-| reliability to applications.  But they have not been primarily designed as a
-| security feature.  For instance, WRPKRU is a completely unprivileged
-| instruction, so pkeys are useless in any case that an attacker controls the
-| PKRU register or can execute arbitrary instructions.
-
-Sebastian
+cheers
