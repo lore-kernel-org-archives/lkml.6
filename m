@@ -2,154 +2,120 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730EBC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9614AC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251FF2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AD4F2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:38:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BYXn4QrA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251FF2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4fw5pRZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AD4F2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbeJEUf6 (ORCPT
+        id S1728732AbeJEUg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:35:58 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:39485 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727701AbeJEUf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:35:58 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d2f8a01b;
-        Fri, 5 Oct 2018 13:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
-        :cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=mail; bh=0Kq5AE3q2nUGsIwGUcZBMZ664cM=; b=BYXn4Qr
-        Ab754itrzm2wYeUg9qCn9cZjunZdHOgUUZnT0iGSYsB2aWqJ+hc1Arr/CMcKUxpw
-        Qn11N/vGsJyZAAa7d952BE5JztA4SFpZdUNGD5X1/4vs30IP9/upKJpgQ41htlkC
-        4qUQKXDtNxH8QvSLldw3k0gMuXhuCKmH1QkKJNoUuu8DZivWlB98R4AyTniwnRB2
-        SOLJ/9WeMO+q0BMFLz96zfwEhM9Ff3ZwEGFhQkuMz352he7J588yuBUgJ/U29iU5
-        RRWdnpcL829/SPjhN5kOvoVHpZ57BLtALwUWolNRrQ3r6ijiifQya5NDIaycu1BZ
-        QXVSpsZ9Fahjncg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 25245c3f (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Fri, 5 Oct 2018 13:36:46 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 15:37:06 +0200
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Richard Weinberger <richard@nod.at>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH 0/9] patchable function pointers for pluggable crypto
- routines
-Message-ID: <20181005133705.GA4588@zx2c4.com>
-References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
+        Fri, 5 Oct 2018 16:36:57 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52031 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727701AbeJEUg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:36:57 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 143-v6so1910056wmf.1;
+        Fri, 05 Oct 2018 06:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AK6EzRMfaUabjqoYDvuZwU1hNBWygeF3CXtM6oIARAU=;
+        b=V4fw5pRZwFnS7+9akPGvQviwOA97TEu23OyA6xURDRXNCEpN1sJH0GWjGeJyp7bQ5C
+         ELOk6jkXsBcOJ5ZX1x/5gBJkIi97589PRD9vWOZEhODq+AXRLD6egbT5yiIkaOBOiswi
+         piC+ZNUOvj1g32JSCuGhqpRhm7hfeaRUJSKKh8Nkl7pJAtVmYonWCmYAqyCSVpqfOWQO
+         XIaY3TZahti4B7B5p2Od9kH1oEmn44XDChfrnZpMxzofsBp6c+I6uVACaR4cpd869Fid
+         kQggwVLfDEx0KpQ6QgOwLS3FWUumoCzN3WrwHrnOPeJ3Gq2oE/MByrL4oLqJAdtdffbn
+         jYlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AK6EzRMfaUabjqoYDvuZwU1hNBWygeF3CXtM6oIARAU=;
+        b=KfOkfAv69+hncgymFABBZ8gK5s4asMPuO29IPE1dD5OCqr7sB70HB+5K2xtEIYCY6i
+         7hOyaiKQyYlot1OqgKKabycitC9fMdkobRpc+nQ9BJ9DMt5PN8bbY+ZYW13+EaUH/Z+k
+         y+vxznEDVMytgjPeHDGeAYeQ5IoehBdDgtMhG3Y5ZFObEFzNKnXD/uCPlJuZByPPR5Vo
+         CA9MWd98b73xggkosgs1SceVehLcgZlqT5J9ZuXjOCdkZCeHGhWCM8lwYkCrfx1498x1
+         WXETuTOqMBfxQQ/4bDjIluV/ZxUnq/FGoZaYOLMpuoGBy7D6v7GVs90sOgd9aULjc3WS
+         DAwA==
+X-Gm-Message-State: ABuFfohft8Zsnsxm9TbbNgJk8ySKXBU1kIELb4F+4dkomJGX5IEUzYDb
+        1KhuoZA8aZXKH49Cudz/JCoHViWcl0lspjiHIXw=
+X-Google-Smtp-Source: ACcGV63VObnJ2eOxo4OjLpmDeg+gDfVa/2wwReYj13Cf7cmz1F4aDUgaHs6aDtIgpPYlIBRl/kjhEzyy9QNaDLQkfOs=
+X-Received: by 2002:a1c:8fcc:: with SMTP id r195-v6mr8178820wmd.44.1538746689285;
+ Fri, 05 Oct 2018 06:38:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
+References: <CAKv+Gu-ZMR7zEAKv6_2tyD3OqnjVugOzKHzBEXW3pQs5W-SvLw@mail.gmail.com>
+ <20181002033908.324yhwqaohfsq65d@gondor.apana.org.au> <CAHmME9piX1kbUhOBcUKVdecr45EjxuruxYuMTepfXVvRrkVmyg@mail.gmail.com>
+ <CAKv+Gu8fr_qADiTJH05nVWF7Yi3U722nfKJsMaRE9CP3YjNBbg@mail.gmail.com>
+ <CAHmME9r6-DHLwePQGBGcnPUZuZgZ2GtSUX9arsWzLqhKxd=uDA@mail.gmail.com>
+ <20181003064951.GC745@sol.localdomain> <CAHmME9ogY=v2Le85+_=-m++RwAzwiUmKyNzx6N2y9Ht-J7xBcQ@mail.gmail.com>
+In-Reply-To: <CAHmME9ogY=v2Le85+_=-m++RwAzwiUmKyNzx6N2y9Ht-J7xBcQ@mail.gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Fri, 5 Oct 2018 15:37:57 +0200
+Message-ID: <CAFLxGvw154vyOziRKuFf5-XTa1NcQm5ZVmgUy3=F79k=Rw2dvA@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     ebiggers@kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
-
-On Fri, Oct 5, 2018 at 10:13 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> At the moment, the Zinc library [1] is being proposed as a solution for that,
-> and while it does address the usability problems, it does a lot more than
-> that, and what we end up with is a lot less flexible than what we have now.
+On Fri, Oct 5, 2018 at 3:14 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> On Wed, Oct 3, 2018 at 8:49 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> > It's not really about the name, though.  It's actually about the whole way of
+> > thinking about the submission.  Is it a new special library with its own things
+> > going on, or is it just some crypto helper functions?  It's really just the
+> > latter, but you've been presenting it as the former
 >
-> Currently, arch specific implementations (based on SIMD or optimized
-> assembler) live in arch/*/crypto, where each sub-community is in charge
-> of its own specialized versions of the various primitives (although still
-> under the purview of the crypto maintainer). Any proposal to change this
-> model should be judged on its own merit, and not blindly accepted as the
-> fallout of cleaning up some library code.
->
-> Also, Zinc removes the possibility to plug different versions of a routine,
-> and instead, keeps all versions in the same module. Currently, the kernel's
-> module support permits user land to take charge of the policies that decide
-> which version to use in which context (by loading or blacklisting modules).
+> No, it really is its own thing with important differences from the
+> present crypto api. Zinc's focus is on simplicity and clarity. To the
+> extent that we're at all tangled with the current crypto api, the goal
+> is to untangle as much as possible. It intends to be a small and
+> lightweight set of routines, whose relationships are obvious, and with
+> this direct and to the point organization, as well as work with the larger
+> cryptography community and with academia to invite collaboration. With
+> this comes a different way of maintaining it, with higher standards
+> and a preference for different implementations than the current
+> situation. With Zinc, you have an obvious series of C function calls
+> composing the whole thing, without complicated indirection. It's
+> something that could be trivially lifted out into a userspace library,
+> and used broadly, for example -- something I'll probably do at some
+> point. That's a bit of a design change to the current crypto api, and
+> sprinkling some direct function calls within the current crypto api's
+> complicated enterprise situation would only kick the can further down
+> the road, as much complexity would still remain. The goal is to move
+> away from behemoth enterprise APIs, and large and complex codebases to
+> a simple and direct way of doing things. This desire to untangle, to
+> start from a simpler base, and to generally do things differently
+> means it will go into lib/zinc/ and include/zinc/ and have different
+> maintainers.
 
-I think this explanation misunderstands many of the design goals of Zinc and
-also points to why going your direction instead is a bad idea that will cause
-even more problems down the road.
+So we will have two competing crypo stacks in the kernel?
 
-Zinc does several important things:
+Having a lightweight crypto API is a good thing but I really don't like the idea
+of having zinc parallel to the existing crypto stack.
+And I strongly vote that Herbert Xu shall remain the maintainer of the whole
+crypto system (including zinc!) in the kernel.
 
-- Introduces direct C function calls throughout, as a central way of being
-  implemented and as a central way of being used by consumers of the
-  API. This has various obvious benefits for the consumers of the API,
-  but it also has big benefits for the developers of the library as
-  well. Namely, it keeps the relationship between different parts
-  extremely clear and direct. It's an explicit choice for simplicity.
-  And by being the simpler and more direct solution, it also gives gcc
-  an important opportunity to optimize and inline.
-
-- Reorganizes crypto routines so that they're grouped together by
-  primitive. This again leads to a much simpler design and layout,
-  making it more obvious what's happening, and making things generally
-  cleaner. It is not only useful and clearer for developers, but it
-  also makes contributors and auditors more easily aware of what
-  implementations are available.
-
-- Has higher standards for code and implementations that are introduced.
-  Zinc prefers code that has been formally verified, that has been in
-  widespread usage and has received many eyeballs and fuzzing hours,
-  that has been fuzzed extensively, that is simple in design, that comes
-  from well-known high-quality authors -- in roughly but not precisely
-  that order of preference. That's a bit different from the current
-  practices of the existing crypto API.
-
-- Has a simpler mechanism that is just as effective for choosing
-  available implementations. This is, again, more obvious and direct
-  than the present crypto API's module approach, leads to smaller code
-  size, and has the potential of being just as flexible with the
-  inevitable desire for nobs, adjustable from userspace, from
-  kernelspace, or from elsewhere.
-
-- Is designed to promote collaboration with the larger cryptography
-  community and with academia, which will yield better implementations
-  and for assurance.
-
-- Can easily be extracted to userspace libraries (perhaps a future
-  libzinc could be easily based on it), which makes testing and fuzzing
-  using tools like libfuzzer and afl more accessible.
-
-- Has faster implementations than the current crypto API.
-
-- Has, again, a very strong focus on being simple and minimal, as
-  opposed to bloated and complicated, so that it's actually possible to
-  understand and audit the library.
-
-Therefore, I think this patch goes in exactly the wrong direction. I
-mean, if you want to introduce dynamic patching as a means for making
-the crypto API's dynamic dispatch stuff not as slow in a post-spectre
-world, sure, go for it; that may very well be a good idea. But
-presenting it as an alternative to Zinc very widely misses the point and
-serves to prolong a series of bad design choices, which are now able to
-be rectified by putting energy into Zinc instead.
-
-Jason
+-- 
+Thanks,
+//richard
