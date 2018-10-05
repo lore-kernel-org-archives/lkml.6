@@ -2,238 +2,98 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCEBC65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11461C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739E3208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739E3208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id C0F18214C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf2OTARL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F18214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbeJEXQN (ORCPT
+        id S1730047AbeJEXQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:13 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:32886 "EHLO ale.deltatee.com"
+        Fri, 5 Oct 2018 19:16:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729971AbeJEXQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:13 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8SmT-0008D6-Oi; Fri, 05 Oct 2018 10:16:47 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8SmS-0000ej-BG; Fri, 05 Oct 2018 10:16:44 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Waterman <andrew@sifive.com>,
-        Olof Johansson <olof@lixom.net>,
-        Michael Clark <michaeljclark@mac.com>,
-        Rob Herring <robh@kernel.org>, Zong Li <zong@andestech.com>
-Date:   Fri,  5 Oct 2018 10:16:42 -0600
-Message-Id: <20181005161642.2462-6-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181005161642.2462-1-logang@deltatee.com>
-References: <20181005161642.2462-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, sbates@raithlin.com, aou@eecs.berkeley.edu, hch@lst.de, logang@deltatee.com, palmer@sifive.com, andrew@sifive.com, olof@lixom.net, michaeljclark@mac.com, robh@kernel.org, zong@andestech.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 5/5] RISC-V: Implement sparsemem
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1730013AbeJEXQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:14 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32FC421480;
+        Fri,  5 Oct 2018 16:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538756210;
+        bh=oBzQo6ih4Tjt0dTKU27+YYSzteqOF5n8/RwdCliRQHw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Xf2OTARLzIgfNQWi9qHj6oaxfPTXxmwo6gOLk2p+glXzit7u7PnomycJZ3d/LPYOi
+         YniF6iRwcUklGy1G3DyFihrWst3uScdeWhqEaaseVXEaCB9STfNToi9L9rjmh8FOH2
+         1VNyclOa/oEz+gPr4/ycphOoih9BxERJW+E191hk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 17/23] ARM: dts: at91: add new compatibility string for macb on sama5d3
+Date:   Fri,  5 Oct 2018 12:16:28 -0400
+Message-Id: <20181005161634.20631-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
+References: <20181005161634.20631-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements sparsemem support for risc-v which helps pave the
-way for memory hotplug and eventually P2P support.
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-We introduce Kconfig options for virtual and physical address bits which
-are used to calculate the size of the vmemmap and set the
-MAX_PHYSMEM_BITS.
+[ Upstream commit 321cc359d899a8e988f3725d87c18a628e1cc624 ]
 
-The vmemmap is located directly before the VMALLOC region and sized
-such that we can allocate enough pages to populate all the virtual
-address space in the system (similar to the way it's done in arm64).
+We need this new compatibility string as we experienced different behavior
+for this 10/100Mbits/s macb interface on this particular SoC.
+Backward compatibility is preserved as we keep the alternative strings.
 
-During initialization, call memblocks_present() and sparse_init(),
-and provide a stub for vmemmap_populate() (all of which is similar to
-arm64).
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Andrew Waterman <andrew@sifive.com>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Michael Clark <michaeljclark@mac.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Zong Li <zong@andestech.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/riscv/Kconfig                 | 23 +++++++++++++++++++++++
- arch/riscv/include/asm/pgtable.h   | 24 ++++++++++++++++++++----
- arch/riscv/include/asm/sparsemem.h | 11 +++++++++++
- arch/riscv/kernel/setup.c          |  4 +++-
- arch/riscv/mm/init.c               |  8 ++++++++
- 5 files changed, 65 insertions(+), 5 deletions(-)
- create mode 100644 arch/riscv/include/asm/sparsemem.h
+ Documentation/devicetree/bindings/net/macb.txt | 1 +
+ arch/arm/boot/dts/sama5d3_emac.dtsi            | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a344980287a5..a1b5d758a542 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -52,12 +52,32 @@ config ZONE_DMA32
- 	bool
- 	default y if 64BIT
+diff --git a/Documentation/devicetree/bindings/net/macb.txt b/Documentation/devicetree/bindings/net/macb.txt
+index 27966ae741e0..141d8c1f714f 100644
+--- a/Documentation/devicetree/bindings/net/macb.txt
++++ b/Documentation/devicetree/bindings/net/macb.txt
+@@ -10,6 +10,7 @@ Required properties:
+   Use "cdns,pc302-gem" for Picochip picoXcell pc302 and later devices based on
+   the Cadence GEM, or the generic form: "cdns,gem".
+   Use "atmel,sama5d2-gem" for the GEM IP (10/100) available on Atmel sama5d2 SoCs.
++  Use "atmel,sama5d3-macb" for the 10/100Mbit IP available on Atmel sama5d3 SoCs.
+   Use "atmel,sama5d3-gem" for the Gigabit IP available on Atmel sama5d3 SoCs.
+   Use "atmel,sama5d4-gem" for the GEM IP (10/100) available on Atmel sama5d4 SoCs.
+   Use "cdns,zynq-gem" Xilinx Zynq-7xxx SoC.
+diff --git a/arch/arm/boot/dts/sama5d3_emac.dtsi b/arch/arm/boot/dts/sama5d3_emac.dtsi
+index 7cb235ef0fb6..6e9e1c2f9def 100644
+--- a/arch/arm/boot/dts/sama5d3_emac.dtsi
++++ b/arch/arm/boot/dts/sama5d3_emac.dtsi
+@@ -41,7 +41,7 @@
+ 			};
  
-+config VA_BITS
-+	int
-+	default 32 if 32BIT
-+	default 39 if 64BIT
-+
-+config PA_BITS
-+	int
-+	default 34 if 32BIT
-+	default 56 if 64BIT
-+
- config PAGE_OFFSET
- 	hex
- 	default 0xC0000000 if 32BIT && MAXPHYSMEM_2GB
- 	default 0xffffffff80000000 if 64BIT && MAXPHYSMEM_2GB
- 	default 0xffffffe000000000 if 64BIT && MAXPHYSMEM_128GB
- 
-+config ARCH_FLATMEM_ENABLE
-+	def_bool y
-+
-+config ARCH_SPARSEMEM_ENABLE
-+	def_bool y
-+	select SPARSEMEM_VMEMMAP_ENABLE
-+
-+config ARCH_SELECT_MEMORY_MODEL
-+	def_bool ARCH_SPARSEMEM_ENABLE
-+
- config STACKTRACE_SUPPORT
- 	def_bool y
- 
-@@ -92,6 +112,9 @@ config PGTABLE_LEVELS
- config HAVE_KPROBES
- 	def_bool n
- 
-+config HAVE_ARCH_PFN_VALID
-+	def_bool y
-+
- menu "Platform type"
- 
- choice
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 16301966d65b..20c49cded686 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -89,6 +89,26 @@ extern pgd_t swapper_pg_dir[];
- #define __S110	PAGE_SHARED_EXEC
- #define __S111	PAGE_SHARED_EXEC
- 
-+#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
-+#define VMALLOC_END      (PAGE_OFFSET - 1)
-+#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
-+
-+/*
-+ * Log2 of the upper bound of the size of a struct page. Used for sizing
-+ * the vmemmap region only, does not affect actual memory footprint.
-+ * We don't use sizeof(struct page) directly since taking its size here
-+ * requires its definition to be available at this point in the inclusion
-+ * chain, and it may not be a power of 2 in the first place.
-+ */
-+#define STRUCT_PAGE_MAX_SHIFT	6
-+
-+#define VMEMMAP_SIZE	(UL(1) << (CONFIG_VA_BITS - PAGE_SHIFT - 1 + \
-+				   STRUCT_PAGE_MAX_SHIFT))
-+#define VMEMMAP_END	(VMALLOC_START - 1)
-+#define VMEMMAP_START	(VMALLOC_START - VMEMMAP_SIZE)
-+
-+#define vmemmap		((struct page *)VMEMMAP_START)
-+
- /*
-  * ZERO_PAGE is a global shared page that is always zero,
-  * used for zero-mapped memory areas, etc.
-@@ -411,10 +431,6 @@ static inline void pgtable_cache_init(void)
- 	/* No page table caches to initialize */
- }
- 
--#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
--#define VMALLOC_END      (PAGE_OFFSET - 1)
--#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
--
- /*
-  * Task size is 0x40000000000 for RV64 or 0xb800000 for RV32.
-  * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
-diff --git a/arch/riscv/include/asm/sparsemem.h b/arch/riscv/include/asm/sparsemem.h
-new file mode 100644
-index 000000000000..4563e806c788
---- /dev/null
-+++ b/arch/riscv/include/asm/sparsemem.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_SPARSEMEM_H
-+#define __ASM_SPARSEMEM_H
-+
-+#ifdef CONFIG_SPARSEMEM
-+#define MAX_PHYSMEM_BITS	CONFIG_PA_BITS
-+#define SECTION_SIZE_BITS	30
-+#endif
-+
-+#endif
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index aee603123030..89fa781a9bf8 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -205,6 +205,9 @@ static void __init setup_bootmem(void)
- 		                  PFN_PHYS(end_pfn - start_pfn),
- 		                  &memblock.memory, 0);
- 	}
-+
-+	memblocks_present();
-+	sparse_init();
- }
- 
- void __init setup_arch(char **cmdline_p)
-@@ -239,4 +242,3 @@ void __init setup_arch(char **cmdline_p)
- 
- 	riscv_fill_hwcap();
- }
--
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 58a522f9bcc3..5d529878667c 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -70,3 +70,11 @@ void free_initrd_mem(unsigned long start, unsigned long end)
- {
- }
- #endif /* CONFIG_BLK_DEV_INITRD */
-+
-+#ifdef CONFIG_SPARSEMEM
-+int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-+			       struct vmem_altmap *altmap)
-+{
-+	return vmemmap_populate_basepages(start, end, node);
-+}
-+#endif
+ 			macb1: ethernet@f802c000 {
+-				compatible = "cdns,at91sam9260-macb", "cdns,macb";
++				compatible = "atmel,sama5d3-macb", "cdns,at91sam9260-macb", "cdns,macb";
+ 				reg = <0xf802c000 0x100>;
+ 				interrupts = <35 IRQ_TYPE_LEVEL_HIGH 3>;
+ 				pinctrl-names = "default";
 -- 
-2.19.0
+2.17.1
 
