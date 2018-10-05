@@ -2,187 +2,195 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C91C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04890C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE65E21477
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:33:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+oVI1aB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE65E21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BC80720652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 22:33:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC80720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbeJFFd5 (ORCPT
+        id S1729323AbeJFFej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 01:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeJFFd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 01:33:57 -0400
-Received: from gmail.com (unknown [104.132.51.88])
+        Sat, 6 Oct 2018 01:34:39 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:53282 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726399AbeJFFei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 01:34:38 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 004F920652;
-        Fri,  5 Oct 2018 22:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538778789;
-        bh=EGk0Wq3gaWrdL4diOLExOeTqVDWAkXn2mHr74mSfpVc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t+oVI1aBRp1PQbnZhMkFR5Y8mEfI+mPlKvos/czp8a/lfF0YdcThBFk27fNmzKUNe
-         8pWZXyUnsMrE6K6RHJknKRUtMFHIJweQ+Ta4wcZCnGwYmSLLg6IHaC9nkKHzoagryV
-         aCifIVsZv+ihhKQvEqKhiGT3B8ULR+KGOgzN4wXU=
-Date:   Fri, 5 Oct 2018 15:33:07 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
-Message-ID: <20181005223307.GB184636@gmail.com>
-References: <00000000000072d64d05737b6b8c@google.com>
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 62C83634C8B;
+        Sat,  6 Oct 2018 01:33:49 +0300 (EEST)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1g8YfN-0000kx-6B; Sat, 06 Oct 2018 01:33:49 +0300
+Date:   Sat, 6 Oct 2018 01:33:48 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>, jacopo@jmondi.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 1/3] [media] imx214: device tree binding
+Message-ID: <20181005223348.vvr3sbsmh6uxw3tz@valkosipuli.retiisi.org.uk>
+References: <20181005215750.6047-1-ricardo.ribalda@gmail.com>
+ <20181005220221.luriq43w3yvstmw3@valkosipuli.retiisi.org.uk>
+ <CAPybu_1_vDjEUN1MY2aFNX-nauEOP98WBC5K=2A+p==4SJVpRA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00000000000072d64d05737b6b8c@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPybu_1_vDjEUN1MY2aFNX-nauEOP98WBC5K=2A+p==4SJVpRA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 09:00:04AM -0700, syzbot wrote:
-> Hello,
+On Sat, Oct 06, 2018 at 12:18:28AM +0200, Ricardo Ribalda Delgado wrote:
+> Hi Sakari
+> On Sat, Oct 6, 2018 at 12:02 AM Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> >
+> > Hi Ricardo,
+> >
+> > On Fri, Oct 05, 2018 at 11:57:50PM +0200, Ricardo Ribalda Delgado wrote:
+> > > Document bindings for imx214 camera sensor
+> > >
+> > > Cc: devicetree@vger.kernel.org
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > > ---
+> > > Changelog from v8:
+> > >
+> > > Rob Herring:
+> > > -rename file
+> > > -Move address to reg
+> > > -rename name on example
+> > > -Patch author
+> > >
+> > > Sakari Ailus:
+> > > -should->shall
+> > >
+> > >  .../bindings/media/i2c/sony,imx214.txt        | 53 +++++++++++++++++++
+> > >  1 file changed, 53 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
+> > > new file mode 100644
+> > > index 000000000000..2744773070c5
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
+> > > @@ -0,0 +1,53 @@
+> > > +* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
+> > > +
+> > > +The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
+> > > +an active array size of 4224H x 3200V. It is programmable through an I2C
+> > > +interface.
+> > > +Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
+> > > +throughput of 1.2Gbps/lane.
+> > > +
+> > > +
+> > > +Required Properties:
+> > > +- compatible: Shall be "sony,imx214".
+> > > +- reg: I2C bus address of the device. Depending on how the sensor is wired,
+> > > +       it shall be <0x10> or <0x1a>;
+> > > +- enable-gpios: GPIO descriptor for the enable pin.
+> > > +- vdddo-supply: Chip digital IO regulator (1.8V).
+> > > +- vdda-supply: Chip analog regulator (2.7V).
+> > > +- vddd-supply: Chip digital core regulator (1.12V).
+> > > +- clocks: Reference to the xclk clock.
+> > > +- clock-names:  Shall be "xclk".
+> >
+> > It could be that this was already discussed earlier but I missed that ---
+> > clock frequency. Apologies for that. How does the driver know what to ask?
+> > If you expect assigned-clock-rate or such, then I think it should be
+> > explicitly said here.
 > 
-> syzbot found the following crash on:
+> It has becoming hard to follow, it is mainly my fault for sending 10 series :)
 > 
-> HEAD commit:    7796916146b8 Merge branch 'x86-cpu-for-linus' of git://git..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164b1922400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=265bef9882cce8d7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d5455bac3ba1ee9114e5
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1013478c400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1349c8aa400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0
-> arch/x86/crypto/sha512-mb/sha512_mb.c:136
-> Read of size 4 at addr ffff8801b0b9e838 by task kworker/0:1/13
-> 
-> CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.18.0+ #187
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: crypto mcryptd_flusher
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
->  sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0
-> arch/x86/crypto/sha512-mb/sha512_mb.c:136
->  sha512_ctx_mgr_resubmit arch/x86/crypto/sha512-mb/sha512_mb.c:135 [inline]
->  sha512_ctx_mgr_flush+0x5c/0xb0 arch/x86/crypto/sha512-mb/sha512_mb.c:367
->  sha512_mb_flusher+0x27b/0x610 arch/x86/crypto/sha512-mb/sha512_mb.c:939
->  mcryptd_flusher+0x342/0x4b0 crypto/mcryptd.c:208
->  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
->  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
->  kthread+0x35a/0x420 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-> 
-> Allocated by task 23902:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc mm/slab.c:3718 [inline]
->  __kmalloc+0x14e/0x760 mm/slab.c:3727
->  kmalloc include/linux/slab.h:518 [inline]
->  sock_kmalloc+0x156/0x1f0 net/core/sock.c:1996
->  hash_accept_parent_nokey+0x58/0x2e0 crypto/algif_hash.c:438
->  hash_accept_parent+0x5b/0x80 crypto/algif_hash.c:465
->  af_alg_accept+0x127/0x7d0 crypto/af_alg.c:296
->  alg_accept+0x46/0x60 crypto/af_alg.c:332
->  __sys_accept4+0x3b2/0x8a0 net/socket.c:1600
->  __do_sys_accept4 net/socket.c:1635 [inline]
->  __se_sys_accept4 net/socket.c:1632 [inline]
->  __x64_sys_accept4+0x97/0xf0 net/socket.c:1632
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 23902:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xd9/0x260 mm/slab.c:3813
->  __sock_kfree_s net/core/sock.c:2017 [inline]
->  sock_kfree_s+0x29/0x60 net/core/sock.c:2023
->  hash_sock_destruct+0x157/0x1c0 crypto/algif_hash.c:427
->  __sk_destruct+0x107/0xa60 net/core/sock.c:1573
->  sk_destruct+0x78/0x90 net/core/sock.c:1608
->  __sk_free+0xcf/0x300 net/core/sock.c:1619
->  sk_free+0x42/0x50 net/core/sock.c:1630
->  sock_put include/net/sock.h:1667 [inline]
->  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
->  __sock_release+0xd7/0x260 net/socket.c:600
->  sock_close+0x19/0x20 net/socket.c:1151
->  __fput+0x355/0x8b0 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
->  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The buggy address belongs to the object at ffff8801b0b9e340
->  which belongs to the cache kmalloc-2048 of size 2048
-> The buggy address is located 1272 bytes inside of
->  2048-byte region [ffff8801b0b9e340, ffff8801b0b9eb40)
-> The buggy address belongs to the page:
-> page:ffffea0006c2e780 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffffea0007543a88 ffffea000760b188 ffff8801dac00c40
-> raw: 0000000000000000 ffff8801b0b9e340 0000000100000003 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801b0b9e700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801b0b9e780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff8801b0b9e800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                         ^
->  ffff8801b0b9e880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801b0b9e900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> 
+> I think we discussed this here:
+> https://lkml.org/lkml/2018/10/2/1402
 
-The "fix" for this is queued in cryptodev:
+Right. The driver uses 24 MHz for now, but that's not a property of the
+sensor. If the driver only supports 24 MHz now, then it should check that
+the frequency it gets matches with that. If other frequencies are needed
+in the future, the driver would be amended with that support.
 
-#syz fix: crypto: x86 - remove SHA multibuffer routines and mcryptd
+As I noted earlier, a lot of drivers set the frequency based on the
+clock-frequency property (as documented in bindings) and never check the
+outcome. I guess using assigned-clock-rate would yield the same result.
 
-- Eric
+I think I'd put clock-frequency property here, and document it as
+mandatory.
+
+> 
+> 
+> >
+> > You also have a single clock, so do you need clock-names?
+> 
+> Seems to be the de-facto standard Looking at:
+> grep xclk Documentation/devicetree/bindings/media/i2c/*
+> 
+> But the driver does not look for a specific name. I am going to remove the name.
+> 
+> >
+> > > +
+> > > +Optional Properties:
+> > > +- flash-leds: See ../video-interfaces.txt
+> > > +- lens-focus: See ../video-interfaces.txt
+> > > +
+> > > +The imx214 device node shall contain one 'port' child node with
+> > > +an 'endpoint' subnode. For further reading on port node refer to
+> > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > > +
+> > > +Required Properties on endpoint:
+> > > +- data-lanes: check ../video-interfaces.txt
+> > > +- link-frequencies: check ../video-interfaces.txt
+> > > +- remote-endpoint: check ../video-interfaces.txt
+> > > +
+> > > +Example:
+> > > +
+> > > +     camera-sensor@1a {
+> > > +             compatible = "sony,imx214";
+> > > +             reg = <0x1a>;
+> > > +             vdddo-supply = <&pm8994_lvs1>;
+> > > +             vddd-supply = <&camera_vddd_1v12>;
+> > > +             vdda-supply = <&pm8994_l17>;
+> > > +             lens-focus = <&ad5820>;
+> > > +             enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
+> > > +             clocks = <&mmcc CAMSS_MCLK0_CLK>;
+> > > +             clock-names = "xclk";
+> > > +             port {
+> > > +                     imx214_ep: endpoint {
+> > > +                             data-lanes = <1 2 3 4>;
+> > > +                             link-frequencies = /bits/ 64 <480000000>;
+> > > +                             remote-endpoint = <&csiphy0_ep>;
+> > > +                     };
+> > > +             };
+> > > +     };
+> > > --
+> > > 2.19.0
+> > >
+> >
+> > --
+> > Sakari Ailus
+> > e-mail: sakari.ailus@iki.fi
+> 
+> 
+> 
+> -- 
+> Ricardo Ribalda
+
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
