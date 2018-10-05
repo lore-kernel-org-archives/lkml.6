@@ -2,72 +2,71 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC27C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478A8C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B50420834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B50420834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 1264220834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1264220834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbeJEWcx (ORCPT
+        id S1728662AbeJEWdI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:32:53 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:55571 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727572AbeJEWcw (ORCPT
+        Fri, 5 Oct 2018 18:33:08 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42150 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbeJEWdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:32:52 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95FT0jv000504;
-        Fri, 5 Oct 2018 17:33:18 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mv4mjm4w8-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Oct 2018 17:33:18 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C80B73A;
-        Fri,  5 Oct 2018 15:33:16 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 950374FAF;
-        Fri,  5 Oct 2018 15:33:16 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.51) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 5 Oct
- 2018 17:33:16 +0200
-Subject: Re: [PATCH V5 02/24] mmc: mmci: create common mmci_dma_setup/release
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
- <1538745782-27446-3-git-send-email-ludovic.Barre@st.com>
- <CAPDyKFogS_74csmZm5_M3D-JFNn_8fi2sxcHpRwVxZOqZhndVg@mail.gmail.com>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <adccdd2f-0525-67b9-35d0-718accc5a7ed@st.com>
-Date:   Fri, 5 Oct 2018 17:33:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFogS_74csmZm5_M3D-JFNn_8fi2sxcHpRwVxZOqZhndVg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_08:,,
- signatures=0
+        Fri, 5 Oct 2018 18:33:08 -0400
+Received: by mail-ed1-f66.google.com with SMTP id b7-v6so5424819edd.9
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 08:33:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vfD2hkc6A7Ng/TUG8sg5MrzsrxO0H6pNnp7VTDvolys=;
+        b=fe7mw9OGkAwcl1ShcvHz00wyagdAMxoiROy/q0DGACZU9a+A9jb+gXllxe9D8eO37M
+         KglrvvrYjBJ/OWDnlcnUQwX+LsR+e0uAjSdk6snRhx8LgA1OA/xuvGAkAmQChO0E6xl3
+         IpQiw1sbCE0Pk2nTzQo6EANV8BLu5Tsu1bSg89smAMXvfOohHTp9DDahFNh3T+0aRWYr
+         +B+tIRbW0LzvEPbBELPq07uJDlExOLdOXUFsI2lnsesw76Jn86t69k/DAADA9jd4RuFc
+         8BgzJarbnLRhnrQ7JBvZ8U9NwGWgkrnXiCC0AcPHZDO3AENSrIvJrdwbE0EY6cQEwF+r
+         lhrQ==
+X-Gm-Message-State: ABuFfog872xiA+tvop20FNUH66beVJNVyMiYD60L2oi0s5S0iFCLFgE3
+        fPEyxLFevkgZQnHODekSnYizlQ==
+X-Google-Smtp-Source: ACcGV61abPVXAYo+B9QTFgFpJEVmzGRNAgyE7Qrhs5sSNUHzTmcrYgAm21wNVC6y/63b18dK0yqtvQ==
+X-Received: by 2002:a50:9886:: with SMTP id j6-v6mr15323831edb.160.1538753634472;
+        Fri, 05 Oct 2018 08:33:54 -0700 (PDT)
+Received: from [192.168.77.22] (val06-1-88-182-161-34.fbx.proxad.net. [88.182.161.34])
+        by smtp.gmail.com with ESMTPSA id z33-v6sm2670913edb.85.2018.10.05.08.33.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 08:33:53 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v2] virtio-gpu: add VIRTIO_GPU_F_EDID feature
+From:   Christophe de Dinechin <cdupontd@redhat.com>
+In-Reply-To: <20181005144127.GE31561@phenom.ffwll.local>
+Date:   Fri, 5 Oct 2018 17:33:50 +0200
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, kvm@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>, virtio-dev@redhat.com,
+        dri-devel@lists.freedesktop.org,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2CB183E2-B7ED-481C-9899-CA908558D39F@redhat.com>
+References: <20181005125154.19824-1-kraxel@redhat.com>
+ <1BA83F18-87E5-4B01-A2D9-01777078B637@redhat.com>
+ <20181005144127.GE31561@phenom.ffwll.local>
+To:     Daniel Vetter <daniel@ffwll.ch>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,130 +74,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 10/05/2018 03:47 PM, Ulf Hansson wrote:
-> On 5 October 2018 at 15:22, Ludovic Barre <ludovic.Barre@st.com> wrote:
->> From: Ludovic Barre <ludovic.barre@st.com>
->>
->> This patch creates a common mmci_dma_setup/release which calls
->> dma_setup/release callbacks of mmci_host_ops and manages
->> common features like use_dma... If there is a fallbacks to
->> pio mode, dma functions must check use_dma.
->>
->> error management:
->> -mmci_dmae_setup fail if Tx and Rx dma channels are not defined
->> -qcom_dma_setup fail if one of both dma channels is not defined,
->>   Qcom has no specific resource to release, just mmci dmae resource.
+> On 5 Oct 2018, at 16:41, Daniel Vetter <daniel@ffwll.ch> wrote:
 > 
-> Makes perfect sense!
+> On Fri, Oct 05, 2018 at 04:38:11PM +0200, Christophe de Dinechin wrote:
+>> 
+>> 
+>>> On 5 Oct 2018, at 14:51, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>>> 
+>>> The feature allows the guest request an EDID blob (describing monitor
+>>> capabilities) for a given scanout (aka virtual monitor connector).
+>>> 
+>>> It brings a new command message, which has just a scanout field (beside
+>>> the standard virtio-gpu header) and a response message which carries the
+>>> EDID data.
+>>> 
+>>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>>> ---
+>>> include/uapi/linux/virtio_gpu.h | 17 +++++++++++++++++
+>>> 1 file changed, 17 insertions(+)
+>>> 
+>>> diff --git a/include/uapi/linux/virtio_gpu.h b/include/uapi/linux/virtio_gpu.h
+>>> index f43c3c6171..1cef1ff339 100644
+>>> --- a/include/uapi/linux/virtio_gpu.h
+>>> +++ b/include/uapi/linux/virtio_gpu.h
+>>> @@ -41,6 +41,7 @@
+>>> #include <linux/types.h>
+>>> 
+>>> #define VIRTIO_GPU_F_VIRGL 0
+>>> +#define VIRTIO_GPU_F_EDID  1
+>>> 
+>>> enum virtio_gpu_ctrl_type {
+>>> 	VIRTIO_GPU_UNDEFINED = 0,
+>>> @@ -56,6 +57,7 @@ enum virtio_gpu_ctrl_type {
+>>> 	VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING,
+>>> 	VIRTIO_GPU_CMD_GET_CAPSET_INFO,
+>>> 	VIRTIO_GPU_CMD_GET_CAPSET,
+>>> +	VIRTIO_GPU_CMD_GET_EDID,
+>>> 
+>>> 	/* 3d commands */
+>>> 	VIRTIO_GPU_CMD_CTX_CREATE = 0x0200,
+>>> @@ -76,6 +78,7 @@ enum virtio_gpu_ctrl_type {
+>>> 	VIRTIO_GPU_RESP_OK_DISPLAY_INFO,
+>>> 	VIRTIO_GPU_RESP_OK_CAPSET_INFO,
+>>> 	VIRTIO_GPU_RESP_OK_CAPSET,
+>>> +	VIRTIO_GPU_RESP_OK_EDID,
+>>> 
+>>> 	/* error responses */
+>>> 	VIRTIO_GPU_RESP_ERR_UNSPEC = 0x1200,
+>>> @@ -291,6 +294,20 @@ struct virtio_gpu_resp_capset {
+>>> 	__u8 capset_data[];
+>>> };
+>>> 
+>>> +/* VIRTIO_GPU_CMD_GET_EDID */
+>>> +struct virtio_gpu_get_edid {
+>>> +	struct virtio_gpu_ctrl_hdr hdr;
+>>> +	__le32 scanout;
+>>> +};
+>>> +
+>>> +/* VIRTIO_GPU_RESP_OK_EDID */
+>>> +struct virtio_gpu_resp_edid {
+>>> +	struct virtio_gpu_ctrl_hdr hdr;
+>>> +	__le32 scanout;
+>>> +	__le32 size;
+>>> +	__u8 edid[1024];
+>> 
+>> Wouldn’t it be enough to stick to EDID 2.0 (256 bytes)?
+>> 
+>> If not, maybe add comment to explain why you chose 1024.
 > 
-> [...]
-> 
->> +void mmci_dma_setup(struct mmci_host *host)
->> +{
->> +       if (!host->ops || !host->ops->dma_setup)
->> +               return;
->> +
->> +       if (host->ops->dma_setup(host)) {
->> +               mmci_dma_release(host);
-> 
-> Please remove this and let the variants clean up themselves. That
-> makes it more straight forward.
+> EDID in the wild can be up to 512 bytes.
 
-This common call was not such a good idea.
-Ok, I will back on first idea.
+Does this return a physical EDID? I thought it would be made-up by virtio-gpu.
 
-> 
->> +               return;
->> +       }
->> +
->> +       host->use_dma = true;
->> +}
->> +
-> 
-> [...]
-> 
->> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
->> index 01e6c6b..9b0a960 100644
->> --- a/drivers/mmc/host/mmci.h
->> +++ b/drivers/mmc/host/mmci.h
->> @@ -273,7 +273,8 @@ struct variant_data {
->>
->>   /* mmci variant callbacks */
->>   struct mmci_host_ops {
->> -       void (*dma_setup)(struct mmci_host *host);
->> +       int (*dma_setup)(struct mmci_host *host);
->> +       void (*dma_release)(struct mmci_host *host);
->>   };
->>
->>   struct mmci_host_next {
->> @@ -323,6 +324,7 @@ struct mmci_host {
->>          unsigned int            size;
->>          int (*get_rx_fifocnt)(struct mmci_host *h, u32 status, int remain);
->>
->> +       u8                      use_dma:1;
->>   #ifdef CONFIG_DMA_ENGINE
->>          /* DMA stuff */
->>          struct dma_chan         *dma_current;
->> @@ -336,3 +338,14 @@ struct mmci_host {
->>   #endif
->>   };
->>
->> +#ifdef CONFIG_DMA_ENGINE
->> +void mmci_variant_init(struct mmci_host *host);
->> +#else
->> +static inline void mmci_variant_init(struct mmci_host *host)
->> +{
->> +}
->> +#endif
-> 
-> This can be kept in mmci.c instead.
-
-OK
+Thanks,
+Christophe
 
 > 
->> +
->> +int mmci_dmae_setup(struct mmci_host *host);
->> +void mmci_dmae_release(struct mmci_host *host);
->> +
->> diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
->> index be3fab5..aa070a9 100644
->> --- a/drivers/mmc/host/mmci_qcom_dml.c
->> +++ b/drivers/mmc/host/mmci_qcom_dml.c
->> @@ -119,19 +119,22 @@ static int of_get_dml_pipe_index(struct device_node *np, const char *name)
->>   }
->>
->>   /* Initialize the dml hardware connected to SD Card controller */
->> -static void qcom_dma_setup(struct mmci_host *host)
->> +static int qcom_dma_setup(struct mmci_host *host)
->>   {
->>          u32 config;
->>          void __iomem *base;
->>          int consumer_id, producer_id;
->>          struct device_node *np = host->mmc->parent->of_node;
->>
->> +       if (mmci_dmae_setup(host))
->> +               return -EINVAL;
->> +
->>          consumer_id = of_get_dml_pipe_index(np, "tx");
->>          producer_id = of_get_dml_pipe_index(np, "rx");
->>
->>          if (producer_id < 0 || consumer_id < 0) {
->>                  host->variant->qcom_dml = false;
->> -               return;
->> +               return -EINVAL;
+>> 
+>>> +};
+>>> +
+>>> #define VIRTIO_GPU_EVENT_DISPLAY (1 << 0)
+>>> 
+>>> struct virtio_gpu_config {
+>>> -- 
+>>> 2.9.3
+>>> 
+>> 
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-> This relies on error handling to be done by mmci_dma_setup(), which as
-> stated, feels a bit wrong.
-> 
-> I would rather just call mmci_dmae_realease() here, before returning -EINVAL.
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-OK
-
-> 
-> [...]
-> 
-> Otherwise, this looks good to me now.
-> 
-> Kind regards
-> Uffe
-> 
