@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D09DC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB7AC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E93BF21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9058C21473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrjkKE4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93BF21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z/cwyJQ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9058C21473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbeJEXOO (ORCPT
+        id S1729431AbeJEXON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51522 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729295AbeJEXOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:14 -0400
+        id S1729295AbeJEXOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24C12214D5;
-        Fri,  5 Oct 2018 16:14:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDDA62148C;
+        Fri,  5 Oct 2018 16:14:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756091;
-        bh=kztMh+YzeLOZYKJl9m96rebpJrF/ID6OGHPPT0A7XyU=;
+        s=default; t=1538756088;
+        bh=FavGqdIE0xdYH1bAL6qAtW0sBSb0aI6cuCjsscrv24c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nrjkKE4maoLYWU3FJlt4MUxXHWP13u9bgvyFgcy9i5sd/3U8ymDvw454WdBoCmRGP
-         aOo2dVxmwhvqv65/j41LTVrfa53PkxXx9S6CdxxSyPclJO3OEAiAdk+Ar3rmI5CKSz
-         l+YfTbMFZh3e4Cg+ZfMxRbp+dxZSaU6Rg2ZKYH+0=
+        b=z/cwyJQ75rbIfGm1Dy3H4+G7HqOvZEtA0lX1lJrHI/p/+lcUUANAvcmblB75i2nDM
+         4cOhMgA9SYe8OVDs/HZNVaYkp5GsGHCzyoKjpYPsVVNB7GUgthnmYbdYZMScL/VmOi
+         IsCJIKkc3z1Eimr8IJ2d6z9+Xzj+peAl90CJhno0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Cc:     Laura Abbott <labbott@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 29/48] bpf: btf: Fix end boundary calculation for type section
-Date:   Fri,  5 Oct 2018 12:14:05 -0400
-Message-Id: <20181005161424.20521-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 25/48] scsi: iscsi: target: Don't use stack buffer for scatterlist
+Date:   Fri,  5 Oct 2018 12:14:01 -0400
+Message-Id: <20181005161424.20521-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -53,42 +52,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin KaFai Lau <kafai@fb.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 4b1c5d917d34f705096bb7dd8a2bd19b0881970e ]
+[ Upstream commit 679fcae46c8b2352bba3485d521da070cfbe68e6 ]
 
-The end boundary math for type section is incorrect in
-btf_check_all_metas().  It just happens that hdr->type_off
-is always 0 for now because there are only two sections
-(type and string) and string section must be at the end (ensured
-in btf_parse_str_sec).
+Fedora got a bug report of a crash with iSCSI:
 
-However, type_off may not be 0 if a new section would be added later.
-This patch fixes it.
+kernel BUG at include/linux/scatterlist.h:143!
+...
+RIP: 0010:iscsit_do_crypto_hash_buf+0x154/0x180 [iscsi_target_mod]
+...
+ Call Trace:
+  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
+  iscsit_get_rx_pdu+0x4cd/0xa90 [iscsi_target_mod]
+  ? native_sched_clock+0x3e/0xa0
+  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
+  iscsi_target_rx_thread+0x81/0xf0 [iscsi_target_mod]
+  kthread+0x120/0x140
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ret_from_fork+0x3a/0x50
 
-Fixes: f80442a4cd18 ("bpf: btf: Change how section is supported in btf_header")
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+This is a BUG_ON for using a stack buffer with a scatterlist.  There
+are two cases that trigger this bug. Switch to using a dynamically
+allocated buffer for one case and do not assign a NULL buffer in
+another case.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- kernel/bpf/btf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/iscsi/iscsi_target.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 2590700237c1..138f0302692e 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -1844,7 +1844,7 @@ static int btf_check_all_metas(struct btf_verifier_env *env)
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index 8e223799347a..572e5f58277a 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -1419,7 +1419,8 @@ static void iscsit_do_crypto_hash_buf(struct ahash_request *hash,
  
- 	hdr = &btf->hdr;
- 	cur = btf->nohdr_data + hdr->type_off;
--	end = btf->nohdr_data + hdr->type_len;
-+	end = cur + hdr->type_len;
+ 	sg_init_table(sg, ARRAY_SIZE(sg));
+ 	sg_set_buf(sg, buf, payload_length);
+-	sg_set_buf(sg + 1, pad_bytes, padding);
++	if (padding)
++		sg_set_buf(sg + 1, pad_bytes, padding);
  
- 	env->log_type_id = 1;
- 	while (cur < end) {
+ 	ahash_request_set_crypt(hash, sg, data_crc, payload_length + padding);
+ 
+@@ -3913,10 +3914,14 @@ static bool iscsi_target_check_conn_state(struct iscsi_conn *conn)
+ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ {
+ 	int ret;
+-	u8 buffer[ISCSI_HDR_LEN], opcode;
++	u8 *buffer, opcode;
+ 	u32 checksum = 0, digest = 0;
+ 	struct kvec iov;
+ 
++	buffer = kcalloc(ISCSI_HDR_LEN, sizeof(*buffer), GFP_KERNEL);
++	if (!buffer)
++		return;
++
+ 	while (!kthread_should_stop()) {
+ 		/*
+ 		 * Ensure that both TX and RX per connection kthreads
+@@ -3924,7 +3929,6 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 		 */
+ 		iscsit_thread_check_cpumask(conn, current, 0);
+ 
+-		memset(buffer, 0, ISCSI_HDR_LEN);
+ 		memset(&iov, 0, sizeof(struct kvec));
+ 
+ 		iov.iov_base	= buffer;
+@@ -3933,7 +3937,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 		ret = rx_data(conn, &iov, 1, ISCSI_HDR_LEN);
+ 		if (ret != ISCSI_HDR_LEN) {
+ 			iscsit_rx_thread_wait_for_tcp(conn);
+-			return;
++			break;
+ 		}
+ 
+ 		if (conn->conn_ops->HeaderDigest) {
+@@ -3943,7 +3947,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 			ret = rx_data(conn, &iov, 1, ISCSI_CRC_LEN);
+ 			if (ret != ISCSI_CRC_LEN) {
+ 				iscsit_rx_thread_wait_for_tcp(conn);
+-				return;
++				break;
+ 			}
+ 
+ 			iscsit_do_crypto_hash_buf(conn->conn_rx_hash, buffer,
+@@ -3967,7 +3971,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 		}
+ 
+ 		if (conn->conn_state == TARG_CONN_STATE_IN_LOGOUT)
+-			return;
++			break;
+ 
+ 		opcode = buffer[0] & ISCSI_OPCODE_MASK;
+ 
+@@ -3978,13 +3982,15 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 			" while in Discovery Session, rejecting.\n", opcode);
+ 			iscsit_add_reject(conn, ISCSI_REASON_PROTOCOL_ERROR,
+ 					  buffer);
+-			return;
++			break;
+ 		}
+ 
+ 		ret = iscsi_target_rx_opcode(conn, buffer);
+ 		if (ret < 0)
+-			return;
++			break;
+ 	}
++
++	kfree(buffer);
+ }
+ 
+ int iscsi_target_rx_thread(void *arg)
 -- 
 2.17.1
 
