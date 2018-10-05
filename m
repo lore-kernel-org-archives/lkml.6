@@ -2,284 +2,152 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BE8C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF84C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 772002084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772002084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 63EC9208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:49:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EC9208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbeJEPrO (ORCPT
+        id S1728680AbeJEPrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:47:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:47704 "EHLO foss.arm.com"
+        Fri, 5 Oct 2018 11:47:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48208 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbeJEPrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:47:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE45880D;
-        Fri,  5 Oct 2018 01:49:29 -0700 (PDT)
-Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52E113F5B3;
-        Fri,  5 Oct 2018 01:49:26 -0700 (PDT)
-From:   Kristina Martsenko <kristina.martsenko@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 00/17] ARMv8.3 pointer authentication support
-Date:   Fri,  5 Oct 2018 09:47:37 +0100
-Message-Id: <20181005084754.20950-1-kristina.martsenko@arm.com>
-X-Mailer: git-send-email 2.11.0
+        id S1727236AbeJEPrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:47:15 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9421243A2E;
+        Fri,  5 Oct 2018 08:49:31 +0000 (UTC)
+Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F58269FC6;
+        Fri,  5 Oct 2018 08:49:27 +0000 (UTC)
+Date:   Fri, 5 Oct 2018 10:49:25 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, david@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com
+Subject: Re: [PATCH v1 1/2] KVM: s390: Tracing APCB changes
+Message-ID: <20181005104925.04a1f3ef.cohuck@redhat.com>
+In-Reply-To: <1538728270-10340-2-git-send-email-pmorel@linux.ibm.com>
+References: <7d147350-4284-8e01-d1fa-0795d2da85c1@de.ibm.com>
+        <1538728270-10340-1-git-send-email-pmorel@linux.ibm.com>
+        <1538728270-10340-2-git-send-email-pmorel@linux.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 05 Oct 2018 08:49:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri,  5 Oct 2018 10:31:09 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-This series adds support for the ARMv8.3 pointer authentication
-extension. The series contains Mark's original patches to enable pointer
-authentication for userspace [1], followed by early RFC patches using
-pointer authentication in the kernel.
+> kvm_arch_crypto_set_masks is a new function to centralize
+> the setup the APCB masks inside the CRYCB SIE satelite.
 
-For now it would make sense to focus on reviewing the userspace pointer
-authentication patches, with the in-kernel pointer authentication
-patches as support to show that the ABI exposed to userspace (e.g.
-APIAKey) does not prevent pointer authentication use in the kernel.
+s/satelite/satellite/
 
-This series is based on v4.19-rc5. The aarch64 bootwrapper [2] does the
-necessary EL3 setup.
-
-
-Extension Overview
-==================
-
-The ARMv8.3 pointer authentication extension adds functionality to detect
-modification of pointer values, mitigating certain classes of attack such as
-stack smashing, and making return oriented programming attacks harder.
-
-The extension introduces the concept of a pointer authentication code (PAC),
-which is stored in some upper bits of pointers. Each PAC is derived from the
-original pointer, another 64-bit value (e.g. the stack pointer), and a secret
-128-bit key.
-
-New instructions are added which can be used to:
-
-* Insert a PAC into a pointer
-* Strip a PAC from a pointer
-* Authenticate strip a PAC from a pointer
-
-If authentication succeeds, the code is removed, yielding the original pointer.
-If authentication fails, bits are set in the pointer such that it is guaranteed
-to cause a fault if used.
-
-These instructions can make use of four keys:
-
-* APIAKey (A.K.A. Instruction A key)
-* APIBKey (A.K.A. Instruction B key)
-* APDAKey (A.K.A. Data A key)
-* APDBKey (A.K.A. Data B Key)
-
-A subset of these instruction encodings have been allocated from the HINT
-space, and will operate as NOPs on any ARMv8-A parts which do not feature the
-extension (or if purposefully disabled by the kernel). Software using only this
-subset of the instructions should function correctly on all ARMv8-A parts.
-
-Additionally, instructions are added to authenticate small blocks of memory in
-similar fashion, using APGAKey (A.K.A. Generic key).
-
-
-Userspace pointer authentication
-================================
-
-The first part of this series (sent as [PATCH v5]) adds support for
-pointer authentication in userspace. This enables userspace return
-address protection with GCC 7 and higher.
-
-Changes since v4 [1]:
- - rebase onto v4.19-rc5
- - patch #7: move key init from init_new_context to arch_bprm_mm_init,
-   remove unused mm_ctx_ptrauth_dup, add back mm_hooks patch from v3
- - patch #7: add AA64ISAR1.API HWCAP_CAP
- - patch #11: update cpu-feature-registers.txt
- - minor cleanups
-
-I've kept all Reviewed-by/Acked-by/Tested-by tags from v4.
-
-There are a couple of things worth noting:
-
-1) Key support
-
-This series enables the use of instructions using APIAKey, which is
-initialised and maintained per-process (shared by all threads). GCC
-currently only makes use of APIAKey.
-
-This series does not add support for APIBKey, APDAKey, APDBKey, nor
-APGAKey. HINT-space instructions using these keys will currently execute
-as NOPs. Support for these keys can be added as users appear.
-
-Note that while we expose the cpuid register (ID_AA64ISAR1_EL1) to
-userspace, it only contains one feature for address authentication
-(API/APA), so it cannot be used by userspace to tell which keys the
-kernel supports. For this the kernel exposes HWCAP bits, one per key
-(currently only APIAKey), which must be checked instead.
-
-2) Checkpoint/restore
-
-I have not yet looked at if checkpoint/restore works with applications
-using pointer authentication. Presumably we will need to save and
-restore the keys a task is using. To restore the keys from userspace, we
-may need some way to set the keys for the task, such as through a prctl.
-
-3) Key initialisation in Android
-
-Currently, keys are preserved across fork and reinitialised on exec. If
-keys were reinitialised on fork, it would break applications where both
-parent and child return from the function that called fork.
-
-This may however be a problem in environments where only fork is used to
-start applications, and exec is not used. If I understand correctly, the
-Android Zygote process model works like this. This would mean that in
-Android, all processes would share the same key. We may therefore need a
-mechanism for userspace to request keys to be reinitialised, e.g. a
-clone flag, prctl, or trapped access to key registers.
-
-4) KVM guest support
-
-For the time being, this series hides pointer authentication
-functionality from KVM guests. Amit Kachhap is currently looking into
-supporting pointer authentication in guests.
-
-5) uprobes
-
-Setting uprobes on pointer authentication instructions is not yet
-supported, and may cause the application to behave in unexpected ways.
+> 
+> To trace APCB mask changes, we add KVM_EVENT() tracing to
+> both kvm_arch_crypto_set_masks and kvm_arch_crypto_clear_masks.
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  arch/s390/include/asm/kvm_host.h |  2 ++
+>  arch/s390/kvm/kvm-s390.c         | 41 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 43 insertions(+)
+> 
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index 36d3531..22aa4da 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -861,6 +861,8 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+>  				 struct kvm_async_pf *work);
+>  
+>  void kvm_arch_crypto_clear_masks(struct kvm *kvm);
+> +void kvm_arch_crypto_set_masks(struct kvm *kvm, unsigned long *apm,
+> +			       unsigned long *aqm, unsigned long *adm);
+>  
+>  extern int sie64a(struct kvm_s390_sie_block *, u64 *);
+>  extern char sie_exit;
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index d3ea721..e871e5a 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -2057,6 +2057,46 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>  		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>  }
+>  
+> +void kvm_arch_crypto_set_masks(struct kvm *kvm, unsigned long *apm,
+> +			       unsigned long *aqm, unsigned long *adm)
+> +{
+> +	struct kvm_s390_crypto_cb *crycb = kvm->arch.crypto.crycb;
+> +
+> +	mutex_lock(&kvm->lock);
+> +	kvm_s390_vcpu_block_all(kvm);
+> +
+> +	switch (kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK) {
+> +	case CRYCB_FORMAT2: /* APCB1 use 256 bits */
+> +		memcpy(crycb->apcb1.apm, apm, 32);
+> +		VM_EVENT(kvm, 3, "SET CRYCB: apm %016lx %016lx %016lx %016lx",
+> +			 apm[0], apm[1], apm[2], apm[3]);
+> +		memcpy(crycb->apcb1.aqm, aqm, 32);
+> +		VM_EVENT(kvm, 3, "SET CRYCB: aqm %016lx %016lx %016lx %016lx",
+> +			 aqm[0], aqm[1], aqm[2], aqm[3]);
+> +		memcpy(crycb->apcb1.adm, adm, 32);
+> +		VM_EVENT(kvm, 3, "SET CRYCB: adm %016lx %016lx %016lx %016lx",
+> +			 adm[0], adm[1], adm[2], adm[3]);
+> +		break;
+> +	case CRYCB_FORMAT1:
+> +	case CRYCB_FORMAT0: /* Fall through both use APCB0 */
+> +		memcpy(crycb->apcb0.apm, apm, 8);
+> +		memcpy(crycb->apcb0.aqm, aqm, 2);
+> +		memcpy(crycb->apcb0.adm, adm, 2);
+> +		VM_EVENT(kvm, 3, "SET CRYCB: apm %016lx aqm %04x adm %04x",
+> +			 apm[0], *((unsigned short *)aqm),
+> +			 *((unsigned short *)adm));
+> +		break;
+> +	default:	/* Can not happen */
+> +		break;
+> +	}
+> +
+> +	/* recreate the shadow crycb for each vcpu */
+> +	kvm_s390_sync_request_broadcast(kvm, KVM_REQ_VSIE_RESTART);
+> +	kvm_s390_vcpu_unblock_all(kvm);
+> +	mutex_unlock(&kvm->lock);
 
 
-In-kernel pointer authentication
-================================
+The locking and requests makes me wonder if we missed them before...
+were they simply not needed for the prior use case (mdev group
+notifier)?
 
-The second part of this series (sent as [RFC]) adds support for building
-the kernel with pointer authentication instructions.
-
-This means adding two instructions to every function: one to sign the
-return address at the beginning of the function, and one to authenticate
-the return address just before returning to it. If authentication fails,
-the return will cause an exception to be taken, followed by a
-panic/oops. This should help protect the kernel against attacks using
-return-oriented programming.
-
-Each task has its own pointer authentication key for use in the kernel,
-initialized during fork. On systems without much entropy during early
-boot, the earlier keys are unfortunately not unpredictable. Ideally the
-kernel should get early randomness from firmware. Currently, this should
-be possible on UEFI systems that support EFI_RNG_PROTOCOL (via
-LINUX_EFI_RANDOM_SEED_TABLE_GUID). ARMv8.5-A will also add Random Number
-instructions that should help with this [3].
-
-The kernel currently uses only APIAKey, and switches it on entry and
-exit to userspace. If/when GCC gains support for generating APIBKey
-instructions, it may be worth switching to APIBKey if there is a
-performance benefit (if userspace only uses APIAKey).
-
-This series is currently intended as an RFC. Some things I haven't yet
-looked at include:
-  - debug and trace (ftrace, kprobes, __builtin_return_address(n),
-    kdump, ...)
-  - interaction with stack protector
-  - suspend/resume
-  - compiler without ptrauth support
-  - separate kconfig option?
-
-Feedback and comments are welcome.
-
-Thanks,
-Kristina
-
-[1] https://lore.kernel.org/lkml/20180503132031.25705-1-mark.rutland@arm.com/
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/boot-wrapper-aarch64.git
-[3] https://community.arm.com/processors/b/blog/posts/arm-a-profile-architecture-2018-developments-armv85a
-
-
-Kristina Martsenko (3):
-  arm64: enable ptrauth earlier
-  arm64: initialize and switch ptrauth kernel keys
-  arm64: compile the kernel with ptrauth -msign-return-address
-
-Mark Rutland (14):
-  arm64: add pointer authentication register bits
-  arm64/kvm: consistently handle host HCR_EL2 flags
-  arm64/kvm: hide ptrauth from guests
-  arm64: Don't trap host pointer auth use to EL2
-  arm64/cpufeature: detect pointer authentication
-  asm-generic: mm_hooks: allow hooks to be overridden individually
-  arm64: add basic pointer authentication support
-  arm64: expose user PAC bit positions via ptrace
-  arm64: perf: strip PAC when unwinding userspace
-  arm64: enable pointer authentication
-  arm64: docs: document pointer authentication
-  arm64: move ptrauth keys to thread_info
-  arm64: install user ptrauth keys at kernel exit time
-  arm64: unwind: strip PAC from kernel addresses
-
- Documentation/arm64/booting.txt                |   8 ++
- Documentation/arm64/cpu-feature-registers.txt  |   4 +
- Documentation/arm64/elf_hwcaps.txt             |   5 ++
- Documentation/arm64/pointer-authentication.txt |  84 ++++++++++++++++++++
- arch/arm64/Kconfig                             |  23 ++++++
- arch/arm64/Makefile                            |   4 +
- arch/arm64/include/asm/cpucaps.h               |   5 +-
- arch/arm64/include/asm/cpufeature.h            |   9 +++
- arch/arm64/include/asm/esr.h                   |   3 +-
- arch/arm64/include/asm/kvm_arm.h               |   3 +
- arch/arm64/include/asm/mmu_context.h           |   3 +-
- arch/arm64/include/asm/pointer_auth.h          | 103 +++++++++++++++++++++++++
- arch/arm64/include/asm/ptrauth-asm.h           |  39 ++++++++++
- arch/arm64/include/asm/sysreg.h                |  30 +++++++
- arch/arm64/include/asm/thread_info.h           |   5 ++
- arch/arm64/include/uapi/asm/hwcap.h            |   1 +
- arch/arm64/include/uapi/asm/ptrace.h           |   7 ++
- arch/arm64/kernel/asm-offsets.c                |   8 ++
- arch/arm64/kernel/cpufeature.c                 |  51 ++++++++++++
- arch/arm64/kernel/cpuinfo.c                    |   1 +
- arch/arm64/kernel/entry.S                      |  13 +++-
- arch/arm64/kernel/head.S                       |   5 +-
- arch/arm64/kernel/perf_callchain.c             |   6 +-
- arch/arm64/kernel/process.c                    |   6 ++
- arch/arm64/kernel/ptrace.c                     |  38 +++++++++
- arch/arm64/kernel/smp.c                        |  10 ++-
- arch/arm64/kernel/stacktrace.c                 |   3 +
- arch/arm64/kvm/handle_exit.c                   |  18 +++++
- arch/arm64/kvm/hyp/switch.c                    |   2 +-
- arch/arm64/kvm/sys_regs.c                      |   8 ++
- include/asm-generic/mm_hooks.h                 |  11 +++
- include/uapi/linux/elf.h                       |   1 +
- 32 files changed, 506 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/arm64/pointer-authentication.txt
- create mode 100644 arch/arm64/include/asm/pointer_auth.h
- create mode 100644 arch/arm64/include/asm/ptrauth-asm.h
-
--- 
-2.11.0
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_arch_crypto_set_masks);
+> +
+>  void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>  {
+>  	mutex_lock(&kvm->lock);
+> @@ -2067,6 +2107,7 @@ void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>  	memset(&kvm->arch.crypto.crycb->apcb1, 0,
+>  	       sizeof(kvm->arch.crypto.crycb->apcb1));
+>  
+> +	VM_EVENT(kvm, 3, "%s", "CLR CRYCB:");
+>  	/* recreate the shadow crycb for each vcpu */
+>  	kvm_s390_sync_request_broadcast(kvm, KVM_REQ_VSIE_RESTART);
+>  	kvm_s390_vcpu_unblock_all(kvm);
 
