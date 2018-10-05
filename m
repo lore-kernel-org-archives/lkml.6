@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140E9C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB692C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF004208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7332D208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 04:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8CHGg/d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF004208E7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAvKvohZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7332D208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeJELLW (ORCPT
+        id S1728051AbeJELLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 07:11:22 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44330 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbeJELLV (ORCPT
+        Fri, 5 Oct 2018 07:11:23 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37897 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbeJELLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 07:11:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r9-v6so4278982pff.11;
-        Thu, 04 Oct 2018 21:14:29 -0700 (PDT)
+        Fri, 5 Oct 2018 07:11:23 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b5-v6so6193289plr.5;
+        Thu, 04 Oct 2018 21:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PMEoU3Gz26JMyroIsJaDweM2uFKnZxU+TruAPOzAvDQ=;
-        b=f8CHGg/dP0+tyxFniBtsAkZ11FN05WqHDiWqCxA2mcK4De/aYj8RKLtwAiMoReNHYs
-         jK49xD2xSDlU+mQUMjunMF1tXiDhv7I9xArb4a6mWx2HfBGvNSZLH4GndqG07vxKMT93
-         uMRm6mxDVZ9bSYCtuLfCz9Q5qsiNbpN/X0NvpZcyEBBeRJ4DLzeXX4oRCrBSDg8B9o5k
-         zVwlLdjqDdDjaTnn0sPDi26neQk44sout3j2Z4FG4GNCKUfHcsPNuVUIdjTOP52EBDad
-         RNekrT0mk2oT4NaKT0b7RiSeMuwPoXKowxdOiUhM+Jy/5cJDMeQJw3+JL+yt6vfRtMox
-         ms8Q==
+        bh=jnKR2PoeAIKjHuDWgCk3o7QuZS8LEHYAoeREGeLzT+w=;
+        b=dAvKvohZsVxx9kvawvTGHS6nMcBizZ2VDXINM1YFkWeD2QgzVzadpwyop5UgZ8Rz3v
+         zY3Gg4ktPe0J1ZibO2z4kOMVdLXfKkNJBj90EW4tLSG0Hx6BGHKIfV0FHl29PMm9P1U5
+         86CkAL2aus9uL/X9tCoYGqzHarTUDKAj2jxyrswrPrkWaUQL1B5R3HV/H1MFJXAmsDEX
+         yOAy5SvcW0UikMQ2CJGV1PtkOTbFeB10RpQqtH755fli7w5IMVvNVpRKhRD93Ecfmgqo
+         dE0pi9uYJDUFdaJB9ld6SpzS4Qojxp3q/UpqItLl4zpd6V/oK1viHG4GbNw2KUiuPHg0
+         MNIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PMEoU3Gz26JMyroIsJaDweM2uFKnZxU+TruAPOzAvDQ=;
-        b=eUT+FXP8x77oiXls1Mp9kN/Cb0hdtqKuRZGrDCpWEvf4TNOaWq2gop+0BbJ6ozdUxD
-         TkCyVOxphyvEy6LwyJuZXb+E/S8mb/rwAxmhS9u+Uk7+GJNBbPlgKaeeSTi5OXkX09LW
-         cdHrW9xfxoJLZXsgw439fQR+zfjtHiULII+qj08eEpKf7w/cVQE7nTI0jI/7gKtUCKMo
-         nmyIXA3tYlFsSocz71RaLStStbd+w7TwrAb9W2hV5JxkTjUnd3N4iIGibKtwF+wsivgT
-         60ewaLWHb3O2oYc6mBOPCGMsoZIe9bK7GB8ppbzgHUfrVAtUz+sopg+45RujhV8BcF0i
-         keDQ==
-X-Gm-Message-State: ABuFfohfzLVqlf9v2sNXAxNxvbDac94tuQE3IFzaJsLUtiuo0X+yH3fC
-        782WIO14j6yEKZ+V5THmo+0=
-X-Google-Smtp-Source: ACcGV616sfBSeWdhY65vuwJ347vlXuWjFMzvd8rfSFxev4MhtCvsl9HFe0cPVapvQHbAn0zPVFYAEA==
-X-Received: by 2002:a63:3507:: with SMTP id c7-v6mr8359856pga.158.1538712869669;
-        Thu, 04 Oct 2018 21:14:29 -0700 (PDT)
+        bh=jnKR2PoeAIKjHuDWgCk3o7QuZS8LEHYAoeREGeLzT+w=;
+        b=Z+QIT7WGDv1IUPt2uoORC77Y1kli5zd82lIuq/+d33kJJTK2ubapw3uTVdtVUbX8iV
+         8adh3vTPxXUc+sDTNgHk3/DzkEuTZ79uQ71AYZaL4TWfs12EM/IdZrtCeTRH3jdk6Kni
+         GL53lHc5A2z5yRGiFoONxxwIMgrFCmIIypHg+f00QuMncdFC4bxI5t59R4PzoOeOkMtP
+         jFmYhzND+cspdX+YoIVap+0UvqiQrrlLHruSJ2PVj52E6imTeTnSceWIIBwFBqF3M3Ct
+         mZbO9JKraUaZbShAmAtbf0UqsurlTGC1GK+OohPAj++erBdAmEZYQAmLqEpBgB/2HUSH
+         5MVA==
+X-Gm-Message-State: ABuFfohMCxfJWY5WF75z7peNBiUJ+4UmhtpI1Z85GGESeQxvn8GkRILT
+        z2jaIkEGiwSlvbK0fvYdLtA=
+X-Google-Smtp-Source: ACcGV62qItnQd2CXtT6xk/RzShI4DDV5hJdw17NOq2BjfOvsibaFEpU1DYVLMYQw8bbac0podcCrfA==
+X-Received: by 2002:a17:902:261:: with SMTP id 88-v6mr9771113plc.331.1538712872151;
+        Thu, 04 Oct 2018 21:14:32 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm277975pfn.9.2018.10.04.21.14.28
+        by smtp.gmail.com with ESMTPSA id n63-v6sm277975pfn.9.2018.10.04.21.14.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 04 Oct 2018 21:14:29 -0700 (PDT)
+        Thu, 04 Oct 2018 21:14:31 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH 14/16] of: unittest: remove unused of_unittest_apply_overlay() argument
-Date:   Thu,  4 Oct 2018 21:12:45 -0700
-Message-Id: <1538712767-30394-15-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH 16/16] of: unittest: find overlays[] entry by name instead of index
+Date:   Thu,  4 Oct 2018 21:12:47 -0700
+Message-Id: <1538712767-30394-17-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
 References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
@@ -81,46 +81,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Argument unittest_nr is not used in of_unittest_apply_overlay(),
-remove it.
+One accessor of overlays[] was using a hard coded index value to
+find the correct array entry instead of searching for the entry
+containing the correct name.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/unittest.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/of/unittest.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index efd9c947f192..6d80f474c8f2 100644
+index b61a33f30a56..4d4ba4ddba9b 100644
 --- a/drivers/of/unittest.c
 +++ b/drivers/of/unittest.c
-@@ -1419,8 +1419,7 @@ static void of_unittest_destroy_tracked_overlays(void)
- 	} while (defers > 0);
- }
+@@ -2152,7 +2152,7 @@ struct overlay_info {
+ OVERLAY_INFO_EXTERN(overlay_bad_phandle);
+ OVERLAY_INFO_EXTERN(overlay_bad_symbol);
  
--static int __init of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
--		int *overlay_id)
-+static int __init of_unittest_apply_overlay(int overlay_nr, int *overlay_id)
+-/* order of entries is hard-coded into users of overlays[] */
++/* entries found by name */
+ static struct overlay_info overlays[] = {
+ 	OVERLAY_INFO(overlay_base, -9999),
+ 	OVERLAY_INFO(overlay, 0),
+@@ -2175,7 +2175,8 @@ struct overlay_info {
+ 	OVERLAY_INFO(overlay_bad_add_dup_prop, -EINVAL),
+ 	OVERLAY_INFO(overlay_bad_phandle, -EINVAL),
+ 	OVERLAY_INFO(overlay_bad_symbol, -EINVAL),
+-	{}
++	/* end marker */
++	{.dtb_begin = NULL, .dtb_end = NULL, .expected_result = 0, .name = NULL}
+ };
+ 
+ static struct device_node *overlay_base_root;
+@@ -2205,6 +2206,19 @@ void __init unittest_unflatten_overlay_base(void)
+ 	u32 data_size;
+ 	void *new_fdt;
+ 	u32 size;
++	int found = 0;
++	const char *overlay_name = "overlay_base";
++
++	for (info = overlays; info && info->name; info++) {
++		if (!strcmp(overlay_name, info->name)) {
++			found = 1;
++			break;
++		}
++	}
++	if (!found) {
++		pr_err("no overlay data for %s\n", overlay_name);
++		return;
++	}
+ 
+ 	info = &overlays[0];
+ 
+@@ -2252,11 +2266,10 @@ static int __init overlay_data_apply(const char *overlay_name, int *overlay_id)
  {
- 	const char *overlay_name;
+ 	struct overlay_info *info;
+ 	int found = 0;
+-	int k;
+ 	int ret;
+ 	u32 size;
  
-@@ -1453,7 +1452,7 @@ static int __init of_unittest_apply_overlay_check(int overlay_nr,
- 	}
- 
- 	ovcs_id = 0;
--	ret = of_unittest_apply_overlay(overlay_nr, unittest_nr, &ovcs_id);
-+	ret = of_unittest_apply_overlay(overlay_nr, &ovcs_id);
- 	if (ret != 0) {
- 		/* of_unittest_apply_overlay already called unittest() */
- 		return ret;
-@@ -1489,7 +1488,7 @@ static int __init of_unittest_apply_revert_overlay_check(int overlay_nr,
- 
- 	/* apply the overlay */
- 	ovcs_id = 0;
--	ret = of_unittest_apply_overlay(overlay_nr, unittest_nr, &ovcs_id);
-+	ret = of_unittest_apply_overlay(overlay_nr, &ovcs_id);
- 	if (ret != 0) {
- 		/* of_unittest_apply_overlay already called unittest() */
- 		return ret;
+-	for (k = 0, info = overlays; info && info->name; info++, k++) {
++	for (info = overlays; info && info->name; info++) {
+ 		if (!strcmp(overlay_name, info->name)) {
+ 			found = 1;
+ 			break;
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
