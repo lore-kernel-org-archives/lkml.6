@@ -2,183 +2,90 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E82C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD95C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D07E20652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:44:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07E20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 538F920652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:48:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538F920652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbeJEQmq (ORCPT
+        id S1727733AbeJEQqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 12:42:46 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40055 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbeJEQmq (ORCPT
+        Fri, 5 Oct 2018 12:46:37 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46271 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbeJEQqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 12:42:46 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g8Mf4-0004ez-Mr; Fri, 05 Oct 2018 11:44:42 +0200
-Message-ID: <1538732679.3545.5.camel@pengutronix.de>
-Subject: Re: [PATCH v4 02/11] gpu: ipu-csi: Swap fields according to
- input/output field types
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "open list:DRM DRIVERS FOR FREESCALE IMX" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
-Date:   Fri, 05 Oct 2018 11:44:39 +0200
-In-Reply-To: <20181004185401.15751-3-slongerbeam@gmail.com>
-References: <20181004185401.15751-1-slongerbeam@gmail.com>
-         <20181004185401.15751-3-slongerbeam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 5 Oct 2018 12:46:37 -0400
+Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 5e597fb7a2fcd3f3; Fri, 5 Oct 2018 11:48:36 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     sudeep.holla@arm.com, gregkh@linuxfoundation.org,
+        linux-acpi@vger.kernel.org, jeremy.linton@arm.com,
+        linux-kernel@vger.kernel.org, vkilari@codeaurora.org
+Subject: Re: [PATCH v4 0/2] PPTT handle Handle architecturally unknown cache types
+Date:   Fri, 05 Oct 2018 11:45:34 +0200
+Message-ID: <2264331.PzHIdRIQff@aspire.rjw.lan>
+In-Reply-To: <1538666406-7504-1-git-send-email-jhugo@codeaurora.org>
+References: <1538666406-7504-1-git-send-email-jhugo@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Thursday, October 4, 2018 5:20:04 PM CEST Jeffrey Hugo wrote:
+> The ARM Architecture Reference Manual allows for caches to be "invisible" and
+> thus not specified in the system registers under some scenarios such as if the
+> cache cannot be managed by set/way operations.
+> 
+> However, such caches may be specified in the ACPI PPTT table for workload
+> performance/scheduling optimizations.
+> 
+> Currently such caches can cause an error in lscpu -
+> 
+> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
+> file or directory
+> 
+> and result in no output, providing a poor user experience.  lstopo is also
+> affected as such caches are not included in the output.
+> 
+> Address these issues by attempting to be a little more discerning about when
+> cache information is provided to userspace, and also utilize all sources for
+> cache information when possible.
+> 
+> [v4]
+> -Collected all current tags and ammended to individual patches
+> -Removed PPTT_CHECKED_ATTRIBUTES
+> 
+> [v3]
+> -removed valid flag in PPTT
+> -Added Jeremy Linton's reviewed-by
+> 
+> [v2]
+> -Updated cacheinfo per Sudeep's suggestion
+> -Integrated the PPTT fix into existing PPTT code per Sudeep's suggestion
+> 
+> Jeffrey Hugo (2):
+>   drivers: base: cacheinfo: Do not populate sysfs for unknown cache
+>     types
+>   ACPI/PPTT: Handle architecturally unknown cache types
+> 
+>  drivers/acpi/pptt.c      | 15 +++++++++++----
+>  drivers/base/cacheinfo.c |  2 ++
+>  2 files changed, 13 insertions(+), 4 deletions(-)
+> 
+> 
 
-On Thu, 2018-10-04 at 11:53 -0700, Steve Longerbeam wrote:
-[...]
->  int ipu_csi_init_interface(struct ipu_csi *csi,
->  			   struct v4l2_mbus_config *mbus_cfg,
-> -			   struct v4l2_mbus_framefmt *mbus_fmt)
-> +			   struct v4l2_mbus_framefmt *infmt,
-> +			   struct v4l2_mbus_framefmt *outfmt)
->  {
-[...] 
-> +		std = V4L2_STD_UNKNOWN;
-> +		if (width == 720) {
-> +			switch (height) {
-> +			case 480:
-> +				std = V4L2_STD_NTSC;
-> +				break;
-> +			case 576:
-> +				std = V4L2_STD_PAL;
-> +				break;
-> +			default:
-> +				break;
-> +			}
-> +		}
-> +
-> +		if (std == V4L2_STD_UNKNOWN) {
->  			dev_err(csi->ipu->dev,
-[...]
-> +				"Unsupported interlaced video mode\n");
-> +			ret = -EINVAL;
-> +			goto out_unlock;
->  		}
-[...]
-> +
-> +		/* framelines for NTSC / PAL */
-> +		height = (std & V4L2_STD_525_60) ? 525 : 625;
+Both patches applied, thanks!
 
-I think this is a bit convoluted. Instead of initializing std, then
-possibly changing it, and then comparing to the inital value, and then
-checking it again to determine the new height, why not just:
 
-		if (width == 720 && height == 480) {
-			std = V4L2_STD_NTSC;
-			height = 525;
-		} else if (width == 720 && height == 576) {
-			std = V4L2_STD_PAL;
-			height = 625;
-		} else {
-			dev_err(csi->ipu->dev,
-				"Unsupported interlaced video mode\n");
-			ret = -EINVAL;
-			goto out_unlock;
-		}
-
-?
-
->  		break;
->  	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_DDR:
->  	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_SDR:
-> @@ -476,9 +529,10 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
->  	dev_dbg(csi->ipu->dev, "CSI_ACT_FRM_SIZE = 0x%08X\n",
->  		ipu_csi_read(csi, CSI_ACT_FRM_SIZE));
->  
-> +out_unlock:
->  	spin_unlock_irqrestore(&csi->lock, flags);
->  
-> -	return 0;
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(ipu_csi_init_interface);
->  
-> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-> index 4acdd7ae612b..ad66f007d395 100644
-> --- a/drivers/staging/media/imx/imx-media-csi.c
-> +++ b/drivers/staging/media/imx/imx-media-csi.c
-> @@ -666,7 +666,6 @@ static int csi_setup(struct csi_priv *priv)
->  	struct v4l2_mbus_framefmt *infmt, *outfmt;
->  	const struct imx_media_pixfmt *incc;
->  	struct v4l2_mbus_config mbus_cfg;
-> -	struct v4l2_mbus_framefmt if_fmt;
->  	struct v4l2_rect crop;
->  
->  	infmt = &priv->format_mbus[CSI_SINK_PAD];
-> @@ -679,22 +678,14 @@ static int csi_setup(struct csi_priv *priv)
->  		priv->upstream_ep.bus.parallel.flags :
->  		priv->upstream_ep.bus.mipi_csi2.flags;
->  
-> -	/*
-> -	 * we need to pass input frame to CSI interface, but
-> -	 * with translated field type from output format
-> -	 */
-> -	if_fmt = *infmt;
-> -	if_fmt.field = outfmt->field;
->  	crop = priv->crop;
->  
->  	/*
->  	 * if cycles is set, we need to handle this over multiple cycles as
->  	 * generic/bayer data
->  	 */
-> -	if (is_parallel_bus(&priv->upstream_ep) && incc->cycles) {
-> -		if_fmt.width *= incc->cycles;
-
-If the input format width passed to ipu_csi_init_interface is not
-multiplied by the number of cycles per pixel anymore, width in the
-CSI_SENS_FRM_SIZE register will be set to the unmultiplied value from
-infmt.
-This breaks 779680e2e793 ("media: imx: add support for RGB565_2X8 on
-parallel bus").
-
-> +	if (is_parallel_bus(&priv->upstream_ep) && incc->cycles)
->  		crop.width *= incc->cycles;
-> -	}
->  
->  	ipu_csi_set_window(priv->csi, &crop);
->  
-> @@ -702,7 +693,7 @@ static int csi_setup(struct csi_priv *priv)
->  			     priv->crop.width == 2 * priv->compose.width,
->  			     priv->crop.height == 2 * priv->compose.height);
->  
-> -	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt);
-> +	ipu_csi_init_interface(priv->csi, &mbus_cfg, infmt, outfmt);
-
-regards
-Philipp
