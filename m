@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E80C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AEDC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7971B2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:50:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7971B2084D
+	by mail.kernel.org (Postfix) with ESMTP id C47412084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:50:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47412084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbeJEPrn (ORCPT
+        id S1728794AbeJEPrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:47:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:47816 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728625AbeJEPrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:47:42 -0400
+        Fri, 5 Oct 2018 11:47:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47842 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728625AbeJEPrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:47:47 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF5DD15BE;
-        Fri,  5 Oct 2018 01:49:58 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 191F51650;
+        Fri,  5 Oct 2018 01:50:03 -0700 (PDT)
 Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79D113F5B3;
-        Fri,  5 Oct 2018 01:49:55 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D79A33F5B3;
+        Fri,  5 Oct 2018 01:49:59 -0700 (PDT)
 From:   Kristina Martsenko <kristina.martsenko@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Adam Wallis <awallis@codeaurora.org>,
@@ -47,9 +47,9 @@ Cc:     Adam Wallis <awallis@codeaurora.org>,
         Will Deacon <will.deacon@arm.com>,
         kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 04/17] arm64: Don't trap host pointer auth use to EL2
-Date:   Fri,  5 Oct 2018 09:47:41 +0100
-Message-Id: <20181005084754.20950-5-kristina.martsenko@arm.com>
+Subject: [PATCH v5 05/17] arm64/cpufeature: detect pointer authentication
+Date:   Fri,  5 Oct 2018 09:47:42 +0100
+Message-Id: <20181005084754.20950-6-kristina.martsenko@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181005084754.20950-1-kristina.martsenko@arm.com>
 References: <20181005084754.20950-1-kristina.martsenko@arm.com>
@@ -60,53 +60,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mark Rutland <mark.rutland@arm.com>
 
-To allow EL0 (and/or EL1) to use pointer authentication functionality,
-we must ensure that pointer authentication instructions and accesses to
-pointer authentication keys are not trapped to EL2.
+So that we can dynamically handle the presence of pointer authentication
+functionality, wire up probing code in cpufeature.c.
 
-This patch ensures that HCR_EL2 is configured appropriately when the
-kernel is booted at EL2. For non-VHE kernels we set HCR_EL2.{API,APK},
-ensuring that EL1 can access keys and permit EL0 use of instructions.
-For VHE kernels host EL0 (TGE && E2H) is unaffected by these settings,
-and it doesn't matter how we configure HCR_EL2.{API,APK}, so we don't
-bother setting them.
+From ARMv8.3 onwards, ID_AA64ISAR1 is no longer entirely RES0, and now
+has four fields describing the presence of pointer authentication
+functionality:
 
-This does not enable support for KVM guests, since KVM manages HCR_EL2
-itself when running VMs.
+* APA - address authentication present, using an architected algorithm
+* API - address authentication present, using an IMP DEF algorithm
+* GPA - generic authentication present, using an architected algorithm
+* GPI - generic authentication present, using an IMP DEF algorithm
+
+For the moment we only care about address authentication, so we only
+need to check APA and API. It is assumed that if all CPUs support an IMP
+DEF algorithm, the same algorithm is used across all CPUs.
+
+Note that when we implement KVM support, we will also need to ensure
+that CPUs have uniform support for GPA and GPI.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+[kristina: update cpucap numbers]
 Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
 ---
- arch/arm64/include/asm/kvm_arm.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/cpucaps.h |  5 ++++-
+ arch/arm64/kernel/cpufeature.c   | 47 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index f885f4e96002..1405bb24acac 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -24,6 +24,8 @@
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index ae1f70450fb2..276d4c95aa3c 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -51,7 +51,10 @@
+ #define ARM64_SSBD				30
+ #define ARM64_MISMATCHED_CACHE_TYPE		31
+ #define ARM64_HAS_STAGE2_FWB			32
++#define ARM64_HAS_ADDRESS_AUTH_ARCH		33
++#define ARM64_HAS_ADDRESS_AUTH_IMP_DEF		34
++#define ARM64_HAS_ADDRESS_AUTH			35
  
- /* Hyp Configuration Register (HCR) bits */
- #define HCR_FWB		(UL(1) << 46)
-+#define HCR_API		(UL(1) << 41)
-+#define HCR_APK		(UL(1) << 40)
- #define HCR_TEA		(UL(1) << 37)
- #define HCR_TERR	(UL(1) << 36)
- #define HCR_TLOR	(UL(1) << 35)
-@@ -87,7 +89,7 @@
- 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW | HCR_TLOR | \
- 			 HCR_FMO | HCR_IMO)
- #define HCR_VIRT_EXCP_MASK (HCR_VSE | HCR_VI | HCR_VF)
--#define HCR_HOST_NVHE_FLAGS (HCR_RW)
-+#define HCR_HOST_NVHE_FLAGS (HCR_RW | HCR_API | HCR_APK)
- #define HCR_HOST_VHE_FLAGS (HCR_RW | HCR_TGE | HCR_E2H)
+-#define ARM64_NCAPS				33
++#define ARM64_NCAPS				36
  
- /* TCR_EL2 Registers bits */
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index e238b7932096..0dd171c7d71e 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -142,6 +142,10 @@ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_LRCPC_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_FCMA_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_JSCVT_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_API_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_APA_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_DPB_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
+@@ -1035,6 +1039,22 @@ static void cpu_has_fwb(const struct arm64_cpu_capabilities *__unused)
+ 	WARN_ON(val & (7 << 27 | 7 << 21));
+ }
+ 
++#ifdef CONFIG_ARM64_PTR_AUTH
++static bool has_address_auth(const struct arm64_cpu_capabilities *entry,
++			     int __unused)
++{
++	u64 isar1 = read_sanitised_ftr_reg(SYS_ID_AA64ISAR1_EL1);
++	bool api, apa;
++
++	apa = cpuid_feature_extract_unsigned_field(isar1,
++					ID_AA64ISAR1_APA_SHIFT) > 0;
++	api = cpuid_feature_extract_unsigned_field(isar1,
++					ID_AA64ISAR1_API_SHIFT) > 0;
++
++	return apa || api;
++}
++#endif /* CONFIG_ARM64_PTR_AUTH */
++
+ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		.desc = "GIC system register CPU interface",
+@@ -1222,6 +1242,33 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.cpu_enable = cpu_enable_hw_dbm,
+ 	},
+ #endif
++#ifdef CONFIG_ARM64_PTR_AUTH
++	{
++		.desc = "Address authentication (architected algorithm)",
++		.capability = ARM64_HAS_ADDRESS_AUTH_ARCH,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.sys_reg = SYS_ID_AA64ISAR1_EL1,
++		.sign = FTR_UNSIGNED,
++		.field_pos = ID_AA64ISAR1_APA_SHIFT,
++		.min_field_value = ID_AA64ISAR1_APA_ARCHITECTED,
++		.matches = has_cpuid_feature,
++	},
++	{
++		.desc = "Address authentication (IMP DEF algorithm)",
++		.capability = ARM64_HAS_ADDRESS_AUTH_IMP_DEF,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.sys_reg = SYS_ID_AA64ISAR1_EL1,
++		.sign = FTR_UNSIGNED,
++		.field_pos = ID_AA64ISAR1_API_SHIFT,
++		.min_field_value = ID_AA64ISAR1_API_IMP_DEF,
++		.matches = has_cpuid_feature,
++	},
++	{
++		.capability = ARM64_HAS_ADDRESS_AUTH,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.matches = has_address_auth,
++	},
++#endif /* CONFIG_ARM64_PTR_AUTH */
+ 	{},
+ };
+ 
 -- 
 2.11.0
 
