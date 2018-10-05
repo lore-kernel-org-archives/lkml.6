@@ -2,109 +2,172 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7321DC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B7CC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394B1208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394B1208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B0AD21473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6ZuTjr6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B0AD21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbeJEXWr (ORCPT
+        id S1729942AbeJEXQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:22:47 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:32856 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729933AbeJEXQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 5 Oct 2018 19:16:10 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8SmS-0008D4-Iz; Fri, 05 Oct 2018 10:16:46 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g8SmS-0000ed-5h; Fri, 05 Oct 2018 10:16:44 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Fri,  5 Oct 2018 10:16:40 -0600
-Message-Id: <20181005161642.2462-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181005161642.2462-1-logang@deltatee.com>
-References: <20181005161642.2462-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, sbates@raithlin.com, palmer@sifive.com, aou@eecs.berkeley.edu, hch@lst.de, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 3/5] arm64: mm: make use of new memblocks_present() helper
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Received: from mail.kernel.org ([198.145.29.99]:53908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729869AbeJEXQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:08 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BE75214C1;
+        Fri,  5 Oct 2018 16:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538756204;
+        bh=QeYqfDXbrCL+tSu6pgxZRm/AfhMu8UG8y/CoEmJRE+4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Z6ZuTjr6vX1a7D47i2NV6p4YS5BROoYscdXWvfzmRmDf5CdlwdRuGkkMXVSu7/mpn
+         rmmPcQhUkJyyOt3eDPQhkKBTrR/LW51TTSVqxP7T0lw4FSCSD0i/vCQ3sfI3/PwXZ5
+         M4Ux9HwkCRUBxLsGn24c0eOvLGarPVpjsx4am2Ys=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Laura Abbott <labbott@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 10/23] scsi: iscsi: target: Don't use stack buffer for scatterlist
+Date:   Fri,  5 Oct 2018 12:16:21 -0400
+Message-Id: <20181005161634.20631-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
+References: <20181005161634.20631-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup the arm64_memory_present() function seeing it's very
-similar to other arches.
+From: Laura Abbott <labbott@redhat.com>
 
-memblocks_present() is a direct replacement of arm64_memory_present()
+[ Upstream commit 679fcae46c8b2352bba3485d521da070cfbe68e6 ]
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Fedora got a bug report of a crash with iSCSI:
+
+kernel BUG at include/linux/scatterlist.h:143!
+...
+RIP: 0010:iscsit_do_crypto_hash_buf+0x154/0x180 [iscsi_target_mod]
+...
+ Call Trace:
+  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
+  iscsit_get_rx_pdu+0x4cd/0xa90 [iscsi_target_mod]
+  ? native_sched_clock+0x3e/0xa0
+  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
+  iscsi_target_rx_thread+0x81/0xf0 [iscsi_target_mod]
+  kthread+0x120/0x140
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ret_from_fork+0x3a/0x50
+
+This is a BUG_ON for using a stack buffer with a scatterlist.  There
+are two cases that trigger this bug. Switch to using a dynamically
+allocated buffer for one case and do not assign a NULL buffer in
+another case.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm64/mm/init.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
+ drivers/target/iscsi/iscsi_target.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 787e27964ab9..63fa9653f281 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -296,24 +296,6 @@ int pfn_valid(unsigned long pfn)
- EXPORT_SYMBOL(pfn_valid);
- #endif
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index 52fa52c20be0..d2cafdae8317 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -1421,7 +1421,8 @@ static void iscsit_do_crypto_hash_buf(
  
--#ifndef CONFIG_SPARSEMEM
--static void __init arm64_memory_present(void)
--{
--}
--#else
--static void __init arm64_memory_present(void)
--{
--	struct memblock_region *reg;
--
--	for_each_memblock(memory, reg) {
--		int nid = memblock_get_region_node(reg);
--
--		memory_present(nid, memblock_region_memory_base_pfn(reg),
--				memblock_region_memory_end_pfn(reg));
--	}
--}
--#endif
--
- static phys_addr_t memory_limit = PHYS_ADDR_MAX;
+ 	sg_init_table(sg, ARRAY_SIZE(sg));
+ 	sg_set_buf(sg, buf, payload_length);
+-	sg_set_buf(sg + 1, pad_bytes, padding);
++	if (padding)
++		sg_set_buf(sg + 1, pad_bytes, padding);
  
- /*
-@@ -506,7 +488,7 @@ void __init bootmem_init(void)
- 	 * Sparsemem tries to allocate bootmem in memory_present(), so must be
- 	 * done after the fixed reservations.
- 	 */
--	arm64_memory_present();
-+	memblocks_present();
+ 	ahash_request_set_crypt(hash, sg, data_crc, payload_length + padding);
  
- 	sparse_init();
- 	zone_sizes_init(min, max);
+@@ -3942,10 +3943,14 @@ static bool iscsi_target_check_conn_state(struct iscsi_conn *conn)
+ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ {
+ 	int ret;
+-	u8 buffer[ISCSI_HDR_LEN], opcode;
++	u8 *buffer, opcode;
+ 	u32 checksum = 0, digest = 0;
+ 	struct kvec iov;
+ 
++	buffer = kcalloc(ISCSI_HDR_LEN, sizeof(*buffer), GFP_KERNEL);
++	if (!buffer)
++		return;
++
+ 	while (!kthread_should_stop()) {
+ 		/*
+ 		 * Ensure that both TX and RX per connection kthreads
+@@ -3953,7 +3958,6 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 		 */
+ 		iscsit_thread_check_cpumask(conn, current, 0);
+ 
+-		memset(buffer, 0, ISCSI_HDR_LEN);
+ 		memset(&iov, 0, sizeof(struct kvec));
+ 
+ 		iov.iov_base	= buffer;
+@@ -3962,7 +3966,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 		ret = rx_data(conn, &iov, 1, ISCSI_HDR_LEN);
+ 		if (ret != ISCSI_HDR_LEN) {
+ 			iscsit_rx_thread_wait_for_tcp(conn);
+-			return;
++			break;
+ 		}
+ 
+ 		if (conn->conn_ops->HeaderDigest) {
+@@ -3972,7 +3976,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 			ret = rx_data(conn, &iov, 1, ISCSI_CRC_LEN);
+ 			if (ret != ISCSI_CRC_LEN) {
+ 				iscsit_rx_thread_wait_for_tcp(conn);
+-				return;
++				break;
+ 			}
+ 
+ 			iscsit_do_crypto_hash_buf(conn->conn_rx_hash,
+@@ -3996,7 +4000,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 		}
+ 
+ 		if (conn->conn_state == TARG_CONN_STATE_IN_LOGOUT)
+-			return;
++			break;
+ 
+ 		opcode = buffer[0] & ISCSI_OPCODE_MASK;
+ 
+@@ -4007,13 +4011,15 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
+ 			" while in Discovery Session, rejecting.\n", opcode);
+ 			iscsit_add_reject(conn, ISCSI_REASON_PROTOCOL_ERROR,
+ 					  buffer);
+-			return;
++			break;
+ 		}
+ 
+ 		ret = iscsi_target_rx_opcode(conn, buffer);
+ 		if (ret < 0)
+-			return;
++			break;
+ 	}
++
++	kfree(buffer);
+ }
+ 
+ int iscsi_target_rx_thread(void *arg)
 -- 
-2.19.0
+2.17.1
 
