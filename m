@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617E6C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809F7C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B84920834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B84920834
+	by mail.kernel.org (Postfix) with ESMTP id 524F120834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524F120834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbeJEXHN (ORCPT
+        id S1728861AbeJEXHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:07:13 -0400
-Received: from sauhun.de ([88.99.104.3]:40304 "EHLO pokefinder.org"
+        Fri, 5 Oct 2018 19:07:20 -0400
+Received: from sauhun.de ([88.99.104.3]:40316 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbeJEXHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:07:13 -0400
+        id S1727572AbeJEXHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:07:19 -0400
 Received: from localhost (p54B3360B.dip0.t-ipconnect.de [84.179.54.11])
-        by pokefinder.org (Postfix) with ESMTPSA id 5190F2C79EA;
-        Fri,  5 Oct 2018 18:07:51 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 18:07:50 +0200
+        by pokefinder.org (Postfix) with ESMTPSA id E1C692C7EC3;
+        Fri,  5 Oct 2018 18:07:57 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 18:07:57 +0200
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] i2c: omap: use core to detect 'no zero length'
- quirk
-Message-ID: <20181005160750.4rehujdlvk7phot4@ninjato>
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/12] i2c: qup: use core to detect 'no zero length' quirk
+Message-ID: <20181005160757.u3tndasxf2burb74@ninjato>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y67gvktqmc777jno"
+        protocol="application/pgp-signature"; boundary="bhtjd42horfsmg7w"
 Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,12 +49,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---y67gvktqmc777jno
+--bhtjd42horfsmg7w
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 23, 2018 at 10:26:08PM +0200, Wolfram Sang wrote:
+On Mon, Jul 23, 2018 at 10:26:10PM +0200, Wolfram Sang wrote:
 > And don't reimplement in the driver.
 >=20
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -62,24 +62,24 @@ On Mon, Jul 23, 2018 at 10:26:08PM +0200, Wolfram Sang wrote:
 Applied to for-next, thanks!
 
 
---y67gvktqmc777jno
+--bhtjd42horfsmg7w
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3jFYACgkQFA3kzBSg
-Kbai4Q//bdUqfiGep2cctWYVOG3tEjuwjrQPQkBEz28T8O+l/7rYlBu5nE7PSkjf
-pQhWNe+ORfzMTpnQHbk7F+qaXDICDEWG3ApnKfiudXCHGVfNzTe1gs5Da1J4zQjX
-l1j8TCXQL8go1ftYQdIfIaAFr1VzbFjhDIRhqyAhuIvKWTWFWuLYAC/x1idA+MRr
-9Ijj24y+8DppchR0Ifh+YbqQdejWiv7RwOyW5G8Lxl5rI1ypKc5Rrpr5yEXNGH0/
-gu5mNISUO44CxL+JQ0oy4d30sl56IKXk+JudZE0RgrmjPORltc8g5MZCoTlaSLzj
-IhHvng6CN/qdfaEsix22aXRv1AY0DOp+CGFSNerym2KmbOThNKk2pQhR/iERVSHr
-7O/mZokwEHp7elGhARYB89tA6eTZDJ7WymrUekDKqTEBlM6QbMifmfN4R8T7wXaI
-YLovwVIXNjjHu29fYb+/DxVR/KxJCazyQaDeQjOPn1N60aeE26CBLToXVAsjvndF
-bdmwWYfLfO5MCA9m17lR23XY81sD9JjyBhus3teKb7cDmQW2DdNGQa5eMlq26Lt1
-/ge8zNNA5Tt/toaOz7hOKqKq5fSsrUyNZoKR4vF6TdwQUJbWU+ZohlrQB9oeXY4Q
-zTH3l8jfrjBw0WlBIs1fZHu9nbFDoQplEr8tMeaIlOa2avOF0mM=
-=YmKR
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3jF0ACgkQFA3kzBSg
+KbZCGw//SE6mTYuSe6OfLNIuF/2L6CFT1VxnZGqJV4MoPvbHgBewEKW/ZGx8+6hO
+aQdW/KoJCoPJPj5TD6wSod5RJVKk+aSX0lj2olKEtQOr/vgr0oWF7Gx83LjJ99Ur
+WUj0KSTqGoqjRgC0n8pE4KYr0jA/vngjUinJsY5VwNStyHriII2qD256hWfrFpfS
+1B0G0RS8RdeneQAUGcK+w7/UsBNUpeCrjxS0hB2Pf+0fSD9HpIgoVXpqyYQyF1r3
+eJyNxIrYXunUHb9fUGSpmgaaUwCMILR4xZB8m2Ck6SWyuDkABxZmIkQ0uCI+7ICk
+jNzg13HF3f1UbM9ODpKgTzEWfxnLidn7V8I5+1BopD/fFnNlN7sfePkdjxQYDUvy
+d1QOXpYAZmn/bF8XEs84mLZllQPwjE4Ai2Xs9N4jGEeXo4meNzt56QIwqHbelDt4
+7KV7B05CY6lWr8q8FaXg67GmrplpqDB7TLbF2qGao9rHk/pgdsZ5JVv8zgjbkrw8
+OvZ4tSXlZRnwAtVb3DLPerICUQouyeIXyjaqBk6G5p0ie5hqWjvSX+wnKrOajUMn
+CYLgJXe2xixuMadjJ5TYjW9+5Uinnv9d7KINuuVLce0apHNmYFS7D4rJC6zqmOUF
+mg7I35/TlwE34S+OXBlfSDI1sH4z7ByeEf8ZSQ2WCPW5r6BnxWo=
+=3wWn
 -----END PGP SIGNATURE-----
 
---y67gvktqmc777jno--
+--bhtjd42horfsmg7w--
