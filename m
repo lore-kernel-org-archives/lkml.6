@@ -2,92 +2,119 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1EFC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4399BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A0F21479
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:57:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A0F21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id EC47520875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:01:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rU/l5Hn2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC47520875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbeJFB5F (ORCPT
+        id S1729063AbeJFCBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:57:05 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:43850 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeJFB5F (ORCPT
+        Fri, 5 Oct 2018 22:01:06 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41471 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeJFCBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:57:05 -0400
-Received: by mail-yw1-f67.google.com with SMTP id j75-v6so5656410ywj.10
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:57:04 -0700 (PDT)
+        Fri, 5 Oct 2018 22:01:05 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m77-v6so5485944pfi.8;
+        Fri, 05 Oct 2018 12:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=SKuVjS39dss0fkHvroG63d4smHsNEcsKSPK9HCDaGvc=;
+        b=rU/l5Hn2UfVBuTabRnZakLv1dgkUSNdSNIfqi6RPHBUbfTjlp4g6JnOpE6NXicoLr3
+         VC6bF9lkTvHA5GbEuBnF5NM1uvxUEtpYX/pxempM5jDpfjsvPehq2HU9tjfCLQwX1B6A
+         TC28RokWaM5uCHjKcI+85TRu0wUN+O11dR42ttc2Bik7JKGHSoBJQ6mnB9fFtKtuw4Ks
+         f1pFMn9RJB3XVMC+AgCGDkaCpHolP6eEaFUkDH4s5jihuAhW4oxbLeBJJ2SiaHyZ5uEy
+         Bb4lLv3M/L7DAKM4eB3GKPIdAiQ0YF8ZSua1/WVfWzmgr/75kDcnx+9VfMDnc+0yXBqs
+         Ewhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1tCsJMkkppw7jkazA9j7eJEyDbmxqhWZwL2uVrD7i6Q=;
-        b=kLUpIjuVE0OhMUEaG5QfpXF/hn3MuxrWDg3yqr95aH/ItqFnxwMB7fSAxGbXPMPrCu
-         vO2+Y5aW72COcjK0AhJrBBcEYu48jNy6+b477Fv1wp9sJbAmlrkiwRqs9HjJ6mM7vCeQ
-         zZ2GQyv02JbNy1pD+Lkr3cOM1rISn7zSQIlvP3MF721Op50gSo0heoJdM1kDBJ8ucxll
-         1ODPTb5SUlFlNadezQL4N5/3BegOo5frDQSZs2fDogAEztL8jjWPB5Z5x0V/mlAIygyi
-         ksW/fQ2p67tCUSbe0a7Y4KHrdtlENKF/ioEkeKXisWI0JjBZ2CtA1/dNIOhBYHVRo6Kx
-         lwGw==
-X-Gm-Message-State: ABuFfohNbJGOOS49JkMGY5GKclLdZxD/zJsqqEBys73L0eQTbtBuJmK5
-        0EvYF2G+SD4u9QYE2CwgrYE=
-X-Google-Smtp-Source: ACcGV601ts02tumKCEocn8tsUmYDh+mwIrih2JnbUMOIEkezDDXyjM8RQoQSKPItlA/crjzXadse8A==
-X-Received: by 2002:a0d:cec5:: with SMTP id q188-v6mr7025532ywd.68.1538765824024;
-        Fri, 05 Oct 2018 11:57:04 -0700 (PDT)
-Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm6708547ywa.60.2018.10.05.11.57.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 11:57:03 -0700 (PDT)
-Subject: Re: [PATCH v2 0/3] mm: Fix for movable_node boot option
-To:     Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>, linux-mm@kvack.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <20180925153532.6206-1-msys.mizuma@gmail.com>
- <alpine.DEB.2.21.1809272241130.8118@nanos.tec.linutronix.de>
- <20181002140111.GW18290@dhcp22.suse.cz>
-From:   Pavel Tatashin <pavel.tatashin@microsoft.com>
-Message-ID: <0e9b7c25-8e84-e37a-ce65-671641210aab@gmail.com>
-Date:   Fri, 5 Oct 2018 14:57:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=SKuVjS39dss0fkHvroG63d4smHsNEcsKSPK9HCDaGvc=;
+        b=LioCk5kQ31m0Tk0/qJx9b9hY1mCX2lg5YpSomeWsMWPoDfLfybkz32ZzXsX6XnaUQf
+         VXGCXZt8rTEaxIBHsfa9VY1FERKf4BUI/NVEu1evmavrjY1rsL/COfDuYrBap8M8rYMy
+         zzut1hksGF4a87QdLHfBya47GEUp/S4iWcVeW3bpn4iAlEJ84deCAAGU88ggVVfLNK7M
+         RykjZ8Q9yYwbL0kEQAxplKpAfe/l3ZII6Neh5z3EzaHAmal2AmORzKUaGKYTKXhAA2B/
+         A8v/FMokkkEIPl/j3IXvNtljo3XQgLvU7EvsSwWmIQkFso9giy86MERV9RQQ7gI/pp7W
+         0fCw==
+X-Gm-Message-State: ABuFfohQDYQ1M/WsoEF3vISlJFB+0RmjwoSGFA7QYA/QzfEgJIqoJL36
+        sT4xhezKGxLOAhctYOF1x0g=
+X-Google-Smtp-Source: ACcGV62fXxPvOR8XVMeEIr8fYMn/0r0XDFKvTXsNB6jtOMfU/gEZT83wIMwKDcyX6pk7S1cP9aBXFg==
+X-Received: by 2002:a63:f:: with SMTP id 15-v6mr11271387pga.15.1538766062657;
+        Fri, 05 Oct 2018 12:01:02 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id f25-v6sm10916996pfn.177.2018.10.05.12.01.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 12:01:01 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 12:00:58 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Derek Basehore <dbasehore@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] cpufreq: dt-platdev: allow RK3399 to have separate
+ tunables per cluster
+Message-ID: <20181005190058.GA234868@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <20181002140111.GW18290@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+RK3899 has one cluster with 4 small cores, and another one with 2 big
+cores, with cores in different clusters having different OPPs and thus
+needing separate set of tunables. Let's enable this via
+"have_governor_per_policy" platform data.
 
-On 10/2/18 10:01 AM, Michal Hocko wrote:
-> On Thu 27-09-18 22:41:36, Thomas Gleixner wrote:
->> On Tue, 25 Sep 2018, Masayoshi Mizuma wrote:
->>
->>> This patch series are the fix for movable_node boot option
->>> issue which was introduced by commit 124049decbb1 ("x86/e820:
->>> put !E820_TYPE_RAM regions into memblock.reserved").
->>>
->>> First patch, revert the commit. Second and third patch fix the
->>> original issue.
->>
->> Can the mm folks please comment on this?
-> 
-> I was under impression that Pavel who authored the original change which
-> got reverted here has reviewed these patches.
-> 
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-I have not reviewed them yet. I am waiting for Masayoshi to send a new
-series with correct order as Ingo requested.
+v2 changes: commit message updated.
 
-Pavel
+Not tested, but we had a patch unconditionally enabling
+CPUFREQ_HAVE_GOVERNOR_PER_POLICY flag in tree we used to ship devices
+based on RK3399 platform.
+
+ drivers/cpufreq/cpufreq-dt-platdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index fe14c57de6ca..040ec0f711f9 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -78,7 +78,10 @@ static const struct of_device_id whitelist[] __initconst = {
+ 	{ .compatible = "rockchip,rk3328", },
+ 	{ .compatible = "rockchip,rk3366", },
+ 	{ .compatible = "rockchip,rk3368", },
+-	{ .compatible = "rockchip,rk3399", },
++	{ .compatible = "rockchip,rk3399",
++	  .data = &(struct cpufreq_dt_platform_data)
++		{ .have_governor_per_policy = true, },
++	},
+ 
+ 	{ .compatible = "st-ericsson,u8500", },
+ 	{ .compatible = "st-ericsson,u8540", },
+-- 
+2.19.0.605.g01d371f741-goog
+
+
+-- 
+Dmitry
