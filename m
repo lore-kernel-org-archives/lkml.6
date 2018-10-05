@@ -5,75 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B914C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9749C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D780620875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:44:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D780620875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 67E502084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:46:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67E502084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbeJEPmK (ORCPT
+        id S1728520AbeJEPoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:42:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32952 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbeJEPmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:42:09 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43BB03082A26;
-        Fri,  5 Oct 2018 08:44:27 +0000 (UTC)
-Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B7E25EDEF;
-        Fri,  5 Oct 2018 08:44:22 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 10:44:20 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, david@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com
-Subject: Re: [PATCH v1 0/2] KVM: s390: Tracing APCB changes
-Message-ID: <20181005104420.62792eed.cohuck@redhat.com>
-In-Reply-To: <1538728270-10340-1-git-send-email-pmorel@linux.ibm.com>
-References: <7d147350-4284-8e01-d1fa-0795d2da85c1@de.ibm.com>
-        <1538728270-10340-1-git-send-email-pmorel@linux.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 05 Oct 2018 08:44:27 +0000 (UTC)
+        Fri, 5 Oct 2018 11:44:15 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37151 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbeJEPoO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 11:44:14 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g8Lki-00073G-AW; Fri, 05 Oct 2018 10:46:28 +0200
+Message-ID: <1538729187.3545.2.camel@pengutronix.de>
+Subject: Re: [PATCH v3 0/6] Add support for PDC Global on SDM845 SoCs
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     mka@chromium.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Date:   Fri, 05 Oct 2018 10:46:27 +0200
+In-Reply-To: <2ae729fe-321b-0918-a06c-d04e43b47101@codeaurora.org>
+References: <20180829191215.10071-1-sibis@codeaurora.org>
+         <20180903193647.GJ3456@tuxbook-pro>
+         <2ae729fe-321b-0918-a06c-d04e43b47101@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  5 Oct 2018 10:31:08 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+Hi Sibi, Bjorn,
 
-> In the first patch we define kvm_arch_crypto_set_masks,
-> a new function to centralize the setup the APCB masks
-> inside the CRYCB SIE satelite and add KVM_EVENT() to
-> kvm_arch_crypto_set_masks and kvm_arch_crypto_clear_masks.
-> 
-> In the second patch we replace the vfio_ap_mdev_copy_masks()
-> by the new kvm_arch_crypto_set_masks() function.
-> 
-> 
-> Pierre Morel (2):
->   KVM: s390: Tracing APCB changes
->   s390: vfio-ap: setup APCB mask using KVM dedicated function
-> 
->  arch/s390/include/asm/kvm_host.h  |  2 ++
->  arch/s390/kvm/kvm-s390.c          | 41 +++++++++++++++++++++++++++++++++++++++
->  drivers/s390/crypto/vfio_ap_ops.c | 33 +++----------------------------
->  3 files changed, 46 insertions(+), 30 deletions(-)
-> 
+On Thu, 2018-10-04 at 23:57 +0530, Sibi Sankar wrote:
+> On 09/04/2018 01:06 AM, Bjorn Andersson wrote:
+[...]
+> > Philipp, there's no compile time dependencies between the PDC and
+> > remoteproc patches in this series. Will you take these two through your
+> > tree and I'll take the remaining four through the remoteproc tree?
+> > 
+> > Regards,
+> > Bjorn
+>
+>Hey Phillip,
+> 
+> Will the PDC driver make the cut for reset/next this time for the
+> 4.20rc?
 
-I like this version better: it moves the mask-setting next to the
-mask-clearing, and, as a bonus, adds a trace event for clearing as
-well :)
+I have applied patches 1 and 2 to reset/next. I'll send a pull request
+early next week.
+
+regards
+Philipp
+
