@@ -2,169 +2,119 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AE7C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C645DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF6CB2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6CB2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C51E2087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFJDq5SD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C51E2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbeJEXU2 (ORCPT
+        id S1730173AbeJEXQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:20:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43565 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeJEXUQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:20:16 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w95GKb8Y3206498
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 5 Oct 2018 09:20:37 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w95GKaFC3206495;
-        Fri, 5 Oct 2018 09:20:36 -0700
-Date:   Fri, 5 Oct 2018 09:20:36 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-c3khb9ac86s00qxzjrueomme@git.kernel.org>
-Cc:     jolsa@kernel.org, adrian.hunter@intel.com, namhyung@kernel.org,
-        tglx@linutronix.de, wangnan0@huawei.com, hpa@zytor.com,
-        mingo@kernel.org, thiago.macieira@intel.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, dsahern@gmail.com
-Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com, dsahern@gmail.com,
-          namhyung@kernel.org, tglx@linutronix.de, jolsa@kernel.org,
-          adrian.hunter@intel.com, hpa@zytor.com, mingo@kernel.org,
-          thiago.macieira@intel.com, wangnan0@huawei.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf python: Use -Wno-redundant-decls to build
- with PYTHON=python3
-Git-Commit-ID: 05a2f54679861deb188750ba2a70187000b2c71f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 5 Oct 2018 19:16:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729747AbeJEXQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:34 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E06C5214C2;
+        Fri,  5 Oct 2018 16:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538756230;
+        bh=vCB+ugg/zzkn9BMkVNbCmp7zLxdTqI+RAjHNM9lNTNg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eFJDq5SDi7reXJWIHcIoJhd3HZROpD0D520g4FG9rxRGpxVntH7gyS46veHTRjqpo
+         GVR3NJpq72VOzxgXLsvWZezCv9ZB5mvWCkqebcoWvIYcgnRKHjQMlcOflNzZn3Xlub
+         FoOFId/3jsi5DunvCvyfNOhWmsTPtegSJWlzlCQc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 05/14] mfd: omap-usb-host: Fix dts probe of children
+Date:   Fri,  5 Oct 2018 12:16:55 -0400
+Message-Id: <20181005161704.20704-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181005161704.20704-1-sashal@kernel.org>
+References: <20181005161704.20704-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181005162036.-IA5sbQHdHylJ9s6DuPECtEVNYB7iXtED-Ier_iKs9s@z>
 
-Commit-ID:  05a2f54679861deb188750ba2a70187000b2c71f
-Gitweb:     https://git.kernel.org/tip/05a2f54679861deb188750ba2a70187000b2c71f
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 18 Sep 2018 16:08:02 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 5 Oct 2018 11:11:55 -0300
+From: Tony Lindgren <tony@atomide.com>
 
-perf python: Use -Wno-redundant-decls to build with PYTHON=python3
+[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
 
-When building in ClearLinux using 'make PYTHON=python3' with gcc 8.2.1
-it fails with:
+It currently only works if the parent bus uses "simple-bus". We
+currently try to probe children with non-existing compatible values.
+And we're missing .probe.
 
-    GEN      /tmp/build/perf/python/perf.so
-  In file included from /usr/include/python3.7m/Python.h:126,
-                   from /git/linux/tools/perf/util/python.c:2:
-  /usr/include/python3.7m/import.h:58:24: error: redundant redeclaration of ‘_PyImport_AddModuleObject’ [-Werror=redundant-decls]
-   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *, PyObject *);
-                          ^~~~~~~~~~~~~~~~~~~~~~~~~
-  /usr/include/python3.7m/import.h:47:24: note: previous declaration of ‘_PyImport_AddModuleObject’ was here
-   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *name,
-                          ^~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
-  error: command 'gcc' failed with exit status 1
+I noticed this while testing devices configured to probe using ti-sysc
+interconnect target module driver. For that we also may want to rebind
+the driver, so let's remove __init and __exit.
 
-And indeed there is a redundant declaration in that Python.h file, one
-with parameter names and the other without, so just add
--Wno-error=redundant-decls to the python setup instructions.
-
-Now perf builds with gcc in ClearLinux with the following Dockerfile:
-
-  # docker.io/acmel/linux-perf-tools-build-clearlinux:latest
-  FROM docker.io/clearlinux:latest
-  MAINTAINER Arnaldo Carvalho de Melo <acme@kernel.org>
-  RUN swupd update && \
-      swupd bundle-add sysadmin-basic-dev
-  RUN mkdir -m 777 -p /git /tmp/build/perf /tmp/build/objtool /tmp/build/linux && \
-      groupadd -r perfbuilder && \
-      useradd -m -r -g perfbuilder perfbuilder && \
-      chown -R perfbuilder.perfbuilder /tmp/build/ /git/
-  USER perfbuilder
-  COPY rx_and_build.sh /
-  ENV EXTRA_MAKE_ARGS=PYTHON=python3
-  ENTRYPOINT ["/rx_and_build.sh"]
-
-Now to figure out why the build fails with clang, that is present in the
-above container as detected by the rx_and_build.sh script:
-
-  clang version 6.0.1 (tags/RELEASE_601/final)
-  Target: x86_64-unknown-linux-gnu
-  Thread model: posix
-  InstalledDir: /usr/sbin
-  make: Entering directory '/git/linux/tools/perf'
-    BUILD:   Doing 'make -j4' parallel build
-    HOSTCC   /tmp/build/perf/fixdep.o
-    HOSTLD   /tmp/build/perf/fixdep-in.o
-    LINK     /tmp/build/perf/fixdep
-
-  Auto-detecting system features:
-  ...                         dwarf: [ OFF ]
-  ...            dwarf_getlocations: [ OFF ]
-  ...                         glibc: [ OFF ]
-  ...                          gtk2: [ OFF ]
-  ...                      libaudit: [ OFF ]
-  ...                        libbfd: [ OFF ]
-  ...                        libelf: [ OFF ]
-  ...                       libnuma: [ OFF ]
-  ...        numa_num_possible_cpus: [ OFF ]
-  ...                       libperl: [ OFF ]
-  ...                     libpython: [ OFF ]
-  ...                      libslang: [ OFF ]
-  ...                     libcrypto: [ OFF ]
-  ...                     libunwind: [ OFF ]
-  ...            libdw-dwarf-unwind: [ OFF ]
-  ...                          zlib: [ OFF ]
-  ...                          lzma: [ OFF ]
-  ...                     get_cpuid: [ OFF ]
-  ...                           bpf: [ OFF ]
-
-  Makefile.config:331: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
-  make[1]: *** [Makefile.perf:206: sub-make] Error 2
-  make: *** [Makefile:70: all] Error 2
-  make: Leaving directory '/git/linux/tools/perf'
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thiago Macieira <thiago.macieira@intel.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-c3khb9ac86s00qxzjrueomme@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/perf/util/setup.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/omap-usb-host.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 97efbcad076e..1942f6dd24f6 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -35,7 +35,7 @@ class install_lib(_install_lib):
+diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
+index 7aab376ecb84..3785c638d530 100644
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
+ }
  
- cflags = getenv('CFLAGS', '').split()
- # switch off several checks (need to be at the end of cflags list)
--cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
-+cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
- if cc != "clang":
-     cflags += ['-Wno-cast-function-type' ]
+ static const struct of_device_id usbhs_child_match_table[] = {
+-	{ .compatible = "ti,omap-ehci", },
+-	{ .compatible = "ti,omap-ohci", },
++	{ .compatible = "ti,ehci-omap", },
++	{ .compatible = "ti,ohci-omap3", },
+ 	{ }
+ };
  
+@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap_driver = {
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
++	.probe		= usbhs_omap_probe,
+ 	.remove		= usbhs_omap_remove,
+ };
+ 
+@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
+ 
+-static int __init omap_usbhs_drvinit(void)
++static int omap_usbhs_drvinit(void)
+ {
+-	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
++	return platform_driver_register(&usbhs_omap_driver);
+ }
+ 
+ /*
+@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(void)
+  */
+ fs_initcall_sync(omap_usbhs_drvinit);
+ 
+-static void __exit omap_usbhs_drvexit(void)
++static void omap_usbhs_drvexit(void)
+ {
+ 	platform_driver_unregister(&usbhs_omap_driver);
+ }
+-- 
+2.17.1
+
