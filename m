@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192A8C65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17BAC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3953206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:36:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 974022087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:36:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIcK5CjK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3953206B2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ct2Jcbwh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974022087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbeJEVfL (ORCPT
+        id S1729100AbeJEVfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:35:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39549 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729042AbeJEVfK (ORCPT
+        Fri, 5 Oct 2018 17:35:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45579 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729079AbeJEVfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:35:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q8-v6so2157471wmq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 07:36:10 -0700 (PDT)
+        Fri, 5 Oct 2018 17:35:12 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q5-v6so13783382wrw.12
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 07:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vSrYxtFz1N3wcfgTO4N+fFrZV9HHfo3EByRhA0R0oWU=;
-        b=IIcK5CjKk1VltGSBSwO3JK2UJ49K8UQW+EByaJ+BT5OmWFzCgaIACwik2A6JHKxn+A
-         7h/fNHf4Dc02A3TnUR3YLMkt1EvApcMIWjFmQupB3KWqa4/cDKQSTxlYqDHpfbyXDfNv
-         Pw4EeQIzAuf/itHlQIK0P+0pGhlCqIATnhn0A=
+        bh=sXoDlSPIn523AVdKM/v0uZychMluY0rp5+e9GQuiKvI=;
+        b=ct2Jcbwhpic+wCSSfpbBOF9c1urHOHag23UBcqm/mQbSTPkK4ZPkkwcd/+pGvKUAWZ
+         NodfjNX9/oZAh1D4AzORAShnEDpDVEoP0GK4/fiWeXEu8PyYISP5GntLTs/UhZ9GxRLn
+         RKInc71BmmKZwQ653tTDMTTK0y3Be1YkK7MB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=vSrYxtFz1N3wcfgTO4N+fFrZV9HHfo3EByRhA0R0oWU=;
-        b=Fw6swmwG3GsvjWBuiedF24o1vgnckvCjjyU2/4wjKPLmLqSNANRzPfIeRNrJBFLM2U
-         PSkdTTX5UvtVRjlws4jx/DgeIuGfG0DDwxMn34Pnq7dEFq9KK7TUn73NMX8d4kJoiGqi
-         +ku9d+lN024VWvBITMJbMUheXjokFhsdS1oUXd3Gea7apT3K8TfWf0LhsRtQCfLtGCLH
-         rsm+u9wuu0tystATQU24AP/xtdA07/rfzFo1XIpyfuiK92xErOnTxkZINGizUBn40lsn
-         pL3zYRb/pyKOvwTCnxi+JrgM5Jit2k2SZ4X9N/YoiCoH8RaRJ2gEKjcsowCCwzGkkyxs
-         PtFg==
-X-Gm-Message-State: ABuFfoiFTNq5Cf7PkHlvzhgLQvuyKXN+Lz29C5cTIuLD0DCDVHG2VDar
-        dT/DAcmIFzgAhVhpjFL9P9qRGg==
-X-Google-Smtp-Source: ACcGV60vfLxpcF4TxLePCq6RO4LPAlPte8z1M0Ki1071VlI67hXWrVOUvxoUp3EqBqlgyEP/mN5aaw==
-X-Received: by 2002:a1c:6c09:: with SMTP id h9-v6mr7692083wmc.95.1538750169767;
-        Fri, 05 Oct 2018 07:36:09 -0700 (PDT)
+        bh=sXoDlSPIn523AVdKM/v0uZychMluY0rp5+e9GQuiKvI=;
+        b=OAClEMQ+WE4OTkq61K54s8nhfrc3Km1k1h6WcaWF0YW9vJpUNYISZMo+SpmS5I7Jat
+         ov2K5h23PLjzqH7DpXCFehS/Bfyp9h8GXrw23bboD4+bj0iCOH9X+ir5Hpzt3KoRlQ7J
+         Elh11U4/p3o2JoPM6hexDRhHniTIzYBokj2IldeDpZVRWJ2JcJB5fun6kOUbLmAGaumU
+         vubrfXhxeLj0j5KR55VtrfuIjI2hD1EhS5B5IKgd7/t95g4ZGinMe1MV3pPbhLLkIgJQ
+         Hvpfua16SInPREtN6go9yfy4L2XlwOxlYjvtBgG3zbbLGiXFx9rbgoTcCPUdWCnMJhSa
+         cOHQ==
+X-Gm-Message-State: ABuFfohBOEZyzX9y87M9WNUJNlYt7PQZe0Nod8aSzZizvL1jby5yX8qq
+        hSLQUB300H0jNE2AdAc8754+aRlTpKA=
+X-Google-Smtp-Source: ACcGV63fLsaLiggPPBcWm4A/84W0nKk3ssaDGZesRr6W4vi5lEXSTTY+nH+gjuWpLYL7/y2TMEk2DA==
+X-Received: by 2002:adf:91a4:: with SMTP id 33-v6mr8541366wri.37.1538750171476;
+        Fri, 05 Oct 2018 07:36:11 -0700 (PDT)
 Received: from localhost.localdomain (151.240.136.77.rev.sfr.net. [77.136.240.151])
-        by smtp.gmail.com with ESMTPSA id t24-v6sm14080377wra.5.2018.10.05.07.36.08
+        by smtp.gmail.com with ESMTPSA id t24-v6sm14080377wra.5.2018.10.05.07.36.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 05 Oct 2018 07:36:09 -0700 (PDT)
+        Fri, 05 Oct 2018 07:36:10 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 04/13] clocksource/drivers/sh_mtu2: Convert to SPDX identifiers
-Date:   Fri,  5 Oct 2018 16:35:33 +0200
-Message-Id: <1538750143-4282-4-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 05/13] clocksource/drivers/sh_tmu: Convert to SPDX identifiers
+Date:   Fri,  5 Oct 2018 16:35:34 +0200
+Message-Id: <1538750143-4282-5-git-send-email-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org>
 References: <20181005143253.GE1881@mai>
@@ -80,17 +80,17 @@ Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/sh_mtu2.c | 10 +---------
+ drivers/clocksource/sh_tmu.c | 10 +---------
  1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/clocksource/sh_mtu2.c b/drivers/clocksource/sh_mtu2.c
-index 6812e09..354b27d 100644
---- a/drivers/clocksource/sh_mtu2.c
-+++ b/drivers/clocksource/sh_mtu2.c
+diff --git a/drivers/clocksource/sh_tmu.c b/drivers/clocksource/sh_tmu.c
+index c74a6c54..49f1c80 100644
+--- a/drivers/clocksource/sh_tmu.c
++++ b/drivers/clocksource/sh_tmu.c
 @@ -1,16 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * SuperH Timer Support - MTU2
+  * SuperH Timer Support - TMU
   *
   *  Copyright (C) 2009 Magnus Damm
 - *
