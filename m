@@ -6,29 +6,30 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F65C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0458FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF332098A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:17:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF332098A
+	by mail.kernel.org (Postfix) with ESMTP id B51AF2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51AF2084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbeJERPa (ORCPT
+        id S1728181AbeJERQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:15:30 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43439 "EHLO
+        Fri, 5 Oct 2018 13:16:38 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58985 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbeJERPa (ORCPT
+        with ESMTP id S1727535AbeJERQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:15:30 -0400
+        Fri, 5 Oct 2018 13:16:38 -0400
 Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
         by metis.ext.pengutronix.de with esmtp (Exim 4.89)
         (envelope-from <p.zabel@pengutronix.de>)
-        id 1g8NAd-0000bi-MV; Fri, 05 Oct 2018 12:17:19 +0200
-Message-ID: <1538734639.3545.11.camel@pengutronix.de>
-Subject: Re: [PATCH v4 04/11] media: imx: Fix field negotiation
+        id 1g8NBj-0000nr-H2; Fri, 05 Oct 2018 12:18:27 +0200
+Message-ID: <1538734707.3545.12.camel@pengutronix.de>
+Subject: Re: [PATCH v4 05/11] media: imx-csi: Double crop height for
+ alternate fields at sink
 From:   Philipp Zabel <p.zabel@pengutronix.de>
 To:     Steve Longerbeam <slongerbeam@gmail.com>,
         linux-media@vger.kernel.org
@@ -36,10 +37,10 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
         open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 05 Oct 2018 12:17:19 +0200
-In-Reply-To: <20181004185401.15751-5-slongerbeam@gmail.com>
+Date:   Fri, 05 Oct 2018 12:18:27 +0200
+In-Reply-To: <20181004185401.15751-6-slongerbeam@gmail.com>
 References: <20181004185401.15751-1-slongerbeam@gmail.com>
-         <20181004185401.15751-5-slongerbeam@gmail.com>
+         <20181004185401.15751-6-slongerbeam@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
@@ -54,55 +55,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 2018-10-04 at 11:53 -0700, Steve Longerbeam wrote:
-> IDMAC interlaced scan, a.k.a. interweave, should be enabled in the
-> IDMAC output channels only if the IDMAC output pad field type is
-> 'seq-bt' or 'seq-tb', and field type at the capture interface is
-> 'interlaced*'.
-> 
-> V4L2_FIELD_HAS_BOTH() macro should not be used on the input to determine
-> enabling interlaced/interweave scan. That macro includes the 'interlaced'
-> field types, and in those cases the data is already interweaved with
-> top/bottom field lines.
-> 
-> The CSI will capture whole frames when the source specifies alternate
-> field mode. So the CSI also enables interweave for alternate input
-> field type and the field type at capture interface is interlaced.
-> 
-> Fix the logic for setting field type in try_fmt in CSI entity.
-> The behavior should be:
-> 
-> - No restrictions on field type at sink pad.
-> 
-> - At the output pads, allow sequential fields in TB order, if the sink pad
->   field type is sequential or alternate. Otherwise passthrough the field
->   type from sink to source pad.
-> 
-> Move this logic to new function csi_try_field().
-> 
-> These changes result in the following allowed field transformations
-> from CSI sink -> source pads (all other field types at sink are passed
-> through to source):
-> 
-> seq-tb -> seq-tb
-> seq-bt -> seq-tb
-> alternate -> seq-tb
-> 
-> In a future patch, the CSI sink -> source will allow:
-> 
-> seq-tb -> seq-bt
-> seq-bt -> seq-bt
-> alternate -> seq-bt
-> 
-> This will require supporting interweave with top/bottom line swapping.
-> Until then seq-bt is not allowed at the CSI source pad because there is
-> no way to swap top/bottom lines when interweaving to INTERLACED_BT --
-> note that despite the name, INTERLACED_BT is top-bottom order in memory.
-> The BT in this case refers to field dominance: the bottom lines are
-> older in time than the top lines.
-> 
-> The capture interface device allows selecting IDMAC interweave by
-> choosing INTERLACED_TB if the CSI/PRPENCVF source pad is seq-tb and
-> INTERLACED_BT if the source pad is seq-bt (for future support of seq-bt).
+> If the incoming sink field type is alternate, the reset crop height
+> and crop height bounds must be set to twice the incoming height,
+> because in alternate field mode, upstream will report only the
+> lines for a single field, and the CSI captures the whole frame.
 > 
 > Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 
