@@ -3,107 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D86C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13424C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A42E20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A42E20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id D0D2820875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 08:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D2820875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbeJEPbH (ORCPT
+        id S1728634AbeJEPb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 11:31:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53573 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727750AbeJEPbG (ORCPT
+        Fri, 5 Oct 2018 11:31:26 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:37216 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728363AbeJEPb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 11:31:06 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MsJXG-1fsc7G2Jli-00thjs; Fri, 05 Oct 2018 10:33:20 +0200
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MsJXG-1fsc7G2Jli-00thjs; Fri, 05 Oct 2018 10:33:20 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, yamada.masahiro@socionext.com,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
-Date:   Fri,  5 Oct 2018 10:33:13 +0200
-Message-Id: <20181005083313.2088252-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
-X-Provags-ID: V03:K1:eSd4N3smMHCfUFjJFljqXtcK91JFZmx2RfcWSHInkLBfiD7xq5v
- P264HkIKnrVNh4BWEkE4PHYs5stZrJXLRICxtqFL7AJFD2ujiEQP10LG6VEdC84Ln2wpkFk
- X2iUIHAtxlCSHa323jMrdRQCzq+/aWTnS4B9qZnByyeVl6d9IaDE0lstRH5Dj6LESTrcqsf
- jQR8Gh9qBSnr5Uk7DCr0g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d/K1V4pDUnc=:3Rl49oCLPskCTsCWUhET/Y
- eKsqj02irIOQNE4RjLVw5XKTNDCgGbKFNv/pPce0wfisGvej37ZCs6DjKg32JaIExL+yCk0g9
- XLLZ910t60mpQ5R53uA1VNps1m/hkid1CgwdHIbK/Uc1wUHtumV1q0pxPwDgNt1AA8si/wae1
- g/Ob+SWFE2ENq0+/ap94w9Xg9InfHyaQ84sFND8Xzy1mGrB2cup+MGIDgVpQi+QD7HKjRfq6f
- EcxFBccXtNxRQ9HzIwoG6fc9qDox7eYd68B1DbNuxqL6pp4nAGbDUZR5baDG7I0vJDGOiAVKH
- uqUrOtC4tRdcxP0m4U+lnBKRcGwic0WRSfPJKlqcMPFjcOi4hHgjthqS5+3qM9ghA8Y8bVix2
- TBFUSD9TdW0yNngeKAEeCdVBbVi6Pft7DyoDQOK8FHia0Kpe72gjTCdEyVouGEohqhLJQ954T
- GFQZQOxGrgxMBXhLDhuHvcaLg7iMOK+CeHSY4XZ74Ypj713I6S9hRQ2oGmG4hI8ngqbMDhuak
- KkkYgEtBYzoRNsbCdkae44tkvPVu2bQLH92vSJiHbJAZMwTUbCSTLxE5ECFwS2I9LRBQtO6N1
- LDdQQ6GD2SD5OcXrEfBkYDVKOsXOu+n9vgKPvtg/+JVmxupt4xHVAdpT0uvyxAE/LU1sPE9ii
- YCV98HLq+QLSkArfZgNaQ/Yz5HCyITcx/ldvlUBXy2CLtdXz0moAa+1qmHwuYL0x22p0=
+        Fri, 5 Oct 2018 11:31:26 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.736427|0.785702;BR=01201311R541S05ruler364_34042_170522;CH=green;FP=3155237579670517207|1|1|12|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CzfHp60_1538728413;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CzfHp60_1538728413)
+          by smtp.aliyun-inc.com(10.147.41.138);
+          Fri, 05 Oct 2018 16:33:33 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Cc:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V7 19/20] dt-bindings: Add vendor prefix for csky
+Date:   Fri,  5 Oct 2018 16:33:15 +0800
+Message-Id: <f9fa15955f651ebe90e7136bf2aef373478eb711.1538715563.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <994158389acaf01d065bf1460eb51b3b7249bd07.1538715563.git.ren_guo@c-sky.com>
+References: <994158389acaf01d065bf1460eb51b3b7249bd07.1538715563.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1538715563.git.ren_guo@c-sky.com>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building any configuration with 'make W=1' produces a warning:
+Add csky vendor definition.
 
-kernel/bounds.c:16:6: warnign: no previous prototype for 'foo' [-Wmissing-prototypes]
-
-When also passing -Werror, this prevents us from building any
-other files. Nobody ever calls the function, but we can't make
-it 'static' either since we want the compiler output.
-
-Calling it 'main' instead however avoids the warning, because gcc
-does not insist on having a declaration for main.
-
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-I have run into this problem several times before, and thought I had
-sent a fix at some point. Looking in the archives, I came across
-the suggested fix from Kieran, so I'm following up on that here.
----
- kernel/bounds.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/bounds.c b/kernel/bounds.c
-index c373e887c066..9795d75b09b2 100644
---- a/kernel/bounds.c
-+++ b/kernel/bounds.c
-@@ -13,7 +13,7 @@
- #include <linux/log2.h>
- #include <linux/spinlock_types.h>
- 
--void foo(void)
-+int main(void)
- {
- 	/* The enum constants to put into include/generated/bounds.h */
- 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
-@@ -23,4 +23,6 @@ void foo(void)
- #endif
- 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
- 	/* End of constants */
-+
-+	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2c3fc51..a728ee3 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -84,6 +84,7 @@ cosmic	Cosmic Circuits
+ crane	Crane Connectivity Solutions
+ creative	Creative Technology Ltd
+ crystalfontz	Crystalfontz America, Inc.
++csky	Hangzhou C-SKY Microsystems Co., Ltd
+ cubietech	Cubietech, Ltd.
+ cypress	Cypress Semiconductor Corporation
+ cznic	CZ.NIC, z.s.p.o.
 -- 
-2.18.0
+2.7.4
 
