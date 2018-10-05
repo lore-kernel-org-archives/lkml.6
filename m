@@ -2,135 +2,302 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4016C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64556C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A65622084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:43:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFOyi8SE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65622084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 22B372084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:43:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B372084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeJEUlt (ORCPT
+        id S1728817AbeJEUlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:41:49 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37865 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727701AbeJEUls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:41:48 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j23-v6so5116600pfi.4;
-        Fri, 05 Oct 2018 06:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=SYku1qYFAEJav22Y8Tj5nBN2krftALYGPwKWKdtPLt0=;
-        b=UFOyi8SEBbG5cmn5b3ksNNF49qgX84G1IHC3CofReKq2h61IOji5e2lWVHX6gymZKD
-         4RteRrjtYs0kMWaS0HrUx6omItvonPvw9+jSPiRCPB3wXHgEfZI/i7qxnpHeU7rz0fa+
-         yfeBBMKZAzTvnhFtPwI7RpbDrsXXkeAH8jOoAGGKfQljmAeG5YXMChU82bPJGmuiZdZi
-         cYFc+WQRr45JjqePQeXSTzWuQN3/0Ed7kgZ/uf7n4vAY10HL0NUpOozP1BiRBLvPtd0N
-         CeHNs8D4kcYSqx7YJORTRuLWxDgY0D4zSlr3eG1YJgQQmVhSs4QyrgbbLpGsiXH93vDO
-         d0Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=SYku1qYFAEJav22Y8Tj5nBN2krftALYGPwKWKdtPLt0=;
-        b=dU/s4dCYzOWghVunFRuynBQkvBPoyNqJgGsxlYnI3OxLs7MxIVm3tiOkwRTTNS7eFz
-         IJwPZM7BMg10pMad+r1pIOOvxaWNw+QQpTqeKoUDnz40roRfA1fozrOFZaYGswFaeniz
-         Cb7RwoUBOMksVXGnqujuVZOcCFcZzmDibz/qPZC7/1h4GBsBSvds11QRqfNYEKcWu+aQ
-         hz6Uzn3mb5djj65o9aNyAgGQzscE7yst43sOWKdTjWkvEdu79a/75Y2h1gzagAGX+2rT
-         eppX1eJ5/R2A02+7B4ECKnVXLYAveRqIrN/Ae02wnJXHEqIGQqgm5VZuC22eWvl8Rzue
-         7s5Q==
-X-Gm-Message-State: ABuFfojPSsUyqKJnOsMQEh2rPiz/QBNLCIBr3zfIFRDDcPDrDu0qcC1r
-        U9eTrykPZjzJG8gW2Szj/Xa5VrHx
-X-Google-Smtp-Source: ACcGV62tKXE4FQQ3sogn+qcL9YQBK36OZRbU6FGmZqdqHSnSD25VcG6qTaVnmREPjC6n/zE8xICuNQ==
-X-Received: by 2002:a63:982:: with SMTP id 124-v6mr10365569pgj.80.1538746980543;
-        Fri, 05 Oct 2018 06:43:00 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.3? ([2402:f000:1:1501:200:5efe:a66f:4703])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm13801546pfe.121.2018.10.05.06.42.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 06:42:59 -0700 (PDT)
-Subject: Re: [PATCH] net: wireless: iwlegacy: Fix possible data races in
- il4965_send_rxon_assoc()
-To:     Stanislaw Gruszka <sgruszka@redhat.com>
-Cc:     kvalo@codeaurora.org, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Fri, 5 Oct 2018 16:41:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42434 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727701AbeJEUlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:41:53 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9DDC7C04BD4F;
+        Fri,  5 Oct 2018 13:43:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 974A62010D6C;
+        Fri,  5 Oct 2018 13:43:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net 1/2] rxrpc: Fix some missed refs to init_net
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-References: <20181003140745.7650-1-baijiaju1990@gmail.com>
- <20181004075914.GB20523@redhat.com>
- <988494cb-c121-697e-b502-ea4e7c601f47@gmail.com>
- <20181005075403.GC1931@redhat.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <60d6ad7c-3aaa-73e1-451c-c6fc7cb66e99@gmail.com>
-Date:   Fri, 5 Oct 2018 21:42:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+Date:   Fri, 05 Oct 2018 14:43:03 +0100
+Message-ID: <153874698381.18195.18055184747295281376.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153874697684.18195.15264114363303320691.stgit@warthog.procyon.org.uk>
+References: <153874697684.18195.15264114363303320691.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20181005075403.GC1931@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 05 Oct 2018 13:43:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix some refs to init_net that should've been changed to the appropriate
+network namespace.
 
+Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Paolo Abeni <pabeni@redhat.com>
+---
 
-On 2018/10/5 15:54, Stanislaw Gruszka wrote:
-> On Thu, Oct 04, 2018 at 04:52:19PM +0800, Jia-Ju Bai wrote:
->> On 2018/10/4 15:59, Stanislaw Gruszka wrote:
->>> On Wed, Oct 03, 2018 at 10:07:45PM +0800, Jia-Ju Bai wrote:
->>>> These possible races are detected by a runtime testing.
->>>> To fix these races, the mutex lock is used in il4965_send_rxon_assoc()
->>>> to protect the data.
->>> Really ? I'm surprised by that, see below.
->> My runtime testing shows that il4965_send_rxon_assoc() and
->> il4965_configure_filter() are concurrently executed.
->> But after seeing your reply, I need to carefully check whether my
->> runtime testing is right, because I think you are right.
->> In fact, I only monitored the iwl4965 driver, but did not monitor
->> the iwlegacy driver, so I will do the testing again with monitoring
->> the lwlegacy driver.
-> <snip>
->>> So I wonder how this patch did not cause the deadlock ?
->> Oh, sorry, anyway, my patch will cause double locks...
-> So how those runtime test were performend such you didn't
-> notice this ?
+ net/rxrpc/ar-internal.h |   10 ++++++----
+ net/rxrpc/call_accept.c |    2 +-
+ net/rxrpc/call_object.c |    4 ++--
+ net/rxrpc/conn_client.c |   10 ++++++----
+ net/rxrpc/input.c       |    4 ++--
+ net/rxrpc/peer_object.c |   28 +++++++++++++++++-----------
+ 6 files changed, 34 insertions(+), 24 deletions(-)
 
-I write a tool to perform runtime testing.
-This tool records the lock status during driver execution.
-Some calls to mutex_lock() are in common.c that I did not handle, so the 
-corresponding lock status was not recorded by my tool, causing this 
-false positive.
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index ef9554131434..63c43b3a2096 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -891,8 +891,9 @@ extern unsigned long rxrpc_conn_idle_client_fast_expiry;
+ extern struct idr rxrpc_client_conn_ids;
+ 
+ void rxrpc_destroy_client_conn_ids(void);
+-int rxrpc_connect_call(struct rxrpc_call *, struct rxrpc_conn_parameters *,
+-		       struct sockaddr_rxrpc *, gfp_t);
++int rxrpc_connect_call(struct rxrpc_sock *, struct rxrpc_call *,
++		       struct rxrpc_conn_parameters *, struct sockaddr_rxrpc *,
++		       gfp_t);
+ void rxrpc_expose_client_call(struct rxrpc_call *);
+ void rxrpc_disconnect_client_call(struct rxrpc_call *);
+ void rxrpc_put_client_conn(struct rxrpc_connection *);
+@@ -1045,10 +1046,11 @@ void rxrpc_peer_keepalive_worker(struct work_struct *);
+  */
+ struct rxrpc_peer *rxrpc_lookup_peer_rcu(struct rxrpc_local *,
+ 					 const struct sockaddr_rxrpc *);
+-struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *,
++struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_sock *, struct rxrpc_local *,
+ 				     struct sockaddr_rxrpc *, gfp_t);
+ struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *, gfp_t);
+-void rxrpc_new_incoming_peer(struct rxrpc_local *, struct rxrpc_peer *);
++void rxrpc_new_incoming_peer(struct rxrpc_sock *, struct rxrpc_local *,
++			     struct rxrpc_peer *);
+ void rxrpc_destroy_all_peers(struct rxrpc_net *);
+ struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *);
+ struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *);
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 9c7f26d06a52..f55f67894465 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -287,7 +287,7 @@ static struct rxrpc_call *rxrpc_alloc_incoming_call(struct rxrpc_sock *rx,
+ 					  (peer_tail + 1) &
+ 					  (RXRPC_BACKLOG_MAX - 1));
+ 
+-			rxrpc_new_incoming_peer(local, peer);
++			rxrpc_new_incoming_peer(rx, local, peer);
+ 		}
+ 
+ 		/* Now allocate and set up the connection */
+diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
+index 799f75b6900d..0ca2c2dfd196 100644
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -287,7 +287,7 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
+ 	/* Set up or get a connection record and set the protocol parameters,
+ 	 * including channel number and call ID.
+ 	 */
+-	ret = rxrpc_connect_call(call, cp, srx, gfp);
++	ret = rxrpc_connect_call(rx, call, cp, srx, gfp);
+ 	if (ret < 0)
+ 		goto error;
+ 
+@@ -339,7 +339,7 @@ int rxrpc_retry_client_call(struct rxrpc_sock *rx,
+ 	/* Set up or get a connection record and set the protocol parameters,
+ 	 * including channel number and call ID.
+ 	 */
+-	ret = rxrpc_connect_call(call, cp, srx, gfp);
++	ret = rxrpc_connect_call(rx, call, cp, srx, gfp);
+ 	if (ret < 0)
+ 		goto error;
+ 
+diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
+index 8acf74fe24c0..521189f4b666 100644
+--- a/net/rxrpc/conn_client.c
++++ b/net/rxrpc/conn_client.c
+@@ -276,7 +276,8 @@ static bool rxrpc_may_reuse_conn(struct rxrpc_connection *conn)
+  * If we return with a connection, the call will be on its waiting list.  It's
+  * left to the caller to assign a channel and wake up the call.
+  */
+-static int rxrpc_get_client_conn(struct rxrpc_call *call,
++static int rxrpc_get_client_conn(struct rxrpc_sock *rx,
++				 struct rxrpc_call *call,
+ 				 struct rxrpc_conn_parameters *cp,
+ 				 struct sockaddr_rxrpc *srx,
+ 				 gfp_t gfp)
+@@ -289,7 +290,7 @@ static int rxrpc_get_client_conn(struct rxrpc_call *call,
+ 
+ 	_enter("{%d,%lx},", call->debug_id, call->user_call_ID);
+ 
+-	cp->peer = rxrpc_lookup_peer(cp->local, srx, gfp);
++	cp->peer = rxrpc_lookup_peer(rx, cp->local, srx, gfp);
+ 	if (!cp->peer)
+ 		goto error;
+ 
+@@ -683,7 +684,8 @@ static int rxrpc_wait_for_channel(struct rxrpc_call *call, gfp_t gfp)
+  * find a connection for a call
+  * - called in process context with IRQs enabled
+  */
+-int rxrpc_connect_call(struct rxrpc_call *call,
++int rxrpc_connect_call(struct rxrpc_sock *rx,
++		       struct rxrpc_call *call,
+ 		       struct rxrpc_conn_parameters *cp,
+ 		       struct sockaddr_rxrpc *srx,
+ 		       gfp_t gfp)
+@@ -696,7 +698,7 @@ int rxrpc_connect_call(struct rxrpc_call *call,
+ 	rxrpc_discard_expired_client_conns(&rxnet->client_conn_reaper);
+ 	rxrpc_cull_active_client_conns(rxnet);
+ 
+-	ret = rxrpc_get_client_conn(call, cp, srx, gfp);
++	ret = rxrpc_get_client_conn(rx, call, cp, srx, gfp);
+ 	if (ret < 0)
+ 		goto out;
+ 
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 800f5b8a1baa..c5af9955665b 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -1156,12 +1156,12 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 	/* we'll probably need to checksum it (didn't call sock_recvmsg) */
+ 	if (skb_checksum_complete(skb)) {
+ 		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
+-		__UDP_INC_STATS(&init_net, UDP_MIB_INERRORS, 0);
++		__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INERRORS, 0);
+ 		_leave(" [CSUM failed]");
+ 		return;
+ 	}
+ 
+-	__UDP_INC_STATS(&init_net, UDP_MIB_INDATAGRAMS, 0);
++	__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INDATAGRAMS, 0);
+ 
+ 	/* The UDP protocol already released all skb resources;
+ 	 * we are free to add our own data there.
+diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
+index 01a9febfa367..2d39eaf19620 100644
+--- a/net/rxrpc/peer_object.c
++++ b/net/rxrpc/peer_object.c
+@@ -153,8 +153,10 @@ struct rxrpc_peer *rxrpc_lookup_peer_rcu(struct rxrpc_local *local,
+  * assess the MTU size for the network interface through which this peer is
+  * reached
+  */
+-static void rxrpc_assess_MTU_size(struct rxrpc_peer *peer)
++static void rxrpc_assess_MTU_size(struct rxrpc_sock *rx,
++				  struct rxrpc_peer *peer)
+ {
++	struct net *net = sock_net(&rx->sk);
+ 	struct dst_entry *dst;
+ 	struct rtable *rt;
+ 	struct flowi fl;
+@@ -169,7 +171,7 @@ static void rxrpc_assess_MTU_size(struct rxrpc_peer *peer)
+ 	switch (peer->srx.transport.family) {
+ 	case AF_INET:
+ 		rt = ip_route_output_ports(
+-			&init_net, fl4, NULL,
++			net, fl4, NULL,
+ 			peer->srx.transport.sin.sin_addr.s_addr, 0,
+ 			htons(7000), htons(7001), IPPROTO_UDP, 0, 0);
+ 		if (IS_ERR(rt)) {
+@@ -188,7 +190,7 @@ static void rxrpc_assess_MTU_size(struct rxrpc_peer *peer)
+ 		       sizeof(struct in6_addr));
+ 		fl6->fl6_dport = htons(7001);
+ 		fl6->fl6_sport = htons(7000);
+-		dst = ip6_route_output(&init_net, NULL, fl6);
++		dst = ip6_route_output(net, NULL, fl6);
+ 		if (dst->error) {
+ 			_leave(" [route err %d]", dst->error);
+ 			return;
+@@ -240,10 +242,11 @@ struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *local, gfp_t gfp)
+ /*
+  * Initialise peer record.
+  */
+-static void rxrpc_init_peer(struct rxrpc_peer *peer, unsigned long hash_key)
++static void rxrpc_init_peer(struct rxrpc_sock *rx, struct rxrpc_peer *peer,
++			    unsigned long hash_key)
+ {
+ 	peer->hash_key = hash_key;
+-	rxrpc_assess_MTU_size(peer);
++	rxrpc_assess_MTU_size(rx, peer);
+ 	peer->mtu = peer->if_mtu;
+ 	peer->rtt_last_req = ktime_get_real();
+ 
+@@ -275,7 +278,8 @@ static void rxrpc_init_peer(struct rxrpc_peer *peer, unsigned long hash_key)
+ /*
+  * Set up a new peer.
+  */
+-static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
++static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_sock *rx,
++					    struct rxrpc_local *local,
+ 					    struct sockaddr_rxrpc *srx,
+ 					    unsigned long hash_key,
+ 					    gfp_t gfp)
+@@ -287,7 +291,7 @@ static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
+ 	peer = rxrpc_alloc_peer(local, gfp);
+ 	if (peer) {
+ 		memcpy(&peer->srx, srx, sizeof(*srx));
+-		rxrpc_init_peer(peer, hash_key);
++		rxrpc_init_peer(rx, peer, hash_key);
+ 	}
+ 
+ 	_leave(" = %p", peer);
+@@ -299,14 +303,15 @@ static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
+  * since we've already done a search in the list from the non-reentrant context
+  * (the data_ready handler) that is the only place we can add new peers.
+  */
+-void rxrpc_new_incoming_peer(struct rxrpc_local *local, struct rxrpc_peer *peer)
++void rxrpc_new_incoming_peer(struct rxrpc_sock *rx, struct rxrpc_local *local,
++			     struct rxrpc_peer *peer)
+ {
+ 	struct rxrpc_net *rxnet = local->rxnet;
+ 	unsigned long hash_key;
+ 
+ 	hash_key = rxrpc_peer_hash_key(local, &peer->srx);
+ 	peer->local = local;
+-	rxrpc_init_peer(peer, hash_key);
++	rxrpc_init_peer(rx, peer, hash_key);
+ 
+ 	spin_lock(&rxnet->peer_hash_lock);
+ 	hash_add_rcu(rxnet->peer_hash, &peer->hash_link, hash_key);
+@@ -317,7 +322,8 @@ void rxrpc_new_incoming_peer(struct rxrpc_local *local, struct rxrpc_peer *peer)
+ /*
+  * obtain a remote transport endpoint for the specified address
+  */
+-struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
++struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_sock *rx,
++				     struct rxrpc_local *local,
+ 				     struct sockaddr_rxrpc *srx, gfp_t gfp)
+ {
+ 	struct rxrpc_peer *peer, *candidate;
+@@ -337,7 +343,7 @@ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
+ 		/* The peer is not yet present in hash - create a candidate
+ 		 * for a new record and then redo the search.
+ 		 */
+-		candidate = rxrpc_create_peer(local, srx, hash_key, gfp);
++		candidate = rxrpc_create_peer(rx, local, srx, hash_key, gfp);
+ 		if (!candidate) {
+ 			_leave(" = NULL [nomem]");
+ 			return NULL;
 
-Now I have handled common.c, and this false positive is not reported any 
-more.
-Actually, I get several new reports.
-I will send you these reports to you later, and hope you can have a 
-look, thanks in advance :)
-
->
->>> Anyway what can be done is adding:
->>>
->>> lockdep_assert_held(&il->mutex);
->>>
->>> il4965_commit_rxon() to check if we hold the mutex.
->> I agree.
-> Care to post a patch ?
-
-Sure :)
-
-
-Best wishes,
-Jia-Ju Bai
