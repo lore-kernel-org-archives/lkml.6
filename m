@@ -2,74 +2,65 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4683AC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6775EC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE85B20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 12:54:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE85B20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 189C92087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:04:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGo6yMon"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189C92087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbeJETxY convert rfc822-to-8bit (ORCPT
+        id S1728381AbeJEUDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 15:53:24 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:38160 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728118AbeJETxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 15:53:24 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1g8Pcy-0000j9-6F; Fri, 05 Oct 2018 14:54:44 +0200
-Date:   Fri, 5 Oct 2018 14:54:44 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc:     Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: set_cpus_allowed_ptr() usage in FREESCALE CAAM
-Message-ID: <20181005125443.dfhd2asqktm22ney@linutronix.de>
+        Fri, 5 Oct 2018 16:03:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727701AbeJEUDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:03:08 -0400
+Received: from dragon (unknown [104.237.86.38])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22C042084D;
+        Fri,  5 Oct 2018 13:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538744669;
+        bh=vQAbWraay0WjFQJzLJUcoWp00C5t8lam0jL9g6xrotQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RGo6yMonY+kkkydOF3yFT4B1zQsDGBAXbqPOl1yI8n828i1HoKB8yfZ38r3okCYtK
+         5KSekIdezWAcjs6LPj7UdSor1dUDu25ifaQVLg4Z2xOleqND8+92GiYdUpxgK9ZsBm
+         bqhpEGBtZ/hQc3U+ReNZpkCFZonIjcA5G90gSrzQ=
+Date:   Fri, 5 Oct 2018 21:04:22 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] i2c: zx2967: use core to detect 'no zero length'
+ quirk
+Message-ID: <20181005130420.GA3587@dragon>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-10-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180723202617.15230-10-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jul 23, 2018 at 10:26:13PM +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-this block:
-|int caam_qi_shutdown(struct device *qidev)
-| {
-|         struct cpumask old_cpumask = current->cpus_allowed;
-…
-|         /*
-|          * QMan driver requires CGRs to be deleted from same CPU from where they
-|          * were instantiated. Hence we get the module removal execute from the
-|          * same CPU from where it was originally inserted.
-|          */
-|         set_cpus_allowed_ptr(current, get_cpu_mask(mod_init_cpu));
-…
-|          /* Now that we're done with the CGRs, restore the cpus allowed mask */
-|         set_cpus_allowed_ptr(current, &old_cpumask);
-
-in drivers/crypto/caam/qi.c needs to go. I saw it twice in the driver.
-set_cpus_allowed_ptr() is not intended for this kind of thing.
-
-What you want is to use work_on_cpu_safe() instead. It takes also a CPU
-as an argument. You need to check the error code of the function if it
-worked because the CPU may have gone offline. This functions also
-ensures that the CPU does not vanish in the middle of the work. 
-Also please check the error code in both cases of the function because
-it may fail if the CPU is not online.
-
-Sebastian
+Acked-by: Shawn Guo <shawnguo@kernel.org>
