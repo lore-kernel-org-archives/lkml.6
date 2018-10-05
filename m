@@ -2,177 +2,91 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCF8C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9714C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301A7206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:21:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DmfZxHMj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301A7206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 6F5D120834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:23:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F5D120834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbeJEWUH (ORCPT
+        id S1728260AbeJEWWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:20:07 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34233 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727788AbeJEWUH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:20:07 -0400
-Received: by mail-io1-f67.google.com with SMTP id w2-v6so4707379ioc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 08:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DbWGc5kURAX0EWuzCw8Dmu5V/t52Llu9Q1dCmhRR5+Y=;
-        b=DmfZxHMjYyzwvJNlXQ3QryStHWwzTIeW7QHjKUXRNUhATKhpCHOT+4DomSh33HupFb
-         AfKIjIHqvdQiKRFXmRij4LQlNFqr3+PAuWafOI8RCeIAqqbWssWnst1Iq0NyQT+Ysg9T
-         DgWPDBeUgS1hBCj4qs17FqXOg1RksLn95SeOyTKFT03ib6prAfvOde5QuvwDl1sqBGNq
-         eOqHmuHsuF1yxlftdq+jqmVPsKbVO+H3I83uk0xwol/pYZXLad5FOb5Cd3Up5IU0M3Wz
-         H9G4rowyW9LZL5E8Ho3er8yyFoJoMEHFRrmYb5p2VGQX5RuHxK9zlX+SGqQHmKsq9Mwu
-         cBWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DbWGc5kURAX0EWuzCw8Dmu5V/t52Llu9Q1dCmhRR5+Y=;
-        b=SE8dff9xBOwaWghuIYmsmNy4Yb/cOGKJMy5RqsDupfuDTj0RgMyBv44xxWZOz6UNGG
-         2ltQt70n7I953hH8Evo/ffE0xFGmVXVdIE3AW2rXvGbca1O1RulMhgNE9aVTuIHdux9q
-         hnHbqMOwCNXrK4nk/aRBCBZvQc2IYGEOkhPoqW2EQp1M7qvxJmPXav8SdMwOHjU2iVtH
-         MZr+7Q8Em5n+rDpxpKNT8PfsO9sd9rqXbXuRMuNfuuJlD9xO82cv+/H3l1K0vDTl8Kwc
-         nt2iv5TOO9ujIpYJuHPH1JbqUfizMg2R7jtDD2Qh0ITfbfXoZLpayB+KWoRRKSOqJAc3
-         l1yA==
-X-Gm-Message-State: ABuFfogs3RC4fLjEg7vq5gCyE9ONCu6NISgLtxZdmD7pODV1J4md0bOw
-        3P3ZK9D6t7e/jicXKdK0Jm7l3Q==
-X-Google-Smtp-Source: ACcGV63zDRR9jqqdFU3fIZaAF2FiuwqQaWMVenJbYt4KlODOp/oWgYFYLLhg7uZKGorFSY8TPjNqPw==
-X-Received: by 2002:a6b:8b8b:: with SMTP id n133-v6mr7646186iod.234.1538752857332;
-        Fri, 05 Oct 2018 08:20:57 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id i71-v6sm976685iti.15.2018.10.05.08.20.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 08:20:56 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g8RuR-0005bZ-F3; Fri, 05 Oct 2018 09:20:55 -0600
-Date:   Fri, 5 Oct 2018 09:20:55 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     john.hubbard@gmail.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>
-Subject: Re: [PATCH v2 3/3] infiniband/mm: convert to the new
- put_user_page[s]() calls
-Message-ID: <20181005152055.GB20776@ziepe.ca>
-References: <20181005040225.14292-1-jhubbard@nvidia.com>
- <20181005040225.14292-4-jhubbard@nvidia.com>
+        Fri, 5 Oct 2018 18:22:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49403 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726082AbeJEWWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:22:44 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 132902073D; Fri,  5 Oct 2018 17:23:32 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C5131206A1;
+        Fri,  5 Oct 2018 17:23:31 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 17:23:32 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 10/10] mtd: maps: gpio-addr-flash: Add support for
+ device-tree devices
+Message-ID: <20181005172332.173791b5@bbrezillon>
+In-Reply-To: <CAPybu_0TbeN+-F6zwN8XOMuY1EpgE6GRi=ExDx6O3Yun9kXjYQ@mail.gmail.com>
+References: <20181004142942.11887-1-ricardo.ribalda@gmail.com>
+        <20181004142942.11887-2-ricardo.ribalda@gmail.com>
+        <20181005002125.12fd229f@bbrezillon>
+        <CAPybu_26HST5xGfhE6MoVTRZok_gfDqN=ZOAesuEMVskdrCpLA@mail.gmail.com>
+        <20181005090811.6b7e9957@bbrezillon>
+        <CAPybu_38xH2Cv+eONQmEJ1i6k=oiQM=WrcwOFR29LbtRvWfKXA@mail.gmail.com>
+        <20181005103730.57d52e3c@bbrezillon>
+        <CAPybu_1RMcro3xLNW5mbybYdObCTq=QwXgk+RT6hcmRGTh6s7A@mail.gmail.com>
+        <20181005121235.7e64b64a@bbrezillon>
+        <CAPybu_0TbeN+-F6zwN8XOMuY1EpgE6GRi=ExDx6O3Yun9kXjYQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005040225.14292-4-jhubbard@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:02:25PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> For code that retains pages via get_user_pages*(),
-> release those pages via the new put_user_page(),
-> instead of put_page().
-> 
-> This prepares for eventually fixing the problem described
-> in [1], and is following a plan listed in [2], [3], [4].
-> 
-> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
-> 
-> [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
->     Proposed steps for fixing get_user_pages() + DMA problems.
-> 
-> [3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
->     Bounce buffers (otherwise [2] is not really viable).
-> 
-> [4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
->     Follow-up discussions.
-> 
-> CC: Doug Ledford <dledford@redhat.com>
-> CC: Jason Gunthorpe <jgg@ziepe.ca>
-> CC: Mike Marciniszyn <mike.marciniszyn@intel.com>
-> CC: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> CC: Christian Benvenuti <benve@cisco.com>
-> 
-> CC: linux-rdma@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-mm@kvack.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->  drivers/infiniband/core/umem.c              |  2 +-
->  drivers/infiniband/core/umem_odp.c          |  2 +-
->  drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
->  drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
->  drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
->  drivers/infiniband/hw/qib/qib_user_sdma.c   |  8 ++++----
->  drivers/infiniband/hw/usnic/usnic_uiom.c    |  2 +-
->  7 files changed, 18 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-> index a41792dbae1f..9430d697cb9f 100644
-> +++ b/drivers/infiniband/core/umem.c
-> @@ -60,7 +60,7 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
->  		page = sg_page(sg);
->  		if (!PageDirty(page) && umem->writable && dirty)
->  			set_page_dirty_lock(page);
-> -		put_page(page);
-> +		put_user_page(page);
->  	}
+On Fri, 5 Oct 2018 14:04:52 +0200
+Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
 
-How about ?
+> Hi Boris
+> On Fri, Oct 5, 2018 at 12:12 PM Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> >
+> > On Fri, 5 Oct 2018 11:54:18 +0200
+> > Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+> >  
+> > > Hi Boris
+> > >
+> > > Just seen that  you already did the rebase at
+> > > https://github.com/bbrezillon/linux-0day/commits/mtd/physmap-cleanup
+> > >
+> > > Thanks for that.
+> > >
+> > > I am about to test it in real hw (unless you want me wait)  
+> >
+> > Sure, go ahead and test it.
+> >
+> > Thanks,
+> >
+> > Boris  
+> I had to change this on your patchset to have it working on hw:
+> https://pastebin.com/78A7yhJ9
 
-if (umem->writable && dirty)
-     put_user_pages_dirty_lock(&page, 1);
-else
-     put_user_page(page);
 
-?
-
-> diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
-> index e341e6dcc388..99ccc0483711 100644
-> +++ b/drivers/infiniband/hw/hfi1/user_pages.c
-> @@ -121,13 +121,10 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
->  void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
->  			     size_t npages, bool dirty)
->  {
-> -	size_t i;
-> -
-> -	for (i = 0; i < npages; i++) {
-> -		if (dirty)
-> -			set_page_dirty_lock(p[i]);
-> -		put_page(p[i]);
-> -	}
-> +	if (dirty)
-> +		put_user_pages_dirty_lock(p, npages);
-> +	else
-> +		put_user_pages(p, npages);
-
-And I know Jan gave the feedback to remove the bool argument, but just
-pointing out that quite possibly evey caller will wrapper it in an if
-like this..
-
-Jason
+I pushed a new version to my branch. Can you test it? The reboot
+notifier bug should still be present, but I don't think this is
+something we introduced.
