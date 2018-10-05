@@ -2,214 +2,157 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7631AC65BBE
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAB3C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376CC208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376CC208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 79662208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:32:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79662208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbeJFD3g (ORCPT
+        id S1729001AbeJFDdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 23:29:36 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:44922 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728314AbeJFD3Y (ORCPT
+        Fri, 5 Oct 2018 23:33:09 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37752 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbeJFDdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 23:29:24 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 5 Oct 2018 13:29:00 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id CF86440834;
-        Fri,  5 Oct 2018 13:29:02 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Ingo Molnar <mingo@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 2/3] x86/cpufeature: Macrofy inline assembly code to work around GCC inlining bugs
-Date:   Fri, 5 Oct 2018 13:27:17 -0700
-Message-ID: <20181005202718.229565-3-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005202718.229565-1-namit@vmware.com>
-References: <20181005093108.GA24723@gmail.com>
- <20181005202718.229565-1-namit@vmware.com>
+        Fri, 5 Oct 2018 23:33:09 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o13-v6so13952114otl.4;
+        Fri, 05 Oct 2018 13:32:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f1wpvtKTUCTBT+HmamF3OxnOhQKrPfOJPCqe96DoL30=;
+        b=NLxsLAbirEi3YUQmJq7mfMIz5vBKS/Gux7KdPGzMoFjaRNkf4Tvb0xDoN72kCJ8PXn
+         6XGI4Cez3sjpoggBy3FbRHd4jbE0vqGb8fbRa7xK0oggl1Q/2Xwfq0RcT+OZqK8Kd4KH
+         H/sgWwKo4P5K4nx0BLlm9AMMJfk+Qs4/uSfea3zVPO29vb64wKRsAgIB8mA0tGyLplZ3
+         9MLX0yYXL4Sqx2Eqtv8NAXW/lljHUWAEYjZXRnjug0cCesAorUL26hfsjeEXzSJkhzl8
+         DDo/a0wVedNz+wT3yb4hRlsSxWBcDaWquz2dCIwHXrJCJyCHKY37dP1Vcj6R6dFzzfp4
+         YwhA==
+X-Gm-Message-State: ABuFfohrwlEwtPNuVGJ51MOqnJ1zcmiK5zdD1E5EYVBxqOSZzsOX/sB4
+        DglIkrL+NvB5z+Q9CqY+qw==
+X-Google-Smtp-Source: ACcGV624NNPAD8Q/g4edzImvnmTiVczKeIiC06Gyd8JSvsaVGM28C/tzVKp6V5DtoVozY3RO/K3QXQ==
+X-Received: by 2002:a9d:29f2:: with SMTP id g47mr7164768otd.21.1538771567680;
+        Fri, 05 Oct 2018 13:32:47 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r83-v6sm2790595oia.55.2018.10.05.13.32.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 13:32:47 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 15:32:46 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        jacopo@jmondi.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 1/3] [media] imx214: device tree binding
+Message-ID: <20181005203246.GA28765@bogus>
+References: <20181005124940.15539-1-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005124940.15539-1-ricardo.ribalda@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As described in:
+On Fri, Oct 05, 2018 at 02:49:37PM +0200, Ricardo Ribalda Delgado wrote:
+> From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+> 
+> Document bindings for imx214 camera sensor
+> 
+> Cc: devicetree@vger.kernel.org
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-77b0bf55bc67: ("kbuild/Makefile: Prepare for using macros in inline assembly code to work around asm() related GCC inlining bugs")
+checkpatch.pl complains that the author and S-o-b don't match.
 
-GCC's inlining heuristics are broken with common asm() patterns used in
-kernel code, resulting in the effective disabling of inlining.
+> ---
+>  .../devicetree/bindings/media/i2c/imx214.txt  | 53 +++++++++++++++++++
 
-The workaround is to set an assembly macro and call it from the inline
-assembly block - which is pretty pointless indirection in the static_cpu_has()
-case, but is worth it to improve overall inlining quality.
+sony,imx214.txt is preferred.
 
-The patch slightly increases the kernel size:
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx214.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/imx214.txt b/Documentation/devicetree/bindings/media/i2c/imx214.txt
+> new file mode 100644
+> index 000000000000..421a019ab7f9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/imx214.txt
+> @@ -0,0 +1,53 @@
+> +* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
+> +
+> +The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
+> +an active array size of 4224H x 3200V. It is programmable through an I2C
+> +interface. The I2C address can be configured to 0x1a or 0x10, depending on
+> +how the hardware is wired.
 
- text     data     bss      dec     hex  filename
-18162879 10226256 2957312 31346447 1de4f0f  ./vmlinux before
-18163528 10226300 2957312 31347140 1de51c4  ./vmlinux after (+693)
+Move the addresses to reg description.
 
-And enables the inlining of function such as free_ldt_pgtables().
+> +Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
+> +throughput of 1.2Gbps/lane.
+> +
+> +
+> +Required Properties:
+> +- compatible: value should be "sony,imx214" for imx214 sensor
+> +- reg: I2C bus address of the device
+> +- enable-gpios: GPIO descriptor for the enable pin.
+> +- vdddo-supply: Chip digital IO regulator (1.8V).
+> +- vdda-supply: Chip analog regulator (2.7V).
+> +- vddd-supply: Chip digital core regulator (1.12V).
+> +- clocks: Reference to the xclk clock.
+> +- clock-names:  Shall be "xclk".
+> +
+> +Optional Properties:
+> +- flash-leds: See ../video-interfaces.txt
+> +- lens-focus: See ../video-interfaces.txt
+> +
+> +The imx214 device node shall contain one 'port' child node with
+> +an 'endpoint' subnode. For further reading on port node refer to
+> +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +Required Properties on endpoint:
+> +- data-lanes: check ../video-interfaces.txt
+> +- link-frequencies: check ../video-interfaces.txt
+> +- remote-endpoint: check ../video-interfaces.txt
+> +
+> +Example:
+> +
+> +	camera_rear@1a {
 
-Tested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/lkml/20181003213100.189959-10-namit@vmware.com/T/#u
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/cpufeature.h | 82 ++++++++++++++++++-------------
- arch/x86/kernel/macros.S          |  1 +
- 2 files changed, 48 insertions(+), 35 deletions(-)
+camera-sensor@1a
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index aced6c9290d6..7d442722ef24 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -2,10 +2,10 @@
- #ifndef _ASM_X86_CPUFEATURE_H
- #define _ASM_X86_CPUFEATURE_H
- 
--#include <asm/processor.h>
--
--#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
-+#ifdef __KERNEL__
-+#ifndef __ASSEMBLY__
- 
-+#include <asm/processor.h>
- #include <asm/asm.h>
- #include <linux/bitops.h>
- 
-@@ -161,37 +161,10 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
-  */
- static __always_inline __pure bool _static_cpu_has(u16 bit)
- {
--	asm_volatile_goto("1: jmp 6f\n"
--		 "2:\n"
--		 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
--			 "((5f-4f) - (2b-1b)),0x90\n"
--		 "3:\n"
--		 ".section .altinstructions,\"a\"\n"
--		 " .long 1b - .\n"		/* src offset */
--		 " .long 4f - .\n"		/* repl offset */
--		 " .word %P[always]\n"		/* always replace */
--		 " .byte 3b - 1b\n"		/* src len */
--		 " .byte 5f - 4f\n"		/* repl len */
--		 " .byte 3b - 2b\n"		/* pad len */
--		 ".previous\n"
--		 ".section .altinstr_replacement,\"ax\"\n"
--		 "4: jmp %l[t_no]\n"
--		 "5:\n"
--		 ".previous\n"
--		 ".section .altinstructions,\"a\"\n"
--		 " .long 1b - .\n"		/* src offset */
--		 " .long 0\n"			/* no replacement */
--		 " .word %P[feature]\n"		/* feature bit */
--		 " .byte 3b - 1b\n"		/* src len */
--		 " .byte 0\n"			/* repl len */
--		 " .byte 0\n"			/* pad len */
--		 ".previous\n"
--		 ".section .altinstr_aux,\"ax\"\n"
--		 "6:\n"
--		 " testb %[bitnum],%[cap_byte]\n"
--		 " jnz %l[t_yes]\n"
--		 " jmp %l[t_no]\n"
--		 ".previous\n"
-+	asm_volatile_goto("STATIC_CPU_HAS bitnum=%[bitnum] "
-+			  "cap_byte=\"%[cap_byte]\" "
-+			  "feature=%P[feature] t_yes=%l[t_yes] "
-+			  "t_no=%l[t_no] always=%P[always]"
- 		 : : [feature]  "i" (bit),
- 		     [always]   "i" (X86_FEATURE_ALWAYS),
- 		     [bitnum]   "i" (1 << (bit & 7)),
-@@ -226,5 +199,44 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
- #define CPU_FEATURE_TYPEVAL		boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
- 					boot_cpu_data.x86_model
- 
--#endif /* defined(__KERNEL__) && !defined(__ASSEMBLY__) */
-+#else /* __ASSEMBLY__ */
-+
-+.macro STATIC_CPU_HAS bitnum:req cap_byte:req feature:req t_yes:req t_no:req always:req
-+1:
-+	jmp 6f
-+2:
-+	.skip -(((5f-4f) - (2b-1b)) > 0) * ((5f-4f) - (2b-1b)),0x90
-+3:
-+	.section .altinstructions,"a"
-+	.long 1b - .		/* src offset */
-+	.long 4f - .		/* repl offset */
-+	.word \always		/* always replace */
-+	.byte 3b - 1b		/* src len */
-+	.byte 5f - 4f		/* repl len */
-+	.byte 3b - 2b		/* pad len */
-+	.previous
-+	.section .altinstr_replacement,"ax"
-+4:
-+	jmp \t_no
-+5:
-+	.previous
-+	.section .altinstructions,"a"
-+	.long 1b - .		/* src offset */
-+	.long 0			/* no replacement */
-+	.word \feature		/* feature bit */
-+	.byte 3b - 1b		/* src len */
-+	.byte 0			/* repl len */
-+	.byte 0			/* pad len */
-+	.previous
-+	.section .altinstr_aux,"ax"
-+6:
-+	testb \bitnum,\cap_byte
-+	jnz \t_yes
-+	jmp \t_no
-+	.previous
-+.endm
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* __KERNEL__ */
- #endif /* _ASM_X86_CPUFEATURE_H */
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 7baa40d5bf16..bf8b9c93e255 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -12,3 +12,4 @@
- #include <asm/bug.h>
- #include <asm/paravirt.h>
- #include <asm/asm.h>
-+#include <asm/cpufeature.h>
--- 
-2.17.1
+If you need location, then perhaps use 'label'.
 
+> +		compatible = "sony,imx214";
+> +		reg = <0x1a>;
+> +		vdddo-supply = <&pm8994_lvs1>;
+> +		vddd-supply = <&camera_vddd_1v12>;
+> +		vdda-supply = <&pm8994_l17>;
+> +		lens-focus = <&ad5820>;
+> +		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
+> +		clocks = <&mmcc CAMSS_MCLK0_CLK>;
+> +		clock-names = "xclk";
+> +		port {
+> +			imx214_ep: endpoint {
+> +				data-lanes = <1 2 3 4>;
+> +				link-frequencies = /bits/ 64 <480000000>;
+> +				remote-endpoint = <&csiphy0_ep>;
+> +			};
+> +		};
+> +	};
+> -- 
+> 2.19.0
+> 
