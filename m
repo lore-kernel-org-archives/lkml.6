@@ -2,88 +2,106 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4129C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131CCC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 904F3208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE8992147D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pswZfkIZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904F3208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUfVOxll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8992147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbeJEXRw (ORCPT
+        id S1730419AbeJEXR4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:17:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55916 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729719AbeJEXRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:17:19 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FCAE208E7;
-        Fri,  5 Oct 2018 16:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756276;
-        bh=/jEupENCxSxdcp/WCuPUYvjf3pj7Z+Aw4HQCkUsEf0k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pswZfkIZ/ATYNnfI3f3Sd+hrwX78X+3XVn5wXmo9WX74mjYpRjExLNmgN/z3wFWJB
-         FHXv/cyzW0qcZLX+UP4cxpNS+MDRr8VsXnHXtUGyvHseiNknjc5HmZzAuf1xmBYwUO
-         iUdguPk99WuLfeZZyFQa2bV4UTYrfod6917lTvxQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 4/6] net: hp100: fix always-true check for link up state
-Date:   Fri,  5 Oct 2018 12:17:48 -0400
-Message-Id: <20181005161750.20823-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161750.20823-1-sashal@kernel.org>
-References: <20181005161750.20823-1-sashal@kernel.org>
+        Fri, 5 Oct 2018 19:17:56 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46597 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729536AbeJEXRz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:17:55 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d8-v6so14322021qtk.13;
+        Fri, 05 Oct 2018 09:18:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=XojoW7X3XGGnrPVboAoj6uP4rNyi3lSaqAIUw6+is08=;
+        b=QUfVOxllEzDtnu7dtdMUv25KT6ihYByUxhZnJEg2dIE6KD+i57lwIn+mvw4qRlJflN
+         w82Q7UcTvhIQQzkzuyIxtik0C9bECKe051r1Cq6tH1NO1+fjDFwGrpjIIXG1wwLSFk/2
+         Fhs4AvybxBOTmL1ODLD7ZdqB++oVs/BqTKN1hB3Jz49cp2R7Z9Cx7BTaqBROmaOkqN/K
+         L1fBBHhdfPXLhfRKNEpE5c6t8+fYeyktMUL7g68kDvG9qhBUebNdnqnBcNxmU27p2wT8
+         igF2KgQCovFQAb6S1mULPibZ9r9mKqkY5g2Ft3mi72aQ5Cq46FQwOKsXYJ1VVP4xFaB4
+         3RTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XojoW7X3XGGnrPVboAoj6uP4rNyi3lSaqAIUw6+is08=;
+        b=UMY9BCOehXkaf9E0gwSKwA2l0NrDjeFtuHHkUxRWLZKsPi04mO6OAwAsDUX3NSaC07
+         VIbKo4kw2joQ8pYVO5nJKK0CREoyqf/UjtV6Jvh/GUEiog5rptNXhjh4GIz7NcnvOCqa
+         fmeZ8hVNvDQFXjc8i0V460Y+kLb2CEywLYJYxbdAqCA1R9umP1c1n8JnZ3ebZ8AEIYIl
+         kC2Wdqsgbymh9pEs7lo/H+0rEFTvdFSmUMJC+0tAlDCBpyK4EMuT496NCXwS5C0Gq511
+         I1yiyb63zc/e30GaC1TpxEgeqdd+cZRTa65lsb38OpCRmSlxsk0Sn+N0pcPr0cXe8Ypi
+         MP0A==
+X-Gm-Message-State: ABuFfoj0HEfgmRpKBxI6LyaUHsU4oHlOLaWSdB5C0jT3lrK6XFSn0y/w
+        1NKEtN3KuDOr0oWGFO1tXrgsNImB
+X-Google-Smtp-Source: ACcGV62B6ejCkpjrEuWLHpYHlG5YqQUBO+XChfshjPNnxQWTIzJpnHwERYZBis5A7+Mki3sedS26PQ==
+X-Received: by 2002:a0c:d928:: with SMTP id p37-v6mr9658038qvj.181.1538756311303;
+        Fri, 05 Oct 2018 09:18:31 -0700 (PDT)
+Received: from gandalf.middle.earth.net (pool-173-48-133-32.bstnma.fios.verizon.net. [173.48.133.32])
+        by smtp.gmail.com with ESMTPSA id d89-v6sm4657141qkj.29.2018.10.05.09.18.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 09:18:30 -0700 (PDT)
+From:   "George G. Davis" <ggdavisiv@gmail.com>
+X-Google-Original-From: "George G. Davis" <george_davis@mentor.com>
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     "George G. Davis" <george_davis@mentor.com>
+Subject: [PATCH] i2c: core: squelch error: uninitialized symbol 'ret'
+Date:   Fri,  5 Oct 2018 12:18:25 -0400
+Message-Id: <20181005161826.2455-1-george_davis@mentor.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The following smatch error was introduced by commit 7ca5f6be7900 ("i2c:
+recovery: add get_bus_free callback"):
 
-[ Upstream commit a7f38002fb69b44f8fc622ecb838665d0b8666af ]
+drivers/i2c/i2c-core-base.c:228 i2c_generic_scl_recovery() error: uninitialized symbol 'ret'.
 
-The operation ~(p100_inb(VG_LAN_CFG_1) & HP100_LINK_UP) returns a value
-that is always non-zero and hence the wait for the link to drop always
-terminates prematurely.  Fix this by using a logical not operator instead
-of a bitwise complement.  This issue has been in the driver since
-pre-2.6.12-rc2.
+Analysis of the code appears to show that the smatch error is a false
+positive since 'ret' will in fact be initialized after exiting the
+'while()' loop.
 
-Detected by CoverityScan, CID#114157 ("Logical vs. bitwise operator")
+Squelch the smatch error since it is a false positive.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 7ca5f6be7900 ("i2c: recovery: add get_bus_free callback")
+Signed-off-by: George G. Davis <george_davis@mentor.com>
 ---
- drivers/net/ethernet/hp/hp100.c | 2 +-
+ drivers/i2c/i2c-core-base.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hp/hp100.c b/drivers/net/ethernet/hp/hp100.c
-index 76a6e0c77d69..034471003249 100644
---- a/drivers/net/ethernet/hp/hp100.c
-+++ b/drivers/net/ethernet/hp/hp100.c
-@@ -2637,7 +2637,7 @@ static int hp100_login_to_vg_hub(struct net_device *dev, u_short force_relogin)
- 		/* Wait for link to drop */
- 		time = jiffies + (HZ / 10);
- 		do {
--			if (~(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
-+			if (!(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
- 				break;
- 			if (!in_interrupt())
- 				schedule_timeout_interruptible(1);
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 9ee9a15e7134..7b25ecb6b616 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -185,7 +185,7 @@ static int i2c_generic_bus_free(struct i2c_adapter *adap)
+ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+ {
+ 	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+-	int i = 0, scl = 1, ret;
++	int i = 0, scl = 1, uninitialized_var(ret);
+ 
+ 	if (bri->prepare_recovery)
+ 		bri->prepare_recovery(adap);
 -- 
-2.17.1
+2.14.4
 
