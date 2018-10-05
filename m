@@ -6,103 +6,166 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DF5C65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4B9C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A726F20834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A726F20834
+	by mail.kernel.org (Postfix) with ESMTP id 63E8A20834
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E8A20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbeJEXKx (ORCPT
+        id S1728789AbeJEXLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:10:53 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:39999 "EHLO
+        Fri, 5 Oct 2018 19:11:38 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:60597 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeJEXKx (ORCPT
+        with ESMTP id S1727878AbeJEXLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:10:53 -0400
+        Fri, 5 Oct 2018 19:11:38 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M9nAB-1g2hPG2CKT-005rpo; Fri, 05 Oct 2018 18:11:27 +0200
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MYNeM-1gCQyQ3his-00VLdR; Fri, 05 Oct 2018 18:12:08 +0200
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M9nAB-1g2hPG2CKT-005rpo; Fri, 05 Oct 2018 18:11:27 +0200
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MYNeM-1gCQyQ3his-00VLdR; Fri, 05 Oct 2018 18:12:08 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: keystone: add missing MODULE_LICENSE
-Date:   Fri,  5 Oct 2018 18:11:15 +0200
-Message-Id: <20181005161126.704214-1-arnd@arndb.de>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: add #ifdef checks for secmark filtering
+Date:   Fri,  5 Oct 2018 18:11:47 +0200
+Message-Id: <20181005161206.727098-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:DVPu+IJOKpsK4wUVvQSrcjPgjI2mrg+eJkiNSyS1OS0/4qgUuNN
- z1zZcgfHHxdmFo5yR/MLWlwiX+JBlzuFwBGgYjMZ44o7YCyUbDYotj6BekP+kXM0IPEcvGv
- AyY2HaH5AtQqNGnkwhY0PdC0Ic2lbu/HPDbl2bR+OZtHyAULiKc6wWDcfTowriRcD4T+TnK
- hzsU2w52PnNqTU79Ruasg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:M/GmLyOCgE4=:hghMhHMl1HRLorJTkLo29n
- ro12sCQ95OuL75xvg1fpjOhja8OzZEaYlXMiT3Jov1vSQYMMdGW6+yOZDST1ZIiqiwtM9vJF+
- hnsi12OFkjmMHnd7JCq7F95qgE6rGcecjIpkT0hw1BTg27Rai67riu5Z9xaF4XAnY8iLERNgy
- lqQa1oWL3Ee0cltMTIiPlqYMALMlzT+1qx3e/BpzFzQRJR2i7d6edX9xU5U9MX5nVYfnz6SxB
- EJaVdk7FhkGzvPWgvYCcDHK+LJfhEF0ULB/0eSTR/iIXtCQuCWSkDBIbh1kNtixC22wY/TUsJ
- yGnMpRzkUXmRJj51nkVv2g7O5KsxCU2+LHLnNV9JY4V2GWrJP0wxySyot3qdSzbapC4lFM3Vq
- 1rJEiUgrg8FAp8xeDiNhtElL4ZhgcuO06F8fGVZ0tLYV6GZDhAelZFr3WJB/hY3G7bNV6SKCL
- hjH0rhyAYCjxbICMtaHD+C557YV++b/Wk6ee8r9sD60B/1wbotfQuvcOZjakA7bdV4nnfAw/u
- 1GhD2DZrWvbFWyH62c1sTY0PtMS9qmUa4a95b/ajzka626PjdarBpJ8jFIs89gNbKkSLch1Yx
- iaVngiMYGFZo61yIr3RN/r2n6OENGiEOHfhyKWwEdAG+Lf0cb+yVxw2c1IZg72e2rWyySTRDM
- RsXYfTwxce3VF5211OzSPB6nenm1O1an5WkB8VlRpDhZq7PxSgRJ/ckDfqhvyJAjTCmM=
+X-Provags-ID: V03:K1:M0zCqPWFVcOcannDUuDOwgjJPuoxDACZDZgPCSEac5NqWsHTsnQ
+ 5cLvwEfc5dqqDCJn+KUuBx+2+8hR1QKx1VuPDioqGjr8bSlSLsbM/pkw4baQpJDsvQx0ObM
+ nV9Bn4Efv8DDhQUjHASr5FUqSA+GiPf2Zd3RnUMeM7x0ee0j4G1/ZoeRSYbjb2Ftx70Y4Y9
+ MnUX3MshiavQME6bJystA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:/ulGstPc9Ak=:VvsvVRm7tiz75wDNKFPRbH
+ Rad4logNWV8ZYqjG4jOCO69Aurf5F/stq6D3myd5dNsHoOLBWHxTTfhXicYzQGEUD4A3YHicI
+ V1k0mQEbZm1NDUkz6phGW8nImYcQ+RISegp7d/pD/aR9n/Iv83wY9+KMYvz2992uHvr1D9soz
+ 1jYI36qt5qj0dbHFW2qAq75V2hwfHe6W5It9g00BWHL1d3ryj6PRGpbAIZgXOBo2YsQ/wJkVB
+ FgAyffDg23wfLXSb0D60U0eD0t6f09qeIquH6OFfiTvT9OpykEpouB8zUHiGS/wbdhxdZC+Z5
+ BeVpOggUNf/U2aNiD4h3EtdKOwrmsJLSmR83cyEfDtWP2ZrIT1S+fTxzx5uDti8QkY7zb4SEq
+ cP43FHQ45QX4cArg/JmSzjS0rNUy9elvwT8DIDRFf2zFnjm/UoQVHy3DrBQKearOoLDv4Y/nw
+ 6dbYOofXle7sLWNQVStUVZdpoMmCprAjlon4tgmo59Dq/k5ev4tGfAfyq8YWSbtEAYkKyG0BL
+ z2pxpmSBXfKTNkpQhNnootn6R3v2lmTKEmgdj0rHs+t16HfQGXDOr79dXTHq8wAFwLeofxjEe
+ wwhCooD/tFfH6XgUM6jJvZCQzjrDui5UrMYr7aNgbBD2r3GlWAWp+1Hg6taU5FPAPL7WhjhGk
+ Q6Yr0vvUMVeh5qKgM0HnLmyq3bLgjHuhGvZTHbZ+c0ZkuZqKQLCJDfgxqeZQe/N824cM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A randconfig build showed that two clk modules have no license tag:
+The newly added code fails to build when either SECMARK or
+NETFILTER are disabled:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/keystone/gate.o
-see include/linux/module.h for more information
-WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/keystone/pll.o
-see include/linux/module.h for more information
+security/apparmor/lsm.c: In function 'apparmor_socket_sock_rcv_skb':
+security/apparmor/lsm.c:1138:12: error: 'struct sk_buff' has no member named 'secmark'; did you mean 'mark'?
 
-Add the appropriate information from the comment at the start of the
-two files.
+security/apparmor/lsm.c:1671:21: error: 'struct nf_hook_state' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
 
+Add a set of #ifdef checks around it to only enable the code that
+we can compile and that makes sense in that configuration.
+
+Fixes: ab9f2115081a ("apparmor: Allow filtering based on secmark policy")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-I had not seen this until today, no idea why it showed up now on arm64.
----
- drivers/clk/keystone/gate.c | 5 +++++
- drivers/clk/keystone/pll.c  | 5 +++++
- 2 files changed, 10 insertions(+)
+ security/apparmor/lsm.c | 10 ++++++++++
+ security/apparmor/net.c |  2 ++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/clk/keystone/gate.c b/drivers/clk/keystone/gate.c
-index def15db4eef0..4ed9b29ba438 100644
---- a/drivers/clk/keystone/gate.c
-+++ b/drivers/clk/keystone/gate.c
-@@ -266,3 +266,8 @@ static void __init of_keystone_psc_clk_init(struct device_node *node)
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 53201013c40e..b74b724d3e84 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1123,6 +1123,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
+ 	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
  }
- CLK_OF_DECLARE(keystone_gate_clk, "ti,keystone,psc-clock",
- 					of_keystone_psc_clk_init);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Clock driver for Keystone 2 based devices");
-+MODULE_AUTHOR("Murali Karicheri <m-karicheri2@ti.com>");
-+MODULE_AUTHOR("Santosh Shilimkar <santosh.shilimkar@ti.com>");
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 2b871fc91d56..349540469fc0 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -338,3 +338,8 @@ static void __init of_pll_mux_clk_init(struct device_node *node)
- 		pr_err("%s: error registering mux %s\n", __func__, clk_name);
+ 
++#ifdef CONFIG_NETWORK_SECMARK
+ /**
+  * apparmor_socket_sock_recv_skb - check perms before associating skb to sk
+  *
+@@ -1141,6 +1142,7 @@ static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 	return apparmor_secmark_check(ctx->label, OP_RECVMSG, AA_MAY_RECEIVE,
+ 				      skb->secmark, sk);
  }
- CLK_OF_DECLARE(pll_mux_clock, "ti,keystone,pll-mux-clock", of_pll_mux_clk_init);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("PLL clock driver for Keystone devices");
-+MODULE_AUTHOR("Murali Karicheri <m-karicheri2@ti.com>");
-+MODULE_AUTHOR("Santosh Shilimkar <santosh.shilimkar@ti.com>");
++#endif
+ 
+ 
+ static struct aa_label *sk_peer_label(struct sock *sk)
+@@ -1235,6 +1237,7 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
+ 		ctx->label = aa_get_current_label();
+ }
+ 
++#ifdef CONFIG_NETWORK_SECMARK
+ static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
+ 				      struct request_sock *req)
+ {
+@@ -1246,6 +1249,7 @@ static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
+ 	return apparmor_secmark_check(ctx->label, OP_CONNECT, AA_MAY_CONNECT,
+ 				      skb->secmark, sk);
+ }
++#endif
+ 
+ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
+@@ -1304,13 +1308,17 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(socket_getsockopt, apparmor_socket_getsockopt),
+ 	LSM_HOOK_INIT(socket_setsockopt, apparmor_socket_setsockopt),
+ 	LSM_HOOK_INIT(socket_shutdown, apparmor_socket_shutdown),
++#ifdef CONFIG_NETWORK_SECMARK
+ 	LSM_HOOK_INIT(socket_sock_rcv_skb, apparmor_socket_sock_rcv_skb),
++#endif
+ 	LSM_HOOK_INIT(socket_getpeersec_stream,
+ 		      apparmor_socket_getpeersec_stream),
+ 	LSM_HOOK_INIT(socket_getpeersec_dgram,
+ 		      apparmor_socket_getpeersec_dgram),
+ 	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
++#ifdef CONFIG_NETWORK_SECMARK
+ 	LSM_HOOK_INIT(inet_conn_request, apparmor_inet_conn_request),
++#endif
+ 
+ 	LSM_HOOK_INIT(cred_alloc_blank, apparmor_cred_alloc_blank),
+ 	LSM_HOOK_INIT(cred_free, apparmor_cred_free),
+@@ -1666,6 +1674,7 @@ static inline int apparmor_init_sysctl(void)
+ }
+ #endif /* CONFIG_SYSCTL */
+ 
++#if defined(CONFIG_NETFILTER) && defined(CONFIG_NETWORK_SECMARK)
+ static unsigned int apparmor_ip_postroute(void *priv,
+ 					  struct sk_buff *skb,
+ 					  const struct nf_hook_state *state)
+@@ -1754,6 +1763,7 @@ static int __init apparmor_nf_ip_init(void)
+ 	return 0;
+ }
+ __initcall(apparmor_nf_ip_init);
++#endif
+ 
+ static int __init apparmor_init(void)
+ {
+diff --git a/security/apparmor/net.c b/security/apparmor/net.c
+index f9a678ce994f..c07fde444792 100644
+--- a/security/apparmor/net.c
++++ b/security/apparmor/net.c
+@@ -190,6 +190,7 @@ int aa_sock_file_perm(struct aa_label *label, const char *op, u32 request,
+ 	return aa_label_sk_perm(label, op, request, sock->sk);
+ }
+ 
++#ifdef CONFIG_NETWORK_SECMARK
+ static int apparmor_secmark_init(struct aa_secmark *secmark)
+ {
+ 	struct aa_label *label;
+@@ -254,3 +255,4 @@ int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
+ 				    aa_secmark_perm(profile, request, secid,
+ 						    &sa, sk));
+ }
++#endif
 -- 
 2.18.0
 
