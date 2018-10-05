@@ -2,140 +2,158 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717BEC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91962C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF4221473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56CA821473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:48:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2UoqpFx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF4221473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="KeBUucrv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56CA821473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbeJFEsQ (ORCPT
+        id S1729112AbeJFEtI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:48:16 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43904 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbeJFEsP (ORCPT
+        Sat, 6 Oct 2018 00:49:08 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38461 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeJFEtI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:48:15 -0400
-Received: by mail-pl1-f195.google.com with SMTP id 30-v6so7407093plb.10;
-        Fri, 05 Oct 2018 14:47:38 -0700 (PDT)
+        Sat, 6 Oct 2018 00:49:08 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b5-v6so7407284plr.5
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 14:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=b8gOChbtKZqdtik70w/F41RnTDSxYpINqRzI3UEg16c=;
-        b=H2UoqpFxHSFrm+aZGXqzeOXoxn96zj63aFdKrxslWYM+VwqM0NysAAJNnKVeLrqcob
-         ecAyQoUt4SLeKBCOtn1a07X2X/x1vzoz4bHR3NsLYh73sWKIwIofBJdhqZOa/zLz928n
-         504efhEC5YrNGzbRqSjmc85/WU4Tcrdl6elKuvIT8JbSKhny/UURewWN8NBfYzA85i8g
-         T71KnVx5NykGdL0hiMfxe5G9f/rocwPNbRkGxQphaL2vjipc4JKoJzhKn0TZ4vsQ/3Tv
-         vU1m4T4GnW706DSJwJ+FkuR6+UexdE60OSX6NNnxv82sD6WtNh7c4TLtIU/3GqaYW9tr
-         gufQ==
+        bh=RmpIuzTYoCLJjlcKuFXKb3VkkcNBiZBingQdKG49O2U=;
+        b=KeBUucrvIMPO1hFGRZgn+8VgPuVhEnRElgOzBYR/t91HM+6MGrFVSj0DSihFfukbKN
+         JcQMEYmjzBDS/cNhKHzShQezYv/mdojZz50LsUx7evAJnjmA7Ov1ArP2ry/pdYeTEAz2
+         3UQe4c5vUzDmNmW82gebzhrj8C2ulZMzN8Qa+prif7x72p5YFsZX9fzQgDseco31wzqC
+         tOrDPUJ+oaKE8xvNUuhBGx8u7eNsnZ5n4VAVcs64Gdf+zn+h3xaumJFBqwRSBCOV8nfJ
+         SmphB5rQDzLESHJif5N+Akr2bbgns1uniclcbnXOFnOXmlXQCmWT9P31rqCY5/gowtb6
+         BXMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b8gOChbtKZqdtik70w/F41RnTDSxYpINqRzI3UEg16c=;
-        b=ULj0PdAsMsxr1J750KYUMLrrEx0HdrEh2/hNcHwcsMldw7DWpwUI2nfrfqY9IU4zJG
-         1pSVVi7h28N336Jp8KHiNiZVxtCkfuZ2AotxAMotLfHId1aXPteLaE/qzIjINfa3faPk
-         ObMLOdYL/LnGYlmhn8Hfd1Lvc+6KJz/DnYHQ6A+uxLOctIslc4Tq3fkhmJ9DOBGMwFcd
-         nFsA3zsA4qvRIE8vlRbnl83lyxXsnv7ReDn2RNf003IJlklOUZ8l1gWgz7rfsaL8voAW
-         NpBNBru9m8dS4NdQgyyS9XgBFL0u7K/o1e4LJ4bHXhvS/q8GFBFwtioW5GT1qJXEXxFZ
-         nWuw==
-X-Gm-Message-State: ABuFfojGdZpDLPEcS0J98l9teWBdOvsSsRsDAxacDExI8cyw42oT64+a
-        kAzdm09WNkwaaFSUtp8JOTU=
-X-Google-Smtp-Source: ACcGV60a+BlSv3Q5YhzDKfChrAeMBYGvr8l3RDBRoKxDgi5CyfyGK110EKteJfri8QKIW/Q+/jz24w==
-X-Received: by 2002:a17:902:6102:: with SMTP id t2-v6mr12984047plj.278.1538776057622;
-        Fri, 05 Oct 2018 14:47:37 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 70-v6sm13515636pfz.27.2018.10.05.14.47.36
+        bh=RmpIuzTYoCLJjlcKuFXKb3VkkcNBiZBingQdKG49O2U=;
+        b=EV97jII9dR7qj9JA7kY6iMeAA1zaWHnpo9orcQT9ry6ar1ythQBtdHrdHlArSnGwgO
+         mpjYw36Flyyuz/LtKmFKNVPHP13rlU47RJz7EvVxQiovx0gnCEg7HmQE6NgA0STaZnuH
+         bAXjuaaGaQm4NatpInd9FUAIMu/fHh7W6Ph2Lh3VEbrConoUvE4wRrkZGm9mf5c2/uhF
+         7as6exyUp/LEJqVPftYS/cmRYkXtr7J2/cRRUQsLQPaqS0w4v0hqvWQF0B/ss+AGZsKJ
+         POd8ThcgC7RHz5iEA10Xg8ldQIctVKufXdEDjrQLckfihdaFdnG6gcHwQSqZAEgRqO/z
+         sOxg==
+X-Gm-Message-State: ABuFfojG5Tbqd8QVj4AvwljXF/43TTqE6yok7wofCx0crf5oqCW373z3
+        Bt44AiyFPrjm33Gf80v4QLcC6g==
+X-Google-Smtp-Source: ACcGV632Dp38QUy6gGHK00OshA/PYdSBC5NWHgfNGseXoglN+rQ5ebDMYyp0AE49Uhj4ohuFk6fCHQ==
+X-Received: by 2002:a17:902:5a4d:: with SMTP id f13-v6mr13425633plm.114.1538776110327;
+        Fri, 05 Oct 2018 14:48:30 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id s13-v6sm13600379pfj.105.2018.10.05.14.48.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 14:47:36 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 14:47:34 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Message-ID: <20181005214734.GC215120@dtor-ws>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180920135348.GF11965@kuha.fi.intel.com>
- <20180921233119.GA44099@dtor-ws>
- <20180924132050.GK11965@kuha.fi.intel.com>
- <20180924184543.GB156847@dtor-ws>
- <20180925121927.GL11965@kuha.fi.intel.com>
+        Fri, 05 Oct 2018 14:48:27 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g8XxS-0001Fx-HM; Fri, 05 Oct 2018 15:48:26 -0600
+Date:   Fri, 5 Oct 2018 15:48:26 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 2/3] mm: introduce put_user_page[s](), placeholder
+ versions
+Message-ID: <20181005214826.GD20776@ziepe.ca>
+References: <20181005040225.14292-1-jhubbard@nvidia.com>
+ <20181005040225.14292-3-jhubbard@nvidia.com>
+ <20181005151726.GA20776@ziepe.ca>
+ <c6f31004-3a67-880b-47bb-b560dfd85343@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180925121927.GL11965@kuha.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c6f31004-3a67-880b-47bb-b560dfd85343@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki,
-
-On Tue, Sep 25, 2018 at 03:19:27PM +0300, Heikki Krogerus wrote:
-> On Mon, Sep 24, 2018 at 11:45:43AM -0700, Dmitry Torokhov wrote:
-> > I think we are talking about totally different use cases and that is why
-> > we are having hard time coming to a mutually agreeable solution. Could
-> > you please describe in more detail what you would like to achieve,
-> > and preferably show how it is described now with DT and/or ACPI, so that
-> > I have a better frame of reference.
+On Fri, Oct 05, 2018 at 12:49:06PM -0700, John Hubbard wrote:
+> On 10/5/18 8:17 AM, Jason Gunthorpe wrote:
+> > On Thu, Oct 04, 2018 at 09:02:24PM -0700, john.hubbard@gmail.com wrote:
+> >> From: John Hubbard <jhubbard@nvidia.com>
+> >>
+> >> Introduces put_user_page(), which simply calls put_page().
+> >> This provides a way to update all get_user_pages*() callers,
+> >> so that they call put_user_page(), instead of put_page().
+> >>
+> >> Also introduces put_user_pages(), and a few dirty/locked variations,
+> >> as a replacement for release_pages(), for the same reasons.
+> >> These may be used for subsequent performance improvements,
+> >> via batching of pages to be released.
+> >>
+> >> This prepares for eventually fixing the problem described
+> >> in [1], and is following a plan listed in [2], [3], [4].
+> >>
+> >> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+> >>
+> >> [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
+> >>     Proposed steps for fixing get_user_pages() + DMA problems.
+> >>
+> >> [3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
+> >>     Bounce buffers (otherwise [2] is not really viable).
+> >>
+> >> [4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
+> >>     Follow-up discussions.
+> >>
+> [...]
+> >>  
+> >> +/* Placeholder version, until all get_user_pages*() callers are updated. */
+> >> +static inline void put_user_page(struct page *page)
+> >> +{
+> >> +	put_page(page);
+> >> +}
+> >> +
+> >> +/* For get_user_pages*()-pinned pages, use these variants instead of
+> >> + * release_pages():
+> >> + */
+> >> +static inline void put_user_pages_dirty(struct page **pages,
+> >> +					unsigned long npages)
+> >> +{
+> >> +	while (npages) {
+> >> +		set_page_dirty(pages[npages]);
+> >> +		put_user_page(pages[npages]);
+> >> +		--npages;
+> >> +	}
+> >> +}
+> > 
+> > Shouldn't these do the !PageDirty(page) thing?
+> > 
 > 
-> Yes, of course. Sorry.
-> 
-> USB ports are devices that usually the USB controller drivers register
-> (or actually the USB core code). They are represented in both ACPI and
-> DT as child nodes of the controller device node. The USB connector OF
-> node is defined in file
-> Documentation/devicetree/bindings/connector/usb-connector.txt
-> 
-> In short, the controller drivers will request handle to a child node
-> that represents a port, and only after that register the actual port
-> device.
-> 
-> The drivers I'm looking at currently are the USB Type-C port
-> controller drivers and the port manager (in Greg's usb-next or
-> linux-next):
-> 
->         drivers/usb/typec/tcpm/tcpci.c
->         drivers/usb/typec/tcpm/fusb302.c
->         drivers/usb/typec/tcpm/tcpm.c
-> 
-> The goal is simply to get rid of the platform data as usual, and
-> ideally so that we don't need any extra code in order to support the
-> "legacy" platforms.
+> Well, not yet. This is the "placeholder" patch, in which I planned to keep
+> the behavior the same, while I go to all the get_user_pages call sites and change 
+> put_page() and release_pages() over to use these new routines.
 
-Are these actually used on any of the "legacy" platforms? I fetched
-linux-next today, but I do not actually see anything in
-drivers/usb/typec touching platform data...
+Hmm.. Well, if it is the right thing to do here, why not include it and
+take it out of callers when doing the conversion?
 
-In the context of the connector, even before we descend to child nodes
-details, how do you propose implementing references between fwnodes?
-Especially since the other node (in case you complementing existing
-topology) may be ACPI or DT instance?
+If it is the wrong thing, then let us still take it out of callers
+when doing the conversion :)
 
-I want to say that "You aren't gonna need it" for what you are asking
-here and we can actually split it apart if and when we actually want to
-separate creation of pset-backed device nodes and instantiating
-corresponding device structures.
+Just seems like things will be in a better place to make future
+changes if all the call sights are de-duplicated and correct.
 
-Thanks.
-
--- 
-Dmitry
+Jason
