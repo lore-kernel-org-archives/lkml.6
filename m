@@ -2,101 +2,79 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D45BC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C11C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 599F520834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 599F520834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 1923C208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:54:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1wGc/3O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1923C208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbeJEXxa (ORCPT
+        id S1728661AbeJEXyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:53:30 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45998 "EHLO mail.skyhub.de"
+        Fri, 5 Oct 2018 19:54:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbeJEXxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:53:30 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IIKIeG7F0REd; Fri,  5 Oct 2018 18:53:55 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727572AbeJEXyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:54:14 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6CF8D1EC0691;
-        Fri,  5 Oct 2018 18:53:55 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 18:53:51 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
-        mchehab@kernel.org, sudeep.holla@arm.com, amit.kucheria@linaro.org,
-        leoyang.li@nxp.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v8 05/10] edac: synps: Add platform specific structures
- for ddrc controller
-Message-ID: <20181005165351.GD10285@zn.tnic>
-References: <1538667328-9465-1-git-send-email-manish.narani@xilinx.com>
- <1538667328-9465-6-git-send-email-manish.narani@xilinx.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 614AE2098A;
+        Fri,  5 Oct 2018 16:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538758481;
+        bh=YKij32Qs7N10hpTTQO/qICFK6FswWYMCh1aT+XaWnFI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=P1wGc/3Oy1ZdY8jdX1lnaFLHmduwO2CjVC/WXC6++Qk5XhMXm+hx460d4QizDpj/+
+         Bfx7tw65Bt4Q9VXEWX8HkUa8pDyy4KM/37GeMZ/cBFtDv7VdSoXNiR2DTQG+mwjkOT
+         rI205RRpPbJIqcIwTEvgrouCRRyoTaYOHcYntT4k=
+Received: by mail-oi1-f170.google.com with SMTP id w81-v6so10919509oiw.9;
+        Fri, 05 Oct 2018 09:54:41 -0700 (PDT)
+X-Gm-Message-State: ABuFfojV5/5XAJkSSuT+2fpvHG5YrZR02jIJrp4alifYecYN6hJIYTFl
+        1Gf5tnc0RpC0RwyHLl3WeXJWH3mDD45MmstYym0=
+X-Google-Smtp-Source: ACcGV60KLIdmfRumpoCVszqp+wimUZ5T0Yw5MeVywgPwMEfy4luHTv1eN+Yjq5RwJyMDCc/i+OM/lcAn2ebyGe84r7M=
+X-Received: by 2002:aca:e804:: with SMTP id f4-v6mr6145023oih.38.1538758480634;
+ Fri, 05 Oct 2018 09:54:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1538667328-9465-6-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+ <20181005065300.22882-3-ricardo.ribalda@gmail.com> <8d10f9b4-7ea9-7d27-478a-39982ba49587@codeaurora.org>
+In-Reply-To: <8d10f9b4-7ea9-7d27-478a-39982ba49587@codeaurora.org>
+From:   Timur Tabi <timur@kernel.org>
+Date:   Fri, 5 Oct 2018 11:54:03 -0500
+X-Gmail-Original-Message-ID: <CAOZdJXU=p0kz0PNhP8KwCQ0o7TuM=z2SvEz4b60_KveCrT7zPA@mail.gmail.com>
+Message-ID: <CAOZdJXU=p0kz0PNhP8KwCQ0o7TuM=z2SvEz4b60_KveCrT7zPA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Linus <linus.walleij@linaro.org>, Timur Tabi <timur@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:05:23PM +0530, Manish Narani wrote:
-> Add platform specific structures, so that we can add different IP
-> support later using quirks.
-> 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/edac/synopsys_edac.c | 91 +++++++++++++++++++++++++++++++-------------
->  1 file changed, 65 insertions(+), 26 deletions(-)
+On 10/05/2018 11:17 AM, Jeffrey Hugo wrote:>
+> Looks like the driver is initing just fine to me.  Is setting up the
+> jumpers and running gpio-test warranted?
 
-...
+Well, that test only makes sure that input/output is actually working
+on the hardware level, but it also makes sure that the GPIOs are
+numbered correctly.
 
-> @@ -423,6 +465,7 @@ static void edac_mc_init(struct mem_ctl_info *mci,
->   */
->  static int synps_edac_mc_probe(struct platform_device *pdev)
->  {
-> +	const struct synps_platform_data *p_data;
->  	struct edac_mc_layer layers[2];
->  	struct synps_edac_priv *priv;
->  	struct mem_ctl_info *mci;
-> @@ -435,7 +478,8 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
->  	if (IS_ERR(baseaddr))
->  		return PTR_ERR(baseaddr);
->  
-> -	if (!edac_get_eccstate(baseaddr)) {
-> +	p_data = of_device_get_match_data(&pdev->dev);
+If you want, just put a printk(... offset) in msm_gpio_get() and read
+from a GPIO that you know you have access to, and make sure the
+'offset' is correct.
 
-That of_device_get_match_data()  does return NULL...
-
-> +	if (!p_data->get_eccstate(baseaddr)) {
-
-... I'm sure you can imagine what happens here if so.
-
-Anyway, I've pushed what I've applied so far, here:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=edac-for-4.20-synps
-
-Please add the error handling ontop of the top patch on that branch and
-send the diff to me.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Then try reading from a GPIO that you don't have access to, and make
+sure you get a failure before msm_gpio_get() is called.
