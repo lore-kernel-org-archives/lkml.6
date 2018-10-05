@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15C9C65BBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3DAC65BBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 759402084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 759402084D
+	by mail.kernel.org (Postfix) with ESMTP id 530D72084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:34:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530D72084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbeJFBeQ (ORCPT
+        id S1729083AbeJFBeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:34:16 -0400
-Received: from mga07.intel.com ([134.134.136.100]:54340 "EHLO mga07.intel.com"
+        Fri, 5 Oct 2018 21:34:21 -0400
+Received: from mga03.intel.com ([134.134.136.65]:7685 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbeJFBeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:34:16 -0400
+        id S1728044AbeJFBeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:34:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 11:34:19 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 11:34:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
-   d="scan'208";a="263223672"
+   d="scan'208";a="263223682"
 Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.166])
-  by orsmga005.jf.intel.com with ESMTP; 05 Oct 2018 11:34:18 -0700
-Subject: [workqueue/driver-core PATCH 3/5] driver core: Probe devices
- asynchronously instead of the driver
+  by orsmga005.jf.intel.com with ESMTP; 05 Oct 2018 11:34:24 -0700
+Subject: [workqueue/driver-core PATCH 4/5] driver core: Attach devices on
+ CPU local to device node
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     tj@kernel.org, gregkh@linuxfoundation.org,
         akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
         jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
         alexander.h.duyck@linux.intel.com
-Date:   Fri, 05 Oct 2018 11:34:18 -0700
-Message-ID: <20181005183418.8790.46609.stgit@localhost.localdomain>
+Date:   Fri, 05 Oct 2018 11:34:24 -0700
+Message-ID: <20181005183424.8790.66813.stgit@localhost.localdomain>
 In-Reply-To: <20181005183239.8790.28631.stgit@localhost.localdomain>
 References: <20181005183239.8790.28631.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -52,129 +52,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes it so that we probe devices asynchronously instead of the
-driver. This results in us seeing the same behavior if the device is
-registered before the driver or after. This way we can avoid serializing
-the initialization should the driver not be loaded until after the devices
-have already been added.
-
-The motivation behind this is that if we have a set of devices that
-take a significant amount of time to load we can greatly reduce the time to
-load by processing them in parallel instead of one at a time. In addition,
-each device can exist on a different node so placing a single thread on one
-CPU to initialize all of the devices for a given driver can result in poor
-performance on a system with multiple nodes.
-
-One issue I can see with this patch is that I am using the
-dev_set/get_drvdata functions to store the driver in the device while I am
-waiting on the asynchronous init to complete. For now I am protecting it by
-using the lack of a dev->driver and the device lock.
+This change makes it so that we call the asynchronous probe routines on a
+CPU local to the device node. By doing this we should be able to improve
+our initialization time significantly as we can avoid having to access the
+device from a remote node which may introduce higher latency.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/base/bus.c |   23 +++--------------------
- drivers/base/dd.c  |   42 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 20 deletions(-)
+ drivers/base/dd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 8bfd27ec73d6..2a17bed657ec 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -616,17 +616,6 @@ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
- }
- static DRIVER_ATTR_WO(uevent);
- 
--static void driver_attach_async(void *_drv, async_cookie_t cookie)
--{
--	struct device_driver *drv = _drv;
--	int ret;
--
--	ret = driver_attach(drv);
--
--	pr_debug("bus: '%s': driver %s async attach completed: %d\n",
--		 drv->bus->name, drv->name, ret);
--}
--
- /**
-  * bus_add_driver - Add a driver to the bus.
-  * @drv: driver.
-@@ -659,15 +648,9 @@ int bus_add_driver(struct device_driver *drv)
- 
- 	klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
- 	if (drv->bus->p->drivers_autoprobe) {
--		if (driver_allows_async_probing(drv)) {
--			pr_debug("bus: '%s': probing driver %s asynchronously\n",
--				drv->bus->name, drv->name);
--			async_schedule(driver_attach_async, drv);
--		} else {
--			error = driver_attach(drv);
--			if (error)
--				goto out_unregister;
--		}
-+		error = driver_attach(drv);
-+		if (error)
-+			goto out_unregister;
- 	}
- 	module_add_driver(drv->owner, drv);
- 
 diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 169412ee4ae8..5ba366c1cb83 100644
+index 5ba366c1cb83..81472dc44a70 100644
 --- a/drivers/base/dd.c
 +++ b/drivers/base/dd.c
-@@ -864,6 +864,29 @@ void device_initial_probe(struct device *dev)
- 	__device_attach(dev, true);
- }
- 
-+static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
-+{
-+	struct device *dev = _dev;
-+
-+	if (dev->parent && dev->bus->need_parent_lock)
-+		device_lock(dev->parent);
-+	device_lock(dev);
-+
-+	if (!dev->driver) {
-+		struct device_driver *drv = dev_get_drvdata(dev);
-+
-+		driver_probe_device(drv, dev);
-+	}
-+
-+	dev_dbg(dev, "async probe completed\n");
-+
-+	device_unlock(dev);
-+	if (dev->parent && dev->bus->need_parent_lock)
-+		device_unlock(dev->parent);
-+
-+	put_device(dev);
-+}
-+
- static int __driver_attach(struct device *dev, void *data)
- {
- 	struct device_driver *drv = data;
-@@ -891,6 +914,25 @@ static int __driver_attach(struct device *dev, void *data)
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
-+	if (driver_allows_async_probing(drv)) {
-+		/*
-+		 * Instead of probing the device synchronously we will
-+		 * probe it asynchronously to allow for more parallelism.
-+		 *
-+		 * We only take the device lock here in order to guarantee
-+		 * that the dev->driver and driver_data fields are protected
-+		 */
-+		dev_dbg(dev, "scheduling asynchronous probe\n");
-+		device_lock(dev);
-+		if (!dev->driver) {
-+			get_device(dev);
-+			dev_set_drvdata(dev, drv);
-+			async_schedule(__driver_attach_async_helper, dev);
-+		}
-+		device_unlock(dev);
-+		return 0;
-+	}
-+
- 	if (dev->parent && dev->bus->need_parent_lock)
- 		device_lock(dev->parent);
- 	device_lock(dev);
+@@ -826,7 +826,7 @@ static int __device_attach(struct device *dev, bool allow_async)
+ 			 */
+ 			dev_dbg(dev, "scheduling asynchronous probe\n");
+ 			get_device(dev);
+-			async_schedule(__device_attach_async_helper, dev);
++			async_schedule_dev(__device_attach_async_helper, dev);
+ 		} else {
+ 			pm_request_idle(dev);
+ 		}
+@@ -927,7 +927,7 @@ static int __driver_attach(struct device *dev, void *data)
+ 		if (!dev->driver) {
+ 			get_device(dev);
+ 			dev_set_drvdata(dev, drv);
+-			async_schedule(__driver_attach_async_helper, dev);
++			async_schedule_dev(__driver_attach_async_helper, dev);
+ 		}
+ 		device_unlock(dev);
+ 		return 0;
 
