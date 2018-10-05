@@ -2,211 +2,212 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFE1C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D766BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E25920875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:20:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LczVpFoB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E25920875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 912E620875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:22:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912E620875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbeJEORr (ORCPT
+        id S1728228AbeJEOUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:17:47 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41877 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbeJEORr (ORCPT
+        Fri, 5 Oct 2018 10:20:18 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:41054 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeJEOUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:17:47 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f38-v6so10749996edd.8
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 00:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tyR8A6AehlqWdICKzKNbC9Z2f5M8A9MRnlp9QAbgGBM=;
-        b=LczVpFoBYHPWTjk+Qu3XZBKHQZXay5qWds1DnnyqTHL3jlPY8htjBJ9ndGqmVmk4mX
-         KQ7OyUom1/t87GY0t4PIA9czeurOYm8+tIvaJMNSFymbSHSm0EDxUvBf49MDtrvDVjKG
-         op7WxsWvPEQyeiaepDdN9QFwyGoYE/mbjjpo4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=tyR8A6AehlqWdICKzKNbC9Z2f5M8A9MRnlp9QAbgGBM=;
-        b=phOK3rAk4yvwGF4fN915pPKVBVfKoW7JSJ7BeKGALTzAnBiHe4xslO59BdVwGI9k6X
-         DaHjeI3shyA9XGE/pFvGcO5qv2ziADfGYh0ID2QL3bGfL2onBYs7cfEcx4UeVM9gJyK7
-         +gWw84uFZ0FlPe4vRQgtUx3FnliT3C9pKmKWe6rEHtz8Kn5NsScKf4LHrnPDf9MYVplo
-         +YIPYM53YZLeLwfdA2Erko6pFU9mOVgTnSH+nIT5A8pI5QnxD3Hjr2iw1r2ib21EttV5
-         JB5t9WRbWdViFaWFQAFF9LbokttI22uD2PyRbYXQWp7iOQUB3fJWP9+EDYbsLJ7Fj3M5
-         +CUA==
-X-Gm-Message-State: ABuFfoj+DANRJ7HuR//m2f/MZH0BsjeFo/AQ9ZICFpKvM/uAgoTFUCQi
-        UHpKjjTjthKjewGSvj4hw2GzgQUarPc=
-X-Google-Smtp-Source: ACcGV62gJcs/IHHGFl5V0Zfv2/cDABlocXRZJh9Hrkeh+3R3Obl7EgGd08aBSL05L2+fQAKznSE0Ww==
-X-Received: by 2002:a50:d78b:: with SMTP id w11-v6mr13311731edi.19.1538724020941;
-        Fri, 05 Oct 2018 00:20:20 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id v1-v6sm2092740edf.3.2018.10.05.00.20.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 00:20:19 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 09:20:17 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        stable@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/5] drm/i915: Leave intel_conn->mst_port set, use
- mst_port_gone instead
-Message-ID: <20181005072017.GV31561@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>, stable@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-References: <20181005002956.7317-1-lyude@redhat.com>
- <20181005002956.7317-4-lyude@redhat.com>
+        Fri, 5 Oct 2018 10:20:17 -0400
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.51 with ESMTP; 5 Oct 2018 16:22:49 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+Received: from unknown (HELO sejong) (10.177.227.17)
+        by 156.147.1.127 with ESMTP; 5 Oct 2018 16:22:48 +0900
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date:   Fri, 5 Oct 2018 16:22:48 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+Subject: Re: [PATCH v9 3/3]: perf record: extend trace writing to multi AIO
+Message-ID: <20181005072248.GD3768@sejong>
+References: <ded47c34-9e92-6bd2-9522-a927a7237011@linux.intel.com>
+ <6cf496d7-60b6-2ba3-7c40-26caeec81837@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181005002956.7317-4-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
+In-Reply-To: <6cf496d7-60b6-2ba3-7c40-26caeec81837@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 08:29:52PM -0400, Lyude Paul wrote:
-> Currently we set intel_connector->mst_port to NULL to signify that the
-> MST port has been removed from the system so that we can prevent further
-> action on the port such as connector probes, mode probing, etc.
-> However, we're going to need access to intel_connector->mst_port in
-> order to fixup ->best_encoder() so that it can always return the correct
-> encoder for an MST port to prevent legacy DPMS prop changes from
-> failing. This should be safe, so instead keep intel_connector->mst_port
-> always set and instead add intel_connector->mst_port_gone in order to
-> signify whether or not the connector has disappeared from the system.
+On Wed, Oct 03, 2018 at 07:17:01PM +0300, Alexey Budankov wrote:
 > 
-> Changes since v2:
-> - Add a comment to mst_port_gone (Jani Nikula)
-> - Change mst_port_gone to a u8 instead of a bool, per the kernel bot.
->   Apparently bool is discouraged in structs these days
+> Multi AIO trace writing allows caching more kernel data into userspace 
+> memory postponing trace writing for the sake of overall profiling data 
+> thruput increase. It could be seen as kernel data buffer extension into
+> userspace memory.
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: stable@vger.kernel.org
+> With aio-cblocks option value different from 0, current default value, 
+> tool has capability to cache more and more data into user space
+> along with delegating spill to AIO.
+> 
+> That allows avoiding suspend at record__aio_sync() between calls of 
+> record__mmap_read_evlist() and increase profiling data thruput for 
+> the cost of userspace memory.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 > ---
->  drivers/gpu/drm/i915/intel_dp_mst.c | 14 +++++++-------
->  drivers/gpu/drm/i915/intel_drv.h    |  6 ++++++
->  2 files changed, 13 insertions(+), 7 deletions(-)
+>  tools/perf/builtin-record.c | 59 +++++++++++++++++++++++++++------
+>  tools/perf/util/evlist.c    |  7 ++--
+>  tools/perf/util/evlist.h    |  3 +-
+>  tools/perf/util/mmap.c      | 79 ++++++++++++++++++++++++++++++++-------------
+>  tools/perf/util/mmap.h      |  7 ++--
+>  5 files changed, 115 insertions(+), 40 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-> index 4ecd65375603..fcb9b87b9339 100644
-> --- a/drivers/gpu/drm/i915/intel_dp_mst.c
-> +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-> @@ -311,9 +311,8 @@ static int intel_dp_mst_get_ddc_modes(struct drm_connector *connector)
->  	struct edid *edid;
->  	int ret;
->  
-> -	if (!intel_dp) {
-> +	if (intel_connector->mst_port_gone)
-
-Just use the same READ_ONCE(conn->registered) trick as in the core? Imo no
-need to track this twice ...
-
->  		return intel_connector_update_modes(connector, NULL);
-> -	}
->  
->  	edid = drm_dp_mst_get_edid(connector, &intel_dp->mst_mgr, intel_connector->port);
->  	ret = intel_connector_update_modes(connector, edid);
-> @@ -328,9 +327,10 @@ intel_dp_mst_detect(struct drm_connector *connector, bool force)
->  	struct intel_connector *intel_connector = to_intel_connector(connector);
->  	struct intel_dp *intel_dp = intel_connector->mst_port;
->  
-> -	if (!intel_dp)
-> +	if (intel_connector->mst_port_gone)
->  		return connector_status_disconnected;
-> -	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr, intel_connector->port);
-> +	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr,
-> +				      intel_connector->port);
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index c63fe8c021a2..7b67574be5b7 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -196,16 +196,35 @@ static int record__aio_complete(struct perf_mmap *md, struct aiocb *cblock)
+>  	return rc;
 >  }
 >  
->  static void
-> @@ -370,7 +370,7 @@ intel_dp_mst_mode_valid(struct drm_connector *connector,
->  	int bpp = 24; /* MST uses fixed bpp */
->  	int max_rate, mode_rate, max_lanes, max_link_clock;
+> -static void record__aio_sync(struct perf_mmap *md)
+> +static int record__aio_sync(struct perf_mmap *md, bool sync_all)
+>  {
+> -	struct aiocb *cblock = &md->cblock;
+> +	struct aiocb **aiocb = md->aiocb;
+> +	struct aiocb *cblocks = md->cblocks;
+>  	struct timespec timeout = { 0, 1000 * 1000  * 1 }; // 1ms
+> +	int i, do_suspend;
 >  
-> -	if (!intel_dp)
-> +	if (intel_connector->mst_port_gone)
->  		return MODE_ERROR;
-
-I think if we've move the conn->registered check into drm_probe_helper.c
-we could drop all these checks here too. And fixup nouveau/amdgpu while at
-it - trying to get modes for a disconnected mst sink is somewhat silly :-)
-
-From a functional pov the patch lgtm. With mst_port_gone removed and the
-READ_ON(!conn->registered) trick everywhere instead this has my
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Cheers, Daniel
-
+>  	do {
+> -		if (cblock->aio_fildes == -1 || record__aio_complete(md, cblock))
+> -			return;
+> +		do_suspend = 0;
+> +		for (i = 0; i < md->nr_cblocks; ++i) {
+> +			if (cblocks[i].aio_fildes == -1 || record__aio_complete(md, &cblocks[i])) {
+> +				if (sync_all)
+> +					aiocb[i] = NULL;
+> +				else
+> +					return i;
+> +			} else {
+> +				/*
+> +				 * Started aio write is not complete yet
+> +				 * so it has to be waited before the
+> +				 * next allocation.
+> +				 */
+> +				aiocb[i] = &cblocks[i];
+> +				do_suspend = 1;
+> +			}
+> +		}
+> +		if (!do_suspend)
+> +			return -1;
 >  
->  	if (mode->flags & DRM_MODE_FLAG_DBLSCAN)
-> @@ -402,7 +402,7 @@ static struct drm_encoder *intel_mst_atomic_best_encoder(struct drm_connector *c
->  	struct intel_dp *intel_dp = intel_connector->mst_port;
->  	struct intel_crtc *crtc = to_intel_crtc(state->crtc);
->  
-> -	if (!intel_dp)
-> +	if (intel_connector->mst_port_gone)
->  		return NULL;
->  	return &intel_dp->mst_encoders[crtc->pipe]->base.base;
+> -		while (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
+> +		while (aio_suspend((const struct aiocb **)aiocb, md->nr_cblocks, &timeout)) {
+>  			if (!(errno == EAGAIN || errno == EINTR))
+>  				pr_err("failed to sync perf data, error: %m\n");
+>  		}
+> @@ -436,11 +455,15 @@ static int record__mmap_evlist(struct record *rec,
+>  			       struct perf_evlist *evlist)
+>  {
+>  	struct record_opts *opts = &rec->opts;
+> +	int nr_cblocks = 0;
+>  	char msg[512];
+> -
+> +#ifdef HAVE_AIO_SUPPORT
+> +	nr_cblocks = opts->nr_cblocks;
+> +#endif
+>  	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
+>  				 opts->auxtrace_mmap_pages,
+> -				 opts->auxtrace_snapshot_mode) < 0) {
+> +				 opts->auxtrace_snapshot_mode,
+> +				 nr_cblocks) < 0) {
+>  		if (errno == EPERM) {
+>  			pr_err("Permission error mapping pages.\n"
+>  			       "Consider increasing "
+> @@ -637,7 +660,7 @@ static void record__mmap_read_sync(struct record *rec __maybe_unused)
+>  	for (i = 0; i < evlist->nr_mmaps; i++) {
+>  		struct perf_mmap *map = &maps[i];
+>  		if (map->base)
+> -			record__aio_sync(map);
+> +			record__aio_sync(map, true);
+>  	}
+>  #endif
 >  }
-> @@ -514,7 +514,7 @@ static void intel_dp_destroy_mst_connector(struct drm_dp_mst_topology_mgr *mgr,
->  						   connector);
->  	/* prevent race with the check in ->detect */
->  	drm_modeset_lock(&connector->dev->mode_config.connection_mutex, NULL);
-> -	intel_connector->mst_port = NULL;
-> +	intel_connector->mst_port_gone = true;
->  	drm_modeset_unlock(&connector->dev->mode_config.connection_mutex);
+> @@ -676,12 +699,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>  					goto out;
+>  				}
+>  			} else {
+> +				int idx;
+>  				/*
+>  				 * Call record__aio_sync() to wait till map->data buffer
+>  				 * becomes available after previous aio write request.
+>  				 */
+> -				record__aio_sync(map);
+> -				if (perf_mmap__aio_push(map, rec, record__aio_pushfn) != 0) {
+> +				idx = record__aio_sync(map, false);
+> +				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn) != 0) {
+>  					rc = -1;
+>  					goto out;
+>  				}
+> @@ -1442,6 +1466,10 @@ static int perf_record_config(const char *var, const char *value, void *cb)
+>  		var = "call-graph.record-mode";
+>  		return perf_default_config(var, value, cb);
+>  	}
+> +#ifdef HAVE_AIO_SUPPORT
+> +	if (!strcmp(var, "record.aio-cblocks"))
+> +		rec->opts.nr_cblocks = strtol(value, NULL, 0);
+> +#endif
 >  
->  	drm_connector_put(connector);
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index 8fc61e96754f..8261d4579452 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -410,6 +410,12 @@ struct intel_connector {
+>  	return 0;
+>  }
+> @@ -1833,6 +1861,10 @@ static struct option __record_options[] = {
+>  			  "signal"),
+>  	OPT_BOOLEAN(0, "dry-run", &dry_run,
+>  		    "Parse options then exit"),
+> +#ifdef HAVE_AIO_SUPPORT
+> +	OPT_INTEGER(0, "aio-cblocks", &record.opts.nr_cblocks,
+> +		    "Max number of simultaneous per-mmap trace writes (default: 0 - serial, max: 4)"),
+> +#endif
+>  	OPT_END()
+>  };
+
+Please update the documentation for the new option and config
+variable.  Perhaps it can provide the option always and check the
+availability at runtime (with a warning message if not enabled).
+
+Thanks,
+Namhyung
+
+
 >  
->  	struct intel_dp *mst_port;
+> @@ -2025,6 +2057,13 @@ int cmd_record(int argc, const char **argv)
+>  		goto out;
+>  	}
 >  
-> +	/*
-> +	 * Set to 1 if this is an MST connector that was removed from the
-> +	 * system and unregistered from sysfs
-> +	 */
-> +	u8 mst_port_gone;
--Daniel
+> +#ifdef HAVE_AIO_SUPPORT
+> +	if (rec->opts.nr_cblocks > 4)
+> +		rec->opts.nr_cblocks = 4;
+> +	if (verbose > 0)
+> +		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
+> +#endif
 > +
->  	/* Work struct to schedule a uevent on link train failure */
->  	struct work_struct modeset_retry_work;
->  
-> -- 
-> 2.17.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+>  	err = __cmd_record(&record, argc, argv);
+>  out:
+>  	perf_evlist__delete(rec->evlist);
