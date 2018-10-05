@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89527C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02355C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE0F2064A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFBBE2064A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:27:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0tIaxHu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE0F2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1lmt8rU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBBE2064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeJEX0z (ORCPT
+        id S1729446AbeJEX1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:26:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50852 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:27:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728991AbeJEXN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:13:56 -0400
+        id S1728698AbeJEXNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:13:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFFA921479;
-        Fri,  5 Oct 2018 16:14:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAC0521477;
+        Fri,  5 Oct 2018 16:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756073;
-        bh=g85A6c+yJLTRvdx3id8M2xrTJ71IsPVqEnkWXBEhvB4=;
+        s=default; t=1538756069;
+        bh=Jc8TuVBiCg7DJvg6GQhqFM9x77mjpf3bXj1OqsXImDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d0tIaxHuDZ2NmN+/zQQIy+ikJgarYtiMgIDKp5W+aoGGOuAs2gPvoeoQzZT/j8EsN
-         Y7V+7dXbsVhRwlcrLLQZm8XXWBhoWz7K92nYlgrSd07dp6lAJv+qVTyS1D0uPlvqDD
-         Ks4W50LmPetBsnJ1KWWGrDokNmRqltwTN4Z91dCo=
+        b=1lmt8rU5CyxA2G95G9agYRVA628MJMY2YdVQbmFVDehmRvMe/0ClTMUUiDBC+1UOs
+         s8RmNhtt+15rzExLW/1FbgLg7L1smhckz1SgRkC+sPSkAgy8+qwHbbiegINFWKmB/v
+         ZXJxDf7TpFELtlBfbGO5mbsxTMG+1fWFcL/ellew=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Danny Smith <danny.smith@axis.com>, Danny Smith <dannys@axis.com>,
+Cc:     Oder Chiou <oder_chiou@realtek.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 08/48] ASoC: sigmadsp: safeload should not have lower byte limit
-Date:   Fri,  5 Oct 2018 12:13:44 -0400
-Message-Id: <20181005161424.20521-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 03/48] ASoC: rt5514: Fix the issue of the delay volume applied again
+Date:   Fri,  5 Oct 2018 12:13:39 -0400
+Message-Id: <20181005161424.20521-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -53,35 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Danny Smith <danny.smith@axis.com>
+From: Oder Chiou <oder_chiou@realtek.com>
 
-[ Upstream commit 5ea752c6efdf5aa8a57aed816d453a8f479f1b0a ]
+[ Upstream commit 6f0a256253f48095ba2e5bcdfbed41f21643c105 ]
 
-Fixed range in safeload conditional to allow safeload to up to 20 bytes,
-without a lower limit.
+After our evaluation, we need to modify the default values to make sure
+the volume applied immediately.
 
-Signed-off-by: Danny Smith <dannys@axis.com>
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Oder Chiou <oder_chiou@realtek.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/codecs/sigmadsp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/codecs/rt5514.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/sigmadsp.c b/sound/soc/codecs/sigmadsp.c
-index d53680ac78e4..6df158669420 100644
---- a/sound/soc/codecs/sigmadsp.c
-+++ b/sound/soc/codecs/sigmadsp.c
-@@ -117,8 +117,7 @@ static int sigmadsp_ctrl_write(struct sigmadsp *sigmadsp,
- 	struct sigmadsp_control *ctrl, void *data)
- {
- 	/* safeload loads up to 20 bytes in a atomic operation */
--	if (ctrl->num_bytes > 4 && ctrl->num_bytes <= 20 && sigmadsp->ops &&
--	    sigmadsp->ops->safeload)
-+	if (ctrl->num_bytes <= 20 && sigmadsp->ops && sigmadsp->ops->safeload)
- 		return sigmadsp->ops->safeload(sigmadsp, ctrl->addr, data,
- 			ctrl->num_bytes);
- 	else
+diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
+index dca82dd6e3bf..32fe76c3134a 100644
+--- a/sound/soc/codecs/rt5514.c
++++ b/sound/soc/codecs/rt5514.c
+@@ -64,8 +64,8 @@ static const struct reg_sequence rt5514_patch[] = {
+ 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
+ 	{RT5514_ANA_CTRL_ADCFED,	0x00000800},
+ 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
+-	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
+-	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
++	{RT5514_DOWNFILTER0_CTRL3,	0x10000342},
++	{RT5514_DOWNFILTER1_CTRL3,	0x10000342},
+ };
+ 
+ static const struct reg_default rt5514_reg[] = {
+@@ -92,10 +92,10 @@ static const struct reg_default rt5514_reg[] = {
+ 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
+ 	{RT5514_DOWNFILTER0_CTRL1,	0x00020c2f},
+ 	{RT5514_DOWNFILTER0_CTRL2,	0x00020c2f},
+-	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
++	{RT5514_DOWNFILTER0_CTRL3,	0x10000342},
+ 	{RT5514_DOWNFILTER1_CTRL1,	0x00020c2f},
+ 	{RT5514_DOWNFILTER1_CTRL2,	0x00020c2f},
+-	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
++	{RT5514_DOWNFILTER1_CTRL3,	0x10000342},
+ 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
+ 	{RT5514_ANA_CTRL_LDO18_16,	0x02000345},
+ 	{RT5514_ANA_CTRL_ADC12,		0x0000a2a8},
 -- 
 2.17.1
 
