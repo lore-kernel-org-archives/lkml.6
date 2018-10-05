@@ -2,128 +2,78 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAB0C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03022C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 218152064A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCA452064A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:26:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqX4u16o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218152064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rm4nKBEs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA452064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbeJEX0A (ORCPT
+        id S1729682AbeJEX0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:26:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51086 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:26:03 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:55093 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729139AbeJEXOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:01 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C31821477;
-        Fri,  5 Oct 2018 16:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756078;
-        bh=7VzB2tM95rDS2xKkK198W+zlgfIGvpkmPFJYQq1fXpY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqX4u16oAU/iclKd1AA90OLt/flbj6d6Sfxe3U5Pk8/mf55+eI/BJ6TO18gv0A+ee
-         /O3eiy/L9Mf2Fw0w3Ei/X2ThPuoZ3EkHZGMeYWM20Kp4AU+nDg6laONW5Q75lhTpve
-         QrwPUq3w6MBJ4xWrKHbGbses+a85D6a0nLhWz8/c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 14/48] ASoC: rsnd: don't fallback to PIO mode when -EPROBE_DEFER
-Date:   Fri,  5 Oct 2018 12:13:50 -0400
-Message-Id: <20181005161424.20521-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
-References: <20181005161424.20521-1-sashal@kernel.org>
+        id S1729024AbeJEX0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:26:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=KQNvv/QjVtmklrfAfcDBdwfZIaye7B00llWXEbjNqMw=;
+        b=rm4nKBEssQIs3Q74z0odUTm5h6QzXljTTnghU48fkZ2CeyUsoW97rS/IisRwjmJ6LdvbMhW3OKcoj14uuehPSLYPvlQDE1hxtt7Yyfbl1S4IoOQ+jtv9GIVQ+kwGKvMxp/0sxhm5FnewkPgGB0PAVXO+SEC68RexDXDFKJZn+IM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g8Svt-0005Xz-8s; Fri, 05 Oct 2018 18:26:29 +0200
+Date:   Fri, 5 Oct 2018 18:26:29 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jason Cooper <jason@lakedaemon.net>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: orion: avoid VLA in orion_mpp_conf
+Message-ID: <20181005162629.GJ4730@lunn.ch>
+References: <20181005161601.875388-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005161601.875388-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Fri, Oct 05, 2018 at 06:15:49PM +0200, Arnd Bergmann wrote:
+> Testing randconfig builds found an instance of a VLA that was
+> missed when determining that we have removed them all:
+> 
+> arch/arm/plat-orion/mpp.c: In function 'orion_mpp_conf':
+> arch/arm/plat-orion/mpp.c:31:2: error: ISO C90 forbids variable length array 'mpp_ctrl' [-Werror=vla]
+> 
+> This one is fairly straightforward: we know what all three
+> callers are, and the maximum length is not very long.
+> 
+> Fixes: 68664695ae57 ("Makefile: Globally enable VLA warning")
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 6c92d5a2744e27619a8fcc9d74b91ee9f1cdebd1 ]
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Current rsnd driver will fallback to PIO mode if it can't get DMA
-handler. But, DMA might return -EPROBE_DEFER when probe timing.
-This driver always fallback to PIO mode especially from
-commit ac6bbf0cdf4206c ("iommu: Remove IOMMU_OF_DECLARE") because
-of this reason.
+Hi Arnd
 
-The DMA driver will be probed later, but sound driver might be
-probed as PIO mode in such case. This patch fixup this issue.
-Then, -EPROBE_DEFER is not error. Thus, let's don't indicate error
-message in such case.
-And it needs to call rsnd_adg_remove() individually if probe failed,
-because it registers clk which should be unregister.
+Do you want this to go via the mvebu tree? Or you can take it direct
+into arm-soc. There have not been any patches to orion5x, dove or
+mv78xx0 for a long time, so there won't be any merge conflicts.
 
-Maybe PIO fallback feature itself is not needed,
-but let's keep it so far.
+Thanks
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- sound/soc/sh/rcar/core.c | 10 +++++++++-
- sound/soc/sh/rcar/dma.c  |  4 ++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index ff13189a7ee4..982a72e73ea9 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -482,7 +482,7 @@ static int rsnd_status_update(u32 *status,
- 			(func_call && (mod)->ops->fn) ? #fn : "");	\
- 		if (func_call && (mod)->ops->fn)			\
- 			tmp = (mod)->ops->fn(mod, io, param);		\
--		if (tmp)						\
-+		if (tmp && (tmp != -EPROBE_DEFER))			\
- 			dev_err(dev, "%s[%d] : %s error %d\n",		\
- 				rsnd_mod_name(mod), rsnd_mod_id(mod),	\
- 						     #fn, tmp);		\
-@@ -1550,6 +1550,14 @@ static int rsnd_probe(struct platform_device *pdev)
- 		rsnd_dai_call(remove, &rdai->capture, priv);
- 	}
- 
-+	/*
-+	 * adg is very special mod which can't use rsnd_dai_call(remove),
-+	 * and it registers ADG clock on probe.
-+	 * It should be unregister if probe failed.
-+	 * Mainly it is assuming -EPROBE_DEFER case
-+	 */
-+	rsnd_adg_remove(priv);
-+
- 	return ret;
- }
- 
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index ef82b94d038b..2f3f4108fda5 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -244,6 +244,10 @@ static int rsnd_dmaen_attach(struct rsnd_dai_stream *io,
- 	/* try to get DMAEngine channel */
- 	chan = rsnd_dmaen_request_channel(io, mod_from, mod_to);
- 	if (IS_ERR_OR_NULL(chan)) {
-+		/* Let's follow when -EPROBE_DEFER case */
-+		if (PTR_ERR(chan) == -EPROBE_DEFER)
-+			return PTR_ERR(chan);
-+
- 		/*
- 		 * DMA failed. try to PIO mode
- 		 * see
--- 
-2.17.1
-
+    Andrew
