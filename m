@@ -2,132 +2,119 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8800EC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBDCC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494C521473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNH88EQg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 494C521473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E253821473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E253821473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbeJEXQQ (ORCPT
+        id S1729643AbeJEXVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54224 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:21:51 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:32894 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730033AbeJEXQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:16 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F06C221477;
-        Fri,  5 Oct 2018 16:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756212;
-        bh=xjRvu9qt8z0ovIDk7nHgbpv/i1xMxd3LrxZuIrNJxKs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bNH88EQg880sAPIk1Sub36Zit7g9aBh5HbjGkgUVUh3p+5THRSaXUDlzFkAViAIu7
-         Bgmr2bT9qxKWIikJGl701mvQ6C+ewLCt/PTeWxFVNff+H6SidkJDi5fkOWmveWrQRC
-         f0bDlrJEIvhoi4NtkNCnv7uGYymUyPDMi2lWPzFc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 19/23] clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail
-Date:   Fri,  5 Oct 2018 12:16:30 -0400
-Message-Id: <20181005161634.20631-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
-References: <20181005161634.20631-1-sashal@kernel.org>
+        id S1729703AbeJEXQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:13 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1g8SmU-0008D3-Sl; Fri, 05 Oct 2018 10:16:49 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1g8SmS-0000ea-2I; Fri, 05 Oct 2018 10:16:44 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Philip Derrin <philip@cog.systems>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>
+Date:   Fri,  5 Oct 2018 10:16:39 -0600
+Message-Id: <20181005161642.2462-3-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181005161642.2462-1-logang@deltatee.com>
+References: <20181005161642.2462-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, sbates@raithlin.com, palmer@sifive.com, aou@eecs.berkeley.edu, hch@lst.de, logang@deltatee.com, linux@armlinux.org.uk, keescook@chromium.org, philip@cog.systems, rostedt@goodmis.org, nicolas.pitre@linaro.org
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH 2/5] ARM: mm: make use of new memblocks_present() helper
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+Cleanup the arm_memory_present() function seeing it's very
+similar to other arches.
 
-[ Upstream commit b1e3454d39f992e5409cd19f97782185950df6e7 ]
+The new memblocks_present() helper checks for node ids which the
+arm version did not. However, this is equivalent seeing
+HAVE_MEMBLOCK_NODE_MAP should be false in this arch and therefore
+memblock_get_region_node() should return 0.
 
-Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the
-firmware") causes all unclaimed PMC clocks on Cherry Trail devices to be on
-all the time, resulting on the device not being able to reach S0i2 or S0i3
-when suspended.
-
-The reason for this commit is that on some Bay Trail / Cherry Trail devices
-the ethernet controller uses pmc_plt_clk_4. This commit adds an "ether_clk"
-alias, so that the relevant ethernet drivers can try to (optionally) use
-this, without needing X86 specific code / hacks, thus fixing ethernet on
-these devices without breaking S0i3 support.
-
-This commit uses clkdev_hw_create() to create the alias, mirroring the code
-for the already existing "mclk" alias for pmc_plt_clk_3.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=196861
-Cc: Johannes Stezenbach <js@sig21.net>
-Cc: Carlo Caione <carlo@endlessm.com>
-Reported-by: Johannes Stezenbach <js@sig21.net>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Philip Derrin <philip@cog.systems>
+Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
 ---
- drivers/clk/x86/clk-pmc-atom.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/mm/init.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index 08ef69945ffb..75151901ff7d 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -55,6 +55,7 @@ struct clk_plt_data {
- 	u8 nparents;
- 	struct clk_plt *clks[PMC_CLK_NUM];
- 	struct clk_lookup *mclk_lookup;
-+	struct clk_lookup *ether_clk_lookup;
- };
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 0cc8e04295a4..e2710dd7446f 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -201,21 +201,6 @@ int pfn_valid(unsigned long pfn)
+ EXPORT_SYMBOL(pfn_valid);
+ #endif
  
- /* Return an index in parent table */
-@@ -351,11 +352,20 @@ static int plt_clk_probe(struct platform_device *pdev)
- 		goto err_unreg_clk_plt;
- 	}
+-#ifndef CONFIG_SPARSEMEM
+-static void __init arm_memory_present(void)
+-{
+-}
+-#else
+-static void __init arm_memory_present(void)
+-{
+-	struct memblock_region *reg;
+-
+-	for_each_memblock(memory, reg)
+-		memory_present(0, memblock_region_memory_base_pfn(reg),
+-			       memblock_region_memory_end_pfn(reg));
+-}
+-#endif
+-
+ static bool arm_memblock_steal_permitted = true;
  
-+	data->ether_clk_lookup = clkdev_hw_create(&data->clks[4]->hw,
-+						  "ether_clk", NULL);
-+	if (!data->ether_clk_lookup) {
-+		err = -ENOMEM;
-+		goto err_drop_mclk;
-+	}
-+
- 	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ phys_addr_t __init arm_memblock_steal(phys_addr_t size, phys_addr_t align)
+@@ -317,7 +302,7 @@ void __init bootmem_init(void)
+ 	 * Sparsemem tries to allocate bootmem in memory_present(),
+ 	 * so must be done after the fixed reservations
+ 	 */
+-	arm_memory_present();
++	memblocks_present();
  
- 	platform_set_drvdata(pdev, data);
- 	return 0;
- 
-+err_drop_mclk:
-+	clkdev_drop(data->mclk_lookup);
- err_unreg_clk_plt:
- 	plt_clk_unregister_loop(data, i);
- 	plt_clk_unregister_parents(data);
-@@ -369,6 +379,7 @@ static int plt_clk_remove(struct platform_device *pdev)
- 
- 	data = platform_get_drvdata(pdev);
- 
-+	clkdev_drop(data->ether_clk_lookup);
- 	clkdev_drop(data->mclk_lookup);
- 	plt_clk_unregister_loop(data, PMC_CLK_NUM);
- 	plt_clk_unregister_parents(data);
+ 	/*
+ 	 * sparse_init() needs the bootmem allocator up and running.
 -- 
-2.17.1
+2.19.0
 
