@@ -6,64 +6,114 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A06C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8304EC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E8D2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:22:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E8D2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4E0DB2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 10:22:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0DB2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeJERUM (ORCPT
+        id S1728257AbeJERUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 13:20:12 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38255 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbeJERUM (ORCPT
+        Fri, 5 Oct 2018 13:20:49 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:48739 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727535AbeJERUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:20:12 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g8NFB-0001Gt-2I; Fri, 05 Oct 2018 12:22:01 +0200
-Message-ID: <1538734920.3545.15.camel@pengutronix.de>
-Subject: Re: [PATCH v4 09/11] media: imx-csi: Move crop/compose reset after
- filling default mbus fields
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 05 Oct 2018 12:22:00 +0200
-In-Reply-To: <20181004185401.15751-10-slongerbeam@gmail.com>
-References: <20181004185401.15751-1-slongerbeam@gmail.com>
-         <20181004185401.15751-10-slongerbeam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 5 Oct 2018 13:20:49 -0400
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:61192 helo=[192.168.10.175])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1g8NFl-0004Ol-Qi; Fri, 05 Oct 2018 12:22:37 +0200
+Subject: Re: [PATCH] drm/imx: move 'legacyfb_depth' definition out of #ifdef
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>, tzimmermann@suse.de,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181002205836.2323084-1-arnd@arndb.de>
+ <123f7e1c-8f2b-5797-de16-650ec01d0b24@tronnes.org>
+ <20181003161326.GD31561@phenom.ffwll.local>
+ <CAK8P3a1gKxXEthLvUxSxOrt6+1qzZE9Jba+vH_qFepv3KXba9g@mail.gmail.com>
+ <CAKMK7uFn=u+04=HQvzkSNdE8_9p=3eX14-h=0nOJ7QKPJSrdmw@mail.gmail.com>
+ <af5994a3-5739-ed7f-4374-85e9d19d2408@tronnes.org>
+ <CAK8P3a1fzr9kX4kNcAnM4ZPh_-Kp61326zrbhDjHyPJJrJq=OQ@mail.gmail.com>
+ <20181004193543.GQ31561@phenom.ffwll.local>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <6b77a97b-59d6-a881-b7ab-baf14c4dc482@tronnes.org>
+Date:   Fri, 5 Oct 2018 12:22:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181004193543.GQ31561@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 11:53 -0700, Steve Longerbeam wrote:
-> If caller passes un-initialized field type V4L2_FIELD_ANY to CSI
-> sink pad, the reset CSI crop window would not be correct, because
-> the crop window depends on a valid input field type. To fix move
-> the reset of crop and compose windows to after the call to
-> imx_media_fill_default_mbus_fields().
-> 
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Den 04.10.2018 21.35, skrev Daniel Vetter:
+> On Thu, Oct 04, 2018 at 05:04:21PM +0200, Arnd Bergmann wrote:
+>> On Thu, Oct 4, 2018 at 4:43 PM Noralf Trønnes <noralf@tronnes.org> wrote:
+>>> Den 04.10.2018 09.48, skrev Daniel Vetter:
+>>>> On Wed, Oct 3, 2018 at 9:51 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>>>>> On Wed, Oct 3, 2018 at 6:13 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+>>>>>> On Wed, Oct 03, 2018 at 05:49:32PM +0200, Noralf Trønnes wrote:
+>>>>>>> Den 02.10.2018 22.58, skrev Arnd Bergmann:
+>>>>>>>> The variable is now referenced unconditionally, but still
+>>>>>>>> declared in an #ifdef:
+>>>>>>>>
+>>>>>>>> drivers/gpu/drm/imx/imx-drm-core.c: In function 'imx_drm_bind':
+>>>>>>>> drivers/gpu/drm/imx/imx-drm-core.c:264:6: error: 'legacyfb_depth' undeclared (first use in this function); did you mean 'lockdep_depth'?
+>>>>>>>>
+>>>>>>>> Remove the #ifdef so it can always be accessed.
+>>>>>>>>
+>>>>>>>> Fixes: f53705fd9803 ("drm/imx: Use drm_fbdev_generic_setup()")
+>>>>>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>>>>>>> ---
+>>>>>>> I've already applied the previous one you sent:
+>>>>>>> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=064b06bbf117f8b5e64a5143e970d5a1cf602fd6
+>>>>>>>
+>>>>>>> Not sure when it reaches linux-next now that we are past rc6.
+>>>>>> Only once we're past -rc1.
+>>>>> Can we revert f53705fd9803 in linux-next then to prevent the regression from
+>>>>> making it into 4.20?
+>>>> Probably simpler to cherry pick the fix from drm-misc-next to
+>>>> drm-misc-next-fixes. Noralf, can you pls do that?
+>>> Would this be the correct procudure:
+>>>
+>>>       dim update-branches
+>>>       dim create-workdir drm-misc-next-fixes
+>>>       <build>
+>>>       CONFIG_DRM_FBDEV_EMULATION=n
+>>>       <build will break>
+>>>       git cherry-pick 064b06bbf117f8b5e64a5143e970d5a1cf602fd6
+>>>       <build passes>
+>>>       dim push-branch drm-misc-next-fixes
+>>>
+>>> I read that cherry picking creates a new commit with a new hash.
+>>> But since you ask me to do this, I assume git will handle this when
+>>> branches are merged?
+>> The git history will show both commit IDs, which is a bit ugly but
+>> ok if it's rare enough. There is a chance for creating a conflict if the
+>> backport changes context, or one branch contains extra changes
+>> that touch the same lines, but usually this is not a problem.
+> +1, and your recipe looks good too. drm-intel works entirely on these
+> cherry-picks, and we've done it a few times in drm-misc too. Having to
+> cherry-pick is one of the downsides of group maintainership, since you
+> really can't rebase trees at will. Definitely not the -next queue.
 
-regards
-Philipp
+The patch is now in drm-misc-next-fixes.
+Thanks for helping me fix this fallout.
+
+Noralf.
+
