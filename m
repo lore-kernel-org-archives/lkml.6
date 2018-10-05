@@ -2,105 +2,160 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F063C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E32C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1BF82084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:24:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BF82084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E6D92084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:27:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6D92084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbeJENWI (ORCPT
+        id S1727733AbeJENZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 09:22:08 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38748 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726732AbeJENWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:22:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 23:24:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,343,1534834800"; 
-   d="scan'208";a="89376997"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 04 Oct 2018 23:24:54 -0700
-Received: from abityuts-desk.fi.intel.com (abityuts-desk.fi.intel.com [10.237.68.39])
-        by linux.intel.com (Postfix) with ESMTP id E7F375801E6;
-        Thu,  4 Oct 2018 23:24:49 -0700 (PDT)
-Message-ID: <1538720688.14984.143.camel@gmail.com>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-From:   Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 05 Oct 2018 09:24:48 +0300
-In-Reply-To: <1538683746.230807.9.camel@acm.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
-         <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
-         <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
-         <1538582091.205649.20.camel@acm.org>
-         <20181004202553.71c2599c@alans-desktop> <1538683746.230807.9.camel@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 5 Oct 2018 09:25:07 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:34690 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbeJENZG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 09:25:06 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g8Jaa-00075N-8R; Fri, 05 Oct 2018 00:27:52 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g8JaZ-00041h-2G; Fri, 05 Oct 2018 00:27:52 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <87h8idv6nw.fsf@xmission.com>
+        <20180925171906.19683-2-ebiederm@xmission.com>
+        <20181005060611.GA19061@gmail.com>
+Date:   Fri, 05 Oct 2018 08:27:41 +0200
+In-Reply-To: <20181005060611.GA19061@gmail.com> (Andrei Vagin's message of
+        "Thu, 4 Oct 2018 23:06:13 -0700")
+Message-ID: <87h8i0di1u.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1g8JaZ-00041h-2G;;;mid=<87h8i0di1u.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19pZRjL1HtfFG/4JsByTJkhqckh7ZMpQpg=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [REVIEW][PATCH 2/6] signal: Fail sigqueueinfo if si_signo != sig
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 13:09 -0700, Bart Van Assche wrote:
-> On Thu, 2018-10-04 at 20:25 +0100, Alan Cox wrote:
-> > > I agree with Jens that it's best to leave it to the Linux distributors to
-> > > select a default I/O scheduler.
-> > 
-> > That assumes such a thing exists. The kernel knows what devices it is
-> > dealing with. The kernel 'default' ought to be 'whatever is usually best
-> > for this device'. A distro cannot just pick a correct single default
-> > because NVME and USB sticks are both normal and rather different in needs.
-> 
-> Which I/O scheduler works best also depends which workload the user will run.
-> BFQ has significant advantages for interactive workloads like video replay
-> with concurrent background I/O but probably slows down kernel builds. That's
-> why I'm not sure whether the kernel should select the default I/O scheduler.
+Andrei Vagin <avagin@gmail.com> writes:
 
-Whats wrong with this simple hierarchy?
+> On Tue, Sep 25, 2018 at 07:19:02PM +0200, Eric W. Biederman wrote:
+>> The kernel needs to validate that the contents of struct siginfo make
+>> sense as siginfo is copied into the kernel, so that the proper union
+>> members can be put in the appropriate locations.  The field si_signo
+>> is a fundamental part of that validation.  As such changing the
+>> contents of si_signo after the validation make no sense and can result
+>> in nonsense values in the kernel.
+>
+> Accoding to the man page, the user should not set si_signo, it has to be set
+> by kernel.
+>
+> $ man 2 rt_sigqueueinfo
+>
+>     The uinfo argument specifies the data to accompany  the  signal.   This
+>        argument  is  a  pointer to a structure of type siginfo_t, described in
+>        sigaction(2) (and defined  by  including  <sigaction.h>).   The  caller
+>        should set the following fields in this structure:
+>
+>        si_code
+>               This  must  be  one of the SI_* codes in the Linux kernel source
+>               file include/asm-generic/siginfo.h, with  the  restriction  that
+>               the  code  must  be  negative (i.e., cannot be SI_USER, which is
+>               used by the kernel to indicate a signal  sent  by  kill(2))  and
+>               cannot  (since  Linux  2.6.39) be SI_TKILL (which is used by the
+>               kernel to indicate a signal sent using tgkill(2)).
+>
+>        si_pid This should be set to a process ID, typically the process ID  of
+>               the sender.
+>
+>        si_uid This  should  be set to a user ID, typically the real user ID of
+>               the sender.
+>
+>        si_value
+>               This field contains the user data to accompany the signal.   For
+>               more information, see the description of the last (union sigval)
+>               argument of sigqueue(3).
+>
+>        Internally, the kernel sets the si_signo field to the  value  specified
+>        in  sig,  so that the receiver of the signal can also obtain the signal
+>        number via that field.
+>
+>> 
+>> As such simply fail if someone is silly enough to set si_signo out of
+>> sync with the signal number passed to sigqueueinfo.
+>> 
+>> I don't expect a problem as glibc's sigqueue implementation sets
+>> "si_signo = sig" and CRIU just returns to the kernel what the kernel
+>> gave to it.
+>> 
+>> If there is some application that calls sigqueueinfo directly that has
+>> a problem with this added sanity check we can revisit this when we see
+>> what kind of crazy that application is doing.
+>
+>
+> I already know two "applications" ;)
+>
+> https://github.com/torvalds/linux/blob/master/tools/testing/selftests/ptrace/peeksiginfo.c
+> https://github.com/checkpoint-restore/criu/blob/master/test/zdtm/static/sigpending.c
+>
+> Disclaimer: I'm the author of both of them.
 
-1. Block core selects the default scheduler.
-2. Driver can overrule it early.
-3. Userspace can overrule the default later.
+Fair enough.  Then this counts as a regression.  The setting in the
+kernel happens in an awkward place and I will see if it can be moved
+earlier.
 
-Everyone is happy.
+Eric
 
-Good defaults in block core are great. Those defaults + #3 may cover
-99% of the population.
 
-1% of the population can use #2. See, Linus wants "bfq" for ubiblock.
-Why wouldn't we to let him work with UBI community, show that bfq is 
-best for ubiblock, and just let the UBI community overrule the block
-core's default.
-
-If some day in the future there is a very good reason, we can even make
-this to be a module parameter, and people could just boot with
-'ubiblock.iosched=bfq'.
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> ---
+>>  kernel/signal.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/kernel/signal.c b/kernel/signal.c
+>> index 7b49c31d3fdb..e445b0a63faa 100644
+>> --- a/kernel/signal.c
+>> +++ b/kernel/signal.c
+>> @@ -3306,7 +3306,8 @@ static int do_rt_sigqueueinfo(pid_t pid, int sig, siginfo_t *info)
+>>  	    (task_pid_vnr(current) != pid))
+>>  		return -EPERM;
+>>  
+>> -	info->si_signo = sig;
+>> +	if (info->si_signo != sig)
+>> +		return -EINVAL;
+>>  
+>>  	/* POSIX.1b doesn't mention process groups.  */
+>>  	return kill_proc_info(sig, info, pid);
+>> @@ -3354,7 +3355,8 @@ static int do_rt_tgsigqueueinfo(pid_t tgid, pid_t pid, int sig, siginfo_t *info)
+>>  	    (task_pid_vnr(current) != pid))
+>>  		return -EPERM;
+>>  
+>> -	info->si_signo = sig;
+>> +	if (info->si_signo != sig)
+>> +		return -EINVAL;
+>>  
+>>  	return do_send_specific(tgid, pid, sig, info);
+>>  }
