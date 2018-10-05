@@ -2,107 +2,311 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B20CC65BBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4ADC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D4820875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 393C920875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:03:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EndqdA2J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D4820875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="B+zq3Sdr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 393C920875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbeJFCCs (ORCPT
+        id S1729276AbeJFCDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:02:48 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46187 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeJFCCr (ORCPT
+        Fri, 5 Oct 2018 22:03:00 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55914 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728044AbeJFCDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:02:47 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o8-v6so5840467ybk.13
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 12:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=J2IVob/3KxqCbHNI/uAHh+5ZTOhDNy3iqyANn3Y8xbw=;
-        b=EndqdA2JZzR5E0xNC7uFiswCYLFSiw6S0wPD1LPDrrY2XlMzPjGS8ZHGWT4KJDe+gn
-         EIPHmplSlUY7+C58GjE0FuPZI7YIHzX+a3o115/8MRlQfWZhsMdjH1/W/S6TM8+KCnIK
-         1qMzyQoBbkMYAzsqHv8EoTygl8TsJO+297yfi9qv0LI8xa33yfpQRaMe18Lc8sxjdr58
-         poaXWOPqlm62PWz4lBd10wcpFNhfZ8MF9QZzXnApCFQlE+p8pFde6A5D2y+IizAW+DdY
-         dUSwBXqS+ioGKkpXv6/hrILgkTanMd6+oi4r/wh1CarLlCUF/g5Rl1bhiu5qvMop82jy
-         5Vkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J2IVob/3KxqCbHNI/uAHh+5ZTOhDNy3iqyANn3Y8xbw=;
-        b=UX2KNTtdg208YBqs1cwD6mrVSvY30B4jQu2bcXhluDwNk7TDHZnoUrBKiRYyZo//Vf
-         vhx/5dlh+/nn0sspwDF4YxYp82dulRrB6WOUDOqLcKZquoKouxcdla/IqpjH3pyBkYta
-         Mn3PAhdPgQySKQoOaK3mSX2AEZl94Bl0DOQZhpgmVHs+x9SrNo3xhMawXpg4GRtV7vAA
-         c67eVQ7xwK/7+hO1PyC5pOxq8eph9Qhvc5Qz9jQDVQeZJxc9yVgHddYcEAMUTx7keLVH
-         J6immkCWdIgz9HYlsdRregrfKEkgbgJJSUciBEEFQ4HbY/Lgda8Xj1BgAPkEAdLsXHep
-         wI9A==
-X-Gm-Message-State: ABuFfohSep8W//lgnw52vRQU6Wg4P0f2cVKZ87cp7NNhvo/yRow9aBIm
-        XJzstVeFFnz4HZSKMSK0UI1myApn
-X-Google-Smtp-Source: ACcGV61sZXRsSyQYXEVeOnDJaT4WwAFria/YzErITgTHfjEpPLLGd0CRZkiBzga0ReLkkKSCPy4YWQ==
-X-Received: by 2002:a25:7613:: with SMTP id r19-v6mr7169840ybc.204.1538766165082;
-        Fri, 05 Oct 2018 12:02:45 -0700 (PDT)
-Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id s187-v6sm3332686ywe.10.2018.10.05.12.02.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 12:02:44 -0700 (PDT)
-Subject: Re: [PATCH v2 0/3] mm: Fix for movable_node boot option
-To:     Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>, linux-mm@kvack.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <20180925153532.6206-1-msys.mizuma@gmail.com>
- <alpine.DEB.2.21.1809272241130.8118@nanos.tec.linutronix.de>
- <20181002140111.GW18290@dhcp22.suse.cz>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Message-ID: <166980d0-03fc-382b-84a9-a7431dae1580@gmail.com>
-Date:   Fri, 5 Oct 2018 15:02:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 5 Oct 2018 22:03:00 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w95IsWHe010376
+        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 12:02:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=+R5tnqvfL0JkuArkxvT2S2WfVXVys1ZspkYvHtL98K0=;
+ b=B+zq3SdrPuZ4AfIqHRQuFFuoauUp5NMl8HGbEuHcnoDcl7nehbenGAsa/QHPY3J60OgN
+ M8g+qvQin1MIoo/GUq8PyzQugp+h9IJZiWlE7X75+0IZ54iNgzSQyw/O3U3k8l1GrUAK
+ xB5Y5e6MB2Q6T+6bbCrjs3oNGErcPgUHOIc= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2mxaxsgjkx-3
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 12:02:57 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.17) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct
+ 2018 12:02:02 -0700
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
+ 954B423AE71E; Fri,  5 Oct 2018 12:02:00 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        "Justin . Lee1 @ Dell . com" <Justin.Lee1@Dell.com>,
+        "joel @ jms . id . au" <joel@jms.id.au>,
+        "linux-aspeed @ lists . ozlabs . org" <linux-aspeed@lists.ozlabs.org>,
+        Sai Dasari <sdasari@fb.com>,
+        "christian @ cmd . nu" <christian@cmd.nu>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH net-next 1/2] net/ncsi: Add NCSI Broadcom OEM command
+Date:   Fri, 5 Oct 2018 12:01:26 -0700
+Message-ID: <20181005190126.983734-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <20181002140111.GW18290@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have not reviewed them yet. I am waiting for Masayoshi to send a new
-series with correct order as Ingo requested.
+This patch adds OEM Broadcom commands and response handling. It also
+defines OEM Get MAC Address handler to get and configure the device.
 
-Pavel
+ncsi_oem_gma_handler_bcm: This handler send NCSI broadcom command for
+getting mac address.
+ncsi_rsp_handler_oem_bcm: This handles response received for all
+broadcom OEM commands.
+ncsi_rsp_handler_oem_bcm_gma: This handles get mac address response and
+set it to device.
 
-On 10/2/18 10:01 AM, Michal Hocko wrote:
-> On Thu 27-09-18 22:41:36, Thomas Gleixner wrote:
->> On Tue, 25 Sep 2018, Masayoshi Mizuma wrote:
->>
->>> This patch series are the fix for movable_node boot option
->>> issue which was introduced by commit 124049decbb1 ("x86/e820:
->>> put !E820_TYPE_RAM regions into memblock.reserved").
->>>
->>> First patch, revert the commit. Second and third patch fix the
->>> original issue.
->>
->> Can the mm folks please comment on this?
-> 
-> I was under impression that Pavel who authored the original change which
-> got reverted here has reviewed these patches.
-> 
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ net/ncsi/Kconfig       |  6 ++++
+ net/ncsi/internal.h    |  8 +++++
+ net/ncsi/ncsi-manage.c | 70 +++++++++++++++++++++++++++++++++++++++++-
+ net/ncsi/ncsi-pkt.h    |  8 +++++
+ net/ncsi/ncsi-rsp.c    | 42 ++++++++++++++++++++++++-
+ 5 files changed, 132 insertions(+), 2 deletions(-)
+
+diff --git a/net/ncsi/Kconfig b/net/ncsi/Kconfig
+index 08a8a6031fd7..7f2b46108a24 100644
+--- a/net/ncsi/Kconfig
++++ b/net/ncsi/Kconfig
+@@ -10,3 +10,9 @@ config NET_NCSI
+ 	  support. Enable this only if your system connects to a network
+ 	  device via NCSI and the ethernet driver you're using supports
+ 	  the protocol explicitly.
++config NCSI_OEM_CMD_GET_MAC
++	bool "Get NCSI OEM MAC Address"
++	depends on NET_NCSI
++	---help---
++	  This allows to get MAC address from NCSI firmware and set them back to
++		controller.
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
+index 3d0a33b874f5..45883b32790e 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -71,6 +71,13 @@ enum {
+ /* OEM Vendor Manufacture ID */
+ #define NCSI_OEM_MFR_MLX_ID             0x8119
+ #define NCSI_OEM_MFR_BCM_ID             0x113d
++/* Broadcom specific OEM Command */
++#define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
++/* OEM Command payload lengths*/
++#define NCSI_OEM_BCM_CMD_GMA_LEN        12
++/* Mac address offset in OEM response */
++#define BCM_MAC_ADDR_OFFSET             28
++
+ 
+ struct ncsi_channel_version {
+ 	u32 version;		/* Supported BCD encoded NCSI version */
+@@ -240,6 +247,7 @@ enum {
+ 	ncsi_dev_state_probe_dp,
+ 	ncsi_dev_state_config_sp	= 0x0301,
+ 	ncsi_dev_state_config_cis,
++	ncsi_dev_state_config_oem_gma,
+ 	ncsi_dev_state_config_clear_vids,
+ 	ncsi_dev_state_config_svf,
+ 	ncsi_dev_state_config_ev,
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index 091284760d21..e5bfd9245b5d 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -635,6 +635,39 @@ static int set_one_vid(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc,
+ 	return 0;
+ }
+ 
++#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
++
++/* NCSI OEM Command APIs */
++static void ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
++{
++	int ret = 0;
++	unsigned char data[NCSI_OEM_BCM_CMD_GMA_LEN];
++
++	nca->payload = NCSI_OEM_BCM_CMD_GMA_LEN;
++
++	memset(data, 0, NCSI_OEM_BCM_CMD_GMA_LEN);
++	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_BCM_ID);
++	data[5] = NCSI_OEM_BCM_CMD_GMA;
++
++	nca->data = data;
++
++	ret = ncsi_xmit_cmd(nca);
++	if (ret)
++		netdev_err(nca->ndp->ndev.dev,
++			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
++			   nca->type);
++}
++
++/* OEM Command handlers initialization */
++static struct ncsi_oem_gma_handler {
++	unsigned int	mfr_id;
++	void		(*handler)(struct ncsi_cmd_arg *nca);
++} ncsi_oem_gma_handlers[] = {
++	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
++};
++
++#endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
++
+ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
+ {
+ 	struct ncsi_dev *nd = &ndp->ndev;
+@@ -643,9 +676,10 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
+ 	struct ncsi_channel *nc = ndp->active_channel;
+ 	struct ncsi_channel *hot_nc = NULL;
+ 	struct ncsi_cmd_arg nca;
++	struct ncsi_oem_gma_handler *nch = NULL;
+ 	unsigned char index;
+ 	unsigned long flags;
+-	int ret;
++	int ret, i;
+ 
+ 	nca.ndp = ndp;
+ 	nca.req_flags = NCSI_REQ_FLAG_EVENT_DRIVEN;
+@@ -685,6 +719,40 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
+ 			goto error;
+ 		}
+ 
++#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
++		nd->state = ncsi_dev_state_config_oem_gma;
++		break;
++	case ncsi_dev_state_config_oem_gma:
++		nca.type = NCSI_PKT_CMD_OEM;
++		nca.package = np->id;
++		nca.channel = nc->id;
++		ndp->pending_req_num = 1;
++
++		/* Check for manufacturer id and Find the handler */
++		for (i = 0; i < ARRAY_SIZE(ncsi_oem_gma_handlers); i++) {
++			if (ncsi_oem_gma_handlers[i].mfr_id ==
++					nc->version.mf_id) {
++				if (ncsi_oem_gma_handlers[i].handler)
++					nch = &ncsi_oem_gma_handlers[i];
++				else
++					nch = NULL;
++
++				break;
++			}
++		}
++
++		if (!nch) {
++			netdev_err(ndp->ndev.dev, "No handler available for GMA with MFR-ID (0x%x)\n",
++				   nc->version.mf_id);
++			nd->state = ncsi_dev_state_config_clear_vids;
++			schedule_work(&ndp->work);
++			break;
++		}
++
++		/* Get Mac address from NCSI device */
++		nch->handler(&nca);
++#endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
++
+ 		nd->state = ncsi_dev_state_config_clear_vids;
+ 		break;
+ 	case ncsi_dev_state_config_clear_vids:
+diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
+index 0f2087c8d42a..4d3f06be38bd 100644
+--- a/net/ncsi/ncsi-pkt.h
++++ b/net/ncsi/ncsi-pkt.h
+@@ -165,6 +165,14 @@ struct ncsi_rsp_oem_pkt {
+ 	unsigned char           data[];      /* Payload data      */
+ };
+ 
++/* Broadcom Response Data */
++struct ncsi_rsp_oem_bcm_pkt {
++	unsigned char           ver;         /* Payload Version   */
++	unsigned char           type;        /* OEM Command type  */
++	__be16                  len;         /* Payload Length    */
++	unsigned char           data[];      /* Cmd specific Data */
++};
++
+ /* Get Link Status */
+ struct ncsi_rsp_gls_pkt {
+ 	struct ncsi_rsp_pkt_hdr rsp;        /* Response header   */
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index d66b34749027..bc20f7036579 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -596,12 +596,52 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
+ 	return 0;
+ }
+ 
++/* Response handler for Broadcom command Get Mac Address */
++static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
++{
++	struct ncsi_rsp_oem_pkt *rsp;
++	struct ncsi_dev_priv *ndp = nr->ndp;
++	struct net_device *ndev = ndp->ndev.dev;
++	int ret = 0;
++	const struct net_device_ops *ops = ndev->netdev_ops;
++	struct sockaddr saddr;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++
++	saddr.sa_family = ndev->type;
++	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
++	memcpy(saddr.sa_data, &rsp->data[BCM_MAC_ADDR_OFFSET], ETH_ALEN);
++	/* Increase mac address by 1 for BMC's address */
++	saddr.sa_data[ETH_ALEN - 1]++;
++	ret = ops->ndo_set_mac_address(ndev, &saddr);
++	if (ret < 0)
++		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
++
++	return ret;
++}
++
++/* Response handler for Broadcom card */
++static int ncsi_rsp_handler_oem_bcm(struct ncsi_request *nr)
++{
++	struct ncsi_rsp_oem_pkt *rsp;
++	struct ncsi_rsp_oem_bcm_pkt *bcm;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++	bcm = (struct ncsi_rsp_oem_bcm_pkt *)(rsp->data);
++
++	if (bcm->type == NCSI_OEM_BCM_CMD_GMA)
++		return ncsi_rsp_handler_oem_bcm_gma(nr);
++	return 0;
++}
++
+ static struct ncsi_rsp_oem_handler {
+ 	unsigned int	mfr_id;
+ 	int		(*handler)(struct ncsi_request *nr);
+ } ncsi_rsp_oem_handlers[] = {
+ 	{ NCSI_OEM_MFR_MLX_ID, NULL },
+-	{ NCSI_OEM_MFR_BCM_ID, NULL }
++	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
+ };
+ 
+ /* Response handler for OEM command */
+-- 
+2.17.1
+
