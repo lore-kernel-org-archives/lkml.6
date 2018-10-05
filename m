@@ -2,111 +2,125 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F10C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69F3C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB9DE20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:16:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9DE20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6EF3C20875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:18:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF3C20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbeJEQOU (ORCPT
+        id S1728730AbeJEQQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 12:14:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50662 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727809AbeJEQOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 12:14:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DC19DACC2;
-        Fri,  5 Oct 2018 09:16:26 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9A0511E3614; Fri,  5 Oct 2018 11:16:26 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 11:16:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181005091626.GA9686@quack2.suse.cz>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1538582091.205649.20.camel@acm.org>
- <20181004202553.71c2599c@alans-desktop>
- <1538683746.230807.9.camel@acm.org>
- <A017CAC7-41E6-4BB3-AC31-5EB524276138@linaro.org>
- <1538692972.8223.7.camel@acm.org>
+        Fri, 5 Oct 2018 12:16:33 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:51365 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727809AbeJEQQc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 12:16:32 -0400
+Received: from [IPv6:2001:420:44c1:2579:51eb:3c7a:5e3a:802b] ([IPv6:2001:420:44c1:2579:51eb:3c7a:5e3a:802b])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id 8MFogK7Z40ZZE8MFrgnLOS; Fri, 05 Oct 2018 11:18:40 +0200
+Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
+To:     Keiichi Watanabe <keiichiw@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricky Liang <jcliang@chromium.org>,
+        Shik Chen <shik@chromium.org>
+References: <20181003070656.193854-1-keiichiw@chromium.org>
+ <CAD90VcbBUcpwLsY0sHim+mML6esSjZA2ocX0Ff-YiZxBsLTZ+w@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5b236e95-b737-51b3-df4f-eea41a36735e@xs4all.nl>
+Date:   Fri, 5 Oct 2018 11:18:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538692972.8223.7.camel@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAD90VcbBUcpwLsY0sHim+mML6esSjZA2ocX0Ff-YiZxBsLTZ+w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEIfFPaTD6NtdO+LnGDHLqo/szkqT8hlw7N63uTdSl3uFE+YBrbhK/S43ALch4DqcUKDzpaS33V8s0macMv82ykVEHKHzbFcHSRTdZLs7xHbb3p6033D
+ WOShh+/3z7DWW2rdSYvKPMSkTj5HpZj/oJ/e7achZfouxQuc4wott/05Z5/MoxphBQF9Sqszv6PfbiSnHZtLOBg8OY8MhwRA4eVVgOG1djBf5rJ77qxnBniV
+ 2HGoY2LqbgGexXxraATqT1iqtHgytZBpRAIKTnRz375pHR9BgLDx0nLemGTMcidz2+btUnJv7YIoh1sSvSziR8e7MYw2WsLccpCjROnawE8FvqffgtNCXAfQ
+ 17YDZ4YQi7/K2rR/ZrjrvQG+7+9e58CwiXujvNDe4lEd+1/kXEDF/bjcqAsieEKO8mnKEoi5zFjkpTcUwed6fIWSrKgDz5lgsCHqvNcx16uAAMs2bVP5HIag
+ OMEDCF6Z5vzVD4AP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 04-10-18 15:42:52, Bart Van Assche wrote:
-> On Thu, 2018-10-04 at 22:39 +0200, Paolo Valente wrote:
-> > No, kernel build is, for evident reasons, one of the workloads I cared
-> > most about.  Actually, I tried to focus on all my main
-> > kernel-development tasks, such as also git checkout, git merge, git
-> > grep, ...
-> > 
-> > According to my test results, with BFQ these tasks are at least as
-> > fast as, or, in most system configurations, much faster than with the
-> > other schedulers.  Of course, at the same time the system also remains
-> > responsive with BFQ.
-> > 
-> > You can repeat these tests using one of my first scripts in the S
-> > suite: kern_dev_tasks_vs_rw.sh (usually, the older the tests, the more
-> > hypertrophied the names I gave :) ).
-> > 
-> > I stopped sharing also my kernel-build results years ago, because I
-> > went on obtaining the same, identical good results for years, and I'm
-> > aware that I tend to show and say too much stuff.
-> 
-> On my test setup building the kernel is slightly slower when using the BFQ
-> scheduler compared to using scheduler "none" (kernel 4.18.12, NVMe SSD,
-> single CPU with 6 cores, hyperthreading disabled). I am aware that the
-> proposal at the start of this thread was to make BFQ the default for devices
-> with a single hardware queue and not for devices like NVMe SSDs that support
-> multiple hardware queues.
-> 
-> What I think is missing is measurement results for BFQ on a system with
-> multiple CPU sockets and against a fast storage medium. Eliminating
-> the host lock from the SCSI core yielded a significant performance
-> improvement for such storage devices. Since the BFQ scheduler locks and
-> unlocks bfqd->lock for every dispatch operation it is very likely that BFQ
-> will slow down I/O for fast storage devices, even if their driver only
-> creates a single hardware queue.
+On 10/03/18 09:08, Keiichi Watanabe wrote:
+> I think 480p is a common frame size and it's worth supporting in vivid.
+> But, my patch might be ad-hoc. Actually, I'm not sure which values are
+> suitable for the intervals.
 
-Well, I'm not sure why that is missing. I don't think anyone proposed to
-default to BFQ for such setup? Neither was anyone claiming that BFQ is
-better in such situation... The proposal has been: Default to BFQ for slow
-storage, leave it to deadline-mq otherwise.
+I can apply this ad-hoc patch as-is.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Or do you want to postpone this and work on a more generic solution?
+Although I am not sure what that would look like.
+
+Proposals are welcome!
+
+The main purpose of this code is to have something that kind of acts like
+a real webcam that has various resolutions, and a slower framerate for
+higher resolutions (as you would expect).
+
+Regards,
+
+	Hans
+
+> 
+> We might want to add a more flexible/extensible way to specify frame sizes.
+> e.g. passing frame sizes and intervals as module parameters
+> 
+> Kei
+> 
+> On Wed, Oct 3, 2018 at 4:06 PM, Keiichi Watanabe <keiichiw@chromium.org> wrote:
+>> Support 640x480 as a frame size for video input devices of vivid.
+>>
+>> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+>> ---
+>>  drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
+>> index 58e14dd1dcd3..da80bf4bc365 100644
+>> --- a/drivers/media/platform/vivid/vivid-vid-cap.c
+>> +++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+>> @@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
+>>  };
+>>
+>>  /* The number of discrete webcam framesizes */
+>> -#define VIVID_WEBCAM_SIZES 5
+>> +#define VIVID_WEBCAM_SIZES 6
+>>  /* The number of discrete webcam frameintervals */
+>>  #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
+>>
+>> @@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
+>>  static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
+>>         {  320, 180 },
+>>         {  640, 360 },
+>> +       {  640, 480 },
+>>         { 1280, 720 },
+>>         { 1920, 1080 },
+>>         { 3840, 2160 },
+>> @@ -75,6 +76,8 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+>>         {  1, 5 },
+>>         {  1, 10 },
+>>         {  1, 15 },
+>> +       {  1, 15 },
+>> +       {  1, 25 },
+>>         {  1, 25 },
+>>         {  1, 30 },
+>>         {  1, 50 },
+>> --
+>> 2.19.0.605.g01d371f741-goog
+>>
+
