@@ -2,132 +2,72 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863C4C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF03DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5E6206B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:36:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IJhJWd6D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5E6206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 80AD3206B2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:37:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80AD3206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbeJEVfn (ORCPT
+        id S1729246AbeJEVgQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:35:43 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35896 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729202AbeJEVfm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:35:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a8-v6so2155543wmf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 07:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VhnOKWzkRDC+3They8IdOyuR0e/vVZiouL/bg+aJfrs=;
-        b=IJhJWd6DGVNVQtroYCFeX+Lkih9gdQDXW3oqwKdHYWrnLB7xS5fvZO4G/XluSgqL4F
-         jCiYPcd4tikJe7EYb1CvfvOOQMebNK29/8V8zEm9mX9kcwvy7vFqYs/MULN9GaRaFFdU
-         L2jRgKWg/9StPows4tqoPsPbupCI7EAhaLKW0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VhnOKWzkRDC+3They8IdOyuR0e/vVZiouL/bg+aJfrs=;
-        b=Zatjy15P4QaplXB8ExYM75o9XZiaPGsw1nMdCHmH2bTg3KKv/NZ6o++GKcgBqlVd4M
-         0e4m3qYH5KDkVgL/xINgqBO3e/Dgsc6O8QaRFZs1KEuizLS5lmTA+hACRRCjUpSMO/C6
-         Ju3o16iHCWwzmHk4pi79aVATSq5jG3xAY8GsMwZRleexQv/qFXcN6U4y9bKs6Td9NrZr
-         o009SHaFoTxjYpzWkF+H0XXO87nksja0F7q1xyv8iFOoJfz7YmeVHHzMdjaooYhheqZ0
-         8akskjMFmBoUiznk5kMb1rokRRZWr3LCTPBW5pUJvShNtBbmFXVAS4Dk6pwA/KRq7Ozf
-         I9Qw==
-X-Gm-Message-State: ABuFfoiIx4vlXUWOUJv+t62B8oV2VagrqI+VKX8FykaB8mNEx58/AnUy
-        42tSawv1KBIO43bsoRC18Wbrbg==
-X-Google-Smtp-Source: ACcGV637BvJCxvtDVWCJnO47yzoDCgScSo3715S78A5XtXvw0Kufib9d7O+fiJLo/1TKkP/3jpad/g==
-X-Received: by 2002:a1c:6c09:: with SMTP id h9-v6mr7693290wmc.95.1538750201297;
-        Fri, 05 Oct 2018 07:36:41 -0700 (PDT)
-Received: from localhost.localdomain (151.240.136.77.rev.sfr.net. [77.136.240.151])
-        by smtp.gmail.com with ESMTPSA id t24-v6sm14080377wra.5.2018.10.05.07.36.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 05 Oct 2018 07:36:40 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>,
-        Marek Vasut <marex@denx.de>
-Subject: [PATCH 13/13] clocksource/drivers/dw_apb: Add reset control
-Date:   Fri,  5 Oct 2018 16:35:42 +0200
-Message-Id: <1538750143-4282-13-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org>
-References: <20181005143253.GE1881@mai>
- <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org>
+        Fri, 5 Oct 2018 17:36:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47432 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728278AbeJEVgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 17:36:15 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1DB1B20802; Fri,  5 Oct 2018 16:37:14 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D2F4A208B7;
+        Fri,  5 Oct 2018 16:37:03 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 16:37:04 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-mtd@lists.infradead.org, Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: ixp4xx: include linux/mtd/platnand.h
+Message-ID: <20181005163704.12661da6@xps13>
+In-Reply-To: <20180926130458.2406549-2-arnd@arndb.de>
+References: <20180926130458.2406549-1-arnd@arndb.de>
+        <20180926130458.2406549-2-arnd@arndb.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+Hi Arnd,
 
-Add code to retrieve the reset property from the dw-apb timers and if
-the property is available, the safe operation is to assert the timer
-into reset, and followed by a deassert of the timer reset (brings the
-timer out of reset).
+Arnd Bergmann <arnd@arndb.de> wrote on Wed, 26 Sep 2018 15:04:39 +0200:
 
-This patch is needed for systems where the bootloader has left the timer
-not used in reset.
+> The platform_nand_data structure definition is required for ixdp425
+> but has now moved to a new header file:
+> 
+> arch/arm/mach-ixp4xx/ixdp425-setup.c:98:15: error: variable 'ixdp425_flash_nand_data' has initializer but incomplete type
+>  static struct platform_nand_data ixdp425_flash_nand_data = {
+>                ^~~~~~~~~~~~~~~~~~
+> arch/arm/mach-ixp4xx/ixdp425-setup.c:99:3: error: 'struct platform_nand_data' has no member named 'chip'
+> 
+> Fixes: 19cf5dfa3a31 ("mtd: rawnand: Move platform_nand_xxx definitions out of rawnand.h")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
- - Trivial conflict with commit a74bd1ad7a:
-    "Convert to using %pOFn instead of device_node.name"
+Sorry for the delay, squashed in nand/next with the commit introducing
+the regression.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/dw_apb_timer_of.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/clocksource/dw_apb_timer_of.c b/drivers/clocksource/dw_apb_timer_of.c
-index fabaa29..db410ac 100644
---- a/drivers/clocksource/dw_apb_timer_of.c
-+++ b/drivers/clocksource/dw_apb_timer_of.c
-@@ -22,6 +22,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/clk.h>
-+#include <linux/reset.h>
- #include <linux/sched_clock.h>
- 
- static void __init timer_get_base_and_rate(struct device_node *np,
-@@ -29,6 +30,7 @@ static void __init timer_get_base_and_rate(struct device_node *np,
- {
- 	struct clk *timer_clk;
- 	struct clk *pclk;
-+	struct reset_control *rstc;
- 
- 	*base = of_iomap(np, 0);
- 
-@@ -36,6 +38,16 @@ static void __init timer_get_base_and_rate(struct device_node *np,
- 		panic("Unable to map regs for %pOFn", np);
- 
- 	/*
-+	 * Reset the timer if the reset control is available, wiping
-+	 * out the state the firmware may have left it
-+	 */
-+	rstc = of_reset_control_get(np, NULL);
-+	if (!IS_ERR(rstc)) {
-+		reset_control_assert(rstc);
-+		reset_control_deassert(rstc);
-+	}
-+
-+	/*
- 	 * Not all implementations use a periphal clock, so don't panic
- 	 * if it's not present
- 	 */
--- 
-2.7.4
-
+Thanks,
+Miquèl
