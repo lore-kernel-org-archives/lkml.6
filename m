@@ -2,262 +2,138 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21E8C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC306C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8C720652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:41:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dc+MGfyc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8C720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 76C3820652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C3820652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbeJFDl4 (ORCPT
+        id S1729207AbeJFDmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 23:41:56 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41206 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728170AbeJFDlz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 23:41:55 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m77-v6so5589424pfi.8
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 13:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GhSkhWOhja309cL1MWf4Bhx/2M0FosQWGcTw1gj7RB4=;
-        b=dc+MGfycvxiSZSHF/i6/H0a9XXqnjv1CacYzGFFMetO7A0T7V0s/uwHA/4dBE0JkCS
-         n6vba+4VbeiCVmfm/caG/PObno7jOcwuaJZlLmws+AbnpzDQIkhNuglrjdsHdrt/Zxke
-         rYEHEIYBak4tE3Mj/CO/RREXOscjU6f8CQhGeRtRiRelkoH51z+JjBDCEZnoyE2KH8wZ
-         iVw4JWO0JHnh5eqMlN8uuEJ3kS/3odkpI6cdWpMfI/qaKh+vBrSJqNMgD80D2RNRbSsY
-         p3CLO3Yt/BRNpd8A8ZkU+yqXaHgW7yY/Bgn/6VBKsEvpptFYfmKjMs4gZwY6GIivrLoT
-         CwfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GhSkhWOhja309cL1MWf4Bhx/2M0FosQWGcTw1gj7RB4=;
-        b=AvU22fJxo0YYRuGUCpKQcR+elZGUiEujXL3MBekNDgeNAuTwUHL3nNcVXVkaCVLm33
-         3Gi7EP+T18TmlhXQgHgHHtQ028Bl59cwv6WLRiDOjF3R8ClK1jDh+QuUqjocn8D+lGsz
-         +yunAsIhyrTGaGt4bbuevMFUKsEs8YAAVDeJ6ycWzqDU8n1t1DZ4wiznrEQqbLWyj8r6
-         D2YyRkBekyGk0rX08T3JycLT/HohQrVcX7wIXVj9mulpdf02OKq/YSMzte+VSp0hUtWK
-         E4GaeMbrTJMbJXp3/vPRLuTTnVwoY6F5hKFPogtm4TEKUmr5BZWBrIVNjJe1fc9u5a4X
-         impg==
-X-Gm-Message-State: ABuFfoi7nX0+l7hXtFlZhCIJ2rZ65vGWwn2bwhvSLrDp/EWfkyMVqilM
-        IwASCr0UkHF/K7Ynjk1dL75MTFfgD4dvk9YcVexFEw==
-X-Google-Smtp-Source: ACcGV63nw34XGErUWabWj489TbwV/IsVQmFOXwaLaMBI1B58UXDmN+Mnrh86i1Ph3XJ5XhWNAwM8SNnS3TEoMBhVtKY=
-X-Received: by 2002:a63:df06:: with SMTP id u6-v6mr11582649pgg.202.1538772091949;
- Fri, 05 Oct 2018 13:41:31 -0700 (PDT)
+        Fri, 5 Oct 2018 23:42:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39798 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728170AbeJFDmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 23:42:23 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B2EEDC057F9F;
+        Fri,  5 Oct 2018 20:42:00 +0000 (UTC)
+Received: from [10.36.116.65] (ovpn-116-65.ams2.redhat.com [10.36.116.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D33D9308BDA1;
+        Fri,  5 Oct 2018 20:41:57 +0000 (UTC)
+Subject: Re: [PATCH] KVM: X86: Add missing KVM_AMD dependency
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Borislav Petkov <bp@suse.de>
+References: <1538765165-19177-1-git-send-email-linux@roeck-us.net>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <749a21f9-ad88-af0e-bed7-b505ac57568d@redhat.com>
+Date:   Fri, 5 Oct 2018 22:41:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20181004024010.15986-1-natechancellor@gmail.com> <20181005192508.18659-1-natechancellor@gmail.com>
-In-Reply-To: <20181005192508.18659-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 5 Oct 2018 13:41:19 -0700
-Message-ID: <CAKwvOd=yJoQNuVjz3=iDOcaDzwqfPO2qKjZw9OS7CL9nU9oD7g@mail.gmail.com>
-Subject: Re: [PATCH v3] spi: spi-ep93xx: Use dma_data_direction for ep93xx_spi_dma_{finish,prepare}
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     mika.westerberg@linux.intel.com, hartleys@visionengravers.com,
-        broonie@kernel.org, linux-spi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1538765165-19177-1-git-send-email-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 05 Oct 2018 20:42:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nathan,
-Thanks for your patience and continued support working towards an
-optimal solution to fix this warning. Some thoughts below.
+On 05/10/2018 20:46, Guenter Roeck wrote:
+> Analysis shows that commit 59414c9892208 ("KVM: SVM: Add support for
+> KVM_SEV_LAUNCH_START command") added a dependency of KVM_AMD on
+> CRYPTO_DEV_CCP_DD if CRYPTO_DEV_SP_PSP is enabled: If CRYPTO_DEV_CCP_DD
+> is built as module, KVM_AMD must be built as module as well.
+> 
+> Fixes: 59414c9892208 ("KVM: SVM: Add support for KVM_SEV_LAUNCH_START command")
+> Cc: Brijesh Singh <brijesh.singh@amd.com>
+> Cc: Borislav Petkov <bp@suse.de>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-On Fri, Oct 5, 2018 at 12:29 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns when one enumerated type is implicitly converted to another.
->
-> drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
-> enumeration type 'enum dma_transfer_direction' to different enumeration
-> type 'enum dma_data_direction' [-Wenum-conversion]
->         nents = dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
->                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> ./include/linux/dma-mapping.h:428:58: note: expanded from macro
-> 'dma_map_sg'
-> #define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
->                                ~~~~~~~~~~~~~~~~          ^
-> drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
-> enumeration type 'enum dma_transfer_direction' to different enumeration
-> type 'enum dma_data_direction' [-Wenum-conversion]
->                 dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
->                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> ./include/linux/dma-mapping.h:429:62: note: expanded from macro
-> 'dma_unmap_sg'
-> #define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
->                                  ~~~~~~~~~~~~~~~~~~          ^
-> drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
-> enumeration type 'enum dma_transfer_direction' to different enumeration
-> type 'enum dma_data_direction' [-Wenum-conversion]
->         dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
->         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-> ./include/linux/dma-mapping.h:429:62: note: expanded from macro
-> 'dma_unmap_sg'
-> #define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
->                                  ~~~~~~~~~~~~~~~~~~          ^
-> 3 warnings generated.
->
-> dma_{,un}map_sg expect an enum of type dma_data_direction but this
-> driver uses dma_transfer_direction for everything. Convert the driver to
-> use dma_data_direction for these two functions.
->
-> There are two places that strictly require an enum of type
-> dma_transfer_direction: the direction member in struct dma_slave_config
-> and the direction parameter in dmaengine_prep_slave_sg. To avoid using
-> an explicit cast, add a simple function, ep93xx_dma_data_to_trans_dir,
-> to safely map between the two types because they are not 1 to 1 in
-> meaning.
->
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> v1 -> v2:
->
-> * Fix escaped hash symbols for '#define' lines (\# -> #)
->
-> v2 -> v3:
->
-> * Instead of changing the dir parameter in the prepare and finish
->   functions, convert the driver to use dma_data_direction for everywhere
->   that makes sense. Add a helper function to convert between the two
->   types as there is still a couple of locations that need a transfer
->   enum (and no such function exists). Alternatively, the function could
->   just convert from transfer -> data and be used in dma_{,un}map_sg and
->   the rest of the driver be left alone. Hopefully I understood what Mika
->   wanted!
->
->  drivers/spi/spi-ep93xx.c | 37 ++++++++++++++++++++++++++-----------
->  1 file changed, 26 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-> index f1526757aaf6..667da7964d63 100644
-> --- a/drivers/spi/spi-ep93xx.c
-> +++ b/drivers/spi/spi-ep93xx.c
-> @@ -246,6 +246,19 @@ static int ep93xx_spi_read_write(struct spi_master *master)
->         return -EINPROGRESS;
->  }
->
-> +static enum dma_transfer_direction
-> +ep93xx_dma_data_to_trans_dir(enum dma_data_direction dir)
-> +{
-> +       switch (dir) {
-> +       case DMA_TO_DEVICE:
-> +               return DMA_MEM_TO_DEV;
-> +       case DMA_FROM_DEVICE:
-> +               return DMA_DEV_TO_MEM;
-> +       default:
-> +               return DMA_TRANS_NONE;
-> +       }
-> +}
-> +
->  /**
->   * ep93xx_spi_dma_prepare() - prepares a DMA transfer
->   * @master: SPI master
-> @@ -257,7 +270,7 @@ static int ep93xx_spi_read_write(struct spi_master *master)
->   */
->  static struct dma_async_tx_descriptor *
->  ep93xx_spi_dma_prepare(struct spi_master *master,
-> -                      enum dma_transfer_direction dir)
-> +                      enum dma_data_direction dir)
->  {
->         struct ep93xx_spi *espi = spi_master_get_devdata(master);
->         struct spi_transfer *xfer = master->cur_msg->state;
-> @@ -277,9 +290,9 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
->                 buswidth = DMA_SLAVE_BUSWIDTH_1_BYTE;
->
->         memset(&conf, 0, sizeof(conf));
-> -       conf.direction = dir;
-> +       conf.direction = ep93xx_dma_data_to_trans_dir(dir);
->
-> -       if (dir == DMA_DEV_TO_MEM) {
-> +       if (dir == DMA_FROM_DEVICE) {
->                 chan = espi->dma_rx;
->                 buf = xfer->rx_buf;
->                 sgt = &espi->rx_sgt;
-> @@ -343,7 +356,9 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
->         if (!nents)
->                 return ERR_PTR(-ENOMEM);
->
-> -       txd = dmaengine_prep_slave_sg(chan, sgt->sgl, nents, dir, DMA_CTRL_ACK);
-> +       txd = dmaengine_prep_slave_sg(chan, sgt->sgl, nents,
-> +                                     ep93xx_dma_data_to_trans_dir(dir),
+This should be handled by
 
-So we've already calculated this once already in this function, and
-the value of `dir` hasn't changed since.  While the compiler might be
-able to optimize out this common sub expression (CSE or GVN I think
-are the compiler passes that could optimize this out), I think it
-would be better to guarantee that this precalculated value is always
-used by replacing the rematerialization of the value
-(`ep93xx_dma_data_to_trans_dir(dir)`) with `conf.direction`.
+config KVM_AMD_SEV
+        def_bool y
+        bool "AMD Secure Encrypted Virtualization (SEV) support"
+        depends on KVM_AMD && X86_64
+        depends on CRYPTO_DEV_SP_PSP && !(KVM_AMD=y && CRYPTO_DEV_CCP_DD=m)
+        ---help---
+        Provides support for launching Encrypted VMs on AMD processors.
 
-> +                                     DMA_CTRL_ACK);
->         if (!txd) {
->                 dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
->                 return ERR_PTR(-ENOMEM);
-> @@ -360,13 +375,13 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
->   * unmapped.
->   */
->  static void ep93xx_spi_dma_finish(struct spi_master *master,
-> -                                 enum dma_transfer_direction dir)
-> +                                 enum dma_data_direction dir)
->  {
->         struct ep93xx_spi *espi = spi_master_get_devdata(master);
->         struct dma_chan *chan;
->         struct sg_table *sgt;
->
-> -       if (dir == DMA_DEV_TO_MEM) {
-> +       if (dir == DMA_FROM_DEVICE) {
->                 chan = espi->dma_rx;
->                 sgt = &espi->rx_sgt;
->         } else {
-> @@ -381,8 +396,8 @@ static void ep93xx_spi_dma_callback(void *callback_param)
->  {
->         struct spi_master *master = callback_param;
->
-> -       ep93xx_spi_dma_finish(master, DMA_MEM_TO_DEV);
-> -       ep93xx_spi_dma_finish(master, DMA_DEV_TO_MEM);
-> +       ep93xx_spi_dma_finish(master, DMA_TO_DEVICE);
-> +       ep93xx_spi_dma_finish(master, DMA_FROM_DEVICE);
->
->         spi_finalize_current_transfer(master);
->  }
-> @@ -392,15 +407,15 @@ static int ep93xx_spi_dma_transfer(struct spi_master *master)
->         struct ep93xx_spi *espi = spi_master_get_devdata(master);
->         struct dma_async_tx_descriptor *rxd, *txd;
->
-> -       rxd = ep93xx_spi_dma_prepare(master, DMA_DEV_TO_MEM);
-> +       rxd = ep93xx_spi_dma_prepare(master, DMA_FROM_DEVICE);
->         if (IS_ERR(rxd)) {
->                 dev_err(&master->dev, "DMA RX failed: %ld\n", PTR_ERR(rxd));
->                 return PTR_ERR(rxd);
->         }
->
-> -       txd = ep93xx_spi_dma_prepare(master, DMA_MEM_TO_DEV);
-> +       txd = ep93xx_spi_dma_prepare(master, DMA_TO_DEVICE);
->         if (IS_ERR(txd)) {
-> -               ep93xx_spi_dma_finish(master, DMA_DEV_TO_MEM);
-> +               ep93xx_spi_dma_finish(master, DMA_FROM_DEVICE);
->                 dev_err(&master->dev, "DMA TX failed: %ld\n", PTR_ERR(txd));
->                 return PTR_ERR(txd);
->         }
-> --
-> 2.19.0
->
+Maybe this works as well?  I haven't tested it yet:
 
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 89c4c5aa15f1..55f10b17d044 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -441,9 +441,13 @@ static inline bool svm_sev_enabled(void)
 
--- 
+ static inline bool sev_guest(struct kvm *kvm)
+ {
++#ifdef CONFIG_KVM_AMD_SEV
+ 	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+
+ 	return sev->active;
++#else
++	return false;
++#endif
+ }
+
+ static inline int sev_get_asid(struct kvm *kvm)
+
 Thanks,
-~Nick Desaulniers
+
+Paolo
