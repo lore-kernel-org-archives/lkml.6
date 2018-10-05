@@ -2,160 +2,238 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E244C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCEBC65BAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB6B12147D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lc+ucrE/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB6B12147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 739E3208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739E3208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730012AbeJEXQN (ORCPT
+        id S1730028AbeJEXQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 5 Oct 2018 19:16:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
+Received: from ale.deltatee.com ([207.54.116.67]:32886 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729703AbeJEXQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:12 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94BDD214C1;
-        Fri,  5 Oct 2018 16:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756208;
-        bh=9hFFrIxQZnp/IIF1IYISw/PXWlQgb3pmHp9VSQXsO/U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lc+ucrE/P5PvITf7ockKnFXIELVqM5VU0nghn2f9aMrJjBkZLOLHFzI8pR0kh6zvN
-         SfI0r0KRJ5pesc2sZf1HeLlFkiUXZct0plkrPrEpruaR7JdM0/GhQLoZkWenlZVyum
-         K/CPkiMnbhB+w00b0XZM4yzIDR/J3ACEwxpM3sKE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 14/23] hv_netvsc: fix schedule in RCU context
-Date:   Fri,  5 Oct 2018 12:16:25 -0400
-Message-Id: <20181005161634.20631-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
-References: <20181005161634.20631-1-sashal@kernel.org>
+        id S1729971AbeJEXQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:13 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1g8SmT-0008D6-Oi; Fri, 05 Oct 2018 10:16:47 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1g8SmS-0000ej-BG; Fri, 05 Oct 2018 10:16:44 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Andrew Waterman <andrew@sifive.com>,
+        Olof Johansson <olof@lixom.net>,
+        Michael Clark <michaeljclark@mac.com>,
+        Rob Herring <robh@kernel.org>, Zong Li <zong@andestech.com>
+Date:   Fri,  5 Oct 2018 10:16:42 -0600
+Message-Id: <20181005161642.2462-6-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181005161642.2462-1-logang@deltatee.com>
+References: <20181005161642.2462-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, sbates@raithlin.com, aou@eecs.berkeley.edu, hch@lst.de, logang@deltatee.com, palmer@sifive.com, andrew@sifive.com, olof@lixom.net, michaeljclark@mac.com, robh@kernel.org, zong@andestech.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH 5/5] RISC-V: Implement sparsemem
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+This patch implements sparsemem support for risc-v which helps pave the
+way for memory hotplug and eventually P2P support.
 
-[ Upstream commit 018349d70f28a78d5343b3660cb66e1667005f8a ]
+We introduce Kconfig options for virtual and physical address bits which
+are used to calculate the size of the vmemmap and set the
+MAX_PHYSMEM_BITS.
 
-When netvsc device is removed it can call reschedule in RCU context.
-This happens because canceling the subchannel setup work could (in theory)
-cause a reschedule when manipulating the timer.
+The vmemmap is located directly before the VMALLOC region and sized
+such that we can allocate enough pages to populate all the virtual
+address space in the system (similar to the way it's done in arm64).
 
-To reproduce, run with lockdep enabled kernel and unbind
-a network device from hv_netvsc (via sysfs).
+During initialization, call memblocks_present() and sparse_init(),
+and provide a stub for vmemmap_populate() (all of which is similar to
+arm64).
 
-[  160.682011] WARNING: suspicious RCU usage
-[  160.707466] 4.19.0-rc3-uio+ #2 Not tainted
-[  160.709937] -----------------------------
-[  160.712352] ./include/linux/rcupdate.h:302 Illegal context switch in RCU read-side critical section!
-[  160.723691]
-[  160.723691] other info that might help us debug this:
-[  160.723691]
-[  160.730955]
-[  160.730955] rcu_scheduler_active = 2, debug_locks = 1
-[  160.762813] 5 locks held by rebind-eth.sh/1812:
-[  160.766851]  #0: 000000008befa37a (sb_writers#6){.+.+}, at: vfs_write+0x184/0x1b0
-[  160.773416]  #1: 00000000b097f236 (&of->mutex){+.+.}, at: kernfs_fop_write+0xe2/0x1a0
-[  160.783766]  #2: 0000000041ee6889 (kn->count#3){++++}, at: kernfs_fop_write+0xeb/0x1a0
-[  160.787465]  #3: 0000000056d92a74 (&dev->mutex){....}, at: device_release_driver_internal+0x39/0x250
-[  160.816987]  #4: 0000000030f6031e (rcu_read_lock){....}, at: netvsc_remove+0x1e/0x250 [hv_netvsc]
-[  160.828629]
-[  160.828629] stack backtrace:
-[  160.831966] CPU: 1 PID: 1812 Comm: rebind-eth.sh Not tainted 4.19.0-rc3-uio+ #2
-[  160.832952] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v1.0 11/26/2012
-[  160.832952] Call Trace:
-[  160.832952]  dump_stack+0x85/0xcb
-[  160.832952]  ___might_sleep+0x1a3/0x240
-[  160.832952]  __flush_work+0x57/0x2e0
-[  160.832952]  ? __mutex_lock+0x83/0x990
-[  160.832952]  ? __kernfs_remove+0x24f/0x2e0
-[  160.832952]  ? __kernfs_remove+0x1b2/0x2e0
-[  160.832952]  ? mark_held_locks+0x50/0x80
-[  160.832952]  ? get_work_pool+0x90/0x90
-[  160.832952]  __cancel_work_timer+0x13c/0x1e0
-[  160.832952]  ? netvsc_remove+0x1e/0x250 [hv_netvsc]
-[  160.832952]  ? __lock_is_held+0x55/0x90
-[  160.832952]  netvsc_remove+0x9a/0x250 [hv_netvsc]
-[  160.832952]  vmbus_remove+0x26/0x30
-[  160.832952]  device_release_driver_internal+0x18a/0x250
-[  160.832952]  unbind_store+0xb4/0x180
-[  160.832952]  kernfs_fop_write+0x113/0x1a0
-[  160.832952]  __vfs_write+0x36/0x1a0
-[  160.832952]  ? rcu_read_lock_sched_held+0x6b/0x80
-[  160.832952]  ? rcu_sync_lockdep_assert+0x2e/0x60
-[  160.832952]  ? __sb_start_write+0x141/0x1a0
-[  160.832952]  ? vfs_write+0x184/0x1b0
-[  160.832952]  vfs_write+0xbe/0x1b0
-[  160.832952]  ksys_write+0x55/0xc0
-[  160.832952]  do_syscall_64+0x60/0x1b0
-[  160.832952]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  160.832952] RIP: 0033:0x7fe48f4c8154
-
-Resolve this by getting RTNL earlier. This is safe because the subchannel
-work queue does trylock on RTNL and will detect the race.
-
-Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Andrew Waterman <andrew@sifive.com>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Michael Clark <michaeljclark@mac.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Zong Li <zong@andestech.com>
 ---
- drivers/net/hyperv/netvsc_drv.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/riscv/Kconfig                 | 23 +++++++++++++++++++++++
+ arch/riscv/include/asm/pgtable.h   | 24 ++++++++++++++++++++----
+ arch/riscv/include/asm/sparsemem.h | 11 +++++++++++
+ arch/riscv/kernel/setup.c          |  4 +++-
+ arch/riscv/mm/init.c               |  8 ++++++++
+ 5 files changed, 65 insertions(+), 5 deletions(-)
+ create mode 100644 arch/riscv/include/asm/sparsemem.h
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index aba16d81e9bb..2d90cffae9ff 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2110,17 +2110,15 @@ static int netvsc_remove(struct hv_device *dev)
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index a344980287a5..a1b5d758a542 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -52,12 +52,32 @@ config ZONE_DMA32
+ 	bool
+ 	default y if 64BIT
  
- 	cancel_delayed_work_sync(&ndev_ctx->dwork);
++config VA_BITS
++	int
++	default 32 if 32BIT
++	default 39 if 64BIT
++
++config PA_BITS
++	int
++	default 34 if 32BIT
++	default 56 if 64BIT
++
+ config PAGE_OFFSET
+ 	hex
+ 	default 0xC0000000 if 32BIT && MAXPHYSMEM_2GB
+ 	default 0xffffffff80000000 if 64BIT && MAXPHYSMEM_2GB
+ 	default 0xffffffe000000000 if 64BIT && MAXPHYSMEM_128GB
  
--	rcu_read_lock();
--	nvdev = rcu_dereference(ndev_ctx->nvdev);
++config ARCH_FLATMEM_ENABLE
++	def_bool y
++
++config ARCH_SPARSEMEM_ENABLE
++	def_bool y
++	select SPARSEMEM_VMEMMAP_ENABLE
++
++config ARCH_SELECT_MEMORY_MODEL
++	def_bool ARCH_SPARSEMEM_ENABLE
++
+ config STACKTRACE_SUPPORT
+ 	def_bool y
+ 
+@@ -92,6 +112,9 @@ config PGTABLE_LEVELS
+ config HAVE_KPROBES
+ 	def_bool n
+ 
++config HAVE_ARCH_PFN_VALID
++	def_bool y
++
+ menu "Platform type"
+ 
+ choice
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index 16301966d65b..20c49cded686 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -89,6 +89,26 @@ extern pgd_t swapper_pg_dir[];
+ #define __S110	PAGE_SHARED_EXEC
+ #define __S111	PAGE_SHARED_EXEC
+ 
++#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
++#define VMALLOC_END      (PAGE_OFFSET - 1)
++#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
++
++/*
++ * Log2 of the upper bound of the size of a struct page. Used for sizing
++ * the vmemmap region only, does not affect actual memory footprint.
++ * We don't use sizeof(struct page) directly since taking its size here
++ * requires its definition to be available at this point in the inclusion
++ * chain, and it may not be a power of 2 in the first place.
++ */
++#define STRUCT_PAGE_MAX_SHIFT	6
++
++#define VMEMMAP_SIZE	(UL(1) << (CONFIG_VA_BITS - PAGE_SHIFT - 1 + \
++				   STRUCT_PAGE_MAX_SHIFT))
++#define VMEMMAP_END	(VMALLOC_START - 1)
++#define VMEMMAP_START	(VMALLOC_START - VMEMMAP_SIZE)
++
++#define vmemmap		((struct page *)VMEMMAP_START)
++
+ /*
+  * ZERO_PAGE is a global shared page that is always zero,
+  * used for zero-mapped memory areas, etc.
+@@ -411,10 +431,6 @@ static inline void pgtable_cache_init(void)
+ 	/* No page table caches to initialize */
+ }
+ 
+-#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
+-#define VMALLOC_END      (PAGE_OFFSET - 1)
+-#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
 -
--	if  (nvdev)
-+	rtnl_lock();
-+	nvdev = rtnl_dereference(ndev_ctx->nvdev);
-+	if (nvdev)
- 		cancel_work_sync(&nvdev->subchan_work);
+ /*
+  * Task size is 0x40000000000 for RV64 or 0xb800000 for RV32.
+  * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
+diff --git a/arch/riscv/include/asm/sparsemem.h b/arch/riscv/include/asm/sparsemem.h
+new file mode 100644
+index 000000000000..4563e806c788
+--- /dev/null
++++ b/arch/riscv/include/asm/sparsemem.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASM_SPARSEMEM_H
++#define __ASM_SPARSEMEM_H
++
++#ifdef CONFIG_SPARSEMEM
++#define MAX_PHYSMEM_BITS	CONFIG_PA_BITS
++#define SECTION_SIZE_BITS	30
++#endif
++
++#endif
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index aee603123030..89fa781a9bf8 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -205,6 +205,9 @@ static void __init setup_bootmem(void)
+ 		                  PFN_PHYS(end_pfn - start_pfn),
+ 		                  &memblock.memory, 0);
+ 	}
++
++	memblocks_present();
++	sparse_init();
+ }
  
- 	/*
- 	 * Call to the vsc driver to let it know that the device is being
- 	 * removed. Also blocks mtu and channel changes.
- 	 */
--	rtnl_lock();
- 	vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
- 	if (vf_netdev)
- 		netvsc_unregister_vf(vf_netdev);
-@@ -2132,7 +2130,6 @@ static int netvsc_remove(struct hv_device *dev)
- 	list_del(&ndev_ctx->list);
+ void __init setup_arch(char **cmdline_p)
+@@ -239,4 +242,3 @@ void __init setup_arch(char **cmdline_p)
  
- 	rtnl_unlock();
--	rcu_read_unlock();
- 
- 	hv_set_drvdata(dev, NULL);
- 
+ 	riscv_fill_hwcap();
+ }
+-
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 58a522f9bcc3..5d529878667c 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -70,3 +70,11 @@ void free_initrd_mem(unsigned long start, unsigned long end)
+ {
+ }
+ #endif /* CONFIG_BLK_DEV_INITRD */
++
++#ifdef CONFIG_SPARSEMEM
++int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
++			       struct vmem_altmap *altmap)
++{
++	return vmemmap_populate_basepages(start, end, node);
++}
++#endif
 -- 
-2.17.1
+2.19.0
 
