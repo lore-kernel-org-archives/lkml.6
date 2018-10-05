@@ -2,142 +2,133 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0F4C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF26C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AAD22087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AAD22087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7FA7C2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:05:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA7C2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbeJEWD6 (ORCPT
+        id S1728293AbeJEWFB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:03:58 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:38463 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbeJEWD5 (ORCPT
+        Fri, 5 Oct 2018 18:05:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60522 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726082AbeJEWFA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:03:57 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1g8Ren-0002aT-46; Fri, 05 Oct 2018 17:04:45 +0200
-Date:   Fri, 5 Oct 2018 17:04:45 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     klassert@kernel.org, davem@davemloft.net, anna-maria@linutronix.de,
-        nhorman@tuxdriver.com, keescook@chromium.org,
-        netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [REPORT] net: 3com: 3c59x: Possible data races
-Message-ID: <20181005150444.pe46gjvd4434xfso@linutronix.de>
-References: <412162cd-8fab-104b-ce73-6f70f108218f@gmail.com>
+        Fri, 5 Oct 2018 18:05:00 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95F4ecO016107
+        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 11:05:53 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mx9wr1eur-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 11:05:53 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 5 Oct 2018 16:05:51 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 5 Oct 2018 16:05:44 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w95F5h3u63897732
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 5 Oct 2018 15:05:43 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D453AE045;
+        Fri,  5 Oct 2018 18:04:33 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C216EAE051;
+        Fri,  5 Oct 2018 18:04:32 +0100 (BST)
+Received: from [9.148.204.169] (unknown [9.148.204.169])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Oct 2018 18:04:32 +0100 (BST)
+Date:   Fri, 05 Oct 2018 18:05:01 +0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8891277c7de92e93d3bfc409df95810ee6f103cd.camel@kernel.crashing.org>
+References: <1538687224-17535-1-git-send-email-rppt@linux.vnet.ibm.com> <8891277c7de92e93d3bfc409df95810ee6f103cd.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <412162cd-8fab-104b-ce73-6f70f108218f@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] memblock: stop using implicit alignement to SMP_CACHE_BYTES
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-mm@kvack.org
+CC:     linux-mips@linux-mips.org, Michal Hocko <mhocko@suse.com>,
+        linux-ia64@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matt Turner <mattst88@gmail.com>, linux-um@lists.infradead.org,
+        linux-m68k@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Zankel <chris@zankel.net>,
+        Michal Simek <monstr@monstr.eu>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
+        linux-alpha@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18100515-0020-0000-0000-000002D00A38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100515-0021-0000-0000-0000211E6102
+Message-Id: <59C9470E-F718-4A11-BC65-FD68901723AC@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=694 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810050153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-03 21:52:14 [+0800], Jia-Ju Bai wrote:
-> ****** Possible race0 ******
-> CPU0:
-> vortex_boomerang_interrupt
->     line 2510: spin_lock_irqsave()
->     _boomerang_interrupt
->         line 2432: vp->tx_skbuff[entry] [READ]
->         line 2433: vp->tx_skbuff[entry] [READ]
->         line 2453: vp->tx_skbuff[entry] = NULL [WRITE]
-> 
-> CPU1:
-> boomerang_start_xmit
->     line 2145: vp->tx_skbuff[entry] = skb [WRITE]
-> 
-> As for vp->tx_skbuff[entry], the WRITE and READ operations in CPU0
-> are performed with holding a spinlock, but the WRITE operation in CPU1
-> is performed without holding this spinlock, so there may exist data races.
 
-not really. One side fills the ring buffer (cur_tx++) and the other side
-purges it (dirty_tx++). Don't see a overlap here.
 
-> ****** Possible race1 ******
-> CPU0:
-> vortex_boomerang_interrupt
->     line 2510: spin_lock_irqsave()
->     _boomerang_interrupt
->         line 2421: vp->dirty_tx = dirty_tx [WRITE]
-> 
-> CPU1:
-> boomerang_start_xmit
->     line 2137: vp->dirty_tx [READ]
-> 
-> As for vp->dirty_tx, the WRITE operation in CPU0 is performed
-> with holding a spinlock, but the READ operation in CPU1 is performed
-> without holding this spinlock, so there may exist a data race.
+On October 5, 2018 6:25:38 AM GMT+03:00, Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+>On Fri, 2018-10-05 at 00:07 +0300, Mike Rapoport wrote:
+>> When a memblock allocation APIs are called with align = 0, the
+>alignment is
+>> implicitly set to SMP_CACHE_BYTES.
+>> 
+>> Replace all such uses of memblock APIs with the 'align' parameter
+>explicitly
+>> set to SMP_CACHE_BYTES and stop implicit alignment assignment in the
+>> memblock internal allocation functions.
+>> 
+>> For the case when memblock APIs are used via helper functions, e.g.
+>like
+>> iommu_arena_new_node() in Alpha, the helper functions were detected
+>with
+>> Coccinelle's help and then manually examined and updated where
+>appropriate.
+>> 
+>> The direct memblock APIs users were updated using the semantic patch
+>below:
+>
+>What is the purpose of this ? It sounds rather counter-intuitive...
 
-basically the same thing as race0
+Why?
+I think it actually more intuitive to explicitly set alignment to SMP_CACHE_BYTES rather than use align = 0 because deeply inside allocator it will be implicitly reset to SMP_CACHE_BYTES...
 
-> ****** Possible race2 ******
-> CPU0:
-> vortex_boomerang_interrupt
->     line 2510: spin_lock_irqsave()
->     _boomerang_interrupt
->         line 2381: vp->handling_irq = 1 [WRITE]
->         line 2498: vp->handling_irq = 0 [WRITE]
-> 
-> CPU1:
-> boomerang_start_xmit
->     line 2134: vp->handling_irq [READ]
-> 
-> As for vp->handling_irq, the WRITE operations in CPU0 are performed
-> with holding a spinlock, but the READ operation in CPU1 is performed
-> without holding this spinlock, so there may exist data races.
+>Ben.
 
-It might but it is not serious. As the comment explains, if CPU1 would
-miss to then it would spin the lock while CPU0 would deadlock.
-However, I doubt that this happens because the core should hold the
-queue lock.
+-- 
+Sincerely yours,
+Mike.
 
-> ****** Possible race3 ******
-> CPU0:
-> vortex_boomerang_interrupt
->     line 2510: spin_lock_irqsave()
->     _boomerang_interrupt
->         boomerang_rx
->             line 2669: skb->ip_summed = ... [WRITE]
-> 
-> CPU1:
-> boomerang_start_xmit
->     line 2149: skb->ip_summed [READ]
-> 
-> As for skb->ip_summed, the WRITE operation in CPU0 is performed
-> with holding a spinlock, but the READ operation in CPU1 is performed
-> without holding this spinlock, so there may exist data races.
-
-This race would exist if the skb would be simultaneously on RX and TX
-side. Otherwise we good.
-
-> 
-> These possible races are detected by a runtime testing.
-
-Could you please define runtime testing? Did something happen or did you
-just instrument the code and assumed that it might happen?cG
-
-> A possible fix of these races is protecting the code in
-> boomerang_start_xmit()
-> using the spinlock in vortex_boomerang_interrupt().
-> But I am not sure whether this fix is correct, so I only report these races.
-
-Okay. As explained above, I don't think the races are real.
-
-> Best wishes,
-> Jia-Ju Bai
-
-Sebastian
