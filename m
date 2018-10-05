@@ -2,49 +2,49 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C47C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D37C65BAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7B12148D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5B122148D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:15:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z74Ik7xl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7B12148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPrtukJb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B122148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbeJEXOW (ORCPT
+        id S1729588AbeJEXOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51826 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729411AbeJEXOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:21 -0400
+        id S1729559AbeJEXOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D56E52148D;
-        Fri,  5 Oct 2018 16:14:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD7DC2147D;
+        Fri,  5 Oct 2018 16:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756098;
-        bh=+rkcwb05et1xdaBXiVpZMvPEXsoplu22uNTKnFq/kUQ=;
+        s=default; t=1538756099;
+        bh=F2ovFTBFMELtTNmmiilEZa6EiejIvvIH7i96WX5ydyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z74Ik7xlZ11x7eoeZlFLGKSt+B3Q8hX/5T/pEPa3k4WSuOrODkMOQ6yYXgnz1Np3F
-         LIdz3ytxqeOrS5ErG6ZhzNIgJamgI2ZWicpWx1GdXS9Y//Ui3UHI2YLFLaD2zMx2V+
-         Jt4lesrWL8I0pCjwi92v3JQI/PbXu3wchNooFJcw=
+        b=gPrtukJbV6fMUFbwCDgnnALzto8lKhJoAqf0e3/5u5hYYNq2cWL89J9AqLzEL1yFm
+         K5AlUOXnfe1dlYCEhdvnkBrkQsOMJGckB19QZIWiH4RGGNi950CsFA+dlYFFgya+Vg
+         qb50fiDpm/+TII2EGDlf/59tsvOyE9RWS4AgCIHs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 37/48] ARM: dts: at91: add new compatibility string for macb on sama5d3
-Date:   Fri,  5 Oct 2018 12:14:13 -0400
-Message-Id: <20181005161424.20521-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 38/48] PCI: hv: support reporting serial number as slot information
+Date:   Fri,  5 Oct 2018 12:14:14 -0400
+Message-Id: <20181005161424.20521-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -53,47 +53,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 321cc359d899a8e988f3725d87c18a628e1cc624 ]
+[ Upstream commit a15f2c08c70811f120d99288d81f70d7f3d104f1 ]
 
-We need this new compatibility string as we experienced different behavior
-for this 10/100Mbits/s macb interface on this particular SoC.
-Backward compatibility is preserved as we keep the alternative strings.
+The Hyper-V host API for PCI provides a unique "serial number" which
+can be used as basis for sysfs PCI slot table. This can be useful
+for cases where userspace wants to find the PCI device based on
+serial number.
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+When an SR-IOV NIC is added, the host sends an attach message
+with serial number. The kernel doesn't use the serial number, but
+it is useful when doing the same thing in a userspace driver such
+as the DPDK. By having /sys/bus/pci/slots/N it provides a direct
+way to find the matching PCI device.
+
+There maybe some cases where serial number is not unique such
+as when using GPU's. But the PCI slot infrastructure will handle
+that.
+
+This has a side effect which may also be useful. The common udev
+network device naming policy uses the slot information (rather
+than PCI address).
+
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- Documentation/devicetree/bindings/net/macb.txt | 1 +
- arch/arm/boot/dts/sama5d3_emac.dtsi            | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/controller/pci-hyperv.c | 37 +++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/macb.txt b/Documentation/devicetree/bindings/net/macb.txt
-index 457d5ae16f23..3e17ac1d5d58 100644
---- a/Documentation/devicetree/bindings/net/macb.txt
-+++ b/Documentation/devicetree/bindings/net/macb.txt
-@@ -10,6 +10,7 @@ Required properties:
-   Use "cdns,pc302-gem" for Picochip picoXcell pc302 and later devices based on
-   the Cadence GEM, or the generic form: "cdns,gem".
-   Use "atmel,sama5d2-gem" for the GEM IP (10/100) available on Atmel sama5d2 SoCs.
-+  Use "atmel,sama5d3-macb" for the 10/100Mbit IP available on Atmel sama5d3 SoCs.
-   Use "atmel,sama5d3-gem" for the Gigabit IP available on Atmel sama5d3 SoCs.
-   Use "atmel,sama5d4-gem" for the GEM IP (10/100) available on Atmel sama5d4 SoCs.
-   Use "cdns,zynq-gem" Xilinx Zynq-7xxx SoC.
-diff --git a/arch/arm/boot/dts/sama5d3_emac.dtsi b/arch/arm/boot/dts/sama5d3_emac.dtsi
-index 7cb235ef0fb6..6e9e1c2f9def 100644
---- a/arch/arm/boot/dts/sama5d3_emac.dtsi
-+++ b/arch/arm/boot/dts/sama5d3_emac.dtsi
-@@ -41,7 +41,7 @@
- 			};
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index d4d4a55f09f8..c6f375e9cce7 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -89,6 +89,9 @@ static enum pci_protocol_version_t pci_protocol_version;
  
- 			macb1: ethernet@f802c000 {
--				compatible = "cdns,at91sam9260-macb", "cdns,macb";
-+				compatible = "atmel,sama5d3-macb", "cdns,at91sam9260-macb", "cdns,macb";
- 				reg = <0xf802c000 0x100>;
- 				interrupts = <35 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
+ #define STATUS_REVISION_MISMATCH 0xC0000059
+ 
++/* space for 32bit serial number as string */
++#define SLOT_NAME_SIZE 11
++
+ /*
+  * Message Types
+  */
+@@ -494,6 +497,7 @@ struct hv_pci_dev {
+ 	struct list_head list_entry;
+ 	refcount_t refs;
+ 	enum hv_pcichild_state state;
++	struct pci_slot *pci_slot;
+ 	struct pci_function_description desc;
+ 	bool reported_missing;
+ 	struct hv_pcibus_device *hbus;
+@@ -1457,6 +1461,34 @@ static void prepopulate_bars(struct hv_pcibus_device *hbus)
+ 	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ }
+ 
++/*
++ * Assign entries in sysfs pci slot directory.
++ *
++ * Note that this function does not need to lock the children list
++ * because it is called from pci_devices_present_work which
++ * is serialized with hv_eject_device_work because they are on the
++ * same ordered workqueue. Therefore hbus->children list will not change
++ * even when pci_create_slot sleeps.
++ */
++static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
++{
++	struct hv_pci_dev *hpdev;
++	char name[SLOT_NAME_SIZE];
++	int slot_nr;
++
++	list_for_each_entry(hpdev, &hbus->children, list_entry) {
++		if (hpdev->pci_slot)
++			continue;
++
++		slot_nr = PCI_SLOT(wslot_to_devfn(hpdev->desc.win_slot.slot));
++		snprintf(name, SLOT_NAME_SIZE, "%u", hpdev->desc.ser);
++		hpdev->pci_slot = pci_create_slot(hbus->pci_bus, slot_nr,
++					  name, NULL);
++		if (!hpdev->pci_slot)
++			pr_warn("pci_create slot %s failed\n", name);
++	}
++}
++
+ /**
+  * create_root_hv_pci_bus() - Expose a new root PCI bus
+  * @hbus:	Root PCI bus, as understood by this driver
+@@ -1480,6 +1512,7 @@ static int create_root_hv_pci_bus(struct hv_pcibus_device *hbus)
+ 	pci_lock_rescan_remove();
+ 	pci_scan_child_bus(hbus->pci_bus);
+ 	pci_bus_assign_resources(hbus->pci_bus);
++	hv_pci_assign_slots(hbus);
+ 	pci_bus_add_devices(hbus->pci_bus);
+ 	pci_unlock_rescan_remove();
+ 	hbus->state = hv_pcibus_installed;
+@@ -1742,6 +1775,7 @@ static void pci_devices_present_work(struct work_struct *work)
+ 		 */
+ 		pci_lock_rescan_remove();
+ 		pci_scan_child_bus(hbus->pci_bus);
++		hv_pci_assign_slots(hbus);
+ 		pci_unlock_rescan_remove();
+ 		break;
+ 
+@@ -1858,6 +1892,9 @@ static void hv_eject_device_work(struct work_struct *work)
+ 	list_del(&hpdev->list_entry);
+ 	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
+ 
++	if (hpdev->pci_slot)
++		pci_destroy_slot(hpdev->pci_slot);
++
+ 	memset(&ctxt, 0, sizeof(ctxt));
+ 	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
+ 	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
 -- 
 2.17.1
 
