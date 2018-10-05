@@ -2,163 +2,154 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD985C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB5BC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D322054F
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D322054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 10820208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10820208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbeJEOcS (ORCPT
+        id S1728379AbeJEOeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:32:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:46570 "EHLO foss.arm.com"
+        Fri, 5 Oct 2018 10:34:06 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18555 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727830AbeJEOcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:32:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C95BF7A9;
-        Fri,  5 Oct 2018 00:34:50 -0700 (PDT)
-Received: from [10.163.1.107] (unknown [10.163.1.107])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C7103F5B3;
-        Fri,  5 Oct 2018 00:34:46 -0700 (PDT)
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <20181002123909.GS18290@dhcp22.suse.cz>
- <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
- <20181003065833.GD18290@dhcp22.suse.cz>
- <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
- <20181003105926.GA4714@dhcp22.suse.cz>
- <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
- <20181003114842.GD4714@dhcp22.suse.cz>
- <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
- <20181003133609.GG4714@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <5dc1dc4d-de60-43b9-aab6-3b3bb6a22a4b@arm.com>
-Date:   Fri, 5 Oct 2018 13:04:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727835AbeJEOeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 10:34:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 00:36:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,343,1534834800"; 
+   d="scan'208";a="96305553"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Oct 2018 00:36:36 -0700
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 1/2] sysfs: constify sysfs create/remove files harder
+In-Reply-To: <CAJZ5v0iOR=PLHWtuJDVSsjpeTp_BLsheRM_dR_AL00hN-6bUhQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20181004143750.30880-1-jani.nikula@intel.com> <CAJZ5v0iOR=PLHWtuJDVSsjpeTp_BLsheRM_dR_AL00hN-6bUhQ@mail.gmail.com>
+Date:   Fri, 05 Oct 2018 10:36:29 +0300
+Message-ID: <87lg7cq1z6.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181003133609.GG4714@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 05 Oct 2018, "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+> On Thu, Oct 4, 2018 at 4:38 PM Jani Nikula <jani.nikula@intel.com> wrote:
+>>
+>> Let the passed in array be const (and thus placed in rodata) instead of
+>> a mutable array of const pointers.
+>
+> I'm not sure if the changes guarantee what you want.  If I'm not
+> mistaken, they just mean that the function itself cannot modify either
+> the pointer passed to it, or the contents of the array pointed to by
+> that pointer.  They don't imply the location of the array itself,
+> though.
+
+I mean, this change allows the caller to add the appropriate const
+qualifiers to the array definition, allowing the placement in
+rodata. Can't do that withouth the extra const in the function.
+
+> As for the changes:
+>
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Thanks for the review.
+
+BR,
+Jani.
 
 
-On 10/03/2018 07:06 PM, Michal Hocko wrote:
-> On Wed 03-10-18 18:36:39, Anshuman Khandual wrote:
-> [...]
->> So we have two checks here
+>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+>> ---
+>>  fs/sysfs/file.c       | 4 ++--
+>>  include/linux/sysfs.h | 8 ++++----
+>>  2 files changed, 6 insertions(+), 6 deletions(-)
 >>
->> 1) platform specific arch_hugetlb_migration -> In principle go ahead
+>> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+>> index 0a7252aecfa5..bb71db63c99c 100644
+>> --- a/fs/sysfs/file.c
+>> +++ b/fs/sysfs/file.c
+>> @@ -334,7 +334,7 @@ int sysfs_create_file_ns(struct kobject *kobj, const struct attribute *attr,
+>>  }
+>>  EXPORT_SYMBOL_GPL(sysfs_create_file_ns);
 >>
->> 2) huge_movable() during allocation
+>> -int sysfs_create_files(struct kobject *kobj, const struct attribute **ptr)
+>> +int sysfs_create_files(struct kobject *kobj, const struct attribute * const *ptr)
+>>  {
+>>         int err = 0;
+>>         int i;
+>> @@ -493,7 +493,7 @@ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr)
+>>         return ret;
+>>  }
 >>
->> 	- If huge page does not have to be placed on movable zone
+>> -void sysfs_remove_files(struct kobject *kobj, const struct attribute **ptr)
+>> +void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *ptr)
+>>  {
+>>         int i;
+>>         for (i = 0; ptr[i]; i++)
+>> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+>> index 987cefa337de..786816cf4aa5 100644
+>> --- a/include/linux/sysfs.h
+>> +++ b/include/linux/sysfs.h
+>> @@ -234,7 +234,7 @@ int __must_check sysfs_create_file_ns(struct kobject *kobj,
+>>                                       const struct attribute *attr,
+>>                                       const void *ns);
+>>  int __must_check sysfs_create_files(struct kobject *kobj,
+>> -                                  const struct attribute **attr);
+>> +                                  const struct attribute * const *attr);
+>>  int __must_check sysfs_chmod_file(struct kobject *kobj,
+>>                                   const struct attribute *attr, umode_t mode);
+>>  struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
+>> @@ -243,7 +243,7 @@ void sysfs_unbreak_active_protection(struct kernfs_node *kn);
+>>  void sysfs_remove_file_ns(struct kobject *kobj, const struct attribute *attr,
+>>                           const void *ns);
+>>  bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr);
+>> -void sysfs_remove_files(struct kobject *kobj, const struct attribute **attr);
+>> +void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *attr);
 >>
->> 		- Allocate any where successfully and done !
->>  
->> 	- If huge page *should* be placed on a movable zone
+>>  int __must_check sysfs_create_bin_file(struct kobject *kobj,
+>>                                        const struct bin_attribute *attr);
+>> @@ -342,7 +342,7 @@ static inline int sysfs_create_file_ns(struct kobject *kobj,
+>>  }
 >>
->> 		- Try allocating on movable zone
+>>  static inline int sysfs_create_files(struct kobject *kobj,
+>> -                                   const struct attribute **attr)
+>> +                                   const struct attribute * const *attr)
+>>  {
+>>         return 0;
+>>  }
+>> @@ -377,7 +377,7 @@ static inline bool sysfs_remove_file_self(struct kobject *kobj,
+>>  }
 >>
->> 			- Successfull and done !
+>>  static inline void sysfs_remove_files(struct kobject *kobj,
+>> -                                    const struct attribute **attr)
+>> +                                    const struct attribute * const *attr)
+>>  {
+>>  }
 >>
->> 		- If the new page could not be allocated on movable zone
->> 		
->> 			- Abort the migration completely
+>> --
+>> 2.11.0
 >>
->> 					OR
->>
->> 			- Warn and fall back to non-movable
-> 
-> I guess you are still making it more complicated than necessary. The
-> later is really only about __GFP_MOVABLE at this stage. I would just
-> make it simple for now. We do not have to implement any dynamic
-> heuristic right now. All that I am asking for is to split the migrate
-> possible part from movable part.
-> 
-> I should have been more clear about that I guess from my very first
-> reply. I do like how you moved the current coarse grained
-> hugepage_migration_supported to be more arch specific but I merely
-> wanted to point out that we need to do some other changes before we can
-> go that route and that thing is to distinguish movable from migration
-> supported.
-> 
-> See my point?
 
-Does the following sound close enough to what you are looking for ?
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 9df1d59..070c419 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -504,6 +504,13 @@ static inline bool hugepage_migration_supported(struct hstate *h)
-        return arch_hugetlb_migration_supported(h);
- }
- 
-+static inline bool hugepage_movable_required(struct hstate *h)
-+{
-+       if (hstate_is_gigantic(h))
-+               return true;
-+       return false;
-+}
-+
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
-                                           struct mm_struct *mm, pte_t *pte)
- {
-@@ -600,6 +607,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
-        return false;
- }
- 
-+static inline bool hugepage_movable_required(struct hstate *h)
-+{
-+       return false;
-+}
-+
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
-                                           struct mm_struct *mm, pte_t *pte)
- {
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 3c21775..8b0afdc 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1635,6 +1635,9 @@ struct page *alloc_huge_page_node(struct hstate *h, int nid)
-        if (nid != NUMA_NO_NODE)
-                gfp_mask |= __GFP_THISNODE;
- 
-+       if (hugepage_movable_required(h))
-+               gfp_mask |= __GFP_MOVABLE;
-+
-        spin_lock(&hugetlb_lock);
-        if (h->free_huge_pages - h->resv_huge_pages > 0)
-                page = dequeue_huge_page_nodemask(h, gfp_mask, nid, NULL);
-@@ -1652,6 +1655,9 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
- {
-        gfp_t gfp_mask = htlb_alloc_mask(h);
- 
-+       if (hugepage_movable_required(h))
-+               gfp_mask |= __GFP_MOVABLE;
-+
-        spin_lock(&hugetlb_lock);
-        if (h->free_huge_pages - h->resv_huge_pages > 0) {
-                struct page *page;
-
+-- 
+Jani Nikula, Intel Open Source Graphics Center
