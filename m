@@ -2,107 +2,112 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A895DC65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7C8C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65C202087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNrN1eEr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C202087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 37CE92087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37CE92087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbeJEXUh (ORCPT
+        id S1730389AbeJEXUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:20:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729704AbeJEXQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:36 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 709FC208E7;
-        Fri,  5 Oct 2018 16:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756233;
-        bh=bc19kyF7cUv3Mg/HHVE6bHX9a9yigYYV2IixZrJDuN0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNrN1eErVYtymlO5xkecwroC65p8SFg46BXBmo/Dj0Bf/3xu5Oh4cul8rS5SjScXI
-         1eAko+GIhcY7iYGdzclPuR2SiphEOVrLEsMaTvkuOSEBuWoYMKVn35r0yny2HoZFFo
-         etF2bnlOt3F/bph/a4JI9dHJfjvXldQnJBQf7Ejk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 08/14] sound: enable interrupt after dma buffer initialization
-Date:   Fri,  5 Oct 2018 12:16:58 -0400
-Message-Id: <20181005161704.20704-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161704.20704-1-sashal@kernel.org>
-References: <20181005161704.20704-1-sashal@kernel.org>
+        Fri, 5 Oct 2018 19:20:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48045 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729309AbeJEXUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:20:48 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w95GLCHU3206718
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 5 Oct 2018 09:21:12 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w95GLC4u3206715;
+        Fri, 5 Oct 2018 09:21:12 -0700
+Date:   Fri, 5 Oct 2018 09:21:12 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Milian Wolff <tipbot@zytor.com>
+Message-ID: <tip-7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf@git.kernel.org>
+Cc:     ravi.bangoria@linux.ibm.com, acme@redhat.com,
+        milian.wolff@kdab.com, jolsa@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        yao.jin@linux.intel.com, namhyung@kernel.org,
+        sandipan@linux.ibm.com, mingo@kernel.org
+Reply-To: sandipan@linux.ibm.com, mingo@kernel.org, namhyung@kernel.org,
+          yao.jin@linux.intel.com, hpa@zytor.com, jolsa@kernel.org,
+          milian.wolff@kdab.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, ravi.bangoria@linux.ibm.com, acme@redhat.com
+In-Reply-To: <20181002073949.3297-1-milian.wolff@kdab.com>
+References: <20180926135207.30263-2-milian.wolff@kdab.com>
+        <20181002073949.3297-1-milian.wolff@kdab.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf record: Use unmapped IP for inline callchain
+ cursors
+Git-Commit-ID: 7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+Commit-ID:  7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf
+Gitweb:     https://git.kernel.org/tip/7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf
+Author:     Milian Wolff <milian.wolff@kdab.com>
+AuthorDate: Wed, 26 Sep 2018 15:52:06 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 5 Oct 2018 11:18:09 -0300
 
-[ Upstream commit b61749a89f826eb61fc59794d9e4697bd246eb61 ]
+perf record: Use unmapped IP for inline callchain cursors
 
-In snd_hdac_bus_init_chip(), we enable interrupt before
-snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
-been acquired and irq handler uses the dma buffer, kernel may crash
-when interrupt comes in.
+Only use the mapped IP to find inline frames, but keep using the
+unmapped IP for the callchain cursor. This ensures we properly show the
+unmapped IP when displaying a frame we received via the
+dso__parse_addr_inlines API for a module which does not contain
+sufficient debug symbols to show the srcline.
 
-Fix the problem by postponing enabling irq after dma buffer
-initialization. And warn once on null dma buffer pointer during the
-initialization.
+This is another follow-up to commit 19610184693c ("perf script: Show
+virtual addresses instead of offsets").
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Sandipan Das <sandipan@linux.ibm.com>
+Fixes: 19610184693c ("perf script: Show virtual addresses instead of offsets")
+Link: http://lkml.kernel.org/r/20180926135207.30263-2-milian.wolff@kdab.com
+Link: http://lkml.kernel.org/r/20181002073949.3297-1-milian.wolff@kdab.com
+[ Squashed a fix from Milian for a problem reported by Ravi, fixed up space damage ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- sound/hda/hdac_controller.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/util/machine.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
-index 8761877207ec..00c6af2ae1c2 100644
---- a/sound/hda/hdac_controller.c
-+++ b/sound/hda/hdac_controller.c
-@@ -40,6 +40,8 @@ static void azx_clear_corbrp(struct hdac_bus *bus)
-  */
- void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
- {
-+	WARN_ON_ONCE(!bus->rb.area);
-+
- 	spin_lock_irq(&bus->reg_lock);
- 	/* CORB set up */
- 	bus->corb.addr = bus->rb.addr;
-@@ -478,13 +480,15 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
- 	/* reset controller */
- 	azx_reset(bus, full_reset);
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 0cb4f8bf3ca7..111ae858cbcb 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2286,7 +2286,8 @@ static int append_inlines(struct callchain_cursor *cursor,
+ 	if (!symbol_conf.inline_name || !map || !sym)
+ 		return ret;
  
--	/* initialize interrupts */
-+	/* clear interrupts */
- 	azx_int_clear(bus);
--	azx_int_enable(bus);
+-	addr = map__rip_2objdump(map, ip);
++	addr = map__map_ip(map, ip);
++	addr = map__rip_2objdump(map, addr);
  
- 	/* initialize the codec command I/O */
- 	snd_hdac_bus_init_cmd_io(bus);
- 
-+	/* enable interrupts after CORB/RIRB buffers are initialized above */
-+	azx_int_enable(bus);
-+
- 	/* program the position buffer */
- 	if (bus->use_posbuf && bus->posbuf.addr) {
- 		snd_hdac_chip_writel(bus, DPLBASE, (u32)bus->posbuf.addr);
--- 
-2.17.1
-
+ 	inline_node = inlines__tree_find(&map->dso->inlined_nodes, addr);
+ 	if (!inline_node) {
