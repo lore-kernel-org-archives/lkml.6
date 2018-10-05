@@ -2,125 +2,260 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB79C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29550C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0DDF21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:45:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DDF21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=solarflare.com
+	by mail.kernel.org (Postfix) with ESMTP id DB6A521473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:46:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="fXQyyy7E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6A521473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbeJFApQ (ORCPT
+        id S1729111AbeJFApx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:45:16 -0400
-Received: from dispatch1-us1.ppe-hosted.com ([148.163.129.52]:43234 "EHLO
-        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727941AbeJFApQ (ORCPT
+        Fri, 5 Oct 2018 20:45:53 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42182 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727941AbeJFApw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:45:16 -0400
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from webmail.solarflare.com (webmail.solarflare.com [12.187.104.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1-us3.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id 36E9848007F;
-        Fri,  5 Oct 2018 17:45:30 +0000 (UTC)
-Received: from ec-desktop.uk.solarflarecom.com (10.17.20.45) by
- ocex03.SolarFlarecom.com (10.20.40.36) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 5 Oct 2018 10:45:26 -0700
-Subject: Re: [PATCH] bpf: 32-bit RSH verification must truncate input before
- the ALU op
-To:     Jann Horn <jannh@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, <netdev@vger.kernel.org>
-CC:     "David S. Miller" <davem@davemloft.net>,
+        Fri, 5 Oct 2018 20:45:52 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95Hi8j6000840
+        for <linux-kernel@vger.kernel.org>; Fri, 5 Oct 2018 10:46:06 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=oQy/nTyswYbGEbWljBxaqBJv7nu9YVJZ4bXIzOJfKCk=;
+ b=fXQyyy7E2cWcJ8iH78xdJdbCj2A7KRTJlPkmWcSCnaKHzJWEQ0StjDo0FE8yt/HWM2jN
+ /iGeyKViB42MIVRUFZO2WZK7Cloe5Ft5DF4i3wUekRtJ5YCWgky5g/Or135UgJOwbMcR
+ MWXVeErbS6F9ly2yYhSQ8vyyF4SEPLTE65M= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2mxads0gh6-5
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 10:46:06 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.15) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct
+ 2018 10:46:05 -0700
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
+ 01F1423A960F; Fri,  5 Oct 2018 10:46:03 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-References: <20181005161759.177992-1-jannh@google.com>
-From:   Edward Cree <ecree@solarflare.com>
-Message-ID: <c34442b0-be90-450e-8c20-6e490cc45be9@solarflare.com>
-Date:   Fri, 5 Oct 2018 18:45:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        "Justin . Lee1 @ Dell . com" <Justin.Lee1@Dell.com>,
+        "joel @ jms . id . au" <joel@jms.id.au>,
+        "linux-aspeed @ lists . ozlabs . org" <linux-aspeed@lists.ozlabs.org>,
+        Sai Dasari <sdasari@fb.com>,
+        "christian @ cmd . nu" <christian@cmd.nu>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH net-next] net/ncsi: Add NCSI OEM command support
+Date:   Fri, 5 Oct 2018 10:46:01 -0700
+Message-ID: <20181005174602.828803-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <20181005161759.177992-1-jannh@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [10.17.20.45]
-X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24136.004
-X-TM-AS-Result: No-10.338800-4.000000-10
-X-TMASE-MatchedRID: zGP2F0O7j/sOwH4pD14DsPHkpkyUphL9Kx5ICGp/WtE0QmmUihPzrOml
-        /E2CK49bhG04o5fV97QPqYE5DXxgAseorcZK7iR7LUfH1TEwaN1flOpBqBHTt2HZ+cd7VyKXU7g
-        EPucszGdOFu8ssjxG87BRsLxMbb3GkbPwnUYuDtM00dkxYNMRt78+q17GFLKR/uymSAhGxLJIkz
-        YW7SvSIVp6dl1Bg4OErCdjRFVGO+tNfs8n85Te8oMbH85DUZXyseWplitmp0j6C0ePs7A07V9vM
-        TaVNFNzhvIj0jzYPjbfQ6mqnEeeF3nyxugVZZoyTLJG1hhay74=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--10.338800-4.000000
-X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24136.004
-X-MDID: 1538761531-6x6hiOD_0UzQ
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/18 17:17, Jann Horn wrote:
-> When I wrote commit 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification"), I
-> assumed that, in order to emulate 64-bit arithmetic with 32-bit logic, it
-> is sufficient to just truncate the output to 32 bits; and so I just moved
-> the register size coercion that used to be at the start of the function to
-> the end of the function.
->
-> That assumption is true for almost every op, but not for 32-bit right
-> shifts, because those can propagate information towards the least
-> significant bit. Fix it by always truncating inputs for 32-bit ops to 32
-> bits.
->
-> Also get rid of the coerce_reg_to_size() after the ALU op, since that has
-> no effect.
-Might be worth saying something like "because src_reg is passed by value".
-> Fixes: 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification")
-> Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-Acked-by: Edward Cree <ecree@solarflare.com>
->  kernel/bpf/verifier.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index bb07e74b34a2..465952a8e465 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -2896,6 +2896,15 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
->  	u64 umin_val, umax_val;
->  	u64 insn_bitness = (BPF_CLASS(insn->code) == BPF_ALU64) ? 64 : 32;
-Incidentally, I don't see why this needs to be a u64 (rather than say a u8).
+This patch adds OEM commands and response handling. It also defines OEM
+command and response structure as per NCSI specification along with its
+handlers.
 
--Ed
->  
-> +	if (insn_bitness == 32) {
-> +		/* Relevant for 32-bit RSH: Information can propagate towards
-> +		 * LSB, so it isn't sufficient to only truncate the output to
-> +		 * 32 bits.
-> +		 */
-> +		coerce_reg_to_size(dst_reg, 4);
-> +		coerce_reg_to_size(&src_reg, 4);
-> +	}
-> +
->  	smin_val = src_reg.smin_value;
->  	smax_val = src_reg.smax_value;
->  	umin_val = src_reg.umin_value;
-> @@ -3131,7 +3140,6 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
->  	if (BPF_CLASS(insn->code) != BPF_ALU64) {
->  		/* 32-bit ALU ops are (32,32)->32 */
->  		coerce_reg_to_size(dst_reg, 4);
-> -		coerce_reg_to_size(&src_reg, 4);
->  	}
->  
->  	__reg_deduce_bounds(dst_reg);
+ncsi_cmd_handler_oem: This is a generic command request handler for OEM
+commands
+ncsi_rsp_handler_oem: This is a generic response handler for OEM commands
 
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+Reviewed-by: Justin Lee <justin.lee1@dell.com>
+Reviewed-by: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+---
+ net/ncsi/internal.h |  5 +++++
+ net/ncsi/ncsi-cmd.c | 30 +++++++++++++++++++++++++++---
+ net/ncsi/ncsi-pkt.h | 14 ++++++++++++++
+ net/ncsi/ncsi-rsp.c | 43 ++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 88 insertions(+), 4 deletions(-)
+
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
+index 8055e3965cef..3d0a33b874f5 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -68,6 +68,10 @@ enum {
+ 	NCSI_MODE_MAX
+ };
+ 
++/* OEM Vendor Manufacture ID */
++#define NCSI_OEM_MFR_MLX_ID             0x8119
++#define NCSI_OEM_MFR_BCM_ID             0x113d
++
+ struct ncsi_channel_version {
+ 	u32 version;		/* Supported BCD encoded NCSI version */
+ 	u32 alpha2;		/* Supported BCD encoded NCSI version */
+@@ -305,6 +309,7 @@ struct ncsi_cmd_arg {
+ 		unsigned short words[8];
+ 		unsigned int   dwords[4];
+ 	};
++	unsigned char        *data;       /* NCSI OEM data                 */
+ };
+ 
+ extern struct list_head ncsi_dev_list;
+diff --git a/net/ncsi/ncsi-cmd.c b/net/ncsi/ncsi-cmd.c
+index 7567ca63aae2..82b7d9201db8 100644
+--- a/net/ncsi/ncsi-cmd.c
++++ b/net/ncsi/ncsi-cmd.c
+@@ -211,6 +211,25 @@ static int ncsi_cmd_handler_snfc(struct sk_buff *skb,
+ 	return 0;
+ }
+ 
++static int ncsi_cmd_handler_oem(struct sk_buff *skb,
++				struct ncsi_cmd_arg *nca)
++{
++	struct ncsi_cmd_oem_pkt *cmd;
++	unsigned int len;
++
++	len = sizeof(struct ncsi_cmd_pkt_hdr) + 4;
++	if (nca->payload < 26)
++		len += 26;
++	else
++		len += nca->payload;
++
++	cmd = skb_put_zero(skb, len);
++	memcpy(&cmd->mfr_id, nca->data, nca->payload);
++	ncsi_cmd_build_header(&cmd->cmd.common, nca);
++
++	return 0;
++}
++
+ static struct ncsi_cmd_handler {
+ 	unsigned char type;
+ 	int           payload;
+@@ -244,7 +263,7 @@ static struct ncsi_cmd_handler {
+ 	{ NCSI_PKT_CMD_GNS,    0, ncsi_cmd_handler_default },
+ 	{ NCSI_PKT_CMD_GNPTS,  0, ncsi_cmd_handler_default },
+ 	{ NCSI_PKT_CMD_GPS,    0, ncsi_cmd_handler_default },
+-	{ NCSI_PKT_CMD_OEM,    0, NULL                     },
++	{ NCSI_PKT_CMD_OEM,   -1, ncsi_cmd_handler_oem     },
+ 	{ NCSI_PKT_CMD_PLDM,   0, NULL                     },
+ 	{ NCSI_PKT_CMD_GPUUID, 0, ncsi_cmd_handler_default }
+ };
+@@ -316,8 +335,13 @@ int ncsi_xmit_cmd(struct ncsi_cmd_arg *nca)
+ 		return -ENOENT;
+ 	}
+ 
+-	/* Get packet payload length and allocate the request */
+-	nca->payload = nch->payload;
++	/* Get packet payload length and allocate the request
++	 * It is expected that if length set as negative in
++	 * handler structure means caller is initializing it
++	 * and setting length in nca before calling xmit function
++	 */
++	if (nch->payload >= 0)
++		nca->payload = nch->payload;
+ 	nr = ncsi_alloc_command(nca);
+ 	if (!nr)
+ 		return -ENOMEM;
+diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
+index 91b4b66438df..0f2087c8d42a 100644
+--- a/net/ncsi/ncsi-pkt.h
++++ b/net/ncsi/ncsi-pkt.h
+@@ -151,6 +151,20 @@ struct ncsi_cmd_snfc_pkt {
+ 	unsigned char           pad[22];
+ };
+ 
++/* OEM Request Command as per NCSI Specification */
++struct ncsi_cmd_oem_pkt {
++	struct ncsi_cmd_pkt_hdr cmd;         /* Command header    */
++	__be32                  mfr_id;      /* Manufacture ID    */
++	unsigned char           data[];      /* OEM Payload Data  */
++};
++
++/* OEM Response Packet as per NCSI Specification */
++struct ncsi_rsp_oem_pkt {
++	struct ncsi_rsp_pkt_hdr rsp;         /* Command header    */
++	__be32                  mfr_id;      /* Manufacture ID    */
++	unsigned char           data[];      /* Payload data      */
++};
++
+ /* Get Link Status */
+ struct ncsi_rsp_gls_pkt {
+ 	struct ncsi_rsp_pkt_hdr rsp;        /* Response header   */
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index 930c1d3796f0..d66b34749027 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -596,6 +596,47 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
+ 	return 0;
+ }
+ 
++static struct ncsi_rsp_oem_handler {
++	unsigned int	mfr_id;
++	int		(*handler)(struct ncsi_request *nr);
++} ncsi_rsp_oem_handlers[] = {
++	{ NCSI_OEM_MFR_MLX_ID, NULL },
++	{ NCSI_OEM_MFR_BCM_ID, NULL }
++};
++
++/* Response handler for OEM command */
++static int ncsi_rsp_handler_oem(struct ncsi_request *nr)
++{
++	struct ncsi_rsp_oem_pkt *rsp;
++	struct ncsi_rsp_oem_handler *nrh = NULL;
++	unsigned int mfr_id, i;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++	mfr_id = ntohl(rsp->mfr_id);
++
++	/* Check for manufacturer id and Find the handler */
++	for (i = 0; i < ARRAY_SIZE(ncsi_rsp_oem_handlers); i++) {
++		if (ncsi_rsp_oem_handlers[i].mfr_id == mfr_id) {
++			if (ncsi_rsp_oem_handlers[i].handler)
++				nrh = &ncsi_rsp_oem_handlers[i];
++			else
++				nrh = NULL;
++
++			break;
++		}
++	}
++
++	if (!nrh) {
++		netdev_err(nr->ndp->ndev.dev, "Received unrecognized OEM packet with MFR-ID (0x%x)\n",
++			   mfr_id);
++		return -ENOENT;
++	}
++
++	/* Process the packet */
++	return nrh->handler(nr);
++}
++
+ static int ncsi_rsp_handler_gvi(struct ncsi_request *nr)
+ {
+ 	struct ncsi_rsp_gvi_pkt *rsp;
+@@ -932,7 +973,7 @@ static struct ncsi_rsp_handler {
+ 	{ NCSI_PKT_RSP_GNS,   172, ncsi_rsp_handler_gns     },
+ 	{ NCSI_PKT_RSP_GNPTS, 172, ncsi_rsp_handler_gnpts   },
+ 	{ NCSI_PKT_RSP_GPS,     8, ncsi_rsp_handler_gps     },
+-	{ NCSI_PKT_RSP_OEM,     0, NULL                     },
++	{ NCSI_PKT_RSP_OEM,    -1, ncsi_rsp_handler_oem     },
+ 	{ NCSI_PKT_RSP_PLDM,    0, NULL                     },
+ 	{ NCSI_PKT_RSP_GPUUID, 20, ncsi_rsp_handler_gpuuid  }
+ };
+-- 
+2.17.1
 
