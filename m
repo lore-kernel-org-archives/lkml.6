@@ -2,100 +2,87 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2910CC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03F1C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DECD221473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:36:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vfYXoioL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DECD221473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 64106213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 23:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64106213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeJFGh2 (ORCPT
+        id S1729292AbeJFGiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 02:37:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbeJFGh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 02:37:28 -0400
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A29902147C;
-        Fri,  5 Oct 2018 23:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538782589;
-        bh=aqMFIdyTeV1767+9gTuv9gezKvMfSjBHgc/hdUtMveU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vfYXoioL/IOJZLUbq1BxmTgIg1b8v2qrg1pMaJuGrPZFrWdN9ErOBhX8V243dRb4X
-         fk36G6kjjxi4N+5SvwDo6zcvC1XWB6gyYqiqdRi85Mh0ECUY8BprApRVmm5m4WG0Os
-         SrVf34rl9o3DxKMI+EUSUCc0j7p6zIQBLAlhwH84=
-Received: by mail-qt1-f172.google.com with SMTP id d8-v6so15568663qtk.13;
-        Fri, 05 Oct 2018 16:36:29 -0700 (PDT)
-X-Gm-Message-State: ABuFfohNwUiZEAhu7bQW5QavFfrI8pAi76zgqGAJUNXfWMc72Wm6Oy5t
-        rAkPZeMopDJIiyuO5oPlvJeMxYK8yL4S6PB4Og==
-X-Google-Smtp-Source: ACcGV62VFMhbwnUifoyIaDmqfgz2PiDP9zN87wHeG1wmofoje728hI4bK+93kHF9L/pjttxfl1eRO8xZPWE8pxcK2iM=
-X-Received: by 2002:a0c:8c86:: with SMTP id p6-v6mr11319328qvb.246.1538782588825;
- Fri, 05 Oct 2018 16:36:28 -0700 (PDT)
+        Sat, 6 Oct 2018 02:38:22 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:51421 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726258AbeJFGiW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 02:38:22 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 06 Oct 2018 09:07:21 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1g8Zer-0004L7-3P; Sat, 06 Oct 2018 09:37:21 +1000
+Date:   Sat, 6 Oct 2018 09:37:21 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] writeback: fix range_cyclic writeback vs writepages
+ deadlock
+Message-ID: <20181005233721.GI12041@dastard>
+References: <20181005054526.21507-1-david@fromorbit.com>
+ <20181005124640.3de2ba9dec8c713ee8cf286b@linux-foundation.org>
 MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-34-robh@kernel.org>
- <1538777991.28477.6.camel@toradex.com>
-In-Reply-To: <1538777991.28477.6.camel@toradex.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 5 Oct 2018 18:36:17 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+pV6HMs25JxFKwfX7_Cj1z2vT1eGWvqPzx7+Wu3-SPeQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+pV6HMs25JxFKwfX7_Cj1z2vT1eGWvqPzx7+Wu3-SPeQ@mail.gmail.com>
-Subject: Re: [PATCH 33/36] dt-bindings: arm: Convert Tegra board/soc bindings
- to json-schema
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Grant Likely <glikely@secretlab.ca>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tom Rini <trini@konsulko.com>, Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005124640.3de2ba9dec8c713ee8cf286b@linux-foundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 5:20 PM Marcel Ziswiler
-<marcel.ziswiler@toradex.com> wrote:
->
-> Hi Rob
->
-> On Fri, 2018-10-05 at 11:58 -0500, Rob Herring wrote:
-> > Convert Tegra SoC bindings to DT schema format using json-schema.
-> >
+On Fri, Oct 05, 2018 at 12:46:40PM -0700, Andrew Morton wrote:
+> On Fri,  5 Oct 2018 15:45:26 +1000 Dave Chinner <david@fromorbit.com> wrote:
+> 
+> > From: Dave Chinner <dchinner@redhat.com>
+> > 
+> > We've recently seen a workload on XFS filesystems with a repeatable
+> > deadlock between background writeback and a multi-process
+> > application doing concurrent writes and fsyncs to a small range of a
+> > file.
+> > 
+> > ...
+> > 
+> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > Reviewed-by: Jan Kara <jack@suse.de>
+> 
+> Not a serious enough problem for a -stable backport?
 
-[...]
+Don't have enough evidence to say one way or another. The reported
+incident was from a RHEL 7 kernel, so the bug has been there for
+years in one form or another, but it's only ever been triggered by
+this one-off custom workload.
 
-> Are you aware that -next already features a few updating commits
-> thereof from around the beginning of September one of which even bears
-> your reviewed-by.
+I haven't done any analysis on older kernels, nor have I looked to see
+if there's any gotchas that a stable backport might encounter. And I
+tend not to change stuff in a path that is critical to data integrity
+without at least doing enough due diligence to suggest a stable
+backport would be fine.
 
-I'm not targeting 4.20, but rather early in the 4.21 cycle. So I'll be
-rebasing on rc1 and will update with any changes. I've been doing that
-a couple of cycles already.
+You can mark it for stable backports if you want, but I'm not
+prepared to because I haven't done the work necessary to ensure it's
+safe to do so.
 
-Rob
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
