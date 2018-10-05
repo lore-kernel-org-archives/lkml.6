@@ -2,95 +2,151 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17723C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212A8C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C681021473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3A14208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zdniwNAB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C681021473
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3nLEPVs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A14208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbeJEXOT (ORCPT
+        id S1729580AbeJEXYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729489AbeJEXOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:17 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C7F32147D;
-        Fri,  5 Oct 2018 16:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756095;
-        bh=52JiMiJtfOKoNfaCVnSKiteRr7whWGmL3DEzYMkl/aQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zdniwNABZF7XnBp7UGK/W4Vb3Lp50Bq7UlSwxBa8wr/XB+KiCxJ+yMoviOAlokHr3
-         YINWr01fU9k2+2zcAoU/468FwfxB49PvrP5gexYozJpvAnbZRfvgiew64VOghzJyhW
-         wDWddkX9O/+PNgO3jKM4EUa32DBq1Zs12CSb2qwk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jongsung Kim <neidhard.kim@lge.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 33/48] stmmac: fix valid numbers of unicast filter entries
-Date:   Fri,  5 Oct 2018 12:14:09 -0400
-Message-Id: <20181005161424.20521-33-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
-References: <20181005161424.20521-1-sashal@kernel.org>
+        Fri, 5 Oct 2018 19:24:07 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36790 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729459AbeJEXOS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a8-v6so2436048wmf.1;
+        Fri, 05 Oct 2018 09:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KsOXf+04nO1i9Fx25nBAdv1HqIVCeXklXULnIBURjDc=;
+        b=A3nLEPVspuqH/lNpAXDWSReVi3ylY83PHg1ZrZor1Mcmcr1e6unO8BuOHUWqCIM4oO
+         vmGtTH1Q46ScgCEwpi7pJYedcazbXEQaJPvdKkZV5F0+MZpeV0ngi7A72lyCWZB8SCHm
+         qY8XiOiTmSTGk6XGswoFRImOxoz9xKk41tmZW6D2IcGdaTH4vEcobuIAqU7lU5/0KByJ
+         WEzFjSAWlFX5GFUl5wdwtR5NoEtikv71EplGp1qjrGSxcg5QzDVQ0A2aq2ZUv6C0zwya
+         01XkWT7cwjGFU6Zs8LBKLsK3yO5PtuWXrj8p92WfWmKvoOdLnWgCkC0QOYLTAeoEz5PC
+         J4Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KsOXf+04nO1i9Fx25nBAdv1HqIVCeXklXULnIBURjDc=;
+        b=MOG47iXlFGyWGE2KiNUQxRDx987U8WcRoydzG1ufl669ShScNWQUXaxQ2AFhXbEXii
+         PLT3XrCXYffYOOFKJ/jVEJp9XR+AWZ9ATKVx19uQKb7HXvl6MwyHXXCP2Ikqq2JskUCD
+         NL/plXonOQjAXsbjI8KleiMQY+8cLGHidNGCRBBH+JYyswGp0ahHZZUPWxv3453X2V39
+         xMavDooPiqAokI7uKcfsdP24M+BOcmloNG3H9rYE3EhBvYham4aA1F9NE8Or0wjZgJee
+         qYwuuIa8HPEikmZ1iHPz8kaO2zDvmUmh3QHcg9yumBpp5l72b51Pz7RFs1I+jfVIhxUV
+         /BNA==
+X-Gm-Message-State: ABuFfojTrd6BBpz2OfwJ5wBFuXNEd+8kgSKH86gJHxQ1cmhgJeaFMZUF
+        7ext/LNJnOqm2Q3njTAe4Xc=
+X-Google-Smtp-Source: ACcGV62pIxWj5DU4Ny8CV4AYV/Eq30vpA3Xuq/GabYIY8IO8f0J9xPXtbQNKCsnlMETskSh5qxQz2A==
+X-Received: by 2002:a1c:6655:: with SMTP id a82-v6mr4906931wmc.10.1538756093620;
+        Fri, 05 Oct 2018 09:14:53 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id g186-v6sm2726696wmf.19.2018.10.05.09.14.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 09:14:53 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 18:14:50 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.ibm.com>, stable@vger.kernel.org,
+        Thiago Macieira <thiago.macieira@intel.com>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 0/5] perf/urgent fixes
+Message-ID: <20181005161450.GA73272@gmail.com>
+References: <20181005161012.18475-1-acme@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005161012.18475-1-acme@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jongsung Kim <neidhard.kim@lge.com>
 
-[ Upstream commit edf2ef7242805e53ec2e0841db26e06d8bc7da70 ]
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Synopsys DWC Ethernet MAC can be configured to have 1..32, 64, or
-128 unicast filter entries. (Table 7-8 MAC Address Registers from
-databook) Fix dwmac1000_validate_ucast_entries() to accept values
-between 1 and 32 in addition.
+> Hi Ingo,
+> 
+> 	Please consider pulling,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit 5d05dfd13f20b01a3cd5d293058baa7d5c1583b6:
+> 
+>   Merge tag 'perf-urgent-for-mingo-4.19-20180918' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-09-19 13:25:35 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.19-20181005
+> 
+> for you to fetch changes up to 7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf:
+> 
+>   perf record: Use unmapped IP for inline callchain cursors (2018-10-05 11:18:09 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/urgent fixes:
+> 
+> - Fix the build on Clear Linux, coping with redundant declarations of
+>   function prototypes in python3 header files by adding
+>   -Wno-redundant-decls to build with PYTHON=python3 (Arnaldo Carvalho de Melo)
+> 
+> - Fixes for processing inline frames in backtraces using DWARF based
+>   unwinding (Milian Wolff)
+> 
+> - Cope with bad DWARF info for function names for inline frames,not
+>   trying to demangle this symbol. Problem reported with rust but
+>   reproduced as well with C++. Problem reported to the libbpf
+>   maintainers (Milian Wolff)
+> 
+> - Fix python export to postgresql and sqlite code (Adrian Hunter)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Adrian Hunter (2):
+>       perf script python: Fix export-to-postgresql.py occasional failure
+>       perf script python: Fix export-to-sqlite.py sample columns
+> 
+> Arnaldo Carvalho de Melo (1):
+>       perf python: Use -Wno-redundant-decls to build with PYTHON=python3
+> 
+> Milian Wolff (2):
+>       perf report: Don't try to map ip to invalid map
+>       perf record: Use unmapped IP for inline callchain cursors
+> 
+>  tools/perf/scripts/python/export-to-postgresql.py | 9 +++++++++
+>  tools/perf/scripts/python/export-to-sqlite.py     | 6 +++++-
+>  tools/perf/util/machine.c                         | 8 +++++---
+>  tools/perf/util/setup.py                          | 2 +-
+>  4 files changed, 20 insertions(+), 5 deletions(-)
 
-Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Pulled into tip:perf/urgent, thanks a lot Arnaldo!
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 72da77b94ecd..8a3867cec67a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -67,7 +67,7 @@ static int dwmac1000_validate_mcast_bins(int mcast_bins)
-  * Description:
-  * This function validates the number of Unicast address entries supported
-  * by a particular Synopsys 10/100/1000 controller. The Synopsys controller
-- * supports 1, 32, 64, or 128 Unicast filter entries for it's Unicast filter
-+ * supports 1..32, 64, or 128 Unicast filter entries for it's Unicast filter
-  * logic. This function validates a valid, supported configuration is
-  * selected, and defaults to 1 Unicast address if an unsupported
-  * configuration is selected.
-@@ -77,8 +77,7 @@ static int dwmac1000_validate_ucast_entries(int ucast_entries)
- 	int x = ucast_entries;
- 
- 	switch (x) {
--	case 1:
--	case 32:
-+	case 1 ... 32:
- 	case 64:
- 	case 128:
- 		break;
--- 
-2.17.1
-
+	Ingo
