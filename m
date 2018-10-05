@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A20C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC78C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0147208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD75208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:25:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WO93Xsbp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0147208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReC5YhSl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD75208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbeJEXYt (ORCPT
+        id S1729691AbeJEXZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:24:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51550 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:25:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729408AbeJEXOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:12 -0400
+        id S1729336AbeJEXOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 732D4213A2;
-        Fri,  5 Oct 2018 16:14:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB1442147C;
+        Fri,  5 Oct 2018 16:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756090;
-        bh=V4P8Z6PIHWq+paeyYf6EJvXY2xXWSPnuCEdHmNR9Hm8=;
+        s=default; t=1538756085;
+        bh=f+Kzb/JybvnSz7+nuKSCIxMFmS0CkgGdsQ3qOJbrbzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WO93XsbpJjE4o5nM8MFFSo1FMlgdfdaA5ViEAgJ4Sluu+corjHYzidl+r0k3L0D/5
-         Ie/Z7bamazkztKE3UpEjCcKafjc635rkwqCJswi9o62Sv+wD/65LBgARXs6KYmTvMM
-         5LIuIeGCs5uiucbxDpKhuRL2P/anFK0BccY1ie/c=
+        b=ReC5YhSlKDKEOSOestLy8tQ2RasyjGew9YjfJhH7D+kHiNq4Wg/qeGkuCRfm1pvLL
+         +uoLgyJXlP9XzM9dBcEFWuRFupgfrOcoUY+Nft+rwDsdABc7pPL8QLleSkcGi3nfg4
+         cuSYsGiWuXtOVOOGsFVXg/Az41uE9Gb1kJR0aXfg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Mark Brown <broonie@kernel.org>,
+Cc:     Hermes Zhang <chenhuiz@axis.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 27/48] sound: enable interrupt after dma buffer initialization
-Date:   Fri,  5 Oct 2018 12:14:03 -0400
-Message-Id: <20181005161424.20521-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 22/48] Bluetooth: hci_ldisc: Free rw_semaphore on close
+Date:   Fri,  5 Oct 2018 12:13:58 -0400
+Message-Id: <20181005161424.20521-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -52,58 +53,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Hermes Zhang <chenhuiz@axis.com>
 
-[ Upstream commit b61749a89f826eb61fc59794d9e4697bd246eb61 ]
+[ Upstream commit e6a57d22f787e73635ce0d29eef0abb77928b3e9 ]
 
-In snd_hdac_bus_init_chip(), we enable interrupt before
-snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
-been acquired and irq handler uses the dma buffer, kernel may crash
-when interrupt comes in.
+The percpu_rw_semaphore is not currently freed, and this leads to
+a crash when the stale rcu callback is invoked.  DEBUG_OBJECTS
+detects this.
 
-Fix the problem by postponing enabling irq after dma buffer
-initialization. And warn once on null dma buffer pointer during the
-initialization.
+ ODEBUG: free active (active state 1) object type: rcu_head hint: (null)
+ ------------[ cut here ]------------
+ WARNING: CPU: 1 PID: 2024 at debug_print_object+0xac/0xc8
+ PC is at debug_print_object+0xac/0xc8
+ LR is at debug_print_object+0xac/0xc8
+ Call trace:
+ [<ffffff80082e2c2c>] debug_print_object+0xac/0xc8
+ [<ffffff80082e40b0>] debug_check_no_obj_freed+0x1e8/0x228
+ [<ffffff8008191254>] kfree+0x1cc/0x250
+ [<ffffff80083cc03c>] hci_uart_tty_close+0x54/0x108
+ [<ffffff800832e118>] tty_ldisc_close.isra.1+0x40/0x58
+ [<ffffff800832e14c>] tty_ldisc_kill+0x1c/0x40
+ [<ffffff800832e3dc>] tty_ldisc_release+0x94/0x170
+ [<ffffff8008325554>] tty_release_struct+0x1c/0x58
+ [<ffffff8008326400>] tty_release+0x3b0/0x490
+ [<ffffff80081a3fe8>] __fput+0x88/0x1d0
+ [<ffffff80081a418c>] ____fput+0xc/0x18
+ [<ffffff80080c0624>] task_work_run+0x9c/0xc0
+ [<ffffff80080a9e24>] do_exit+0x24c/0x8a0
+ [<ffffff80080aa4e0>] do_group_exit+0x38/0xa0
+ [<ffffff80080aa558>] __wake_up_parent+0x0/0x28
+ [<ffffff8008082c00>] el0_svc_naked+0x34/0x38
+ ---[ end trace bfe08cbd89098cdf ]---
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Hermes Zhang <chenhuiz@axis.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/hda/hdac_controller.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/bluetooth/hci_ldisc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
-index 560ec0986e1a..11057d9f84ec 100644
---- a/sound/hda/hdac_controller.c
-+++ b/sound/hda/hdac_controller.c
-@@ -40,6 +40,8 @@ static void azx_clear_corbrp(struct hdac_bus *bus)
-  */
- void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
- {
-+	WARN_ON_ONCE(!bus->rb.area);
+diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+index 963bb0309e25..ea6238ed5c0e 100644
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -543,6 +543,8 @@ static void hci_uart_tty_close(struct tty_struct *tty)
+ 	}
+ 	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
+ 
++	percpu_free_rwsem(&hu->proto_lock);
 +
- 	spin_lock_irq(&bus->reg_lock);
- 	/* CORB set up */
- 	bus->corb.addr = bus->rb.addr;
-@@ -479,13 +481,15 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
- 	/* reset controller */
- 	azx_reset(bus, full_reset);
+ 	kfree(hu);
+ }
  
--	/* initialize interrupts */
-+	/* clear interrupts */
- 	azx_int_clear(bus);
--	azx_int_enable(bus);
- 
- 	/* initialize the codec command I/O */
- 	snd_hdac_bus_init_cmd_io(bus);
- 
-+	/* enable interrupts after CORB/RIRB buffers are initialized above */
-+	azx_int_enable(bus);
-+
- 	/* program the position buffer */
- 	if (bus->use_posbuf && bus->posbuf.addr) {
- 		snd_hdac_chip_writel(bus, DPLBASE, (u32)bus->posbuf.addr);
 -- 
 2.17.1
 
