@@ -2,135 +2,118 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BE3C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC20DC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447EE2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DCFE2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:16:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="LqFT+zsD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447EE2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YnvOXkCd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DCFE2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeJEWO0 (ORCPT
+        id S1728314AbeJEWPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:14:26 -0400
-Received: from mail-sn1nam02on0060.outbound.protection.outlook.com ([104.47.36.60]:14208
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727725AbeJEWOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:14:25 -0400
+        Fri, 5 Oct 2018 18:15:19 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45248 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbeJEWPS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:15:18 -0400
+Received: by mail-io1-f66.google.com with SMTP id e12-v6so10918871iok.12
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 08:16:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0hpThrub/x13ZWEos+//e3UjS9eJo5Hy5fbSbuWsts8=;
- b=LqFT+zsDytIOavH4uDQrKDuxXS4Ryx/xBr5GDsh6vy2fx5myP2iUMz0QMA/LO8b/fGYNyUKEwZ8Ti6gE/lXiGjOhIiLyCd3sBULLAT25Y0uqqvnCFcEUQSdOs/RnXv+dZh9+LBzeEJH85Zv43hYXmqMA5JRxSjkz9km6azLy0pk=
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com (52.135.105.33) by
- SN6PR07MB4269.namprd07.prod.outlook.com (52.135.89.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.26; Fri, 5 Oct 2018 15:15:14 +0000
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::c008:dd27:9b88:4a5]) by SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::c008:dd27:9b88:4a5%4]) with mapi id 15.20.1185.024; Fri, 5 Oct 2018
- 15:15:14 +0000
-From:   "Richter, Robert" <Robert.Richter@cavium.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Marc Zyngier <marc.zyngier@arm.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        "matthias.bgg@kernel.org" <matthias.bgg@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "shankerd@codeaurora.org" <shankerd@codeaurora.org>,
-        "xiexiuqi@huawei.com" <xiexiuqi@huawei.com>,
-        "Dave.Martin@arm.com" <Dave.Martin@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v3-its: Add early memory allocation errata
-Thread-Topic: [PATCH] irqchip/gic-v3-its: Add early memory allocation errata
-Thread-Index: AQHUSn5jXSWA5hACtkm/BATHVar8DKUPyVAAgADVpQCAABtrAIAAEysAgAAIvACAABEfgA==
-Date:   Fri, 5 Oct 2018 15:15:14 +0000
-Message-ID: <20181005151505.GO3795@rric.localdomain>
-References: <20180912095232.2110-1-matthias.bgg@kernel.org>
- <a08119a0-fc4e-6328-c3ad-04e5250f38d7@suse.com>
- <95733d12-ee1d-9874-16a7-c614cc0ce8cd@arm.com>
- <8ef6b381-e170-30de-ad0e-fae8ccf189e5@suse.com>
- <1d227152-2770-3e93-f78c-71e7a3b4fe76@arm.com>
- <93532c6a-0a84-4063-3f9f-171490985cbb@gmail.com>
-In-Reply-To: <93532c6a-0a84-4063-3f9f-171490985cbb@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR08CA0123.eurprd08.prod.outlook.com
- (2603:10a6:800:d4::25) To SN6PR07MB5326.namprd07.prod.outlook.com
- (2603:10b6:805:73::33)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Robert.Richter@cavium.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [78.55.228.33]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR07MB4269;6:7dPktfKwyPxGfeKb1DJ2NI5G1XNnFQqK9WaqXVxV88i/EySsDpU0rMdL9ipw8aSvU0FpeSxkyP2vfJWoeYqw4rt195B/UzXHIftNm2rCL8NKJwjFUmfViUlyqxCZFP8N1VQLZqJTq/P3fZ8OOwsz8KjhE9xBBS0/nSYsQ5jj9U9rE/aZj5yojimlQ1yL1kw96opL2TPl9XFa2eCmN3XnUCCjSWsGgKhd2ufeeq2HQyBy2t69Vq5xNIFZDWs8YNuCLFxEhxWAa61cTnQ3foHUF3O0+9YdkTgoM1qicyrZFPvh0iwEvYSRrwt6EEpd/G+uD6ty7P+4tjyS9RyAy3aNkDJVd6fdxGCiLdgfNrg4Q8OmcqEl7wAKXUuJDlZtpdhwx/LrlVhCyaalFnspMFQ1HQZ1nyo+r8NMFqlO6OSe5D5rhp+B7okqmsPzKA+ojW2kthS6UEpqnfQ9XOgHs04r2w==;5:GKGJTdTfJmBtPYhLG4wCkLHjtxc9dKbiMlL0jVv+jjA78YQEccz3in9nYhZ3ykpkZTcpZDwMqlcw7tDc5vHozUdzgHPvsNzJA1QpkuyrZCOCKaGkjckfWL8CPcG8+j/WJJxbwZwFmcUSsMT6D+qxztgVbsRZx99d1LK6XX8lvwc=;7:/ChkbY3CEtIJhU+i/M7RHllkVcVfw5Cj/XVHahKSNFM6rtmKPi/vxsKHnPQ//FId5SuQJcRwq6V7tKEEgEy/D9CUQWPH6hik+lt7iC4oqlNvqPMijH2Y2z2YUacve/d9FMUm8GxA4hl44kJaLAwhGQ6e7/N94wx+WxMRZrZLxKX8++MjgcxsxIJwt2jf00OY5dbeWbNosLLW7iW8oQ3/d/BbAC/hTU2sMVXxpbmo5N/6W5bfMLI9/rM9cfbBfFsR
-x-ms-office365-filtering-correlation-id: 1520067b-331a-44ab-c939-08d62ad559e1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4269;
-x-ms-traffictypediagnostic: SN6PR07MB4269:
-x-microsoft-antispam-prvs: <SN6PR07MB426961A42A7585DA6448FDBEF1EB0@SN6PR07MB4269.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(201708071742011)(7699051);SRVR:SN6PR07MB4269;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4269;
-x-forefront-prvs: 0816F1D86E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(346002)(396003)(189003)(199004)(2900100001)(6506007)(53546011)(386003)(33656002)(33896004)(5660300001)(476003)(11346002)(14454004)(68736007)(478600001)(446003)(66066001)(3846002)(6116002)(316002)(72206003)(1076002)(93886005)(54906003)(5250100002)(186003)(7736002)(305945005)(52116002)(76176011)(97736004)(99286004)(7416002)(256004)(6512007)(9686003)(53936002)(2906002)(71190400001)(71200400001)(102836004)(229853002)(6436002)(39060400002)(86362001)(6246003)(4326008)(8936002)(6486002)(105586002)(25786009)(26005)(106356001)(486006)(6916009)(81156014)(81166006)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4269;H:SN6PR07MB5326.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: nfZJ1Nnp6pdKXGmgvyHKDCecZna/yi5QrLt83OyuTEzuBMmAR5sQzFCtBKjvKsakO7BFtxzGFM7NmAYAd79WbUklXPxGY7C8v64TSYAH1LcKdB3ZLbP6ooStFfhRxkoLvr0UO8oZ1BQ0aSsAWVYDyi4yNqDK1sSdFq1DTofk7Id4BU65V7ywG6iO1/S/5bFV84XRFRr8CU/A9VpbspBDo7X8ucXxBLnPSRVUFSj3CsjzJ6QAeoVu62KoMjloIE/J2SFLB1N+PpE7ubflIboHCVPe4i+A1zjZXk+jA+OndHBK9fI1PKtoqsF+e7WW2QMS7vjBY+m3UpSZg72isXLGqgQnmz5Q55V5wEYZ78Xcs7g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FDB4EE467C7BAA4FBE2A225A33C4005C@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=K2fR45txb+KGTYn8sBXSjm3wPg1ebjIW3jHzlvMEYbk=;
+        b=YnvOXkCdJ1oJ+UhIdJGdzU3Ri0RkbyrwIJSzkOse46phpV6Ep6iwujnFO+mdgF0dB1
+         KXlJ/6LiRql0L7x19ycqtf+Ef8Ixc+VDOWZ+LVDGdlQ7j/6VTmptn2vgwF/TUABJ1ISD
+         yyKEy7g+GTWcM2J09NkvhPENi/JMn+c+HUuVI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=K2fR45txb+KGTYn8sBXSjm3wPg1ebjIW3jHzlvMEYbk=;
+        b=VQ+oB0EptN5keQgtcHNrZf2hDlTs1lJ8XQkM7azKUJqx1P8ZVKYsgM+u3PAtcsIP4i
+         gC2gxVWTC00oUVugMvl6MchrD2WjPm4kJ2wotc6DIgoMnDY0pYfOCmJ9JaEVnzPntTV4
+         ZNeU6UYem/DQAe2fSlcoNZJYH4wcjoTQ1Co8jAhTDliivZIICf5+Y9C0YPMxLOWHYfqZ
+         lXDL+1M4hkgg3hzJgFvYK9VMlRgw72l3s/WmvoScKYvYHyPs9iOxKJ9P3NTdvbHk6lGG
+         II9l782lrtfZSe0TmH3aS2GYHj9mbVxWhVNZtGcLoQ69fx2XOeceXLsM+8QS0f2HLAeI
+         tHjQ==
+X-Gm-Message-State: ABuFfoj3bdnALG2ML8GOXh15jH1/DJclRC9yWQ3DAiVpFIETSLQO+J5j
+        kJI5F8sfoqP5xaXZTPw7IkukUgXBotB8+i4rFkEWPA==
+X-Google-Smtp-Source: ACcGV62L4I0mPQSBMQD06bUFfC0YL9+loe3q6sdye9/64hGEOCyhMivcs9p8C2N17pJKBkDyMV34yfFft6hIETfduS0=
+X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr8524150ioa.60.1538752569558;
+ Fri, 05 Oct 2018 08:16:09 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1520067b-331a-44ab-c939-08d62ad559e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2018 15:15:14.8717
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4269
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Fri, 5 Oct 2018 08:16:08 -0700 (PDT)
+In-Reply-To: <20181005150538.17006.qmail@cr.yp.to>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-20-Jason@zx2c4.com>
+ <CAKv+Gu9FLDRLxHReKcveZYHNYerR5Y2pZd9gn-hWrU0jb2KgfA@mail.gmail.com>
+ <CAHmME9rp0Fi5ObK5oi8FHj1_nK5hP4T2Bq7_dAmzq4OQ0mp0uw@mail.gmail.com> <20181005150538.17006.qmail@cr.yp.to>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 5 Oct 2018 17:16:08 +0200
+Message-ID: <CAKv+Gu8SFbKXwO_fngymM6Rh6jU4=B14=V0NaCBOTOCoO3M-kA@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 19/23] zinc: Curve25519 ARM implementation
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        peter@cryptojedi.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.10.18 16:13:48, Matthias Brugger wrote:
-> On 05/10/2018 15:42, Marc Zyngier wrote:
-> > On 05/10/18 13:33, Matthias Brugger wrote:
+On 5 October 2018 at 17:05, D. J. Bernstein <djb@cr.yp.to> wrote:
+> For the in-order ARM Cortex-A8 (the target for this code), adjacent
+> multiply-add instructions forward summands quickly. A simple in-order
+> dot-product computation has no latency problems, while interleaving
+> computations, as suggested in this thread, creates problems. Also, on
+> this microarchitecture, occasional ARM instructions run in parallel with
+> NEON, so trying to manually eliminate ARM instructions through global
+> pointer tracking wouldn't gain speed; it would simply create unnecessary
+> code-maintenance problems.
+>
+> See https://cr.yp.to/papers.html#neoncrypto for analysis of the
+> performance of---and remaining bottlenecks in---this code. Further
+> speedups should be possible on this microarchitecture, but, for anyone
+> interested in this, I recommend focusing on building a cycle-accurate
+> simulator (e.g., fixing inaccuracies in the Sobole simulator) first.
+>
+> Of course, there are other ARM microarchitectures, and there are many
+> cases where different microarchitectures prefer different optimizations.
+> The kernel already has boot-time benchmarks for different optimizations
+> for raid6, and should do the same for crypto code, so that implementors
+> can focus on each microarchitecture separately rather than living in the
+> barbaric world of having to choose which CPUs to favor.
+>
 
-> >> With my distribution head on, I would prefer a solution that does not =
-change
-> >> FORCE_MAX_ZONEORDER. That's how I came to the idea providing a third s=
-olution to
-> >> the same problem :)
-> >
-> > Why is that a problem? What impact does this have on your favourite dis=
-tro?
-> >
->=20
-> The impact is on changing FORCE_MAX_ZONEORDER on an already released kern=
-el will
-> break Kernel ABI and with that all external modules. I know that's nothin=
-g
-> upstream cares too much about, but the distros do :)
+Thanks Dan for the insight.
 
-Wrt upstream, there is no way to do this change without patching the
-kernel. Thus, it is impossible to run an unpatched 4k page size kernel
-on ThunderX.
+We have already established in a separate discussion that Cortex-A7,
+which is main optimization target for future development, does not
+have the microarchitectural peculiarity that you are referring to that
+ARM instructions are essentially free when interleaved with NEON code.
 
--Robert
+But I take your point re benchmarking (as I already indicated in my
+reply to Jason): if we optimize towards speed, we should ideally reuse
+the existing benchmarking infrastructure we have to select the fastest
+implementation at runtime. For instance, it turns out that scalar
+ChaCha20 is almost as fast as NEON (or even faster?) on A7, and using
+NEON in the kernel has some issues of its own.
