@@ -2,150 +2,80 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141A7C00449
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA201C65BAA
 	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75A121486
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 831A721486
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ya8+j0HT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75A121486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1CbtRmz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831A721486
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbeJEXNu (ORCPT
+        id S1728772AbeJEXNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:13:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50678 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:13:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbeJEXNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727746AbeJEXNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 5 Oct 2018 19:13:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F233020834;
-        Fri,  5 Oct 2018 16:14:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D04B1213A2;
+        Fri,  5 Oct 2018 16:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756067;
-        bh=A5qQqjHMfEx5aGAnDCa9HRTzrR0MlDCiwRKwSdt4SEA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ya8+j0HTViD8rX5/lV0o8moxpIosrK4ZjAimL6Osi/24c9winnISFwoRRIp0zBoIl
-         CYGuFXAeePqdnwz6bCzIMHMXXD2AQ7SJ6D8aAW0tN1sueAh6/VklUOxFu2fvN58CGZ
-         BhKZrhSk4xLuGC58fXNOgQFzmUbzRRl4yrdEUtjU=
+        s=default; t=1538756068;
+        bh=A37tUkOaaHoLcLoyt48peEK6d5Jp53As83PsWHbsyrI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=F1CbtRmz4p9XKkgCDg8/Snfo7lOq0bKFAVfK0LV4gcB/C3ywejCT0dCExAMW+NvQ7
+         96gcxRABlLRDeV+fkMOWaJnznKyp9UnEtJc9b42E9cDyLTMVwjBJKdLSmHmqVmHBrF
+         1xJ2oBFnyVqe+OTLaf2VS0QJLh2QEFEhOguvz5C4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+Cc:     Ryan Lee <ryans.lee@maximintegrated.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 01/48] ASoC: dapm: Fix NULL pointer deference on CODEC to CODEC DAIs
-Date:   Fri,  5 Oct 2018 12:13:37 -0400
-Message-Id: <20181005161424.20521-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 02/48] ASoC: max98373: Added speaker FS gain cotnrol register to volatile.
+Date:   Fri,  5 Oct 2018 12:13:38 -0400
+Message-Id: <20181005161424.20521-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
+References: <20181005161424.20521-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Ryan Lee <ryans.lee@maximintegrated.com>
 
-[ Upstream commit 249dc49576fc953a7378b916c6a6d47ea81e4da2 ]
+[ Upstream commit 0d22825255f25adb6a609f130b42c752d3fd0f5d ]
 
-Commit a655de808cbde ("ASoC: core: Allow topology to override
-machine driver FE DAI link config.") caused soc_dai_hw_params to
-be come dependent on the substream private_data being set with
-a pointer to the snd_soc_pcm_runtime. Currently, CODEC to CODEC
-links don't set this, which causes a NULL pointer dereference:
-
-[<4069de54>] (soc_dai_hw_params) from
-[<40694b68>] (snd_soc_dai_link_event+0x1a0/0x380)
-
-Since the ASoC core in general assumes that the substream
-private_data will be set to a pointer to the snd_soc_pcm_runtime,
-update the CODEC to CODEC links to respect this.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/sound/soc-dapm.h | 1 +
- sound/soc/soc-core.c     | 4 ++--
- sound/soc/soc-dapm.c     | 4 ++++
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/codecs/max98373.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
-index a6ce2de4e20a..be3bee1cf91f 100644
---- a/include/sound/soc-dapm.h
-+++ b/include/sound/soc-dapm.h
-@@ -410,6 +410,7 @@ int snd_soc_dapm_new_dai_widgets(struct snd_soc_dapm_context *dapm,
- int snd_soc_dapm_link_dai_widgets(struct snd_soc_card *card);
- void snd_soc_dapm_connect_dai_link_widgets(struct snd_soc_card *card);
- int snd_soc_dapm_new_pcm(struct snd_soc_card *card,
-+			 struct snd_soc_pcm_runtime *rtd,
- 			 const struct snd_soc_pcm_stream *params,
- 			 unsigned int num_params,
- 			 struct snd_soc_dapm_widget *source,
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 4663de3cf495..0b4896d411f9 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1430,7 +1430,7 @@ static int soc_link_dai_widgets(struct snd_soc_card *card,
- 	sink = codec_dai->playback_widget;
- 	source = cpu_dai->capture_widget;
- 	if (sink && source) {
--		ret = snd_soc_dapm_new_pcm(card, dai_link->params,
-+		ret = snd_soc_dapm_new_pcm(card, rtd, dai_link->params,
- 					   dai_link->num_params,
- 					   source, sink);
- 		if (ret != 0) {
-@@ -1443,7 +1443,7 @@ static int soc_link_dai_widgets(struct snd_soc_card *card,
- 	sink = cpu_dai->playback_widget;
- 	source = codec_dai->capture_widget;
- 	if (sink && source) {
--		ret = snd_soc_dapm_new_pcm(card, dai_link->params,
-+		ret = snd_soc_dapm_new_pcm(card, rtd, dai_link->params,
- 					   dai_link->num_params,
- 					   source, sink);
- 		if (ret != 0) {
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index a099c3e45504..577f6178af57 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3658,6 +3658,7 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
+diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
+index a92586106932..eb2e9b3c7201 100644
+--- a/sound/soc/codecs/max98373.c
++++ b/sound/soc/codecs/max98373.c
+@@ -519,6 +519,7 @@ static bool max98373_volatile_reg(struct device *dev, unsigned int reg)
  {
- 	struct snd_soc_dapm_path *source_p, *sink_p;
- 	struct snd_soc_dai *source, *sink;
-+	struct snd_soc_pcm_runtime *rtd = w->priv;
- 	const struct snd_soc_pcm_stream *config = w->params + w->params_select;
- 	struct snd_pcm_substream substream;
- 	struct snd_pcm_hw_params *params = NULL;
-@@ -3717,6 +3718,7 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
- 		goto out;
- 	}
- 	substream.runtime = runtime;
-+	substream.private_data = rtd;
- 
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMU:
-@@ -3901,6 +3903,7 @@ snd_soc_dapm_alloc_kcontrol(struct snd_soc_card *card,
- }
- 
- int snd_soc_dapm_new_pcm(struct snd_soc_card *card,
-+			 struct snd_soc_pcm_runtime *rtd,
- 			 const struct snd_soc_pcm_stream *params,
- 			 unsigned int num_params,
- 			 struct snd_soc_dapm_widget *source,
-@@ -3969,6 +3972,7 @@ int snd_soc_dapm_new_pcm(struct snd_soc_card *card,
- 
- 	w->params = params;
- 	w->num_params = num_params;
-+	w->priv = rtd;
- 
- 	ret = snd_soc_dapm_add_path(&card->dapm, source, w, NULL, NULL);
- 	if (ret)
+ 	switch (reg) {
+ 	case MAX98373_R2000_SW_RESET ... MAX98373_R2009_INT_FLAG3:
++	case MAX98373_R203E_AMP_PATH_GAIN:
+ 	case MAX98373_R2054_MEAS_ADC_PVDD_CH_READBACK:
+ 	case MAX98373_R2055_MEAS_ADC_THERM_CH_READBACK:
+ 	case MAX98373_R20B6_BDE_CUR_STATE_READBACK:
 -- 
 2.17.1
 
