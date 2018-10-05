@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A8FC65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366D0C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713F721477
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E71FA2148D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUX/1/d/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713F721477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3Y/cOfu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71FA2148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbeJEXOG (ORCPT
+        id S1729365AbeJEXOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729295AbeJEXOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:06 -0400
+        id S1729295AbeJEXOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 218852148D;
+        by mail.kernel.org (Postfix) with ESMTPSA id ED90F2148C;
         Fri,  5 Oct 2018 16:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756083;
-        bh=Acp24Y/qNpg5h5uol7Ywa/4dJXI+vM6T1hk/KNtLNlc=;
+        s=default; t=1538756084;
+        bh=IVhuoQqtByZIttKnONdHtdyV++z1WAE/xlvPgGP2Zpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cUX/1/d/PfNTqHfWZu+wR87Fkc923cKBki5I+sZZqmAA2UKAXFZzMwTrluZpW+DVV
-         FG6NFXWqcnjuKc4xdUZJ6RaMy+n48cul7G2+A8WY35/noibs2xaEDsRFKBVdw3itNM
-         dQdoLu9+CsxaqDvLdAdngnYilhHY6Zc+9QTR3QkY=
+        b=D3Y/cOfu0kRUUuMp45Qg/xgi1hCH6z9o8uebL+VpH/3UnatnVsNChOZI23cSGqFWz
+         3HDuv8HnmXNZcSvwBxjaoA6NJiuLvYriGnoNMfAM40fg9OlsUXqfG8LYtnRZwq6eZt
+         jK8cTV68gET7RA89suKkvXiYLfAB7a6qMnfBIeV4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Johan Hedberg <johan.hedberg@intel.com>,
+Cc:     Matias Karhumaa <matias.karhumaa@gmail.com>,
+        Johan Hedberg <johan.hedberg@intel.com>,
         Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 20/48] Bluetooth: SMP: Fix trying to use non-existent local OOB data
-Date:   Fri,  5 Oct 2018 12:13:56 -0400
-Message-Id: <20181005161424.20521-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 21/48] Bluetooth: Use correct tfm to generate OOB data
+Date:   Fri,  5 Oct 2018 12:13:57 -0400
+Message-Id: <20181005161424.20521-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -52,69 +53,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hedberg <johan.hedberg@intel.com>
+From: Matias Karhumaa <matias.karhumaa@gmail.com>
 
-[ Upstream commit 94f14e4728125f979629b2b020d31cd718191626 ]
+[ Upstream commit 4ba5175f2c10affd412fa41855cecda02b66cd71 ]
 
-A remote device may claim that it has received our OOB data, even
-though we never geneated it. Add a new flag to track whether we
-actually have OOB data, and ignore the remote peer's flag if haven't
-generated OOB data.
+In case local OOB data was generated and other device initiated pairing
+claiming that it has got OOB data, following crash occurred:
 
+[  222.847853] general protection fault: 0000 [#1] SMP PTI
+[  222.848025] CPU: 1 PID: 42 Comm: kworker/u5:0 Tainted: G         C        4.18.0-custom #4
+[  222.848158] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  222.848307] Workqueue: hci0 hci_rx_work [bluetooth]
+[  222.848416] RIP: 0010:compute_ecdh_secret+0x5a/0x270 [bluetooth]
+[  222.848540] Code: 0c af f5 48 8b 3d 46 de f0 f6 ba 40 00 00 00 be c0 00 60 00 e8 b7 7b c5 f5 48 85 c0 0f 84 ea 01 00 00 48 89 c3 e8 16 0c af f5 <49> 8b 47 38 be c0 00 60 00 8b 78 f8 48 83 c7 48 e8 51 84 c5 f5 48
+[  222.848914] RSP: 0018:ffffb1664087fbc0 EFLAGS: 00010293
+[  222.849021] RAX: ffff8a5750d7dc00 RBX: ffff8a5671096780 RCX: ffffffffc08bc32a
+[  222.849111] RDX: 0000000000000000 RSI: 00000000006000c0 RDI: ffff8a5752003800
+[  222.849192] RBP: ffffb1664087fc60 R08: ffff8a57525280a0 R09: ffff8a5752003800
+[  222.849269] R10: ffffb1664087fc70 R11: 0000000000000093 R12: ffff8a5674396e00
+[  222.849350] R13: ffff8a574c2e79aa R14: ffff8a574c2e796a R15: 020e0e100d010101
+[  222.849429] FS:  0000000000000000(0000) GS:ffff8a5752500000(0000) knlGS:0000000000000000
+[  222.849518] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  222.849586] CR2: 000055856016a038 CR3: 0000000110d2c005 CR4: 00000000000606e0
+[  222.849671] Call Trace:
+[  222.849745]  ? sc_send_public_key+0x110/0x2a0 [bluetooth]
+[  222.849825]  ? sc_send_public_key+0x115/0x2a0 [bluetooth]
+[  222.849925]  smp_recv_cb+0x959/0x2490 [bluetooth]
+[  222.850023]  ? _cond_resched+0x19/0x40
+[  222.850105]  ? mutex_lock+0x12/0x40
+[  222.850202]  l2cap_recv_frame+0x109d/0x3420 [bluetooth]
+[  222.850315]  ? l2cap_recv_frame+0x109d/0x3420 [bluetooth]
+[  222.850426]  ? __switch_to_asm+0x34/0x70
+[  222.850515]  ? __switch_to_asm+0x40/0x70
+[  222.850625]  ? __switch_to_asm+0x34/0x70
+[  222.850724]  ? __switch_to_asm+0x40/0x70
+[  222.850786]  ? __switch_to_asm+0x34/0x70
+[  222.850846]  ? __switch_to_asm+0x40/0x70
+[  222.852581]  ? __switch_to_asm+0x34/0x70
+[  222.854976]  ? __switch_to_asm+0x40/0x70
+[  222.857475]  ? __switch_to_asm+0x40/0x70
+[  222.859775]  ? __switch_to_asm+0x34/0x70
+[  222.861218]  ? __switch_to_asm+0x40/0x70
+[  222.862327]  ? __switch_to_asm+0x34/0x70
+[  222.863758]  l2cap_recv_acldata+0x266/0x3c0 [bluetooth]
+[  222.865122]  hci_rx_work+0x1c9/0x430 [bluetooth]
+[  222.867144]  process_one_work+0x210/0x4c0
+[  222.868248]  worker_thread+0x41/0x4d0
+[  222.869420]  kthread+0x141/0x160
+[  222.870694]  ? process_one_work+0x4c0/0x4c0
+[  222.871668]  ? kthread_create_worker_on_cpu+0x90/0x90
+[  222.872896]  ret_from_fork+0x35/0x40
+[  222.874132] Modules linked in: algif_hash algif_skcipher af_alg rfcomm bnep btusb btrtl btbcm btintel snd_intel8x0 cmac intel_rapl_perf vboxvideo(C) snd_ac97_codec bluetooth ac97_bus joydev ttm snd_pcm ecdh_generic drm_kms_helper snd_timer snd input_leds drm serio_raw fb_sys_fops soundcore syscopyarea sysfillrect sysimgblt mac_hid sch_fq_codel ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi ip_tables x_tables autofs4 btrfs zstd_compress raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 multipath linear hid_generic usbhid hid crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper ahci psmouse libahci i2c_piix4 video e1000 pata_acpi
+[  222.883153] fbcon_switch: detected unhandled fb_set_par error, error code -16
+[  222.886774] fbcon_switch: detected unhandled fb_set_par error, error code -16
+[  222.890503] ---[ end trace 6504aa7a777b5316 ]---
+[  222.890541] RIP: 0010:compute_ecdh_secret+0x5a/0x270 [bluetooth]
+[  222.890551] Code: 0c af f5 48 8b 3d 46 de f0 f6 ba 40 00 00 00 be c0 00 60 00 e8 b7 7b c5 f5 48 85 c0 0f 84 ea 01 00 00 48 89 c3 e8 16 0c af f5 <49> 8b 47 38 be c0 00 60 00 8b 78 f8 48 83 c7 48 e8 51 84 c5 f5 48
+[  222.890555] RSP: 0018:ffffb1664087fbc0 EFLAGS: 00010293
+[  222.890561] RAX: ffff8a5750d7dc00 RBX: ffff8a5671096780 RCX: ffffffffc08bc32a
+[  222.890565] RDX: 0000000000000000 RSI: 00000000006000c0 RDI: ffff8a5752003800
+[  222.890571] RBP: ffffb1664087fc60 R08: ffff8a57525280a0 R09: ffff8a5752003800
+[  222.890576] R10: ffffb1664087fc70 R11: 0000000000000093 R12: ffff8a5674396e00
+[  222.890581] R13: ffff8a574c2e79aa R14: ffff8a574c2e796a R15: 020e0e100d010101
+[  222.890586] FS:  0000000000000000(0000) GS:ffff8a5752500000(0000) knlGS:0000000000000000
+[  222.890591] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  222.890594] CR2: 000055856016a038 CR3: 0000000110d2c005 CR4: 00000000000606e0
+
+This commit fixes a bug where invalid pointer to crypto tfm was used for
+SMP SC ECDH calculation when OOB was in use. Solution is to use same
+crypto tfm than when generating OOB material on generate_oob() function.
+
+This bug was introduced in commit c0153b0b901a ("Bluetooth: let the crypto
+subsystem generate the ecc privkey"). Bug was found by fuzzing kernel SMP
+implementation using Synopsys Defensics.
+
+Signed-off-by: Matias Karhumaa <matias.karhumaa@gmail.com>
 Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
 Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/bluetooth/smp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/bluetooth/smp.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-index ae91e2d40056..9752879fdd3a 100644
+index 9752879fdd3a..3a7b0773536b 100644
 --- a/net/bluetooth/smp.c
 +++ b/net/bluetooth/smp.c
-@@ -83,6 +83,7 @@ enum {
- 
- struct smp_dev {
- 	/* Secure Connections OOB data */
-+	bool			local_oob;
- 	u8			local_pk[64];
- 	u8			local_rand[16];
- 	bool			debug_key;
-@@ -599,6 +600,8 @@ int smp_generate_oob(struct hci_dev *hdev, u8 hash[16], u8 rand[16])
- 
- 	memcpy(rand, smp->local_rand, 16);
- 
-+	smp->local_oob = true;
+@@ -2700,7 +2700,13 @@ static int smp_cmd_public_key(struct l2cap_conn *conn, struct sk_buff *skb)
+ 	 * key was set/generated.
+ 	 */
+ 	if (test_bit(SMP_FLAG_LOCAL_OOB, &smp->flags)) {
+-		struct smp_dev *smp_dev = chan->data;
++		struct l2cap_chan *hchan = hdev->smp_data;
++		struct smp_dev *smp_dev;
 +
- 	return 0;
- }
++		if (!hchan || !hchan->data)
++			return SMP_UNSPECIFIED;
++
++		smp_dev = hchan->data;
  
-@@ -1785,7 +1788,7 @@ static u8 smp_cmd_pairing_req(struct l2cap_conn *conn, struct sk_buff *skb)
- 	 * successfully received our local OOB data - therefore set the
- 	 * flag to indicate that local OOB is in use.
- 	 */
--	if (req->oob_flag == SMP_OOB_PRESENT)
-+	if (req->oob_flag == SMP_OOB_PRESENT && SMP_DEV(hdev)->local_oob)
- 		set_bit(SMP_FLAG_LOCAL_OOB, &smp->flags);
- 
- 	/* SMP over BR/EDR requires special treatment */
-@@ -1967,7 +1970,7 @@ static u8 smp_cmd_pairing_rsp(struct l2cap_conn *conn, struct sk_buff *skb)
- 	 * successfully received our local OOB data - therefore set the
- 	 * flag to indicate that local OOB is in use.
- 	 */
--	if (rsp->oob_flag == SMP_OOB_PRESENT)
-+	if (rsp->oob_flag == SMP_OOB_PRESENT && SMP_DEV(hdev)->local_oob)
- 		set_bit(SMP_FLAG_LOCAL_OOB, &smp->flags);
- 
- 	smp->prsp[0] = SMP_CMD_PAIRING_RSP;
-@@ -3230,6 +3233,7 @@ static struct l2cap_chan *smp_add_cid(struct hci_dev *hdev, u16 cid)
- 		return ERR_CAST(tfm_ecdh);
- 	}
- 
-+	smp->local_oob = false;
- 	smp->tfm_aes = tfm_aes;
- 	smp->tfm_cmac = tfm_cmac;
- 	smp->tfm_ecdh = tfm_ecdh;
+ 		tfm_ecdh = smp_dev->tfm_ecdh;
+ 	} else {
 -- 
 2.17.1
 
