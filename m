@@ -2,47 +2,51 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387BBC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A85C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E56C4214C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E13E214DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAufOOLK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56C4214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfXYC4nb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E13E214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbeJEXOK (ORCPT
+        id S1729407AbeJEXOL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51408 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729295AbeJEXOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:09 -0400
+        id S1729366AbeJEXOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5948214AB;
-        Fri,  5 Oct 2018 16:14:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C8A52147D;
+        Fri,  5 Oct 2018 16:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756086;
-        bh=YTwFsFtCMCLM7lEd0JySFItqR8epexOHVyd88TK1yTY=;
+        s=default; t=1538756087;
+        bh=QtIRZySVkRRK9rQOCIEFPI7DqV8HV1GVgZeCRrtvL2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RAufOOLK/RvEX7s6zhlWl1J78EIl/1o2csaUJztR4SaW+6FDKXnx2hg9VYSoUcw+2
-         Geka+sAMxnk1JUOhvM9Lu5LHebfhuXT4qDtuiDzSlxCsy5Gse2uFxyMtkSw6glMDGc
-         71HbAS8P747h9hlYx6ZooDAStm30+VOrS2xyRZi8=
+        b=hfXYC4nbi1jkM23XS59U/clmb/Zkghtne5rBbxmpw9mQNpNPbKAmuEjj4yhIv4mZO
+         c2W0OfwggykdBo6eilsQasQAKskXfyRnSdmG1MPePEdbTePDlmcBX6+A/OhBqUdtsF
+         o7rt7T2xPHbDLcMHP2CccrPaKx9dbUyXn21y7b/A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 23/48] mfd: omap-usb-host: Fix dts probe of children
-Date:   Fri,  5 Oct 2018 12:13:59 -0400
-Message-Id: <20181005161424.20521-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 24/48] KVM: PPC: Book3S HV: Don't use compound_order to determine host mapping size
+Date:   Fri,  5 Oct 2018 12:14:00 -0400
+Message-Id: <20181005161424.20521-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -51,70 +55,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
+[ Upstream commit 71d29f43b6332badc5598c656616a62575e83342 ]
 
-It currently only works if the parent bus uses "simple-bus". We
-currently try to probe children with non-existing compatible values.
-And we're missing .probe.
+THP paths can defer splitting compound pages until after the actual
+remap and TLB flushes to split a huge PMD/PUD. This causes radix
+partition scope page table mappings to get out of synch with the host
+qemu page table mappings.
 
-I noticed this while testing devices configured to probe using ti-sysc
-interconnect target module driver. For that we also may want to rebind
-the driver, so let's remove __init and __exit.
+This results in random memory corruption in the guest when running
+with THP. The easiest way to reproduce is use KVM balloon to free up
+a lot of memory in the guest and then shrink the balloon to give the
+memory back, while some work is being done in the guest.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Cc: David Gibson <david@gibson.dropbear.id.au>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc: kvm-ppc@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mfd/omap-usb-host.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/powerpc/kvm/book3s_64_mmu_radix.c | 91 +++++++++++---------------
+ 1 file changed, 37 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
-index e11ab12fbdf2..800986a79704 100644
---- a/drivers/mfd/omap-usb-host.c
-+++ b/drivers/mfd/omap-usb-host.c
-@@ -528,8 +528,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
- }
- 
- static const struct of_device_id usbhs_child_match_table[] = {
--	{ .compatible = "ti,omap-ehci", },
--	{ .compatible = "ti,omap-ohci", },
-+	{ .compatible = "ti,ehci-omap", },
-+	{ .compatible = "ti,ohci-omap3", },
- 	{ }
- };
- 
-@@ -855,6 +855,7 @@ static struct platform_driver usbhs_omap_driver = {
- 		.pm		= &usbhsomap_dev_pm_ops,
- 		.of_match_table = usbhs_omap_dt_ids,
- 	},
-+	.probe		= usbhs_omap_probe,
- 	.remove		= usbhs_omap_remove,
- };
- 
-@@ -864,9 +865,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
- 
--static int __init omap_usbhs_drvinit(void)
-+static int omap_usbhs_drvinit(void)
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book3s_64_mmu_radix.c
+index 7efc42538ccf..ae023d2256ef 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
+@@ -538,8 +538,8 @@ int kvmppc_book3s_radix_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
+ 				   unsigned long ea, unsigned long dsisr)
  {
--	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
-+	return platform_driver_register(&usbhs_omap_driver);
- }
+ 	struct kvm *kvm = vcpu->kvm;
+-	unsigned long mmu_seq, pte_size;
+-	unsigned long gpa, gfn, hva, pfn;
++	unsigned long mmu_seq;
++	unsigned long gpa, gfn, hva;
+ 	struct kvm_memory_slot *memslot;
+ 	struct page *page = NULL;
+ 	long ret;
+@@ -636,9 +636,10 @@ int kvmppc_book3s_radix_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
+ 	 */
+ 	hva = gfn_to_hva_memslot(memslot, gfn);
+ 	if (upgrade_p && __get_user_pages_fast(hva, 1, 1, &page) == 1) {
+-		pfn = page_to_pfn(page);
+ 		upgrade_write = true;
+ 	} else {
++		unsigned long pfn;
++
+ 		/* Call KVM generic code to do the slow-path check */
+ 		pfn = __gfn_to_pfn_memslot(memslot, gfn, false, NULL,
+ 					   writing, upgrade_p);
+@@ -652,63 +653,45 @@ int kvmppc_book3s_radix_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
+ 		}
+ 	}
  
- /*
-@@ -878,7 +879,7 @@ static int __init omap_usbhs_drvinit(void)
-  */
- fs_initcall_sync(omap_usbhs_drvinit);
+-	/* See if we can insert a 1GB or 2MB large PTE here */
+-	level = 0;
+-	if (page && PageCompound(page)) {
+-		pte_size = PAGE_SIZE << compound_order(compound_head(page));
+-		if (pte_size >= PUD_SIZE &&
+-		    (gpa & (PUD_SIZE - PAGE_SIZE)) ==
+-		    (hva & (PUD_SIZE - PAGE_SIZE))) {
+-			level = 2;
+-			pfn &= ~((PUD_SIZE >> PAGE_SHIFT) - 1);
+-		} else if (pte_size >= PMD_SIZE &&
+-			   (gpa & (PMD_SIZE - PAGE_SIZE)) ==
+-			   (hva & (PMD_SIZE - PAGE_SIZE))) {
+-			level = 1;
+-			pfn &= ~((PMD_SIZE >> PAGE_SHIFT) - 1);
+-		}
+-	}
+-
+ 	/*
+-	 * Compute the PTE value that we need to insert.
++	 * Read the PTE from the process' radix tree and use that
++	 * so we get the shift and attribute bits.
+ 	 */
+-	if (page) {
+-		pgflags = _PAGE_READ | _PAGE_EXEC | _PAGE_PRESENT | _PAGE_PTE |
+-			_PAGE_ACCESSED;
+-		if (writing || upgrade_write)
+-			pgflags |= _PAGE_WRITE | _PAGE_DIRTY;
+-		pte = pfn_pte(pfn, __pgprot(pgflags));
++	local_irq_disable();
++	ptep = __find_linux_pte(vcpu->arch.pgdir, hva, NULL, &shift);
++	pte = *ptep;
++	local_irq_enable();
++
++	/* Get pte level from shift/size */
++	if (shift == PUD_SHIFT &&
++	    (gpa & (PUD_SIZE - PAGE_SIZE)) ==
++	    (hva & (PUD_SIZE - PAGE_SIZE))) {
++		level = 2;
++	} else if (shift == PMD_SHIFT &&
++		   (gpa & (PMD_SIZE - PAGE_SIZE)) ==
++		   (hva & (PMD_SIZE - PAGE_SIZE))) {
++		level = 1;
+ 	} else {
+-		/*
+-		 * Read the PTE from the process' radix tree and use that
+-		 * so we get the attribute bits.
+-		 */
+-		local_irq_disable();
+-		ptep = __find_linux_pte(vcpu->arch.pgdir, hva, NULL, &shift);
+-		pte = *ptep;
+-		local_irq_enable();
+-		if (shift == PUD_SHIFT &&
+-		    (gpa & (PUD_SIZE - PAGE_SIZE)) ==
+-		    (hva & (PUD_SIZE - PAGE_SIZE))) {
+-			level = 2;
+-		} else if (shift == PMD_SHIFT &&
+-			   (gpa & (PMD_SIZE - PAGE_SIZE)) ==
+-			   (hva & (PMD_SIZE - PAGE_SIZE))) {
+-			level = 1;
+-		} else if (shift && shift != PAGE_SHIFT) {
+-			/* Adjust PFN */
+-			unsigned long mask = (1ul << shift) - PAGE_SIZE;
+-			pte = __pte(pte_val(pte) | (hva & mask));
+-		}
+-		pte = __pte(pte_val(pte) | _PAGE_EXEC | _PAGE_ACCESSED);
+-		if (writing || upgrade_write) {
+-			if (pte_val(pte) & _PAGE_WRITE)
+-				pte = __pte(pte_val(pte) | _PAGE_DIRTY);
+-		} else {
+-			pte = __pte(pte_val(pte) & ~(_PAGE_WRITE | _PAGE_DIRTY));
++		level = 0;
++		if (shift > PAGE_SHIFT) {
++			/*
++			 * If the pte maps more than one page, bring over
++			 * bits from the virtual address to get the real
++			 * address of the specific single page we want.
++			 */
++			unsigned long rpnmask = (1ul << shift) - PAGE_SIZE;
++			pte = __pte(pte_val(pte) | (hva & rpnmask));
+ 		}
+ 	}
  
--static void __exit omap_usbhs_drvexit(void)
-+static void omap_usbhs_drvexit(void)
- {
- 	platform_driver_unregister(&usbhs_omap_driver);
- }
++	pte = __pte(pte_val(pte) | _PAGE_EXEC | _PAGE_ACCESSED);
++	if (writing || upgrade_write) {
++		if (pte_val(pte) & _PAGE_WRITE)
++			pte = __pte(pte_val(pte) | _PAGE_DIRTY);
++	} else {
++		pte = __pte(pte_val(pte) & ~(_PAGE_WRITE | _PAGE_DIRTY));
++	}
++
+ 	/* Allocate space in the tree and write the PTE */
+ 	ret = kvmppc_create_pte(kvm, pte, gpa, level, mmu_seq);
+ 
 -- 
 2.17.1
 
