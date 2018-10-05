@@ -2,133 +2,133 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF30C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A16C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972F7214C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:18:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972F7214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AA57208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:19:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA57208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbeJEXSL (ORCPT
+        id S1730437AbeJEXSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:18:11 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40260 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728967AbeJEXSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:18:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 09:18:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,345,1534834800"; 
-   d="scan'208";a="86033243"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Oct 2018 09:18:23 -0700
-Message-ID: <fc2f98ab46240c0498bdf4d7458b4373c1f02bf8.camel@intel.com>
-Subject: Re: [RFC PATCH v4 3/9] x86/cet/ibt: Add IBT legacy code bitmap
- allocation function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Fri, 05 Oct 2018 09:13:40 -0700
-In-Reply-To: <20181003195702.GF32759@asgard.redhat.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
-         <20180921150553.21016-4-yu-cheng.yu@intel.com>
-         <20181003195702.GF32759@asgard.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 5 Oct 2018 19:18:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:46027 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728967AbeJEXSW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:18:22 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N1M4p-1fjOZh2og7-012lnk; Fri, 05 Oct 2018 18:18:46 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N1M4p-1fjOZh2og7-012lnk; Fri, 05 Oct 2018 18:18:46 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Ilya Dryomov <idryomov@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: use an enum instead of 'static const' to define constants
+Date:   Fri,  5 Oct 2018 18:18:38 +0200
+Message-Id: <20181005161845.959919-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:U7g/JovbVRmUvIWHMhDo9InnZSi8KsJh/pi3+A9ngUPNgizb2Hf
+ W5RQ3Ipj5w4F+uq/eGlHnv0KHiu9E3Z3v8efvqvItWENnFaKoAgvkLL4ZQGyC4Df3naQzFW
+ PaMRbzlR2g1ammXJ2S7ylluXYLtpMJYx6E8vLzMdiXeUJqmx572WOPRC75My6euQXLE0vcr
+ sdzAMZ7vDKwFIJWEWNlrQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:DnMKUp3GjcI=:FqVSfnHXe1ZrtpryTC8gJm
+ HANSyzqF8t2DogP+/YNO37uKFFLM3wXR9Upn6BNvsJYA2xMm/kVHZ1igEMxJcA8iURZ1bCqKA
+ FESzZD7+nbCZev+CVx7QE1cvBIQZsqcIKLCZGdFnJtJjIBPewIcz/Y2vdAE5/HvmhRItG4+/E
+ YQCMOBu6nzKvJIR1NxV2pwrv/pZWzFA2IjLKohM/8H+/J6JXSyKumJja/g2OL7K6f5Kmp9CtJ
+ SBOPlLS1anV5cj958REeAlVKv5VBAqpKsRJjXDkPJB6HB0u1BPCQPYLYcQOWfGho1sxQ78PNU
+ 1bcMgsUwjc8TpcqhKmGgTQRE2oVEQnH+C5MM4jTs/TkY49OgvxwOVmzzOLu5wS8ep/WOa5/jm
+ sucpgYqUBbvD8uuJx2qgP4YIR5ENeiMHbL7WYcdCmbX9IqSUjm0V1zeD2p2U+BIvspLG+NmNU
+ k4Y2AEfsSKxR5yevvBJdEESRgdWLLD3r39FVJoLPsL9C8UabPzOnfMgAXqZejyVMwQ+uvjFXh
+ XPZIKVkB09UReAnAgcYuBQSgWlaEiMCLlYcbCxachz4mX0wgQ2TIhK6NbiW4q4LrAQxcFr90m
+ XYnOvf0meOU5pT7XLOgrIfWLe7oiNk1A45nwEzdsgm0tThnNr0T0CPjjBbWunzjdm6eJXy4pd
+ udV1YW/OZtQy4StF0H4w9D7vLaiVokUSIXzPy6S2/86CqmEh6wgaoiLoXXZMbYMUFIpU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-03 at 21:57 +0200, Eugene Syromiatnikov wrote:
-> On Fri, Sep 21, 2018 at 08:05:47AM -0700, Yu-cheng Yu wrote:
-> > Indirect branch tracking provides an optional legacy code bitmap
-> > that indicates locations of non-IBT compatible code.  When set,
-> > each bit in the bitmap represents a page in the linear address is
-> > legacy code.
-> > 
-> > We allocate the bitmap only when the application requests it.
-> > Most applications do not need the bitmap.
-> > 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> >  arch/x86/kernel/cet.c | 45 +++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 45 insertions(+)
-> > 
-> > diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-> > index 6adfe795d692..a65d9745af08 100644
-> > --- a/arch/x86/kernel/cet.c
-> > +++ b/arch/x86/kernel/cet.c
-> > @@ -314,3 +314,48 @@ void cet_disable_ibt(void)
-> >  	wrmsrl(MSR_IA32_U_CET, r);
-> >  	current->thread.cet.ibt_enabled = 0;
-> >  }
-> > +
-> > +int cet_setup_ibt_bitmap(void)
-> > +{
-> > +	u64 r;
-> > +	unsigned long bitmap;
-> > +	unsigned long size;
-> > +
-> > +	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	if (!current->thread.cet.ibt_bitmap_addr) {
-> > +		/*
-> > +		 * Calculate size and put in thread header.
-> > +		 * may_expand_vm() needs this information.
-> > +		 */
-> > +		size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
-> 
-> TASK_SIZE_MAX is likely needed here, as an application can easily switch
-> between long an 32-bit protected mode.  And then the case of a CPU that
-> doesn't support 5LPT.
+Building with W=1 produces lots of warnings for files including
+ceph_features.h:
 
-If we had calculated bitmap size from TASK_SIZE_MAX, all 32-bit apps would have
-failed the allocation for bitmap size > TASK_SIZE.  Please see values below,
-which is printed from the current code.
+include/linux/ceph/ceph_features.h:15:24: error: 'CEPH_FEATUREMASK_SERVER_M' defined but not used [-Werror=unused-const-variable=]
 
-Yu-cheng
+The normal way to define compile-time constants in the kernel is
+to use either macros or enums, and gcc does not warn about those.
 
+Converting to an enum is simple here and means we can still use
+the names while debugging.
 
-x64:
-TASK_SIZE_MAX	= 0000 7fff ffff f000
-TASK_SIZE	= 0000 7fff ffff f000
-bitmap size	= 0000 0000 ffff ffff
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/ceph/ceph_features.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-x32:
-TASK_SIZE_MAX	= 0000 7fff ffff f000
-TASK_SIZE	= 0000 0000 ffff e000
-bitmap size	= 0000 0000 0001 ffff
+diff --git a/include/linux/ceph/ceph_features.h b/include/linux/ceph/ceph_features.h
+index 6b92b3395fa9..676908eca060 100644
+--- a/include/linux/ceph/ceph_features.h
++++ b/include/linux/ceph/ceph_features.h
+@@ -11,15 +11,15 @@
+ #define CEPH_FEATURE_INCARNATION_2 (1ull<<57) // CEPH_FEATURE_SERVER_JEWEL
+ 
+ #define DEFINE_CEPH_FEATURE(bit, incarnation, name)			\
+-	static const uint64_t CEPH_FEATURE_##name = (1ULL<<bit);		\
+-	static const uint64_t CEPH_FEATUREMASK_##name =			\
+-		(1ULL<<bit | CEPH_FEATURE_INCARNATION_##incarnation);
++	CEPH_FEATURE_##name = (1ULL<<bit),				\
++	CEPH_FEATUREMASK_##name =					\
++		(1ULL<<bit | CEPH_FEATURE_INCARNATION_##incarnation),
+ 
+ /* this bit is ignored but still advertised by release *when* */
+-#define DEFINE_CEPH_FEATURE_DEPRECATED(bit, incarnation, name, when) \
+-	static const uint64_t DEPRECATED_CEPH_FEATURE_##name = (1ULL<<bit); \
+-	static const uint64_t DEPRECATED_CEPH_FEATUREMASK_##name =		\
+-		(1ULL<<bit | CEPH_FEATURE_INCARNATION_##incarnation);
++#define DEFINE_CEPH_FEATURE_DEPRECATED(bit, incarnation, name, when)	\
++	DEPRECATED_CEPH_FEATURE_##name = (1ULL<<bit),			\
++	DEPRECATED_CEPH_FEATUREMASK_##name =				\
++		(1ULL<<bit | CEPH_FEATURE_INCARNATION_##incarnation),
+ 
+ /*
+  * this bit is ignored by release *unused* and not advertised by
+@@ -71,7 +71,7 @@
+  * This ensures that no two versions who have different meanings for
+  * the bit ever speak to each other.
+  */
+-
++enum ceph_features {
+ DEFINE_CEPH_FEATURE( 0, 1, UID)
+ DEFINE_CEPH_FEATURE( 1, 1, NOSRCADDR)
+ DEFINE_CEPH_FEATURE_RETIRED( 2, 1, MONCLOCKCHECK, JEWEL, LUMINOUS)
+@@ -170,13 +170,13 @@ DEFINE_CEPH_FEATURE(61, 1, CEPHX_V2)             // *do not share this bit*
+ 
+ DEFINE_CEPH_FEATURE(62, 1, RESERVED)           // do not use; used as a sentinal
+ DEFINE_CEPH_FEATURE_DEPRECATED(63, 1, RESERVED_BROKEN, LUMINOUS) // client-facing
+-
++};
+ 
+ /*
+  * Features supported.
+  */
+ #define CEPH_FEATURES_SUPPORTED_DEFAULT		\
+-	(CEPH_FEATURE_NOSRCADDR |		\
++	(u64)(CEPH_FEATURE_NOSRCADDR |		\
+ 	 CEPH_FEATURE_FLOCK |			\
+ 	 CEPH_FEATURE_SUBSCRIBE2 |		\
+ 	 CEPH_FEATURE_RECONNECT_SEQ |		\
+-- 
+2.18.0
 
