@@ -2,114 +2,255 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A65FC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C0C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB2A2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:16:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB2A2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id DD2F52087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:17:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTySl17o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2F52087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbeJEWPe (ORCPT
+        id S1728580AbeJEWQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:15:34 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:53169 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbeJEWPe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:15:34 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g8Rpl-0007GU-Bd; Fri, 05 Oct 2018 17:16:05 +0200
-Message-ID: <1538752564.3545.37.camel@pengutronix.de>
-Subject: Re: [PATCH v2] reset: Exclusive resets must be dedicated to a
- single hardware block
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Date:   Fri, 05 Oct 2018 17:16:04 +0200
-In-Reply-To: <CAMuHMdUC3dGRnMCsX3HjmGgb0-vLSNXKXRiiAS+TzW72_uM+LQ@mail.gmail.com>
-References: <20180927180038.24599-1-geert+renesas@glider.be>
-         <1538648094.14153.8.camel@pengutronix.de>
-         <CAMuHMdV_qb8qDFJ1VT6FYYkHK73tjbp2hOUShaOEhezPWg+VDg@mail.gmail.com>
-         <CAMuHMdUC3dGRnMCsX3HjmGgb0-vLSNXKXRiiAS+TzW72_uM+LQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Fri, 5 Oct 2018 18:16:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727735AbeJEWQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:16:22 -0400
+Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A6EA2084D;
+        Fri,  5 Oct 2018 15:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538752632;
+        bh=XQlPBL5t9aJ3r48RKmEeViCFziv42vK6Afw2TwbTLR8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YTySl17osIQ6+Mwm6L5C/mD/APHFrkP1fYGyuyTGVzr/7a5iNQ1ASj0KZzivEEzCM
+         KT05F1zY5XzlMbtHYknbF2ARueW83r94ll4Bib0DptSSux0mTRIdgykQUUtsb3Uj8S
+         ff3YJb+ZMhIxEfKWmyK3TYoA1S/zTp2WqoqoxEWc=
+Subject: Re: [PATCH] reset: socfpga: add an early reset driver for SoCFPGA
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     marex@denx.de, linux-kernel@vger.kernel.org
+References: <1537195830-25759-1-git-send-email-dinguyen@kernel.org>
+ <1538646836.14153.4.camel@pengutronix.de>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <04f701c1-8f1c-ee99-6797-cfbe769ebbc7@kernel.org>
+Date:   Fri, 5 Oct 2018 10:17:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1538646836.14153.4.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-10-05 at 14:31 +0200, Geert Uytterhoeven wrote:
-[...]
-> > > > +                     eq = (args2.np == args.np &&
-> > > > +                           args2.args_count == args.args_count &&
-> > > > +                           !memcmp(args2.args, args.args,
-> > > > +                                   args.args_count * sizeof(args.args[0])));
-> > 
-> > As there's at least one other function in -next that compares of_phandle_args,
-> > I will add a helper of_phandle_args_eq().
-> > 
-> > > > +                     of_node_put(args2.np);
-> > > > +                     if (eq)
-> > > 
-> > > Emitting a loud warning here could be very helpful if it contains
-> > > both the reset controller node and the reset index, as well as the
-> 
-> Actually on DT-based systems, the index is a driver-specific
-> implementation detail, and may differ from the actual reset specifier in DT.
-> E.g. on R-Car systems, DT uses a human-readable representation matching
-> the datasheet, while internally, the driver uses a packed representation.
-> Hence printing the index may confuse the user.
-> 
-> For lookup-based systems, this is different.
 
-Correct. I'm so used to #reset-cells = <1>, it's hard to remember the
-exceptions. So let's not try to print indices or args.
 
-> > > consumer nodes: node and node2.
-> > 
-> > Indeed, will do, also for lookup resets.
-> > 
-> > We already have of_print_phandle_args(), but that is a bit inflexible.
-> > Adding support for "%pOFa" looks like the modern thing to do.
+On 10/04/2018 04:53 AM, Philipp Zabel wrote:
+> Hi Dinh,
 > 
-> Scrap that: of_phandle_args is not derived from a device_node, so %pOFa
-> is not appropriate (and would crash instead of fall back to a pointer before
-> %pOFa support is implemented). And without more users, it doesn't make much
-> sense to go for a new type (e.g. "%pOA")...
+> On Mon, 2018-09-17 at 09:50 -0500, Dinh Nguyen wrote:
+>> Create a separate reset driver that uses the reset operations in reset-simple.
+>> The reset driver for the SoCFPGA platform needs to register early in order to
+>> be able bring online timers that needed early in the kernel bootup.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+>>  arch/arm/mach-socfpga/socfpga.c |  4 ++
+>>  drivers/reset/Kconfig           |  7 ++++
+>>  drivers/reset/Makefile          |  1 +
+>>  drivers/reset/reset-simple.c    | 17 ---------
+>>  drivers/reset/reset-socfpga.c   | 85 +++++++++++++++++++++++++++++++++++++++++
+>>  5 files changed, 97 insertions(+), 17 deletions(-)
+>>  create mode 100644 drivers/reset/reset-socfpga.c
+>>
+>> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+>> index dde14f7..cc64576 100644
+>> --- a/arch/arm/mach-socfpga/socfpga.c
+>> +++ b/arch/arm/mach-socfpga/socfpga.c
+>> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
+>>  void __iomem *sdr_ctl_base_addr;
+>>  unsigned long socfpga_cpu1start_addr;
+>>  
+>> +extern void __init socfpga_reset_init(void);
+>> +
+>>  void __init socfpga_sysmgr_init(void)
+>>  {
+>>  	struct device_node *np;
+>> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
+>>  
+>>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>>  		socfpga_init_ocram_ecc();
+>> +	socfpga_reset_init();
+>>  }
+>>  
+>>  static void __init socfpga_arria10_init_irq(void)
+>> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
+>>  		socfpga_init_arria10_l2_ecc();
+>>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>>  		socfpga_init_arria10_ocram_ecc();
+>> +	socfpga_reset_init();
+>>  }
+>>  
+>>  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
+>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>> index 13d28fd..dcc5f1d 100644
+>> --- a/drivers/reset/Kconfig
+>> +++ b/drivers/reset/Kconfig
+>> @@ -119,6 +119,13 @@ config RESET_STM32MP157
+>>  	help
+>>  	  This enables the RCC reset controller driver for STM32 MPUs.
+>>  
+>> +config RESET_SOCFPGA
+>> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
+>> +	default ARCH_SOCFPGA
+>> +	select RESET_SIMPLE
+>> +	help
+>> +	  This enables the reset driver for SoCFPGA.
+>> +
+>>  config RESET_SUNXI
+>>  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+>>  	default ARCH_SUNXI
+>> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+>> index 4243c38..d09bb41 100644
+>> --- a/drivers/reset/Makefile
+>> +++ b/drivers/reset/Makefile
+>> @@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>>  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+>> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+>>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>>  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+>> diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
+>> index a91107f..483824f 100644
+>> --- a/drivers/reset/reset-simple.c
+>> +++ b/drivers/reset/reset-simple.c
+>> @@ -106,21 +106,12 @@ struct reset_simple_devdata {
+>>  	bool status_active_low;
+>>  };
+>>  
+>> -#define SOCFPGA_NR_BANKS	8
+>> -
+>> -static const struct reset_simple_devdata reset_simple_socfpga = {
+>> -	.reg_offset = 0x10,
 > 
-> Actually, printing the full reset specifier is not needed. A message like
+> Before, the default reg_offset for DTs missing the altr,modrst-offset
+> property was 0x10 ...
 > 
->     /soc/pwm@e6e31000 and /soc/pwm@e6e30000 share a reset on
-> /soc/clock-controller@e6150000
+>> -	.nr_resets = SOCFPGA_NR_BANKS * 32,
+>> -	.status_active_low = true,
+>> -};
+>> -
+> [...]
+>> +static int a10_reset_init(struct device_node *np)
+>> +{
+>> +	struct reset_simple_data *data;
+>> +	struct resource res;
+>> +	resource_size_t size;
+>> +	int ret;
+>> +	u32 reg_offset = 0;
 > 
-> should give sufficient clue to the user.
+> ... now it is 0x0.
+> I think this should be
+> 
+> 	u32 reg_offset = 0x10;
+> 
+> to avoid breaking SocFPGA with ancient device trees.
+> 
+>> +
+>> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = of_address_to_resource(np, 0, &res);
+>> +	if (ret)
+>> +		goto err_alloc;
+>> +
+>> +	size = resource_size(&res);
+>> +	if (!request_mem_region(res.start, size, np->name)) {
+>> +		ret = -EBUSY;
+>> +		goto err_alloc;
+>> +	}
+>> +
+>> +	data->membase = ioremap(res.start, size);
+>> +	if (!data->membase) {
+>> +		ret = -ENOMEM;
+>> +		goto err_alloc;
+>> +	}
+>> +
+>> +	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
+>> +		pr_warn("missing altr,modrst-offset property, assuming 0x0\n");
+>> +	data->membase += reg_offset;
+>> +
+>> +	spin_lock_init(&data->lock);
+>> +
+>> +	data->rcdev.owner = THIS_MODULE;
+>> +	data->rcdev.nr_resets = 32 * 8;
+> 
+> Could we keep the SOCFPGA_NR_BANKS #define to reduce the amount of magic
+> numbers?
+> 
+> I can make both changes when applying if you want.
+> 
 
-Yes. You could also pass con_id into __of_reset_is_exclusive and print
-that. It would be nice to indicate which consumer requested exclusive
-access.
+If you don't mind, that would be great!
 
-regards
-Philipp
+Thanks,
+Dinh
