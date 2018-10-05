@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA3DC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27074C65BAB
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67D652098A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67D652098A
+	by mail.kernel.org (Postfix) with ESMTP id D858E208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D858E208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbeJFAEO (ORCPT
+        id S1729418AbeJFAEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:04:14 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53820 "EHLO huawei.com"
+        Fri, 5 Oct 2018 20:04:20 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53841 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728900AbeJFAEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:04:14 -0400
+        id S1728021AbeJFAEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:04:20 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 241F1FB978EA1;
-        Sat,  6 Oct 2018 01:04:34 +0800 (CST)
+        by Forcepoint Email with ESMTP id 30D92BAD0FB85;
+        Sat,  6 Oct 2018 01:04:39 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 6 Oct 2018 01:04:25 +0800
+ 14.3.399.0; Sat, 6 Oct 2018 01:04:31 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>,
-        Zhongzhu Liu <liuzhongzhu@huawei.com>
-Subject: [PATCH net-next 1/6] net: hns3: Remove the default mask configuration for mac vlan table
-Date:   Fri, 5 Oct 2018 18:03:24 +0100
-Message-ID: <20181005170329.6512-2-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
+Subject: [PATCH net-next 3/6] net: hns3: Optimize for unicast mac vlan table
+Date:   Fri, 5 Oct 2018 18:03:26 +0100
+Message-ID: <20181005170329.6512-4-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181005170329.6512-1-salil.mehta@huawei.com>
 References: <20181005170329.6512-1-salil.mehta@huawei.com>
@@ -52,101 +51,329 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-The default mask configuration has been done by firmware, so the driver
-doesn't need to do it any more.
+In previously implement for unicast mac vlan table, the space is
+shared by all the functions, driver does nothing when the space is
+exhausted. This patch preallocates the space of unicast mac vlan
+table for each function by software. Each function can only use its
+private space and available shared space, avoiding single function
+exhausts too much space, and other functions are unable to add
+unicast mac address.
 
-Signed-off-by: Zhongzhu Liu <liuzhongzhu@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 10 -------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 32 ----------------------
- 2 files changed, 42 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  11 ++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 147 ++++++++++++++++++++-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  18 +++
+ 3 files changed, 174 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index e5e66b2..26fda05 100644
+index 26fda05..6098dacb 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -177,7 +177,6 @@ enum hclge_opcode_type {
+@@ -175,6 +175,7 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_MAC_VLAN_REMOVE	    = 0x1001,
+ 	HCLGE_OPC_MAC_VLAN_TYPE_ID	    = 0x1002,
  	HCLGE_OPC_MAC_VLAN_INSERT	    = 0x1003,
++	HCLGE_OPC_MAC_VLAN_ALLOCATE	    = 0x1004,
  	HCLGE_OPC_MAC_ETHTYPE_ADD	    = 0x1010,
  	HCLGE_OPC_MAC_ETHTYPE_REMOVE	= 0x1011,
--	HCLGE_OPC_MAC_VLAN_MASK_SET	= 0x1012,
  
- 	/* Multicast linear table commands */
- 	HCLGE_OPC_MTA_MAC_MODE_CFG	    = 0x1020,
-@@ -591,15 +590,6 @@ struct hclge_mac_vlan_tbl_entry_cmd {
+@@ -401,6 +402,8 @@ struct hclge_pf_res_cmd {
+ #define HCLGE_CFG_RSS_SIZE_M	GENMASK(31, 24)
+ #define HCLGE_CFG_SPEED_ABILITY_S	0
+ #define HCLGE_CFG_SPEED_ABILITY_M	GENMASK(7, 0)
++#define HCLGE_CFG_UMV_TBL_SPACE_S	16
++#define HCLGE_CFG_UMV_TBL_SPACE_M	GENMASK(31, 16)
+ 
+ struct hclge_cfg_param_cmd {
+ 	__le32 offset;
+@@ -590,6 +593,14 @@ struct hclge_mac_vlan_tbl_entry_cmd {
  	u8      rsv2[6];
  };
  
--#define HCLGE_VLAN_MASK_EN_B		0
--struct hclge_mac_vlan_mask_entry_cmd {
--	u8 rsv0[2];
--	u8 vlan_mask;
--	u8 rsv1;
--	u8 mac_mask[6];
--	u8 rsv2[14];
--};
--
++#define HCLGE_UMV_SPC_ALC_B	0
++struct hclge_umv_spc_alc_cmd {
++	u8 allocate;
++	u8 rsv1[3];
++	__le32 space_size;
++	u8 rsv2[16];
++};
++
  #define HCLGE_MAC_MGR_MASK_VLAN_B		BIT(0)
  #define HCLGE_MAC_MGR_MASK_MAC_B		BIT(1)
  #define HCLGE_MAC_MGR_MASK_ETHERTYPE_B		BIT(2)
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 21ca4af..0106c1b 100644
+index 0106c1b..d346d0a 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1939,36 +1939,11 @@ static int hclge_get_autoneg(struct hnae3_handle *handle)
- 	return hdev->hw.mac.autoneg;
+@@ -31,6 +31,8 @@ static int hclge_set_mta_filter_mode(struct hclge_dev *hdev,
+ static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu);
+ static int hclge_init_vlan_config(struct hclge_dev *hdev);
+ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev);
++static int hclge_set_umv_space(struct hclge_dev *hdev, u16 space_size,
++			       u16 *allocated_size, bool is_alloc);
+ 
+ static struct hnae3_ae_algo ae_algo;
+ 
+@@ -778,6 +780,11 @@ static void hclge_parse_cfg(struct hclge_cfg *cfg, struct hclge_desc *desc)
+ 	cfg->speed_ability = hnae3_get_field(__le32_to_cpu(req->param[1]),
+ 					     HCLGE_CFG_SPEED_ABILITY_M,
+ 					     HCLGE_CFG_SPEED_ABILITY_S);
++	cfg->umv_space = hnae3_get_field(__le32_to_cpu(req->param[1]),
++					 HCLGE_CFG_UMV_TBL_SPACE_M,
++					 HCLGE_CFG_UMV_TBL_SPACE_S);
++	if (!cfg->umv_space)
++		cfg->umv_space = HCLGE_DEFAULT_UMV_SPACE_PER_PF;
  }
  
--static int hclge_set_default_mac_vlan_mask(struct hclge_dev *hdev,
--					   bool mask_vlan,
--					   u8 *mac_mask)
--{
--	struct hclge_mac_vlan_mask_entry_cmd *req;
--	struct hclge_desc desc;
--	int status;
--
--	req = (struct hclge_mac_vlan_mask_entry_cmd *)desc.data;
--	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_MAC_VLAN_MASK_SET, false);
--
--	hnae3_set_bit(req->vlan_mask, HCLGE_VLAN_MASK_EN_B,
--		      mask_vlan ? 1 : 0);
--	ether_addr_copy(req->mac_mask, mac_mask);
--
--	status = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (status)
--		dev_err(&hdev->pdev->dev,
--			"Config mac_vlan_mask failed for cmd_send, ret =%d\n",
--			status);
--
--	return status;
--}
--
- static int hclge_mac_init(struct hclge_dev *hdev)
+ /* hclge_get_cfg: query the static parameter from flash
+@@ -856,6 +863,7 @@ static int hclge_configure(struct hclge_dev *hdev)
+ 	hdev->tm_info.num_pg = 1;
+ 	hdev->tc_max = cfg.tc_num;
+ 	hdev->tm_info.hw_pfc_map = 0;
++	hdev->wanted_umv_size = cfg.umv_space;
+ 
+ 	ret = hclge_parse_speed(cfg.default_speed, &hdev->hw.mac.speed);
+ 	if (ret) {
+@@ -5237,6 +5245,118 @@ static int hclge_add_mac_vlan_tbl(struct hclge_vport *vport,
+ 	return cfg_status;
+ }
+ 
++static int hclge_init_umv_space(struct hclge_dev *hdev)
++{
++	u16 allocated_size = 0;
++	int ret;
++
++	ret = hclge_set_umv_space(hdev, hdev->wanted_umv_size, &allocated_size,
++				  true);
++	if (ret)
++		return ret;
++
++	if (allocated_size < hdev->wanted_umv_size)
++		dev_warn(&hdev->pdev->dev,
++			 "Alloc umv space failed, want %d, get %d\n",
++			 hdev->wanted_umv_size, allocated_size);
++
++	mutex_init(&hdev->umv_mutex);
++	hdev->max_umv_size = allocated_size;
++	hdev->priv_umv_size = hdev->max_umv_size / (hdev->num_req_vfs + 2);
++	hdev->share_umv_size = hdev->priv_umv_size +
++			hdev->max_umv_size % (hdev->num_req_vfs + 2);
++
++	return 0;
++}
++
++static int hclge_uninit_umv_space(struct hclge_dev *hdev)
++{
++	int ret;
++
++	if (hdev->max_umv_size > 0) {
++		ret = hclge_set_umv_space(hdev, hdev->max_umv_size, NULL,
++					  false);
++		if (ret)
++			return ret;
++		hdev->max_umv_size = 0;
++	}
++	mutex_destroy(&hdev->umv_mutex);
++
++	return 0;
++}
++
++static int hclge_set_umv_space(struct hclge_dev *hdev, u16 space_size,
++			       u16 *allocated_size, bool is_alloc)
++{
++	struct hclge_umv_spc_alc_cmd *req;
++	struct hclge_desc desc;
++	int ret;
++
++	req = (struct hclge_umv_spc_alc_cmd *)desc.data;
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_MAC_VLAN_ALLOCATE, false);
++	hnae3_set_bit(req->allocate, HCLGE_UMV_SPC_ALC_B, !is_alloc);
++	req->space_size = cpu_to_le32(space_size);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret) {
++		dev_err(&hdev->pdev->dev,
++			"%s umv space failed for cmd_send, ret =%d\n",
++			is_alloc ? "allocate" : "free", ret);
++		return ret;
++	}
++
++	if (is_alloc && allocated_size)
++		*allocated_size = le32_to_cpu(desc.data[1]);
++
++	return 0;
++}
++
++static void hclge_reset_umv_space(struct hclge_dev *hdev)
++{
++	struct hclge_vport *vport;
++	int i;
++
++	for (i = 0; i < hdev->num_alloc_vport; i++) {
++		vport = &hdev->vport[i];
++		vport->used_umv_num = 0;
++	}
++
++	mutex_lock(&hdev->umv_mutex);
++	hdev->share_umv_size = hdev->priv_umv_size +
++			hdev->max_umv_size % (hdev->num_req_vfs + 2);
++	mutex_unlock(&hdev->umv_mutex);
++}
++
++static bool hclge_is_umv_space_full(struct hclge_vport *vport)
++{
++	struct hclge_dev *hdev = vport->back;
++	bool is_full;
++
++	mutex_lock(&hdev->umv_mutex);
++	is_full = (vport->used_umv_num >= hdev->priv_umv_size &&
++		   hdev->share_umv_size == 0);
++	mutex_unlock(&hdev->umv_mutex);
++
++	return is_full;
++}
++
++static void hclge_update_umv_space(struct hclge_vport *vport, bool is_free)
++{
++	struct hclge_dev *hdev = vport->back;
++
++	mutex_lock(&hdev->umv_mutex);
++	if (is_free) {
++		if (vport->used_umv_num > hdev->priv_umv_size)
++			hdev->share_umv_size++;
++		vport->used_umv_num--;
++	} else {
++		if (vport->used_umv_num >= hdev->priv_umv_size)
++			hdev->share_umv_size--;
++		vport->used_umv_num++;
++	}
++	mutex_unlock(&hdev->umv_mutex);
++}
++
+ static int hclge_add_uc_addr(struct hnae3_handle *handle,
+ 			     const unsigned char *addr)
  {
- 	struct hnae3_handle *handle = &hdev->vport[0].nic;
- 	struct net_device *netdev = handle->kinfo.netdev;
- 	struct hclge_mac *mac = &hdev->hw.mac;
--	u8 mac_mask[ETH_ALEN] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
- 	struct hclge_vport *vport;
- 	int mtu;
- 	int ret;
-@@ -2011,13 +1986,6 @@ static int hclge_mac_init(struct hclge_dev *hdev)
+@@ -5282,8 +5402,19 @@ int hclge_add_uc_addr_common(struct hclge_vport *vport,
+ 	 * is not allowed in the mac vlan table.
+ 	 */
+ 	ret = hclge_lookup_mac_vlan_tbl(vport, &req, &desc, false);
+-	if (ret == -ENOENT)
+-		return hclge_add_mac_vlan_tbl(vport, &req, NULL);
++	if (ret == -ENOENT) {
++		if (!hclge_is_umv_space_full(vport)) {
++			ret = hclge_add_mac_vlan_tbl(vport, &req, NULL);
++			if (!ret)
++				hclge_update_umv_space(vport, false);
++			return ret;
++		}
++
++		dev_err(&hdev->pdev->dev, "UC MAC table full(%u)\n",
++			hdev->priv_umv_size);
++
++		return -ENOSPC;
++	}
+ 
+ 	/* check if we just hit the duplicate */
+ 	if (!ret)
+@@ -5326,6 +5457,8 @@ int hclge_rm_uc_addr_common(struct hclge_vport *vport,
+ 	hnae3_set_bit(req.entry_type, HCLGE_MAC_VLAN_BIT0_EN_B, 0);
+ 	hclge_prepare_mac_addr(&req, addr);
+ 	ret = hclge_remove_mac_vlan_tbl(vport, &req);
++	if (!ret)
++		hclge_update_umv_space(vport, true);
+ 
+ 	return ret;
+ }
+@@ -6714,6 +6847,12 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
  		}
  	}
  
--	ret = hclge_set_default_mac_vlan_mask(hdev, true, mac_mask);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"set default mac_vlan_mask fail ret=%d\n", ret);
--		return ret;
--	}
--
- 	if (netdev)
- 		mtu = netdev->mtu;
- 	else
++	ret = hclge_init_umv_space(hdev);
++	if (ret) {
++		dev_err(&pdev->dev, "umv space init error, ret=%d.\n", ret);
++		goto err_msi_irq_uninit;
++	}
++
+ 	ret = hclge_mac_init(hdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Mac init error, ret = %d\n", ret);
+@@ -6834,6 +6973,8 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		return ret;
+ 	}
+ 
++	hclge_reset_umv_space(hdev);
++
+ 	ret = hclge_mac_init(hdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Mac init error, ret = %d\n", ret);
+@@ -6887,6 +7028,8 @@ static void hclge_uninit_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 	if (mac->phydev)
+ 		mdiobus_unregister(mac->mdio_bus);
+ 
++	hclge_uninit_umv_space(hdev);
++
+ 	/* Disable MISC vector(vector0) */
+ 	hclge_enable_vector(&hdev->misc_vector, false);
+ 	synchronize_irq(hdev->misc_vector.vector_irq);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 06adbdd..d0c7c62 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -14,6 +14,8 @@
+ #define HCLGE_MOD_VERSION "1.0"
+ #define HCLGE_DRIVER_NAME "hclge"
+ 
++#define HCLGE_MAX_PF_NUM		8
++
+ #define HCLGE_INVALID_VPORT 0xffff
+ 
+ #define HCLGE_PF_CFG_BLOCK_SIZE		32
+@@ -53,6 +55,10 @@
+ #define HCLGE_RSS_TC_SIZE_6		64
+ #define HCLGE_RSS_TC_SIZE_7		128
+ 
++#define HCLGE_UMV_TBL_SIZE		3072
++#define HCLGE_DEFAULT_UMV_SPACE_PER_PF \
++	(HCLGE_UMV_TBL_SIZE / HCLGE_MAX_PF_NUM)
++
+ #define HCLGE_MTA_TBL_SIZE		4096
+ 
+ #define HCLGE_TQP_RESET_TRY_TIMES	10
+@@ -251,6 +257,7 @@ struct hclge_cfg {
+ 	u8 default_speed;
+ 	u32 numa_node_map;
+ 	u8 speed_ability;
++	u16 umv_space;
+ };
+ 
+ struct hclge_tm_info {
+@@ -680,6 +687,15 @@ struct hclge_dev {
+ 	struct hclge_fd_cfg fd_cfg;
+ 	struct hlist_head fd_rule_list;
+ 	u16 hclge_fd_rule_num;
++
++	u16 wanted_umv_size;
++	/* max available unicast mac vlan space */
++	u16 max_umv_size;
++	/* private unicast mac vlan space, it's same for PF and its VFs */
++	u16 priv_umv_size;
++	/* unicast mac vlan space shared by PF and its VFs */
++	u16 share_umv_size;
++	struct mutex umv_mutex; /* protect share_umv_size */
+ };
+ 
+ /* VPort level vlan tag configuration for TX direction */
+@@ -732,6 +748,8 @@ struct hclge_vport {
+ 	struct hclge_tx_vtag_cfg  txvlan_cfg;
+ 	struct hclge_rx_vtag_cfg  rxvlan_cfg;
+ 
++	u16 used_umv_num;
++
+ 	int vport_id;
+ 	struct hclge_dev *back;  /* Back reference to associated dev */
+ 	struct hnae3_handle nic;
 -- 
 2.7.4
 
