@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACACEC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF98C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C0E21477
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF77C21477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6htzJ0r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C0E21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v0ZZEgly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF77C21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbeJEXQD (ORCPT
+        id S1729867AbeJEXQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53682 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729502AbeJEXQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:02 -0400
+        id S1728819AbeJEXQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D3E121480;
+        by mail.kernel.org (Postfix) with ESMTPSA id 02BC0214AB;
         Fri,  5 Oct 2018 16:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756199;
-        bh=mREfsZig+VL81srNjz9zMXi8F6TgzFKbqZO5WmfCyww=;
+        s=default; t=1538756200;
+        bh=2ijBGWYGoC8VzMkaFc8AwRwUrSeoEpUeEKJOespls2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r6htzJ0rjlvFGbl5y3Gbgs3G8w35GfFzNsqaS6h9OB0vmdiM20xKa6Xpa5JQcTD0A
-         0qc/DGqWotOnksHsPzyhrMjg9R9WmsUaRFzh/NnS4Y/HoaiLX83p5E+tntjd2yQyqF
-         STuo/hqK1Y2Wn6DqczjckP/a2wIiFBB7fFVkSfno=
+        b=v0ZZEglyzLulDYaQilC+rUe6MTk3uJWtxgGo6e5CN+jpamB8CD2SewTg846JkWLLC
+         TbQ/fKrNlDvVM4pvOlgrqABpuGKeATQInpigSSu2kfJ9oBMbzyaopHhOoGvm1Tyfgt
+         OpeTOkZsw9Dj56P8HBIRm0JH6tbRLy6QBcO/Jkio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Lei Yang <Lei.Yang@windriver.com>, Shuah Khan <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 04/23] selftests/efivarfs: add required kernel configs
-Date:   Fri,  5 Oct 2018 12:16:15 -0400
-Message-Id: <20181005161634.20631-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 05/23] selftests: memory-hotplug: add required configs
+Date:   Fri,  5 Oct 2018 12:16:16 -0400
+Message-Id: <20181005161634.20631-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
 References: <20181005161634.20631-1-sashal@kernel.org>
@@ -54,25 +54,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lei Yang <Lei.Yang@windriver.com>
 
-[ Upstream commit 53cf59d6c0ad3edc4f4449098706a8f8986258b6 ]
+[ Upstream commit 4d85af102a66ee6aeefa596f273169e77fb2b48e ]
 
-add config file
+add CONFIG_MEMORY_HOTREMOVE=y in config
+without this config, /sys/devices/system/memory/memory*/removable
+always return 0, I endup getting an early skip during test
 
 Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
 Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/testing/selftests/efivarfs/config | 1 +
+ tools/testing/selftests/memory-hotplug/config | 1 +
  1 file changed, 1 insertion(+)
- create mode 100644 tools/testing/selftests/efivarfs/config
 
-diff --git a/tools/testing/selftests/efivarfs/config b/tools/testing/selftests/efivarfs/config
-new file mode 100644
-index 000000000000..4e151f1005b2
---- /dev/null
-+++ b/tools/testing/selftests/efivarfs/config
-@@ -0,0 +1 @@
-+CONFIG_EFIVAR_FS=y
+diff --git a/tools/testing/selftests/memory-hotplug/config b/tools/testing/selftests/memory-hotplug/config
+index 2fde30191a47..a7e8cd5bb265 100644
+--- a/tools/testing/selftests/memory-hotplug/config
++++ b/tools/testing/selftests/memory-hotplug/config
+@@ -2,3 +2,4 @@ CONFIG_MEMORY_HOTPLUG=y
+ CONFIG_MEMORY_HOTPLUG_SPARSE=y
+ CONFIG_NOTIFIER_ERROR_INJECTION=y
+ CONFIG_MEMORY_NOTIFIER_ERROR_INJECT=m
++CONFIG_MEMORY_HOTREMOVE=y
 -- 
 2.17.1
 
