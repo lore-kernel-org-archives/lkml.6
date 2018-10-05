@@ -2,48 +2,47 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA0FC65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00F1C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025B02147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9382147D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwcHsIEW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025B02147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgAL/2P8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9382147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbeJEXOD (ORCPT
+        id S1729309AbeJEXOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51102 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeJEXOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:02 -0400
+        id S1729242AbeJEXOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9B48208E7;
-        Fri,  5 Oct 2018 16:14:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 823392148C;
+        Fri,  5 Oct 2018 16:14:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756079;
-        bh=YKH5b5vYpcUrL7lvWUE9vbkk452WFxnhtyWcwaJxo+Y=;
+        s=default; t=1538756081;
+        bh=d8aIPMlQK1Ie+KgZr8AkTM4+UW2/LpolW2VGOT/kGbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DwcHsIEWBelUQaDpqX40yWvtO8JMjc+hzsGBC1SnPojPKZtNLMQGKADMsCB/aGnhu
-         MzsJ6flwzr/oOfjRj6Wmw/TnZ3lslgUvdA7sm0xt0c43w1493P5pfuU1WHLNGCzl2C
-         Jbo+gpq5C4KQ3fE+Y0lzq9EXphImAenU/NKaA7qs=
+        b=JgAL/2P8xjF0yOaqfjxxkL+xpNlWlyWp0axw5y3iT98FvHSeK1AZd2zSeHwygiEiv
+         LXe/sn1uXhGr76b61P5Q4rfCNnySe/NHpqGbPioLVlltI2DOMCUGZoO+skBN48SEzs
+         nWUf/haTgdBpqKUm4f7nXFKg42wZg3tzMboAtt2c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Guenter Roeck <linux@roeck-us.net>,
+Cc:     Jay Kamat <jgkamat@fb.com>, Shuah Khan <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 15/48] hwmon: (nct6775) Fix access to fan pulse registers
-Date:   Fri,  5 Oct 2018 12:13:51 -0400
-Message-Id: <20181005161424.20521-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 17/48] Add tests for memory.oom.group
+Date:   Fri,  5 Oct 2018 12:13:53 -0400
+Message-Id: <20181005161424.20521-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -52,103 +51,302 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Jay Kamat <jgkamat@fb.com>
 
-[ Upstream commit c793279c77035053e67937f5743c6ebfc303e7c5 ]
+[ Upstream commit a987785dcd6c8ae2915460582aebd6481c81eb67 ]
 
-Not all fans have a fan pulse register. This can result in reading
-beyond the end of REG_FAN_PULSES and FAN_PULSE_SHIFT arrays,
-and was reported by smatch as possible error.
+Add tests for memory.oom.group for the following cases:
+- Killing all processes in a leaf cgroup, but leaving the
+  parent untouched
+- Killing all processes in a parent and leaf cgroup
+- Keeping processes marked by OOM_SCORE_ADJ_MIN alive when considered
+  for being killed by the group oom killer.
 
-1672          for (i = 0; i < ARRAY_SIZE(data->rpm); i++) {
-                              ^^^^^^^^^^^^^^^^^^^^^^^^
-			      This is a 7 element array.
-...
-1685                  data->fan_pulses[i] =
-1686                    (nct6775_read_value(data, data->REG_FAN_PULSES[i])
-1687                          >> data->FAN_PULSE_SHIFT[i]) & 0x03;
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^
-				 FAN_PULSE_SHIFT is either 5 or 6
-				 elements.
-
-To fix the problem, we have to ensure that all REG_FAN_PULSES and
-FAN_PULSE_SHIFT have the appropriate length, and that REG_FAN_PULSES
-is only read if the register actually exists.
-
-Fixes: 6c009501ff200 ("hwmon: (nct6775) Add support for NCT6102D/6106D")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Jay Kamat <jgkamat@fb.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/hwmon/nct6775.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ tools/testing/selftests/cgroup/cgroup_util.c  |  21 ++
+ tools/testing/selftests/cgroup/cgroup_util.h  |   1 +
+ .../selftests/cgroup/test_memcontrol.c        | 205 ++++++++++++++++++
+ 3 files changed, 227 insertions(+)
 
-diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
-index b89e8379d898..6f40a9435731 100644
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -299,8 +299,9 @@ static const u16 NCT6775_REG_PWM_READ[] = {
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+index 8b644ea39725..e0db048331cb 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.c
++++ b/tools/testing/selftests/cgroup/cgroup_util.c
+@@ -340,3 +340,24 @@ int is_swap_enabled(void)
  
- static const u16 NCT6775_REG_FAN[] = { 0x630, 0x632, 0x634, 0x636, 0x638 };
- static const u16 NCT6775_REG_FAN_MIN[] = { 0x3b, 0x3c, 0x3d };
--static const u16 NCT6775_REG_FAN_PULSES[] = { 0x641, 0x642, 0x643, 0x644, 0 };
--static const u16 NCT6775_FAN_PULSE_SHIFT[] = { 0, 0, 0, 0, 0, 0 };
-+static const u16 NCT6775_REG_FAN_PULSES[NUM_FAN] = {
-+	0x641, 0x642, 0x643, 0x644 };
-+static const u16 NCT6775_FAN_PULSE_SHIFT[NUM_FAN] = { };
- 
- static const u16 NCT6775_REG_TEMP[] = {
- 	0x27, 0x150, 0x250, 0x62b, 0x62c, 0x62d };
-@@ -425,8 +426,8 @@ static const u8 NCT6776_PWM_MODE_MASK[] = { 0x01, 0, 0, 0, 0, 0 };
- 
- static const u16 NCT6776_REG_FAN_MIN[] = {
- 	0x63a, 0x63c, 0x63e, 0x640, 0x642, 0x64a, 0x64c };
--static const u16 NCT6776_REG_FAN_PULSES[] = {
--	0x644, 0x645, 0x646, 0x647, 0x648, 0x649, 0 };
-+static const u16 NCT6776_REG_FAN_PULSES[NUM_FAN] = {
-+	0x644, 0x645, 0x646, 0x647, 0x648, 0x649 };
- 
- static const u16 NCT6776_REG_WEIGHT_DUTY_BASE[] = {
- 	0x13e, 0x23e, 0x33e, 0x83e, 0x93e, 0xa3e };
-@@ -502,8 +503,8 @@ static const s8 NCT6779_BEEP_BITS[] = {
- 
- static const u16 NCT6779_REG_FAN[] = {
- 	0x4b0, 0x4b2, 0x4b4, 0x4b6, 0x4b8, 0x4ba, 0x660 };
--static const u16 NCT6779_REG_FAN_PULSES[] = {
--	0x644, 0x645, 0x646, 0x647, 0x648, 0x649, 0 };
-+static const u16 NCT6779_REG_FAN_PULSES[NUM_FAN] = {
-+	0x644, 0x645, 0x646, 0x647, 0x648, 0x649 };
- 
- static const u16 NCT6779_REG_CRITICAL_PWM_ENABLE[] = {
- 	0x136, 0x236, 0x336, 0x836, 0x936, 0xa36, 0xb36 };
-@@ -779,8 +780,8 @@ static const u16 NCT6106_REG_TEMP_CONFIG[] = {
- 
- static const u16 NCT6106_REG_FAN[] = { 0x20, 0x22, 0x24 };
- static const u16 NCT6106_REG_FAN_MIN[] = { 0xe0, 0xe2, 0xe4 };
--static const u16 NCT6106_REG_FAN_PULSES[] = { 0xf6, 0xf6, 0xf6, 0, 0 };
--static const u16 NCT6106_FAN_PULSE_SHIFT[] = { 0, 2, 4, 0, 0 };
-+static const u16 NCT6106_REG_FAN_PULSES[] = { 0xf6, 0xf6, 0xf6 };
-+static const u16 NCT6106_FAN_PULSE_SHIFT[] = { 0, 2, 4 };
- 
- static const u8 NCT6106_REG_PWM_MODE[] = { 0xf3, 0xf3, 0xf3 };
- static const u8 NCT6106_PWM_MODE_MASK[] = { 0x01, 0x02, 0x04 };
-@@ -1682,9 +1683,13 @@ static struct nct6775_data *nct6775_update_device(struct device *dev)
- 			if (data->has_fan_min & BIT(i))
- 				data->fan_min[i] = nct6775_read_value(data,
- 					   data->REG_FAN_MIN[i]);
--			data->fan_pulses[i] =
--			  (nct6775_read_value(data, data->REG_FAN_PULSES[i])
--				>> data->FAN_PULSE_SHIFT[i]) & 0x03;
+ 	return cnt > 1;
+ }
 +
-+			if (data->REG_FAN_PULSES[i]) {
-+				data->fan_pulses[i] =
-+				  (nct6775_read_value(data,
-+						      data->REG_FAN_PULSES[i])
-+				   >> data->FAN_PULSE_SHIFT[i]) & 0x03;
-+			}
++int set_oom_adj_score(int pid, int score)
++{
++	char path[PATH_MAX];
++	int fd, len;
++
++	sprintf(path, "/proc/%d/oom_score_adj", pid);
++
++	fd = open(path, O_WRONLY | O_APPEND);
++	if (fd < 0)
++		return fd;
++
++	len = dprintf(fd, "%d", score);
++	if (len < 0) {
++		close(fd);
++		return len;
++	}
++
++	close(fd);
++	return 0;
++}
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.h b/tools/testing/selftests/cgroup/cgroup_util.h
+index fe82a297d4e0..cabd43fd137a 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.h
++++ b/tools/testing/selftests/cgroup/cgroup_util.h
+@@ -39,3 +39,4 @@ extern int get_temp_fd(void);
+ extern int alloc_pagecache(int fd, size_t size);
+ extern int alloc_anon(const char *cgroup, void *arg);
+ extern int is_swap_enabled(void);
++extern int set_oom_adj_score(int pid, int score);
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index cf0bddc9d271..28d321ba311b 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -2,6 +2,7 @@
+ #define _GNU_SOURCE
  
- 			nct6775_select_fan_div(dev, data, i, reg);
- 		}
+ #include <linux/limits.h>
++#include <linux/oom.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -202,6 +203,36 @@ static int alloc_pagecache_50M_noexit(const char *cgroup, void *arg)
+ 	return 0;
+ }
+ 
++static int alloc_anon_noexit(const char *cgroup, void *arg)
++{
++	int ppid = getppid();
++
++	if (alloc_anon(cgroup, arg))
++		return -1;
++
++	while (getppid() == ppid)
++		sleep(1);
++
++	return 0;
++}
++
++/*
++ * Wait until processes are killed asynchronously by the OOM killer
++ * If we exceed a timeout, fail.
++ */
++static int cg_test_proc_killed(const char *cgroup)
++{
++	int limit;
++
++	for (limit = 10; limit > 0; limit--) {
++		if (cg_read_strcmp(cgroup, "cgroup.procs", "") == 0)
++			return 0;
++
++		usleep(100000);
++	}
++	return -1;
++}
++
+ /*
+  * First, this test creates the following hierarchy:
+  * A       memory.min = 50M,  memory.max = 200M
+@@ -964,6 +995,177 @@ static int test_memcg_sock(const char *root)
+ 	return ret;
+ }
+ 
++/*
++ * This test disables swapping and tries to allocate anonymous memory
++ * up to OOM with memory.group.oom set. Then it checks that all
++ * processes in the leaf (but not the parent) were killed.
++ */
++static int test_memcg_oom_group_leaf_events(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *parent, *child;
++
++	parent = cg_name(root, "memcg_test_0");
++	child = cg_name(root, "memcg_test_0/memcg_test_1");
++
++	if (!parent || !child)
++		goto cleanup;
++
++	if (cg_create(parent))
++		goto cleanup;
++
++	if (cg_create(child))
++		goto cleanup;
++
++	if (cg_write(parent, "cgroup.subtree_control", "+memory"))
++		goto cleanup;
++
++	if (cg_write(child, "memory.max", "50M"))
++		goto cleanup;
++
++	if (cg_write(child, "memory.swap.max", "0"))
++		goto cleanup;
++
++	if (cg_write(child, "memory.oom.group", "1"))
++		goto cleanup;
++
++	cg_run_nowait(parent, alloc_anon_noexit, (void *) MB(60));
++	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
++	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
++	if (!cg_run(child, alloc_anon, (void *)MB(100)))
++		goto cleanup;
++
++	if (cg_test_proc_killed(child))
++		goto cleanup;
++
++	if (cg_read_key_long(child, "memory.events", "oom_kill ") <= 0)
++		goto cleanup;
++
++	if (cg_read_key_long(parent, "memory.events", "oom_kill ") != 0)
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (child)
++		cg_destroy(child);
++	if (parent)
++		cg_destroy(parent);
++	free(child);
++	free(parent);
++
++	return ret;
++}
++
++/*
++ * This test disables swapping and tries to allocate anonymous memory
++ * up to OOM with memory.group.oom set. Then it checks that all
++ * processes in the parent and leaf were killed.
++ */
++static int test_memcg_oom_group_parent_events(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *parent, *child;
++
++	parent = cg_name(root, "memcg_test_0");
++	child = cg_name(root, "memcg_test_0/memcg_test_1");
++
++	if (!parent || !child)
++		goto cleanup;
++
++	if (cg_create(parent))
++		goto cleanup;
++
++	if (cg_create(child))
++		goto cleanup;
++
++	if (cg_write(parent, "memory.max", "80M"))
++		goto cleanup;
++
++	if (cg_write(parent, "memory.swap.max", "0"))
++		goto cleanup;
++
++	if (cg_write(parent, "memory.oom.group", "1"))
++		goto cleanup;
++
++	cg_run_nowait(parent, alloc_anon_noexit, (void *) MB(60));
++	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
++	cg_run_nowait(child, alloc_anon_noexit, (void *) MB(1));
++
++	if (!cg_run(child, alloc_anon, (void *)MB(100)))
++		goto cleanup;
++
++	if (cg_test_proc_killed(child))
++		goto cleanup;
++	if (cg_test_proc_killed(parent))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (child)
++		cg_destroy(child);
++	if (parent)
++		cg_destroy(parent);
++	free(child);
++	free(parent);
++
++	return ret;
++}
++
++/*
++ * This test disables swapping and tries to allocate anonymous memory
++ * up to OOM with memory.group.oom set. Then it checks that all
++ * processes were killed except those set with OOM_SCORE_ADJ_MIN
++ */
++static int test_memcg_oom_group_score_events(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *memcg;
++	int safe_pid;
++
++	memcg = cg_name(root, "memcg_test_0");
++
++	if (!memcg)
++		goto cleanup;
++
++	if (cg_create(memcg))
++		goto cleanup;
++
++	if (cg_write(memcg, "memory.max", "50M"))
++		goto cleanup;
++
++	if (cg_write(memcg, "memory.swap.max", "0"))
++		goto cleanup;
++
++	if (cg_write(memcg, "memory.oom.group", "1"))
++		goto cleanup;
++
++	safe_pid = cg_run_nowait(memcg, alloc_anon_noexit, (void *) MB(1));
++	if (set_oom_adj_score(safe_pid, OOM_SCORE_ADJ_MIN))
++		goto cleanup;
++
++	cg_run_nowait(memcg, alloc_anon_noexit, (void *) MB(1));
++	if (!cg_run(memcg, alloc_anon, (void *)MB(100)))
++		goto cleanup;
++
++	if (cg_read_key_long(memcg, "memory.events", "oom_kill ") != 3)
++		goto cleanup;
++
++	if (kill(safe_pid, SIGKILL))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (memcg)
++		cg_destroy(memcg);
++	free(memcg);
++
++	return ret;
++}
++
++
+ #define T(x) { x, #x }
+ struct memcg_test {
+ 	int (*fn)(const char *root);
+@@ -978,6 +1180,9 @@ struct memcg_test {
+ 	T(test_memcg_oom_events),
+ 	T(test_memcg_swap_max),
+ 	T(test_memcg_sock),
++	T(test_memcg_oom_group_leaf_events),
++	T(test_memcg_oom_group_parent_events),
++	T(test_memcg_oom_group_score_events),
+ };
+ #undef T
+ 
 -- 
 2.17.1
 
