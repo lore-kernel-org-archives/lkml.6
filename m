@@ -2,174 +2,285 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121ACC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8573FC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8A621477
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8A621477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 206582098A
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:11:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8KocMer"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 206582098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbeJFAJY (ORCPT
+        id S1728606AbeJFAL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:09:24 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:33352 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbeJFAJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:09:24 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 11F2CBFC09;
-        Fri,  5 Oct 2018 19:09:46 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 1ED5DC0FE1; Fri,  5 Oct 2018 19:09:45 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id C7B04C0E51;
-        Fri,  5 Oct 2018 19:09:41 +0200 (CEST)
-Message-ID: <dc1045e5806638d58ae5ace796541cb8a3d29481.camel@paulk.fr>
-Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
- decoder interface
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Fri, 05 Oct 2018 19:10:06 +0200
-In-Reply-To: <5085f73bc44424b20f1bd0dc1332d9baabecb090.camel@ndufresne.ca>
-References: <20181004081119.102575-1-acourbot@chromium.org>
-         <f1fa989b372b514f0a7534057de80b0c453cc8a3.camel@paulk.fr>
-         <5085f73bc44424b20f1bd0dc1332d9baabecb090.camel@ndufresne.ca>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-iFSnDOpqPj8PwitcW17P"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
+        Fri, 5 Oct 2018 20:11:29 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35753 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbeJFAL3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:11:29 -0400
+Received: by mail-io1-f67.google.com with SMTP id w11-v6so11223926iob.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 10:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SUr6zJI2whow9x9OpfHeIW8md/b4SvoCH3/Fc0VhBmQ=;
+        b=R8KocMernaUgA69CSl7qi7imAZ/PnvUkkkfoaBsvsyjzPPtfOdE5cMFNngiEAtE/8I
+         1gLVxXorDnxPeEj2uFZoVuGIAC1NY//ifOWIFo/d7hcd8OGw+9pHPeQ9hOzwYTm6pin4
+         4DrTwSeGDEIZ2K55goesymYKpRFvz2A6RvC/A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SUr6zJI2whow9x9OpfHeIW8md/b4SvoCH3/Fc0VhBmQ=;
+        b=pqypFBYofLG/uYh7XUKojI27fe9VEEKKTdSXwhGnMMiy0EnF+u4RnkxH9qjnX4kI6H
+         qXKJjpUykFOl9NEih5IwSNUNAX1dncTrIru4h+OQJlqQYVk+mQKs9JcxT14xpHvyydX0
+         uEvwy1raFGLDDtUFqBV9ItRVntJcrke7LqvrBwCvwvQs7zaami5JHFG1H1f9g53lghlq
+         uMH0ztsf7nMWTwpj8Ter1xhAIe/NAccq7wlWW1h3orP5MTZ7YKGYC67+mLqO6cpaX7Xy
+         5luUGEJTtF10np9HUWYmwzBeQH/ik0ZEdcm2zolTTZDCsR4OQhd7lh2K++op5IrHoarT
+         ML1w==
+X-Gm-Message-State: ABuFfohroB3aAem4jNA7gJCaGLrpeJvsfg4WBUWTMlod1cu+S+3QLUCr
+        1aQZQKDVHhVoZhdyoN8rKr1rf+E8dNws5hUGwzb5fg==
+X-Google-Smtp-Source: ACcGV62Ohy9AkvBD8HNOxWTgfhC9qm/SZXxzbjciaPgMyHsIOiSZJIq7pDu9YI3s9Su2J0V82w4I+ekrPio0M3URhwo=
+X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr8485187iob.170.1538759510568;
+ Fri, 05 Oct 2018 10:11:50 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Fri, 5 Oct 2018 10:11:49 -0700 (PDT)
+In-Reply-To: <CALCETrWaewXsdJsf3SocgZ0ggnvZk86L+5-LWPRbjdnG2mB7jw@mail.gmail.com>
+References: <20181005081333.15018-1-ard.biesheuvel@linaro.org>
+ <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net>
+ <9E0E08C8-0DFC-4E50-A4FA-73208835EF9E@amacapital.net> <CAKv+Gu9z503ZJXcsG+9Ys240BZiB-+GB=kNY4VGWpjvdzN4JtA@mail.gmail.com>
+ <CALCETrWaewXsdJsf3SocgZ0ggnvZk86L+5-LWPRbjdnG2mB7jw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 5 Oct 2018 19:11:49 +0200
+Message-ID: <CAKv+Gu-oHBtgGbWXJu6+z4+BNhBZyY5VvF_v6cJJUGk_5YX1eQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5 October 2018 at 18:58, Andy Lutomirski <luto@kernel.org> wrote:
+> On Fri, Oct 5, 2018 at 8:24 AM Ard Biesheuvel <ard.biesheuvel@linaro.org>=
+ wrote:
+>>
+>> On 5 October 2018 at 17:08, Andy Lutomirski <luto@amacapital.net> wrote:
+>> >
+>> >
+>> >> On Oct 5, 2018, at 7:14 AM, Peter Zijlstra <peterz@infradead.org> wro=
+te:
+>> >>
+>> >>> On Fri, Oct 05, 2018 at 10:13:25AM +0200, Ard Biesheuvel wrote:
+>> >>> diff --git a/include/linux/ffp.h b/include/linux/ffp.h
+>> >>> new file mode 100644
+>> >>> index 000000000000..8fc3b4c9b38f
+>> >>> --- /dev/null
+>> >>> +++ b/include/linux/ffp.h
+>> >>> @@ -0,0 +1,43 @@
+>> >>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> >>> +
+>> >>> +#ifndef __LINUX_FFP_H
+>> >>> +#define __LINUX_FFP_H
+>> >>> +
+>> >>> +#include <linux/types.h>
+>> >>> +#include <linux/compiler.h>
+>> >>> +
+>> >>> +#ifdef CONFIG_HAVE_ARCH_FFP
+>> >>> +#include <asm/ffp.h>
+>> >>> +#else
+>> >>> +
+>> >>> +struct ffp {
+>> >>> +    void    (**fn)(void);
+>> >>> +    void    (*default_fn)(void);
+>> >>> +};
+>> >>> +
+>> >>> +#define DECLARE_FFP(_fn, _def)                        \
+>> >>> +    extern typeof(_def) *_fn;                    \
+>> >>> +    extern struct ffp const __ffp_ ## _fn
+>> >>> +
+>> >>> +#define DEFINE_FFP(_fn, _def)                        \
+>> >>> +    typeof(_def) *_fn =3D &_def;                    \
+>> >>> +    struct ffp const __ffp_ ## _fn                    \
+>> >>> +        =3D { (void(**)(void))&_fn, (void(*)(void))&_def };    \
+>> >>> +    EXPORT_SYMBOL(__ffp_ ## _fn)
+>> >>> +
+>> >>> +static inline void ffp_set_target(const struct ffp *m, void *new_fn=
+)
+>> >>> +{
+>> >>> +    WRITE_ONCE(*m->fn, new_fn);
+>> >>> +}
+>> >>> +
+>> >>> +static inline void ffp_reset_target(const struct ffp *m)
+>> >>> +{
+>> >>> +    WRITE_ONCE(*m->fn, m->default_fn);
+>> >>> +}
+>> >>> +
+>> >>> +#endif
+>> >>> +
+>> >>> +#define SET_FFP(_fn, _new)    ffp_set_target(&__ffp_ ## _fn, _new)
+>> >>> +#define RESET_FFP(_fn)        ffp_reset_target(&__ffp_ ## _fn)
+>> >>> +
+>> >>> +#endif
+>> >>
+>> >> I don't understand this interface. There is no wrapper for the call
+>> >> site, so how are we going to patch all call-sites when you update the
+>> >> target?
+>> >
+>> > I=E2=80=99m also confused.
+>> >
+>> > Anyway, we have patchable functions on x86. They=E2=80=99re called PVO=
+Ps, and they=E2=80=99re way overcomplicated.
+>> >
+>> > I=E2=80=99ve proposed a better way that should generate better code, b=
+e more portable, and be more maintainable.  It goes like this.
+>> >
+>> > To call the function, you literally just call  the default implementat=
+ion.  It *might* be necessary to call a nonexistent wrapper to avoid annoyi=
+ng optimizations. At build time, the kernel is built with relocations, so t=
+he object files contain relocation entries for the call. We collect these e=
+ntries into a table. If we=E2=80=99re using the =E2=80=9Cnonexistent wrappe=
+r=E2=80=9D approach, we can link in a .S or linker script to alias them to =
+the default implementation.
+>> >
+>> > To patch them, we just patch them. It can=E2=80=99t necessarily be don=
+e concurrently because nothing forces the right alignment. But we can do it=
+ at boot time and module load time. (Maybe we can patch at runtime on archi=
+tectures with appropriate instruction alignment.  Or we ask gcc for an exte=
+nsion to align calls to a function.)
+>> >
+>> > Most of the machinery already exists: this is roughly how the module l=
+oader resolves calls outside of a module.
+>>
+>> Yeah nothing is ever simple on x86 :-(
+>>
+>> So are you saying the approach i use in patch #2 (which would
+>> translate to emitting a jmpq instruction pointing to the default
+>> implementation, and patching it at runtime to point elsewhere) would
+>> not fly on x86?
+>
+> After getting some more sleep, I'm obviously wrong.  The
+> text_poke_bp() mechanism will work.  It's just really slow.
+>
 
---=-iFSnDOpqPj8PwitcW17P
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+OK
 
-Hi,
+> Let me try to summarize some of the issues.  First, when emitting
+> jumps and calls from inline asm on x86, there are a few considerations
+> that are annoying:
+>
+> 1. Following the x86_64 ABI calling conventions is basically
+> impossible.  x86_64 requires a 128-byte redzone and 16-byte stack
+> alignment.  After much discussion a while back, we decided that it was
+> flat-out impossible on current gcc to get the stack pointer aligned in
+> a known manner in an inline asm statement.  Instead, if we actually
+> need alignment, we need to align manually.  Fortunately, the kernel is
+> built with an override that forces only 8-byte alignment (on *most*
+> GCC versions).  But for crypto in particular, it sucks extra, since
+> the crypto code is basically the only thing in the kernel that
+> actually wants 16-byte alignment.  I don't think this is a huge
+> problem in practice, but it's annoying.  And the kernel is built
+> without a redzone.
+>
+> 2. On x86_64, depending on config, we either need frame pointers or
+> ORC.  ORC is no big deal -- it Just Works (tm).  Frame pointers need
+> extra asm hackery.  It's doable, but it's still annoying.
+>
+> 3. Actually getting the asm constraints right to do what a C
+> programmer expects is distinctly nontrivial.  I just fixed an
+> extremely longstanding bug in the vDSO code in which the asm
+> constraints for the syscall fallback were wrong in such a way that GCC
+> didn't notice that the fallback wrote to its output parameter.
+> Whoops.
+>
 
-Le jeudi 04 octobre 2018 =C3=A0 14:10 -0400, Nicolas Dufresne a =C3=A9crit =
-:
-> Le jeudi 04 octobre 2018 =C3=A0 14:47 +0200, Paul Kocialkowski a =C3=A9cr=
-it :
-> > > +    Instance of struct v4l2_ctrl_h264_scaling_matrix, containing the=
- scaling
-> > > +    matrix to use when decoding the next queued frame. Applicable to=
- the H.264
-> > > +    stateless decoder.
-> > > +
-> > > +``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM``
-> >=20
-> > Ditto with "H264_SLICE_PARAMS".
-> >=20
-> > > +    Array of struct v4l2_ctrl_h264_slice_param, containing at least =
-as many
-> > > +    entries as there are slices in the corresponding ``OUTPUT`` buff=
-er.
-> > > +    Applicable to the H.264 stateless decoder.
-> > > +
-> > > +``V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM``
-> > > +    Instance of struct v4l2_ctrl_h264_decode_param, containing the h=
-igh-level
-> > > +    decoding parameters for a H.264 frame. Applicable to the H.264 s=
-tateless
-> > > +    decoder.
-> >=20
-> > Since we require all the macroblocks to decode one frame to be held in
-> > the same OUTPUT buffer, it probably doesn't make sense to keep
-> > DECODE_PARAM and SLICE_PARAM distinct.
-> >=20
-> > I would suggest merging both in "SLICE_PARAMS", similarly to what I
-> > have proposed for H.265: https://patchwork.kernel.org/patch/10578023/
-> >=20
-> > What do you think?
->=20
-> I don't understand why we add this arbitrary restriction of "all the
-> macroblocks to decode one frame". The bitstream may contain multiple
-> NALs per frame (e.g. slices), and stateless API shall pass each NAL
-> separately imho. The driver can then decide to combine them if needed,
-> or to keep them seperate. I would expect most decoder to decode each
-> slice independently from each other, even though they write into the
-> same frame.
+OK, so the thing I am missing is why this all matters.
 
-Well, we sort of always assumed that there is a 1:1 correspondency
-between request and output frame when implemeting the software for
-cedrus, which simplified both userspace and the driver. The approach we
-have taken is to use one of the slice parameters for the whole series
-of slices and just append the slice data.
+Note that the compiler should take care of all of this. It emits a
+call a function with external linkage having prototype X, and all the
+inline asm does is emit a jmp to some function having that same
+prototype, either the default one or the one we patched in.
 
-Now that you bring it up, I realize this is an unfortunate decision.
-This may have been the cause of bugs and limitations with our driver
-because the slice parameters may very well be distinct for each slice.
-Moreover, I suppose that just appending the slices data implies that
-they are coded in the same order as the picture, which is probably
-often the case but certainly not anything guaranteed.=20
+Apologies if I am missing something obvious here: as you know, x86 is
+not my focus in general.
 
-So I think we should change our software to associate one request per
-slice, not per frame and drop this limitation that all the macroblocks
-for the frame must be included.
+So in the arm64 case, we have
 
-This will require a number of changes to our driver and userspace, but
-also to the MPEG-2 controls where I don't think we have the macroblock
-position specified.
+    " .globl " #_fn " \n" \
+    #_fn " : \n" \
+    " b " #_def " \n" \
+    " nop \n" \
+    " nop \n" \
+    " nop \n" \
+    " nop \n" \
 
-So it certainly makes sense to keep SLICE_PARAMS separate from
-DECODE_PARAMS for H.264. I should probably also rework the H.265
-controls to reflect this. Still, all controls must be passed per slice
-(and the hardware decoding pipeline is fully reconfigured then), so I
-guess it doesn't make such a big difference in practice.
+and all the patching does is replace the target of that branch (the
+NOPs are there for jumps that are more then 128 MB away, which require
+a indirect jump on arm64)
 
-Thanks for pointing this out, it should help bring the API closer to
-what is represented in the bitstream.
+> And having all this asm hackery per architecture is ugly and annoying.
+>
 
-Cheers,
+True. But note that only the architectures that cannot tolerate the
+default instantiation using function pointers will require a special
+implementation.
 
-Paul
+> So my suggestion is to do it like a regular relocation.  Call a
+> function the normal way (make it literally be a C function and call
+> it), and rig up the noinline and noclone attributes and whatever else
+> is needed to make sure that it's a *relocatable* call.  Then the
+> toolchain emits ELF relocations saying exactly what part of the text
+> needs patching, and we can patch it at runtime.  On x86, this is a bit
+> extra annoying because we can't fully reliably parse backwards to find
+> the beginning of the instruction, but objtool could doit.
+>
+> And then we get something that is mostly arch-neutral!  Because surely
+> ARM can also use a relocation-based mechanism.
+>
 
---=20
-Developer of free digital technology and hardware support.
+Not really. We don't have any build time tooling for this, and
+CONFIG_RELOCATABLE only produces R_AARCH64_RELATIVE relocations for
+absolute quantities.
 
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+So it would mean we'd have to start building vmlinux with
+--emit-relocs, add tooling to parse all of that etc etc.
 
---=-iFSnDOpqPj8PwitcW17P
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+> I will generally object to x86 containing more than one
+> inline-asm-hackery-based patchable call mechanism, which your series
+> will add.  I would *love* to see a non-inline-asm one, and then we
+> could move most of the x86 paravirt crap over to use it for a big win
+> in readability and maintainability.
+>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlu3mu4ACgkQhP3B6o/u
-lQxj8A/+KXicOc1t6TihkQElO50sDdpbqQ9i7ebWG+NJhpS8FTKeew4ZMazMKo9c
-9C7PbQfKMadSqrKluS4cm1TxQ/NrsJiKs8qRKogg83M7/F8xCK7LF5ocwYS39Fa4
-lJ2s75Priq7dtlYUjS8Hc91cRkbZnzurvWwvedWu3kwbi6d5xV8m1W+USaDCTMVs
-uQ9eTcavYJ3aksFgqK/zfCG9DR7ZBT3ftXRBFjyjPWiXqNpvTxMxCU9OdFPJrczK
-e5l9lij7ntflTofMOnfnCYvp+nvZxD6dk+KA9x3BeYK0i+O3tQSc6z249QU0S+og
-Q87mVXyzqD5xwiuTW+ac5K6XK7dKrTVAC+w+duHgoIbZmINRdNgrCahNCeBxB/N+
-ofmnEBDPEfzjCX3nDgP/OqQQiXMoCrvC6SZ5mnMSWUQfSRZkCO+DzK01hdbevrhK
-MV/phq4dh01ca6eVIfL/0h/h7OevTDj22cH3u6kzXMAdGFBiBqfRTIBB2lLMEHtC
-n+MxkQs4MBTDLKaYvry32ocyNk9riME5UbecqsUROzTC5OqyLLjx3M5AtclaMasS
-6NMLZhageDGnDvb6M4aG+gTjluEizyb3b1i7ZGjhyR0nmt2XbUMvpWLxaaDB8Gba
-5OvB09eM8FoWbiv2TZ3ov1ruE8pbtjA+N5UQp6iuy7VBgwSKtk4=
-=cYDd
------END PGP SIGNATURE-----
-
---=-iFSnDOpqPj8PwitcW17P--
-
+Fair enough.
