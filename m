@@ -2,170 +2,124 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BCCC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66280C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371112064E
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:32:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYYY0I+0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371112064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3969F2064E
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:33:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3969F2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeJESbA (ORCPT
+        id S1728370AbeJESb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 14:31:00 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45622 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727581AbeJESbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 14:31:00 -0400
-Received: by mail-qk1-f194.google.com with SMTP id m8-v6so7665814qka.12;
-        Fri, 05 Oct 2018 04:32:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=t/iFC8Pcj1eF9sD0qlwu60t61PqTsPMrYHkQvjGK2Sg=;
-        b=GYYY0I+0ZEcHhQhTJ+kZgTPhZSJhqbc4hGqNZnxcVFQyBOHOgri9b56xrHmDFKsQic
-         AhkISHFZq0r21Zx8Io4f4Qtz54uZN4eyf4VdH3Kr1f3iaMotW8rwVfzUbLfYjK8wOSb2
-         1d/rUZ2/2aXCIswuGNFK5Q875NIHWL8yuyYclVpNnHnZZtZ2IS4pDsFvCi8q3iGPWwxU
-         G+AidkZPr7QGWawsqXxB7UKzsVyNohmlJIV+peX6/k6IyyvzzcD4PbeB8+M794eCjAxw
-         ZAJWiot2b4o+fxOq5LX6sjLGtQ2KYkDMcIp+5H3EPQrGht7QuuSiJnueHD5D8Zb7cCXb
-         oy2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=t/iFC8Pcj1eF9sD0qlwu60t61PqTsPMrYHkQvjGK2Sg=;
-        b=jtHB5EnrjC3IVuyFsHM5Uur0ezRiDr+l1/cPJUOoVJwRd80jawvX6VUKiZQqse66Dm
-         K4EAYkOCbt9Ew2nZqdmbdNQJr761BVm+WulE/QFCoQTvuei24m85QNh+MKGEcWHHUSnk
-         /OVqkbfcFraRhkHc6IjtwOATNps8xYxJaSAkw0gJFMIosGKnPBIOLSFpQ0QK/bEqgfNL
-         PxlV/op6L8UcCkaBZ/Jmrl+0MHaCSZrFV9L0kWKgfAy4zgedvU+t9kXmg9bLV4vdmi+h
-         cWgLXHieuXAX43BKAhT2kkBTylBhA/GgHyFVPNFGFtCjrf8e0jOzcNjcbVUd7CrG480V
-         C+8A==
-X-Gm-Message-State: ABuFfoiysVLxIFIIDXiys9rX4jwQKN87omxguQIqQOm38ixR3zRESadI
-        MR13Br5vv38JhzIHl2g/N8Zdjj2NR+Gt0tMQNpI=
-X-Google-Smtp-Source: ACcGV60ASAFV3bazoyOhyC8WCMJGfdKgNT2YGvo1NnVmcn36poo609H6UkEQDw6juzkaoiGE0EEg1IHI92M4P95yq6U=
-X-Received: by 2002:a37:7a05:: with SMTP id v5-v6mr8455036qkc.129.1538739156777;
- Fri, 05 Oct 2018 04:32:36 -0700 (PDT)
-MIME-Version: 1.0
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 5 Oct 2018 13:32:25 +0200
-Message-ID: <CANiq72kuTr09CjE0jcNFkdO-gOFCjYp+REuLPq5V9c4Y8KvWXA@mail.gmail.com>
-Subject: [GIT PULL linux-next] Add Compiler Attributes (v6) tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
+        Fri, 5 Oct 2018 14:31:26 -0400
+Received: from mga03.intel.com ([134.134.136.65]:21825 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727581AbeJESb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 14:31:26 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 04:33:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,344,1534834800"; 
+   d="scan'208";a="78718953"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.74])
+  by orsmga007.jf.intel.com with ESMTP; 05 Oct 2018 04:32:44 -0700
+Date:   Fri, 5 Oct 2018 14:32:44 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 15/19] platform/x86: Intel SGX driver
+Message-ID: <20181005113244.GB25985@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-16-jarkko.sakkinen@linux.intel.com>
+ <1538676077.2562.6.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1538676077.2562.6.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Thu, Oct 04, 2018 at 11:01:17AM -0700, Sean Christopherson wrote:
+> On Tue, 2018-09-25 at 16:06 +0300, Jarkko Sakkinen wrote:
+> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > can be used by applications to set aside private regions of code and
+> > data. The code outside the enclave is disallowed to access the memory
+> > inside the enclave by the CPU access control.
+> > 
+> > SGX driver provides a ioctl API for loading and initializing enclaves.
+> > Address range for enclaves is reserved with mmap() and they are
+> > destroyed with munmap(). Enclave construction, measurement and
+> > initialization is done with the provided the ioctl API.
+> 
+> ...
+> 
+> > +/**
+> > + * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
+> > + *
+> > + * @filep:	open file to /dev/sgx
+> > + * @cmd:	the command value
+> > + * @arg:	pointer to an &sgx_enclave_init instance
+> > + *
+> > + * Flushes the remaining enqueued EADD operations and performs EINIT. Does not
+> > + * allow the EINITTOKENKEY attribute for an enclave.
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   SGX error code on EINIT failure,
+> > + *   -errno otherwise
+> > + */
+> > +static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+> > +				 unsigned long arg)
+> > +{
+> > +	struct sgx_enclave_init *initp = (struct sgx_enclave_init *)arg;
+> > +	struct sgx_sigstruct *sigstruct;
+> > +	struct sgx_einittoken *einittoken;
+> > +	struct sgx_encl *encl;
+> > +	struct page *initp_page;
+> > +	int ret;
+> > +
+> > +	initp_page = alloc_page(GFP_HIGHUSER);
+> > +	if (!initp_page)
+> > +		return -ENOMEM;
+> > +
+> > +	sigstruct = kmap(initp_page);
+> > +	einittoken = (struct sgx_einittoken *)
+> > +		((unsigned long)sigstruct + PAGE_SIZE / 2);
+> > +	memset(einittoken, 0, sizeof(*einittoken));
+> > +
+> > +	ret = copy_from_user(sigstruct, (void __user *)initp->sigstruct,
+> > +			     sizeof(*sigstruct));
+> > +	if (ret)
+> > +		goto out;
+> > +	if (sigstruct->attributes & SGX_ATTR_EINITTOKENKEY) {
+> > +		ret = EINVAL;
+> 
+> This should be "ret = -EINVAL".
 
-As discussed, here it is the Compiler Attributes series for
-linux-next. This time the original v6, based on -rc6.
+Ouch :-( Thank you for spotting this out.
 
-The changes w.r.t. v5:
-
-  - Added latest Reviewed-by's and Tested-by's.
-
-The conflicts are trivial to solve, but if you want a reference, take
-a look at (rebased on top of next-20181005):
-
-  https://github.com/ojeda/linux.git compiler-attributes-rebased
-
-Thanks!
-
-Cheers,
-Miguel
-
-The following changes since commit 17b57b1883c1285f3d0dc2266e8f79286a7bef38:
-
-  Linux 4.19-rc6 (2018-09-30 07:15:35 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/ojeda/linux.git compiler-attributes
-
-for you to fetch changes up to f0604f63033d4020f019d2aaee805c1075b1077b:
-
-  Compiler Attributes: ext4: remove local __nonstring definition
-(2018-09-30 20:14:04 +0200)
-
-----------------------------------------------------------------
-Miguel Ojeda (15):
-      Compiler Attributes: remove unused attributes
-      Compiler Attributes: always use the extra-underscores syntax
-      Compiler Attributes: remove unneeded tests
-      Compiler Attributes: homogenize __must_be_array
-      Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
-      Compiler Attributes: add missing SPDX ID in compiler_types.h
-      Compiler Attributes: use feature checks instead of version checks
-      Compiler Attributes: KENTRY used twice the "used" attribute
-      Compiler Attributes: remove uses of __attribute__ from compiler.h
-      Compiler Attributes: add Doc/process/programming-language.rst
-      Compiler Attributes: add MAINTAINERS entry
-      Compiler Attributes: add support for __nonstring (gcc >= 8)
-      Compiler Attributes: enable -Wstringop-truncation on W=1 (gcc >= 8)
-      Compiler Attributes: auxdisplay: panel: use __nonstring
-      Compiler Attributes: ext4: remove local __nonstring definition
-
- Documentation/process/index.rst                |   1 +
- Documentation/process/programming-language.rst |  45 +++++
- MAINTAINERS                                    |   5 +
- drivers/auxdisplay/panel.c                     |   7 +-
- fs/ext4/ext4.h                                 |   9 -
- include/linux/compiler-clang.h                 |   5 -
- include/linux/compiler-gcc.h                   |  70 +------
- include/linux/compiler-intel.h                 |   9 -
- include/linux/compiler.h                       |  19 +-
- include/linux/compiler_attributes.h            | 258 +++++++++++++++++++++++++
- include/linux/compiler_types.h                 | 101 ++--------
- scripts/Makefile.extrawarn                     |   1 +
- 12 files changed, 341 insertions(+), 189 deletions(-)
- create mode 100644 Documentation/process/programming-language.rst
- create mode 100644 include/linux/compiler_attributes.h
+/Jarkko
