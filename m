@@ -2,48 +2,49 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6D8C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A27C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11775208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB287208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:23:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5L9DZL7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11775208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6DrIJdJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB287208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbeJEXQK (ORCPT
+        id S1729664AbeJEXXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53924 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729621AbeJEXQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:08 -0400
+        id S1729881AbeJEXQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1617D21477;
-        Fri,  5 Oct 2018 16:16:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 857582148D;
+        Fri,  5 Oct 2018 16:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756205;
-        bh=SaNnqa7kWaOuxOzCG+LLMWxYpLkqF7qUGEYtsCIcH24=;
+        s=default; t=1538756203;
+        bh=r8ZHerqgAVQkAlMFiPZiODUNtwL/Fp0c+naEk+Vi9KU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q5L9DZL7+3tYxuIDWFMSrUfd0DraQ6qEDMc/bs7eA5A3PkWalOsBE5fntCcnGKHA7
-         gml2yeIcGpUl8snA45EI/D4wrG4/IaVTclFeKz/yTwbl/AoiPkBl5ExBEalYGTH5gb
-         Y/vW0NOkCHQOvfCysbY8rXF6fA5ok1OqLl+OX1WE=
+        b=h6DrIJdJA/vCntwiu9qGRpNEfU/ZX7ubvu28AWo0ZwCWRyudE0yvH6ofjLI4rdqYr
+         PCECnH8ELBNiHYshHkHrsXYX7ZosNDl/Nb9cqp6zd+O8WgJaxRohedh25FeWbuovxx
+         TGPa3VcpypGvzcMMvAD1q+e7Ndt1HvIhv6HOVlko=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Hermes Zhang <chenhuiz@axis.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 11/23] scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
-Date:   Fri,  5 Oct 2018 12:16:22 -0400
-Message-Id: <20181005161634.20631-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 08/23] Bluetooth: hci_ldisc: Free rw_semaphore on close
+Date:   Fri,  5 Oct 2018 12:16:19 -0400
+Message-Id: <20181005161634.20631-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
 References: <20181005161634.20631-1-sashal@kernel.org>
@@ -52,38 +53,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Hermes Zhang <chenhuiz@axis.com>
 
-[ Upstream commit cbe3fd39d223f14b1c60c80fe9347a3dd08c2edb ]
+[ Upstream commit e6a57d22f787e73635ce0d29eef0abb77928b3e9 ]
 
-We should first do the le16_to_cpu endian conversion and then apply the
-FCP_CMD_LENGTH_MASK mask.
+The percpu_rw_semaphore is not currently freed, and this leads to
+a crash when the stale rcu callback is invoked.  DEBUG_OBJECTS
+detects this.
 
-Fixes: 5f35509db179 ("qla2xxx: Terminate exchange if corrupted")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Quinn Tran <Quinn.Tran@cavium.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+ ODEBUG: free active (active state 1) object type: rcu_head hint: (null)
+ ------------[ cut here ]------------
+ WARNING: CPU: 1 PID: 2024 at debug_print_object+0xac/0xc8
+ PC is at debug_print_object+0xac/0xc8
+ LR is at debug_print_object+0xac/0xc8
+ Call trace:
+ [<ffffff80082e2c2c>] debug_print_object+0xac/0xc8
+ [<ffffff80082e40b0>] debug_check_no_obj_freed+0x1e8/0x228
+ [<ffffff8008191254>] kfree+0x1cc/0x250
+ [<ffffff80083cc03c>] hci_uart_tty_close+0x54/0x108
+ [<ffffff800832e118>] tty_ldisc_close.isra.1+0x40/0x58
+ [<ffffff800832e14c>] tty_ldisc_kill+0x1c/0x40
+ [<ffffff800832e3dc>] tty_ldisc_release+0x94/0x170
+ [<ffffff8008325554>] tty_release_struct+0x1c/0x58
+ [<ffffff8008326400>] tty_release+0x3b0/0x490
+ [<ffffff80081a3fe8>] __fput+0x88/0x1d0
+ [<ffffff80081a418c>] ____fput+0xc/0x18
+ [<ffffff80080c0624>] task_work_run+0x9c/0xc0
+ [<ffffff80080a9e24>] do_exit+0x24c/0x8a0
+ [<ffffff80080aa4e0>] do_group_exit+0x38/0xa0
+ [<ffffff80080aa558>] __wake_up_parent+0x0/0x28
+ [<ffffff8008082c00>] el0_svc_naked+0x34/0x38
+ ---[ end trace bfe08cbd89098cdf ]---
+
+Signed-off-by: Hermes Zhang <chenhuiz@axis.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/qla2xxx/qla_target.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bluetooth/hci_ldisc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index aba58d3848a6..511a31b359c7 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -374,8 +374,8 @@ struct atio_from_isp {
- static inline int fcpcmd_is_corrupted(struct atio *atio)
- {
- 	if (atio->entry_type == ATIO_TYPE7 &&
--	    (le16_to_cpu(atio->attr_n_length & FCP_CMD_LENGTH_MASK) <
--	    FCP_CMD_LENGTH_MIN))
-+	    ((le16_to_cpu(atio->attr_n_length) & FCP_CMD_LENGTH_MASK) <
-+	     FCP_CMD_LENGTH_MIN))
- 		return 1;
- 	else
- 		return 0;
+diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+index c823914b3a80..30bbe19b4b85 100644
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -539,6 +539,8 @@ static void hci_uart_tty_close(struct tty_struct *tty)
+ 	}
+ 	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
+ 
++	percpu_free_rwsem(&hu->proto_lock);
++
+ 	kfree(hu);
+ }
+ 
 -- 
 2.17.1
 
