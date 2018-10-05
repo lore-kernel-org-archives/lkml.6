@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D51C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6582AC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B6D21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B6D21473
+	by mail.kernel.org (Postfix) with ESMTP id 363E221477
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 17:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363E221477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729474AbeJFAEY (ORCPT
+        id S1729499AbeJFAE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:04:24 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53870 "EHLO huawei.com"
+        Fri, 5 Oct 2018 20:04:29 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13599 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728021AbeJFAEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:04:23 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 40AE9F7A8140A;
-        Sat,  6 Oct 2018 01:04:44 +0800 (CST)
+        id S1727958AbeJFAE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:04:28 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 97609D51EFE39;
+        Sat,  6 Oct 2018 01:04:49 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 6 Oct 2018 01:04:37 +0800
+ 14.3.399.0; Sat, 6 Oct 2018 01:04:40 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Zhongzhu Liu <liuzhongzhu@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 5/6] net: hns3: Add egress/ingress vlan filter for revision 0x21
-Date:   Fri, 5 Oct 2018 18:03:28 +0100
-Message-ID: <20181005170329.6512-6-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
+Subject: [PATCH net-next 6/6] net: hns3: Fix for rx vlan id handle to support Rev 0x21 hardware
+Date:   Fri, 5 Oct 2018 18:03:29 +0100
+Message-ID: <20181005170329.6512-7-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181005170329.6512-1-salil.mehta@huawei.com>
 References: <20181005170329.6512-1-salil.mehta@huawei.com>
@@ -50,102 +49,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhongzhu Liu <liuzhongzhu@huawei.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-In revision 0x21, hw supports both ingress and egress vlan filter.
-This patch adds support for it.
+In revision 0x20, we use vlan id != 0 to check whether a vlan tag
+has been offloaded, so vlan id 0 is not supported.
 
-Signed-off-by: Zhongzhu Liu <liuzhongzhu@huawei.com>
+In revision 0x21, rx buffer descriptor adds two bits to indicate
+whether one or more vlan tags have been offloaded, so vlan id 0
+is valid now.
+
+This patch seperates the handle for vlan id 0, add vlan id 0 support
+for revision 0x21.
+
+Fixes: 5b5455a9ed5a ("net: hns3: Add STRP_TAGP field support for hardware revision 0x21")
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 45 +++++++++++++++++-----
- 1 file changed, 36 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 30 +++++++++++--------------
+ 1 file changed, 13 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index d95ea9b..ca1a936 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5523,7 +5523,7 @@ static int hclge_do_ioctl(struct hnae3_handle *handle, struct ifreq *ifr,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 3f36c38..e9d4564 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2200,18 +2200,18 @@ static void hns3_rx_skb(struct hns3_enet_ring *ring, struct sk_buff *skb)
+ 	napi_gro_receive(&ring->tqp_vector->napi, skb);
  }
  
- static int hclge_set_vlan_filter_ctrl(struct hclge_dev *hdev, u8 vlan_type,
--				      bool filter_en)
-+				      u8 fe_type, bool filter_en)
+-static u16 hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
+-			       struct hns3_desc *desc, u32 l234info)
++static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
++				struct hns3_desc *desc, u32 l234info,
++				u16 *vlan_tag)
  {
- 	struct hclge_vlan_filter_ctrl_cmd *req;
- 	struct hclge_desc desc;
-@@ -5533,7 +5533,7 @@ static int hclge_set_vlan_filter_ctrl(struct hclge_dev *hdev, u8 vlan_type,
+ 	struct pci_dev *pdev = ring->tqp->handle->pdev;
+-	u16 vlan_tag;
  
- 	req = (struct hclge_vlan_filter_ctrl_cmd *)desc.data;
- 	req->vlan_type = vlan_type;
--	req->vlan_fe = filter_en;
-+	req->vlan_fe = filter_en ? fe_type : 0;
+ 	if (pdev->revision == 0x20) {
+-		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
+-		if (!(vlan_tag & VLAN_VID_MASK))
+-			vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
++		*vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
++		if (!(*vlan_tag & VLAN_VID_MASK))
++			*vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
  
- 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
- 	if (ret)
-@@ -5545,13 +5545,30 @@ static int hclge_set_vlan_filter_ctrl(struct hclge_dev *hdev, u8 vlan_type,
+-		return vlan_tag;
++		return (*vlan_tag != 0);
+ 	}
  
- #define HCLGE_FILTER_TYPE_VF		0
- #define HCLGE_FILTER_TYPE_PORT		1
-+#define HCLGE_FILTER_FE_EGRESS_V1_B	BIT(0)
-+#define HCLGE_FILTER_FE_NIC_INGRESS_B	BIT(0)
-+#define HCLGE_FILTER_FE_NIC_EGRESS_B	BIT(1)
-+#define HCLGE_FILTER_FE_ROCE_INGRESS_B	BIT(2)
-+#define HCLGE_FILTER_FE_ROCE_EGRESS_B	BIT(3)
-+#define HCLGE_FILTER_FE_EGRESS		(HCLGE_FILTER_FE_NIC_EGRESS_B \
-+					| HCLGE_FILTER_FE_ROCE_EGRESS_B)
-+#define HCLGE_FILTER_FE_INGRESS		(HCLGE_FILTER_FE_NIC_INGRESS_B \
-+					| HCLGE_FILTER_FE_ROCE_INGRESS_B)
- 
- static void hclge_enable_vlan_filter(struct hnae3_handle *handle, bool enable)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
- 
--	hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF, enable);
-+	if (hdev->pdev->revision >= 0x21) {
-+		hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
-+					   HCLGE_FILTER_FE_EGRESS, enable);
-+		hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_PORT,
-+					   HCLGE_FILTER_FE_INGRESS, enable);
-+	} else {
-+		hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
-+					   HCLGE_FILTER_FE_EGRESS_V1_B, enable);
-+	}
+ #define HNS3_STRP_OUTER_VLAN	0x1
+@@ -2220,17 +2220,14 @@ static u16 hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
+ 	switch (hnae3_get_field(l234info, HNS3_RXD_STRP_TAGP_M,
+ 				HNS3_RXD_STRP_TAGP_S)) {
+ 	case HNS3_STRP_OUTER_VLAN:
+-		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
+-		break;
++		*vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
++		return true;
+ 	case HNS3_STRP_INNER_VLAN:
+-		vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
+-		break;
++		*vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
++		return true;
+ 	default:
+-		vlan_tag = 0;
+-		break;
++		return false;
+ 	}
+-
+-	return vlan_tag;
  }
  
- static int hclge_set_vf_vlan_common(struct hclge_dev *hdev, int vfid,
-@@ -5853,13 +5870,23 @@ static int hclge_init_vlan_config(struct hclge_dev *hdev)
- 	int ret;
- 	int i;
+ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+@@ -2332,8 +2329,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	if (netdev->features & NETIF_F_HW_VLAN_CTAG_RX) {
+ 		u16 vlan_tag;
  
--	ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF, true);
--	if (ret)
--		return ret;
-+	if (hdev->pdev->revision >= 0x21) {
-+		ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
-+						 HCLGE_FILTER_FE_EGRESS, true);
-+		if (ret)
-+			return ret;
- 
--	ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_PORT, true);
--	if (ret)
--		return ret;
-+		ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_PORT,
-+						 HCLGE_FILTER_FE_INGRESS, true);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
-+						 HCLGE_FILTER_FE_EGRESS_V1_B,
-+						 true);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	hdev->vlan_type_cfg.rx_in_fst_vlan_type = HCLGE_DEF_VLAN_TYPE;
- 	hdev->vlan_type_cfg.rx_in_sec_vlan_type = HCLGE_DEF_VLAN_TYPE;
+-		vlan_tag = hns3_parse_vlan_tag(ring, desc, l234info);
+-		if (vlan_tag & VLAN_VID_MASK)
++		if (hns3_parse_vlan_tag(ring, desc, l234info, &vlan_tag))
+ 			__vlan_hwaccel_put_tag(skb,
+ 					       htons(ETH_P_8021Q),
+ 					       vlan_tag);
 -- 
 2.7.4
 
