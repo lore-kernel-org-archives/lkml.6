@@ -3,63 +3,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DFDC65BAA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03CDC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 658702087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:43:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658702087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 943A12087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 15:45:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943A12087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbeJEWnH (ORCPT
+        id S1728443AbeJEWoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 18:43:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42414 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 18:44:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbeJEWnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 18:43:07 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727572AbeJEWoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 18:44:34 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D1B789E60A;
-        Fri,  5 Oct 2018 15:43:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B11C2675F6;
-        Fri,  5 Oct 2018 15:43:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <alpine.LRH.2.21.1810040511390.16168@namei.org>
-References: <alpine.LRH.2.21.1810040511390.16168@namei.org> <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <153618448451.7946.79126788153992612.stgit@warthog.procyon.org.uk>
-To:     James Morris <jmorris@namei.org>
-Cc:     dhowells@redhat.com, denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/22] KEYS: Make the X.509 and PKCS7 parsers supply the sig encoding type
+        by mail.kernel.org (Postfix) with ESMTPSA id 300662087D;
+        Fri,  5 Oct 2018 15:45:18 +0000 (UTC)
+Date:   Fri, 5 Oct 2018 11:45:16 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Colin Patrick McCabe <cmccabe@alumni.cmu.edu>
+Subject: Re: [PATCH v3] tools/lib/traceevent: Replace str_error_r() with an
+ open coded implementation
+Message-ID: <20181005114516.68f47767@gandalf.local.home>
+In-Reply-To: <20181005153731.GC20250@kernel.org>
+References: <20181002175539.2ac894c7@gandalf.local.home>
+        <20181005113056.55b23c31@gandalf.local.home>
+        <20181005153731.GC20250@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <21921.1538754230.1@warthog.procyon.org.uk>
-Date:   Fri, 05 Oct 2018 16:43:50 +0100
-Message-ID: <21922.1538754230@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 05 Oct 2018 15:43:52 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
+On Fri, 5 Oct 2018 12:37:31 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-> Perhaps I'm missing something here but why do you need the gotos vs. just 
-> breaking to this code?
+> Em Fri, Oct 05, 2018 at 11:30:56AM -0400, Steven Rostedt escreveu:
+> > Bah, I now get warnings that sys_nerr and sys_errlist are deprecated.
+> > 
+> > OK, so going back to just using the racy strerror() should be good
+> > enough, as this incompatibility with strerror_r() is a disaster!  
+> 
+> I've been there, done that... ;-) Check:
+> 
+> tools/lib/str_error_r.c
+> tools/lib/bpf/str_error.c
+> 
+> The trick: have this function in a separate file, so that _GNU_SOURCE
+> doesn't get in the way...
+> 
 
-Because at some point we might add support for some other public key
-algorithm, such as EC.  This makes it clearer that that piece of code is
-specific to a certain set of algorithm identifiers.
+Yep, I've been looking at these. I'll need to add yet another version,
+so that we can have it for the external libtraceevent. I'll be sending
+out a patch shortly.
 
-David
+-- Steve
