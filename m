@@ -2,116 +2,132 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DB5C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F262C65BBE
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28F58208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:19:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F58208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CE5E208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:19:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="RS1gRwgW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE5E208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJFET6 (ORCPT
+        id S1727811AbeJFEUJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:19:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49086 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725787AbeJFET6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:19:58 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A5DC7308ED66;
-        Fri,  5 Oct 2018 21:19:26 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-2.gru2.redhat.com [10.97.112.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 299155C22B;
-        Fri,  5 Oct 2018 21:19:26 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id E788E105148;
-        Fri,  5 Oct 2018 18:18:57 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id w95LIfkI012495;
-        Fri, 5 Oct 2018 18:18:41 -0300
-Date:   Fri, 5 Oct 2018 18:18:41 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI
- support
-Message-ID: <20181005211838.GB7129@amt.cnet>
-References: <20180914125006.349747096@linutronix.de>
- <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
- <87sh1ne64t.fsf@vitty.brq.redhat.com>
- <20181003190617.GC21381@amt.cnet>
- <87k1mycfju.fsf@vitty.brq.redhat.com>
+        Sat, 6 Oct 2018 00:20:09 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:36068 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeJFEUJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 00:20:09 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7806710C0A70;
+        Fri,  5 Oct 2018 14:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1538774377; bh=tDzuuME0GaDD8mj1n0Jn2SE0+gTmpd+ZjEhD4sQaywU=;
+        h=From:To:CC:Subject:Date:From;
+        b=RS1gRwgW0CWddBXRjaGD5kh5t6WNMeInxmVTyOq68KwqJL6qiaCYHNllJbYCHG1gO
+         +sgc5xVxi2EZNOYUBrLRARS3cgSy1BDPDQct0D69jRLoA8gN4GVdkYAzpqpnkigTqL
+         EMjEYCuuVnyb7C9KITtfouvnPopM8qgbqBxvgDFMr70DaiB44b0b4Q6HKpGMgb9o+G
+         ZUVfSV0okU3R0kPJKfxzwUHWIHs4ABV2GbU9JgJc+Gr4Ly/K7DiGisM0kb6sTvSaLo
+         Iaqvm4sSM0y6uq7WY1aiv3hcYoezwqt+RY1tjAplRAY6TuQdCipxVcmeX6c4cpnhjK
+         Lm/2hMYDrnbyA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 26C1735BE;
+        Fri,  5 Oct 2018 14:19:36 -0700 (PDT)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 5 Oct 2018 14:19:36 -0700
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Sat, 6 Oct 2018 02:49:32 +0530
+Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.73) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Sat, 6 Oct 2018 02:49:32 +0530
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     <linux-snps-arc@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <alexey.brodkin@synopsys.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] ARC: clone syscall to setp r25 as thread pointer
+Date:   Fri, 5 Oct 2018 14:19:21 -0700
+Message-ID: <1538774361-9306-1-git-send-email-vgupta@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1mycfju.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 05 Oct 2018 21:19:27 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.10.161.73]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:54:45AM +0200, Vitaly Kuznetsov wrote:
-> Marcelo Tosatti <mtosatti@redhat.com> writes:
-> 
-> > On Wed, Oct 03, 2018 at 11:22:58AM +0200, Vitaly Kuznetsov wrote:
-> >> 
-> >> There is a very long history of different (hardware) issues Marcelo was
-> >> fighting with and the current code is the survived Frankenstein.
-> >
-> > Right, the code has to handle different TSC modes.
-> >
-> >>  E.g. it
-> >> is very, very unclear what "catchup", "always catchup" and
-> >> masterclock-less mode in general are and if we still need them.
-> >
-> > Catchup means handling exposed (to guest) TSC frequency smaller than
-> > HW TSC frequency.
-> >
-> > That is "frankenstein" code, could be removed.
-> >
-> >> That said I'm all for simplification. I'm not sure if we still need to
-> >> care about buggy hardware though.
-> >
-> > What simplification is that again? 
-> >
-> 
-> I was hoping to hear this from you :-) If I am to suggest how we can
-> move forward I'd propose:
-> - Check if pure TSC can be used on SkyLake+ systems (where TSC scaling
-> is supported).
+Per ARC TLS ABI, r25 is designated TP (thread pointer register).
+However so far kernel didn't do any special treatment, like setting up
+usermode r25, even for CLONE_SETTLS. We instead relied on libc runtime
+to do this, in say clone libc wrapper [1]. This was deliberate to keep
+kernel ABI agnostic (userspace could potentially change TP, specially
+for different ARC ISA say ARCompact vs. ARCv2 with different spare
+registers etc)
 
-In that case just use TSC clocksource on the guest directly: i am
-writing code for that now (its faster than pvclock syscall).
+However userspace setting up r25, after clone syscall opens a race, if
+child is not scheduled and gets a signal instead. It starts off in
+userspace not in clone but in a signal handler and anything TP sepcific
+there such as pthread_self() fails which showed up with uClibc
+testsuite nptl/tst-kill6 [2]
 
-> - Check if non-masterclock mode is still needed. E.g. HyperV's TSC page
-> clocksource is a single page for the whole VM, not a per-cpu thing. Can
-> we think that all the buggy hardware is already gone?
+Fix this by having kernel populate r25 to TP value. So this locks in
+ABI, but it was not going to change anyways, and fwiw is same for both
+ARCompact (arc700 core) and ARCvs (HS3x cores)
 
-As Peter mentioned, non sync TSC hardware might exist in the future. 
-And older hardware must be supported.
+[1] https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/tree/libc/sysdeps/linux/arc/clone.S
+[2] https://github.com/wbx-github/uclibc-ng-test/blob/master/test/nptl/tst-kill6.c
 
+Fixes: ARC STAR 9001378481
+Cc: stable@vger.kernel.org
+Reported-by: Nikita Sobolev <sobolev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+---
+ arch/arc/kernel/process.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arc/kernel/process.c b/arch/arc/kernel/process.c
+index 4674541eba3f..c29fa8ceb2d6 100644
+--- a/arch/arc/kernel/process.c
++++ b/arch/arc/kernel/process.c
+@@ -241,6 +241,26 @@ int copy_thread(unsigned long clone_flags,
+ 		task_thread_info(current)->thr_ptr;
+ 	}
+ 
++
++	/*
++	 * setup usermode thread pointer #1:
++	 * when child is picked by scheduler, __switch_to() uses @c_callee to
++	 * populate usermode callee regs: this is fine even despite being in a
++	 * kernel function since special return path for child @ret_from_fork()
++	 * ensures those regs are not clobbered all the way to RTIE to usermode
++	 */
++	c_callee->r25 = task_thread_info(p)->thr_ptr;
++
++#ifdef CONFIG_ARC_CURR_IN_REG
++	/*
++	 * setup usermode thread pointer #2:
++	 *   however for this special use of r25 in kernel, __switch_to() sets
++	 *   r25 for kernel needs and only in the final return path is usermode
++	 *   r25 setup, from pt_regs->user_r25. So set that up as well
++	 */
++	c_regs->user_r25 = c_callee->r25;
++#endif
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
 
