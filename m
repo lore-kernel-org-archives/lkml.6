@@ -2,153 +2,134 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8198C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D17C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54CCE2064E
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:36:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nptHH9+g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54CCE2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A6DD0208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:39:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6DD0208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbeJEQet (ORCPT
+        id S1727711AbeJEQhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 12:34:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38706 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeJEQes (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 12:34:48 -0400
-Received: by mail-wr1-f67.google.com with SMTP id a13-v6so12830192wrt.5
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 02:36:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=kGzM4xTqlGpe32GISfVIdFrlVFgMOsfGROpaokWRl84=;
-        b=nptHH9+gJXmtzOiO5mlOeeZhFzUt+eoWhyP4XxVcdOOA2zpT0rEjp8/FwaPnRTDibP
-         xs/S6J/wpLidCwNpPIDjTNhns0SJzWYDd5tpFeaVkkPRMl6VADRhbyaQMMLnLKM70238
-         CVlXNsKzZ2pLcrz9BL5fGxPKm9EzWb4P/8RSkz52Ya/tfdg3Kh4a9iDu8zOIOHns2s5E
-         37uNOzb8iCn/k1bBNKA4BacQ/1n8v6nE+VPrBswtZHWGrOjAUuU7d2icuieJZYPwZUOK
-         pYEZe635bt4yqyPkE7KEr83AAr/EtkywS8y8fjrP1WwM0DX1BJ8GUm3jAkeXplMFIkKF
-         60bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=kGzM4xTqlGpe32GISfVIdFrlVFgMOsfGROpaokWRl84=;
-        b=EgRATDDhbWAjDiluVH896oPhnCaDJ3xtWMsompXV7CRH10CH9KAYrjqM95UVBtpVTC
-         +LziiQCGa5cjFCre54QzgS+MW883WOhzFeAVxP/ryMODf4iQNCHqBh46xV4Sn7z79Pzr
-         DXn4C1lSw5Ef91Bb/MS37JpobbDPsp5R7klGjIB18iRV+WApyQlSEIDqixVw77OIARk/
-         KJuqaZI3sMUlmJrouXZZfIB8IrIgLNuGQbh9R8DLquiCeJP7FWCAOiuvo9yg3v+a364N
-         dn2Tt9Ynf07wZ79MnzAlq+09mlJHg14WMyabErRYVconeaHXBOnRW/xWWppsWA6l3SBb
-         EWXQ==
-X-Gm-Message-State: ABuFfohcXsOiScZhn+G9XUO3byiZh3V20+rZ3zL9ITW8Xy6SngOBe/ZE
-        UCAsZigpSNABLdZpLSn4YoS+lh0K
-X-Google-Smtp-Source: ACcGV63wJ3j0AUTDXCyxSMHmM4UNV11KZQroOlWcvfuW29xbPyCrjsQyWfGQ/jEZKv71D7n/AwNhtg==
-X-Received: by 2002:adf:9a38:: with SMTP id z53-v6mr7923927wrb.75.1538732210457;
-        Fri, 05 Oct 2018 02:36:50 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm3648466wrw.12.2018.10.05.02.36.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 02:36:49 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 11:36:47 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] locking fixes
-Message-ID: <20181005093647.GA52472@gmail.com>
+        Fri, 5 Oct 2018 12:37:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:39981 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727179AbeJEQhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 12:37:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 02:39:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,343,1534834800"; 
+   d="scan'208";a="268692163"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 05 Oct 2018 02:39:14 -0700
+Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
+        by linux.intel.com (Postfix) with ESMTP id CB8B95801E6;
+        Fri,  5 Oct 2018 02:39:11 -0700 (PDT)
+Subject: Re: [PATCH v9 2/3]: perf record: enable asynchronous trace writing
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+References: <ded47c34-9e92-6bd2-9522-a927a7237011@linux.intel.com>
+ <5ed78452-ff2b-dfe5-ec29-888971cb4b55@linux.intel.com>
+ <20181005071615.GC3768@sejong>
+ <dc944fcf-cbb6-9b88-bc1c-606eb027a6ac@linux.intel.com>
+ <20181005084854.GE3768@sejong>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <4ee1c347-674b-ac61-65cf-55fb71a7cc2b@linux.intel.com>
+Date:   Fri, 5 Oct 2018 12:39:10 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181005084854.GE3768@sejong>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg,
+Hi,
 
-Please pull the latest locking-urgent-for-linus git tree from:
+On 05.10.2018 11:48, Namhyung Kim wrote:
+> On Fri, Oct 05, 2018 at 11:31:11AM +0300, Alexey Budankov wrote:
+<SNIP>
+>>
+>> Well, this could be implemented like this avoiding lseek() in else branch:
+>>
+>> 	off = lseek(trace_fd, 0, SEEK_CUR);
+>> 	ret = record__aio_write(cblock, trace_fd, bf, size, off);
+>> 	if (!ret) {
+>> 		lseek(trace_fd, off + size, SEEK_SET);
+>> 		rec->bytes_written += size;
+>>
+>> 		if (switch_output_size(rec))
+>> 			trigger_hit(&switch_output_trigger);
+>> 	}
+> 
+> Oh I meant the both like:
+> 
+> 	off = rec->bytes_written;
+>  	ret = record__aio_write(cblock, trace_fd, bf, size, off);
+>  	if (!ret) {
+>  		rec->bytes_written += size;
+> 
+> 		...
+> 
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
+It still have to adjust the file pos thru lseek() prior leaving 
+record__aio_pushfn() so space in trace file would be pre-allocated for 
+enqueued record and file pos be moved beyond the record data, 
+possibly for the next record.
 
-   # HEAD: e4a02ed2aaf447fa849e3254bfdb3b9b01e1e520 locking/ww_mutex: Fix runtime warning in the WW mutex selftest
+> 
+<SNIP>
+> 
+> Why not exposing opts.nr_cblocks regardless of the #ifdef?  It'll have
+> 0 when it's not compiled in.  Then it could be like below (assuming
+> you have all the dummy aio funcitons):
+> 
+> 
+>>
+>> 		if (map->base) {
+>> 			if (!rec->opts.nr_cblocks) {
+>> 				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+>> 					rc = -1;
+>> 					goto out;
+>> 				}
+>> 			} else {
+>> 				int idx;
+>> 				/*
+>> 				 * Call record__aio_sync() to wait till map->data buffer
+>> 				 * becomes available after previous aio write request.
+>> 				 */
+>> 				idx = record__aio_sync(map, false);
+>> 				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn) != 0) {
+>> 					rc = -1;
+>> 					goto out;
+>> 				}
+>> 			}
+>> 		}
+>>
 
-A fix in the ww_mutex self-test that produces a scary splat, plus an updates to the 
-maintained-filed patters in MAINTAINER.
+Well, if it has AIO symbols + opts.nr_cblocks exposed unconditionally of 
+HAVE_AIO_SUPPORT, but keeps the symbols implementation under the define, then
+as far aio-cblocks option is not exposed thru command line, we end up in
+whole bunch of symbols referenced under the else branch that, after all, 
+can cause Perf binary size increase, which is, probably, worth avoiding.
 
- Thanks,
-
-	Ingo
-
------------------->
-Guenter Roeck (1):
-      locking/ww_mutex: Fix runtime warning in the WW mutex selftest
-
-Will Deacon (1):
-      MAINTAINERS: Remove dead path from LOCKING PRIMITIVES entry
-
-
- MAINTAINERS                    |  1 -
- kernel/locking/test-ww_mutex.c | 10 ++++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a255240d1452..3bd8913b2d78 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8598,7 +8598,6 @@ F:	include/linux/spinlock*.h
- F:	arch/*/include/asm/spinlock*.h
- F:	include/linux/rwlock*.h
- F:	include/linux/mutex*.h
--F:	arch/*/include/asm/mutex*.h
- F:	include/linux/rwsem*.h
- F:	arch/*/include/asm/rwsem.h
- F:	include/linux/seqlock.h
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 0be047dbd897..65a3b7e55b9f 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -260,7 +260,7 @@ static void test_cycle_work(struct work_struct *work)
- {
- 	struct test_cycle *cycle = container_of(work, typeof(*cycle), work);
- 	struct ww_acquire_ctx ctx;
--	int err;
-+	int err, erra = 0;
- 
- 	ww_acquire_init(&ctx, &ww_class);
- 	ww_mutex_lock(&cycle->a_mutex, &ctx);
-@@ -270,17 +270,19 @@ static void test_cycle_work(struct work_struct *work)
- 
- 	err = ww_mutex_lock(cycle->b_mutex, &ctx);
- 	if (err == -EDEADLK) {
-+		err = 0;
- 		ww_mutex_unlock(&cycle->a_mutex);
- 		ww_mutex_lock_slow(cycle->b_mutex, &ctx);
--		err = ww_mutex_lock(&cycle->a_mutex, &ctx);
-+		erra = ww_mutex_lock(&cycle->a_mutex, &ctx);
- 	}
- 
- 	if (!err)
- 		ww_mutex_unlock(cycle->b_mutex);
--	ww_mutex_unlock(&cycle->a_mutex);
-+	if (!erra)
-+		ww_mutex_unlock(&cycle->a_mutex);
- 	ww_acquire_fini(&ctx);
- 
--	cycle->result = err;
-+	cycle->result = err ?: erra;
- }
- 
- static int __test_cycle(unsigned int nthreads)
+Thanks,
+Alexey
