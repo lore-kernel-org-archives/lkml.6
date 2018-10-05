@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5898CC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A4EC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C63621480
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 416E7214C1
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBwpEGix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C63621480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldDMentV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416E7214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729895AbeJEXQG (ORCPT
+        id S1729910AbeJEXQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:16:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53782 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:16:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729869AbeJEXQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:16:05 -0400
+        id S1729869AbeJEXQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:16:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC191214C3;
-        Fri,  5 Oct 2018 16:16:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60053208E7;
+        Fri,  5 Oct 2018 16:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756202;
-        bh=GFsZthMO5CHhqmLS+5k6RMHIUOjrv9SAy+4pCGG14S4=;
+        s=default; t=1538756204;
+        bh=vCB+ugg/zzkn9BMkVNbCmp7zLxdTqI+RAjHNM9lNTNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fBwpEGixyq/dtnGycdbvrhb46h/roKUFaUj72c4qeLxoGIdp7zfnP0fcqOQwdILsY
-         EoRbqAomRPoDS2qKU51+GhVPvhXk+B6jOoaMBFM+5VprTT4BGHj4SJOHe4lO+TJn+b
-         XFkxVem7BGR2HmmPZ3HhqDdQiSQ0UokBqOhLZbgo=
+        b=ldDMentVq+9p2eIJefSpEjbNfdoRLDI2QG7vceHj9i+vutiv47jJK+ThoTikDyRKy
+         AnOzFRQJXZmS8H6asDHXU/VN51AQmRTPUjMYVszVkRw6Qbfqk1IcXaDhZP2IAmDZzH
+         4+nLZSypVQofISpjPHNn3V0DIsxpZ0x4oltnmIxs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 07/23] ASoC: rsnd: don't fallback to PIO mode when -EPROBE_DEFER
-Date:   Fri,  5 Oct 2018 12:16:18 -0400
-Message-Id: <20181005161634.20631-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 09/23] mfd: omap-usb-host: Fix dts probe of children
+Date:   Fri,  5 Oct 2018 12:16:20 -0400
+Message-Id: <20181005161634.20631-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161634.20631-1-sashal@kernel.org>
 References: <20181005161634.20631-1-sashal@kernel.org>
@@ -53,77 +52,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 6c92d5a2744e27619a8fcc9d74b91ee9f1cdebd1 ]
+[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
 
-Current rsnd driver will fallback to PIO mode if it can't get DMA
-handler. But, DMA might return -EPROBE_DEFER when probe timing.
-This driver always fallback to PIO mode especially from
-commit ac6bbf0cdf4206c ("iommu: Remove IOMMU_OF_DECLARE") because
-of this reason.
+It currently only works if the parent bus uses "simple-bus". We
+currently try to probe children with non-existing compatible values.
+And we're missing .probe.
 
-The DMA driver will be probed later, but sound driver might be
-probed as PIO mode in such case. This patch fixup this issue.
-Then, -EPROBE_DEFER is not error. Thus, let's don't indicate error
-message in such case.
-And it needs to call rsnd_adg_remove() individually if probe failed,
-because it registers clk which should be unregister.
+I noticed this while testing devices configured to probe using ti-sysc
+interconnect target module driver. For that we also may want to rebind
+the driver, so let's remove __init and __exit.
 
-Maybe PIO fallback feature itself is not needed,
-but let's keep it so far.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/sh/rcar/core.c | 10 +++++++++-
- sound/soc/sh/rcar/dma.c  |  4 ++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/mfd/omap-usb-host.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 9896e736fa5c..710c01cd2ad2 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -486,7 +486,7 @@ static int rsnd_status_update(u32 *status,
- 			(func_call && (mod)->ops->fn) ? #fn : "");	\
- 		if (func_call && (mod)->ops->fn)			\
- 			tmp = (mod)->ops->fn(mod, io, param);		\
--		if (tmp)						\
-+		if (tmp && (tmp != -EPROBE_DEFER))			\
- 			dev_err(dev, "%s[%d] : %s error %d\n",		\
- 				rsnd_mod_name(mod), rsnd_mod_id(mod),	\
- 						     #fn, tmp);		\
-@@ -1469,6 +1469,14 @@ static int rsnd_probe(struct platform_device *pdev)
- 		rsnd_dai_call(remove, &rdai->capture, priv);
- 	}
- 
-+	/*
-+	 * adg is very special mod which can't use rsnd_dai_call(remove),
-+	 * and it registers ADG clock on probe.
-+	 * It should be unregister if probe failed.
-+	 * Mainly it is assuming -EPROBE_DEFER case
-+	 */
-+	rsnd_adg_remove(priv);
-+
- 	return ret;
+diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
+index 7aab376ecb84..3785c638d530 100644
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
  }
  
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 041ec1080d52..39a46e302bab 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -330,6 +330,10 @@ static int rsnd_dmaen_attach(struct rsnd_dai_stream *io,
- 	/* try to get DMAEngine channel */
- 	chan = rsnd_dmaen_request_channel(io, mod_from, mod_to);
- 	if (IS_ERR_OR_NULL(chan)) {
-+		/* Let's follow when -EPROBE_DEFER case */
-+		if (PTR_ERR(chan) == -EPROBE_DEFER)
-+			return PTR_ERR(chan);
-+
- 		/*
- 		 * DMA failed. try to PIO mode
- 		 * see
+ static const struct of_device_id usbhs_child_match_table[] = {
+-	{ .compatible = "ti,omap-ehci", },
+-	{ .compatible = "ti,omap-ohci", },
++	{ .compatible = "ti,ehci-omap", },
++	{ .compatible = "ti,ohci-omap3", },
+ 	{ }
+ };
+ 
+@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap_driver = {
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
++	.probe		= usbhs_omap_probe,
+ 	.remove		= usbhs_omap_remove,
+ };
+ 
+@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
+ 
+-static int __init omap_usbhs_drvinit(void)
++static int omap_usbhs_drvinit(void)
+ {
+-	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
++	return platform_driver_register(&usbhs_omap_driver);
+ }
+ 
+ /*
+@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(void)
+  */
+ fs_initcall_sync(omap_usbhs_drvinit);
+ 
+-static void __exit omap_usbhs_drvexit(void)
++static void omap_usbhs_drvexit(void)
+ {
+ 	platform_driver_unregister(&usbhs_omap_driver);
+ }
 -- 
 2.17.1
 
