@@ -2,98 +2,114 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1FCC65BBF
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842E9C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D6A21473
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:47:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKXeFZ2v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D6A21473
+	by mail.kernel.org (Postfix) with ESMTP id 44F9020652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 20:47:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F9020652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbeJFDr6 (ORCPT
+        id S1729189AbeJFDsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 23:47:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbeJFDr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 23:47:58 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B410720652;
-        Fri,  5 Oct 2018 20:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538772453;
-        bh=3LPGNtj4f8IzbWL0fPhnRr1hV0+95eS6kCLc1JnILV0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LKXeFZ2vuMRlLlARTQFLQizfo+vqizQ25jHBU55/npBMqhHRNnE1wDn5Zyv6Tz/cA
-         7Fx84D39G1u8Iq8l8oHY6Sab3IDas/CxHKXoswrQRWYL284W6X7dFH8xXAAyEQJ4FC
-         g2wnf8YvJ+O2nVHENHpT9mrJvoQLpBAvkOIYY3gA=
-Date:   Fri, 5 Oct 2018 15:47:30 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Peter Wu <peter@lekensteyn.nl>
-Subject: [GIT PULL] PCI fixes for v4.19
-Message-ID: <20181005204730.GA136037@bhelgaas-glaptop.roam.corp.google.com>
+        Fri, 5 Oct 2018 23:48:11 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34913 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728293AbeJFDsK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 23:48:10 -0400
+Received: by mail-ot1-f68.google.com with SMTP id j9-v6so14003740otl.2;
+        Fri, 05 Oct 2018 13:47:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dgWf3C6YYXPiqscAiM4zGkRksjQAUTy8JzvxuXPZlXI=;
+        b=DoshpxlOql4/namXbp1pSVMTN7r6UUNm+W+An0tVVzGeMLnyC6zjZs1CIHv8cJjr3H
+         30M0TZwKTAC4JzOZcUGK2yeX3i8FDqDuH+e0J14wjghOYGzi/93XwBBmmTvxjpFRt3nF
+         p93BYhGmIN0gt98f0RP9t58Muvt143qEXiKOp2q9ilk4yw2NVY8oIxqVV4v9Bd7takWG
+         9/cPwUySNsYV5qHwTCgqPoDBJxOwj/yuPkUEaFu3WmCMj75B61UntqULyElL+Whzb1r2
+         dlH7wssoQrHOiCF5b0aCMZ1vQxNAS8kQSfpdiw2nFFPzz/FBOgJdMNoXLhqAAeJAAhY8
+         nT3A==
+X-Gm-Message-State: ABuFfoiKh98FgN+kNMbgiEDjoZ3YM/kRBOpf2eE/0CXtvDyj1+MnWlEG
+        NJryHLqGRMmvulqfMw39NA==
+X-Google-Smtp-Source: ACcGV62J82F4yowiLKSsb2HXJoJ+F98AagvZ1qnNdtflvkjjw4ZC6H2LifuvDXV5nUsmjOdSC4aSVQ==
+X-Received: by 2002:a9d:6e5:: with SMTP id 92mr450599otx.241.1538772464711;
+        Fri, 05 Oct 2018 13:47:44 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j83-v6sm2441030oih.18.2018.10.05.13.47.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 13:47:44 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 15:47:43 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: iio: vadc: Update example to include
+ unit address for node 'usb-id-nopull'
+Message-ID: <20181005204743.GA17135@bogus>
+References: <20181004001432.21218-1-mka@chromium.org>
+ <20181004001432.21218-2-mka@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181004001432.21218-2-mka@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+On Wed, Oct 03, 2018 at 05:14:31PM -0700, Matthias Kaehlcke wrote:
+> The node has a reg property, therefore its name should include a unit
+> address.
+> 
+> Also change the name from 'usb_id_nopull' to 'usb-id-nopull' to follow
+> DT conventions.
 
-  - Reprogram bridge prefetch registers to fix NVIDIA and Radeon issues
-    after suspend/resume (Daniel Drake)
+This is ADC channels? If so, then DT convention would really be 
+"adc@...". 
 
-  - Fix mvebu I/O mapping creation sequence (Thomas Petazzoni)
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes in v4:
+> - patch added to the series
+> ---
+>  Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+> index d0c188e5c922..ff7aa5038ba6 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+> @@ -112,7 +112,7 @@ Example:
+>  		io-channel-ranges;
+>  
+>  		/* Channel node */
+> -		usb_id_nopull {
+> +		usb-id-nopull@VADC_LR_MUX10_USB_ID {
+>  			reg = <VADC_LR_MUX10_USB_ID>;
 
-  - Fix minor MAINTAINERS file match issue (Bjorn Helgaas)
+Defines are generally used when there's not well defined numbering such 
+as clock ids. Interrupts and addresses are generally well defined and 
+don't need defines.
 
-
-The following changes since commit f188b99f0b2d33794b4af8a225f95d1e968c0a3f:
-
-  ACPI / hotplug / PCI: Don't scan for non-hotplug bridges if slot is not bridge (2018-09-26 15:39:28 -0500)
-
-are available in the Git repository at:
- 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.19-fixes-3
-
-for you to fetch changes up to 95375f2ab2960c135484d83ea9f8f357cb1be26a:
-
-  PCI: mvebu: Fix PCI I/O mapping creation sequence (2018-10-01 15:42:09 -0500)
-
-----------------------------------------------------------------
-pci-v4.19-fixes-3
-
-----------------------------------------------------------------
-Bjorn Helgaas (1):
-      MAINTAINERS: Remove obsolete drivers/pci pattern from ACPI section
-
-Daniel Drake (1):
-      PCI: Reprogram bridge prefetch registers on resume
-
-Thomas Petazzoni (1):
-      PCI: mvebu: Fix PCI I/O mapping creation sequence
-
- MAINTAINERS                        |  1 -
- drivers/pci/controller/pci-mvebu.c | 52 +++++++++++++++++++++++++++++++++++---
- drivers/pci/pci.c                  | 27 ++++++++++++++------
- 3 files changed, 67 insertions(+), 13 deletions(-)
+>  			qcom,decimation = <512>;
+>  			qcom,ratiometric;
+> -- 
+> 2.19.0.605.g01d371f741-goog
+> 
