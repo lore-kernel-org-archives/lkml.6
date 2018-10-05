@@ -2,88 +2,119 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4813C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3098C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C06020875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5ZwVVCg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C06020875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F2342084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:14:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2342084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbeJFCNS (ORCPT
+        id S1728798AbeJFCOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:13:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36270 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728170AbeJFCNS (ORCPT
+        Fri, 5 Oct 2018 22:14:47 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.109]:49533 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728042AbeJFCOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:13:18 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y16so14602069wrw.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 12:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sdpbSWqVxxATFOTM+th+JlVkcdQW8j/qVBFdj3PvebQ=;
-        b=A5ZwVVCgW5kIJ5Pqo/lVRjpSvXxTqQENFwQsGhsWyEMHYcm6w1jHw8h2WhxTPQGU+0
-         gFQ+BPxZCvrxsquHrqlpi2lHxcCWWTz6J2mJ2dtFCp8Ta9YMkw+V2JJBPIXG0elFuMx+
-         /RWpmU4AMbh2GYfR26Lv9ZSJB368ycgNHiZN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sdpbSWqVxxATFOTM+th+JlVkcdQW8j/qVBFdj3PvebQ=;
-        b=uRvb/tPMiFGrhjq0aDe/OMl0g/lbXxF727y1NhdeZqEuEw7Ea3P0dK7xOXgy9yynL9
-         3IWVm1GOCh5fGDbglMq7JQa1kWhCRWBuk/bjUXnJiWZOj1CYBju8YJ9OZaWO2IrcICvf
-         ZeucqxI7DVnGqzOvu3O9/18WKj2qCMQOCUATCjrzg4E3oHQ3O96F4DZL4lmbrNzElryK
-         HFcMlU8xCDNEGVmpVw0EkmyniGcKyYrYjvXasrAh33wkqc55Imh1MEQh0vQYdGQTHQKR
-         y26GVeJ0IRSP3aN8kH7yI37ibMKa7rjyYgjKiOdRCUNa0dbV/qTJuv3t4DxL4wgJh1tq
-         g53g==
-X-Gm-Message-State: ABuFfoh3CRKMHkll9ZiJS6uoMTB4AbgvavHXVxCMOQGPhQs26aFiPsJh
-        T/uRByfdfhuE7OEQPH3xFFjVZg==
-X-Google-Smtp-Source: ACcGV63nW64IxxBk5S+d0rq46sRa+52vihM6ZORtYaMwXrFL0ms/S8j0mDY7oCvN+M69ZGg1LZjNLg==
-X-Received: by 2002:adf:b743:: with SMTP id n3-v6mr9445850wre.274.1538766791049;
-        Fri, 05 Oct 2018 12:13:11 -0700 (PDT)
-Received: from [100.89.214.43] (26.202.154.77.rev.sfr.net. [77.154.202.26])
-        by smtp.gmail.com with ESMTPSA id h63-v6sm2732947wmf.31.2018.10.05.12.13.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 12:13:10 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 1/9] kernel: add support for patchable function pointers
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <CAHmME9pcQF=FvKRuxnqrJ5R1pvtUVbx3DXvXiUX5HywS2Xgj3A@mail.gmail.com>
-Date:   Fri, 5 Oct 2018 21:13:08 +0200
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>, Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, benh@kernel.crashing.org,
-        paulus@samba.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, richard@nod.at,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E75F755E-E447-4302-BFBD-095FC45B991E@linaro.org>
-References: <20181005081333.15018-1-ard.biesheuvel@linaro.org> <20181005081333.15018-2-ard.biesheuvel@linaro.org> <20181005141433.GS19272@hirez.programming.kicks-ass.net> <9E0E08C8-0DFC-4E50-A4FA-73208835EF9E@amacapital.net> <CAKv+Gu9z503ZJXcsG+9Ys240BZiB-+GB=kNY4VGWpjvdzN4JtA@mail.gmail.com> <CALCETrWaewXsdJsf3SocgZ0ggnvZk86L+5-LWPRbjdnG2mB7jw@mail.gmail.com> <CAKv+Gu-oHBtgGbWXJu6+z4+BNhBZyY5VvF_v6cJJUGk_5YX1eQ@mail.gmail.com> <CALCETrU=fm+ZG4WZJfG-5GwL7kv5_GS1aZYu=L42d5BuSbhJDQ@mail.gmail.com> <CAKv+Gu8eHPEsUbkhN=61z9FvhdCo2e3VOdemp4g0bzdO1EJFYQ@mail.gmail.com> <CALCETrVMBULVP9qEQDVuisxAMzdheM1qQ97AZFs-xcO0eaXiiA@mail.gmail.com> <CAHmME9pgJ_2GGDUVsbQXcNRfh3yACqFG+5uemFRMZkb8LdH95g@mail.gmail.com> <CALCETrWjCY2Wceiqu99C+g5RdnrZuRujYO_+jBvuJFRB1LTG4w@mail.gmail.com> <CAHmME9pcQF=FvKRuxnqrJ5R1pvtUVbx3DXvXiUX5HywS2Xgj3A@mail.gmail.com>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+        Fri, 5 Oct 2018 22:14:47 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 47D328299F2
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 14:14:41 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8VYfgkJAGPvAd8VYfgaXrO; Fri, 05 Oct 2018 14:14:41 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:53710 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g8VYe-000HT9-J7; Fri, 05 Oct 2018 14:14:40 -0500
+Subject: Re: [PATCH] ath10k: htt_rx: Fix signedness bug in
+ ath10k_update_per_peer_tx_stats
+To:     Ben Greear <greearb@candelatech.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181005184245.GA11700@embeddedor.com>
+ <3a55bec6-d20d-f500-e741-b228a86b7117@candelatech.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <dd75a8aa-b87c-e325-cc1d-a0efe3664a32@embeddedor.com>
+Date:   Fri, 5 Oct 2018 21:14:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <3a55bec6-d20d-f500-e741-b228a86b7117@candelatech.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g8VYe-000HT9-J7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:53710
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -91,34 +122,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-> On 5 Oct 2018, at 20:28, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->=20
-> Hey Andy,
->=20
->> On Fri, Oct 5, 2018 at 7:44 PM Andy Lutomirski <luto@kernel.org> wrote:
->> I *think* the only change to Zinc per se would be that the calls like
->> chacha20_simd() would be static calls or patchable functions or
->> whatever we want to call them.  And there could be a debugfs to
->> override the default selection.
->=20
-> Yea, right, exactly. It turns out this is really easy to do with the
-> way it's structured now. I'd actually experimented considerably with
-> using the static keys a while back, but couldn't find any performance
-> difference on any platform at all (four ARM microarchitectures, three
-> MIPS, various random intel, an old powerpc), so went with the simplest
-> solution. But we can certainly play with more elaborate patching
-> mechanisms later on and see how those turn out. Also, even with the
-> simple bools as we have now, it's quite easy to make all the
-> parameters toggle-able.
->=20
->> Ard, I don't think that sticking this in udev rules makes sense.  The
->> kernel has bascially complete information as to what the right choice
->> is, and that will change over time as the implementation gets tuned,
->> and the udev rules will never get updated in sync.
->=20
-> Yes, I agree with this.
->=20
->=20
+On 10/5/18 9:09 PM, Ben Greear wrote:
+> On 10/05/2018 11:42 AM, Gustavo A. R. Silva wrote:
+>> Currently, the error handling for the call to function
+>> ath10k_get_legacy_rate_idx() doesn't work because
+>> *rate_idx* is of type u8 (8 bits, unsigned), which
+>> makes it impossible for it to hold a value less
+>> than 0.
+>>
+>> Fix this by changing the type of variable *rate_idx*
+>> to s8 (8 bits, signed).
+> 
+> There are more than 127 rates, are you sure this is doing
+> what you want?
+> 
 
-I am not referring to udev rules. I just mean the current way that udev auto=
-loads modules based on CPU features.=
+Based on the following function, rate_idx can only hold values from 0 to 11
+
+static inline int ath10k_get_legacy_rate_idx(struct ath10k *ar, u8 rate)
+{
+        static const u8 legacy_rates[] = {1, 2, 5, 11, 6, 9, 12,
+                                          18, 24, 36, 48, 54};
+        int i;
+
+        for (i = 0; i < ARRAY_SIZE(legacy_rates); i++) {
+                if (rate == legacy_rates[i])
+                        return i;
+        }
+
+        ath10k_warn(ar, "Invalid legacy rate %hhd peer stats", rate);
+        return -EINVAL;
+}
+
+Thanks
+--
+Gustavo
+
+> Thanks,
+> Ben
+> 
+>>
+>> Addresses-Coverity-ID: 1473914 ("Unsigned compared against 0")
+>> Fixes: 0189dbd71cbd ("ath10k: get the legacy rate index to update the txrate table")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/net/wireless/ath/ath10k/htt_rx.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
+>> index f240525..edd0e74 100644
+>> --- a/drivers/net/wireless/ath/ath10k/htt_rx.c
+>> +++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
+>> @@ -2753,7 +2753,8 @@ ath10k_update_per_peer_tx_stats(struct ath10k *ar,
+>>                  struct ath10k_per_peer_tx_stats *peer_stats)
+>>  {
+>>      struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
+>> -    u8 rate = 0, rate_idx = 0, sgi;
+>> +    u8 rate = 0, sgi;
+>> +    s8 rate_idx = 0;
+>>      struct rate_info txrate;
+>>
+>>      lockdep_assert_held(&ar->data_lock);
+>>
+> 
+> 
