@@ -2,112 +2,137 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEBCC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22154C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF65C2064A
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:02:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXIYtc0t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF65C2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EA5DB213A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 18:07:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA5DB213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeJFBCf (ORCPT
+        id S1728525AbeJFBHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:02:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34414 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 21:07:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57480 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbeJFBCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 21:02:34 -0400
-Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2537D2064A;
-        Fri,  5 Oct 2018 18:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538762565;
-        bh=an+GhQYi9c/4jQ9PQutGRBz/WGwZmlIjwEqUrUgvL2c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mXIYtc0t3HoTi5aMslcJWgUPoLBL3lifhDTMWz4y8OlWwHiE29RnY1j4lz//Y0m0n
-         DSi1SS/lDvggjucnkMl0XwVYNr6tDlGwI59yCpxhylxTVOnHHc4BDz4ZE8KiA9s0HS
-         kVp9Nm/WKOc6xgdIKuo5bJfviDQCfYLofIknEYf4=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     x86@kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2] x86/vdso: Rearrange do_hres() to improve code generation
-Date:   Fri,  5 Oct 2018 11:02:43 -0700
-Message-Id: <3c05644d010b72216aa286a6d20b5078d5fae5cd.1538762487.git.luto@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727941AbeJFBHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 21:07:17 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D3BD120731; Fri,  5 Oct 2018 20:07:24 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A05F820719;
+        Fri,  5 Oct 2018 20:07:24 +0200 (CEST)
+Date:   Fri, 5 Oct 2018 20:07:25 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH 19/36] dt-bindings: arm: Convert Atmel board/soc bindings
+ to json-schema
+Message-ID: <20181005180725.GH5626@piout.net>
+References: <20181005165848.3474-1-robh@kernel.org>
+ <20181005165848.3474-20-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005165848.3474-20-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vgetcyc() is full of barriers, so fetching values out of the vvar
-page before vgetcyc() for use after vgetcyc() results in poor code
-generation.  Put vgetcyc() first to avoid this problem.
+Hello,
 
-Also, pull the tv_sec division into the loop and put all the ts
-writes together.  The old code wrote ts->tv_sec on each iteration
-before the syscall fallback check and then added in the offset
-afterwards, which forced the compiler to pointlessly copy base->sec
-to ts->tv_sec on each iteration.  The new version seems to generate
-sensible code.
+On 05/10/2018 11:58:31-0500, Rob Herring wrote:
+> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> new file mode 100644
+> index 000000000000..f788315b94fa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: None
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/arm/atmel-at91.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Atmel AT91 device tree bindings.
+> +
+> +maintainers:
+> +  - Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> +  - Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 
-Saves several cycles.  With this patch applied, the result is faster
-than before the clock_gettime() rewrite.
+Jean-Christophe has not been active for years, I'd mention Ludovic
+instead.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
+> +description: |
+> +  Boards with a SoC of the Atmel AT91 or SMART family shall have the following
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: atmel,at91rm9200
+> +      - items:
+> +          - enum:
+> +              - olimex,sam9-l9260
+> +          - enum:
+> +              - atmel,at91sam9260
+> +              - atmel,at91sam9261
+> +              - atmel,at91sam9263
+> +              - atmel,at91sam9g20
+> +              - atmel,at91sam9g45
+> +              - atmel,at91sam9n12
+> +              - atmel,at91sam9rl
+> +              - atmel,at91sam9xe
+> +          - const: atmel,at91sam9
+> +
+> +      - items:
+> +          - enum:
+> +              - atmel,at91sam9g15
+> +              - atmel,at91sam9g25
+> +              - atmel,at91sam9g35
+> +              - atmel,at91sam9x25
+> +              - atmel,at91sam9x35
+> +          - const: atmel,at91sam9x5
+> +          - const: atmel,at91sam9
+> +
+> +      - items:
+> +          - const: atmel,sama5d27
+> +          - const: atmel,sama5d2
+> +          - const: atmel,sama5
+> +
+> +      - description: Nattis v2 board with Natte v2 power board
+> +        items:
+> +          - const: axentia,nattis-2
+> +          - const: axentia,natte-2
+> +          - const: axentia,linea
 
-v2: Fix the obvious race -- this doesn't appear to affect performance
-    Thanks, tglx, for noticing it.
+Shouldn't we have the board specific compatibles in a separate file to
+avoid mixing everything with the SoC compatibles?
 
-arch/x86/entry/vdso/vclock_gettime.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index 18c8a78d1ec9..007b3fe9d727 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -142,23 +142,27 @@ notrace static inline u64 vgetcyc(int mode)
- notrace static int do_hres(clockid_t clk, struct timespec *ts)
- {
- 	struct vgtod_ts *base = &gtod->basetime[clk];
--	u64 cycles, last, ns;
-+	u64 cycles, last, sec, ns;
- 	unsigned int seq;
- 
- 	do {
- 		seq = gtod_read_begin(gtod);
--		ts->tv_sec = base->sec;
-+		cycles = vgetcyc(gtod->vclock_mode);
- 		ns = base->nsec;
- 		last = gtod->cycle_last;
--		cycles = vgetcyc(gtod->vclock_mode);
- 		if (unlikely((s64)cycles < 0))
- 			return vdso_fallback_gettime(clk, ts);
- 		if (cycles > last)
- 			ns += (cycles - last) * gtod->mult;
- 		ns >>= gtod->shift;
-+		sec = base->sec;
- 	} while (unlikely(gtod_read_retry(gtod, seq)));
- 
--	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-+	/*
-+	 * Do this outside the loop: a race inside the loop could result
-+	 * in __iter_div_u64_rem() being extremely slow.
-+	 */
-+	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
- 	ts->tv_nsec = ns;
- 
- 	return 0;
 -- 
-2.17.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
