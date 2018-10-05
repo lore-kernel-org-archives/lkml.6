@@ -2,132 +2,144 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F262C65BBE
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBB0C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE5E208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:19:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="RS1gRwgW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE5E208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 71DF8208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:20:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71DF8208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeJFEUJ (ORCPT
+        id S1728451AbeJFEUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:20:09 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:36068 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbeJFEUJ (ORCPT
+        Sat, 6 Oct 2018 00:20:49 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.4]:21933 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725826AbeJFEUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:20:09 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 7806710C0A70;
-        Fri,  5 Oct 2018 14:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1538774377; bh=tDzuuME0GaDD8mj1n0Jn2SE0+gTmpd+ZjEhD4sQaywU=;
-        h=From:To:CC:Subject:Date:From;
-        b=RS1gRwgW0CWddBXRjaGD5kh5t6WNMeInxmVTyOq68KwqJL6qiaCYHNllJbYCHG1gO
-         +sgc5xVxi2EZNOYUBrLRARS3cgSy1BDPDQct0D69jRLoA8gN4GVdkYAzpqpnkigTqL
-         EMjEYCuuVnyb7C9KITtfouvnPopM8qgbqBxvgDFMr70DaiB44b0b4Q6HKpGMgb9o+G
-         ZUVfSV0okU3R0kPJKfxzwUHWIHs4ABV2GbU9JgJc+Gr4Ly/K7DiGisM0kb6sTvSaLo
-         Iaqvm4sSM0y6uq7WY1aiv3hcYoezwqt+RY1tjAplRAY6TuQdCipxVcmeX6c4cpnhjK
-         Lm/2hMYDrnbyA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 26C1735BE;
-        Fri,  5 Oct 2018 14:19:36 -0700 (PDT)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 5 Oct 2018 14:19:36 -0700
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 6 Oct 2018 02:49:32 +0530
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.73) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 6 Oct 2018 02:49:32 +0530
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <alexey.brodkin@synopsys.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH] ARC: clone syscall to setp r25 as thread pointer
-Date:   Fri, 5 Oct 2018 14:19:21 -0700
-Message-ID: <1538774361-9306-1-git-send-email-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Sat, 6 Oct 2018 00:20:49 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 6957E7864A9
+        for <linux-kernel@vger.kernel.org>; Fri,  5 Oct 2018 16:20:17 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8XWDg95u1aSey8XWDgVzJZ; Fri, 05 Oct 2018 16:20:17 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:56176 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g8XWC-001NU9-O6; Fri, 05 Oct 2018 16:20:17 -0500
+Subject: Re: [PATCH] mmc: meson-mx-sdio: mark expected switch fall-through
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     ulf.hansson@linaro.org, carlo@caione.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20181005100903.GA32057@embeddedor.com>
+ <CAFBinCDWUO74R_GKBJCmGRNSz=b75zxj4XB8LnYuQjdW9ecGLA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <1768f2bf-4253-e071-a93a-6ec2e19fc256@embeddedor.com>
+Date:   Fri, 5 Oct 2018 23:20:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.10.161.73]
+In-Reply-To: <CAFBinCDWUO74R_GKBJCmGRNSz=b75zxj4XB8LnYuQjdW9ecGLA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g8XWC-001NU9-O6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:56176
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per ARC TLS ABI, r25 is designated TP (thread pointer register).
-However so far kernel didn't do any special treatment, like setting up
-usermode r25, even for CLONE_SETTLS. We instead relied on libc runtime
-to do this, in say clone libc wrapper [1]. This was deliberate to keep
-kernel ABI agnostic (userspace could potentially change TP, specially
-for different ARC ISA say ARCompact vs. ARCv2 with different spare
-registers etc)
+Hi Martin,
 
-However userspace setting up r25, after clone syscall opens a race, if
-child is not scheduled and gets a signal instead. It starts off in
-userspace not in clone but in a signal handler and anything TP sepcific
-there such as pthread_self() fails which showed up with uClibc
-testsuite nptl/tst-kill6 [2]
+On 10/5/18 11:10 PM, Martin Blumenstingl wrote:
+> On Fri, Oct 5, 2018 at 12:15 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Notice that in this particular case, I replaced the "fall-through:"
+>> comment with a proper "fall through", which is what GCC is
+>> expecting to find.
+>>
+>> Addresses-Coverity-ID: 1373880 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> 
+> thank you for taking care of this!
+> 
 
-Fix this by having kernel populate r25 to TP value. So this locks in
-ABI, but it was not going to change anyways, and fwiw is same for both
-ARCompact (arc700 core) and ARCvs (HS3x cores)
+Glad to help. :)
 
-[1] https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/tree/libc/sysdeps/linux/arc/clone.S
-[2] https://github.com/wbx-github/uclibc-ng-test/blob/master/test/nptl/tst-kill6.c
-
-Fixes: ARC STAR 9001378481
-Cc: stable@vger.kernel.org
-Reported-by: Nikita Sobolev <sobolev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
----
- arch/arc/kernel/process.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arc/kernel/process.c b/arch/arc/kernel/process.c
-index 4674541eba3f..c29fa8ceb2d6 100644
---- a/arch/arc/kernel/process.c
-+++ b/arch/arc/kernel/process.c
-@@ -241,6 +241,26 @@ int copy_thread(unsigned long clone_flags,
- 		task_thread_info(current)->thr_ptr;
- 	}
- 
-+
-+	/*
-+	 * setup usermode thread pointer #1:
-+	 * when child is picked by scheduler, __switch_to() uses @c_callee to
-+	 * populate usermode callee regs: this is fine even despite being in a
-+	 * kernel function since special return path for child @ret_from_fork()
-+	 * ensures those regs are not clobbered all the way to RTIE to usermode
-+	 */
-+	c_callee->r25 = task_thread_info(p)->thr_ptr;
-+
-+#ifdef CONFIG_ARC_CURR_IN_REG
-+	/*
-+	 * setup usermode thread pointer #2:
-+	 *   however for this special use of r25 in kernel, __switch_to() sets
-+	 *   r25 for kernel needs and only in the final return path is usermode
-+	 *   r25 setup, from pt_regs->user_r25. So set that up as well
-+	 */
-+	c_regs->user_r25 = c_callee->r25;
-+#endif
-+
- 	return 0;
- }
- 
--- 
-2.7.4
-
+Thanks
+--
+Gustavo
