@@ -2,130 +2,152 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241E7C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF8AC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BC820875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:04:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75BAF2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 19:05:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVkQSWrA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BC820875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CC+DJiEq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BAF2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbeJFCEc (ORCPT
+        id S1729299AbeJFCFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 22:04:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36117 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728661AbeJFCEc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 22:04:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f18-v6so5134305pgv.3;
-        Fri, 05 Oct 2018 12:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IxNzpZfrzf04aYB260LV+RsW+idnvKy2G4n6HkUa5Hw=;
-        b=DVkQSWrANzQVEbIxB0Nlcx7OLj3wGT7nho/daPWb/qgY8XmmDOCiZ2HhYLGObgLlXb
-         nYHR4tdV3WiXB4V3mlPY+Sx5DXoFCwYTGMkSZfqql0ut03o9CXI2yvzgi4gb5jFv5wal
-         ycFjyEpjMO0Fl1c+ajYfx4s+FldyTa2HmrBGi7utt66hccZ5oP9rVjRA1ZL9bmxc8uym
-         qKGpKZVKaerFJCP2N6De3p4PGkGigAFP+0hkiW+ogoieb8/i6p+xY4ZiHX3faHdPoyYM
-         FBYdXEx487K2J6VD9APzzm0tjdswYvpMi/kNJKrx5KB+LPtt+5wm+bctuWrlZ4NWj1OX
-         ec0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IxNzpZfrzf04aYB260LV+RsW+idnvKy2G4n6HkUa5Hw=;
-        b=KLVXQu00Rx8TULz3ugwYWPOmMh6awx6pIpeT6LD2hnrIx9vmBzAS4nQAGgd3Z2XK6T
-         BZH1Z/NJQD3Cv2fGhn7DFajx7eWE854gC/ch2ja7ekcg2mNN6jp3GBSkYhpu0+jWUFb5
-         Pys8xExm5D54kppwsiTzq2eOVIuVVQJUSG+EYScAzzGGF1NsHfcjoEqpHzZcnFvzg3GG
-         a/Inz1W/UCRTp4UknJRBgyJAvGZf8cx/9iWjuvMKeBfCVkyuezY+33nhkV/lLC4rCHRL
-         80zJz6rYdt1Op+bbdu42dj1uFe5rQyqH08jb/7B19egEVtWEEf1gImcV9NTLixrHumkd
-         +5Kg==
-X-Gm-Message-State: ABuFfojDX0yi2qQ2w5frTeidQfEKnVySRnsOJmk9mksuAMbI1oaQ+vjz
-        Ohh9UXERm6jLb6Y2vgrMpyk=
-X-Google-Smtp-Source: ACcGV62yVMH0Ns+v8EkrWDksh8GtzkzM9J+zqUJnswaNs+zHA4lj5w4Stj2v9nfb+nDIDPwk4Te+ig==
-X-Received: by 2002:a62:d841:: with SMTP id e62-v6mr13285662pfg.60.1538766268846;
-        Fri, 05 Oct 2018 12:04:28 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id y128-v6sm11691843pfb.56.2018.10.05.12.04.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 12:04:28 -0700 (PDT)
-Subject: Re: [PATCH 15/16] of: unittest: initialize args before calling
- of_irq_parse_one()
-To:     Rob Herring <robh+dt@kernel.org>
+        Fri, 5 Oct 2018 22:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728446AbeJFCFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 22:05:17 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ED1621479;
+        Fri,  5 Oct 2018 19:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538766312;
+        bh=6k9069I+PGl0uims8OkanuL5u5WPHx3rohj/vmFAKwU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CC+DJiEqkNrviw+go2H2Une9sHnN7e+9mTvJgecOAvDYF+YfkPe0ddK1BbZir0zGO
+         hnPl2o3gakr7/HuhdDmujo4DPI36dUx4ZYRhHc7gk6+f8OTxs9j/pJTD6IH3GdCEgj
+         2jnNnskzA4wgPJx23uvR3xdR/qhQCHD0llf8gK/E=
+Received: by mail-qt1-f169.google.com with SMTP id z8-v6so14907687qto.9;
+        Fri, 05 Oct 2018 12:05:12 -0700 (PDT)
+X-Gm-Message-State: ABuFfojfEJiT0X2PcoVzgLZyzYOXHUUgw2gF8I+TMJT9BMnmTJCTsT0J
+        oIiJFaiUeAmjY6FgaaqRYhl96jdYCUhq1wqndg==
+X-Google-Smtp-Source: ACcGV60G+MYBSEmWjNyEjxIEeTO59tmZUsjEhbK9fDk1zKQt8Lh32DpxZYEezpu8NngygJCAOTtCMyahdCfptYt7ecA=
+X-Received: by 2002:ac8:2ac9:: with SMTP id c9-v6mr10565192qta.188.1538766311677;
+ Fri, 05 Oct 2018 12:05:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
+ <1538712767-30394-10-git-send-email-frowand.list@gmail.com>
+ <CAL_JsqKK3f4W1DdPkzNed0=tx5Oxu9w=RKs8PnaXMfuShBpV1A@mail.gmail.com> <f39a84d3-f706-d31e-db22-4e3ebc72c447@gmail.com>
+In-Reply-To: <f39a84d3-f706-d31e-db22-4e3ebc72c447@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 5 Oct 2018 14:04:58 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+53znm=LHxH8bZZJ2wN4uUez8D7E2V03+Zc9nvYBNjrg@mail.gmail.com>
+Message-ID: <CAL_Jsq+53znm=LHxH8bZZJ2wN4uUez8D7E2V03+Zc9nvYBNjrg@mail.gmail.com>
+Subject: Re: [PATCH 09/16] of: overlay: validate overlay properties
+ #address-cells and #size-cells
+To:     Frank Rowand <frowand.list@gmail.com>
 Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>
-References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
- <1538712767-30394-16-git-send-email-frowand.list@gmail.com>
- <CAL_Jsq+dqRr54_WAdBQ88sJytAuLL=U9kF_Xbj5rJv4PVn9gQg@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <d251f99e-6618-f1d2-814f-7aaffb8f499f@gmail.com>
-Date:   Fri, 5 Oct 2018 12:04:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+dqRr54_WAdBQ88sJytAuLL=U9kF_Xbj5rJv4PVn9gQg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/05/18 07:53, Rob Herring wrote:
-> On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
->>
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> Callers of of_irq_parse_one() blindly use the pointer args.np
->> without checking whether of_irq_parse_one() had an error and
->> thus did not set the value of args.np.  Initialize args to
->> zero so that using the format "%pOF" to show the value of
->> args.np will show "(null)" when of_irq_parse_one() has an
->> error and does not set args.np instead of trying to
->> dereference a random value.
->>
->> Reported-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
->> ---
->>  drivers/of/unittest.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> Does this need to be part of this series?
+On Fri, Oct 5, 2018 at 1:53 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 10/05/18 08:07, Rob Herring wrote:
+> > On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
+> >>
+> >> From: Frank Rowand <frank.rowand@sony.com>
+> >>
+> >> If overlay properties #address-cells or #size-cells are already in
+> >> the live devicetree for any given node, then the values in the
+> >> overlay must match the values in the live tree.
+> >>
+> >> If the properties are already in the live tree then there is no
+> >> need to create a changeset entry to add them since they must
+> >> have the same value.  This reduces the memory used by the
+> >> changeset and eliminates a possible memory leak.  This is
+> >> verified by 12 fewer warnings during the devicetree unittest,
+> >> as the possible memory leak warnings about #address-cells and
+> >
+> > and...?
+>
+> #size-cells no longer occur.
+>
+> (Thanks for catching that.)
+>
+>
+> >>
+> >> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> >> ---
+> >>  drivers/of/overlay.c | 38 +++++++++++++++++++++++++++++++++++---
+> >>  1 file changed, 35 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> >> index 29c33a5c533f..e6fb3ffe9d93 100644
+> >> --- a/drivers/of/overlay.c
+> >> +++ b/drivers/of/overlay.c
+> >> @@ -287,7 +287,12 @@ static struct property *dup_and_fixup_symbol_prop(
+> >>   * @target may be either in the live devicetree or in a new subtree that
+> >>   * is contained in the changeset.
+> >>   *
+> >> - * Some special properties are not updated (no error returned).
+> >> + * Some special properties are not added or updated (no error returned):
+> >> + * "name", "phandle", "linux,phandle".
+> >> + *
+> >> + * Properties "#address-cells" and "#size-cells" are not updated if they
+> >> + * are already in the live tree, but if present in the live tree, the values
+> >> + * in the overlay must match the values in the live tree.
+> >
+> > Perhaps this should be generalized to apply to any property? We can't
+> > really deal with property values changing on the fly anyways.
+>
+> That is a bigger discussion.  I'd prefer to not hold up this series for that
+> question to be resolved.  It will be easy enough to generalize in an add-on
+> patch later.
 
-I do not know if it could be independently applied before the
-rest of the series (I have not tested that).  I included it
-in the series because the series has so many other changes to
-unittest.c.
+Fair enough.
 
-If you want me to break this out, I will remove it from this
-series and resend it after the rest of the series has been
-pulled to mainline (and rebase on the new mainline).
+> >> +               if (prop->length != 4 || new_prop->length != 4 ||
+> >> +                   *(u32 *)prop->value != *(u32 *)new_prop->value)
+> >
+> > Technically these are __be32 types. This could use a helper (of_prop_val_eq).
+>
+> These are in a unpacked form, so cpu byte order, not FDT byte order.
 
-This patch is not fixing a known failure case - the current
-test data does not trigger the problem.  The recent patch
-from  Guenter that you already accepted fixes the known failure
-case, so this patch is not urgent.  The same is true about the
-other cases Guenter pointed out that this patch should fix.
+You sure about that? Unpacking doesn't change the order. It can't
+because the type is unknown. The value of 'value' is the address of
+the data in the FDT.
 
--Frank
+> > I'm not sure we really need to validate the length here as dtc does
+> > that (but yes, not everything is from dtc).
+>
+> Since I'm accessing 4 bytes of the values, I need to be sure the lengths
+> are at least 4.  For #address-cells and #size-cells the property is
+> specified as four bytes, so I could simplify the code for the specific case.
+>
+> If this gets extended to any arbitrary property then a new of_prop_val_eq()
+> would check that the lengths are equal and the values (of size length) are
+> also equal.
+
+Right, that's what I was thinking. Check lengths are equal and then
+you can just do a memcmp().
+
+Rob
