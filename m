@@ -2,97 +2,133 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5949FC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD975C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CBBF20834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:07:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CBBF20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D979208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 06:14:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bezn5lhl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D979208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeJENFH (ORCPT
+        id S1727687AbeJENLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 09:05:07 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60988 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726732AbeJENFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:05:07 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AF3D7B4269EB2;
-        Fri,  5 Oct 2018 14:07:49 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 5 Oct 2018 14:07:41 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Devang Panchal <devang.panchal@softnautics.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] eeprom: at25: remove unneeded 'at25_remove'
-Date:   Fri, 5 Oct 2018 06:19:12 +0000
-Message-ID: <1538720352-85691-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Fri, 5 Oct 2018 09:11:22 -0400
+Received: from ozlabs.org ([203.11.71.1]:45325 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726732AbeJENLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 09:11:22 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42RKG83Bgfz9s1c;
+        Fri,  5 Oct 2018 16:14:08 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538720048;
+        bh=jK0o3PtWZeLAF8khM/jrOtwToJhWv4Nn4c4dbxoOTZE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bezn5lhlwxyiQL9WaiGD2+TlBMM5fUFP4sUTkTc/eH/5JqXufFtjCAZE/7ihvxDF4
+         EQyolfr47hcoLXVXRVrSgai+KeTC8k4D63yCVPeBYNExoEnz4DZUro78XlzW4XD6Zw
+         rRIxKVgRbTFi7Hq93Y3J78K/EghWdDC6o37rU7rO8SZsfG59QxLP2pApn3GLZw8QZP
+         L9LwNvaEnqfw4cSFsBRhVGjVcQNiveXGvUujrAnncNqLDkmqQTYcLk9FfRi+lcQdbI
+         11m9mi5xYVw5GuVSXq3OumiHoBUw8Dvw+AECnQLH+gme/oSr6vzx1zhfHG/nfcb3oS
+         bYDMicLHyw/rw==
+Date:   Fri, 5 Oct 2018 16:14:06 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: linux-next: build failure after merge of the akpm tree
+Message-ID: <20181005161406.73ef8727@canb.auug.org.au>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PqI=Q4__5fvqHM010aHNvvg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+--Sig_/PqI=Q4__5fvqHM010aHNvvg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/misc/eeprom/at25.c: In function 'at25_remove':
-drivers/misc/eeprom/at25.c:384:20: warning:
- variable 'at25' set but not used [-Wunused-but-set-variable]
+Hi Andrew,
 
-Since commit 96d08fb43e30 ("eeprom: at25: use devm_nvmem_register()"),
-at25_remove is do nothing, so can be removed.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+arch/powerpc/kernel/setup-common.c:36:10: fatal error: linux/bootmem.h: No =
+such file or directory
+ #include <linux/bootmem.h>
+          ^~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  49353a51a758 ("mm: remove include/linux/bootmem.h")
+
+interacting with commit
+
+  d90fe2acd9b2 ("powerpc: Wire up memtest")
+
+from the powerpc tree.
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 5 Oct 2018 16:09:34 +1000
+Subject: [PATCH] powerpc: fix up for removal of linux/bootmem.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/misc/eeprom/at25.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ arch/powerpc/kernel/setup-common.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
-index d874df7..99de693 100644
---- a/drivers/misc/eeprom/at25.c
-+++ b/drivers/misc/eeprom/at25.c
-@@ -379,15 +379,6 @@ static int at25_probe(struct spi_device *spi)
- 	return 0;
- }
- 
--static int at25_remove(struct spi_device *spi)
--{
--	struct at25_data	*at25;
--
--	at25 = spi_get_drvdata(spi);
--
--	return 0;
--}
--
- /*-------------------------------------------------------------------------*/
- 
- static const struct of_device_id at25_of_match[] = {
-@@ -402,7 +393,6 @@ static int at25_remove(struct spi_device *spi)
- 		.of_match_table = at25_of_match,
- 	},
- 	.probe		= at25_probe,
--	.remove		= at25_remove,
- };
- 
- module_spi_driver(at25_driver);
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup=
+-common.c
+index 2b56d1f30387..93ee3703b42f 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -33,7 +33,6 @@
+ #include <linux/serial_8250.h>
+ #include <linux/percpu.h>
+ #include <linux/memblock.h>
+-#include <linux/bootmem.h>
+ #include <linux/of_platform.h>
+ #include <linux/hugetlb.h>
+ #include <asm/debugfs.h>
+--=20
+2.18.0
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PqI=Q4__5fvqHM010aHNvvg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu3AS4ACgkQAVBC80lX
+0GxCyggAg5gUWegEXXnk7wl/PLRnQNhoBupsa4E65FXsIkDF4WoiF+i9lhogvJ3+
+0xoJ7ebndA4ouD+mpfvHblrhvHaUoTCTn89Oay9IQcYnvZWqOUBEYulZHMufaBpe
+iNWajM0BVMfQ4x7xXWZTSyPFJR6McVXjdqln70zk6yyMjbpfAdmDZSjs1cQW56iM
+ZNi8Q8J8JRL3JeSZeQqIlhTQ4vITRYhntHFD50mWNqXUviBw0zfFsIlvgH8XEMEf
+/8V5OWQ1Q57Jj+vMbJY/UgyF0HNZWvnWmVAv8+VP2M0RjN7GKfcY4RtTv+Zyun81
+L4UwewyWuPg+/tvjH2MhBzwzVcENTw==
+=Pl6b
+-----END PGP SIGNATURE-----
+
+--Sig_/PqI=Q4__5fvqHM010aHNvvg--
