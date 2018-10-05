@@ -6,47 +6,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A85C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98F1C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E13E214DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A162C2148C
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfXYC4nb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E13E214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5r4NrMK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A162C2148C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeJEXOL (ORCPT
+        id S1729471AbeJEXOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:14:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51454 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:14:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729366AbeJEXOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:14:10 -0400
+        id S1729411AbeJEXOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:14:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C8A52147D;
-        Fri,  5 Oct 2018 16:14:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C0832148D;
+        Fri,  5 Oct 2018 16:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756087;
-        bh=QtIRZySVkRRK9rQOCIEFPI7DqV8HV1GVgZeCRrtvL2Y=;
+        s=default; t=1538756090;
+        bh=ef98Qogx2VjJqCBudaM/t/Q1kb0oTfnCtpjHrhh8pDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hfXYC4nbi1jkM23XS59U/clmb/Zkghtne5rBbxmpw9mQNpNPbKAmuEjj4yhIv4mZO
-         c2W0OfwggykdBo6eilsQasQAKskXfyRnSdmG1MPePEdbTePDlmcBX6+A/OhBqUdtsF
-         o7rt7T2xPHbDLcMHP2CccrPaKx9dbUyXn21y7b/A=
+        b=k5r4NrMKjmPFGpm4aa0aevAiuEXWQLtqzsV82uM/gb5IiVZgpggD+w3qMEqIHYwh6
+         jfeeB3ApIBnIBot+M48vc/nIh+BUQp4oSpOHQ+jd7N1vaCX2OA5ac+vJ9Pa9ftmjkN
+         4+iCavCr9UUM8n9SQ9V79XUo/KQ86CMzX6ANMNGQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Paul Mackerras <paulus@ozlabs.org>,
+Cc:     Yu Zhao <yuzhao@google.com>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 24/48] KVM: PPC: Book3S HV: Don't use compound_order to determine host mapping size
-Date:   Fri,  5 Oct 2018 12:14:00 -0400
-Message-Id: <20181005161424.20521-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 28/48] sound: don't call skl_init_chip() to reset intel skl soc
+Date:   Fri,  5 Oct 2018 12:14:04 -0400
+Message-Id: <20181005161424.20521-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -55,154 +51,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 71d29f43b6332badc5598c656616a62575e83342 ]
+[ Upstream commit 75383f8d39d4c0fb96083dd460b7b139fbdac492 ]
 
-THP paths can defer splitting compound pages until after the actual
-remap and TLB flushes to split a huge PMD/PUD. This causes radix
-partition scope page table mappings to get out of synch with the host
-qemu page table mappings.
+Internally, skl_init_chip() calls snd_hdac_bus_init_chip() which
+1) sets bus->chip_init to prevent multiple entrances before device
+is stopped; 2) enables interrupt.
 
-This results in random memory corruption in the guest when running
-with THP. The easiest way to reproduce is use KVM balloon to free up
-a lot of memory in the guest and then shrink the balloon to give the
-memory back, while some work is being done in the guest.
+We shouldn't use it for the purpose of resetting device only because
+1) when we really want to initialize device, we won't be able to do
+so; 2) we are ready to handle interrupt yet, and kernel crashes when
+interrupt comes in.
 
-Cc: David Gibson <david@gibson.dropbear.id.au>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc: kvm-ppc@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Rename azx_reset() to snd_hdac_bus_reset_link(), and use it to reset
+device properly.
+
+Fixes: 60767abcea3d ("ASoC: Intel: Skylake: Reset the controller in probe")
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/kvm/book3s_64_mmu_radix.c | 91 +++++++++++---------------
- 1 file changed, 37 insertions(+), 54 deletions(-)
+ include/sound/hdaudio.h       | 1 +
+ sound/hda/hdac_controller.c   | 7 ++++---
+ sound/soc/intel/skylake/skl.c | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-index 7efc42538ccf..ae023d2256ef 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-@@ -538,8 +538,8 @@ int kvmppc_book3s_radix_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 				   unsigned long ea, unsigned long dsisr)
+diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
+index c052afc27547..138e976a2ba2 100644
+--- a/include/sound/hdaudio.h
++++ b/include/sound/hdaudio.h
+@@ -355,6 +355,7 @@ void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus);
+ void snd_hdac_bus_stop_cmd_io(struct hdac_bus *bus);
+ void snd_hdac_bus_enter_link_reset(struct hdac_bus *bus);
+ void snd_hdac_bus_exit_link_reset(struct hdac_bus *bus);
++int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset);
+ 
+ void snd_hdac_bus_update_rirb(struct hdac_bus *bus);
+ int snd_hdac_bus_handle_stream_irq(struct hdac_bus *bus, unsigned int status,
+diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
+index 11057d9f84ec..74244d8e2909 100644
+--- a/sound/hda/hdac_controller.c
++++ b/sound/hda/hdac_controller.c
+@@ -385,7 +385,7 @@ void snd_hdac_bus_exit_link_reset(struct hdac_bus *bus)
+ EXPORT_SYMBOL_GPL(snd_hdac_bus_exit_link_reset);
+ 
+ /* reset codec link */
+-static int azx_reset(struct hdac_bus *bus, bool full_reset)
++int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset)
  {
- 	struct kvm *kvm = vcpu->kvm;
--	unsigned long mmu_seq, pte_size;
--	unsigned long gpa, gfn, hva, pfn;
-+	unsigned long mmu_seq;
-+	unsigned long gpa, gfn, hva;
- 	struct kvm_memory_slot *memslot;
- 	struct page *page = NULL;
- 	long ret;
-@@ -636,9 +636,10 @@ int kvmppc_book3s_radix_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 	 */
- 	hva = gfn_to_hva_memslot(memslot, gfn);
- 	if (upgrade_p && __get_user_pages_fast(hva, 1, 1, &page) == 1) {
--		pfn = page_to_pfn(page);
- 		upgrade_write = true;
- 	} else {
-+		unsigned long pfn;
-+
- 		/* Call KVM generic code to do the slow-path check */
- 		pfn = __gfn_to_pfn_memslot(memslot, gfn, false, NULL,
- 					   writing, upgrade_p);
-@@ -652,63 +653,45 @@ int kvmppc_book3s_radix_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 		}
+ 	if (!full_reset)
+ 		goto skip_reset;
+@@ -410,7 +410,7 @@ static int azx_reset(struct hdac_bus *bus, bool full_reset)
+  skip_reset:
+ 	/* check to see if controller is ready */
+ 	if (!snd_hdac_chip_readb(bus, GCTL)) {
+-		dev_dbg(bus->dev, "azx_reset: controller not ready!\n");
++		dev_dbg(bus->dev, "controller not ready!\n");
+ 		return -EBUSY;
  	}
  
--	/* See if we can insert a 1GB or 2MB large PTE here */
--	level = 0;
--	if (page && PageCompound(page)) {
--		pte_size = PAGE_SIZE << compound_order(compound_head(page));
--		if (pte_size >= PUD_SIZE &&
--		    (gpa & (PUD_SIZE - PAGE_SIZE)) ==
--		    (hva & (PUD_SIZE - PAGE_SIZE))) {
--			level = 2;
--			pfn &= ~((PUD_SIZE >> PAGE_SHIFT) - 1);
--		} else if (pte_size >= PMD_SIZE &&
--			   (gpa & (PMD_SIZE - PAGE_SIZE)) ==
--			   (hva & (PMD_SIZE - PAGE_SIZE))) {
--			level = 1;
--			pfn &= ~((PMD_SIZE >> PAGE_SHIFT) - 1);
--		}
--	}
--
- 	/*
--	 * Compute the PTE value that we need to insert.
-+	 * Read the PTE from the process' radix tree and use that
-+	 * so we get the shift and attribute bits.
- 	 */
--	if (page) {
--		pgflags = _PAGE_READ | _PAGE_EXEC | _PAGE_PRESENT | _PAGE_PTE |
--			_PAGE_ACCESSED;
--		if (writing || upgrade_write)
--			pgflags |= _PAGE_WRITE | _PAGE_DIRTY;
--		pte = pfn_pte(pfn, __pgprot(pgflags));
-+	local_irq_disable();
-+	ptep = __find_linux_pte(vcpu->arch.pgdir, hva, NULL, &shift);
-+	pte = *ptep;
-+	local_irq_enable();
-+
-+	/* Get pte level from shift/size */
-+	if (shift == PUD_SHIFT &&
-+	    (gpa & (PUD_SIZE - PAGE_SIZE)) ==
-+	    (hva & (PUD_SIZE - PAGE_SIZE))) {
-+		level = 2;
-+	} else if (shift == PMD_SHIFT &&
-+		   (gpa & (PMD_SIZE - PAGE_SIZE)) ==
-+		   (hva & (PMD_SIZE - PAGE_SIZE))) {
-+		level = 1;
- 	} else {
--		/*
--		 * Read the PTE from the process' radix tree and use that
--		 * so we get the attribute bits.
--		 */
--		local_irq_disable();
--		ptep = __find_linux_pte(vcpu->arch.pgdir, hva, NULL, &shift);
--		pte = *ptep;
--		local_irq_enable();
--		if (shift == PUD_SHIFT &&
--		    (gpa & (PUD_SIZE - PAGE_SIZE)) ==
--		    (hva & (PUD_SIZE - PAGE_SIZE))) {
--			level = 2;
--		} else if (shift == PMD_SHIFT &&
--			   (gpa & (PMD_SIZE - PAGE_SIZE)) ==
--			   (hva & (PMD_SIZE - PAGE_SIZE))) {
--			level = 1;
--		} else if (shift && shift != PAGE_SHIFT) {
--			/* Adjust PFN */
--			unsigned long mask = (1ul << shift) - PAGE_SIZE;
--			pte = __pte(pte_val(pte) | (hva & mask));
--		}
--		pte = __pte(pte_val(pte) | _PAGE_EXEC | _PAGE_ACCESSED);
--		if (writing || upgrade_write) {
--			if (pte_val(pte) & _PAGE_WRITE)
--				pte = __pte(pte_val(pte) | _PAGE_DIRTY);
--		} else {
--			pte = __pte(pte_val(pte) & ~(_PAGE_WRITE | _PAGE_DIRTY));
-+		level = 0;
-+		if (shift > PAGE_SHIFT) {
-+			/*
-+			 * If the pte maps more than one page, bring over
-+			 * bits from the virtual address to get the real
-+			 * address of the specific single page we want.
-+			 */
-+			unsigned long rpnmask = (1ul << shift) - PAGE_SIZE;
-+			pte = __pte(pte_val(pte) | (hva & rpnmask));
- 		}
+@@ -425,6 +425,7 @@ static int azx_reset(struct hdac_bus *bus, bool full_reset)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(snd_hdac_bus_reset_link);
+ 
+ /* enable interrupts */
+ static void azx_int_enable(struct hdac_bus *bus)
+@@ -479,7 +480,7 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
+ 		return false;
+ 
+ 	/* reset controller */
+-	azx_reset(bus, full_reset);
++	snd_hdac_bus_reset_link(bus, full_reset);
+ 
+ 	/* clear interrupts */
+ 	azx_int_clear(bus);
+diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+index f0d9793f872a..c7cdfa4a7076 100644
+--- a/sound/soc/intel/skylake/skl.c
++++ b/sound/soc/intel/skylake/skl.c
+@@ -844,7 +844,7 @@ static int skl_first_init(struct hdac_ext_bus *ebus)
+ 		return -ENXIO;
  	}
  
-+	pte = __pte(pte_val(pte) | _PAGE_EXEC | _PAGE_ACCESSED);
-+	if (writing || upgrade_write) {
-+		if (pte_val(pte) & _PAGE_WRITE)
-+			pte = __pte(pte_val(pte) | _PAGE_DIRTY);
-+	} else {
-+		pte = __pte(pte_val(pte) & ~(_PAGE_WRITE | _PAGE_DIRTY));
-+	}
-+
- 	/* Allocate space in the tree and write the PTE */
- 	ret = kvmppc_create_pte(kvm, pte, gpa, level, mmu_seq);
+-	skl_init_chip(bus, true);
++	snd_hdac_bus_reset_link(bus, true);
+ 
+ 	snd_hdac_bus_parse_capabilities(bus);
  
 -- 
 2.17.1
