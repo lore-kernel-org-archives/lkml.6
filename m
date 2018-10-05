@@ -2,143 +2,308 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A61C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF28CC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375CC20875
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:51:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5sCKCtD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 375CC20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 868D620875
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 05:52:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 868D620875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeJEMsM (ORCPT
+        id S1727639AbeJEMt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 08:48:12 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40945 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeJEMsM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 08:48:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id r83-v6so10494693ljr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 22:51:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gIgBsJgITCialaB2v+GU0Fc6nzO65o16U8AsPvywMGQ=;
-        b=S5sCKCtDA8z9oGefRw0baclbjwRlYpjU20Ug11UveVm0JQa0nvcvXxEYWz2F3jg4ru
-         n3VSVQNuha2rX6MPVpFxnlFIzQE1lFs8vKKzE10eDSj+dLhVE+BY/YNJL5wKE6Ys8tbt
-         1Jy8VW5P47umnbrEpr5a8u52QjGblEIWmiBmGUmZeAJGJVHix9wf/xMxXruqbjLHRzLe
-         aNMyrOy+f+foCatcoS/0LLuWf0ZV4cHwW4jEOcuodCKoG43nyXIjfrJn3LA/7BTzney1
-         vYbpBElPCTpXyc6KOf3IJn59McUo7LEM3/FG+nuCnq2UwN6hdSI/Pbw2iC4jE+MZFRYw
-         eNZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gIgBsJgITCialaB2v+GU0Fc6nzO65o16U8AsPvywMGQ=;
-        b=jzcSni4rK2S+wnNftSbTsF/eiHX+PFx4+dSrt+tTYpKd6/BMjQ3pqWWspxnWbY2WfA
-         WV6Pd8PqhtOsUPfYUJt67/dU4XsX8ktDhmQRIYqKA4WZz+VgpjLT4EIpXFLigcj2yCJO
-         t1w+gaLKZEi5U0Llsda83LwOqEPaZf1APkGswKdoUcvn6z0UteLm4FXINQS1w03kFDYR
-         a4jk1XZKuL6VYUO+1nkvPeMieKRqxHecXb8b/IEExzxAaDfxNXlqkLoOkFMxNZ5/T0sC
-         vBRsJrmlJR5zZwkEt0zoNCN4BMSYgmgO0w1ukT1NsOfPatTVzSGfqxDyfYJY86lA/KZR
-         8K2g==
-X-Gm-Message-State: ABuFfoiHdPdbOwMkWJcS3D+DvmtoldtmitbToIqhyLb1xo7UDKlBOOd1
-        J4u/XYG5AKkbkHGN0JP2hVEyBZZ6vCOWiY2snfk=
-X-Google-Smtp-Source: ACcGV63fxqmuP+GYsbGOmYQb6cbBAN4girYk2To14eFlKZvDrDH7kA2qEaYWhXJwyWwHir+tot55cQh3ZRpghHjG2QE=
-X-Received: by 2002:a2e:91d3:: with SMTP id u19-v6mr5956682ljg.64.1538718661663;
- Thu, 04 Oct 2018 22:51:01 -0700 (PDT)
+        Fri, 5 Oct 2018 08:49:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60456 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726979AbeJEMtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 08:49:55 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 81A9C30001E8;
+        Fri,  5 Oct 2018 05:52:46 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-28.pek2.redhat.com [10.72.12.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A15D117CCB;
+        Fri,  5 Oct 2018 05:52:32 +0000 (UTC)
+Subject: Re: [PATCH v8 RESEND 0/4] Support kdump for AMD secure memory
+ encryption(SME)
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, thomas.lendacky@amd.com,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
+        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
+        jroedel@suse.de
+References: <20180930031033.22110-1-lijiang@redhat.com>
+ <20181002114012.GB29859@zn.tnic>
+ <43da68b1-fda0-c033-39e1-907d01f13354@redhat.com>
+ <20181003113435.GB4436@zn.tnic>
+ <dac69aae-27cf-9c93-a0ee-b65e241e1dd6@redhat.com>
+ <20181004190221.GA17667@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <0d1c112c-37b7-ee9d-b3d6-6d8e3df02d78@redhat.com>
+Date:   Fri, 5 Oct 2018 13:52:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
- <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
- <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
- <20181004123400.GC30658@n2100.armlinux.org.uk> <CAFqt6zZPOM17QwmcWKF3F1gqkJm=2PxvuJ3naWuRXZGHc2HrEQ@mail.gmail.com>
- <20181004181736.GB20842@bombadil.infradead.org> <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
- <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
-In-Reply-To: <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 5 Oct 2018 11:20:49 +0530
-Message-ID: <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
-        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
-        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
-        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
-        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181004190221.GA17667@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 05 Oct 2018 05:52:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 1:16 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Hi Souptick,
->
-> On Thu, Oct 4, 2018 at 8:49 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > On Thu, Oct 4, 2018 at 11:47 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > I think this is a bad plan.  What we should rather do is examine the current
-> > > users of vm_insert_page() and ask "What interface would better replace
-> > > vm_insert_page()?"
-> > >
-> > > As I've said to you before, I believe the right answer is to have a
-> > > vm_insert_range() which takes an array of struct page pointers.  That
-> > > fits the majority of remaining users.
-> >
-> > Ok, but it will take some time.
-> > Is it a good idea to introduce the final vm_fault_t patch and then
-> > start working on vm_insert_range as it will be bit time consuming ?
-> >
->
-> Well, why is there a rush? Development should be done in a patch
-> series or a tree, and submitted as a whole, instead of sending partial
-> patches.
+在 2018年10月05日 03:02, Borislav Petkov 写道:
+> On Thu, Oct 04, 2018 at 05:33:14PM +0800, lijiang wrote:
+>> I have tested the patch again based on upstream 4.19.0-rc6, it works very well.
+> 
+> How have you tested this?
+> 
+> Please describe the steps in detail.
+> 
 
-Not in hurry, will do it in a patch series :-)
->
-> Also, not sure if you saw my comments/review: if the interface is not
-> going to change, why the name change? Why can't we simply keep using
-> vm_insert_page?
+There are eight steps:
 
-yes, changing the name without changing the interface is a
-bad approach and this can't be taken. As Matthew mentioned,
-"vm_insert_range() which takes an array of struct page pointers.
-That fits the majority of remaining users" would be a better approach
-to fit this use case.
+Step 1: prepare for test tools, you might refer to the cover-letter.
+     a. makedumpfile
+     b. crash-7.2.3
+     c. kexec-tools-2.0.17
 
-But yes, we can't keep vm_insert_page and vmf_insert_page together
-as it doesn't guarantee  that future drivers will not use vm_insert_page
-in #PF context ( which will generate new errno to VM_FAULT_CODE).
+     Compile and install these test tools.
 
-Any further comment form others on vm_Insert_range() approach ?
+Step 2: make sure that the kernel option is enabled if this machine has SME feature.
+        CONFIG_AMD_MEM_ENCRYPT=y 
+
+Step 3: apply these patches based on upstream v4.19-rc6, compile and install kernel
+        #git am xxxx.patch
+        #make ARCH=x86_64 -j32
+        #make ARCH=x86_64 modules_install -j32
+        #make ARCH=x86_64 install
+
+Step 4: configure kdump and modify some parameters for SME
+     a. configure kdump.conf
+        #cat /etc/kdump.conf
+        path /var/crash
+        core_collector makedumpfile -l --message-level 1 -d 31
+
+     b. add the parameter "mem_encrypt=on" for kernel command-line to grub.cfg, if
+        this machine has SME feature. And also add crashkernel=xx, which will reserve
+        memory for kdump.
+
+Step 5: reboot, and then load the crash kernel image and kdump initramfs.
+
+     a: When SME is enabled, i use this command to load them:
+
+        #kexec -p /boot/vmlinuz-4.19.0-rc6+ --initrd=/boot/initramfs-4.19.0-rc6+kdump.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap mem_encrypt=on console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never disable_cpu_apicid=0"
+
+     b: When SME is disabled, i use this command to load them:
+
+        #kexec -p /boot/vmlinuz-4.19.0-rc6+ --initrd=/boot/initramfs-4.19.0-rc6+kdump.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap mem_encrypt=off console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never disable_cpu_apicid=0"
+
+Step 6: trigger panic by sysrq
+        #echo c > /proc/sysrq-trigger
+
+Step 7: check whether the vmcore has been created.
+
+[root@hp-dl385g10-03 linux]# ls -al /var/crash/*
+/var/crash/127.0.0.1-2018-10-05-01:20:20:
+drwxr-xr-x. 2 root root         44 10月  5 01:20 .
+drwxr-xr-x. 3 root root        107 10月  5 01:20 ..
+-rw-------. 1 root root 1179265928 10月  5 01:20 vmcore
+-rw-r--r--. 1 root root     126571 10月  5 01:20 vmcore-dmesg.txt
+
+/var/crash/127.0.0.1-2018-10-05-01:35:21:
+drwxr-xr-x. 2 root root         44 10月  5 01:35 .
+drwxr-xr-x. 4 root root        144 10月  5 01:35 ..
+-rw-------. 1 root root 1084270120 10月  5 01:35 vmcore
+-rw-r--r--. 1 root root     125578 10月  5 01:35 vmcore-dmesg.txt
+
+Step 8: check whether the crash tool can parse the vmcore
+     a. When SME is enabled.
+        #crash vmlinux /var/crash/127.0.0.1-2018-10-05-01\:20\:20/vmcore
+
+crash 7.2.3++
+Copyright (C) 2002-2017  Red Hat, Inc.
+Copyright (C) 2004, 2005, 2006, 2010  IBM Corporation
+Copyright (C) 1999-2006  Hewlett-Packard Co
+Copyright (C) 2005, 2006, 2011, 2012  Fujitsu Limited
+Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
+Copyright (C) 2005, 2011  NEC Corporation
+Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
+Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
+This program is free software, covered by the GNU General Public License,
+and you are welcome to change it and/or distribute copies of it under
+certain conditions.  Enter "help copying" to see the conditions.
+This program has absolutely no warranty.  Enter "help warranty" for details.
+ 
+GNU gdb (GDB) 7.6
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-unknown-linux-gnu"...
+
+WARNING: kernel relocated [308MB]: patching 85986 gdb minimal_symbol values
+
+      KERNEL: vmlinux                                                  
+    DUMPFILE: /var/crash/127.0.0.1-2018-10-05-01:20:20/vmcore  [PARTIAL DUMP]
+        CPUS: 32
+        DATE: Fri Oct  5 01:19:40 2018
+      UPTIME: 00:04:04
+LOAD AVERAGE: 0.18, 0.33, 0.16
+       TASKS: 462
+    NODENAME: hp-dl385g10-03.lab.eng.pek2.redhat.com
+     RELEASE: 4.19.0-rc6+
+     VERSION: #223 SMP Fri Oct 5 01:05:56 EDT 2018
+     MACHINE: x86_64  (2095 Mhz)
+      MEMORY: 31.8 GB
+       PANIC: "sysrq: SysRq : Trigger a crash"
+         PID: 9451
+     COMMAND: "bash"
+        TASK: ffff9d53c5f8c500  [THREAD_INFO: ffff9d53c5f8c500]
+         CPU: 26
+       STATE: TASK_RUNNING (SYSRQ)
+
+crash> log
+[    0.000000] Linux version 4.19.0-rc6+ (root@hp-dl385g10-03.lab.eng.pek2.redhat.com) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-34) (GCC)) #223 SMP Fri Oct 5 01:05:56 EDT 2018
+[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-4.19.0-rc6+ root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on crashkernel=2G,high rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.000000] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.000000] x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'compacted' format.
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000008bfff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000008c000-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000029920fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000029921000-0x0000000029921fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000029922000-0x0000000062242fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000062243000-0x0000000062342fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000062343000-0x0000000062355fff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x0000000062356000-0x0000000062356fff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x0000000062357000-0x00000000623d5fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000623d6000-0x0000000062615fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000062616000-0x0000000062637fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000062638000-0x0000000062697fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000062698000-0x0000000062757fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000062758000-0x0000000062758fff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x0000000062759000-0x0000000062789fff] usable
+[    0.000000] BIOS-e820: [mem 0x000000006278a000-0x000000006278cfff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x000000006278d000-0x00000000627d6fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000627d7000-0x00000000627d7fff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x00000000627d8000-0x000000006286afff] usable
+[    0.000000] BIOS-e820: [mem 0x000000006286b000-0x000000006286efff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000006286f000-0x00000000682f8fff] usable
+...
+...
+[    0.000000] Console: colour VGA+ 80x25
+[    0.000000] console [ttyS0] enabled
+[    0.000000] AMD Secure Memory Encryption (SME) active
+[    0.000000] mempolicy: Enabling automatic NUMA balancing. Configure with numa_balancing= or the kernel.numa_balancing sysctl
+[    0.000000] ACPI: Core revision 20180810
+...
+...
+
+     b. When SME is disabled.
+        #crash vmlinux /var/crash/127.0.0.1-2018-10-05-01\:35\:21/vmcore
+
+crash 7.2.3++
+Copyright (C) 2002-2017  Red Hat, Inc.
+Copyright (C) 2004, 2005, 2006, 2010  IBM Corporation
+Copyright (C) 1999-2006  Hewlett-Packard Co
+Copyright (C) 2005, 2006, 2011, 2012  Fujitsu Limited
+Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
+Copyright (C) 2005, 2011  NEC Corporation
+Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
+Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
+This program is free software, covered by the GNU General Public License,
+and you are welcome to change it and/or distribute copies of it under
+certain conditions.  Enter "help copying" to see the conditions.
+This program has absolutely no warranty.  Enter "help warranty" for details.
+ 
+GNU gdb (GDB) 7.6
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-unknown-linux-gnu"...
+
+WARNING: kernel relocated [576MB]: patching 85986 gdb minimal_symbol values
+
+      KERNEL: vmlinux                                                  
+    DUMPFILE: /var/crash/127.0.0.1-2018-10-05-01:35:21/vmcore  [PARTIAL DUMP]
+        CPUS: 32
+        DATE: Fri Oct  5 01:34:44 2018
+      UPTIME: 00:01:43
+LOAD AVERAGE: 0.31, 0.20, 0.08
+       TASKS: 456
+    NODENAME: hp-dl385g10-03.lab.eng.pek2.redhat.com
+     RELEASE: 4.19.0-rc6+
+     VERSION: #223 SMP Fri Oct 5 01:05:56 EDT 2018
+     MACHINE: x86_64  (2095 Mhz)
+      MEMORY: 31.8 GB
+       PANIC: "sysrq: SysRq : Trigger a crash"
+         PID: 2093
+     COMMAND: "bash"
+        TASK: ffff9be9aa062e00  [THREAD_INFO: ffff9be9aa062e00]
+         CPU: 12
+       STATE: TASK_RUNNING (SYSRQ)
+
+crash> log
+[    0.000000] Linux version 4.19.0-rc6+ (root@hp-dl385g10-03.lab.eng.pek2.redhat.com) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-34) (GCC)) #223 SMP Fri Oct 5 01:05:56 EDT 2018
+[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-4.19.0-rc6+ root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=off crashkernel=2G,high rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.000000] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.000000] x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'compacted' format.
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000008bfff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000008c000-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000029920fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000029921000-0x0000000029921fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000029922000-0x00000000622dbfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000622dc000-0x000000006261bfff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000006261c000-0x000000006263dfff] usable
+[    0.000000] BIOS-e820: [mem 0x000000006263e000-0x000000006269dfff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000006269e000-0x00000000627d9fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000627da000-0x00000000627ecfff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x00000000627ed000-0x00000000627edfff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x00000000627ee000-0x00000000627f1fff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x00000000627f2000-0x00000000627f3fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000627f4000-0x00000000627f4fff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x00000000627f5000-0x000000006286afff] usable
+[    0.000000] BIOS-e820: [mem 0x000000006286b000-0x000000006286efff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000006286f000-0x00000000682f8fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000682f9000-0x0000000068b05fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000068b06000-0x0000000068b09fff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x0000000068b0a000-0x0000000068b1afff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000068b1b000-0x0000000068b1dfff] ACPI NVS
+...
+...
+[    0.000000] Console: colour VGA+ 80x25
+[    0.000000] console [ttyS0] enabled
+[    0.000000] mempolicy: Enabling automatic NUMA balancing. Configure with numa_balancing= or the kernel.numa_balancing sysctl
+[    0.000000] ACPI: Core revision 20180810
+...
+...
+
+Regards,
+Lianbo
+
+> Thx.
+> 
