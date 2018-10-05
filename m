@@ -2,207 +2,162 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FA7C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE863C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE0B208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:56:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE0B208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 9161C208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 21:56:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awNqDUPJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9161C208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbeJFE4z (ORCPT
+        id S1729161AbeJFE5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 00:56:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47921 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbeJFE4y (ORCPT
+        Sat, 6 Oct 2018 00:57:06 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:36180 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeJFE4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 6 Oct 2018 00:56:54 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1g8Y4x-0007qB-Tm; Fri, 05 Oct 2018 21:56:12 +0000
-Subject: Re: [PATCH] apparmor: add #ifdef checks for secmark filtering
-To:     Arnd Bergmann <arnd@arndb.de>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181005161206.727098-1-arnd@arndb.de>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <cddbef8c-f2e0-149c-2626-a3657851672b@canonical.com>
-Date:   Fri, 5 Oct 2018 14:56:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Received: by mail-ua1-f65.google.com with SMTP id b3so5235689uak.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 14:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=Rl24sJAi0Y2HiAPQyt9R0IT0oB0epHMd3uPDxXcutMo=;
+        b=awNqDUPJj+9P9OXhQ2Q/oHmb1zPeVm85B33J+11ZBYgW49GVDkJa/l0GeWVoq/hncp
+         Hw2POhbXPT4UiqnMqjJrKbYOTu87cPcLBbO00VwpHZCN/YArA+Mj2iaOCoX7TpQ96tIl
+         A1LiCITjEAVnwAvXa5hJzTQ46UXSDVH0bJcjWhcKUkIJGtdwhgP4N+6oQuwM52hO9P91
+         B8UK90Be/CAhFr0fZwgs1Q0eWegFrNYO0hoVVGBuSn1TcF1IKcL7kfE4ulPxkeYmeN9I
+         qRHoiAb2gJW7zIvbbkYmyNLboGwwgtMSJJPiStNuwXPWCtCaspf9qJbQ6HYgSQi9aJa7
+         J5QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=Rl24sJAi0Y2HiAPQyt9R0IT0oB0epHMd3uPDxXcutMo=;
+        b=pz7CytrNt6NdZYHVoF8CKuUySlslXoaX75obAaozxizgIuMPktI4Ybsbvoca2+m5ie
+         7372JcvdF9+P1V8P0g0K3PyT55bq3gcUi2CX+o6Povd4sH12mflCFPL/vuswQJ7dV1m8
+         /e3yM4RrWXwaVGgOpEjcwgncO4Drs9VgbPBgSwdIVlwgmma//CgLS6+CEAgvq7mR3Z8Y
+         hKG6B//beA2SL9WmADW7XhOsQ8I8wJTsW54U4WfmNfU3jvtZ32iXRZ4MRWBTr8AqI3Xu
+         cCHMF6CBuBwJiRiWCwbsN52S+ICg2loxpBxqN/WgxYogjAzW9kxZKaRx7JV7Lq2q4klk
+         Prjg==
+X-Gm-Message-State: ABuFfohDPtoCSnHyS5qGMC50+s5J2iYoZx2PAeaZ5hhGYqbsiXsp44LF
+        QDR9vpkV3TGY9i9a6S51utephQeIbQTssf6hpCzwVvhL
+X-Google-Smtp-Source: ACcGV622d0Gr/wsyZXBe8fMrSQgWOwJuR0o/e5Eas/mFYMCpdr4HX3B3tcN5uy02Dc4xHbq/zNVKZv/y4TZwZnz8z/w=
+X-Received: by 2002:ab0:6607:: with SMTP id r7mr4563049uam.6.1538776573350;
+ Fri, 05 Oct 2018 14:56:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181005161206.727098-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <CAOTh5U3srTK_-OeESDL_-=M8petsorTDfzr6Ycte9f7p+5ZLCQ@mail.gmail.com>
+In-Reply-To: <CAOTh5U3srTK_-OeESDL_-=M8petsorTDfzr6Ycte9f7p+5ZLCQ@mail.gmail.com>
+From:   Sebastian Kuzminsky <seb.kuzminsky@gmail.com>
+Date:   Fri, 5 Oct 2018 15:56:02 -0600
+Message-ID: <CAOTh5U26Fwfarvs9e=Tj0rL5syfnB0KWwn+491co201RoDFOCA@mail.gmail.com>
+Subject: Re: hung task in 4.14 (syzbot bug from 2018 April 17)
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/05/2018 09:11 AM, Arnd Bergmann wrote:
-> The newly added code fails to build when either SECMARK or
-> NETFILTER are disabled:
-> 
-> security/apparmor/lsm.c: In function 'apparmor_socket_sock_rcv_skb':
-> security/apparmor/lsm.c:1138:12: error: 'struct sk_buff' has no member named 'secmark'; did you mean 'mark'?
-> 
-> security/apparmor/lsm.c:1671:21: error: 'struct nf_hook_state' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
-> 
-> Add a set of #ifdef checks around it to only enable the code that
-> we can compile and that makes sense in that configuration.
-> 
-> Fixes: ab9f2115081a ("apparmor: Allow filtering based on secmark policy")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Another instance of the same problem (also on 4.14.67), this time with
+the hung task timeout restored to its 120 second default:
 
-Thanks Arnd, I have pulled this into apparmor-next
+[  980.954129] INFO: task systemd:1 blocked for more than 120 seconds.
+[  980.954132]       Tainted: G           OE   4.14.67-solidfire1 #1
+[  980.954133] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[  980.954135] systemd         D    0     1      0 0x00000000
+[  980.954137] Call Trace:
+[  980.954150]  ? __schedule+0x27f/0x870
+[  980.954154]  ? check_preempt_wakeup+0x102/0x230
+[  980.954156]  schedule+0x28/0x80
+[  980.954159]  schedule_timeout+0x1e7/0x340
+[  980.954163]  ? radix_tree_node_ctor+0x20/0x20
+[  980.954165]  ? delete_node+0x1b8/0x1f0
+[  980.954167]  ? wait_for_completion+0xb0/0x120
+[  980.954169]  wait_for_completion+0xb0/0x120
+[  980.954172]  ? wake_up_q+0x70/0x70
+[  980.954176]  flush_work+0x10d/0x1c0
+[  980.954179]  ? worker_detach_from_pool+0xa0/0xa0
+[  980.954183]  fsnotify_destroy_group+0x34/0xa0
+[  980.954185]  inotify_release+0x1a/0x50
+[  980.954189]  __fput+0xd8/0x220
+[  980.954194]  task_work_run+0x8a/0xb0
+[  980.954198]  exit_to_usermode_loop+0xb9/0xc0
+[  980.954200]  do_syscall_64+0x10b/0x120
+[  980.954203]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[  980.954206] RIP: 0033:0x7f031a552900
+[  980.954208] RSP: 002b:00007fff93fd18b0 EFLAGS: 00000293 ORIG_RAX:
+0000000000000003
+[  980.954210] RAX: 0000000000000000 RBX: 0000000000000010 RCX: 00007f031a552900
+[  980.954211] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000010
+[  980.954212] RBP: 00007f031beba088 R08: 0000000000000020 R09: 000055ac5a21e2ad
+[  980.954213] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+[  980.954214] R13: 000055ac5a488b20 R14: 000055ac5c0907f0 R15: 0000000000000000
+[  980.954724] INFO: task kworker/u114:4:41909 blocked for more than
+120 seconds.
+[  980.954725]       Tainted: G           OE   4.14.67-solidfire1 #1
+[  980.954726] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[  980.954727] kworker/u114:4  D    0 41909      2 0x80000000
+[  980.954733] Workqueue: events_unbound fsnotify_mark_destroy_workfn
+[  980.954734] Call Trace:
+[  980.954739]  ? __schedule+0x27f/0x870
+[  980.954741]  schedule+0x28/0x80
+[  980.954743]  schedule_timeout+0x1e7/0x340
+[  980.954746]  ? __switch_to_asm+0x40/0x70
+[  980.954747]  ? update_curr+0xe1/0x1a0
+[  980.954750]  ? wait_for_completion+0xb0/0x120
+[  980.954751]  wait_for_completion+0xb0/0x120
+[  980.954753]  ? wake_up_q+0x70/0x70
+[  980.954758]  __synchronize_srcu.part.13+0x76/0x90
+[  980.954761]  ? trace_raw_output_rcu_utilization+0x40/0x40
+[  980.954762]  ? try_to_wake_up+0x44/0x460
+[  980.954765]  ? fsnotify_mark_destroy_workfn+0x67/0xb0
+[  980.954767]  fsnotify_mark_destroy_workfn+0x67/0xb0
+[  980.954769]  process_one_work+0x1da/0x3d0
+[  980.954772]  worker_thread+0x21f/0x3f0
+[  980.954775]  ? process_one_work+0x3d0/0x3d0
+[  980.954777]  kthread+0x119/0x130
+[  980.954779]  ? kthread_create_on_node+0x40/0x40
+[  980.954781]  ret_from_fork+0x35/0x40
 
+crash> print reaper_work
+$3 = {
+  work = {
+    data = {
+      counter = -117148584927483
+    },
+    entry = {
+      next = 0xffff95743772b770,
+      prev = 0xffffa2aa800a3df8
+    },
+    func = 0xffffffffa8249df0
+  },
+  timer = {
+    entry = {
+      next = 0xdead000000000200,
+      pprev = 0x0
+    },
+    expires = 4295020559,
+    function = 0xffffffffa80778c0,
+    data = 18446744072250514272,
+    flags = 69206020
+  },
+  wq = 0xffff95443f011400,
+  cpu = 128
+}
 
-> ---
->  security/apparmor/lsm.c | 10 ++++++++++
->  security/apparmor/net.c |  2 ++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 53201013c40e..b74b724d3e84 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1123,6 +1123,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
->  	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
->  }
->  
-> +#ifdef CONFIG_NETWORK_SECMARK
->  /**
->   * apparmor_socket_sock_recv_skb - check perms before associating skb to sk
->   *
-> @@ -1141,6 +1142,7 @@ static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->  	return apparmor_secmark_check(ctx->label, OP_RECVMSG, AA_MAY_RECEIVE,
->  				      skb->secmark, sk);
->  }
-> +#endif
->  
->  
->  static struct aa_label *sk_peer_label(struct sock *sk)
-> @@ -1235,6 +1237,7 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
->  		ctx->label = aa_get_current_label();
->  }
->  
-> +#ifdef CONFIG_NETWORK_SECMARK
->  static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
->  				      struct request_sock *req)
->  {
-> @@ -1246,6 +1249,7 @@ static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
->  	return apparmor_secmark_check(ctx->label, OP_CONNECT, AA_MAY_CONNECT,
->  				      skb->secmark, sk);
->  }
-> +#endif
->  
->  static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
->  	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
-> @@ -1304,13 +1308,17 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
->  	LSM_HOOK_INIT(socket_getsockopt, apparmor_socket_getsockopt),
->  	LSM_HOOK_INIT(socket_setsockopt, apparmor_socket_setsockopt),
->  	LSM_HOOK_INIT(socket_shutdown, apparmor_socket_shutdown),
-> +#ifdef CONFIG_NETWORK_SECMARK
->  	LSM_HOOK_INIT(socket_sock_rcv_skb, apparmor_socket_sock_rcv_skb),
-> +#endif
->  	LSM_HOOK_INIT(socket_getpeersec_stream,
->  		      apparmor_socket_getpeersec_stream),
->  	LSM_HOOK_INIT(socket_getpeersec_dgram,
->  		      apparmor_socket_getpeersec_dgram),
->  	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
-> +#ifdef CONFIG_NETWORK_SECMARK
->  	LSM_HOOK_INIT(inet_conn_request, apparmor_inet_conn_request),
-> +#endif
->  
->  	LSM_HOOK_INIT(cred_alloc_blank, apparmor_cred_alloc_blank),
->  	LSM_HOOK_INIT(cred_free, apparmor_cred_free),
-> @@ -1666,6 +1674,7 @@ static inline int apparmor_init_sysctl(void)
->  }
->  #endif /* CONFIG_SYSCTL */
->  
-> +#if defined(CONFIG_NETFILTER) && defined(CONFIG_NETWORK_SECMARK)
->  static unsigned int apparmor_ip_postroute(void *priv,
->  					  struct sk_buff *skb,
->  					  const struct nf_hook_state *state)
-> @@ -1754,6 +1763,7 @@ static int __init apparmor_nf_ip_init(void)
->  	return 0;
->  }
->  __initcall(apparmor_nf_ip_init);
-> +#endif
->  
->  static int __init apparmor_init(void)
->  {
-> diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-> index f9a678ce994f..c07fde444792 100644
-> --- a/security/apparmor/net.c
-> +++ b/security/apparmor/net.c
-> @@ -190,6 +190,7 @@ int aa_sock_file_perm(struct aa_label *label, const char *op, u32 request,
->  	return aa_label_sk_perm(label, op, request, sock->sk);
->  }
->  
-> +#ifdef CONFIG_NETWORK_SECMARK
->  static int apparmor_secmark_init(struct aa_secmark *secmark)
->  {
->  	struct aa_label *label;
-> @@ -254,3 +255,4 @@ int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
->  				    aa_secmark_perm(profile, request, secid,
->  						    &sa, sk));
->  }
-> +#endif
-> 
+Any input is welcome.
 
+-- 
+Sebastian Kuzminsky
