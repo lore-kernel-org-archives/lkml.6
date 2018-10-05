@@ -2,125 +2,129 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF548C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFDAC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6522084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:40:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="paTKd4nJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6522084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6D5BB2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:42:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5BB2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbeJEUjF (ORCPT
+        id S1728535AbeJEUlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:39:05 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45436 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727701AbeJEUjF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:39:05 -0400
-Received: by mail-lf1-f67.google.com with SMTP id m80-v6so9365826lfi.12;
-        Fri, 05 Oct 2018 06:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iOxL1Fw89+j4myCcc8niw3QsDsss42c4mJhRtaCwo6c=;
-        b=paTKd4nJIJ5ossp55X9awCP8dD/W9EL2N9cNJAqxmsxKwkEgUfY7bJnCj/TpQ+WQ5S
-         bS/dZZ4dz35l6SNxcB+GoGZbZDp9IwiaSA9FGQh2BWMhw4s1jdACzaqsXzZK9uJVYMgc
-         Dw1zjBcqvIhCyJDqCgaAcn48bBJ2zdoeooMPYjpOUrAGQSZP7ChRnzYiEgWCRHMUCJ55
-         rlajRk6hOu/d27zwhqoEu2YvfWfFhPP/akgsFKliJqY25zxhZKStCDVE6GbvIzPQjTS1
-         Qhw9GP2FKPL2TiuFnphhD06VfjqvTwRS0cv5blYLcJb3K6ixFDWPrIojVSymAzMweC6g
-         5nRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iOxL1Fw89+j4myCcc8niw3QsDsss42c4mJhRtaCwo6c=;
-        b=derC0WqY3X6cpluTRoQRV5XHnnUArPWMy5n7WTkCxAZ+dWe2ld+1IxtlUFQiUgZ6X5
-         UWGkj+VGYVL3LkUAFHijiO9jP0LBIPs/XqzLbVR+NlGV33H8iJ9aSHJkG4BL7Y3A+YjJ
-         lSwqhJfeitYmKY7hL/Nkn9Jv/7l+mHy2j7DxTBfbIimq/l0gc+oKQelvsabKI+THK/0J
-         7OtwLiFHPCdTTGDzEBw6dSncf55YZJH+9aDC34+qnht+dqQTsGtp0wwVXvLspoFqWw/t
-         iPhL6hSMHlPExWajWaS4z/bgLP/j+V9Nosig7BLPmgNqf2/El+zeRgv2D0Bf9p72NkQc
-         R/MA==
-X-Gm-Message-State: ABuFfohQHGMcTQPgZbG0qSVJ62uYiTRVi+5iVOHj90R4agabVYpC12EH
-        Zj8LeLZlpmIrYSRTy1bwylU=
-X-Google-Smtp-Source: ACcGV60VylheG7d+dgases/TbrY4hHoV32+YWUANObz/Vile8wpPBAd0zbyOA55v4D3PgTlAhX6dMA==
-X-Received: by 2002:a19:4acd:: with SMTP id x196-v6mr7002972lfa.130.1538746815295;
-        Fri, 05 Oct 2018 06:40:15 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id p24-v6sm1815567ljg.57.2018.10.05.06.40.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 06:40:14 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g8QL0-0008SF-NS; Fri, 05 Oct 2018 15:40:14 +0200
-Date:   Fri, 5 Oct 2018 15:40:14 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-        pados@pados.hu, Loic Poulain <loic.poulain@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio
- support
-Message-ID: <20181005134014.GH3774@localhost>
-References: <20180930122703.7115-1-johan@kernel.org>
- <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
+        Fri, 5 Oct 2018 16:41:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:52092 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727775AbeJEUlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:41:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79605ED1;
+        Fri,  5 Oct 2018 06:42:36 -0700 (PDT)
+Received: from [10.4.13.99] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 126793F5B3;
+        Fri,  5 Oct 2018 06:42:33 -0700 (PDT)
+Subject: Re: [PATCH] irqchip/gic-v3-its: Add early memory allocation errata
+To:     Matthias Brugger <mbrugger@suse.com>, matthias.bgg@kernel.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, tglx@linutronix.de,
+        jason@lakedaemon.net, robert.richter@cavium.com
+Cc:     suzuki.poulose@arm.com, shankerd@codeaurora.org,
+        xiexiuqi@huawei.com, Dave.Martin@arm.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180912095232.2110-1-matthias.bgg@kernel.org>
+ <a08119a0-fc4e-6328-c3ad-04e5250f38d7@suse.com>
+ <95733d12-ee1d-9874-16a7-c614cc0ce8cd@arm.com>
+ <8ef6b381-e170-30de-ad0e-fae8ccf189e5@suse.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <1d227152-2770-3e93-f78c-71e7a3b4fe76@arm.com>
+Date:   Fri, 5 Oct 2018 14:42:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8ef6b381-e170-30de-ad0e-fae8ccf189e5@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 11:43:55AM +0200, Linus Walleij wrote:
-> On Sun, Sep 30, 2018 at 2:29 PM Johan Hovold <johan@kernel.org> wrote:
-
-> > Linus, we finally got around to adding gpio support for FTDI devices;
-> > see commit
-> >
-> >         ba93cc7da896 ("USB: serial: ftdi_sio: implement GPIO support for FT-X devices")
-> >
-> > in my usb-next branch (and linux-next).
+On 05/10/18 13:33, Matthias Brugger wrote:
 > 
-> This is good news, I think it's a pretty neat way for people to get
-> a few inexpensive GPIOs from their serial adapters.
 > 
-> > The gpiolib warnings and inability to use the legacy sysfs interface
-> > prevents us from setting the line names however as someone is bound to
-> > plugin more than one of these devices at some point. I think we
-> > discussed this issue with the name space and hotpluggable devices a few
-> > years ago, but looks like this topic may need to be revisited.
+> On 05/10/2018 12:55, Marc Zyngier wrote:
+>> Hi Matthias,
+>>
+>> On 04/10/18 23:11, Matthias Brugger wrote:
+>>> Friendly reminder, if anyone has any comment on the patch :)
+>>>
+>>> On 9/12/18 11:52 AM, matthias.bgg@kernel.org wrote:
+>>>> From: Matthias Brugger <mbrugger@suse.com>
+>>>>
+>>>> Some hardware does not implement two-level page tables so that
+>>>> the amount of contigious memory needed by the baser is bigger
+>>>> then the zone order. This is a known problem on Cavium Thunderx
+>>>> with 4K page size.
+>>>>
+>>>> We fix this by adding an errata which allocates the memory early
+>>>> in the boot cycle, using the memblock allocator.
+>>>>
+>>>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>>>> ---
+>>>>    arch/arm64/Kconfig               | 12 ++++++++
+>>>>    arch/arm64/include/asm/cpucaps.h |  3 +-
+>>>>    arch/arm64/kernel/cpu_errata.c   | 33 +++++++++++++++++++++
+>>>>    drivers/irqchip/irq-gic-v3-its.c | 50 ++++++++++++++++++++------------
+>>>>    4 files changed, 79 insertions(+), 19 deletions(-)
+>>
+>> My only comment would be to state how much I dislike both the HW and the
+>> patch... ;-) The idea that we have some erratum that depends on the page size
+>> doesn't feel good at all.
+>>
 > 
-> Hm I guess the right long-term fix is to allow per-gpiochip unique
-> names rather than enforcing globally unique names.
+> Well ugly HW needs ugly patches ;-)
+> 
+>>>>
+>>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>>> index 1b1a0e95c751..dfd9fe08f0b2 100644
+>>>> --- a/arch/arm64/Kconfig
+>>>> +++ b/arch/arm64/Kconfig
+>>>> @@ -597,6 +597,18 @@ config QCOM_FALKOR_ERRATUM_E1041
+>>>>            If unsure, say Y.
+>>>>    +config CAVIUM_ALLOC_ITS_TABLE_EARLY
+>>>> +    bool "Cavium Thunderx: Allocate the its table early"
+>>>> +    default y
+>>>> +    depends on ARM64_4K_PAGES && FORCE_MAX_ZONEORDER < 13
+>>
+>> Here's a though: Why don't we ensure that FORCE_MAX_ZONEORDER is such as we
+>> could always allocate the same amount of memory, no matter what the page size
+>> is? That, or bump FORCE_MAX_ZONEORDER to 13 if the kernel includes support for TX1.
+>>
+> 
+> Bumping FORCE_MAX_ZONEORDER when TX1 is supported was proposed here:
+> https://patchwork.kernel.org/patch/6322281/
+> 
+> To bring in some more history, the CMA approach ended with this discussion:
+> https://patchwork.kernel.org/patch/9888041/
+> 
+>> Any of this of course requires buy-in from the arm64 maintainers, as this is
+>> quite a departure from the way things work so far.
+>>
+> 
+> With my distribution head on, I would prefer a solution that does not change
+> FORCE_MAX_ZONEORDER. That's how I came to the idea providing a third solution to
+> the same problem :)
 
-Indeed.
-
-> The idea is to make it possible for userspace to look up a GPIO
-> on a chip by name, so if the gpiochip has a unique name,
-> and the line name is unique on that chip it should be good
-> enough.
-
-I haven't really had time do dig into this again, but is this also an
-issue with the chardev interface? I thought this was one of the things
-you wanted to get right with the new interface, so hopefully that's
-already taken care of.
-
-If the flat name space is only an issue with the legacy interface we
-might get away with simply not using the line names in sysfs when a new
-chip flag is set (unless we can resue .can_sleep, but there seems to be
-some i2c devices already using line names).
+Why is that a problem? What impact does this have on your favourite distro?
 
 Thanks,
-Johan
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
