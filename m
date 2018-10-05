@@ -2,81 +2,58 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2309C65BA9
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD985C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BBA92054F
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:34:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BBA92054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id A8D322054F
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 07:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D322054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728473AbeJEObv (ORCPT
+        id S1728459AbeJEOcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 10:31:51 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39118 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727830AbeJEObv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 10:31:51 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c25-v6so4352050pfe.6;
-        Fri, 05 Oct 2018 00:34:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SEhqGCs3D6tIVEyCVOq+J9ATvMQloVr0AmxdN/QdFsk=;
-        b=ktOMNRSskAwnQyb531Skeaj5kMGGjVH+kTIFPj7F2NvPNEA4yiiFrOilcnr6OJ94pU
-         8KPbJz2Rm8SMtWM+wngvq/okk6lc+7UA3ytP0kLx7N452DYMBJyZZGas8CqpQJqZThrI
-         0MIo4FOApmnOGBxFcfakhQbO3mozypmcp/IZyGZPEE0Sdi3NvN2flSfp3bnAA9ihvr+8
-         DyNWEP/T/rxnkji6/uJRuJLfXgQ7oqqA38ft7oJwW4UkOmYHmILr2Hs89Ajpvss2FzZt
-         L4BzprHpfW7oQzpBfXtngoCggIXLO390H/WepWhmFoW5hHXxtsrscHTP8Ko4a/7q2hxk
-         355A==
-X-Gm-Message-State: ABuFfoimCLU9GK5CCeLsJT72W4yomaLBREP/WU/e7sa5BV6my4MxRdtz
-        s5iAM5KiW/SO7akSJf2Mr3Z9V0VF
-X-Google-Smtp-Source: ACcGV62v4GXHUGqx7UVBEVD0y4McXxnULW5VpdgrVx/dH4ubp2NgXLzFSJlLYHg3b9sF7HKFfv7NzQ==
-X-Received: by 2002:a63:1b0b:: with SMTP id b11-v6mr8916635pgb.66.1538724863548;
-        Fri, 05 Oct 2018 00:34:23 -0700 (PDT)
-Received: from ?IPv6:2601:647:4800:973f:65ce:2bfc:fedf:1f69? ([2601:647:4800:973f:65ce:2bfc:fedf:1f69])
-        by smtp.gmail.com with ESMTPSA id 70-v6sm10529605pfz.27.2018.10.05.00.34.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 00:34:22 -0700 (PDT)
-Subject: Re: [PATCH v9 13/13] nvmet: Optionally use PCI P2P memory
-To:     Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Steve Wise <swise@opengridcomputing.com>
-References: <20181004212747.6301-1-logang@deltatee.com>
- <20181004212747.6301-14-logang@deltatee.com>
- <a3af4bda-0b73-c964-c7d6-5d59f0710768@grimberg.me>
- <2bcc0927-83ab-1bf2-d584-aebd5274cefa@deltatee.com>
- <20181005070720.GA23725@lst.de>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <236ae882-34e0-50d8-ac19-ee5dab8db3f2@grimberg.me>
-Date:   Fri, 5 Oct 2018 00:34:06 -0700
+        Fri, 5 Oct 2018 10:32:18 -0400
+Received: from foss.arm.com ([217.140.101.70]:46570 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727830AbeJEOcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 10:32:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C95BF7A9;
+        Fri,  5 Oct 2018 00:34:50 -0700 (PDT)
+Received: from [10.163.1.107] (unknown [10.163.1.107])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C7103F5B3;
+        Fri,  5 Oct 2018 00:34:46 -0700 (PDT)
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <20181002123909.GS18290@dhcp22.suse.cz>
+ <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
+ <20181003065833.GD18290@dhcp22.suse.cz>
+ <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+ <20181003105926.GA4714@dhcp22.suse.cz>
+ <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
+ <20181003114842.GD4714@dhcp22.suse.cz>
+ <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
+ <20181003133609.GG4714@dhcp22.suse.cz>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <5dc1dc4d-de60-43b9-aab6-3b3bb6a22a4b@arm.com>
+Date:   Fri, 5 Oct 2018 13:04:43 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181005070720.GA23725@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181003133609.GG4714@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,40 +62,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
->>>> +static inline struct device *nvmet_ns_dev(struct nvmet_ns *ns)
->>>> +{
->>>> +	return disk_to_dev(ns->bdev->bd_disk);
->>>> +}
->>>
->>> This needs to handle non bdev namespaces.
+
+On 10/03/2018 07:06 PM, Michal Hocko wrote:
+> On Wed 03-10-18 18:36:39, Anshuman Khandual wrote:
+> [...]
+>> So we have two checks here
 >>
->> As it's coded now the helper never gets called unless ns->bdev is not
->> null. But in general, yes you are right, we should probably return NULL
->> if ns->bdev is NULL.
+>> 1) platform specific arch_hugetlb_migration -> In principle go ahead
+>>
+>> 2) huge_movable() during allocation
+>>
+>> 	- If huge page does not have to be placed on movable zone
+>>
+>> 		- Allocate any where successfully and done !
+>>  
+>> 	- If huge page *should* be placed on a movable zone
+>>
+>> 		- Try allocating on movable zone
+>>
+>> 			- Successfull and done !
+>>
+>> 		- If the new page could not be allocated on movable zone
+>> 		
+>> 			- Abort the migration completely
+>>
+>> 					OR
+>>
+>> 			- Warn and fall back to non-movable
 > 
-> I'd rather skip that for now.
-
-If there is a v10 I don't see why that cannot be addressed.
-
->>> index ef286b72d958..3d12f5f4568d 100644
->>> --- a/drivers/nvme/target/fc.c
->>> +++ b/drivers/nvme/target/fc.c
->>> @@ -2280,6 +2280,7 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport
->>> *tgtport,
->>>           fod->req.cmd = &fod->cmdiubuf.sqe;
->>>           fod->req.rsp = &fod->rspiubuf.cqe;
->>>           fod->req.port = tgtport->pe->port;
->>> +       fod->req.p2p_client = tgtport->dev;
->>>
->>>           /* clear any response payload */
->>>           memset(&fod->rspiubuf, 0, sizeof(fod->rspiubuf));
->>> --
->>
->> Sure, I guess that makes sense. I've never tried it with fc hardware but
->> I assume there's no reason it wouldn't work.
->>
->> I'll queue these changes up for a v10.
+> I guess you are still making it more complicated than necessary. The
+> later is really only about __GFP_MOVABLE at this stage. I would just
+> make it simple for now. We do not have to implement any dynamic
+> heuristic right now. All that I am asking for is to split the migrate
+> possible part from movable part.
 > 
-> And I'd wait until someone has actually tested this case.
+> I should have been more clear about that I guess from my very first
+> reply. I do like how you moved the current coarse grained
+> hugepage_migration_supported to be more arch specific but I merely
+> wanted to point out that we need to do some other changes before we can
+> go that route and that thing is to distinguish movable from migration
+> supported.
+> 
+> See my point?
 
-Oh yes, agreed. Should work though...
+Does the following sound close enough to what you are looking for ?
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 9df1d59..070c419 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -504,6 +504,13 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+        return arch_hugetlb_migration_supported(h);
+ }
+ 
++static inline bool hugepage_movable_required(struct hstate *h)
++{
++       if (hstate_is_gigantic(h))
++               return true;
++       return false;
++}
++
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+                                           struct mm_struct *mm, pte_t *pte)
+ {
+@@ -600,6 +607,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+        return false;
+ }
+ 
++static inline bool hugepage_movable_required(struct hstate *h)
++{
++       return false;
++}
++
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+                                           struct mm_struct *mm, pte_t *pte)
+ {
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 3c21775..8b0afdc 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1635,6 +1635,9 @@ struct page *alloc_huge_page_node(struct hstate *h, int nid)
+        if (nid != NUMA_NO_NODE)
+                gfp_mask |= __GFP_THISNODE;
+ 
++       if (hugepage_movable_required(h))
++               gfp_mask |= __GFP_MOVABLE;
++
+        spin_lock(&hugetlb_lock);
+        if (h->free_huge_pages - h->resv_huge_pages > 0)
+                page = dequeue_huge_page_nodemask(h, gfp_mask, nid, NULL);
+@@ -1652,6 +1655,9 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
+ {
+        gfp_t gfp_mask = htlb_alloc_mask(h);
+ 
++       if (hugepage_movable_required(h))
++               gfp_mask |= __GFP_MOVABLE;
++
+        spin_lock(&hugetlb_lock);
+        if (h->free_huge_pages - h->resv_huge_pages > 0) {
+                struct page *page;
+
