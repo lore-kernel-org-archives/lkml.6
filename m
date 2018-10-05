@@ -2,92 +2,87 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8EFC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0EFC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE71220652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:20:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE71220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id E710B2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 11:25:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E710B2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeJESSh (ORCPT
+        id S1728118AbeJESYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 14:18:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60908 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727581AbeJESSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 14:18:36 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 62puEbml3eNp; Fri,  5 Oct 2018 13:20:14 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ABDEF1EC021C;
-        Fri,  5 Oct 2018 13:20:14 +0200 (CEST)
-Date:   Fri, 5 Oct 2018 13:20:10 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Nadav Amit <namit@vmware.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
-Message-ID: <20181005112010.GC10285@zn.tnic>
-References: <20181003213100.189959-5-namit@vmware.com>
- <20181004075755.GA3353@gmail.com>
- <20181004083333.GA9802@gmail.com>
- <10D29A50-C352-4407-A824-0C3C06CD8592@zytor.com>
- <A5DED74C-A95A-48D8-AF68-39E23696385F@vmware.com>
- <20181004091222.GB21864@gmail.com>
- <D42AB116-BFA4-4CF0-BF45-41C579A9B4C7@vmware.com>
- <20181004094519.GA97692@gmail.com>
- <29591D3B-D49B-4D7A-B280-85A2C3F63F9C@vmware.com>
- <20181005093108.GA24723@gmail.com>
+        Fri, 5 Oct 2018 14:24:00 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13598 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727581AbeJESYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 14:24:00 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B8AAF1B97ACFA;
+        Fri,  5 Oct 2018 19:25:35 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 5 Oct 2018 19:25:27 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'file_priv'
+Date:   Fri, 5 Oct 2018 11:36:58 +0000
+Message-ID: <1538739418-151469-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181005093108.GA24723@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 11:31:08AM +0200, Ingo Molnar wrote:
-> 
-> * Nadav Amit <namit@vmware.com> wrote:
-> 
-> > > Are you using defconfig or a reasonable distro-config for your tests?
-> > 
-> > I think it is best to take the kernel and run localyesconfig for testing.
-> 
-> Ok, agreed - and this makes the numbers you provided pretty representative.
-> 
-> Good - now that all of my concerns were addressed I'd like to merge the remaining 3 patches as 
-> well - but they are conflicting with ongoing x86 work in tip:x86/core. The extable conflict is 
-> trivial, the jump-label conflict a bit more involved.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-FWIW, gcc guys are not too averse to the idea of enhancing gcc inline
-asm syntax with a statement which specifies its size so that gcc can use
-it to do better inlining cost estimation than counting lines.
+drivers/gpu/drm/vmwgfx/vmwgfx_fence.c: In function 'vmw_event_fence_action_seq_passed':
+drivers/gpu/drm/vmwgfx/vmwgfx_fence.c:909:19: warning:
+ variable 'file_priv' set but not used [-Wunused-but-set-variable]
+  struct drm_file *file_priv;
+  
+It not used any more since 
+commit fb740cf2492c ("drm: Create drm_send_event helpers")
 
-Lemme work the process ...
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
--- 
-Regards/Gruss,
-    Boris.
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+index f872615..301260e 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -906,13 +906,10 @@ static void vmw_event_fence_action_seq_passed(struct vmw_fence_action *action)
+ 		container_of(action, struct vmw_event_fence_action, action);
+ 	struct drm_device *dev = eaction->dev;
+ 	struct drm_pending_event *event = eaction->event;
+-	struct drm_file *file_priv;
+-
+ 
+ 	if (unlikely(event == NULL))
+ 		return;
+ 
+-	file_priv = event->file_priv;
+ 	spin_lock_irq(&dev->event_lock);
+ 
+ 	if (likely(eaction->tv_sec != NULL)) {
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+
+
