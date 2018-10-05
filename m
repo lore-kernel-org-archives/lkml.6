@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2E9C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B7BC65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B6C21486
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7E121473
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 16:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9ONLKj/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B6C21486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbZEFu+9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7E121473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729046AbeJEXN4 (ORCPT
+        id S1729082AbeJEXN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 19:13:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50834 "EHLO mail.kernel.org"
+        Fri, 5 Oct 2018 19:13:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbeJEXNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:13:55 -0400
+        id S1727958AbeJEXN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 19:13:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1466220834;
-        Fri,  5 Oct 2018 16:14:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD0C42148D;
+        Fri,  5 Oct 2018 16:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538756072;
-        bh=sq+5z8/F0NlZ8vUz1E5tKUIFWF3Do+U2+n5rd29uWzo=;
+        s=default; t=1538756074;
+        bh=2CHOi86Myddl7TisdRqK1y06+D1TqKxm2Ker6sGEr1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q9ONLKj/DhkCnI3F9rWFTqkoLbAJ0CKjkgM7nilX9wQ0fqwOJ6AoB+VWKf/v8zMrj
-         OTEQtZjC4M6yhJprX5MtvAL2bfvhI6VI9gzELnLKkPSYZsivE0fUmIlTmI5MOWx5D5
-         UqyYwofhZ07+wqI+kWJfku5wTM9H92jg2yLyn1MA=
+        b=CbZEFu+9WyuNaUGi8rkWRN7YwJCprspdIAGjYPjEEG8SGGsEXYZObf3dkhmGzkJpa
+         LOaV5DMKH0/75PdnB0HrJ54p0e5TFeAdn8LRl7z0Jcr6zvnFMKQZjZSbauHLIrG6zR
+         tPkp7wOXHyAbQojs2oU1Q4JKkqTeFt2ZX4aDCyO8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 07/48] ASoC: wm8804: Add ACPI support
-Date:   Fri,  5 Oct 2018 12:13:43 -0400
-Message-Id: <20181005161424.20521-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 09/48] ASoC: q6routing: initialize data correctly
+Date:   Fri,  5 Oct 2018 12:13:45 -0400
+Message-Id: <20181005161424.20521-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181005161424.20521-1-sashal@kernel.org>
 References: <20181005161424.20521-1-sashal@kernel.org>
@@ -52,68 +52,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
+[ Upstream commit 7aa09ff24301535491cd4de1b93107ee91449a12 ]
 
-HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
+Some of the router data fields are left as default zeros which are
+valid dai ids, so initialize these to invalid value of -1.
 
-This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
+Without intializing these correctly get_session_from_id() can return
+incorrect session resulting in not closing the opened copp and messing
+up with the copp ref count.
 
-The scripts at https://github.com/thesofproject/acpi-scripts can be
-used to add the ACPI initrd overlays.
-
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Fixes: e3a33673e845 ("ASoC: qdsp6: q6routing: Add q6routing driver")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/codecs/wm8804-i2c.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6routing.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm8804-i2c.c b/sound/soc/codecs/wm8804-i2c.c
-index f27464c2c5ba..79541960f45d 100644
---- a/sound/soc/codecs/wm8804-i2c.c
-+++ b/sound/soc/codecs/wm8804-i2c.c
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-+#include <linux/acpi.h>
+diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+index 593f66b8622f..33bb97c0b6b6 100644
+--- a/sound/soc/qcom/qdsp6/q6routing.c
++++ b/sound/soc/qcom/qdsp6/q6routing.c
+@@ -933,8 +933,10 @@ static int msm_routing_probe(struct snd_soc_component *c)
+ {
+ 	int i;
  
- #include "wm8804.h"
+-	for (i = 0; i < MAX_SESSIONS; i++)
++	for (i = 0; i < MAX_SESSIONS; i++) {
+ 		routing_data->sessions[i].port_id = -1;
++		routing_data->sessions[i].fedai_id = -1;
++	}
  
-@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804_i2c_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
- 
-+#if defined(CONFIG_OF)
- static const struct of_device_id wm8804_of_match[] = {
- 	{ .compatible = "wlf,wm8804", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, wm8804_of_match);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id wm8804_acpi_match[] = {
-+	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
-+	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
-+#endif
- 
- static struct i2c_driver wm8804_i2c_driver = {
- 	.driver = {
- 		.name = "wm8804",
- 		.pm = &wm8804_pm,
--		.of_match_table = wm8804_of_match,
-+		.of_match_table = of_match_ptr(wm8804_of_match),
-+		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
- 	},
- 	.probe = wm8804_i2c_probe,
- 	.remove = wm8804_i2c_remove,
+ 	return 0;
+ }
 -- 
 2.17.1
 
