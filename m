@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59ABCC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E38C65BA7
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2298620834
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2298620834
+	by mail.kernel.org (Postfix) with ESMTP id 1C1D62087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:24:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1D62087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbeJEUXZ (ORCPT
+        id S1729056AbeJEUXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:23:25 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57554 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727788AbeJEUXY (ORCPT
+        Fri, 5 Oct 2018 16:23:33 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34990 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727788AbeJEUXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:23:24 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DJZha001823;
-        Fri, 5 Oct 2018 15:23:38 +0200
+        Fri, 5 Oct 2018 16:23:32 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w95DIvcE012074;
+        Fri, 5 Oct 2018 15:23:44 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mu1bkc6vf-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mv4mjkj24-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 05 Oct 2018 15:23:38 +0200
+        Fri, 05 Oct 2018 15:23:44 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A1BBB31;
-        Fri,  5 Oct 2018 13:23:37 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8174D2CBE;
-        Fri,  5 Oct 2018 13:23:37 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:37 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 903283F;
+        Fri,  5 Oct 2018 13:23:40 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 67A7C2C92;
+        Fri,  5 Oct 2018 13:23:40 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
+ 15:23:40 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 5 Oct 2018
- 15:23:36 +0200
+ 15:23:40 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -53,9 +53,9 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 14/24] mmc: mmci: add variant properties to define cpsm & cmdresp bits
-Date:   Fri, 5 Oct 2018 15:22:52 +0200
-Message-ID: <1538745782-27446-15-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V5 17/24] mmc: mmci: add variant property to write datactrl before command
+Date:   Fri, 5 Oct 2018 15:22:55 +0200
+Message-ID: <1538745782-27446-18-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
 References: <1538745782-27446-1-git-send-email-ludovic.Barre@st.com>
@@ -71,170 +71,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds command variant properties to define
-cpsm enable bit and responses.
-Needed to support the STM32 variant (shift of cpsm bit,
-specific definition of commands response).
+This patch adds a boolean property to allow to write datactrl
+before to send command, whatever the command type (read or write).
+Needed to support the STM32 sdmmc variant.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c | 47 +++++++++++++++++++++++++++++++++++++++++++----
- drivers/mmc/host/mmci.h |  8 ++++++++
- 2 files changed, 51 insertions(+), 4 deletions(-)
+ drivers/mmc/host/mmci.c | 6 ++++--
+ drivers/mmc/host/mmci.h | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 7e90dbe..0b4dc66 100644
+index 438d70b..bc04329 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -50,6 +50,10 @@ static unsigned int fmax = 515633;
- static struct variant_data variant_arm = {
- 	.fifosize		= 16 * 4,
- 	.fifohalfsize		= 8 * 4,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 16,
- 	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
-@@ -64,6 +68,10 @@ static struct variant_data variant_arm = {
- static struct variant_data variant_arm_extended_fifo = {
- 	.fifosize		= 128 * 4,
- 	.fifohalfsize		= 64 * 4,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 16,
- 	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
-@@ -78,6 +86,10 @@ static struct variant_data variant_arm_extended_fifo_hwfc = {
- 	.fifosize		= 128 * 4,
- 	.fifohalfsize		= 64 * 4,
- 	.clkreg_enable		= MCI_ARM_HWFCEN,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 16,
- 	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
-@@ -93,6 +105,10 @@ static struct variant_data variant_u300 = {
- 	.fifohalfsize		= 8 * 4,
- 	.clkreg_enable		= MCI_ST_U300_HWFCEN,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 16,
- 	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
-@@ -113,6 +129,10 @@ static struct variant_data variant_nomadik = {
- 	.fifohalfsize		= 8 * 4,
- 	.clkreg			= MCI_CLK_ENABLE,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 24,
- 	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
-@@ -136,6 +156,10 @@ static struct variant_data variant_ux500 = {
- 	.clkreg_enable		= MCI_ST_UX500_HWFCEN,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 24,
- 	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
-@@ -163,6 +187,10 @@ static struct variant_data variant_ux500v2 = {
- 	.clkreg_enable		= MCI_ST_UX500_HWFCEN,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datactrl_mask_ddrmode	= MCI_DPSM_ST_DDRMODE,
- 	.datalength_bits	= 24,
- 	.datactrl_blocksz	= 11,
-@@ -192,6 +220,10 @@ static struct variant_data variant_stm32 = {
- 	.clkreg_enable		= MCI_ST_UX500_HWFCEN,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.datalength_bits	= 24,
- 	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
-@@ -212,6 +244,10 @@ static struct variant_data variant_qcom = {
- 				  MCI_QCOM_CLK_SELECT_IN_FBCLK,
- 	.clkreg_8bit_bus_enable = MCI_QCOM_CLK_WIDEBUS_8,
- 	.datactrl_mask_ddrmode	= MCI_QCOM_CLK_SELECT_IN_DDR_MODE,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-+	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
-+	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
- 	.data_cmd_enable	= MCI_CPSM_QCOM_DATCMD,
- 	.blksz_datactrl4	= true,
- 	.datalength_bits	= 24,
-@@ -1009,16 +1045,19 @@ mmci_start_command(struct mmci_host *host, struct mmc_command *cmd, u32 c)
- 	dev_dbg(mmc_dev(host->mmc), "op %02x arg %08x flags %08x\n",
- 	    cmd->opcode, cmd->arg, cmd->flags);
- 
--	if (readl(base + MMCICOMMAND) & MCI_CPSM_ENABLE) {
-+	if (readl(base + MMCICOMMAND) & host->variant->cmdreg_cpsm_enable) {
- 		writel(0, base + MMCICOMMAND);
- 		mmci_reg_delay(host);
+@@ -1261,7 +1261,8 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
+ 		mmci_request_end(host, host->mrq);
+ 	} else if (sbc) {
+ 		mmci_start_command(host, host->mrq->cmd, 0);
+-	} else if (!(cmd->data->flags & MMC_DATA_READ)) {
++	} else if (!host->variant->datactrl_first &&
++		   !(cmd->data->flags & MMC_DATA_READ)) {
+ 		mmci_start_data(host, cmd->data);
  	}
+ }
+@@ -1525,7 +1526,8 @@ static void mmci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 	if (mrq->data)
+ 		mmci_get_next_data(host, mrq->data);
  
--	c |= cmd->opcode | MCI_CPSM_ENABLE;
-+	c |= cmd->opcode | host->variant->cmdreg_cpsm_enable;
- 	if (cmd->flags & MMC_RSP_PRESENT) {
- 		if (cmd->flags & MMC_RSP_136)
--			c |= MCI_CPSM_LONGRSP;
--		c |= MCI_CPSM_RESPONSE;
-+			c |= host->variant->cmdreg_lrsp_crc;
-+		else if (cmd->flags & MMC_RSP_CRC)
-+			c |= host->variant->cmdreg_srsp_crc;
-+		else
-+			c |= host->variant->cmdreg_srsp;
- 	}
- 	if (/*interrupt*/0)
- 		c |= MCI_CPSM_INTERRUPT;
+-	if (mrq->data && mrq->data->flags & MMC_DATA_READ)
++	if (mrq->data &&
++	    (host->variant->datactrl_first || mrq->data->flags & MMC_DATA_READ))
+ 		mmci_start_data(host, mrq->data);
+ 
+ 	if (mrq->sbc)
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 87846db..e601dda 100644
+index d9db184..1aa8eac 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -204,6 +204,10 @@ struct mmci_host;
-  * @clkreg_enable: enable value for MMCICLOCK register
-  * @clkreg_8bit_bus_enable: enable value for 8 bit bus
-  * @clkreg_neg_edge_enable: enable value for inverted data/cmd output
-+ * @cmdreg_cpsm_enable: enable value for CPSM
-+ * @cmdreg_lrsp_crc: enable value for long response with crc
-+ * @cmdreg_srsp_crc: enable value for short response with crc
-+ * @cmdreg_srsp: enable value for short response without crc
-  * @datalength_bits: number of bits in the MMCIDATALENGTH register
-  * @fifosize: number of bytes that can be written when MMCI_TXFIFOEMPTY
-  *	      is asserted (likewise for RX)
-@@ -243,6 +247,10 @@ struct variant_data {
- 	unsigned int		clkreg_enable;
- 	unsigned int		clkreg_8bit_bus_enable;
- 	unsigned int		clkreg_neg_edge_enable;
-+	unsigned int		cmdreg_cpsm_enable;
-+	unsigned int		cmdreg_lrsp_crc;
-+	unsigned int		cmdreg_srsp_crc;
-+	unsigned int		cmdreg_srsp;
- 	unsigned int		datalength_bits;
- 	unsigned int		fifosize;
- 	unsigned int		fifohalfsize;
+@@ -223,6 +223,7 @@ struct mmci_host;
+  * @datactrl_mask_sdio: SDIO enable mask in datactrl register
+  * @datactrl_blksz: block size in power of two
+  * @datactrl_dpsm_enable: enable value for DPSM
++ * @datactrl_first: true if data must be setup before send command
+  * @pwrreg_powerup: power up value for MMCIPOWER register
+  * @f_max: maximum clk frequency supported by the controller.
+  * @signal_direction: input/out direction of bus signals can be indicated
+@@ -262,6 +263,7 @@ struct variant_data {
+ 	unsigned int		datactrl_mask_sdio;
+ 	unsigned int		datactrl_blocksz;
+ 	unsigned int		datactrl_dpsm_enable;
++	u8			datactrl_first:1;
+ 	u8			st_sdio:1;
+ 	u8			st_clkdiv:1;
+ 	u8			blksz_datactrl16:1;
 -- 
 2.7.4
 
