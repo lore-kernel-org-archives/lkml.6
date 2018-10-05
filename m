@@ -3,229 +3,209 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46635C65BA7
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEDDC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096EB2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 096EB2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A0442087D
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 13:46:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A0442087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbeJEUmB (ORCPT
+        id S1728543AbeJEUoq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 16:42:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54458 "EHLO mx1.redhat.com"
+        Fri, 5 Oct 2018 16:44:46 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:53338 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727701AbeJEUmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:42:00 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C941530820DB;
-        Fri,  5 Oct 2018 13:43:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B04D162487;
-        Fri,  5 Oct 2018 13:43:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net 2/2] rxrpc: Fix the data_ready handler
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 05 Oct 2018 14:43:10 +0100
-Message-ID: <153874699086.18195.6819270943388841145.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153874697684.18195.15264114363303320691.stgit@warthog.procyon.org.uk>
-References: <153874697684.18195.15264114363303320691.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1727775AbeJEUop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:44:45 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42RWHN1ZHdz9ttS6;
+        Fri,  5 Oct 2018 15:45:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kKJ3kHWqHjOc; Fri,  5 Oct 2018 15:45:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42RWHN0xWsz9ttS1;
+        Fri,  5 Oct 2018 15:45:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A8A68BB99;
+        Fri,  5 Oct 2018 15:45:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ZddUxHk7h4hs; Fri,  5 Oct 2018 15:45:56 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4059F8BB96;
+        Fri,  5 Oct 2018 15:45:56 +0200 (CEST)
+Subject: Re: [PATCH v5 1/9] book3s/64: avoid circular header inclusion in
+ mmu-hash.h
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <cover.1538687073.git.christophe.leroy@c-s.fr>
+ <3ae99c06f76fc89de00b801a6e839952850c7abb.1538687074.git.christophe.leroy@c-s.fr>
+Message-ID: <8055896d-f1cd-3560-2f08-ab367270beae@c-s.fr>
+Date:   Fri, 5 Oct 2018 15:45:54 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 05 Oct 2018 13:43:12 +0000 (UTC)
+In-Reply-To: <3ae99c06f76fc89de00b801a6e839952850c7abb.1538687074.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the rxrpc_data_ready() function to pick up all packets and to not miss
-any.  There are two problems:
+The serie has been successfully compiled tested at 
+http://kisskb.ellerman.id.au/kisskb/head/358723b36b126a381d827c82d04ee226321416b2/
 
- (1) The sk_data_ready pointer on the UDP socket is set *after* it is
-     bound.  This means that it's open for business before we're ready to
-     dequeue packets and there's a tiny window exists in which a packet can
-     sneak onto the receive queue, but we never know about it.
+Christophe
 
-     Fix this by setting the pointers on the socket prior to binding it.
-
- (2) skb_recv_udp() will return an error (such as ENETUNREACH) if there was
-     an error on the transmission side, even though we set the
-     sk_error_report hook.  Because rxrpc_data_ready() returns immediately
-     in such a case, it never actually removes its packet from the receive
-     queue.
-
-     Fix this by abstracting out the UDP dequeuing and checksumming into a
-     separate function that keeps hammering on skb_recv_udp() until it
-     returns -EAGAIN, passing the packets extracted to the remainder of the
-     function.
-
-and two potential problems:
-
- (3) It might be possible in some circumstances or in the future for
-     packets to be being added to the UDP receive queue whilst rxrpc is
-     running consuming them, so the data_ready() handler might get called
-     less often than once per packet.
-
-     Allow for this by fully draining the queue on each call as (2).
-
- (4) If a packet fails the checksum check, the code currently returns after
-     discarding the packet without checking for more.
-
-     Allow for this by fully draining the queue on each call as (2).
-
-Fixes: 17926a79320a ("[AF_RXRPC]: Provide secure RxRPC sockets for use by userspace and kernel both")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
----
-
- net/rxrpc/input.c        |   68 ++++++++++++++++++++++++++--------------------
- net/rxrpc/local_object.c |   11 ++++---
- 2 files changed, 44 insertions(+), 35 deletions(-)
-
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index c5af9955665b..c3114fa66c92 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1121,7 +1121,7 @@ int rxrpc_extract_header(struct rxrpc_skb_priv *sp, struct sk_buff *skb)
-  * shut down and the local endpoint from going away, thus sk_user_data will not
-  * be cleared until this function returns.
-  */
--void rxrpc_data_ready(struct sock *udp_sk)
-+void rxrpc_input_packet(struct sock *udp_sk, struct sk_buff *skb)
- {
- 	struct rxrpc_connection *conn;
- 	struct rxrpc_channel *chan;
-@@ -1130,39 +1130,11 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 	struct rxrpc_local *local = udp_sk->sk_user_data;
- 	struct rxrpc_peer *peer = NULL;
- 	struct rxrpc_sock *rx = NULL;
--	struct sk_buff *skb;
- 	unsigned int channel;
--	int ret, skew = 0;
-+	int skew = 0;
- 
- 	_enter("%p", udp_sk);
- 
--	ASSERT(!irqs_disabled());
--
--	skb = skb_recv_udp(udp_sk, 0, 1, &ret);
--	if (!skb) {
--		if (ret == -EAGAIN)
--			return;
--		_debug("UDP socket error %d", ret);
--		return;
--	}
--
--	if (skb->tstamp == 0)
--		skb->tstamp = ktime_get_real();
--
--	rxrpc_new_skb(skb, rxrpc_skb_rx_received);
--
--	_net("recv skb %p", skb);
--
--	/* we'll probably need to checksum it (didn't call sock_recvmsg) */
--	if (skb_checksum_complete(skb)) {
--		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
--		__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INERRORS, 0);
--		_leave(" [CSUM failed]");
--		return;
--	}
--
--	__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INDATAGRAMS, 0);
--
- 	/* The UDP protocol already released all skb resources;
- 	 * we are free to add our own data there.
- 	 */
-@@ -1181,6 +1153,8 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 		}
- 	}
- 
-+	if (skb->tstamp == 0)
-+		skb->tstamp = ktime_get_real();
- 	trace_rxrpc_rx_packet(sp);
- 
- 	switch (sp->hdr.type) {
-@@ -1398,3 +1372,37 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 	rxrpc_reject_packet(local, skb);
- 	_leave(" [badmsg]");
- }
-+
-+void rxrpc_data_ready(struct sock *udp_sk)
-+{
-+	struct sk_buff *skb;
-+	int ret;
-+
-+	for (;;) {
-+		skb = skb_recv_udp(udp_sk, 0, 1, &ret);
-+		if (!skb) {
-+			if (ret == -EAGAIN)
-+				return;
-+
-+			/* If there was a transmission failure, we get an error
-+			 * here that we need to ignore.
-+			 */
-+			_debug("UDP socket error %d", ret);
-+			continue;
-+		}
-+
-+		rxrpc_new_skb(skb, rxrpc_skb_rx_received);
-+
-+		/* we'll probably need to checksum it (didn't call sock_recvmsg) */
-+		if (skb_checksum_complete(skb)) {
-+			rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
-+			__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INERRORS, 0);
-+			_debug("csum failed");
-+			continue;
-+		}
-+
-+		__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INDATAGRAMS, 0);
-+
-+		rxrpc_input_packet(udp_sk, skb);
-+	}
-+}
-diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
-index 94d234e9c685..30862f44c9f1 100644
---- a/net/rxrpc/local_object.c
-+++ b/net/rxrpc/local_object.c
-@@ -122,6 +122,12 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
- 		return ret;
- 	}
- 
-+	/* set the socket up */
-+	sock = local->socket->sk;
-+	sock->sk_user_data	= local;
-+	sock->sk_data_ready	= rxrpc_data_ready;
-+	sock->sk_error_report	= rxrpc_error_report;
-+
- 	/* if a local address was supplied then bind it */
- 	if (local->srx.transport_len > sizeof(sa_family_t)) {
- 		_debug("bind");
-@@ -191,11 +197,6 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
- 		BUG();
- 	}
- 
--	/* set the socket up */
--	sock = local->socket->sk;
--	sock->sk_user_data	= local;
--	sock->sk_data_ready	= rxrpc_data_ready;
--	sock->sk_error_report	= rxrpc_error_report;
- 	_leave(" = 0");
- 	return 0;
- 
-
+Le 05/10/2018 à 09:32, Christophe Leroy a écrit :
+> When activating CONFIG_THREAD_INFO_IN_TASK, linux/sched.h
+> includes asm/current.h. This generates a circular dependency.
+> To avoid that, asm/processor.h shall not be included in mmu-hash.h
+> 
+> In order to do that, this patch moves into a new header called
+> asm/task_size_user64.h the information from asm/processor.h required
+> by mmu-hash.h
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+> ---
+>   arch/powerpc/include/asm/book3s/64/mmu-hash.h |  2 +-
+>   arch/powerpc/include/asm/processor.h          | 34 +---------------------
+>   arch/powerpc/include/asm/task_size_user64.h   | 42 +++++++++++++++++++++++++++
+>   arch/powerpc/kvm/book3s_hv_hmi.c              |  1 +
+>   4 files changed, 45 insertions(+), 34 deletions(-)
+>   create mode 100644 arch/powerpc/include/asm/task_size_user64.h
+> 
+> diff --git a/arch/powerpc/include/asm/book3s/64/mmu-hash.h b/arch/powerpc/include/asm/book3s/64/mmu-hash.h
+> index e0e4ce8f77d6..02955d867067 100644
+> --- a/arch/powerpc/include/asm/book3s/64/mmu-hash.h
+> +++ b/arch/powerpc/include/asm/book3s/64/mmu-hash.h
+> @@ -23,7 +23,7 @@
+>    */
+>   #include <asm/book3s/64/pgtable.h>
+>   #include <asm/bug.h>
+> -#include <asm/processor.h>
+> +#include <asm/task_size_user64.h>
+>   #include <asm/cpu_has_feature.h>
+>   
+>   /*
+> diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
+> index 52fadded5c1e..13589274fe9b 100644
+> --- a/arch/powerpc/include/asm/processor.h
+> +++ b/arch/powerpc/include/asm/processor.h
+> @@ -101,40 +101,8 @@ void release_thread(struct task_struct *);
+>   #endif
+>   
+>   #ifdef CONFIG_PPC64
+> -/*
+> - * 64-bit user address space can have multiple limits
+> - * For now supported values are:
+> - */
+> -#define TASK_SIZE_64TB  (0x0000400000000000UL)
+> -#define TASK_SIZE_128TB (0x0000800000000000UL)
+> -#define TASK_SIZE_512TB (0x0002000000000000UL)
+> -#define TASK_SIZE_1PB   (0x0004000000000000UL)
+> -#define TASK_SIZE_2PB   (0x0008000000000000UL)
+> -/*
+> - * With 52 bits in the address we can support
+> - * upto 4PB of range.
+> - */
+> -#define TASK_SIZE_4PB   (0x0010000000000000UL)
+>   
+> -/*
+> - * For now 512TB is only supported with book3s and 64K linux page size.
+> - */
+> -#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
+> -/*
+> - * Max value currently used:
+> - */
+> -#define TASK_SIZE_USER64		TASK_SIZE_4PB
+> -#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
+> -#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
+> -#else
+> -#define TASK_SIZE_USER64		TASK_SIZE_64TB
+> -#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
+> -/*
+> - * We don't need to allocate extended context ids for 4K page size, because
+> - * we limit the max effective address on this config to 64TB.
+> - */
+> -#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
+> -#endif
+> +#include <asm/task_size_user64.h>
+>   
+>   /*
+>    * 32-bit user address space is 4GB - 1 page
+> diff --git a/arch/powerpc/include/asm/task_size_user64.h b/arch/powerpc/include/asm/task_size_user64.h
+> new file mode 100644
+> index 000000000000..a4043075864b
+> --- /dev/null
+> +++ b/arch/powerpc/include/asm/task_size_user64.h
+> @@ -0,0 +1,42 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_POWERPC_TASK_SIZE_USER64_H
+> +#define _ASM_POWERPC_TASK_SIZE_USER64_H
+> +
+> +#ifdef CONFIG_PPC64
+> +/*
+> + * 64-bit user address space can have multiple limits
+> + * For now supported values are:
+> + */
+> +#define TASK_SIZE_64TB  (0x0000400000000000UL)
+> +#define TASK_SIZE_128TB (0x0000800000000000UL)
+> +#define TASK_SIZE_512TB (0x0002000000000000UL)
+> +#define TASK_SIZE_1PB   (0x0004000000000000UL)
+> +#define TASK_SIZE_2PB   (0x0008000000000000UL)
+> +/*
+> + * With 52 bits in the address we can support
+> + * upto 4PB of range.
+> + */
+> +#define TASK_SIZE_4PB   (0x0010000000000000UL)
+> +
+> +/*
+> + * For now 512TB is only supported with book3s and 64K linux page size.
+> + */
+> +#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
+> +/*
+> + * Max value currently used:
+> + */
+> +#define TASK_SIZE_USER64		TASK_SIZE_4PB
+> +#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
+> +#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
+> +#else
+> +#define TASK_SIZE_USER64		TASK_SIZE_64TB
+> +#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
+> +/*
+> + * We don't need to allocate extended context ids for 4K page size, because
+> + * we limit the max effective address on this config to 64TB.
+> + */
+> +#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
+> +#endif
+> +
+> +#endif /* CONFIG_PPC64 */
+> +#endif /* _ASM_POWERPC_TASK_SIZE_USER64_H */
+> diff --git a/arch/powerpc/kvm/book3s_hv_hmi.c b/arch/powerpc/kvm/book3s_hv_hmi.c
+> index e3f738eb1cac..64b5011475c7 100644
+> --- a/arch/powerpc/kvm/book3s_hv_hmi.c
+> +++ b/arch/powerpc/kvm/book3s_hv_hmi.c
+> @@ -24,6 +24,7 @@
+>   #include <linux/compiler.h>
+>   #include <asm/paca.h>
+>   #include <asm/hmi.h>
+> +#include <asm/processor.h>
+>   
+>   void wait_for_subcore_guest_exit(void)
+>   {
+> 
