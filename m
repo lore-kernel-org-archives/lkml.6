@@ -2,163 +2,108 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D522C64EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94C9C64EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 02:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD2D20684
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 01:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B85C20684
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 02:03:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G3IXlW0J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD2D20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOojo8gP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B85C20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeJEI4E (ORCPT
+        id S1727506AbeJEI7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 04:56:04 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36200 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbeJEI4D (ORCPT
+        Fri, 5 Oct 2018 04:59:49 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45611 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbeJEI7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 04:56:03 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y11-v6so2902569plt.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 18:59:37 -0700 (PDT)
+        Fri, 5 Oct 2018 04:59:48 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y15-v6so6044041plr.12;
+        Thu, 04 Oct 2018 19:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c8WYS60pMXYaIH2cJoE+xgzFFDKfDQtT42NBS2ouWJw=;
-        b=G3IXlW0J4mWSTzPQjPuhV2ytBAJosY3f4GNL4WOf0I6J0JHYKqRFANxhZlQFdDiGcL
-         DBymHnDryZcdGAfSptbfw99DSGCtKacaJBGekThmNqQxCR/cziPA29vtBfgfjkaftls3
-         jZq1IpRoOjooZpDrhlXwXpjltVDYHBgJv+EXY=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z4PN66NcGIc19BySOr8tcZB7vTozJ8u6rgclM6ReKl0=;
+        b=UOojo8gPpE4+8IVMwpMsV5dkq4X8ok7Fcdu04yWVYylX9i5wVScUQCaRvAhgwtKL4s
+         FjQj3uR40d2pBofXog98g/OgvcNje5T9Oe1+wpnClsQMHp0RzV8YO/3q5yPrHGUL8Vo+
+         17ZJMbbWRt9KMtORHEQcVJlpTrcKzJ0aEwX8nSDNml1t0Wlxc+tWEXevgZEBNerlMGQp
+         76ANAieCTdoPFq9txpSC1rin/F151v41KKA/Fubtj5S2F3m81P5AOXaoucpGEX9M6OcY
+         R8nHaJx2DZ0UBYPhHBdAft6abz/9En5RuKlKm5ITdJLomuUQz5J+FeMQ2gyUsPbPc2J6
+         Lb5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c8WYS60pMXYaIH2cJoE+xgzFFDKfDQtT42NBS2ouWJw=;
-        b=dDicY2NEeqdTPagUUiI6/o3NQJ7dWdZYLT5nwxE57YY9KEbh8AcK/JSf+DmQXBqWsP
-         AusnN4v2K5AQ2p4Te9nQcVPgKErI56ljbaG3NYHjqcgYtUsWQXjUrA5Oz8iYd4FdivJ4
-         PlCa6qC/Yiqc9knQ7rf5qG2N94bGZ8Jl/wEcBeq0iK9eZLQi6syyQomggfeASN/K+twC
-         XNHz+uA4HxrC6Te0shnUUZ9mSwdwey0JdbZZTOffypGqTk6apTmr0ll8k+OcP0EBI3VG
-         eZJiZgZc8C2h5wB5egaehQmrmf+F1+zXa0jPVEVVgQwl7pDQES3fQCZMfEosBAZVmeDE
-         UIUA==
-X-Gm-Message-State: ABuFfoiWBZ6yx60SNTig7Jfwo04BZMsATCp5SHsnoTgsCZ4xmfAG1tGM
-        zl8QkEKFYlwkB+OT2s8evRTK0Q==
-X-Google-Smtp-Source: ACcGV62hS2xlmE7f6YNwlroGO7Gv/UoVyQJccvdoLyLukQViXvvxy8ObOfzj60teSnxmyQPzFzqyWQ==
-X-Received: by 2002:a17:902:70c3:: with SMTP id l3-v6mr9135140plt.185.1538704776669;
-        Thu, 04 Oct 2018 18:59:36 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id n17-v6sm10607204pfj.84.2018.10.04.18.59.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z4PN66NcGIc19BySOr8tcZB7vTozJ8u6rgclM6ReKl0=;
+        b=keh2rOX9sXZY5YNfDKk9Y5/2+se8t/bGmRYpmlY2hCXqkFqgYTbqNUrPy3muRm6utj
+         6eABLsy1LGsdErQlvejMPPmsFhdcEy+Mw/gkXa++KJhuaQ+ND+9WsaTE9sp4OBOHK7pV
+         QjupN4/qqqUkGaP2NIH1TvGcBWwKcYp/yNgH4UNdudlFIiuClMvMKVLVljCP4swliD75
+         n1EgHQeOrDazLXpmWJcR/cOWWeTCMxIr6aWLDvQjQ4pppd6LfyDHplA7a9URCzzTlD/+
+         HArb0GGf9Iyw/vqwL1elSnCjv7bK769TFunlFyEnMERGF/tfeystl6POaSQ7YJ/GpdL0
+         Aw2Q==
+X-Gm-Message-State: ABuFfoiJ03bKf5UwHG74Xvr8sXmwFdopeQ8JXuyCB3m1b71lBmV2dFP7
+        OHIgblBpN1TNi5P0/3lX9go=
+X-Google-Smtp-Source: ACcGV60flJ2gnYYKUl2wQQ0y7VBhkNgBbIjGbTdfO7ZySLJ5fO7mPbrVMSfkV1r+qBzti2llW1LzRw==
+X-Received: by 2002:a17:902:7e45:: with SMTP id a5-v6mr9447545pln.151.1538705000815;
+        Thu, 04 Oct 2018 19:03:20 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:c49e])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm13594181pfs.108.2018.10.04.19.03.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 18:59:35 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     Ryan Case <ryandcase@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: sdm845: Add qspi (quad SPI) node
-Date:   Thu,  4 Oct 2018 18:59:02 -0700
-Message-Id: <20181005015902.134192-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Thu, 04 Oct 2018 19:03:19 -0700 (PDT)
+Date:   Thu, 4 Oct 2018 19:03:18 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] udp: Add tracepoints to monitor skbs going in
+ and out of a UDP socket
+Message-ID: <20181005020316.7cqlcfkedhamwhtt@ast-mbp.dhcp.thefacebook.com>
+References: <20181004171925.6neebizw4xmpjhv6@ast-mbp.dhcp.thefacebook.com>
+ <f4d5ec71-b09a-84fa-599e-d0482cdb77b7@gmail.com>
+ <153864184110.20296.16498481420320274305.stgit@warthog.procyon.org.uk>
+ <25668.1538672073@warthog.procyon.org.uk>
+ <5213.1538695482@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5213.1538695482@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the Quad SPI controller to the main sdm845 device tree file.
-Boards will be expected to assign the proper pinctrl depending on how
-many chip selects they have hooked up and how many data lines.
+On Fri, Oct 05, 2018 at 12:24:42AM +0100, David Howells wrote:
+> 
+> As for kprobes: spots, plural.  Using kprobes involves installing breakpoint
+> instructions and taking traps and would seem to require using printk for the
+> output, which would affect the timings and potentially affect the situation,
+> especially given the sheer amount of traces produced.  Note that one of these
+> was in an interrupt handler, which is possibly not the best place to be taking
+> an illegal instruction trap.
+> 
+> Using kprobes gets worse too.  In my case, the source code and the build tree
+> aren't on the test machine, which I understand would be a requirement - and
 
-This depends on commit 48735597f7bd ("clk: qcom: Add qspi (Quad SPI)
-clock defines for sdm845 to header") to add the needed defines.  It
-also shouldn't land until the patch ("dt-bindings: spi: Qualcomm Quad
-SPI(QSPI) documentation") [1] lands.
+there is quite a bit of misunderstanding in the above two paragraphs about kprobes.
+Sounds like it influences odd design choices with tracepoints.
 
-[1] https://lkml.kernel.org/r/20181002214709.162330-1-ryandcase@chromium.org
+- kprobes at the top of the function don't use traps and they've been
+optimized over the years to have very low overhead
+- trace_printk is using the same mechanism as tracepoint prints
+- both trace_printk and tracepoints can affect timing
+- kprobes and trace_printk work well out of irq handler. They work out of NMI too
+- build tree doesn't need to be present to use kprobes
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 47 ++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b72bdb0a31a5..cfc96262e8dd 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -822,6 +822,41 @@
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 
-+			qspi_clk: qspi-clk {
-+				pinmux {
-+					pins = "gpio95";
-+					function = "qspi_clk";
-+				};
-+			};
-+
-+			qspi_cs0: qspi-cs0 {
-+				pinmux {
-+					pins = "gpio90";
-+					function = "qspi_cs";
-+				};
-+			};
-+
-+			qspi_cs1: qspi-cs1 {
-+				pinmux {
-+					pins = "gpio89";
-+					function = "qspi_cs";
-+				};
-+			};
-+
-+			qspi_data01: qspi-data01 {
-+				pinmux-data {
-+					pins = "gpio91", "gpio92";
-+					function = "qspi_data";
-+				};
-+			};
-+
-+			qspi_data12: qspi-data12 {
-+				pinmux-data {
-+					pins = "gpio93", "gpio94";
-+					function = "qspi_data";
-+				};
-+			};
-+
- 			qup_i2c0_default: qup-i2c0-default {
- 				pinmux {
- 					pins = "gpio0", "gpio1";
-@@ -1070,6 +1105,18 @@
- 			};
- 		};
- 
-+		qspi: qspi@88df000 {
-+			compatible = "qcom,sdm845-qspi", "qcom,qspi-v1";
-+			reg = <0x88df000 0x600>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
-+				 <&gcc GCC_QSPI_CORE_CLK>;
-+			clock-names = "iface", "core";
-+			status = "disabled";
-+		};
-+
- 		usb_1_hsphy: phy@88e2000 {
- 			compatible = "qcom,sdm845-qusb2-phy";
- 			reg = <0x88e2000 0x400>;
--- 
-2.19.0.605.g01d371f741-goog
+perf, bcc and others tools have user friendly (arguable of course) interfaces
+for kprobes.
 
