@@ -2,251 +2,97 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1ADC00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70806C00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A359A20652
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A359A20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=foss.arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 287FE20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 09:07:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 287FE20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeJEQCo (ORCPT
+        id S1728704AbeJEQF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 12:02:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48510 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbeJEQCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 12:02:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E983180D;
-        Fri,  5 Oct 2018 02:04:55 -0700 (PDT)
-Received: from [10.2.206.71] (e113077-lin.cambridge.arm.com [10.2.206.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3E63F5B3;
-        Fri,  5 Oct 2018 02:04:52 -0700 (PDT)
-Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
-To:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-12-kristina.martsenko@arm.com>
-From:   Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>
-Message-ID: <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
-Date:   Fri, 5 Oct 2018 10:04:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 5 Oct 2018 12:05:29 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37885 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbeJEQF2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 12:05:28 -0400
+Received: by mail-qk1-f196.google.com with SMTP id x8-v6so7474799qka.4;
+        Fri, 05 Oct 2018 02:07:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=htNP80o6BBkOtuNFFZJZQK0NcflO1dHa27ZKc+DFtlY=;
+        b=V+VUqgU+A6a1Who/eo20/iro81WutakcsXhrNbHe6ZviA9HZA49hXFGbLIhURgI7gP
+         Ep4w5RX5oOfiA6tYSyQ3Nvxxrzn12PCKhrPakj0o7OlexLNEyfp3H68fiJoEMeeJyqLz
+         iynMoc4zWtqQxZ34d4Seq1ph04BJMmSGMYQa2Gzp5LMTA7XQ8y/Gz4SDVq+bTIoivwfx
+         ddEUj5N6IYOVBqj+VjAhoWhY/pwcuRK9Uu8GMH+IjlSCFYOneH2XKva+MLAlZYNc6zgK
+         uBNo4j7cpmurtdpllY5EVU1Wb+EWhFpGSuHvc9XG/mkBO5bh0Xcw3UYQHjDXDRFB+5VP
+         dJ3w==
+X-Gm-Message-State: ABuFfoieUHc6hVAOG1h5bF/cu5jP/1JTAM74tdkwg7tFDOpsND/EAFC9
+        MHjkdm7+5VQdiOmxRKaI66jfexsZZqG0NTiV755zPTPz
+X-Google-Smtp-Source: ACcGV601ZG4AvOlThN+EwFM+w2bR5/QDt7Wf1unDCKmGLXcux14tUFlX4Vr0joafldSr6aEJQCztDf+Fy27YiJLC1xA=
+X-Received: by 2002:a37:7347:: with SMTP id o68-v6mr8397175qkc.291.1538730458842;
+ Fri, 05 Oct 2018 02:07:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181005084754.20950-12-kristina.martsenko@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
+ <20181005083313.2088252-1-arnd@arndb.de> <08b190b9dabd4625ae3d636b88b43ccb@AcuMS.aculab.com>
+In-Reply-To: <08b190b9dabd4625ae3d636b88b43ccb@AcuMS.aculab.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 5 Oct 2018 11:07:22 +0200
+Message-ID: <CAK8P3a0ZWfjGfpCRzoVw9vg=xg2ov2c7et_qTi5mzd81_RParQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kieran.bingham+renesas@ideasonboard.com,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 09:47, Kristina Martsenko wrote:
-> From: Mark Rutland <mark.rutland@arm.com>
-> 
-> Now that we've added code to support pointer authentication, add some
-> documentation so that people can figure out if/how to use it.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> [kristina: update cpu-feature-registers.txt]
-> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: Andrew Jones <drjones@redhat.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->   Documentation/arm64/booting.txt                |  8 +++
->   Documentation/arm64/cpu-feature-registers.txt  |  4 ++
->   Documentation/arm64/elf_hwcaps.txt             |  5 ++
->   Documentation/arm64/pointer-authentication.txt | 84 ++++++++++++++++++++++++++
->   4 files changed, 101 insertions(+)
->   create mode 100644 Documentation/arm64/pointer-authentication.txt
-> 
-> diff --git a/Documentation/arm64/booting.txt b/Documentation/arm64/booting.txt
-> index 8d0df62c3fe0..8df9f4658d6f 100644
-> --- a/Documentation/arm64/booting.txt
-> +++ b/Documentation/arm64/booting.txt
-> @@ -205,6 +205,14 @@ Before jumping into the kernel, the following conditions must be met:
->       ICC_SRE_EL2.SRE (bit 0) must be initialised to 0b0.
->     - The DT or ACPI tables must describe a GICv2 interrupt controller.
->   
-> +  For CPUs with pointer authentication functionality:
-> +  - If EL3 is present:
-> +    SCR_EL3.APK (bit 16) must be initialised to 0b1
-> +    SCR_EL3.API (bit 17) must be initialised to 0b1
-> +  - If the kernel is entered at EL1:
-> +    HCR_EL2.APK (bit 40) must be initialised to 0b1
-> +    HCR_EL2.API (bit 41) must be initialised to 0b1
-> +
->   The requirements described above for CPU mode, caches, MMUs, architected
->   timers, coherency and system registers apply to all CPUs.  All CPUs must
->   enter the kernel in the same exception level.
-> diff --git a/Documentation/arm64/cpu-feature-registers.txt b/Documentation/arm64/cpu-feature-registers.txt
-> index 7964f03846b1..b165677ffab9 100644
-> --- a/Documentation/arm64/cpu-feature-registers.txt
-> +++ b/Documentation/arm64/cpu-feature-registers.txt
-> @@ -190,6 +190,10 @@ infrastructure:
->        |--------------------------------------------------|
->        | JSCVT                        | [15-12] |    y    |
->        |--------------------------------------------------|
-> +     | API                          | [11-8]  |    y    |
-> +     |--------------------------------------------------|
-> +     | APA                          | [7-4]   |    y    |
-> +     |--------------------------------------------------|
->        | DPB                          | [3-0]   |    y    |
->        x--------------------------------------------------x
->   
-> diff --git a/Documentation/arm64/elf_hwcaps.txt b/Documentation/arm64/elf_hwcaps.txt
-> index d6aff2c5e9e2..95509a7b0ffe 100644
-> --- a/Documentation/arm64/elf_hwcaps.txt
-> +++ b/Documentation/arm64/elf_hwcaps.txt
-> @@ -178,3 +178,8 @@ HWCAP_ILRCPC
->   HWCAP_FLAGM
->   
->       Functionality implied by ID_AA64ISAR0_EL1.TS == 0b0001.
-> +
-> +HWCAP_APIA
-> +
-> +    EL0 AddPac and Auth functionality using APIAKey_EL1 is enabled, as
-> +    described by Documentation/arm64/pointer-authentication.txt.
-> diff --git a/Documentation/arm64/pointer-authentication.txt b/Documentation/arm64/pointer-authentication.txt
-> new file mode 100644
-> index 000000000000..8a9cb5713770
-> --- /dev/null
-> +++ b/Documentation/arm64/pointer-authentication.txt
-> @@ -0,0 +1,84 @@
-> +Pointer authentication in AArch64 Linux
-> +=======================================
-> +
-> +Author: Mark Rutland <mark.rutland@arm.com>
-> +Date: 2017-07-19
-> +
-> +This document briefly describes the provision of pointer authentication
-> +functionality in AArch64 Linux.
-> +
-> +
-> +Architecture overview
-> +---------------------
-> +
-> +The ARMv8.3 Pointer Authentication extension adds primitives that can be
-> +used to mitigate certain classes of attack where an attacker can corrupt
-> +the contents of some memory (e.g. the stack).
-> +
-> +The extension uses a Pointer Authentication Code (PAC) to determine
-> +whether pointers have been modified unexpectedly. A PAC is derived from
-> +a pointer, another value (such as the stack pointer), and a secret key
-> +held in system registers.
-> +
-> +The extension adds instructions to insert a valid PAC into a pointer,
-> +and to verify/remove the PAC from a pointer. The PAC occupies a number
-> +of high-order bits of the pointer, which varies dependent on the
-> +configured virtual address size and whether pointer tagging is in use.
+On Fri, Oct 5, 2018 at 10:52 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> From: Arnd Bergmann
+> > Sent: 05 October 2018 09:33
+> >
+> > Building any configuration with 'make W=1' produces a warning:
+> >
+> > kernel/bounds.c:16:6: warnign: no previous prototype for 'foo' [-Wmissing-prototypes]
+> >
+> > When also passing -Werror, this prevents us from building any
+> > other files. Nobody ever calls the function, but we can't make
+> > it 'static' either since we want the compiler output.
+> >
+> > Calling it 'main' instead however avoids the warning, because gcc
+> > does not insist on having a declaration for main.
+>
+> Ugg.
+> main() might be special in other ways too.
+> It wouldn't surprise me if some linkers don't do special stuff for it.
+>
+> What is wrong with just putting and extra "void foo(void);" before
+> the function?
 
-s/pointer tagging/top byte ignore unless that's the terminology in the 
-rest of the kernel documentation ?
+Greg objected to that on the basis that we don't want declarations
+in .c files -- they should be in a shared header:
 
-> +
-> +A subset of these instructions have been allocated from the HINT
-> +encoding space. In the absence of the extension (or when disabled),
-> +these instructions behave as NOPs. Applications and libraries using
-> +these instructions operate correctly regardless of the presence of the
-> +extension.
-> +
-> +
-> +Basic support
-> +-------------
-> +
-> +When CONFIG_ARM64_PTR_AUTH is selected, and relevant HW support is
-> +present, the kernel will assign a random APIAKey value to each process
-> +at exec*() time. This key is shared by all threads within the process,
-> +and the key is preserved across fork(). Presence of functionality using
-> +APIAKey is advertised via HWCAP_APIA.
-> +
-> +Recent versions of GCC can compile code with APIAKey-based return
-> +address protection when passed the -msign-return-address option. This
-> +uses instructions in the HINT space, and such code can run on systems
-> +without the pointer authentication extension.
+https://lkml.org/lkml/2018/9/21/735
 
-Just a clarification.
+I don't see what could go wrong here with calling it main(), after
+all we are just interested in the assembler output, not even
+creating an object file.
 
-This uses instructions in the hint space for architecture levels less 
-than armv8.3-a by default. If folks use -march=armv8.3-a you will start 
-seeing the combined forms of retaa appear.
-
-> +
-> +The remaining instruction and data keys (APIBKey, APDAKey, APDBKey) are
-> +reserved for future use, and instructions using these keys must not be
-> +used by software until a purpose and scope for their use has been
-> +decided. To enable future software using these keys to function on
-> +contemporary kernels, where possible, instructions using these keys are
-> +made to behave as NOPs.
-> +
-> +The generic key (APGAKey) is currently unsupported. Instructions using
-> +the generic key must not be used by software.
-> +
-> +
-> +Debugging
-> +---------
-> +
-> +When CONFIG_ARM64_PTR_AUTH is selected, and relevant HW support is
-> +present, the kernel will expose the position of TTBR0 PAC bits in the
-> +NT_ARM_PAC_MASK regset (struct user_pac_mask), which userspace can
-> +acqure via PTRACE_GETREGSET.
-> +
-> +Separate masks are exposed for data pointers and instruction pointers,
-> +as the set of PAC bits can vary between the two. Debuggers should not
-> +expect that HWCAP_APIA implies the presence (or non-presence) of this
-> +regset -- in future the kernel may support the use of APIBKey, APDAKey,
-> +and/or APBAKey, even in the absence of APIAKey.
-> +
-> +Note that the masks apply to TTBR0 addresses, and are not valid to apply
-> +to TTBR1 addresses (e.g. kernel pointers).
-> +
-> +
-> +Virtualization
-> +--------------
-> +
-> +Pointer authentication is not currently supported in KVM guests. KVM
-> +will mask the feature bits from ID_AA64ISAR1_EL1, and attempted use of
-> +the feature will result in an UNDEFINED exception being injected into
-> +the guest.
-
-However applications using instructions from the hint space will 
-continue to work albeit without any protection (as they would just be 
-nops) ?
-
-
-regards,
-Ramana
-
-
-Reviewed-by: Ramana Radhakrishnan  <ramana.radhakrishnan@arm.com>
-
-> 
-
-
+      Arnd
