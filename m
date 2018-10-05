@@ -2,115 +2,65 @@ Return-Path: <SRS0=9Qwj=MR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D46C00449
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E741BC00449
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACBD2087D
-	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:35:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACBD2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B9642206B2
+	for <linux-kernel@archiver.kernel.org>; Fri,  5 Oct 2018 14:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9642206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeJEVeK (ORCPT
+        id S1728978AbeJEVec convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 5 Oct 2018 17:34:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52852 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbeJEVeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 5 Oct 2018 17:34:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D37EA80D;
-        Fri,  5 Oct 2018 07:35:10 -0700 (PDT)
-Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EE493F5D3;
-        Fri,  5 Oct 2018 07:35:10 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     linux-doc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        steve.capper@arm.com, Punit Agrawal <punit.agrawal@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH] Documentation/arm64: HugeTLB page implementation
-Date:   Fri,  5 Oct 2018 15:34:58 +0100
-Message-Id: <20181005143458.17875-1-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.18.0
-X-ARM-No-Footer: FoSSMail
+        Fri, 5 Oct 2018 17:34:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38332 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728643AbeJEVec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 5 Oct 2018 17:34:32 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1g8RCU-0002Al-Bu; Fri, 05 Oct 2018 16:35:30 +0200
+Date:   Fri, 5 Oct 2018 16:35:30 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Kurt Kanzenbach <kurt@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH RT] tty: serial: pl011: fix warning about uninitialized
+ variable
+Message-ID: <20181005143530.o5g6kuh5i3ym44os@linutronix.de>
+References: <20180924082901.21191-1-kurt@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180924082901.21191-1-kurt@linutronix.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arm v8 architecture supports multiple page sizes - 4k, 16k and
-64k. Based on the active page size, the Linux port supports
-corresponding hugepage sizes at PMD and PUD(4k only) levels.
+On 2018-09-24 10:29:01 [+0200], Kurt Kanzenbach wrote:
+> Silence the following gcc warning:
+> 
+> drivers/tty/serial/amba-pl011.c: In function ‘pl011_console_write’:
+> ./include/linux/spinlock.h:260:3: warning: ‘flags’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>    _raw_spin_unlock_irqrestore(lock, flags); \
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/tty/serial/amba-pl011.c:2214:16: note: ‘flags’ was declared here
+>   unsigned long flags;
+>                 ^~~~~
+> 
+> The code is correct. Thus, initializing flags to zero doesn't change the
+> behavior and resolves the warning.
+> 
+> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
 
-In addition, the architecture also supports caching larger sized
-ranges (composed of multiple entries) at the PTE and PMD level in the
-TLBs using the contiguous bit. The Linux port makes use of this
-architectural support to enable additional hugepage sizes.
+applied.
 
-Describe the two different types of hugepages supported by the arm64
-kernel and the hugepage sizes enabled by each.
-
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/arm64/hugetlbpage.txt | 39 +++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/arm64/hugetlbpage.txt
-
-diff --git a/Documentation/arm64/hugetlbpage.txt b/Documentation/arm64/hugetlbpage.txt
-new file mode 100644
-index 000000000000..64ee24b88d27
---- /dev/null
-+++ b/Documentation/arm64/hugetlbpage.txt
-@@ -0,0 +1,39 @@
-+HugeTLBpage on ARM64
-+====================
-+
-+Hugepage relies on making efficient use of TLBs to improve performance of
-+address translations. The benefit depends on both -
-+
-+  - the size of hugepages
-+  - size of entries supported by the TLBs
-+
-+The ARM64 port supports two flavours of hugepages.
-+
-+1) Block mappings at the pud/pmd level
-+--------------------------------------
-+
-+These are regular hugepages where a pmd or a pud page table entry points to a
-+block of memory. Regardless of the supported size of entries in TLB, block
-+mappings reduces the depth of page table walk needed to translate hugepage
-+addresses.
-+
-+2) Using the Contiguous bit
-+---------------------------
-+
-+The architecture provides a contiguous bit in the translation table entries
-+(D4.5.3, ARM DDI 0487C.a) that hints to the mmu to indicate that it is one of a
-+contiguous set of entries that can be cached in a single TLB entry.
-+
-+The contiguous bit is used in Linux to increase the mapping size at the pmd and
-+pte (last) level. The number of supported contiguous entries vary by page size
-+and level of the page table.
-+
-+
-+
-+The following hugepage sizes are supported -
-+
-+         CONT PTE    PMD    CONT PMD    PUD
-+         --------    ---    --------    ---
-+  4K:         64K     2M         32M     1G
-+  16K:         2M    32M          1G
-+  64K:         2M   512M         16G
--- 
-2.18.0
-
+Sebastian
