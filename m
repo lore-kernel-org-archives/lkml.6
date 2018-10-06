@@ -2,79 +2,101 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B147C67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AC6C67871
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FBE321473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FBE321473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F75821473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:46:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F75821473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbeJGBrS (ORCPT
+        id S1727840AbeJGBu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 21:47:18 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60235 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJGBrS (ORCPT
+        Sat, 6 Oct 2018 21:50:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41877 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeJGBu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 21:47:18 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g8rXL-0004Ve-EZ; Sat, 06 Oct 2018 18:42:47 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Tsang-Shian Lin <thlin@realtek.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8821ae: add in a missing break in switch statement
-Date:   Sat,  6 Oct 2018 19:42:46 +0100
-Message-Id: <20181006184246.29985-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 6 Oct 2018 21:50:29 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Ijsgn3646355
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 6 Oct 2018 11:45:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96IjsVu3646352;
+        Sat, 6 Oct 2018 11:45:54 -0700
+Date:   Sat, 6 Oct 2018 11:45:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-fa112cf1e8bc693d5a666b1c479a2859c8b6e0f1@git.kernel.org>
+Cc:     mingo@kernel.org, bp@suse.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, lkundrak@v3.sk
+Reply-To: lkundrak@v3.sk, tglx@linutronix.de, mingo@kernel.org, bp@suse.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <20181005131750.GA5366@zn.tnic>
+References: <20181005131750.GA5366@zn.tnic>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/platform] x86/olpc: Fix build error with
+ CONFIG_MFD_CS5535=m
+Git-Commit-ID: fa112cf1e8bc693d5a666b1c479a2859c8b6e0f1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit-ID:  fa112cf1e8bc693d5a666b1c479a2859c8b6e0f1
+Gitweb:     https://git.kernel.org/tip/fa112cf1e8bc693d5a666b1c479a2859c8b6e0f1
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Fri, 5 Oct 2018 15:13:07 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 6 Oct 2018 20:40:43 +0200
 
-The switch case RATR_INX_WIRELESS_MC has a missing break, this seems
-to be unintentional as the setting of variable ret gets overwritten
-when the case falls through to the following RATR_INX_WIRELESS_AC_5N
-case.  Fix this by adding in the missing break.
+x86/olpc: Fix build error with CONFIG_MFD_CS5535=m
 
-Detected by CoverityScan, CID#1167237 ("Missing break in switch")
+When building a 32-bit config which has the above MFD item as module
+but OLPC_XO1_PM is enabled =y - which is bool, btw - the kernel fails
+building with:
 
-Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  ld: arch/x86/platform/olpc/olpc-xo1-pm.o: in function `xo1_pm_remove':
+  /home/boris/kernel/linux/arch/x86/platform/olpc/olpc-xo1-pm.c:159: undefined reference to `mfd_cell_disable'
+  ld: arch/x86/platform/olpc/olpc-xo1-pm.o: in function `xo1_pm_probe':
+  /home/boris/kernel/linux/arch/x86/platform/olpc/olpc-xo1-pm.c:133: undefined reference to `mfd_cell_enable'
+  make: *** [Makefile:1030: vmlinux] Error 1
+
+Force MFD_CS5535 to y if OLPC_XO1_PM is enabled.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Lubomir Rintel <lkundrak@v3.sk>
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/20181005131750.GA5366@zn.tnic
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
-index 317c1b3101da..8af49c1c99db 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
-@@ -3448,6 +3448,7 @@ static u8 _rtl8821ae_mrate_idx_to_arfr_id(
- 			ret = 6;
- 		else
- 			ret = 7;
-+		break;
- 	case RATR_INX_WIRELESS_AC_5N:
- 		if (rtlphy->rf_type == RF_1T1R)
- 			ret = 10;
--- 
-2.17.1
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..285b5d6a5ea5 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2742,8 +2742,7 @@ config OLPC
+ 
+ config OLPC_XO1_PM
+ 	bool "OLPC XO-1 Power Management"
+-	depends on OLPC && MFD_CS5535 && PM_SLEEP
+-	select MFD_CORE
++	depends on OLPC && MFD_CS5535=y && PM_SLEEP
+ 	---help---
+ 	  Add support for poweroff and suspend of the OLPC XO-1 laptop.
+ 
