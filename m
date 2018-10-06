@@ -2,122 +2,117 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3A2ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 20:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0D9ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 20:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC53C2087D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 20:43:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mG3/sUxK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC53C2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 696A321473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 20:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696A321473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeJGDs2 (ORCPT
+        id S1726297AbeJGEBi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 23:48:28 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43156 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeJGDs2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 23:48:28 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p24-v6so6600412pff.10;
-        Sat, 06 Oct 2018 13:43:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oPmYQ0BGaSYFMm+d0TzEj5zlGjVaZ1jhACbfb+p1gIQ=;
-        b=mG3/sUxKoJQ3UprlUX4HMSktypw8wLzL+GDERq4pZ47hqxN2rMq+mhQu26s4n2nz1C
-         oOkiaNTBZJ1a+u9mZ+Z4eTlShjx6ro4yOn8IXOxWWicQlZKwTvnCovqWS0OePYfEIK01
-         oActC6Wd/7FzEzyFRGbhUJjX4/pKAOhDsXnvHXe1pL+IHDn+eLpDbXflRMZsaUWi3GnC
-         qzzs+JkNtwlUUkBAnxmUnqMmbYDZV0Il83Hvk++M4VTT/q/RKvJnBo81cQLAewQlNX2u
-         uyOiOeLbVTGee6DdQiOuBLpi5T0FpC2JECLDpogBXBFFQKkztmnyPsk67axoM1NFjYq3
-         PUhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oPmYQ0BGaSYFMm+d0TzEj5zlGjVaZ1jhACbfb+p1gIQ=;
-        b=LL+A0VJIo94ubNlhsD3kw0HHUsVDSL3FtxHStVeIgIZKTJfQQGL92uEAxrQebbVz0o
-         ToTnTtHtWH95IPJt1+jcvKnOs1mqEarh2pF/4wb9OIrTvAjL/PcZ4QXUk7bjCZ1SC1wy
-         jyEp95kgwQigulQVpcGysk51QEaW/o8OQw2dBfAgkLMzckJoAZ1DJCUAbeGoT4gLRVZv
-         c7XXjW4Tw6kU2BFNErCHj+avbpV0KU3BUbpd7vS+fvZ7XgJRAHLixNjfrO77Jd5lwlwU
-         wTEpC0V7i4NGcDg9aus5tjJHrxWuJalQDcmourfzOU9TmNiFeGmtt6mEqEgW8/LZeezF
-         KoEA==
-X-Gm-Message-State: ABuFfoiGwQgaueTOvlGIWuvzOG1uzOvuEcnzuSd46TenyJt2+uINPY0q
-        trbWsxZfjB05X0oMfUzFHLU=
-X-Google-Smtp-Source: ACcGV62AS0FEXaKK+SDBmiFVSD7uzI3IwB/789iEV0jJ9Qj1gWZkx3y8H6E9LqB47L4Woo3aKD988g==
-X-Received: by 2002:a62:210:: with SMTP id 16-v6mr18669991pfc.100.1538858624151;
-        Sat, 06 Oct 2018 13:43:44 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm26332750pfd.99.2018.10.06.13.43.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 06 Oct 2018 13:43:43 -0700 (PDT)
-Subject: Re: [PATCH] KVM: X86: Add missing KVM_AMD dependency
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Borislav Petkov <bp@suse.de>
-References: <1538765165-19177-1-git-send-email-linux@roeck-us.net>
- <749a21f9-ad88-af0e-bed7-b505ac57568d@redhat.com>
- <20181005220325.GA24365@roeck-us.net>
- <713d35b9-5dd5-284f-b514-7d2295a2db34@redhat.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b489282b-912d-e79d-3b7a-77784b8c51c9@roeck-us.net>
-Date:   Sat, 6 Oct 2018 13:43:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 7 Oct 2018 00:01:38 -0400
+Received: from albireo.enyo.de ([5.158.152.32]:34638 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbeJGEBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 00:01:38 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1g8tce-0006hj-21; Sat, 06 Oct 2018 20:56:24 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.89)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1g8tcd-0004TR-Qh; Sat, 06 Oct 2018 22:56:23 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path resolution
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+        <20180929131534.24472-1-cyphar@cyphar.com>
+        <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+        <20181001054246.gfinmx3api7kjhmc@ryuk>
+        <C89D720F-3CC4-4FA9-9CBB-E41A67360A6B@amacapital.net>
+        <20181002073220.7mzndna4tdnxdvdt@ryuk>
+Date:   Sat, 06 Oct 2018 22:56:23 +0200
+In-Reply-To: <20181002073220.7mzndna4tdnxdvdt@ryuk> (Aleksa Sarai's message of
+        "Tue, 2 Oct 2018 17:32:20 +1000")
+Message-ID: <875zyeg5fs.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-In-Reply-To: <713d35b9-5dd5-284f-b514-7d2295a2db34@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paolo,
+* Aleksa Sarai:
 
-On 10/05/2018 03:18 PM, Paolo Bonzini wrote:
-> On 06/10/2018 00:03, Guenter Roeck wrote:
->>> This should be handled by
->>>
->>> config KVM_AMD_SEV
->>>          def_bool y
->>>          bool "AMD Secure Encrypted Virtualization (SEV) support"
->>>          depends on KVM_AMD && X86_64
->>>          depends on CRYPTO_DEV_SP_PSP && !(KVM_AMD=y && CRYPTO_DEV_CCP_DD=m)
->>>          ---help---
->>>          Provides support for launching Encrypted VMs on AMD processors.
->>>
->> Unfortunately it doesn't. It disables KVM_AMD_SEV, but that doesn't prevent
->> the calls.
-> 
-> Yes, exactly - that's why I mentioned the sev_guest patch that should
-> cull all the SEV code from a !KVM_AMD_SEV build.
-> 
->>> Maybe this works as well?  I haven't tested it yet:
->>>
->> I am sure there are many possible solutions. I would personally prefer one
->> that enforces KVM_AMD=m with CRYPTO_DEV_CCP_DD=m, but that is just me.
-> 
-> Well, KVM_AMD=y is a relatively unusual choice to begin with.  The
+> On 2018-10-01, Andy Lutomirski <luto@amacapital.net> wrote:
+>> >>> Currently most container runtimes try to do this resolution in
+>> >>> userspace[1], causing many potential race conditions. In addition, the
+>> >>> "obvious" alternative (actually performing a {ch,pivot_}root(2))
+>> >>> requires a fork+exec which is *very* costly if necessary for every
+>> >>> filesystem operation involving a container.
+>> >> 
+>> >> Wait. fork() I understand, but why exec? And actually, you don't need
+>> >> a full fork() either, clone() lets you do this with some process parts
+>> >> shared. And then you also shouldn't need to use SCM_RIGHTS, just keep
+>> >> the file descriptor table shared. And why chroot()/pivot_root(),
+>> >> wouldn't you want to use setns()?
+>> > 
+>> > You're right about this -- for C runtimes. In Go we cannot do a raw
+>> > clone() or fork() (if you do it manually with RawSyscall you'll end with
+>> > broken runtime state). So you're forced to do fork+exec (which then
+>> > means that you can't use CLONE_FILES and must use SCM_RIGHTS). Same goes
+>> > for CLONE_VFORK.
+>> 
+>> I must admit that I’m not very sympathetic to the argument that “Go’s
+>> runtime model is incompatible with the simpler solution.”
+>
+> Multi-threaded programs have a similar issue (though with Go it's much
+> worse). If you fork a multi-threaded C program then you can only safely
+> use AS-Safe glibc functions (those that are safe within a signal
+> handler). But if you're just doing three syscalls this shouldn't be as
+> big of a problem as Go where you can't even do said syscalls.
 
-It is common enough that we are not the only ones affected. Also, even a
-"relatively unusual choice" should, in my opinion, not result in a build
-error. Never mind, I'll just apply the suggested workaround and configure
-CRYPTO_DEV_CCP_DD=y. I need to do that anyway, after all, if I want to keep
-KVM_AMD=y.
+The situation is a bit more complicated.  There are many programs out
+there which use malloc and free (at least indirectly) after a fork,
+and we cannot break them.  In glibc, we have a couple of subsystems
+which are put into a known state before calling the fork/clone system
+call if the application calls fork.  The price we pay for that is a
+fork which is not POSIX-compliant because it is not async-signal-safe.
+Admittedly, other libcs chose different trade-offs.
 
-Thanks,
-Guenter
+However, what is the same across libcs is this: You cannot call the
+clone system call directly and get a fully working new process.  Some
+things break.  For example, for recursive mutexes, we need to know the
+TID of the current thread, and we cannot perform a system call to get
+it for performance reasons.  So everyone has a TID cache for that.
+But the TID cache does not get reset when you bypass the fork
+implementation in libc, so you end up with subtle corruption bugs on
+TID reuse.
+
+So I'd say that in most cases, the C situation is pretty much the same
+as the Go situation.  If I recall correctly, the problem for Go is
+that it cannot call setns from Go code because it fails in the kernel
+for multi-threaded processes, and Go processes are already
+multi-threaded when user Go code runs.
