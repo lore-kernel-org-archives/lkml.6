@@ -2,173 +2,201 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92FBC00449
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0DEC65BD1
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706142147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F45621480
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dSHBicMN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706142147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtFCbeUQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F45621480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbeJFJiz (ORCPT
+        id S1729407AbeJFJv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 05:38:55 -0400
-Received: from ozlabs.org ([203.11.71.1]:46621 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbeJFJiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 05:38:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42RrPH2gbRz9s47;
-        Sat,  6 Oct 2018 12:37:07 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538793442;
-        bh=J4SdjjyM9zQ/Xa76pXOmtyqJYshw7Xr3fpvsIHJk2go=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dSHBicMNXfpVoDrSXsJ84TWNsg8skFxNrHbVVX8T7ejnZ59AJ2L6wacszwuKBmxYn
-         4QGaXkssJYZ88vvZZm+zx5xaXbnFUG81NBtXmfQycAoh5S6XKIoo9cVJO+1DbTihU5
-         B4MnXAws1X5IBinmXchiS7aKPpxL6KSkBw4COTElJiC3XHe6SctPw9Bccn7EfCh/TN
-         ij/J+hCZx7NARrHE0eqKjNkSU+XUWs+STnfe1q+LzvPP5a3//o8EhlZC59FAw55V/0
-         6PYJOFJ1K1SIz8thioJvz9lzBYaCYSQwmAsy1/zQ0p+/Xg04ciYFXhwvhLGlTi0j2T
-         CnRfCDgSoG49A==
-Date:   Sat, 6 Oct 2018 12:37:06 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes (v6) tree
-Message-ID: <20181006123706.121fc6bc@canb.auug.org.au>
-In-Reply-To: <CANiq72kuTr09CjE0jcNFkdO-gOFCjYp+REuLPq5V9c4Y8KvWXA@mail.gmail.com>
-References: <CANiq72kuTr09CjE0jcNFkdO-gOFCjYp+REuLPq5V9c4Y8KvWXA@mail.gmail.com>
+        Sat, 6 Oct 2018 05:51:26 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36908 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeJFJvZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 05:51:25 -0400
+Received: by mail-pl1-f196.google.com with SMTP id az3-v6so7619642plb.4;
+        Fri, 05 Oct 2018 19:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FVIsmZsD2UYUIajD9wCWvufUKrPcgTlr9PeHswP0yEs=;
+        b=TtFCbeUQABKwJQNsY1ARZNCx4FpkA64f1mZStu96EEXotHAt9mhWVKYMxISGgZIuAy
+         e9XH9h3UlTqIpFJMnHvv/F8ZM3YpgWBol0G9MgMTvKLfdMDQz8waroBAE9BLt5i93eVi
+         unxz3ToLsqxZShV8nWoWz6xE75lLYMtfFYZa6ryBouDtkU2CFbENDu0gwAipIPucI4/f
+         f0dfgBXLY34NZf5lVhC7Qpdg5v8kHXASNVpHN+Fzx8XoIQ0xnffM0N42BrjnGZSmJbKE
+         YHf+gQbLgTWl94iN98FCxVLbs7fd8BDOird5jcNZ0YsgMma0hW3XG/ZtLeo0SFW8+VQ9
+         z43Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FVIsmZsD2UYUIajD9wCWvufUKrPcgTlr9PeHswP0yEs=;
+        b=Zy4hxmTA+QTudPryYRt/LBenb43SipAeeeA+JYpVicfCEx2cznd7tr0jKV4+ZV0boH
+         QzA1Famlsjg2bLDdKCh1Q8SNG+J4Fx7ugCKhnsRGZIy9VGSHACdDIEEf3mfA2JXDiFs/
+         PonFBbl4mHVcNa2QKF5kzxDHto/NwSwDT3UXvne3lgLh8cLz7pkuNk7P9rUrTns5RZrn
+         G0LX1Hrxk5u6nEMoo7woH8cJduuyBZz3yfgPvH+0dq9dLsV3f3sxdBXyCbw984UO2aP2
+         kLnT8moDmcnLCIuZfXct9l6X7deaaXXBkfanXLlWeClyuXhWYKQ56wltflq7Pk0hCYab
+         DIjw==
+X-Gm-Message-State: ABuFfojgEjPZ62dcd/gHT0Htc6CMJra0eay4DFKl43SMRI7kQyvIZWmH
+        6o17LVDYKDRkhP/CScA/L5s=
+X-Google-Smtp-Source: ACcGV62BmgctjFnuEzcUrQCVuDXjZsdW3sOw7lJYocd8SSwA0nJNtMPSF930/XkeU2sheSeUcgT72w==
+X-Received: by 2002:a17:902:a618:: with SMTP id u24-v6mr14096438plq.77.1538794193757;
+        Fri, 05 Oct 2018 19:49:53 -0700 (PDT)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id n63-v6sm3962785pfn.9.2018.10.05.19.49.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 19:49:52 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v3 1/3] mm: get_user_pages: consolidate error handling
+Date:   Fri,  5 Oct 2018 19:49:47 -0700
+Message-Id: <20181006024949.20691-2-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181006024949.20691-1-jhubbard@nvidia.com>
+References: <20181006024949.20691-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XBsAZcgT2zZeLnpPcuNXhp1"; protocol="application/pgp-signature"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XBsAZcgT2zZeLnpPcuNXhp1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: John Hubbard <jhubbard@nvidia.com>
 
-Hi Miguel,
+An upcoming patch requires a way to operate on each page that
+any of the get_user_pages_*() variants returns.
 
-On Fri, 5 Oct 2018 13:32:25 +0200 Miguel Ojeda <miguel.ojeda.sandonis@gmail=
-.com> wrote:
->
-> As discussed, here it is the Compiler Attributes series for
-> linux-next. This time the original v6, based on -rc6.
->=20
-> The changes w.r.t. v5:
->=20
->   - Added latest Reviewed-by's and Tested-by's.
->=20
-> The conflicts are trivial to solve, but if you want a reference, take
-> a look at (rebased on top of next-20181005):
->=20
->   https://github.com/ojeda/linux.git compiler-attributes-rebased
->=20
-> Thanks!
->=20
-> Cheers,
-> Miguel
->=20
-> The following changes since commit 17b57b1883c1285f3d0dc2266e8f79286a7bef=
-38:
->=20
->   Linux 4.19-rc6 (2018-09-30 07:15:35 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/ojeda/linux.git compiler-attributes
+In preparation for that, consolidate the error handling for
+__get_user_pages(). This provides a single location (the "out:" label)
+for operating on the collected set of pages that are about to be returned.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+As long every use of the "ret" variable is being edited, rename
+"ret" --> "err", so that its name matches its true role.
+This also gets rid of two shadowed variable declarations, as a
+tiny beneficial a side effect.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ mm/gup.c | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+diff --git a/mm/gup.c b/mm/gup.c
+index 1abc8b4afff6..05ee7c18e59a 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -660,6 +660,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		struct vm_area_struct **vmas, int *nonblocking)
+ {
+ 	long i = 0;
++	int err = 0;
+ 	unsigned int page_mask;
+ 	struct vm_area_struct *vma = NULL;
+ 
+@@ -685,18 +686,19 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		if (!vma || start >= vma->vm_end) {
+ 			vma = find_extend_vma(mm, start);
+ 			if (!vma && in_gate_area(mm, start)) {
+-				int ret;
+-				ret = get_gate_page(mm, start & PAGE_MASK,
++				err = get_gate_page(mm, start & PAGE_MASK,
+ 						gup_flags, &vma,
+ 						pages ? &pages[i] : NULL);
+-				if (ret)
+-					return i ? : ret;
++				if (err)
++					goto out;
+ 				page_mask = 0;
+ 				goto next_page;
+ 			}
+ 
+-			if (!vma || check_vma_flags(vma, gup_flags))
+-				return i ? : -EFAULT;
++			if (!vma || check_vma_flags(vma, gup_flags)) {
++				err = -EFAULT;
++				goto out;
++			}
+ 			if (is_vm_hugetlb_page(vma)) {
+ 				i = follow_hugetlb_page(mm, vma, pages, vmas,
+ 						&start, &nr_pages, i,
+@@ -709,23 +711,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		 * If we have a pending SIGKILL, don't keep faulting pages and
+ 		 * potentially allocating memory.
+ 		 */
+-		if (unlikely(fatal_signal_pending(current)))
+-			return i ? i : -ERESTARTSYS;
++		if (unlikely(fatal_signal_pending(current))) {
++			err = -ERESTARTSYS;
++			goto out;
++		}
+ 		cond_resched();
+ 		page = follow_page_mask(vma, start, foll_flags, &page_mask);
+ 		if (!page) {
+-			int ret;
+-			ret = faultin_page(tsk, vma, start, &foll_flags,
++			err = faultin_page(tsk, vma, start, &foll_flags,
+ 					nonblocking);
+-			switch (ret) {
++			switch (err) {
+ 			case 0:
+ 				goto retry;
+ 			case -EFAULT:
+ 			case -ENOMEM:
+ 			case -EHWPOISON:
+-				return i ? i : ret;
++				goto out;
+ 			case -EBUSY:
+-				return i;
++				err = 0;
++				goto out;
+ 			case -ENOENT:
+ 				goto next_page;
+ 			}
+@@ -737,7 +741,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 			 */
+ 			goto next_page;
+ 		} else if (IS_ERR(page)) {
+-			return i ? i : PTR_ERR(page);
++			err = PTR_ERR(page);
++			goto out;
+ 		}
+ 		if (pages) {
+ 			pages[i] = page;
+@@ -757,7 +762,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		start += page_increm * PAGE_SIZE;
+ 		nr_pages -= page_increm;
+ 	} while (nr_pages);
+-	return i;
++
++out:
++	return i ? i : err;
+ }
+ 
+ static bool vma_permits_fault(struct vm_area_struct *vma,
+-- 
+2.19.0
 
-Just in case you are unaware, I will fetch that branch every morning
-and the merge it into linux-next, so any updates will be added without
-you having to send a new pull request.  I will send you an email if I
-find a problem.
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/XBsAZcgT2zZeLnpPcuNXhp1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu4H9IACgkQAVBC80lX
-0Gw8Xgf/WO3e5cq2gi42DEe04GACun0MjPVUObeEaYyMIPJAWWf9N61ljSZn6kqF
-kPniwP4jklEvGQAkBYVwsArnGHKacOk28ahaZMUeIM5qIcVRVGasJ4HHMTq+8Wdn
-wYhq3q1OjEUOR+HxofUS9oFYPiikGWv7rqRHlnwnVQONqAcA+kvTmxH3wWyGRSfp
-sX978hckIPvhwNQZh6/Qy32RG7SYefa0Z3UpDbdfpWpmehWrFmC4mh6ITkMOcGCY
-bqPkGqBnHqoa0PDQMAf56OdbhKwrRAS6WF6t5/7KSUgwxWaqSMnDXfSCpYErAdA1
-5/DHCXzqxkCKto4C05UrwgUQG7l/VQ==
-=d5WN
------END PGP SIGNATURE-----
-
---Sig_/XBsAZcgT2zZeLnpPcuNXhp1--
