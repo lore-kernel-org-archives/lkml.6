@@ -2,77 +2,191 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1967C00449
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6096BC00449
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D8221479
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:03:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D8221479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DF8C20834
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:10:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF8C20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbeJFJFU (ORCPT
+        id S1729196AbeJFJLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 05:05:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47412 "EHLO mail.kernel.org"
+        Sat, 6 Oct 2018 05:11:48 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:54122 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbeJFJFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 05:05:20 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S1726505AbeJFJLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 05:11:47 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6253720834;
-        Sat,  6 Oct 2018 02:03:53 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 22:03:51 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Matthew Helsley <mhelsley@vmware.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
- "jump_function"
-Message-ID: <20181005220351.46ae531a@vmware.local.home>
-In-Reply-To: <20181006015720.634688468@goodmis.org>
-References: <20181006015110.653946300@goodmis.org>
-        <20181006015720.634688468@goodmis.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 612C741517;
+        Sat,  6 Oct 2018 04:10:18 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id HCkFdIR-ehHB; Sat,  6 Oct 2018 04:10:16 +0200 (CEST)
+Date:   Sat, 6 Oct 2018 12:10:02 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, jlayton@kernel.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        "cyphar@cyphar.com Linux API" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
+ resolution
+Message-ID: <20181006021002.6vzsdwd3klddbmji@ryuk>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20180929131534.24472-1-cyphar@cyphar.com>
+ <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+ <20181004162611.vdlujbdguvagalpt@ryuk>
+ <CAG48ez2u--Wac7d9n3idC92Pd-M40QzYtR6FKR8PAYr=VQHUBQ@mail.gmail.com>
+ <20181005150728.mgqnpkbukpeu3bsm@ryuk>
+ <CAG48ez3FG0axt92F=+vDe1Q=kj-YngmCgFqDET7E2xCE1mOgeg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y5cyimyl4h3ru7zm"
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3FG0axt92F=+vDe1Q=kj-YngmCgFqDET7E2xCE1mOgeg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 05 Oct 2018 21:51:11 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> +#ifndef PARAMS
-> +#define PARAMS(x...) x
-> +#endif
-> +
-> +#ifndef ARGS
-> +#define ARGS(x...) x
-> +#endif
-> +
+--y5cyimyl4h3ru7zm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is also leftover from the first attempt and can be nuked.
+On 2018-10-05, Jann Horn <jannh@google.com> wrote:
+> > What if we took rename_lock (call it nd->r_seq) at the start of the
+> > resolution, and then only tried the __d_path-style check
+> >
+> >   if (read_seqretry(&rename_lock, nd->r_seq) ||
+> >       read_seqretry(&mount_lock, nd->m_seq))
+> >           /* do the __d_path lookup. */
+> >
+> > That way you would only hit the slow path if there were concurrent
+> > renames or mounts *and* you are doing a path resolution with
+> > AT_THIS_ROOT or AT_BENEATH. I've attached a modified patch that does
+> > this (and after some testing it also appears to work).
+>=20
+> Yeah, I think that might do the job.
 
-Yeah, yeah, I should have reviewed my patches better before sending
-them. But I was so excited that I got it working I just wanted to share
-the joy!
+*phew* I was all out of other ideas. :P
 
--- Steve
+> > ---
+> >  fs/namei.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 46 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 6f995e6de6b1..12c9be175cb4 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -493,7 +493,7 @@ struct nameidata {
+> >         struct path     root;
+> >         struct inode    *inode; /* path.dentry.d_inode */
+> >         unsigned int    flags;
+> > -       unsigned        seq, m_seq;
+> > +       unsigned        seq, m_seq, r_seq;
+> >         int             last_type;
+> >         unsigned        depth;
+> >         int             total_link_count;
+> > @@ -1375,6 +1375,27 @@ static int follow_dotdot_rcu(struct nameidata *n=
+d)
+> >                                 return -EXDEV;
+> >                         break;
+> >                 }
+> > +               if (unlikely((nd->flags & (LOOKUP_BENEATH | LOOKUP_CHRO=
+OT)) &&
+> > +                            (read_seqretry(&rename_lock, nd->r_seq) ||
+> > +                             read_seqretry(&mount_lock, nd->m_seq)))) {
+> > +                       char *pathbuf, *pathptr;
+> > +
+> > +                       nd->r_seq =3D read_seqbegin(&rename_lock);
+> > +                       /* Cannot take m_seq here. */
+> > +
+> > +                       pathbuf =3D kmalloc(PATH_MAX, GFP_ATOMIC);
+> > +                       if (!pathbuf)
+> > +                               return -ECHILD;
+> > +                       pathptr =3D __d_path(&nd->path, &nd->root, path=
+buf, PATH_MAX);
+> > +                       kfree(pathbuf);
+>=20
+> You're doing this check before actually looking up the parent, right?
+> So as long as I don't trigger the "path_equal(&nd->path, &nd->root)"
+> check that you do for O_BENEATH, escaping up by one level is possible,
+> right? You should probably move this check so that it happens after
+> following "..".
+
+Yup, you're right. I'll do that.
+
+> (Also: I assume that you're going to get rid of that memory allocation
+> in a future version.)
+
+Sure. Would you prefer adding some scratch space in nameidata, or that I
+change __d_path so it accepts NULL as the buffer (and thus it doesn't
+actually do any string operations)?
+
+> >                 if (nd->path.dentry !=3D nd->path.mnt->mnt_root) {
+> >                         int ret =3D path_parent_directory(&nd->path);
+> >                         if (ret)
+> > @@ -2269,6 +2311,9 @@ static const char *path_init(struct nameidata *nd=
+, unsigned flags)
+> >         nd->last_type =3D LAST_ROOT; /* if there are only slashes... */
+> >         nd->flags =3D flags | LOOKUP_JUMPED | LOOKUP_PARENT;
+> >         nd->depth =3D 0;
+> > +       nd->m_seq =3D read_seqbegin(&mount_lock);
+> > +       nd->r_seq =3D read_seqbegin(&rename_lock);
+>=20
+> This means that now, attempting to perform a lookup while something is
+> holding the rename_lock will spin on the lock. I don't know whether
+> that's a problem in practice though. Does anyone on this thread know
+> whether this is problematic?
+
+I could make it so that we only take &rename_lock
+  if (nd->flags & (FOLLOW_BENEATH | FOLLOW_CHROOT)),
+since it's not used outside of that path.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--y5cyimyl4h3ru7zm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlu4GXcACgkQnhiqJn3b
+jbSetw/9H1Y6MiSjGRuK0/R1aLFbEbq0BkUgy+kdt3R+qt0BJjUU9JrmzbbUWnjC
+eQH8by6CDPNBIY5R8G/SlbcUiEoyRevo/saa14ZS5ny2vJjuxd9n82Ey9oHpZb0Y
+hSD4+dx6S4iQADq0+HbsVO/5x+9jxVr2Nmk92GkTdGd1kTeob8NmNW8rbFqteGM8
+6HJ9DxCaOC0Tlk0aY70OzavIk5rylvi4conyxoYWqE+gZIXUCRNzFBBqbxSAgUMq
+NKFkDwEK+MuCgMoGstrKvCnaGijbuTGBGjY1lKmY506wsnPO1k2hnQPDS904jOoB
+P4MjsobwBIU2Kx4lPIeDbL70E+f1AwXpmBQw2rFotf4mq79SoASM40wb/TP7HBhx
+cn9gjPO1oykB9NkJ/yhFySN3rZszXHfhNRAY2BwQeBlA5Mo1fmJCAN0E8813GCt8
+f5KLN6vYYxsnUjiY4R1yLHe4TsY+F93b0xqLkghdgpHg+78ytOvgpDR+13TShE3j
+eIcwyeG0ZCJr84Xgloeny/tc13IhtW0nnH5HgTaNXqFHpavtaRAROBXttV7ADTL2
+XSmRgIihrrN8ULpFTuwEvE7qBLwh3V9AyYhMY4XrVlanEygmdVJkn0R/CQ7lbwiV
+EW56EqlbKmen/1fN7jYU9obldALUIX+b5Iq8AktXKyOOVBeekXk=
+=EMae
+-----END PGP SIGNATURE-----
+
+--y5cyimyl4h3ru7zm--
