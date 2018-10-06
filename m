@@ -2,583 +2,137 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1864C67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 15:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C532C677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 15:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 745632147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 15:35:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745632147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 302CF21473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 15:51:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302CF21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeJFWio convert rfc822-to-8bit (ORCPT
+        id S1727762AbeJFWuw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 18:38:44 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43403 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbeJFWin (ORCPT
+        Sat, 6 Oct 2018 18:50:52 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:57705 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeJFWuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 18:38:43 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y20-v6so7428915eds.10;
-        Sat, 06 Oct 2018 08:34:56 -0700 (PDT)
+        Sat, 6 Oct 2018 18:50:51 -0400
+Received: by mail-it1-f199.google.com with SMTP id y142-v6so5955724itb.7
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 08:47:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9xBb/oCzx6L1zGRQVmzlalIWfvJK1IodR0KLwP4/C74=;
-        b=h1Xzgq+/gOHopFWc/2qNQrwn+yhP9o2FYCRHivt1w7Ktl6zM7fnSW1VhKFM4a1I0ps
-         Ep7gF0n3mmAGfXhIgfQdsO3IAn9RKFuwPAlVWN5t8H8mdGLhLVeQLDrU+ryH9acmzNoE
-         WW2CVFBNxZRmzmFSkgj8F18/N2fDkXEcrGtkqL0g/LZlVrjyWP4YocZrQdHEG7W3S6Nu
-         /SSEMFi3eKxxTbyFYeYLSk/RXtIJmr9YANrU5K8qHqWiy3Z5d7w5gVLyRbjA7BPbzRwL
-         C2z5phEZQCVYrCEk9MbmcYplHtO2Jm/C3Bo7fpeyhK6iG5LG5a+yw+iVqnsgHS5pmBOF
-         D/LQ==
-X-Gm-Message-State: ABuFfohr21f/REmqSwxWaBqGEoasVYGLU6VIgZz8vTxGiSA7RgdgA07Z
-        RfOBQaoJh3BkIUAml/F9UfnD6uy0iqQ=
-X-Google-Smtp-Source: ACcGV637oQ8usOopkOyV1/yKDsH98zxr+pKtNCA1FaEdMnqbgV/6edd7rBzHcx79FTVVDYLulrIEEQ==
-X-Received: by 2002:a17:906:3d31:: with SMTP id l17-v6mr15883130ejf.89.1538840094983;
-        Sat, 06 Oct 2018 08:34:54 -0700 (PDT)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
-        by smtp.gmail.com with ESMTPSA id j22-v6sm3230742edr.96.2018.10.06.08.34.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 06 Oct 2018 08:34:54 -0700 (PDT)
-Received: by mail-wr1-f44.google.com with SMTP id g15-v6so13756842wru.9;
-        Sat, 06 Oct 2018 08:34:54 -0700 (PDT)
-X-Received: by 2002:adf:9503:: with SMTP id 3-v6mr12263168wrs.91.1538840093615;
- Sat, 06 Oct 2018 08:34:53 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=5h/wPkMlzUYrFgESqqZt4JsgdWeqADfzeCulI6GuRBE=;
+        b=o7ggulLkKrKkLnKt6qeqmHbEci506ebr/I9H7esdz6IctjDJg3rqjXr1ekZyoYr9sM
+         BuF04/DusrNsi3y0zy2aquVRa/HThKI6lvoqX/pg+aciVjodQQps/XgjObYwn/zKRZFV
+         QdAcI2oL3HJQg+ftZfHWsyUDXg4xMWpbEoGwYFvyQjMxheamOyZRBGe41B/I7GsQZqsc
+         A4JzGhrXqazTgRS2X6z8gJz+6duU8sLb1TJxqMUlgkJb8rZxu6+cw9oZIgu8oPEl1TnJ
+         6JUDylRMys59NLmcWY7OfspLL2VMH8UvvLezAXPIIQ3xvgzLf/Hd0ej8JUMv7bxoBsrr
+         Mk4A==
+X-Gm-Message-State: ABuFfoh0TRgFCkjKiirvsghW2AuTHeRK/HtirqLNHaSix9TlKNje4HCk
+        9tI/l3iDEIPI0y4qYtYCTANdvLrjkO4mnkmDh87wNh3b359D
+X-Google-Smtp-Source: ACcGV63iK9cf4rXQSfPEJ/WbtqFuqNRJKmOs9B1y4noTqKvlGIrrE7h5h7RfUSVVGNC3b+FdCR1DLA+7ptHeyZgw7NZtjPBpTwW0
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <20180902072643.4917-13-jernej.skrabec@siol.net> <CAGb2v65tt4S-k=AF2AmjQyEkUydzMimB8TT2Uiqmpf6G8qD1Cw@mail.gmail.com>
- <1603658.HpHSbfQY4F@jernej-laptop>
-In-Reply-To: <1603658.HpHSbfQY4F@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 6 Oct 2018 23:34:41 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67VgB3Chpjn4YLUD8ZDtm26E7zHfJ76ctD1mz3DzR3PiA@mail.gmail.com>
-Message-ID: <CAGb2v67VgB3Chpjn4YLUD8ZDtm26E7zHfJ76ctD1mz3DzR3PiA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 12/27] drm/sun4i: Add basic support for DE3
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-Received: by 2002:a24:8306:: with SMTP id d6-v6mr11681521ite.24.1538840823267;
+ Sat, 06 Oct 2018 08:47:03 -0700 (PDT)
+Date:   Sat, 06 Oct 2018 08:47:03 -0700
+In-Reply-To: <00000000000068750f0576c178ab@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a30bcb0577914cba@google.com>
+Subject: Re: KASAN: use-after-free Read in vhost_transport_cancel_pkt
+From:   syzbot <syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com>
+To:     jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com,
+        netdev@vger.kernel.org, stefanha@redhat.com,
+        syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 6, 2018 at 1:51 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
->
-> Dne sobota, 22. september 2018 ob 15:19:12 CEST je Chen-Yu Tsai napisal(a):
-> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
-> > > Display Engine 3 is an upgrade of DE2 with new features like support for
-> > > 10 bit color formats and support for AFBC.
-> > >
-> > > Most of DE2 code works with DE3, except some small details.
-> > >
-> > > Add support for it.
-> > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > ---
-> > >
-> > >  drivers/gpu/drm/sun4i/sun8i_csc.c       | 96 +++++++++++++++++++++++--
-> > >  drivers/gpu/drm/sun4i/sun8i_mixer.c     | 17 ++++-
-> > >  drivers/gpu/drm/sun4i/sun8i_mixer.h     | 21 +++++-
-> > >  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c |  8 ++-
-> > >  drivers/gpu/drm/sun4i/sun8i_ui_scaler.h |  1 +
-> > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.c  |  8 +++
-> > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.h  |  2 +
-> > >  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c | 34 ++++++++-
-> > >  drivers/gpu/drm/sun4i/sun8i_vi_scaler.h | 23 ++++++
-> > >  9 files changed, 197 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c
-> > > b/drivers/gpu/drm/sun4i/sun8i_csc.c index b14925b40ccf..101901ccf2dc
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> > > @@ -34,6 +34,34 @@ static const u32 yvu2rgb[] = {
-> > >
-> > >         0x000004A8, 0x00000000, 0x00000813, 0xFFFBAC4A,
-> > >
-> > >  };
-> > >
-> > > +/*
-> > > + * DE3 has a bit different CSC units. Factors are in two's complement
-> > > format. + * First three have 17 bits for fractinal part and last two 2
-> > > bits. First + * three values in each line are multiplication factor, 4th
-> > > is difference, + * which is subtracted from the input value before the
-> > > multiplication and + * last value is constant, which is added at the end.
-> > > + *
-> > > + * x' = c00 * (x + d0) + c01 * (y + d1) + c02 * (z + d2) + const0
-> > > + * y' = c10 * (x + d0) + c11 * (y + d1) + c12 * (z + d2) + const1
-> > > + * z' = c20 * (x + d0) + c21 * (y + d1) + c22 * (z + d2) + const2
-> > > + *
-> > > + * Please note that above formula is true only for Blender CSC. Other DE3
-> > > CSC + * units takes only positive value for difference. From what can be
-> > > deducted + * from BSP driver code, those units probably automatically
-> > > assume that + * difference has to be subtracted.
-> > > + */
-> > > +static const u32 yuv2rgb_de3[] = {
-> > > +       0x0002542a, 0x00000000, 0x0003312a, 0xffffffc0, 0x00000000,
-> > > +       0x0002542a, 0xffff376b, 0xfffe5fc3, 0xfffffe00, 0x00000000,
-> > > +       0x0002542a, 0x000408d3, 0x00000000, 0xfffffe00, 0x00000000,
-> > > +};
-> > > +
-> > > +static const u32 yvu2rgb_de3[] = {
-> > > +       0x0002542a, 0x0003312a, 0x00000000, 0xffffffc0, 0x00000000,
-> > > +       0x0002542a, 0xfffe5fc3, 0xffff376b, 0xfffffe00, 0x00000000,
-> > > +       0x0002542a, 0x00000000, 0x000408d3, 0xfffffe00, 0x00000000,
-> > > +};
-> > > +
-> > >
-> > >  static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
-> > >
-> > >                                        enum sun8i_csc_mode mode)
-> > >
-> > >  {
-> > >
-> > > @@ -61,6 +89,38 @@ static void sun8i_csc_set_coefficients(struct regmap
-> > > *map, u32 base,>
-> > >         }
-> > >
-> > >  }
-> > >
-> > > +static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int
-> > > layer,
-> > > +                                           enum sun8i_csc_mode mode)
-> > > +{
-> > > +       const u32 *table;
-> > > +       int i, j;
-> > > +
-> > > +       switch (mode) {
-> > > +       case SUN8I_CSC_MODE_YUV2RGB:
-> > > +               table = yuv2rgb_de3;
-> > > +               break;
-> > > +       case SUN8I_CSC_MODE_YVU2RGB:
-> > > +               table = yvu2rgb_de3;
-> > > +               break;
-> > > +       default:
-> > > +               DRM_WARN("Wrong CSC mode specified.\n");
-> > > +               return;
-> > > +       }
-> > > +
-> > > +       for (i = 0; i < 3; i++) {
-> > > +               for (j = 0; j < 3; j++)
-> > > +                       regmap_write(map,
-> > > +
-> > > SUN8I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE, +
-> > >                                  layer, i, j), +
-> > >           table[i * 5 + j]);
-> >
-> > Given that the first three values occupy contiguous addresses,
-> > you can use regmap_bulk_write() here.
->
-> Do you mind if I rework table in a way that directly fits in registers and use
-> regmap_bulk_write() on whole table? This means I must combine two values into
-> one for "const" register, but I would explain it better in a comment. It would
-> be most elegant solution, one call to regmap_bulk_write() instead of two for
-> loops and some arithmetics.
+syzbot has found a reproducer for the following crash on:
 
-With proper comments I see no problem with it. The constants are hexidecimal
-and only loaded once. It's unlikely others would use it any other way.
+HEAD commit:    091a1eaa0e30 Merge branch 'akpm'
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15627ae6400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=e3e074963495f92a89ed
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120d5491400000
 
-> I guess macro for "const" part can stay as documentation.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com
 
-I agree.
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: use-after-free in debug_spin_lock_before  
+kernel/locking/spinlock_debug.c:83 [inline]
+BUG: KASAN: use-after-free in do_raw_spin_lock+0x1c0/0x200  
+kernel/locking/spinlock_debug.c:112
+Read of size 4 at addr ffff8801c5e6977c by task syz-executor0/7470
 
->
-> >
-> > > +               regmap_write(map,
-> > > +                            SUN8I_MIXER_BLEND_CSC_CONST(DE3_BLD_BASE,
-> > > +                                                        layer, i),
-> > > +                            SUN8I_MIXER_BLEND_CSC_CONST_VAL(table[i * 5 +
-> > > 3], +                                                            table[i
-> > > * 5 + 4]));
-> > Nit: Using a two-dimension array might make it easier to read.
-> >
-> > > +       }
-> > > +}
-> > > +
-> > >
-> > >  static void sun8i_csc_enable(struct regmap *map, u32 base, bool enable)
-> > >  {
-> > >
-> > >         u32 val;
-> > >
-> > > @@ -73,21 +133,45 @@ static void sun8i_csc_enable(struct regmap *map, u32
-> > > base, bool enable)>
-> > >         regmap_update_bits(map, SUN8I_CSC_CTRL(base), SUN8I_CSC_CTRL_EN,
-> > >         val);
-> > >
-> > >  }
-> > >
-> > > +static void sun8i_de3_ccsc_enable(struct regmap *map, int layer, bool
-> > > enable) +{
-> > > +       u32 val, mask;
-> > > +
-> > > +       mask = SUN8I_MIXER_BLEND_CSC_CTL_EN(layer);
-> > > +
-> > > +       if (enable)
-> > > +               val = mask;
-> > > +       else
-> > > +               val = 0;
-> > > +
-> > > +       regmap_update_bits(map, SUN8I_MIXER_BLEND_CSC_CTL(DE3_BLD_BASE),
-> > > +                          mask, val);
-> > > +}
-> > > +
-> > >
-> > >  void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int
-> > >  layer,
-> > >
-> > >                                      enum sun8i_csc_mode mode)
-> > >
-> > >  {
-> > >
-> > > -       u32 base;
-> > > +       if (!mixer->cfg->is_de3) {
-> > > +               u32 base;
-> >
-> > You could rewrite this as
-> >
-> >     if (mixer->cfg->is_de3) {
-> >                sun8i_de3_ccsc_set_coefficients(mixer->engine.regs,
-> >                                                layer, mode);
-> >                return;
-> >     }
-> >
-> > That way you don't need to change the indentation on the existing lines.
-> > I suppose this is more of a personal preference. The downside is the control
-> > flow is slightly more complicated.
-> >
-> > > -       base = ccsc_base[mixer->cfg->ccsc][layer];
-> > > +               base = ccsc_base[mixer->cfg->ccsc][layer];
-> > >
-> > > -       sun8i_csc_set_coefficients(mixer->engine.regs, base, mode);
-> > > +               sun8i_csc_set_coefficients(mixer->engine.regs, base,
-> > > mode);
-> > > +       } else {
-> > > +               sun8i_de3_ccsc_set_coefficients(mixer->engine.regs,
-> > > +                                               layer, mode);
-> > > +       }
-> > >
-> > >  }
-> > >
-> > >  void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool
-> > >  enable) {
-> > >
-> > > -       u32 base;
-> > > +       if (!mixer->cfg->is_de3) {
-> > > +               u32 base;
-> > >
-> > > -       base = ccsc_base[mixer->cfg->ccsc][layer];
-> > > +               base = ccsc_base[mixer->cfg->ccsc][layer];
-> > >
-> > > -       sun8i_csc_enable(mixer->engine.regs, base, enable);
-> > > +               sun8i_csc_enable(mixer->engine.regs, base, enable);
-> > > +       } else {
-> > > +               sun8i_de3_ccsc_enable(mixer->engine.regs, layer, enable);
-> > > +       }
-> > >
-> > >  }
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index 743941a33d88..a9218abf0935
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > @@ -460,8 +460,21 @@ static int sun8i_mixer_bind(struct device *dev,
-> > > struct device *master,>
-> > >         base = sun8i_blender_base(mixer);
-> > >
-> > >         /* Reset the registers */
-> > >
-> > > -       for (i = 0x0; i < 0x20000; i += 4)
-> > > -               regmap_write(mixer->engine.regs, i, 0);
-> > > +       if (mixer->cfg->is_de3) {
-> > > +               for (i = 0x0; i < 0x3000; i += 4)
-> > > +                       regmap_write(mixer->engine.regs, i, 0);
-> > > +               for (i = 0x20000; i < 0x40000; i += 4)
-> > > +                       regmap_write(mixer->engine.regs, i, 0);
-> > > +               for (i = 0x70000; i < 0x88000; i += 4)
-> > > +                       regmap_write(mixer->engine.regs, i, 0);
-> > > +               for (i = 0xa0000; i < 0xb0000; i += 4)
-> > > +                       regmap_write(mixer->engine.regs, i, 0);
-> > > +               for (i = 0xd0000; i < 0xe0000; i += 4)
-> > > +                       regmap_write(mixer->engine.regs, i, 0);
-> >
-> > Could you use the macros *_BASE and *_SIZE here? That would make
-> > it more obviously what parts you're clearing.
-> >
-> > The last offset, 0xd0000, isn't even defined in the DE3 spec.
-> >
-> > > +       } else {
-> > > +               for (i = 0x0; i < 0x20000; i += 4)
-> > > +                       regmap_write(mixer->engine.regs, i, 0);
-> > > +       }
-> > >
-> > >         /* Enable the mixer */
-> > >         regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 020b0a097c84..4c9a442bbb44
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > > @@ -33,6 +33,10 @@
-> > >
-> > >  #define DE2_CH_BASE                            0x2000
-> > >  #define DE2_CH_SIZE                            0x1000
-> > >
-> > > +#define DE3_BLD_BASE                           0x0800
-> > > +#define DE3_CH_BASE                            0x1000
-> > > +#define DE3_CH_SIZE                            0x0800
-> > > +
-> > >
-> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
-> > >  #define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 *
-> > >  (x))
-> > >  #define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 *
-> > >  (x))
-> > >
-> > > @@ -47,6 +51,11 @@
-> > >
-> > >  #define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 *
-> > >  (x))
-> > >  #define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 + 0x04 *
-> > >  (x))
-> > >  #define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) + 0xfc)
-> > >
-> > > +#define SUN8I_MIXER_BLEND_CSC_CTL(base)                ((base) + 0x100)
-> > > +#define SUN8I_MIXER_BLEND_CSC_COEFF(base, layer, x, y) \
-> > > +       ((base) + 0x110 + (layer) * 0x30 +  (x) * 0x10 + 4 * (y))
-> > > +#define SUN8I_MIXER_BLEND_CSC_CONST(base, layer, i) \
-> > > +       ((base) + 0x110 + (layer) * 0x30 +  (i) * 0x10 + 0x0c)
-> >
-> > Should these have a DE3 prefix?
->
-> How do you want this to look like?
->
-> SUN50I_DE3_MIXER_BLEND_CSC_CONST?
->
-> SUN8I prefix doesn't fit for DE3, but as usual, there is a chance that AW
-> releases 32 bit SoC with DE3.
->
-> At the end, it would be better to rename everything to have just DE2 or DE3
-> prefix without mentioning any SoC family. After all, DE2 is also supported on
-> sun50i family, which makes any family name in DE2/3 macros confusing...
+CPU: 1 PID: 7470 Comm: syz-executor0 Not tainted 4.19.0-rc6+ #47
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+  do_raw_spin_lock+0x1c0/0x200 kernel/locking/spinlock_debug.c:112
+  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:136 [inline]
+  _raw_spin_lock_bh+0x39/0x40 kernel/locking/spinlock.c:168
+  spin_lock_bh include/linux/spinlock.h:334 [inline]
+  vhost_transport_cancel_pkt+0x15e/0x910 drivers/vhost/vsock.c:244
+  vsock_transport_cancel_pkt net/vmw_vsock/af_vsock.c:1114 [inline]
+  vsock_stream_connect+0x903/0xe40 net/vmw_vsock/af_vsock.c:1241
+  __sys_connect+0x37d/0x4c0 net/socket.c:1664
+  __do_sys_connect net/socket.c:1675 [inline]
+  __se_sys_connect net/socket.c:1672 [inline]
+  __x64_sys_connect+0x73/0xb0 net/socket.c:1672
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fbd405dac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
+RDX: 0000000000000080 RSI: 0000000020000400 RDI: 0000000000000007
+RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fbd405db6d4
+R13: 00000000004bda00 R14: 00000000004cc478 R15: 00000000ffffffff
 
-Probably SUNXI_DEx_MIXER_foo or just DEx_MIXER_foo ...
-Since it's contained in the driver I think the latter would suffice.
+Allocated by task 7456:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc_node mm/slab.c:3682 [inline]
+  __kmalloc_node+0x47/0x70 mm/slab.c:3689
+  kmalloc_node include/linux/slab.h:555 [inline]
+  kvmalloc_node+0xb9/0xf0 mm/util.c:423
+  kvmalloc include/linux/mm.h:577 [inline]
+  vhost_vsock_dev_open+0xa2/0x5a0 drivers/vhost/vsock.c:511
+  misc_open+0x3ca/0x560 drivers/char/misc.c:141
+  chrdev_open+0x25a/0x710 fs/char_dev.c:417
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open+0xa0/0xd0 fs/open.c:880
+  do_last fs/namei.c:3418 [inline]
+  path_openat+0x12bf/0x5160 fs/namei.c:3534
 
-> Do you think I can squeeze dropping SUN8I prefix to a previous patch, where
-> macros are reworked anyway?
-
-Given there's a lot of them, and you're only changing about half of them
-in that patch, I suggest you have a separate patch to do all the renaming.
-
-ChenYu
-
-> Best regards,
-> Jernej
->
-> >
-> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
-> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
-> > >
-> > > @@ -61,6 +70,9 @@
-> > >
-> > >  #define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED    BIT(1)
-> > >
-> > > +#define SUN8I_MIXER_BLEND_CSC_CTL_EN(ch)       BIT(ch)
-> > > +#define SUN8I_MIXER_BLEND_CSC_CONST_VAL(d, c)  (((d) << 16) | ((c) &
-> > > 0xffff)) +
-> >
-> > Same here.
-> >
-> > >  #define SUN8I_MIXER_FBFMT_ARGB8888     0
-> > >  #define SUN8I_MIXER_FBFMT_ABGR8888     1
-> > >  #define SUN8I_MIXER_FBFMT_RGBA8888     2
-> >
-> > [...]
-> >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> > > b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h index 46f0237c17bb..3d0ad64178ea
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> > > @@ -30,6 +30,8 @@
-> > >
-> > >  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE                BIT(15)
-> > >  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_OFFSET    8
-> > >  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_MASK      GENMASK(12, 8)
-> > >
-> > > +#define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK      GENMASK(31, 24)
-> > > +#define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA(x)                ((x) <<
-> > > 24)
-> >
-> > DE3 prefix?
-> >
-> > >  struct sun8i_mixer;
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c index
-> > > 8697afc36023..22e1ed5cd7a4 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > > @@ -835,7 +835,10 @@ static const u32 bicubic4coefftab32[480] = {
-> > >
-> > >  static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int
-> > >  channel) {
-> > >
-> > > -       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
-> > > +       if (mixer->cfg->is_de3)
-> > > +               return DE3_VI_SCALER_BASE + DE3_VI_SCALER_SIZE * channel;
-> > > +       else
-> > > +               return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
-> > >
-> > >  }
-> > >
-> > >  static int sun8i_vi_scaler_coef_index(unsigned int step)
-> > >
-> > > @@ -951,6 +954,35 @@ void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer,
-> > > int layer,>
-> > >                 cvphase = vphase;
-> > >
-> > >         }
-> > >
-> > > +       if (mixer->cfg->is_de3) {
-> > > +               u32 val;
-> > > +
-> > > +               if (format->hsub == 1 && format->vsub == 1)
-> > > +                       val = SUN8I_SCALER_VSU_SCALE_MODE_UI;
-> > > +               else
-> > > +                       val = SUN8I_SCALER_VSU_SCALE_MODE_NORMAL;
-> > > +
-> > > +               regmap_write(mixer->engine.regs,
-> > > +                            SUN8I_SCALER_VSU_SCALE_MODE(base), val);
-> >
-> > The remaining settings seem to be related to the edge detection scaling
-> > method. Since you aren't supporting it, are they necessary?
-> >
-> > > +               regmap_write(mixer->engine.regs,
-> > > +                            SUN8I_SCALER_VSU_DIR_THR(base),
-> > > +                            SUN8I_SCALER_VSU_SUB_ZERO_DIR_THR(0) |
-> > > +                            SUN8I_SCALER_VSU_ZERO_DIR_THR(0) |
-> > > +                            SUN8I_SCALER_VSU_HORZ_DIR_THR(0xff) |
-> > > +                            SUN8I_SCALER_VSU_VERT_DIR_THR(1));
-> > > +               regmap_write(mixer->engine.regs,
-> > > +                            SUN8I_SCALER_VSU_EDGE_THR(base),
-> > > +                            SUN8I_SCALER_VSU_EDGE_SHIFT(8) |
-> > > +                            SUN8I_SCALER_VSU_EDGE_OFFSET(0));
-> > > +               regmap_write(mixer->engine.regs,
-> > > +                            SUN8I_SCALER_VSU_EDSCL_CTRL(base), 0);
-> > > +               regmap_write(mixer->engine.regs,
-> > > +                            SUN8I_SCALER_VSU_ANGLE_THR(base),
-> > > +                            SUN8I_SCALER_VSU_ANGLE_SHIFT(2) |
-> > > +                            SUN8I_SCALER_VSU_ANGLE_OFFSET(0));
-> > > +       }
-> > > +
-> > >
-> > >         regmap_write(mixer->engine.regs,
-> > >
-> > >                      SUN8I_SCALER_VSU_OUTSIZE(base), outsize);
-> > >
-> > >         regmap_write(mixer->engine.regs,
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
-> > > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h index
-> > > cd015405f66d..c322f5652481 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
-> > > @@ -15,6 +15,9 @@
-> > >
-> > >  #define DE2_VI_SCALER_BASE 0x20000
-> > >  #define DE2_VI_SCALER_SIZE 0x20000
-> > >
-> > > +#define DE3_VI_SCALER_BASE 0x20000
-> > > +#define DE3_VI_SCALER_SIZE 0x08000
-> > > +
-> > >
-> > >  /* this two macros assumes 16 fractional bits which is standard in DRM */
-> > >  #define SUN8I_VI_SCALER_SCALE_MIN              1
-> > >  #define SUN8I_VI_SCALER_SCALE_MAX              ((1UL << 20) - 1)
-> > >
-> > > @@ -25,6 +28,11 @@
-> > >
-> > >  #define SUN8I_VI_SCALER_SIZE(w, h)             (((h) - 1) << 16 | ((w) -
-> > >  1))
-> > >
-> > >  #define SUN8I_SCALER_VSU_CTRL(base)            ((base) + 0x0)
-> > >
-> > > +#define SUN8I_SCALER_VSU_SCALE_MODE(base)      ((base) + 0x10)
-> > > +#define SUN8I_SCALER_VSU_DIR_THR(base)         ((base) + 0x20)
-> > > +#define SUN8I_SCALER_VSU_EDGE_THR(base)                ((base) + 0x24)
-> > > +#define SUN8I_SCALER_VSU_EDSCL_CTRL(base)      ((base) + 0x28)
-> > > +#define SUN8I_SCALER_VSU_ANGLE_THR(base)       ((base) + 0x2c)
-> >
-> > DE3 prefix for the new ones please.
-> >
-> > >  #define SUN8I_SCALER_VSU_OUTSIZE(base)         ((base) + 0x40)
-> > >  #define SUN8I_SCALER_VSU_YINSIZE(base)         ((base) + 0x80)
-> > >  #define SUN8I_SCALER_VSU_YHSTEP(base)          ((base) + 0x88)
-> > >
-> > > @@ -46,6 +54,21 @@
-> > >
-> > >  #define SUN8I_SCALER_VSU_CTRL_EN               BIT(0)
-> > >  #define SUN8I_SCALER_VSU_CTRL_COEFF_RDY                BIT(4)
-> > >
-> > > +#define SUN8I_SCALER_VSU_SUB_ZERO_DIR_THR(x)   (((x) << 24) & 0xFF)
-> > > +#define SUN8I_SCALER_VSU_ZERO_DIR_THR(x)       (((x) << 16) & 0xFF)
-> > > +#define SUN8I_SCALER_VSU_HORZ_DIR_THR(x)       (((x) << 8) & 0xFF)
-> > > +#define SUN8I_SCALER_VSU_VERT_DIR_THR(x)       ((x) & 0xFF)
-> > > +
-> > > +#define SUN8I_SCALER_VSU_SCALE_MODE_UI         0
-> > > +#define SUN8I_SCALER_VSU_SCALE_MODE_NORMAL     1
-> > > +#define SUN8I_SCALER_VSU_SCALE_MODE_ED_SCALE   2
-> > > +
-> > > +#define SUN8I_SCALER_VSU_EDGE_SHIFT(x)         (((x) << 16) & 0xF)
-> > > +#define SUN8I_SCALER_VSU_EDGE_OFFSET(x)                ((x) & 0xFF)
-> > > +
-> > > +#define SUN8I_SCALER_VSU_ANGLE_SHIFT(x)                (((x) << 16) &
-> > > 0xF)
-> > > +#define SUN8I_SCALER_VSU_ANGLE_OFFSET(x)       ((x) & 0xFF)
-> > > +
-> >
-> > Same here.
-> >
-> > Regards
-> > ChenYu
-> >
-> > >  void sun8i_vi_scaler_enable(struct sun8i_mixer *mixer, int layer, bool
-> > >  enable); void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer, int
-> > >  layer,
-> > >
-> > >                            u32 src_w, u32 src_h, u32 dst_w, u32 dst_h,
-> > >
-> > > --
-> > > 2.18.0
->
->
->
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
