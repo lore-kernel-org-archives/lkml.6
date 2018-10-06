@@ -2,50 +2,103 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B65C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 10:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8969BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 10:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8522147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 10:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8522147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AB3C2147D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 10:41:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB3C2147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeJFRmP (ORCPT
+        id S1727815AbeJFRno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 13:42:15 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:51115 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727768AbeJFRmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 13:42:15 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1224211|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D-8QCpe_1538822334;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D-8QCpe_1538822334)
-          by smtp.aliyun-inc.com(10.147.41.187);
-          Sat, 06 Oct 2018 18:38:54 +0800
-Date:   Sat, 6 Oct 2018 18:38:54 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
+        Sat, 6 Oct 2018 13:43:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56494 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727140AbeJFRnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 13:43:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A4E0BACD1;
+        Sat,  6 Oct 2018 10:40:54 +0000 (UTC)
+Subject: Re: [PATCH 15/36] dt-bindings: arm: Convert Actions Semi bindings to
+ jsonschema
 To:     Rob Herring <robh@kernel.org>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        mark.rutland@arm.com, daniel.lezcano@linaro.org,
-        anurup.m@huawei.com, Jonathan.Cameron@huawei.com,
-        will.deacon@arm.com, zhangshaokun@hisilicon.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V10 8/8] dt-bindings: timer: gx6605s SOC timer
-Message-ID: <20181006103853.GA4149@guoren-Inspiron-7460>
-References: <cover.1538672812.git.ren_guo@c-sky.com>
- <6ed886ec014de868e0a84a62e339e45de4ea1e5f.1538672812.git.ren_guo@c-sky.com>
- <20181005202108.GA20389@bogus>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20181005165848.3474-1-robh@kernel.org>
+ <20181005165848.3474-16-robh@kernel.org>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <c4909f78-bfa1-9253-e436-1159392b45a9@suse.de>
+Date:   Sat, 6 Oct 2018 12:40:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005202108.GA20389@bogus>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181005165848.3474-16-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,23 +106,179 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Rob,
 
-Thx for the review.
+Am 05.10.18 um 18:58 schrieb Rob Herring:
+> Convert Actions Semi SoC bindings to DT schema format using json-schema.
 
-On Fri, Oct 05, 2018 at 03:21:08PM -0500, Rob Herring wrote:
-> On Fri, Oct 05, 2018 at 01:22:28AM +0800, Guo Ren wrote:
-> > Dt-bindings doc for gx6605s SOC's system timer.
-> > 
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > ---
-> >  .../bindings/timer/csky,gx6605s-timer.txt          | 42 ++++++++++++++++++++++
-> >  1 file changed, 42 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
+This sounds like the next Yanny vs. Laurel... I fail to see any json. ;)
+
+Also, it may help my understanding to be CC'ed on the cover letter, too?
+
 > 
-> Please add acks/reviewed-by's when posting new versions.
-Add:
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Cc: "Andreas Färber" <afaerber@suse.de>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/arm/actions.txt       | 56 -------------------
+>  .../devicetree/bindings/arm/actions.yaml      | 34 +++++++++++
+>  2 files changed, 34 insertions(+), 56 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/actions.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/actions.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/actions.txt b/Documentation/devicetree/bindings/arm/actions.txt
+> deleted file mode 100644
+> index d54f33c4e0da..000000000000
+> --- a/Documentation/devicetree/bindings/arm/actions.txt
+> +++ /dev/null
+> @@ -1,56 +0,0 @@
+> -Actions Semi platforms device tree bindings
+> --------------------------------------------
+> -
+> -
+> -S500 SoC
+> -========
+> -
+> -Required root node properties:
+> -
+> - - compatible :  must contain "actions,s500"
+> -
+> -
+> -Modules:
+> -
+> -Root node property compatible must contain, depending on module:
+> -
+> - - LeMaker Guitar: "lemaker,guitar"
+> -
+> -
+> -Boards:
+> -
+> -Root node property compatible must contain, depending on board:
+> -
+> - - Allo.com Sparky: "allo,sparky"
+> - - Cubietech CubieBoard6: "cubietech,cubieboard6"
+> - - LeMaker Guitar Base Board rev. B: "lemaker,guitar-bb-rev-b", "lemaker,guitar"
+> -
+> -
+> -S700 SoC
+> -========
+> -
+> -Required root node properties:
+> -
+> -- compatible :  must contain "actions,s700"
+> -
+> -
+> -Boards:
+> -
+> -Root node property compatible must contain, depending on board:
+> -
+> - - Cubietech CubieBoard7: "cubietech,cubieboard7"
+> -
+> -
+> -S900 SoC
+> -========
+> -
+> -Required root node properties:
+> -
+> -- compatible :  must contain "actions,s900"
+> -
+> -
+> -Boards:
+> -
+> -Root node property compatible must contain, depending on board:
+> -
+> - - uCRobotics Bubblegum-96: "ucrobotics,bubblegum-96"
+> diff --git a/Documentation/devicetree/bindings/arm/actions.yaml b/Documentation/devicetree/bindings/arm/actions.yaml
+> new file mode 100644
+> index 000000000000..af9345a228b4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/actions.yaml
+> @@ -0,0 +1,34 @@
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/arm/actions.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 
-OK?
+404 for the schema. Where does one find an explanation?
 
-Best Regards
- Guo Ren
+> +
+> +title: Actions Semi platforms device tree bindings
+> +
+> +maintainers:
+> +  - Andreas Färber <afaerber@suse.de>
+
+Mani is now officially reviewer and the closest I have to a
+co-maintainer. I suggest we add him here in some form. I assume this is
+independent of MAINTAINERS patterns though, or will get_maintainers.pl
+parse this, too?
+
+> +
+> +description: |
+
+Does the | have any meaning, or a stray typo?
+
+> +  The Actions Semi S500 is a quad-core ARM Cortex-A9 SoC. The Actions Semi
+> +  S900 is a quad-core ARM Cortex-A53 SoC.
+
+You forgot the S700 as another quad-core Cortex-A53 SoC.
+Also, arm or Arm rather than ARM these days?
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - lemaker,guitar-bb-rev-b
+> +          - enum:
+> +              - lemaker,guitar
+> +              - allo,sparky
+> +              - cubietech,cubieboard6
+> +          - const: actions,s500
+> +        minItems: 2
+> +        maxItems: 3
+> +        additionalItems: false
+
+Objection. You've managed to turn a perfectly human-comprehensible text
+into a machine-parseable representation incomprehensible for humans.
+
+First, there should remain some free-text explanation of the values
+defined here. Are comments allowed after the value or indented maybe?
+Alternatively we could have a per-vendor file à la vendor-prefixes.txt,
+but that would seem inefficient.
+
+Next, the above items construct is horrible. What about nested oneOf:
+
++      - items:
++          - oneOf:
++              - items:
++                  - enum:
++                      - lemaker,guitar-bb-rev-b
++                  - const: lemaker,guitar
++              - items:
++                  - enum:
++                      - allo,sparky
++                      - cubietech,cubieboard6
++          - const: actions,s500
+
+This grouping is much clearer to me and hopefully to anyone adding
+further base boards for the module.
+We will have the same issue for the BPi-S64 module with S700 below.
+
+> +      - items:
+> +          - const: cubietech,cubieboard7
+> +          - const: actions,s700
+> +      - items:
+> +          - const: ucrobotics,bubblegum-96
+> +          - const: actions,s900
+
+Please make the board compatible an enum, even if only one is listed
+today. That makes it clearer where/how (and easier) to add new boards.
+
+Regards,
+Andreas
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
