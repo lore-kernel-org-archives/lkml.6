@@ -7,71 +7,71 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1F2C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 06:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21305C64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 06:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C4A2086D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 06:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9AA2147D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 06:11:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cj/6g9Go"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C4A2086D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzRha8nL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9AA2147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbeJFNNV (ORCPT
+        id S1727950AbeJFNNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 09:13:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46559 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbeJFNNV (ORCPT
+        Sat, 6 Oct 2018 09:13:54 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37004 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727629AbeJFNNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 09:13:21 -0400
-Received: by mail-pg1-f195.google.com with SMTP id a5-v6so5596176pgv.13
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 23:11:18 -0700 (PDT)
+        Sat, 6 Oct 2018 09:13:54 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j23-v6so6037876pfi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 23:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=0ksjS2PC0nIpT6aCGh5ZNcMl2T2Q2qkLQ74P02qGm54=;
-        b=cj/6g9Gol2/Odho0aKpo6YIHlcu/GF3EiNZWBX43iFTJtVssgdieMdf2k6h723b77g
-         c6YLkcOpczh6bFMpCLltr9ZU8QEh2vPRhm1XKHJxrkcc83FIZLK60j0FRbU72GtAh+FZ
-         01y47CQ4n2V7Ogu0YOKNMFDx4doWlEufwOEck=
+        bh=K42Cvg+0JCrHPZPATtlCPfs4YxgFVLQk0K/l7cVaXow=;
+        b=bzRha8nLy4/ZQTz79D2tt0sWOoH8waIv3WWx8JuQAC5LsEuhIB2MloGlckXUC0qP/a
+         JlV32hZRO+LdpSZwJB1BO0Bivdy8OaXk3ahvVmRkTclc1oNfRMjNPM/HPaGwGLWSSvho
+         oKBe/40xioOaC6Nc3PZm8XTfjANZnsP47tEbo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0ksjS2PC0nIpT6aCGh5ZNcMl2T2Q2qkLQ74P02qGm54=;
-        b=otXCLxgmjcs03l1atO5MnV4ZsU30J/MNMa88xpNx25YGrtF6lfO/fhcx99sQzzD5PR
-         Dx5KNm249pIUmzgtMKgZPhYRdUGSS4rgx6obK+JQZG8olhexQiSO8JXweqc8hyszbjGi
-         XrC3z9cBsOpjiTvwg3znUdtd+0Z3TkLJRoxVvLwt9qpsLEe6i1PB8rAepEvwNIJ2mE6z
-         NFF8MR2wNpZ3+mPESJYmS83CMlplSYeheguSh4pfLu4xzlnG6q0RdjuU7Lz8rZJoX8K0
-         rk8vYLldagUOXvKrFv+4dKjuHcnbP2XbXwXkMM1QcmZ0EtyHnwLCbzK/NMHsBSPrt+Tl
-         VHtg==
-X-Gm-Message-State: ABuFfohQ7/0Do75w7aITwDT6rP/ACtdMrKMEtH6nW6RoKcaQwUsmgdiL
-        DWhRDCXTbk9njLUvE1uPFL90lQ==
-X-Google-Smtp-Source: ACcGV61LlI5vcRj+r02oDVP6Gvha1Y3iUW6QOHagVJzGT0+Q630m18umQGJ7grk+ju5pTTvG/kmnAg==
-X-Received: by 2002:a62:507:: with SMTP id 7-v6mr15250755pff.80.1538806278004;
-        Fri, 05 Oct 2018 23:11:18 -0700 (PDT)
+        bh=K42Cvg+0JCrHPZPATtlCPfs4YxgFVLQk0K/l7cVaXow=;
+        b=SdwoA3srbAPrZ1TxueoPdhZxtQuBbt9PC2oD5KtGbIezlQmOr0/0jbLrAnshv1AXYT
+         IdVSWvl+AoupISDQe1dAFUJI9LKJaRu9zsTc2E0KJCO10SexqHbFiyo/GnmqukL2OVPG
+         SNiMrQNp7hm05TLfHdpYVc7G3m1OGhl+UZ1P2SSKZxgYGLvdLV5pbtiw/83cY29go7lG
+         ZAxXq280fc6PtPDjLO/cqdAMaXGg1ZOIER/7d4mLagfSxbEFSsL/KJm+h7zMZZqMFpNV
+         fabXrWx04jhSn0Vi6x9wm18sqc63ulIg6sCjHjx2/87Hg//iJdM6mJUaH36T51QWMN8H
+         gz0Q==
+X-Gm-Message-State: ABuFfoibL3XG7kHE0vL3Vf7h4LmXZtsIKyggoG7amDmr9J0Akrb6+Xh7
+        u2QHvLsW3Wn0LKwe5y6prOxd/A==
+X-Google-Smtp-Source: ACcGV61i4QFUhi8JVZsSqagk6DrAloCEh0MXiiGCJ4yhxQO4wlokwz7Jph+IZ4RcbxcekIgUdtnB2w==
+X-Received: by 2002:a63:f347:: with SMTP id t7-v6mr12352222pgj.255.1538806310956;
+        Fri, 05 Oct 2018 23:11:50 -0700 (PDT)
 Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y71-v6sm16304955pfk.70.2018.10.05.23.11.17
+        by smtp.gmail.com with ESMTPSA id v189-v6sm16285934pfb.54.2018.10.05.23.11.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 23:11:17 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 23:14:03 -0700
+        Fri, 05 Oct 2018 23:11:50 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 23:14:36 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Suman Anna <s-anna@ti.com>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Loic Pallardy <loic.pallardy@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] remoteproc: Check for NULL firmwares in sysfs
- interface
-Message-ID: <20181006061403.GD12063@builder>
+Subject: Re: [PATCH 3/5] remoteproc: Add missing kernel-doc comment for
+ auto-boot
+Message-ID: <20181006061436.GE12063@builder>
 References: <20180915003725.17549-1-s-anna@ti.com>
- <20180915003725.17549-3-s-anna@ti.com>
+ <20180915003725.17549-4-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180915003725.17549-3-s-anna@ti.com>
+In-Reply-To: <20180915003725.17549-4-s-anna@ti.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -80,40 +80,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri 14 Sep 17:37 PDT 2018, Suman Anna wrote:
 
-> The remoteproc framework provides a sysfs file 'firmware'
-> for modifying the firmware image name from userspace. Add
-> an additional check to ensure NULL firmwares are errored
-> out right away, rather than getting a delayed error while
-> requesting a firmware during the start of a remoteproc
-> later on.
+> The commit ddf711872c9d ("remoteproc: Introduce auto-boot flag")
+> introduced the auto-boot flag but missed adding the corresponding
+> kernel-doc comment. Add the same.
 > 
 > Signed-off-by: Suman Anna <s-anna@ti.com>
 
 Applied.
 
-Regards,
+Thanks,
 Bjorn
 
 > ---
->  drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  include/linux/remoteproc.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-> index 2142b3ea726e..ce93f4d710f3 100644
-> --- a/drivers/remoteproc/remoteproc_sysfs.c
-> +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> @@ -49,6 +49,11 @@ static ssize_t firmware_store(struct device *dev,
->  	}
->  
->  	len = strcspn(buf, "\n");
-> +	if (!len) {
-> +		dev_err(dev, "can't provide a NULL firmware\n");
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
->  
->  	p = kstrndup(buf, len, GFP_KERNEL);
->  	if (!p) {
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e3c5d856b6da..75f9ca05b865 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -439,6 +439,7 @@ struct rproc_dump_segment {
+>   * @cached_table: copy of the resource table
+>   * @table_sz: size of @cached_table
+>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> + * @auto_boot: flag to indicate if remote processor should be auto-started
+>   * @dump_segments: list of segments in the firmware
+>   */
+>  struct rproc {
 > -- 
 > 2.18.0
 > 
