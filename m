@@ -2,182 +2,108 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B31C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65775C64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC482075C
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC482075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 110D9208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:34:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Qpt+Q+6P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110D9208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeJFMW0 (ORCPT
+        id S1727662AbeJFMgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 08:22:26 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50508 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbeJFMW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 08:22:26 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 34BFD13AE15A2;
-        Fri,  5 Oct 2018 22:20:31 -0700 (PDT)
-Date:   Fri, 05 Oct 2018 22:20:27 -0700 (PDT)
-Message-Id: <20181005.222027.1089846249951010801.davem@davemloft.net>
-To:     gregkh@linuxfoundation.org
-CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 05 Oct 2018 22:20:31 -0700 (PDT)
+        Sat, 6 Oct 2018 08:36:51 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37544 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726792AbeJFMgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 08:36:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=eNCvdSXnHk7RGTNgGwQlTQ6cNBzhy/g+YAfKuxoR0ZE=; b=Qpt+Q+6PJeUVWyPS+YJKFGaska
+        w3OMKcffOD4Xq5oCrzEKHJAtR/BHdf1SRJTKXNxIppDvwAjbmdAL9L3WvXbsCVxwQ7XfQLHIIDz//
+        YYZkKXTz2qEx8jxlvPxLKmTKK9levh0Y8XATyfYSummTqKS3l+D+MoRLuenAfdbAUO/A=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1g8fEm-0000Bx-0h; Sat, 06 Oct 2018 05:34:48 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id B87F47A523B; Sat,  6 Oct 2018 01:34:46 -0400 (EDT)
+Date:   Sat, 6 Oct 2018 01:34:46 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
+Subject: Re: [PATCH RFC 0/5] rcu doc updates for whatisRCU and checklist
+Message-ID: <20181006053446.GA2529@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
+References: <20181005231815.170433-1-joel@joelfernandes.org>
+ <20181005234628.GB2548@thunk.org>
+ <20181006034540.GM2674@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006034540.GM2674@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 05, 2018 at 08:45:40PM -0700, Paul E. McKenney wrote:
+> 
+> Shouldn't the synchronize_rcu() precede the loop doing the kfree()
+> calls?  Or am I missing something subtle?
 
-I know this is really soon after the previous net pull request, but I want
-to get this in for the BPF 32-bit right shift truncation fix.
+No, that was a cut and paste error on my part.  I was removing the
+rcu_read_unlock() before the kfree loop, and accidentally removed the
+synchronize_rcu().  Then when I put it back, I put it back in the
+right place.
 
-1) Fix truncation of 32-bit right shift in bpf, from Jann Horn.
+The longer version:
 
-2) Fix memory leak in wireless wext compat, from Stefan Seyfried.
+I originally used rcu_read_lock() and rcu_read_unlock() around setting
+up to_free[] --- since whatisRCU.txt didn't talk about
+rcu_derefence_proctected(), just rcu_dereference() in Section 2: "What
+is RCU's Core API?"   
 
-3) Use after free in cfg80211's reg_process_hint(), from Yu Zhao.
+Then when I looked at the example in Section 3, I was surprised when I
+didn't see the rcu_read_[un]lock() on the updater side, and spent some
+time trying to figure out how to use rcu_dereference_protected().
 
-4) Need to cancel pending work when unbinding in smsc75xx otherwise
-   we oops, also from Yu Zhao.
+Then when I did the transumation from
+rcu_read_lock/rcu_dereference_protected/rcu_read_unlock to
+rcu_dereference_protected, I bobbled the location of
+synchronize_rcu().
 
-5) Don't allow enslaving a team device to itself, from Ido Schimmel.
+						- Ted
 
-6) Fix backwards compat with older userspace for rtnetlink FDB dumps.
-   From Mauricio Faria.
-
-7) Add validation of tc policy netlink attributes, from David Ahern.
-
-8) Fix RCU locking in rawv6_send_hdrinc(), from Wei Wang.
-
-Please pull, thanks a lot!
-
-The following changes since commit cec4de302c5ff2c5eb3bfcb0c4845a095f5149b9:
-
-  Merge gitolite.kernel.org:/pub/scm/linux/kernel/git/davem/net (2018-10-03 16:09:11 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to 35f3625c21852ad839f20c91c7d81c4c1101e207:
-
-  net: mvpp2: Extract the correct ethtype from the skb for tx csum offload (2018-10-05 14:52:43 -0700)
-
-----------------------------------------------------------------
-Baruch Siach (1):
-      net: phy: phylink: fix SFP interface autodetection
-
-David Ahern (1):
-      net: sched: Add policy validation for tc attributes
-
-David S. Miller (4):
-      Merge branch 'mlxsw-fixes'
-      Merge tag 'mac80211-for-davem-2018-10-04' of git://git.kernel.org/.../jberg/mac80211
-      Merge branch 'bnxt_en-fixes'
-      Merge git://git.kernel.org/.../bpf/bpf
-
-Davide Caratti (1):
-      be2net: don't flip hw_features when VXLANs are added/deleted
-
-Felix Fietkau (1):
-      mac80211: fix setting IEEE80211_KEY_FLAG_RX_MGMT for AP mode keys
-
-Flavio Leitner (1):
-      openvswitch: load NAT helper
-
-Florian Fainelli (1):
-      net: dsa: b53: Keep CPU port as tagged in all VLANs
-
-Ido Schimmel (2):
-      mlxsw: spectrum: Delete RIF when VLAN device is removed
-      team: Forbid enslaving team device to itself
-
-Jann Horn (1):
-      bpf: 32-bit RSH verification must truncate input before the ALU op
-
-Jianfeng Tan (1):
-      net/packet: fix packet drop as of virtio gso
-
-Mauricio Faria de Oliveira (1):
-      rtnetlink: fix rtnl_fdb_dump() for ndmsg header
-
-Maxime Chevallier (1):
-      net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
-
-Michael Chan (1):
-      bnxt_en: Fix VNIC reservations on the PF.
-
-Nir Dotan (1):
-      mlxsw: pci: Derive event type from event queue number
-
-Roman Gushchin (2):
-      bpf: harden flags check in cgroup_storage_update_elem()
-      bpf: don't accept cgroup local storage with zero value size
-
-Shanthosh RK (1):
-      net: bpfilter: Fix type cast and pointer warnings
-
-Stefan Seyfried (1):
-      cfg80211: fix wext-compat memory leak
-
-Vasundhara Volam (2):
-      bnxt_en: Fix enables field in HWRM_QUEUE_COS2BW_CFG request
-      bnxt_en: get the reduced max_irqs by the ones used by RDMA
-
-Venkat Duvvuru (1):
-      bnxt_en: free hwrm resources, if driver probe fails.
-
-Wei Wang (1):
-      ipv6: take rcu lock in rawv6_send_hdrinc()
-
-Wenwen Wang (2):
-      net: cxgb3_main: fix a missing-check bug
-      yam: fix a missing-check bug
-
-Yu Zhao (2):
-      cfg80211: fix use-after-free in reg_process_hint()
-      net/usb: cancel pending work when unbinding smsc75xx
-
- drivers/net/dsa/b53/b53_common.c                |  4 ++--
- drivers/net/ethernet/broadcom/bnxt/bnxt.c       | 14 ++++++++------
- drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c   |  6 +++---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 17 +++++++++++++++++
- drivers/net/ethernet/emulex/benet/be_main.c     |  5 +----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |  9 +++++----
- drivers/net/ethernet/mellanox/mlxsw/pci.c       | 11 +++++++----
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c  |  2 ++
- drivers/net/hamradio/yam.c                      |  4 ++++
- drivers/net/phy/phylink.c                       | 48 ++++++++++++++++++++++++++++--------------------
- drivers/net/team/team.c                         |  6 ++++++
- drivers/net/usb/smsc75xx.c                      |  1 +
- include/linux/virtio_net.h                      | 18 ++++++++++++++++++
- kernel/bpf/local_storage.c                      |  5 ++++-
- kernel/bpf/verifier.c                           | 10 +++++++++-
- net/bpfilter/bpfilter_kern.c                    |  4 ++--
- net/core/rtnetlink.c                            | 29 ++++++++++++++++++++---------
- net/ipv6/raw.c                                  | 29 ++++++++++++++++++++---------
- net/mac80211/cfg.c                              |  2 +-
- net/openvswitch/conntrack.c                     |  4 ++++
- net/packet/af_packet.c                          | 11 +++++++----
- net/sched/sch_api.c                             | 24 ++++++++++++++++++++----
- net/wireless/reg.c                              |  7 ++++---
- net/wireless/wext-compat.c                      | 14 ++++++++++----
- 24 files changed, 203 insertions(+), 81 deletions(-)
+P.S.  Pedagogically, it might make sense to show an example that only
+uses the RCU core API --- I assume using rcu_read_[un]lock() and
+rcu_dereference() does work; it's just non-optimal, right?  --- and
+then introduce the use of rcu_dereference_protected() afterwards.
