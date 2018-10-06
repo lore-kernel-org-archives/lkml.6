@@ -2,106 +2,122 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A62C677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8ECC677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6452089D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:59:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6452089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2508221486
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:01:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="x+duXVvf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2508221486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeJGAD7 (ORCPT
+        id S1727947AbeJGAFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 20:03:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55656 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726256AbeJGAD6 (ORCPT
+        Sat, 6 Oct 2018 20:05:36 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40172 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeJGAFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 20:03:58 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w96Gwjj5081787
-        for <linux-kernel@vger.kernel.org>; Sat, 6 Oct 2018 12:59:52 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mxs255y07-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 12:59:52 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 6 Oct 2018 12:59:51 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 6 Oct 2018 12:59:48 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w96GxlmL27066444
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 6 Oct 2018 16:59:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85204B205F;
-        Sat,  6 Oct 2018 12:57:54 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63EEEB2065;
-        Sat,  6 Oct 2018 12:57:54 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.150.28])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat,  6 Oct 2018 12:57:54 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C05A216C366B; Sat,  6 Oct 2018 09:59:47 -0700 (PDT)
-Date:   Sat, 6 Oct 2018 09:59:47 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     ldr709@gmail.com, linux-kernel@vger.kernel.org, 3chas3@gmail.com,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
-Subject: Re: [PATCH] atm: nicstar: Replace spin_is_locked() with
- spin_trylock()
-Reply-To: paulmck@linux.ibm.com
-References: <20181004074657.17597-1-ldr709@gmail.com>
- <20181005.143236.511366748709139149.davem@davemloft.net>
+        Sat, 6 Oct 2018 20:05:36 -0400
+Received: by mail-oi1-f196.google.com with SMTP id j68-v6so12822738oib.7
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 10:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3ngIs1RadAHa2B2Y7t8SJNs6/pvSDPRHSyYOW9Dnewk=;
+        b=x+duXVvfD3d/oS09RB48NVUrDS/05GJSzYtELtSab+yt2C7hNmfWvm5dBjr2LKU+t2
+         alqD0+fDwXoWjaubGQBsxGO3pxrUlUsuQ5+wgZ/Z8V2QkByjMo3ahMXUHk5taD+y9pMw
+         hiazdIMqlO88dK1pYb12RCuZSP0QqS4gt6ufjj8NzCDLgGgr32mBt3u3bSJ59sYGRPX4
+         8VmC5weyFRIOhI+ymSI8HlF2zVO8IX3J+sSQlzvGXZxsL9WMa9q8uybq3Lv+1aYF72uo
+         EGRiAP4o+U0f3F2Fw7Hflm0MquCln+Hpfw9mBg8gHWCyiy+6qcuzwi9L/ZkODoNgjXLM
+         1HgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3ngIs1RadAHa2B2Y7t8SJNs6/pvSDPRHSyYOW9Dnewk=;
+        b=GzvC3yplXY5MgnbjTGJrUOTFA0PbIOIGdTMGEZPFOjnNK3zkRgFpUyGyAn0FLiH7Cw
+         jMIs2JKfwBb/FZSOp/jWfy1od0/r1lWofJmCVAMfOMaluxqpny/9q+OXr4uh6QUIZTep
+         EgEvmJBiWBzjyN4a2LCqTD33TZG33cGISbDGQvnG5qEyuaeVJxeHY+aNEC97/j++WhhV
+         U4EWEdcoywYl0EGawSFjcrTzkEDylWYegd+dk3NGV/YtJxN4b8ZsBVWYnjJheUxjTjYb
+         qyuNpkBkkm1yWtgKR5tnvVDpawkByqh/u5sKYeL7dqiG2I0mAHK2n5VF6sMf0W6ZJf9Y
+         cBtg==
+X-Gm-Message-State: ABuFfojencDHSaCtJA1cPKuN438/cl+FmXY6C0nP7etLbIqhhjDx9kEz
+        AkA+0k5fVRObgbvrDiy7Dyn4KS5S/DhMyNn5SUUTFw==
+X-Google-Smtp-Source: ACcGV61aMSQQZ3mDxrIoq413KR51Q+EZ8kNo3YvyhqXGdBt3jSG9OF8DVoMhDVAFsUHPlU8MKwmoiJP2RQnQZsSDmQY=
+X-Received: by 2002:aca:1c19:: with SMTP id c25-v6mr1637560oic.246.1538845289992;
+ Sat, 06 Oct 2018 10:01:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005.143236.511366748709139149.davem@davemloft.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18100616-0064-0000-0000-0000035B2974
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009831; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01098789; UDB=6.00568359; IPR=6.00878830;
- MB=3.00023641; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-06 16:59:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100616-0065-0000-0000-00003AE3E9E4
-Message-Id: <20181006165947.GQ2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=686 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810060172
+References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181004074457.GD22173@dhcp22.suse.cz> <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
+In-Reply-To: <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 6 Oct 2018 10:01:17 -0700
+Message-ID: <CAPcyv4jKGJLGqTHbxPvSD0X=kNGce-iJCYvTHJA8x2JSST5ETQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Randomize free memory
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 02:32:36PM -0700, David Miller wrote:
-> From: Lance Roy <ldr709@gmail.com>
-> Date: Thu,  4 Oct 2018 00:46:57 -0700
-> 
-> > ns_poll() used spin_is_locked() + spin_lock() to get achieve the same
-> > thing as a spin_trylock(), so simplify it by using that instead. This is
-> > also a step towards possibly removing spin_is_locked().
-> > 
-> > Signed-off-by: Lance Roy <ldr709@gmail.com>
-> 
-> Applied to net-next.
+On Thu, Oct 4, 2018 at 9:44 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> Hi Michal,
+>
+> On Thu, Oct 4, 2018 at 12:53 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Wed 03-10-18 19:15:18, Dan Williams wrote:
+> > > Changes since v1:
+> > > * Add support for shuffling hot-added memory (Andrew)
+> > > * Update cover letter and commit message to clarify the performance impact
+> > >   and relevance to future platforms
+> >
+> > I believe this hasn't addressed my questions in
+> > http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
+> > "
+> > It is the more general idea that I am not really sure about. First of
+> > all. Does it make _any_ sense to randomize 4MB blocks by default? Why
+> > cannot we simply have it disabled?
+>
+> I'm not aware of any CVE that this would directly preclude, but that
+> said the entropy injected at 4MB boundaries raises the bar on heap
+> attacks. Environments that want more can adjust that with the boot
+> parameter. Given the potential benefits I think it would only make
+> sense to default disable it if there was a significant runtime impact,
+> from what I have seen there isn't.
+>
+> > Then and more concerning question is,
+> > does it even make sense to have this randomization applied to higher
+> > orders than 0? Attacker might fragment the memory and keep recycling the
+> > lowest order and get the predictable behavior that we have right now.
+>
+> Certainly I expect there are attacks that can operate within a 4MB
+> window, as I expect there are attacks that could operate within a 4K
+> window that would need sub-page randomization to deter. In fact I
+> believe that is the motivation for CONFIG_SLAB_FREELIST_RANDOM.
+> Combining that with page allocator randomization makes the kernel less
+> predictable.
+>
+> Is that enough justification for this patch on its own? It's
+> debatable. Combine that though with the wider availability of
+> platforms with memory-side-cache and I think it's a reasonable default
+> behavior for the kernel to deploy.
 
-Thank you, Dave!  I have dropped this one from my tree.
+Hi Michal,
 
-							Thanx, Paul
-
+Does the above address your concerns? v4.20 is perhaps the last
+upstream kernel release in advance of wider hardware availability.
