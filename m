@@ -2,150 +2,137 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00255C71151
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9665BC67871
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 19:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64B521473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:53:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A64B521473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 47112208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 19:09:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mch1gRRh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47112208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbeJGB5b (ORCPT
+        id S1727852AbeJGCOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 21:57:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60025 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJGB5b (ORCPT
+        Sat, 6 Oct 2018 22:14:10 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45774 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbeJGCOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 21:57:31 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Ir2Jb3647718
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 11:53:02 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96Ir2nN3647715;
-        Sat, 6 Oct 2018 11:53:02 -0700
-Date:   Sat, 6 Oct 2018 11:53:02 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-42688c0c327ec0d647db6e0fc18fd644e7c50e3d@git.kernel.org>
-Cc:     mingo@kernel.org, reinette.chatre@intel.com, fenghua.yu@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          fenghua.yu@intel.com, reinette.chatre@intel.com, mingo@kernel.org
-In-Reply-To: <b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com>
-References: <b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Fix initial allocation to consider
- CDP
-Git-Commit-ID: 42688c0c327ec0d647db6e0fc18fd644e7c50e3d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 6 Oct 2018 22:14:10 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t70-v6so6099283pgd.12;
+        Sat, 06 Oct 2018 12:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xwO9Z1ujbh5aK0GlU/IP+KmXoCeb7rpEI22ixYR8poY=;
+        b=mch1gRRhyb9okOyRoTu5tcLhyDELwMDHDHMlxNsnQZY8z12aDZ+u2aIx64bK8qcnIm
+         agbKTQklO6qXNCjiUe/sQ58sw/WxoxLjcHtbsC9I4pqmfORAdPn7WcsFI0lCgqnv/TMG
+         74DgrX0Wi0f3nBJnXsIz5A6A/S5v9YUBLqf+vcVaRnNEJtkHbYKaoYJDObeDdKMep+MH
+         I3zPPI6ax6rsHSGTXRYpR89UOvKbkoC7km/HROOSv7WGY9/QIZ6jYjP6mnEpcJ/XBph+
+         0zhhVmZKTowVKMS/ydUjFLWHulCS++pPIGF33i27qfgXE3Bz+q0URXK3yNmPgRfr6KV7
+         Xv1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xwO9Z1ujbh5aK0GlU/IP+KmXoCeb7rpEI22ixYR8poY=;
+        b=WwSl/0CAXcWUOoaOSCRaPl5AcGYF6SHw4HrKtFdqH5jOXp1av/lXgBxQKOSne8oKWL
+         zlPrsNApi/zGbBZuh0yO2BKRo5NsZpEqN0O37bfHXDVZSzNaYY38iCEkC+eNSiTS09pU
+         1KZpwRcpTyjdDm/HHWGUE+noz43OV0ODhQlmWAFABUCgsjDl95atKuLwlO779tu30lnQ
+         IChUspFonz9xhvkQDAn5MFSXnaSiq8F1i+J7likrjgDypRR25VpiiypEFuNvBzPeQ3BJ
+         fK/tWlgX2VspGiuQVunDko/KPYxaoLwJj5vITeGOzB2HufAGYoypitnzWSMp56iaBHKd
+         +lxQ==
+X-Gm-Message-State: ABuFfoi4d566cPztFo5Z13EHSoa+UTV+qdFppqJLJvvr2VYkl6wjIJ6m
+        vCPWcxPhLX+eug3mzYU5Ik/Po0gmSUbRDheEq2M=
+X-Google-Smtp-Source: ACcGV63t4riU/cEmPgOdfbj/M84YDCRDg3MlwvjuCm2I4QsXBnLCfQbaX71rbCltGfUa0ilMGC2txQ2kAvF5vjHEkyA=
+X-Received: by 2002:a62:9402:: with SMTP id m2-v6mr17952526pfe.255.1538852982526;
+ Sat, 06 Oct 2018 12:09:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com>
+ <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
+ <194690850.32402710.1538508513975.JavaMail.zimbra@redhat.com>
+ <CAH2r5ms814MUNWVZNfCTuSO2LQZsmCs5N1nwgdVuhxtMctRE3Q@mail.gmail.com>
+ <697659653.32427271.1538515234390.JavaMail.zimbra@redhat.com>
+ <CAH2r5muV-vC6twZbNQQ3DHoXJTdaUwhzZi7YH+rhxr0BiMseJQ@mail.gmail.com> <633521295.32428133.1538517226400.JavaMail.zimbra@redhat.com>
+In-Reply-To: <633521295.32428133.1538517226400.JavaMail.zimbra@redhat.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sat, 6 Oct 2018 14:09:30 -0500
+Message-ID: <CAH2r5mvXVDfYdJxPKLRJ0QAb_6mUHo4cfhxmkA7c19_GOR0p_Q@mail.gmail.com>
+Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+To:     rfreire@redhat.com
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Pavel Shilovsky <piastryyy@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  42688c0c327ec0d647db6e0fc18fd644e7c50e3d
-Gitweb:     https://git.kernel.org/tip/42688c0c327ec0d647db6e0fc18fd644e7c50e3d
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Wed, 3 Oct 2018 15:17:03 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 6 Oct 2018 20:46:27 +0200
+On Tue, Oct 2, 2018 at 4:53 PM Rodrigo Freire <rfreire@redhat.com> wrote:
+>
+> Hi hi again Steve \o
+>
+> I do see potential for a ftrace rewrite for the cifs_dbg messages.
 
-x86/intel_rdt: Fix initial allocation to consider CDP
+Was looking at this on current kernels and debugging mount is probably
+fine for developers (or users) - plenty of debug messages get printed
+via the dynamic ftrace points.  In practice some would prefer less
+noisy trace logs so the minimum set for some would be something like
+this (which already works with current cifs).  If we want to add some
+default log messages on mount to dmesg instead of the trace-cmd log,
+maybe we should log them at a slightly less noisy level (as we see
+with xfs and btrfs) so they will be more log friendly
 
-When a new resource group is created it is initialized with a default
-allocation that considers which portions of cache are currently
-available for sharing across all resource groups or which portions of
-cache are currently unused.
 
-If a CDP allocation forms part of a resource group that is in exclusive
-mode then it should be ensured that no new allocation overlaps with any
-resource that shares the underlying hardware. The current initial
-allocation does not take this sharing of hardware into account and
-a new allocation in a resource that shares the same
-hardware would affect the exclusive resource group.
+root@smf-Thinkpad~/# trace-cmd record -e smb3_enter* -e smb3_exit*
+Hit Ctrl^C to stop recording
 
-Fix this by considering the allocation of a peer RDT domain - a RDT
-domain sharing the same hardware - as part of the test to determine
-which portion of cache is in use and available for use.
 
-Fixes: 95f0b77efa57 ("x86/intel_rdt: Initialize new resource group with sane defaults")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Fenghua Yu <fenghua.yu@intel.com>
-Cc: tony.luck@intel.com
-Cc: jithu.joseph@intel.com
-Cc: gavin.hindman@intel.com
-Cc: dave.hansen@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com
+root@smf-Thinkpad:~/# trace-cmd show
+# tracer: nop
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+      mount.cifs-14199 [002] .... 97642.728411: smb3_enter:
+cifs_mount: xid=20
+      mount.cifs-14199 [002] .... 97642.728669: smb3_enter:
+cifs_get_smb_ses: xid=21
+      mount.cifs-14199 [003] .... 97642.742336: smb3_exit_done:
+cifs_get_smb_ses: xid=21
+      mount.cifs-14199 [003] .... 97642.742343: smb3_enter:
+cifs_setup_ipc: xid=22
+      mount.cifs-14199 [003] .... 97642.742530: smb3_exit_done:
+cifs_setup_ipc: xid=22
+      mount.cifs-14199 [003] .... 97642.742532: smb3_enter:
+cifs_get_tcon: xid=23
+      mount.cifs-14199 [003] .... 97642.742674: smb3_exit_done:
+cifs_get_tcon: xid=23
+      mount.cifs-14199 [003] .... 97642.743267: smb3_exit_done:
+cifs_mount: xid=20
+      mount.cifs-14199 [003] .... 97642.743311: smb3_enter:
+cifs_root_iget: xid=24
+      mount.cifs-14199 [003] .... 97642.743471: smb3_exit_done:
+cifs_root_iget: xid=24
 
----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 172a1a88e716..5f55f8848da6 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2460,14 +2460,16 @@ static void cbm_ensure_valid(u32 *_val, struct rdt_resource *r)
-  */
- static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- {
-+	struct rdt_resource *r_cdp = NULL;
-+	struct rdt_domain *d_cdp = NULL;
- 	u32 used_b = 0, unused_b = 0;
- 	u32 closid = rdtgrp->closid;
- 	struct rdt_resource *r;
- 	unsigned long tmp_cbm;
- 	enum rdtgrp_mode mode;
- 	struct rdt_domain *d;
-+	u32 peer_ctl, *ctrl;
- 	int i, ret;
--	u32 *ctrl;
- 
- 	for_each_alloc_enabled_rdt_resource(r) {
- 		/*
-@@ -2477,6 +2479,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 		if (r->rid == RDT_RESOURCE_MBA)
- 			continue;
- 		list_for_each_entry(d, &r->domains, list) {
-+			rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp);
- 			d->have_new_ctrl = false;
- 			d->new_ctrl = r->cache.shareable_bits;
- 			used_b = r->cache.shareable_bits;
-@@ -2486,9 +2489,19 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 					mode = rdtgroup_mode_by_closid(i);
- 					if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
- 						break;
--					used_b |= *ctrl;
-+					/*
-+					 * If CDP is active include peer
-+					 * domain's usage to ensure there
-+					 * is no overlap with an exclusive
-+					 * group.
-+					 */
-+					if (d_cdp)
-+						peer_ctl = d_cdp->ctrl_val[i];
-+					else
-+						peer_ctl = 0;
-+					used_b |= *ctrl | peer_ctl;
- 					if (mode == RDT_MODE_SHAREABLE)
--						d->new_ctrl |= *ctrl;
-+						d->new_ctrl |= *ctrl | peer_ctl;
- 				}
- 			}
- 			if (d->plr && d->plr->cbm > 0)
+
+
+-- 
+Thanks,
+
+Steve
