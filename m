@@ -2,145 +2,115 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFDCC677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136B0C677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DD42084D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:49:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DD42084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AB4D22084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:51:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4D22084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeJFXxp (ORCPT
+        id S1727944AbeJFXzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 19:53:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36024 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725266AbeJFXxp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 19:53:45 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w96GmvMa047225
-        for <linux-kernel@vger.kernel.org>; Sat, 6 Oct 2018 12:49:40 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mxs88wg38-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 12:49:40 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 6 Oct 2018 12:49:39 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 6 Oct 2018 12:49:34 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w96GnXNZ38142184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 6 Oct 2018 16:49:33 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89FEFB2067;
-        Sat,  6 Oct 2018 12:47:40 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6801FB2064;
-        Sat,  6 Oct 2018 12:47:40 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.150.28])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat,  6 Oct 2018 12:47:40 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C059C16C12C1; Sat,  6 Oct 2018 09:49:33 -0700 (PDT)
-Date:   Sat, 6 Oct 2018 09:49:33 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
-Subject: Re: [PATCH RFC 0/5] rcu doc updates for whatisRCU and checklist
-Reply-To: paulmck@linux.ibm.com
-References: <20181005231815.170433-1-joel@joelfernandes.org>
- <20181005234628.GB2548@thunk.org>
- <20181006034540.GM2674@linux.ibm.com>
- <20181006053446.GA2529@thunk.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181006053446.GA2529@thunk.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18100616-2213-0000-0000-000002FE6019
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009831; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01098786; UDB=6.00568357; IPR=6.00878826;
- MB=3.00023641; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-06 16:49:37
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100616-2214-0000-0000-00005BCD4874
-Message-Id: <20181006164933.GP2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810060171
+        Sat, 6 Oct 2018 19:55:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:26836 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727762AbeJFXzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 19:55:18 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42SCLf4QVCz9ttCB;
+        Sat,  6 Oct 2018 18:51:06 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 8v7ZINekMdD8; Sat,  6 Oct 2018 18:51:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42SCLf3pSgz9ttC7;
+        Sat,  6 Oct 2018 18:51:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1F2AB8B793;
+        Sat,  6 Oct 2018 18:51:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id dFL4D4wFWV9n; Sat,  6 Oct 2018 18:51:13 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AFC2E8B74B;
+        Sat,  6 Oct 2018 18:51:12 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 5BAAB6F2BA; Sat,  6 Oct 2018 16:51:12 +0000 (UTC)
+Message-Id: <981244f0ffb38c1aa02c9eb831c7ebf479b8f564.1538789120.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v4 1/3] powerpc/process: fix casting and missing header
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, muriloo@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Sat,  6 Oct 2018 16:51:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 01:34:46AM -0400, Theodore Y. Ts'o wrote:
-> On Fri, Oct 05, 2018 at 08:45:40PM -0700, Paul E. McKenney wrote:
-> > 
-> > Shouldn't the synchronize_rcu() precede the loop doing the kfree()
-> > calls?  Or am I missing something subtle?
-> 
-> No, that was a cut and paste error on my part.  I was removing the
-> rcu_read_unlock() before the kfree loop, and accidentally removed the
-> synchronize_rcu().  Then when I put it back, I put it back in the
-> right place.
+This patch fixes the following warnings. The first ones are leftovers
+from when __get_user() was replaced by probe_kernel_address().
 
-Been there, done that!  ;-)
+The last one is from when show_user_instructions() was added.
 
-> The longer version:
-> 
-> I originally used rcu_read_lock() and rcu_read_unlock() around setting
-> up to_free[] --- since whatisRCU.txt didn't talk about
-> rcu_derefence_proctected(), just rcu_dereference() in Section 2: "What
-> is RCU's Core API?"   
-> 
-> Then when I looked at the example in Section 3, I was surprised when I
-> didn't see the rcu_read_[un]lock() on the updater side, and spent some
-> time trying to figure out how to use rcu_dereference_protected().
-> 
-> Then when I did the transumation from
-> rcu_read_lock/rcu_dereference_protected/rcu_read_unlock to
-> rcu_dereference_protected, I bobbled the location of
-> synchronize_rcu().
-> 
-> 						- Ted
-> 
-> P.S.  Pedagogically, it might make sense to show an example that only
-> uses the RCU core API --- I assume using rcu_read_[un]lock() and
-> rcu_dereference() does work; it's just non-optimal, right?  --- and
-> then introduce the use of rcu_dereference_protected() afterwards.
+arch/powerpc/kernel/process.c:1287:22: warning: incorrect type in argument 2 (different address spaces)
+arch/powerpc/kernel/process.c:1287:22:    expected void const *src
+arch/powerpc/kernel/process.c:1287:22:    got unsigned int [noderef] <asn:1>*<noident>
+arch/powerpc/kernel/process.c:1319:21: warning: incorrect type in argument 2 (different address spaces)
+arch/powerpc/kernel/process.c:1319:21:    expected void const *src
+arch/powerpc/kernel/process.c:1319:21:    got unsigned int [noderef] <asn:1>*<noident>
+arch/powerpc/kernel/process.c:1302:6: warning: symbol 'show_user_instructions' was not declared. Should it be static?
 
-Yes, you can use rcu_dereference() on the update side and dispense
-with rcu_dereference_protected(), but that will require you to add an
-otherwise useless rcu_read_lock()/rcu_read_unlock() pair when accessing
-the pointer on the update side.
+Fixes: 7b051f665c32d ("powerpc: Use probe_kernel_address in show_instructions")
+Fixes: 88b0fe1757359 ("powerpc: Add show_user_instructions()")
+Reviewed-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v4: no change. Serie rebased on top of latest powerpc/merge (87dbfc1308ee)
+ v3: new in v3 to fix sparse warnings reported by snowpatch on the serie
 
-Furthermore, if you are OK leaking memory rather than freeing it (which
-is admittedly quite rare, but does sometimes happen), then yes, you
-don't need call_rcu(), synchronize_rcu(), and friends.
+ arch/powerpc/kernel/process.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-So it is as you say, functional but non-optimal.
-
-							Thanx, Paul
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index d9d4eb2ea6c9..3396c419abf2 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -65,6 +65,7 @@
+ #include <asm/livepatch.h>
+ #include <asm/cpu_has_feature.h>
+ #include <asm/asm-prototypes.h>
++#include <asm/stacktrace.h>
+ 
+ #include <linux/kprobes.h>
+ #include <linux/kdebug.h>
+@@ -1281,7 +1282,7 @@ static void show_instructions(struct pt_regs *regs)
+ #endif
+ 
+ 		if (!__kernel_text_address(pc) ||
+-		     probe_kernel_address((unsigned int __user *)pc, instr)) {
++		    probe_kernel_address((const void *)pc, instr)) {
+ 			pr_cont("XXXXXXXX ");
+ 		} else {
+ 			if (regs->nip == pc)
+@@ -1323,7 +1324,7 @@ void show_user_instructions(struct pt_regs *regs)
+ 			pr_info("%s[%d]: code: ", current->comm, current->pid);
+ 		}
+ 
+-		if (probe_kernel_address((unsigned int __user *)pc, instr)) {
++		if (probe_kernel_address((const void *)pc, instr)) {
+ 			pr_cont("XXXXXXXX ");
+ 		} else {
+ 			if (regs->nip == pc)
+-- 
+2.13.3
 
