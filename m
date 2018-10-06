@@ -6,54 +6,55 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40381C67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC610C67871
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00FDE208E7
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E5952084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:38:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BCcb4bdk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00FDE208E7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="spYkkGUF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5952084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeJFXeb (ORCPT
+        id S1727802AbeJFXmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 19:34:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33812 "EHLO
+        Sat, 6 Oct 2018 19:42:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38574 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeJFXea (ORCPT
+        with ESMTP id S1725266AbeJFXmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 19:34:30 -0400
+        Sat, 6 Oct 2018 19:42:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
         Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eTBgH6DqMO6/18Ze4VhgcO9CjLgRjQl/mNnVbrWImLQ=; b=BCcb4bdkqHVSMxPYLivhsYq5h
-        RHXLYkAE0yMlrExxt0h/rkWNfKtYGILGTkMzAcU+u7QS8D2/pucuCS9PEv6hJrumZuxa6XCwEFfpL
-        dRHIk3jaTlqymVWJpdJeDeIcuJsfh3H/+VFxIO8ViBtB1G2Rf8NzsPp72heiSW2FzSZJc4NMUehLL
-        XdwepnPHZFlYByqaS4+dcptIwIa/jbr/ekvHQ7mnxgZFiEdx3VsQqyxXX6FFjGBFzHhlXeASJUO2S
-        FhEjIyvpZF7qP/Eu64KIXQAw9+Mtkg9V7cD8151//7KbU5DO4e0j90YcGm4Nby0la75v4q326c7Ao
-        aL2jcAp0w==;
+         bh=9L3PusQtZHJPoFDTUa2lzYEr5j16up4N+qr+FN1KZTc=; b=spYkkGUFNhqGaIwUATrsKk55M
+        FE1sYz9cg/XJvMIblDXcG3BffB1NDauyC2Gf8jHIk/C3YbcNajiwhHXwBFYn9t9RfpF0Qq1Y13J8E
+        9DvItwm4Ag2vxLm8ub7oMfA/6YJQQbP6ABHxGeAxTxapbeN2Vv1R/9MGuWyslBBc9YsnrC13pV/vP
+        mauuatT4o3/DZZaV/GETytLw9+JM7+QGwPULgOxpaSZoQ/SdqFYb5coCGttEmUD4lvzW1TTs82BnZ
+        y9iRqfQWWc+KBzYjq76ObMfpZe/YeL8A8pLP2v3N9OgAR4YD9IyOU6TLVmKODJf3WJAVZmBrxAK0V
+        vOi2oUd/A==;
 Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g8pTA-0005Xe-Jx; Sat, 06 Oct 2018 16:30:20 +0000
-Subject: Re: [PATCH] Documentation/arm64: HugeTLB page implementation
-To:     Punit Agrawal <punit.agrawal@arm.com>, linux-doc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        steve.capper@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20181005143458.17875-1-punit.agrawal@arm.com>
+        id 1g8pax-0000He-L9; Sat, 06 Oct 2018 16:38:23 +0000
+Subject: Re: [GIT PULL 11/16] stm class: Document the MIPI SyS-T protocol
+ usage
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
+ <20181005124306.54870-12-alexander.shishkin@linux.intel.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <97e4e5fb-24ed-0545-414a-6a0c0116e6b8@infradead.org>
-Date:   Sat, 6 Oct 2018 09:30:19 -0700
+Message-ID: <5e7d8200-d357-4105-b00a-3ca36d375aac@infradead.org>
+Date:   Sat, 6 Oct 2018 09:38:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181005143458.17875-1-punit.agrawal@arm.com>
+In-Reply-To: <20181005124306.54870-12-alexander.shishkin@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,87 +64,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-Just some minor stuff (below).
+one small typo/spello below...
 
-On 10/5/18 7:34 AM, Punit Agrawal wrote:
-> Arm v8 architecture supports multiple page sizes - 4k, 16k and
-> 64k. Based on the active page size, the Linux port supports
-> corresponding hugepage sizes at PMD and PUD(4k only) levels.
+On 10/5/18 5:43 AM, Alexander Shishkin wrote:
+> Add a document describing MIPI SyS-T protocol driver usage.
 > 
-> In addition, the architecture also supports caching larger sized
-> ranges (composed of multiple entries) at the PTE and PMD level in the
-> TLBs using the contiguous bit. The Linux port makes use of this
-> architectural support to enable additional hugepage sizes.
-> 
-> Describe the two different types of hugepages supported by the arm64
-> kernel and the hugepage sizes enabled by each.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  Documentation/arm64/hugetlbpage.txt | 39 +++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/arm64/hugetlbpage.txt
+>  Documentation/trace/sys-t.rst | 62 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/trace/sys-t.rst
 > 
-> diff --git a/Documentation/arm64/hugetlbpage.txt b/Documentation/arm64/hugetlbpage.txt
+> diff --git a/Documentation/trace/sys-t.rst b/Documentation/trace/sys-t.rst
 > new file mode 100644
-> index 000000000000..64ee24b88d27
+> index 000000000000..3d8eb92735e9
 > --- /dev/null
-> +++ b/Documentation/arm64/hugetlbpage.txt
-> @@ -0,0 +1,39 @@
-> +HugeTLBpage on ARM64
-> +====================
+> +++ b/Documentation/trace/sys-t.rst
+> @@ -0,0 +1,62 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +Hugepage relies on making efficient use of TLBs to improve performance of
-> +address translations. The benefit depends on both -
+> +===================
+> +MIPI SyS-T over STP
+> +===================
 > +
-> +  - the size of hugepages
-> +  - size of entries supported by the TLBs
+> +The MIPI SyS-T protocol driver can be used with STM class devices to
+> +generate standardized trace stream. Aside from being a standard, it
+> +provides better trace source identification and timestamp correlation.
 > +
-> +The ARM64 port supports two flavours of hugepages.
+> +In order to use the MIPI SyS-T protocol driver with your STM device,
+> +first, you'll need CONFIG_STM_PROTO_SYS_T.
 > +
-> +1) Block mappings at the pud/pmd level
-> +--------------------------------------
+> +Now, you can select which protocol driver you want to use when you create
+> +a policy for your STM device, by specifying it in the policy name:
 > +
-> +These are regular hugepages where a pmd or a pud page table entry points to a
-> +block of memory. Regardless of the supported size of entries in TLB, block
-> +mappings reduces the depth of page table walk needed to translate hugepage
+> +# mkdir /config/stp-policy/dummy_stm.0:p_sys-t.my-policy/
+> +
+> +In other words, the policy name format is extended like this:
+> +
+> +  <device_name>:<protocol_name>.<policy_name>
+> +
+> +With Intel TH, therefore it can look like "0-sth:p_sys-t.my-policy".
+> +
+> +If the protocol name is omitted, the STM class will chose whichever
 
-            reduce
+s/chose/choose/
 
-> +addresses.
+> +protocol driver was loaded first.
 > +
-> +2) Using the Contiguous bit
-> +---------------------------
+> +You can also double check that everything is working as expected by
 > +
-> +The architecture provides a contiguous bit in the translation table entries
-> +(D4.5.3, ARM DDI 0487C.a) that hints to the mmu to indicate that it is one of a
-
-preferably                                     MMU
-
-> +contiguous set of entries that can be cached in a single TLB entry.
+> +# cat /config/stp-policy/dummy_stm.0:p_sys-t.my-policy/protocol
+> +p_sys-t
 > +
-> +The contiguous bit is used in Linux to increase the mapping size at the pmd and
-> +pte (last) level. The number of supported contiguous entries vary by page size
-
-                                                                varies
-
-> +and level of the page table.
+> +Now, with the MIPI SyS-T protocol driver, each policy node in the
+> +configfs gets a few additional attributes, which determine per-source
+> +parameters specific to the protocol:
 > +
+> +# mkdir /config/stp-policy/dummy_stm.0:p_sys-t.my-policy/default
+> +# ls /config/stp-policy/dummy_stm.0:p_sys-t.my-policy/default
+> +channels
+> +clocksync_interval
+> +do_len
+> +masters
+> +ts_interval
+> +uuid
 > +
+> +The most important one here is the "uuid", which determines the UUID
+> +that will be used to tag all data coming from this source. It is
+> +automatically generated when a new node is created, but it is likely
+> +that you would want to change it.
 > +
-> +The following hugepage sizes are supported -
+> +do_len switches on/off the additional "payload length" field in the
+> +MIPI SyS-T message header. It is off by default as the STP already
+> +marks message boundaries.
 > +
-> +         CONT PTE    PMD    CONT PMD    PUD
-> +         --------    ---    --------    ---
-> +  4K:         64K     2M         32M     1G
-> +  16K:         2M    32M          1G
-> +  64K:         2M   512M         16G
+> +ts_interval and clocksync_interval determine how much time in milliseconds
+> +can pass before we need to include a protocol (not transport, aka STP)
+> +timestamp in a message header or send a CLOCKSYNC packet, respectively.
+> +
+> +See Documentation/ABI/testing/configfs-stp-policy-p_sys-t for more
+> +details.
+> +
+> +* [1] https://www.mipi.org/specifications/sys-t
 > 
 
 
-thanks,
 -- 
 ~Randy
