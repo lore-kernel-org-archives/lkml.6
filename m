@@ -2,149 +2,157 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC796C677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC24C65C31
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97C72148D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:02:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eI2lgzAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97C72148D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C5762147D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:04:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5762147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeJFUGA (ORCPT
+        id S1727959AbeJFUHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 16:06:00 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38856 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbeJFUF7 (ORCPT
+        Sat, 6 Oct 2018 16:07:18 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:53672 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbeJFUHR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 16:05:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a13-v6so16136097wrt.5
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 06:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W+KVaGT26r59EyZOx40AE+8cAXVLjkTu67ycCRZjZWc=;
-        b=eI2lgzAd8TY+6pST2jQXYfKX6DMk5HvYGIBwHM1lr7C8v80M4/d7IHCtP06ABudrHn
-         1Evdwxw01gal+/hZfBAhdBbUz9R0cvtatFwI90+NtMRDrmOQDWJDWHNG4e4Pq3YN7lA3
-         0sccwhdSPjemzgpiZnU3O7cPnVCyvxQNcKK6GRshq4sPE2kgwdrg+MZ+Q/EzupiMBv2M
-         yqnWHWolweOU6CzCyGXeTGnR86oGPxPkBt0Z25ZR9xVoi9WOfqt7WImzrEog6MtbRX0o
-         C75UR1jqFr/U6BzwjJsIwWNKMFzryzIssa1MioD5/GYKKfiizcWf+EMr9pKmofn3A9zm
-         kXKQ==
+        Sat, 6 Oct 2018 16:07:17 -0400
+Received: by mail-it1-f200.google.com with SMTP id f79-v6so5624885ita.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 06:04:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W+KVaGT26r59EyZOx40AE+8cAXVLjkTu67ycCRZjZWc=;
-        b=qPLGtqw94XdchiFonXUOOInt/bFc+dgTdVw14aUHPQRrq5KR3ROapmxkc5ai3eteWc
-         /iclI6NA9ptsqClehuFEBwBLS9/CaDZcIOrTksXozjRMEatGpeZKaLySBMjF91tR/A/5
-         fp/xLbv9bxm47NtNeIbuYMX26BA/E9Bf4clwCTuFkJQwiBrz0S/vrY8Jlguev9ubZ1iH
-         JJFGJt5GvuBxT+cOy/DvJ3yZHOy/GF5czbZB1fub+7O6A1OWnA+qbHTfwHSyPFvzkQpc
-         aP2ldX23ECqTf7jdHJABtTIm/AjkWdAeIFDrWL5xnWrRHFSViTFrlqPmeFZX7xHvtkOu
-         KXBw==
-X-Gm-Message-State: ABuFfohPqU5pEd9g0763uifba1CfAg4WCHFAEKMrIW89uwwygAgdu8Lk
-        dvH1Ic1AzbdXQPX6TBozGkHgnIDn
-X-Google-Smtp-Source: ACcGV61PxCHNL8Z0Ffc5rYNc35pT3OBgNLVM4ZuE4ctjarxi4gz7mUJB0wbuL5wSaxodPk/oQ7jj/Q==
-X-Received: by 2002:a05:6000:1008:: with SMTP id a8mr2378382wrx.271.1538830964619;
-        Sat, 06 Oct 2018 06:02:44 -0700 (PDT)
-Received: from localhost.localdomain (ip1f12fd32.dynamic.kabel-deutschland.de. [31.18.253.50])
-        by smtp.gmail.com with ESMTPSA id z89-v6sm23230445wrb.3.2018.10.06.06.02.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 06 Oct 2018 06:02:44 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/2] staging: rtl8188eu: add spaces around operators in odm_rtl8188e.c
-Date:   Sat,  6 Oct 2018 15:02:31 +0200
-Message-Id: <20181006130231.1428-2-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181006130231.1428-1-straube.linux@gmail.com>
-References: <20181006130231.1428-1-straube.linux@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=UxIoLajxzDOME6HGpHrwzgO4xcPB7WH4jKyISFUDB68=;
+        b=SBtOP1tbEE7f9ip8OG+M2cM2shQQmyIQeunWZImGQWbYiu85mJQib6RXNJ+WMY5IIs
+         eM25IMZfstRKX6b0aX+zFKUrhTbCZ7+5J7cmI/p2FtSzEhR0aWgrdwuA0x36osr3OuFi
+         xdo9QRa0cpYjX12KsScddlmAx6HXJcL9HVYg+g1ZzY9vlzUSh3UT34SEUUgLWCs8GsbC
+         teADK7v6H9HSYJq3T4Q/K1Syg/wYH78ZZYhf/ePukYSVeHj4TMSWwQ++VINg14wQCxSQ
+         PPGLgf21OIUHXr8TKjxDxUJdekT5rl6GwWouNeeze0hr0lvS5/EtXEggvN2b7ZyB5OSJ
+         0XsQ==
+X-Gm-Message-State: ABuFfoiqzWeL0+OB8TOYcIq8KfVzHtFXz7WWATly5kZFNFvAzn952ut6
+        xip4l04pcV+rKC115yNqGmiVUVSEDkScd1uWFT3AFPCGsIP9
+X-Google-Smtp-Source: ACcGV61elX0Lj7gx9pk/gBm5xOcsR3jTz+5DUFfoekt4Fa/3jpIt324pivILt5jbUpn1RutxFbI5ZdQcZhLPJ+sQsQb+RLjn9OvM
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a24:e38c:: with SMTP id d134-v6mr7486882ith.38.1538831043242;
+ Sat, 06 Oct 2018 06:04:03 -0700 (PDT)
+Date:   Sat, 06 Oct 2018 06:04:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b3b10305778f05f5@google.com>
+Subject: general protection fault in gcmaes_crypt_by_sg
+From:   syzbot <syzbot+c5048caf67d09ee24549@syzkaller.appspotmail.com>
+To:     bp@alien8.de, davem@davemloft.net, herbert@gondor.apana.org.au,
+        hpa@zytor.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add spaces around '|', '>>' and '/' to follow kernel coding style.
-Reported by checkpatch.
-
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/odm_rtl8188e.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c b/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c
-index 3430796d56a3..251bd8aba3b1 100644
---- a/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c
-+++ b/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c
-@@ -23,7 +23,7 @@ static void dm_rx_hw_antena_div_init(struct odm_dm_struct *dm_odm)
- 	/* MAC Setting */
- 	value32 = phy_query_bb_reg(adapter, ODM_REG_ANTSEL_PIN_11N, bMaskDWord);
- 	phy_set_bb_reg(adapter, ODM_REG_ANTSEL_PIN_11N, bMaskDWord,
--		       value32|(BIT(23) | BIT(25)));
-+		       value32 | (BIT(23) | BIT(25)));
- 	/* Pin Settings */
- 	phy_set_bb_reg(adapter, ODM_REG_PIN_CTRL_11N, BIT(9) | BIT(8), 0);
- 	phy_set_bb_reg(adapter, ODM_REG_RX_ANT_CTRL_11N, BIT(10), 0);
-@@ -55,7 +55,7 @@ static void dm_trx_hw_antenna_div_init(struct odm_dm_struct *dm_odm)
- 	/* MAC Setting */
- 	value32 = phy_query_bb_reg(adapter, ODM_REG_ANTSEL_PIN_11N, bMaskDWord);
- 	phy_set_bb_reg(adapter, ODM_REG_ANTSEL_PIN_11N, bMaskDWord,
--		       value32|(BIT(23) | BIT(25)));
-+		       value32 | (BIT(23) | BIT(25)));
- 	/* Pin Settings */
- 	phy_set_bb_reg(adapter, ODM_REG_PIN_CTRL_11N, BIT(9) | BIT(8), 0);
- 	phy_set_bb_reg(adapter, ODM_REG_RX_ANT_CTRL_11N, BIT(10), 0);
-@@ -103,9 +103,11 @@ static void dm_fast_training_init(struct odm_dm_struct *dm_odm)
- 
- 	/* MAC Setting */
- 	value32 = phy_query_bb_reg(adapter, 0x4c, bMaskDWord);
--	phy_set_bb_reg(adapter, 0x4c, bMaskDWord, value32|(BIT(23) | BIT(25)));
-+	phy_set_bb_reg(adapter, 0x4c, bMaskDWord,
-+		       value32 | (BIT(23) | BIT(25)));
- 	value32 = phy_query_bb_reg(adapter,  0x7B4, bMaskDWord);
--	phy_set_bb_reg(adapter, 0x7b4, bMaskDWord, value32|(BIT(16) | BIT(17)));
-+	phy_set_bb_reg(adapter, 0x7b4, bMaskDWord,
-+		       value32 | (BIT(16) | BIT(17)));
- 
- 	/* Match MAC ADDR */
- 	phy_set_bb_reg(adapter, 0x7b4, 0xFFFF, 0);
-@@ -194,8 +196,8 @@ static void update_tx_ant_88eu(struct odm_dm_struct *dm_odm, u8 ant, u32 mac_id)
- 	else
- 		target_ant = AUX_ANT_CG_TRX;
- 	dm_fat_tbl->antsel_a[mac_id] = target_ant & BIT(0);
--	dm_fat_tbl->antsel_b[mac_id] = (target_ant & BIT(1))>>1;
--	dm_fat_tbl->antsel_c[mac_id] = (target_ant & BIT(2))>>2;
-+	dm_fat_tbl->antsel_b[mac_id] = (target_ant & BIT(1)) >> 1;
-+	dm_fat_tbl->antsel_c[mac_id] = (target_ant & BIT(2)) >> 2;
- }
- 
- void rtl88eu_dm_set_tx_ant_by_tx_info(struct odm_dm_struct *dm_odm,
-@@ -250,9 +252,11 @@ static void rtl88eu_dm_hw_ant_div(struct odm_dm_struct *dm_odm)
- 		if (IS_STA_VALID(entry)) {
- 			/* 2 Calculate RSSI per Antenna */
- 			main_rssi = (dm_fat_tbl->MainAnt_Cnt[i] != 0) ?
--				     (dm_fat_tbl->MainAnt_Sum[i]/dm_fat_tbl->MainAnt_Cnt[i]) : 0;
-+				     (dm_fat_tbl->MainAnt_Sum[i] /
-+				      dm_fat_tbl->MainAnt_Cnt[i]) : 0;
- 			aux_rssi = (dm_fat_tbl->AuxAnt_Cnt[i] != 0) ?
--				    (dm_fat_tbl->AuxAnt_Sum[i]/dm_fat_tbl->AuxAnt_Cnt[i]) : 0;
-+				    (dm_fat_tbl->AuxAnt_Sum[i] /
-+				     dm_fat_tbl->AuxAnt_Cnt[i]) : 0;
- 			target_ant = (main_rssi >= aux_rssi) ? MAIN_ANT : AUX_ANT;
- 			/* 2 Select max_rssi for DIG */
- 			local_max_rssi = max(main_rssi, aux_rssi);
--- 
-2.19.0
-
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgMTJmZmFhMTE5N2Y1IEFkZCBsaW51eC1uZXh0IHNwZWNpZmljIGZpbGVzIGZvciAy
+MDE4MTAwNQ0KZ2l0IHRyZWU6ICAgICAgIGxpbnV4LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBodHRw
+czovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNmNiNzgwNjQwMDAwMA0Ka2Vy
+bmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PWQ2
+YjA1OGE3MjMyMDQ2Zg0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3Qu
+Y29tL2J1Zz9leHRpZD1jNTA0OGNhZjY3ZDA5ZWUyNDU0OQ0KY29tcGlsZXI6ICAgICAgIGdjYyAo
+R0NDKSA4LjAuMSAyMDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0KDQpVbmZvcnR1bmF0ZWx5LCBJIGRv
+bid0IGhhdmUgYW55IHJlcHJvZHVjZXIgZm9yIHRoaXMgY3Jhc2ggeWV0Lg0KDQpJTVBPUlRBTlQ6
+IGlmIHlvdSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUg
+Y29tbWl0Og0KUmVwb3J0ZWQtYnk6IHN5emJvdCtjNTA0OGNhZjY3ZDA5ZWUyNDU0OUBzeXprYWxs
+ZXIuYXBwc3BvdG1haWwuY29tDQoNCkAZOiByZW5hbWVkIGZyb20gaXA2Z3JlMA0Ka2FzYW46IENP
+TkZJR19LQVNBTl9JTkxJTkUgZW5hYmxlZA0Ka2FzYW46IEdQRiBjb3VsZCBiZSBjYXVzZWQgYnkg
+TlVMTC1wdHIgZGVyZWYgb3IgdXNlciBtZW1vcnkgYWNjZXNzDQpnZW5lcmFsIHByb3RlY3Rpb24g
+ZmF1bHQ6IDAwMDAgWyMxXSBQUkVFTVBUIFNNUCBLQVNBTg0KQ1BVOiAxIFBJRDogMTUxMCBDb21t
+OiBzeXotZXhlY3V0b3IwIE5vdCB0YWludGVkIDQuMTkuMC1yYzYtbmV4dC0yMDE4MTAwNSsgIA0K
+Izg4DQpIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dvb2dsZSBD
+b21wdXRlIEVuZ2luZSwgQklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQOiAwMDEwOnNjYXR0
+ZXJ3YWxrX3N0YXJ0IGluY2x1ZGUvY3J5cHRvL3NjYXR0ZXJ3YWxrLmg6NzMgW2lubGluZV0NClJJ
+UDogMDAxMDpnY21hZXNfY3J5cHRfYnlfc2crMHg1NmYvMHgyMTEwICANCmFyY2gveDg2L2NyeXB0
+by9hZXNuaS1pbnRlbF9nbHVlLmM6ODM0DQpDb2RlOiBjMSBlOSAwMyA4MCAzYyAxMSAwMCAwZiA4
+NSBiZiAxOCAwMCAwMCA0OCA4ZCA3OCAwOCA0OCA4OSA4NCAyNCA1MCAwMSAgDQowMCAwMCA0OCBi
+YSAwMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OCA4OSBmOSA0OCBjMSBlOSAwMyA8MGY+IGI2IDE0
+IDExIDg0ICANCmQyIDc0IDA5IDgwIGZhIDAzIDBmIDhlIDZiIDE1IDAwIDAwIDQ0IDhiIDYwIDA4
+IDQ4DQpSU1A6IDAwMTg6ZmZmZjg4MDE4NTJiZjEyMCBFRkxBR1M6IDAwMDEwMjAyDQpSQVg6IDAw
+MDAwMDAwMDAwMDAwMDAgUkJYOiBmZmZmODgwMTkwMjNjNmIwIFJDWDogMDAwMDAwMDAwMDAwMDAw
+MQ0KUkRYOiBkZmZmZmMwMDAwMDAwMDAwIFJTSTogZmZmZmZmZmY4MzU5ZTA2YyBSREk6IDAwMDAw
+MDAwMDAwMDAwMDgNClJCUDogZmZmZjg4MDE4NTJiZjUyMCBSMDg6IGZmZmY4ODAxODUwYzQzMDAg
+UjA5OiBmZmZmODgwMWJlZmIwMDYwDQpSMTA6IGZmZmY4ODAxODUyYmY3YjAgUjExOiBmZmZmODgw
+MTg1MmJmN2RiIFIxMjogMDAwMDAwMDAwMDAwMDAwZA0KUjEzOiAwMDAwMDAwMDAwMDAwMDBkIFIx
+NDogZmZmZjg4MDE4NTJiZjIzOCBSMTU6IGZmZmY4ODAxODUyYmY3ZDANCkZTOiAgMDAwMDAwMDAw
+MjVkMzk0MCgwMDAwKSBHUzpmZmZmODgwMWRhZjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAw
+MDAwMDANCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMN
+CkNSMjogMDAwMDAwMWIyZDEyODAwMCBDUjM6IDAwMDAwMDAxY2QyNzMwMDAgQ1I0OiAwMDAwMDAw
+MDAwMTQwNmUwDQpEUjA6IDAwMDAwMDAwMjAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERS
+MjogMDAwMDAwMDAwMDAwMDAwMA0KRFIzOiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAwMDAwMDBm
+ZmZlMGZmMCBEUjc6IDAwMDAwMDAwMDAwMDA2MDANCkNhbGwgVHJhY2U6DQogIGdjbWFlc19lbmNy
+eXB0LmNvbnN0cHJvcC4xNysweDdkNy8weDExOTAgIA0KYXJjaC94ODYvY3J5cHRvL2Flc25pLWlu
+dGVsX2dsdWUuYzo5MjkNCiAgZ2VuZXJpY19nY21hZXNfZW5jcnlwdCsweDEyZC8weDE4NiBhcmNo
+L3g4Ni9jcnlwdG8vYWVzbmktaW50ZWxfZ2x1ZS5jOjEyOTQNCiAgY3J5cHRvX2FlYWRfZW5jcnlw
+dCBpbmNsdWRlL2NyeXB0by9hZWFkLmg6MzY0IFtpbmxpbmVdDQogIGdjbWFlc193cmFwcGVyX2Vu
+Y3J5cHQrMHgxNjIvMHgyMDAgYXJjaC94ODYvY3J5cHRvL2Flc25pLWludGVsX2dsdWUuYzoxMTI3
+DQogIGNyeXB0b19hZWFkX2VuY3J5cHQgaW5jbHVkZS9jcnlwdG8vYWVhZC5oOjM2NCBbaW5saW5l
+XQ0KICB0bHNfZG9fZW5jcnlwdGlvbiBuZXQvdGxzL3Rsc19zdy5jOjUzNCBbaW5saW5lXQ0KICB0
+bHNfcHVzaF9yZWNvcmQrMHhjMTIvMHgxN2YwIG5ldC90bHMvdGxzX3N3LmM6NTgzDQogIHRsc19z
+d19wdXNoX3BlbmRpbmdfcmVjb3JkKzB4MjIvMHgzMCBuZXQvdGxzL3Rsc19zdy5jOjU5Nw0KICB0
+bHNfaGFuZGxlX29wZW5fcmVjb3JkIG5ldC90bHMvdGxzX21haW4uYzoxNTUgW2lubGluZV0NCiAg
+dGxzX3NrX3Byb3RvX2Nsb3NlKzB4NDM5LzB4NzUwIG5ldC90bHMvdGxzX21haW4uYzoyNzINCiAg
+aW5ldF9yZWxlYXNlKzB4MTA0LzB4MWYwIG5ldC9pcHY0L2FmX2luZXQuYzo0MjgNCiAgaW5ldDZf
+cmVsZWFzZSsweDUwLzB4NzAgbmV0L2lwdjYvYWZfaW5ldDYuYzo0NTgNCiAgX19zb2NrX3JlbGVh
+c2UrMHhkNy8weDI1MCBuZXQvc29ja2V0LmM6NTgwDQogIHNvY2tfY2xvc2UrMHgxOS8weDIwIG5l
+dC9zb2NrZXQuYzoxMTQyDQogIF9fZnB1dCsweDNiYy8weGE3MCBmcy9maWxlX3RhYmxlLmM6Mjc5
+DQogIF9fX19mcHV0KzB4MTUvMHgyMCBmcy9maWxlX3RhYmxlLmM6MzEyDQogIHRhc2tfd29ya19y
+dW4rMHgxZTgvMHgyYTAga2VybmVsL3Rhc2tfd29yay5jOjExMw0KICB0cmFjZWhvb2tfbm90aWZ5
+X3Jlc3VtZSBpbmNsdWRlL2xpbnV4L3RyYWNlaG9vay5oOjE4OCBbaW5saW5lXQ0KICBleGl0X3Rv
+X3VzZXJtb2RlX2xvb3ArMHgzMTgvMHgzODAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MTY2DQog
+IHByZXBhcmVfZXhpdF90b191c2VybW9kZSBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzoxOTcgW2lu
+bGluZV0NCiAgc3lzY2FsbF9yZXR1cm5fc2xvd3BhdGggYXJjaC94ODYvZW50cnkvY29tbW9uLmM6
+MjY4IFtpbmxpbmVdDQogIGRvX3N5c2NhbGxfNjQrMHg2YmUvMHg4MjAgYXJjaC94ODYvZW50cnkv
+Y29tbW9uLmM6MjkzDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUN
+ClJJUDogMDAzMzoweDQxMTA1MQ0KQ29kZTogNzUgMTQgYjggMDMgMDAgMDAgMDAgMGYgMDUgNDgg
+M2QgMDEgZjAgZmYgZmYgMGYgODMgMzQgMTkgMDAgMDAgYzMgNDggIA0KODMgZWMgMDggZTggMGEg
+ZmMgZmYgZmYgNDggODkgMDQgMjQgYjggMDMgMDAgMDAgMDAgMGYgMDUgPDQ4PiA4YiAzYyAyNCA0
+OCAgDQo4OSBjMiBlOCA1MyBmYyBmZiBmZiA0OCA4OSBkMCA0OCA4MyBjNCAwOCA0OCAzZCAwMQ0K
+UlNQOiAwMDJiOjAwMDA3ZmZmNDBmOWE4ZDAgRUZMQUdTOiAwMDAwMDI5MyBPUklHX1JBWDogMDAw
+MDAwMDAwMDAwMDAwMw0KUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAw
+NCBSQ1g6IDAwMDAwMDAwMDA0MTEwNTENClJEWDogMDAwMDAwMWIyZGEyMDAwMCBSU0k6IDAwMDAw
+MDAwMDAwMDAwMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDAzDQpSQlA6IDAwMDAwMDAwMDAwMDAwMDAg
+UjA4OiAwMDAwMDAwMDQ5Y2NkMWVmIFIwOTogMDAwMDAwMDA0OWNjZDFmMw0KUjEwOiAwMDAwN2Zm
+ZjQwZjlhODAwIFIxMTogMDAwMDAwMDAwMDAwMDI5MyBSMTI6IDAwMDAwMDAwMDAwMDAwMDANClIx
+MzogMDAwMDAwMDAwMDAwMDAwMSBSMTQ6IDAwMDAwMDAwMDAwMDAxMGMgUjE1OiAwMDAwMDAwMDAw
+MDAwMDAwDQpNb2R1bGVzIGxpbmtlZCBpbjoNCi0tLVsgZW5kIHRyYWNlIGE4ZjUyMzExMGQ4Y2Ez
+NzUgXS0tLQ0KUklQOiAwMDEwOnNjYXR0ZXJ3YWxrX3N0YXJ0IGluY2x1ZGUvY3J5cHRvL3NjYXR0
+ZXJ3YWxrLmg6NzMgW2lubGluZV0NClJJUDogMDAxMDpnY21hZXNfY3J5cHRfYnlfc2crMHg1NmYv
+MHgyMTEwICANCmFyY2gveDg2L2NyeXB0by9hZXNuaS1pbnRlbF9nbHVlLmM6ODM0DQpDb2RlOiBj
+MSBlOSAwMyA4MCAzYyAxMSAwMCAwZiA4NSBiZiAxOCAwMCAwMCA0OCA4ZCA3OCAwOCA0OCA4OSA4
+NCAyNCA1MCAwMSAgDQowMCAwMCA0OCBiYSAwMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OCA4OSBm
+OSA0OCBjMSBlOSAwMyA8MGY+IGI2IDE0IDExIDg0ICANCmQyIDc0IDA5IDgwIGZhIDAzIDBmIDhl
+IDZiIDE1IDAwIDAwIDQ0IDhiIDYwIDA4IDQ4DQpSU1A6IDAwMTg6ZmZmZjg4MDE4NTJiZjEyMCBF
+RkxBR1M6IDAwMDEwMjAyDQpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiBmZmZmODgwMTkwMjNj
+NmIwIFJDWDogMDAwMDAwMDAwMDAwMDAwMQ0KUkRYOiBkZmZmZmMwMDAwMDAwMDAwIFJTSTogZmZm
+ZmZmZmY4MzU5ZTA2YyBSREk6IDAwMDAwMDAwMDAwMDAwMDgNClJCUDogZmZmZjg4MDE4NTJiZjUy
+MCBSMDg6IGZmZmY4ODAxODUwYzQzMDAgUjA5OiBmZmZmODgwMWJlZmIwMDYwDQpSMTA6IGZmZmY4
+ODAxODUyYmY3YjAgUjExOiBmZmZmODgwMTg1MmJmN2RiIFIxMjogMDAwMDAwMDAwMDAwMDAwZA0K
+UjEzOiAwMDAwMDAwMDAwMDAwMDBkIFIxNDogZmZmZjg4MDE4NTJiZjIzOCBSMTU6IGZmZmY4ODAx
+ODUyYmY3ZDANCkZTOiAgMDAwMDAwMDAwMjVkMzk0MCgwMDAwKSBHUzpmZmZmODgwMWRhZjAwMDAw
+KDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAw
+MCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNSMjogMDAwMDAwMWIyZDEyODAwMCBDUjM6IDAwMDAw
+MDAxY2QyNzMwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQpEUjA6IDAwMDAwMDAwMjAwMDAwMDAg
+RFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMA0KRFIzOiAwMDAwMDAw
+MDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAwMDAwMDAwMDA2MDANCg0K
+DQotLS0NClRoaXMgYnVnIGlzIGdlbmVyYXRlZCBieSBhIGJvdC4gSXQgbWF5IGNvbnRhaW4gZXJy
+b3JzLg0KU2VlIGh0dHBzOi8vZ29vLmdsL3Rwc21FSiBmb3IgbW9yZSBpbmZvcm1hdGlvbiBhYm91
+dCBzeXpib3QuDQpzeXpib3QgZW5naW5lZXJzIGNhbiBiZSByZWFjaGVkIGF0IHN5emthbGxlckBn
+b29nbGVncm91cHMuY29tLg0KDQpzeXpib3Qgd2lsbCBrZWVwIHRyYWNrIG9mIHRoaXMgYnVnIHJl
+cG9ydC4gU2VlOg0KaHR0cHM6Ly9nb28uZ2wvdHBzbUVKI2J1Zy1zdGF0dXMtdHJhY2tpbmcgZm9y
+IGhvdyB0byBjb21tdW5pY2F0ZSB3aXRoICANCnN5emJvdC4NCg==
