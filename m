@@ -2,81 +2,103 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305E7C67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A3CC67871
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE5AA20875
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE5AA20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0A68F206B2
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:41:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivv/0a2c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A68F206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbeJGBn4 (ORCPT
+        id S1727988AbeJGBqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 21:43:56 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33938 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbeJGBn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 21:43:56 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id VGry3GgWBVoO; Sat,  6 Oct 2018 20:39:33 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A81011EC02B2;
-        Sat,  6 Oct 2018 20:39:33 +0200 (CEST)
-Date:   Sat, 6 Oct 2018 20:39:28 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org, eranian@google.com,
-        kan.liang@intel.com, isaku.yamahata@intel.com, kvm@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] x86/cpufeature: Add facility to match microcode
- revisions
-Message-ID: <20181006183928.GA703@zn.tnic>
-References: <20181006001928.28097-1-andi@firstfloor.org>
- <alpine.DEB.2.21.1810061555270.5454@nanos.tec.linutronix.de>
- <20181006181506.7cycnsg5gtoavtmx@two.firstfloor.org>
+        Sat, 6 Oct 2018 21:46:06 -0400
+Received: from mail-it1-f177.google.com ([209.85.166.177]:40428 "EHLO
+        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeJGBqG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 21:46:06 -0400
+Received: by mail-it1-f177.google.com with SMTP id i191-v6so7056689iti.5;
+        Sat, 06 Oct 2018 11:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LhGcYQifUFhab0dWrZFati4U00BqsJHJdLqOzhALdzY=;
+        b=ivv/0a2cENfb9jgZPGFPyNaAMKyEyzAi2rNlDLAk/VCi1eVATJUWbLViXK2jl0o5w4
+         OX6HKoaPntV4M6jeX3Ae49qWu0GILpQYsUvOhlBBFinzCva+sqKjNa75OF8Tv5carUYS
+         ckzyWZQdF97B+pb1Q0pSPgpdAnzzNna/0Bvp1KU6eH5eqt2AstnbTr2IOJgX2uDwjPgM
+         njlIsrpxkd4EEx8h977XsePyEbvKFsE88/2z0Ym8U/8XMYoof2QKL5S4hZT4oR70kHcq
+         enoXyHyqKIvSQ+Nodahtn/BVFUeiiLp5rrToT+vXfRKRsCU/2OTYk3bbm+XllwG4nRKk
+         MWGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LhGcYQifUFhab0dWrZFati4U00BqsJHJdLqOzhALdzY=;
+        b=jylSPKou8ZDJJxknA4oO0LIFqHu/Ym72mnovXX67cVxqDB7A6pnvXDucu/48wRMSJC
+         HQFjBpdUJJWiFgEWhWbVIvyar4HOQinHKFr2zHLYAQu3OaJvBcV3gHwPwXJBD69ujU+0
+         MiCMbGOfHzdLSI/p2XAKmCxAgUw/r/UBMbCaziOIQ4tgT6QJScC8P9WwKC/c9GBpoM91
+         NItBKZpJAefx/vile5vntNFYBvPG9HRFqRBmur80CkdaViQz6pGWbx/r+xL8ZAtXX5FP
+         HBLleJofnpAY0nlKoGijY/SAmZJEtPq8MBitsKFwsee9Frf9yvI4fPwDDxDyj4iCGZum
+         L8iQ==
+X-Gm-Message-State: ABuFfogNyzRmJ2I32Uyt0Ud2HMOyjImd2fTYQX7sdARIchdbGRNAJes7
+        XiNIQ4zF+QZLjtH7IFhCcZswWNO9kfJB/xo6buc=
+X-Google-Smtp-Source: ACcGV62qEx3zb2LND6BbarRn8XP+SoH30IpFr5RPNaND4PovzugN6thmNsYAB95+oMVivKxYe82r9fYjs0lvDG9sKLc=
+X-Received: by 2002:a24:ddd4:: with SMTP id t203-v6mr11998634itf.128.1538851303917;
+ Sat, 06 Oct 2018 11:41:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181006181506.7cycnsg5gtoavtmx@two.firstfloor.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180911161527.GA30689@vnote> <20180912083844.iegei2kobcz4b7ag@ws.net.home>
+ <6d349d22d37041c1a2942d8ed4c76b69@AcuMS.aculab.com> <CAJC2YLaug4=7otnRC7x+UdDp=5ErgJFHFL_7mjRO7sdM2CrUfQ@mail.gmail.com>
+ <2db38b2d1af34ab9b653c665d08872f1@AcuMS.aculab.com> <20180914110703.ishvqwcpcf5ozihy@ws.net.home>
+In-Reply-To: <20180914110703.ishvqwcpcf5ozihy@ws.net.home>
+From:   Eugene Korenevsky <ekorenevsky@gmail.com>
+Date:   Sat, 6 Oct 2018 21:41:27 +0300
+Message-ID: <CAJC2YLYqb6WB43P5pJe=D7GXgUY16PS=QLVJbD8=qEH=aB9qvg@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: take size of partition entry from GPT header
+To:     kzak@redhat.com
+Cc:     David.Laight@aculab.com, Davidlohr Bueso <dave@stgolabs.net>,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 11:15:07AM -0700, Andi Kleen wrote:
-> The matcher can be used to match specific hardware steppings by setting
-> the min/max_ucode to 0 or specific microcode revisions 
-> (which are associated with steppings)
+> is_gpt_valid() already contains
+>         pt_size = (u64)le32_to_cpu((*gpt)->num_partition_entries) *
+>                 le32_to_cpu((*gpt)->sizeof_partition_entry);
+>         if (pt_size > KMALLOC_MAX_SIZE)
+>                 pr_debug("GUID Partition Table is too large: %llu > %lu bytes\n",
+>                 (unsigned long long)pt_size, KMALLOC_MAX_SIZE);
+>                 goto fail;
+>         }
+> I guess it good enough for sanity check.
+>
+> If you want to be really paranoid than you can also check that array
+> is possible to store to the expected area on the disk:
+>
+>     pt_size <= (gpt->first_usable_lba - gpt->partition_entry_lba)
+>
 
-This better be explained unambiguously.
+Well, we should apply several checks for different cases:
+- primary GPT: table entries should not override gpt->first_usable_lba
+- alternate GPT, table entries BEFORE agpt (agpt->partition_entry_lba
+< agpt_lba): table entries should not override agpt_lba AND
+agpt->partition_entry_lba MUST BE more than agpt->last_usable_lba
+- alternate GPT, table entries AFTER agpt (agpt->partition_entry_lba >
+agpt_lba): table entries should not override the end of the disk
 
-> We still support the old microcode interface that allows updates
-> per CPU, and also it could happen during CPU hotplug.
+Is this correct?
 
-There are no per CPU microcode updates anymore - it is all or none.
-
-It is actually your microcoders who came up with a bunch of restrictions
-like quiescing the cores from doing *anything*, blocking hotplug,
-prohibiting updates if a subset of the cores is not online and still not
-guaranteeing it'll work all the time because <reasons>.
-
-The actually very simple reason being it is just too late for microcode
-update when the machine is up. Where all I wanna do is rip the damn
-thing out completely.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+--
+Eugene
