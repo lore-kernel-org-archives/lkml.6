@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C676C67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00255C71151
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057B121473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:52:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057B121473
+	by mail.kernel.org (Postfix) with ESMTP id A64B521473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A64B521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeJGB47 (ORCPT
+        id S1727961AbeJGB5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 21:56:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54373 "EHLO
+        Sat, 6 Oct 2018 21:57:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60025 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJGB47 (ORCPT
+        with ESMTP id S1726285AbeJGB5b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 21:56:59 -0400
+        Sat, 6 Oct 2018 21:57:31 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96IqUfi3647675
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Ir2Jb3647718
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 11:52:30 -0700
+        Sat, 6 Oct 2018 11:53:02 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96IqU5B3647672;
-        Sat, 6 Oct 2018 11:52:30 -0700
-Date:   Sat, 6 Oct 2018 11:52:30 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96Ir2nN3647715;
+        Sat, 6 Oct 2018 11:53:02 -0700
+Date:   Sat, 6 Oct 2018 11:53:02 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-edbdd2c8bd30da45629e6466714c86eec915364a@git.kernel.org>
-Cc:     jithu.joseph@intel.com, tglx@linutronix.de, hpa@zytor.com,
-        fenghua.yu@intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, reinette.chatre@intel.com
-Reply-To: mingo@kernel.org, reinette.chatre@intel.com,
-          linux-kernel@vger.kernel.org, jithu.joseph@intel.com,
-          tglx@linutronix.de, hpa@zytor.com, fenghua.yu@intel.com
-In-Reply-To: <e538b7f56f7ca15963dce2e00ac3be8edb8a68e1.1538603665.git.reinette.chatre@intel.com>
-References: <e538b7f56f7ca15963dce2e00ac3be8edb8a68e1.1538603665.git.reinette.chatre@intel.com>
+Message-ID: <tip-42688c0c327ec0d647db6e0fc18fd644e7c50e3d@git.kernel.org>
+Cc:     mingo@kernel.org, reinette.chatre@intel.com, fenghua.yu@intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          fenghua.yu@intel.com, reinette.chatre@intel.com, mingo@kernel.org
+In-Reply-To: <b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com>
+References: <b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: CBM overlap should also check for
- overlap with CDP peer
-Git-Commit-ID: edbdd2c8bd30da45629e6466714c86eec915364a
+Subject: [tip:x86/cache] x86/intel_rdt: Fix initial allocation to consider
+ CDP
+Git-Commit-ID: 42688c0c327ec0d647db6e0fc18fd644e7c50e3d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,128 +57,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  edbdd2c8bd30da45629e6466714c86eec915364a
-Gitweb:     https://git.kernel.org/tip/edbdd2c8bd30da45629e6466714c86eec915364a
+Commit-ID:  42688c0c327ec0d647db6e0fc18fd644e7c50e3d
+Gitweb:     https://git.kernel.org/tip/42688c0c327ec0d647db6e0fc18fd644e7c50e3d
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Wed, 3 Oct 2018 15:17:02 -0700
+AuthorDate: Wed, 3 Oct 2018 15:17:03 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 6 Oct 2018 20:46:27 +0200
 
-x86/intel_rdt: CBM overlap should also check for overlap with CDP peer
+x86/intel_rdt: Fix initial allocation to consider CDP
 
-The CBM overlap test is used to manage the allocations of RDT resources
-where overlap is possible between resource groups. When a resource group
-is in exclusive mode then there should be no overlap between resource
-groups.
+When a new resource group is created it is initialized with a default
+allocation that considers which portions of cache are currently
+available for sharing across all resource groups or which portions of
+cache are currently unused.
 
-The current overlap test only considers overlap between the same
-resources, for example, that usage of a RDT_RESOURCE_L2DATA resource
-in one resource group does not overlap with usage of a RDT_RESOURCE_L2DATA
-resource in another resource group. The problem with this is that it
-allows overlap between a RDT_RESOURCE_L2DATA resource in one resource
-group with a RDT_RESOURCE_L2CODE resource in another resource group -
-even if both resource groups are in exclusive mode. This is a problem
-because even though these appear to be different resources they end up
-sharing the same underlying hardware and thus does not fulfill the
-user's request for exclusive use of hardware resources.
+If a CDP allocation forms part of a resource group that is in exclusive
+mode then it should be ensured that no new allocation overlaps with any
+resource that shares the underlying hardware. The current initial
+allocation does not take this sharing of hardware into account and
+a new allocation in a resource that shares the same
+hardware would affect the exclusive resource group.
 
-Fix this by including the CDP peer (if there is one) in every CBM
-overlap test. This does not impact the overlap between resources
-within the same exclusive resource group that is allowed.
+Fix this by considering the allocation of a peer RDT domain - a RDT
+domain sharing the same hardware - as part of the test to determine
+which portion of cache is in use and available for use.
 
-Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
-Reported-by: Jithu Joseph <jithu.joseph@intel.com>
+Fixes: 95f0b77efa57 ("x86/intel_rdt: Initialize new resource group with sane defaults")
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jithu Joseph <jithu.joseph@intel.com>
 Acked-by: Fenghua Yu <fenghua.yu@intel.com>
 Cc: tony.luck@intel.com
+Cc: jithu.joseph@intel.com
 Cc: gavin.hindman@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/e538b7f56f7ca15963dce2e00ac3be8edb8a68e1.1538603665.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 48 +++++++++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 7fc2f86bb13a..172a1a88e716 100644
+index 172a1a88e716..5f55f8848da6 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -983,10 +983,9 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
-  *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
-  *         and @d_cdp will point to the peer RDT domain.
+@@ -2460,14 +2460,16 @@ static void cbm_ensure_valid(u32 *_val, struct rdt_resource *r)
   */
--static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
--						    struct rdt_domain *d,
--						    struct rdt_resource **r_cdp,
--						    struct rdt_domain **d_cdp)
-+static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
-+			    struct rdt_resource **r_cdp,
-+			    struct rdt_domain **d_cdp)
+ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
  {
- 	struct rdt_resource *_r_cdp = NULL;
- 	struct rdt_domain *_d_cdp = NULL;
-@@ -1033,7 +1032,7 @@ out:
- }
- 
- /**
-- * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-+ * __rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-  * @r: Resource to which domain instance @d belongs.
-  * @d: The domain instance for which @closid is being tested.
-  * @cbm: Capacity bitmask being tested.
-@@ -1052,8 +1051,8 @@ out:
-  *
-  * Return: false if CBM does not overlap, true if it does.
-  */
--bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--			   unsigned long cbm, int closid, bool exclusive)
-+static bool __rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+				    unsigned long cbm, int closid, bool exclusive)
- {
++	struct rdt_resource *r_cdp = NULL;
++	struct rdt_domain *d_cdp = NULL;
+ 	u32 used_b = 0, unused_b = 0;
+ 	u32 closid = rdtgrp->closid;
+ 	struct rdt_resource *r;
+ 	unsigned long tmp_cbm;
  	enum rdtgrp_mode mode;
- 	unsigned long ctrl_b;
-@@ -1088,6 +1087,41 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
- 	return false;
- }
+ 	struct rdt_domain *d;
++	u32 peer_ctl, *ctrl;
+ 	int i, ret;
+-	u32 *ctrl;
  
-+/**
-+ * rdtgroup_cbm_overlaps - Does CBM overlap with other use of hardware
-+ * @r: Resource to which domain instance @d belongs.
-+ * @d: The domain instance for which @closid is being tested.
-+ * @cbm: Capacity bitmask being tested.
-+ * @closid: Intended closid for @cbm.
-+ * @exclusive: Only check if overlaps with exclusive resource groups
-+ *
-+ * Resources that can be allocated using a CBM can use the CBM to control
-+ * the overlap of these allocations. rdtgroup_cmb_overlaps() is the test
-+ * for overlap. Overlap test is not limited to the specific resource for
-+ * which the CBM is intended though - when dealing with CDP resources that
-+ * share the underlying hardware the overlap check should be performed on
-+ * the CDP resource sharing the hardware also.
-+ *
-+ * Refer to description of __rdtgroup_cbm_overlaps() for the details of the
-+ * overlap test.
-+ *
-+ * Return: true if CBM overlap detected, false if there is no overlap
-+ */
-+bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+			   unsigned long cbm, int closid, bool exclusive)
-+{
-+	struct rdt_resource *r_cdp;
-+	struct rdt_domain *d_cdp;
-+
-+	if (__rdtgroup_cbm_overlaps(r, d, cbm, closid, exclusive))
-+		return true;
-+
-+	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) < 0)
-+		return false;
-+
-+	return  __rdtgroup_cbm_overlaps(r_cdp, d_cdp, cbm, closid, exclusive);
-+}
-+
- /**
-  * rdtgroup_mode_test_exclusive - Test if this resource group can be exclusive
-  *
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		/*
+@@ -2477,6 +2479,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 		if (r->rid == RDT_RESOURCE_MBA)
+ 			continue;
+ 		list_for_each_entry(d, &r->domains, list) {
++			rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp);
+ 			d->have_new_ctrl = false;
+ 			d->new_ctrl = r->cache.shareable_bits;
+ 			used_b = r->cache.shareable_bits;
+@@ -2486,9 +2489,19 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 					mode = rdtgroup_mode_by_closid(i);
+ 					if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
+ 						break;
+-					used_b |= *ctrl;
++					/*
++					 * If CDP is active include peer
++					 * domain's usage to ensure there
++					 * is no overlap with an exclusive
++					 * group.
++					 */
++					if (d_cdp)
++						peer_ctl = d_cdp->ctrl_val[i];
++					else
++						peer_ctl = 0;
++					used_b |= *ctrl | peer_ctl;
+ 					if (mode == RDT_MODE_SHAREABLE)
+-						d->new_ctrl |= *ctrl;
++						d->new_ctrl |= *ctrl | peer_ctl;
+ 				}
+ 			}
+ 			if (d->plr && d->plr->cbm > 0)
