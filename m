@@ -2,114 +2,140 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7229CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 03:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB838C64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 03:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3259A213A2
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 03:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3259A213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 836DD208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 03:14:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="xJUB/see"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 836DD208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbeJFKOI (ORCPT
+        id S1729398AbeJFKQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 06:14:08 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34453 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeJFKOH (ORCPT
+        Sat, 6 Oct 2018 06:16:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35023 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbeJFKQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 06:14:07 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k19-v6so5915837pfi.1;
-        Fri, 05 Oct 2018 20:12:31 -0700 (PDT)
+        Sat, 6 Oct 2018 06:16:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l17-v6so1535497pff.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 20:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=suCoay0QDIWtHm2tijyxcdrOkSUsgE2+EpD78wypXAo=;
+        b=xJUB/seeWe7QkFLxGPi3cRiIKShN8M72MUeSHDnAtTXqPdvZC+s3Q+IrZuLIZt1eQN
+         nYUy/9uUB/6iHSn4olq5ZM8dJ9vzFfQ1vfv4U+Oh4ldw7WMNIecy7ECExua7CZlQYCRc
+         ERYvfXKXTZeYX/N6nAPMbceJm7Xy2ue0O6mAA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CrlANVbBXs5JGvkHTjl/dhpKTstM6Ljvh1WcfzwIkTk=;
-        b=jPijW4ZLfQpngUp3ViwsD2Y8Fu+m4u6uxxGf9Mozv/l4kANqOO4zh2X4BS5iAfVAXE
-         bK3oZYPAQYiT+1vwNDNloSq3+J4onG+jP5oIpkYExnURRM1IQsVt0JP5+xi6iYZRimwr
-         pqROzU8uNxIh44Lvw/Nq+dVTkDUnJYHKOsLNkBGYcFyfF8cN3ojjrznGjJzzKGTOnbtu
-         Zz2dcJK2JAe57cYzwfYYbnlmwhJ2h2TrYtgIpvD6THswwoOVxcNQ2Gw4HH524M1EGAw5
-         u6gM0RR3w9085BaXYKnulmkF7IC5VO7tW84h/l6lS0K0rOoJ5mOqUjmUc1RexDWMWBwO
-         K/Ng==
-X-Gm-Message-State: ABuFfogY+OFUiP+iRIPol/ACNs9grHPbuUnBj9n4vtY+3mF6592NyLM9
-        Zaab4+l5tjqo/p2XzqcusFgupEHWH5EkPQ==
-X-Google-Smtp-Source: ACcGV60vt0thEFT/IFJdCdaI1179ELHPkMVl8AHFxlKNeTArKWZHrDZwIYs5MgfQNWZDFZ+k+uyGHw==
-X-Received: by 2002:a63:4107:: with SMTP id o7-v6mr12673225pga.256.1538795550196;
-        Fri, 05 Oct 2018 20:12:30 -0700 (PDT)
-Received: from asus.site ([2601:647:4601:42b4:3842:3e31:3bb6:cf62])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm20127910pfs.108.2018.10.05.20.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 20:12:29 -0700 (PDT)
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-To:     Jan Kara <jack@suse.cz>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1538582091.205649.20.camel@acm.org> <20181004202553.71c2599c@alans-desktop>
- <1538683746.230807.9.camel@acm.org>
- <A017CAC7-41E6-4BB3-AC31-5EB524276138@linaro.org>
- <1538692972.8223.7.camel@acm.org> <20181005091626.GA9686@quack2.suse.cz>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <20bfa679-3131-e0af-f69d-2fbec32fbced@acm.org>
-Date:   Fri, 5 Oct 2018 20:12:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=suCoay0QDIWtHm2tijyxcdrOkSUsgE2+EpD78wypXAo=;
+        b=hdqPjEvsSxctE6qNgMK5pCivuPkl92moGa/NMBt2tgHJGftEz38DdjSVfC2A1eLnqr
+         6ggRZoTn4ZSRTMWV8pw/4/p3eTuray2l7El211E1M2+auqgkUWhJqvDRrouz14KL6beV
+         lgdg9w2P/cRSd7LYn970ps82h+GFZe2R07P4xvYBYkycsZX5qDatc9+XcGMbWOBpcVT8
+         1kUgGUmTM2vCWWOwAk6r7BpkguXkZH0u5bNa6E4su+8ITHQwrh2DwBvBQkmBXjth0OzQ
+         qqzV6amtizem7uRv+/YcUx87BxO7Wu0cZFuC55n5Hpcclmc9mib5AxElOxLnQaS4WW3r
+         Ou3w==
+X-Gm-Message-State: ABuFfogVF5wDMGcP0TN0KeLk6UpdN3znsEtYyklkU+qO4powy9yVm/iD
+        A0SnWPXYeyFdvIacOYLFuxZK3A==
+X-Google-Smtp-Source: ACcGV60DcTvA8xuoD+W90eOTMM68HritI9lSoDmrNa2+luvApyzX86VuZTt/G/odURn8rH/uu0uBWw==
+X-Received: by 2002:a63:2e47:: with SMTP id u68-v6mr12750966pgu.294.1538795677045;
+        Fri, 05 Oct 2018 20:14:37 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id c28-v6sm34652750pfk.48.2018.10.05.20.14.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 20:14:35 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 20:14:34 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, fengguang.wu@intel.com
+Subject: Re: [PATCH v4.19-rc7] treewide: Replace more open-coded allocation
+ size multiplications
+Message-ID: <20181006031434.GA224454@joelaf.mtv.corp.google.com>
+References: <20181005233559.GA37919@beast>
+ <20181005235131.GA27193@kroah.com>
+ <CAGXu5jJfs0KpRa6yag=ud0sJVW-tM-E4xuvgCMnBdFfDck5E1g@mail.gmail.com>
+ <20181006002235.GA18415@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20181005091626.GA9686@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006002235.GA18415@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/5/18 2:16 AM, Jan Kara wrote:
-> On Thu 04-10-18 15:42:52, Bart Van Assche wrote:
->> What I think is missing is measurement results for BFQ on a system with
->> multiple CPU sockets and against a fast storage medium. Eliminating
->> the host lock from the SCSI core yielded a significant performance
->> improvement for such storage devices. Since the BFQ scheduler locks and
->> unlocks bfqd->lock for every dispatch operation it is very likely that BFQ
->> will slow down I/O for fast storage devices, even if their driver only
->> creates a single hardware queue.
+On Fri, Oct 05, 2018 at 05:22:35PM -0700, Greg KH wrote:
+> On Fri, Oct 05, 2018 at 05:04:16PM -0700, Kees Cook wrote:
+> > On Fri, Oct 5, 2018 at 4:51 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > On Fri, Oct 05, 2018 at 04:35:59PM -0700, Kees Cook wrote:
+> > >> As done treewide earlier, this catches several more open-coded
+> > >> allocation size calculations that were added to the kernel during the
+> > >> merge window. This performs the following mechanical transformations
+> > >> using Coccinelle:
+> > >>
+> > >>       kvmalloc(a * b, ...) -> kvmalloc_array(a, b, ...)
+> > >>       kvzalloc(a * b, ...) -> kvcalloc(a, b, ...)
+> > >>       devm_kzalloc(..., a * b, ...) -> devm_kcalloc(..., a, b, ...)
+> > >>
+> > >> Signed-off-by: Kees Cook <keescook@chromium.org>
+> > >
+> > > Has this had any testing in linux-next?
+> > 
+> > No; they're mechanical transformations (though I did build test them).
+> > If you want I could add this to linux-next for a week?
 > 
-> Well, I'm not sure why that is missing. I don't think anyone proposed to
-> default to BFQ for such setup? Neither was anyone claiming that BFQ is
-> better in such situation... The proposal has been: Default to BFQ for slow
-> storage, leave it to deadline-mq otherwise.
+> That would be good, thanks.
+> 
+> > > And when was "earlier"?
+> > 
+> > v4.18, when all of these were originally eliminated:
+> > 
+> > 026f05079b00 treewide: Use array_size() in f2fs_kzalloc()
+> > c86065938aab treewide: Use array_size() in f2fs_kmalloc()
+> > 76e43e37a407 treewide: Use array_size() in sock_kmalloc()
+> > 84ca176bf54a treewide: Use array_size() in kvzalloc_node()
+> > fd7becedb1f0 treewide: Use array_size() in vzalloc_node()
+> > fad953ce0b22 treewide: Use array_size() in vzalloc()
+> > 42bc47b35320 treewide: Use array_size() in vmalloc()
+> > a86854d0c599 treewide: devm_kzalloc() -> devm_kcalloc()
+> > 3c4211ba8ad8 treewide: devm_kmalloc() -> devm_kmalloc_array()
+> > 778e1cdd81bb treewide: kvzalloc() -> kvcalloc()
+> > 344476e16acb treewide: kvmalloc() -> kvmalloc_array()
+> > 590b5b7d8671 treewide: kzalloc_node() -> kcalloc_node()
+> > 6396bb221514 treewide: kzalloc() -> kcalloc()
+> > 6da2ec56059c treewide: kmalloc() -> kmalloc_array()
+> > 
+> > The new patch is catching new open-coded multiplications introduced in v4.19.
+> 
+> As this is getting smaller, why not just break it up and do it through
+> all of the different subsystems instead of one large patch?
+> 
+> And do we have a way to add a rule to 0-day to catch these so that they
+> get a warning when they are added again?
 
-Hi Jan,
+They could just be added to scripts/coccinelle and 0-day will report them?
 
-How do you define slow storage? The proposal at the start of this thread 
-was to make BFQ the default for all block devices that create a single 
-hardware queue. That includes all SATA storage since scsi-mq only 
-creates a single hardware queue when using the SATA protocol. The 
-proposal to make BFQ the default for systems with a single hard disk 
-probably makes sense but I am not sure that making BFQ the default for 
-systems equipped with one or more (SATA) SSDs is also a good idea. 
-Especially for multi-socket systems since BFQ reintroduces a queue-wide 
-lock. As you know no queue-wide locking happens during I/O in the 
-scsi-mq core nor in the blk-mq core.
+For example, 0-day ran scripts/coccinelle/api/platform_no_drv_owner.cocci on
+a recently submitted patch and reported it here:
+https://lore.kernel.org/lkml/201808301856.vMNJerSs%25fengguang.wu@intel.com/
 
-Bart.
+But I'm not sure if 0-day runs make coccicheck on specific semantic patches,
+or runs all of them (CC'd Fengguang).
+
+thanks,
+
+ - Joel
+
