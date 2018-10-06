@@ -2,64 +2,63 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0DEC65BD1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B45C00449
 	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F45621480
+	by mail.kernel.org (Postfix) with ESMTP id 643F321479
 	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 02:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtFCbeUQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F45621480
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJHmpJuj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643F321479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeJFJv0 (ORCPT
+        id S1729228AbeJFJvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 05:51:26 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36908 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeJFJvZ (ORCPT
+        Sat, 6 Oct 2018 05:51:24 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35916 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeJFJvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 05:51:25 -0400
-Received: by mail-pl1-f196.google.com with SMTP id az3-v6so7619642plb.4;
-        Fri, 05 Oct 2018 19:49:54 -0700 (PDT)
+        Sat, 6 Oct 2018 05:51:24 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l81-v6so811142pfg.3;
+        Fri, 05 Oct 2018 19:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FVIsmZsD2UYUIajD9wCWvufUKrPcgTlr9PeHswP0yEs=;
-        b=TtFCbeUQABKwJQNsY1ARZNCx4FpkA64f1mZStu96EEXotHAt9mhWVKYMxISGgZIuAy
-         e9XH9h3UlTqIpFJMnHvv/F8ZM3YpgWBol0G9MgMTvKLfdMDQz8waroBAE9BLt5i93eVi
-         unxz3ToLsqxZShV8nWoWz6xE75lLYMtfFYZa6ryBouDtkU2CFbENDu0gwAipIPucI4/f
-         f0dfgBXLY34NZf5lVhC7Qpdg5v8kHXASNVpHN+Fzx8XoIQ0xnffM0N42BrjnGZSmJbKE
-         YHf+gQbLgTWl94iN98FCxVLbs7fd8BDOird5jcNZ0YsgMma0hW3XG/ZtLeo0SFW8+VQ9
-         z43Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NWVvB4KoMztN3RfvQsH7juqXZuH+ge8yGMOqZR0qLbk=;
+        b=tJHmpJuj6//bePZPXlSMexP3IqebnIh82gjuaIdBGQuaf+VL86X7SZ15++gk3CwHPc
+         2Fn1TDWsH+h/ITuZ02XSImb+GR0A0uCwdBO78ygB3cN1QcWg/2VrA0rrXYD57Vct+W+Z
+         Oh+AdHlOZTPB7BOyRUPYT7yiqy7B/fNcYz4yQAH7E+QUJLifeYphwghxxU1ILUZbWRRD
+         GmDYPJW+25ZQ/ItnugPeAOtjrwLrdHqTkJjdxvHcOcQvr4wA5HfglhdN2DwkJ9rXY864
+         VIhUcMRVGLHKExqG60rKheeDiqQWTe818BUxDy45QzIcs/FYVwnoAtVxRPSNGTwO8GdC
+         Sddw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FVIsmZsD2UYUIajD9wCWvufUKrPcgTlr9PeHswP0yEs=;
-        b=Zy4hxmTA+QTudPryYRt/LBenb43SipAeeeA+JYpVicfCEx2cznd7tr0jKV4+ZV0boH
-         QzA1Famlsjg2bLDdKCh1Q8SNG+J4Fx7ugCKhnsRGZIy9VGSHACdDIEEf3mfA2JXDiFs/
-         PonFBbl4mHVcNa2QKF5kzxDHto/NwSwDT3UXvne3lgLh8cLz7pkuNk7P9rUrTns5RZrn
-         G0LX1Hrxk5u6nEMoo7woH8cJduuyBZz3yfgPvH+0dq9dLsV3f3sxdBXyCbw984UO2aP2
-         kLnT8moDmcnLCIuZfXct9l6X7deaaXXBkfanXLlWeClyuXhWYKQ56wltflq7Pk0hCYab
-         DIjw==
-X-Gm-Message-State: ABuFfojgEjPZ62dcd/gHT0Htc6CMJra0eay4DFKl43SMRI7kQyvIZWmH
-        6o17LVDYKDRkhP/CScA/L5s=
-X-Google-Smtp-Source: ACcGV62BmgctjFnuEzcUrQCVuDXjZsdW3sOw7lJYocd8SSwA0nJNtMPSF930/XkeU2sheSeUcgT72w==
-X-Received: by 2002:a17:902:a618:: with SMTP id u24-v6mr14096438plq.77.1538794193757;
-        Fri, 05 Oct 2018 19:49:53 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm3962785pfn.9.2018.10.05.19.49.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NWVvB4KoMztN3RfvQsH7juqXZuH+ge8yGMOqZR0qLbk=;
+        b=h7a6g6Npcf6D/XBzImyr2Bj/3IjMTN0b9alH5Q4jdpnQSobmoHh4P2lfQJT9fTEdLn
+         Dyq7uoZfEvLQpQOUFcyoQRVQfbii/xSJy1gaLiIt7pYoCiFJJv1Q6fcR1uj5a7/wxNau
+         Q1lLTe1IfT+OjAqNrMigbRxXvl/kjUscZ/GUEER9e35qoW88aBPtsqIKlmwZbTXaN6fJ
+         9VWCgMWdNVUz9ZiFjF94ddoDPBjTgoAygdjmIGT1t9bSlhTpcj/vSnxOnPpctgj2fSq6
+         YV5hpbEqcImPx2RBYPQFhXNFQyq7m68/13+SzZrubdkHnwjOzHo+FOgYyHr2yqzxt9D/
+         AS+Q==
+X-Gm-Message-State: ABuFfoggpRYDNc8ofJQszpX8za8Mg9Jfx1pP5QrIARItQCWHfET/MmtN
+        c1i/eSVcarPSE/HwO6WSjyVxpTWl
+X-Google-Smtp-Source: ACcGV62eipnqqwRNkNBaKJerrKmLONkG7QsEP58EDheoe5/H3eOzEMVP6KBDnMJ1U/aUATxVLfD/cg==
+X-Received: by 2002:a63:1520:: with SMTP id v32-v6mr8273824pgl.150.1538794192307;
         Fri, 05 Oct 2018 19:49:52 -0700 (PDT)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id n63-v6sm3962785pfn.9.2018.10.05.19.49.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 19:49:51 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Matthew Wilcox <willy@infradead.org>,
@@ -70,13 +69,15 @@ To:     Matthew Wilcox <willy@infradead.org>,
         Jan Kara <jack@suse.cz>
 Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
         linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3 1/3] mm: get_user_pages: consolidate error handling
-Date:   Fri,  5 Oct 2018 19:49:47 -0700
-Message-Id: <20181006024949.20691-2-jhubbard@nvidia.com>
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: [PATCH v3 0/3] get_user_pages*() and RDMA: first steps
+Date:   Fri,  5 Oct 2018 19:49:46 -0700
+Message-Id: <20181006024949.20691-1-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181006024949.20691-1-jhubbard@nvidia.com>
-References: <20181006024949.20691-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
@@ -87,116 +88,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-An upcoming patch requires a way to operate on each page that
-any of the get_user_pages_*() variants returns.
+Changes since v2:
 
-In preparation for that, consolidate the error handling for
-__get_user_pages(). This provides a single location (the "out:" label)
-for operating on the collected set of pages that are about to be returned.
+-- Absorbed more dirty page handling logic into the put_user_page*(), and
+   handled some page releasing loops in infiniband more thoroughly, as per
+   Jason Gunthorpe's feedback.
 
-As long every use of the "ret" variable is being edited, rename
-"ret" --> "err", so that its name matches its true role.
-This also gets rid of two shadowed variable declarations, as a
-tiny beneficial a side effect.
+-- Fixed a bug in the put_user_pages*() routines' loops (thanks to
+   Ralph Campbell for spotting it).
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- mm/gup.c | 37 ++++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+Changes since v1:
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 1abc8b4afff6..05ee7c18e59a 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -660,6 +660,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		struct vm_area_struct **vmas, int *nonblocking)
- {
- 	long i = 0;
-+	int err = 0;
- 	unsigned int page_mask;
- 	struct vm_area_struct *vma = NULL;
- 
-@@ -685,18 +686,19 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		if (!vma || start >= vma->vm_end) {
- 			vma = find_extend_vma(mm, start);
- 			if (!vma && in_gate_area(mm, start)) {
--				int ret;
--				ret = get_gate_page(mm, start & PAGE_MASK,
-+				err = get_gate_page(mm, start & PAGE_MASK,
- 						gup_flags, &vma,
- 						pages ? &pages[i] : NULL);
--				if (ret)
--					return i ? : ret;
-+				if (err)
-+					goto out;
- 				page_mask = 0;
- 				goto next_page;
- 			}
- 
--			if (!vma || check_vma_flags(vma, gup_flags))
--				return i ? : -EFAULT;
-+			if (!vma || check_vma_flags(vma, gup_flags)) {
-+				err = -EFAULT;
-+				goto out;
-+			}
- 			if (is_vm_hugetlb_page(vma)) {
- 				i = follow_hugetlb_page(mm, vma, pages, vmas,
- 						&start, &nr_pages, i,
-@@ -709,23 +711,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		 * If we have a pending SIGKILL, don't keep faulting pages and
- 		 * potentially allocating memory.
- 		 */
--		if (unlikely(fatal_signal_pending(current)))
--			return i ? i : -ERESTARTSYS;
-+		if (unlikely(fatal_signal_pending(current))) {
-+			err = -ERESTARTSYS;
-+			goto out;
-+		}
- 		cond_resched();
- 		page = follow_page_mask(vma, start, foll_flags, &page_mask);
- 		if (!page) {
--			int ret;
--			ret = faultin_page(tsk, vma, start, &foll_flags,
-+			err = faultin_page(tsk, vma, start, &foll_flags,
- 					nonblocking);
--			switch (ret) {
-+			switch (err) {
- 			case 0:
- 				goto retry;
- 			case -EFAULT:
- 			case -ENOMEM:
- 			case -EHWPOISON:
--				return i ? i : ret;
-+				goto out;
- 			case -EBUSY:
--				return i;
-+				err = 0;
-+				goto out;
- 			case -ENOENT:
- 				goto next_page;
- 			}
-@@ -737,7 +741,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			 */
- 			goto next_page;
- 		} else if (IS_ERR(page)) {
--			return i ? i : PTR_ERR(page);
-+			err = PTR_ERR(page);
-+			goto out;
- 		}
- 		if (pages) {
- 			pages[i] = page;
-@@ -757,7 +762,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		start += page_increm * PAGE_SIZE;
- 		nr_pages -= page_increm;
- 	} while (nr_pages);
--	return i;
-+
-+out:
-+	return i ? i : err;
- }
- 
- static bool vma_permits_fault(struct vm_area_struct *vma,
+-- Renamed release_user_pages*() to put_user_pages*(), from Jan's feedback.
+
+-- Removed the goldfish.c changes, and instead, only included a single
+   user (infiniband) of the new functions. That is because goldfish.c no
+   longer has a name collision (it has a release_user_pages() routine), and
+   also because infiniband exercises both the put_user_page() and
+   put_user_pages*() paths.
+
+-- Updated links to discussions and plans, so as to be sure to include
+   bounce buffers, thanks to Jerome's feedback.
+
+Also:
+
+-- Dennis, thanks for your earlier review, and I have not yet added your
+   Reviewed-by tag, because this revision changes the things that you had
+   previously reviewed, thus potentially requiring another look.
+
+This short series prepares for eventually fixing the problem described
+in [1], and is following a plan listed in [2], [3], [4].
+
+Patch 1, although not technically critical to do now, is still nice to
+have, because it's already been reviewed by Jan, and it's just one more
+thing on the long TODO list here, that is ready to be checked off.
+
+Patch 2 is required in order to allow me (and others, if I'm lucky) to
+start submitting changes to convert all of the callsites of
+get_user_pages*() and put_page().  I think this will work a lot better
+than trying to maintain a massive patchset and submitting all at once.
+
+Patch 3 converts infiniband drivers: put_page() --> put_user_page(), and
+also exercises put_user_pages_dirty_locked().
+
+Once these are all in, then the floodgates can open up to convert the large
+number of get_user_pages*() callsites.
+
+[1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+
+[2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
+    Proposed steps for fixing get_user_pages() + DMA problems.
+
+[3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
+    Bounce buffers (otherwise [2] is not really viable).
+
+[4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
+    Follow-up discussions.
+
+CC: Matthew Wilcox <willy@infradead.org>
+CC: Michal Hocko <mhocko@kernel.org>
+CC: Christopher Lameter <cl@linux.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Jan Kara <jack@suse.cz>
+CC: Al Viro <viro@zeniv.linux.org.uk>
+CC: Jerome Glisse <jglisse@redhat.com>
+CC: Christoph Hellwig <hch@infradead.org>
+CC: Ralph Campbell <rcampbell@nvidia.com>
+
+John Hubbard (3):
+  mm: get_user_pages: consolidate error handling
+  mm: introduce put_user_page*(), placeholder versions
+  infiniband/mm: convert put_page() to put_user_page*()
+
+ drivers/infiniband/core/umem.c              |  7 +--
+ drivers/infiniband/core/umem_odp.c          |  2 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++---
+ drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +--
+ drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++---
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |  8 ++--
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 +--
+ include/linux/mm.h                          | 48 ++++++++++++++++++++-
+ mm/gup.c                                    | 37 +++++++++-------
+ 9 files changed, 92 insertions(+), 45 deletions(-)
+
 -- 
 2.19.0
 
