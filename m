@@ -2,474 +2,192 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C8EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 07:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EBEC64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 07:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D462087D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 07:28:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EBx3rbl1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D462087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B9A420875
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 07:37:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9A420875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeJFObM (ORCPT
+        id S1727947AbeJFOjV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 10:31:12 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41398 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbeJFObL (ORCPT
+        Sat, 6 Oct 2018 10:39:21 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:34460 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbeJFOjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 10:31:11 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w967SQ5I079087;
-        Sat, 6 Oct 2018 02:28:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538810906;
-        bh=/ZRzakmN50V7d05LQDlgzCQ/87+y6ylpFeItMkpMmOc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=EBx3rbl1j4meAcmu3/1DZTrwu9YArpJz9NUO47uu15o9DqZY6DkKQ4zZpaJTyOUHy
-         LoBbhA/nAY8Jl2KlSCBXe+UPJAL9LBmDbzuU3fU+hilsHeXbPA0WDoBPO2OglrtNcF
-         TCkkaJQ95mBZQouWq+DxxkhoNXnZ6GGS7IrIMS6k=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w967SQeg031762;
-        Sat, 6 Oct 2018 02:28:26 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sat, 6 Oct
- 2018 02:28:26 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sat, 6 Oct 2018 02:28:26 -0500
-Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w967SFuE016164;
-        Sat, 6 Oct 2018 02:28:23 -0500
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-To:     Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH 2/2] irqchip: ti-sci-intr: Add support for Interrupt Router driver
-Date:   Sat, 6 Oct 2018 12:58:12 +0530
-Message-ID: <20181006072812.15814-3-lokeshvutla@ti.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181006072812.15814-1-lokeshvutla@ti.com>
-References: <20181006072812.15814-1-lokeshvutla@ti.com>
+        Sat, 6 Oct 2018 10:39:21 -0400
+Received: by mail-io1-f71.google.com with SMTP id y3-v6so14249336iob.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 00:37:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=q/un/j6KCmqUjx5alDexbhntQd5OdYpTxDCIoOHWpUQ=;
+        b=Odih9Xuf9c7o/uvcj5U73KCyvU2k7RMahV6GYjKmoN5O1ypKQriFhSvh2gx7nCS+Ct
+         iVvuBjE/3tgaJw+EBBT650cWEbabmzE0nedFfU5cBEFr9L1CbMg84DrPT/YE7Z38bHwq
+         fF83lOq7KZ9fvm1guvwYUvRXqi9Ld/OKKqzj+ib+GJ59e2MSbClDBXp0iOPqPdVC80kE
+         HWVJfZN07QKOaXg59Cc/kmNEWqpwhah4NkOoKdNVtRg5BRApMAqlTl7/ufaw4x32x9V7
+         i6W/O7OwH1dfMgd4/GFjyVUYbIJaZSDvqF5w4/5bnXGgaRVjLEJQ128Vl5AxMOoDCnSC
+         snlA==
+X-Gm-Message-State: ABuFfogkdVAxHewHBVVp9skkL+vSIapeg2vJMk1yGBzfR0/Wja6UZ1kN
+        jub/VdrbD+Q2tyUtzY2UQeKAUfn39ZE7NQqXCFFmxMjK1d2H
+X-Google-Smtp-Source: ACcGV61AytknWI/qYEuAdEAdI16VPCxzLG0/cdFQpT3T3xLqHlRtEOiwyjSHaS3lYJFZ1n5TpINFJeOI7jyYWBh23CAAQ3qdy6bK
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a6b:c786:: with SMTP id x128-v6mr10238764iof.1.1538811423738;
+ Sat, 06 Oct 2018 00:37:03 -0700 (PDT)
+Date:   Sat, 06 Oct 2018 00:37:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000049d7e605778a7402@google.com>
+Subject: KASAN: use-after-free Read in af_alg_wmem_wakeup
+From:   syzbot <syzbot+087a5bddc4565427739e@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Texas Instruments' K3 generation SoCs has an IP Interrupt Router
-that does allows for multiplexing of input interrupts to host
-interrupt controller. Interrupt Router inputs are either from a
-peripheral or from an Interrupt Aggregator which is another
-interrupt controller.
+Hello,
 
-Configuration of the interrupt router registers can only be done by
-a system co-processor and the driver needs to send a message to this
-co processor over TISCI protocol.
+syzbot found the following crash on:
 
-Add support for Interrupt Router driver over TISCI protocol.
+HEAD commit:    befad944e231 Merge tag 'drm-fixes-2018-10-05' of git://ano..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=159f6bc6400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=087a5bddc4565427739e
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+087a5bddc4565427739e@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in af_alg_sndbuf include/crypto/if_alg.h:190  
+[inline]
+BUG: KASAN: use-after-free in af_alg_writable include/crypto/if_alg.h:204  
+[inline]
+BUG: KASAN: use-after-free in af_alg_wmem_wakeup+0x711/0x7d0  
+crypto/af_alg.c:731
+Read of size 8 at addr ffff880186c705f0 by task syz-executor1/21582
+
+CPU: 0 PID: 21582 Comm: syz-executor1 Not tainted 4.19.0-rc6+ #268
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  af_alg_sndbuf include/crypto/if_alg.h:190 [inline]
+  af_alg_writable include/crypto/if_alg.h:204 [inline]
+  af_alg_wmem_wakeup+0x711/0x7d0 crypto/af_alg.c:731
+  aead_recvmsg+0x53e/0x1ba0 crypto/algif_aead.c:354
+  sock_recvmsg_nosec net/socket.c:794 [inline]
+  sock_recvmsg+0xd0/0x110 net/socket.c:801
+  sock_read_iter+0x39b/0x570 net/socket.c:878
+  call_read_iter include/linux/fs.h:1802 [inline]
+  aio_read+0x297/0x490 fs/aio.c:1516
+  io_submit_one+0xac2/0xf80 fs/aio.c:1832
+  __do_sys_io_submit fs/aio.c:1916 [inline]
+  __se_sys_io_submit fs/aio.c:1887 [inline]
+  __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2c2b30bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
+RDX: 0000000020001440 RSI: 0000000000000002 RDI: 00007f2c2b2eb000
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2c2b30c6d4
+R13: 00000000004be741 R14: 00000000004ce380 R15: 00000000ffffffff
+
+Allocated by task 21585:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  sk_prot_alloc+0x1b0/0x2e0 net/core/sock.c:1468
+  sk_alloc+0x10d/0x1690 net/core/sock.c:1522
+  af_alg_accept+0x9d/0x7d0 crypto/af_alg.c:287
+  alg_accept+0x46/0x60 crypto/af_alg.c:332
+  __sys_accept4+0x3b2/0x8a0 net/socket.c:1590
+  __do_sys_accept4 net/socket.c:1625 [inline]
+  __se_sys_accept4 net/socket.c:1622 [inline]
+  __x64_sys_accept4+0x97/0xf0 net/socket.c:1622
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 21580:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3813
+  sk_prot_free net/core/sock.c:1505 [inline]
+  __sk_destruct+0x797/0xa80 net/core/sock.c:1587
+  sk_destruct+0x78/0x90 net/core/sock.c:1595
+  __sk_free+0xcf/0x300 net/core/sock.c:1606
+  sk_free+0x42/0x50 net/core/sock.c:1617
+  sock_put include/net/sock.h:1691 [inline]
+  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1141
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff880186c70180
+  which belongs to the cache kmalloc-2048 of size 2048
+The buggy address is located 1136 bytes inside of
+  2048-byte region [ffff880186c70180, ffff880186c70980)
+The buggy address belongs to the page:
+page:ffffea00061b1c00 count:1 mapcount:0 mapping:ffff8801da800c40 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea0007266508 ffffea0006129088 ffff8801da800c40
+raw: 0000000000000000 ffff880186c70180 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff880186c70480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff880186c70500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff880186c70580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                              ^
+  ffff880186c70600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff880186c70680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- MAINTAINERS                       |   1 +
- drivers/irqchip/Kconfig           |  11 +
- drivers/irqchip/Makefile          |   1 +
- drivers/irqchip/irq-ti-sci-intr.c | 325 ++++++++++++++++++++++++++++++
- 4 files changed, 338 insertions(+)
- create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a23778b68d74..cf3c834f8cee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14626,6 +14626,7 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
- F:	drivers/clk/keystone/sci-clk.c
- F:	drivers/reset/reset-ti-sci.c
- F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
-+F:	drivers/irqchip/irq-ti-sci-intr.c
- 
- THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 96451b581452..9a965fe22043 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -374,6 +374,17 @@ config QCOM_PDC
- 	  Power Domain Controller driver to manage and configure wakeup
- 	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
- 
-+config TI_SCI_INTR_IRQCHIP
-+	tristate "TISCI based Interrupt Router irqchip driver"
-+	depends on TI_SCI_PROTOCOL && ARCH_K3
-+	select IRQ_DOMAIN
-+	select IRQ_DOMAIN_HIERARCHY
-+	help
-+	  This enables the irqchip driver support for K3 Interrupt router
-+	  over TI System Control Interface available on some new TI's SoCs.
-+	  If you wish to use interrupt router irq resources managed by the
-+	  TI System Controller, say Y here. Otherwise, say N.
-+
- endmenu
- 
- config SIFIVE_PLIC
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index b822199445ff..44bf65606d60 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -89,3 +89,4 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
- obj-$(CONFIG_NDS32)			+= irq-ativic32.o
- obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-+obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
-diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
-new file mode 100644
-index 000000000000..f04fe6da1b09
---- /dev/null
-+++ b/drivers/irqchip/irq-ti-sci-intr.c
-@@ -0,0 +1,325 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Texas Instruments' K3 Interrupt Router irqchip driver
-+ *
-+ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+ *	Lokesh Vutla <lokeshvutla@ti.com>
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/irqchip.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/irqdomain.h>
-+#include <linux/soc/ti/ti_sci_protocol.h>
-+
-+#define TI_SCI_DEV_ID_MASK	0xffff
-+#define TI_SCI_DEV_ID_SHIFT	16
-+#define TI_SCI_IRQ_ID_MASK	0xffff
-+#define TI_SCI_IRQ_ID_SHIFT	0
-+#define TI_SCI_IS_EVENT_IRQ	BIT(31)
-+
-+#define HWIRQ_TO_DEVID(HWIRQ)	(((HWIRQ) >> (TI_SCI_DEV_ID_SHIFT)) & \
-+				 (TI_SCI_DEV_ID_MASK))
-+#define HWIRQ_TO_IRQID(HWIRQ)	((HWIRQ) & (TI_SCI_IRQ_ID_MASK))
-+
-+/**
-+ * struct ti_sci_intr_irq_domain - Structure representing a TISCI based
-+ *				   Interrupt Router IRQ domain.
-+ * @sci:	Pointer to TISCI handle
-+ * @dst_irq:	TISCI resource pointer representing destination irq controller.
-+ * @dst_id:	TISCI device ID of the destination irq controller.
-+ */
-+struct ti_sci_intr_irq_domain {
-+	const struct ti_sci_handle *sci;
-+	struct ti_sci_resource *dst_irq;
-+	u16 dst_id;
-+};
-+
-+/**
-+ * struct ti_sci_intr_irq_desc - Description of an Interrupt Router IRQ
-+ * @src_id:		TISCI device ID of the IRQ source
-+ * @src_index:		IRQ source index within the device.
-+ * @dst_irq:		Destination host IRQ.
-+ */
-+struct ti_sci_intr_irq_desc {
-+	u16 src_id;
-+	u16 src_index;
-+	u16 dst_irq;
-+};
-+
-+static struct irq_chip ti_sci_intr_irq_chip = {
-+	.name			= "INTR",
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-+	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+};
-+
-+/**
-+ * ti_sci_intr_irq_domain_translate() - Retrieve hwirq and type from
-+ *					IRQ firmware specific handler.
-+ * @domain:	Pointer to IRQ domain
-+ * @fwspec:	Pointer to IRQ specific firmware structure
-+ * @hwirq:	IRQ number identified by hardware
-+ * @type:	IRQ type
-+ *
-+ * Return 0 if all went ok else appropriate error.
-+ */
-+static int ti_sci_intr_irq_domain_translate(struct irq_domain *domain,
-+					    struct irq_fwspec *fwspec,
-+					    unsigned long *hwirq,
-+					    unsigned int *type)
-+{
-+	if (is_of_node(fwspec->fwnode)) {
-+		if (fwspec->param_count != 3)
-+			return -EINVAL;
-+
-+		*hwirq = ((fwspec->param[0] & TI_SCI_DEV_ID_MASK) <<
-+			  TI_SCI_DEV_ID_SHIFT) |
-+			 (fwspec->param[1] & TI_SCI_IRQ_ID_MASK);
-+		*type = fwspec->param[2];
-+
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static inline void ti_sci_intr_delete_desc(struct ti_sci_intr_irq_domain *intr,
-+					   struct ti_sci_intr_irq_desc *desc)
-+{
-+	intr->sci->ops.rm_irq_ops.free_direct_irq(intr->sci, desc->src_id,
-+						  desc->src_index,
-+						  intr->dst_id, desc->dst_irq);
-+	pr_debug("%s: IRQ deleted from src = %d, src_index = %d, to dst = %d, dst_irq = %d\n",
-+		 __func__, desc->src_id, desc->src_index, intr->dst_id,
-+		desc->dst_irq);
-+}
-+
-+/**
-+ * ti_sci_intr_irq_domain_free() - Free the specified IRQs from the domain.
-+ * @domain:	Domain to which the irqs belong
-+ * @virq:	Linux virtual IRQ to be freed.
-+ * @nr_irqs:	Number of continuous irqs to be freed
-+ */
-+static void ti_sci_intr_irq_domain_free(struct irq_domain *domain,
-+					unsigned int virq, unsigned int nr_irqs)
-+{
-+	struct ti_sci_intr_irq_domain *intr = domain->host_data;
-+	struct ti_sci_intr_irq_desc *desc;
-+	struct irq_data *data;
-+	int i;
-+
-+	intr = domain->host_data;
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		data = irq_domain_get_irq_data(domain, virq + i);
-+
-+		desc = irq_data_get_irq_chip_data(data);
-+
-+		ti_sci_intr_delete_desc(intr, desc);
-+		irq_domain_free_irqs_parent(domain, virq, 1);
-+		irq_domain_reset_irq_data(data);
-+		ti_sci_release_resource(intr->dst_irq, desc->dst_irq);
-+		kfree(desc);
-+	}
-+}
-+
-+/**
-+ * allocate_gic_irq() - Allocate GIC specific IRQ
-+ * @domain:	Point to the interrupt router IRQ domain
-+ * @dev:	TISCI device IRQ generating the IRQ
-+ * @irq:	IRQ offset within the device
-+ * @flags:	Corresponding flags to the IRQ
-+ *
-+ * Returns pointer to irq descriptor if all went well else appropriate
-+ * error pointer.
-+ */
-+static struct ti_sci_intr_irq_desc *allocate_gic_irq(struct irq_domain *domain,
-+						     unsigned int virq,
-+						     u16 dev, u16 irq,
-+						     u32 flags)
-+{
-+	struct ti_sci_intr_irq_domain *intr = domain->host_data;
-+	struct ti_sci_intr_irq_desc *desc;
-+	struct irq_fwspec fwspec;
-+	int err;
-+
-+	if (!irq_domain_get_of_node(domain->parent))
-+		return ERR_PTR(-EINVAL);
-+
-+	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
-+	if (!desc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	desc->src_id = dev;
-+	desc->src_index = irq;
-+	desc->dst_irq = ti_sci_get_free_resource(intr->dst_irq);
-+
-+	fwspec.fwnode = domain->parent->fwnode;
-+	fwspec.param_count = 3;
-+	fwspec.param[0] = 0;	/* SPI */
-+	fwspec.param[1] = desc->dst_irq - 32; /* SPI offset */
-+	fwspec.param[2] = flags & IRQ_TYPE_SENSE_MASK;
-+
-+	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
-+	if (err)
-+		goto err_irqs;
-+
-+	pr_debug("%s: IRQ requested from src = %d, src_index = %d, to dst = %d, dst_irq = %d\n",
-+		 __func__, desc->src_id, desc->src_index, intr->dst_id,
-+		 desc->dst_irq);
-+
-+	err = intr->sci->ops.rm_irq_ops.set_direct_irq(intr->sci, desc->src_id,
-+						       desc->src_index,
-+						       intr->dst_id,
-+						       desc->dst_irq);
-+	if (err) {
-+		pr_err("%s: IRQ allocation failed from src = %d, src_index = %d to dst_id = %d, dst_irq = %d",
-+		       __func__, desc->src_id, desc->src_index, intr->dst_id,
-+		       desc->dst_irq);
-+		goto err_msg;
-+	}
-+
-+	return desc;
-+
-+err_msg:
-+	irq_domain_free_irqs_parent(domain, virq, 1);
-+err_irqs:
-+	ti_sci_release_resource(intr->dst_irq, desc->dst_irq);
-+	kfree(desc);
-+	return ERR_PTR(err);
-+}
-+
-+/**
-+ * ti_sci_intr_irq_domain_alloc() - Allocate Interrupt router IRQs
-+ * @domain:	Point to the interrupt router IRQ domain
-+ * @virq:	Corresponding Linux virtual IRQ number
-+ * @nr_irqs:	Continuous irqs to be allocated
-+ * @data:	Pointer to firmware specifier
-+ *
-+ * Return 0 if all went well else appropriate error value.
-+ */
-+static int ti_sci_intr_irq_domain_alloc(struct irq_domain *domain,
-+					unsigned int virq, unsigned int nr_irqs,
-+					void *data)
-+{
-+	struct irq_fwspec *fwspec = data;
-+	struct ti_sci_intr_irq_desc *desc;
-+	unsigned long hwirq;
-+	u16 src_id, src_index;
-+	int i, err;
-+	u32 type;
-+
-+	err = ti_sci_intr_irq_domain_translate(domain, fwspec, &hwirq, &type);
-+	if (err)
-+		return err;
-+
-+	src_id = HWIRQ_TO_DEVID(hwirq);
-+	src_index = HWIRQ_TO_IRQID(hwirq);
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		desc = allocate_gic_irq(domain, virq + i, src_id, src_index + i,
-+					type);
-+		if (IS_ERR(desc))
-+			/* ToDO: Clean already allocated IRQs */
-+			return PTR_ERR(desc);
-+
-+		err = irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-+						    &ti_sci_intr_irq_chip,
-+						    desc);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops ti_sci_intr_irq_domain_ops = {
-+	.alloc		= ti_sci_intr_irq_domain_alloc,
-+	.free		= ti_sci_intr_irq_domain_free,
-+	.translate	= ti_sci_intr_irq_domain_translate,
-+};
-+
-+static int ti_sci_intr_irq_domain_probe(struct platform_device *pdev)
-+{
-+	struct irq_domain *parent_domain, *domain;
-+	struct ti_sci_intr_irq_domain *intr;
-+	struct device_node *parent_node;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	parent_node = of_irq_find_parent(dev_of_node(dev));
-+	if (!parent_node) {
-+		dev_err(dev, "Failed to get IRQ parent node\n");
-+		return -ENODEV;
-+	}
-+
-+	parent_domain = irq_find_host(parent_node);
-+	if (!parent_domain) {
-+		dev_err(dev, "Failed to find IRQ parent domain\n");
-+		return -ENODEV;
-+	}
-+
-+	intr = devm_kzalloc(dev, sizeof(*intr), GFP_KERNEL);
-+	if (!intr)
-+		return -ENOMEM;
-+
-+	intr->sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
-+	if (IS_ERR(intr->sci)) {
-+		ret = PTR_ERR(intr->sci);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "ti,sci read fail %d\n", ret);
-+		intr->sci = NULL;
-+		return ret;
-+	}
-+
-+	intr->dst_irq = devm_ti_sci_get_of_resource(intr->sci, dev,
-+						    "ti,sci-rm-range-girq");
-+	if (IS_ERR(intr->dst_irq)) {
-+		dev_err(dev, "Destination irq resource allocation failed\n");
-+		return PTR_ERR(intr->dst_irq);
-+	}
-+
-+	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dst-id",
-+				   (u32 *)&intr->dst_id);
-+	if (ret) {
-+		dev_err(dev, "missing 'ti,sci-dst-id' property\n");
-+		return -EINVAL;
-+	}
-+
-+	domain = irq_domain_add_hierarchy(parent_domain, 0, 0, dev_of_node(dev),
-+					  &ti_sci_intr_irq_domain_ops, intr);
-+	if (!domain) {
-+		dev_err(dev, "Failed to allocate IRQ domain\n");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ti_sci_intr_irq_domain_of_match[] = {
-+	{ .compatible = "ti,sci-intr", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, ti_sci_intr_irq_domain_of_match);
-+
-+static struct platform_driver ti_sci_intr_irq_domain_driver = {
-+	.probe = ti_sci_intr_irq_domain_probe,
-+	.driver = {
-+		.name = "ti-sci-intr",
-+		.of_match_table = ti_sci_intr_irq_domain_of_match,
-+	},
-+};
-+module_platform_driver(ti_sci_intr_irq_domain_driver);
-+
-+MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ticom>");
-+MODULE_DESCRIPTION("K3 Interrupt Router driver over TI SCI protocol");
-+MODULE_LICENSE("GPL v2");
--- 
-2.19.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
