@@ -2,94 +2,445 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC78ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 21:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EC3ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 21:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 306FA208E7
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 21:18:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiwEkO1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306FA208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 42FBC208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 21:18:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FBC208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbeJGEXI (ORCPT
+        id S1726825AbeJGEXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 00:23:08 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43990 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeJGEXI (ORCPT
+        Sun, 7 Oct 2018 00:23:35 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.91]:29323 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725778AbeJGEXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 00:23:08 -0400
-Received: by mail-lj1-f193.google.com with SMTP id r8-v6so14548090ljc.10;
-        Sat, 06 Oct 2018 14:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nyQA9OblBIWJcm5p8Zg/bhzRyBzuHUmKIgYWPhS+Yrc=;
-        b=fiwEkO1x0p13PEkKnacBQQHvM42hO29bkp+UL4LeOqCjlbBsDjH8vSwEsRv1ShtQgz
-         pw+Fj0TeepPbtyWk+qHGeLiwrLvkGwsJXr+E6ctfF9yWm40iHNGXxQHoGmon+QhYM4uB
-         gC/ZAOSA91b/7X79bQnwbHVlfEJNkjj/ucsrYriAAAlYuFXBhwXaFJ9t+zDM7Q+ZVkep
-         rzsQnEWt/yVxnGv3wyZaOKoKAsKUK3YOHRpb6bYh5k2BsezRBAO/xALu6FADO5X8xHnp
-         bb9FF2F4jZ+TuO2pZmcSIXAG4osgHpH2mD4E0QwPt0oNr+lC96EP3ad0gzO9NoddQD9L
-         0W7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nyQA9OblBIWJcm5p8Zg/bhzRyBzuHUmKIgYWPhS+Yrc=;
-        b=pzWFhhzM2GbqjKGp1IV55EPDbscCFHRBR+4VNw84jgL6aeEn2qU5j3IWPVBbXv76Za
-         Cj+kG6WqT3BAGEGGCs+mbmCFKDy1rYqjuTepbPnLtg57NsKSiaVTT8nOT/vM6lbQq2Ci
-         4Fp5UvpCYJR3yd3PRkAT6sKoX/6iuBYz+NswHOeOzKDWAFZe9vJvBOTVR3J0JHUCvDv/
-         bGtIWw6BI4MqGIAHeWq0yoWG5EVBdGtXMHn+pQgOdRXqB+yJX/08OCYYvwDqUTA/m2Cn
-         grcIKziawksUDJ4HpuGCjYjKiUtNRzGevg39WpNCjXu5180ekNDJiHIXzvLHmJkYfQzp
-         BY0A==
-X-Gm-Message-State: ABuFfogXFw2Fxm5PcHwlAp+SHfcmf256UmeELgatDtPqtZDrYkMpsmI3
-        hAz0tehuGtE9ZQIIkqQlAh8IcBxmhRLyt9iK+ms=
-X-Google-Smtp-Source: ACcGV61MPXtCwL0Gi9p5CQxsE21DFRqWgtIxnA7Nm86/5cQEdTrsJ3nQQQJ8hycKv6O6m3PnUHW4xh5jG+WXsV0N0kA=
-X-Received: by 2002:a2e:501c:: with SMTP id e28-v6mr10669835ljb.45.1538860697448;
- Sat, 06 Oct 2018 14:18:17 -0700 (PDT)
+        Sun, 7 Oct 2018 00:23:35 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id D3790150A
+        for <linux-kernel@vger.kernel.org>; Sat,  6 Oct 2018 16:18:44 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8tyGgV3lGRPoj8tyGgnqxW; Sat, 06 Oct 2018 16:18:44 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:45380 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g8tyG-000Cfh-87; Sat, 06 Oct 2018 16:18:44 -0500
+To:     Carmeli Tamir <carmeli.tamir@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <1538764038-96838-1-git-send-email-carmeli.tamir@gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] STAGING/EMXX_UDC: emxx_udc.c: Fixed all meaningful sparse
+ errors: 1. Added static to udc_controller 2. Added mising __iomem modifier to
+ handle p_regs 3. Added missing le16_to_cpu
+Message-ID: <39db31e1-51c9-7080-e509-442a0013bb0d@embeddedor.com>
+Date:   Sat, 6 Oct 2018 23:18:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com> <20181005083313.2088252-1-arnd@arndb.de>
-In-Reply-To: <20181005083313.2088252-1-arnd@arndb.de>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 6 Oct 2018 23:18:06 +0200
-Message-ID: <CANiq72mHDxe9-+pFf+dDuYXRz5YeyRYi6RW65tyo9-ENNngsCw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-renesas-soc@vger.kernel.org,
-        kieran.bingham+renesas@ideasonboard.com, stable@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1538764038-96838-1-git-send-email-carmeli.tamir@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g8tyG-000Cfh-87
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:45380
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 10:35 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Building any configuration with 'make W=1' produces a warning:
->
-> kernel/bounds.c:16:6: warnign: no previous prototype for 'foo' [-Wmissing-prototypes]
->
-> When also passing -Werror, this prevents us from building any
-> other files. Nobody ever calls the function, but we can't make
-> it 'static' either since we want the compiler output.
->
-> Calling it 'main' instead however avoids the warning, because gcc
-> does not insist on having a declaration for main.
 
-I think marking the function as static __used should do the trick and
-would be less confusing.
+Hi,
 
-Cheers,
-Miguel
+Please, separate the commit log from the subject. And mention exactly
+what are all those errors that sparse reported and that you are
+trying to fix.
+
+Notice that you didn't send this patch to all the relevant people.
+Use the get_maintainer.pl script for that.
+
+On 10/5/18 8:27 PM, Carmeli Tamir wrote:
+> Signed-off-by: Tamir Carmeli <carmeli.tamir@gmail.com>
+> ---
+>  drivers/staging/emxx_udc/Makefile   |  2 +-
+
+Also, did you modify the Makefile?
+
+Where are those changes?
+
+Thanks
+--
+Gustavo
+
+>  drivers/staging/emxx_udc/emxx_udc.c | 69 +++++++++++++++++++------------------
+>  drivers/staging/emxx_udc/emxx_udc.h |  2 +-
+>  3 files changed, 38 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+> index 3e51476..83eb430 100644
+> --- a/drivers/staging/emxx_udc/emxx_udc.c
+> +++ b/drivers/staging/emxx_udc/emxx_udc.c
+> @@ -56,25 +56,25 @@ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *, struct nbu2ss_ep *);
+>  
+>  /*===========================================================================*/
+>  /* Global */
+> -struct nbu2ss_udc udc_controller;
+> +static struct nbu2ss_udc udc_controller;
+>  
+>  /*-------------------------------------------------------------------------*/
+>  /* Read */
+> -static inline u32 _nbu2ss_readl(void *address)
+> +static inline u32 _nbu2ss_readl(void __iomem *address)
+>  {
+>  	return __raw_readl(address);
+>  }
+>  
+>  /*-------------------------------------------------------------------------*/
+>  /* Write */
+> -static inline void _nbu2ss_writel(void *address, u32 udata)
+> +static inline void _nbu2ss_writel(void __iomem *address, u32 udata)
+>  {
+>  	__raw_writel(udata, address);
+>  }
+>  
+>  /*-------------------------------------------------------------------------*/
+>  /* Set Bit */
+> -static inline void _nbu2ss_bitset(void *address, u32 udata)
+> +static inline void _nbu2ss_bitset(void __iomem *address, u32 udata)
+>  {
+>  	u32	reg_dt = __raw_readl(address) | (udata);
+>  
+> @@ -83,7 +83,7 @@ static inline void _nbu2ss_bitset(void *address, u32 udata)
+>  
+>  /*-------------------------------------------------------------------------*/
+>  /* Clear Bit */
+> -static inline void _nbu2ss_bitclr(void *address, u32 udata)
+> +static inline void _nbu2ss_bitclr(void __iomem *address, u32 udata)
+>  {
+>  	u32	reg_dt = __raw_readl(address) & ~(udata);
+>  
+> @@ -135,6 +135,7 @@ static void _nbu2ss_ep0_complete(struct usb_ep *_ep, struct usb_request *_req)
+>  {
+>  	u8		recipient;
+>  	u16		selector;
+> +	u16		wIndex;
+>  	u32		test_mode;
+>  	struct usb_ctrlrequest	*p_ctrl;
+>  	struct nbu2ss_udc *udc;
+> @@ -149,10 +150,11 @@ static void _nbu2ss_ep0_complete(struct usb_ep *_ep, struct usb_request *_req)
+>  			/*-------------------------------------------------*/
+>  			/* SET_FEATURE */
+>  			recipient = (u8)(p_ctrl->bRequestType & USB_RECIP_MASK);
+> -			selector  = p_ctrl->wValue;
+> +			selector  = le16_to_cpu(p_ctrl->wValue);
+>  			if ((recipient == USB_RECIP_DEVICE) &&
+>  			    (selector == USB_DEVICE_TEST_MODE)) {
+> -				test_mode = (u32)(p_ctrl->wIndex >> 8);
+> +				wIndex = le16_to_cpu(p_ctrl->wIndex);
+> +				test_mode = (u32)(wIndex >> 8);
+>  				_nbu2ss_set_test_mode(udc, test_mode);
+>  			}
+>  		}
+> @@ -184,7 +186,7 @@ static u32 _nbu2ss_get_begin_ram_address(struct nbu2ss_udc *udc)
+>  	u32		num, buf_type;
+>  	u32		data, last_ram_adr, use_ram_size;
+>  
+> -	struct ep_regs *p_ep_regs;
+> +	struct ep_regs __iomem *p_ep_regs;
+>  
+>  	last_ram_adr = (D_RAM_SIZE_CTRL / sizeof(u32)) * 2;
+>  	use_ram_size = 0;
+> @@ -377,7 +379,7 @@ static void _nbu2ss_ep_dma_exit(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+>  {
+>  	u32		num;
+>  	u32		data;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs __iomem	*preg = udc->p_regs;
+>  
+>  	if (udc->vbus_active == 0)
+>  		return;		/* VBUS OFF */
+> @@ -408,7 +410,7 @@ static void _nbu2ss_ep_dma_exit(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+>  /* Abort DMA */
+>  static void _nbu2ss_ep_dma_abort(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+>  {
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs __iomem *preg = udc->p_regs;
+>  
+>  	_nbu2ss_bitclr(&preg->EP_DCR[ep->epnum - 1].EP_DCR1, DCR1_EPN_REQEN);
+>  	mdelay(DMA_DISABLE_TIME);	/* DCR1_EPN_REQEN Clear */
+> @@ -426,7 +428,7 @@ static void _nbu2ss_ep_in_end(
+>  {
+>  	u32		data;
+>  	u32		num;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs __iomem *preg = udc->p_regs;
+>  
+>  	if (length >= sizeof(u32))
+>  		return;
+> @@ -817,7 +819,7 @@ static int _nbu2ss_out_dma(
+>  	u32		burst = 1;
+>  	u32		data;
+>  	int		result = -EINVAL;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs __iomem	*preg = udc->p_regs;
+>  
+>  	if (req->dma_flag)
+>  		return 1;		/* DMA is forwarded */
+> @@ -880,7 +882,7 @@ static int _nbu2ss_epn_out_pio(
+>  	union usb_reg_access	temp_32;
+>  	union usb_reg_access	*p_buf_32;
+>  	int		result = 0;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs __iomem	*preg = udc->p_regs;
+>  
+>  	if (req->dma_flag)
+>  		return 1;		/* DMA is forwarded */
+> @@ -964,7 +966,7 @@ static int _nbu2ss_epn_out_transfer(
+>  	u32		num;
+>  	u32		i_recv_length;
+>  	int		result = 1;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	if (ep->epnum == 0)
+>  		return -EINVAL;
+> @@ -1026,7 +1028,7 @@ static int _nbu2ss_in_dma(
+>  	u32		i_write_length;
+>  	u32		data;
+>  	int		result = -EINVAL;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	if (req->dma_flag)
+>  		return 1;		/* DMA is forwarded */
+> @@ -1101,7 +1103,7 @@ static int _nbu2ss_epn_in_pio(
+>  	union usb_reg_access	temp_32;
+>  	union usb_reg_access	*p_buf_32 = NULL;
+>  	int		result = 0;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	if (req->dma_flag)
+>  		return 1;		/* DMA is forwarded */
+> @@ -1317,7 +1319,7 @@ static void _nbu2ss_set_endpoint_stall(
+>  	u8		num, epnum;
+>  	u32		data;
+>  	struct nbu2ss_ep *ep;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	if ((ep_adrs == 0) || (ep_adrs == 0x80)) {
+>  		if (bstall) {
+> @@ -1380,7 +1382,7 @@ static struct usb_device_descriptor device_desc = {
+>  	.bMaxPacketSize0      = 64,
+>  	.idVendor             = cpu_to_le16(0x0409),
+>  	.idProduct            = cpu_to_le16(0xfff0),
+> -	.bcdDevice            = 0xffff,
+> +	.bcdDevice            = cpu_to_le16(0xffff),
+>  	.iManufacturer        = 0x00,
+>  	.iProduct             = 0x00,
+>  	.iSerialNumber        = 0x00,
+> @@ -1440,7 +1442,7 @@ static int _nbu2ss_get_ep_stall(struct nbu2ss_udc *udc, u8 ep_adrs)
+>  {
+>  	u8		epnum;
+>  	u32		data = 0, bit_data;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	epnum = ep_adrs & ~USB_ENDPOINT_DIR_MASK;
+>  	if (epnum == 0) {
+> @@ -1468,8 +1470,8 @@ static inline int _nbu2ss_req_feature(struct nbu2ss_udc *udc, bool bset)
+>  {
+>  	u8	recipient = (u8)(udc->ctrl.bRequestType & USB_RECIP_MASK);
+>  	u8	direction = (u8)(udc->ctrl.bRequestType & USB_DIR_IN);
+> -	u16	selector  = udc->ctrl.wValue;
+> -	u16	wIndex    = udc->ctrl.wIndex;
+> +	u16	selector  = le16_to_cpu(udc->ctrl.wValue);
+> +	u16	wIndex    = le16_to_cpu(udc->ctrl.wIndex);
+>  	u8	ep_adrs;
+>  	int	result = -EOPNOTSUPP;
+>  
+> @@ -1535,7 +1537,7 @@ static void _nbu2ss_epn_set_stall(
+>  	u32	regdata;
+>  	int	limit_cnt = 0;
+>  
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	if (ep->direct == USB_DIR_IN) {
+>  		for (limit_cnt = 0
+> @@ -1568,7 +1570,8 @@ static int std_req_get_status(struct nbu2ss_udc *udc)
+>  	if ((udc->ctrl.wValue != 0x0000) || (direction != USB_DIR_IN))
+>  		return result;
+>  
+> -	length = min_t(u16, udc->ctrl.wLength, sizeof(status_data));
+> +	length =
+> +		min_t(u16, le16_to_cpu(udc->ctrl.wLength), sizeof(status_data));
+>  
+>  	switch (recipient) {
+>  	case USB_RECIP_DEVICE:
+> @@ -1584,8 +1587,8 @@ static int std_req_get_status(struct nbu2ss_udc *udc)
+>  		break;
+>  
+>  	case USB_RECIP_ENDPOINT:
+> -		if (0x0000 == (udc->ctrl.wIndex & 0xFF70)) {
+> -			ep_adrs = (u8)(udc->ctrl.wIndex & 0xFF);
+> +		if (0x0000 == (le16_to_cpu(udc->ctrl.wIndex) & 0xFF70)) {
+> +			ep_adrs = (u8)(le16_to_cpu(udc->ctrl.wIndex) & 0xFF);
+>  			result = _nbu2ss_get_ep_stall(udc, ep_adrs);
+>  
+>  			if (result > 0)
+> @@ -1625,7 +1628,7 @@ static int std_req_set_feature(struct nbu2ss_udc *udc)
+>  static int std_req_set_address(struct nbu2ss_udc *udc)
+>  {
+>  	int		result = 0;
+> -	u32		wValue = udc->ctrl.wValue;
+> +	u32		wValue = le16_to_cpu(udc->ctrl.wValue);
+>  
+>  	if ((udc->ctrl.bRequestType != 0x00)	||
+>  	    (udc->ctrl.wIndex != 0x0000)	||
+> @@ -1647,7 +1650,7 @@ static int std_req_set_address(struct nbu2ss_udc *udc)
+>  /*-------------------------------------------------------------------------*/
+>  static int std_req_set_configuration(struct nbu2ss_udc *udc)
+>  {
+> -	u32 config_value = (u32)(udc->ctrl.wValue & 0x00ff);
+> +	u32 config_value = (u32)(le16_to_cpu(udc->ctrl.wValue) & 0x00ff);
+>  
+>  	if ((udc->ctrl.wIndex != 0x0000)	||
+>  	    (udc->ctrl.wLength != 0x0000)	||
+> @@ -1943,7 +1946,7 @@ static inline void _nbu2ss_epn_in_int(
+>  	int	result = 0;
+>  	u32	status;
+>  
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem *preg = udc->p_regs;
+>  
+>  	if (req->dma_flag)
+>  		return;		/* DMA is forwarded */
+> @@ -2038,7 +2041,7 @@ static inline void _nbu2ss_epn_out_dma_int(
+>  	u32		num;
+>  	u32		dmacnt, ep_dmacnt;
+>  	u32		mpkt;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs	__iomem  *preg = udc->p_regs;
+>  
+>  	num = ep->epnum - 1;
+>  
+> @@ -2214,7 +2217,7 @@ static int _nbu2ss_pullup(struct nbu2ss_udc *udc, int is_on)
+>  /*-------------------------------------------------------------------------*/
+>  static void _nbu2ss_fifo_flush(struct nbu2ss_udc *udc, struct nbu2ss_ep *ep)
+>  {
+> -	struct fc_regs	*p = udc->p_regs;
+> +	struct fc_regs __iomem	*p = udc->p_regs;
+>  
+>  	if (udc->vbus_active == 0)
+>  		return;
+> @@ -2432,7 +2435,7 @@ static irqreturn_t _nbu2ss_udc_irq(int irq, void *_udc)
+>  	u32	epnum, int_bit;
+>  
+>  	struct nbu2ss_udc	*udc = (struct nbu2ss_udc *)_udc;
+> -	struct fc_regs	*preg = udc->p_regs;
+> +	struct fc_regs __iomem *preg = udc->p_regs;
+>  
+>  	if (gpio_get_value(VBUS_VALUE) == 0) {
+>  		_nbu2ss_writel(&preg->USB_INT_STA, ~USB_INT_STA_RW);
+> @@ -2831,7 +2834,7 @@ static int nbu2ss_ep_fifo_status(struct usb_ep *_ep)
+>  	struct nbu2ss_ep	*ep;
+>  	struct nbu2ss_udc	*udc;
+>  	unsigned long		flags;
+> -	struct fc_regs		*preg;
+> +	struct fc_regs __iomem *preg;
+>  
+>  	if (!_ep) {
+>  		pr_err("%s, bad param\n", __func__);
+> @@ -3216,7 +3219,7 @@ static int nbu2ss_drv_probe(struct platform_device *pdev)
+>  				  0, driver_name, udc);
+>  
+>  	/* IO Memory */
+> -	udc->p_regs = (struct fc_regs *)mmio_base;
+> +	udc->p_regs = (struct fc_regs __iomem *)mmio_base;
+>  
+>  	/* USB Function Controller Interrupt */
+>  	if (status != 0) {
+> diff --git a/drivers/staging/emxx_udc/emxx_udc.h b/drivers/staging/emxx_udc/emxx_udc.h
+> index 8337e38c..e28a74d 100644
+> --- a/drivers/staging/emxx_udc/emxx_udc.h
+> +++ b/drivers/staging/emxx_udc/emxx_udc.h
+> @@ -582,7 +582,7 @@ struct nbu2ss_udc {
+>  
+>  	u32		curr_config;	/* Current Configuration Number */
+>  
+> -	struct fc_regs		*p_regs;
+> +	struct fc_regs __iomem *p_regs;
+>  };
+>  
+>  /* USB register access structure */
+> 
