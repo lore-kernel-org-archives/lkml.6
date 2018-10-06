@@ -2,38 +2,37 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E095C6787A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419D7C67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0393214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:54:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0393214C5
+	by mail.kernel.org (Postfix) with ESMTP id E28DF214C3
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:54:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E28DF214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbeJIIIb (ORCPT
+        id S1726672AbeJIIIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:08:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41580 "EHLO mail.kernel.org"
+        Tue, 9 Oct 2018 04:08:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeJIIIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725794AbeJIIIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 9 Oct 2018 04:08:31 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF87221476;
+        by mail.kernel.org (Postfix) with ESMTPSA id B941B2087D;
         Tue,  9 Oct 2018 00:54:09 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1g9gHo-0003PD-JK; Mon, 08 Oct 2018 20:54:08 -0400
-Message-Id: <20181009005408.498762975@goodmis.org>
+        id 1g9gHo-0003Of-Eh; Mon, 08 Oct 2018 20:54:08 -0400
+Message-Id: <20181009005408.376271534@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sat, 06 Oct 2018 08:01:27 -0400
+Date:   Sat, 06 Oct 2018 08:01:26 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -49,7 +48,7 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>
-Subject: [POC][RFC][PATCH 2/2 v2] tracepoints: Implement it with dynamic functions
+Subject: [POC][RFC][PATCH 1/2 v2] jump_function: Addition of new feature "jump_function"
 References: <20181006120125.376880240@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,316 +61,515 @@ From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/tracepoint-defs.h |  3 ++
- include/linux/tracepoint.h      | 65 ++++++++++++++++++++++-----------
- include/trace/define_trace.h    | 14 +++----
- kernel/tracepoint.c             | 29 +++++++++++++--
- 4 files changed, 79 insertions(+), 32 deletions(-)
+ include/asm-generic/vmlinux.lds.h |   4 +
+ include/linux/jump_function.h     |  93 ++++++++
+ kernel/Makefile                   |   2 +-
+ kernel/jump_function.c            | 368 ++++++++++++++++++++++++++++++
+ 4 files changed, 466 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/jump_function.h
+ create mode 100644 kernel/jump_function.c
 
-diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
-index 22c5a46e9693..a9d267be98de 100644
---- a/include/linux/tracepoint-defs.h
-+++ b/include/linux/tracepoint-defs.h
-@@ -11,6 +11,8 @@
- #include <linux/atomic.h>
- #include <linux/static_key.h>
- 
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 7b75ff6e2fce..0e205069ff36 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -257,6 +257,10 @@
+ 	__start___jump_table = .;					\
+ 	KEEP(*(__jump_table))                                           \
+ 	__stop___jump_table = .;					\
++	. = ALIGN(8);                                                   \
++	__start___dynfunc_table = .;					\
++	KEEP(*(__dynfunc_table))					\
++	__stop___dynfunc_table = .;					\
+ 	. = ALIGN(8);							\
+ 	__start___verbose = .;						\
+ 	KEEP(*(__verbose))                                              \
+diff --git a/include/linux/jump_function.h b/include/linux/jump_function.h
+new file mode 100644
+index 000000000000..8c6b0bab5f10
+--- /dev/null
++++ b/include/linux/jump_function.h
+@@ -0,0 +1,93 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_JUMP_FUNCTION_H
++#define _LINUX_JUMP_FUNCTION_H
++
++
++//// This all should be in arch/x86/include/asm
++
++typedef long dynfunc_t;
++
 +struct dynfunc_struct;
 +
- struct trace_print_flags {
- 	unsigned long		mask;
- 	const char		*name;
-@@ -30,6 +32,7 @@ struct tracepoint_func {
- struct tracepoint {
- 	const char *name;		/* Tracepoint name */
- 	struct static_key key;
-+	struct dynfunc_struct *dynfunc;
- 	int (*regfunc)(void);
- 	void (*unregfunc)(void);
- 	struct tracepoint_func __rcu *funcs;
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 041f7e56a289..800c1b025e1f 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -21,6 +21,7 @@
- #include <linux/cpumask.h>
- #include <linux/rcupdate.h>
- #include <linux/tracepoint-defs.h>
-+#include <linux/jump_function.h>
- 
- struct module;
- struct tracepoint;
-@@ -94,7 +95,9 @@ extern int syscall_regfunc(void);
- extern void syscall_unregfunc(void);
- #endif /* CONFIG_HAVE_SYSCALL_TRACEPOINTS */
- 
++#define arch_dynfunc_trampoline(name, def)	\
++	asm volatile (				\
++	".globl dynfunc_" #name "; \n\t"	\
++	"dynfunc_" #name ": \n\t"		\
++	"jmp " #def " \n\t"			\
++	".balign 8 \n \t"			\
++	: : : "memory" )
++
++int arch_assign_dynamic_function(const struct dynfunc_struct *dynfunc, void *func);
++
++//////////////// The below should be in include/linux
++
 +#ifndef PARAMS
- #define PARAMS(args...) args
++#define PARAMS(x...) x
 +#endif
- 
- #define TRACE_DEFINE_ENUM(x)
- #define TRACE_DEFINE_SIZEOF(x)
-@@ -138,12 +141,11 @@ extern void syscall_unregfunc(void);
-  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
-  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
-  */
--#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
-+#define __DO_TRACE(name, proto, args, cond, rcuidle)			\
- 	do {								\
- 		struct tracepoint_func *it_func_ptr;			\
--		void *it_func;						\
--		void *__data;						\
- 		int __maybe_unused idx = 0;				\
-+		void *__data;						\
- 									\
- 		if (!(cond))						\
- 			return;						\
-@@ -163,14 +165,11 @@ extern void syscall_unregfunc(void);
- 			rcu_irq_enter_irqson();				\
- 		}							\
- 									\
--		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
--									\
-+		it_func_ptr =						\
-+			rcu_dereference_raw((&__tracepoint_##name)->funcs); \
- 		if (it_func_ptr) {					\
--			do {						\
--				it_func = (it_func_ptr)->func;		\
--				__data = (it_func_ptr)->data;		\
--				((void(*)(proto))(it_func))(args);	\
--			} while ((++it_func_ptr)->func);		\
-+			__data = (it_func_ptr)->data;			\
-+			dynfunc_tp_func_##name(args);			\
- 		}							\
- 									\
- 		if (rcuidle) {						\
-@@ -186,7 +185,7 @@ extern void syscall_unregfunc(void);
- 	static inline void trace_##name##_rcuidle(proto)		\
- 	{								\
- 		if (static_key_false(&__tracepoint_##name.key))		\
--			__DO_TRACE(&__tracepoint_##name,		\
-+			__DO_TRACE(name,				\
- 				TP_PROTO(data_proto),			\
- 				TP_ARGS(data_args),			\
- 				TP_CONDITION(cond), 1);			\
-@@ -208,11 +207,13 @@ extern void syscall_unregfunc(void);
-  * poking RCU a bit.
-  */
- #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-+	DECLARE_DYNAMIC_FUNCTION(tp_func_##name, PARAMS(data_proto),	\
-+				 PARAMS(data_args));			\
- 	extern struct tracepoint __tracepoint_##name;			\
- 	static inline void trace_##name(proto)				\
- 	{								\
- 		if (static_key_false(&__tracepoint_##name.key))		\
--			__DO_TRACE(&__tracepoint_##name,		\
-+			__DO_TRACE(name,				\
- 				TP_PROTO(data_proto),			\
- 				TP_ARGS(data_args),			\
- 				TP_CONDITION(cond), 0);			\
-@@ -271,21 +272,43 @@ extern void syscall_unregfunc(void);
-  * structures, so we create an array of pointers that will be used for iteration
-  * on the tracepoints.
-  */
--#define DEFINE_TRACE_FN(name, reg, unreg)				 \
-+#define DEFINE_TRACE_FN(name, reg, unreg, proto, args)			\
- 	static const char __tpstrtab_##name[]				 \
- 	__attribute__((section("__tracepoints_strings"))) = #name;	 \
- 	struct tracepoint __tracepoint_##name				 \
- 	__attribute__((section("__tracepoints"), used)) =		 \
--		{ __tpstrtab_##name, STATIC_KEY_INIT_FALSE, reg, unreg, NULL };\
--	__TRACEPOINT_ENTRY(name);
-+		{ __tpstrtab_##name, STATIC_KEY_INIT_FALSE,		\
-+		  &___dyn_func__tp_func_##name, reg, unreg, NULL };	\
-+	__TRACEPOINT_ENTRY(name);					\
-+	int __tracepoint_iter_##name(void *__data, proto)		\
-+	{								\
-+		struct tracepoint_func *it_func_ptr;			\
-+		void *it_func;						\
-+									\
-+		it_func_ptr =						\
-+			rcu_dereference_raw((&__tracepoint_##name)->funcs); \
-+		do {							\
-+			it_func = (it_func_ptr)->func;			\
-+			__data = (it_func_ptr)->data;			\
-+			((void(*)(void *, proto))(it_func))(__data, args); \
-+		} while ((++it_func_ptr)->func);			\
-+		return 0;						\
++
++#ifndef ARGS
++#define ARGS(x...) x
++#endif
++
++struct dynfunc_struct {
++	const void		*dynfunc;
++	void			*func;
++};
++
++int assign_dynamic_function(const struct dynfunc_struct *dynfunc, void *func);
++
++/*
++ * DECLARE_DYNAMIC_FUNCTION - Declaration to create a dynamic function call
++ * @name: The name of the function call to create
++ * @proto: The proto-type of the function (up to 4 args)
++ * @args: The arguments used by @proto
++ *
++ * This macro creates the function that can by used to create a dynamic
++ * function call later. It also creates the function to modify what is
++ * called:
++ *
++ *   dynfunc_[name](args);
++ *
++ * This is placed in the code where the dynamic function should be called
++ * from.
++ *
++ *   assign_dynamic_function_[name](func);
++ *
++ * This is used to make the dynfunc_[name]() call a different function.
++ * It will then call (func) instead.
++ *
++ * This must be added in a header for users of the above two functions.
++ */
++#define DECLARE_DYNAMIC_FUNCTION(name, proto, args)			\
++	extern struct dynfunc_struct ___dyn_func__##name;		\
++	static inline int assign_dynamic_function_##name(int(*func)(proto)) { \
++		return assign_dynamic_function(&___dyn_func__##name, func); \
 +	}								\
-+	DEFINE_DYNAMIC_FUNCTION(tp_func_##name, __tracepoint_iter_##name, \
-+				PARAMS(void *__data, proto))
- 
--#define DEFINE_TRACE(name)						\
--	DEFINE_TRACE_FN(name, NULL, NULL);
-+#define DEFINE_TRACE(name, proto, args)		\
-+	DEFINE_TRACE_FN(name, NULL, NULL, PARAMS(proto), PARAMS(args));
- 
- #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)				\
--	EXPORT_SYMBOL_GPL(__tracepoint_##name)
-+	EXPORT_SYMBOL_GPL(__tracepoint_##name);				\
-+	EXPORT_SYMBOL_GPL(___dyn_func__tp_func_##name);			\
-+	EXPORT_SYMBOL_GPL(dynfunc_tp_func_##name)
- #define EXPORT_TRACEPOINT_SYMBOL(name)					\
--	EXPORT_SYMBOL(__tracepoint_##name)
-+	EXPORT_SYMBOL(__tracepoint_##name);				\
-+	EXPORT_SYMBOL(___dyn_func__tp_func_##name);			\
-+	EXPORT_SYMBOL(dynfunc_tp_func_##name)
++	extern int dynfunc_##name(proto)
 +
- 
- #else /* !TRACEPOINTS_ENABLED */
- #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-@@ -314,8 +337,8 @@ extern void syscall_unregfunc(void);
- 		return false;						\
- 	}
- 
--#define DEFINE_TRACE_FN(name, reg, unreg)
--#define DEFINE_TRACE(name)
-+#define DEFINE_TRACE_FN(name, reg, unreg, proto, args)
-+#define DEFINE_TRACE(name, proto, args)
- #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)
- #define EXPORT_TRACEPOINT_SYMBOL(name)
- 
-diff --git a/include/trace/define_trace.h b/include/trace/define_trace.h
-index cb30c5532144..c19aea44efb2 100644
---- a/include/trace/define_trace.h
-+++ b/include/trace/define_trace.h
-@@ -25,7 +25,7 @@
- 
- #undef TRACE_EVENT
- #define TRACE_EVENT(name, proto, args, tstruct, assign, print)	\
--	DEFINE_TRACE(name)
-+	DEFINE_TRACE(name, PARAMS(proto), PARAMS(args))
- 
- #undef TRACE_EVENT_CONDITION
- #define TRACE_EVENT_CONDITION(name, proto, args, cond, tstruct, assign, print) \
-@@ -39,24 +39,24 @@
- #undef TRACE_EVENT_FN
- #define TRACE_EVENT_FN(name, proto, args, tstruct,		\
- 		assign, print, reg, unreg)			\
--	DEFINE_TRACE_FN(name, reg, unreg)
-+	DEFINE_TRACE_FN(name, reg, unreg, PARAMS(proto), PARAMS(args))
- 
- #undef TRACE_EVENT_FN_COND
- #define TRACE_EVENT_FN_COND(name, proto, args, cond, tstruct,		\
- 		assign, print, reg, unreg)			\
--	DEFINE_TRACE_FN(name, reg, unreg)
-+	DEFINE_TRACE_FN(name, reg, unreg, PARAMS(proto), PARAMS(args))
- 
- #undef DEFINE_EVENT
- #define DEFINE_EVENT(template, name, proto, args) \
--	DEFINE_TRACE(name)
-+	DEFINE_TRACE(name, PARAMS(proto), PARAMS(args))
- 
- #undef DEFINE_EVENT_FN
- #define DEFINE_EVENT_FN(template, name, proto, args, reg, unreg) \
--	DEFINE_TRACE_FN(name, reg, unreg)
-+	DEFINE_TRACE_FN(name, reg, unreg, PARAMS(proto), PARAMS(args))
- 
- #undef DEFINE_EVENT_PRINT
- #define DEFINE_EVENT_PRINT(template, name, proto, args, print)	\
--	DEFINE_TRACE(name)
-+	DEFINE_TRACE(name, PARAMS(proto), PARAMS(args))
- 
- #undef DEFINE_EVENT_CONDITION
- #define DEFINE_EVENT_CONDITION(template, name, proto, args, cond) \
-@@ -64,7 +64,7 @@
- 
- #undef DECLARE_TRACE
- #define DECLARE_TRACE(name, proto, args)	\
--	DEFINE_TRACE(name)
-+	DEFINE_TRACE(name, PARAMS(proto), PARAMS(args))
- 
- #undef TRACE_INCLUDE
- #undef __TRACE_INCLUDE
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index bf2c06ef9afc..b141f25d4b3a 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -140,7 +140,7 @@ static void debug_print_probes(struct tracepoint_func *funcs)
- 
- static struct tracepoint_func *
- func_add(struct tracepoint_func **funcs, struct tracepoint_func *tp_func,
--	 int prio)
-+	 int prio, int *tot_probes)
- {
- 	struct tracepoint_func *old, *new;
- 	int nr_probes = 0;
-@@ -183,11 +183,12 @@ func_add(struct tracepoint_func **funcs, struct tracepoint_func *tp_func,
- 	new[nr_probes + 1].func = NULL;
- 	*funcs = new;
- 	debug_print_probes(*funcs);
-+	*tot_probes = nr_probes + 1;
- 	return old;
- }
- 
- static void *func_remove(struct tracepoint_func **funcs,
--		struct tracepoint_func *tp_func)
-+		struct tracepoint_func *tp_func, int *left)
- {
- 	int nr_probes = 0, nr_del = 0, i;
- 	struct tracepoint_func *old, *new;
-@@ -241,6 +242,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 			       struct tracepoint_func *func, int prio)
- {
- 	struct tracepoint_func *old, *tp_funcs;
-+	int probes = 0;
- 	int ret;
- 
- 	if (tp->regfunc && !static_key_enabled(&tp->key)) {
-@@ -251,7 +253,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 
- 	tp_funcs = rcu_dereference_protected(tp->funcs,
- 			lockdep_is_held(&tracepoints_mutex));
--	old = func_add(&tp_funcs, func, prio);
-+	old = func_add(&tp_funcs, func, prio, &probes);
- 	if (IS_ERR(old)) {
- 		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
- 		return PTR_ERR(old);
-@@ -266,6 +268,15 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 	rcu_assign_pointer(tp->funcs, tp_funcs);
- 	if (!static_key_enabled(&tp->key))
- 		static_key_slow_inc(&tp->key);
-+
-+	if (probes == 1) {
-+//		printk("make direct call to %pS\n", tp_funcs->func);
-+		assign_dynamic_function(tp->dynfunc, tp_funcs->func);
-+	} else {
-+//		printk("[%d] make call to iterator %pS\n", probes, tp->dynfunc->func);
-+		assign_dynamic_function(tp->dynfunc, tp->dynfunc->func);
++/*
++ * DEFINE_DYNAMIC_FUNCTION - Define the dynamic function and default
++ * @name: The name of the function call to create
++ * @def: The default function to call
++ * @proto: The proto-type of the function (up to 4 args)
++ *
++ * Must be placed in a C file.
++ *
++ * This sets up the dynamic function that other places may call
++ * dynfunc_[name]().
++ *
++ * It defines the default function that the dynamic function will start
++ * out calling at boot up.
++ */
++#define DEFINE_DYNAMIC_FUNCTION(name, def, proto)			\
++	static void __used __dyn_func_trampoline_##name(void)		\
++	{								\
++		arch_dynfunc_trampoline(name, def);			\
++		unreachable();						\
++	}								\
++	struct dynfunc_struct ___dyn_func__##name __used = {		\
++		.dynfunc	= (void *)dynfunc_##name,		\
++		.func		= def,					\
 +	}
 +
- 	release_probes(old);
- 	return 0;
- }
-@@ -280,10 +291,11 @@ static int tracepoint_remove_func(struct tracepoint *tp,
- 		struct tracepoint_func *func)
- {
- 	struct tracepoint_func *old, *tp_funcs;
-+	int probes_left = 0;
++#endif	/*  _LINUX_JUMP_FUNCTION_H */
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 7a63d567fdb5..c647c7f15318 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -10,7 +10,7 @@ obj-y     = fork.o exec_domain.o panic.o \
+ 	    extable.o params.o \
+ 	    kthread.o sys_ni.o nsproxy.o \
+ 	    notifier.o ksysfs.o cred.o reboot.o \
+-	    async.o range.o smpboot.o ucount.o
++	    async.o range.o smpboot.o ucount.o jump_function.o
  
- 	tp_funcs = rcu_dereference_protected(tp->funcs,
- 			lockdep_is_held(&tracepoints_mutex));
--	old = func_remove(&tp_funcs, func);
-+	old = func_remove(&tp_funcs, func, &probes_left);
- 	if (IS_ERR(old)) {
- 		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
- 		return PTR_ERR(old);
-@@ -297,6 +309,15 @@ static int tracepoint_remove_func(struct tracepoint *tp,
- 		if (static_key_enabled(&tp->key))
- 			static_key_slow_dec(&tp->key);
- 	}
+ obj-$(CONFIG_MODULES) += kmod.o
+ obj-$(CONFIG_MULTIUSER) += groups.o
+diff --git a/kernel/jump_function.c b/kernel/jump_function.c
+new file mode 100644
+index 000000000000..f3decae1bb84
+--- /dev/null
++++ b/kernel/jump_function.c
+@@ -0,0 +1,368 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * dynamic function support
++ *
++ * Copyright (C) 2018 VMware inc, Steven Rostedt <rostedt@goodmis.org>
++ *
++ */
 +
-+	if (probes_left == 1) {
-+//		printk("make direct call to %pS\n", tp_funcs->func);
-+		assign_dynamic_function(tp->dynfunc, tp_funcs->func);
-+	} else {
-+//		printk("[%d] make call to iterator %pS\n", probes_left, tp->dynfunc->func);
-+		assign_dynamic_function(tp->dynfunc, tp->dynfunc->func);
++#include <linux/jump_function.h>
++#include <linux/memory.h>
++#include <linux/module.h>
++#include <linux/list.h>
++#include <linux/sort.h>
++#include <linux/err.h>
++
++#include <asm/sections.h>
++#include <asm/text-patching.h>
++
++#include <linux/uaccess.h>
++
++static DEFINE_MUTEX(dynfunc_mutex);
++
++
++////// The below should be in arch/x86/kernel
++
++#define CALL_SIZE 5
++
++union call_code_union {
++	unsigned char code[CALL_SIZE];
++	struct {
++		unsigned char e9;
++		int offset;
++	} __attribute__((packed));
++};
++
++int arch_assign_dynamic_function(const struct dynfunc_struct *dynfunc,
++				void *func)
++{
++	unsigned long dfunc = (unsigned long)dynfunc->dynfunc;
++	union call_code_union code;
++
++	/* Debug to see what we are replacing (remove this) */
++	probe_kernel_read(code.code, (void *)dfunc, CALL_SIZE);
++#if 0
++	printk("old code = %02x %02x %02x %02x %02x %pS (%lx)\n",
++		code.code[0], code.code[1], code.code[2], code.code[3], code.code[4],
++	       (void *)(code.offset + dfunc + CALL_SIZE),
++	       code.offset + dfunc + CALL_SIZE);
++#endif
++
++	code.e9 = 0xe9;
++	code.offset = (int)((unsigned long)func - (dfunc + CALL_SIZE));
++
++#if 0
++	/* Debug to see what we are updating to (remove this) */
++	printk("adding func %pS to %pS (%lx) %02x %02x %02x %02x %02x\n",
++	       func, (void *)dfunc, (unsigned long)dfunc,
++		code.code[0], code.code[1], code.code[2], code.code[3], code.code[4]);
++#endif
++
++	mutex_lock(&text_mutex);
++	text_poke_bp((void *)dfunc, code.code, CALL_SIZE, func);
++	mutex_unlock(&text_mutex);
++
++	return 0;
++}
++
++////////////// The below can be in kernel/jump_function.c
++
++int assign_dynamic_function(const struct dynfunc_struct *dynfunc, void *func)
++{
++	int ret;
++
++	mutex_lock(&dynfunc_mutex);
++	ret = arch_assign_dynamic_function(dynfunc, func);
++	mutex_unlock(&dynfunc_mutex);
++
++	return ret;
++}
++
++///////// The below is for testing. Can be added in sample code.
++
++#include <linux/debugfs.h>
++
++/*
++ * The below creates a directory in debugfs called "jump_funcs" and
++ * five files within that directory:
++ *
++ * func0, func1, func2, func3, func4.
++ *
++ * Each of those files trigger a dynamic function, with the number
++ * of arguments that match the number in the file name. The
++ * arguments are an "int", "long", "void *" and "char *" (for the defined
++ * arguments of the dynmaic functions). The values used are:
++ * "1", "2", "0xdeadbeef" and "random string".
++ *
++ * Reading the file causes a dynamic function to be called. The
++ * functions assigned to the dynamic functions just prints its own
++ * function name, followed by the parameters passed to it.
++ *
++ * Each dynamic function has 3 functions that can be assigned to it.
++ * By echoing a "0" through "2" will change the function that is
++ * assigned. By doing another read of that file, it should show that
++ * the dynamic function has been updated.
++ */
++DECLARE_DYNAMIC_FUNCTION(myfunc0, PARAMS(void), ARGS());
++DECLARE_DYNAMIC_FUNCTION(myfunc1, PARAMS(int a), ARGS(a));
++DECLARE_DYNAMIC_FUNCTION(myfunc2, PARAMS(int a, long b), ARGS(a, b));
++DECLARE_DYNAMIC_FUNCTION(myfunc3, PARAMS(int a, long b, void *c),
++			 ARGS(a, b, c));
++DECLARE_DYNAMIC_FUNCTION(myfunc4, PARAMS(int a, long b, void *c, char *d),
++			 ARGS(a, b, c, d));
++
++static int myfunc0_default(void)
++{
++	printk("%s\n", __func__);
++	return 0;
++}
++
++static int myfunc1_default(int a)
++{
++	printk("%s %d\n", __func__, a);
++	return 0;
++}
++
++static int myfunc2_default(int a, long b)
++{
++	printk("%s %d %ld\n", __func__, a, b);
++	return 0;
++}
++
++static int myfunc3_default(int a, long b, void *c)
++{
++	printk("%s %d %ld %p\n", __func__, a, b, c);
++	return 0;
++}
++
++static int myfunc4_default(int a, long b, void *c, char *d)
++{
++	printk("%s %d %ld %p %s\n", __func__, a, b, c, d);
++	return 0;
++}
++
++DEFINE_DYNAMIC_FUNCTION(myfunc0, myfunc0_default, PARAMS(void));
++DEFINE_DYNAMIC_FUNCTION(myfunc1, myfunc1_default, PARAMS(int a));
++DEFINE_DYNAMIC_FUNCTION(myfunc2, myfunc2_default, PARAMS(int a, long b));
++DEFINE_DYNAMIC_FUNCTION(myfunc3, myfunc3_default, PARAMS(int a, long b, void *c));
++DEFINE_DYNAMIC_FUNCTION(myfunc4, myfunc4_default,
++			PARAMS(int a, long b, void *c, char *d));
++
++static int myfunc0_test1(void)
++{
++	printk("%s\n", __func__);
++	return 1;
++}
++
++static int myfunc1_test1(int a)
++{
++	printk("%s %d\n", __func__, a);
++	return 1;
++}
++
++static int myfunc2_test1(int a, long b)
++{
++	printk("%s %d %ld\n", __func__, a, b);
++	return 1;
++}
++
++static int myfunc3_test1(int a, long b, void *c)
++{
++	printk("%s %d %ld %p\n", __func__, a, b, c);
++	return 1;
++}
++
++static int myfunc4_test1(int a, long b, void *c, char *d)
++{
++	printk("%s %d %ld %p %s\n", __func__, a, b, c, d);
++	return 1;
++}
++
++static int myfunc0_test2(void)
++{
++	printk("%s\n", __func__);
++	return 2;
++}
++
++static int myfunc1_test2(int a)
++{
++	printk("%s %d\n", __func__, a);
++	return 2;
++}
++
++static int myfunc2_test2(int a, long b)
++{
++	printk("%s %d %ld\n", __func__, a, b);
++	return 2;
++}
++
++static int myfunc3_test2(int a, long b, void *c)
++{
++	printk("%s %d %ld %px\n", __func__, a, b, c);
++	return 2;
++}
++
++static int myfunc4_test2(int a, long b, void *c, char *d)
++{
++	printk("%s %d %ld %px %s\n", __func__, a, b, c, d);
++	return 2;
++}
++
++static int open_generic(struct inode *inode, struct file *filp)
++{
++	filp->private_data = inode->i_private;
++	return 0;
++}
++
++static ssize_t
++jump_func_write(struct file *filp, const char __user *ubuf,
++	       size_t cnt, loff_t *ppos)
++{
++	long type = (long)filp->private_data;
++	unsigned long val;
++	int ret;
++
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
++		return ret;
++
++	switch (type) {
++	case 0:
++		switch(val) {
++		case 0:
++			assign_dynamic_function_myfunc0(myfunc0_default);
++			break;
++		case 1:
++			assign_dynamic_function_myfunc0(myfunc0_test1);
++			break;
++		case 2:
++			assign_dynamic_function_myfunc0(myfunc0_test2);
++			break;
++		}
++		break;
++	case 1:
++		switch(val) {
++		case 0:
++			assign_dynamic_function_myfunc1(myfunc1_default);
++			break;
++		case 1:
++			assign_dynamic_function_myfunc1(myfunc1_test1);
++			break;
++		case 2:
++			assign_dynamic_function_myfunc1(myfunc1_test2);
++			break;
++		}
++		break;
++	case 2:
++		switch(val) {
++		case 0:
++			assign_dynamic_function_myfunc2(myfunc2_default);
++			break;
++		case 1:
++			assign_dynamic_function_myfunc2(myfunc2_test1);
++			break;
++		case 2:
++			assign_dynamic_function_myfunc2(myfunc2_test2);
++			break;
++		}
++		break;
++	case 3:
++		switch(val) {
++		case 0:
++			assign_dynamic_function_myfunc3(myfunc3_default);
++			break;
++		case 1:
++			assign_dynamic_function_myfunc3(myfunc3_test1);
++			break;
++		case 2:
++			assign_dynamic_function_myfunc3(myfunc3_test2);
++			break;
++		}
++		break;
++	case 4:
++		switch(val) {
++		case 0:
++			assign_dynamic_function_myfunc4(myfunc4_default);
++			break;
++		case 1:
++			assign_dynamic_function_myfunc4(myfunc4_test1);
++			break;
++		case 2:
++			assign_dynamic_function_myfunc4(myfunc4_test2);
++			break;
++		}
++		break;
++	}
++	return cnt;
++}
++
++static ssize_t
++jump_func_read(struct file *filp, char __user *ubuf,
++	       size_t count, loff_t *ppos)
++{
++	long type = (long)filp->private_data;
++	int a = 1;
++	long b = 2;
++	void *c = (void *)0xdeadbeef;
++	char *d = "random string";
++	long ret;
++
++	switch (type) {
++	case 0:
++		ret = dynfunc_myfunc0();
++		printk("ret=%ld\n", ret);
++		break;
++	case 1:
++		ret = dynfunc_myfunc1(a);
++		printk("ret=%ld\n", ret);
++		break;
++	case 2:
++		ret = dynfunc_myfunc2(a, b);
++		printk("ret=%ld\n", ret);
++		break;
++	case 3:
++		ret = dynfunc_myfunc3(a, b, c);
++		printk("ret=%ld\n", ret);
++		break;
++	case 4:
++		ret = dynfunc_myfunc4(a, b, c, d);
++		printk("ret=%ld\n", ret);
++		break;
 +	}
 +
- 	rcu_assign_pointer(tp->funcs, tp_funcs);
- 	release_probes(old);
- 	return 0;
++	*ppos += count;
++	return 0;
++}
++
++static const struct file_operations jump_func_ops = {
++	.open			= open_generic,
++	.write			= jump_func_write,
++	.read			= jump_func_read,
++};
++
++
++static __init int setup_test(void)
++{
++	struct dentry *top = debugfs_create_dir("jump_funcs", NULL);
++
++	if (!top)
++		return -ENOMEM;
++
++	debugfs_create_file("func0", 0666, top, (void *)0,
++			    &jump_func_ops);
++
++	debugfs_create_file("func1", 0666, top, (void *)1,
++			    &jump_func_ops);
++
++	debugfs_create_file("func2", 0666, top, (void *)2,
++			    &jump_func_ops);
++
++	debugfs_create_file("func3", 0666, top, (void *)3,
++			    &jump_func_ops);
++
++	debugfs_create_file("func4", 0666, top, (void *)4,
++			    &jump_func_ops);
++
++	return 0;
++}
++__initcall(setup_test);
 -- 
 2.19.0
 
