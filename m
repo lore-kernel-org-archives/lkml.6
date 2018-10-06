@@ -2,158 +2,124 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDADC00449
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404F5C00449
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31DD9213A2
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B96213A2
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:04:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WJ4tXzdO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DD9213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i6Nwshzg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B96213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729254AbeJFHEL (ORCPT
+        id S1729379AbeJFHFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 03:04:11 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11150 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbeJFHEL (ORCPT
+        Sat, 6 Oct 2018 03:05:24 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:46790 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbeJFHFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 03:04:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bb7fbb80000>; Fri, 05 Oct 2018 17:03:04 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 05 Oct 2018 17:03:07 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 05 Oct 2018 17:03:07 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 6 Oct
- 2018 00:03:06 +0000
-Subject: Re: [PATCH v2 2/3] mm: introduce put_user_page[s](), placeholder
- versions
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     <john.hubbard@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20181005040225.14292-1-jhubbard@nvidia.com>
- <20181005040225.14292-3-jhubbard@nvidia.com>
- <20181005151726.GA20776@ziepe.ca>
- <c6f31004-3a67-880b-47bb-b560dfd85343@nvidia.com>
- <20181005214826.GD20776@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <25021511-04f8-7b6a-6b15-2c95a3a01745@nvidia.com>
-Date:   Fri, 5 Oct 2018 17:03:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sat, 6 Oct 2018 03:05:24 -0400
+Received: by mail-yw1-f65.google.com with SMTP id j202-v6so5943815ywa.13
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 17:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HMSE6orMcmHkT2mznbA9dUcPMyTPZXa48sNNzlO0+58=;
+        b=i6NwshzgwU7p1ZMqUx8Mnrhvq3vm/KFXIziIcg/g8tznm15ZVMSOSKMw/nw7vEssYL
+         FXH1EGJLgaouLa343tOvGmuWEYMti54aSRyecqv0DUYI/nz2afw3jokrHJE0LMH2kLBR
+         Gb5MmByCKOwD6AnYMhNU4+V7gYUJeDh2GI7l8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HMSE6orMcmHkT2mznbA9dUcPMyTPZXa48sNNzlO0+58=;
+        b=kjVfQOjVQLErHod86K3sAPaBVzNKfFMfK21ACCsei+rVvJPGTx7EZwqCG4Q4DXPjz4
+         VWO4fKintnzUf7pBb0zHUGYpCGrUdGpOELT9QriL4zKlGoQoTTFCUrcjvi2mn3UfTDp3
+         8qhxfoXl1v4uHNAIAoEQnfZ1/N4y949t507BASHVsEVPlheWDIDTgYlGS74XpXCFgIay
+         TV4MILRMqRnRGiKKlohLfkdfsscE5mPi1pQTA6VtP/mqob7G4Uol2S41UUzyRkys0+Dd
+         JhItaVjzdGXbEJybPZIg1oEoQsuf579fJ49XjsSbNBPPRhteJUULl8TpvaKgdC14XWzD
+         /5sw==
+X-Gm-Message-State: ABuFfoiEmAfXQjLYYtXEsXLjSP/hZGjAbQ245XGZVOvFM8LjpOYJiT17
+        y9+FOZwDXJafLluBwLJxip6sMUzU0AE=
+X-Google-Smtp-Source: ACcGV62qcnCGph1FMLID41KqjLhf460jAOqKT9sEROqq1/GuHMSKs79tSB4HnvS6LOYBLRe+gegjRQ==
+X-Received: by 2002:a0d:f0c1:: with SMTP id z184-v6mr7671962ywe.479.1538784259682;
+        Fri, 05 Oct 2018 17:04:19 -0700 (PDT)
+Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
+        by smtp.gmail.com with ESMTPSA id l30-v6sm8188026ywa.104.2018.10.05.17.04.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Oct 2018 17:04:18 -0700 (PDT)
+Received: by mail-yw1-f51.google.com with SMTP id y76-v6so5963577ywd.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 17:04:18 -0700 (PDT)
+X-Received: by 2002:a0d:cd84:: with SMTP id p126-v6mr7956103ywd.288.1538784257867;
+ Fri, 05 Oct 2018 17:04:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181005214826.GD20776@ziepe.ca>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1538784184; bh=nbX0a2BwHjJClBCxXwdomLCL7ALearOFbAqoHV2EXeY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=WJ4tXzdOv+Qzjxgo1t2STSgEYnZ1mz2emVbLj7YAqBxgPg9Rasrwgfd+ZLKgGYufj
-         CKD55iP8CStdxaxcR/fNOr0R8AguRxESna6GNNbgzoUPkzgRysFuSVLWBQM4m40LB7
-         aJDZAkMJntACFXHO0vcU3yQUBVwdsN9zaSYB71kf0WJHt47flIXO1X5DEPOoMgupLq
-         e+H+pNvjdr2iuU0yBugPhjaE8/B7tOW7Pg/0ypxO1ZoeNm0WYqrBtMqVYClls0O5AY
-         KRGMuk6wKmrGjdFu3nKykQ3x8CK8Db/V8TGp6l3wu7F8FBJ51Hj5YcCJsayqRHBrOl
-         ufw441tF3IB6A==
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 5 Oct 2018 17:04:16 -0700 (PDT)
+In-Reply-To: <20181005235131.GA27193@kroah.com>
+References: <20181005233559.GA37919@beast> <20181005235131.GA27193@kroah.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 5 Oct 2018 17:04:16 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJfs0KpRa6yag=ud0sJVW-tM-E4xuvgCMnBdFfDck5E1g@mail.gmail.com>
+Message-ID: <CAGXu5jJfs0KpRa6yag=ud0sJVW-tM-E4xuvgCMnBdFfDck5E1g@mail.gmail.com>
+Subject: Re: [PATCH v4.19-rc7] treewide: Replace more open-coded allocation
+ size multiplications
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/5/18 2:48 PM, Jason Gunthorpe wrote:
-> On Fri, Oct 05, 2018 at 12:49:06PM -0700, John Hubbard wrote:
->> On 10/5/18 8:17 AM, Jason Gunthorpe wrote:
->>> On Thu, Oct 04, 2018 at 09:02:24PM -0700, john.hubbard@gmail.com wrote:
->>>> From: John Hubbard <jhubbard@nvidia.com>
->>>>
->>>> Introduces put_user_page(), which simply calls put_page().
->>>> This provides a way to update all get_user_pages*() callers,
->>>> so that they call put_user_page(), instead of put_page().
->>>>
->>>> Also introduces put_user_pages(), and a few dirty/locked variations,
->>>> as a replacement for release_pages(), for the same reasons.
->>>> These may be used for subsequent performance improvements,
->>>> via batching of pages to be released.
->>>>
->>>> This prepares for eventually fixing the problem described
->>>> in [1], and is following a plan listed in [2], [3], [4].
->>>>
->>>> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
->>>>
->>>> [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
->>>>     Proposed steps for fixing get_user_pages() + DMA problems.
->>>>
->>>> [3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
->>>>     Bounce buffers (otherwise [2] is not really viable).
->>>>
->>>> [4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
->>>>     Follow-up discussions.
->>>>
->> [...]
->>>>  
->>>> +/* Placeholder version, until all get_user_pages*() callers are updated. */
->>>> +static inline void put_user_page(struct page *page)
->>>> +{
->>>> +	put_page(page);
->>>> +}
->>>> +
->>>> +/* For get_user_pages*()-pinned pages, use these variants instead of
->>>> + * release_pages():
->>>> + */
->>>> +static inline void put_user_pages_dirty(struct page **pages,
->>>> +					unsigned long npages)
->>>> +{
->>>> +	while (npages) {
->>>> +		set_page_dirty(pages[npages]);
->>>> +		put_user_page(pages[npages]);
->>>> +		--npages;
->>>> +	}
->>>> +}
->>>
->>> Shouldn't these do the !PageDirty(page) thing?
->>>
+On Fri, Oct 5, 2018 at 4:51 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Fri, Oct 05, 2018 at 04:35:59PM -0700, Kees Cook wrote:
+>> As done treewide earlier, this catches several more open-coded
+>> allocation size calculations that were added to the kernel during the
+>> merge window. This performs the following mechanical transformations
+>> using Coccinelle:
 >>
->> Well, not yet. This is the "placeholder" patch, in which I planned to keep
->> the behavior the same, while I go to all the get_user_pages call sites and change 
->> put_page() and release_pages() over to use these new routines.
-> 
-> Hmm.. Well, if it is the right thing to do here, why not include it and
-> take it out of callers when doing the conversion?
-> 
-> If it is the wrong thing, then let us still take it out of callers
-> when doing the conversion :)
-> 
-> Just seems like things will be in a better place to make future
-> changes if all the call sights are de-duplicated and correct.
-> 
+>>       kvmalloc(a * b, ...) -> kvmalloc_array(a, b, ...)
+>>       kvzalloc(a * b, ...) -> kvcalloc(a, b, ...)
+>>       devm_kzalloc(..., a * b, ...) -> devm_kcalloc(..., a, b, ...)
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>
+> Has this had any testing in linux-next?
 
-OK, yes. Let me send out a v3 with that included, then.
+No; they're mechanical transformations (though I did build test them).
+If you want I could add this to linux-next for a week?
 
-thanks,
+> And when was "earlier"?
+
+v4.18, when all of these were originally eliminated:
+
+026f05079b00 treewide: Use array_size() in f2fs_kzalloc()
+c86065938aab treewide: Use array_size() in f2fs_kmalloc()
+76e43e37a407 treewide: Use array_size() in sock_kmalloc()
+84ca176bf54a treewide: Use array_size() in kvzalloc_node()
+fd7becedb1f0 treewide: Use array_size() in vzalloc_node()
+fad953ce0b22 treewide: Use array_size() in vzalloc()
+42bc47b35320 treewide: Use array_size() in vmalloc()
+a86854d0c599 treewide: devm_kzalloc() -> devm_kcalloc()
+3c4211ba8ad8 treewide: devm_kmalloc() -> devm_kmalloc_array()
+778e1cdd81bb treewide: kvzalloc() -> kvcalloc()
+344476e16acb treewide: kvmalloc() -> kvmalloc_array()
+590b5b7d8671 treewide: kzalloc_node() -> kcalloc_node()
+6396bb221514 treewide: kzalloc() -> kcalloc()
+6da2ec56059c treewide: kmalloc() -> kmalloc_array()
+
+The new patch is catching new open-coded multiplications introduced in v4.19.
+
+-Kees
+
 -- 
-John Hubbard
-NVIDIA
+Kees Cook
+Pixel Security
