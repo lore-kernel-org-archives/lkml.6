@@ -2,64 +2,103 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3C4C65C31
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1968C65C31
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A08321486
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A08321486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 7D0A22147D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:39:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0A22147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeJFUcW (ORCPT
+        id S1727940AbeJFUmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 16:32:22 -0400
-Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:56128 "EHLO
-        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727726AbeJFUcV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 16:32:21 -0400
-Received: from mail.blacknight.com (unknown [81.17.254.11])
-        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id E16271C1BBF
-        for <linux-kernel@vger.kernel.org>; Sat,  6 Oct 2018 14:29:00 +0100 (IST)
-Received: (qmail 28500 invoked from network); 6 Oct 2018 13:29:00 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 6 Oct 2018 13:29:00 -0000
-Date:   Sat, 6 Oct 2018 14:23:19 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
+        Sat, 6 Oct 2018 16:42:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727726AbeJFUma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 16:42:30 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75FE821473;
+        Sat,  6 Oct 2018 13:39:07 +0000 (UTC)
+Date:   Sat, 6 Oct 2018 09:39:05 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm,numa: Remove remaining traces of rate-limiting.
-Message-ID: <20181006132319.GA5819@techsingularity.net>
-References: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        ard.biesheuvel@linaro.org, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
+ "jump_function"
+Message-ID: <20181006093905.46276505@vmware.local.home>
+In-Reply-To: <20181006121211.GA5663@hirez.programming.kicks-ass.net>
+References: <20181006015110.653946300@goodmis.org>
+        <20181006015720.634688468@goodmis.org>
+        <20181006121211.GA5663@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 04:53:19PM +0530, Srikar Dronamraju wrote:
-> With Commit efaffc5e40ae ("mm, sched/numa: Remove rate-limiting of automatic
-> NUMA balancing migration"), we no more require migrate lock and its
-> initialization. Its redundant. Hence remove it.
+On Sat, 6 Oct 2018 14:12:11 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Fri, Oct 05, 2018 at 09:51:11PM -0400, Steven Rostedt wrote:
+> > +#define arch_dynfunc_trampoline(name, def)	\
+> > +	asm volatile (				\
+> > +	".globl dynfunc_" #name "; \n\t"	\
+> > +	"dynfunc_" #name ": \n\t"		\
+> > +	"jmp " #def " \n\t"			\
+> > +	".balign 8 \n \t"			\
+> > +	: : : "memory" )  
 > 
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Bah, what is it with you people and trampolines. Why can't we, just like
+> jump_label, patch the call directly?
+> 
+> The whole call+jmp thing is silly, don't do that. It just wrecks I$ and
+> is slower for no real reason afaict.
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+My first attempt was to do just that. But to add a label at the
+call site required handling all the parameters too. See my branch:
+ ftrace/jump_function-v1 for how ugly it got (and it didn't work).
 
--- 
-Mel Gorman
-SUSE Labs
+> 
+> Steve, also see:
+> 
+>   https://lkml.kernel.org/r/20181005081333.15018-1-ard.biesheuvel@linaro.org
+
+Interesting. I don't have time to look at it at the moment to see what
+was done, but will do so in the near future.
+
+Remember, this was a proof of concept and even with the trampolines, it
+showed a great level of improvement. One thought was to do a
+"recordmcount.c" type of action to find where the calls were and patch
+them directly at boot up. I tried to keep the API the same where this
+could actually be done as an improvement later.
+
+Perhaps a gcc plugin might work too.
+
+I'll have to see what Ard did to handle the function parameters.
+
+-- Steve
+
