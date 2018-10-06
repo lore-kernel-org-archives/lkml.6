@@ -2,141 +2,98 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB39C00449
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B17AC00449
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1DF21473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:22:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncdYN+Kb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1DF21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6969221473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 00:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6969221473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbeJFHXa (ORCPT
+        id S1729424AbeJFHXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 03:23:30 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40864 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbeJFHXa (ORCPT
+        Sat, 6 Oct 2018 03:23:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60310 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbeJFHXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 03:23:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n31-v6so5388049pgm.7;
-        Fri, 05 Oct 2018 17:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=x9eQrkMyrWPMhICe83T2cY5IxAr+/4HTRZP+n1VAv6M=;
-        b=ncdYN+KbfXozQv/DTKcJqLztFeqezO+uUaKCmewj2jNKoGU2UOPLBGYdxJbswsgRKf
-         ODf9E4MGYZ0A25IMhW+1hiUiiUEYCXBllbTByN6YgTHhBayQB8VUKcWOI0Ox1C3i1kXp
-         J1ChzwANW957jzYcaiKpE1xIP+Z1A2nUSBStySAHSgAnhoJpT7yAq3VH760TSE26gzJY
-         4xtsV0NZtwskQDuAZ48SCU+Z/bzW2i9SutcRD7PfwridgcrM7AxeVoS/4Co0ZQpk+AVX
-         blRlEvipTaTf7WFjqSKxaBEE2rqPsRjjSGr0Tyh9jUU3ExEsZjmMa3dSk4liKYwDWzyh
-         veaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=x9eQrkMyrWPMhICe83T2cY5IxAr+/4HTRZP+n1VAv6M=;
-        b=E/yKUWwZSXU/T9Ncs+9itN+rdTEZS03bUqguodtAbKeQqEYSBtF/Vntt9/hHytuG4C
-         JX7yLKvEIyScVrstB15wBJA1XLobIt0RXwTMn9sM0T8smI8cDZpExoO/OXSh2PEksSfF
-         FqkOmDJ/QuKNsI2Bp+2jXspDZqPMxXuBsmbX4Thoppzvbji/p0spgV7GqqWZuaIZJpIg
-         4T9q8SZ9IEb+/voyGWLlJVdAPOlt9bsK618qtYWjcZGyrSRlaXH8N0MPZlKB02SHkGvb
-         e/imDeWOuahKOHBy9cAhL+C29G28FCre88N4vup5vmtrlpPO+9ZUG2nFR5eThMuvrwce
-         Y3ig==
-X-Gm-Message-State: ABuFfoi+t0B+XkmgVs1rQUwEbh+SQVtxxk1Vy0V/8/5uJvrWO4sS6GGh
-        Vd5/FIO2LTABtHiXMHK5dmI=
-X-Google-Smtp-Source: ACcGV63lAKg87tm3mg3fRB1yFqfhei49tA/wOajFsDaMqJ7otBOzUevOxIgnrGRHvoA3aXVAZBKwKw==
-X-Received: by 2002:a63:d34f:: with SMTP id u15-v6mr12197329pgi.325.1538785343248;
-        Fri, 05 Oct 2018 17:22:23 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::4:fc91])
-        by smtp.gmail.com with ESMTPSA id h19-v6sm16084779pfk.71.2018.10.05.17.22.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 17:22:22 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 17:22:20 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>
-Subject: Re: [PATCH bpf-next 1/6] bpf: introduce BPF_PROG_TYPE_FILE_FILTER
-Message-ID: <20181006002218.amfazxko4sq32hu6@ast-mbp.dhcp.thefacebook.com>
-References: <20181004025750.498303-1-ast@kernel.org>
- <20181004025750.498303-2-ast@kernel.org>
- <20181005044659.GU32577@ZenIV.linux.org.uk>
- <20181005220518.747ri4q34obrnaoc@ast-mbp.dhcp.thefacebook.com>
- <CALCETrVURVaqJChL=RwZPe74+JfX-6Zzp9kLR9-mLiownSOexQ@mail.gmail.com>
- <20181005222752.l5da54rpww6tlyfy@ast-mbp.dhcp.thefacebook.com>
- <20181005234706.GX32577@ZenIV.linux.org.uk>
+        Sat, 6 Oct 2018 03:23:52 -0400
+Received: from localhost (unknown [104.153.224.168])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C064684F;
+        Sat,  6 Oct 2018 00:22:43 +0000 (UTC)
+Date:   Fri, 5 Oct 2018 17:22:35 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4.19-rc7] treewide: Replace more open-coded allocation
+ size multiplications
+Message-ID: <20181006002235.GA18415@kroah.com>
+References: <20181005233559.GA37919@beast>
+ <20181005235131.GA27193@kroah.com>
+ <CAGXu5jJfs0KpRa6yag=ud0sJVW-tM-E4xuvgCMnBdFfDck5E1g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181005234706.GX32577@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <CAGXu5jJfs0KpRa6yag=ud0sJVW-tM-E4xuvgCMnBdFfDck5E1g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 12:47:06AM +0100, Al Viro wrote:
+On Fri, Oct 05, 2018 at 05:04:16PM -0700, Kees Cook wrote:
+> On Fri, Oct 5, 2018 at 4:51 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > On Fri, Oct 05, 2018 at 04:35:59PM -0700, Kees Cook wrote:
+> >> As done treewide earlier, this catches several more open-coded
+> >> allocation size calculations that were added to the kernel during the
+> >> merge window. This performs the following mechanical transformations
+> >> using Coccinelle:
+> >>
+> >>       kvmalloc(a * b, ...) -> kvmalloc_array(a, b, ...)
+> >>       kvzalloc(a * b, ...) -> kvcalloc(a, b, ...)
+> >>       devm_kzalloc(..., a * b, ...) -> devm_kcalloc(..., a, b, ...)
+> >>
+> >> Signed-off-by: Kees Cook <keescook@chromium.org>
+> >
+> > Has this had any testing in linux-next?
 > 
-> And no, it's not that each of those filesystems does not use inode->i_ino at all.
-> There's a bunch of library helpers in fs/*.c that happen to use the value filesystem
-> has seen fit to store there.  Whether to use those helpers or not, what to store in
-> that field, etc. is, again, entirely up to the filesystem in question.
-> generic_fillattr() is one of those, that's all there is to it.
+> No; they're mechanical transformations (though I did build test them).
+> If you want I could add this to linux-next for a week?
 
-makes sense.
+That would be good, thanks.
 
-> That's precisely why I really do not like the idea of hooks poking in the internals
-> of kernel data structures.  Especially since not even "it's not visible outside of
-> a subsystem-internal header" appears to slow you down.
+> > And when was "earlier"?
+> 
+> v4.18, when all of these were originally eliminated:
+> 
+> 026f05079b00 treewide: Use array_size() in f2fs_kzalloc()
+> c86065938aab treewide: Use array_size() in f2fs_kmalloc()
+> 76e43e37a407 treewide: Use array_size() in sock_kmalloc()
+> 84ca176bf54a treewide: Use array_size() in kvzalloc_node()
+> fd7becedb1f0 treewide: Use array_size() in vzalloc_node()
+> fad953ce0b22 treewide: Use array_size() in vzalloc()
+> 42bc47b35320 treewide: Use array_size() in vmalloc()
+> a86854d0c599 treewide: devm_kzalloc() -> devm_kcalloc()
+> 3c4211ba8ad8 treewide: devm_kmalloc() -> devm_kmalloc_array()
+> 778e1cdd81bb treewide: kvzalloc() -> kvcalloc()
+> 344476e16acb treewide: kvmalloc() -> kvmalloc_array()
+> 590b5b7d8671 treewide: kzalloc_node() -> kcalloc_node()
+> 6396bb221514 treewide: kzalloc() -> kcalloc()
+> 6da2ec56059c treewide: kmalloc() -> kmalloc_array()
+> 
+> The new patch is catching new open-coded multiplications introduced in v4.19.
 
-that's why there is a code review to get the patches in shape that
-don't expose kernel internals by _accident_.
+As this is getting smaller, why not just break it up and do it through
+all of the different subsystems instead of one large patch?
 
-> The same goes for tracepoints, etc. - turning random details of implementation into
-> a carved in stone ABI is actively harmful.
+And do we have a way to add a rule to 0-day to catch these so that they
+get a warning when they are added again?
 
-we're not talking about tracepoints here.
+thanks,
 
-> PS: If anything, visibility to hooks should be opt-in.
-
-not sure how do you expect 'opt-in' to be imlemented.
-As far as exposing inode and dev I agree that was a wrong approach.
-Going to switch to struct file_handle instead.
-Doing statx for every file_open is probably too slow for practical use.
-
-> Sure, we can start actively hiding
-> the things, but that's a winless arms race  - even if we bloody went and encrypted the
-> private stuff, you'd still be able to pull decryption key from where it would be accessed
-> by legitimate users, etc.  Нахуй нам это надо?
-
-why do this ?
-the use cases are explained in commit log.
-
-Back to internals exposure.
-Do you see an issue in the following:
-struct bpf_file_info {
-        __u32 fs_magic; // file->f_inode->i_sb->s_magic
-        __u32 mnt_id;   // real_mount(file->f_path.mnt)->mnt_id
-        __u32 nlink;    // file->f_inode->i_nlink
-        __u32 mode;     // file->f_inode->i_mode
-        __u32 flags;    // file->f_flags
-};
-and separate helper that returns struct file_handle ?
-and ctx rewriting moved to fs/bpf_file_filter.c ?
-
+greg k-h
