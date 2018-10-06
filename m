@@ -2,256 +2,96 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B8EC677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD10BC677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A912147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5606721473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samba.org header.i=@samba.org header.b="Re6eOdq9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A912147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=samba.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HXMW+i15"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5606721473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeJGARh (ORCPT
+        id S1727944AbeJGAYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 20:17:37 -0400
-Received: from hr2.samba.org ([144.76.82.148]:44880 "EHLO hr2.samba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726324AbeJGARh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 20:17:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42627210; h=Date:Message-ID:From:Cc:To;
-        bh=k2gQvgXrlUH8NfuGbEuSrp6F1PCTCKheb5SRVVbHzKQ=; b=Re6eOdq9ifI+yGmxjAvIqj4Vsn
-        R96xVCcuT7JLwJISR166Ar8b7bPch5cEK06Myj8V8t2zIfKpbNDEkqclqKJNU29tSJ5KrxKpv47pV
-        iqDPE32f1XvjGMHKo+pzohWn6oQuehQ7yXE8MU8+/ZSMG+vONctnWE4F5aQz88aGXQpc=;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.2:ECDHE_ECDSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1g8q8q-0007nM-S7; Sat, 06 Oct 2018 17:13:25 +0000
-Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
-To:     Rodrigo Freire <rfreire@redhat.com>,
-        Steve French <smfrench@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Pavel Shilovsky <piastryyy@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com>
- <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
- <194690850.32402710.1538508513975.JavaMail.zimbra@redhat.com>
- <CAH2r5ms814MUNWVZNfCTuSO2LQZsmCs5N1nwgdVuhxtMctRE3Q@mail.gmail.com>
- <697659653.32427271.1538515234390.JavaMail.zimbra@redhat.com>
- <CAH2r5muV-vC6twZbNQQ3DHoXJTdaUwhzZi7YH+rhxr0BiMseJQ@mail.gmail.com>
- <633521295.32428133.1538517226400.JavaMail.zimbra@redhat.com>
-From:   Steve French <sfrench@samba.org>
-Message-ID: <a24927eb-2c52-4b19-f9ae-c88b2c129c60@samba.org>
-Date:   Sat, 6 Oct 2018 12:13:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <633521295.32428133.1538517226400.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Sat, 6 Oct 2018 20:24:23 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53746 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726324AbeJGAYX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 20:24:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1EF7D8EE2BB;
+        Sat,  6 Oct 2018 10:20:14 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id K6pWYy1Z-xf3; Sat,  6 Oct 2018 10:20:14 -0700 (PDT)
+Received: from [153.66.254.242] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 852A08EE2AF;
+        Sat,  6 Oct 2018 10:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1538846413;
+        bh=tvUNzdmAaNE7KHOfk35FVe6lSKXXgmWIiDWeikbxjes=;
+        h=Subject:From:To:Cc:Date:From;
+        b=HXMW+i152irvAiPDTYUmAQ79ZxLRyFFQOmn/OxKRmV45wzuSkL+rWJ0OAr7DiCEVH
+         lmB+KDHbxhqtoobmUCWBOPFLdZzd8CrUh7MRJy49lf41ngcysD+55dW4aqYrzUhhOw
+         wHbFkvAGPdwVbk+wKnIUNfJKlQuytuWcHcVB+bWY=
+Message-ID: <1538846412.4088.1.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.19-rc5
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <greg@kroah.com>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sat, 06 Oct 2018 10:20:12 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Small fix for an unititialized mutex in the qedi driver.
 
-Comparing what other file systems print to dmesg at mount time is 
-interesting - just tried it for  four file systems, two log nothing by 
-default, two log something. See below.
+The patch is available here:
 
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-BTRFS:
+The short changelog is:
 
-root@smf-Thinkpad-P51:~/# mount /btrfs
-root@smf-Thinkpad-P51:~/c# dmesg
-[96283.701117] BTRFS info (device mmcblk0p1): disk space caching is enabled
-[96283.701121] BTRFS info (device mmcblk0p1): has skinny extents
-[96283.708477] BTRFS info (device mmcblk0p1): enabling ssd optimizations
+Nilesh Javali (1):
+      scsi: qedi: Initialize the stats mutex lock
 
+and the diffstat:
 
-EXT4:
+ drivers/scsi/qedi/qedi_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-root@smf-Thinkpad-P51:~# mount /dev/nvme0n1p6 /ext4
-root@smf-Thinkpad-P51:~# dmesg
-[96654.422038] EXT4-fs (nvme0n1p6): mounted filesystem with ordered data 
-mode. Opts: (null)
+With full diff below.
 
+James
 
-VFAT:
+---
 
-root@smf-Thinkpad-P51:~# mount /dev/nvme0n1p1 /fat
-root@smf-Thinkpad-P51:~# dmesg
-root@smf-Thinkpad-P51:~#
-
-
-NFS (it logs messages first time the module is loaded, for the 
-id_resolver, but not for the mount):
-
-root@smf-Thinkpad-P51:~# mount -t nfs localhost:/nfsexport /nfs
-root@smf-Thinkpad-P51:~# dmesg
-root@smf-Thinkpad-P51:~#
-
-
-On 10/02/2018 04:53 PM, Rodrigo Freire wrote:
-> Hi hi again Steve \o
->
-> I do see potential for a ftrace rewrite for the cifs_dbg messages.
->
-> But for the original post, I am aiming for a message to be printed
-> and found in dmesg, helping to correlate and troubleshoot events in
-> production systems.
->
-> So given the debugging nature of ftrace, this is not of help for my
-> patch request.
->
-> So, ACK for v2, using cifs_dbg(VFS) which actually translates to a
-> pr_warn(), or request a V3 using pr_info() (which I am absolutely fine
-> with) or...?
->
-> Let me know.
->
-> I appreciate your time and review!
->
-> - RF.
->
-> ----- Original Message -----
->
->> From: "Steve French" <smfrench@gmail.com>
->> To: rfreire@redhat.com
->> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
->> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel Shilovsky"
->> <piastryyy@gmail.com>
->> Sent: Tuesday, October 2, 2018 6:25:46 PM
->> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
->> It is an interesting question - my gut reaction is that messages that
->> need more immediate attention should be logged as KERN_ERR (similar to
->> cifs_dbg(VFS ...) but given how easy it is now to use dynamic tracing
->> and better to read, if a developer would need it ... probably best to
->> use ftrace (trace-cmd). Note that xfs has more than 570 (!) dynamic
->> trace point callouts now vs. fewer than 30 for xfs_notice
->> On Tue, Oct 2, 2018 at 4:20 PM Rodrigo Freire <rfreire@redhat.com> wrote:
->>> Hi Steve o/
->>>
->>> I personally like more a pr_info() instead of a cifs_dbg (which wraps to a
->>> pr_warn). But in order to keep in line with the general CIFS coding style
->>> I stuck to cifs_dbg
->>>
->>> But I would happily rewrite the cifs_dbg to pr_info a v3: That would be
->>> good enough too.
->>>
->>> Ah for what is worth my test/target systems are CentOS/Red Hat Enterprise
->>> Linux.
->>>
->>> Thoughts?
->>>
->>> Thanks!
->>>
->>> - RF.
->>>
->>> ----- Original Message -----
->>>> From: "Steve French" <smfrench@gmail.com>
->>>> To: rfreire@redhat.com
->>>> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
->>>> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel
->>>> Shilovsky"
->>>> <piastryyy@gmail.com>
->>>> Sent: Tuesday, October 2, 2018 5:35:49 PM
->>>> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
->>>> I noticed that on at least the first system I looked at (Ubuntu 18.04)
->>>> it defaults to KERN_WARNING (ie 4) so wouldn't have shown a KERN_INFO
->>>> which is level 6 (as the mount example from ext4) by default
->>>> or the xfs_notice (which is level 5)
->>>> https://elinux.org/Debugging_by_printing
->>>> On Tue, Oct 2, 2018 at 2:28 PM Rodrigo Freire <rfreire@redhat.com> wrote:
->>>>> Hi Steve,
->>>>>
->>>>> ----- Original Message -----
->>>>>> From: "Steve French" <smfrench@gmail.com>
->>>>>> To: rfreire@redhat.com
->>>>>> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
->>>>>> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel
->>>>>> Shilovsky"
->>>>>> <piastryyy@gmail.com>
->>>>>> Sent: Tuesday, October 2, 2018 4:17:02 PM
->>>>>> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
->>>>>>
->>>>>> Are you sure that these aren't logged by the automounter (for ext4,
->>>>>> xfs etc.). When I looked in my dmesg logs I didn't find matching log
->>>>>> entries in the file systems themselves. Do you have an example?
->>>>> I'm positive about it. Check it out:
->>>>>
->>>>> [rfreire@rf ~]$ cd git/upstream/fs/ext4/
->>>>> [rfreire@rf ext4]$
->>>>> [rfreire@rf ext4]$
->>>>> [rfreire@rf ext4]$ grep -r "mounted filesystem with"
->>>>> super.c: ext4_msg(sb, KERN_INFO, "mounted filesystem with%s. "
->>>>>
->>>>>
->>>>> [rfreire@rf ext4]$ dmesg | grep mount
->>>>> [ 21.550897] EXT4-fs (dm-1): mounted filesystem with ordered data mode.
->>>>> Opts: (null)
->>>>> [ 22.216213] EXT4-fs (dm-1): re-mounted. Opts: discard
->>>>> [ 22.598267] EXT4-fs (sda1): mounted filesystem with ordered data mode.
->>>>> Opts: (null)
->>>>> [ 22.605225] EXT4-fs (sdc): mounted filesystem without journal. Opts:
->>>>> discard
->>>>> [ 24.029161] EXT4-fs (dm-2): mounted filesystem with ordered data mode.
->>>>> Opts: (null)
->>>>> [ 24.047777] EXT4-fs (dm-4): mounted filesystem without journal. Opts:
->>>>> (null)
->>>>>
->>>>> XFS sample dmesg (from
->>>>> https://www.reddit.com/r/archlinux/comments/40b9r9/xfs_partition_is_mounted_during_boot_and_then/):
->>>>>
->>>>> [ 2.764491] XFS (sdb1): Mounting V5 Filesystem
->>>>> [ 3.200886] XFS (sdb1): Ending clean mount
->>>>> [ 5.384218] XFS (sdb1): Unmounting Filesystem
->>>>>
->>>>> Relevant code:
->>>>>
->>>>> [rfreire@rf ~]$ cd ../xfs
->>>>>
->>>>> [rfreire@rf xfs]$ grep "Mounting V" *.c
->>>>> xfs_log.c: xfs_notice(mp, "Mounting V%d Filesystem",
->>>>>
->>>>>
->>>>>> On the idea of adding cifsFYI logging here - I slightly prefer using
->>>>>> ftrace (trace-cmd, ie dynamic tracing) so there is less overhead and
->>>>>> easier to turn on/off following the example of xfs, f2fs, nfs, nfsd
->>>>>> etc.
->>>>> Remember that cifsFYI already exists; I just moved it inside a if
->>>>> clause
->>>>> to print it only when running under debug. (they way it is originally).
->>>>>
->>>>>> On Tue, Oct 2, 2018 at 6:57 AM Rodrigo Freire <rfreire@redhat.com>
->>>>>> wrote:
->>>>>>> Currently, no messages are printed when mounting a CIFS filesystem
->>>>>>> and
->>>>>>> no debug configuration is enabled.
->>>>>>>
->>>>>>> However, a CIFS mount information is valuable when troubleshooting
->>>>>>> and/or forensic analyzing a system and finding out if was a CIFS
->>>>>>> endpoint mount attempted.
->>>>>>>
->>>>>>> Other filesystems such as XFS, EXT* does issue a printk() when
->>>>>>> mounting
->>>>>>> their filesystems.
->>>>>
->>>>>> --
->>>>>> Thanks,
->>>>> Thank You! o/
->>>> --
->>>> Thanks,
->>>> Steve
->> --
->> Thanks,
->> Steve
-
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index cc8e64dc65ad..e5bd035ebad0 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -2472,6 +2472,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
+ 		/* start qedi context */
+ 		spin_lock_init(&qedi->hba_lock);
+ 		spin_lock_init(&qedi->task_idx_lock);
++		mutex_init(&qedi->stats_lock);
+ 	}
+ 	qedi_ops->ll2->register_cb_ops(qedi->cdev, &qedi_ll2_cb_ops, qedi);
+ 	qedi_ops->ll2->start(qedi->cdev, &params);
