@@ -2,116 +2,104 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09837ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 22:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD07ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 22:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45DA2147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 22:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80786208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 22:49:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPId6INq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45DA2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="G2fhd4zh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80786208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbeJGFdT (ORCPT
+        id S1726310AbeJGFwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 01:33:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54964 "EHLO mail.kernel.org"
+        Sun, 7 Oct 2018 01:52:40 -0400
+Received: from imap.thunk.org ([74.207.234.97]:43430 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbeJGFdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 01:33:19 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B6EB214FF
-        for <linux-kernel@vger.kernel.org>; Sat,  6 Oct 2018 22:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538864899;
-        bh=Pm4HyIK0Lnie+pFEWmr9H5YcN4c27rPEanb+Nmc75fI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DPId6INqcQj+KYzwi9TdJSv4rQX1V+el09roRnbKpeLAEYOxjDaD6Ad9rQ5LfPBZY
-         6k5k3leig2G8/IFYmkv3H5C8dYDxA46MHIy9QSYFsbm7CHFw1dhm7TVspl6ArXE40A
-         IhtK0nvfMfxfAg5WZMuXUtxsDEhYXafeyDhP/yUM=
-Received: by mail-wr1-f42.google.com with SMTP id 61-v6so16183450wrb.6
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 15:28:19 -0700 (PDT)
-X-Gm-Message-State: ABuFfojL8QTI2oME7N7vJhnivrrXhnf/zFYFnRGS0BFjR1MIyjTKcWoa
-        dPxabTCz3cItGfpw7DHkOpn55+WhzGomkCAG/jE2XQ==
-X-Google-Smtp-Source: ACcGV61EHF8yjziYTE4gr78ermpmK54EQCYkOD/Wp3WaHsurcAi8Iq6HLCe/9WoxcarNFmMMTFOR5yVPNqa59Xrs0Ac=
-X-Received: by 2002:adf:e387:: with SMTP id e7-v6mr12207669wrm.94.1538864897441;
- Sat, 06 Oct 2018 15:28:17 -0700 (PDT)
+        id S1725821AbeJGFwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 01:52:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=NZBjo2aGfpTjJRn918klV4zqOc8QA4M8zsX7haRhh2k=; b=G2fhd4zhcsvxg0xVJYL4q2mMqP
+        wOwexAbxrp9LMg1xBlUwLhVjvREw6Z/JMjtUVcWY0ratjd0JpJ93lWZ0ysd0U7tQD1anXGTfDro8I
+        od2epYH3gDBBPhtWz5DOCNHiaoL4IZbKdkVcILHSCcj2Op9xqs51v9OtG+ypM0vpj3o8=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1g8vMB-0004hI-2K; Sat, 06 Oct 2018 22:47:31 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 08A247A5240; Sat,  6 Oct 2018 18:47:30 -0400 (EDT)
+Date:   Sat, 6 Oct 2018 18:47:29 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
+Subject: Re: [PATCH RFC 0/5] rcu doc updates for whatisRCU and checklist
+Message-ID: <20181006224729.GA7130@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
+References: <20181005231815.170433-1-joel@joelfernandes.org>
+ <20181005234628.GB2548@thunk.org>
+ <20181006034540.GM2674@linux.ibm.com>
+ <20181006044057.GA41279@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
- <87sh1ne64t.fsf@vitty.brq.redhat.com> <20181003190617.GC21381@amt.cnet>
- <87k1mycfju.fsf@vitty.brq.redhat.com> <20181004081100.GI19272@hirez.programming.kicks-ass.net>
- <B8C05946-43BB-40A4-A564-53904FAF8CC0@amacapital.net> <20181004193150.GQ19272@hirez.programming.kicks-ass.net>
- <499807AB-E779-40C3-AA3F-E8C77A7770EC@amacapital.net> <CALCETrXNKCNZzUXj=2sp1vBd_o7HHzfW6RwyY5v3-wMfbVaZnQ@mail.gmail.com>
- <20181006202731.GC7129@amt.cnet>
-In-Reply-To: <20181006202731.GC7129@amt.cnet>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 6 Oct 2018 15:28:05 -0700
-X-Gmail-Original-Message-ID: <CALCETrWqze2mifOdFc0GJYHtHGKiKX2Zdi5Kz87OyUogbqD15w@mail.gmail.com>
-Message-ID: <CALCETrWqze2mifOdFc0GJYHtHGKiKX2Zdi5Kz87OyUogbqD15w@mail.gmail.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006044057.GA41279@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 6, 2018 at 1:29 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
->
-> On Thu, Oct 04, 2018 at 03:15:32PM -0700, Andy Lutomirski wrote:
-> > For better or for worse, I'm trying to understand this code.  So far,
-> > I've come up with this patch:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/vdso-tglx&id=14fd71e12b1c4492a06f368f75041f263e6862bf
-> >
-> > Is it correct, or am I missing some subtlety?
->
-> The master clock, when initialized, has a pair
->
-> masterclockvalues=(TSC value, time-of-day data).
->
-> When updating the guest clock, we only update relative to (TSC value)
-> that was read on masterclock initialization.
+On Fri, Oct 05, 2018 at 09:40:57PM -0700, Joel Fernandes wrote:
+> 
+> Could you annotate this pointer (sbi->s_qf_names) with __rcu so it can be
+> checked by sparse for proper usage? Its also point #16 in the checklist.txt
+> RCU document. I enclosed a diff to do this below.
 
-I don't see the problem.  The masterclock data is updated here:
+Sure.
 
-    host_tsc_clocksource = kvm_get_time_and_clockread(
-                    &ka->master_kernel_ns,
-                    &ka->master_cycle_now);
+> I also saw a bunch of places in super.c where the pointer isn't accessed from
+> an rcu read section or rcu_dereference, but it was a quick look so sorry if I
+> missed something. If its true, then are you planning to convert these to use
+> rcu_dereference and wrapped by an rcu_read_lock/unlock as well?
 
-kvm_get_time_and_clockread() gets those values from
-do_monotonic_boot(), which, barring bugs, should cause
-get_kvmclock_ns() to return exactly the same thing as
-ktime_get_boot_ns() + ka->kvmclock_offset, albeit in a rather
-roundabout manner.
+These are places where we are holding s_umount, so there's no way
+s_qf_names can change out from under us.  So the conversion should be
+to use rcu_dereference_protected().
 
-So what am I missing?  Is there actually something wrong with my patch?
+> > +		to_free[i] = rcu_dereference_protected(sbi->s_qf_names[i],
+> > +						       &sb->s_umount);
+> 
+> Also should this be the following?
+> 		to_free[i] = rcu_dereference_protected(sbi->s_qf_names[i],
+> 					       lockdep_is_held(&sb->s_umount));
 
+Yep, good catch, thanks.
 
->
-> See the following comment on x86.c:
-
-I read that comment, and it's not obvious to me how it's related.
+						- Ted
