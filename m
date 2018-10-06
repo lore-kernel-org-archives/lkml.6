@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A316BC65C30
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BACC65C31
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63E7D21473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:46:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E7D21473
+	by mail.kernel.org (Postfix) with ESMTP id 2140321473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:46:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2140321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbeJFStO (ORCPT
+        id S1727788AbeJFStn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 14:49:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36615 "EHLO
+        Sat, 6 Oct 2018 14:49:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43359 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeJFStO (ORCPT
+        with ESMTP id S1726919AbeJFStn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 14:49:14 -0400
+        Sat, 6 Oct 2018 14:49:43 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Bjqcu3529898
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96BkQVt3529951
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 04:45:52 -0700
+        Sat, 6 Oct 2018 04:46:26 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96BjpjQ3529895;
-        Sat, 6 Oct 2018 04:45:51 -0700
-Date:   Sat, 6 Oct 2018 04:45:51 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96BkQfT3529948;
+        Sat, 6 Oct 2018 04:46:26 -0700
+Date:   Sat, 6 Oct 2018 04:46:26 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Lianbo Jiang <tipbot@zytor.com>
-Message-ID: <tip-c3a7a61c192ec350330128edb13db33a9bc0ace1@git.kernel.org>
-Cc:     lijiang@redhat.com, mingo@kernel.org, hpa@zytor.com,
-        thomas.lendacky@amd.com, tglx@linutronix.de, bp@suse.de,
+Message-ID: <tip-9cf38d5559e813cccdba8b44c82cc46ba48d0896@git.kernel.org>
+Cc:     thomas.lendacky@amd.com, hpa@zytor.com, bp@suse.de,
+        mingo@kernel.org, lijiang@redhat.com, tglx@linutronix.de,
         linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, bp@suse.de, linux-kernel@vger.kernel.org,
-          lijiang@redhat.com, mingo@kernel.org, thomas.lendacky@amd.com,
-          hpa@zytor.com
-In-Reply-To: <20180927071954.29615-2-lijiang@redhat.com>
-References: <20180927071954.29615-2-lijiang@redhat.com>
+Reply-To: hpa@zytor.com, thomas.lendacky@amd.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          lijiang@redhat.com, mingo@kernel.org, bp@suse.de
+In-Reply-To: <20180930031033.22110-3-lijiang@redhat.com>
+References: <20180930031033.22110-3-lijiang@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/ioremap: Add an ioremap_encrypted() helper
-Git-Commit-ID: c3a7a61c192ec350330128edb13db33a9bc0ace1
+Subject: [tip:x86/mm] kexec: Allocate decrypted control pages for kdump if
+ SME is enabled
+Git-Commit-ID: 9cf38d5559e813cccdba8b44c82cc46ba48d0896
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,47 +59,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c3a7a61c192ec350330128edb13db33a9bc0ace1
-Gitweb:     https://git.kernel.org/tip/c3a7a61c192ec350330128edb13db33a9bc0ace1
+Commit-ID:  9cf38d5559e813cccdba8b44c82cc46ba48d0896
+Gitweb:     https://git.kernel.org/tip/9cf38d5559e813cccdba8b44c82cc46ba48d0896
 Author:     Lianbo Jiang <lijiang@redhat.com>
-AuthorDate: Thu, 27 Sep 2018 15:19:51 +0800
+AuthorDate: Sun, 30 Sep 2018 11:10:31 +0800
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 6 Oct 2018 11:57:51 +0200
+CommitDate: Sat, 6 Oct 2018 12:01:51 +0200
 
-x86/ioremap: Add an ioremap_encrypted() helper
+kexec: Allocate decrypted control pages for kdump if SME is enabled
 
-When SME is enabled, the memory is encrypted in the first kernel. In
-this case, SME also needs to be enabled in the kdump kernel, and we have
-to remap the old memory with the memory encryption mask.
+When SME is enabled in the first kernel, it needs to allocate decrypted
+pages for kdump because when the kdump kernel boots, these pages need to
+be accessed decrypted in the initial boot stage, before SME is enabled.
 
-The case of concern here is if SME is active in the first kernel,
-and it is active too in the kdump kernel. There are four cases to be
-considered:
-
-a. dump vmcore
-   It is encrypted in the first kernel, and needs be read out in the
-   kdump kernel.
-
-b. crash notes
-   When dumping vmcore, the people usually need to read useful
-   information from notes, and the notes is also encrypted.
-
-c. iommu device table
-   It's encrypted in the first kernel, kdump kernel needs to access its
-   content to analyze and get information it needs.
-
-d. mmio of AMD iommu
-   not encrypted in both kernels
-
-Add a new bool parameter @encrypted to __ioremap_caller(). If set,
-memory will be remapped with the SME mask.
-
-Add a new function ioremap_encrypted() to explicitly pass in a true
-value for @encrypted. Use ioremap_encrypted() for the above a, b, c
-cases.
-
- [ bp: cleanup commit message, extern defs in io.h and drop forgotten
-   include. ]
+ [ bp: clean up text. ]
 
 Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
@@ -116,110 +90,39 @@ Cc: brijesh.singh@amd.com
 Cc: dyoung@redhat.com
 Cc: bhe@redhat.com
 Cc: jroedel@suse.de
-Link: https://lkml.kernel.org/r/20180927071954.29615-2-lijiang@redhat.com
+Link: https://lkml.kernel.org/r/20180930031033.22110-3-lijiang@redhat.com
 ---
- arch/x86/include/asm/io.h |  3 ++-
- arch/x86/mm/ioremap.c     | 24 ++++++++++++++++--------
- 2 files changed, 18 insertions(+), 9 deletions(-)
+ kernel/kexec_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 6de64840dd22..6df53efcecfd 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -187,11 +187,12 @@ extern void __iomem *ioremap_nocache(resource_size_t offset, unsigned long size)
- #define ioremap_nocache ioremap_nocache
- extern void __iomem *ioremap_uc(resource_size_t offset, unsigned long size);
- #define ioremap_uc ioremap_uc
--
- extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
- #define ioremap_cache ioremap_cache
- extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
- #define ioremap_prot ioremap_prot
-+extern void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size);
-+#define ioremap_encrypted ioremap_encrypted
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 23a83a4da38a..86ef06d3dbe3 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -471,6 +471,10 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+ 		}
+ 	}
  
- /**
-  * ioremap     -   map bus memory into CPU space
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index c63a545ec199..24e0920a9b25 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -131,7 +131,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
-  * caller shouldn't need to know that small detail.
-  */
- static void __iomem *__ioremap_caller(resource_size_t phys_addr,
--		unsigned long size, enum page_cache_mode pcm, void *caller)
-+		unsigned long size, enum page_cache_mode pcm,
-+		void *caller, bool encrypted)
- {
- 	unsigned long offset, vaddr;
- 	resource_size_t last_addr;
-@@ -199,7 +200,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
- 	 * resulting mapping.
- 	 */
- 	prot = PAGE_KERNEL_IO;
--	if (sev_active() && mem_flags.desc_other)
-+	if ((sev_active() && mem_flags.desc_other) || encrypted)
- 		prot = pgprot_encrypted(prot);
- 
- 	switch (pcm) {
-@@ -291,7 +292,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
- 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
- 
- 	return __ioremap_caller(phys_addr, size, pcm,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_nocache);
- 
-@@ -324,7 +325,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
- 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
- 
- 	return __ioremap_caller(phys_addr, size, pcm,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL_GPL(ioremap_uc);
- 
-@@ -341,7 +342,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
- void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
--					__builtin_return_address(0));
-+					__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_wc);
- 
-@@ -358,14 +359,21 @@ EXPORT_SYMBOL(ioremap_wc);
- void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
--					__builtin_return_address(0));
-+					__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_wt);
- 
-+void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
-+{
-+	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
-+				__builtin_return_address(0), true);
-+}
-+EXPORT_SYMBOL(ioremap_encrypted);
++	/* Ensure that these pages are decrypted if SME is enabled. */
++	if (pages)
++		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
 +
- void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
+ 	return pages;
  }
- EXPORT_SYMBOL(ioremap_cache);
  
-@@ -374,7 +382,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
- {
- 	return __ioremap_caller(phys_addr, size,
- 				pgprot2cachemode(__pgprot(prot_val)),
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_prot);
- 
+@@ -867,6 +871,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result  = -ENOMEM;
+ 			goto out;
+ 		}
++		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+ 		ptr = kmap(page);
+ 		ptr += maddr & ~PAGE_MASK;
+ 		mchunk = min_t(size_t, mbytes,
+@@ -884,6 +889,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result = copy_from_user(ptr, buf, uchunk);
+ 		kexec_flush_icache_page(page);
+ 		kunmap(page);
++		arch_kexec_pre_free_pages(page_address(page), 1);
+ 		if (result) {
+ 			result = -EFAULT;
+ 			goto out;
