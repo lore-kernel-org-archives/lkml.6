@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF90AC67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44645C67871
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788C321473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788C321473
+	by mail.kernel.org (Postfix) with ESMTP id EF3E421473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 18:52:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3E421473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbeJGBxX (ORCPT
+        id S1727836AbeJGB4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 21:53:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40709 "EHLO
+        Sat, 6 Oct 2018 21:56:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53421 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJGBxX (ORCPT
+        with ESMTP id S1726285AbeJGB4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 21:53:23 -0400
+        Sat, 6 Oct 2018 21:56:22 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Imq8E3646960
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96IpqHQ3647627
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 11:48:52 -0700
+        Sat, 6 Oct 2018 11:51:52 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96ImqU43646957;
-        Sat, 6 Oct 2018 11:48:52 -0700
-Date:   Sat, 6 Oct 2018 11:48:52 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96Ipq4M3647624;
+        Sat, 6 Oct 2018 11:51:52 -0700
+Date:   Sat, 6 Oct 2018 11:51:52 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-e8bd1803aec89dfce5758d88022963fe3248bc4c@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        reinette.chatre@intel.com, tglx@linutronix.de
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          reinette.chatre@intel.com, hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com>
-References: <69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com>
+Message-ID: <tip-fa9032bca042b50f0ba7d80e53025cecbd5ad0f3@git.kernel.org>
+Cc:     tglx@linutronix.de, jithu.joseph@intel.com, fenghua.yu@intel.com,
+        reinette.chatre@intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: mingo@kernel.org, jithu.joseph@intel.com,
+          reinette.chatre@intel.com, fenghua.yu@intel.com,
+          tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com>
+References: <9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/intel_rdt: Fix out-of-bounds memory access in
- CBM tests
-Git-Commit-ID: e8bd1803aec89dfce5758d88022963fe3248bc4c
+Subject: [tip:x86/cache] x86/intel_rdt: Introduce utility to obtain CDP peer
+Git-Commit-ID: fa9032bca042b50f0ba7d80e53025cecbd5ad0f3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,220 +58,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e8bd1803aec89dfce5758d88022963fe3248bc4c
-Gitweb:     https://git.kernel.org/tip/e8bd1803aec89dfce5758d88022963fe3248bc4c
+Commit-ID:  fa9032bca042b50f0ba7d80e53025cecbd5ad0f3
+Gitweb:     https://git.kernel.org/tip/fa9032bca042b50f0ba7d80e53025cecbd5ad0f3
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Thu, 4 Oct 2018 14:05:23 -0700
+AuthorDate: Wed, 3 Oct 2018 15:17:01 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 6 Oct 2018 20:41:59 +0200
+CommitDate: Sat, 6 Oct 2018 20:46:26 +0200
 
-x86/intel_rdt: Fix out-of-bounds memory access in CBM tests
+x86/intel_rdt: Introduce utility to obtain CDP peer
 
-While the DOC at the beginning of lib/bitmap.c explicitly states that
-"The number of valid bits in a given bitmap does _not_ need to be an
-exact multiple of BITS_PER_LONG." some of the bitmap operations do
-indeed access BITS_PER_LONG portions of the provided bitmap no matter
-the size of the provided bitmap. For example, if bitmap_intersects()
-is provided with an 8 bit bitmap the operation will access
-BITS_PER_LONG bits from the provided bitmap. While the operation
-ensures that these extra bits do not affect the result the memory
-is still accessed.
+Introduce a utility that, when provided with a RDT resource and an
+instance of this RDT resource (a RDT domain), would return pointers to
+the RDT resource and RDT domain that share the same hardware. This is
+specific to the CDP resources that share the same hardware.
 
-The capacity bitmasks (CBMs) are typically stored in u32 since they
-can never exceed 32 bits. A few instances exist where a bitmap_*
-operation is performed on a CBM by simply pointing the bitmap operation
-to the stored u32 value.
+For example, if a pointer to the RDT_RESOURCE_L2DATA resource (struct
+rdt_resource) and a pointer to an instance of this resource (struct
+rdt_domain) is provided, then it will return a pointer to the
+RDT_RESOURCE_L2CODE resource as well as the specific instance that
+shares the same hardware as the provided rdt_domain.
 
-The consequency of this pattern is that some bitmap_* operations will
-access out-of-bounds memory when interacting with the provided CBM. This
-is confirmed with a KASAN test that reports:
+This utility is created in support of the "exclusive" resource group
+mode where overlap of resource allocation between resource groups need
+to be avoided. The overlap test need to consider not just the matching
+resources, but also the resources that share the same hardware.
 
- BUG: KASAN: stack-out-of-bounds in __bitmap_intersects+0xa2/0x100
+Temporarily mark it as unused in support of patch testing to avoid
+compile warnings until it is used.
 
-and
-
- BUG: KASAN: stack-out-of-bounds in __bitmap_weight+0x58/0x90
-
-Fix this by moving any CBM provided to a bitmap operation needing
-BITS_PER_LONG to an unsigned long variable.
-
-[ tglx: Changed related function arguments to unsigned long and got rid
-  	of the _cbm extra step ]
-
-Fixes: 72d505056604 ("x86/intel_rdt: Add utilities to test pseudo-locked region possibility")
 Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
-Fixes: d9b48c86eb38 ("x86/intel_rdt: Display resource groups' allocations' size in bytes")
-Fixes: 95f0b77efa57 ("x86/intel_rdt: Initialize new resource group with sane defaults")
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com
+Tested-by: Jithu Joseph <jithu.joseph@intel.com>
+Acked-by: Fenghua Yu <fenghua.yu@intel.com>
 Cc: tony.luck@intel.com
 Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.h             |  6 ++---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 20 ++++++++--------
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 36 ++++++++++++++++++-----------
- 3 files changed, 37 insertions(+), 25 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 72 ++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 285eb3ec4200..3736f6dc9545 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -529,14 +529,14 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
- bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--			   u32 _cbm, int closid, bool exclusive);
-+			   unsigned long cbm, int closid, bool exclusive);
- unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
--				  u32 cbm);
-+				  unsigned long cbm);
- enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- int rdtgroup_tasks_assigned(struct rdtgroup *r);
- int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
- int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
--bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
- bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
- int rdt_pseudo_lock_init(void);
- void rdt_pseudo_lock_release(void);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 40f3903ae5d9..0cf489264de5 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -797,25 +797,27 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
- /**
-  * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
-  * @d: RDT domain
-- * @_cbm: CBM to test
-+ * @cbm: CBM to test
-  *
-- * @d represents a cache instance and @_cbm a capacity bitmask that is
-- * considered for it. Determine if @_cbm overlaps with any existing
-+ * @d represents a cache instance and @cbm a capacity bitmask that is
-+ * considered for it. Determine if @cbm overlaps with any existing
-  * pseudo-locked region on @d.
-  *
-- * Return: true if @_cbm overlaps with pseudo-locked region on @d, false
-+ * @cbm is unsigned long, even if only 32 bits are used to make the
-+ * bitmap functions work correctly.
-+ *
-+ * Return: true if @cbm overlaps with pseudo-locked region on @d, false
-  * otherwise.
-  */
--bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm)
- {
--	unsigned long *cbm = (unsigned long *)&_cbm;
--	unsigned long *cbm_b;
- 	unsigned int cbm_len;
-+	unsigned long cbm_b;
- 
- 	if (d->plr) {
- 		cbm_len = d->plr->r->cache.cbm_len;
--		cbm_b = (unsigned long *)&d->plr->cbm;
--		if (bitmap_intersects(cbm, cbm_b, cbm_len))
-+		cbm_b = d->plr->cbm;
-+		if (bitmap_intersects(&cbm, &cbm_b, cbm_len))
- 			return true;
- 	}
- 	return false;
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 1b8e86a5d5e1..280cfb0b4a93 100644
+index 56a6b2388c61..7fc2f86bb13a 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -975,33 +975,34 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
-  * is false then overlaps with any resource group or hardware entities
-  * will be considered.
-  *
-+ * @cbm is unsigned long, even if only 32 bits are used to make the
-+ * bitmap functions work correctly.
+@@ -960,6 +960,78 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+ 	return 0;
+ }
+ 
++/**
++ * rdt_cdp_peer_get - Retrieve CDP peer if it exists
++ * @r: RDT resource to which RDT domain @d belongs
++ * @d: Cache instance for which a CDP peer is requested
++ * @r_cdp: RDT resource that shares hardware with @r (RDT resource peer)
++ *         Used to return the result.
++ * @d_cdp: RDT domain that shares hardware with @d (RDT domain peer)
++ *         Used to return the result.
 + *
-  * Return: false if CBM does not overlap, true if it does.
-  */
- bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--			   u32 _cbm, int closid, bool exclusive)
-+			   unsigned long cbm, int closid, bool exclusive)
- {
--	unsigned long *cbm = (unsigned long *)&_cbm;
--	unsigned long *ctrl_b;
- 	enum rdtgrp_mode mode;
-+	unsigned long ctrl_b;
- 	u32 *ctrl;
- 	int i;
- 
- 	/* Check for any overlap with regions used by hardware directly */
- 	if (!exclusive) {
--		if (bitmap_intersects(cbm,
--				      (unsigned long *)&r->cache.shareable_bits,
--				      r->cache.cbm_len))
-+		ctrl_b = r->cache.shareable_bits;
-+		if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len))
- 			return true;
- 	}
- 
- 	/* Check for overlap with other resource groups */
- 	ctrl = d->ctrl_val;
- 	for (i = 0; i < closids_supported(); i++, ctrl++) {
--		ctrl_b = (unsigned long *)ctrl;
-+		ctrl_b = *ctrl;
- 		mode = rdtgroup_mode_by_closid(i);
- 		if (closid_allocated(i) && i != closid &&
- 		    mode != RDT_MODE_PSEUDO_LOCKSETUP) {
--			if (bitmap_intersects(cbm, ctrl_b, r->cache.cbm_len)) {
-+			if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len)) {
- 				if (exclusive) {
- 					if (mode == RDT_MODE_EXCLUSIVE)
- 						return true;
-@@ -1138,15 +1139,18 @@ out:
-  * computed by first dividing the total cache size by the CBM length to
-  * determine how many bytes each bit in the bitmask represents. The result
-  * is multiplied with the number of bits set in the bitmask.
++ * RDT resources are managed independently and by extension the RDT domains
++ * (RDT resource instances) are managed independently also. The Code and
++ * Data Prioritization (CDP) RDT resources, while managed independently,
++ * could refer to the same underlying hardware. For example,
++ * RDT_RESOURCE_L2CODE and RDT_RESOURCE_L2DATA both refer to the L2 cache.
 + *
-+ * @cbm is unsigned long, even if only 32 bits are used to make the
-+ * bitmap functions work correctly.
-  */
- unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
--				  struct rdt_domain *d, u32 cbm)
-+				  struct rdt_domain *d, unsigned long cbm)
- {
- 	struct cpu_cacheinfo *ci;
- 	unsigned int size = 0;
- 	int num_b, i;
- 
--	num_b = bitmap_weight((unsigned long *)&cbm, r->cache.cbm_len);
-+	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
- 	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
- 	for (i = 0; i < ci->num_leaves; i++) {
- 		if (ci->info_list[i].level == r->cache_level) {
-@@ -2353,6 +2357,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 	u32 used_b = 0, unused_b = 0;
- 	u32 closid = rdtgrp->closid;
- 	struct rdt_resource *r;
-+	unsigned long tmp_cbm;
- 	enum rdtgrp_mode mode;
- 	struct rdt_domain *d;
- 	int i, ret;
-@@ -2390,9 +2395,14 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 			 * modify the CBM based on system availability.
- 			 */
- 			cbm_ensure_valid(&d->new_ctrl, r);
--			if (bitmap_weight((unsigned long *) &d->new_ctrl,
--					  r->cache.cbm_len) <
--					r->cache.min_cbm_bits) {
-+			/*
-+			 * Assign the u32 CBM to an unsigned long to ensure
-+			 * that bitmap_weight() does not access out-of-bound
-+			 * memory.
-+			 */
-+			tmp_cbm = d->new_ctrl;
-+			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
-+			    r->cache.min_cbm_bits) {
- 				rdt_last_cmd_printf("no space on %s:%d\n",
- 						    r->name, d->id);
- 				return -ENOSPC;
++ * When provided with an RDT resource @r and an instance of that RDT
++ * resource @d rdt_cdp_peer_get() will return if there is a peer RDT
++ * resource and the exact instance that shares the same hardware.
++ *
++ * Return: 0 if a CDP peer was found, <0 on error or if no CDP peer exists.
++ *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
++ *         and @d_cdp will point to the peer RDT domain.
++ */
++static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
++						    struct rdt_domain *d,
++						    struct rdt_resource **r_cdp,
++						    struct rdt_domain **d_cdp)
++{
++	struct rdt_resource *_r_cdp = NULL;
++	struct rdt_domain *_d_cdp = NULL;
++	int ret = 0;
++
++	switch (r->rid) {
++	case RDT_RESOURCE_L3DATA:
++		_r_cdp = &rdt_resources_all[RDT_RESOURCE_L3CODE];
++		break;
++	case RDT_RESOURCE_L3CODE:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L3DATA];
++		break;
++	case RDT_RESOURCE_L2DATA:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2CODE];
++		break;
++	case RDT_RESOURCE_L2CODE:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2DATA];
++		break;
++	default:
++		ret = -ENOENT;
++		goto out;
++	}
++
++	/*
++	 * When a new CPU comes online and CDP is enabled then the new
++	 * RDT domains (if any) associated with both CDP RDT resources
++	 * are added in the same CPU online routine while the
++	 * rdtgroup_mutex is held. It should thus not happen for one
++	 * RDT domain to exist and be associated with its RDT CDP
++	 * resource but there is no RDT domain associated with the
++	 * peer RDT CDP resource. Hence the WARN.
++	 */
++	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
++	if (WARN_ON(!_d_cdp)) {
++		_r_cdp = NULL;
++		ret = -EINVAL;
++	}
++
++out:
++	*r_cdp = _r_cdp;
++	*d_cdp = _d_cdp;
++
++	return ret;
++}
++
+ /**
+  * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+  * @r: Resource to which domain instance @d belongs.
