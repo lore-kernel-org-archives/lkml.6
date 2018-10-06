@@ -2,102 +2,190 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDB0C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 09:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CEAC64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 10:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7903620875
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 09:56:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7903620875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id A6EF621473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 10:02:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EF621473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeJFQ7O (ORCPT
+        id S1727709AbeJFRFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 12:59:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52594 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726409AbeJFQ7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 12:59:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92538ACD8;
-        Sat,  6 Oct 2018 09:56:34 +0000 (UTC)
-Date:   Sat, 6 Oct 2018 11:56:27 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     lijiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
-        jroedel@suse.de
-Subject: Re: [PATCH v8 RESEND 0/4] Support kdump for AMD secure memory
- encryption(SME)
-Message-ID: <20181006095627.GA30555@zn.tnic>
-References: <20180930031033.22110-1-lijiang@redhat.com>
- <20181002114012.GB29859@zn.tnic>
- <43da68b1-fda0-c033-39e1-907d01f13354@redhat.com>
- <20181003113435.GB4436@zn.tnic>
- <dac69aae-27cf-9c93-a0ee-b65e241e1dd6@redhat.com>
- <20181004190221.GA17667@zn.tnic>
- <0d1c112c-37b7-ee9d-b3d6-6d8e3df02d78@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0d1c112c-37b7-ee9d-b3d6-6d8e3df02d78@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 6 Oct 2018 13:05:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:34010 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726919AbeJFRFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 13:05:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75AB780D;
+        Sat,  6 Oct 2018 03:02:56 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B7F23F5B7;
+        Sat,  6 Oct 2018 03:02:53 -0700 (PDT)
+Date:   Sat, 06 Oct 2018 11:02:50 +0100
+Message-ID: <86tvlztmt1.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: irqchip: Introduce TISCI Interrupt router bindings
+In-Reply-To: <20181006072812.15814-2-lokeshvutla@ti.com>
+References: <20181006072812.15814-1-lokeshvutla@ti.com>
+        <20181006072812.15814-2-lokeshvutla@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 01:52:26PM +0800, lijiang wrote:
->      b. add the parameter "mem_encrypt=on" for kernel command-line to grub.cfg, if
->         this machine has SME feature. And also add crashkernel=xx, which will reserve
->         memory for kdump.
-
-Ok, I'm doing the simpler crashkernel= cmdline:
-
-crashkernel=256M
-
-That says:
-
-[    0.011918] Reserving 256MB of memory at 640MB for crashkernel (System RAM: 262030MB)
-
-> Step 5: reboot, and then load the crash kernel image and kdump initramfs.
+On Sat, 06 Oct 2018 08:28:11 +0100,
+Lokesh Vutla <lokeshvutla@ti.com> wrote:
 > 
->      a: When SME is enabled, i use this command to load them:
+> Add the DT binding documentation for Interrupt router driver.
 > 
->         #kexec -p /boot/vmlinuz-4.19.0-rc6+ --initrd=/boot/initramfs-4.19.0-rc6+kdump.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap mem_encrypt=on console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never disable_cpu_apicid=0"
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+>  .../interrupt-controller/ti,sci-intr.txt      | 83 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> new file mode 100644
+> index 000000000000..681ca53cc5fb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> @@ -0,0 +1,83 @@
+> +Texas Instruments K3 Interrupt Router
+> +=====================================
+> +
+> +The Interrupt Router (INTR) module provides a mechanism to mux M
+> +interrupt inputs to N interrupt outputs, where all M inputs are selectable
+> +to be driven per N output. There is one register per output (MUXCNTL_N) that
+> +controls the selection.
+> +
+> +
+> +                                 Interrupt Router
+> +                             +----------------------+
+> +                             |  Inputs     Outputs  |
+> +        +-------+            | +------+             |
+> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
+> +        +-------+            | +------+             |      controller
+> +                             |    .        +-----+  |      +-------+
+> +        +-------+            |    .        |  0  |  |----->|  GIC  |
+> +        | INTA  |----------->|    .        +-----+  |      +-------+
+> +        +-------+            |    .          .      |
+> +                             | +------+      .      |
+> +                             | | irqM |    +-----+  |
+> +                             | +------+    |  N  |  |
+> +                             |             +-----+  |
+> +                             +----------------------+
+> +
+> +Configuration of these MUXCNTL_N registers is done by a system controller
+> +(like the Device Memory and Security Controller on K3 AM654 SoC). System
+> +controller will keep track of the used and unused registers within the Router.
+> +Driver should request the system controller to get the range of GIC IRQs
+> +assigned to the requesting hosts. It is the drivers responsibility to keep
+> +track of GIC IRQs.
 
-Ok, did that, my cmdline is:
+I would drop the GIC here, and replace it by "parent interrupt
+controller", as nothing here is GIC specific.
 
-~/bpetkov/src/kexec-tools/build/sbin/kexec -p /boot/vmlinuz-4.19.0-rc6+ --initrd=/boot/initrd-4.19.0-rc6+ --command-line="root=/dev/mapper/ubuntu--010236012132--vg-leap15 rd.lvm.lv=ubuntu--010236012132--vg-leap15/root rd.lvm.lv=ubuntu--010236012132--vg-leap15/swap splash=silent showopts console=ttyS5,115200 console=tty0 debug ignore_loglevel log_buf_len=16M nr_cpus=1 irqpoll maxcpus=1 reset_devices vga=normal mem_encrypt=on LANG=en_US.UTF-8 earlyprintk=serial cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never disable_cpu_apicid=0"
+> +
+> +Communication between the host processor running an OS and the system
+> +controller happens through a protocol called TI System Control Interface
+> +(TISCI protocol). For more details refer:
+> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+> +
+> +TISCI Interrupt Router Node:
+> +----------------------------
+> +- compatible:		Must be "ti,sci-intr".
+> +- interrupt-controller:	Identifies the node as an interrupt controller
+> +- #interrupt-cells:	Specifies the number of cells needed to encode an
+> +			interrupt source. The value should be 3.
+> +			First cell should contain the TISCI device ID of source
+> +			Second cell should contain the interrupt source offset
+> +			within the device
+> +			Third cell specifies the trigger type as defined
+> +			in interrupts.txt in this directory.
 
-Verified it loaded ok:
+Are all trigger types supported?
 
-$ grep . /sys/kernel/kexec_*
-/sys/kernel/kexec_crash_loaded:1
-/sys/kernel/kexec_crash_size:268435456
-/sys/kernel/kexec_loaded:0
+> +- interrupt-parent:	phandle of irq parent for TISCI intr. The parent must
+> +			use the same interrupt-cells format as GIC.
 
-> Step 6: trigger panic by sysrq
->         #echo c > /proc/sysrq-trigger
+Why that constraint? From what I can see, the two are fairly
+independent, and the constraint looks more of a Linux driver issue
+than a DT constraint.
 
-Did that and I got into the kdump kernel with SME. So I'd guess your kdump
-kernel command line was needed - I was missing a bunch of switches and
-remote-debugging a box kexecing is not fun.
+> +- ti,sci:		Phandle to TI-SCI compatible System controller node.
+> +- ti,sci-dst-id:	TISCI device ID of the destination IRQ controller.
+> +- ti,sci-rm-range-girq:	Tuple corresponding to unique TISCI resource type that
+> +			defines the dst host irq ranges assigned to this
+> +			interrupt router from this host context.
+> +			Tuple should be of format <type subtype>.
+> +
+> +Example:
+> +--------
+> +The following example demonstrates both interrupt router node and the consumer
+> +node(main gpio) on the AM654 SoC:
+> +
+> +main_intr: interrupt-controller@1 {
+> +	compatible = "ti,sci-intr";
+> +	interrupt-controller;
+> +	interrupt-parent = <&gic>;
+> +	#interrupt-cells = <3>;
+> +	ti,sci = <&dmsc>;
+> +	ti,sci-dst-id = <56>;
+> +	ti,sci-rm-range-girq = <0xb 0x1>;
+> +};
+> +
+> +main_gpio0:  main_gpio0@600000 {
+> +	...
+> +	interrupt-parent = <&main_intr>;
+> +	interrupts = <57 256 IRQ_TYPE_EDGE_RISING>,
+> +			<57 257 IRQ_TYPE_EDGE_RISING>,
+> +			<57 258 IRQ_TYPE_EDGE_RISING>,
+> +			<57 259 IRQ_TYPE_EDGE_RISING>,
+> +			<57 260 IRQ_TYPE_EDGE_RISING>,
+> +			<57 261 IRQ_TYPE_EDGE_RISING>;
+> +	...
+> +};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 29c08106bd22..a23778b68d74 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14625,6 +14625,7 @@ F:	Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+>  F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>  F:	drivers/clk/keystone/sci-clk.c
+>  F:	drivers/reset/reset-ti-sci.c
+> +F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>  
+>  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+>  M:	Hans Verkuil <hverkuil@xs4all.nl>
+> -- 
+> 2.19.0
+> 
 
-So thanks a lot for the detailed steps, I'm putting them to my notes.
+Thanks,
+
+	M.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+Jazz is not dead, it just smell funny.
