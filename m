@@ -2,74 +2,251 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9992AC65C30
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 12:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275B7C65C30
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 12:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6EF2087D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 12:47:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C6EF2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id D22D22147D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 12:51:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22D22147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbeJFTuV (ORCPT
+        id S1727813AbeJFTyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 15:50:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:47737 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbeJFTuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 15:50:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42S5xB05D7z9s5b;
-        Sat,  6 Oct 2018 22:47:09 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/9] book3s/64: avoid circular header inclusion in mmu-hash.h
-In-Reply-To: <8055896d-f1cd-3560-2f08-ab367270beae@c-s.fr>
-References: <cover.1538687073.git.christophe.leroy@c-s.fr> <3ae99c06f76fc89de00b801a6e839952850c7abb.1538687074.git.christophe.leroy@c-s.fr> <8055896d-f1cd-3560-2f08-ab367270beae@c-s.fr>
-Date:   Sat, 06 Oct 2018 22:47:06 +1000
-Message-ID: <87r2h3i6np.fsf@concordia.ellerman.id.au>
+        Sat, 6 Oct 2018 15:54:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34732 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727161AbeJFTyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 15:54:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59DD67A9;
+        Sat,  6 Oct 2018 05:51:09 -0700 (PDT)
+Received: from [10.162.0.175] (a75553-lin.blr.arm.com [10.162.0.175])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A3A43F5D3;
+        Sat,  6 Oct 2018 05:51:03 -0700 (PDT)
+Subject: Re: [RFC 15/17] arm64: enable ptrauth earlier
+To:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Adam Wallis <awallis@codeaurora.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-16-kristina.martsenko@arm.com>
+From:   Amit Kachhap <amit.kachhap@arm.com>
+Message-ID: <fdf0373e-064d-f46a-fa76-9cd9b75d724b@arm.com>
+Date:   Sat, 6 Oct 2018 18:21:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181005084754.20950-16-kristina.martsenko@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
-
-> The serie has been successfully compiled tested at 
-> http://kisskb.ellerman.id.au/kisskb/head/358723b36b126a381d827c82d04ee226321416b2/
-
-I guess we need to turn on BPF_JIT in some configs :)
-
-This works (builds), but not runtime tested:
-
-diff --git a/arch/powerpc/net/bpf_jit32.h b/arch/powerpc/net/bpf_jit32.h
-index 6f4daacad296..dc50a8d4b3b9 100644
---- a/arch/powerpc/net/bpf_jit32.h
-+++ b/arch/powerpc/net/bpf_jit32.h
-@@ -106,9 +106,8 @@ DECLARE_LOAD_FUNC(sk_load_byte_msh);
- 	} while (0)
- #else
- #define PPC_BPF_LOAD_CPU(r)     \
--	do { BUILD_BUG_ON(FIELD_SIZEOF(struct thread_info, cpu) != 4);		\
--		PPC_LHZ_OFFS(r, (1 & ~(THREAD_SIZE - 1)),			\
--				offsetof(struct thread_info, cpu));		\
-+	do { BUILD_BUG_ON(FIELD_SIZEOF(struct task_struct, cpu) != 4);		\
-+		PPC_LHZ_OFFS(r, 2, offsetof(struct task_struct, cpu));		\
- 	} while(0)
- #endif
- #else
 
 
-cheers
+On 10/05/2018 02:17 PM, Kristina Martsenko wrote:
+> When the kernel is compiled with pointer auth instructions, the boot CPU
+> needs to start using pointer auth very early, so change the cpucap to
+> account for this.
+> 
+> A function that enables pointer auth cannot return, so inline such
+> functions or compile them without pointer auth.
+> 
+> Do not use the cpu_enable callback, to avoid compiling the whole
+> callchain down to cpu_enable without pointer auth.
+> 
+> Note the change in behavior: if the boot CPU has pointer auth and a late
+> CPU does not, we panic. Until now we would have just disabled pointer
+> auth in this case.
+> 
+> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+> ---
+>   arch/arm64/include/asm/cpufeature.h   |  9 +++++++++
+>   arch/arm64/include/asm/pointer_auth.h | 18 ++++++++++++++++++
+>   arch/arm64/kernel/cpufeature.c        | 14 ++++----------
+>   arch/arm64/kernel/smp.c               |  7 ++++++-
+>   4 files changed, 37 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 1717ba1db35d..af4ca92a5fa9 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -292,6 +292,15 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>    */
+>   #define ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
+>   
+> +/*
+> + * CPU feature used early in the boot based on the boot CPU. It is safe for a
+> + * late CPU to have this feature even though the boot CPU hasn't enabled it,
+> + * although the feature will not be used by Linux in this case. If the boot CPU
+> + * has enabled this feature already, then every late CPU must have it.
+> + */
+> +#define ARM64_CPUCAP_BOOT_CPU_FEATURE			\
+> +	 (ARM64_CPUCAP_SCOPE_BOOT_CPU | ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
+> +
+>   struct arm64_cpu_capabilities {
+>   	const char *desc;
+>   	u16 capability;
+> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+> index e60f225d9fa2..0634f06c3af2 100644
+> --- a/arch/arm64/include/asm/pointer_auth.h
+> +++ b/arch/arm64/include/asm/pointer_auth.h
+> @@ -11,6 +11,13 @@
+>   
+>   #ifdef CONFIG_ARM64_PTR_AUTH
+>   /*
+> + * Compile the function without pointer authentication instructions. This
+> + * allows pointer authentication to be enabled/disabled within the function
+> + * (but leaves the function unprotected by pointer authentication).
+> + */
+> +#define __no_ptrauth	__attribute__((target("sign-return-address=none")))
+> +
+> +/*
+>    * Each key is a 128-bit quantity which is split across a pair of 64-bit
+>    * registers (Lo and Hi).
+>    */
+> @@ -51,6 +58,15 @@ static inline void ptrauth_keys_switch(struct ptrauth_keys *keys)
+>   	__ptrauth_key_install(APIA, keys->apia);
+>   }
+>   
+> +static __always_inline void ptrauth_cpu_enable(void)
+> +{
+> +	if (!cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH))
+> +		return;
+> +
+> +	sysreg_clear_set(sctlr_el1, 0, SCTLR_ELx_ENIA);
+> +	isb();
+> +}
+> +
+>   /*
+>    * The EL0 pointer bits used by a pointer authentication code.
+>    * This is dependent on TBI0 being enabled, or bits 63:56 would also apply.
+> @@ -71,8 +87,10 @@ static inline unsigned long ptrauth_strip_insn_pac(unsigned long ptr)
+>   	ptrauth_keys_init(&(tsk)->thread_info.keys_user)
+>   
+>   #else /* CONFIG_ARM64_PTR_AUTH */
+> +#define __no_ptrauth
+>   #define ptrauth_strip_insn_pac(lr)	(lr)
+>   #define ptrauth_task_init_user(tsk)
+> +#define ptrauth_cpu_enable(tsk)
+>   #endif /* CONFIG_ARM64_PTR_AUTH */
+>   
+>   #endif /* __ASM_POINTER_AUTH_H */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 3157685aa56a..380ee01145e8 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1040,15 +1040,10 @@ static void cpu_has_fwb(const struct arm64_cpu_capabilities *__unused)
+>   }
+>   
+>   #ifdef CONFIG_ARM64_PTR_AUTH
+> -static void cpu_enable_address_auth(struct arm64_cpu_capabilities const *cap)
+> -{
+> -	sysreg_clear_set(sctlr_el1, 0, SCTLR_ELx_ENIA);
+> -}
+> -
+>   static bool has_address_auth(const struct arm64_cpu_capabilities *entry,
+>   			     int __unused)
+>   {
+> -	u64 isar1 = read_sanitised_ftr_reg(SYS_ID_AA64ISAR1_EL1);
+> +	u64 isar1 = read_sysreg(id_aa64isar1_el1);
+>   	bool api, apa;
+>   
+>   	apa = cpuid_feature_extract_unsigned_field(isar1,
+> @@ -1251,7 +1246,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>   	{
+>   		.desc = "Address authentication (architected algorithm)",
+>   		.capability = ARM64_HAS_ADDRESS_AUTH_ARCH,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
+>   		.sys_reg = SYS_ID_AA64ISAR1_EL1,
+>   		.sign = FTR_UNSIGNED,
+>   		.field_pos = ID_AA64ISAR1_APA_SHIFT,
+> @@ -1261,7 +1256,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>   	{
+>   		.desc = "Address authentication (IMP DEF algorithm)",
+>   		.capability = ARM64_HAS_ADDRESS_AUTH_IMP_DEF,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
+>   		.sys_reg = SYS_ID_AA64ISAR1_EL1,
+>   		.sign = FTR_UNSIGNED,
+>   		.field_pos = ID_AA64ISAR1_API_SHIFT,
+> @@ -1270,9 +1265,8 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>   	},
+>   	{
+>   		.capability = ARM64_HAS_ADDRESS_AUTH,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
+>   		.matches = has_address_auth,
+> -		.cpu_enable = cpu_enable_address_auth,
+>   	},
+>   #endif /* CONFIG_ARM64_PTR_AUTH */
+>   	{},
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 25fcd22a4bb2..09690024dce8 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -53,6 +53,7 @@
+>   #include <asm/numa.h>
+>   #include <asm/pgtable.h>
+>   #include <asm/pgalloc.h>
+> +#include <asm/pointer_auth.h>
+>   #include <asm/processor.h>
+>   #include <asm/smp_plat.h>
+>   #include <asm/sections.h>
+> @@ -211,6 +212,8 @@ asmlinkage notrace void secondary_start_kernel(void)
+This function secondary_start_kernel attribute can be set to 
+__no_ptrauth for better redability as below, although no functionality 
+is broken as this function does not return.
+>   	 */
+>   	check_local_cpu_capabilities();
+>   
+> +	ptrauth_cpu_enable();
+There are some function calls before so wondering if pointer 
+authentication and cpu capabilities check required by ptrauth can be 
+moved still up.
+> +
+>   	if (cpu_ops[cpu]->cpu_postboot)
+>   		cpu_ops[cpu]->cpu_postboot();
+>   
+> @@ -405,7 +408,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
+>   	mark_linear_text_alias_ro();
+>   }
+>   
+> -void __init smp_prepare_boot_cpu(void)
+> +void __init __no_ptrauth smp_prepare_boot_cpu(void)
+>   {
+>   	set_my_cpu_offset(per_cpu_offset(smp_processor_id()));
+>   	/*
+> @@ -414,6 +417,8 @@ void __init smp_prepare_boot_cpu(void)
+>   	 */
+>   	jump_label_init();
+>   	cpuinfo_store_boot_cpu();
+> +
+> +	ptrauth_cpu_enable();
+>   }
+>   
+>   static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+> 
