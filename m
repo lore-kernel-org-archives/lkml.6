@@ -2,290 +2,523 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB72EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 09:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7287BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 09:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986C321480
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 09:40:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986C321480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
+	by mail.kernel.org (Postfix) with ESMTP id E242420875
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 09:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E242420875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbeJFQnN (ORCPT
+        id S1727652AbeJFQ56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 12:43:13 -0400
-Received: from gofer.mess.org ([88.97.38.141]:33405 "EHLO gofer.mess.org"
+        Sat, 6 Oct 2018 12:57:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:33948 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726409AbeJFQnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 12:43:13 -0400
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id B2D1060777; Sat,  6 Oct 2018 10:40:33 +0100 (BST)
-Date:   Sat, 6 Oct 2018 10:40:33 +0100
-From:   Sean Young <sean@mess.org>
-To:     ektor5 <ek5.chimenti@gmail.com>
-Cc:     hverkuil@xs4all.nl, luca.pisani@udoo.org, jose.abreu@synopsys.com,
-        sakari.ailus@linux.intel.com, jacopo@jmondi.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] seco-cec: add Consumer-IR support
-Message-ID: <20181006094033.xyphjosvwpvg57ay@gofer.mess.org>
-References: <cover.1538474121.git.ek5.chimenti@gmail.com>
- <cover.1538760098.git.ek5.chimenti@gmail.com>
- <3eb65888e2bd0869341732312460d24ee99d8d13.1538760098.git.ek5.chimenti@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3eb65888e2bd0869341732312460d24ee99d8d13.1538760098.git.ek5.chimenti@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1726409AbeJFQ56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 12:57:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 687AA80D;
+        Sat,  6 Oct 2018 02:55:19 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1C5B3F5B7;
+        Sat,  6 Oct 2018 02:55:16 -0700 (PDT)
+Date:   Sat, 06 Oct 2018 10:55:13 +0100
+Message-ID: <86va6ftn5q.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 2/2] irqchip: ti-sci-intr: Add support for Interrupt Router driver
+In-Reply-To: <20181006072812.15814-3-lokeshvutla@ti.com>
+References: <20181006072812.15814-1-lokeshvutla@ti.com>
+        <20181006072812.15814-3-lokeshvutla@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 07:33:59PM +0200, ektor5 wrote:
-> From: Ettore Chimenti <ek5.chimenti@gmail.com>
+Hi Lokesh,
+
+On Sat, 06 Oct 2018 08:28:12 +0100,
+Lokesh Vutla <lokeshvutla@ti.com> wrote:
 > 
-> Introduce support for Consumer-IR into seco-cec driver, as it shares the
-> same interrupt for receiving messages.
-> The device decodes RC5 signals only, defaults to hauppauge mapping.
-> It will spawn an input interface using the RC framework (like CEC
-> device).
+> Texas Instruments' K3 generation SoCs has an IP Interrupt Router
+> that does allows for multiplexing of input interrupts to host
+> interrupt controller. Interrupt Router inputs are either from a
+> peripheral or from an Interrupt Aggregator which is another
+> interrupt controller.
 > 
-> Signed-off-by: Ettore Chimenti <ek5.chimenti@gmail.com>
+> Configuration of the interrupt router registers can only be done by
+> a system co-processor and the driver needs to send a message to this
+> co processor over TISCI protocol.
 
-Looks great, thanks!
+I assume that this co-processor only deals with the routing itself,
+and doesn't need to be talked to during interrupt processing, right?
 
-Reviewed-by: Sean Young <sean@mess.org>
-
+> 
+> Add support for Interrupt Router driver over TISCI protocol.
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 > ---
->  drivers/media/platform/Kconfig             |  10 ++
->  drivers/media/platform/seco-cec/seco-cec.c | 125 ++++++++++++++++++++-
->  drivers/media/platform/seco-cec/seco-cec.h |  11 ++
->  3 files changed, 145 insertions(+), 1 deletion(-)
+>  MAINTAINERS                       |   1 +
+>  drivers/irqchip/Kconfig           |  11 +
+>  drivers/irqchip/Makefile          |   1 +
+>  drivers/irqchip/irq-ti-sci-intr.c | 325 ++++++++++++++++++++++++++++++
+>  4 files changed, 338 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
 > 
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 51cd1fd005e3..e6b45da2af6d 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -625,6 +625,16 @@ config VIDEO_SECO_CEC
->  	  CEC bus is present in the HDMI connector and enables communication
->  	  between compatible devices.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a23778b68d74..cf3c834f8cee 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14626,6 +14626,7 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>  F:	drivers/clk/keystone/sci-clk.c
+>  F:	drivers/reset/reset-ti-sci.c
+>  F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> +F:	drivers/irqchip/irq-ti-sci-intr.c
 >  
-> +config VIDEO_SECO_RC
-> +	bool "SECO Boards IR RC5 support"
-> +	depends on VIDEO_SECO_CEC
-> +	select RC_CORE
+>  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+>  M:	Hans Verkuil <hverkuil@xs4all.nl>
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 96451b581452..9a965fe22043 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -374,6 +374,17 @@ config QCOM_PDC
+>  	  Power Domain Controller driver to manage and configure wakeup
+>  	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
+>  
+> +config TI_SCI_INTR_IRQCHIP
+> +	tristate "TISCI based Interrupt Router irqchip driver"
+> +	depends on TI_SCI_PROTOCOL && ARCH_K3
+> +	select IRQ_DOMAIN
+> +	select IRQ_DOMAIN_HIERARCHY
 > +	help
-> +	  If you say yes here you will get support for the
-> +	  SECO Boards Consumer-IR in seco-cec driver.
-> +	  The embedded controller supports RC5 protocol only, default mapping
-> +	  is set to rc-hauppauge.
+> +	  This enables the irqchip driver support for K3 Interrupt router
+> +	  over TI System Control Interface available on some new TI's SoCs.
+> +	  If you wish to use interrupt router irq resources managed by the
+> +	  TI System Controller, say Y here. Otherwise, say N.
+
+I don't really see the point of making this user-selectable. If you're
+compiling support for a given platform, this platform configuration
+fragment should itself select the necessary dependencies for the
+system to work as expected. Here, you are leaving the choice to the
+user, with a 50% chance of getting a system that doesn't boot...
+
 > +
->  endif #CEC_PLATFORM_DRIVERS
+>  endmenu
 >  
->  menuconfig SDR_PLATFORM_DRIVERS
-> diff --git a/drivers/media/platform/seco-cec/seco-cec.c b/drivers/media/platform/seco-cec/seco-cec.c
-> index 990e88f979a2..6ae42fc855ef 100644
-> --- a/drivers/media/platform/seco-cec/seco-cec.c
-> +++ b/drivers/media/platform/seco-cec/seco-cec.c
-> @@ -26,6 +26,8 @@ struct secocec_data {
->  	struct platform_device *pdev;
->  	struct cec_adapter *cec_adap;
->  	struct cec_notifier *notifier;
-> +	struct rc_dev *ir;
-> +	char ir_input_phys[32];
->  	int irq;
->  };
->  
-> @@ -371,6 +373,114 @@ struct cec_adap_ops secocec_cec_adap_ops = {
->  	.adap_transmit = secocec_adap_transmit,
->  };
->  
-> +#ifdef CONFIG_VIDEO_SECO_RC
-> +static int secocec_ir_probe(void *priv)
-> +{
-> +	struct secocec_data *cec = priv;
-> +	struct device *dev = cec->dev;
-> +	int status;
-> +	u16 val;
-> +
-> +	/* Prepare the RC input device */
-> +	cec->ir = devm_rc_allocate_device(dev, RC_DRIVER_SCANCODE);
-> +	if (!cec->ir)
-> +		return -ENOMEM;
-> +
-> +	snprintf(cec->ir_input_phys, sizeof(cec->ir_input_phys),
-> +		 "%s/input0", dev_name(dev));
-> +
-> +	cec->ir->device_name = dev_name(dev);
-> +	cec->ir->input_phys = cec->ir_input_phys;
-> +	cec->ir->input_id.bustype = BUS_HOST;
-> +	cec->ir->input_id.vendor = 0;
-> +	cec->ir->input_id.product = 0;
-> +	cec->ir->input_id.version = 1;
-> +	cec->ir->driver_name = SECOCEC_DEV_NAME;
-> +	cec->ir->allowed_protocols = RC_PROTO_BIT_RC5;
-> +	cec->ir->priv = cec;
-> +	cec->ir->map_name = RC_MAP_HAUPPAUGE;
-> +	cec->ir->timeout = MS_TO_NS(100);
-> +
-> +	/* Clear the status register */
-> +	status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
-> +	if (status != 0)
-> +		goto err;
-> +
-> +	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
-> +	if (status != 0)
-> +		goto err;
-> +
-> +	/* Enable the interrupts */
-> +	status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
-> +	if (status != 0)
-> +		goto err;
-> +
-> +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
-> +			  val | SECOCEC_ENABLE_REG_1_IR);
-> +	if (status != 0)
-> +		goto err;
-> +
-> +	dev_dbg(dev, "IR enabled");
-> +
-> +	status = devm_rc_register_device(dev, cec->ir);
-> +
-> +	if (status) {
-> +		dev_err(dev, "Failed to prepare input device");
-> +		cec->ir = NULL;
-> +		goto err;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	smb_rd16(SECOCEC_ENABLE_REG_1, &val);
-> +
-> +	smb_wr16(SECOCEC_ENABLE_REG_1,
-> +		 val & ~SECOCEC_ENABLE_REG_1_IR);
-> +
-> +	dev_dbg(dev, "IR disabled");
-> +	return status;
-> +}
-> +
-> +static int secocec_ir_rx(struct secocec_data *priv)
-> +{
-> +	struct secocec_data *cec = priv;
-> +	struct device *dev = cec->dev;
-> +	u16 val, status, key, addr, toggle;
-> +
-> +	if (!cec->ir)
-> +		return -ENODEV;
-> +
-> +	status = smb_rd16(SECOCEC_IR_READ_DATA, &val);
-> +	if (status != 0)
-> +		goto err;
-> +
-> +	key = val & SECOCEC_IR_COMMAND_MASK;
-> +	addr = (val & SECOCEC_IR_ADDRESS_MASK) >> SECOCEC_IR_ADDRESS_SHL;
-> +	toggle = (val & SECOCEC_IR_TOGGLE_MASK) >> SECOCEC_IR_TOGGLE_SHL;
-> +
-> +	rc_keydown(cec->ir, RC_PROTO_RC5, RC_SCANCODE_RC5(addr, key), toggle);
-> +
-> +	dev_dbg(dev, "IR key pressed: 0x%02x addr 0x%02x toggle 0x%02x", key,
-> +		addr, toggle);
-> +
-> +	return 0;
-> +
-> +err:
-> +	dev_err(dev, "IR Receive message failed (%d)", status);
-> +	return -EIO;
-> +}
-> +#else
-> +static void secocec_ir_rx(struct secocec_data *priv)
-> +{
-> +}
-> +
-> +static int secocec_ir_probe(void *priv)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  static irqreturn_t secocec_irq_handler(int irq, void *priv)
->  {
->  	struct secocec_data *cec = priv;
-> @@ -406,7 +516,8 @@ static irqreturn_t secocec_irq_handler(int irq, void *priv)
->  	if (status_val & SECOCEC_STATUS_REG_1_IR) {
->  		dev_dbg(dev, "IR RC5 Interrupt Caught");
->  		val |= SECOCEC_STATUS_REG_1_IR;
-> -		/* TODO IRDA RX */
-> +
-> +		secocec_ir_rx(cec);
->  	}
->  
->  	/*  Reset status register */
-> @@ -576,6 +687,10 @@ static int secocec_probe(struct platform_device *pdev)
->  	if (secocec->notifier)
->  		cec_register_cec_notifier(secocec->cec_adap, secocec->notifier);
->  
-> +	ret = secocec_ir_probe(secocec);
-> +	if (ret)
-> +		goto err_delete_adapter;
-> +
->  	platform_set_drvdata(pdev, secocec);
->  
->  	dev_dbg(dev, "Device registered");
-> @@ -593,7 +708,15 @@ static int secocec_probe(struct platform_device *pdev)
->  static int secocec_remove(struct platform_device *pdev)
->  {
->  	struct secocec_data *secocec = platform_get_drvdata(pdev);
-> +	u16 val;
-> +
-> +	if (secocec->ir) {
-> +		smb_rd16(SECOCEC_ENABLE_REG_1, &val);
->  
-> +		smb_wr16(SECOCEC_ENABLE_REG_1, val & ~SECOCEC_ENABLE_REG_1_IR);
-> +
-> +		dev_dbg(&pdev->dev, "IR disabled");
-> +	}
->  	cec_unregister_adapter(secocec->cec_adap);
->  
->  	if (secocec->notifier)
-> diff --git a/drivers/media/platform/seco-cec/seco-cec.h b/drivers/media/platform/seco-cec/seco-cec.h
-> index 93020900935e..3f1aad89b073 100644
-> --- a/drivers/media/platform/seco-cec/seco-cec.h
-> +++ b/drivers/media/platform/seco-cec/seco-cec.h
-> @@ -99,6 +99,17 @@
->  
->  #define SECOCEC_IR_READ_DATA		0x3e
->  
+>  config SIFIVE_PLIC
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index b822199445ff..44bf65606d60 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -89,3 +89,4 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
+>  obj-$(CONFIG_NDS32)			+= irq-ativic32.o
+>  obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
+>  obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
+> +obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
+> diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
+> new file mode 100644
+> index 000000000000..f04fe6da1b09
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-ti-sci-intr.c
+> @@ -0,0 +1,325 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * IR
+> + * Texas Instruments' K3 Interrupt Router irqchip driver
+> + *
+> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
+> + *	Lokesh Vutla <lokeshvutla@ti.com>
 > + */
 > +
-> +#define SECOCEC_IR_COMMAND_MASK		0x007F
-> +#define SECOCEC_IR_COMMAND_SHL		0
-> +#define SECOCEC_IR_ADDRESS_MASK		0x1F00
-> +#define SECOCEC_IR_ADDRESS_SHL		7
-> +#define SECOCEC_IR_TOGGLE_MASK		0x8000
-> +#define SECOCEC_IR_TOGGLE_SHL		15
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/module.h>
+> +#include <linux/moduleparam.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/soc/ti/ti_sci_protocol.h>
 > +
->  /*
->   * Enabling register
->   */
+> +#define TI_SCI_DEV_ID_MASK	0xffff
+> +#define TI_SCI_DEV_ID_SHIFT	16
+> +#define TI_SCI_IRQ_ID_MASK	0xffff
+> +#define TI_SCI_IRQ_ID_SHIFT	0
+> +#define TI_SCI_IS_EVENT_IRQ	BIT(31)
+> +
+> +#define HWIRQ_TO_DEVID(HWIRQ)	(((HWIRQ) >> (TI_SCI_DEV_ID_SHIFT)) & \
+> +				 (TI_SCI_DEV_ID_MASK))
+> +#define HWIRQ_TO_IRQID(HWIRQ)	((HWIRQ) & (TI_SCI_IRQ_ID_MASK))
+
+nit: s/(HWIRQ)/(hwirq)/g
+
+> +
+> +/**
+> + * struct ti_sci_intr_irq_domain - Structure representing a TISCI based
+> + *				   Interrupt Router IRQ domain.
+> + * @sci:	Pointer to TISCI handle
+> + * @dst_irq:	TISCI resource pointer representing destination irq controller.
+> + * @dst_id:	TISCI device ID of the destination irq controller.
+> + */
+> +struct ti_sci_intr_irq_domain {
+> +	const struct ti_sci_handle *sci;
+> +	struct ti_sci_resource *dst_irq;
+> +	u16 dst_id;
+> +};
+> +
+> +/**
+> + * struct ti_sci_intr_irq_desc - Description of an Interrupt Router IRQ
+> + * @src_id:		TISCI device ID of the IRQ source
+> + * @src_index:		IRQ source index within the device.
+> + * @dst_irq:		Destination host IRQ.
+> + */
+> +struct ti_sci_intr_irq_desc {
+> +	u16 src_id;
+> +	u16 src_index;
+> +	u16 dst_irq;
+> +};
+
+Oh great. So this is reinventing the GICv3 ITS, only for SPIs. :-(
+
+Now, this structure seems completely useless, see below.
+
+> +
+> +static struct irq_chip ti_sci_intr_irq_chip = {
+> +	.name			= "INTR",
+> +	.irq_eoi		= irq_chip_eoi_parent,
+> +	.irq_mask		= irq_chip_mask_parent,
+> +	.irq_unmask		= irq_chip_unmask_parent,
+> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+> +	.irq_set_type		= irq_chip_set_type_parent,
+> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+> +};
+> +
+> +/**
+> + * ti_sci_intr_irq_domain_translate() - Retrieve hwirq and type from
+> + *					IRQ firmware specific handler.
+> + * @domain:	Pointer to IRQ domain
+> + * @fwspec:	Pointer to IRQ specific firmware structure
+> + * @hwirq:	IRQ number identified by hardware
+> + * @type:	IRQ type
+> + *
+> + * Return 0 if all went ok else appropriate error.
+> + */
+> +static int ti_sci_intr_irq_domain_translate(struct irq_domain *domain,
+> +					    struct irq_fwspec *fwspec,
+> +					    unsigned long *hwirq,
+> +					    unsigned int *type)
+> +{
+> +	if (is_of_node(fwspec->fwnode)) {
+> +		if (fwspec->param_count != 3)
+> +			return -EINVAL;
+> +
+> +		*hwirq = ((fwspec->param[0] & TI_SCI_DEV_ID_MASK) <<
+> +			  TI_SCI_DEV_ID_SHIFT) |
+> +			 (fwspec->param[1] & TI_SCI_IRQ_ID_MASK);
+
+Maybe it would make sense to have a macro that hides this:
+
+      	       *hwirq = FWSPEC_TO_HWIRQ(fwspec);
+
+> +		*type = fwspec->param[2];
+> +
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static inline void ti_sci_intr_delete_desc(struct ti_sci_intr_irq_domain *intr,
+> +					   struct ti_sci_intr_irq_desc *desc)
+> +{
+> +	intr->sci->ops.rm_irq_ops.free_direct_irq(intr->sci, desc->src_id,
+> +						  desc->src_index,
+> +						  intr->dst_id, desc->dst_irq);
+
+This looks horrible. Why doesn't your firmware interface have a helper
+functions that hides this? Something like:
+
+	ti_sci_free_direct_irq(intr, src_id, src_index, dst_irq);
+
+and you could even add some error checking.
+
+> +	pr_debug("%s: IRQ deleted from src = %d, src_index = %d, to dst = %d, dst_irq = %d\n",
+> +		 __func__, desc->src_id, desc->src_index, intr->dst_id,
+> +		desc->dst_irq);
+
+And put this where it belongs (in the helper function).
+
+> +}
+> +
+> +/**
+> + * ti_sci_intr_irq_domain_free() - Free the specified IRQs from the domain.
+> + * @domain:	Domain to which the irqs belong
+> + * @virq:	Linux virtual IRQ to be freed.
+> + * @nr_irqs:	Number of continuous irqs to be freed
+> + */
+> +static void ti_sci_intr_irq_domain_free(struct irq_domain *domain,
+> +					unsigned int virq, unsigned int nr_irqs)
+> +{
+> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
+> +	struct ti_sci_intr_irq_desc *desc;
+> +	struct irq_data *data;
+> +	int i;
+> +
+> +	intr = domain->host_data;
+> +
+> +	for (i = 0; i < nr_irqs; i++) {
+> +		data = irq_domain_get_irq_data(domain, virq + i);
+> +
+> +		desc = irq_data_get_irq_chip_data(data);
+> +
+> +		ti_sci_intr_delete_desc(intr, desc);
+> +		irq_domain_free_irqs_parent(domain, virq, 1);
+> +		irq_domain_reset_irq_data(data);
+> +		ti_sci_release_resource(intr->dst_irq, desc->dst_irq);
+> +		kfree(desc);
+> +	}
+> +}
+> +
+> +/**
+> + * allocate_gic_irq() - Allocate GIC specific IRQ
+> + * @domain:	Point to the interrupt router IRQ domain
+> + * @dev:	TISCI device IRQ generating the IRQ
+> + * @irq:	IRQ offset within the device
+> + * @flags:	Corresponding flags to the IRQ
+> + *
+> + * Returns pointer to irq descriptor if all went well else appropriate
+> + * error pointer.
+> + */
+> +static struct ti_sci_intr_irq_desc *allocate_gic_irq(struct irq_domain *domain,
+> +						     unsigned int virq,
+> +						     u16 dev, u16 irq,
+> +						     u32 flags)
+> +{
+> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
+> +	struct ti_sci_intr_irq_desc *desc;
+> +	struct irq_fwspec fwspec;
+> +	int err;
+> +
+> +	if (!irq_domain_get_of_node(domain->parent))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
+> +	if (!desc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	desc->src_id = dev;
+> +	desc->src_index = irq;
+> +	desc->dst_irq = ti_sci_get_free_resource(intr->dst_irq);
+
+I don't think this structure serves any purpose. src_id and src_index
+are just a decomposition of hwirq. dst_irq is the GIC interrupt, which
+is stored... by the GIC driver. Also, it is worth realising that
+you're allocating per-interrupt data, but none of the per-interrupt
+callbacks are using it. In my book, that's a sure sign that this
+structure is pointless.
+
+Am I missing anything here?
+
+> +
+> +	fwspec.fwnode = domain->parent->fwnode;
+> +	fwspec.param_count = 3;
+> +	fwspec.param[0] = 0;	/* SPI */
+> +	fwspec.param[1] = desc->dst_irq - 32; /* SPI offset */
+> +	fwspec.param[2] = flags & IRQ_TYPE_SENSE_MASK;
+> +
+> +	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
+> +	if (err)
+> +		goto err_irqs;
+> +
+> +	pr_debug("%s: IRQ requested from src = %d, src_index = %d, to dst = %d, dst_irq = %d\n",
+> +		 __func__, desc->src_id, desc->src_index, intr->dst_id,
+> +		 desc->dst_irq);
+> +
+> +	err = intr->sci->ops.rm_irq_ops.set_direct_irq(intr->sci, desc->src_id,
+> +						       desc->src_index,
+> +						       intr->dst_id,
+> +						       desc->dst_irq);
+
+Same remarks about the horrible interface.
+
+> +	if (err) {
+> +		pr_err("%s: IRQ allocation failed from src = %d, src_index = %d to dst_id = %d, dst_irq = %d",
+> +		       __func__, desc->src_id, desc->src_index, intr->dst_id,
+> +		       desc->dst_irq);
+> +		goto err_msg;
+> +	}
+> +
+> +	return desc;
+> +
+> +err_msg:
+> +	irq_domain_free_irqs_parent(domain, virq, 1);
+> +err_irqs:
+> +	ti_sci_release_resource(intr->dst_irq, desc->dst_irq);
+> +	kfree(desc);
+> +	return ERR_PTR(err);
+> +}
+> +
+> +/**
+> + * ti_sci_intr_irq_domain_alloc() - Allocate Interrupt router IRQs
+> + * @domain:	Point to the interrupt router IRQ domain
+> + * @virq:	Corresponding Linux virtual IRQ number
+> + * @nr_irqs:	Continuous irqs to be allocated
+> + * @data:	Pointer to firmware specifier
+> + *
+> + * Return 0 if all went well else appropriate error value.
+> + */
+> +static int ti_sci_intr_irq_domain_alloc(struct irq_domain *domain,
+> +					unsigned int virq, unsigned int nr_irqs,
+> +					void *data)
+> +{
+> +	struct irq_fwspec *fwspec = data;
+> +	struct ti_sci_intr_irq_desc *desc;
+> +	unsigned long hwirq;
+> +	u16 src_id, src_index;
+> +	int i, err;
+> +	u32 type;
+> +
+> +	err = ti_sci_intr_irq_domain_translate(domain, fwspec, &hwirq, &type);
+> +	if (err)
+> +		return err;
+> +
+> +	src_id = HWIRQ_TO_DEVID(hwirq);
+> +	src_index = HWIRQ_TO_IRQID(hwirq);
+> +
+> +	for (i = 0; i < nr_irqs; i++) {
+> +		desc = allocate_gic_irq(domain, virq + i, src_id, src_index + i,
+> +					type);
+> +		if (IS_ERR(desc))
+> +			/* ToDO: Clean already allocated IRQs */
+> +			return PTR_ERR(desc);
+
+Please address this. But it also worth realising that this code will
+never be called with nr_irqs!=1 (that's only for things like PCI
+Multi-MSI).
+
+> +
+> +		err = irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
+> +						    &ti_sci_intr_irq_chip,
+> +						    desc);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops ti_sci_intr_irq_domain_ops = {
+> +	.alloc		= ti_sci_intr_irq_domain_alloc,
+> +	.free		= ti_sci_intr_irq_domain_free,
+> +	.translate	= ti_sci_intr_irq_domain_translate,
+> +};
+> +
+> +static int ti_sci_intr_irq_domain_probe(struct platform_device *pdev)
+> +{
+> +	struct irq_domain *parent_domain, *domain;
+> +	struct ti_sci_intr_irq_domain *intr;
+> +	struct device_node *parent_node;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	parent_node = of_irq_find_parent(dev_of_node(dev));
+> +	if (!parent_node) {
+> +		dev_err(dev, "Failed to get IRQ parent node\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	parent_domain = irq_find_host(parent_node);
+> +	if (!parent_domain) {
+> +		dev_err(dev, "Failed to find IRQ parent domain\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	intr = devm_kzalloc(dev, sizeof(*intr), GFP_KERNEL);
+> +	if (!intr)
+> +		return -ENOMEM;
+> +
+> +	intr->sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+> +	if (IS_ERR(intr->sci)) {
+> +		ret = PTR_ERR(intr->sci);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "ti,sci read fail %d\n", ret);
+> +		intr->sci = NULL;
+> +		return ret;
+> +	}
+> +
+> +	intr->dst_irq = devm_ti_sci_get_of_resource(intr->sci, dev,
+> +						    "ti,sci-rm-range-girq");
+> +	if (IS_ERR(intr->dst_irq)) {
+> +		dev_err(dev, "Destination irq resource allocation failed\n");
+> +		return PTR_ERR(intr->dst_irq);
+> +	}
+> +
+> +	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dst-id",
+> +				   (u32 *)&intr->dst_id);
+> +	if (ret) {
+> +		dev_err(dev, "missing 'ti,sci-dst-id' property\n");
+> +		return -EINVAL;
+> +	}
+
+Do you expect other drivers to require similar resource request? If
+so, It might be worth getting the firmware interface to do that
+work. Specially the "give me my SCI" part.
+
+> +
+> +	domain = irq_domain_add_hierarchy(parent_domain, 0, 0, dev_of_node(dev),
+> +					  &ti_sci_intr_irq_domain_ops, intr);
+> +	if (!domain) {
+> +		dev_err(dev, "Failed to allocate IRQ domain\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id ti_sci_intr_irq_domain_of_match[] = {
+> +	{ .compatible = "ti,sci-intr", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, ti_sci_intr_irq_domain_of_match);
+> +
+> +static struct platform_driver ti_sci_intr_irq_domain_driver = {
+> +	.probe = ti_sci_intr_irq_domain_probe,
+> +	.driver = {
+> +		.name = "ti-sci-intr",
+> +		.of_match_table = ti_sci_intr_irq_domain_of_match,
+> +	},
+> +};
+> +module_platform_driver(ti_sci_intr_irq_domain_driver);
+> +
+> +MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ticom>");
+> +MODULE_DESCRIPTION("K3 Interrupt Router driver over TI SCI protocol");
+> +MODULE_LICENSE("GPL v2");
 > -- 
-> 2.18.0
+> 2.19.0
+> 
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
