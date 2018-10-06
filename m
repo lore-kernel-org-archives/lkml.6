@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BACC65C31
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31459C65C31
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2140321473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:46:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2140321473
+	by mail.kernel.org (Postfix) with ESMTP id E5E3221473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E3221473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbeJFStn (ORCPT
+        id S1727815AbeJFSuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 14:49:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43359 "EHLO
+        Sat, 6 Oct 2018 14:50:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43309 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeJFStn (ORCPT
+        with ESMTP id S1726919AbeJFSuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 14:49:43 -0400
+        Sat, 6 Oct 2018 14:50:22 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96BkQVt3529951
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Bl0UN3530017
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 04:46:26 -0700
+        Sat, 6 Oct 2018 04:47:00 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96BkQfT3529948;
-        Sat, 6 Oct 2018 04:46:26 -0700
-Date:   Sat, 6 Oct 2018 04:46:26 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96Bl04j3530014;
+        Sat, 6 Oct 2018 04:47:00 -0700
+Date:   Sat, 6 Oct 2018 04:47:00 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Lianbo Jiang <tipbot@zytor.com>
-Message-ID: <tip-9cf38d5559e813cccdba8b44c82cc46ba48d0896@git.kernel.org>
-Cc:     thomas.lendacky@amd.com, hpa@zytor.com, bp@suse.de,
-        mingo@kernel.org, lijiang@redhat.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, thomas.lendacky@amd.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          lijiang@redhat.com, mingo@kernel.org, bp@suse.de
-In-Reply-To: <20180930031033.22110-3-lijiang@redhat.com>
-References: <20180930031033.22110-3-lijiang@redhat.com>
+Message-ID: <tip-8780158cf977ea5f9912931a30b3d575b36dba22@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, jroedel@suse.de,
+        thomas.lendacky@amd.com, bp@suse.de, mingo@kernel.org,
+        hpa@zytor.com, lijiang@redhat.com
+Reply-To: jroedel@suse.de, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, lijiang@redhat.com, hpa@zytor.com,
+          mingo@kernel.org, thomas.lendacky@amd.com, bp@suse.de
+In-Reply-To: <20180930031033.22110-4-lijiang@redhat.com>
+References: <20180930031033.22110-4-lijiang@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] kexec: Allocate decrypted control pages for kdump if
- SME is enabled
-Git-Commit-ID: 9cf38d5559e813cccdba8b44c82cc46ba48d0896
+Subject: [tip:x86/mm] iommu/amd: Remap the IOMMU device table with the
+ memory encryption mask for kdump
+Git-Commit-ID: 8780158cf977ea5f9912931a30b3d575b36dba22
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,24 +59,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9cf38d5559e813cccdba8b44c82cc46ba48d0896
-Gitweb:     https://git.kernel.org/tip/9cf38d5559e813cccdba8b44c82cc46ba48d0896
+Commit-ID:  8780158cf977ea5f9912931a30b3d575b36dba22
+Gitweb:     https://git.kernel.org/tip/8780158cf977ea5f9912931a30b3d575b36dba22
 Author:     Lianbo Jiang <lijiang@redhat.com>
-AuthorDate: Sun, 30 Sep 2018 11:10:31 +0800
+AuthorDate: Sun, 30 Sep 2018 11:10:32 +0800
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 6 Oct 2018 12:01:51 +0200
+CommitDate: Sat, 6 Oct 2018 12:08:24 +0200
 
-kexec: Allocate decrypted control pages for kdump if SME is enabled
+iommu/amd: Remap the IOMMU device table with the memory encryption mask for kdump
 
-When SME is enabled in the first kernel, it needs to allocate decrypted
-pages for kdump because when the kdump kernel boots, these pages need to
-be accessed decrypted in the initial boot stage, before SME is enabled.
+The kdump kernel copies the IOMMU device table from the old device table
+which is encrypted when SME is enabled in the first kernel. So remap the
+old device table with the memory encryption mask in the kdump kernel.
 
- [ bp: clean up text. ]
+ [ bp: Massage commit message. ]
 
 Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Acked-by: Joerg Roedel <jroedel@suse.de>
 Cc: kexec@lists.infradead.org
 Cc: tglx@linutronix.de
 Cc: mingo@redhat.com
@@ -89,40 +90,37 @@ Cc: tiwai@suse.de
 Cc: brijesh.singh@amd.com
 Cc: dyoung@redhat.com
 Cc: bhe@redhat.com
-Cc: jroedel@suse.de
-Link: https://lkml.kernel.org/r/20180930031033.22110-3-lijiang@redhat.com
+Link: https://lkml.kernel.org/r/20180930031033.22110-4-lijiang@redhat.com
 ---
- kernel/kexec_core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/iommu/amd_iommu_init.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 23a83a4da38a..86ef06d3dbe3 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -471,6 +471,10 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index 84b3e4445d46..3931c7de7c69 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -902,12 +902,22 @@ static bool copy_device_table(void)
  		}
  	}
  
-+	/* Ensure that these pages are decrypted if SME is enabled. */
-+	if (pages)
-+		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+-	old_devtb_phys = entry & PAGE_MASK;
++	/*
++	 * When SME is enabled in the first kernel, the entry includes the
++	 * memory encryption mask(sme_me_mask), we must remove the memory
++	 * encryption mask to obtain the true physical address in kdump kernel.
++	 */
++	old_devtb_phys = __sme_clr(entry) & PAGE_MASK;
 +
- 	return pages;
- }
+ 	if (old_devtb_phys >= 0x100000000ULL) {
+ 		pr_err("The address of old device table is above 4G, not trustworthy!\n");
+ 		return false;
+ 	}
+-	old_devtb = memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
++	old_devtb = (sme_active() && is_kdump_kernel())
++		    ? (__force void *)ioremap_encrypted(old_devtb_phys,
++							dev_table_size)
++		    : memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
++
+ 	if (!old_devtb)
+ 		return false;
  
-@@ -867,6 +871,7 @@ static int kimage_load_crash_segment(struct kimage *image,
- 			result  = -ENOMEM;
- 			goto out;
- 		}
-+		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
- 		ptr = kmap(page);
- 		ptr += maddr & ~PAGE_MASK;
- 		mchunk = min_t(size_t, mbytes,
-@@ -884,6 +889,7 @@ static int kimage_load_crash_segment(struct kimage *image,
- 			result = copy_from_user(ptr, buf, uchunk);
- 		kexec_flush_icache_page(page);
- 		kunmap(page);
-+		arch_kexec_pre_free_pages(page_address(page), 1);
- 		if (result) {
- 			result = -EFAULT;
- 			goto out;
