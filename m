@@ -2,110 +2,98 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE00C46475
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 23:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C109CC46475
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 23:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05FA5208E7
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 23:34:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8Qxp0ca"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05FA5208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7859E2089D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 23:47:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7859E2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbeJGGjk (ORCPT
+        id S1726348AbeJGGxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 02:39:40 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34813 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeJGGjj (ORCPT
+        Sun, 7 Oct 2018 02:53:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48248 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725842AbeJGGxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 02:39:39 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z25-v6so6150941wmf.1;
-        Sat, 06 Oct 2018 16:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/SLne0mnrsDWXdIjAUi1bGxH4OeDwTEqfbJU9GdKjI0=;
-        b=F8Qxp0caR8mYktlLEdwayLhkzJCfGZcCFbU2wV5IMJVw3MBxH/zXQykCL9N1sOs8UD
-         nM8v26YX/u47qln6iZ4mix2p3PTgbHlpvRuuUxdML09A/7zc18963yvdtUVuwv8NMKhn
-         SVwwtbo1CPnpGdxR9WclDriUWYPd+hRysTY0t6d6EJjVF+CiVGSk0/pKFv1EulVxrkdu
-         SppkZPH2pYTO1QybAQyU0JnxqQ25FUHc/z7xqTRIJnS0cO3DdH29y5H4F8vaw2G/gN+r
-         fTCH3WmFV5pKNgVudsnU+dloKlGdPlFJtzGhKNwdZ3t767oyFwdHAaTSjfvhN7G73DLV
-         Yhfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/SLne0mnrsDWXdIjAUi1bGxH4OeDwTEqfbJU9GdKjI0=;
-        b=aVptqqJTvYbWDaIReYo100suPCA0gPHifS8r39R6aE0pKWWmHjnCpWYXuKxKrkZIK+
-         g/zCp38zkam28FEyN9nyNASEy4lWA8qeSg5BhS19ZBEpQ5orNArIF30CnuxDip2D0LtH
-         PGrsEyZ2uvdWR5qn7xeLAYG5nXqbphrGg08w2zCH5Mp4mEgfE48JBZ7rMzIh7rRPWMAb
-         Zh4/0UIddcsXwjlqZ4J9kZIuS4zIaZkiAV7Qq5OR5soyjRDQBaE7u8UyOGTgT2r3rSt2
-         o0pqp+nCmXsqHTiIOFNhRUz0sGgqYgDsZ+fFbS2cl5icCTyd+4i0tO7sLwhczdpewAXI
-         b3cw==
-X-Gm-Message-State: ABuFfoi4yeQfcIV9WRBspAxEYA9sbeYMI5uMlEns9TrCxIGnz8FLWjq8
-        4SV0uyqvkm6/cZRNofLosVk=
-X-Google-Smtp-Source: ACcGV61ctOL/qWcB9mmIq/BupQd2Lv41sSxxUIdjHeqKUN6Ww4VJshZfw7k6W9MDF64+5boPo7kroA==
-X-Received: by 2002:a1c:6c09:: with SMTP id h9-v6mr10880506wmc.95.1538868868897;
-        Sat, 06 Oct 2018 16:34:28 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a18sm9158672wrx.55.2018.10.06.16.34.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 06 Oct 2018 16:34:28 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>
-Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] netfilter: xt_quota: Don't use aligned attribute in sizeof
-Date:   Sat,  6 Oct 2018 16:33:31 -0700
-Message-Id: <20181006233331.13150-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 7 Oct 2018 02:53:04 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w96Ni1dH031873
+        for <linux-kernel@vger.kernel.org>; Sat, 6 Oct 2018 19:47:53 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2my40qmub3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 19:47:53 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 7 Oct 2018 00:47:51 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 7 Oct 2018 00:47:48 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w96Nll7M52035814
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 6 Oct 2018 23:47:47 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E04DA4040;
+        Sun,  7 Oct 2018 02:47:23 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 34D7AA404D;
+        Sun,  7 Oct 2018 02:47:22 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.101.34])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  7 Oct 2018 02:47:22 +0100 (BST)
+Subject: Re: linux-next: Signed-off-by missing for commit in the integrity
+ tree
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Sat, 06 Oct 2018 19:47:36 -0400
+In-Reply-To: <20181006115838.62f7712b@canb.auug.org.au>
+References: <20181006115838.62f7712b@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18100623-0020-0000-0000-000002D0822E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100623-0021-0000-0000-0000211EDDA0
+Message-Id: <1538869656.4914.3.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-06_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810060241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Hi Stephen,
 
-net/netfilter/xt_quota.c:47:44: warning: 'aligned' attribute ignored
-when parsing type [-Wignored-attributes]
-        BUILD_BUG_ON(sizeof(atomic64_t) != sizeof(__aligned_u64));
-                                                  ^~~~~~~~~~~~~
+On Sat, 2018-10-06 at 11:58 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   3dcee2d9c069 ("ima: fix showing large 'violations' or 'runtime_measurements_count'")
+> 
+> is missing a Signed-off-by from its committer.
 
-Use 'sizeof(__u64)' instead, as the alignment doesn't affect the size
-of the type.
+Added comment and Signed-off-by.
 
-Fixes: e9837e55b020 ("netfilter: xt_quota: fix the behavior of xt_quota module")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- net/netfilter/xt_quota.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netfilter/xt_quota.c b/net/netfilter/xt_quota.c
-index 6afa7f468a73..fceae245eb03 100644
---- a/net/netfilter/xt_quota.c
-+++ b/net/netfilter/xt_quota.c
-@@ -44,7 +44,7 @@ static int quota_mt_check(const struct xt_mtchk_param *par)
- {
- 	struct xt_quota_info *q = par->matchinfo;
- 
--	BUILD_BUG_ON(sizeof(atomic64_t) != sizeof(__aligned_u64));
-+	BUILD_BUG_ON(sizeof(atomic64_t) != sizeof(__u64));
- 
- 	if (q->flags & ~XT_QUOTA_MASK)
- 		return -EINVAL;
--- 
-2.19.0
+Mimi
 
