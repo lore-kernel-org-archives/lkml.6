@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31459C65C31
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C248C65C30
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E3221473
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:47:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E3221473
+	by mail.kernel.org (Postfix) with ESMTP id 2396721473
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:47:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2396721473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbeJFSuX (ORCPT
+        id S1727858AbeJFSuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 14:50:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43309 "EHLO
+        Sat, 6 Oct 2018 14:50:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60161 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeJFSuW (ORCPT
+        with ESMTP id S1726919AbeJFSuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 14:50:22 -0400
+        Sat, 6 Oct 2018 14:50:51 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Bl0UN3530017
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96BlaZt3530073
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 04:47:00 -0700
+        Sat, 6 Oct 2018 04:47:36 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96Bl04j3530014;
-        Sat, 6 Oct 2018 04:47:00 -0700
-Date:   Sat, 6 Oct 2018 04:47:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96BlaXp3530070;
+        Sat, 6 Oct 2018 04:47:36 -0700
+Date:   Sat, 6 Oct 2018 04:47:36 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Lianbo Jiang <tipbot@zytor.com>
-Message-ID: <tip-8780158cf977ea5f9912931a30b3d575b36dba22@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, jroedel@suse.de,
-        thomas.lendacky@amd.com, bp@suse.de, mingo@kernel.org,
-        hpa@zytor.com, lijiang@redhat.com
-Reply-To: jroedel@suse.de, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, lijiang@redhat.com, hpa@zytor.com,
-          mingo@kernel.org, thomas.lendacky@amd.com, bp@suse.de
-In-Reply-To: <20180930031033.22110-4-lijiang@redhat.com>
-References: <20180930031033.22110-4-lijiang@redhat.com>
+Message-ID: <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, lijiang@redhat.com, bp@suse.de,
+        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
+Reply-To: bp@suse.de, lijiang@redhat.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
+References: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] iommu/amd: Remap the IOMMU device table with the
- memory encryption mask for kdump
-Git-Commit-ID: 8780158cf977ea5f9912931a30b3d575b36dba22
+Subject: [tip:x86/mm] kdump, proc/vmcore: Enable kdumping encrypted memory
+ with SME enabled
+Git-Commit-ID: 992b649a3f013465d8128da02e5449def662a4c3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,25 +57,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8780158cf977ea5f9912931a30b3d575b36dba22
-Gitweb:     https://git.kernel.org/tip/8780158cf977ea5f9912931a30b3d575b36dba22
+Commit-ID:  992b649a3f013465d8128da02e5449def662a4c3
+Gitweb:     https://git.kernel.org/tip/992b649a3f013465d8128da02e5449def662a4c3
 Author:     Lianbo Jiang <lijiang@redhat.com>
-AuthorDate: Sun, 30 Sep 2018 11:10:32 +0800
+AuthorDate: Sun, 30 Sep 2018 16:37:41 +0800
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 6 Oct 2018 12:08:24 +0200
+CommitDate: Sat, 6 Oct 2018 12:09:26 +0200
 
-iommu/amd: Remap the IOMMU device table with the memory encryption mask for kdump
+kdump, proc/vmcore: Enable kdumping encrypted memory with SME enabled
 
-The kdump kernel copies the IOMMU device table from the old device table
-which is encrypted when SME is enabled in the first kernel. So remap the
-old device table with the memory encryption mask in the kdump kernel.
+In the kdump kernel, the memory of the first kernel needs to be dumped
+into the vmcore file.
 
- [ bp: Massage commit message. ]
+If SME is enabled in the first kernel, the old memory has to be remapped
+with the memory encryption mask in order to access it properly.
+
+Split copy_oldmem_page() functionality to handle encrypted memory
+properly.
+
+ [ bp: Heavily massage everything. ]
 
 Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Acked-by: Joerg Roedel <jroedel@suse.de>
 Cc: kexec@lists.infradead.org
 Cc: tglx@linutronix.de
 Cc: mingo@redhat.com
@@ -90,37 +91,189 @@ Cc: tiwai@suse.de
 Cc: brijesh.singh@amd.com
 Cc: dyoung@redhat.com
 Cc: bhe@redhat.com
-Link: https://lkml.kernel.org/r/20180930031033.22110-4-lijiang@redhat.com
+Cc: jroedel@suse.de
+Link: https://lkml.kernel.org/r/be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com
 ---
- drivers/iommu/amd_iommu_init.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/x86/kernel/crash_dump_64.c | 60 ++++++++++++++++++++++++++++-------------
+ fs/proc/vmcore.c                | 24 ++++++++++++-----
+ include/linux/crash_dump.h      |  4 +++
+ 3 files changed, 63 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 84b3e4445d46..3931c7de7c69 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -902,12 +902,22 @@ static bool copy_device_table(void)
+diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
+index 4f2e0778feac..eb8ab3915268 100644
+--- a/arch/x86/kernel/crash_dump_64.c
++++ b/arch/x86/kernel/crash_dump_64.c
+@@ -11,40 +11,62 @@
+ #include <linux/uaccess.h>
+ #include <linux/io.h>
+ 
+-/**
+- * copy_oldmem_page - copy one page from "oldmem"
+- * @pfn: page frame number to be copied
+- * @buf: target memory address for the copy; this can be in kernel address
+- *	space or user address space (see @userbuf)
+- * @csize: number of bytes to copy
+- * @offset: offset in bytes into the page (based on pfn) to begin the copy
+- * @userbuf: if set, @buf is in user address space, use copy_to_user(),
+- *	otherwise @buf is in kernel address space, use memcpy().
+- *
+- * Copy a page from "oldmem". For this page, there is no pte mapped
+- * in the current kernel. We stitch up a pte, similar to kmap_atomic.
+- */
+-ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
+-		size_t csize, unsigned long offset, int userbuf)
++static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
++				  unsigned long offset, int userbuf,
++				  bool encrypted)
+ {
+ 	void  *vaddr;
+ 
+ 	if (!csize)
+ 		return 0;
+ 
+-	vaddr = ioremap_cache(pfn << PAGE_SHIFT, PAGE_SIZE);
++	if (encrypted)
++		vaddr = (__force void *)ioremap_encrypted(pfn << PAGE_SHIFT, PAGE_SIZE);
++	else
++		vaddr = (__force void *)ioremap_cache(pfn << PAGE_SHIFT, PAGE_SIZE);
++
+ 	if (!vaddr)
+ 		return -ENOMEM;
+ 
+ 	if (userbuf) {
+-		if (copy_to_user(buf, vaddr + offset, csize)) {
+-			iounmap(vaddr);
++		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
++			iounmap((void __iomem *)vaddr);
+ 			return -EFAULT;
  		}
- 	}
+ 	} else
+ 		memcpy(buf, vaddr + offset, csize);
  
--	old_devtb_phys = entry & PAGE_MASK;
-+	/*
-+	 * When SME is enabled in the first kernel, the entry includes the
-+	 * memory encryption mask(sme_me_mask), we must remove the memory
-+	 * encryption mask to obtain the true physical address in kdump kernel.
-+	 */
-+	old_devtb_phys = __sme_clr(entry) & PAGE_MASK;
+ 	set_iounmap_nonlazy();
+-	iounmap(vaddr);
++	iounmap((void __iomem *)vaddr);
+ 	return csize;
+ }
 +
- 	if (old_devtb_phys >= 0x100000000ULL) {
- 		pr_err("The address of old device table is above 4G, not trustworthy!\n");
- 		return false;
- 	}
--	old_devtb = memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
-+	old_devtb = (sme_active() && is_kdump_kernel())
-+		    ? (__force void *)ioremap_encrypted(old_devtb_phys,
-+							dev_table_size)
-+		    : memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
++/**
++ * copy_oldmem_page - copy one page of memory
++ * @pfn: page frame number to be copied
++ * @buf: target memory address for the copy; this can be in kernel address
++ *	space or user address space (see @userbuf)
++ * @csize: number of bytes to copy
++ * @offset: offset in bytes into the page (based on pfn) to begin the copy
++ * @userbuf: if set, @buf is in user address space, use copy_to_user(),
++ *	otherwise @buf is in kernel address space, use memcpy().
++ *
++ * Copy a page from the old kernel's memory. For this page, there is no pte
++ * mapped in the current kernel. We stitch up a pte, similar to kmap_atomic.
++ */
++ssize_t copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
++			 unsigned long offset, int userbuf)
++{
++	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, false);
++}
 +
- 	if (!old_devtb)
- 		return false;
++/**
++ * copy_oldmem_page_encrypted - same as copy_oldmem_page() above but ioremap the
++ * memory with the encryption mask set to accomodate kdump on SME-enabled
++ * machines.
++ */
++ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
++				   unsigned long offset, int userbuf)
++{
++	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, true);
++}
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index cbde728f8ac6..42c32d06f7da 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -24,6 +24,8 @@
+ #include <linux/vmalloc.h>
+ #include <linux/pagemap.h>
+ #include <linux/uaccess.h>
++#include <linux/mem_encrypt.h>
++#include <asm/pgtable.h>
+ #include <asm/io.h>
+ #include "internal.h"
  
+@@ -98,7 +100,8 @@ static int pfn_is_ram(unsigned long pfn)
+ 
+ /* Reads a page from the oldmem device from given offset. */
+ static ssize_t read_from_oldmem(char *buf, size_t count,
+-				u64 *ppos, int userbuf)
++				u64 *ppos, int userbuf,
++				bool encrypted)
+ {
+ 	unsigned long pfn, offset;
+ 	size_t nr_bytes;
+@@ -120,8 +123,15 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
+ 		if (pfn_is_ram(pfn) == 0)
+ 			memset(buf, 0, nr_bytes);
+ 		else {
+-			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
+-						offset, userbuf);
++			if (encrypted)
++				tmp = copy_oldmem_page_encrypted(pfn, buf,
++								 nr_bytes,
++								 offset,
++								 userbuf);
++			else
++				tmp = copy_oldmem_page(pfn, buf, nr_bytes,
++						       offset, userbuf);
++
+ 			if (tmp < 0)
+ 				return tmp;
+ 		}
+@@ -155,7 +165,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
+  */
+ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+ {
+-	return read_from_oldmem(buf, count, ppos, 0);
++	return read_from_oldmem(buf, count, ppos, 0, false);
+ }
+ 
+ /*
+@@ -163,7 +173,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+  */
+ ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
+ {
+-	return read_from_oldmem(buf, count, ppos, 0);
++	return read_from_oldmem(buf, count, ppos, 0, sme_active());
+ }
+ 
+ /*
+@@ -173,6 +183,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
+ 				  unsigned long from, unsigned long pfn,
+ 				  unsigned long size, pgprot_t prot)
+ {
++	prot = pgprot_encrypted(prot);
+ 	return remap_pfn_range(vma, from, pfn, size, prot);
+ }
+ 
+@@ -351,7 +362,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+ 					    m->offset + m->size - *fpos,
+ 					    buflen);
+ 			start = m->paddr + *fpos - m->offset;
+-			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
++			tmp = read_from_oldmem(buffer, tsz, &start,
++					       userbuf, sme_active());
+ 			if (tmp < 0)
+ 				return tmp;
+ 			buflen -= tsz;
+diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+index 3e4ba9d753c8..f774c5eb9e3c 100644
+--- a/include/linux/crash_dump.h
++++ b/include/linux/crash_dump.h
+@@ -26,6 +26,10 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
+ 
+ extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
+ 						unsigned long, int);
++extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
++					  size_t csize, unsigned long offset,
++					  int userbuf);
++
+ void vmcore_cleanup(void);
+ 
+ /* Architecture code defines this if there are other possible ELF
