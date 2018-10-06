@@ -2,166 +2,155 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CABC64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 04:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D73C64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 04:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E0C20875
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 04:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF9B7213A2
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 04:41:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khcclnDw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E0C20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="qWqMd31g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9B7213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeJFLa2 (ORCPT
+        id S1727576AbeJFLmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 07:30:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41618 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeJFLa1 (ORCPT
+        Sat, 6 Oct 2018 07:42:50 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37568 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeJFLmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 07:30:27 -0400
-Received: by mail-pf1-f196.google.com with SMTP id m77-v6so5947377pfi.8;
-        Fri, 05 Oct 2018 21:28:40 -0700 (PDT)
+        Sat, 6 Oct 2018 07:42:50 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j23-v6so5970251pfi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 21:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=/O48OpVMFHSVCTo9ystJgMwkMX/+75g2FepSOVPLCkE=;
-        b=khcclnDwCgNDLGj4Egl25Fg5jqqqCJJUsgMaJleoTyNAguHNwlh17MNxsEyPq/e8sc
-         9yWAncviq+wyC6glDV7SddEDzzRsRBLJ5YK3Rdmr5qeHg2v61nnv/E91ffsK/3pUHdlh
-         xgS2fJPAb0J1CdQnIMFoRgEQB3C67ncovkfaoojSDZwE8N6jtpPBghfbtqNpm4gLhy28
-         BgujzXmspO3Mmh0A9GqTXuODcb9E9pw8QXQar6TP2GTAOsE7Vp1LNWSz2R3mjyjj0tzC
-         wd/MKwAAlRl3o/kykwv2ns2+qj5PT1VIJXQPw/povBq8ZcHQOGGCXDuvp9K4WTpU6F/z
-         cXZA==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=buawwSaE4LVq8zBFZZNwx1NbiRZrm6PBPrDAaPIvISQ=;
+        b=qWqMd31gcrcVQjNdxZoiBdKP0HWyFuwo0BIkNPbZ8HjshhBT3PwGuCf05pVfwBUl6b
+         1qjMtOLs8ZIaGrn6tRCWkReXdgn3tOPwScftnwXowo8wrg7U1HFGMfcwwUbaxJ0+EhQm
+         CE/QsbqS+FOcH3J7NeZsnNzRxmdZ1u70ZaGww=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=/O48OpVMFHSVCTo9ystJgMwkMX/+75g2FepSOVPLCkE=;
-        b=rYiwAsVIFN+X1+oXuR0Ylokr70NYUXMtdcS2rg7OClJSlLoqhrgidDsw6R2zwgPdSg
-         hz+euOnppXjC5N72Px6xnyfu/W2n0u8pgJUooHhU16obowmrutq3SmrFe6rc0X52z/AE
-         wHfwUvxM+HTCfQePwgJbXgIFJ7lwPEqGs44lJwh3bUEw7ZHXJxWH0ZqNkxje59eXKGNJ
-         6PxfzRk+Xs7IWAQp441/yo35gRPWUxMh+mk/3dBt8w6ArY1Wtcybi5hP6Cxkg5eVV2T1
-         YN+4xDRCwYbG2u8RkTgEvFgOKHnac8uIHesV+uPHiD8rk9stwhglkRuEcS9DDwsRitiz
-         DJEA==
-X-Gm-Message-State: ABuFfog54pwD036F3UeAj99slhPW2Foi+75gjjT6+xFwgRwwcgslZvO5
-        7//et9CWENriYfA+ckQjtok90gCmGn4=
-X-Google-Smtp-Source: ACcGV63pu3QIci8/wL9/8pdQw/6wY3wrC8hrg/jEc3lYWr1OscgUW2qStULq4jDz+Axz876yanhBmg==
-X-Received: by 2002:a62:21d1:: with SMTP id o78-v6mr14763287pfj.235.1538800119497;
-        Fri, 05 Oct 2018 21:28:39 -0700 (PDT)
-Received: from [192.168.1.101] (222-154-41-72-adsl.sparkbb.co.nz. [222.154.41.72])
-        by smtp.gmail.com with ESMTPSA id l2-v6sm9407582pgp.20.2018.10.05.21.28.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Oct 2018 21:28:38 -0700 (PDT)
-Subject: Re: [PATCH v3 3/7] drivers: parisc: Avoids building driver if
- CONFIG_PARISC is disabled
-To:     Leonardo Bras <leobras.c@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-References: <20180928020816.11251-1-leobras.c@gmail.com>
- <20180928020816.11251-4-leobras.c@gmail.com>
- <1538118915.3593.4.camel@HansenPartnership.com>
- <CADvQ+rGQenkoE0xCRTwjA5BuKZbZ2Upkyx=+qWFUGnUcit-aCQ@mail.gmail.com>
- <1538628062.18776.5.camel@HansenPartnership.com>
- <CADvQ+rG0WQjFTU=A4tAACvqFevw51DX_-yq2-9j78T8pSrjcXQ@mail.gmail.com>
-Cc:     lkcamp@lists.libreplanetbr.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Robert Richter <rric@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-m68k@lists.linux-m68k.org, oprofile-list@lists.sf.net,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <765df6c3-0339-ebf3-6446-cef4fc1eb1cc@gmail.com>
-Date:   Sat, 6 Oct 2018 17:28:41 +1300
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=buawwSaE4LVq8zBFZZNwx1NbiRZrm6PBPrDAaPIvISQ=;
+        b=pJhfeRlp6q3iM7sYoFi1u+96d58QsRx/gWTh3te05EJWs1Xylp4y9pmadxxmGIOskU
+         5swGJQeuhduOkC1eRfzUcuFAMS6B4Sxyv6J8kJEaVxxa1ouj90cDlt0CDkeIdeyPeJxE
+         ym1z0rijp4hLbODD8uw0+g3aj5BfgYpA9Y8+3Mq4JrXt8RzO2ygiqziuXN2MjegFovKt
+         1UtItiZas7t59VHv/h4noazEkigo669DZ5Y2Omk76pvWEQ8rBOEFb2NQwdCUsfHnozMm
+         WOjHuPj8FOJIsWuRgtfjF4P4V5V3YDM3LY2CxviB0DgQlIsbRuF50oii2sG57rNbOS2Q
+         EbxA==
+X-Gm-Message-State: ABuFfoimaVBRChzWCvuR86xyT8XyUZ67LGFOfoIJRG2sifthdtr+6CRq
+        L8cKjf7TrhICpbZChvcRmIMUYQ==
+X-Google-Smtp-Source: ACcGV62ZJ35r8fo61+vj+CBq2/d4qs9WquhX1ssKrRQ7He+pzBe5xgq/yD9lCKUcKVssF5eJhkuCyw==
+X-Received: by 2002:a63:d40c:: with SMTP id a12-v6mr12633830pgh.394.1538800860147;
+        Fri, 05 Oct 2018 21:41:00 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id b3-v6sm17202258pfc.178.2018.10.05.21.40.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Oct 2018 21:40:58 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 21:40:57 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>, pantin@google.com
+Subject: Re: [PATCH RFC 0/5] rcu doc updates for whatisRCU and checklist
+Message-ID: <20181006044057.GA41279@joelaf.mtv.corp.google.com>
+References: <20181005231815.170433-1-joel@joelfernandes.org>
+ <20181005234628.GB2548@thunk.org>
+ <20181006034540.GM2674@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CADvQ+rG0WQjFTU=A4tAACvqFevw51DX_-yq2-9j78T8pSrjcXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006034540.GM2674@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 05, 2018 at 08:45:40PM -0700, Paul E. McKenney wrote:
+> On Fri, Oct 05, 2018 at 07:46:28PM -0400, Theodore Y. Ts'o wrote:
+> > On Fri, Oct 05, 2018 at 04:18:09PM -0700, Joel Fernandes (Google) wrote:
+> > > 
+> > > Here are this week's rcu doc updates based on combing through whatisRCU and
+> > > checklists. Hopefully you agree with them. I left several old _bh and _sched
+> > > API references as is, since I don't think its a good idea to remove them till
+> > > the APIs themselves are removed, however I did remove several of them as well
+> > > (like in the first patch in this series) since I feel its better to "encourage"
+> > > new users not to use the old API.
+> > 
+> > Hi Joel,
+> > 
+> > As it so happens, I just recently wrote my first RCU patch[1] (file
+> > systems, especially on-disk data structures, generally tend not to be
+> > good candidates for RCU semantics).
+> > 
+> > [1] http://patchwork.ozlabs.org/patch/979779/
+> 
+> Very cool!
+> 
+> One question...  In the following hunk:
+> 
+> ------------------------------------------------------------------------
+> 
+> @@ -5353,9 +5362,13 @@  static int ext4_remount(struct super_block *sb, int *flags, char *data)
+>  #ifdef CONFIG_QUOTA
+>  	sbi->s_jquota_fmt = old_opts.s_jquota_fmt;
+>  	for (i = 0; i < EXT4_MAXQUOTAS; i++) {
+> -		kfree(sbi->s_qf_names[i]);
+> -		sbi->s_qf_names[i] = old_opts.s_qf_names[i];
 
+Could you annotate this pointer (sbi->s_qf_names) with __rcu so it can be
+checked by sparse for proper usage? Its also point #16 in the checklist.txt
+RCU document. I enclosed a diff to do this below.
 
-Am 05.10.2018 um 15:16 schrieb Leonardo Bras:
->> Well it's not really that persuasive.  Most people simply let the build
->> run to completion, but if you have a problem with a job control 3h
->> timelimit, then create a job that kills itself at 2:59 and then
->> resubmits itself.  That will produce a complete build in 3h chunks
->> without any need to call sub Makefiles.
->>
->
-> Humm, I probably should have explained better how GitlabCI works.
-> It works creating a docker container that have a limited lifespan of 3h max.
-> After that the time is over, this container ceases to exist, leaving no build
-> objects, only the console log. So there is no way of 'resuming' the building
-> from where it stopped. I used the 'job' term because it's how they call it,
-> and I understand it's easily confused with bash jobs.
->
->> All of our Makefiles are coded assuming the upper level can prevent
->> descent into the lower ones.  You're proposing to change that
->> assumption, requiring a fairly large patch set, which doesn't really
->> seem to provide a huge benefit.
->>
->> James
->
-> I understand your viewpoint.
-> But what I propose is not to change that assumption, but instead give some
-> Makefiles the aditional ability to be called directly and still not build stuff
-> if they were not enabled in .config.
->
-> But, why these chosen Makefiles, and not all of them?
-> Granularity.
-> What I am trying to achieve with this patchset is the ability of building
-> smaller sets of drivers without accidentally building what is not enabled
-> on .config.
-> And, in my viewpoint, building a single drivers/DRIVERNAME is small enough to
-> be fast in most situations.
+I also saw a bunch of places in super.c where the pointer isn't accessed from
+an rcu read section or rcu_dereference, but it was a quick look so sorry if I
+missed something. If its true, then are you planning to convert these to use
+rcu_dereference and wrapped by an rcu_read_lock/unlock as well?
 
-That already works, doesn't it? So all that you'd need is an offline 
-tool to precompute what drivers to actually build with a given config.
+> +		to_free[i] = rcu_dereference_protected(sbi->s_qf_names[i],
+> +						       &sb->s_umount);
 
-'make -n' with some suitable output mangling might do the job.
+Also should this be the following?
+		to_free[i] = rcu_dereference_protected(sbi->s_qf_names[i],
+					       lockdep_is_held(&sb->s_umount));
 
-There may well be other ways to achieve your stated goal, without any 
-need to make changes to the kernel build process (which is the result of 
-many years of evolution and tuning, BTW).
+> +		rcu_assign_pointer(sbi->s_qf_names[i], old_opts.s_qf_names[i]);
+>  	}
+> +	for (i = 0; i < EXT4_MAXQUOTAS; i++)
+> +		kfree(to_free[i]);
+> +	synchronize_rcu();
 
-> This change is not supposed to bother the usual way of building the kernel, and
+I had same concern as Paul here about synchronize_rcu done before the kfree.
 
-Enough people have voiced their concern to warrant that you should back 
-up that claim, IMO. Have you verified that your patchset does not change 
-current behaviour when building the entire set of default configurations 
-for each supported architecture? Does it reduce or increase overall 
-complexity of the build process?
+thanks,
 
-> it is not even supposed to add overhead to kernel compilation. And it would,
-> at least, solve my problem with the 3h limit, and enable the tool
-> I am building on GiltabCI to help other developers.
+ - Joel
 
-(Apropos of nothing: Am I the only one who thinks gitlab might take a 
-rather dim view of your creativity in dealing with their limit?)
-
-> Thanks for reading,
->
-> Leonardo Bras
-
-Thanks for listening!
-
-Cheers,
-
-	Michael
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 5863fd22e90b..eec1b3090d04 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5083,7 +5083,7 @@ struct ext4_mount_options {
+ 	u32 s_min_batch_time, s_max_batch_time;
+ #ifdef CONFIG_QUOTA
+ 	int s_jquota_fmt;
+-	char *s_qf_names[EXT4_MAXQUOTAS];
++	char __rcu *s_qf_names[EXT4_MAXQUOTAS];
+ #endif
+ };
+ 
