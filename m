@@ -2,173 +2,148 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADCEC677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40381C67871
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F3F208E7
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00FDE208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:30:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vi12rti+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F3F208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BCcb4bdk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00FDE208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbeJFXeJ (ORCPT
+        id S1727881AbeJFXeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 19:34:09 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:42046 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeJFXeJ (ORCPT
+        Sat, 6 Oct 2018 19:34:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33812 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeJFXea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 19:34:09 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w96GTV2i022913;
-        Sat, 6 Oct 2018 11:29:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538843371;
-        bh=Mx+k+8UlU6t+lRSMyrxqshCbhbVL3if/0SY8ujaZ/Ng=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=vi12rti+ZyCjHpEkI1Wn32HPx1g4tNFX9KdgvgdrcmXwzq2y/dOUjo4oLcSJ6r5fx
-         kAOK9Dgwx6CQTwx4DFDJCHmNlaVzvbSqDBwM1RI6Vye6G6zPztXXxSzqvtaV7aK+RB
-         QixRAOHi8vq4UqeZrb6CcaR42nFXgN2cMdm8Zu9s=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w96GTVB8000928;
-        Sat, 6 Oct 2018 11:29:31 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sat, 6 Oct
- 2018 11:29:31 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sat, 6 Oct 2018 11:29:31 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w96GTUMq012991;
-        Sat, 6 Oct 2018 11:29:30 -0500
-Date:   Sat, 6 Oct 2018 11:29:29 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-CC:     Tero Kristo <t-kristo@ti.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH 1/2] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-Message-ID: <20181006162929.u6uh4ffn6gm3incf@akan>
-References: <20181006072812.15814-1-lokeshvutla@ti.com>
- <20181006072812.15814-2-lokeshvutla@ti.com>
+        Sat, 6 Oct 2018 19:34:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eTBgH6DqMO6/18Ze4VhgcO9CjLgRjQl/mNnVbrWImLQ=; b=BCcb4bdkqHVSMxPYLivhsYq5h
+        RHXLYkAE0yMlrExxt0h/rkWNfKtYGILGTkMzAcU+u7QS8D2/pucuCS9PEv6hJrumZuxa6XCwEFfpL
+        dRHIk3jaTlqymVWJpdJeDeIcuJsfh3H/+VFxIO8ViBtB1G2Rf8NzsPp72heiSW2FzSZJc4NMUehLL
+        XdwepnPHZFlYByqaS4+dcptIwIa/jbr/ekvHQ7mnxgZFiEdx3VsQqyxXX6FFjGBFzHhlXeASJUO2S
+        FhEjIyvpZF7qP/Eu64KIXQAw9+Mtkg9V7cD8151//7KbU5DO4e0j90YcGm4Nby0la75v4q326c7Ao
+        aL2jcAp0w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g8pTA-0005Xe-Jx; Sat, 06 Oct 2018 16:30:20 +0000
+Subject: Re: [PATCH] Documentation/arm64: HugeTLB page implementation
+To:     Punit Agrawal <punit.agrawal@arm.com>, linux-doc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        steve.capper@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20181005143458.17875-1-punit.agrawal@arm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <97e4e5fb-24ed-0545-414a-6a0c0116e6b8@infradead.org>
+Date:   Sat, 6 Oct 2018 09:30:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181006072812.15814-2-lokeshvutla@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20181005143458.17875-1-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12:58-20181006, Lokesh Vutla wrote:
-> Add the DT binding documentation for Interrupt router driver.
+Hi,
+Just some minor stuff (below).
+
+On 10/5/18 7:34 AM, Punit Agrawal wrote:
+> Arm v8 architecture supports multiple page sizes - 4k, 16k and
+> 64k. Based on the active page size, the Linux port supports
+> corresponding hugepage sizes at PMD and PUD(4k only) levels.
 > 
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> In addition, the architecture also supports caching larger sized
+> ranges (composed of multiple entries) at the PTE and PMD level in the
+> TLBs using the contiguous bit. The Linux port makes use of this
+> architectural support to enable additional hugepage sizes.
+> 
+> Describe the two different types of hugepages supported by the arm64
+> kernel and the hugepage sizes enabled by each.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
 > ---
->  .../interrupt-controller/ti,sci-intr.txt      | 83 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>  Documentation/arm64/hugetlbpage.txt | 39 +++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 Documentation/arm64/hugetlbpage.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> diff --git a/Documentation/arm64/hugetlbpage.txt b/Documentation/arm64/hugetlbpage.txt
 > new file mode 100644
-> index 000000000000..681ca53cc5fb
+> index 000000000000..64ee24b88d27
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
-> @@ -0,0 +1,83 @@
-> +Texas Instruments K3 Interrupt Router
-> +=====================================
+> +++ b/Documentation/arm64/hugetlbpage.txt
+> @@ -0,0 +1,39 @@
+> +HugeTLBpage on ARM64
+> +====================
 > +
-> +The Interrupt Router (INTR) module provides a mechanism to mux M
-> +interrupt inputs to N interrupt outputs, where all M inputs are selectable
-> +to be driven per N output. There is one register per output (MUXCNTL_N) that
-> +controls the selection.
+> +Hugepage relies on making efficient use of TLBs to improve performance of
+> +address translations. The benefit depends on both -
 > +
+> +  - the size of hugepages
+> +  - size of entries supported by the TLBs
 > +
-> +                                 Interrupt Router
-> +                             +----------------------+
-> +                             |  Inputs     Outputs  |
-> +        +-------+            | +------+             |
-> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
-> +        +-------+            | +------+             |      controller
-> +                             |    .        +-----+  |      +-------+
-> +        +-------+            |    .        |  0  |  |----->|  GIC  |
-> +        | INTA  |----------->|    .        +-----+  |      +-------+
-> +        +-------+            |    .          .      |
-> +                             | +------+      .      |
-> +                             | | irqM |    +-----+  |
-> +                             | +------+    |  N  |  |
-> +                             |             +-----+  |
-> +                             +----------------------+
+> +The ARM64 port supports two flavours of hugepages.
 > +
-> +Configuration of these MUXCNTL_N registers is done by a system controller
-> +(like the Device Memory and Security Controller on K3 AM654 SoC). System
-> +controller will keep track of the used and unused registers within the Router.
-> +Driver should request the system controller to get the range of GIC IRQs
-> +assigned to the requesting hosts. It is the drivers responsibility to keep
-> +track of GIC IRQs.
+> +1) Block mappings at the pud/pmd level
+> +--------------------------------------
 > +
-> +Communication between the host processor running an OS and the system
-> +controller happens through a protocol called TI System Control Interface
-> +(TISCI protocol). For more details refer:
-> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-> +
-> +TISCI Interrupt Router Node:
-> +----------------------------
-> +- compatible:		Must be "ti,sci-intr".
-> +- interrupt-controller:	Identifies the node as an interrupt controller
-> +- #interrupt-cells:	Specifies the number of cells needed to encode an
-> +			interrupt source. The value should be 3.
-> +			First cell should contain the TISCI device ID of source
-> +			Second cell should contain the interrupt source offset
-> +			within the device
-> +			Third cell specifies the trigger type as defined
-> +			in interrupts.txt in this directory.
-> +- interrupt-parent:	phandle of irq parent for TISCI intr. The parent must
-> +			use the same interrupt-cells format as GIC.
-> +- ti,sci:		Phandle to TI-SCI compatible System controller node.
-> +- ti,sci-dst-id:	TISCI device ID of the destination IRQ controller.
-> +- ti,sci-rm-range-girq:	Tuple corresponding to unique TISCI resource type that
-> +			defines the dst host irq ranges assigned to this
-> +			interrupt router from this host context.
-> +			Tuple should be of format <type subtype>.
-> +
+> +These are regular hugepages where a pmd or a pud page table entry points to a
+> +block of memory. Regardless of the supported size of entries in TLB, block
+> +mappings reduces the depth of page table walk needed to translate hugepage
 
-Rob, DT maintainers,
+            reduce
 
-I'd like a feedback from DT maintainers on this 'range' topic.
+> +addresses.
+> +
+> +2) Using the Contiguous bit
+> +---------------------------
+> +
+> +The architecture provides a contiguous bit in the translation table entries
+> +(D4.5.3, ARM DDI 0487C.a) that hints to the mmu to indicate that it is one of a
 
-TISCI Firmware [1] currently seems to define a type corresponding to a
-device ID[2]. in AM6 device, for example, this is different, however
-have a 1 to 1 correspondence. However, there is expectation that type will
-end up as device ID in a future SoC.
+preferably                                     MMU
 
-While this is subject to much debate internally, I'd like some feedback if this
-is OK from Device tree representation - it is true that Firmware does
-look at it as type, however in some future SoC, it could be that the
-values themselves may correspond one to one with a device id -> The
-original wish was that types might be something reusable across SoCs,
-but that is turning out to be more of a theoretical wish than any thing
-practical.
+> +contiguous set of entries that can be cached in a single TLB entry.
+> +
+> +The contiguous bit is used in Linux to increase the mapping size at the pmd and
+> +pte (last) level. The number of supported contiguous entries vary by page size
 
-[1]http://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am6x/resasg_types.html
-[2]http://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am6x/devices.html
+                                                                varies
+
+> +and level of the page table.
+> +
+> +
+> +
+> +The following hugepage sizes are supported -
+> +
+> +         CONT PTE    PMD    CONT PMD    PUD
+> +         --------    ---    --------    ---
+> +  4K:         64K     2M         32M     1G
+> +  16K:         2M    32M          1G
+> +  64K:         2M   512M         16G
+> 
+
+
+thanks,
 -- 
-Regards,
-Nishanth Menon
+~Randy
