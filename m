@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79A1C67871
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877F9C677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 784722089D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:11:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 784722089D
+	by mail.kernel.org (Postfix) with ESMTP id 447E32089D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 16:14:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447E32089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbeJFXPP (ORCPT
+        id S1727846AbeJFXSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 19:15:15 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39448 "EHLO
+        Sat, 6 Oct 2018 19:18:08 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39457 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeJFXPP (ORCPT
+        with ESMTP id S1725266AbeJFXSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 19:15:15 -0400
+        Sat, 6 Oct 2018 19:18:08 -0400
 Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g8pAP-0006rF-UO; Sat, 06 Oct 2018 18:10:58 +0200
-Date:   Sat, 6 Oct 2018 18:10:57 +0200 (CEST)
+        id 1g8pDK-00070U-Cr; Sat, 06 Oct 2018 18:13:58 +0200
+Date:   Sat, 6 Oct 2018 18:13:57 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Andi Kleen <andi@firstfloor.org>
 cc:     peterz@infradead.org, x86@kernel.org, linux-kernel@vger.kernel.org,
         eranian@google.com, kan.liang@intel.com, isaku.yamahata@intel.com,
         kvm@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] x86/cpufeature: Add facility to match microcode
- revisions
-In-Reply-To: <alpine.DEB.2.21.1810061555270.5454@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1810061809310.5454@nanos.tec.linutronix.de>
-References: <20181006001928.28097-1-andi@firstfloor.org> <alpine.DEB.2.21.1810061555270.5454@nanos.tec.linutronix.de>
+Subject: Re: [PATCH v1 2/2] perf/x86/kvm: Avoid unnecessary work in guest
+ filtering
+In-Reply-To: <alpine.DEB.2.21.1810061632100.5454@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1810061811020.5454@nanos.tec.linutronix.de>
+References: <20181006001928.28097-1-andi@firstfloor.org> <20181006001928.28097-2-andi@firstfloor.org> <alpine.DEB.2.21.1810061632100.5454@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -52,41 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Sat, 6 Oct 2018, Thomas Gleixner wrote:
 
 > On Fri, 5 Oct 2018, Andi Kleen wrote:
-> > +/*
-> > + * Match specific microcodes or steppings.
+> > Some time ago KVM added a workaround for PEBS events leaking
+> > into guests. This uses the KVM entry/exit list to add an extra
+> > disable of the PEBS_ENABLE MSR.
+> > 
+> > Intel also added a fix for this issue to microcode updates on
+> > Haswell/Broadwell/Skylake.
+> > 
+> > It turns out using the MSR entry/exit list makes VM exits
+> > significantly slower. The list is only needed for disabling
+> > PEBS, because the GLOBAL_CTRL change gets optimized by
+> > KVM into changing the VMCS.
+> > 
+> > This patch checks for the microcode updates that have the microcode
 > 
-> What means microcodes or steppings? If you mean microcode revisions then
-> please spell it out and use it all over the place. steppings is confusing
-> at best as its associated to the CPU stepping.
+> # grep "This patch" Documentation/process
 > 
-> > + *
-> > + * vendor/family/model/stepping must be all set.
-> > + * min_ucode/max_ucode/driver_data are optional and can be 0.
-> > + */
-> > +
-> > +struct x86_ucode_id {
-> > +	__u16 vendor;
+> > fix for leaking PEBS, and disables the extra entry/exit list
+> > entry for PEBS_ENABLE. In addition we always clear the
+> > GLOBAL_CTRL for the PEBS counter while running in the guest,
+> > which is enough to make them never fire at the wrong
+> > side of the host/guest transition.
+> >  
+> > +#define IUCODE(model, step, rev) \
+> > +	{ X86_VENDOR_INTEL, 6, model, step, rev, 0, 0 }
 > 
-> __uXX are usually UAPI types. Please use the regular kernel uXX
-> types instead.
+> So we are going to have this kind of defines on every usage site. Please
+> put these macros into the corresponding header file.
 > 
-> > +	__u16 family;
-> > +	__u16 model;
-> > +	__u16 stepping;
-> 
-> Why u16? The corresponding members in cpuinfo_x86 are 8bit wide so why
-> wasting memory for these tables?
-> 
-> > +	__u32 min_ucode;
-> > +	__u32 max_ucode;
-> > +	kernel_ulong_t driver_data;
+> Also this wants to be named INTEL_MIN_UCODE() so it's clear what this is
+> about.
 
-Why do we need max_ucode and driver_data? I can't find an existing example
-where this would be useful. If we need it later then it can be added
-incrementaly.
+And please use designated initializers. That way the unused fields do not
+need explicit zeroing and any change of the data structure either just
+works or the compiler catches the breakage.
 
 Thanks,
 
 	tglx
-
-
