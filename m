@@ -2,157 +2,169 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC24C65C31
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EBAC65C31
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C5762147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:04:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5762147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D42992084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 13:06:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aFWdJyRT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42992084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbeJFUHS (ORCPT
+        id S1727840AbeJFUKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 16:07:18 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:53672 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbeJFUHR (ORCPT
+        Sat, 6 Oct 2018 16:10:07 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34891 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbeJFUKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 16:07:17 -0400
-Received: by mail-it1-f200.google.com with SMTP id f79-v6so5624885ita.3
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 06:04:03 -0700 (PDT)
+        Sat, 6 Oct 2018 16:10:07 -0400
+Received: by mail-it1-f196.google.com with SMTP id p64-v6so6454150itp.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 06:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sArb+o4nGlB/1R00j0WQLW0cVei1gVT2Mda1Wfvw11I=;
+        b=aFWdJyRTcLc/m8TFxNxGpbFA0hTye83kQRqy7SgI4j4w5U15LfkErRF0YakkbovMq6
+         0ck3QFh+C+vyesq2Va4i2qbdNb4Lh0imeBf3bRajjKzroBR5YNNqNiz+JeSxy5k1h6C5
+         7Utu9dduJCY1oSCck8H1quxA2qHz3qJlYY2STTd1dydLWHOrVTjV3S927J2xKkb89/B9
+         H8Gw0+CZxp/cM+Iw9FFx0g3EstPBXdjlEY1RaDj8yvSLoed8PQj/z4GqgLFhOsvrZ4Tx
+         m2vBErSGlcph/Ymfl9fFjKyh5aVUZqzHQ+e9PSEtK3TWYsSSXuLJ9crOnAmPmAJmDPCA
+         zhtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=UxIoLajxzDOME6HGpHrwzgO4xcPB7WH4jKyISFUDB68=;
-        b=SBtOP1tbEE7f9ip8OG+M2cM2shQQmyIQeunWZImGQWbYiu85mJQib6RXNJ+WMY5IIs
-         eM25IMZfstRKX6b0aX+zFKUrhTbCZ7+5J7cmI/p2FtSzEhR0aWgrdwuA0x36osr3OuFi
-         xdo9QRa0cpYjX12KsScddlmAx6HXJcL9HVYg+g1ZzY9vlzUSh3UT34SEUUgLWCs8GsbC
-         teADK7v6H9HSYJq3T4Q/K1Syg/wYH78ZZYhf/ePukYSVeHj4TMSWwQ++VINg14wQCxSQ
-         PPGLgf21OIUHXr8TKjxDxUJdekT5rl6GwWouNeeze0hr0lvS5/EtXEggvN2b7ZyB5OSJ
-         0XsQ==
-X-Gm-Message-State: ABuFfoiqzWeL0+OB8TOYcIq8KfVzHtFXz7WWATly5kZFNFvAzn952ut6
-        xip4l04pcV+rKC115yNqGmiVUVSEDkScd1uWFT3AFPCGsIP9
-X-Google-Smtp-Source: ACcGV61elX0Lj7gx9pk/gBm5xOcsR3jTz+5DUFfoekt4Fa/3jpIt324pivILt5jbUpn1RutxFbI5ZdQcZhLPJ+sQsQb+RLjn9OvM
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sArb+o4nGlB/1R00j0WQLW0cVei1gVT2Mda1Wfvw11I=;
+        b=q/to4Ax4yQIkZKJhEiDaUMkG2XNwALsE0zhUa6KtzOtX7rxgMbvoy/Fz8TL6hd9CLC
+         PJ+N7CdyRuNwl5DgtAlK7JBvBfhylkqsJejpUXfrLCRNkhROQXYVt2JVrUC4paYPNkZq
+         g9WZ+MR9U67+pJZnTLZ19jDYZHXa/PMfd6tR/0wFw0ubUFtzoSxMcMTuAZmM5abFiXwC
+         s5IdMiOZDertYpR0QVe7Xl1yQ0haVzpL/4e8WVUXCOEC873KVS6Y3ngrIz8A+6uw42rj
+         fnz4iiGQEiOwUlH5jb8faDyAJHpFNwDxV02e3IR0QUFE3M4FPHuHak1y7Tbr1NhtlskR
+         46lA==
+X-Gm-Message-State: ABuFfogOH55uCNNjFFfznBlxLUSDW/lRYdy800mXvTpUNyMyiAnZhTSC
+        aoGnmnrtkgSdtKxyxcdge74vSJYsd0b2Ss67piemiQ==
+X-Google-Smtp-Source: ACcGV63oeF5QSf0KkS6EahL8bPh7gccaugrBFMdViemcl3Jgeh84AMXCRhZE/RZsO2Is5D+dadkAxVzT4lRA4nxKbNk=
+X-Received: by 2002:a02:97c5:: with SMTP id v5-v6mr11637134jaj.72.1538831211195;
+ Sat, 06 Oct 2018 06:06:51 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:e38c:: with SMTP id d134-v6mr7486882ith.38.1538831043242;
- Sat, 06 Oct 2018 06:04:03 -0700 (PDT)
-Date:   Sat, 06 Oct 2018 06:04:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b3b10305778f05f5@google.com>
-Subject: general protection fault in gcmaes_crypt_by_sg
-From:   syzbot <syzbot+c5048caf67d09ee24549@syzkaller.appspotmail.com>
-To:     bp@alien8.de, davem@davemloft.net, herbert@gondor.apana.org.au,
-        hpa@zytor.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Sat, 6 Oct 2018 06:06:30 -0700 (PDT)
+In-Reply-To: <20181005223206.GA184636@gmail.com>
+References: <0000000000002e9bdb0576c70441@google.com> <20181005223206.GA184636@gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sat, 6 Oct 2018 15:06:30 +0200
+Message-ID: <CACT4Y+aVZTpjzMzPQ2Rtgx_cRjXdwJG7BaAEO78UAitm-AnptA@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in sha1_mb_mgr_get_comp_job_avx2
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     syzbot <syzbot+87dbe4b17debcec16d71@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, megha.dey@linux.intel.com,
+        Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        tim.c.chen@linux.intel.com,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgMTJmZmFhMTE5N2Y1IEFkZCBsaW51eC1uZXh0IHNwZWNpZmljIGZpbGVzIGZvciAy
-MDE4MTAwNQ0KZ2l0IHRyZWU6ICAgICAgIGxpbnV4LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBodHRw
-czovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNmNiNzgwNjQwMDAwMA0Ka2Vy
-bmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PWQ2
-YjA1OGE3MjMyMDQ2Zg0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3Qu
-Y29tL2J1Zz9leHRpZD1jNTA0OGNhZjY3ZDA5ZWUyNDU0OQ0KY29tcGlsZXI6ICAgICAgIGdjYyAo
-R0NDKSA4LjAuMSAyMDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0KDQpVbmZvcnR1bmF0ZWx5LCBJIGRv
-bid0IGhhdmUgYW55IHJlcHJvZHVjZXIgZm9yIHRoaXMgY3Jhc2ggeWV0Lg0KDQpJTVBPUlRBTlQ6
-IGlmIHlvdSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUg
-Y29tbWl0Og0KUmVwb3J0ZWQtYnk6IHN5emJvdCtjNTA0OGNhZjY3ZDA5ZWUyNDU0OUBzeXprYWxs
-ZXIuYXBwc3BvdG1haWwuY29tDQoNCkAZOiByZW5hbWVkIGZyb20gaXA2Z3JlMA0Ka2FzYW46IENP
-TkZJR19LQVNBTl9JTkxJTkUgZW5hYmxlZA0Ka2FzYW46IEdQRiBjb3VsZCBiZSBjYXVzZWQgYnkg
-TlVMTC1wdHIgZGVyZWYgb3IgdXNlciBtZW1vcnkgYWNjZXNzDQpnZW5lcmFsIHByb3RlY3Rpb24g
-ZmF1bHQ6IDAwMDAgWyMxXSBQUkVFTVBUIFNNUCBLQVNBTg0KQ1BVOiAxIFBJRDogMTUxMCBDb21t
-OiBzeXotZXhlY3V0b3IwIE5vdCB0YWludGVkIDQuMTkuMC1yYzYtbmV4dC0yMDE4MTAwNSsgIA0K
-Izg4DQpIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dvb2dsZSBD
-b21wdXRlIEVuZ2luZSwgQklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQOiAwMDEwOnNjYXR0
-ZXJ3YWxrX3N0YXJ0IGluY2x1ZGUvY3J5cHRvL3NjYXR0ZXJ3YWxrLmg6NzMgW2lubGluZV0NClJJ
-UDogMDAxMDpnY21hZXNfY3J5cHRfYnlfc2crMHg1NmYvMHgyMTEwICANCmFyY2gveDg2L2NyeXB0
-by9hZXNuaS1pbnRlbF9nbHVlLmM6ODM0DQpDb2RlOiBjMSBlOSAwMyA4MCAzYyAxMSAwMCAwZiA4
-NSBiZiAxOCAwMCAwMCA0OCA4ZCA3OCAwOCA0OCA4OSA4NCAyNCA1MCAwMSAgDQowMCAwMCA0OCBi
-YSAwMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OCA4OSBmOSA0OCBjMSBlOSAwMyA8MGY+IGI2IDE0
-IDExIDg0ICANCmQyIDc0IDA5IDgwIGZhIDAzIDBmIDhlIDZiIDE1IDAwIDAwIDQ0IDhiIDYwIDA4
-IDQ4DQpSU1A6IDAwMTg6ZmZmZjg4MDE4NTJiZjEyMCBFRkxBR1M6IDAwMDEwMjAyDQpSQVg6IDAw
-MDAwMDAwMDAwMDAwMDAgUkJYOiBmZmZmODgwMTkwMjNjNmIwIFJDWDogMDAwMDAwMDAwMDAwMDAw
-MQ0KUkRYOiBkZmZmZmMwMDAwMDAwMDAwIFJTSTogZmZmZmZmZmY4MzU5ZTA2YyBSREk6IDAwMDAw
-MDAwMDAwMDAwMDgNClJCUDogZmZmZjg4MDE4NTJiZjUyMCBSMDg6IGZmZmY4ODAxODUwYzQzMDAg
-UjA5OiBmZmZmODgwMWJlZmIwMDYwDQpSMTA6IGZmZmY4ODAxODUyYmY3YjAgUjExOiBmZmZmODgw
-MTg1MmJmN2RiIFIxMjogMDAwMDAwMDAwMDAwMDAwZA0KUjEzOiAwMDAwMDAwMDAwMDAwMDBkIFIx
-NDogZmZmZjg4MDE4NTJiZjIzOCBSMTU6IGZmZmY4ODAxODUyYmY3ZDANCkZTOiAgMDAwMDAwMDAw
-MjVkMzk0MCgwMDAwKSBHUzpmZmZmODgwMWRhZjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAw
-MDAwMDANCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMN
-CkNSMjogMDAwMDAwMWIyZDEyODAwMCBDUjM6IDAwMDAwMDAxY2QyNzMwMDAgQ1I0OiAwMDAwMDAw
-MDAwMTQwNmUwDQpEUjA6IDAwMDAwMDAwMjAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERS
-MjogMDAwMDAwMDAwMDAwMDAwMA0KRFIzOiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAwMDAwMDBm
-ZmZlMGZmMCBEUjc6IDAwMDAwMDAwMDAwMDA2MDANCkNhbGwgVHJhY2U6DQogIGdjbWFlc19lbmNy
-eXB0LmNvbnN0cHJvcC4xNysweDdkNy8weDExOTAgIA0KYXJjaC94ODYvY3J5cHRvL2Flc25pLWlu
-dGVsX2dsdWUuYzo5MjkNCiAgZ2VuZXJpY19nY21hZXNfZW5jcnlwdCsweDEyZC8weDE4NiBhcmNo
-L3g4Ni9jcnlwdG8vYWVzbmktaW50ZWxfZ2x1ZS5jOjEyOTQNCiAgY3J5cHRvX2FlYWRfZW5jcnlw
-dCBpbmNsdWRlL2NyeXB0by9hZWFkLmg6MzY0IFtpbmxpbmVdDQogIGdjbWFlc193cmFwcGVyX2Vu
-Y3J5cHQrMHgxNjIvMHgyMDAgYXJjaC94ODYvY3J5cHRvL2Flc25pLWludGVsX2dsdWUuYzoxMTI3
-DQogIGNyeXB0b19hZWFkX2VuY3J5cHQgaW5jbHVkZS9jcnlwdG8vYWVhZC5oOjM2NCBbaW5saW5l
-XQ0KICB0bHNfZG9fZW5jcnlwdGlvbiBuZXQvdGxzL3Rsc19zdy5jOjUzNCBbaW5saW5lXQ0KICB0
-bHNfcHVzaF9yZWNvcmQrMHhjMTIvMHgxN2YwIG5ldC90bHMvdGxzX3N3LmM6NTgzDQogIHRsc19z
-d19wdXNoX3BlbmRpbmdfcmVjb3JkKzB4MjIvMHgzMCBuZXQvdGxzL3Rsc19zdy5jOjU5Nw0KICB0
-bHNfaGFuZGxlX29wZW5fcmVjb3JkIG5ldC90bHMvdGxzX21haW4uYzoxNTUgW2lubGluZV0NCiAg
-dGxzX3NrX3Byb3RvX2Nsb3NlKzB4NDM5LzB4NzUwIG5ldC90bHMvdGxzX21haW4uYzoyNzINCiAg
-aW5ldF9yZWxlYXNlKzB4MTA0LzB4MWYwIG5ldC9pcHY0L2FmX2luZXQuYzo0MjgNCiAgaW5ldDZf
-cmVsZWFzZSsweDUwLzB4NzAgbmV0L2lwdjYvYWZfaW5ldDYuYzo0NTgNCiAgX19zb2NrX3JlbGVh
-c2UrMHhkNy8weDI1MCBuZXQvc29ja2V0LmM6NTgwDQogIHNvY2tfY2xvc2UrMHgxOS8weDIwIG5l
-dC9zb2NrZXQuYzoxMTQyDQogIF9fZnB1dCsweDNiYy8weGE3MCBmcy9maWxlX3RhYmxlLmM6Mjc5
-DQogIF9fX19mcHV0KzB4MTUvMHgyMCBmcy9maWxlX3RhYmxlLmM6MzEyDQogIHRhc2tfd29ya19y
-dW4rMHgxZTgvMHgyYTAga2VybmVsL3Rhc2tfd29yay5jOjExMw0KICB0cmFjZWhvb2tfbm90aWZ5
-X3Jlc3VtZSBpbmNsdWRlL2xpbnV4L3RyYWNlaG9vay5oOjE4OCBbaW5saW5lXQ0KICBleGl0X3Rv
-X3VzZXJtb2RlX2xvb3ArMHgzMTgvMHgzODAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MTY2DQog
-IHByZXBhcmVfZXhpdF90b191c2VybW9kZSBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzoxOTcgW2lu
-bGluZV0NCiAgc3lzY2FsbF9yZXR1cm5fc2xvd3BhdGggYXJjaC94ODYvZW50cnkvY29tbW9uLmM6
-MjY4IFtpbmxpbmVdDQogIGRvX3N5c2NhbGxfNjQrMHg2YmUvMHg4MjAgYXJjaC94ODYvZW50cnkv
-Y29tbW9uLmM6MjkzDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUN
-ClJJUDogMDAzMzoweDQxMTA1MQ0KQ29kZTogNzUgMTQgYjggMDMgMDAgMDAgMDAgMGYgMDUgNDgg
-M2QgMDEgZjAgZmYgZmYgMGYgODMgMzQgMTkgMDAgMDAgYzMgNDggIA0KODMgZWMgMDggZTggMGEg
-ZmMgZmYgZmYgNDggODkgMDQgMjQgYjggMDMgMDAgMDAgMDAgMGYgMDUgPDQ4PiA4YiAzYyAyNCA0
-OCAgDQo4OSBjMiBlOCA1MyBmYyBmZiBmZiA0OCA4OSBkMCA0OCA4MyBjNCAwOCA0OCAzZCAwMQ0K
-UlNQOiAwMDJiOjAwMDA3ZmZmNDBmOWE4ZDAgRUZMQUdTOiAwMDAwMDI5MyBPUklHX1JBWDogMDAw
-MDAwMDAwMDAwMDAwMw0KUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAw
-NCBSQ1g6IDAwMDAwMDAwMDA0MTEwNTENClJEWDogMDAwMDAwMWIyZGEyMDAwMCBSU0k6IDAwMDAw
-MDAwMDAwMDAwMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDAzDQpSQlA6IDAwMDAwMDAwMDAwMDAwMDAg
-UjA4OiAwMDAwMDAwMDQ5Y2NkMWVmIFIwOTogMDAwMDAwMDA0OWNjZDFmMw0KUjEwOiAwMDAwN2Zm
-ZjQwZjlhODAwIFIxMTogMDAwMDAwMDAwMDAwMDI5MyBSMTI6IDAwMDAwMDAwMDAwMDAwMDANClIx
-MzogMDAwMDAwMDAwMDAwMDAwMSBSMTQ6IDAwMDAwMDAwMDAwMDAxMGMgUjE1OiAwMDAwMDAwMDAw
-MDAwMDAwDQpNb2R1bGVzIGxpbmtlZCBpbjoNCi0tLVsgZW5kIHRyYWNlIGE4ZjUyMzExMGQ4Y2Ez
-NzUgXS0tLQ0KUklQOiAwMDEwOnNjYXR0ZXJ3YWxrX3N0YXJ0IGluY2x1ZGUvY3J5cHRvL3NjYXR0
-ZXJ3YWxrLmg6NzMgW2lubGluZV0NClJJUDogMDAxMDpnY21hZXNfY3J5cHRfYnlfc2crMHg1NmYv
-MHgyMTEwICANCmFyY2gveDg2L2NyeXB0by9hZXNuaS1pbnRlbF9nbHVlLmM6ODM0DQpDb2RlOiBj
-MSBlOSAwMyA4MCAzYyAxMSAwMCAwZiA4NSBiZiAxOCAwMCAwMCA0OCA4ZCA3OCAwOCA0OCA4OSA4
-NCAyNCA1MCAwMSAgDQowMCAwMCA0OCBiYSAwMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OCA4OSBm
-OSA0OCBjMSBlOSAwMyA8MGY+IGI2IDE0IDExIDg0ICANCmQyIDc0IDA5IDgwIGZhIDAzIDBmIDhl
-IDZiIDE1IDAwIDAwIDQ0IDhiIDYwIDA4IDQ4DQpSU1A6IDAwMTg6ZmZmZjg4MDE4NTJiZjEyMCBF
-RkxBR1M6IDAwMDEwMjAyDQpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiBmZmZmODgwMTkwMjNj
-NmIwIFJDWDogMDAwMDAwMDAwMDAwMDAwMQ0KUkRYOiBkZmZmZmMwMDAwMDAwMDAwIFJTSTogZmZm
-ZmZmZmY4MzU5ZTA2YyBSREk6IDAwMDAwMDAwMDAwMDAwMDgNClJCUDogZmZmZjg4MDE4NTJiZjUy
-MCBSMDg6IGZmZmY4ODAxODUwYzQzMDAgUjA5OiBmZmZmODgwMWJlZmIwMDYwDQpSMTA6IGZmZmY4
-ODAxODUyYmY3YjAgUjExOiBmZmZmODgwMTg1MmJmN2RiIFIxMjogMDAwMDAwMDAwMDAwMDAwZA0K
-UjEzOiAwMDAwMDAwMDAwMDAwMDBkIFIxNDogZmZmZjg4MDE4NTJiZjIzOCBSMTU6IGZmZmY4ODAx
-ODUyYmY3ZDANCkZTOiAgMDAwMDAwMDAwMjVkMzk0MCgwMDAwKSBHUzpmZmZmODgwMWRhZjAwMDAw
-KDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAw
-MCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNSMjogMDAwMDAwMWIyZDEyODAwMCBDUjM6IDAwMDAw
-MDAxY2QyNzMwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQpEUjA6IDAwMDAwMDAwMjAwMDAwMDAg
-RFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMA0KRFIzOiAwMDAwMDAw
-MDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAwMDAwMDAwMDA2MDANCg0K
-DQotLS0NClRoaXMgYnVnIGlzIGdlbmVyYXRlZCBieSBhIGJvdC4gSXQgbWF5IGNvbnRhaW4gZXJy
-b3JzLg0KU2VlIGh0dHBzOi8vZ29vLmdsL3Rwc21FSiBmb3IgbW9yZSBpbmZvcm1hdGlvbiBhYm91
-dCBzeXpib3QuDQpzeXpib3QgZW5naW5lZXJzIGNhbiBiZSByZWFjaGVkIGF0IHN5emthbGxlckBn
-b29nbGVncm91cHMuY29tLg0KDQpzeXpib3Qgd2lsbCBrZWVwIHRyYWNrIG9mIHRoaXMgYnVnIHJl
-cG9ydC4gU2VlOg0KaHR0cHM6Ly9nb28uZ2wvdHBzbUVKI2J1Zy1zdGF0dXMtdHJhY2tpbmcgZm9y
-IGhvdyB0byBjb21tdW5pY2F0ZSB3aXRoICANCnN5emJvdC4NCg==
+On Sat, Oct 6, 2018 at 12:32 AM, Eric Biggers <ebiggers@kernel.org> wrote:
+> On Wed, Sep 26, 2018 at 07:27:04AM -0700, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    a38523185b40 erge tag 'libnvdimm-fixes-4.19-rc6' of git://..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1767b7fa400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=dfb440e26f0a6f6f
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=87dbe4b17debcec16d71
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+87dbe4b17debcec16d71@syzkaller.appspotmail.com
+>>
+>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000034
+>> PGD 1b8b87067 P4D 1b8b87067 PUD 1b8b88067 PMD 0
+>> Oops: 0002 [#1] PREEMPT SMP KASAN
+>> CPU: 1 PID: 24 Comm: kworker/1:1 Not tainted 4.19.0-rc5+ #32
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Workqueue: crypto mcryptd_flusher
+>> RIP: 0010:sha1_mb_mgr_get_comp_job_avx2+0x62/0xba
+>> arch/x86/crypto/sha1-mb/sha1_mb_mgr_flush_avx2.S:256
+>> Code: 04 c4 e2 69 3b d3 c4 c1 79 7e d0 49 f7 c0 f0 ff ff ff 75 6e 49 6b d8
+>> 08 48 8d 9c 1f 08 01 00 00 48 8b 03 48 c7 03 00 00 00 00 <c7> 40 34 02 00 00
+>> 00 48 8b 9f 00 01 00 00 48 c1 e3 04 4c 09 c3 48
+>> kobject: 'loop1' (00000000307f8c2f): kobject_uevent_env
+>> RSP: 0018:ffff8801d94473c0 EFLAGS: 00010206
+>> RAX: 0000000000000000 RBX: ffff8801d4818688 RCX: 1ffff1003b2869e1
+>> RDX: 1ffffd1ffffa2591 RSI: ffffffff81454f3a RDI: ffff8801d4818580
+>> RBP: ffff8801d9447520 R08: 0000000000000000 R09: 0000000000000006
+>> kobject: 'loop1' (00000000307f8c2f): fill_kobj_path: path =
+>> '/devices/virtual/block/loop1'
+>> R10: 0000000000000000 R11: ffff8801d9434640 R12: ffff8801d94474f8
+>> R13: 0000000000000001 R14: ffff8801bb509720 R15: 0000000000000200
+>> FS:  0000000000000000(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> kobject: 'loop4' (00000000fa342cfc): kobject_uevent_env
+>> CR2: 0000000000000034 CR3: 00000001b8b85000 CR4: 00000000001406e0
+>> kobject: 'loop4' (00000000fa342cfc): fill_kobj_path: path =
+>> '/devices/virtual/block/loop4'
+>> Call Trace:
+>>  sha1_mb_flusher+0x2f4/0x60b arch/x86/crypto/sha1-mb/sha1_mb.c:918
+>>  mcryptd_flusher+0x3af/0x520 crypto/mcryptd.c:208
+>>  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+>>  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+>>  kthread+0x35a/0x420 kernel/kthread.c:246
+>>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+>> Modules linked in:
+>> CR2: 0000000000000034
+>> ---[ end trace 7d3a48e5625a9543 ]---
+>> RIP: 0010:sha1_mb_mgr_get_comp_job_avx2+0x62/0xba
+>> arch/x86/crypto/sha1-mb/sha1_mb_mgr_flush_avx2.S:256
+>> Code: 04 c4 e2 69 3b d3 c4 c1 79 7e d0 49 f7 c0 f0 ff ff ff 75 6e 49 6b d8
+>> 08 48 8d 9c 1f 08 01 00 00 48 8b 03 48 c7 03 00 00 00 00 <c7> 40 34 02 00 00
+>> 00 48 8b 9f 00 01 00 00 48 c1 e3 04 4c 09 c3 48
+>> RSP: 0018:ffff8801d94473c0 EFLAGS: 00010206
+>> RAX: 0000000000000000 RBX: ffff8801d4818688 RCX: 1ffff1003b2869e1
+>> RDX: 1ffffd1ffffa2591 RSI: ffffffff81454f3a RDI: ffff8801d4818580
+>> RBP: ffff8801d9447520 R08: 0000000000000000 R09: 0000000000000006
+>> R10: 0000000000000000 R11: ffff8801d9434640 R12: ffff8801d94474f8
+>> R13: 0000000000000001 R14: ffff8801bb509720 R15: 0000000000000200
+>> FS:  0000000000000000(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000000000034 CR3: 00000001b8b85000 CR4: 00000000001406e0
+>>
+>>
+>> ---
+>> This bug is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report. See:
+>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+>> syzbot.
+>
+> The "fix" for this is queued in cryptodev:
+>
+> #syz fix: crypto: x86 - remove SHA multibuffer routines and mcryptd
+
+That's the best type of fix! :)
