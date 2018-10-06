@@ -2,251 +2,188 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38934C65C31
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 14:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E482EC65C31
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 15:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E12382089D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 14:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12382089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 87640208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 15:02:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87640208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeJFVsV (ORCPT
+        id S1727856AbeJFWGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 17:48:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46069 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbeJFVsU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 17:48:20 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w96Ei3Z63577292
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 6 Oct 2018 07:44:03 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w96Ei2rD3577059;
-        Sat, 6 Oct 2018 07:44:02 -0700
-Date:   Sat, 6 Oct 2018 07:44:02 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Nadav Amit <tipbot@zytor.com>
-Message-ID: <tip-5bdcd510c2ac9efaf55c4cbd8d46421d8e2320cd@git.kernel.org>
-Cc:     keescook@chromium.org, peterz@infradead.org,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        luto@amacapital.net, mingo@kernel.org, pombredanne@nexb.com,
-        hpa@zytor.com, namit@vmware.com, bp@alien8.de,
-        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        brgerst@gmail.com
-Reply-To: brgerst@gmail.com, tglx@linutronix.de,
-          torvalds@linux-foundation.org, dvlasenk@redhat.com, bp@alien8.de,
-          linux-kernel@vger.kernel.org, namit@vmware.com,
-          kstewart@linuxfoundation.org, peterz@infradead.org,
-          keescook@chromium.org, hpa@zytor.com, pombredanne@nexb.com,
-          luto@amacapital.net, mingo@kernel.org, gregkh@linuxfoundation.org
-In-Reply-To: <20181005202718.229565-4-namit@vmware.com>
-References: <20181005202718.229565-4-namit@vmware.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/jump-labels: Macrofy inline assembly code to
- work around GCC inlining bugs
-Git-Commit-ID: 5bdcd510c2ac9efaf55c4cbd8d46421d8e2320cd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 6 Oct 2018 18:06:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727595AbeJFWGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 18:06:22 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B34E130820D1;
+        Sat,  6 Oct 2018 15:02:43 +0000 (UTC)
+Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E41E02010D55;
+        Sat,  6 Oct 2018 15:02:42 +0000 (UTC)
+Date:   Sat, 6 Oct 2018 23:02:40 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, tglx@linutronix.de, thgarnie@google.com,
+        corbet@lwn.net, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 4/3 v2] x86/mm/doc: Enhance the x86-64 virtual memory
+ layout descriptions
+Message-ID: <20181006150240.GF5140@MiWiFi-R3L-srv>
+References: <20181006084327.27467-1-bhe@redhat.com>
+ <20181006122259.GB418@gmail.com>
+ <20181006143821.GA72401@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181006143821.GA72401@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 06 Oct 2018 15:02:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5bdcd510c2ac9efaf55c4cbd8d46421d8e2320cd
-Gitweb:     https://git.kernel.org/tip/5bdcd510c2ac9efaf55c4cbd8d46421d8e2320cd
-Author:     Nadav Amit <namit@vmware.com>
-AuthorDate: Fri, 5 Oct 2018 13:27:18 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 6 Oct 2018 15:52:17 +0200
+On 10/06/18 at 04:38pm, Ingo Molnar wrote:
+> +Notes:
+> +
+> + - Negative addresses such as "-23 TB" are absolute addresses in bytes, counted down
+> +   from the top of the 64-bit address space. It's easier to understand the layout
+> +   when seen both in absolute addresses and in distance-from-top notation.
+> +
+> +   For example 0xffffe90000000000 == -23 TB, it's 23 TB lower than the top of the
+> +   64-bit address space (ffffffffffffffff).
+> +
+> +   Note that as we get closer to the top of the address space, the notation changes
+> +   from TB to GB and then MB/KB.
+> +
+> + - "16M TB" might look weird at first sight, but it's an easier to visualize size
+> +   notation than "16 EB", which few will recognize at first sight as 16 exabytes.
+> +   It also shows it nicely how incredibly large 64-bit address space is.
 
-x86/jump-labels: Macrofy inline assembly code to work around GCC inlining bugs
+Thanks, this looks much better than the old version and my change.
 
-As described in:
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
-  77b0bf55bc67: ("kbuild/Makefile: Prepare for using macros in inline assembly code to work around asm() related GCC inlining bugs")
-
-GCC's inlining heuristics are broken with common asm() patterns used in
-kernel code, resulting in the effective disabling of inlining.
-
-The workaround is to set an assembly macro and call it from the inline
-assembly block - which is also a minor cleanup for the jump-label code.
-
-As a result the code size is slightly increased, but inlining decisions
-are better:
-
-      text     data     bss      dec     hex  filename
-  18163528 10226300 2957312 31347140 1de51c4  ./vmlinux before
-  18163608 10227348 2957312 31348268 1de562c  ./vmlinux after (+1128)
-
-And functions such as intel_pstate_adjust_policy_max(),
-kvm_cpu_accept_dm_intr(), kvm_register_readl() are inlined.
-
-Tested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181005202718.229565-4-namit@vmware.com
-Link: https://lore.kernel.org/lkml/20181003213100.189959-11-namit@vmware.com/T/#u
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/calling.h          |  2 +-
- arch/x86/include/asm/jump_label.h | 72 ++++++++++-----------------------------
- arch/x86/kernel/macros.S          |  1 +
- 3 files changed, 20 insertions(+), 55 deletions(-)
-
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index 352e70cd33e8..708b46a54578 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -338,7 +338,7 @@ For 32-bit we have the following conventions - kernel is built with
- .macro CALL_enter_from_user_mode
- #ifdef CONFIG_CONTEXT_TRACKING
- #ifdef HAVE_JUMP_LABEL
--	STATIC_JUMP_IF_FALSE .Lafter_call_\@, context_tracking_enabled, def=0
-+	STATIC_BRANCH_JMP l_yes=.Lafter_call_\@, key=context_tracking_enabled, branch=1
- #endif
- 	call enter_from_user_mode
- .Lafter_call_\@:
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 21efc9d07ed9..a5fb34fe56a4 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -2,19 +2,6 @@
- #ifndef _ASM_X86_JUMP_LABEL_H
- #define _ASM_X86_JUMP_LABEL_H
- 
--#ifndef HAVE_JUMP_LABEL
--/*
-- * For better or for worse, if jump labels (the gcc extension) are missing,
-- * then the entire static branch patching infrastructure is compiled out.
-- * If that happens, the code in here will malfunction.  Raise a compiler
-- * error instead.
-- *
-- * In theory, jump labels and the static branch patching infrastructure
-- * could be decoupled to fix this.
-- */
--#error asm/jump_label.h included on a non-jump-label kernel
--#endif
--
- #define JUMP_LABEL_NOP_SIZE 5
- 
- #ifdef CONFIG_X86_64
-@@ -33,15 +20,9 @@
- 
- static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("1:"
--		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		".long 1b - ., %l[l_yes] - . \n\t"
--		_ASM_PTR "%c0 + %c1 - .\n\t"
--		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
--
-+	asm_volatile_goto("STATIC_BRANCH_NOP l_yes=\"%l[l_yes]\" key=\"%c0\" "
-+			  "branch=\"%c1\""
-+			: :  "i" (key), "i" (branch) : : l_yes);
- 	return false;
- l_yes:
- 	return true;
-@@ -49,14 +30,8 @@ l_yes:
- 
- static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("1:"
--		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
--		"2:\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		".long 1b - ., %l[l_yes] - . \n\t"
--		_ASM_PTR "%c0 + %c1 - .\n\t"
--		".popsection \n\t"
-+	asm_volatile_goto("STATIC_BRANCH_JMP l_yes=\"%l[l_yes]\" key=\"%c0\" "
-+			  "branch=\"%c1\""
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
-@@ -66,37 +41,26 @@ l_yes:
- 
- #else	/* __ASSEMBLY__ */
- 
--.macro STATIC_JUMP_IF_TRUE target, key, def
--.Lstatic_jump_\@:
--	.if \def
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - .Lstatic_jump_after_\@
--.Lstatic_jump_after_\@:
--	.else
--	.byte		STATIC_KEY_INIT_NOP
--	.endif
-+.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
-+.Lstatic_branch_nop_\@:
-+	.byte STATIC_KEY_INIT_NOP
-+.Lstatic_branch_no_after_\@:
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
--	.long		.Lstatic_jump_\@ - ., \target - .
--	_ASM_PTR	\key - .
-+	.long		.Lstatic_branch_nop_\@ - ., \l_yes - .
-+	_ASM_PTR        \key + \branch - .
- 	.popsection
- .endm
- 
--.macro STATIC_JUMP_IF_FALSE target, key, def
--.Lstatic_jump_\@:
--	.if \def
--	.byte		STATIC_KEY_INIT_NOP
--	.else
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - .Lstatic_jump_after_\@
--.Lstatic_jump_after_\@:
--	.endif
-+.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
-+.Lstatic_branch_jmp_\@:
-+	.byte 0xe9
-+	.long \l_yes - .Lstatic_branch_jmp_after_\@
-+.Lstatic_branch_jmp_after_\@:
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
--	.long		.Lstatic_jump_\@ - ., \target - .
--	_ASM_PTR	\key + 1 - .
-+	.long		.Lstatic_branch_jmp_\@ - ., \l_yes - .
-+	_ASM_PTR	\key + \branch - .
- 	.popsection
- .endm
- 
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index bf8b9c93e255..161c95059044 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -13,3 +13,4 @@
- #include <asm/paravirt.h>
- #include <asm/asm.h>
- #include <asm/cpufeature.h>
-+#include <asm/jump_label.h>
+Thanks
+Baoquan
+> +
+> +========================================================================================================================
+> +    Start addr    |   Offset   |     End addr     |  Size   | VM area description
+> +========================================================================================================================
+> +                  |            |                  |         |
+> + 0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space virtual memory, different per mm
+> +__________________|____________|__________________|_________|___________________________________________________________
+> +                  |            |                  |         |
+> + 0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, almost 64 bits wide hole of non-canonical
+> +                  |            |                  |         |     virtual memory addresses up to the -128 TB
+> +                  |            |                  |         |     starting offset of kernel mappings.
+> +__________________|____________|__________________|_________|___________________________________________________________
+> +                                                            |
+> +                                                            | Kernel-space virtual memory, shared between all processes:
+> +____________________________________________________________|___________________________________________________________
+> +                  |            |                  |         |
+> + ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
+> + ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
+> + ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused hole
+> + ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)
+> + ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
+> + ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
+> + ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
+> + ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
+> + fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
+> +                  |            |                  |         | vaddr_end for KASLR
+> + fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
+> + fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | LDT remap for PTI
+> + ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
+> +__________________|____________|__________________|_________|____________________________________________________________
+> +                                                            |
+> +                                                            | Identical layout to the 47-bit one from here on:
+> +____________________________________________________________|____________________________________________________________
+> +                  |            |                  |         |
+> + ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
+> + ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
+> + ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
+> + ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text mapping, mapped to physical address 0
+> + ffffffff80000000 |-2048    MB |                  |         |
+> + ffffffffa0000000 |-1536    MB | fffffffffeffffff | 1520 MB | module mapping space
+> + ffffffffff000000 |  -16    MB |                  |         |
+> +    FIXADDR_START | ~-11    MB | ffffffffff5fffff | ~0.5 MB | kernel-internal fixmap range, variable size and offset
+> + ffffffffff600000 |  -10    MB | ffffffffff600fff |    4 kB | legacy vsyscall ABI
+> + ffffffffffe00000 |   -2    MB | ffffffffffffffff |    2 MB | ... unused hole
+> +__________________|____________|__________________|_________|___________________________________________________________
+> +
+> +
+> +====================================================
+> +Complete virtual memory map with 5-level page tables
+> +====================================================
+> +
+> +Notes:
+> +
+> + - With 56-bit addresses, user-space memory gets expanded by a factor of 512x,
+> +   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PT starting
+> +   offset and many of the regions expand to support the much larger physical
+> +   memory supported.
+> +
+> +========================================================================================================================
+> +    Start addr    |   Offset   |     End addr     |  Size   | VM area description
+> +========================================================================================================================
+> +                  |            |                  |         |
+> + 0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space virtual memory, different per mm
+> +__________________|____________|__________________|_________|___________________________________________________________
+> +                  |            |                  |         |
+> + 0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, still almost 64 bits wide hole of non-canonical
+> +                  |            |                  |         |     virtual memory addresses up to the -128 TB
+> +                  |            |                  |         |     starting offset of kernel mappings.
+> +__________________|____________|__________________|_________|___________________________________________________________
+> +                                                            |
+> +                                                            | Kernel-space virtual memory, shared between all processes:
+> +____________________________________________________________|___________________________________________________________
+> +                  |            |                  |         |
+> + ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard hole, also reserved for hypervisor
+> + ff10000000000000 |  -60    PB | ff8fffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
+> + ff90000000000000 |  -28    PB | ff9fffffffffffff |    4 PB | LDT remap for PTI
+> + ffa0000000000000 |  -24    PB | ffd1ffffffffffff | 12.5 PB | vmalloc/ioremap space (vmalloc_base)
+> + ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused hole
+> + ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual memory map (vmemmap_base)
+> + ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused hole
+> + ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shadow memory
+> + fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
+> +                  |            |                  |         | vaddr_end for KASLR
+> + fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
+> + fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
+> + ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
+> +__________________|____________|__________________|_________|____________________________________________________________
+> +                                                            |
+> +                                                            | Identical layout to the 47-bit one from here on:
+> +____________________________________________________________|____________________________________________________________
+> +                  |            |                  |         |
+> + ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
+> + ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
+> + ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
+> + ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text mapping, mapped to physical address 0
+> + ffffffff80000000 |-2048    MB |                  |         |
+> + ffffffffa0000000 |-1536    MB | fffffffffeffffff | 1520 MB | module mapping space
+> + ffffffffff000000 |  -16    MB |                  |         |
+> +    FIXADDR_START | ~-11    MB | ffffffffff5fffff | ~0.5 MB | kernel-internal fixmap range, variable size and offset
+> + ffffffffff600000 |  -10    MB | ffffffffff600fff |    4 kB | legacy vsyscall ABI
+> + ffffffffffe00000 |   -2    MB | ffffffffffffffff |    2 MB | ... unused hole
+> +__________________|____________|__________________|_________|___________________________________________________________
+>  
+>  Architecture defines a 64-bit virtual address. Implementations can support
+>  less. Currently supported are 48- and 57-bit virtual addresses. Bits 63
