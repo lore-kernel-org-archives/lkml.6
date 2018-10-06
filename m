@@ -2,82 +2,256 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BE1C677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B8EC677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B769C21486
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:07:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B769C21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 40A912147D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:13:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samba.org header.i=@samba.org header.b="Re6eOdq9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A912147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=samba.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeJGAL0 (ORCPT
+        id S1727944AbeJGARh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 20:11:26 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39503 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbeJGAL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 20:11:26 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g8q2v-0007jI-BW; Sat, 06 Oct 2018 19:07:17 +0200
-Date:   Sat, 6 Oct 2018 19:07:16 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-cc:     Dinh Nguyen <dinguyen@kernel.org>, linux-kernel@vger.kernel.org,
-        Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 13/13] clocksource/drivers/dw_apb: Add reset control
-In-Reply-To: <5ebc1d90-2067-8cb5-0c93-1c9f0677abc5@linaro.org>
-Message-ID: <alpine.DEB.2.21.1810061907030.5454@nanos.tec.linutronix.de>
-References: <20181005143253.GE1881@mai> <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org> <1538750143-4282-13-git-send-email-daniel.lezcano@linaro.org> <alpine.DEB.2.21.1810061433170.5454@nanos.tec.linutronix.de>
- <5ebc1d90-2067-8cb5-0c93-1c9f0677abc5@linaro.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 6 Oct 2018 20:17:37 -0400
+Received: from hr2.samba.org ([144.76.82.148]:44880 "EHLO hr2.samba.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726324AbeJGARh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 20:17:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42627210; h=Date:Message-ID:From:Cc:To;
+        bh=k2gQvgXrlUH8NfuGbEuSrp6F1PCTCKheb5SRVVbHzKQ=; b=Re6eOdq9ifI+yGmxjAvIqj4Vsn
+        R96xVCcuT7JLwJISR166Ar8b7bPch5cEK06Myj8V8t2zIfKpbNDEkqclqKJNU29tSJ5KrxKpv47pV
+        iqDPE32f1XvjGMHKo+pzohWn6oQuehQ7yXE8MU8+/ZSMG+vONctnWE4F5aQz88aGXQpc=;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.2:ECDHE_ECDSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1g8q8q-0007nM-S7; Sat, 06 Oct 2018 17:13:25 +0000
+Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+To:     Rodrigo Freire <rfreire@redhat.com>,
+        Steve French <smfrench@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Pavel Shilovsky <piastryyy@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com>
+ <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
+ <194690850.32402710.1538508513975.JavaMail.zimbra@redhat.com>
+ <CAH2r5ms814MUNWVZNfCTuSO2LQZsmCs5N1nwgdVuhxtMctRE3Q@mail.gmail.com>
+ <697659653.32427271.1538515234390.JavaMail.zimbra@redhat.com>
+ <CAH2r5muV-vC6twZbNQQ3DHoXJTdaUwhzZi7YH+rhxr0BiMseJQ@mail.gmail.com>
+ <633521295.32428133.1538517226400.JavaMail.zimbra@redhat.com>
+From:   Steve French <sfrench@samba.org>
+Message-ID: <a24927eb-2c52-4b19-f9ae-c88b2c129c60@samba.org>
+Date:   Sat, 6 Oct 2018 12:13:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <633521295.32428133.1538517226400.JavaMail.zimbra@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 6 Oct 2018, Daniel Lezcano wrote:
 
-> On 06/10/2018 14:34, Thomas Gleixner wrote:
-> > On Fri, 5 Oct 2018, Daniel Lezcano wrote:
-> > 
-> >> From: Dinh Nguyen <dinguyen@kernel.org>
-> >>
-> >> Add code to retrieve the reset property from the dw-apb timers and if
-> >> the property is available, the safe operation is to assert the timer
-> >> into reset, and followed by a deassert of the timer reset (brings the
-> >> timer out of reset).
-> >>
-> >> This patch is needed for systems where the bootloader has left the timer
-> >> not used in reset.
-> >>
-> >>  - Trivial conflict with commit a74bd1ad7a:
-> >>     "Convert to using %pOFn instead of device_node.name"
-> >>
-> >> Signed-off-by: Marek Vasut <marex@denx.de>
-> >> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> > 
-> > Ingo just noticed, that this SOB chain is wrong. How is Marek involved
-> > here? Can you please fix that up and send me another pull request?
-> 
-> Thomas,
-> 
-> I will fix it as soon as possible but I would like to give the
-> opportunity to Dinh to explain why he sent the patch with Marek's SOB.
-> 
-> Dinh ?
+Comparing what other file systems print to dmesg at mount time is 
+interesting - just tried it for  four file systems, two log nothing by 
+default, two log something. See below.
 
-No rush.
+
+BTRFS:
+
+root@smf-Thinkpad-P51:~/# mount /btrfs
+root@smf-Thinkpad-P51:~/c# dmesg
+[96283.701117] BTRFS info (device mmcblk0p1): disk space caching is enabled
+[96283.701121] BTRFS info (device mmcblk0p1): has skinny extents
+[96283.708477] BTRFS info (device mmcblk0p1): enabling ssd optimizations
+
+
+EXT4:
+
+root@smf-Thinkpad-P51:~# mount /dev/nvme0n1p6 /ext4
+root@smf-Thinkpad-P51:~# dmesg
+[96654.422038] EXT4-fs (nvme0n1p6): mounted filesystem with ordered data 
+mode. Opts: (null)
+
+
+VFAT:
+
+root@smf-Thinkpad-P51:~# mount /dev/nvme0n1p1 /fat
+root@smf-Thinkpad-P51:~# dmesg
+root@smf-Thinkpad-P51:~#
+
+
+NFS (it logs messages first time the module is loaded, for the 
+id_resolver, but not for the mount):
+
+root@smf-Thinkpad-P51:~# mount -t nfs localhost:/nfsexport /nfs
+root@smf-Thinkpad-P51:~# dmesg
+root@smf-Thinkpad-P51:~#
+
+
+On 10/02/2018 04:53 PM, Rodrigo Freire wrote:
+> Hi hi again Steve \o
+>
+> I do see potential for a ftrace rewrite for the cifs_dbg messages.
+>
+> But for the original post, I am aiming for a message to be printed
+> and found in dmesg, helping to correlate and troubleshoot events in
+> production systems.
+>
+> So given the debugging nature of ftrace, this is not of help for my
+> patch request.
+>
+> So, ACK for v2, using cifs_dbg(VFS) which actually translates to a
+> pr_warn(), or request a V3 using pr_info() (which I am absolutely fine
+> with) or...?
+>
+> Let me know.
+>
+> I appreciate your time and review!
+>
+> - RF.
+>
+> ----- Original Message -----
+>
+>> From: "Steve French" <smfrench@gmail.com>
+>> To: rfreire@redhat.com
+>> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
+>> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel Shilovsky"
+>> <piastryyy@gmail.com>
+>> Sent: Tuesday, October 2, 2018 6:25:46 PM
+>> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+>> It is an interesting question - my gut reaction is that messages that
+>> need more immediate attention should be logged as KERN_ERR (similar to
+>> cifs_dbg(VFS ...) but given how easy it is now to use dynamic tracing
+>> and better to read, if a developer would need it ... probably best to
+>> use ftrace (trace-cmd). Note that xfs has more than 570 (!) dynamic
+>> trace point callouts now vs. fewer than 30 for xfs_notice
+>> On Tue, Oct 2, 2018 at 4:20 PM Rodrigo Freire <rfreire@redhat.com> wrote:
+>>> Hi Steve o/
+>>>
+>>> I personally like more a pr_info() instead of a cifs_dbg (which wraps to a
+>>> pr_warn). But in order to keep in line with the general CIFS coding style
+>>> I stuck to cifs_dbg
+>>>
+>>> But I would happily rewrite the cifs_dbg to pr_info a v3: That would be
+>>> good enough too.
+>>>
+>>> Ah for what is worth my test/target systems are CentOS/Red Hat Enterprise
+>>> Linux.
+>>>
+>>> Thoughts?
+>>>
+>>> Thanks!
+>>>
+>>> - RF.
+>>>
+>>> ----- Original Message -----
+>>>> From: "Steve French" <smfrench@gmail.com>
+>>>> To: rfreire@redhat.com
+>>>> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
+>>>> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel
+>>>> Shilovsky"
+>>>> <piastryyy@gmail.com>
+>>>> Sent: Tuesday, October 2, 2018 5:35:49 PM
+>>>> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+>>>> I noticed that on at least the first system I looked at (Ubuntu 18.04)
+>>>> it defaults to KERN_WARNING (ie 4) so wouldn't have shown a KERN_INFO
+>>>> which is level 6 (as the mount example from ext4) by default
+>>>> or the xfs_notice (which is level 5)
+>>>> https://elinux.org/Debugging_by_printing
+>>>> On Tue, Oct 2, 2018 at 2:28 PM Rodrigo Freire <rfreire@redhat.com> wrote:
+>>>>> Hi Steve,
+>>>>>
+>>>>> ----- Original Message -----
+>>>>>> From: "Steve French" <smfrench@gmail.com>
+>>>>>> To: rfreire@redhat.com
+>>>>>> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
+>>>>>> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel
+>>>>>> Shilovsky"
+>>>>>> <piastryyy@gmail.com>
+>>>>>> Sent: Tuesday, October 2, 2018 4:17:02 PM
+>>>>>> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+>>>>>>
+>>>>>> Are you sure that these aren't logged by the automounter (for ext4,
+>>>>>> xfs etc.). When I looked in my dmesg logs I didn't find matching log
+>>>>>> entries in the file systems themselves. Do you have an example?
+>>>>> I'm positive about it. Check it out:
+>>>>>
+>>>>> [rfreire@rf ~]$ cd git/upstream/fs/ext4/
+>>>>> [rfreire@rf ext4]$
+>>>>> [rfreire@rf ext4]$
+>>>>> [rfreire@rf ext4]$ grep -r "mounted filesystem with"
+>>>>> super.c: ext4_msg(sb, KERN_INFO, "mounted filesystem with%s. "
+>>>>>
+>>>>>
+>>>>> [rfreire@rf ext4]$ dmesg | grep mount
+>>>>> [ 21.550897] EXT4-fs (dm-1): mounted filesystem with ordered data mode.
+>>>>> Opts: (null)
+>>>>> [ 22.216213] EXT4-fs (dm-1): re-mounted. Opts: discard
+>>>>> [ 22.598267] EXT4-fs (sda1): mounted filesystem with ordered data mode.
+>>>>> Opts: (null)
+>>>>> [ 22.605225] EXT4-fs (sdc): mounted filesystem without journal. Opts:
+>>>>> discard
+>>>>> [ 24.029161] EXT4-fs (dm-2): mounted filesystem with ordered data mode.
+>>>>> Opts: (null)
+>>>>> [ 24.047777] EXT4-fs (dm-4): mounted filesystem without journal. Opts:
+>>>>> (null)
+>>>>>
+>>>>> XFS sample dmesg (from
+>>>>> https://www.reddit.com/r/archlinux/comments/40b9r9/xfs_partition_is_mounted_during_boot_and_then/):
+>>>>>
+>>>>> [ 2.764491] XFS (sdb1): Mounting V5 Filesystem
+>>>>> [ 3.200886] XFS (sdb1): Ending clean mount
+>>>>> [ 5.384218] XFS (sdb1): Unmounting Filesystem
+>>>>>
+>>>>> Relevant code:
+>>>>>
+>>>>> [rfreire@rf ~]$ cd ../xfs
+>>>>>
+>>>>> [rfreire@rf xfs]$ grep "Mounting V" *.c
+>>>>> xfs_log.c: xfs_notice(mp, "Mounting V%d Filesystem",
+>>>>>
+>>>>>
+>>>>>> On the idea of adding cifsFYI logging here - I slightly prefer using
+>>>>>> ftrace (trace-cmd, ie dynamic tracing) so there is less overhead and
+>>>>>> easier to turn on/off following the example of xfs, f2fs, nfs, nfsd
+>>>>>> etc.
+>>>>> Remember that cifsFYI already exists; I just moved it inside a if
+>>>>> clause
+>>>>> to print it only when running under debug. (they way it is originally).
+>>>>>
+>>>>>> On Tue, Oct 2, 2018 at 6:57 AM Rodrigo Freire <rfreire@redhat.com>
+>>>>>> wrote:
+>>>>>>> Currently, no messages are printed when mounting a CIFS filesystem
+>>>>>>> and
+>>>>>>> no debug configuration is enabled.
+>>>>>>>
+>>>>>>> However, a CIFS mount information is valuable when troubleshooting
+>>>>>>> and/or forensic analyzing a system and finding out if was a CIFS
+>>>>>>> endpoint mount attempted.
+>>>>>>>
+>>>>>>> Other filesystems such as XFS, EXT* does issue a printk() when
+>>>>>>> mounting
+>>>>>>> their filesystems.
+>>>>>
+>>>>>> --
+>>>>>> Thanks,
+>>>>> Thank You! o/
+>>>> --
+>>>> Thanks,
+>>>> Steve
+>> --
+>> Thanks,
+>> Steve
+
