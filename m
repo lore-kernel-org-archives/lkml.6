@@ -2,61 +2,61 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D76C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16345C64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB75208E7
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5241205C9
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:47:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MJOvvHRW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB75208E7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BlXZvIpc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5241205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeJFMnS (ORCPT
+        id S1727729AbeJFMta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 08:43:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:32943 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbeJFMnR (ORCPT
+        Sat, 6 Oct 2018 08:49:30 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43738 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727591AbeJFMta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 08:43:17 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d4-v6so6023304pfn.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 22:41:19 -0700 (PDT)
+        Sat, 6 Oct 2018 08:49:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p24-v6so5996959pff.10
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Oct 2018 22:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=7tGRCKVZ2iW3PkxswNFwym5EZjsrB6XdxelDdg5iiY4=;
-        b=MJOvvHRW36LqQ1+1Lb6401amBcAgGihpWD3VCJvbWsH5SLbz2upGZfAokxeXuIYXvC
-         mFh3RiYo8sASP6r8NE2oCxSz0qRxUevtUpwCgxwlotAPCZISXeRmJDekeHCOm4zCN/wI
-         /C47uNYTUmKrVeObYMa6un7j6wyTGxZGH9kjU=
+        bh=5gCcXUAurwGrJDoh/Gd2lyAJu5TWDppL/aLxQ9aIXmU=;
+        b=BlXZvIpcaDt/nwaD+2Mb8vHbLIHylzQY1TU+07YEHzjEfRni3eoiV4of3A91UP7vw9
+         EiT4G487OTSfPS6FMSUSfmOBIqVsUrUgfI1mzrSqi+9wH0uiXfbfruqCRtULrvx6Tzdo
+         8S15qjBDS6yBcKdf1ggYorOa5x50p6VVLulFc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7tGRCKVZ2iW3PkxswNFwym5EZjsrB6XdxelDdg5iiY4=;
-        b=DfvQBvFT8s4kkMsPzXk6eLkZzTiDWa47RQQvPiXCPJ/gV9u5NTzSuGNmvBBu27+HOZ
-         uZ8N43obaAokhk9WIOpPt9xNxalLcPe1srrg5AiEohpBcgfvbqQ2xWbBdgWbgXLQ3/Eh
-         /nx1cB51LbYaVsIH0yNj1DqcPfVh5jBlilTOhUe4x7bnui/12wsRkVh/t3wkdDRlBv58
-         cMWru4xpdbVXPhfhk5Lnu9m6InOiO+UgP8VqNem6qj6J+tDZfyqGNkGn5MDnOHToXuSD
-         2BSnvktpRS8okhvNvqvLP3rfxIit+gxfvbLbVjoaCsz+8pwmBZzJs+FBK3cKgQlqkGxc
-         iYiA==
-X-Gm-Message-State: ABuFfojLv4deR6+3MgsWQdpfG9ccATUSgQQbsHLmz01dwC5C73A4w0hI
-        6AEDV/5PFCnu9RiE7MTBG+JoNkaRYkKolg==
-X-Google-Smtp-Source: ACcGV60P2hjRcJa9ZpYkTdt+HiaLNPhOejBn8p/X5ydPMvWAWd03Q6BK0RZWk58mZobMSGQwvN/xsA==
-X-Received: by 2002:a65:52c1:: with SMTP id z1-v6mr12764419pgp.65.1538804479051;
-        Fri, 05 Oct 2018 22:41:19 -0700 (PDT)
+        bh=5gCcXUAurwGrJDoh/Gd2lyAJu5TWDppL/aLxQ9aIXmU=;
+        b=rLBZXGVQ2wLkIdmgPjq5+ZN1qttxTkwUflbI5FesuSggMCB3meRbvT4S2yZT8+d9/m
+         9HyBj6wR2dR6Gngi3THwxnNsOikj2sE/6GVDyU65ZyT+gAejSUEY5IP4ZCak2jwxoven
+         F1TfdPqeNTjdRn7VTkLuwDKViZBoBfKexjDq44vP/na0Kx2DYB41jV8XIDIUTtFhDw2p
+         sJxfsmEkN1wmr7m7xnBGG4URwIko1uL8Y8FvMgNbhLTqvKgkPqwsN4U71nONlL0pAl29
+         fhR3NSkGSuUvfTcvkURzb/NFWfpOV1cMTConSsUPLhecHYy85ud1cdVHxrgzr8Vxu+ru
+         NJ+g==
+X-Gm-Message-State: ABuFfojM1gipPFyua7B33Ac12bRT/2Yx/7f/LZ73LUe2TPVOhfQNKiTr
+        EQPtDHW3JR4sycmyXzV6fQE88A==
+X-Google-Smtp-Source: ACcGV61mc1ZioWrq5Aoe+5DyjDmgUfoJf1SL+3aJeTab/zWvGHFLPs/RSxUZjnNP4Nint0pyMcdJBA==
+X-Received: by 2002:a63:f744:: with SMTP id f4-v6mr12978482pgk.410.1538804851480;
+        Fri, 05 Oct 2018 22:47:31 -0700 (PDT)
 Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm16104137pfg.85.2018.10.05.22.41.17
+        by smtp.gmail.com with ESMTPSA id v83-v6sm19610108pfa.103.2018.10.05.22.47.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Oct 2018 22:41:18 -0700 (PDT)
-Date:   Fri, 5 Oct 2018 22:44:04 -0700
+        Fri, 05 Oct 2018 22:47:30 -0700 (PDT)
+Date:   Fri, 5 Oct 2018 22:50:16 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Wendy Liang <wendy.liang@xilinx.com>
 Cc:     ohad@wizery.com, michal.simek@xilinx.com, robh+dt@kernel.org,
@@ -64,14 +64,15 @@ Cc:     ohad@wizery.com, michal.simek@xilinx.com, robh+dt@kernel.org,
         linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
-Subject: Re: [PATCH 6/7] remoteproc: Add Xilinx ZynqMP R5 remoteproc
-Message-ID: <20181006054404.GA9450@builder>
+Subject: Re: [PATCH 7/7] Documentation: devicetree: Add Xilinx R5 rproc
+ binding
+Message-ID: <20181006055016.GB9450@builder>
 References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
- <1534403190-28523-7-git-send-email-jliang@xilinx.com>
+ <1534403190-28523-8-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534403190-28523-7-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1534403190-28523-8-git-send-email-jliang@xilinx.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,909 +80,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu 16 Aug 00:06 PDT 2018, Wendy Liang wrote:
-> diff --git a/drivers/remoteproc/zynqmp_r5_remoteproc.c b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+
+> Add device tree binding for Xilinx Cortex-r5 remoteproc.
+> 
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> ---
+>  .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       | 81 ++++++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
 > new file mode 100644
-> index 0000000..7fc3718
+> index 0000000..3940019
 > --- /dev/null
-> +++ b/drivers/remoteproc/zynqmp_r5_remoteproc.c
-> @@ -0,0 +1,692 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Zynq R5 Remote Processor driver
-> + *
-> + * Copyright (C) 2015 Xilinx, Inc.
-> + *
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/slab.h>
-> +#include <linux/cpu.h>
-> +#include <linux/delay.h>
-> +#include <linux/list.h>
-> +#include <linux/genalloc.h>
-> +#include <linux/pfn.h>
-> +#include <linux/idr.h>
-> +#include <linux/firmware/xlnx-zynqmp.h>
-> +
-> +#include "remoteproc_internal.h"
-> +
-> +/* IPI reg offsets */
-> +#define TRIG_OFFSET		0x00000000
-> +#define OBS_OFFSET		0x00000004
-> +#define ISR_OFFSET		0x00000010
-> +#define IMR_OFFSET		0x00000014
-> +#define IER_OFFSET		0x00000018
-> +#define IDR_OFFSET		0x0000001C
-> +#define IPI_ALL_MASK		0x0F0F0301
-> +
-> +/* RPU IPI mask */
-> +#define RPU_IPI_INIT_MASK	0x00000100
-> +#define RPU_IPI_MASK(n)		(RPU_IPI_INIT_MASK << (n))
-> +#define RPU_0_IPI_MASK		RPU_IPI_MASK(0)
-> +#define RPU_1_IPI_MASK		RPU_IPI_MASK(1)
-
-Rather than using 2 levels of macros, just define RPU_0_IPI_MASK and
-RPU_1_IPI_MASK as BIT(8) and BIT(9)
-
-> +
-> +/* PM proc states */
-> +#define PM_PROC_STATE_ACTIVE 1u
-
-Unused
-
-> +
-> +/* Maximum TCM power nodes IDs */
-> +#define MAX_TCM_PNODES 4
-> +
-> +/* Register access macros */
-> +#define reg_read(base, reg) \
-> +	readl(((void __iomem *)(base)) + (reg))
-> +#define reg_write(base, reg, val) \
-> +	writel((val), ((void __iomem *)(base)) + (reg))
-
-Please drop these macros, using readl/writel directly rather than hiding
-it behind a similar macro will make it easier to read the code.
-
-> +
-> +#define DEFAULT_FIRMWARE_NAME	"rproc-rpu-fw"
-> +
-> +static bool autoboot __read_mostly;
-
-A variable only read during probe() doesn't need hints.
-
-> +
-> +struct zynqmp_r5_rproc_pdata;
-
-No need to forward declare this, as the very next statement is the
-declaration of this struct.
-
-> +
-> +/**
-> + * struct zynqmp_r5_rproc_pdata - zynqmp rpu remote processor instance state
-> + * @rproc: rproc handle
-> + * @workqueue: workqueue for the RPU remoteproc
-> + * @ipi_base: virt ptr to IPI channel address registers for APU
-> + * @rpu_mode: RPU core configuration
-> + * @rpu_id: RPU CPU id
-> + * @rpu_pnode_id: RPU CPU power domain id
-> + * @mem_pools: list of gen_pool for firmware mmio_sram memory and their
-> + *             power domain IDs
-
-mem_pools is not a member of the struct.
-
-> + * @mems: list of rproc_mem_entries for firmware
-
-Please reorder to match struct.
-
-> + * @irq: IRQ number
-> + * @ipi_dest_mask: IPI destination mask for the IPI channel
-> + */
-> +struct zynqmp_r5_rproc_pdata {
-> +	struct rproc *rproc;
-> +	struct work_struct workqueue;
-
-This is the work object, not the work queue. Please update naming
-("work" is a common choice to this).
-
-> +	void __iomem *ipi_base;
-> +	enum rpu_oper_mode rpu_mode;
-> +	struct list_head mems;
-
-Consider renaming to mem_entries.
-
-> +	u32 ipi_dest_mask;
-> +	u32 rpu_id;
-> +	u32 rpu_pnode_id;
-> +	int irq;
-> +	u32 tcm_pnode_id[MAX_TCM_PNODES];
-> +};
-> +
-> +/**
-> + * r5_boot_addr_config - configure the boot address of R5
-
-Add () on the function name in kerneldoc.
-
-> + * @pdata: platform data
-> + * @bootmem: boot from LOVEC or HIVEC
-> + *
-> + * This function will set the RPU boot address
-> + */
-> +static void r5_boot_addr_config(struct zynqmp_r5_rproc_pdata *pdata,
-> +				enum rpu_boot_mem bootmem)
-> +{
-> +	const struct zynqmp_eemi_ops *eemi = zynqmp_pm_get_eemi_ops();
-
-I presume this will return the same eemi as when it was called right
-before in zynqmp_r5_rproc_start(). How about passing eemi from the
-caller?
-
-> +
-> +	pr_debug("%s: R5 ID: %d, boot_dev %d\n",
-> +		 __func__, pdata->rpu_id, bootmem);
-> +
-> +	if (!eemi || !eemi->ioctl) {
-
-If eemi is NULL zynqmp_r5_rproc_start() already aborted. How about
-making zynqmp_r5_rproc_start() also check to see that eemi->ioctl is
-non-NULL? and then just skip this check.
-
-> +		pr_err("%s: no eemi ioctl operation.\n", __func__);
-> +		return;
-> +	}
-> +	eemi->ioctl(pdata->rpu_pnode_id, IOCTL_RPU_BOOT_ADDR_CONFIG,
-> +		    bootmem, 0, NULL);
-> +}
-> +
-> +/**
-> + * r5_mode_config - configure R5 operation mode
-> + * @pdata: platform data
-> + *
-> + * configure R5 to split mode or lockstep mode
-> + * based on the platform data.
-> + */
-> +static void r5_mode_config(struct zynqmp_r5_rproc_pdata *pdata)
-> +{
-> +	const struct zynqmp_eemi_ops *eemi = zynqmp_pm_get_eemi_ops();
-
-Same comments as for r5_boot_addr_config()
-
-> +
-> +	pr_debug("%s: mode: %d\n", __func__, pdata->rpu_mode);
-> +
-> +	if (!eemi || !eemi->ioctl) {
-> +		pr_err("%s: no eemi ioctl operation.\n", __func__);
-> +		return;
-> +	}
-> +	eemi->ioctl(pdata->rpu_pnode_id, IOCTL_SET_RPU_OPER_MODE,
-> +		    pdata->rpu_mode, 0, NULL);
-> +}
-> +
-> +/**
-> + * r5_release_tcm() - release TCM
-> + * @pdata: platform data
-> + *
-> + * Release TCM
-> + */
-> +static void r5_release_tcm(struct zynqmp_r5_rproc_pdata *pdata)
-> +{
-> +	const struct zynqmp_eemi_ops *eemi = zynqmp_pm_get_eemi_ops();
-
-Consider acquiring eemi in zynqmp_r5_remoteproc_remove() and pass it as
-an argument to this function - to get symmetry with the functions called
-during start.
-
-> +	int i;
-> +
-> +	if (!eemi || !eemi->release_node) {
-> +		pr_err("Failed to release TCM\n");
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < MAX_TCM_PNODES; i++) {
-> +		if (pdata->tcm_pnode_id[i] != 0)
-
-See comment in zynqmp_r5_get_tcms() about this conditional.
-
-> +			eemi->release_node(pdata->tcm_pnode_id[i]);
-> +	}
-> +}
-> +
-> +/**
-> + * disable_ipi - disable IPI
-> + * @pdata: platform data
-> + *
-> + * Disable IPI interrupt
-> + */
-> +static inline void disable_ipi(struct zynqmp_r5_rproc_pdata *pdata)
-
-Please give this a less generic name and drop the "inline".
-
-> +{
-> +	/* Disable R5 IPI interrupt */
-> +	if (pdata->ipi_base)
-> +		reg_write(pdata->ipi_base, IDR_OFFSET, pdata->ipi_dest_mask);
-> +}
-> +
-> +/**
-> + * enable_ipi - enable IPI
-> + * @pdata: platform data
-> + *
-> + * Enable IPI interrupt
-> + */
-> +static inline void enable_ipi(struct zynqmp_r5_rproc_pdata *pdata)
-
-Please give this a less generic name and drop the "inline".
-
-> +{
-> +	/* Enable R5 IPI interrupt */
-> +	if (pdata->ipi_base)
-> +		reg_write(pdata->ipi_base, IER_OFFSET, pdata->ipi_dest_mask);
-> +}
-> +
-> +/**
-> + * event_notified_idr_cb - event notified idr callback
-> + * @id: idr id
-> + * @ptr: pointer to idr private data
-> + * @data: data passed to idr_for_each callback
-
-Please mention that data is a rproc handle.
-
-> + *
-> + * Pass notification to remoteproc virtio
-> + *
-> + * @return: 0. having return is to satisfy the idr_for_each() function
-
- * Return: 0
-
-> + *          pointer input argument requirement.
-> + */
-> +static int event_notified_idr_cb(int id, void *ptr, void *data)
-
-Please give this a less generic name.
-
-> +{
-> +	struct rproc *rproc = data;
-> +
-> +	(void)rproc_vq_interrupt(rproc, id);
-
-You shouldn't need the (void) cast here and you can just pass "data"
-directly as the first parameter.
-
-> +	return 0;
-> +}
-> +
-> +static void handle_event_notified(struct work_struct *work)
-
-Please give this a less generic name.
-
-> +{
-> +	struct rproc *rproc;
-> +	struct zynqmp_r5_rproc_pdata *local;
-> +
-> +	local = container_of(work, struct zynqmp_r5_rproc_pdata, workqueue);
-> +	rproc = local->rproc;
-> +	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
-
-So this is rproc_vq_interrupt(), but triggering all notifyids. This will
-be the case for any platform that has lumped together the kick in a
-single interrupt, so improve rproc_vq_interrupt() to allow for a
-notifyid such as -1 will trigger all interrupts.
-
-> +}
-> +
-> +static int zynqmp_r5_rproc_start(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +	enum rpu_boot_mem bootmem;
-> +	const struct zynqmp_eemi_ops *eemi = zynqmp_pm_get_eemi_ops();
-> +
-> +	dev_dbg(dev, "%s\n", __func__);
-> +
-> +	if (!eemi || !eemi->force_powerdown ||
-> +	    !eemi->request_wakeup) {
-> +		pr_err("Failed to start R5\n");
-
-Please use dev_err()
-
-The error your hitting here isn't that you failed to start the R5, it's
-that the returned eemi is "broken", please update the error message to
-reflect this.
-
-
-Also, I would presume the eemi_ops are pretty static, so do consider
-getting a reference in probe() and store that in your r5_rproc_pdata -
-that way you can actually handle crazy things like
-zynqmp_pm_get_eemi_ops() not being available and returning EPROBE_DEFER
-and you don't need to check that it's valid all over the place.
-
-> +		return -ENXIO;
-> +	}
-> +
-> +	/* Set up R5 */
-> +	if ((rproc->bootaddr & 0xF0000000) == 0xF0000000)
-> +		bootmem = PM_RPU_BOOTMEM_HIVEC;
-> +	else
-> +		bootmem = PM_RPU_BOOTMEM_LOVEC;
-> +	dev_info(dev, "RPU boot from %s.",
-> +		 bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
-
-Rather than having a print with a conditional just inline two static
-prints in the if/else..
-
-> +
-> +	r5_mode_config(local);
-> +	eemi->force_powerdown(local->rpu_pnode_id,
-> +			      ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> +	r5_boot_addr_config(local, bootmem);
-> +	/* Add delay before release from halt and reset */
-> +	usleep_range(400, 500);
-> +	eemi->request_wakeup(local->rpu_pnode_id,
-> +			     1, bootmem,
-> +			     ZYNQMP_PM_REQUEST_ACK_NO);
-> +
-> +	/* Make sure IPI is enabled */
-> +	enable_ipi(local);
-> +
-> +	return 0;
-> +}
-> +
-> +/* kick a firmware */
-> +static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-
-Store the zynqmp_r5 device pointer in your pdata.
-
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +
-> +	dev_dbg(dev, "KICK Firmware to start send messages vqid %d\n", vqid);
-> +
-> +	/*
-> +	 * send irq to R5 firmware
-> +	 * Currently vqid is not used because we only got one.
-> +	 */
-> +	if (local->ipi_base)
-> +		reg_write(local->ipi_base, TRIG_OFFSET, local->ipi_dest_mask);
-> +}
-> +
-> +/* power off the remote processor */
-> +static int zynqmp_r5_rproc_stop(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +	struct rproc_mem_entry *mem, *nmem;
-
-mem and nmem are unused.
-
-> +	const struct zynqmp_eemi_ops *eemi = zynqmp_pm_get_eemi_ops();
-> +
-> +	dev_dbg(dev, "%s\n", __func__);
-> +
-> +	if (!eemi || !eemi->force_powerdown) {
-> +		pr_err("Failed to stop R5\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	disable_ipi(local);
-> +	eemi->force_powerdown(local->rpu_pnode_id,
-> +			      ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> +
-> +	return 0;
-> +}
-> +
-> +static void *zynqmp_r5_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-
-We should be able to drop this after getting Loic's carveout series in,
-but for now I think this looks reasonable.
-
-> +{
-> +	struct rproc_mem_entry *mem;
-> +	void *va = NULL;
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +
-> +	list_for_each_entry(mem, &local->mems, node) {
-> +		int offset = da - mem->da;
-> +
-> +		/* try next carveout if da is too small */
-> +		if (offset < 0)
-> +			continue;
-> +
-> +		/* try next carveout if da is too large */
-> +		if (offset + len > mem->len)
-> +			continue;
-> +
-> +		va = mem->va + offset;
-> +
-> +		break;
-> +	}
-> +	return va;
-> +}
-> +
-> +static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	int ret;
-> +
-> +	ret = rproc_elf_load_rsc_table(rproc, fw);
-> +	if (ret == -EINVAL)
-
-Would be nice if rproc_elf_load_rsc_table() returned e.g. ENOENT for
-this, to distinguish from a broken resource table.
-
-Please consider a separate patch making find_table() return a ERR_PTR()
-and propagate this.
-
-> +		/* No resource table */
-> +		return 0;
-> +	else
-> +		return ret;
-> +}
-> +
-> +static struct rproc_ops zynqmp_r5_rproc_ops = {
-> +	.start		= zynqmp_r5_rproc_start,
-> +	.stop		= zynqmp_r5_rproc_stop,
-> +	.kick		= zynqmp_r5_rproc_kick,
-> +	.da_to_va       = zynqmp_r5_rproc_da_to_va,
-> +};
-> +
-> +/* Release R5 from reset and make it halted.
-> + * In case the firmware uses TCM, in order to load firmware to TCM,
-> + * will need to release R5 from reset and stay in halted state.
-> + */
-> +static int zynqmp_r5_rproc_init(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +
-> +	dev_dbg(dev, "%s\n", __func__);
-> +	enable_ipi(local);
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t r5_remoteproc_interrupt(int irq, void *dev_id)
-> +{
-> +	struct device *dev = dev_id;
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +	u32 ipi_reg;
-> +
-> +	/* Check if there is a kick from R5 */
-> +	ipi_reg = reg_read(local->ipi_base, ISR_OFFSET);
-> +	if (!(ipi_reg & local->ipi_dest_mask))
-> +		return IRQ_NONE;
-> +
-> +	dev_dbg(dev, "KICK Linux because of pending message(irq%d)\n", irq);
-
-What is this print trying to say? Which Linux is this kicking?
-
-> +	reg_write(local->ipi_base, ISR_OFFSET, local->ipi_dest_mask);
-> +	schedule_work(&local->workqueue);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +/* zynqmp_r5_get_tcm_memories() - get tcm memories
-> + * @pdev: pointer to the platform device
-> + * @pdata: pointer to the remoteproc private data
-> + *
-> + * Function to create remoteproc memory entries for TCM memories.
-
- * Return: 0 on success, negative errno on failure.
-
-> + */
-> +static int zynqmp_r5_get_tcms(struct platform_device *pdev,
-> +			      struct zynqmp_r5_rproc_pdata *pdata)
-> +{
-> +	static const char * const mem_names[] = {"tcm_a", "tcm_b"};
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	int num_mems = 0;
-> +	int i, ret;
-> +	struct property *prop;
-> +	const __be32 *cur;
-> +	u32 val;
-> +	const struct zynqmp_eemi_ops *eemi = zynqmp_pm_get_eemi_ops();
-> +
-> +	/* Get TCM power node ids */
-> +	i = 0;
-> +	of_property_for_each_u32(np, "tcm-pnode-id", prop, cur, val)
-> +		pdata->tcm_pnode_id[i++] = val;
-> +
-> +	/* Request TCMs */
-> +	for (i = 0; i < MAX_TCM_PNODES; i++) {
-> +		if (pdata->tcm_pnode_id[i] != 0) {
-
-This will be != for the first i (the i from 5 lines up) and then 0 from
-there. Consider carrying a count of the number tcm_pnode_ids, which you
-increment in above loop and then use as limit here.
-
-That way you would iterate from i = 0 to pdata->tcm_pnode_id_count (or
-something) and you can skip the conditional in this loop and in the
-other places where you iterate over it.
-
-> +			ret = eemi->request_node(pdata->tcm_pnode_id[i],
-> +						 ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> +						 ZYNQMP_PM_REQUEST_ACK_BLOCKING
-> +						);
-> +			if (ret < 0) {
-> +				dev_err(dev, "failed to request TCM: %u\n",
-> +					pdata->tcm_pnode_id[i]);
-> +				return ret;
-> +			}
-> +			dev_dbg(dev, "request tcm pnode: %u\n",
-> +				pdata->tcm_pnode_id[i]);
-> +		} else {
-> +			break;
-> +		}
-> +	}
-> +	/* Create remoteproc memories entries for TCM memories */
-> +	num_mems = ARRAY_SIZE(mem_names);
-
-Just move the ARRAY_SIZE() into the for loop conditional.
-
-> +	for (i = 0; i < num_mems; i++) {
-> +		struct resource *res;
-> +		struct rproc_mem_entry *mem;
-> +		dma_addr_t dma;
-> +		resource_size_t size;
-> +
-> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> +						   mem_names[i]);
-> +		mem  = devm_kzalloc(dev, sizeof(struct rproc_mem_entry),
-> +				    GFP_KERNEL);
-> +		if (!mem)
-> +			return -ENOMEM;
-
-Reorder this to devm_kzalloc() first and then do
-platform_get_resource_byname(), this will be a little bit better flow.
-
-> +		/* Map it as normal memory */
-> +		size = resource_size(res);
-> +		mem->va = devm_ioremap_wc(dev, res->start, size);
-
-devm_ioremap_resource(dev, res)
-
-> +		mem->len = size;
-> +		dma = (dma_addr_t)res->start;
-> +		mem->dma = dma;
-> +		/* TCM memory:
-> +		 *   TCM_0: da 0 <-> global addr 0xFFE00000
-> +		 *   TCM_1: da 0 <-> global addr 0xFFE90000
-> +		 */
-> +		if ((dma & 0xFFF00000) == 0xFFE00000) {
-> +			if ((dma & 0xFFF80000) == 0xFFE80000)
-> +				mem->da -= 0x90000;
-> +			else
-> +				mem->da = (dma & 0x000FFFFF);
-> +		}
-> +		dev_dbg(dev, "%s: va = %p, da = 0x%x dma = 0x%llx\n",
-> +			__func__, mem->va, mem->da, mem->dma);
-> +		list_add_tail(&mem->node, &pdata->mems);
-> +	}
-> +	return 0;
-> +}
-> +
-> +/* zynqmp_r5_get_reserved_mems() - get reserved memories
-> + * @pdev: pointer to the platform device
-> + * @pdata: pointer to the remoteproc private data
-> + *
-> + * Function to create remoteproc memory entries from memory-region
-> + * property.
-
- * Return: 0 on success, negative errno on failure.
-
-> + */
-> +static int zynqmp_r5_get_reserved_mems(struct platform_device *pdev,
-> +				       struct zynqmp_r5_rproc_pdata *pdata)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	int num_mems;
-> +	int i;
-> +
-> +	num_mems = of_count_phandle_with_args(np, "memory-region", NULL);
-> +	if (num_mems <= 0)
-> +		return 0;
-
-Skip this early return and the for loop won't be entered and you will
-return 0 anyways.
-
-> +	for (i = 0; i < num_mems; i++) {
-> +		struct device_node *node;
-> +		struct resource res;
-> +		resource_size_t size;
-> +		struct rproc_mem_entry *mem;
-> +		int ret;
-> +
-> +		node = of_parse_phandle(np, "memory-region", i);
-> +		ret = of_device_is_compatible(node, "rproc-prog-memory");
-> +		if (!ret) {
-> +			/* it is DMA memory. */
-> +			dev_info(dev, "%s, dma memory %d\n", __func__, i);
-
-Don't use __func__ in info messages.
-
-> +			ret = of_reserved_mem_device_init_by_idx(dev,
-> +								 np, i);
-> +			if (ret) {
-> +				dev_err(dev, "unable to reserve DMA mem.\n");
-> +				return ret;
-> +			}
-> +			continue;
-> +		}
-> +		ret = of_address_to_resource(node, 0, &res);
-> +		if (ret) {
-> +			dev_err(dev, "unable to resolve memory region.\n");
-> +			return ret;
-> +		}
-> +		mem  = devm_kzalloc(dev, sizeof(struct rproc_mem_entry),
-> +				    GFP_KERNEL);
-
-The idiomatic way is to do devm_kzalloc(dev, sizeof(*mem), GFP_KERNEL),
-which you can fit in one line...
-
-> +		if (!mem)
-> +			return -ENOMEM;
-> +		/* Map it as normal memory */
-> +		size = resource_size(&res);
-> +		mem->va = devm_ioremap_wc(dev, res.start, size);
-
-devm_ioremap_resource(dev, res)
-
-> +		mem->len = size;
-> +		mem->dma = (dma_addr_t)res.start;
-> +		mem->da = (u32)res.start;
-> +		dev_dbg(dev, "%s: va = %p, da = 0x%x dma = 0x%llx\n",
-> +			__func__, mem->va, mem->da, mem->dma);
-> +		list_add_tail(&mem->node, &pdata->mems);
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
-> +{
-> +	const unsigned char *prop;
-> +	struct resource *res;
-> +	int ret = 0;
-> +	struct zynqmp_r5_rproc_pdata *local;
-> +	struct rproc *rproc;
-> +
-> +	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev),
-> +			    &zynqmp_r5_rproc_ops, NULL,
-> +		sizeof(struct zynqmp_r5_rproc_pdata));
-> +	if (!rproc) {
-> +		dev_err(&pdev->dev, "rproc allocation failed\n");
-> +		return -ENOMEM;
-> +	}
-> +	local = rproc->priv;
-> +	local->rproc = rproc;
-> +
-> +	platform_set_drvdata(pdev, rproc);
-> +
-> +	/* Override parse_fw op to allow no resource table firmware */
-> +	rproc->ops->parse_fw = zynqmp_r5_parse_fw;
-
-You can reference rproc_elf_load_segments et al from your definition of
-zynqmp_r5_rproc_ops, so that you don't need to "override" this op.
-
-> +
-> +	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "dma_set_coherent_mask: %d\n", ret);
-> +		goto rproc_fault;
-> +	}
-> +
-> +	/* Get the RPU power domain id */
-> +	ret = of_property_read_u32(pdev->dev.of_node, "rpu-pnode-id",
-> +				   &local->rpu_pnode_id);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "No RPU power node ID is specified.\n");
-> +		ret = -EINVAL;
-> +		goto rproc_fault;
-> +	}
-> +	dev_dbg(&pdev->dev, "RPU[%d] pnode_id = %d.\n",
-> +		local->rpu_id, local->rpu_pnode_id);
-> +
-> +	prop = of_get_property(pdev->dev.of_node, "core_conf", NULL);
-> +	if (!prop) {
-> +		dev_warn(&pdev->dev, "default core_conf used: lock-step\n");
-> +		prop = "lock-step";
-> +	}
-> +
-> +	dev_info(&pdev->dev, "RPU core_conf: %s\n", prop);
-
-This is a debug print, rather than info.
-
-> +	if (!strcmp(prop, "split0")) {
-> +		local->rpu_mode = PM_RPU_MODE_SPLIT;
-> +		local->rpu_id = 0;
-> +		local->ipi_dest_mask = RPU_0_IPI_MASK;
-> +	} else if (!strcmp(prop, "split1")) {
-> +		local->rpu_mode = PM_RPU_MODE_SPLIT;
-> +		local->rpu_id = 1;
-> +		local->ipi_dest_mask = RPU_1_IPI_MASK;
-> +	} else if (!strcmp(prop, "lock-step")) {
-> +		local->rpu_mode = PM_RPU_MODE_LOCKSTEP;
-> +		local->rpu_id = 0;
-> +		local->ipi_dest_mask = RPU_0_IPI_MASK;
-> +	} else {
-> +		dev_err(&pdev->dev, "Invalid core_conf mode provided - %s , %d\n",
-> +			prop, local->rpu_mode);
-> +		ret = -EINVAL;
-> +		goto rproc_fault;
-> +	}
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ipi");
-> +	if (res) {
-> +		local->ipi_base = devm_ioremap(&pdev->dev, res->start,
-> +					       resource_size(res));
-> +		if (IS_ERR(local->ipi_base)) {
-> +			pr_err("%s: Unable to map IPI\n", __func__);
-> +			ret = PTR_ERR(local->ipi_base);
-> +			goto rproc_fault;
-> +		}
-> +	} else {
-> +		dev_info(&pdev->dev, "IPI resource is not specified.\n");
-> +	}
-> +	dev_dbg(&pdev->dev, "got ipi base address\n");
-
-Make this print useful or drop it.
-
-> +
-> +	INIT_LIST_HEAD(&local->mems);
-
-Group initialization of all the local members to one place above.
-
-> +	/* Get TCM memories */
-> +	ret = zynqmp_r5_get_tcms(pdev, local);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to get TCM memories.\n");
-
-zynqmp_r5_get_tcms() did already print a more specific error, no need to
-print another generic one.
-
-> +		goto rproc_fault;
-> +	}
-> +	dev_dbg(&pdev->dev, "got TCM memories\n");
-
-Make this print useful or drop it.
-
-> +	/* Get reserved memory regions for firmware */
-> +	ret = zynqmp_r5_get_reserved_mems(pdev, local);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to get reserved memories.\n");
-
-zynqmp_r5_get_reserved_mems() already printed more specific error
-messages, drop this.
-
-> +		goto rproc_fault;
-> +	}
-> +	dev_dbg(&pdev->dev, "got reserved memories.\n");
-
-Make this print useful or drop it.
-
-> +
-> +	/* Disable IPI before requesting IPI IRQ */
-> +	disable_ipi(local);
-> +	INIT_WORK(&local->workqueue, handle_event_notified);
-> +
-> +	/* IPI IRQ */
-> +	if (local->ipi_base) {
-> +		ret = platform_get_irq(pdev, 0);
-> +		if (ret < 0) {
-> +			dev_err(&pdev->dev, "unable to find IPI IRQ\n");
-> +			goto rproc_fault;
-> +		}
-> +		local->irq = ret;
-> +		ret = devm_request_irq(&pdev->dev, local->irq,
-> +				       r5_remoteproc_interrupt, IRQF_SHARED,
-> +				       dev_name(&pdev->dev), &pdev->dev);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "IRQ %d already allocated\n",
-> +				local->irq);
-> +			goto rproc_fault;
-> +		}
-> +		dev_dbg(&pdev->dev, "notification irq: %d\n", local->irq);
-> +	}
-> +
-> +	ret = zynqmp_r5_rproc_init(local->rproc);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to init ZynqMP R5 rproc\n");
-> +		goto rproc_fault;
-> +	}
-
-zynqmp_r5_rproc_init() is just a call to enable_ipi(), which is just a
-conditional writel() and can't return anything but 0. Consider just
-inlining the writel() here - or at least the enable_ipi() and remove the
-error handling.
-
-> +
-> +	rproc->auto_boot = autoboot;
-> +
-> +	ret = rproc_add(local->rproc);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "rproc registration failed\n");
-> +		goto rproc_fault;
-> +	}
-> +
-> +	return ret;
-> +
-> +rproc_fault:
-> +	rproc_free(local->rproc);
-> +
-> +	return ret;
-> +}
-> +
-> +static int zynqmp_r5_remoteproc_remove(struct platform_device *pdev)
-> +{
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
-> +	struct rproc_mem_entry *mem;
-> +
-> +	dev_info(&pdev->dev, "%s\n", __func__);
-
-This isn't a info print.
-
-> +
-> +	rproc_del(rproc);
-> +
-> +	list_for_each_entry(mem, &local->mems, node) {
-> +		if (mem->priv)
-> +			gen_pool_free((struct gen_pool *)mem->priv,
-> +				      (unsigned long)mem->va, mem->len);
-
-I can't find where mem->priv is assigned, is this some old remnant?
-
-> +	}
-> +
-> +	r5_release_tcm(local);
-> +	of_reserved_mem_device_release(&pdev->dev);
-> +	rproc_free(rproc);
-> +
-> +	return 0;
-> +}
-> +
-> +/* Match table for OF platform binding */
-> +static const struct of_device_id zynqmp_r5_remoteproc_match[] = {
-> +	{ .compatible = "xlnx,zynqmp-r5-remoteproc-1.0", },
-> +	{ /* end of list */ },
-
-Drop the comment.
-
-> +};
-> +MODULE_DEVICE_TABLE(of, zynqmp_r5_remoteproc_match);
-> +
-> +static struct platform_driver zynqmp_r5_remoteproc_driver = {
-> +	.probe = zynqmp_r5_remoteproc_probe,
-> +	.remove = zynqmp_r5_remoteproc_remove,
-> +	.driver = {
-> +		.name = "zynqmp_r5_remoteproc",
-> +		.of_match_table = zynqmp_r5_remoteproc_match,
-> +	},
-> +};
-> +module_platform_driver(zynqmp_r5_remoteproc_driver);
-> +
-> +module_param_named(autoboot,  autoboot, bool, 0444);
-> +MODULE_PARM_DESC(autoboot,
-> +		 "enable | disable autoboot. (default: true)");
-
-Please don't add module_params for this.
-
-> +
-> +MODULE_AUTHOR("Jason Wu <j.wu@xilinx.com>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("ZynqMP R5 remote processor control driver");
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> @@ -0,0 +1,81 @@
+> +Xilinx ARM Cortex A53-R5 remoteproc driver
+> +==========================================
+> +
+> +ZynqMP family of devices use two Cortex R5 processors to help with various
+> +low power / real time tasks.
+> +
+> +This driver requires specific ZynqMP hardware design.
+> +
+> +ZynqMP R5 RemoteProc Device Node:
+> +=================================
+> +A zynqmp_r5_remoteproc device node is used to represent a R5 IP instance
+> +within ZynqMP SoC.
+> +
+> +Required properties:
+> +--------------------
+> + - compatible : Should be "xlnx,zynqmp-r5-remoteproc-1.0"
+
+What is 1.0?
+
+> + - reg : Address and length of the register set for the device. It
+> +        contains in the same order as described reg-names
+> + - reg-names: Contain the register set names.
+> +              "tcm_a" and "tcm_b" for TCM memories.
+> +              If the user uses the remoteproc driver with the RPMsg kernel
+> +              driver,"ipi" for the IPI register used to communicate with RPU
+> +              is also required.
+> +              Otherwise, if user only uses the remoteproc driver to boot RPU
+> +              firmware, "ipi" is not required.
+> + - tcm-pnode-id: TCM resources power nodes IDs which are used to request TCM
+> +                 resources for the remoteproc driver to access.
+> + - rpu-pnode-id : RPU power node id which is used by the remoteproc driver
+> +                  to start RPU or shut it down.
+> +
+> +Optional properties:
+> +--------------------
+> + - core_conf : R5 core configuration (valid string - split0 or split1 or
+> +               lock-step), default is lock-step.
+> + - memory-region: memories regions for RPU executable and DMA memory.
+> + - interrupts : Interrupt mapping for remoteproc IPI. It is required if the
+> +                user uses the remoteproc driver with the RPMsg kernel driver.
+> + - interrupt-parent : Phandle for the interrupt controller. It is required if
+> +                      the user uses the remoteproc driver with the RPMsg kernel
+> +                      kernel driver.
+> +
+> +Example:
+> +--------
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		rproc_0_fw_reserved: rproc@3ed000000 {
+> +			compatible = "rproc-prog-memory";
+> +			no-map;
+> +			reg = <0x0 0x3ed00000 0x0 0x40000>;
+> +		};
+> +		rproc_0_dma_reserved: rproc@3ed400000 {
+> +			compatible = "shared-dma-pool";
+> +			no-map;
+> +			reg = <0x0 0x3ed40000 0x0 0x80000>;
+> +		};
+> +	};
+> +
+> +	firmware {
+> +		zynqmp_firmware: zynqmp-firmware {
+> +			compatible = "xlnx,zynqmp-firmware";
+> +			method = "smc";
+> +		};
+> +	};
+> +
+> +	zynqmp-r5-remoteproc@0 {
+
+remoteproc@ffe00000 {
+
+> +		compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+> +		reg = <0x0 0xFFE00000 0x0 0x10000>,
+> +			<0x0 0xFFE20000 0x0 0x10000>,
+> +			<0x0 0xff340000 0x0 0x100>;
+
+Make all addresses lowercase, rather than mixing case.
+
+> +		reg-names = "tcm_a", "tcm_b", "ipi";
+> +		dma-ranges;
+> +		core_conf = "split0";
+> +		memory-region = <&rproc_0_fw_reserved>,
+> +				<&rproc_0_dma_reserved>;
+> +		tcm-pnode-id = <0xf>, <0x10>;
+> +		rpu-pnode-id = <0x7>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 29 4>;
+
+interrutps = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+
+> +	} ;
+> -- 
+> 2.7.4
+> 
 
 Regards,
 Bjorn
