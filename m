@@ -2,68 +2,51 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B48C65C31
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A5CC65C30
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE232087D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:52:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gfb810dc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gfb810dc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE232087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id AA5D02087D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 11:56:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5D02087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeJFSz3 (ORCPT
+        id S1727771AbeJFS7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 14:55:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42616 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeJFSz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 14:55:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CD9986021C; Sat,  6 Oct 2018 11:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538826751;
-        bh=MCFDA02KMy2t7nbezQouY64mdhbsYX6o+dFGLYImCts=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Gfb810dc9d9HyGRQWfen4lS1OSsY/bcwaXOmSOXwbOChD2cAUZIIj7lYzf1RlNVxH
-         CEjQiOGUFus55KKRmooBruJVm67WY9gU24+Ap675ppcu5hVyrGvWaBkV/NJe7u9Mg+
-         4BXZOaMbaZMc5H0msxMAXa2n2b6Hy8PEhfOhb580=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Sat, 6 Oct 2018 14:59:16 -0400
+Received: from ozlabs.org ([203.11.71.1]:40779 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727491AbeJFS7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 14:59:16 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E88696021C;
-        Sat,  6 Oct 2018 11:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538826751;
-        bh=MCFDA02KMy2t7nbezQouY64mdhbsYX6o+dFGLYImCts=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Gfb810dc9d9HyGRQWfen4lS1OSsY/bcwaXOmSOXwbOChD2cAUZIIj7lYzf1RlNVxH
-         CEjQiOGUFus55KKRmooBruJVm67WY9gU24+Ap675ppcu5hVyrGvWaBkV/NJe7u9Mg+
-         4BXZOaMbaZMc5H0msxMAXa2n2b6Hy8PEhfOhb580=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E88696021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Cody Schuffelen <schuffelen@google.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation device
-References: <20181004195906.201895-1-schuffelen@google.com>
-Date:   Sat, 06 Oct 2018 14:52:26 +0300
-In-Reply-To: <20181004195906.201895-1-schuffelen@google.com> (Cody
-        Schuffelen's message of "Thu, 4 Oct 2018 12:59:06 -0700")
-Message-ID: <8736tjgumd.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        by ozlabs.org (Postfix) with ESMTPSA id 42S4pQ6HNXz9s1x;
+        Sat,  6 Oct 2018 21:56:14 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Suresh Warrier <warrier@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v22 3/6] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
+In-Reply-To: <20181002224108.3321-4-logang@deltatee.com>
+References: <20181002224108.3321-1-logang@deltatee.com> <20181002224108.3321-4-logang@deltatee.com>
+Date:   Sat, 06 Oct 2018 21:56:13 +1000
+Message-ID: <877eivjnky.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,65 +54,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cody Schuffelen <schuffelen@google.com> writes:
+Logan Gunthorpe <logang@deltatee.com> writes:
 
-> This device takes over an existing network device and produces a
-> new one that appears like a wireless connection, returning enough canned
-> responses to nl80211 to satisfy a standard connection manager. If
-> necessary, it can also be set up one step removed from an existing
-> network device, such as through a vlan/80211Q or macvlan connection to
-> not disrupt the existing network interface.
+> In order to provide non-atomic functions for io{read|write}64 that will
+> use readq and writeq when appropriate. We define a number of variants
+> of these functions in the generic iomap that will do non-atomic
+> operations on pio but atomic operations on mmio.
 >
-> To use it to wrap a bare ethernet connection:
+> These functions are only defined if readq and writeq are defined. If
+> they are not, then the wrappers that always use non-atomic operations
+> from include/linux/io-64-nonatomic*.h will be used.
 >
-> ip link add link eth0 name wlan0 type virt_wifi
->
-> You may have to rename or otherwise hide the eth0 from your connection
-> manager, as the original network link will become unusuable and only
-> the wireless wrapper will be functional. This can also be combined with
-> vlan or macvlan links on top of eth0 to share the network between
-> distinct links, but that requires support outside the machine for
-> accepting vlan-tagged packets or packets from multiple MAC addresses.
->
-> This is being used for Google's Remote Android Virtual Device project,
-> which runs Android devices in virtual machines. The standard network
-> interfaces provided inside the virtual machines are all ethernet.
-> However, Android is not interested in ethernet devices and would rather
-> connect to a wireless interface. This patch allows the virtual machine
-> guest to treat one of its network connections as wireless rather than
-> ethernet, satisfying Android's network connection requirements.
->
-> We believe this is a generally useful driver for simulating wireless
-> network connections in other environments where a wireless connection is
-> desired by some userspace process but is not available.
->
-> This is distinct from other testing efforts such as mac80211_hwsim by
-> being a cfg80211 device instead of mac80211 device, allowing straight
-> pass-through on the data plane instead of forcing packaging of ethernet
-> data into mac80211 frames.
->
-> Signed-off-by: A. Cody Schuffelen <schuffelen@google.com>
-> Acked-by: Alistair Strachan <astrachan@google.com>
-> Acked-by: Greg Hartman <ghartman@google.com>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Suresh Warrier <warrier@linux.vnet.ibm.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
 > ---
-> First version: https://lkml.org/lkml/2018/7/27/947
-> First review: https://lore.kernel.org/lkml/1535460343.5895.56.camel@sipsolutions.net/
-> Second version: https://lore.kernel.org/lkml/20180926194324.71290-1-schuffelen@google.com/
-> Second review: https://www.lkml.org/lkml/2018/9/27/228
-> Second review: https://www.lkml.org/lkml/2018/9/27/229
-> Second review: https://www.lkml.org/lkml/2018/9/27/669
+>  arch/powerpc/include/asm/io.h |   2 +
+>  include/asm-generic/iomap.h   |  22 ++++++
+>  lib/iomap.c                   | 132 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 156 insertions(+)
 >
-> Thanks for all the comments on v2! I believe I've addressed all of them
-> here. I've also added changes to react better to the netdev going down,
-> canceling ongoing scans and rejecting wifi network connection requests.
->
-> I wasn't completely clear on whether I should change the title (net-next
-> to mac80211-next) so I left it as is for v3 to try to keep the patchwork
-> series together.
+> diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+> index e0331e754568..20fe5d7515db 100644
+> --- a/arch/powerpc/include/asm/io.h
+> +++ b/arch/powerpc/include/asm/io.h
+> @@ -798,8 +798,10 @@ extern void __iounmap_at(void *ea, unsigned long size);
+>  
+>  #define mmio_read16be(addr)		readw_be(addr)
+>  #define mmio_read32be(addr)		readl_be(addr)
+> +#define mmio_read64be(addr)		readq_be(addr)
+>  #define mmio_write16be(val, addr)	writew_be(val, addr)
+>  #define mmio_write32be(val, addr)	writel_be(val, addr)
+> +#define mmio_write64be(val, addr)	writeq_be(val, addr)
+>  #define mmio_insb(addr, dst, count)	readsb(addr, dst, count)
+>  #define mmio_insw(addr, dst, count)	readsw(addr, dst, count)
+>  #define mmio_insl(addr, dst, count)	readsl(addr, dst, count)
 
-I already said in v2 that you should not mark this for net-next as this
-goes to mac80211-next (if it gets accepted), now you are just
-unnecessarily confusing people.
+For the powerpc part:
 
--- 
-Kalle Valo
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+
+cheers
