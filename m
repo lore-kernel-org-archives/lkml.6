@@ -2,144 +2,120 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC74C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF31FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 06:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9632087D
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 05:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9799E2086D
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 06:01:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cy6qTeZT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9632087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="B5YeboJ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9799E2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeJFMzN (ORCPT
+        id S1727759AbeJFND0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 08:55:13 -0400
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:45978 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbeJFMzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 08:55:13 -0400
-Received: by mail-oi1-f171.google.com with SMTP id e17-v6so12067793oig.12;
-        Fri, 05 Oct 2018 22:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WCseJAA0rNXiW8azI+VZDlgB494Cr/VqyESt1C6Gm/Y=;
-        b=cy6qTeZT5jz3P4d1Xfz9H8LmNjU7mn+nGRiPbTWcXZmxsBRPdVC3X80qZbalq1dYL4
-         zTKb8ePP347RTXEgsrLYHLCcDGCCojqPasFKwnpr1t0jkXkVSVx/Y5bg2LLmSrkBYrgA
-         zSAwJlqz2u2LceyydSci+YZvPFVf8ow4dv/E6RLmTP+HxIiVcNFYo+i6f5e6zhlUhiQ9
-         E63kkP9URUjGk8Tv1F53MJibwspaLdWuL9nLbNbwGiIVE6FHui4H93nVoSsOX646mVmz
-         z8Sh157iifNGhPo00o1e0MOt41+ZhrVA4SqmcLHp7uPZP7mmWE6HIU4F20YHWXU2FABm
-         FEqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WCseJAA0rNXiW8azI+VZDlgB494Cr/VqyESt1C6Gm/Y=;
-        b=Z3nZZWiVZrZne51988wp3zBy5TqGPgdySBsjVwxdtyX0qBiYg9F3DsZ8+69a350AjH
-         4dGqyHj3RUdKthSElTzp35jLqmDlACdzZ1JFgxHN83JkJvCDJsfkvKUePg41dXDkadQN
-         D2Rkh6HwbZbv/bMNIAsSkfwkBTneIJZu9nq0jDm+CsJ37KVwHJy0Gfwy1iIXREhzRJpE
-         bXc8VvjxMSq8dp9yN7cKNFM+q2Or+9FYIR+PhKWGmt9kMrnqjGZOz83VNxNI6r2XBDzz
-         XUXTmAbAnn78jnd9uzYBl5Ym4ofivIckfuVwH5vVYv5bwCms2tY0eLG4cbUhFH4z5riP
-         5f6w==
-X-Gm-Message-State: ABuFfoiXCYUpKGz0T2zYvcuFs4yr8m4n66fGE5KmAMRvqMO6Pf8ohv61
-        36QgCf0eAPgOf8tt4WLwkCSqxe1DxgzmeeY158A=
-X-Google-Smtp-Source: ACcGV63BqO8bAXf9k/cLvImmV37UUN8krx3pRiY34Xmxcnv2R70YjGeF6gi/kDlBm48J8r8rYFpKdTwzOUOiBzC9zHk=
-X-Received: by 2002:a54:4f89:: with SMTP id g9-v6mr989325oiy.214.1538805193595;
- Fri, 05 Oct 2018 22:53:13 -0700 (PDT)
+        Sat, 6 Oct 2018 09:03:26 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37674 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726792AbeJFND0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 6 Oct 2018 09:03:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=yYOH+dNhbRCktPLecNlUgYA50I+ZrhCJfAXEkYAhHD0=; b=B5YeboJ6X+0qO7UzPQKoOZtlzD
+        Et7Pm1fOPTiq/imR5y/lDlN/CeYiSUKEQQ+x7k71dH4cIlj0ea8ngb9FewkBx42DxKyjsMgFUnwTv
+        maZbnWDGzgdp6/cBgYEfJUyCPA/0vT798kQFMI6VSu6PiAqoxY+RXFPKr6KTi69zP9v8=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1g8feU-0000El-VL; Sat, 06 Oct 2018 06:01:23 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id EB8CA7A5240; Sat,  6 Oct 2018 02:01:21 -0400 (EDT)
+Date:   Sat, 6 Oct 2018 02:01:21 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mario.Limonciello@dell.com
+Cc:     mika.westerberg@linux.intel.com, whitequark@whitequark.org,
+        heikki.krogerus@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: A different PD controller firmware problem?
+Message-ID: <20181006060121.GA4050@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mario.Limonciello@dell.com, mika.westerberg@linux.intel.com,
+        whitequark@whitequark.org, heikki.krogerus@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <1e8398f2c1790890f40b69f12e2934e3@whitequark.org>
+ <20180903140623.GD15112@kuha.fi.intel.com>
+ <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
+ <20180905132429.GB25121@kuha.fi.intel.com>
+ <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
+ <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
+ <3a666f66d6e342e2971b800caae7c889@whitequark.org>
+ <3b76178ca0de4990a38362cfd4836fdc@ausx13mpc120.AMER.DELL.COM>
+ <20180911093239.GW14465@lahna.fi.intel.com>
+ <fd00612c1bb94f69820be2b1f1e171f9@ausx13mpc120.AMER.DELL.COM>
 MIME-Version: 1.0
-References: <20181004200249.GL5238@garbanzo.do-not-panic.com>
-In-Reply-To: <20181004200249.GL5238@garbanzo.do-not-panic.com>
-From:   Ulf Magnusson <ulfalizer@gmail.com>
-Date:   Sat, 6 Oct 2018 07:53:02 +0200
-Message-ID: <CAFkk2KQk8ZZhjo3aC1hi2Kph5okuS-UVApboajUXEcu0JFGPOg@mail.gmail.com>
-Subject: Re: [ANN] init-kconfig - easy way to embrace Linux's kconfig
-To:     "Luis R . Rodriguez" <mcgrof@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sam Ravnborg <sam@ravnborg.org>, pvorel@suse.cz,
-        rostedt@goodmis.org, johannes@sipsolutions.net,
-        valentinrothberg@gmail.com, vegard.nossum@oracle.com, nbd@nbd.name,
-        kconfig-sat@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd00612c1bb94f69820be2b1f1e171f9@ausx13mpc120.AMER.DELL.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 10:03 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> Every now and then a project is born, and they decide to use Linux's
-> kconfig to enable configuration of their project. As it stands we *know*
-> kconfig is now used in at least over 12 different projects [0]. I myself
-> added kconfig to one as well years ago. Even research reveals that
-> kconfig has become one of the leading industrial variability modeling
-> languages [1] [2].
->
-> What is often difficult to do though is to start off using kconfig and
-> integrating it into a project. Or updating / syncing to the latest
-> kconfig from upstream Linux.
->
-> I had yet another need to use kconfig for another small project so
-> decided to make a clean template others can use and help keep it in sync.
-> This is a passive fork which aims to keep in sync with the Linux
-> kernel's latest kconfig to make it easier to keep up to date and to
-> enable new projects to use and embrace kconfig on their own.  The goal
-> is *not* to fork kconfig and evolve it separately, but rather keep in
-> sync with the evolution of kconfig on Linux to make it easier for
-> projects to use kconfig and also update their own kconfig when needed.
->
-> This may also be useful if folks want to test R&D code on a smaller
-> compartamentalized codebase.
->
-> If you find this useful and you'd like to help keep it in sync, send
-> patches my way as the kernel's kconfig evolves. The code is up on
-> gitlab).) [3].
->
-> Do we want to document this option on Linux in case folks want to try
-> and embrace kconfig on their own for other projects?
->
-> [0] http://www.eng.uwaterloo.ca/~shshe/kconfig_semantics.pdf
-> [1] http://gsd.uwaterloo.ca/sites/default/files/vm-2013-berger.pdf
-> [2] http://gsd.uwaterloo.ca/sites/default/files/ase241-berger_0.pdf
-> [3] https://gitlab.com/mcgrof/init-kconfig
->
->   Luis
+On Tue, Sep 11, 2018 at 01:02:00PM +0000, Mario.Limonciello@dell.com wrote:
+> > I tried 9370 and it detects the adapter correctly. IIRC I did the same
+> > for 5530 and it worked as well.
+> 
+> Thanks for confirming that.  Hopefully the same change can be ported to PD controller
+> firmware then on other models, I'll inquire.
 
-Shameless self-plug:
+Hey Mario,
 
-There's also a Python Kconfig implementation that's starting to get
-picked up by several projects: https://github.com/ulfalizer/kconfiglib
+Sorry for the thread hijack (I've changed the subject line to make it
+clear it's a separate issue), but just this evening I just had a
+very.... interesting problem with my Dell XPS 9370, and it appears to
+be related to the PD controller.
 
-It has a terminal menuconfig interface with a lot more features than
-mconf (a demonstration is available at
-https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/menuconfig.gif),
-and can also be used e.g. to generate cross-referenced Kconfig
-documentation that includes propagated dependencies:
-https://docs.zephyrproject.org/latest/reference/kconfig/index.html
-(note: heavy page).
+Sortly after 12:30am US/Eastern, I got a low power warning on my
+system, and the battery power had dropped below 10%.  Apparently the
+laptop was not accepting any charge any more.  I tried doing a suspend
+to ram, and then unsuspended it, and it still wasn't accepting any
+charge, even though the adapter indicated it was plugged in and
+supplying power.  I then did a power cycle, and still the laptop
+didn't indicate it was charging with a USB C 45W power supply plugged
+in.
 
-Kconfiglib is based around a library (an old version appears in e.g.
-U-Boot and Yocto, and a newer version in e.g. Espressif). The
-documentation generation is just a script
-(https://github.com/zephyrproject-rtos/zephyr/blob/master/doc/scripts/genrest.py),
-and the same goes for the menuconfig and the other tools. The core
-library takes part of all the trickiness related to evaluating
-symbols.
+I inserted a Satechi USB C voltage monitor in-line, and found that
+while it was powered on, the laptop has pulling 0 mA at 5V.  If the
+laptop was suspended, it would pull 3A at 5V.  Rebooting and power
+cycling didn't change this syndrome.
 
-I realize there would probably be massive opposition to adding a
-Python dependency to a core part of the kernel, so I'm not going for
-that. For most other projects, I think it's a good fit though.
+What *did* fix it was powering down, and disconnecting the power
+adapter for 30 seconds or so.  Then when I plugged it back in, the
+laptop started accepting 20V at 2A.  I assume what happened is that
+the PD controller had crashed, and it required a powerdown *and*
+unplugging the power to force the EC to reset.
 
-Cheers,
-Ulf
+I have noticed other problems where a USB C to HDMI adapter doesn't
+quite work right (the laptop refuses to talk to the display), and the
+*only* way to fix things is to powerdown Linux and then remove the
+power plug.  So this is not the first time that this particular
+technique is needed to make my Dell XPS 9370 (with NVMe SSD, currently
+running XPS 13 9370 System Firmware version 0.1.5.1) happy again.
+
+What's the best place to report this sort of problem?  And is there
+anything more I can do to debug these sorts of apparent PD Controller
+/ EC bugs?
+
+					- Ted
