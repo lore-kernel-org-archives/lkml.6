@@ -2,122 +2,117 @@ Return-Path: <SRS0=izC1=MS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8ECC677E8
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A859EC677E8
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2508221486
-	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5397521486
+	for <linux-kernel@archiver.kernel.org>; Sat,  6 Oct 2018 17:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="x+duXVvf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2508221486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YTRTROlO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5397521486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeJGAFg (ORCPT
+        id S1727951AbeJGAGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 6 Oct 2018 20:05:36 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40172 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbeJGAFg (ORCPT
+        Sat, 6 Oct 2018 20:06:55 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51461 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbeJGAGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 6 Oct 2018 20:05:36 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j68-v6so12822738oib.7
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 10:01:30 -0700 (PDT)
+        Sat, 6 Oct 2018 20:06:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 143-v6so4435436wmf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 10:02:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3ngIs1RadAHa2B2Y7t8SJNs6/pvSDPRHSyYOW9Dnewk=;
-        b=x+duXVvfD3d/oS09RB48NVUrDS/05GJSzYtELtSab+yt2C7hNmfWvm5dBjr2LKU+t2
-         alqD0+fDwXoWjaubGQBsxGO3pxrUlUsuQ5+wgZ/Z8V2QkByjMo3ahMXUHk5taD+y9pMw
-         hiazdIMqlO88dK1pYb12RCuZSP0QqS4gt6ufjj8NzCDLgGgr32mBt3u3bSJ59sYGRPX4
-         8VmC5weyFRIOhI+ymSI8HlF2zVO8IX3J+sSQlzvGXZxsL9WMa9q8uybq3Lv+1aYF72uo
-         EGRiAP4o+U0f3F2Fw7Hflm0MquCln+Hpfw9mBg8gHWCyiy+6qcuzwi9L/ZkODoNgjXLM
-         1HgA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZAbHohvfMG0TDgFeW4zJNLWY2xuStAPo5HN+M6fgGUY=;
+        b=YTRTROlOX5JZoSQKONwP7d/zsWei466HXsOowoEfNDdfhfZlYsQ8CdhAXSpzfkBEyR
+         XmRmHgJtKyrjWawghH6VUA2zQzpiZNqtiF/pvDUwp+ChYm9W2omQ0+Imk//Y6aH1D6Js
+         O8jt9MWePIEAoQVnIwCPkjC30LPNyNX7WyBuU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3ngIs1RadAHa2B2Y7t8SJNs6/pvSDPRHSyYOW9Dnewk=;
-        b=GzvC3yplXY5MgnbjTGJrUOTFA0PbIOIGdTMGEZPFOjnNK3zkRgFpUyGyAn0FLiH7Cw
-         jMIs2JKfwBb/FZSOp/jWfy1od0/r1lWofJmCVAMfOMaluxqpny/9q+OXr4uh6QUIZTep
-         EgEvmJBiWBzjyN4a2LCqTD33TZG33cGISbDGQvnG5qEyuaeVJxeHY+aNEC97/j++WhhV
-         U4EWEdcoywYl0EGawSFjcrTzkEDylWYegd+dk3NGV/YtJxN4b8ZsBVWYnjJheUxjTjYb
-         qyuNpkBkkm1yWtgKR5tnvVDpawkByqh/u5sKYeL7dqiG2I0mAHK2n5VF6sMf0W6ZJf9Y
-         cBtg==
-X-Gm-Message-State: ABuFfojencDHSaCtJA1cPKuN438/cl+FmXY6C0nP7etLbIqhhjDx9kEz
-        AkA+0k5fVRObgbvrDiy7Dyn4KS5S/DhMyNn5SUUTFw==
-X-Google-Smtp-Source: ACcGV61aMSQQZ3mDxrIoq413KR51Q+EZ8kNo3YvyhqXGdBt3jSG9OF8DVoMhDVAFsUHPlU8MKwmoiJP2RQnQZsSDmQY=
-X-Received: by 2002:aca:1c19:: with SMTP id c25-v6mr1637560oic.246.1538845289992;
- Sat, 06 Oct 2018 10:01:29 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZAbHohvfMG0TDgFeW4zJNLWY2xuStAPo5HN+M6fgGUY=;
+        b=K976sfUvfW5DsDNHOlkNdAHX1Hva1CFqeOVQKphRsVMyzghOCwxu5U6dfI94e7E3Ng
+         ndgyG/oMr5O0jLrt27PtHi5WQqpihh5+TfAVDpjhFNnKyzcXlRYC1zZkN/z9uAQOrHps
+         ycCbb0xOGGfEfr5Tn1Qo626G0KaPwAX0yyNKdbVh/hIt+71OD32Zrl4wsLRZyo2prIgH
+         PcSn29kYsCcW4U68CtpjDAT71corSCNo94W86ydDArrSDylnS01j1PNLrPG86/Te5xTH
+         TNC2zMPhLhSADyjwOXRYW+oxfDy7ljmduxvc7hZMsT/LzrYuYRCexPhIcUAeN6tYJDVM
+         UWpw==
+X-Gm-Message-State: ABuFfogvLERU65QfZE0aRFb8+iJjTNAhslEZbOPP0nTKos8zhoVALGov
+        t8uAjtHvW0672EqdfdDHRBTTGQ==
+X-Google-Smtp-Source: ACcGV60d2Ot8hF2KMCRth+BKiT82HldT09r1WhDNhqLw9Z9IosMLrH2xG2BWkeokkHT9QCPu3cSVUQ==
+X-Received: by 2002:a1c:c708:: with SMTP id x8-v6mr10844881wmf.116.1538845366764;
+        Sat, 06 Oct 2018 10:02:46 -0700 (PDT)
+Received: from [192.168.0.40] (41.220.136.77.rev.sfr.net. [77.136.220.41])
+        by smtp.googlemail.com with ESMTPSA id l67-v6sm13967170wma.20.2018.10.06.10.02.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 06 Oct 2018 10:02:45 -0700 (PDT)
+Subject: Re: [PATCH 13/13] clocksource/drivers/dw_apb: Add reset control
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Marek Vasut <marex@denx.de>
+References: <20181005143253.GE1881@mai>
+ <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org>
+ <1538750143-4282-13-git-send-email-daniel.lezcano@linaro.org>
+ <alpine.DEB.2.21.1810061433170.5454@nanos.tec.linutronix.de>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <5ebc1d90-2067-8cb5-0c93-1c9f0677abc5@linaro.org>
+Date:   Sat, 6 Oct 2018 19:02:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074457.GD22173@dhcp22.suse.cz> <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
-In-Reply-To: <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sat, 6 Oct 2018 10:01:17 -0700
-Message-ID: <CAPcyv4jKGJLGqTHbxPvSD0X=kNGce-iJCYvTHJA8x2JSST5ETQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Randomize free memory
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1810061433170.5454@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 9:44 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> Hi Michal,
->
-> On Thu, Oct 4, 2018 at 12:53 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Wed 03-10-18 19:15:18, Dan Williams wrote:
-> > > Changes since v1:
-> > > * Add support for shuffling hot-added memory (Andrew)
-> > > * Update cover letter and commit message to clarify the performance impact
-> > >   and relevance to future platforms
-> >
-> > I believe this hasn't addressed my questions in
-> > http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
-> > "
-> > It is the more general idea that I am not really sure about. First of
-> > all. Does it make _any_ sense to randomize 4MB blocks by default? Why
-> > cannot we simply have it disabled?
->
-> I'm not aware of any CVE that this would directly preclude, but that
-> said the entropy injected at 4MB boundaries raises the bar on heap
-> attacks. Environments that want more can adjust that with the boot
-> parameter. Given the potential benefits I think it would only make
-> sense to default disable it if there was a significant runtime impact,
-> from what I have seen there isn't.
->
-> > Then and more concerning question is,
-> > does it even make sense to have this randomization applied to higher
-> > orders than 0? Attacker might fragment the memory and keep recycling the
-> > lowest order and get the predictable behavior that we have right now.
->
-> Certainly I expect there are attacks that can operate within a 4MB
-> window, as I expect there are attacks that could operate within a 4K
-> window that would need sub-page randomization to deter. In fact I
-> believe that is the motivation for CONFIG_SLAB_FREELIST_RANDOM.
-> Combining that with page allocator randomization makes the kernel less
-> predictable.
->
-> Is that enough justification for this patch on its own? It's
-> debatable. Combine that though with the wider availability of
-> platforms with memory-side-cache and I think it's a reasonable default
-> behavior for the kernel to deploy.
+On 06/10/2018 14:34, Thomas Gleixner wrote:
+> On Fri, 5 Oct 2018, Daniel Lezcano wrote:
+> 
+>> From: Dinh Nguyen <dinguyen@kernel.org>
+>>
+>> Add code to retrieve the reset property from the dw-apb timers and if
+>> the property is available, the safe operation is to assert the timer
+>> into reset, and followed by a deassert of the timer reset (brings the
+>> timer out of reset).
+>>
+>> This patch is needed for systems where the bootloader has left the timer
+>> not used in reset.
+>>
+>>  - Trivial conflict with commit a74bd1ad7a:
+>>     "Convert to using %pOFn instead of device_node.name"
+>>
+>> Signed-off-by: Marek Vasut <marex@denx.de>
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> 
+> Ingo just noticed, that this SOB chain is wrong. How is Marek involved
+> here? Can you please fix that up and send me another pull request?
 
-Hi Michal,
+Thomas,
 
-Does the above address your concerns? v4.20 is perhaps the last
-upstream kernel release in advance of wider hardware availability.
+I will fix it as soon as possible but I would like to give the
+opportunity to Dinh to explain why he sent the patch with Marek's SOB.
+
+Dinh ?
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
