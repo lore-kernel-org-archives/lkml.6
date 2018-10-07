@@ -2,77 +2,73 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B9FC65C1B
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAF3C65C1B
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90942087D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABFAB2087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHWuMyKu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90942087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dWUTO4O3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABFAB2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeJHA7M (ORCPT
+        id S1728164AbeJHBBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 20:59:12 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39236 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeJHA7L (ORCPT
+        Sun, 7 Oct 2018 21:01:00 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46440 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeJHBA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 20:59:11 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w14-v6so9011861plp.6
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 10:51:09 -0700 (PDT)
+        Sun, 7 Oct 2018 21:00:59 -0400
+Received: by mail-io1-f65.google.com with SMTP id t7-v6so14203653ioj.13
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 10:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=ffwll.ch; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jdHfr+oJYsCNSjRpa6DJVw4SA4PzWsHtuVbL2FD7mZY=;
-        b=UHWuMyKukEpcslgCMN6ztP5bL1lrQDvJn6PM8ColT66z6w+ej1Hp3vLIhQow5ckOIY
-         XinBlJrMKDu17zOX4Ms6KkBQLlXMnPF7e/QXSjkQh4Is+f8BebPRs0WQZPDuyugeLaoX
-         llPR/OwMBPfjUnINkZk8mCxBZAu1LSdUK4jbE39ZALoLUt0G9KXHaC+xe9pX7+LwKPWD
-         CwupHUbPvxsr5lrVLwQGT+NwrkbaceBjj22p4nnlGJEvhm+pp6ZBwQ7UqY5FMCuYTF37
-         GwKOEnoN9QuUAVLF1a1Lp6cl9cZsNsPUr6x/beP4103x0csD/ajHlcBXlCzahY5FVRTp
-         /7tQ==
+        bh=0D9FJ/tNqXn0mWKd+FjlS3m4YZMqgMyhJ4YkYLIcRCo=;
+        b=dWUTO4O3w/bd91e2GgIsGE4B6SZLshTW8Yyroxws1+VBmaXrj9J/TJw+biO6MP9Lve
+         w746UNWZ/ZzGytuh1F7I6F8FS7trWVAcgOL5Oj8XGZgMf6uqFsETbMB13lGVOpgeBQtb
+         meQpVPYYF152WAmrvICpY4hndfsBo7xXooqr0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jdHfr+oJYsCNSjRpa6DJVw4SA4PzWsHtuVbL2FD7mZY=;
-        b=h1HicsX+mUbxbsd1x1UGAVwIXfJhQ2Tkp9XW8ZEONZ1Dk/cctLl4LMx2mGWCRGH2Bc
-         a9L+JfKYU64hYsRpHQgdcbhzK0si7lnKlGV001PizvxyDnVbjDNihH5Hb9oyPUFzwhZi
-         9yhB31IVm/7IrhF/uypTK1SfkKtHGLpx+NiW3QN9QzXZ5YgBcuYHCYK32/xBCxFpbdRJ
-         2f7P7ys+0IGdJpEjAmi1QhtctkWGEjjD/Jt7nYVikXsAEAe6+dfxvKtfMgZF6m90/xKE
-         w7LFcDuWaNzDYBiYpJfzL5Bup3uYhEZ/D+f7BT62QF+hmOgmF7hV8iIG0OieYf3BLFYP
-         V2DQ==
-X-Gm-Message-State: ABuFfoj2RyyFHzW6j7qg9UEL4KcRgM31viWfNy5Ih4xk1iPlVSbxgO1f
-        HI57k1CDMRzbkcgT026Q03kRyxmig+hAMw8dMkDHTg==
-X-Google-Smtp-Source: ACcGV62GD7aKztaHlXFWuCsj6RNvAINZvKe4C9XfMVI8ZyrVIU/6nBEbLa9euvs07vtFctnnq3WndbMEaGYWlLMRn5M=
-X-Received: by 2002:a17:902:a716:: with SMTP id w22-v6mr6099670plq.334.1538934669037;
- Sun, 07 Oct 2018 10:51:09 -0700 (PDT)
+        bh=0D9FJ/tNqXn0mWKd+FjlS3m4YZMqgMyhJ4YkYLIcRCo=;
+        b=afUckTGoABUSQFoHpfiSUOUFzczA/vftfPhPaVsMyaYiU/s8o1oTvGAQV+X61p5V1s
+         ZnQQOgSV0FMtv3qY5MjL9tqidIaNlpaxkwdoVmGcQNsOthd+6G5BwTpkao6gngjDdgZ/
+         9TN+sZPFtBKWLwTk7u/5i0vWHEScaBXVruxtM+g9vwEcXqc1USWCw61fEefJPmrQRNFZ
+         rh3Tb1ztt4qyPbP73D/pkQC+eif675VhRhlBEHmWMJD6UgdO//iJUnWRqOHtrtQ8UVKS
+         Nz9cQiXkNiWUzlxnQgXT5oIYGzkOpsx7cRYSUO167W3IED4i0qmSYGhrO/WF9zuOwUaG
+         a0xg==
+X-Gm-Message-State: ABuFfoiFKDIBpXGGvVjYXEUd1ynufXrNY88PSRA2yke9P8PndGR7DIQw
+        x3Eciv+zC1TQDFgJ9XVV9j7IA7ClyfDTh/r485RdcA==
+X-Google-Smtp-Source: ACcGV61LUJ+cv13yb0rsJfBSsHYB05MJUEXQWcRlvI7e0rBiZtIOJ8f1gChNER8Vix8OY3Ircwvjgj79BhjIHPUUlGc=
+X-Received: by 2002:a6b:8d88:: with SMTP id p130-v6mr14577460iod.34.1538934776611;
+ Sun, 07 Oct 2018 10:52:56 -0700 (PDT)
 MIME-Version: 1.0
 References: <1538861738.4088.5.camel@HansenPartnership.com>
  <CAKMK7uFvmXtk=WiZJxGrzQQD1RHv7srA-_e8KdwXZ9Kn5rcmiQ@mail.gmail.com> <1538934030.4010.1.camel@HansenPartnership.com>
 In-Reply-To: <1538934030.4010.1.camel@HansenPartnership.com>
-From:   "jonsmirl@gmail.com" <jonsmirl@gmail.com>
-Date:   Sun, 7 Oct 2018 13:50:57 -0400
-Message-ID: <CAKON4OyztjgTp_AJcrUjpkmT36RY4r-jMzNG75+riOy8U=PTgQ@mail.gmail.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Sun, 7 Oct 2018 19:52:45 +0200
+Message-ID: <CAKMK7uG9pZX5_r_9q5O0+3f1vRjMb8xErBY=oup6RP2QxOunag@mail.gmail.com>
 Subject: Re: [Ksummit-discuss] [PATCH 0/2] code of conduct fixes
 To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     daniel.vetter@ffwll.ch, lkml <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 7, 2018 at 1:42 PM James Bottomley
+On Sun, Oct 7, 2018 at 7:40 PM James Bottomley
 <James.Bottomley@hansenpartnership.com> wrote:
 >
 > On Sun, 2018-10-07 at 19:11 +0200, Daniel Vetter wrote:
@@ -111,13 +107,6 @@ On Sun, Oct 7, 2018 at 1:42 PM James Bottomley
 > > rushed in, least because I still don't understand why it happened,
 > > but also for all the other reasons we've discussed here in the past
 > > few weeks.
-
-As far as I know none of the usual open source friendly lawyers have
-reviewed and commented. I suspect this document is on shaky legal
-ground and it needs a vetting from the legal community. For example,
-is the CoC simply guidance or it is a legal contract? I don't know
-enough about the law to answer that.
-
 > >
 > > For all the same reasons I don't think it's a good idea to now rush
 > > in a few edits, just a few days before the 4.19 release. In my
@@ -148,10 +137,24 @@ enough about the law to answer that.
 > but it's not a strong one, so if people want to go for the revert
 > instead of the amendment, I'd be happy to redo the patch series with
 > that.
->
-> James
->
->
+
+I thought about adding something like "meanwhile the old Code of
+Conflict stays in effect", but that already felt like editorializing,
+and so could prevent the big pile of acks I think we need for any such
+change. That's why I tried to limit my suggestion as much as possible
+to stricly undisputed facts only (we _are_ discussing it still after
+all). Personally I don't want to ack or nack any concrete changes
+(including going back to the old one, if temporarily), as long as
+Linus hasn't clarified why this was rushed and why he felt the change
+was necessary.
+
+Long term I'm all for getting this right of course, but figuring out
+what "right" is in the context of the linux kernel community will take
+a while longer than what we have until 4.19 ships (even with the 1
+week extension, just read the -rc7 release announcement)..
+
+Thanks, Daniel
+
 > > would make this clear and ameliorate the concerns from many people
 > > about the open questions we still have, at least for now. This would
 > > give us the time to discuss all the details properly and with all due
@@ -163,13 +166,9 @@ enough about the law to answer that.
 > >
 > > Thanks, Daniel
 >
-> _______________________________________________
-> Ksummit-discuss mailing list
-> Ksummit-discuss@lists.linuxfoundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
-
 
 
 -- 
-Jon Smirl
-jonsmirl@gmail.com
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
