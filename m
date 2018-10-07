@@ -2,110 +2,99 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E9EC6787E
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FF4C6787D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71F920882
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:41:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="or/wtz48"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71F920882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 89CF72088F
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:09:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CF72088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbeJHEtg (ORCPT
+        id S1726128AbeJHFRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 00:49:36 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34280 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeJHEsr (ORCPT
+        Mon, 8 Oct 2018 01:17:55 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38687 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbeJHFRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 00:48:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z4-v6so18711582wrb.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 14:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/eT30h/5dLsMQi7bdrrJuhg3P83jMrLyGQiMNFnuj0I=;
-        b=or/wtz48oSdwY9sip0vbcEBwOv5SVZEK5L2XurkrawrkpELvDqok9NhhwMGZXMew7g
-         sqN6Oesi4pA84xdDrNAh3sstLW7Rg31SJqdZhetYbEzTHTaWhV2BgAEd3MdGZH/5cGdJ
-         2ejKBbWtwVraDz+Vvrr3qmq6npwLXYuKish/TSdIS2T00NJIr7nFD5cHg8wqSLtcUrGV
-         57t8zkUtaeTsdiOQknwV5QJdaoKNjbaEIM4KUWCpgs+UjMZ5gvEqpX8uuPliIayNshhh
-         gbW+776sxes7f2OeGLS+w2JKPkNMgSlN9ynPLyHflnD81qkWqN+1rP/NQUyzfDNrHGU7
-         aJug==
+        Mon, 8 Oct 2018 01:17:55 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b5-v6so9152723plr.5;
+        Sun, 07 Oct 2018 15:09:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/eT30h/5dLsMQi7bdrrJuhg3P83jMrLyGQiMNFnuj0I=;
-        b=OX5Ewo9CtjdpIeZBJ5BGZkpkV530XJCcCb2Db8GWD+jO0qY2cnESZUz70pWNcM6ik3
-         uBMhu1r6oWRihci+Jhn8EG/Rzg9FaIvne4EKuhO00bTa+yxcKkzuCnGaZJ89NaQo1eEo
-         uNEXnA+o71GH9tWu0cL8WptbYkFQNks7IyW47PNkYNCIy2ml0lFPFpyH6Znyap+3IzGD
-         FdGL/g2ezMi0iXJj25dqgbu4sLzTxBJOgv7bPBhf0jty03pYt7tgOs0CJqpPQUr112oL
-         JhV5LQMzR+nZP475sHBXHC0Bro48OJohdEKXGHww5h0f+b2ngpJEm6R8Dt2qr3Zaj0wn
-         kyjg==
-X-Gm-Message-State: ABuFfogHsykutrgREp9NiRTdYF38go05Cqn5uluGKXp24ncnFnqxJAjk
-        UOkBynZGunzFe/71mD3QA1lYGJFr
-X-Google-Smtp-Source: ACcGV629JdeKattX1zqRuyCXC0jjRdrCiV42Wae3xLqgfQvwduX7NEYSE5hLs3bkAadwJdf0BYvpeg==
-X-Received: by 2002:a05:6000:114e:: with SMTP id d14mr14161131wrx.301.1538948409842;
-        Sun, 07 Oct 2018 14:40:09 -0700 (PDT)
-Received: from localhost.localdomain (host86-169-110-130.range86-169.btcentralplus.com. [86.169.110.130])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm7758097wmd.41.2018.10.07.14.40.08
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YZ7BXXiQMt6Ugf4OF7z3nfT027Rh0chNaueHXupqcmc=;
+        b=fgng3Aa5N4KTwtNo4SjNLoFneMk+NmcTPVlHb/rsB3gcOS6j7v3WWGxkol56jpHPiL
+         tygqhgP7htYkZfmDsDN9MQFuuI2qDW5AhLKaE2Na+lJQBYAng2Jm7rt4/Kddmw5pf/Tg
+         H16cH31mg0JXEM4qvdLpsho7wG6vKUA30nBYegNZMN0qD4Q/IdQxBW7EQD5pAIBpN2sT
+         /riWnrwV50jO8zdKX9vrfxofnhYfsKidhmwNmB1YZkYiLbY6Jn7EoUZCjLIfOsAF+0pC
+         DJDcMjfGMJua+GayGl28GSrOIq7z/nd/GZ8IysXaJchDRVF9xldH5XNnj0CmZZfS/w0C
+         ljaA==
+X-Gm-Message-State: ABuFfogfkm6+7r4OOqMGzTzpluc89tZ4WczYGl7rBV2UgrxBCuG7ae2C
+        5Ttqh4j7ONOK2Lknx7nDwZ4=
+X-Google-Smtp-Source: ACcGV63FvN0qjpk+jcYa0hNr7jXJwlZ6BOfBMVpZ5yH0yRFgVWQRDo1uQHdon54zdpW8uD3G9+1fAg==
+X-Received: by 2002:a17:902:48:: with SMTP id 66-v6mr10559757pla.7.1538950155541;
+        Sun, 07 Oct 2018 15:09:15 -0700 (PDT)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:461d])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm26607222pfv.33.2018.10.07.15.09.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Oct 2018 14:40:09 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 02/11] staging:rtl8192u: Removed commented out include - Style
-Date:   Sun,  7 Oct 2018 22:40:16 +0100
-Message-Id: <20181007214025.25469-3-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181007214025.25469-1-johnfwhitmore@gmail.com>
-References: <20181007214025.25469-1-johnfwhitmore@gmail.com>
+        Sun, 07 Oct 2018 15:09:14 -0700 (PDT)
+Date:   Sun, 7 Oct 2018 15:09:11 -0700
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] percpu: stop leaking bitmap metadata blocks
+Message-ID: <20181007220911.GA3425@dennisz-mbp.dhcp.thefacebook.com>
+References: <1538901111-22823-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538901111-22823-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove commented out #include directive.
+Hi Mike,
 
-Additionally shorted a block comment to clear the checkpatch issue
-with line length.
+On Sun, Oct 07, 2018 at 11:31:51AM +0300, Mike Rapoport wrote:
+> The commit ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
+> introduced bitmap metadata blocks. These metadata blocks are allocated
+> whenever a new chunk is created, but they are never freed. Fix it.
+> 
+> Fixes: ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  mm/percpu.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/mm/percpu.c b/mm/percpu.c
+> index d21cb13..25104cd 100644
+> --- a/mm/percpu.c
+> +++ b/mm/percpu.c
+> @@ -1212,6 +1212,7 @@ static void pcpu_free_chunk(struct pcpu_chunk *chunk)
+>  {
+>  	if (!chunk)
+>  		return;
+> +	pcpu_mem_free(chunk->md_blocks);
+>  	pcpu_mem_free(chunk->bound_map);
+>  	pcpu_mem_free(chunk->alloc_map);
+>  	pcpu_mem_free(chunk);
 
-These are coding style changes which should have no impact on runtime
-code execution.
+Ah a bit of a boneheaded miss on my part.. Thanks for catching this!
+I've applied it to for-4.19-fixes.
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/ieee80211/ieee80211_module.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-index 5f8229f2c757..bd64d126ba2b 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-@@ -29,10 +29,9 @@
-  *  James P. Ketrenos <ipw2100-admin@linux.intel.com>
-  *  Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-6497
-  *
-- *******************************************************************************/
-+ ******************************************************************************/
- 
- #include <linux/compiler.h>
--/* #include <linux/config.h> */
- #include <linux/errno.h>
- #include <linux/if_arp.h>
- #include <linux/in6.h>
--- 
-2.19.0
-
+Thanks,
+Dennis
