@@ -2,127 +2,88 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0845C6787D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09730ECDE21
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B962087D
+	by mail.kernel.org (Postfix) with ESMTP id B3DCD2088F
 	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:39:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QO2U1Kh7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B962087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EBxgGcKh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DCD2088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbeJHFea (ORCPT
+        id S1726678AbeJHFoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 01:34:30 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41744 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeJHFea (ORCPT
+        Mon, 8 Oct 2018 01:44:21 -0400
+Received: from mail-pl1-f179.google.com ([209.85.214.179]:45642 "EHLO
+        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeJHFoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 01:34:30 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l41-v6so6624132qtl.8
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 15:25:48 -0700 (PDT)
+        Mon, 8 Oct 2018 01:44:21 -0400
+Received: by mail-pl1-f179.google.com with SMTP id y15-v6so9155308plr.12
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 15:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PVuOoMPxZx+0WC0U+AcmhsryKNgOQdjSQpTGaLhVVhA=;
-        b=QO2U1Kh7VtHfJ7HJgkaatGeaabGdJtFp69tFmJ62ATu4g/DtgOZ2OCPbBjgSuKZ9GZ
-         3nbndPKhzdusH6HaNay1vRwUMsjjrRqREWj4GIwWLrcTV+IUJ8ztIuZJ1/R4zevEM038
-         /8x17X2nZccEnXmqcKMYuT/dkVLi7XIO8wVkpLnJGWdovbPvC3gxp6Ka5SXabddG9S9y
-         S6LDNsgV0YZ+WblfNpylqJRHF/L6hLDarqrjzR7R+J+xGL6Wv9LCgVZMXVVwzluS5lUv
-         gB/Aw+Lsa55LrU6o8cghdbbWqxJGQqSAH7GSf+a4T39iTthMDRw7RbDYESU0iU2hLQBH
-         MKgA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=yxp5id9lMNvSglWhiNLo1rmpjCDxobRwASmj+aoEj7g=;
+        b=EBxgGcKhBKklnjENJ90TYhbHIpYEqMovFwW4IZCL5euGyQdCKW/G02LyL9w5rjTN9e
+         txH0DEpR41mHWBHy6gfywaHxCUYQ63iFuMKMKK4nBIJLzjEahD27DngGl1ayBlZNPITK
+         hPHJcZo1Onke0fsKg1vhu8KRk3RWcsY4lnhb7nE93CSbv+IiShi5U34Rbg5jnKI01Ekr
+         Qm/1xlqC/LtLRzADwBV5bp/fMXJ0rSTu7CfE+LlLSJCW4BkRq1+AnS6aIQ8UKeJJyhc3
+         G1v+4eyKfb3vJRjLjJHR4kjFZcsudQRKLgP+1dPFrAlIjJZG1JYlYVFJtb3Teubh6pqE
+         NACw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PVuOoMPxZx+0WC0U+AcmhsryKNgOQdjSQpTGaLhVVhA=;
-        b=auHbraeb6h1BkWq/e8cohZqWWlPUZGXS/05pciojJ7MQgPtQPn2woIWayKUB+jCFZE
-         Bn8cdUlSnsyYuuXW4ei668ilvgKwbC1oL8h7zFcUTMSyiM9ZQON4x1k+o+fOccEUYZCN
-         YpvSP3vBNAjFMZgmpZjj4WLmtzKmnAnJJq45vSQQ5yA0Ac0mU7I0cuH0OVRv9ScH8KxB
-         u5j4z4vNFgILc30SbsvLTFMB3ZH7dJbKqQVwEUZGVD++2EncoGdKcSVZgYJIhz0m+5Uq
-         kLtkxgwpdy25Rm82GmHE1CRlcRTRL1LR7xWUZ7fxlcMAhOPSO3cffH2+18SvWJGKza94
-         B8rQ==
-X-Gm-Message-State: ABuFfojmVuAe97UzpnntngI12zZToWqua/G0FCDPEq+bb5xtpibGSAIf
-        gWn4sj/KCHJZp9OpNefWZ3vXeqBSUi5dqpFUF9Wj3A==
-X-Google-Smtp-Source: ACcGV63C6A9GCt6GQ/xUd9l0J2EE0sgxlGITdWRNWiwQwKWtk88NAjD5J8axrOkWQFzdUHBCMWefX5McIlR9eiI2zTs=
-X-Received: by 2002:a0c:9213:: with SMTP id a19mr561040qva.124.1538951147626;
- Sun, 07 Oct 2018 15:25:47 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=yxp5id9lMNvSglWhiNLo1rmpjCDxobRwASmj+aoEj7g=;
+        b=ha5WR9T0DCEBj1mDI43u3NAPD7fKx6NrzcYECaNJbZJTWZ2uvWnYQYjTT/Kii9Q7kN
+         RDKVVshta6qJ5+GMdBI70YUmJVztiaZsaDE0WXnboNbblezJMBRZm+EbHG6ken0eZ1Al
+         EHZxafq+YrqpEqacAaXzKUozLJTryDmLx1wPuXvmDsoE/j+d3ene+fudpUug6Ud/qjiv
+         rX+qzl5y2gqrpDN6znRooXbTV3aXg11wd19huZZEP5jYbzRxGGrt2QBOaLQUQSD6eR74
+         SGFCU5CVhy2cWcDfD88djOq+I7Vcq21yaVq0wqoTLJN5S0rwXNmGWoy42Jlc+oy9i5uj
+         Cu5g==
+X-Gm-Message-State: ABuFfojKVvvB6WH7vtb50v1IMiZNEqkcGOGFYKZNySNP8o06x+AN1G4A
+        1hVvrnuj46bjofSZEMmDnOLAOA==
+X-Google-Smtp-Source: ACcGV60yvI5au8Dy95thzySaNf65JOhVuTmxVqFoFhgtAX5hOuVARm7hrtu5q/wZ3rQMvpss5dKTPw==
+X-Received: by 2002:a17:902:680e:: with SMTP id h14-v6mr21527729plk.177.1538951737974;
+        Sun, 07 Oct 2018 15:35:37 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm17694665pgn.39.2018.10.07.15.35.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 07 Oct 2018 15:35:37 -0700 (PDT)
+Date:   Sun, 7 Oct 2018 15:35:36 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Vlastimil Babka <vbabka@suse.cz>, Greg Thelen <gthelen@google.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, page_alloc: set num_movable in move_freepages()
+In-Reply-To: <20181005142143.30032b7a4fb9dc2b587a8c21@linux-foundation.org>
+Message-ID: <alpine.DEB.2.21.1810071535080.189597@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1810051355490.212229@chino.kir.corp.google.com> <20181005142143.30032b7a4fb9dc2b587a8c21@linux-foundation.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1538861738.4088.5.camel@HansenPartnership.com> <1538861799.4088.6.camel@HansenPartnership.com>
-In-Reply-To: <1538861799.4088.6.camel@HansenPartnership.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Mon, 8 Oct 2018 08:25:35 +1000
-Message-ID: <CAPM=9tz3Z=vD6qWUL2boZGEAgMeC_o9euBXFu2V58RHOn6gR9g@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the ambiguity
- about collecting email addresses
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 7 Oct 2018 at 07:36, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> From 4a614e9440148894207bef5bf69e74071baceb3b Mon Sep 17 00:00:00 2001
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Date: Sat, 6 Oct 2018 14:21:56 -0700
-> Subject: [PATCH 1/2] code-of-conduct: Fix the ambiguity about collecting =
-email
->  addresses
->
-> The current code of conduct has an ambiguity in the it considers publishi=
-ng
-> private information such as email addresses unacceptable behaviour.  Sinc=
-e
-> the Linux kernel collects and publishes email addresses as part of the pa=
-tch
-> process, add an exception clause for email addresses ordinarily collected=
- by
-> the project to correct this ambiguity.
->
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->  Documentation/process/code-of-conduct.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/pr=
-ocess/code-of-conduct.rst
-> index ab7c24b5478c..aa40e34e7785 100644
-> --- a/Documentation/process/code-of-conduct.rst
-> +++ b/Documentation/process/code-of-conduct.rst
-> @@ -31,7 +31,7 @@ Examples of unacceptable behavior by participants inclu=
-de:
->  * Trolling, insulting/derogatory comments, and personal or political att=
-acks
->  * Public or private harassment
->  * Publishing others=E2=80=99 private information, such as a physical or =
-electronic
-> -  address, without explicit permission
-> +  address not ordinarily collected by the project, without explicit perm=
-ission
->  * Other conduct which could reasonably be considered inappropriate in a
->    professional setting
->
+On Fri, 5 Oct 2018, Andrew Morton wrote:
 
-I agree we want something like this, the question is whether we want
-to change the CoC text from upstream, or clarify it in a separate
-section.
+> On Fri, 5 Oct 2018 13:56:39 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+> 
+> > If move_freepages() returns 0 because zone_spans_pfn(), *num_movable can
+> 
+>      move_free_pages_block()?           !zone_spans_pfn()?
+> 
 
-This isn't a legally binding license or anything, but departing from
-the upstream wording makes it tricker to merge new upstream versions
-if they are considered appropriate.
-
-Dave.
+move_freepages_block() more accurately, yes.  And yes, it depends on the 
+return value of zone_spans_pfn().
