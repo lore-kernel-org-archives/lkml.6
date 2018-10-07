@@ -2,132 +2,187 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01156C00449
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF659C00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0772087D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511112087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:29:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIPgGOxn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0772087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ipl+pgvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 511112087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbeJGTZ5 (ORCPT
+        id S1727940AbeJGTgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 15:25:57 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55151 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbeJGTZ4 (ORCPT
+        Sun, 7 Oct 2018 15:36:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40147 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbeJGTgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 15:25:56 -0400
-Received: by mail-it1-f195.google.com with SMTP id l191-v6so8092901ita.4
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 05:18:52 -0700 (PDT)
+        Sun, 7 Oct 2018 15:36:12 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d2-v6so13415593wro.7
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 05:29:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=uNFss/PfiCZSX0OoMYf+bbsx4Ou6OPaka35W6tRtVh8=;
-        b=jIPgGOxnDolP1iwiEWD2xWCLAlza4blUX/WOD5KT72a8UAbtXy5UNi0tj8qT8HXg8F
-         l6NsgH27QAOPQijqIATA7LQcwY4gBklprP8NlbydL+thpp8lPUMnTK3J9EoKJ+0O0Zq+
-         VWQOZ/IiH5BGRnyEhUBPZ+Nh807DCnV0BoI4uNAUF5qfSizNG2PLfWGr4WxXkl434AxE
-         6hx+Jkec790X7MXhv0mDze0XxYukzXCTLyyHXQSFnlVyU9jMLByCwzmbnUK9dWNKVyjn
-         Gxg9AGZARwaiJmgqkoL6gZwZK8fFH/RNVyU2RtMojk5csRruKw/6u7++xOtZLF/I1e+3
-         07JA==
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=UNqqNDjRPsEcGeJzOf229HEvgkunue35VWMse+IIzYQ=;
+        b=Ipl+pgvlvqjyBUHQSA3vfXbU8j/8a9A3SMsAkd/N6fAVzgHqsHPFA5Htd3pbFsXf5V
+         k1EtgjxNeBRRD7bKCnYmeaZRa8BLEbD+HuAdy2xD9XkHzwmUBVqXpTFt2TrUoEK7X9KF
+         OOLkJu8nHgejyo6ODNY0arioen8jDZKvY6E9M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=uNFss/PfiCZSX0OoMYf+bbsx4Ou6OPaka35W6tRtVh8=;
-        b=Wlu0bSElTvtQ+YWrcyjEusjQ2nm6h/aSlVdbImhA7S+anEl9vqW7kwPd1QN+zZOckz
-         3ka7wb8vVYZuUg7qIJdspcIC8xvfNeZKYalx3Cop3E5V6Qh5Dy022s7V2rJ3WUBI4DO7
-         Rzxa19ZjhZnDabYsl6fVSkgWL8D0xkRkJGYxoXxz8QqqYex4tFqdszNcaA39aM38Mv2O
-         vrzz9glNftbyiIIJdVEZdPm67+wWvP+++wpGoZaegNYgwVLCcMDP3KUiVHgHKuuNtuqz
-         ijdM71pzfRLs/CBipGBJ10vDTzwwgDYkTxKWOfDaRmdjOqv7elL9i21b0k8jMiRNt99B
-         YosQ==
-X-Gm-Message-State: ABuFfoihXHm2zm32ElsYq6H+wdCW8QZT0U5MWJW5+7rZd6XZlZqap1fW
-        dxNykDjv3LBsYbQUACUE/YQg4T120Zkyucohlf7a8w==
-X-Google-Smtp-Source: ACcGV61FVAhyldIXkCCel2RI4KgZx36Womi9XKyUaDAhP4h/aNt+HQoZiXFOGoaL8WSHSJxonIcoGvFTNmvN04pInow=
-X-Received: by 2002:a02:97c5:: with SMTP id v5-v6mr14207946jaj.72.1538914731534;
- Sun, 07 Oct 2018 05:18:51 -0700 (PDT)
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=UNqqNDjRPsEcGeJzOf229HEvgkunue35VWMse+IIzYQ=;
+        b=MP7goF2YjJnkdyFGx9bCShcGybh9o39nOkGwL9GZmqP54nkuecZI88ab92t+Qj6CCs
+         8lZc+5YT/z5La1baDHqnF9a9G8NY9UY0DhRPVtWoxCFZDreOe+tVoiU9Nm83b3LS2pFv
+         QgIJrb5iSxxZb0tTalGLSSbV0m1KXTmZJXglIHzn5wENEP+4AwSDXskDIRYMfOkurM6w
+         JG5LZZZftqJP+qi6lxluw033EiUOCiayIXdOH2c1OOxNbXCl3jSIaBvKl80McxXZwmDJ
+         KVU60M+vtNhtzaRCoTU9x9lgTbMxbkAkPSKGDr+EeeUEIN4rQzSVnhr5pjZavLOFmzWD
+         H59A==
+X-Gm-Message-State: ABuFfojZOyFU7ky+JFzrnIzfMAIJolfvOaIgnNg0CRiNyk/7SN3gxufn
+        ORdyB7rsglXWzKJEXF68ayT2TA7SS6c=
+X-Google-Smtp-Source: ACcGV62BjJ1EAZB6v2S0SO79bE6xJTHV7Td9ZgdeOW/w2EJplb4ziuRnnupWUpVigRRVzJZd2yxO2g==
+X-Received: by 2002:a5d:6ac5:: with SMTP id u5-v6mr13330819wrw.288.1538915344305;
+        Sun, 07 Oct 2018 05:29:04 -0700 (PDT)
+Received: from [192.168.0.40] (79.11.130.77.rev.sfr.net. [77.130.11.79])
+        by smtp.googlemail.com with ESMTPSA id a5-v6sm6620491wmh.8.2018.10.07.05.29.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Oct 2018 05:29:03 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [GIT PULL] timer changes for 4.20 #2 (SOB fixed)
+To:     tglx@linutronix.de
+Cc:     dinguyen@kernel.org, kuninori.morimoto.gx@renesas.com,
+        robh@kernel.org, sergei.shtylyov@cogentembedded.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <4ea1aeac-369d-df55-62a0-ef840b3d845e@linaro.org>
+Date:   Sun, 7 Oct 2018 14:29:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Sun, 7 Oct 2018 05:18:31 -0700 (PDT)
-In-Reply-To: <0000000000005764090577a27486@google.com>
-References: <0000000000005764090577a27486@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 7 Oct 2018 14:18:31 +0200
-Message-ID: <CACT4Y+ZAoLro6LHhaA2EuWF1nAWAA=NAVtpMammhspL4V2aMgw@mail.gmail.com>
-Subject: Re: BUG: workqueue lockup (4)
-To:     syzbot <syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com>,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        linux-rtc@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 7, 2018 at 2:15 PM, syzbot
-<syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14c5f491400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=08116743f8ad6f9a6de7
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14514a6e400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1025ebb9400000
 
-The reproducer seems to be all about rtc. So +rtc maintainers.
+Hi Thomas,
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com
->
-> BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 204s!
-> Showing busy workqueues and worker pools:
-> workqueue events: flags=0x0
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=4/256
->     in-flight: 14:rtc_timer_do_work
->     pending: vmstat_shepherd, cache_reap, check_corruption
-> workqueue events_power_efficient: flags=0x80
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
->     pending: do_cache_clean
-> workqueue mm_percpu_wq: flags=0x8
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
->     pending: vmstat_update
-> workqueue kacpi_notify: flags=0x0
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
->     pending: acpi_os_execute_deferred
-> pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=204s workers=2 idle: 2683
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000005764090577a27486%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+these are the changes for v4.20, it contains:
+
+ - Prefix file names with timer-* (Daniel Lezcano)
+
+ - Remove old CLOCKSOURCE_OF_DECLARE which was replaced by
+TIMER_OF_DECLARE (Daniel Lezcano)
+
+ - Add reset control for dw_apb (Dinh Nguyen)
+
+ - Add the SPDX identifiers for the renesas and sh timers (Kuninori
+Morimoto)
+
+ - Use %pOFn instead of device_node.name (Rob Herring)
+
+ - Fixup 64bits and clocksource width to 32b for sh_cmt (Sergei Shtylyov)
+
+ - Add the R-Car gen3 support (Sergei Shtylyov)
+
+Thanks!
+
+  -- Daniel
+
+The following changes since commit dc6253108f0fbff4a634055d5b8a91958ec2af81:
+
+  tick/broadcast: Remove redundant check (2018-09-28 22:29:35 +0200)
+
+are available in the git repository at:
+
+  https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.20
+
+for you to fetch changes up to 1f174a1a2cdebc65138e6ed1448b842e73200bb5:
+
+  clocksource/drivers/dw_apb: Add reset control (2018-10-07 14:16:35 +0200)
+
+----------------------------------------------------------------
+Daniel Lezcano (2):
+      clocksource/drivers: Unify the names to timer-* format
+      clocksource: Remove obsolete CLOCKSOURCE_OF_DECLARE
+
+Dinh Nguyen (1):
+      clocksource/drivers/dw_apb: Add reset control
+
+Kuninori Morimoto (4):
+      clocksource/drivers/renesas-ostm: Convert to SPDX identifiers
+      clocksource/drivers/sh_cmt: Convert to SPDX identifiers
+      clocksource/drivers/sh_mtu2: Convert to SPDX identifiers
+      clocksource/drivers/sh_tmu: Convert to SPDX identifiers
+
+Rob Herring (1):
+      clocksource: Convert to using %pOFn instead of device_node.name
+
+Sergei Shtylyov (5):
+      clocksource/drivers/sh_cmt: Fixup for 64-bit machines
+      clocksource/drivers/sh_cmt: Fix clocksource width for 32-bit machines
+      clocksource/drivers/sh_cmt: Properly line-wrap sh_cmt_of_table[]
+initializer
+      dt-bindings: timer: renesas: cmt: document R-Car gen3 support
+      clocksource/drivers/sh_cmt: Add R-Car gen3 support
+
+ .../devicetree/bindings/timer/renesas,cmt.txt      |   7 ++
+ MAINTAINERS                                        |  10 +-
+ drivers/clocksource/Makefile                       |  26 ++---
+ drivers/clocksource/asm9260_timer.c                |   2 +-
+ drivers/clocksource/dw_apb_timer_of.c              |  20 +++-
+ drivers/clocksource/pxa_timer.c                    |   6 +-
+ drivers/clocksource/renesas-ostm.c                 |  11 +--
+ drivers/clocksource/sh_cmt.c                       | 106
+++++++++++-----------
+ drivers/clocksource/sh_mtu2.c                      |  10 +-
+ drivers/clocksource/sh_tmu.c                       |  10 +-
+ ...{time-armada-370-xp.c => timer-armada-370-xp.c} |   0
+ .../{cadence_ttc_timer.c => timer-cadence-ttc.c}   |   2 +-
+ .../clocksource/{time-efm32.c => timer-efm32.c}    |   0
+ .../{fsl_ftm_timer.c => timer-fsl-ftm.c}           |   0
+ drivers/clocksource/timer-integrator-ap.c          |   2 +-
+ .../{time-lpc32xx.c => timer-lpc32xx.c}            |   0
+ .../clocksource/{time-orion.c => timer-orion.c}    |   8 +-
+ drivers/clocksource/{owl-timer.c => timer-owl.c}   |   0
+ .../{time-pistachio.c => timer-pistachio.c}        |   0
+ drivers/clocksource/{qcom-timer.c => timer-qcom.c} |   0
+ drivers/clocksource/timer-sp804.c                  |   2 +-
+ .../clocksource/{versatile.c => timer-versatile.c} |   0
+ .../clocksource/{vf_pit_timer.c => timer-vf-pit.c} |   0
+ .../clocksource/{vt8500_timer.c => timer-vt8500.c} |   0
+ .../clocksource/{zevio-timer.c => timer-zevio.c}   |   8 +-
+ include/linux/clocksource.h                        |   3 -
+ 26 files changed, 112 insertions(+), 121 deletions(-)
+ rename drivers/clocksource/{time-armada-370-xp.c =>
+timer-armada-370-xp.c} (100%)
+ rename drivers/clocksource/{cadence_ttc_timer.c => timer-cadence-ttc.c}
+(99%)
+ rename drivers/clocksource/{time-efm32.c => timer-efm32.c} (100%)
+ rename drivers/clocksource/{fsl_ftm_timer.c => timer-fsl-ftm.c} (100%)
+ rename drivers/clocksource/{time-lpc32xx.c => timer-lpc32xx.c} (100%)
+ rename drivers/clocksource/{time-orion.c => timer-orion.c} (95%)
+ rename drivers/clocksource/{owl-timer.c => timer-owl.c} (100%)
+ rename drivers/clocksource/{time-pistachio.c => timer-pistachio.c} (100%)
+ rename drivers/clocksource/{qcom-timer.c => timer-qcom.c} (100%)
+ rename drivers/clocksource/{versatile.c => timer-versatile.c} (100%)
+ rename drivers/clocksource/{vf_pit_timer.c => timer-vf-pit.c} (100%)
+ rename drivers/clocksource/{vt8500_timer.c => timer-vt8500.c} (100%)
+ rename drivers/clocksource/{zevio-timer.c => timer-zevio.c} (97%)
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
