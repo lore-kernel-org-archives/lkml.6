@@ -2,313 +2,136 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F65C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 05:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A591C65C30
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6F32084D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 05:55:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6F32084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BE5752088F
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:03:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="mthVg0Wi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE5752088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJGNBw (ORCPT
+        id S1726678AbeJGNJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 09:01:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37600 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbeJGNBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 09:01:51 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 75837859FF;
-        Sun,  7 Oct 2018 05:55:43 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58F6F308BDB3;
-        Sun,  7 Oct 2018 05:55:38 +0000 (UTC)
-Subject: Re: [tip:x86/mm] kdump, proc/vmcore: Enable kdumping encrypted memory
- with SME enabled
-To:     bp@suse.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com,
-        linux-tip-commits@vger.kernel.org
-References: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
- <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <21eab36e-d113-cf88-e497-7dd620981544@redhat.com>
-Date:   Sun, 7 Oct 2018 13:55:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 7 Oct 2018 09:09:12 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40989 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbeJGNJM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 09:09:12 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e18-v6so16611743oti.8
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Oct 2018 23:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mRJ3PazCHSkxn35xfNFADflNjJc3n/OYiCeEej6jyvo=;
+        b=mthVg0WifB2dvpR8hFXLX4Jy8VZ03oD//zwNk6LOjivBv7d7qlv1Z/WEjX7UMeOC3W
+         rFj+hjzpiy+Dkp0jG1mzpGysy7EDmdYkWyPGeBJEJLFPDEOmZwiCr+rUyJAzmuE9joQR
+         Hgq4J2fby822q9Upn1WcG3zZParpjZINnKK7wxL00DGeShNUwsKU6kOWV+e8WqAi/CWA
+         KEfAY9O3qKy8zaj8l4kHsp3BBFQ6JDioiWqkG+t2YnqqjrNcJGCD2HSMpGB8vOmJtBmT
+         vJ3nEPZAKgDHbykgPEbvrCKuY2l6lScLFO7oo1Gc1xzXuijTvCst45TmpIwrLbzmKzgb
+         JX2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mRJ3PazCHSkxn35xfNFADflNjJc3n/OYiCeEej6jyvo=;
+        b=tpfogRKObP7+L5L67b3rSoa/COkmD/YJM0tWmJUJpFD39ubQ82nD8jYjh8nOHdA+1g
+         HEypma6HqL9pSczBp5aS9RabqNQ6ZRvg4IUygvt0aMSq2MMBlENKCcdSQ67TUyRaGi5Y
+         9aBHWRrpWTE1Gey6taRu+jGkAZBKTt+9BlJoK9Jf9v0dRGjaDo+k03+UJxe6K+woZjVf
+         /TbZOAjfapVvafn6XMx6Uu8o/o/zESvYFteHhDXV+wxGOByXKdaR1bzVzNGvkcByLaCs
+         eKqRAUG+WodzdzcsfR4UGHnzk5zTGboCFuWYtSeRcMKRtVXFQxJBFgoShbZVBDmFRxbl
+         x2Zw==
+X-Gm-Message-State: ABuFfoiYzmcbuy7iiFLron9AQPqaUls3pit+jevo177oi35Ugruyglrw
+        xZ7XYfNsWHPzjcti43C25nsTHwf3UhFsq0BddptT4A==
+X-Google-Smtp-Source: ACcGV61ckH+dqM8SnsjadxQIDRrxQDvoAFTfCqyn4qBU+lQbEh3g8jAD0jpFmpPDtsnYBQJS3FnfP1F6cFt4APJXs6E=
+X-Received: by 2002:a9d:4d0a:: with SMTP id n10mr9982711otf.95.1538892182028;
+ Sat, 06 Oct 2018 23:03:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 07 Oct 2018 05:55:43 +0000 (UTC)
+References: <153884891237.3128209.14619968108312095820.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <153884891237.3128209.14619968108312095820.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 6 Oct 2018 23:02:50 -0700
+Message-ID: <CAPcyv4hcF-tbv4OBZ4NAs00PmRAH6mE3nzSpe5=AwNORyHnLWw@mail.gmail.com>
+Subject: Re: [PATCH] filesystem-dax: Fix dax_layout_busy_page() livelock
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        zwisler@kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月06日 19:47, tip-bot for Lianbo Jiang 写道:
-> Commit-ID:  992b649a3f013465d8128da02e5449def662a4c3
-> Gitweb:     https://git.kernel.org/tip/992b649a3f013465d8128da02e5449def662a4c3
-> Author:     Lianbo Jiang <lijiang@redhat.com>
-> AuthorDate: Sun, 30 Sep 2018 16:37:41 +0800
-> Committer:  Borislav Petkov <bp@suse.de>
-> CommitDate: Sat, 6 Oct 2018 12:09:26 +0200
-> 
-> kdump, proc/vmcore: Enable kdumping encrypted memory with SME enabled
-> 
-> In the kdump kernel, the memory of the first kernel needs to be dumped
-> into the vmcore file.
-> 
-> If SME is enabled in the first kernel, the old memory has to be remapped
-> with the memory encryption mask in order to access it properly.
-> 
-> Split copy_oldmem_page() functionality to handle encrypted memory
-> properly.
-> 
->  [ bp: Heavily massage everything. ]
-> 
-> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: kexec@lists.infradead.org
-> Cc: tglx@linutronix.de
-> Cc: mingo@redhat.com
-> Cc: hpa@zytor.com
-> Cc: akpm@linux-foundation.org
-> Cc: dan.j.williams@intel.com
-> Cc: bhelgaas@google.com
-> Cc: baiyaowei@cmss.chinamobile.com
-> Cc: tiwai@suse.de
-> Cc: brijesh.singh@amd.com
-> Cc: dyoung@redhat.com
-> Cc: bhe@redhat.com
-> Cc: jroedel@suse.de
-> Link: https://lkml.kernel.org/r/be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com
+On Sat, Oct 6, 2018 at 11:14 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> In the presence of multi-order entries the typical
+> pagevec_lookup_entries() pattern may loop forever:
+>
+>         while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
+>                                 min(end - index, (pgoff_t)PAGEVEC_SIZE),
+>                                 indices)) {
+>                 ...
+>                 for (i = 0; i < pagevec_count(&pvec); i++) {
+>                         index = indices[i];
+>                         ...
+>                 }
+>                 index++; /* BUG */
+>         }
+>
+> The loop updates 'index' for each index found and then increments to the
+> next possible page to continue the lookup. However, if the last entry in
+> the pagevec is multi-order then the next possible page index is more
+> than 1 page away. Fix this locally for the filesystem-dax case by
+> checking for dax-multi-order entries. Going forward new users of
+> multi-order entries need to be similarly careful, or we need a generic
+> way to report the page increment in the radix iterator.
+>
+> Fixes: 5fac7408d828 ("mm, fs, dax: handle layout changes to pinned dax...")
+> Cc: <stable@vger.kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 > ---
->  arch/x86/kernel/crash_dump_64.c | 60 ++++++++++++++++++++++++++++-------------
->  fs/proc/vmcore.c                | 24 ++++++++++++-----
->  include/linux/crash_dump.h      |  4 +++
->  3 files changed, 63 insertions(+), 25 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-> index 4f2e0778feac..eb8ab3915268 100644
-> --- a/arch/x86/kernel/crash_dump_64.c
-> +++ b/arch/x86/kernel/crash_dump_64.c
-> @@ -11,40 +11,62 @@
->  #include <linux/uaccess.h>
->  #include <linux/io.h>
->  
-> -/**
-> - * copy_oldmem_page - copy one page from "oldmem"
-> - * @pfn: page frame number to be copied
-> - * @buf: target memory address for the copy; this can be in kernel address
-> - *	space or user address space (see @userbuf)
-> - * @csize: number of bytes to copy
-> - * @offset: offset in bytes into the page (based on pfn) to begin the copy
-> - * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-> - *	otherwise @buf is in kernel address space, use memcpy().
-> - *
-> - * Copy a page from "oldmem". For this page, there is no pte mapped
-> - * in the current kernel. We stitch up a pte, similar to kmap_atomic.
-> - */
-> -ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
-> -		size_t csize, unsigned long offset, int userbuf)
-> +static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
-> +				  unsigned long offset, int userbuf,
-> +				  bool encrypted)
->  {
->  	void  *vaddr;
->  
->  	if (!csize)
->  		return 0;
->  
-> -	vaddr = ioremap_cache(pfn << PAGE_SHIFT, PAGE_SIZE);
-> +	if (encrypted)
-> +		vaddr = (__force void *)ioremap_encrypted(pfn << PAGE_SHIFT, PAGE_SIZE);
-> +	else
-> +		vaddr = (__force void *)ioremap_cache(pfn << PAGE_SHIFT, PAGE_SIZE);
+>  fs/dax.c |    9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 4becbf168b7f..c1472eede1f7 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -666,6 +666,8 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+>         while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
+>                                 min(end - index, (pgoff_t)PAGEVEC_SIZE),
+>                                 indices)) {
+> +               pgoff_t nr_pages = 1;
 > +
->  	if (!vaddr)
->  		return -ENOMEM;
->  
->  	if (userbuf) {
-> -		if (copy_to_user(buf, vaddr + offset, csize)) {
-> -			iounmap(vaddr);
-> +		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
-> +			iounmap((void __iomem *)vaddr);
->  			return -EFAULT;
->  		}
->  	} else
->  		memcpy(buf, vaddr + offset, csize);
->  
->  	set_iounmap_nonlazy();
-> -	iounmap(vaddr);
-> +	iounmap((void __iomem *)vaddr);
->  	return csize;
->  }
-> +
-> +/**
-> + * copy_oldmem_page - copy one page of memory
-> + * @pfn: page frame number to be copied
-> + * @buf: target memory address for the copy; this can be in kernel address
-> + *	space or user address space (see @userbuf)
-> + * @csize: number of bytes to copy
-> + * @offset: offset in bytes into the page (based on pfn) to begin the copy
-> + * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-> + *	otherwise @buf is in kernel address space, use memcpy().
-> + *
-> + * Copy a page from the old kernel's memory. For this page, there is no pte
-> + * mapped in the current kernel. We stitch up a pte, similar to kmap_atomic.
-> + */
-> +ssize_t copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
-> +			 unsigned long offset, int userbuf)
-> +{
-> +	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, false);
-> +}
-> +
-> +/**
-> + * copy_oldmem_page_encrypted - same as copy_oldmem_page() above but ioremap the
-> + * memory with the encryption mask set to accomodate kdump on SME-enabled
-> + * machines.
-> + */
-> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-> +				   unsigned long offset, int userbuf)
-> +{
-> +	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, true);
-> +}
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index cbde728f8ac6..42c32d06f7da 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -24,6 +24,8 @@
->  #include <linux/vmalloc.h>
->  #include <linux/pagemap.h>
->  #include <linux/uaccess.h>
-> +#include <linux/mem_encrypt.h>
-> +#include <asm/pgtable.h>
->  #include <asm/io.h>
->  #include "internal.h"
->  
-> @@ -98,7 +100,8 @@ static int pfn_is_ram(unsigned long pfn)
->  
->  /* Reads a page from the oldmem device from given offset. */
->  static ssize_t read_from_oldmem(char *buf, size_t count,
-> -				u64 *ppos, int userbuf)
-> +				u64 *ppos, int userbuf,
-> +				bool encrypted)
->  {
->  	unsigned long pfn, offset;
->  	size_t nr_bytes;
-> @@ -120,8 +123,15 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
->  		if (pfn_is_ram(pfn) == 0)
->  			memset(buf, 0, nr_bytes);
->  		else {
-> -			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
-> -						offset, userbuf);
-> +			if (encrypted)
-> +				tmp = copy_oldmem_page_encrypted(pfn, buf,
-> +								 nr_bytes,
-> +								 offset,
-> +								 userbuf);
-> +			else
-> +				tmp = copy_oldmem_page(pfn, buf, nr_bytes,
-> +						       offset, userbuf);
-> +
->  			if (tmp < 0)
->  				return tmp;
->  		}
-> @@ -155,7 +165,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
->   */
->  ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
->  {
-> -	return read_from_oldmem(buf, count, ppos, 0);
-> +	return read_from_oldmem(buf, count, ppos, 0, false);
->  }
->  
->  /*
-> @@ -163,7 +173,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
->   */
->  ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
->  {
-> -	return read_from_oldmem(buf, count, ppos, 0);
-> +	return read_from_oldmem(buf, count, ppos, 0, sme_active());
->  }
->  
->  /*
-> @@ -173,6 +183,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  				  unsigned long from, unsigned long pfn,
->  				  unsigned long size, pgprot_t prot)
->  {
-> +	prot = pgprot_encrypted(prot);
->  	return remap_pfn_range(vma, from, pfn, size, prot);
->  }
->  
-> @@ -351,7 +362,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
->  					    m->offset + m->size - *fpos,
->  					    buflen);
->  			start = m->paddr + *fpos - m->offset;
-> -			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
-> +			tmp = read_from_oldmem(buffer, tsz, &start,
-> +					       userbuf, sme_active());
->  			if (tmp < 0)
->  				return tmp;
->  			buflen -= tsz;
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index 3e4ba9d753c8..f774c5eb9e3c 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-> @@ -26,6 +26,10 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  
->  extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
->  						unsigned long, int);
-> +extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-> +					  size_t csize, unsigned long offset,
-> +					  int userbuf);
-> +
+>                 for (i = 0; i < pagevec_count(&pvec); i++) {
+>                         struct page *pvec_ent = pvec.pages[i];
+>                         void *entry;
+> @@ -680,8 +682,11 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+>
+>                         xa_lock_irq(&mapping->i_pages);
+>                         entry = get_unlocked_mapping_entry(mapping, index, NULL);
+> -                       if (entry)
+> +                       if (entry) {
+>                                 page = dax_busy_page(entry);
+> +                               /* account for multi-order entries */
+> +                               nr_pages = 1UL << dax_radix_order(entry);
+> +                       }
 
-Here, it may be have a compile error.
-Links: https://lore.kernel.org/patchwork/patch/993337/
-kbuild test robot Sept. 29, 2018, 6:25 p.m. UTC | #1
-
-The correct patch is this one, you might refer to "Re: [PATCH v9 4/4] kdump/vmcore:support
-encrypted old memory with SME enabled" or this links.
-Links: https://lore.kernel.org/patchwork/patch/993538/#1177439
-lijiang Sept. 30, 2018, 8:37 a.m. UTC | #2 
-
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index 3e4ba9d753c8..84d8ddcb818e 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -26,6 +26,19 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 
- extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
- 						unsigned long, int);
-+#if defined(CONFIG_AMD_MEM_ENCRYPT) || defined(CONFIG_X86_64)
-+extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-+					  size_t csize, unsigned long offset,
-+					  int userbuf);
-+#else
-+static inline
-+ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-+				   unsigned long offset, int userbuf)
-+{
-+	return 0;
-+}
-+#endif
-+
-
-
-Thanks.
-Lianbo
-
->  void vmcore_cleanup(void);
->  
->  /* Architecture code defines this if there are other possible ELF
-> 
+Thinking about this a bit further the next index will be at least
+nr_pages away, but we don't want to accidentally skip over entries as
+this patch might do. So nr_pages should only be adjusted by the entry
+size if it is the last entry.
