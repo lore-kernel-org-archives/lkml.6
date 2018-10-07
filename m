@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC341C677F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14BDC65C30
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C3912089D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3912089D
+	by mail.kernel.org (Postfix) with ESMTP id B465E20895
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B465E20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbeJGQrB (ORCPT
+        id S1728591AbeJGQrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:47:01 -0400
-Received: from mailoutvs7.siol.net ([185.57.226.198]:40121 "EHLO mail.siol.net"
+        Sun, 7 Oct 2018 12:47:03 -0400
+Received: from mailoutvs5.siol.net ([185.57.226.196]:40141 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728533AbeJGQrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 12:47:00 -0400
+        id S1728371AbeJGQrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 12:47:02 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 725CD52048D;
-        Sun,  7 Oct 2018 11:40:15 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id B6E2D520049;
+        Sun,  7 Oct 2018 11:40:17 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id HaVr_KbXsn5D; Sun,  7 Oct 2018 11:40:15 +0200 (CEST)
+        with ESMTP id hE23f8ymFSXZ; Sun,  7 Oct 2018 11:40:17 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id EE874520456;
-        Sun,  7 Oct 2018 11:40:14 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 6CD52520456;
+        Sun,  7 Oct 2018 11:40:17 +0200 (CEST)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 8C7C352048D;
-        Sun,  7 Oct 2018 11:40:12 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 0128F520A87;
+        Sun,  7 Oct 2018 11:40:14 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
@@ -44,9 +44,9 @@ Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v2 23/29] drm/sun4i: Add support for H6 HDMI PHY
-Date:   Sun,  7 Oct 2018 11:38:59 +0200
-Message-Id: <20181007093905.11253-24-jernej.skrabec@siol.net>
+Subject: [PATCH v2 24/29] drm/sun4i: Initialize registers in tcon-top driver
+Date:   Sun,  7 Oct 2018 11:39:00 +0200
+Message-Id: <20181007093905.11253-25-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
 References: <20181007093905.11253-1-jernej.skrabec@siol.net>
@@ -57,196 +57,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-H6 has Synopsys DWC HDMI 2.0 TX PHY.
+It turns out that TCON TOP registers in H6 SoC have non-zero reset
+value. This may cause issues if bits are not changed during
+configuration.
 
-There is no freely available documentation for it, only code found in
-BSP kernel. However, judging by the code, PHY is very similar to older
-Synopsys HDMI PHY described in i.MX6 documentation. Most registers seem
-to be the same.
-
-According to i.MX6 documentation, mpll settings are based on pixel clock
-and are not specific to each SoC. Because of that, mpll table in this
-commit is based on that documentation and not on BSP code. Other PHY
-settings were derived from BSP PHY driver code.
+To prevent that, initialize registers to 0.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
- 1 file changed, 137 insertions(+)
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun=
-4i/sun8i_hdmi_phy.c
-index 635825b55648..66ea3a902e36 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -14,6 +14,122 @@
-  */
- #define I2C_ADDR	0x69
+diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun=
+4i/sun8i_tcon_top.c
+index 3040a79f298f..37158548b447 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
++++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+@@ -167,6 +167,13 @@ static int sun8i_tcon_top_bind(struct device *dev, s=
+truct device *master,
+ 		goto err_assert_reset;
+ 	}
 =20
-+static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] =3D {
-+	{
-+		30666000, {
-+			{ 0x00b3, 0x0000 },
-+			{ 0x2153, 0x0000 },
-+			{ 0x40f3, 0x0000 },
-+		},
-+	},  {
-+		36800000, {
-+			{ 0x00b3, 0x0000 },
-+			{ 0x2153, 0x0000 },
-+			{ 0x40a2, 0x0001 },
-+		},
-+	},  {
-+		46000000, {
-+			{ 0x00b3, 0x0000 },
-+			{ 0x2142, 0x0001 },
-+			{ 0x40a2, 0x0001 },
-+		},
-+	},  {
-+		61333000, {
-+			{ 0x0072, 0x0001 },
-+			{ 0x2142, 0x0001 },
-+			{ 0x40a2, 0x0001 },
-+		},
-+	},  {
-+		73600000, {
-+			{ 0x0072, 0x0001 },
-+			{ 0x2142, 0x0001 },
-+			{ 0x4061, 0x0002 },
-+		},
-+	},  {
-+		92000000, {
-+			{ 0x0072, 0x0001 },
-+			{ 0x2145, 0x0002 },
-+			{ 0x4061, 0x0002 },
-+		},
-+	},  {
-+		122666000, {
-+			{ 0x0051, 0x0002 },
-+			{ 0x2145, 0x0002 },
-+			{ 0x4061, 0x0002 },
-+		},
-+	},  {
-+		147200000, {
-+			{ 0x0051, 0x0002 },
-+			{ 0x2145, 0x0002 },
-+			{ 0x4064, 0x0003 },
-+		},
-+	},  {
-+		184000000, {
-+			{ 0x0051, 0x0002 },
-+			{ 0x214c, 0x0003 },
-+			{ 0x4064, 0x0003 },
-+		},
-+	},  {
-+		226666000, {
-+			{ 0x0040, 0x0003 },
-+			{ 0x214c, 0x0003 },
-+			{ 0x4064, 0x0003 },
-+		},
-+	},  {
-+		272000000, {
-+			{ 0x0040, 0x0003 },
-+			{ 0x214c, 0x0003 },
-+			{ 0x5a64, 0x0003 },
-+		},
-+	},  {
-+		340000000, {
-+			{ 0x0040, 0x0003 },
-+			{ 0x3b4c, 0x0003 },
-+			{ 0x5a64, 0x0003 },
-+		},
-+	},  {
-+		594000000, {
-+			{ 0x1a40, 0x0003 },
-+			{ 0x3b4c, 0x0003 },
-+			{ 0x5a64, 0x0003 },
-+		},
-+	}, {
-+		~0UL, {
-+			{ 0x0000, 0x0000 },
-+			{ 0x0000, 0x0000 },
-+			{ 0x0000, 0x0000 },
-+		},
-+	}
-+};
++	/*
++	 * At least on H6, some registers have some bits set by default
++	 * which may cause issues. Clear them here.
++	 */
++	writel(0, regs + TCON_TOP_PORT_SEL_REG);
++	writel(0, regs + TCON_TOP_GATE_SRC_REG);
 +
-+static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] =3D {
-+	/* pixelclk    bpp8    bpp10   bpp12 */
-+	{ 25175000,  { 0x0000, 0x0000, 0x0000 }, },
-+	{ 27000000,  { 0x0012, 0x0000, 0x0000 }, },
-+	{ 59400000,  { 0x0008, 0x0008, 0x0008 }, },
-+	{ 72000000,  { 0x0008, 0x0008, 0x001b }, },
-+	{ 74250000,  { 0x0013, 0x0013, 0x0013 }, },
-+	{ 90000000,  { 0x0008, 0x001a, 0x001b }, },
-+	{ 118800000, { 0x001b, 0x001a, 0x001b }, },
-+	{ 144000000, { 0x001b, 0x001a, 0x0034 }, },
-+	{ 180000000, { 0x001b, 0x0033, 0x0034 }, },
-+	{ 216000000, { 0x0036, 0x0033, 0x0034 }, },
-+	{ 237600000, { 0x0036, 0x0033, 0x001b }, },
-+	{ 288000000, { 0x0036, 0x001b, 0x001b }, },
-+	{ 297000000, { 0x0019, 0x001b, 0x0019 }, },
-+	{ 330000000, { 0x0036, 0x001b, 0x001b }, },
-+	{ 594000000, { 0x003f, 0x001b, 0x001b }, },
-+	{ ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
-+};
-+
-+static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] =3D {
-+	/*pixelclk   symbol   term   vlev*/
-+	{ 74250000,  0x8009, 0x0004, 0x0232},
-+	{ 148500000, 0x8029, 0x0004, 0x0273},
-+	{ 594000000, 0x8039, 0x0004, 0x014a},
-+	{ ~0UL,	     0x0000, 0x0000, 0x0000}
-+};
-+
- static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
- 				      struct sun8i_hdmi_phy *phy,
- 				      unsigned int clk_rate)
-@@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_=
-phy *phy)
- 		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
- }
-=20
-+static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
-+{
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
-+			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
-+			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
-+
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
-+			   0xffff0000, 0x80c00000);
-+}
-+
- static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
- {
- 	sun8i_hdmi_phy_unlock(phy);
-@@ -446,6 +572,13 @@ static const struct sun8i_hdmi_phy_variant sun50i_a6=
-4_hdmi_phy =3D {
- 	.phy_config =3D &sun8i_hdmi_phy_config_h3,
- };
-=20
-+static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy =3D {
-+	.cur_ctr  =3D sun50i_h6_cur_ctr,
-+	.mpll_cfg =3D sun50i_h6_mpll_cfg,
-+	.phy_cfg  =3D sun50i_h6_phy_config,
-+	.phy_init =3D &sun50i_hdmi_phy_init_h6,
-+};
-+
- static const struct of_device_id sun8i_hdmi_phy_of_table[] =3D {
- 	{
- 		.compatible =3D "allwinner,sun8i-a83t-hdmi-phy",
-@@ -463,6 +596,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_t=
-able[] =3D {
- 		.compatible =3D "allwinner,sun50i-a64-hdmi-phy",
- 		.data =3D &sun50i_a64_hdmi_phy,
- 	},
-+	{
-+		.compatible =3D "allwinner,sun50i-h6-hdmi-phy",
-+		.data =3D &sun50i_h6_hdmi_phy,
-+	},
- 	{ /* sentinel */ }
- };
-=20
+ 	/*
+ 	 * TCON TOP has two muxes, which select parent clock for each TCON TV
+ 	 * channel clock. Parent could be either TCON TV or TVE clock. For now
 --=20
 2.19.0
 
