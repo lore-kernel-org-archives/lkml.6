@@ -2,127 +2,74 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03526C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 05:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD5AC00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 05:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C379020895
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 05:32:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C379020895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B5F12089D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 05:33:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5F12089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbeJGMiS (ORCPT
+        id S1727728AbeJGMjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 08:38:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:15198 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727976AbeJGMhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 08:37:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Oct 2018 22:31:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,351,1534834800"; 
-   d="scan'208";a="89845341"
-Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga003.jf.intel.com with ESMTP; 06 Oct 2018 22:31:28 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
-        yi.y.sun@intel.com, peterx@redhat.com,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v3 08/12] iommu/vt-d: Pass pasid table to context mapping
-Date:   Sun,  7 Oct 2018 13:28:49 +0800
-Message-Id: <20181007052853.25940-9-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181007052853.25940-1-baolu.lu@linux.intel.com>
-References: <20181007052853.25940-1-baolu.lu@linux.intel.com>
+        Sun, 7 Oct 2018 08:39:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39726 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbeJGMjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 08:39:16 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g91gQ-00033x-OM; Sun, 07 Oct 2018 07:32:50 +0200
+Date:   Sun, 7 Oct 2018 07:32:50 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andi Kleen <andi@firstfloor.org>
+cc:     peterz@infradead.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        eranian@google.com, kan.liang@intel.com, isaku.yamahata@intel.com,
+        kvm@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v1 1/2] x86/cpufeature: Add facility to match microcode
+ revisions
+In-Reply-To: <20181006181506.7cycnsg5gtoavtmx@two.firstfloor.org>
+Message-ID: <alpine.DEB.2.21.1810070725460.5454@nanos.tec.linutronix.de>
+References: <20181006001928.28097-1-andi@firstfloor.org> <alpine.DEB.2.21.1810061555270.5454@nanos.tec.linutronix.de> <20181006181506.7cycnsg5gtoavtmx@two.firstfloor.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So that the pasid related info, such as the pasid table and the
-maximum of pasid could be used during setting up scalable mode
-context.
+On Sat, 6 Oct 2018, Andi Kleen wrote:
+> On Sat, Oct 06, 2018 at 04:14:54PM +0200, Thomas Gleixner wrote:
+> > On Fri, 5 Oct 2018, Andi Kleen wrote:
+> > > +/*
+> > > + * Match specific microcodes or steppings.
+> > 
+> > What means microcodes or steppings? If you mean microcode revisions then
+> > please spell it out and use it all over the place. steppings is confusing
+> > at best as its associated to the CPU stepping.
+> 
+> The matcher can be used to match specific hardware steppings by setting
+> the min/max_ucode to 0 or specific microcode revisions 
+> (which are associated with steppings)
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
----
- drivers/iommu/intel-iommu.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+I can see your point, but calling x86_match_ucode() to match the stepping
+of a CPU is really not intuitive. Can we please have functions and data
+structures which have a clear purpose and are not overloaded in obscure
+ways?
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 2762b076eee6..0b22fd300842 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1917,6 +1917,7 @@ static void domain_exit(struct dmar_domain *domain)
- 
- static int domain_context_mapping_one(struct dmar_domain *domain,
- 				      struct intel_iommu *iommu,
-+				      struct pasid_table *table,
- 				      u8 bus, u8 devfn)
- {
- 	u16 did = domain->iommu_did[iommu->seq_id];
-@@ -2039,6 +2040,7 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
- struct domain_context_mapping_data {
- 	struct dmar_domain *domain;
- 	struct intel_iommu *iommu;
-+	struct pasid_table *table;
- };
- 
- static int domain_context_mapping_cb(struct pci_dev *pdev,
-@@ -2047,25 +2049,31 @@ static int domain_context_mapping_cb(struct pci_dev *pdev,
- 	struct domain_context_mapping_data *data = opaque;
- 
- 	return domain_context_mapping_one(data->domain, data->iommu,
--					  PCI_BUS_NUM(alias), alias & 0xff);
-+					  data->table, PCI_BUS_NUM(alias),
-+					  alias & 0xff);
- }
- 
- static int
- domain_context_mapping(struct dmar_domain *domain, struct device *dev)
- {
-+	struct domain_context_mapping_data data;
-+	struct pasid_table *table;
- 	struct intel_iommu *iommu;
- 	u8 bus, devfn;
--	struct domain_context_mapping_data data;
- 
- 	iommu = device_to_iommu(dev, &bus, &devfn);
- 	if (!iommu)
- 		return -ENODEV;
- 
-+	table = intel_pasid_get_table(dev);
-+
- 	if (!dev_is_pci(dev))
--		return domain_context_mapping_one(domain, iommu, bus, devfn);
-+		return domain_context_mapping_one(domain, iommu, table,
-+						  bus, devfn);
- 
- 	data.domain = domain;
- 	data.iommu = iommu;
-+	data.table = table;
- 
- 	return pci_for_each_dma_alias(to_pci_dev(dev),
- 				      &domain_context_mapping_cb, &data);
--- 
-2.17.1
+Thanks,
+
+	tglx
+
 
