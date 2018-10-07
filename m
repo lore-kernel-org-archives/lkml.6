@@ -2,106 +2,99 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04281C00449
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2315C00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC26620882
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:10:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC26620882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 8636E2087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:15:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8636E2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbeJGTRp (ORCPT
+        id S1727059AbeJGTWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 15:17:45 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:47317 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbeJGTRp (ORCPT
+        Sun, 7 Oct 2018 15:22:08 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:55815 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbeJGTWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 15:17:45 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42Sj4b478Fz1qtfG;
-        Sun,  7 Oct 2018 14:10:39 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42Sj4b3WbWz1qqkR;
-        Sun,  7 Oct 2018 14:10:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id MBFM1MsJIr6a; Sun,  7 Oct 2018 14:10:38 +0200 (CEST)
-X-Auth-Info: PJbux57IreIQdtilU0Zv9F1N2yUmu53ww6xpckRAaxw=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun,  7 Oct 2018 14:10:38 +0200 (CEST)
-Subject: Re: [PATCH 13/13] clocksource/drivers/dw_apb: Add reset control
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>, linux-kernel@vger.kernel.org
-References: <20181005143253.GE1881@mai>
- <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org>
- <1538750143-4282-13-git-send-email-daniel.lezcano@linaro.org>
- <alpine.DEB.2.21.1810061433170.5454@nanos.tec.linutronix.de>
- <5ebc1d90-2067-8cb5-0c93-1c9f0677abc5@linaro.org>
- <alpine.DEB.2.21.1810061907030.5454@nanos.tec.linutronix.de>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <d27e6960-5f59-4a81-09c2-8606f0bce344@denx.de>
-Date:   Sun, 7 Oct 2018 14:10:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 7 Oct 2018 15:22:08 -0400
+Received: by mail-it1-f200.google.com with SMTP id m123-v6so8238835ith.5
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 05:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=SJ3AGGTSUU66fho8qWGNy6hg3KJQ+MSNtMQghR8VfxM=;
+        b=tOfpe+TS6g8NhDbKpTuGj9mIz3Z2g573SpCzNRAMXWdowdv4ddTS1FVKMbUWPPR6aG
+         MTZ/UVfRRxnVC6dKH8ujO+CA5Jm4Jdf4Uwl6CIgZjtGDGDM5OIXranAGccxtn/zyPrtb
+         d5kaUCDQ/bo7e8gHoTPe92uB3Bt18/ltuRbMSGvGGaqr0aOTsSSZY6NOPN/2xkrOQHSc
+         wuNFdRfHyeCMlIuOXl1n8xXqUDkh6szVjTfmFTYTzSWtUL7LBk8guhOGTxvhPkV76kT2
+         fqApsNJkPgiK4oL5i1R19qql70/CFSqYTLIAeph8eHPa7TJY7D/y7QTD2nihqrff3D1Q
+         +akQ==
+X-Gm-Message-State: ABuFfojCHk+0gjwSLVUCrPHeJ+xJwb4olKad4V8vi7QXBSLSU/bER7HX
+        3xsn7kC3vwZLmqRLzHGHvw9ZbKStmjKKECpdBoCU+xefjtDA
+X-Google-Smtp-Source: ACcGV60z8xmbt7d38K9Wt/g9+0ikQAnFjTgmMo+f0QUGVpDMVNyng7Sn2tNbpY2fTh9RoUPOFVOv+h9RZFXm7jcaTQ0efhGab5On
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810061907030.5454@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5e:9514:: with SMTP id r20-v6mr9583943ioj.39.1538914503841;
+ Sun, 07 Oct 2018 05:15:03 -0700 (PDT)
+Date:   Sun, 07 Oct 2018 05:15:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005764090577a27486@google.com>
+Subject: BUG: workqueue lockup (4)
+From:   syzbot <syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/06/2018 07:07 PM, Thomas Gleixner wrote:
-> On Sat, 6 Oct 2018, Daniel Lezcano wrote:
-> 
->> On 06/10/2018 14:34, Thomas Gleixner wrote:
->>> On Fri, 5 Oct 2018, Daniel Lezcano wrote:
->>>
->>>> From: Dinh Nguyen <dinguyen@kernel.org>
->>>>
->>>> Add code to retrieve the reset property from the dw-apb timers and if
->>>> the property is available, the safe operation is to assert the timer
->>>> into reset, and followed by a deassert of the timer reset (brings the
->>>> timer out of reset).
->>>>
->>>> This patch is needed for systems where the bootloader has left the timer
->>>> not used in reset.
->>>>
->>>>  - Trivial conflict with commit a74bd1ad7a:
->>>>     "Convert to using %pOFn instead of device_node.name"
->>>>
->>>> Signed-off-by: Marek Vasut <marex@denx.de>
->>>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->>>
->>> Ingo just noticed, that this SOB chain is wrong. How is Marek involved
->>> here? Can you please fix that up and send me another pull request?
->>
->> Thomas,
->>
->> I will fix it as soon as possible but I would like to give the
->> opportunity to Dinh to explain why he sent the patch with Marek's SOB.
->>
->> Dinh ?
-> 
-> No rush.
+Hello,
 
-I reported this to Dinh and gave him some prototype patches to start
-with, since I didn't have the time to write a patch. You can change it
-to Reported-by: if you want.
+syzbot found the following crash on:
 
--- 
-Best regards,
-Marek Vasut
+HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c5f491400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=08116743f8ad6f9a6de7
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14514a6e400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1025ebb9400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com
+
+BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 204s!
+Showing busy workqueues and worker pools:
+workqueue events: flags=0x0
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=4/256
+     in-flight: 14:rtc_timer_do_work
+     pending: vmstat_shepherd, cache_reap, check_corruption
+workqueue events_power_efficient: flags=0x80
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+     pending: do_cache_clean
+workqueue mm_percpu_wq: flags=0x8
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+     pending: vmstat_update
+workqueue kacpi_notify: flags=0x0
+   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
+     pending: acpi_os_execute_deferred
+pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=204s workers=2 idle: 2683
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
