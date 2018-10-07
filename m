@@ -2,307 +2,126 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD2EC65C1B
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 20:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4751C65C1B
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 20:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90C62086D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 20:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53FBB2086D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 20:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZYB6Pxq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90C62086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="c7CuiUUD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FBB2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbeJHDTm (ORCPT
+        id S1728431AbeJHDb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 23:19:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726503AbeJHDTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 23:19:42 -0400
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Sun, 7 Oct 2018 23:31:57 -0400
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:57732 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbeJHDb5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 23:31:57 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 8C5CD1D5
+        for <linux-kernel@vger.kernel.org>; Sun,  7 Oct 2018 20:23:30 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id M46LQDsHOaF1 for <linux-kernel@vger.kernel.org>;
+        Sun,  7 Oct 2018 15:23:30 -0500 (CDT)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 501B22088F;
-        Sun,  7 Oct 2018 20:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538943077;
-        bh=dgFy1AiGiANm/Ym2ioekXxDyRet8pPPlqlCfBFrivds=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JZYB6PxqO/BHu8QAK4Phgg2HcJBZEd0LLr4uQJ3jTRwAK4RNPER2sZpivdIx/4qaF
-         LWZfZYhxN2F4PirKS8t8UZErFfm6mLZ8b3n0fE3WLAdn88/Wcgvu+KNCCWdo4ZWHp6
-         tPgsjwOLm4+4Q4lBf1A6K87yon4QCGjQtRK8+Pco=
-Received: by mail-qt1-f173.google.com with SMTP id d8-v6so18964017qtk.13;
-        Sun, 07 Oct 2018 13:11:17 -0700 (PDT)
-X-Gm-Message-State: ABuFfoimjCGxW83TRsP9Lvao0e6VLZT+x8YcEi7odQ+3x1KgoOycGFW+
-        f+8WSrAlz3kF+ioRsizhZbTrMgZIDdeaP0JNUA==
-X-Google-Smtp-Source: ACcGV6387Kr7ZUbVftFd1KMdECkBbnlmYm3CVgx3BzpBYqQ0E/9UFWuiGRXbd4CCQl6rR8fxx+CXsllFRSSWld+/ACk=
-X-Received: by 2002:ac8:148b:: with SMTP id l11-v6mr17291430qtj.27.1538943076484;
- Sun, 07 Oct 2018 13:11:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-16-robh@kernel.org>
- <c4909f78-bfa1-9253-e436-1159392b45a9@suse.de>
-In-Reply-To: <c4909f78-bfa1-9253-e436-1159392b45a9@suse.de>
-From:   Rob Herring <robh@kernel.org>
-Date:   Sun, 7 Oct 2018 15:11:04 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKiSz+a4s4=ZGokm5bNVw-hrZAnO=uHO3oLm=T-5U=z0A@mail.gmail.com>
-Message-ID: <CAL_JsqKiSz+a4s4=ZGokm5bNVw-hrZAnO=uHO3oLm=T-5U=z0A@mail.gmail.com>
-Subject: Re: [PATCH 15/36] dt-bindings: arm: Convert Actions Semi bindings to jsonschema
-To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 601B49FC
+        for <linux-kernel@vger.kernel.org>; Sun,  7 Oct 2018 15:23:30 -0500 (CDT)
+Received: by mail-it1-f198.google.com with SMTP id k69-v6so1349077ite.9
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 13:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=GDHzrbWwf7H50BYiqvccLLc+rwpiyI9fiUsRn1ypPgY=;
+        b=c7CuiUUD1utj2cLcXLY7DVlYIJ+7KcfFvUPUPFdut3Uh4kDV6xyhYUXn2WaBL+5v6K
+         jvs7Mx3WeuAG2y/Qtr73JVJESl9vbWQ822JLhbisftKI2E1RcSiA3VDM+q0Pksk8SasS
+         o7U2ddJwZbNKoRLYXu+INwuHinvDh0xouXwHuLPrPyQy0ExKbJWkCYNwgQxOkT40bSjj
+         Ayklu4wFntdx8p+Px1B4y3hEV3M+5lqotD2KciEFLd/ReCwhO/nKjpyus1jaM2N15FlK
+         CFos/Z5T1FgFbTcNmdcgaL2HDmOxh4sMDxcWaCHBVCuKNb0OQ7cRQTRwfFeXladXBJ1e
+         4OeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GDHzrbWwf7H50BYiqvccLLc+rwpiyI9fiUsRn1ypPgY=;
+        b=qtEBsshp0lbJzDX7DJfBGMo0nKipNihNdusj6ZDANaqwhGD6+d+GN05QLuf1zzgpnc
+         arJ7nktX7XlcBvqvZ5kVE7+ARB2JDkh7ooqCouk38rE5xExjMvx5FPAqAx4CPbPNcrot
+         BsPQ0BqEkpOZn1ic+4f86Pg8Ql3h4yphN50Ywkn1sTUwGTSzA8gqgY3vedYaXzyCUR8t
+         SJ5Ax4WffBwbjPRRjA8G1Jr4wiennR0feVlA5jLONS2iK7UPHG+HXf8UowIjHEhFRTeU
+         c4h3uzAvgsaQMVNVjJO2GjJzY2DPa/9EJXcSkAwFdwB+7lUcotS7IDySeQVdp3kO0d8I
+         SRZQ==
+X-Gm-Message-State: ABuFfogjeD3ae8/S+6iaW0w12mquGaD3g/HIq/heP99t5s/JNbtSI55Z
+        3Zr/lpTw7hLA7MBRMUhHc1nj/WUSqxcMNY8/aFeLHtjopTICA6YC/FY7Qm+gHU0G6xw0FUuTsPF
+        nqH2zjGLUYJOtPT907tKjrFrcshkv
+X-Received: by 2002:a24:25c1:: with SMTP id g184-v6mr14260637itg.120.1538943810068;
+        Sun, 07 Oct 2018 13:23:30 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV60rinK7Yu4tkPN05/q5x0S7kIx1qvle1YoC9BQr/QR28Or1zHd5NkNgdAZavZKzwOWrZqIFFg==
+X-Received: by 2002:a24:25c1:: with SMTP id g184-v6mr14260628itg.120.1538943809886;
+        Sun, 07 Oct 2018 13:23:29 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id w134-v6sm4023152itc.12.2018.10.07.13.23.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 07 Oct 2018 13:23:29 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        linux-kernel@vger.kernel.org (open list:BPF (Safe dynamic programs and
+        tools))
+Subject: [PATCH] bpf: btf: Fix a missing check bug
+Date:   Sun,  7 Oct 2018 15:23:15 -0500
+Message-Id: <1538943795-30895-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 6, 2018 at 5:40 AM Andreas F=C3=A4rber <afaerber@suse.de> wrote=
-:
->
-> Hi Rob,
->
-> Am 05.10.18 um 18:58 schrieb Rob Herring:
-> > Convert Actions Semi SoC bindings to DT schema format using json-schema=
-.
->
-> This sounds like the next Yanny vs. Laurel... I fail to see any json. ;)
+In btf_parse_hdr(), the length of the btf data header is firstly copied
+from the user space to 'hdr_len' and checked to see whether it is larger
+than 'btf_data_size'. If yes, an error code EINVAL is returned. Otherwise,
+the whole header is copied again from the user space to 'btf->hdr'.
+However, after the second copy, there is no check between
+'btf->hdr->hdr_len' and 'hdr_len' to confirm that the two copies get the
+same value. Given that the btf data is in the user space, a malicious user
+can race to change the data between the two copies. By doing so, the user
+can provide malicious data to the kernel and cause undefined behavior.
 
-Read the docs in patch 8.
+This patch adds a necessary check after the second copy, to make sure
+'btf->hdr->hdr_len' has the same value as 'hdr_len'. Otherwise, an error
+code EINVAL will be returned.
 
-> Also, it may help my understanding to be CC'ed on the cover letter, too?
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ kernel/bpf/btf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Sorry, trying to avoid a huge Cc list.
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 2590700..7cce7db 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -2114,6 +2114,9 @@ static int btf_parse_hdr(struct btf_verifier_env *env, void __user *btf_data,
+ 
+ 	hdr = &btf->hdr;
+ 
++	if (hdr->hdr_len != hdr_len)
++		return -EINVAL;
++
+ 	btf_verifier_log_hdr(env, btf_data_size);
+ 
+ 	if (hdr->magic != BTF_MAGIC) {
+-- 
+2.7.4
 
-> > Cc: "Andreas F=C3=A4rber" <afaerber@suse.de>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../devicetree/bindings/arm/actions.txt       | 56 -------------------
-> >  .../devicetree/bindings/arm/actions.yaml      | 34 +++++++++++
-> >  2 files changed, 34 insertions(+), 56 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/arm/actions.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/actions.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/actions.txt b/Docume=
-ntation/devicetree/bindings/arm/actions.txt
-> > deleted file mode 100644
-> > index d54f33c4e0da..000000000000
-> > --- a/Documentation/devicetree/bindings/arm/actions.txt
-> > +++ /dev/null
-> > @@ -1,56 +0,0 @@
-> > -Actions Semi platforms device tree bindings
-> > --------------------------------------------
-> > -
-> > -
-> > -S500 SoC
-> > -=3D=3D=3D=3D=3D=3D=3D=3D
-> > -
-> > -Required root node properties:
-> > -
-> > - - compatible :  must contain "actions,s500"
-> > -
-> > -
-> > -Modules:
-> > -
-> > -Root node property compatible must contain, depending on module:
-> > -
-> > - - LeMaker Guitar: "lemaker,guitar"
-> > -
-> > -
-> > -Boards:
-> > -
-> > -Root node property compatible must contain, depending on board:
-> > -
-> > - - Allo.com Sparky: "allo,sparky"
-> > - - Cubietech CubieBoard6: "cubietech,cubieboard6"
-> > - - LeMaker Guitar Base Board rev. B: "lemaker,guitar-bb-rev-b", "lemak=
-er,guitar"
-> > -
-> > -
-> > -S700 SoC
-> > -=3D=3D=3D=3D=3D=3D=3D=3D
-> > -
-> > -Required root node properties:
-> > -
-> > -- compatible :  must contain "actions,s700"
-> > -
-> > -
-> > -Boards:
-> > -
-> > -Root node property compatible must contain, depending on board:
-> > -
-> > - - Cubietech CubieBoard7: "cubietech,cubieboard7"
-> > -
-> > -
-> > -S900 SoC
-> > -=3D=3D=3D=3D=3D=3D=3D=3D
-> > -
-> > -Required root node properties:
-> > -
-> > -- compatible :  must contain "actions,s900"
-> > -
-> > -
-> > -Boards:
-> > -
-> > -Root node property compatible must contain, depending on board:
-> > -
-> > - - uCRobotics Bubblegum-96: "ucrobotics,bubblegum-96"
-> > diff --git a/Documentation/devicetree/bindings/arm/actions.yaml b/Docum=
-entation/devicetree/bindings/arm/actions.yaml
-> > new file mode 100644
-> > index 000000000000..af9345a228b4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/actions.yaml
-> > @@ -0,0 +1,34 @@
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/soc/arm/actions.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
->
-> 404 for the schema. Where does one find an explanation?
-
-In the docs. This could someday actually be hosted on devicetree.org,
-but for now only the path, not the host, matters.
-
->
-> > +
-> > +title: Actions Semi platforms device tree bindings
-> > +
-> > +maintainers:
-> > +  - Andreas F=C3=A4rber <afaerber@suse.de>
->
-> Mani is now officially reviewer and the closest I have to a
-> co-maintainer.
-
-Okay, NP.
-
-> I suggest we add him here in some form. I assume this is
-> independent of MAINTAINERS patterns though, or will get_maintainers.pl
-> parse this, too?
-
-It is independent. Not really ideal, but the bindings don't live just
-in the kernel. (And lots are missing a maintainer anyways).
-
-> > +
-> > +description: |
->
-> Does the | have any meaning, or a stray typo?
-
-Explained in other patch.
-
-> > +  The Actions Semi S500 is a quad-core ARM Cortex-A9 SoC. The Actions =
-Semi
-> > +  S900 is a quad-core ARM Cortex-A53 SoC.
->
-> You forgot the S700 as another quad-core Cortex-A53 SoC.
-> Also, arm or Arm rather than ARM these days?
-
-I was going to say it's just copied out from the old file, but that
-doesn't seem to be the case here. I am sure I didn't spend time on
-nice descriptions. :)
-
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - lemaker,guitar-bb-rev-b
-> > +          - enum:
-> > +              - lemaker,guitar
-> > +              - allo,sparky
-> > +              - cubietech,cubieboard6
-> > +          - const: actions,s500
-> > +        minItems: 2
-> > +        maxItems: 3
-> > +        additionalItems: false
->
-> Objection. You've managed to turn a perfectly human-comprehensible text
-> into a machine-parseable representation incomprehensible for humans.
->
-> First, there should remain some free-text explanation of the values
-> defined here. Are comments allowed after the value or indented maybe?
-
-Yes, both. Comments are the major reason for using YAML over JSON file form=
-at.
-
-> Alternatively we could have a per-vendor file =C3=A0 la vendor-prefixes.t=
-xt,
-> but that would seem inefficient.
-
-You mean per board vendor files? We'd have to duplicate the SoC
-compatibles then as you can't really split the schema to 2 files.
-
-There's 2 SoC families doing per board vendor files: Atmel (only one
-vendor though) and i.MX. This series makes those 2 a single file like
-all other SoCs. I don't really care which way it is done, but I think
-we should be consistent and I'm not going to convert everyone's
-bindings to per board vendor files.
-
-> Next, the above items construct is horrible. What about nested oneOf:
->
-> +      - items:
-> +          - oneOf:
-> +              - items:
-> +                  - enum:
-> +                      - lemaker,guitar-bb-rev-b
-> +                  - const: lemaker,guitar
-> +              - items:
-> +                  - enum:
-> +                      - allo,sparky
-> +                      - cubietech,cubieboard6
-> +          - const: actions,s500
-
-That's not actually doing what you think. That's saying the first item
-is a list of items (1 or 2 items). For example, you'd have to have
-data like this to be valid:
-
-[ [ allo,sparky ], actions,s500 ]
-
-(Note that [] are more json style list format, but allowed in yaml too.)
-
-Probably the best thing to do here is separate the 2 and 3 item cases.
-That also would eliminate some combinations here that are allowed, but
-not valid.
-
->
-> This grouping is much clearer to me and hopefully to anyone adding
-> further base boards for the module.
-> We will have the same issue for the BPi-S64 module with S700 below.
->
-> > +      - items:
-> > +          - const: cubietech,cubieboard7
-> > +          - const: actions,s700
-> > +      - items:
-> > +          - const: ucrobotics,bubblegum-96
-> > +          - const: actions,s900
->
-> Please make the board compatible an enum, even if only one is listed
-> today. That makes it clearer where/how (and easier) to add new boards.
-
-Yes, I did that in most cases, but not here some reason.
-
-Rob
