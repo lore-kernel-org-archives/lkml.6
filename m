@@ -2,131 +2,132 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6370CC00449
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01156C00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A02F2089D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA0772087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:18:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XiHojB9v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A02F2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIPgGOxn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0772087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbeJGTXZ (ORCPT
+        id S1727827AbeJGTZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 15:23:25 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33092 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbeJGTXZ (ORCPT
+        Sun, 7 Oct 2018 15:25:57 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55151 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeJGTZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 15:23:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e4-v6so17872550wrs.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 05:16:21 -0700 (PDT)
+        Sun, 7 Oct 2018 15:25:56 -0400
+Received: by mail-it1-f195.google.com with SMTP id l191-v6so8092901ita.4
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 05:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UgFweVgnCUbXwns5CNhZGMBVwvIV/pOqWXpg6lA1Gw8=;
-        b=XiHojB9v30wN2RlIyplBOcd/MApv0V+JMFo4Y2lxt4e1Ql06xNtZOUM81XVZ+MuiPd
-         vCkYaj7sdPbsqmO5mRKoJN5hUbM6FXal38OgIvXD0GHqe1PT9tsPJiAdjy2J2ThyBy4D
-         oLoDLkI1z66Wy4373RY3Pr/FaFaaVBPedLLsQ=
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uNFss/PfiCZSX0OoMYf+bbsx4Ou6OPaka35W6tRtVh8=;
+        b=jIPgGOxnDolP1iwiEWD2xWCLAlza4blUX/WOD5KT72a8UAbtXy5UNi0tj8qT8HXg8F
+         l6NsgH27QAOPQijqIATA7LQcwY4gBklprP8NlbydL+thpp8lPUMnTK3J9EoKJ+0O0Zq+
+         VWQOZ/IiH5BGRnyEhUBPZ+Nh807DCnV0BoI4uNAUF5qfSizNG2PLfWGr4WxXkl434AxE
+         6hx+Jkec790X7MXhv0mDze0XxYukzXCTLyyHXQSFnlVyU9jMLByCwzmbnUK9dWNKVyjn
+         Gxg9AGZARwaiJmgqkoL6gZwZK8fFH/RNVyU2RtMojk5csRruKw/6u7++xOtZLF/I1e+3
+         07JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UgFweVgnCUbXwns5CNhZGMBVwvIV/pOqWXpg6lA1Gw8=;
-        b=iNNPGUtQHEpuDXXavROO3aiD0HIQpm7VFBtqt6TS5AAD25JCWB0KMJfFH99ALOkTWH
-         XWMVSx7wy5icaxLr+kkCkHHHqmxKYpEVEQG9CgusvEShXDahvHWYsY+Gav6B9cZ3zHev
-         hOB3F4uNDyzj1pNXLoJTQEGG4xr53Pup3Zu7XC67zp0kQYAKT2qRjbbZVYiDSsUt48Rl
-         qVFRWjtfrwcGvCcMOINMDBcKK2JScHf1hydb4eF1c+wsJG4OdCIb0RQSFyYkIRDF7t/q
-         vDt6re5ju402+utvDE/SB1UsoQcPwOZk+sAVHpmEW6Bsz4rX1OlrIv4rUAD+AePcO1NW
-         XrPA==
-X-Gm-Message-State: ABuFfogpImELK++V8XBKqQar1RCri44NjikYkVCxRxQ6Ielos5yFCFvO
-        9o6wMMhYbeWWRpIblJp4kM8nH0kUXIE=
-X-Google-Smtp-Source: ACcGV61k1BlgT6Erl2nM1EJdcQALhHbM05RhSYjg4VCaduP7TZjPTptrQH8FNLtp9ry9cTPN/2MZLg==
-X-Received: by 2002:adf:ce10:: with SMTP id p16-v6mr12668586wrn.118.1538914579844;
-        Sun, 07 Oct 2018 05:16:19 -0700 (PDT)
-Received: from [192.168.0.40] (79.11.130.77.rev.sfr.net. [77.130.11.79])
-        by smtp.googlemail.com with ESMTPSA id a105-v6sm32039609wrc.23.2018.10.07.05.16.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Oct 2018 05:16:19 -0700 (PDT)
-Subject: Re: [PATCH 13/13] clocksource/drivers/dw_apb: Add reset control
-To:     Marek Vasut <marex@denx.de>, Thomas Gleixner <tglx@linutronix.de>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>, linux-kernel@vger.kernel.org
-References: <20181005143253.GE1881@mai>
- <1538750143-4282-1-git-send-email-daniel.lezcano@linaro.org>
- <1538750143-4282-13-git-send-email-daniel.lezcano@linaro.org>
- <alpine.DEB.2.21.1810061433170.5454@nanos.tec.linutronix.de>
- <5ebc1d90-2067-8cb5-0c93-1c9f0677abc5@linaro.org>
- <alpine.DEB.2.21.1810061907030.5454@nanos.tec.linutronix.de>
- <d27e6960-5f59-4a81-09c2-8606f0bce344@denx.de>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a70866b1-cf62-ea03-e389-e08906e8580a@linaro.org>
-Date:   Sun, 7 Oct 2018 14:16:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uNFss/PfiCZSX0OoMYf+bbsx4Ou6OPaka35W6tRtVh8=;
+        b=Wlu0bSElTvtQ+YWrcyjEusjQ2nm6h/aSlVdbImhA7S+anEl9vqW7kwPd1QN+zZOckz
+         3ka7wb8vVYZuUg7qIJdspcIC8xvfNeZKYalx3Cop3E5V6Qh5Dy022s7V2rJ3WUBI4DO7
+         Rzxa19ZjhZnDabYsl6fVSkgWL8D0xkRkJGYxoXxz8QqqYex4tFqdszNcaA39aM38Mv2O
+         vrzz9glNftbyiIIJdVEZdPm67+wWvP+++wpGoZaegNYgwVLCcMDP3KUiVHgHKuuNtuqz
+         ijdM71pzfRLs/CBipGBJ10vDTzwwgDYkTxKWOfDaRmdjOqv7elL9i21b0k8jMiRNt99B
+         YosQ==
+X-Gm-Message-State: ABuFfoihXHm2zm32ElsYq6H+wdCW8QZT0U5MWJW5+7rZd6XZlZqap1fW
+        dxNykDjv3LBsYbQUACUE/YQg4T120Zkyucohlf7a8w==
+X-Google-Smtp-Source: ACcGV61FVAhyldIXkCCel2RI4KgZx36Womi9XKyUaDAhP4h/aNt+HQoZiXFOGoaL8WSHSJxonIcoGvFTNmvN04pInow=
+X-Received: by 2002:a02:97c5:: with SMTP id v5-v6mr14207946jaj.72.1538914731534;
+ Sun, 07 Oct 2018 05:18:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d27e6960-5f59-4a81-09c2-8606f0bce344@denx.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Sun, 7 Oct 2018 05:18:31 -0700 (PDT)
+In-Reply-To: <0000000000005764090577a27486@google.com>
+References: <0000000000005764090577a27486@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sun, 7 Oct 2018 14:18:31 +0200
+Message-ID: <CACT4Y+ZAoLro6LHhaA2EuWF1nAWAA=NAVtpMammhspL4V2aMgw@mail.gmail.com>
+Subject: Re: BUG: workqueue lockup (4)
+To:     syzbot <syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com>,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-rtc@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 14:10, Marek Vasut wrote:
-> On 10/06/2018 07:07 PM, Thomas Gleixner wrote:
->> On Sat, 6 Oct 2018, Daniel Lezcano wrote:
->>
->>> On 06/10/2018 14:34, Thomas Gleixner wrote:
->>>> On Fri, 5 Oct 2018, Daniel Lezcano wrote:
->>>>
->>>>> From: Dinh Nguyen <dinguyen@kernel.org>
->>>>>
->>>>> Add code to retrieve the reset property from the dw-apb timers and if
->>>>> the property is available, the safe operation is to assert the timer
->>>>> into reset, and followed by a deassert of the timer reset (brings the
->>>>> timer out of reset).
->>>>>
->>>>> This patch is needed for systems where the bootloader has left the timer
->>>>> not used in reset.
->>>>>
->>>>>  - Trivial conflict with commit a74bd1ad7a:
->>>>>     "Convert to using %pOFn instead of device_node.name"
->>>>>
->>>>> Signed-off-by: Marek Vasut <marex@denx.de>
->>>>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->>>>
->>>> Ingo just noticed, that this SOB chain is wrong. How is Marek involved
->>>> here? Can you please fix that up and send me another pull request?
->>>
->>> Thomas,
->>>
->>> I will fix it as soon as possible but I would like to give the
->>> opportunity to Dinh to explain why he sent the patch with Marek's SOB.
->>>
->>> Dinh ?
->>
->> No rush.
-> 
-> I reported this to Dinh and gave him some prototype patches to start
-> with, since I didn't have the time to write a patch. You can change it
-> to Reported-by: if you want.
+On Sun, Oct 7, 2018 at 2:15 PM, syzbot
+<syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14c5f491400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=08116743f8ad6f9a6de7
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14514a6e400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1025ebb9400000
 
-Ok, thanks
+The reproducer seems to be all about rtc. So +rtc maintainers.
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com
+>
+> BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 204s!
+> Showing busy workqueues and worker pools:
+> workqueue events: flags=0x0
+>   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=4/256
+>     in-flight: 14:rtc_timer_do_work
+>     pending: vmstat_shepherd, cache_reap, check_corruption
+> workqueue events_power_efficient: flags=0x80
+>   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+>     pending: do_cache_clean
+> workqueue mm_percpu_wq: flags=0x8
+>   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+>     pending: vmstat_update
+> workqueue kacpi_notify: flags=0x0
+>   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
+>     pending: acpi_os_execute_deferred
+> pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=204s workers=2 idle: 2683
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000005764090577a27486%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
