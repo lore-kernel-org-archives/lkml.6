@@ -2,89 +2,184 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A25C64EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308D0C00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB11720875
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:37:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="vUArfxnp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB11720875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id AC9B220841
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:38:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC9B220841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbeJGKmz (ORCPT
+        id S1726771AbeJGKoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 06:42:55 -0400
-Received: from imap.thunk.org ([74.207.234.97]:44216 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbeJGKmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 06:42:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=5zwO9NZgwJbTf09T6OEh+9VCoIdaGNT9FDjI2+3/4a8=; b=vUArfxnpSI0KNUOiB2cjRzn1c9
-        bxXfANSBF45jFhk94G99dh7ychFFIi5u9vjK51MZG232sFyz3nOcZGQf5FD2mIKO3LtEyq41jeIe3
-        8qiRFjgux5N2+ysW9y9KBKQkZxpUjEeXVEJr5//15JaP8G35A6ZHIQ/g5RObRsBZmjaQ=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1g8zs6-0006WK-Js; Sun, 07 Oct 2018 03:36:46 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 888177A5250; Sat,  6 Oct 2018 23:36:45 -0400 (EDT)
-Date:   Sat, 6 Oct 2018 23:36:45 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     cgxu519 <cgxu519@gmx.com>
-Cc:     adilger.kernel@dilger.ca, jack@suse.com, jaegeuk@kernel.org,
-        yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com,
-        martin@omnibond.com, devel@lists.orangefs.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        jfs-discussion@lists.sourceforge.net
-Subject: Re: [PATCH v2 2/5] ext4: cache NULL when both default_acl and acl
- are NULL
-Message-ID: <20181007033645.GA12046@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        cgxu519 <cgxu519@gmx.com>, adilger.kernel@dilger.ca, jack@suse.com,
-        jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org,
-        hubcap@omnibond.com, martin@omnibond.com, devel@lists.orangefs.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        jfs-discussion@lists.sourceforge.net
-References: <20180831143352.22970-1-cgxu519@gmx.com>
- <20180831143352.22970-2-cgxu519@gmx.com>
- <f1dd02a3-78ea-0240-72cc-135ee26f6524@gmx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1dd02a3-78ea-0240-72cc-135ee26f6524@gmx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        Sun, 7 Oct 2018 06:44:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53609 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726236AbeJGKoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 06:44:09 -0400
+Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w973btg4047550
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 6 Oct 2018 20:37:55 -0700
+Received: from carbon-x1.hos.anvin.org (localhost [127.0.0.1])
+        by carbon-x1.hos.anvin.org (8.15.2/8.15.2) with ESMTP id w973bowO224514;
+        Sat, 6 Oct 2018 20:37:50 -0700
+Received: (from hpa@localhost)
+        by carbon-x1.hos.anvin.org (8.15.2/8.15.2/Submit) id w973boCd224513;
+        Sat, 6 Oct 2018 20:37:50 -0700
+From:   "H. Peter Anvin" <hpa@zytor.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "H. Peter Anvin (Intel)" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
+Subject: [PATCH stable 1/2] arch/alpha, termios: implement BOTHER, IBSHIFT and termios2
+Date:   Sat,  6 Oct 2018 20:37:47 -0700
+Message-Id: <20181007033748.224461-2-hpa@zytor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181007033748.224461-1-hpa@zytor.com>
+References: <20181007033748.224461-1-hpa@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 11:04:35PM +0800, cgxu519 wrote:
-> On 08/31/2018 10:33 PM, Chengguang Xu wrote:
-> > default_acl and acl of newly created inode will be initiated
-> > as ACL_NOT_CACHED in vfs function inode_init_always() and later
-> > will be updated by calling xxx_init_acl() in specific filesystems.
-> > Howerver, when default_acl and acl are NULL then they keep the value
-> > of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
-> > in this case.
-> > 
-> > Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
 
-Applied, thanks.
+Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
+using arbitrary flags. Because BOTHER is not defined, the general
+Linux code doesn't allow setting arbitrary baud rates, and because
+CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
+drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
 
-						- Ted
+Resolve both problems by #defining BOTHER to 037 on Alpha.
+
+However, userspace still needs to know if setting BOTHER is actually
+safe given legacy kernels (does anyone actually care about that on
+Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
+though they use the same structure. Define struct termios2 just for
+compatibility; it is the exact same structure as struct termios. In a
+future patchset, this will be cleaned up so the uapi headers are
+usable from libc.
+
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: <linux-alpha@vger.kernel.org>
+Cc: <linux-serial@vger.kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: <stable@vger.kernel.org>
+---
+ arch/alpha/include/asm/termios.h       |  8 +++++++-
+ arch/alpha/include/uapi/asm/ioctls.h   |  5 +++++
+ arch/alpha/include/uapi/asm/termbits.h | 17 +++++++++++++++++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/arch/alpha/include/asm/termios.h b/arch/alpha/include/asm/termios.h
+index 6a8c53dec57e..b7c77bb1bfd2 100644
+--- a/arch/alpha/include/asm/termios.h
++++ b/arch/alpha/include/asm/termios.h
+@@ -73,9 +73,15 @@
+ })
+ 
+ #define user_termios_to_kernel_termios(k, u) \
+-	copy_from_user(k, u, sizeof(struct termios))
++	copy_from_user(k, u, sizeof(struct termios2))
+ 
+ #define kernel_termios_to_user_termios(u, k) \
++	copy_to_user(u, k, sizeof(struct termios2))
++
++#define user_termios_to_kernel_termios_1(k, u) \
++	copy_from_user(k, u, sizeof(struct termios))
++
++#define kernel_termios_to_user_termios_1(u, k) \
+ 	copy_to_user(u, k, sizeof(struct termios))
+ 
+ #endif	/* _ALPHA_TERMIOS_H */
+diff --git a/arch/alpha/include/uapi/asm/ioctls.h b/arch/alpha/include/uapi/asm/ioctls.h
+index 3729d92d3fa8..dc8c20ac7191 100644
+--- a/arch/alpha/include/uapi/asm/ioctls.h
++++ b/arch/alpha/include/uapi/asm/ioctls.h
+@@ -32,6 +32,11 @@
+ #define TCXONC		_IO('t', 30)
+ #define TCFLSH		_IO('t', 31)
+ 
++#define TCGETS2		_IOR('T', 42, struct termios2)
++#define TCSETS2		_IOW('T', 43, struct termios2)
++#define TCSETSW2	_IOW('T', 44, struct termios2)
++#define TCSETSF2	_IOW('T', 45, struct termios2)
++
+ #define TIOCSWINSZ	_IOW('t', 103, struct winsize)
+ #define TIOCGWINSZ	_IOR('t', 104, struct winsize)
+ #define	TIOCSTART	_IO('t', 110)		/* start output, like ^Q */
+diff --git a/arch/alpha/include/uapi/asm/termbits.h b/arch/alpha/include/uapi/asm/termbits.h
+index de6c8360fbe3..4575ba34a0ea 100644
+--- a/arch/alpha/include/uapi/asm/termbits.h
++++ b/arch/alpha/include/uapi/asm/termbits.h
+@@ -26,6 +26,19 @@ struct termios {
+ 	speed_t c_ospeed;		/* output speed */
+ };
+ 
++/* Alpha has identical termios and termios2 */
++
++struct termios2 {
++	tcflag_t c_iflag;		/* input mode flags */
++	tcflag_t c_oflag;		/* output mode flags */
++	tcflag_t c_cflag;		/* control mode flags */
++	tcflag_t c_lflag;		/* local mode flags */
++	cc_t c_cc[NCCS];		/* control characters */
++	cc_t c_line;			/* line discipline (== c_cc[19]) */
++	speed_t c_ispeed;		/* input speed */
++	speed_t c_ospeed;		/* output speed */
++};
++
+ /* Alpha has matching termios and ktermios */
+ 
+ struct ktermios {
+@@ -152,6 +165,7 @@ struct ktermios {
+ #define B3000000  00034
+ #define B3500000  00035
+ #define B4000000  00036
++#define BOTHER    00037
+ 
+ #define CSIZE	00001400
+ #define   CS5	00000000
+@@ -169,6 +183,9 @@ struct ktermios {
+ #define CMSPAR	  010000000000		/* mark or space (stick) parity */
+ #define CRTSCTS	  020000000000		/* flow control */
+ 
++#define CIBAUD	07600000
++#define IBSHIFT	16
++
+ /* c_lflag bits */
+ #define ISIG	0x00000080
+ #define ICANON	0x00000100
+-- 
+2.17.1
+
