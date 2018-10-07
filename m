@@ -3,83 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B1BC65C33
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 13:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C73C65C1D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 14:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79E5320895
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 13:46:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79E5320895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id B87DB20882
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 14:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87DB20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbeJGUxt (ORCPT
+        id S1728084AbeJGVVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 16:53:49 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52819 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbeJGUxt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 16:53:49 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id A80D6807B5; Sun,  7 Oct 2018 15:46:30 +0200 (CEST)
-Date:   Sun, 7 Oct 2018 15:46:30 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [RFC PATCH 9/9] leds: lm3632: Introduce the TI LM3632 driver
-Message-ID: <20181007134630.GA19323@amd>
-References: <20180926130921.12329-1-dmurphy@ti.com>
- <20180926130921.12329-10-dmurphy@ti.com>
+        Sun, 7 Oct 2018 17:21:24 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35372 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727142AbeJGVVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 17:21:24 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id XsiTcyLhSPP1; Sun,  7 Oct 2018 16:14:01 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E22AB1EC01F6;
+        Sun,  7 Oct 2018 16:14:00 +0200 (CEST)
+Date:   Sun, 7 Oct 2018 16:13:49 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     gcc@gcc.gnu.org, Richard Biener <rguenther@suse.de>,
+        Michael Matz <matz@suse.de>, Nadav Amit <namit@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181007141349.GD30687@zn.tnic>
+References: <20181003213100.189959-1-namit@vmware.com>
+ <20181007091805.GA30687@zn.tnic>
+ <20181007132228.GJ29268@gate.crashing.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180926130921.12329-10-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181007132228.GJ29268@gate.crashing.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Oct 07, 2018 at 08:22:28AM -0500, Segher Boessenkool wrote:
+> GCC already estimates the *size* of inline asm, and this is required
+> *for correctness*.
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I didn't say it didn't - but the heuristic could use improving.
 
-On Wed 2018-09-26 08:09:21, Dan Murphy wrote:
-> Add the dedicated TI LM3632 LED driver.  This
-> LED device is capable of driving a backlight display.
->=20
-> In addition to the backlight the device has control
-> of a strobe and torch output.
+> So I guess the real issue is that the inline asm size estimate for x86
+> isn't very good (since it has to be pessimistic, and x86 insns can be
+> huge)?
 
-Is this in some way similar to 3639? That also seems to include flash
-and torch.
+Well, the size thing could be just a "parameter" or "hint" of sorts, to
+tell gcc to inline the function X which is inlining the asm statement
+into the function Y which is calling function X. If you look at the
+patchset, it is moving everything to asm macros where gcc is apparently
+able to do better inlining.
 
-drivers/video/backlight/lm3639_bl.c
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> >  3) asm ("...") __attribute__((asm_size(<size-expr>)));
+> 
+> Eww.
 
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Why?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> More precise *size* estimates, yes.  And if the user lies he should not
+> be surprised to get assembler errors, etc.
 
-iEYEARECAAYFAlu6DjYACgkQMOfwapXb+vKIfgCfaCzUEz9ZpoY/EfPeEOMPf4a9
-KQAAnRlaLwr0s5K4pIDwlOTMD6W6XxRB
-=upBE
------END PGP SIGNATURE-----
+Yes.
 
---3MwIy2ne0vdjdPXF--
+Another option would be if gcc parses the inline asm directly and
+does a more precise size estimation. Which is a lot more involved and
+complicated solution so I guess we wanna look at the simpler ones first.
+
+:-)
+
+> I don't like 2) either.  But 1) looks interesting, depends what its
+> semantics would be?  "Don't count this insn's size for inlining decisions",
+> maybe?
+
+Or simply "this asm statement has a size of 1" to mean, inline it
+everywhere. Which has the same caveats as above.
+
+> Another option is to just force inlining for those few functions where
+> GCC currently makes an inlining decision you don't like.  Or are there
+> more than a few?
+
+I'm afraid they're more than a few and this should work automatically,
+if possible.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
