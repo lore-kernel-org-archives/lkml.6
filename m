@@ -2,88 +2,66 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D85C00449
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CB8C00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 061AD20882
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:01:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 061AD20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schupikov.de
+	by mail.kernel.org (Postfix) with ESMTP id B93EA20882
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 12:05:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93EA20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vger.kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeJGTIP (ORCPT
+        id S1726932AbeJGTMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 15:08:15 -0400
-Received: from gravityforest ([185.233.107.85]:47904 "EHLO
-        gravity.schupikov.de" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbeJGTIP (ORCPT
+        Sun, 7 Oct 2018 15:12:19 -0400
+Received: from [41.90.108.214] ([41.90.108.214]:38068 "EHLO
+        41-139-159-234.safaricombusiness.co.ke" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726310AbeJGTMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 15:08:15 -0400
-Received: from zlid.rus.uni-stuttgart.de (s-8d3a2233.on.site.uni-stuttgart.de [141.58.34.51])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by gravity.schupikov.de (Postfix) with ESMTPSA id 58CB55D146;
-        Sun,  7 Oct 2018 14:01:11 +0200 (CEST)
-From:   Michael Schupikov <michael@schupikov.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Michael Schupikov <michael@schupikov.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto/testmgr.c: fix sizeof() on COMP_BUF_SIZE
-Date:   Sun,  7 Oct 2018 13:58:10 +0200
-Message-Id: <20181007115810.27779-1-michael@schupikov.de>
+        Sun, 7 Oct 2018 15:12:19 -0400
+X-Greylist: delayed 71158 seconds by postgrey-1.27 at vger.kernel.org; Sun, 07 Oct 2018 15:12:17 EDT
+Message-ID: <003b01d45e4f$050897fb$579c3999@dnmlmc>
+From:   <linux-kernel@vger.kernel.org>
+To:     "qwerty" <linux-kernel@vger.kernel.org>
+Subject: Your Account Was Hacked!
+Date:   7 Oct 2018 16:39:24 +0200
 MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="ibm852"
 Content-Transfer-Encoding: 8bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.3790
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.3790
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After allocation, output and decomp_output both point to memory chunks of
-size COMP_BUF_SIZE. Then, only the first bytes are zeroed out using
-sizeof(COMP_BUF_SIZE) as parameter to memset(), because
-sizeof(COMP_BUF_SIZE) provides the size of the constant and not the size of
-allocated memory.
+Hi, dear user of vger.kernel.org
+We have installed one RAT software into you device.
+For this moment your email account is hacked (see on "from address", I messaged you from your account).
+Your password for linux-kernel@vger.kernel.org: qwerty
 
-Instead, the whole allocated memory is meant to be zeroed out. Use
-COMP_BUF_SIZE as parameter to memset() directly in order to accomplish
-this.
+I have downloaded all confidential information from your system and I got some more evidence.
+The most interesting moment that I have discovered are videos records where you masturbating.
 
-Fixes: 336073840a872 ("crypto: testmgr - Allow different compression results")
+I posted my virus on porn site, and then you installed it on your operation system.
+When you clicked the button Play on porn video, at that moment my trojan was downloaded to your device.
+After installation, your front camera shoots video every time you masturbate, in addition, the software is synchronized with the video you choose.
 
-Signed-off-by: Michael Schupikov <michael@schupikov.de>
----
- crypto/testmgr.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+For the moment, the software has collected all your contact information from social networks and email addresses.
+If you need to erase all of your collected data, send me $800 in BTC (crypto currency).
+This is my Bitcoin wallet: 13cyEdT7kyH2f4j9xchvDGhv1o64MYNLUS
+You have 48 hours after reading this letter.
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index a1d42245082a..790aa3536631 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1400,8 +1400,8 @@ static int test_comp(struct crypto_comp *tfm,
- 		int ilen;
- 		unsigned int dlen = COMP_BUF_SIZE;
- 
--		memset(output, 0, sizeof(COMP_BUF_SIZE));
--		memset(decomp_output, 0, sizeof(COMP_BUF_SIZE));
-+		memset(output, 0, COMP_BUF_SIZE);
-+		memset(decomp_output, 0, COMP_BUF_SIZE);
- 
- 		ilen = ctemplate[i].inlen;
- 		ret = crypto_comp_compress(tfm, ctemplate[i].input,
-@@ -1445,7 +1445,7 @@ static int test_comp(struct crypto_comp *tfm,
- 		int ilen;
- 		unsigned int dlen = COMP_BUF_SIZE;
- 
--		memset(decomp_output, 0, sizeof(COMP_BUF_SIZE));
-+		memset(decomp_output, 0, COMP_BUF_SIZE);
- 
- 		ilen = dtemplate[i].inlen;
- 		ret = crypto_comp_decompress(tfm, dtemplate[i].input,
--- 
-2.19.0
+After your transaction I will erase all your data.
+Otherwise, I will send video with your pranks to all your colleagues and friends!!!
+
+And henceforth be more careful!
+Please visit only secure sites!
+Bye!
 
