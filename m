@@ -5,67 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA35C6787D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E9EC6787E
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAF12088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B71F920882
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:41:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcTsOViT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAF12088F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="or/wtz48"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71F920882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbeJHEtM (ORCPT
+        id S1728065AbeJHEtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 00:49:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37685 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbeJHEs6 (ORCPT
+        Mon, 8 Oct 2018 00:49:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34280 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeJHEsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 00:48:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y11-v6so7968661wrd.4
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 14:40:22 -0700 (PDT)
+        Mon, 8 Oct 2018 00:48:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z4-v6so18711582wrb.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 14:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=X9iVR6Ieabsa8yWAr/NVgOitXv4IQZ0R9q4XUZNISWc=;
-        b=hcTsOViTYHZGGWq2Wo2gjOGXp98R72u0caqlxr29pKlBxGblx81zZsqmMUN39QAJ5X
-         XfVmFLincRXhg9uqcF8C+MaiyEJ01aICOR9l5ONTZIyX+Tr86yWcGQuCcGiAljld5efV
-         gx75mIU9d4r4hb+C4l2u3/Mwj30+TkNCbyBWUwhcSWc+zdZN4w3FUx52nde3F4/HY54k
-         dGWhDaa1TORllsty9med9Wx8HD92dDGNtYTG7R4m94n33KWtai1wwEdRcj46yCzmF/Q1
-         LGY5qo67ZgEZEvzkYRde+R3qgEw1xvaTrsRGnijT70yeHT9NTC2bfFHMeWm+PbTB/QhJ
-         gkHQ==
+        bh=/eT30h/5dLsMQi7bdrrJuhg3P83jMrLyGQiMNFnuj0I=;
+        b=or/wtz48oSdwY9sip0vbcEBwOv5SVZEK5L2XurkrawrkpELvDqok9NhhwMGZXMew7g
+         sqN6Oesi4pA84xdDrNAh3sstLW7Rg31SJqdZhetYbEzTHTaWhV2BgAEd3MdGZH/5cGdJ
+         2ejKBbWtwVraDz+Vvrr3qmq6npwLXYuKish/TSdIS2T00NJIr7nFD5cHg8wqSLtcUrGV
+         57t8zkUtaeTsdiOQknwV5QJdaoKNjbaEIM4KUWCpgs+UjMZ5gvEqpX8uuPliIayNshhh
+         gbW+776sxes7f2OeGLS+w2JKPkNMgSlN9ynPLyHflnD81qkWqN+1rP/NQUyzfDNrHGU7
+         aJug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=X9iVR6Ieabsa8yWAr/NVgOitXv4IQZ0R9q4XUZNISWc=;
-        b=ONrrK0qLMO9UNXumYfjTXqiN2msvhsxWbE6IubM5B5JQ9fz8QxjdbXYnfHRVvXWuBO
-         58yekZgmba1Ttu7xPIxGMvTsdxSxUcCV7uswJL8VFkhBzRGUV/0Yu19R3sWB6JJDD30X
-         XwlkAVsuViM307CjNPnBLux0t4Qq6tc+FFhVDq3IdS1ekUyG2km697APemJUM/jLCkc4
-         8hCKRiJgSMnlFclW6+c+lxpCMCl6Dh14pGd0LKudJRb3bXsVmiToEtWMFh/Rp1rzksAS
-         CFzFLwXb+e/Owwq3w8psVkeVWMz9tSCiesEA0idvJ8noN38SGyln6psk+2D+RPXq+Gss
-         Flqw==
-X-Gm-Message-State: ABuFfohjvzXjF8LvFuaBcqxr0P1l5F+YhBpPsZH7I9t8sPVmKhaAxd/i
-        tReQ9qoJFWg17UswG5D6BbOf3f0j
-X-Google-Smtp-Source: ACcGV60N/JIjLyzJKIOR+XCzabV9Sb5obhoVVIlG2aT7bSaK5wzME4weJ2o6naoBvwomOdG7TcOEqQ==
-X-Received: by 2002:a5d:4706:: with SMTP id y6-v6mr13826615wrq.256.1538948421108;
-        Sun, 07 Oct 2018 14:40:21 -0700 (PDT)
+        bh=/eT30h/5dLsMQi7bdrrJuhg3P83jMrLyGQiMNFnuj0I=;
+        b=OX5Ewo9CtjdpIeZBJ5BGZkpkV530XJCcCb2Db8GWD+jO0qY2cnESZUz70pWNcM6ik3
+         uBMhu1r6oWRihci+Jhn8EG/Rzg9FaIvne4EKuhO00bTa+yxcKkzuCnGaZJ89NaQo1eEo
+         uNEXnA+o71GH9tWu0cL8WptbYkFQNks7IyW47PNkYNCIy2ml0lFPFpyH6Znyap+3IzGD
+         FdGL/g2ezMi0iXJj25dqgbu4sLzTxBJOgv7bPBhf0jty03pYt7tgOs0CJqpPQUr112oL
+         JhV5LQMzR+nZP475sHBXHC0Bro48OJohdEKXGHww5h0f+b2ngpJEm6R8Dt2qr3Zaj0wn
+         kyjg==
+X-Gm-Message-State: ABuFfogHsykutrgREp9NiRTdYF38go05Cqn5uluGKXp24ncnFnqxJAjk
+        UOkBynZGunzFe/71mD3QA1lYGJFr
+X-Google-Smtp-Source: ACcGV629JdeKattX1zqRuyCXC0jjRdrCiV42Wae3xLqgfQvwduX7NEYSE5hLs3bkAadwJdf0BYvpeg==
+X-Received: by 2002:a05:6000:114e:: with SMTP id d14mr14161131wrx.301.1538948409842;
+        Sun, 07 Oct 2018 14:40:09 -0700 (PDT)
 Received: from localhost.localdomain (host86-169-110-130.range86-169.btcentralplus.com. [86.169.110.130])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm7758097wmd.41.2018.10.07.14.40.19
+        by smtp.gmail.com with ESMTPSA id i7-v6sm7758097wmd.41.2018.10.07.14.40.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Oct 2018 14:40:20 -0700 (PDT)
+        Sun, 07 Oct 2018 14:40:09 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 10/11] staging:rtl8192u: Correct code alignment - Style
-Date:   Sun,  7 Oct 2018 22:40:24 +0100
-Message-Id: <20181007214025.25469-11-johnfwhitmore@gmail.com>
+Subject: [PATCH 02/11] staging:rtl8192u: Removed commented out include - Style
+Date:   Sun,  7 Oct 2018 22:40:16 +0100
+Message-Id: <20181007214025.25469-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181007214025.25469-1-johnfwhitmore@gmail.com>
 References: <20181007214025.25469-1-johnfwhitmore@gmail.com>
@@ -76,29 +77,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correct the alignment of a function, this clears checkpatch issue.
+Remove commented out #include directive.
 
-This is a simple coding style change which should not impact runtime
+Additionally shorted a block comment to clear the checkpatch issue
+with line length.
+
+These are coding style changes which should have no impact on runtime
 code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192u/ieee80211/ieee80211_module.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-index 1b0f45f1bb84..5dc780119eff 100644
+index 5f8229f2c757..bd64d126ba2b 100644
 --- a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
 +++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-@@ -244,7 +244,7 @@ static int show_debug_level(struct seq_file *m, void *v)
- }
+@@ -29,10 +29,9 @@
+  *  James P. Ketrenos <ipw2100-admin@linux.intel.com>
+  *  Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-6497
+  *
+- *******************************************************************************/
++ ******************************************************************************/
  
- static ssize_t write_debug_level(struct file *file, const char __user *buffer,
--			     size_t count, loff_t *ppos)
-+				 size_t count, loff_t *ppos)
- {
- 	unsigned long val;
- 	int err = kstrtoul_from_user(buffer, count, 0, &val);
+ #include <linux/compiler.h>
+-/* #include <linux/config.h> */
+ #include <linux/errno.h>
+ #include <linux/if_arp.h>
+ #include <linux/in6.h>
 -- 
 2.19.0
 
