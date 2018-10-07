@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD2AC65C30
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E89CC65C31
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE922088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:06:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE922088F
+	by mail.kernel.org (Postfix) with ESMTP id 1AE8F2088F
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE8F2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbeJGNMf (ORCPT
+        id S1727836AbeJGNNF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 09:12:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54796 "EHLO
+        Sun, 7 Oct 2018 09:13:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54802 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeJGNMf (ORCPT
+        with ESMTP id S1726308AbeJGNNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 09:12:35 -0400
+        Sun, 7 Oct 2018 09:13:05 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 520DDD10;
-        Sun,  7 Oct 2018 06:06:25 +0000 (UTC)
-Date:   Sun, 7 Oct 2018 08:06:22 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F314D10;
+        Sun,  7 Oct 2018 06:06:55 +0000 (UTC)
+Date:   Sun, 7 Oct 2018 08:06:52 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 4.19-rc7
-Message-ID: <20181007060622.GA13764@kroah.com>
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 4.19-rc7
+Message-ID: <20181007060652.GA13828@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -49,51 +49,32 @@ The following changes since commit 17b57b1883c1285f3d0dc2266e8f79286a7bef38:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-4.19-rc7
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-4.19-rc7
 
-for you to fetch changes up to 555df5820e733cded7eb8d0bf78b2a791be51d75:
+for you to fetch changes up to 5b162cc4ac27ba76e576abc9090c54cf90a17980:
 
-  usb: xhci-mtk: resume USB3 roothub first (2018-10-01 17:59:02 -0700)
+  Revert "serial: sh-sci: Allow for compressed SCIF address" (2018-10-02 14:38:16 -0700)
 
 ----------------------------------------------------------------
-USB fixes for 4.19-rc7
+Serial driver fixes for 4.19-rc7
 
-Here are some small USB fixes for 4.19-rc7
+Here are 3 small serial driver fixes for 4.19-rc7
+  - 2 sh-sci bugfixes for reported issues
+  - a revert of the PM handling for the 8250_dw code
 
-These include:
-   - the usual xhci bugfixes for reported issues
-   - some new serial driver device ids
-   - bugfix for the option serial driver for some devices
-   - bugfix for the cdc_acm driver that has been there for a long time.
-
-All of these have been in linux-next for a while with no reported
-issues.
+All of these have been in linux-next with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Chunfeng Yun (1):
-      usb: xhci-mtk: resume USB3 roothub first
+Geert Uytterhoeven (2):
+      Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+      Revert "serial: sh-sci: Allow for compressed SCIF address"
 
-Greg Kroah-Hartman (1):
-      Merge tag 'usb-serial-4.19-rc7' of https://git.kernel.org/.../johan/usb-serial into usb-linus
+Guenter Roeck (1):
+      Revert "serial: 8250_dw: Fix runtime PM handling"
 
-Johan Hovold (2):
-      USB: serial: option: add two-endpoints device-id flag
-      USB: serial: simple: add Motorola Tetra MTP6550 id
-
-Kristian Evensen (1):
-      USB: serial: option: improve Quectel EP06 detection
-
-Mathias Nyman (1):
-      xhci: Add missing CAS workaround for Intel Sunrise Point xHCI
-
-Romain Izard (1):
-      usb: cdc_acm: Do not leak URB buffers
-
- drivers/usb/class/cdc-acm.c            |  6 ++++++
- drivers/usb/host/xhci-mtk.c            |  4 ++--
- drivers/usb/host/xhci-pci.c            |  2 ++
- drivers/usb/serial/option.c            | 15 +++++++++++++--
- drivers/usb/serial/usb-serial-simple.c |  3 ++-
- 5 files changed, 25 insertions(+), 5 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c |  4 ---
+ drivers/tty/serial/sh-sci.c       | 56 ++++++++++++++++++++++++++++-----------
+ include/linux/serial_sci.h        |  1 +
+ 3 files changed, 42 insertions(+), 19 deletions(-)
