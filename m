@@ -2,100 +2,142 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400A9C6787D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD2FC6787D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25782086D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E512086D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 21:06:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D8F2W07j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25782086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAbmvJ0e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E512086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbeJHEMH (ORCPT
+        id S1726065AbeJHEPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 00:12:07 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38403 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725755AbeJHEMG (ORCPT
+        Mon, 8 Oct 2018 00:15:19 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36000 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725755AbeJHEPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 00:12:06 -0400
-Received: by mail-it1-f196.google.com with SMTP id i76-v6so9379755ita.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 14:03:35 -0700 (PDT)
+        Mon, 8 Oct 2018 00:15:19 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f18-v6so6913318pgv.3;
+        Sun, 07 Oct 2018 14:06:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PvrFfuoUNDi7qj4rnHFmBEJS1sAyLTIEO2Ozt4HkCec=;
-        b=D8F2W07jedMw0WjejvrDxc6UX/vFkHqNE0+k1dp08L6D5YkBfI7RgbVOeVAklDuMYV
-         BBEef4cs4owIOeavrO7CUAptsG8DOawKlYccV3EBzsLOvZz19CQeKZpPF3o++22soUbp
-         c7gtkKmK7CXJSNgmmjSlITNJcGO0VhAyElSfI=
+         :cc:content-transfer-encoding;
+        bh=P/XtOx9ddrUlhCq64yA92kWH9QKRy9rHxPsL/tOf9j4=;
+        b=QAbmvJ0enPN/xBmUdmekFqIclQNCjk6EjL2GA79L+ME3qWpaaMy8tB0rlrJpNsSqDN
+         n7Qp6MhdHqYPpCb46GBkMB87rGD9RQe5BTO1MWKFRmM1NDOfWj33UvF51A2N0cCTTBRe
+         usTtG3Nxqhxplf11sLHOfPTUJiarPhGDR2FsEEi8je40U4+X79S7WHw9VXjxTx6Kk+A5
+         ifKjC6tNMCB3cR5fvap4UNgesaydryDllnlpqqmpdSO7dfpTueyJ8byUgCkVRLW7Lkh2
+         W1KOHq6RPgqejBt4wTzA9Aa599OFWTvzaZaprly8m4X/cf50bI11uEbNAirN05UNIxKQ
+         m3xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PvrFfuoUNDi7qj4rnHFmBEJS1sAyLTIEO2Ozt4HkCec=;
-        b=h8+iYaM9c4D7fMeDTAy7rkGq/snwuZ0a7GIsVQTjg8h4Q7pu/9XvSKNaUn20fibiS2
-         arx6qTtjrrqjb/nBcFuWi2yD/8RHSiyq2BLS0NZOyQnLCHWaEgO6/+SW2knsTVyVFVvH
-         zkQEuhLlypH4LiDuhbvu63ELTvLfyBHBIMz0BaPQ+ks4s88bISWb9la32NUYKBzoKja6
-         GKY8ppDTaskw2XnUJMDD9vYaRB+p8FT81WQsJDvCijx6BS2WgMDH2MeVEKjozZfem6Py
-         VMos0HtU2/VbRSqjwVX25LvNMHL+HBpfJn+se3qcYRP1IGqOIySzvtUF10ma7JdJbTP5
-         zwWw==
-X-Gm-Message-State: ABuFfoi38eyoOl15gW0A3pdWXfzDMav6JiN4vkoHu97gHRZbMzwV3/BU
-        14/dxHqUB87UJXR/OMkThaZarS6TM/rl4baj4ZpQXA==
-X-Google-Smtp-Source: ACcGV62il1fk/MD0I9NnLoNsZEXETVCWShsoCnGLUjWi1WWa3SrEMXZmxQjMGoio5GbjantboUbDBn9nuykWg9BzoBQ=
-X-Received: by 2002:a02:7789:: with SMTP id g131-v6mr16252652jac.66.1538946214954;
- Sun, 07 Oct 2018 14:03:34 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=P/XtOx9ddrUlhCq64yA92kWH9QKRy9rHxPsL/tOf9j4=;
+        b=BVAiCVCn5wTx1uu79C6zv7vAxn6OEJ+linuywrR4aAKOT5P5/o+2o9jzhPIYuqQOGa
+         svK4pS8rnEcO9GGelvDUpdwuki13sFOwmmuWnWOan6MZwdM1LB1rJ7PNlHQPklS+pA7B
+         5ZnHXwFewAn2SgP/WflXbTo5/5CB1WAx28O1gyU6TOejbeGbDOFXfAB6hRSnwMsfsbz8
+         wLRzvQHqcD6CTASn2M2xAhA9uIFxh10JbT3gaj0stUY5+W9UfLPvDPk6QHUTLD6qxw1S
+         6XN+DRxuxU1YDpUJ3T67FedR1TE4HCfD0KxIZWyD5YsYl5HbMdbijK5WZmSsl7DQEU+C
+         rjsg==
+X-Gm-Message-State: ABuFfojbXI0D6I/bN/9MDhSrTElCbly2fQoB5RVxfIiFEIw+wncSSsAP
+        P4uGo559erTRV2v16DDbcn8sv6EMhw+Q+GMP5SU=
+X-Google-Smtp-Source: ACcGV62XdMCWj7lo03POAbzbbTj0dNtm80n0m4yDa1TROcSYYdk+5BuEEYQSvyJRcfsn1jL/rj5LCTs5P5XvAZY8WJk=
+X-Received: by 2002:a63:6b05:: with SMTP id g5-v6mr18803673pgc.344.1538946406932;
+ Sun, 07 Oct 2018 14:06:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181003215350.3550926-1-taoren@fb.com>
-In-Reply-To: <20181003215350.3550926-1-taoren@fb.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 7 Oct 2018 23:03:23 +0200
-Message-ID: <CACRpkdbbUO9_VOtnZL+Xf_0nTTgSruaaPOLnvZ4M+NQfPLzvWQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clocksource/drivers/fttmr010: fix invalid interrupt
- register access
-To:     taoren@fb.com
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Yu Lei <mine260309@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-aspeed@lists.ozlabs.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+References: <cover.1538873915.git.rfreire@redhat.com> <CAH2r5muEpTd4xG7oWV5BdA12AOogqscEnFdbUri9C=MFHrN_gQ@mail.gmail.com>
+ <9006BE8A-38BB-4249-BEBA-C0DB34560885@redhat.com>
+In-Reply-To: <9006BE8A-38BB-4249-BEBA-C0DB34560885@redhat.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sun, 7 Oct 2018 16:06:35 -0500
+Message-ID: <CAH2r5msPHc4qup7W=9Pt3PTATtEAN8QcgXQ8Y3r1mZdq1=T7xw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] CIFS: Info-level log support, print message when
+ attempting mount.
+To:     rfreire@redhat.com
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Pavel Shilovsky <piastryyy@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 11:54 PM Tao Ren <taoren@fb.com> wrote:
-
-> TIMER_INTR_MASK register (Base Address of Timer + 0x38) is not designed
-> for masking interrupts on ast2500 chips, and it's not even listed in
-> ast2400 datasheet, so it's not safe to access TIMER_INTR_MASK on aspeed
-> chips.
+On Sun, Oct 7, 2018 at 3:27 PM Rodrigo Freire <rfreire@redhat.com> wrote:
 >
-> Similarly, TIMER_INTR_STATE register (Base Address of Timer + 0x34) is
-> not interrupt status register on ast2400 and ast2500 chips. Although
-> there is no side effect to reset the register in fttmr010_common_init(),
-> it's just misleading to do so.
+> Thanks Steve! Sorry for overlooking it, whoops.
 >
-> Besides, "count_down" is renamed to "is_aspeed" in "fttmr010" structure,
-> and more comments are added so the code is more readble.
+> One more question; what=E2=80=99s your/community opinion on rewriting the=
+ existing pr_notice to the new cifs_info?
 >
-> Signed-off-by: Tao Ren <taoren@fb.com>
-> ---
-> Changes in v2:
->   - "count_down" is renamed to "is_aspeed" in "fttmr010" structure.
->   - more comments are added to make the code more readable.
+> I could happily retrofit it.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I don't have a strong opinion. The four callers could be changed, but
+my gut reaction
+is that it is a much higher priority to add useful dynamic tracepoints
+(ftrace ie trace-cmd)
+to cifs to make it easier to debug real customer problems that are
+currently awkward to
+debug.   By comparison, even ext4 has over 100 dynamic tracepoints, but lar=
+ger
+file systems like XFS has 500 (!), and nfs (including SunRPC) has about 100=
+.
 
-Yours,
-Linus Walleij
+My guess is that going from our current 28 dynamic trace points (in
+cifs.ko) to double
+that (at least) will happen as developers add tracepoints to help them
+debug real
+problems (and of course it will help developers working on future problems =
+even
+more ...)
+
+
+> > On 7 Oct 2018, at 15:59, Steve French <smfrench@gmail.com> wrote:
+> >
+> > Merged into cifs-2.6.git for-next
+> >
+> > Made a trivial tab/space correction in the patch (pointed out by
+> > checkpatch) and then added a trivial followon patch to address a
+> > comment/style (trivial)
+> > issue pointed out by checkpatch and to add a little more detailed
+> > comments about generally when to use each debug function.  If any
+> > objections let me know.
+> >
+> >
+> >> On Sun, Oct 7, 2018 at 10:21 AM Rodrigo Freire <rfreire@redhat.com> wr=
+ote:
+> >>
+> >> Hi Steve,
+> >> From our conversation over v2, I came out with this v3 patch, which I =
+broke
+> >> in two commits:
+> >>
+> >> * The first commit in cifs_debug.h, creating the cifs_info() function.
+> >>  - The aim of this commit is to allow to the developer to be able to p=
+rint
+> >>    informational-level data without having to use pr_info, pr_notice e=
+tc,
+> >>    in line with other filesystems.
+> >>    . One interesting and noteworthy feature of cifs_info() is that it =
+is
+> >>      transparent to the CIFS_DEBUG config state, either in "y" or "n".
+<snip>
+
+
+--=20
+Thanks,
+
+Steve
