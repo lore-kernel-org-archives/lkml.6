@@ -2,182 +2,267 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBCCC65C30
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2F5C65C30
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4009A2064A
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:11:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4009A2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
+	by mail.kernel.org (Postfix) with ESMTP id 1E9442087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:18:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9442087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbeJGQSP (ORCPT
+        id S1726944AbeJGQYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:18:15 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:33305 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbeJGQSP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 12:18:15 -0400
-Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MCb2L-1g0alP1ygF-009hK7; Sun, 07 Oct 2018 11:11:04 +0200
-Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MCb2L-1g0alP1ygF-009hK7; Sun, 07 Oct 2018 11:11:04 +0200
-Subject: Re: [RFC v4 1/1] ns: add binfmt_misc to the user namespace
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, Dmitry Safonov <dima@arista.com>,
-        containers@lists.linux-foundation.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-References: <20181006193546.29340-1-laurent@vivier.eu>
- <20181006193546.29340-2-laurent@vivier.eu>
- <20181007050224.GA3035@mail.hallyn.com>
-From:   Laurent Vivier <laurent@vivier.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0d96603a-f739-ca12-eea8-5552d9c6a1fd@vivier.eu>
-Date:   Sun, 7 Oct 2018 11:11:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sun, 7 Oct 2018 12:24:53 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55438 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbeJGQYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 12:24:52 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id MhW8C87-EVbY; Sun,  7 Oct 2018 11:18:11 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 882651EC0496;
+        Sun,  7 Oct 2018 11:18:11 +0200 (CEST)
+Date:   Sun, 7 Oct 2018 11:18:06 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     gcc@gcc.gnu.org, Richard Biener <rguenther@suse.de>,
+        Michael Matz <matz@suse.de>
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org
+Subject: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181007091805.GA30687@zn.tnic>
+References: <20181003213100.189959-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <20181007050224.GA3035@mail.hallyn.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UQR9P06QS6m7HAMwk7fFt47FCHvBBRqCiBbx4OnMBJBEDT762hF
- kt60xsCj7EU/Pwm8YJK+K+bgLX1ZdDc0BlxzSgYkyS5rPVvxogBm4FtjB2rGbmDX1LGGdOm
- zpAwDj5SxrXYGbrEEnb/wvwmuiwDyN+57KJ1CNPZxUg8560NUZhktzUj52AUnjaTcDq2JW1
- vAWlvYZtepQcSuYQeqXtw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:e5yJX/G5PnQ=:FA28uddt6x5K4EDsIxB43o
- 4PWQ0Zuz3SxooEF2zmperNhT4nhbxcuq90sumIjkVi5FEwcMKusy3x7wYUWgebM04EYz8P0qp
- nTaMwVQKOlBphmPk8ZSsSjQAtzQtQOMif7aRywXuZ68KKSGjVLiTdIEqNf0qRbfls9pjxogdg
- vzeBHzUiEjhn+7q8t2GI90Db9I2zZ/LTfETB6R88BuwYXGKkP+iq9tN2BDfooo9WJCH2SVecL
- 5UjmSEzvClBUt6kj59HauAy8PxJpZB1uK3h4riUKNLGwEWsPrDFhq/inlYh24ZYHX2D/bDpyR
- wePudQzQZTSan3q0XYGwL1Er32TxJ+H2/FMzhsW7asVBAEZOoMYu4JXHkTusugk7kyHDVasCm
- ulmOdnL2S7Dpw/wDwLdzzV9u6A8Xpkaso3zI71LPjgAA9Qo/nV0MsAj7SATvq/R3abzHr+Wqr
- 7QPhxxVBxSHtMeIGQWfcv8Kk2MSY7hxFLxiWN4BUng0RjlS2mMiQyJVAmwMxA2BtjyJQWMJNa
- oM/9L4+cDqV+HFg3kE/WtZb7KfsZuSDioSasR3qEfvNZp/QM7hoVJZIHxW7mmYBxFxf2pzWNQ
- h+J1fFLTqDv0G9pbhlFebAUDCznadKryRsqxCPRV9khbs3anz2AaB1rf1UzWxuSQ2niDki4qn
- +cWrx7IF6FAK13vrmI1PI0oFFw3A+Ntkz5MyrDN0CpeJjOLmVC1z4QS3H+SkA/kFeDUBjW8qi
- UnnNQC5lcB25iW2W
+Content-Disposition: inline
+In-Reply-To: <20181003213100.189959-1-namit@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 07/10/2018 à 07:02, Serge E. Hallyn a écrit :
-> On Sat, Oct 06, 2018 at 09:35:46PM +0200, Laurent Vivier wrote:
->> This patch allows to have a different binfmt_misc configuration
->> for each new user namespace. By default, the binfmt_misc configuration
->> is the one of the previous level, but if the binfmt_misc filesystem is
->> mounted in the new namespace a new empty binfmt instance is created and
->> used in this namespace.
->>
->> For instance, using "unshare" we can start a chroot of an another
->> architecture and configure the binfmt_misc interpreter without being root
->> to run the binaries in this chroot.
->>
->> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+Hi people,
+
+this is an attempt to see whether gcc's inline asm heuristic when
+estimating inline asm statements' cost for better inlining can be
+improved.
+
+AFAIU, the problematic arises when one ends up using a lot of inline
+asm statements in the kernel but due to the inline asm cost estimation
+heuristic which counts lines, I think, for example like in this here
+macro:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/include/asm/cpufeature.h#n162
+
+the resulting code ends up not inlining the functions themselves which
+use this macro. I.e., you see a CALL <function> instead of its body
+getting inlined directly.
+
+Even though it should be because the actual instructions are only a
+couple in most cases and all those other directives end up in another
+section anyway.
+
+The issue is explained below in the forwarded mail in a larger detail
+too.
+
+Now, Richard suggested doing something like:
+
+ 1) inline asm ("...")
+ 2) asm ("..." : : : : <size-expr>)
+ 3) asm ("...") __attribute__((asm_size(<size-expr>)));
+
+with which user can tell gcc what the size of that inline asm statement
+is and thus allow for more precise cost estimation and in the end better
+inlining.
+
+And FWIW 3) looks pretty straight-forward to me because attributes are
+pretty common anyways.
+
+But I'm sure there are other options and I'm sure people will have
+better/different ideas so feel free to chime in.
+
+Thx.
+
+On Wed, Oct 03, 2018 at 02:30:50PM -0700, Nadav Amit wrote:
+> This patch-set deals with an interesting yet stupid problem: kernel code
+> that does not get inlined despite its simplicity. There are several
+> causes for this behavior: "cold" attribute on __init, different function
+> optimization levels; conditional constant computations based on
+> __builtin_constant_p(); and finally large inline assembly blocks.
 > 
-> Hi,
+> This patch-set deals with the inline assembly problem. I separated these
+> patches from the others (that were sent in the RFC) for easier
+> inclusion. I also separated the removal of unnecessary new-lines which
+> would be sent separately.
 > 
-> quick question below,
+> The problem with inline assembly is that inline assembly is often used
+> by the kernel for things that are other than code - for example,
+> assembly directives and data. GCC however is oblivious to the content of
+> the blocks and assumes their cost in space and time is proportional to
+> the number of the perceived assembly "instruction", according to the
+> number of newlines and semicolons. Alternatives, paravirt and other
+> mechanisms are affected, causing code not to be inlined, and degrading
+> compilation quality in general.
 > 
->> ---
->>  fs/binfmt_misc.c               | 99 ++++++++++++++++++++++++----------
->>  include/linux/user_namespace.h | 13 +++++
->>  kernel/user.c                  | 13 +++++
->>  kernel/user_namespace.c        |  7 +++
->>  4 files changed, 104 insertions(+), 28 deletions(-)
->>
->> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
->> index aa4a7a23ff99..1beefafcb416 100644
->> --- a/fs/binfmt_misc.c
-...
->> @@ -725,12 +736,16 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->>  
->>  	if (e->flags & MISC_FMT_OPEN_FILE) {
->>  		struct file *f;
->> +		const struct cred *old_cred;
->>  
->> +		old_cred = override_creds(file->f_cred);
+> The solution that this patch-set carries for this problem is to create
+> an assembly macro, and then call it from the inline assembly block.  As
+> a result, the compiler sees a single "instruction" and assigns the more
+> appropriate cost to the code.
 > 
-> What exactly is this aiming to do?
+> To avoid uglification of the code, as many noted, the macros are first
+> precompiled into an assembly file, which is later assembled together
+> with the C files. This also enables to avoid duplicate implementation
+> that was set before for the asm and C code. This can be seen in the
+> exception table changes.
+> 
+> Overall this patch-set slightly increases the kernel size (my build was
+> done using my Ubuntu 18.04 config + localyesconfig for the record):
+> 
+>    text	   data	    bss	    dec	    hex	filename
+> 18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
+> 18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
+> 
+> The number of static functions in the image is reduced by 379, but
+> actually inlining is even better, which does not always shows in these
+> numbers: a function may be inlined causing the calling function not to
+> be inlined.
+> 
+> I ran some limited number of benchmarks, and in general the performance
+> impact is not very notable. You can still see >10 cycles shaved off some
+> syscalls that manipulate page-tables (e.g., mprotect()), in which
+> paravirt caused many functions not to be inlined. In addition this
+> patch-set can prevent issues such as [1], and improves code readability
+> and maintainability.
+> 
+> Update: Rasmus recently caused me (inadvertently) to become paranoid
+> about the dependencies. To clarify: if any of the headers changes, any c
+> file which uses macros that are included in macros.S would be fine as
+> long as it includes the header as well (as it should). Adding an
+> assertion to check this is done might become slightly ugly, and nobody
+> else is concerned about it. Another minor issue is that changes of
+> macros.S would not trigger a global rebuild, but that is pretty similar
+> to changes of the Makefile that do not trigger a rebuild.
+> 
+> [1] https://patchwork.kernel.org/patch/10450037/
+> 
+> v8->v9: * Restoring the '-pipe' parameter (Rasmus)
+> 	* Adding Kees's tested-by tag (Kees)
+> 
+> v7->v8:	* Add acks (Masahiro, Max)
+> 	* Rebase on 4.19 (Ingo)
+> 
+> v6->v7: * Fix context switch tracking (Ingo)
+> 	* Fix xtensa build error (Ingo)
+> 	* Rebase on 4.18-rc8
+> 
+> v5->v6:	* Removing more code from jump-labels (PeterZ)
+> 	* Fix build issue on i386 (0-day, PeterZ)
+> 
+> v4->v5:	* Makefile fixes (Masahiro, Sam)
+> 
+> v3->v4: * Changed naming of macros in 2 patches (PeterZ)
+> 	* Minor cleanup of the paravirt patch
+> 
+> v2->v3: * Several build issues resolved (0-day)
+> 	* Wrong comments fix (Josh)
+> 	* Change asm vs C order in refcount (Kees)
+> 
+> v1->v2:	* Compiling the macros into a separate .s file, improving
+> 	  readability (Linus)
+> 	* Improving assembly formatting, applying most of the comments
+> 	  according to my judgment (Jan)
+> 	* Adding exception-table, cpufeature and jump-labels
+> 	* Removing new-line cleanup; to be submitted separately
+> 
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Alok Kataria <akataria@vmware.com>
+> Cc: Christopher Li <sparse@chrisli.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jan Beulich <JBeulich@suse.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: linux-sparse@vger.kernel.org
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: virtualization@lists.linux-foundation.org
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: x86@kernel.org
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: linux-xtensa@linux-xtensa.org
+> 
+> Nadav Amit (10):
+>   xtensa: defining LINKER_SCRIPT for the linker script
+>   Makefile: Prepare for using macros for inline asm
+>   x86: objtool: use asm macro for better compiler decisions
+>   x86: refcount: prevent gcc distortions
+>   x86: alternatives: macrofy locks for better inlining
+>   x86: bug: prevent gcc distortions
+>   x86: prevent inline distortion by paravirt ops
+>   x86: extable: use macros instead of inline assembly
+>   x86: cpufeature: use macros instead of inline assembly
+>   x86: jump-labels: use macros instead of inline assembly
+> 
+>  Makefile                               |  9 ++-
+>  arch/x86/Makefile                      |  7 ++
+>  arch/x86/entry/calling.h               |  2 +-
+>  arch/x86/include/asm/alternative-asm.h | 20 ++++--
+>  arch/x86/include/asm/alternative.h     | 11 +--
+>  arch/x86/include/asm/asm.h             | 61 +++++++---------
+>  arch/x86/include/asm/bug.h             | 98 +++++++++++++++-----------
+>  arch/x86/include/asm/cpufeature.h      | 82 ++++++++++++---------
+>  arch/x86/include/asm/jump_label.h      | 77 ++++++++------------
+>  arch/x86/include/asm/paravirt_types.h  | 56 +++++++--------
+>  arch/x86/include/asm/refcount.h        | 74 +++++++++++--------
+>  arch/x86/kernel/macros.S               | 16 +++++
+>  arch/xtensa/kernel/Makefile            |  4 +-
+>  include/asm-generic/bug.h              |  8 +--
+>  include/linux/compiler.h               | 56 +++++++++++----
+>  scripts/Kbuild.include                 |  4 +-
+>  scripts/mod/Makefile                   |  2 +
+>  17 files changed, 331 insertions(+), 256 deletions(-)
+>  create mode 100644 arch/x86/kernel/macros.S
+> 
+> -- 
+> 2.17.1
+> 
 
-See comment from the version 1:
+-- 
+Regards/Gruss,
+    Boris.
 
-https://lkml.org/lkml/2018/10/1/377
-
-"This looks wrong. A write handler's behavior should not depend on the
-namespace of the process that is using it.
-
-Ideally, the affected namespace should depend on the file you're writing to.
-If that's not possible, the affected namespace should at least be the
-namespace of the process that opened the file." -- Jann Horn
-
-And from version 2:
-
-https://lkml.org/lkml/2018/10/3/872
-
-"Something else: bm_register_write() currently calls into open_exec(),
-which uses the credentials of current. That's not really allowed in
-this context - but so far, it's not a big deal because only
-init-namespace root can reach this code. Before you expose this stuff
-to unprivileged userspace, this needs to get fixed; perhaps by
-wrapping the open_exec() call in override_creds(file->f_cred) and
-revert_creds()."  -- Jann Horn
-
-Thanks,
-Laurent
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
