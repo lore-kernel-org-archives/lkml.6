@@ -2,106 +2,102 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96271C65C30
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 08:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D84C65C30
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 08:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E3E20882
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 08:32:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E3E20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 93ABE20882
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 08:32:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="k+a4vqGD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93ABE20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeJGPih (ORCPT
+        id S1727985AbeJGPi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 11:38:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47932 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726402AbeJGPih (ORCPT
+        Sun, 7 Oct 2018 11:38:57 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46752 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbeJGPi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 11:38:37 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w978TLdL062845
-        for <linux-kernel@vger.kernel.org>; Sun, 7 Oct 2018 04:32:05 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2myah3yp64-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 04:32:04 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Sun, 7 Oct 2018 09:32:03 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 7 Oct 2018 09:32:00 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w978VxB966977954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 7 Oct 2018 08:31:59 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99AECAE045;
-        Sun,  7 Oct 2018 11:30:46 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 06BBFAE04D;
-        Sun,  7 Oct 2018 11:30:45 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.161])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sun,  7 Oct 2018 11:30:44 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Sun, 07 Oct 2018 11:31:56 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, stable@vger.kernel.org
-Subject: [PATCH] percpu: stop leaking bitmap metadata blocks
-Date:   Sun,  7 Oct 2018 11:31:51 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18100708-0008-0000-0000-0000027C0E21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100708-0009-0000-0000-000021E53EB9
-Message-Id: <1538901111-22823-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810070089
+        Sun, 7 Oct 2018 11:38:57 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x3-v6so1525039lji.13
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 01:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3a9ymhh2MnehDz22UnwDjqto72Z95nUBhKDlTDnID8g=;
+        b=k+a4vqGDl6cynYjlMFuEfK3PjVSl5bzbDV/AEA7be+sI6v25mhtUBvoB/VzV3NmavD
+         3B1+4E/izQzt5/B9cfy7vABa3+Ki3zpjq0e5HtIkOr2xNxG+3UYamFGupg5cbejpOKvW
+         QroQGuP+D6UsXuOSEmzuC/9L/dKu26mnaxXq/8+zkj2X4LQgSJmH8XfpyB9HasIqtv8W
+         MSGxEk76Nbl2SnDWpAux8BCQcjEcc50RbswOWdnSWKEf7FTe1V4nmUPf+exmqpwV9qPf
+         p7YMu9XroHKk4EaUs66X3jbdqu0/5+5TGPsPejFhP/R4E1ac2ib3qjeuHuBcbLEjO1qf
+         3p8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3a9ymhh2MnehDz22UnwDjqto72Z95nUBhKDlTDnID8g=;
+        b=qd+qw/fkevv2fcqpgfYhL0aRL5ljVI6NJee5RMfFvkSHtibBIDkAOFl/AtLOxEFfLB
+         +0MZ/fmnB0SOQshZmzz54omakbfpmXhXEIi5VkWKvPz+4me2DBwiiHoim285kaVHlJLn
+         45ns6yFLNgZ54G/w/peOn7wKSSRJgsSfOCOWpHJbI4Uy6kZecX/siPRj/ic+9edw3IT/
+         zqYBSh9ftvlq1gtD6uVFWGPrpIYJrhowm72TDyTKQdyQpCIaSqL3YcHJ7NDv5UKH8rS0
+         DaHWuFV9T/iUOJWhe5OIxlZvAEGYNPr1/McQ1uYgdtSbnh4b86hFTYyWdUerQoRZHHef
+         zQQA==
+X-Gm-Message-State: ABuFfoiJ7piFzjXxCOGepupOeE2CXHOxsozHQXV4cJN8lPCVgSoc6SLb
+        wfVok7WQBZfKfqEQ9lRe09RS0g==
+X-Google-Smtp-Source: ACcGV63Fdj5A9pbNxA4fhNXEf50JCMctJljujIVWvk236mMlrax8HX3JqmSteZ0VA1vTnCO5gBfI6Q==
+X-Received: by 2002:a2e:47:: with SMTP id 68-v6mr12516071lja.123.1538901144408;
+        Sun, 07 Oct 2018 01:32:24 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.84.205])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm3114284lji.75.2018.10.07.01.32.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Oct 2018 01:32:23 -0700 (PDT)
+Subject: Re: [PATCH net 1/2] net/smc: use __aigned_u64 for 64-bit smc_diag
+ fields
+To:     Eugene Syromiatnikov <esyr@redhat.com>, netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        Hans Wippel <hwippel@linux.ibm.com>
+References: <20181006203222.GA11338@asgard.redhat.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5e806c98-e313-6b47-92d1-65ab7f81589b@cogentembedded.com>
+Date:   Sun, 7 Oct 2018 11:32:24 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181006203222.GA11338@asgard.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-introduced bitmap metadata blocks. These metadata blocks are allocated
-whenever a new chunk is created, but they are never freed. Fix it.
+Hello!
 
-Fixes: ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
+On 10/6/2018 11:32 PM, Eugene Syromiatnikov wrote:
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org
----
- mm/percpu.c | 1 +
- 1 file changed, 1 insertion(+)
+> Commit v4.19-rc1~140^2~507^2~1 ("net/smc: add SMC-D diag support")
 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index d21cb13..25104cd 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1212,6 +1212,7 @@ static void pcpu_free_chunk(struct pcpu_chunk *chunk)
- {
- 	if (!chunk)
- 		return;
-+	pcpu_mem_free(chunk->md_blocks);
- 	pcpu_mem_free(chunk->bound_map);
- 	pcpu_mem_free(chunk->alloc_map);
- 	pcpu_mem_free(chunk);
--- 
-2.7.4
+    You have the SHA1 below in the "Fixes:" tag, need the same 12 digits here.
 
+> introduced new UAPI-exposed structure, struct smcd_diag_dmbinfo.
+> However, it's not usable by compat binaries, as it has different
+> layout there.  Probably, the most straightforward fix that will avoid
+> the similar issues in the future is to use __aligned_u64 for 64-bit
+> fields.
+> 
+> Fixes: 4b1b7d3b30a6 ("net/smc: add SMC-D diag support")
+> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+[...]
+
+MBR, Sergei
