@@ -2,99 +2,127 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FF4C6787D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0845C6787D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CF72088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:09:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CF72088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 79B962087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 22:39:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QO2U1Kh7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B962087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726128AbeJHFRz (ORCPT
+        id S1726496AbeJHFea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 01:17:55 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38687 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeJHFRz (ORCPT
+        Mon, 8 Oct 2018 01:34:30 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41744 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbeJHFea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 01:17:55 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b5-v6so9152723plr.5;
-        Sun, 07 Oct 2018 15:09:15 -0700 (PDT)
+        Mon, 8 Oct 2018 01:34:30 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l41-v6so6624132qtl.8
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 15:25:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PVuOoMPxZx+0WC0U+AcmhsryKNgOQdjSQpTGaLhVVhA=;
+        b=QO2U1Kh7VtHfJ7HJgkaatGeaabGdJtFp69tFmJ62ATu4g/DtgOZ2OCPbBjgSuKZ9GZ
+         3nbndPKhzdusH6HaNay1vRwUMsjjrRqREWj4GIwWLrcTV+IUJ8ztIuZJ1/R4zevEM038
+         /8x17X2nZccEnXmqcKMYuT/dkVLi7XIO8wVkpLnJGWdovbPvC3gxp6Ka5SXabddG9S9y
+         S6LDNsgV0YZ+WblfNpylqJRHF/L6hLDarqrjzR7R+J+xGL6Wv9LCgVZMXVVwzluS5lUv
+         gB/Aw+Lsa55LrU6o8cghdbbWqxJGQqSAH7GSf+a4T39iTthMDRw7RbDYESU0iU2hLQBH
+         MKgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YZ7BXXiQMt6Ugf4OF7z3nfT027Rh0chNaueHXupqcmc=;
-        b=fgng3Aa5N4KTwtNo4SjNLoFneMk+NmcTPVlHb/rsB3gcOS6j7v3WWGxkol56jpHPiL
-         tygqhgP7htYkZfmDsDN9MQFuuI2qDW5AhLKaE2Na+lJQBYAng2Jm7rt4/Kddmw5pf/Tg
-         H16cH31mg0JXEM4qvdLpsho7wG6vKUA30nBYegNZMN0qD4Q/IdQxBW7EQD5pAIBpN2sT
-         /riWnrwV50jO8zdKX9vrfxofnhYfsKidhmwNmB1YZkYiLbY6Jn7EoUZCjLIfOsAF+0pC
-         DJDcMjfGMJua+GayGl28GSrOIq7z/nd/GZ8IysXaJchDRVF9xldH5XNnj0CmZZfS/w0C
-         ljaA==
-X-Gm-Message-State: ABuFfogfkm6+7r4OOqMGzTzpluc89tZ4WczYGl7rBV2UgrxBCuG7ae2C
-        5Ttqh4j7ONOK2Lknx7nDwZ4=
-X-Google-Smtp-Source: ACcGV63FvN0qjpk+jcYa0hNr7jXJwlZ6BOfBMVpZ5yH0yRFgVWQRDo1uQHdon54zdpW8uD3G9+1fAg==
-X-Received: by 2002:a17:902:48:: with SMTP id 66-v6mr10559757pla.7.1538950155541;
-        Sun, 07 Oct 2018 15:09:15 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:461d])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm26607222pfv.33.2018.10.07.15.09.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Oct 2018 15:09:14 -0700 (PDT)
-Date:   Sun, 7 Oct 2018 15:09:11 -0700
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] percpu: stop leaking bitmap metadata blocks
-Message-ID: <20181007220911.GA3425@dennisz-mbp.dhcp.thefacebook.com>
-References: <1538901111-22823-1-git-send-email-rppt@linux.vnet.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PVuOoMPxZx+0WC0U+AcmhsryKNgOQdjSQpTGaLhVVhA=;
+        b=auHbraeb6h1BkWq/e8cohZqWWlPUZGXS/05pciojJ7MQgPtQPn2woIWayKUB+jCFZE
+         Bn8cdUlSnsyYuuXW4ei668ilvgKwbC1oL8h7zFcUTMSyiM9ZQON4x1k+o+fOccEUYZCN
+         YpvSP3vBNAjFMZgmpZjj4WLmtzKmnAnJJq45vSQQ5yA0Ac0mU7I0cuH0OVRv9ScH8KxB
+         u5j4z4vNFgILc30SbsvLTFMB3ZH7dJbKqQVwEUZGVD++2EncoGdKcSVZgYJIhz0m+5Uq
+         kLtkxgwpdy25Rm82GmHE1CRlcRTRL1LR7xWUZ7fxlcMAhOPSO3cffH2+18SvWJGKza94
+         B8rQ==
+X-Gm-Message-State: ABuFfojmVuAe97UzpnntngI12zZToWqua/G0FCDPEq+bb5xtpibGSAIf
+        gWn4sj/KCHJZp9OpNefWZ3vXeqBSUi5dqpFUF9Wj3A==
+X-Google-Smtp-Source: ACcGV63C6A9GCt6GQ/xUd9l0J2EE0sgxlGITdWRNWiwQwKWtk88NAjD5J8axrOkWQFzdUHBCMWefX5McIlR9eiI2zTs=
+X-Received: by 2002:a0c:9213:: with SMTP id a19mr561040qva.124.1538951147626;
+ Sun, 07 Oct 2018 15:25:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538901111-22823-1-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1538861738.4088.5.camel@HansenPartnership.com> <1538861799.4088.6.camel@HansenPartnership.com>
+In-Reply-To: <1538861799.4088.6.camel@HansenPartnership.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Mon, 8 Oct 2018 08:25:35 +1000
+Message-ID: <CAPM=9tz3Z=vD6qWUL2boZGEAgMeC_o9euBXFu2V58RHOn6gR9g@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the ambiguity
+ about collecting email addresses
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
-
-On Sun, Oct 07, 2018 at 11:31:51AM +0300, Mike Rapoport wrote:
-> The commit ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-> introduced bitmap metadata blocks. These metadata blocks are allocated
-> whenever a new chunk is created, but they are never freed. Fix it.
-> 
-> Fixes: ca460b3c9627 ("percpu: introduce bitmap metadata blocks")
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: stable@vger.kernel.org
+On Sun, 7 Oct 2018 at 07:36, James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> From 4a614e9440148894207bef5bf69e74071baceb3b Mon Sep 17 00:00:00 2001
+> From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Date: Sat, 6 Oct 2018 14:21:56 -0700
+> Subject: [PATCH 1/2] code-of-conduct: Fix the ambiguity about collecting =
+email
+>  addresses
+>
+> The current code of conduct has an ambiguity in the it considers publishi=
+ng
+> private information such as email addresses unacceptable behaviour.  Sinc=
+e
+> the Linux kernel collects and publishes email addresses as part of the pa=
+tch
+> process, add an exception clause for email addresses ordinarily collected=
+ by
+> the project to correct this ambiguity.
+>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 > ---
->  mm/percpu.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index d21cb13..25104cd 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -1212,6 +1212,7 @@ static void pcpu_free_chunk(struct pcpu_chunk *chunk)
->  {
->  	if (!chunk)
->  		return;
-> +	pcpu_mem_free(chunk->md_blocks);
->  	pcpu_mem_free(chunk->bound_map);
->  	pcpu_mem_free(chunk->alloc_map);
->  	pcpu_mem_free(chunk);
+>  Documentation/process/code-of-conduct.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/pr=
+ocess/code-of-conduct.rst
+> index ab7c24b5478c..aa40e34e7785 100644
+> --- a/Documentation/process/code-of-conduct.rst
+> +++ b/Documentation/process/code-of-conduct.rst
+> @@ -31,7 +31,7 @@ Examples of unacceptable behavior by participants inclu=
+de:
+>  * Trolling, insulting/derogatory comments, and personal or political att=
+acks
+>  * Public or private harassment
+>  * Publishing others=E2=80=99 private information, such as a physical or =
+electronic
+> -  address, without explicit permission
+> +  address not ordinarily collected by the project, without explicit perm=
+ission
+>  * Other conduct which could reasonably be considered inappropriate in a
+>    professional setting
+>
 
-Ah a bit of a boneheaded miss on my part.. Thanks for catching this!
-I've applied it to for-4.19-fixes.
+I agree we want something like this, the question is whether we want
+to change the CoC text from upstream, or clarify it in a separate
+section.
 
-Thanks,
-Dennis
+This isn't a legally binding license or anything, but departing from
+the upstream wording makes it tricker to merge new upstream versions
+if they are considered appropriate.
+
+Dave.
