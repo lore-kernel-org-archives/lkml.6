@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C185C65C31
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85851C65C30
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC46D2088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:07:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC46D2088F
+	by mail.kernel.org (Postfix) with ESMTP id 55A192088F
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 06:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A192088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeJGNNu (ORCPT
+        id S1728024AbeJGNOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 09:13:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54818 "EHLO
+        Sun, 7 Oct 2018 09:14:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeJGNNu (ORCPT
+        with ESMTP id S1726308AbeJGNOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 09:13:50 -0400
+        Sun, 7 Oct 2018 09:14:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3762D08;
-        Sun,  7 Oct 2018 06:07:39 +0000 (UTC)
-Date:   Sun, 7 Oct 2018 08:07:37 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E16ED08;
+        Sun,  7 Oct 2018 06:07:58 +0000 (UTC)
+Date:   Sun, 7 Oct 2018 08:07:55 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY/Serial fixes for 4.19-rc7
-Message-ID: <20181007060737.GB13878@kroah.com>
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 4.19-rc7 - take 2
+Message-ID: <20181007060755.GA13996@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -51,32 +49,55 @@ The following changes since commit 17b57b1883c1285f3d0dc2266e8f79286a7bef38:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-4.19-rc7
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-4.19-rc7
 
-for you to fetch changes up to 5b162cc4ac27ba76e576abc9090c54cf90a17980:
+for you to fetch changes up to eafa717bc145963c944bb0a64d16add683861b35:
 
-  Revert "serial: sh-sci: Allow for compressed SCIF address" (2018-10-02 14:38:16 -0700)
+  thunderbolt: Initialize after IOMMUs (2018-10-02 10:51:16 -0700)
 
 ----------------------------------------------------------------
-Serial driver fixes for 4.19-rc7
+Char/Misc fixes for 4.19-rc7
 
-Here are 3 small serial driver fixes for 4.19-rc7
-  - 2 sh-sci bugfixes for reported issues
-  - a revert of the PM handling for the 8250_dw code
+Here are 8 small fixes for some char/misc driver issues
+
+Included here are:
+	- fpga driver fixes
+	- thunderbolt bugfixes
+	- firmware core revert/fix
+	- hv core fix
+	- hv tool fix
 
 All of these have been in linux-next with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
-      Revert "serial: sh-sci: Allow for compressed SCIF address"
+Alan Tull (3):
+      fpga: do not access region struct after fpga_region_unregister
+      fpga: bridge: fix obvious function documentation error
+      docs: fpga: document fpga manager flags
 
-Guenter Roeck (1):
-      Revert "serial: 8250_dw: Fix runtime PM handling"
+Bjorn Andersson (1):
+      firmware: Always initialize the fw_priv list object
 
- drivers/tty/serial/8250/8250_dw.c |  4 ---
- drivers/tty/serial/sh-sci.c       | 56 ++++++++++++++++++++++++++++-----------
- include/linux/serial_sci.h        |  1 +
- 3 files changed, 42 insertions(+), 19 deletions(-)
+Dexuan Cui (1):
+      Drivers: hv: vmbus: Use get/put_cpu() in vmbus_connect()
+
+Mika Westerberg (2):
+      thunderbolt: Do not handle ICM events after domain is stopped
+      thunderbolt: Initialize after IOMMUs
+
+Vitaly Kuznetsov (1):
+      tools: hv: fcopy: set 'error' in case an unknown operation was requested
+
+ Documentation/driver-api/fpga/fpga-mgr.rst |  5 +++
+ drivers/base/firmware_loader/main.c        |  7 +++--
+ drivers/fpga/dfl-fme-region.c              |  4 ++-
+ drivers/fpga/fpga-bridge.c                 |  2 +-
+ drivers/fpga/of-fpga-region.c              |  3 +-
+ drivers/hv/connection.c                    |  8 +++--
+ drivers/thunderbolt/icm.c                  | 49 ++++++++++++------------------
+ drivers/thunderbolt/nhi.c                  |  2 +-
+ include/linux/fpga/fpga-mgr.h              | 20 ++++++++----
+ tools/hv/hv_fcopy_daemon.c                 |  1 +
+ 10 files changed, 57 insertions(+), 44 deletions(-)
