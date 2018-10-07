@@ -2,80 +2,83 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BB2C6783B
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 19:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55429C65C1B
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 19:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5402088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 19:39:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5402088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E47442084D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 19:51:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47442084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeJHCrj (ORCPT
+        id S1728193AbeJHC7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 22:47:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54011 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbeJHCrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 22:47:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 31F76207C4; Sun,  7 Oct 2018 21:39:18 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EDFEC20703;
-        Sun,  7 Oct 2018 21:39:17 +0200 (CEST)
-Date:   Sun, 7 Oct 2018 21:39:18 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com>,
-        a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: BUG: workqueue lockup (4)
-Message-ID: <20181007193918.GC32272@piout.net>
-References: <0000000000005764090577a27486@google.com>
- <CACT4Y+ZAoLro6LHhaA2EuWF1nAWAA=NAVtpMammhspL4V2aMgw@mail.gmail.com>
+        Sun, 7 Oct 2018 22:59:36 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34621 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbeJHC7g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 22:59:36 -0400
+Received: by mail-vs1-f67.google.com with SMTP id v12-v6so10281677vsc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 12:51:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ws65oVmQ0nLwLcHDh8E3EGh6WixIQm2WOSvbSWj2JNI=;
+        b=iRj1VkYcOku0Q+Qb+He4REE4xidzZAa+/U0wX3IhFFt8UwlhW8g84Rao9EEZGN1Ese
+         ZGRsr6mz/Z4wK3SGoB+p0x9LYrHqpTjnKXtCJNXcsZ4F6/vfwdjlll/+tnD2Mth80les
+         WRlT6FxK1TXI8nheo5nlDftTYX9FR7VYEkWX+vbAy4Eq7srDf/1wVSQ8dAWEJrwuKMD4
+         iA20lv3WWncR2X2FRcaqDZyZhIYYUmEAyAP0biK7JZMZCuLf70Xninm321dZhGf8IbNw
+         J2g/Iw1Pt8dHEOqzyGJdkrw948xXhBZpShJCFyAPvpIM1hq96qBIgAQNhzgEEaBjqG+Q
+         Heuw==
+X-Gm-Message-State: ABuFfogbM99dZhx2C5e9h/zphgAonO3Z6DcLI6fQt0oO/xIGV9AeoxoF
+        NoKqXWDQTyda3kqhHw8ZokVhG9mQm7lbPxCrZ5TQZQoC
+X-Google-Smtp-Source: ACcGV62azAAHhPrM0/AJD/7z+AwPttnNAF6ZVWHap3Xj64QjijULBTGt0jkyt0DsCSk7DLXD610oXTHR/QyJs6Hbiec=
+X-Received: by 2002:a67:7b56:: with SMTP id w83mr6357541vsc.152.1538941874283;
+ Sun, 07 Oct 2018 12:51:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZAoLro6LHhaA2EuWF1nAWAA=NAVtpMammhspL4V2aMgw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1538861738.4088.5.camel@HansenPartnership.com> <1538861851.4088.7.camel@HansenPartnership.com>
+In-Reply-To: <1538861851.4088.7.camel@HansenPartnership.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 7 Oct 2018 21:51:02 +0200
+Message-ID: <CAMuHMdXVbda8cn8Yt=wA9ABQ9M=S-QM51NVMb6N_J3yBz3sTgQ@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
+ enforcement paragraph pending community discussion
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     ksummit-discuss@lists.linuxfoundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, Oct 6, 2018 at 11:37 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> Significant concern has been expressed about the responsibilities outlined in
+> the enforcement clause of the new code of conduct.  Since there is concern
+> that this becomes binding on the release of the 4.19 kernel, strip the
+> enforcement clauses to give the community time to consider and debate how this
+> should be handled.
+>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-On 07/10/2018 14:18:31+0200, Dmitry Vyukov wrote:
-> On Sun, Oct 7, 2018 at 2:15 PM, syzbot
-> <syzbot+08116743f8ad6f9a6de7@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14c5f491400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=08116743f8ad6f9a6de7
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14514a6e400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1025ebb9400000
-> 
-> The reproducer seems to be all about rtc. So +rtc maintainers.
-> 
+Fixes: 8a104f8b5867c682 ("Code of Conduct: Let's revamp it.")
 
-It seems to be that bug:
-http://patchwork.ozlabs.org/patch/898552/
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-I'm pretty sure the fix is not correct though and didn't have the time
-to work on a proper fix.
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
