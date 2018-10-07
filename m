@@ -2,142 +2,89 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60CDC00449
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 04:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B539C00449
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 04:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C49920882
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 04:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C49920882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4910620882
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 04:48:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4910620882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbeJGLs4 (ORCPT
+        id S1726559AbeJGLy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 07:48:56 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41384 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbeJGLs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 07:48:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Oct 2018 21:39:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,351,1534834800"; 
-   d="scan'208";a="76009866"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Oct 2018 21:39:51 -0700
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     rjw@rjwysocki.net, lenb@kernel.org, robert.moore@intel.com,
-        erik.schmauss@intel.com
-Cc:     pprakash@codeaurora.org, george.cherian@cavium.com,
-        linux-kernel@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] ACPI / CPPC: Add support for guaranteed performance
-Date:   Sat,  6 Oct 2018 21:39:45 -0700
-Message-Id: <20181007043945.19350-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 7 Oct 2018 07:54:56 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:33948 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726238AbeJGLy4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 07:54:56 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08991465|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.D-V7pfc_1538887695;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D-V7pfc_1538887695)
+          by smtp.aliyun-inc.com(10.147.42.135);
+          Sun, 07 Oct 2018 12:48:16 +0800
+Date:   Sun, 7 Oct 2018 12:48:15 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de, green.hu@gmail.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, c-sky_gcc_upstream@c-sky.com
+Subject: Re: [PATCH V7 00/20] C-SKY(csky) Linux Kernel Port
+Message-ID: <20181007044815.GA27049@guoren-Inspiron-7460>
+References: <cover.1538715563.git.ren_guo@c-sky.com>
+ <20181006200649.GL32759@asgard.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006200649.GL32759@asgard.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Continuous Performance Control Package can have guaranteed performance
-field. Add support to read guaranteed performance.
+On Sat, Oct 06, 2018 at 10:06:49PM +0200, Eugene Syromiatnikov wrote:
+> On Fri, Oct 05, 2018 at 01:41:42PM +0800, Guo Ren wrote:
+> > This is the 7th version patchset to add the Linux kernel port for
+> > C-SKY(csky) based on linux-4.19-rc3.
+> > 
+> > In this patchset some fixup patches are folded into original patch in
+> > order to make review clearly and reduce the patches' number for upstream
+> > patchset. The changelog is added in the every patch's commit-msg.
+> > 
+> > Here is the LTP test report for this patchset:
+> > (and add "V10 C-SKY(csky) Linux Kernel Driver" patchset)
+> > -----------------------------------------------
+> > Total Tests: 1298
+> > Total Skipped Tests: 280
+> > Total Failures: 11
+> > Kernel Version: 4.19.0-rc3+
+> > Machine Architecture: csky
+> > Hostname: buildroot
+> > -----------------------------------------------
+> > 
+> > This patchset adds architecture support to Linux for C-SKY's 32-bit embedded
+> > 
+> > There are two ABI versions with several CPU cores in this patchset:
+> >   ABIv1: ck610 (16-bit instruction, 32-bit data path, VIPT Cache ...)
+> >   ABIv2: ck807 ck810 ck860 (16/32-bit variable length instruction, PIPT Cache,
+> > 	 SMP ...)
+> > More information: http://en.c-sky.com
+> > The development repo: https://gitlab.com/c-sky/csky-linux
+> 
+> I'm sorry for my ignorance, but I'm struggling to find ISA reference/manual,
+> architecture programming manual, and System V ABI definition;
+> may I ask to give links to them?
+Here is the link: https://github.com/c-sky/csky-doc
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- Documentation/acpi/cppc_sysfs.txt |  2 ++
- drivers/acpi/cppc_acpi.c          | 10 ++++++++--
- include/acpi/cppc_acpi.h          |  1 +
- 3 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/acpi/cppc_sysfs.txt b/Documentation/acpi/cppc_sysfs.txt
-index f20fb445135d..812574d30717 100644
---- a/Documentation/acpi/cppc_sysfs.txt
-+++ b/Documentation/acpi/cppc_sysfs.txt
-@@ -22,6 +22,7 @@ $ ls -lR  /sys/devices/system/cpu/cpu0/acpi_cppc/
- /sys/devices/system/cpu/cpu0/acpi_cppc/:
- total 0
- -r--r--r-- 1 root root 65536 Mar  5 19:38 feedback_ctrs
-+-r--r--r-- 1 root root 65536 Mar  5 19:38 guaranteed_perf
- -r--r--r-- 1 root root 65536 Mar  5 19:38 highest_perf
- -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_freq
- -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_nonlinear_perf
-@@ -33,6 +34,7 @@ total 0
- 
- --------------------------------------------------------------------------------
- 
-+* guaranteed_perf : Guaranteed performance of this processor (abstract scale).
- * highest_perf : Highest performance of this processor (abstract scale).
- * nominal_perf : Highest sustained performance of this processor (abstract scale).
- * lowest_nonlinear_perf : Lowest performance of this processor with nonlinear
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index d9ce4b162e2c..5babb9402f11 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -153,6 +153,7 @@ __ATTR(_name, 0444, show_##_name, NULL)
- 	}								\
- 	define_one_cppc_ro(member_name)
- 
-+show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
- show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
-@@ -189,6 +190,7 @@ static struct attribute *cppc_attrs[] = {
- 	&nominal_perf.attr,
- 	&nominal_freq.attr,
- 	&lowest_freq.attr,
-+	&guaranteed_perf.attr,
- 	NULL
- };
- 
-@@ -1061,9 +1063,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
- {
- 	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
- 	struct cpc_register_resource *highest_reg, *lowest_reg,
--		*lowest_non_linear_reg, *nominal_reg,
-+		*lowest_non_linear_reg, *nominal_reg, *guaranteed_reg,
- 		*low_freq_reg = NULL, *nom_freq_reg = NULL;
--	u64 high, low, nom, min_nonlinear, low_f = 0, nom_f = 0;
-+	u64 high, low, guaranteed, nom, min_nonlinear, low_f = 0, nom_f = 0;
- 	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
- 	struct cppc_pcc_data *pcc_ss_data = NULL;
- 	int ret = 0, regs_in_pcc = 0;
-@@ -1079,6 +1081,7 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
- 	nominal_reg = &cpc_desc->cpc_regs[NOMINAL_PERF];
- 	low_freq_reg = &cpc_desc->cpc_regs[LOWEST_FREQ];
- 	nom_freq_reg = &cpc_desc->cpc_regs[NOMINAL_FREQ];
-+	guaranteed_reg = &cpc_desc->cpc_regs[GUARANTEED_PERF];
- 
- 	/* Are any of the regs PCC ?*/
- 	if (CPC_IN_PCC(highest_reg) || CPC_IN_PCC(lowest_reg) ||
-@@ -1107,6 +1110,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
- 	cpc_read(cpunum, nominal_reg, &nom);
- 	perf_caps->nominal_perf = nom;
- 
-+	cpc_read(cpunum, guaranteed_reg, &guaranteed);
-+	perf_caps->guaranteed_perf = guaranteed;
-+
- 	cpc_read(cpunum, lowest_non_linear_reg, &min_nonlinear);
- 	perf_caps->lowest_nonlinear_perf = min_nonlinear;
- 
-diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-index 8e0b8250a139..cf59e6210d27 100644
---- a/include/acpi/cppc_acpi.h
-+++ b/include/acpi/cppc_acpi.h
-@@ -104,6 +104,7 @@ enum cppc_regs {
-  * today.
-  */
- struct cppc_perf_caps {
-+	u32 guaranteed_perf;
- 	u32 highest_perf;
- 	u32 nominal_perf;
- 	u32 lowest_perf;
--- 
-2.17.1
-
+Best Regards
+ Guo Ren
