@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B99AC67869
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3397AC65C30
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C5AE2084D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5AE2084D
+	by mail.kernel.org (Postfix) with ESMTP id 03F2E2089D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F2E2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeJGQqJ (ORCPT
+        id S1727945AbeJGQqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:46:09 -0400
-Received: from mailoutvs18.siol.net ([185.57.226.209]:39604 "EHLO
+        Sun, 7 Oct 2018 12:46:13 -0400
+Received: from mailoutvs22.siol.net ([185.57.226.213]:39630 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725994AbeJGQqI (ORCPT
+        with ESMTP id S1725994AbeJGQqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 12:46:08 -0400
+        Sun, 7 Oct 2018 12:46:12 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id B083D520BC7;
-        Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id 8317C520BDE;
+        Sun,  7 Oct 2018 11:39:27 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id e1FTxHqgNsBP; Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
+        with ESMTP id CLUkU-rQORuV; Sun,  7 Oct 2018 11:39:27 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 0F0D2520BCC;
-        Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id E8B91520BE4;
+        Sun,  7 Oct 2018 11:39:26 +0200 (CEST)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 7D9CC520BC7;
-        Sun,  7 Oct 2018 11:39:20 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 1C69F520BDE;
+        Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
@@ -44,10 +44,10 @@ Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
         Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, stable@vger.kernel.org
-Subject: [PATCH v2 03/29] clk: sunxi-ng: Use u64 for calculation of NM rate
-Date:   Sun,  7 Oct 2018 11:38:39 +0200
-Message-Id: <20181007093905.11253-4-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 04/29] clk: sunxi-ng: h6: Set video PLLs limits
+Date:   Sun,  7 Oct 2018 11:38:40 +0200
+Message-Id: <20181007093905.11253-5-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
 References: <20181007093905.11253-1-jernej.skrabec@siol.net>
@@ -58,77 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
-rate is 24MHz, intermediate result when calculating final rate easily
-overflows 32 bit variable.
+Video PLL factors can be set in a way that final PLL rate is outside
+stable range. H6 user manual specifically says that N factor should not
+be below 12. While it doesn't says anything about maximum stable rate, it
+is clear that PLL doesn't work at 6.096 GHz (254 * 24 MHz).
 
-Because of that, introduce function for calculating clock rate which
-uses 64 bit variable for intermediate result.
+Set minimum allowed PLL video rate to 288 MHz (12 * 24 MHz) and maximum
+to 2.4 GHz, which is maximum in BSP driver.
 
-Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
-Fixes: ee28648cb2b4 ("clk: sunxi-ng: Remove the use of rational computati=
-ons")
-
-CC: <stable@vger.kernel.org>
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu_nm.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.=
-c
-index 6fe3c14f7b2d..424d8635b053 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -19,6 +19,17 @@ struct _ccu_nm {
- 	unsigned long	m, min_m, max_m;
- };
-=20
-+static unsigned long ccu_nm_calc_rate(unsigned long parent,
-+				      unsigned long n, unsigned long m)
-+{
-+	u64 rate =3D parent;
-+
-+	rate *=3D n;
-+	do_div(rate, m);
-+
-+	return rate;
-+}
-+
- static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 			     struct _ccu_nm *nm)
- {
-@@ -28,7 +39,8 @@ static void ccu_nm_find_best(unsigned long parent, unsi=
-gned long rate,
-=20
- 	for (_n =3D nm->min_n; _n <=3D nm->max_n; _n++) {
- 		for (_m =3D nm->min_m; _m <=3D nm->max_m; _m++) {
--			unsigned long tmp_rate =3D parent * _n  / _m;
-+			unsigned long tmp_rate =3D ccu_nm_calc_rate(parent,
-+								  _n, _m);
-=20
- 			if (tmp_rate > rate)
- 				continue;
-@@ -100,7 +112,7 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw=
- *hw,
- 	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm))
- 		rate =3D ccu_sdm_helper_read_rate(&nm->common, &nm->sdm, m, n);
- 	else
--		rate =3D parent_rate * n / m;
-+		rate =3D ccu_nm_calc_rate(parent_rate, n, m);
-=20
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /=3D nm->fixed_post_div;
-@@ -149,7 +161,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsi=
-gned long rate,
- 	_nm.max_m =3D nm->m.max ?: 1 << nm->m.width;
-=20
- 	ccu_nm_find_best(*parent_rate, rate, &_nm);
--	rate =3D *parent_rate * _nm.n / _nm.m;
-+	rate =3D ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
-=20
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /=3D nm->fixed_post_div;
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/=
+ccu-sun50i-h6.c
+index 2193e1495086..19ff09f610e4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -120,6 +120,8 @@ static struct ccu_nm pll_video0_clk =3D {
+ 	.n		=3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		=3D _SUNXI_CCU_DIV(1, 1), /* input divider */
+ 	.fixed_post_div	=3D 4,
++	.min_rate	=3D 288000000,
++	.max_rate	=3D 2400000000UL,
+ 	.common		=3D {
+ 		.reg		=3D 0x040,
+ 		.features	=3D CCU_FEATURE_FIXED_POSTDIV,
+@@ -136,6 +138,8 @@ static struct ccu_nm pll_video1_clk =3D {
+ 	.n		=3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		=3D _SUNXI_CCU_DIV(1, 1), /* input divider */
+ 	.fixed_post_div	=3D 4,
++	.min_rate	=3D 288000000,
++	.max_rate	=3D 2400000000UL,
+ 	.common		=3D {
+ 		.reg		=3D 0x048,
+ 		.features	=3D CCU_FEATURE_FIXED_POSTDIV,
 --=20
 2.19.0
 
