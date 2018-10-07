@@ -2,144 +2,94 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4CAC6787D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC724C6787E
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 688912088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 688912088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6ABB720882
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:46:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VwSmjlCp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ABB720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJHGxB (ORCPT
+        id S1727781AbeJHGzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 02:53:01 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:41156 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbeJHGxB (ORCPT
+        Mon, 8 Oct 2018 02:55:11 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40869 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbeJHGzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 02:53:01 -0400
-Received: by mail-io1-f70.google.com with SMTP id f64-v6so17899977ioa.8
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 16:44:04 -0700 (PDT)
+        Mon, 8 Oct 2018 02:55:10 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 1-v6so9203194plv.7
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 16:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0q8EfWT03t0QCT05DDVi7T9b5F55I4jNnoh3aLJcUXs=;
+        b=VwSmjlCpkyW0GrzO6Hx1jNKz0zjr6KGOSTdQNiLZFTD9dBegGsgRNzA/WogU2WUUkN
+         QrA/XtFadESUaTQet26NExcfpNUaYN0BUniEBAvJW2/GfspaCM9EQL+P4W2uxNLsdXoO
+         FeJr3/fo8LgPjIsduxVcc8gHHaUgPOSrZ+ZyI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=czxXr/jGUG8KgJJCDLENMI6k/QfUSdBmhn2bp1yfvVU=;
-        b=OsG39lfh49AY4/ND0fj0LvU0VE4jy3vkTdrxJ7GAnpI0kwjZgc9myPZ66HufC/y8zY
-         SfC0vzsXo5OjgqS637xQB+ru5rBmlbOvLZZhWv0hESzk7Wjxi00J5vqNY4UDNlH2uZY3
-         pb9Tgz28nR/C6nLemiUCEvWcUj6BK7sApGvg2+t7bzD32eHsyFqpl3jCp5RhxnhOZx9F
-         yP0bba4aJ/YlxWvkGnOx5nPO317oBLD4clbU53a/O9h2WKCijcmdywqBGKbNeFOGqxki
-         7nkwu3oiSfXgI80/PixymqrefPHgsewQiGc20jCXOJf/x8nvSW8X2nxTp8Z1UMMfGS3N
-         YSKQ==
-X-Gm-Message-State: ABuFfoj8N5dU/XAJjSfS5ZE5Xa+pUmTt1G2wVH2tHObzCpQMHKip93ZO
-        BI4Lti7VxFHGgAR7Uc6/7nnh3NV9BmwOSz83wMRdCNWTveeh
-X-Google-Smtp-Source: ACcGV62sLZ2RcarMKr6qD5kGslcJ/D19S6jpdTL5ZU1mDNfvZahoC4h4VEGhKHFTi3jqmpRxBUSn43Tb9OfTTlZlaH1LudOw053i
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0q8EfWT03t0QCT05DDVi7T9b5F55I4jNnoh3aLJcUXs=;
+        b=YK6ftiK3LyCl136QWG6WnkkP36hyKwwVr4QOI18StBGJlPhn0pFjbvSLPfNUJanhTS
+         i41idXPB8hIpD1pKG8Ap2TLgCMyFup21umZWGx0EFxxb9uGeEWiVMz0ASjcbZriuXqB/
+         STO7iGy9aBPGXwpXscsPEAbTS7cW203kk4vMaTJCNZan4SCOjlbw+l9qfc9nlt3wcbRH
+         X1kve1yayH9Y0ejt4z0XawerXhPYkUeWqgVARpV/y2z4/btgZgePbq7nhBfy6wUiYGr7
+         yCti0pndbWivlaXgclrRtJIjG+ny+F+CcDfXJkaQthf+dn9TAZTipU50ZMj2qZaeDKcx
+         ZYGg==
+X-Gm-Message-State: ABuFfoi4eQ0+GDMlQz5IkK5Z27MQODB7OlTuElQ1py7EE0HMOhA3+ZV0
+        g0oWEfQSnyPu5fCMggKw8qkjSu6Xe0w=
+X-Google-Smtp-Source: ACcGV61gb2pHUfQ8Xbeper2nKj6KlqlHNgUUU5xuns0PjGz8jplgUY8kF0Qdi2t02n4nL4ti3XAaCw==
+X-Received: by 2002:a17:902:7043:: with SMTP id h3-v6mr21777620plt.103.1538955973835;
+        Sun, 07 Oct 2018 16:46:13 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id y10-v6sm24200433pgi.85.2018.10.07.16.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Oct 2018 16:46:13 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH] usb: typec: Fix copy/paste on typec_set_vconn_role() kerneldoc
+Date:   Sun,  7 Oct 2018 16:46:12 -0700
+Message-Id: <20181007234612.94364-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-X-Received: by 2002:a24:6cc2:: with SMTP id w185-v6mr4611390itb.5.1538955843804;
- Sun, 07 Oct 2018 16:44:03 -0700 (PDT)
-Date:   Sun, 07 Oct 2018 16:44:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006533a60577ac1419@google.com>
-Subject: general protection fault in getname_kernel
-From:   syzbot <syzbot+c54f8e94e6bba03b04e9@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This must have been copy pasted from the function above. Fix it.
 
-syzbot found the following crash on:
-
-HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f3c6a1400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=c54f8e94e6bba03b04e9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10688159400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1162aa31400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c54f8e94e6bba03b04e9@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5829 Comm: syz-executor215 Not tainted 4.19.0-rc6+ #271
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:strlen+0x1f/0xa0 lib/string.c:479
-Code: ff ff ff 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48  
-89 fa 48 89 e5 48 c1 ea 03 41 54 49 89 fc 53 48 83 ec 08 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c 24
-RSP: 0018:ffff8801bc30f9b0 EFLAGS: 00010282
-RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffff8801bc74eec0
-RDX: 0000000000000000 RSI: ffffffff81d2cccc RDI: 0000000000000000
-RBP: ffff8801bc30f9c8 R08: ffff8801d7c24400 R09: ffffed003af0a800
-R10: fffff94000ebc2a6 R11: ffffea00075e1537 R12: 0000000000000000
-R13: 0000000000000000 R14: ffffffff89f3ee98 R15: 0000000000000000
-FS:  0000000001f11880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000001d7cc6000 CR4: 00000000001406e0
-Call Trace:
-  strlen include/linux/string.h:267 [inline]
-  getname_kernel+0x24/0x370 fs/namei.c:218
-  kern_path+0x1e/0x40 fs/namei.c:2434
-  gfs2_mount_meta+0x85/0x2a0 fs/gfs2/ops_fstype.c:1336
-  mount_fs+0xae/0x31d fs/super.c:1261
-  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
-  vfs_kern_mount fs/namespace.c:951 [inline]
-  do_new_mount fs/namespace.c:2457 [inline]
-  do_mount+0x581/0x31f0 fs/namespace.c:2787
-  ksys_mount+0x12d/0x140 fs/namespace.c:3003
-  __do_sys_mount fs/namespace.c:3017 [inline]
-  __se_sys_mount fs/namespace.c:3014 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3014
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440059
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe32cedb58 EFLAGS: 00000217 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 0000000000440059
-RDX: 0000000020000040 RSI: 0000000020000080 RDI: 0000000000000000
-RBP: 00000000006ca018 R08: 00000000200000c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018e0
-R13: 0000000000401970 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace e8236b178a90d827 ]---
-RIP: 0010:strlen+0x1f/0xa0 lib/string.c:479
-Code: ff ff ff 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48  
-89 fa 48 89 e5 48 c1 ea 03 41 54 49 89 fc 53 48 83 ec 08 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c 24
-RSP: 0018:ffff8801bc30f9b0 EFLAGS: 00010282
-RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffff8801bc74eec0
-RDX: 0000000000000000 RSI: ffffffff81d2cccc RDI: 0000000000000000
-RBP: ffff8801bc30f9c8 R08: ffff8801d7c24400 R09: ffffed003af0a800
-R10: fffff94000ebc2a6 R11: ffffea00075e1537 R12: 0000000000000000
-R13: 0000000000000000 R14: ffffffff89f3ee98 R15: 0000000000000000
-FS:  0000000001f11880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000001d7cc6000 CR4: 00000000001406e0
-
-
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/usb/typec/class.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+index 00141e05bc72..5db0593ca0bd 100644
+--- a/drivers/usb/typec/class.c
++++ b/drivers/usb/typec/class.c
+@@ -1322,7 +1322,7 @@ void typec_set_pwr_role(struct typec_port *port, enum typec_role role)
+ EXPORT_SYMBOL_GPL(typec_set_pwr_role);
+ 
+ /**
+- * typec_set_pwr_role - Report VCONN source change
++ * typec_set_vconn_role - Report VCONN source change
+  * @port: The USB Type-C Port which VCONN role changed
+  * @role: Source when @port is sourcing VCONN, or Sink when it's not
+  *
+-- 
+Sent by a computer through tubes
+
