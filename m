@@ -7,73 +7,73 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F6BC65C1B
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FD4C65C1B
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2842087D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B59272084D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 17:56:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIyHONw8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2842087D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+YPJXlx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59272084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbeJHBBq (ORCPT
+        id S1728324AbeJHBEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 21:01:46 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42197 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeJHBBq (ORCPT
+        Sun, 7 Oct 2018 21:04:50 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35673 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbeJHBEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 21:01:46 -0400
-Received: by mail-pf1-f196.google.com with SMTP id f26-v6so7134022pfn.9
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 10:53:44 -0700 (PDT)
+        Sun, 7 Oct 2018 21:04:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v133-v6so6820726pgb.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 10:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OikYU+xsBSIWH/iBAunyxk0DN8ye9H2FGU58wKCjm4g=;
-        b=eIyHONw8cNnQakb3IsDnT/kQnmcxJJTSmqKiCpqEJVnnJhCUApMfnAol3W1Jr5qC6r
-         yCqkcYY8xeH2a8KsSkux+zYfQP0FVsRIVmqowE7uf5/cPfn3fMHzhlIIvDGTKKpSVSOM
-         BBJsr3gmlFEh34WXxNWecU2yR9fsPCIids2Tm44TOBQ/az2sap9HhVCKbrwH+HiDmn+I
-         TuURZWUCUUoos1dbaaQ0YQ6r2b/VxOakgiSxkXE2CglVyAWGnsADiLnvA54NzyEMyCc2
-         AIcHZ2YiL0/r2FhdCakgIenPVo2Ua3v2OD2cQxTAU0iOcw6ymPYMSJ8UMoqZPqcvwaLg
-         NPBw==
+        bh=IxzGyc1JPT9oE9iHoUCT2NXlGRmv8pLGUxji2u6bi1s=;
+        b=M+YPJXlxo5I6boCkz8FEFL+1ZFQPpPzhC4g4eJAk8c5b3db2cViQR+gTBbNeaV+rQQ
+         hxCz9PKK/MHkuScLq2KnlEyd9Ms+FmjeSCQ0Ohg/L4m/76TviRC51D+gN5G1j/oSclQ0
+         hMiPQzDSu7oaBlwrWtfWajFtoo0HLyU1+zCzuzyr00mrNNErAAtiUwxEoiRnh/lfoR34
+         pT7TeuHlXv2SJ3OtGrUb8pLyiuwZ76Dv2rINywLmGi+Q/RUZipwHwQ9LbMA7arQ88hQl
+         bVBfaMYYF8/16a0vNSRjeCYX5T+bvJGS2pnH/C3LYXZ+3FALEAU1gQSJU2oSMa3VO5Gc
+         4ppg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=OikYU+xsBSIWH/iBAunyxk0DN8ye9H2FGU58wKCjm4g=;
-        b=EMn79NAXwEhq4ClARBxwQJ21/hFlrtJp9nWNwgHHwlj/xSQ4zx3bdu0S5fEdUDd1Mp
-         QFWIywmitdlAZbSFA5SAXVwlvKjksjGUtwpbL2k2wSxxO0TbnBr4a04ItsdY9T676kbJ
-         N+CCa7fjmk7DGTu8P7Pbko0Lo1Cp8t/+uHLe5Dn+h5VOEjB1M0YEavnroL2pahGUDgi1
-         KRFVdN2+lNVXqdsL5VAxrMo0rI+3e9MOng4ArPxcLpQWTOWnKGysTCWvLD7CavCKZq6I
-         JQAMfgOWVECFK6OypWl3xExMjYsBVbcBuFkKXxuuEJxQMG0WOLEMtoF2VQCZzMpzy1Hu
-         8Mgg==
-X-Gm-Message-State: ABuFfogj8M0OtxN7OZmxqdfA0Xcs+I47tQ+d/zov9g3QaTYgZ5921rcD
-        WDMl42ncZQKBG1vyKWOuQ/5VpVwu
-X-Google-Smtp-Source: ACcGV635i+SjuulvMaQlEgTZV34L5dB/ydNQaQuuKaehaeW4VVHEIVutd+xgF96km2Mp4OfRQl/+YQ==
-X-Received: by 2002:a62:c8c3:: with SMTP id i64-v6mr22088083pfk.183.1538934823465;
-        Sun, 07 Oct 2018 10:53:43 -0700 (PDT)
+        bh=IxzGyc1JPT9oE9iHoUCT2NXlGRmv8pLGUxji2u6bi1s=;
+        b=SLb1F4uclnZXNIMlw1zEOIVzNtC03S76+za5godHylH2zlzTAHDZIZEk1CLR3xpiIb
+         vD2i7dSvYS5CZiBsJ+mRgx6fRz2ZE+5CqPGBEYAHsUJFc+nWRunH+lFopRzYV2UGJxLX
+         znEIlilluv5a8Xy8OXKkPsED82WPjfmlIalH/pO5/OYMtZSxABZUHsHWd4D6KSdtSRMG
+         XvZHBb6D4zqi5M1T6G5l75glNp/fEC8EEAHiP3IbHvIuuay71wj8o1VUfqvdOx66Ar2Y
+         yqPufsPx2iwnUz1yBa5YtQwt6voUESpym8D4TbxbwtsNpuzJVMcpzb8E/DfX6j9UTiB0
+         8uRw==
+X-Gm-Message-State: ABuFfohGxrfXlTapFejfvPQQCxj1V1z51TlYXmxL145ImIHdo/1pEAho
+        aZ63mIDkZWvb8xOvWweHp+H0Vt44
+X-Google-Smtp-Source: ACcGV62IRrgz51skPrshIm0bjR9ul0qACroX//hyMXsxcz+ePE00A1p8FEgo0pERhVL7r7exAyIZTQ==
+X-Received: by 2002:a62:4c3:: with SMTP id 186-v6mr21395109pfe.156.1538935006640;
+        Sun, 07 Oct 2018 10:56:46 -0700 (PDT)
 Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id o24-v6sm22277703pfa.90.2018.10.07.10.53.41
+        by smtp.gmail.com with ESMTPSA id r1-v6sm28874312pgo.81.2018.10.07.10.56.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Oct 2018 10:53:42 -0700 (PDT)
-Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the ambiguity
- about collecting email addresses
+        Sun, 07 Oct 2018 10:56:46 -0700 (PDT)
+Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
+ enforcement paragraph pending community discussion
 To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
         ksummit-discuss@lists.linuxfoundation.org
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>
 References: <1538861738.4088.5.camel@HansenPartnership.com>
- <1538861799.4088.6.camel@HansenPartnership.com>
+ <1538861851.4088.7.camel@HansenPartnership.com>
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <6f59a5cb-8a23-228c-34a1-5750b50c5c98@roeck-us.net>
-Date:   Sun, 7 Oct 2018 10:53:41 -0700
+Message-ID: <a564a1bd-6a11-a075-6d57-8d37bc5953aa@roeck-us.net>
+Date:   Sun, 7 Oct 2018 10:56:45 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1538861799.4088.6.camel@HansenPartnership.com>
+In-Reply-To: <1538861851.4088.7.camel@HansenPartnership.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,39 +82,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/06/2018 02:36 PM, James Bottomley wrote:
->  From 4a614e9440148894207bef5bf69e74071baceb3b Mon Sep 17 00:00:00 2001
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Date: Sat, 6 Oct 2018 14:21:56 -0700
-> Subject: [PATCH 1/2] code-of-conduct: Fix the ambiguity about collecting email
->   addresses
-> 
-> The current code of conduct has an ambiguity in the it considers publishing
-> private information such as email addresses unacceptable behaviour.  Since
-> the Linux kernel collects and publishes email addresses as part of the patch
-> process, add an exception clause for email addresses ordinarily collected by
-> the project to correct this ambiguity.
+On 10/06/2018 02:37 PM, James Bottomley wrote:
+> Significant concern has been expressed about the responsibilities outlined in
+> the enforcement clause of the new code of conduct.  Since there is concern
+> that this becomes binding on the release of the 4.19 kernel, strip the
+> enforcement clauses to give the community time to consider and debate how this
+> should be handled.
 > 
 > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
 Acked-by: Guenter Roeck <linux@roeck-us.net>
 
+Reasoning:
+- The TAB was not elected as enforcement agency.
+- I, as a maintainer, was not consulted when it was decided that I shall be
+   responsible for enforcing the Code of Conduct.
+
+Guenter
+
 > ---
->   Documentation/process/code-of-conduct.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   Documentation/process/code-of-conduct.rst | 15 ---------------
+>   1 file changed, 15 deletions(-)
 > 
 > diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
-> index ab7c24b5478c..aa40e34e7785 100644
+> index aa40e34e7785..4dd90987305b 100644
 > --- a/Documentation/process/code-of-conduct.rst
 > +++ b/Documentation/process/code-of-conduct.rst
-> @@ -31,7 +31,7 @@ Examples of unacceptable behavior by participants include:
->   * Trolling, insulting/derogatory comments, and personal or political attacks
->   * Public or private harassment
->   * Publishing others’ private information, such as a physical or electronic
-> -  address, without explicit permission
-> +  address not ordinarily collected by the project, without explicit permission
->   * Other conduct which could reasonably be considered inappropriate in a
->     professional setting
+> @@ -59,21 +59,6 @@ address, posting via an official social media account, or acting as an appointed
+>   representative at an online or offline event. Representation of a project may be
+>   further defined and clarified by project maintainers.
+>   
+> -Enforcement
+> -===========
+> -
+> -Instances of abusive, harassing, or otherwise unacceptable behavior may be
+> -reported by contacting the Technical Advisory Board (TAB) at
+> -<tab@lists.linux-foundation.org>. All complaints will be reviewed and
+> -investigated and will result in a response that is deemed necessary and
+> -appropriate to the circumstances. The TAB is obligated to maintain
+> -confidentiality with regard to the reporter of an incident.  Further details of
+> -specific enforcement policies may be posted separately.
+> -
+> -Maintainers who do not follow or enforce the Code of Conduct in good faith may
+> -face temporary or permanent repercussions as determined by other members of the
+> -project’s leadership.
+> -
+>   Attribution
+>   ===========
 >   
 > 
 
