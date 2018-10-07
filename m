@@ -2,163 +2,211 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7710FC46475
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 00:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7764EC46475
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 00:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A99F21473
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 00:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A99F21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 46A29206B2
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 00:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A29206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeJGHIv (ORCPT
+        id S1726496AbeJGHi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 03:08:51 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58044 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeJGHIu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 03:08:50 -0400
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9703LGe076050;
-        Sun, 7 Oct 2018 09:03:21 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Sun, 07 Oct 2018 09:03:21 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9703GaT075946
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 7 Oct 2018 09:03:21 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: Hard lockup in blk_mq_free_request() / wbt_done() / wake_up_all()
-To:     Chris Boot <bootc@boo.tc>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Josef Bacik <jbacik@fb.com>
-References: <9788e0e6-a448-bf85-1f41-88f42dc0071d@boo.tc>
- <ac2c7156-f405-4047-564d-816159d5968b@kernel.dk>
- <7080a91c-8d9a-6305-2b67-dc27a374327a@boo.tc>
- <d8ba8949-259a-c0c0-d476-710bcf69c266@kernel.dk>
- <9c444ab8-2e50-c42a-dae1-86954358218e@boo.tc>
- <7dbe184d-5660-7b64-8027-bf4f82625ff2@I-love.SAKURA.ne.jp>
- <296ff5ef-6d50-d895-2ba2-5c824e96c44b@boo.tc>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <7f79b5b8-fb3e-46d6-69a8-8e137139d24b@i-love.sakura.ne.jp>
-Date:   Sun, 7 Oct 2018 09:03:17 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 7 Oct 2018 03:38:57 -0400
+Received: from shell.v3.sk ([90.176.6.54]:37416 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725846AbeJGHi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 03:38:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5DBD8BC9D0;
+        Sun,  7 Oct 2018 02:33:35 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id ce_ZhLh4Dceg; Sun,  7 Oct 2018 02:33:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 2044ABC9D2;
+        Sun,  7 Oct 2018 02:33:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id heItqBYkrIEz; Sun,  7 Oct 2018 02:33:31 +0200 (CEST)
+Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 449C4BC9D0;
+        Sun,  7 Oct 2018 02:33:31 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v2] libertas: return errno from lbs_add_card()
+Date:   Sun,  7 Oct 2018 02:33:27 +0200
+Message-Id: <20181007003327.2806010-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <296ff5ef-6d50-d895-2ba2-5c824e96c44b@boo.tc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Josef.
+This makes the error handling somewhat cleaner -- lbs_add_card() does no
+logner throw away the errno and lets its callers propagate it.
 
-On 2018/10/06 2:05, Chris Boot wrote:
-> I upgraded the kernel on my affected system to a 4.18.6 kernel (Debian's
-> 4.18.6-1~bpo9+1 in stretch-backports) and ran my test suite again. I'm
-> sorry to report that the issue occurred once more.
-> 
-> Logs below, it's all I managed to get out of it before my session locked up.
-> 
-> [Oct 5 17:56] INFO: rcu_sched self-detected stall on CPU
-> [  +0.003914] INFO: rcu_sched detected stalls on CPUs/tasks:
-> [  +0.001271] 	82-....: (1 GPs behind) idle=47a/0/3 softirq=60148/60149
-> fqs=2234
-> [  +0.012840] 	
-> [  +0.000007] 	82-....: (1 GPs behind) idle=47a/0/3 softirq=60148/60149
-> fqs=2235
-> [  +0.000002]  (t=5255 jiffies g=82048 c=82047 q=35803)
-> [  +0.008936] 	
-> [  +0.000003] NMI backtrace for cpu 82
-> [  +0.000005] (detected by 87, t=5257 jiffies, g=82048, c=82047, q=35803)
-> [  +0.001598] CPU: 82 PID: 0 Comm: swapper/82 Not tainted
-> 4.18.0-0.bpo.1-amd64 #1 Debian 4.18.6-1~bpo9+1
-> [  +0.000001] Hardware name: Supermicro SYS-8048B-TR4FT/X10QBi, BIOS
-> 3.0a 05/30/2017
-> [  +0.000001] Call Trace:
-> [  +0.000004]  <IRQ>
-> [  +0.000011]  dump_stack+0x5c/0x7b
-> [  +0.000005]  nmi_cpu_backtrace+0x89/0x90
-> [  +0.000007]  ? lapic_can_unplug_cpu+0xa0/0xa0
-> [  +0.000002]  nmi_trigger_cpumask_backtrace+0xf5/0x130
-> [  +0.000007]  rcu_dump_cpu_stacks+0x9b/0xcb
-> [  +0.000003]  rcu_check_callbacks+0x79a/0x8e0
-> [  +0.000007]  ? sched_clock_cpu+0xc/0xa0
-> [  +0.000005]  ? tick_sched_do_timer+0x60/0x60
-> [  +0.000005]  update_process_times+0x28/0x50
-> [  +0.000003]  tick_sched_handle+0x22/0x60
-> [  +0.000002]  tick_sched_timer+0x37/0x70
-> [  +0.000002]  __hrtimer_run_queues+0xfc/0x270
-> [  +0.000003]  hrtimer_interrupt+0x101/0x240
-> [  +0.000004]  smp_apic_timer_interrupt+0x6a/0x130
-> [  +0.000002]  apic_timer_interrupt+0xf/0x20
-> [  +0.000006] RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x20
-> [  +0.000001] Code: 8b 00 a8 08 74 0b 65 81 25 d8 6b 11 48 ff ff ff 7f
-> 44 89 e0 5b 5d 41 5c c3 0f 1f 44 00 00 c6 07 00 0f 1f 40 00 48 89 f7 57
-> 9d <0f> 1f 44 00 00 c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 c6 07
-> [  +0.000030] RSP: 0000:ffff8bfdffc83de8 EFLAGS: 00000202 ORIG_RAX:
-> ffffffffffffff13
-> [  +0.000002] RAX: 00000000ff72b790 RBX: ffff8bedf5807768 RCX:
-> dead000000000200
-> [  +0.000001] RDX: ffffa8cc4fa87410 RSI: 0000000000000202 RDI:
-> 0000000000000202
-> [  +0.000001] RBP: 00000000ff72b790 R08: ffff8bedf5807770 R09:
-> 000003fffff00000
-> [  +0.000001] R10: 0000000000000052 R11: 0000000000000001 R12:
-> 0000000000000202
-> [  +0.000001] R13: 0000000000000003 R14: 0000000000000000 R15:
-> 0000000000000000
-> [  +0.000001]  ? apic_timer_interrupt+0xa/0x20
-> [  +0.000006]  __wake_up_common_lock+0x89/0xc0
-> [  +0.000007]  rwb_wake_all+0x30/0x40
-> [  +0.000003]  scale_up.part.25+0x24/0x40
-> [  +0.000002]  wb_timer_fn+0x295/0x430
-> [  +0.000007]  ? blk_mq_tag_update_depth+0x110/0x110
-> [  +0.000001]  call_timer_fn+0x2b/0x120
-> [  +0.000003]  run_timer_softirq+0x1d3/0x410
-> [  +0.000002]  ? enqueue_hrtimer+0x3a/0x90
-> [  +0.000002]  ? __hrtimer_run_queues+0x12c/0x270
-> [  +0.000002]  __do_softirq+0x10d/0x2a6
-> [  +0.000006]  irq_exit+0xb6/0xc0
-> [  +0.000003]  smp_apic_timer_interrupt+0x74/0x130
-> [  +0.000001]  apic_timer_interrupt+0xf/0x20
-> [  +0.000001]  </IRQ>
-> [  +0.000008] RIP: 0010:cpuidle_enter_state+0xa7/0x2b0
-> [  +0.000001] Code: c8 28 48 e8 bb b9 b2 ff 48 89 04 24 0f 1f 44 00 00
-> 31 ff e8 4b c4 b2 ff 80 7c 24 0f 00 0f 85 b6 01 00 00 fb 66 0f 1f 44 00
-> 00 <48> 8b 0c 24 48 ba cf f7 53 e3 a5 9b c4 20 4c 29 f9 48 89 c8 48 c1
-> [  +0.000028] RSP: 0000:ffffa8cc4c7cbe78 EFLAGS: 00000246 ORIG_RAX:
-> ffffffffffffff13
-> [  +0.000002] RAX: ffff8bfdffca1b80 RBX: 0000000000000001 RCX:
-> 000000000000001f
-> [  +0.000001] RDX: 00000237c552d9f0 RSI: 0000000040000219 RDI:
-> 0000000000000000
-> [  +0.000000] RBP: ffff8bfdffcaaf78 R08: 00000000ffffffff R09:
-> 0000000000000008
-> [  +0.000001] R10: 00000000000000a9 R11: 00000000000000c2 R12:
-> ffffffffb88b3a78
-> [  +0.000001] R13: 0000000000000001 R14: 0000000000000001 R15:
-> 00000237c55130a6
-> [  +0.000004]  ? cpuidle_enter_state+0x95/0x2b0
-> [  +0.000004]  do_idle+0x204/0x270
-> [  +0.000003]  cpu_startup_entry+0x6f/0x80
-> [  +0.000002]  start_secondary+0x1a4/0x1f0
-> [  +0.000005]  secondary_startup_64+0xa5/0xb0
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+Changes since v1:
+- Address SPI & USB build failures
 
-This trace contains rwb_wake_all() from scale_up(), which was removed by
-commit a79050434b45959f ("blk-rq-qos: refactor out common elements of blk-wbt").
+ drivers/net/wireless/marvell/libertas/if_cs.c   |  4 ++--
+ drivers/net/wireless/marvell/libertas/if_sdio.c |  4 ++--
+ drivers/net/wireless/marvell/libertas/if_spi.c  |  4 ++--
+ drivers/net/wireless/marvell/libertas/if_usb.c  |  5 ++++-
+ drivers/net/wireless/marvell/libertas/main.c    | 17 ++++++++++-------
+ 5 files changed, 20 insertions(+), 14 deletions(-)
 
-Josef, what is the reason you removed rwb_wake_all() from scale_up() (and
-you added rwb_wake_all() to scale_down()) ?
+diff --git a/drivers/net/wireless/marvell/libertas/if_cs.c b/drivers/net/=
+wireless/marvell/libertas/if_cs.c
+index 7d88223f890b..cebf03c6a622 100644
+--- a/drivers/net/wireless/marvell/libertas/if_cs.c
++++ b/drivers/net/wireless/marvell/libertas/if_cs.c
+@@ -900,8 +900,8 @@ static int if_cs_probe(struct pcmcia_device *p_dev)
+=20
+ 	/* Make this card known to the libertas driver */
+ 	priv =3D lbs_add_card(card, &p_dev->dev);
+-	if (!priv) {
+-		ret =3D -ENOMEM;
++	if (IS_ERR(priv)) {
++		ret =3D PTR_ERR(priv);
+ 		goto out2;
+ 	}
+=20
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/ne=
+t/wireless/marvell/libertas/if_sdio.c
+index 43743c26c071..2fd54a0aeb5a 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1206,8 +1206,8 @@ static int if_sdio_probe(struct sdio_func *func,
+=20
+=20
+ 	priv =3D lbs_add_card(card, &func->dev);
+-	if (!priv) {
+-		ret =3D -ENOMEM;
++	if (IS_ERR(priv)) {
++		ret =3D PTR_ERR(priv);
+ 		goto free;
+ 	}
+=20
+diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net=
+/wireless/marvell/libertas/if_spi.c
+index e9aec6cb1105..504d6e096476 100644
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -1146,8 +1146,8 @@ static int if_spi_probe(struct spi_device *spi)
+ 	 * This will call alloc_etherdev.
+ 	 */
+ 	priv =3D lbs_add_card(card, &spi->dev);
+-	if (!priv) {
+-		err =3D -ENOMEM;
++	if (IS_ERR(priv)) {
++		err =3D PTR_ERR(priv);
+ 		goto free_card;
+ 	}
+ 	card->priv =3D priv;
+diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net=
+/wireless/marvell/libertas/if_usb.c
+index c67a8e7be310..5fee555a3d60 100644
+--- a/drivers/net/wireless/marvell/libertas/if_usb.c
++++ b/drivers/net/wireless/marvell/libertas/if_usb.c
+@@ -254,8 +254,11 @@ static int if_usb_probe(struct usb_interface *intf,
+ 		goto dealloc;
+ 	}
+=20
+-	if (!(priv =3D lbs_add_card(cardp, &intf->dev)))
++	priv =3D lbs_add_card(cardp, &intf->dev);
++	if (IS_ERR(priv)) {
++		r =3D PTR_ERR(priv);
+ 		goto err_add_card;
++	}
+=20
+ 	cardp->priv =3D priv;
+=20
+diff --git a/drivers/net/wireless/marvell/libertas/main.c b/drivers/net/w=
+ireless/marvell/libertas/main.c
+index f22e1c220cba..f7db60bc7c7f 100644
+--- a/drivers/net/wireless/marvell/libertas/main.c
++++ b/drivers/net/wireless/marvell/libertas/main.c
+@@ -907,25 +907,29 @@ struct lbs_private *lbs_add_card(void *card, struct=
+ device *dmdev)
+ 	struct net_device *dev;
+ 	struct wireless_dev *wdev;
+ 	struct lbs_private *priv =3D NULL;
++	int err;
+=20
+ 	/* Allocate an Ethernet device and register it */
+ 	wdev =3D lbs_cfg_alloc(dmdev);
+ 	if (IS_ERR(wdev)) {
++		err =3D PTR_ERR(wdev);
+ 		pr_err("cfg80211 init failed\n");
+-		goto done;
++		goto err_cfg;
+ 	}
+=20
+ 	wdev->iftype =3D NL80211_IFTYPE_STATION;
+ 	priv =3D wdev_priv(wdev);
+ 	priv->wdev =3D wdev;
+=20
+-	if (lbs_init_adapter(priv)) {
++	err =3D lbs_init_adapter(priv);
++	if (err) {
+ 		pr_err("failed to initialize adapter structure\n");
+ 		goto err_wdev;
+ 	}
+=20
+ 	dev =3D alloc_netdev(0, "wlan%d", NET_NAME_UNKNOWN, ether_setup);
+ 	if (!dev) {
++		err =3D -ENOMEM;
+ 		dev_err(dmdev, "no memory for network device instance\n");
+ 		goto err_adapter;
+ 	}
+@@ -949,6 +953,7 @@ struct lbs_private *lbs_add_card(void *card, struct d=
+evice *dmdev)
+ 	init_waitqueue_head(&priv->waitq);
+ 	priv->main_thread =3D kthread_run(lbs_thread, dev, "lbs_main");
+ 	if (IS_ERR(priv->main_thread)) {
++		err =3D PTR_ERR(priv->main_thread);
+ 		lbs_deb_thread("Error creating main thread.\n");
+ 		goto err_ndev;
+ 	}
+@@ -961,7 +966,7 @@ struct lbs_private *lbs_add_card(void *card, struct d=
+evice *dmdev)
+ 	priv->wol_gap =3D 20;
+ 	priv->ehs_remove_supported =3D true;
+=20
+-	goto done;
++	return priv;
+=20
+  err_ndev:
+ 	free_netdev(dev);
+@@ -972,10 +977,8 @@ struct lbs_private *lbs_add_card(void *card, struct =
+device *dmdev)
+  err_wdev:
+ 	lbs_cfg_free(priv);
+=20
+-	priv =3D NULL;
+-
+-done:
+-	return priv;
++ err_cfg:
++	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(lbs_add_card);
+=20
+--=20
+2.19.0
 
