@@ -2,92 +2,98 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3125C46475
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 00:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436BEC65BD4
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 01:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72B372089D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 00:56:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MXfalaP4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B372089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id EE4262089D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 01:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE4262089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbeJGIBx (ORCPT
+        id S1726348AbeJGIdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 04:01:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39492 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeJGIBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 04:01:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SLdjYTeu6muTGx7U+bGZmODo3htucla5zxxrrlAOijI=; b=MXfalaP4h4BfvpVpHZQHI/a7f
-        e2sPlLnEcATpoFjgE8dLITl9WClU66y/XnL2V2L9eZdTp3sA0IFRKhYabn4U7Gy/W/7Q5X9rKawoI
-        4cLn33m9Qiymziyyl5WG4QZTj0wLy8Bj/QY348u093z90TP10klNaoUtzAPTYp+2ryuyJZvCmvo8D
-        JmQjeffmup49dJ7ccgkQWmcafI0zAEfyv8jfLivu0zFdAeBklJOsqpxmDfkxY7KdXCDY0ZhH5QE9k
-        tGbczLS2siW92PBuROlothaLotuQpDpIivf5PKuS6fZ1Bmxtn/JhCCFrLrx1VqQXaMEguEbsfsb+6
-        nJVoULXUg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g8xN2-0003sV-Qr; Sun, 07 Oct 2018 00:56:32 +0000
-Subject: Re: [linuxwifi] [PATCH] fix iwlwifi on old cards in v4.19 was Re:
- 4.19-rc[23] iwlwifi: BUG in swiotlb
-To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Johannes Berg <johannes@sipsolutions.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linuxwifi <linuxwifi@intel.com>
-References: <0c5e53e5-2afa-8d38-0b48-272c670c4bc5@infradead.org>
- <1536651177.3224.106.camel@sipsolutions.net> <20180916093414.GA4299@amd>
- <20180916094142.GB4299@amd> <20180916095535.GA4245@amd>
- <20180916095935.GA4388@amd>
- <0BA3FCBA62E2DC44AF3030971E174FB301336B20F4@HASMSX111.ger.corp.intel.com>
- <5c46135d-99ae-5c63-5cc9-f066cec6543c@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e4b4fb1a-5f78-378f-dec8-529bc92c2e08@infradead.org>
-Date:   Sat, 6 Oct 2018 17:56:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sun, 7 Oct 2018 04:33:39 -0400
+Received: from mga09.intel.com ([134.134.136.24]:9922 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbeJGIdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 04:33:38 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Oct 2018 18:28:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,350,1534834800"; 
+   d="scan'208";a="86320273"
+Received: from lensonx-mobl3.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.208.115])
+  by FMSMGA003.fm.intel.com with ESMTP; 06 Oct 2018 18:27:40 -0700
+Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
+        (envelope-from <fengguang.wu@intel.com>)
+        id 1g8xrA-0000xl-2d; Sun, 07 Oct 2018 09:27:40 +0800
+Date:   Sun, 7 Oct 2018 09:27:40 +0800
+From:   Fengguang Wu <fengguang.wu@intel.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@intel.com>
+Subject: Re: [PATCH v4.19-rc7] treewide: Replace more open-coded allocation
+ size multiplications
+Message-ID: <20181007012740.uv6tujq7ii5iaczc@wfg-t540p.sh.intel.com>
+References: <20181005233559.GA37919@beast>
+ <20181005235131.GA27193@kroah.com>
+ <CAGXu5jJfs0KpRa6yag=ud0sJVW-tM-E4xuvgCMnBdFfDck5E1g@mail.gmail.com>
+ <20181006002235.GA18415@kroah.com>
+ <20181006031434.GA224454@joelaf.mtv.corp.google.com>
+ <20181006084922.xq5bxpghyvbq4tao@wfg-t540p.sh.intel.com>
+ <CAGXu5jKftdZdGxkxv6t_maoG2uDqCdBJHvzZoM=Noiakrkyb6Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5c46135d-99ae-5c63-5cc9-f066cec6543c@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jKftdZdGxkxv6t_maoG2uDqCdBJHvzZoM=Noiakrkyb6Q@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/6/18 5:44 PM, Randy Dunlap wrote:
-> On 9/16/18 3:12 AM, Grumbach, Emmanuel wrote:
+On Sat, Oct 06, 2018 at 08:51:16AM -0700, Kees Cook wrote:
+>On Sat, Oct 6, 2018 at 1:49 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+>> On Fri, Oct 05, 2018 at 08:14:34PM -0700, Joel Fernandes wrote:
+>>>
+>>> On Fri, Oct 05, 2018 at 05:22:35PM -0700, Greg KH wrote:
+>>>> And do we have a way to add a rule to 0-day to catch these so that they
+>>>> get a warning when they are added again?
 >>>
 >>>
->>> .max_tfd_queue_size was ommited for old cards, leading to oops in swiotlb.
+>>> They could just be added to scripts/coccinelle and 0-day will report them?
 >>>
->>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+>>> For example, 0-day ran scripts/coccinelle/api/platform_no_drv_owner.cocci
+>>> on
+>>> a recently submitted patch and reported it here:
 >>>
+>>> https://lore.kernel.org/lkml/201808301856.vMNJerSs%25fengguang.wu@intel.com/
+>>>
+>>> But I'm not sure if 0-day runs make coccicheck on specific semantic
+>>> patches,
+>>> or runs all of them (CC'd Fengguang).
 >>
->> I picked it up in our tree with minor commit message fixes.
->> I also added the Fixes tag for stable.
+>> 0-day runs all coccinelle scripts. However only auto report out
+>> warnings that are known to have low false positives.
 >>
->> Thanks!
-> 
-> Hi,
-> Are we going to see this fix in 4.19?  hopefully.
+>> So if you add new coccinelle scripts that emit accurate enough
+>> warnings, it'd be good to inform the LKP team to add the new
+>> warnings to our auto-report-out white list.
+>
+>It runs with MODE=report by default, yes? I'd need to expand the cases
+>to cover that (it is patch-only currently) so that would be a roughly
+>10,000 line Coccinelle script. :)
 
-Sorry, I see it now.
+It first runs with "-D report", then with "-D patch" to create
+possible patches.
 
-thanks,
--- 
-~Randy
+Thanks,
+Fengguang
