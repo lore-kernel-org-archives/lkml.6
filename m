@@ -2,224 +2,100 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8BDC677F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6D7C67876
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A542820895
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:49:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A542820895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 28E2220895
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 09:50:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ5Yg9HJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E2220895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeJGQ4h (ORCPT
+        id S1727852AbeJGQ5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:56:37 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:58722 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbeJGQ4g (ORCPT
+        Sun, 7 Oct 2018 12:57:40 -0400
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:45770 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbeJGQ5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 12:56:36 -0400
-X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Sun, 07 Oct 2018 12:56:34 EDT
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 7C64E72CC5C;
-        Sun,  7 Oct 2018 12:42:05 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 370D64A4A29;
-        Sun,  7 Oct 2018 12:42:05 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vitaly Chikunov <vt@altlinux.org>
-Subject: [PATCH 2/2] crypto: streebog - add Streebog test vectors
-Date:   Sun,  7 Oct 2018 12:41:11 +0300
-Message-Id: <20181007094114.16777-3-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181007094114.16777-1-vt@altlinux.org>
-References: <20181007094114.16777-1-vt@altlinux.org>
+        Sun, 7 Oct 2018 12:57:40 -0400
+Received: by mail-wr1-f46.google.com with SMTP id q5-v6so17616740wrw.12;
+        Sun, 07 Oct 2018 02:50:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1Km3shdmMfTCI64wZ03MRdpiPgg+D4OMTEmkORIjYWg=;
+        b=GQ5Yg9HJNXVZBzJXAsTkxapB2oKPcKNBVVh0yXeAqMIew/x2U0jNg/nOk+hJI50HFo
+         imxu8BNCtTQV6BqOS6peryVQ8HXppFU9ORRz3dE5VLQilNe78oGUHzl/UQyYXL1vGog9
+         cESTsbkW5vIbSOcQyHbTjhsBj01MSFH4bkODsvtfg6jIjyE86nqYJtIur4ZV0pXLW++P
+         wjuSY4TvCA6W4o0w5CHQ4bQURbaIzQVbkxFLXYdzPrr+pR/rSXTnzAzwb163iXDV9GBG
+         yPFh8KocLIQNhgdek9X3XuUosBbdcDr0qr/y4LQDiUkrRl5By3FHdw2NavPYo9eThmpC
+         2ihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1Km3shdmMfTCI64wZ03MRdpiPgg+D4OMTEmkORIjYWg=;
+        b=ZjWB9HDQ4EUD7vkGFaJlLeBkt8KEVAw8tpvTrlb4Bv32URXDe+Qi82Bo5wluE9Od7/
+         +YEdX1Pbt0kpdiM8ElgbD+i7/PMz9yO+OLvigD/TPuVBCOr3R7ZJsbU+92rO/1IdwFIo
+         1ewk0vmfpyNelOrs6t7OzDfrm4gylZRdcULWy88kAqsrFAO6POUBjQhkfoyw3QYYtFGW
+         dKXvbLEwcDOa1FdRzCB8FqedLQepHvWcTw9bPZY2Ty/2jD7sOjQ7iJY556B3VdtlLSpf
+         obIYT4PcJu96hgpnQDq81uMnKJxFlE5/i9ivo9k3l9Yze6SWWPCDHJI/qAwsEPgrEanS
+         uCgA==
+X-Gm-Message-State: ABuFfojOV1mD1jTjXCzekMEehb7mhD162B27iPExdXGin1VnPVBqo2Jl
+        kLHIVsV3fTOkLFLLRyKZtuU=
+X-Google-Smtp-Source: ACcGV60ugt6F0O043Gvkwuo3YlCB5wW7m4CmBQXslDOPAfvdA0giYPTGVH0rJyi/QzHR0cQmjidCRw==
+X-Received: by 2002:adf:ef0a:: with SMTP id e10-v6mr13353084wro.292.1538905854578;
+        Sun, 07 Oct 2018 02:50:54 -0700 (PDT)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net. [213.161.8.82])
+        by smtp.gmail.com with ESMTPSA id z12-v6sm1220453wrv.46.2018.10.07.02.50.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 07 Oct 2018 02:50:53 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     linux-sunxi@googlegroups.com
+Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
+        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [linux-sunxi] [PATCH v2 00/29] Allwinner H6 DE3 and HDMI support
+Date:   Sun, 07 Oct 2018 11:50:52 +0200
+Message-ID: <3147828.SFUzx6Pm4T@jernej-laptop>
+In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add testmgr and tcrypt tests and vectors for Streebog hash function
-from RFC 6986 and GOST R 34.11-2012.
+Dne nedelja, 07. oktober 2018 ob 11:38:36 CEST je Jernej Skrabec napisal(a):
+> This series adds support for Display Engine 3.0 and HDMI 2.0a, which
+> can be found on H6 SoC.
+> 
+> Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
+> displaying and processing 10-bit and AFBC formats, which are not yet
+> supported by this series.
+> 
+> This series is based on linux-next at next-20180828, which has working
+> R40 display pipeline support. I'll rebase series on later linux-next, if
+> needed, once R40 display pipeline support is reintroduced.
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
----
- crypto/tcrypt.c  | 27 +++++++++++++++++++++
- crypto/testmgr.c | 12 ++++++++++
- crypto/testmgr.h | 71 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 110 insertions(+)
+Sorry, I forgot to update above text. It is based on next-20181004 and R40 
+HDMI support is already fixed.
 
-diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
-index bdde95e8d369..d66cb167daa2 100644
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -77,6 +77,7 @@ static char *check[] = {
- 	"khazad", "wp512", "wp384", "wp256", "tnepres", "xeta",  "fcrypt",
- 	"camellia", "seed", "salsa20", "rmd128", "rmd160", "rmd256", "rmd320",
- 	"lzo", "cts", "zlib", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
-+	"sb256", "sb512",
- 	NULL
- };
- 
-@@ -1914,6 +1915,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		ret += tcrypt_test("sm3");
- 		break;
- 
-+	case 53:
-+		ret += tcrypt_test("sb256");
-+		break;
-+
-+	case 54:
-+		ret += tcrypt_test("sb512");
-+		break;
-+
- 	case 100:
- 		ret += tcrypt_test("hmac(md5)");
- 		break;
-@@ -2392,6 +2401,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		test_hash_speed("sm3", sec, generic_hash_speed_template);
- 		if (mode > 300 && mode < 400) break;
- 		/* fall through */
-+	case 327:
-+		test_hash_speed("sb256", sec, generic_hash_speed_template);
-+		if (mode > 300 && mode < 400) break;
-+		/* fall through */
-+	case 328:
-+		test_hash_speed("sb512", sec, generic_hash_speed_template);
-+		if (mode > 300 && mode < 400) break;
-+		/* fall through */
- 	case 399:
- 		break;
- 
-@@ -2505,6 +2522,16 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 				    num_mb);
- 		if (mode > 400 && mode < 500) break;
- 		/* fall through */
-+	case 426:
-+		test_mb_ahash_speed("sb256", sec, generic_hash_speed_template,
-+				    num_mb);
-+		if (mode > 400 && mode < 500) break;
-+		/* fall through */
-+	case 427:
-+		test_mb_ahash_speed("sb512", sec, generic_hash_speed_template,
-+				    num_mb);
-+		if (mode > 400 && mode < 500) break;
-+		/* fall through */
- 	case 499:
- 		break;
- 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index a1d42245082a..6efb0a218b41 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3428,6 +3428,18 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.cipher = __VECS(salsa20_stream_tv_template)
- 		}
- 	}, {
-+		.alg = "sb256",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(sb256_tv_template)
-+		}
-+	}, {
-+		.alg = "sb512",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(sb512_tv_template)
-+		}
-+	}, {
- 		.alg = "sha1",
- 		.test = alg_test_hash,
- 		.fips_allowed = 1,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 173111c70746..9f9b7d6e4072 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -2309,6 +2309,77 @@ static const struct hash_testvec crct10dif_tv_template[] = {
- 	}
- };
- 
-+/*
-+ * Streebog test vectors from RFC 6986 and GOST R 34.11-2012
-+ */
-+static const struct hash_testvec sb256_tv_template[] = {
-+	{ /* M1 */
-+		.plaintext = "012345678901234567890123456789012345678901234567890123456789012",
-+		.psize = 63,
-+		.digest =
-+			"\x9d\x15\x1e\xef\xd8\x59\x0b\x89"
-+			"\xda\xa6\xba\x6c\xb7\x4a\xf9\x27"
-+			"\x5d\xd0\x51\x02\x6b\xb1\x49\xa4"
-+			"\x52\xfd\x84\xe5\xe5\x7b\x55\x00",
-+	},
-+	{ /* M2 */
-+		.plaintext =
-+			"\xd1\xe5\x20\xe2\xe5\xf2\xf0\xe8"
-+			"\x2c\x20\xd1\xf2\xf0\xe8\xe1\xee"
-+			"\xe6\xe8\x20\xe2\xed\xf3\xf6\xe8"
-+			"\x2c\x20\xe2\xe5\xfe\xf2\xfa\x20"
-+			"\xf1\x20\xec\xee\xf0\xff\x20\xf1"
-+			"\xf2\xf0\xe5\xeb\xe0\xec\xe8\x20"
-+			"\xed\xe0\x20\xf5\xf0\xe0\xe1\xf0"
-+			"\xfb\xff\x20\xef\xeb\xfa\xea\xfb"
-+			"\x20\xc8\xe3\xee\xf0\xe5\xe2\xfb",
-+		.psize = 72,
-+		.digest =
-+			"\x9d\xd2\xfe\x4e\x90\x40\x9e\x5d"
-+			"\xa8\x7f\x53\x97\x6d\x74\x05\xb0"
-+			"\xc0\xca\xc6\x28\xfc\x66\x9a\x74"
-+			"\x1d\x50\x06\x3c\x55\x7e\x8f\x50",
-+	},
-+};
-+
-+static const struct hash_testvec sb512_tv_template[] = {
-+	{ /* M1 */
-+		.plaintext = "012345678901234567890123456789012345678901234567890123456789012",
-+		.psize = 63,
-+		.digest =
-+			"\x1b\x54\xd0\x1a\x4a\xf5\xb9\xd5"
-+			"\xcc\x3d\x86\xd6\x8d\x28\x54\x62"
-+			"\xb1\x9a\xbc\x24\x75\x22\x2f\x35"
-+			"\xc0\x85\x12\x2b\xe4\xba\x1f\xfa"
-+			"\x00\xad\x30\xf8\x76\x7b\x3a\x82"
-+			"\x38\x4c\x65\x74\xf0\x24\xc3\x11"
-+			"\xe2\xa4\x81\x33\x2b\x08\xef\x7f"
-+			"\x41\x79\x78\x91\xc1\x64\x6f\x48",
-+	},
-+	{ /* M2 */
-+		.plaintext =
-+			"\xd1\xe5\x20\xe2\xe5\xf2\xf0\xe8"
-+			"\x2c\x20\xd1\xf2\xf0\xe8\xe1\xee"
-+			"\xe6\xe8\x20\xe2\xed\xf3\xf6\xe8"
-+			"\x2c\x20\xe2\xe5\xfe\xf2\xfa\x20"
-+			"\xf1\x20\xec\xee\xf0\xff\x20\xf1"
-+			"\xf2\xf0\xe5\xeb\xe0\xec\xe8\x20"
-+			"\xed\xe0\x20\xf5\xf0\xe0\xe1\xf0"
-+			"\xfb\xff\x20\xef\xeb\xfa\xea\xfb"
-+			"\x20\xc8\xe3\xee\xf0\xe5\xe2\xfb",
-+		.psize = 72,
-+		.digest =
-+			"\x1e\x88\xe6\x22\x26\xbf\xca\x6f"
-+			"\x99\x94\xf1\xf2\xd5\x15\x69\xe0"
-+			"\xda\xf8\x47\x5a\x3b\x0f\xe6\x1a"
-+			"\x53\x00\xee\xe4\x6d\x96\x13\x76"
-+			"\x03\x5f\xe8\x35\x49\xad\xa2\xb8"
-+			"\x62\x0f\xcd\x7c\x49\x6c\xe5\xb3"
-+			"\x3f\x0c\xb9\xdd\xdc\x2b\x64\x60"
-+			"\x14\x3b\x03\xda\xba\xc9\xfb\x28",
-+	},
-+};
-+
- /* Example vectors below taken from
-  * http://www.oscca.gov.cn/UpFile/20101222141857786.pdf
-  *
--- 
-2.11.0
+Best regards,
+Jernej
+
 
