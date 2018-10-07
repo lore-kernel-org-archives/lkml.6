@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DE6C6787E
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE4FC6787E
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C322087D
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E53472087D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 23:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="Kl0bmeQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C322087D
+	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="TnGRw1PC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53472087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeJHGhG (ORCPT
+        id S1728548AbeJHGiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 02:37:06 -0400
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:44923 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeJHGhF (ORCPT
+        Mon, 8 Oct 2018 02:38:01 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35620 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727087AbeJHGhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 02:37:05 -0400
-Received: by mail-qt1-f171.google.com with SMTP id c56-v6so19234126qtd.11
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 16:28:11 -0700 (PDT)
+        Mon, 8 Oct 2018 02:37:02 -0400
+Received: by mail-qt1-f195.google.com with SMTP id v19-v6so19296893qtg.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 16:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=omnibond-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=idwzqZPvg8/SO2d47Tiai819xLoijednl4cLWo+6w+s=;
-        b=Kl0bmeQhRLbOp8e10VYDEBWzXbs1XVIPte3v94zI+thh8DSQ85o8LyIEfrHtbUzu/K
-         FaA++BOypsbxzYlkxrPJsVCC69JP9OijqRVDn1RkyBJW7Idwxbt3yHNzJCba3TGVVBcQ
-         QiG2uD1pLDQi45oubvhjjkHQRMytnNd4LnjlIrbiOuUGZ5by/z4RDrWGeFjUAtHzbZ6R
-         b7ZkmK/H8WraNPu6MGIZq2+kEr4qqK30AoC2lDM0TR8WySCzjcL92jCaUP6b2vm5bVz4
-         /3E/j7xyhyGPQ2aKvCIKPQb5maoacc7USyDUH+W70KK0RP1jdjToVG4x6MMZkRabaQP9
-         WE4A==
+        bh=qoA7p70DREEGHDGYkqmqpCGl6/L2/Ybk6ecH83aW6UM=;
+        b=TnGRw1PC+RYDMgUJevYIyxMxeIsVgk5UDDalaeYOKKuKBB4P0zAyD2HQkfM5qH//jL
+         WkkdGY18xqHWpBPjgizHqaf1uSRtyyCKRSJiCoJYOV/2SXMTxyoiyjjuQCvRjXj/BYKz
+         yl3bXgmIcfhQSm9d3GfCsmip+QgO8Lg8azqfwuXd8t0R797mQC2ZNuHgzZPXCXQBHH4Y
+         5KaZu6eHd6MvHz26vRA5HaOSrUv+7nxCksB2lHgMm380fTsqpJt6l4oEBifuxLzkNRxX
+         0R9gPwvkethGA4yXM/EwAd9pXfwlBqPtOwVGtMYd6qJYVG3Ku7wUHfGN7OkW51OX49Jn
+         TdwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=idwzqZPvg8/SO2d47Tiai819xLoijednl4cLWo+6w+s=;
-        b=RqnWEmWTUjXBUE3Z5/q4czABr3o0EJGmOYjsGjs0pjWwnvmnQ6VOUSzk8PHSq6pHN1
-         pLBmSrZ47s+BsyhYEVjTLx6ykSLfdb+AqSOyc7A7mDXT7jep5kVm2MM/ntwc+xLqhtbQ
-         A1kOcLLR71QVT7Md+GRMTNXDxs9maIgbv1yEfAArCzW3Too5r5CDGHJHdS8rJdngkfG7
-         XmVLGaek4Im/5jZ6Fc57HysFssgKqgD2cpcyUee9/tlXClXfDGEiuX8FrOc8gK8COHJJ
-         ws49VwCjiLigzmKY1YLWCopCeYLpshR0DvG4S9lM4z482Vmt19iKIqyq+x4d2bwE5Ufy
-         9FqA==
-X-Gm-Message-State: ABuFfoinlYIS8QHp6mILBeOvELTkCGS8RVutoBHsVXH4BrDepddU9or8
-        wPxlxloL2cMc+OxUtRgP82jkDQ==
-X-Google-Smtp-Source: ACcGV613zFoinmPzIiKZeWQBKOZEuv38GFUNnhVHYoCcczrJgcTlFlcsyFT+aSMqZgvzxHTfrKnmtw==
-X-Received: by 2002:ad4:51d2:: with SMTP id p18-v6mr17708711qvq.186.1538954890542;
-        Sun, 07 Oct 2018 16:28:10 -0700 (PDT)
+        bh=qoA7p70DREEGHDGYkqmqpCGl6/L2/Ybk6ecH83aW6UM=;
+        b=bqgnuS48M5H2wy4XxG6zny9/LfgbLZK8P5yWw/VAt44p92KFlpQhjZWS5HEaiDNnvN
+         zrqKqzVMMg86JHUAn25Mo3lql3lqBiMpyuRZz6Bvy/Z+iTaoxyNw468JPN2cOqubCMf1
+         MqRmn8lzkjNa2KRD8w2QqEL7hitiJDRgJ+8DEAKuLK1y9AxsbleW023+h3hRT/L6Maew
+         jAsFCdzLA7BDIVTuU9eSXcsDF8jUEjRRgdpBGbFlFea+VO5M48SMJ6TlvyzhtgcnHaWp
+         uH8ht+XU859VPv9DwkLG2IeKCIQITo3O5orjqCblg2i+HJaASJuE/QfaglJVpNaULSQd
+         kaug==
+X-Gm-Message-State: ABuFfojSTnM62rMpZt/fbYh6vkpOohBJeHnxKgaP/EMdux19+p09qlIG
+        e/QBrMmiK73OWl+vNijHr4sRPw==
+X-Google-Smtp-Source: ACcGV61nILXKpXex+Xq3BSgF5wKlLOt7dvhPALfWv6IBBzOxT534rDFDkFCGF4lUlp97u0yfaQ18DA==
+X-Received: by 2002:a0c:f091:: with SMTP id g17-v6mr17325369qvk.55.1538954888785;
+        Sun, 07 Oct 2018 16:28:08 -0700 (PDT)
 Received: from ip-172-31-22-34.ec2.internal (ec2-35-153-175-159.compute-1.amazonaws.com. [35.153.175.159])
-        by smtp.gmail.com with ESMTPSA id x38-v6sm6793915qtc.39.2018.10.07.16.28.08
+        by smtp.gmail.com with ESMTPSA id x38-v6sm6793915qtc.39.2018.10.07.16.28.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 07 Oct 2018 16:28:09 -0700 (PDT)
+        Sun, 07 Oct 2018 16:28:07 -0700 (PDT)
 From:   Martin Brandenburg <martin@omnibond.com>
 To:     devel@lists.orangefs.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, hubcap@omnibond.com
 Cc:     Martin Brandenburg <martin@omnibond.com>
-Subject: [PATCH 12/19] orangefs: implement writepage
-Date:   Sun,  7 Oct 2018 23:27:29 +0000
-Message-Id: <20181007232736.3780-13-martin@omnibond.com>
+Subject: [PATCH 11/19] orangefs: migrate to generic_file_read_iter
+Date:   Sun,  7 Oct 2018 23:27:28 +0000
+Message-Id: <20181007232736.3780-12-martin@omnibond.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181007232736.3780-1-martin@omnibond.com>
 References: <20181007232736.3780-1-martin@omnibond.com>
@@ -76,279 +76,242 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now orangefs_inode_getattr fills from cache if an inode has dirty pages.
+Remove orangefs_inode_read.  It was used by readpage.  Calling
+wait_for_direct_io directly serves the purpose just as well.  There is
+now no check of the bufmap size in the readpage path.  There are already
+other places the bufmap size is assumed to be greater than PAGE_SIZE.
 
-also if attr_valid and dirty pages and !flags, we spin on inode writeback
-before returning if pages still dirty after: should it be other way
+Important to call truncate_inode_pages now in the write path so a
+subsequent read sees the new data.
 
 Signed-off-by: Martin Brandenburg <martin@omnibond.com>
 ---
- fs/orangefs/file.c           | 77 +++++++-----------------------------
- fs/orangefs/inode.c          | 59 ++++++++++++++++++++++++---
- fs/orangefs/orangefs-utils.c | 12 +++++-
- 3 files changed, 78 insertions(+), 70 deletions(-)
+ fs/orangefs/file.c            | 68 ++++-------------------------------
+ fs/orangefs/inode.c           | 63 ++++++++++++--------------------
+ fs/orangefs/orangefs-kernel.h | 13 ++++---
+ 3 files changed, 38 insertions(+), 106 deletions(-)
 
 diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index 4bc06c310e02..ba580a5c6fd2 100644
+index aec17635a50f..4bc06c310e02 100644
 --- a/fs/orangefs/file.c
 +++ b/fs/orangefs/file.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
+@@ -44,7 +44,7 @@ static int flush_racache(struct inode *inode)
  /*
-  * (C) 2001 Clemson University and The University of Chicago
-+ * Copyright 2018 Omnibond Systems, L.L.C.
-  *
-  * See COPYING in top-level directory.
+  * Post and wait for the I/O upcall to finish
   */
-@@ -348,65 +349,11 @@ static ssize_t orangefs_file_read_iter(struct kiocb *iocb,
- 	return generic_file_read_iter(iocb, iter);
- }
- 
--static ssize_t orangefs_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
-+static ssize_t orangefs_file_write_iter(struct kiocb *iocb,
-+    struct iov_iter *iter)
+-static ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
++ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
+ 		loff_t *offset, struct iov_iter *iter,
+ 		size_t total_size, loff_t readahead_size)
  {
--	struct file *file = iocb->ki_filp;
--	loff_t pos;
--	ssize_t rc;
--
--	BUG_ON(iocb->private);
--
--	truncate_inode_pages(file->f_mapping, 0);
--
--	gossip_debug(GOSSIP_FILE_DEBUG, "orangefs_file_write_iter\n");
--
--	inode_lock(file->f_mapping->host);
--
--	/* Make sure generic_write_checks sees an up to date inode size. */
--	if (file->f_flags & O_APPEND) {
--		rc = orangefs_inode_getattr(file->f_mapping->host,
--		    ORANGEFS_GETATTR_SIZE);
--		if (rc == -ESTALE)
--			rc = -EIO;
--		if (rc) {
--			gossip_err("%s: orangefs_inode_getattr failed, "
--			    "rc:%zd:.\n", __func__, rc);
--			goto out;
--		}
--	}
--
--	rc = generic_write_checks(iocb, iter);
--
--	if (rc <= 0) {
--		gossip_err("%s: generic_write_checks failed, rc:%zd:.\n",
--			   __func__, rc);
--		goto out;
--	}
--
--	/*
--	 * if we are appending, generic_write_checks would have updated
--	 * pos to the end of the file, so we will wait till now to set
--	 * pos...
--	 */
--	pos = iocb->ki_pos;
--
--	rc = do_readv_writev(ORANGEFS_IO_WRITE,
--			     file,
--			     &pos,
--			     iter);
--	if (rc < 0) {
--		gossip_err("%s: do_readv_writev failed, rc:%zd:.\n",
--			   __func__, rc);
--		goto out;
--	}
--
--	iocb->ki_pos = pos;
- 	orangefs_stats.writes++;
--
--out:
--
--	inode_unlock(file->f_mapping->host);
--	return rc;
-+	return generic_file_write_iter(iocb, iter);
- }
- 
- /*
-@@ -501,9 +448,6 @@ static int orangefs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 			(char *)file->f_path.dentry->d_name.name :
- 			(char *)"Unknown"));
- 
--	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
--		return -EINVAL;
--
- 	/* set the sequential readahead hint */
- 	vma->vm_flags |= VM_SEQ_READ;
- 	vma->vm_flags &= ~VM_RAND_READ;
-@@ -543,8 +487,6 @@ static int orangefs_file_release(struct inode *inode, struct file *file)
- 			gossip_debug(GOSSIP_INODE_DEBUG,
- 			    "flush_racache finished\n");
- 		}
--		truncate_inode_pages(file_inode(file)->i_mapping,
--				     0);
- 	}
- 	return 0;
- }
-@@ -562,6 +504,11 @@ static int orangefs_fsync(struct file *file,
- 		ORANGEFS_I(file_inode(file));
- 	struct orangefs_kernel_op_s *new_op = NULL;
- 
-+	ret = filemap_write_and_wait_range(file_inode(file)->i_mapping,
-+	    start, end);
-+	if (ret)
-+		return ret;
-+
- 	new_op = op_alloc(ORANGEFS_VFS_OP_FSYNC);
- 	if (!new_op)
- 		return -ENOMEM;
-@@ -643,6 +590,11 @@ static int orangefs_lock(struct file *filp, int cmd, struct file_lock *fl)
- 	return rc;
- }
- 
-+int orangefs_flush(struct file *file, fl_owner_t id)
-+{
-+	return vfs_fsync(file, 0);
-+}
-+
- /** ORANGEFS implementation of VFS file operations */
- const struct file_operations orangefs_file_operations = {
- 	.llseek		= orangefs_file_llseek,
-@@ -652,6 +604,7 @@ const struct file_operations orangefs_file_operations = {
- 	.unlocked_ioctl	= orangefs_ioctl,
- 	.mmap		= orangefs_file_mmap,
- 	.open		= generic_file_open,
-+	.flush		= orangefs_flush,
- 	.release	= orangefs_file_release,
- 	.fsync		= orangefs_fsync,
- };
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 826054b979cc..bd2ce18453f2 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -15,6 +15,44 @@
- #include "orangefs-kernel.h"
- #include "orangefs-bufmap.h"
- 
-+static int orangefs_writepage(struct page *page, struct writeback_control *wbc)
-+{
-+	struct inode *inode = page->mapping->host;
-+	struct iov_iter iter;
-+	struct bio_vec bv;
-+	size_t len, wlen;
-+	ssize_t ret;
-+	loff_t off;
-+
-+	set_page_writeback(page);
-+
-+	off = page_offset(page);
-+	len = i_size_read(inode);
-+	if (off + PAGE_SIZE > len)
-+		wlen = len - off;
-+	else
-+		wlen = PAGE_SIZE;
-+
-+	bv.bv_page = page;
-+	bv.bv_len = wlen;
-+	bv.bv_offset = off % PAGE_SIZE;
-+	if (wlen == 0)
-+		dump_stack();
-+	iov_iter_bvec(&iter, ITER_BVEC | WRITE, &bv, 1, wlen);
-+
-+	ret = wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter, wlen,
-+	    len);
-+	if (ret < 0) {
-+		SetPageError(page);
-+		mapping_set_error(page->mapping, ret);
-+	} else {
-+		ret = 0;
-+	}
-+	end_page_writeback(page);
-+	unlock_page(page);
-+	return ret;
-+}
-+
- static int orangefs_readpage(struct file *file, struct page *page)
+@@ -240,7 +240,7 @@ static ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inod
+  * augmented/extended metadata attached to the file.
+  * Note: File extended attributes override any mount options.
+  */
+-static ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
++ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
+ 		loff_t *offset, struct iov_iter *iter)
  {
- 	struct inode *inode = page->mapping->host;
-@@ -48,6 +86,15 @@ static int orangefs_readpage(struct file *file, struct page *page)
+ 	struct inode *inode = file->f_mapping->host;
+@@ -341,67 +341,11 @@ static ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
  	return ret;
  }
  
-+int orangefs_write_end(struct file *file, struct address_space *mapping,
-+    loff_t pos, unsigned len, unsigned copied, struct page *page, void *fsdata)
-+{
-+	int r;
-+	r = simple_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	mark_inode_dirty_sync(file_inode(file));
-+	return r;
-+}
-+
- static void orangefs_invalidatepage(struct page *page,
- 				 unsigned int offset,
- 				 unsigned int length)
-@@ -77,17 +124,17 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
+-/*
+- * Read data from a specified offset in a file (referenced by inode).
+- * Data may be placed either in a user or kernel buffer.
+- */
+-ssize_t orangefs_inode_read(struct inode *inode,
+-			    struct iov_iter *iter,
+-			    loff_t *offset,
+-			    loff_t readahead_size)
++static ssize_t orangefs_file_read_iter(struct kiocb *iocb,
++    struct iov_iter *iter)
  {
- 	struct file *file = iocb->ki_filp;
- 	loff_t pos = *(&iocb->ki_pos);
--	/*
--	 * This cannot happen until write_iter becomes
--	 * generic_file_write_iter.
--	 */
--	BUG_ON(iov_iter_rw(iter) != READ);
--	return do_readv_writev(ORANGEFS_IO_READ, file, &pos, iter);
-+	return do_readv_writev(iov_iter_rw(iter) == WRITE ?
-+	    ORANGEFS_IO_WRITE : ORANGEFS_IO_READ, file, &pos, iter);
+-	struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
+-	size_t count = iov_iter_count(iter);
+-	size_t bufmap_size;
+-	ssize_t ret = -EINVAL;
+-
+ 	orangefs_stats.reads++;
+-
+-	bufmap_size = orangefs_bufmap_size_query();
+-	if (count > bufmap_size) {
+-		gossip_debug(GOSSIP_FILE_DEBUG,
+-			     "%s: count is too large (%zd/%zd)!\n",
+-			     __func__, count, bufmap_size);
+-		return -EINVAL;
+-	}
+-
+-	gossip_debug(GOSSIP_FILE_DEBUG,
+-		     "%s(%pU) %zd@%llu\n",
+-		     __func__,
+-		     &orangefs_inode->refn.khandle,
+-		     count,
+-		     llu(*offset));
+-
+-	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, offset, iter,
+-			count, readahead_size);
+-	if (ret > 0)
+-		*offset += ret;
+-
+-	gossip_debug(GOSSIP_FILE_DEBUG,
+-		     "%s(%pU): Value(%zd) returned.\n",
+-		     __func__,
+-		     &orangefs_inode->refn.khandle,
+-		     ret);
+-
+-	return ret;
+-}
+-
+-static ssize_t orangefs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct file *file = iocb->ki_filp;
+-	loff_t pos = iocb->ki_pos;
+-	ssize_t rc = 0;
+-
+-	BUG_ON(iocb->private);
+-
+-	gossip_debug(GOSSIP_FILE_DEBUG, "orangefs_file_read_iter\n");
+-
+-	orangefs_stats.reads++;
+-
+-	rc = do_readv_writev(ORANGEFS_IO_READ, file, &pos, iter);
+-	iocb->ki_pos = pos;
+-
+-	return rc;
++	return generic_file_read_iter(iocb, iter);
+ }
+ 
+ static ssize_t orangefs_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+@@ -412,6 +356,8 @@ static ssize_t orangefs_file_write_iter(struct kiocb *iocb, struct iov_iter *ite
+ 
+ 	BUG_ON(iocb->private);
+ 
++	truncate_inode_pages(file->f_mapping, 0);
++
+ 	gossip_debug(GOSSIP_FILE_DEBUG, "orangefs_file_write_iter\n");
+ 
+ 	inode_lock(file->f_mapping->host);
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 1ef000b69e06..826054b979cc 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -17,37 +17,25 @@
+ 
+ static int orangefs_readpage(struct file *file, struct page *page)
+ {
+-	int ret;
+-	int max_block;
+-	ssize_t bytes_read = 0;
+ 	struct inode *inode = page->mapping->host;
+-	const __u32 blocksize = PAGE_SIZE;
+-	const __u32 blockbits = PAGE_SHIFT;
+-	struct iov_iter to;
+-	struct bio_vec bv = {.bv_page = page, .bv_len = PAGE_SIZE};
+-
+-	iov_iter_bvec(&to, ITER_BVEC | READ, &bv, 1, PAGE_SIZE);
+-
+-	gossip_debug(GOSSIP_INODE_DEBUG,
+-		    "orangefs_readpage called with page %p\n",
+-		     page);
+-
+-	max_block = ((inode->i_size / blocksize) + 1);
+-
+-	if (page->index < max_block) {
+-		loff_t blockptr_offset = (((loff_t) page->index) << blockbits);
+-
+-		bytes_read = orangefs_inode_read(inode,
+-						 &to,
+-						 &blockptr_offset,
+-						 inode->i_size);
+-	}
++	struct iov_iter iter;
++	struct bio_vec bv;
++	ssize_t ret;
++	loff_t off;
++
++	off = page_offset(page);
++	bv.bv_page = page;
++	bv.bv_len = PAGE_SIZE;
++	bv.bv_offset = 0;
++	iov_iter_bvec(&iter, ITER_BVEC | READ, &bv, 1, PAGE_SIZE);
++
++	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &off, &iter,
++	    PAGE_SIZE, inode->i_size);
+ 	/* this will only zero remaining unread portions of the page data */
+-	iov_iter_zero(~0U, &to);
++	iov_iter_zero(~0U, &iter);
+ 	/* takes care of potential aliasing */
+ 	flush_dcache_page(page);
+-	if (bytes_read < 0) {
+-		ret = bytes_read;
++	if (ret < 0) {
+ 		SetPageError(page);
+ 	} else {
+ 		SetPageUptodate(page);
+@@ -84,22 +72,17 @@ static int orangefs_releasepage(struct page *page, gfp_t foo)
+ 	return 0;
+ }
+ 
+-/*
+- * Having a direct_IO entry point in the address_space_operations
+- * struct causes the kernel to allows us to use O_DIRECT on
+- * open. Nothing will ever call this thing, but in the future we
+- * will need to be able to use O_DIRECT on open in order to support
+- * AIO. Modeled after NFS, they do this too.
+- */
+-
+ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
+ 				  struct iov_iter *iter)
+ {
+-	gossip_debug(GOSSIP_INODE_DEBUG,
+-		     "orangefs_direct_IO: %pD\n",
+-		     iocb->ki_filp);
+-
+-	return -EINVAL;
++	struct file *file = iocb->ki_filp;
++	loff_t pos = *(&iocb->ki_pos);
++	/*
++	 * This cannot happen until write_iter becomes
++	 * generic_file_write_iter.
++	 */
++	BUG_ON(iov_iter_rw(iter) != READ);
++	return do_readv_writev(ORANGEFS_IO_READ, file, &pos, iter);
  }
  
  /** ORANGEFS2 implementation of address space operations */
- static const struct address_space_operations orangefs_address_operations = {
-+	.writepage = orangefs_writepage,
- 	.readpage = orangefs_readpage,
-+	.set_page_dirty = __set_page_dirty_nobuffers,
-+	.write_begin = simple_write_begin,
-+	.write_end = orangefs_write_end,
- 	.invalidatepage = orangefs_invalidatepage,
- 	.releasepage = orangefs_releasepage,
- 	.direct_IO = orangefs_direct_IO,
-diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
-index 9221c4a3398e..902ebd1599e1 100644
---- a/fs/orangefs/orangefs-utils.c
-+++ b/fs/orangefs/orangefs-utils.c
-@@ -247,12 +247,16 @@ int orangefs_inode_getattr(struct inode *inode, int flags)
- 	spin_lock(&inode->i_lock);
- 	/* Must have all the attributes in the mask and be within cache time. */
- 	if ((!flags && time_before(jiffies, orangefs_inode->getattr_time)) ||
--	    orangefs_inode->attr_valid) {
-+	    orangefs_inode->attr_valid || inode->i_state & I_DIRTY_PAGES) {
- 		if (orangefs_inode->attr_valid) {
- 			spin_unlock(&inode->i_lock);
- 			write_inode_now(inode, 1);
- 			goto again;
- 		}
-+		if (inode->i_state & I_DIRTY_PAGES) {
-+			spin_unlock(&inode->i_lock);
-+			return 0;
-+		}
- 		spin_unlock(&inode->i_lock);
- 		return 0;
- 	}
-@@ -281,12 +285,16 @@ int orangefs_inode_getattr(struct inode *inode, int flags)
- 	spin_lock(&inode->i_lock);
- 	/* Must have all the attributes in the mask and be within cache time. */
- 	if ((!flags && time_before(jiffies, orangefs_inode->getattr_time)) ||
--	    orangefs_inode->attr_valid) {
-+	    orangefs_inode->attr_valid || inode->i_state & I_DIRTY_PAGES) {
- 		if (orangefs_inode->attr_valid) {
- 			spin_unlock(&inode->i_lock);
- 			write_inode_now(inode, 1);
- 			goto again2;
- 		}
-+		if (inode->i_state & I_DIRTY_PAGES) {
-+			spin_unlock(&inode->i_lock);
-+			return 0;
-+		}
- 		gossip_debug(GOSSIP_UTILS_DEBUG, "%s: in cache or dirty\n",
- 		    __func__);
- 		ret = 0;
+diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
+index cdb08e51a4b1..e128500e33b4 100644
+--- a/fs/orangefs/orangefs-kernel.h
++++ b/fs/orangefs/orangefs-kernel.h
+@@ -368,11 +368,6 @@ ssize_t orangefs_listxattr(struct dentry *dentry, char *buffer, size_t size);
+ struct inode *orangefs_iget(struct super_block *sb,
+ 			 struct orangefs_object_kref *ref);
+ 
+-ssize_t orangefs_inode_read(struct inode *inode,
+-			    struct iov_iter *iter,
+-			    loff_t *offset,
+-			    loff_t readahead_size);
+-
+ /*
+  * defined in devorangefs-req.c
+  */
+@@ -383,6 +378,14 @@ void orangefs_dev_cleanup(void);
+ int is_daemon_in_service(void);
+ bool __is_daemon_in_service(void);
+ 
++/*
++ * defined in file.c
++ */
++ssize_t wait_for_direct_io(enum ORANGEFS_io_type, struct inode *, loff_t *,
++    struct iov_iter *, size_t, loff_t);
++ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
++    struct iov_iter *);
++
+ /*
+  * defined in orangefs-utils.c
+  */
 -- 
 2.19.0
 
