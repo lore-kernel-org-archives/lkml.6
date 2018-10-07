@@ -2,37 +2,37 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308D0C00449
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95ACBC64EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC9B220841
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:38:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC9B220841
+	by mail.kernel.org (Postfix) with ESMTP id 62FE420841
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 03:38:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FE420841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeJGKoK (ORCPT
+        id S1727056AbeJGKo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 06:44:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53609 "EHLO
+        Sun, 7 Oct 2018 06:44:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47557 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbeJGKoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 06:44:09 -0400
+        id S1726236AbeJGKo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 06:44:27 -0400
 Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
         (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w973btg4047550
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w973bt80047549
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
         Sat, 6 Oct 2018 20:37:55 -0700
 Received: from carbon-x1.hos.anvin.org (localhost [127.0.0.1])
-        by carbon-x1.hos.anvin.org (8.15.2/8.15.2) with ESMTP id w973bowO224514;
-        Sat, 6 Oct 2018 20:37:50 -0700
+        by carbon-x1.hos.anvin.org (8.15.2/8.15.2) with ESMTP id w973bneD224510;
+        Sat, 6 Oct 2018 20:37:49 -0700
 Received: (from hpa@localhost)
-        by carbon-x1.hos.anvin.org (8.15.2/8.15.2/Submit) id w973boCd224513;
-        Sat, 6 Oct 2018 20:37:50 -0700
+        by carbon-x1.hos.anvin.org (8.15.2/8.15.2/Submit) id w973bn4l224508;
+        Sat, 6 Oct 2018 20:37:49 -0700
 From:   "H. Peter Anvin" <hpa@zytor.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     "H. Peter Anvin (Intel)" <hpa@zytor.com>,
@@ -48,13 +48,14 @@ Cc:     "H. Peter Anvin (Intel)" <hpa@zytor.com>,
         Eugene Syromiatnikov <esyr@redhat.com>,
         linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
         Johan Hovold <johan@kernel.org>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
-Subject: [PATCH stable 1/2] arch/alpha, termios: implement BOTHER, IBSHIFT and termios2
-Date:   Sat,  6 Oct 2018 20:37:47 -0700
-Message-Id: <20181007033748.224461-2-hpa@zytor.com>
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, stable@vger.kernel.org
+Subject: [PATCH stable 0/2] termios: Alpha BOTHER/IBSHIFT, tty_baudrate fix
+Date:   Sat,  6 Oct 2018 20:37:46 -0700
+Message-Id: <20181007033748.224461-1-hpa@zytor.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181007033748.224461-1-hpa@zytor.com>
-References: <20181007033748.224461-1-hpa@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,21 +63,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
 
-Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
-using arbitrary flags. Because BOTHER is not defined, the general
-Linux code doesn't allow setting arbitrary baud rates, and because
-CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
-drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
+It turns out that Alpha is the only architecture that never
+implemented BOTHER and IBSHIFT, which is otherwise ages old. This is
+one thing that has held up glibc support for this feature (all other
+architectures have supported these for about a decade, at least before
+the current 3.2 glibc cutoff.)
 
-Resolve both problems by #defining BOTHER to 037 on Alpha.
+Furthermore, in the process of dealing with this, I discovered that
+the current code in tty_baudrate.c can read past the end of the
+baud_table[] on Alpha and PowerPC. The second patch in this series
+fixes that, but it also cleans up the code substantially by
+auto-generating the table and, since all architectures now have them,
+removing all conditionals for BOTHER and IBSHIFT existing.
 
-However, userspace still needs to know if setting BOTHER is actually
-safe given legacy kernels (does anyone actually care about that on
-Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
-though they use the same structure. Define struct termios2 just for
-compatibility; it is the exact same structure as struct termios. In a
-future patchset, this will be cleaned up so the uapi headers are
-usable from libc.
+Tagging for stable because these are concrete problems. I have a much
+bigger update in process, nearly done, which will clean up a lot of
+duplicated code and make the uapi headers usable for libc, but that is
+not critical on the same level.
+
+Tested on x86, compile-tested on Alpha.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -94,92 +99,16 @@ Cc: <linux-alpha@vger.kernel.org>
 Cc: <linux-serial@vger.kernel.org>
 Cc: Johan Hovold <johan@kernel.org>
 Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: <stable@vger.kernel.org>
 ---
- arch/alpha/include/asm/termios.h       |  8 +++++++-
- arch/alpha/include/uapi/asm/ioctls.h   |  5 +++++
- arch/alpha/include/uapi/asm/termbits.h | 17 +++++++++++++++++
- 3 files changed, 29 insertions(+), 1 deletion(-)
-
-diff --git a/arch/alpha/include/asm/termios.h b/arch/alpha/include/asm/termios.h
-index 6a8c53dec57e..b7c77bb1bfd2 100644
---- a/arch/alpha/include/asm/termios.h
-+++ b/arch/alpha/include/asm/termios.h
-@@ -73,9 +73,15 @@
- })
- 
- #define user_termios_to_kernel_termios(k, u) \
--	copy_from_user(k, u, sizeof(struct termios))
-+	copy_from_user(k, u, sizeof(struct termios2))
- 
- #define kernel_termios_to_user_termios(u, k) \
-+	copy_to_user(u, k, sizeof(struct termios2))
-+
-+#define user_termios_to_kernel_termios_1(k, u) \
-+	copy_from_user(k, u, sizeof(struct termios))
-+
-+#define kernel_termios_to_user_termios_1(u, k) \
- 	copy_to_user(u, k, sizeof(struct termios))
- 
- #endif	/* _ALPHA_TERMIOS_H */
-diff --git a/arch/alpha/include/uapi/asm/ioctls.h b/arch/alpha/include/uapi/asm/ioctls.h
-index 3729d92d3fa8..dc8c20ac7191 100644
---- a/arch/alpha/include/uapi/asm/ioctls.h
-+++ b/arch/alpha/include/uapi/asm/ioctls.h
-@@ -32,6 +32,11 @@
- #define TCXONC		_IO('t', 30)
- #define TCFLSH		_IO('t', 31)
- 
-+#define TCGETS2		_IOR('T', 42, struct termios2)
-+#define TCSETS2		_IOW('T', 43, struct termios2)
-+#define TCSETSW2	_IOW('T', 44, struct termios2)
-+#define TCSETSF2	_IOW('T', 45, struct termios2)
-+
- #define TIOCSWINSZ	_IOW('t', 103, struct winsize)
- #define TIOCGWINSZ	_IOR('t', 104, struct winsize)
- #define	TIOCSTART	_IO('t', 110)		/* start output, like ^Q */
-diff --git a/arch/alpha/include/uapi/asm/termbits.h b/arch/alpha/include/uapi/asm/termbits.h
-index de6c8360fbe3..4575ba34a0ea 100644
---- a/arch/alpha/include/uapi/asm/termbits.h
-+++ b/arch/alpha/include/uapi/asm/termbits.h
-@@ -26,6 +26,19 @@ struct termios {
- 	speed_t c_ospeed;		/* output speed */
- };
- 
-+/* Alpha has identical termios and termios2 */
-+
-+struct termios2 {
-+	tcflag_t c_iflag;		/* input mode flags */
-+	tcflag_t c_oflag;		/* output mode flags */
-+	tcflag_t c_cflag;		/* control mode flags */
-+	tcflag_t c_lflag;		/* local mode flags */
-+	cc_t c_cc[NCCS];		/* control characters */
-+	cc_t c_line;			/* line discipline (== c_cc[19]) */
-+	speed_t c_ispeed;		/* input speed */
-+	speed_t c_ospeed;		/* output speed */
-+};
-+
- /* Alpha has matching termios and ktermios */
- 
- struct ktermios {
-@@ -152,6 +165,7 @@ struct ktermios {
- #define B3000000  00034
- #define B3500000  00035
- #define B4000000  00036
-+#define BOTHER    00037
- 
- #define CSIZE	00001400
- #define   CS5	00000000
-@@ -169,6 +183,9 @@ struct ktermios {
- #define CMSPAR	  010000000000		/* mark or space (stick) parity */
- #define CRTSCTS	  020000000000		/* flow control */
- 
-+#define CIBAUD	07600000
-+#define IBSHIFT	16
-+
- /* c_lflag bits */
- #define ISIG	0x00000080
- #define ICANON	0x00000100
--- 
-2.17.1
-
+ arch/alpha/include/asm/termios.h       |   8 +-
+ arch/alpha/include/uapi/asm/ioctls.h   |   5 +
+ arch/alpha/include/uapi/asm/termbits.h |  17 +++
+ drivers/tty/.gitignore                 |   1 +
+ drivers/tty/Makefile                   |  16 +++
+ drivers/tty/bmacros.c                  |   2 +
+ drivers/tty/tty_baudrate.c             | 190 +++++++++++++--------------------
+ 7 files changed, 122 insertions(+), 117 deletions(-)
