@@ -2,233 +2,119 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD45C65C33
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 13:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C28AC65C1D
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 13:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB8120895
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 13:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADBED20895
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 13:37:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXTHE+3Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CB8120895
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0Txyvy3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADBED20895
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeJGUjQ (ORCPT
+        id S1727976AbeJGUoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 16:39:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60674 "EHLO mail.kernel.org"
+        Sun, 7 Oct 2018 16:44:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbeJGUjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 16:39:16 -0400
-Received: from localhost (unknown [171.76.113.63])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726785AbeJGUoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 16:44:19 -0400
+Received: from localhost.localdomain (unknown [49.77.226.129])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 721F720882;
-        Sun,  7 Oct 2018 13:31:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95F2C2075C;
+        Sun,  7 Oct 2018 13:37:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538919121;
-        bh=wj2QmWov8A96peUkfsylEHO5nk/nrzp9lY/32T+O+JY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tXTHE+3Qr1yJNJa79SC4OemF3QT8V1fuTlwQV//6bvoMULtwVnEq2PIsqOJFkaJt/
-         2fXQMSAeO51yVtAlTl8Ot7Q5xxDD33yK2AXq4AUDrkUltOAF4OsxO0MwY979Qh94+V
-         4bCkLEeNQQnpAbjpCNiCaDtQdZjUTI0nn5x+ok+k=
-Date:   Sun, 7 Oct 2018 19:01:51 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shefali Jain <shefjain@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver
- for QCS404
-Message-ID: <20181007133151.GS2372@vkoul-mobl>
-References: <20180921185936.9590-1-vkoul@kernel.org>
- <20180921185936.9590-2-vkoul@kernel.org>
- <68d91d52-302d-1b0d-a995-bae976afe8e2@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68d91d52-302d-1b0d-a995-bae976afe8e2@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        s=default; t=1538919424;
+        bh=xo2neObXqXRegz0wzfn2YmjjMn2Dn6Pyo0hvsH02zps=;
+        h=From:To:Cc:Subject:Date:From;
+        b=M0Txyvy34+LGsAnytYbxmosvcfl0dxC0F7mARcW1e4Sk6ySv5xggSUM8XQDLB8zco
+         fkAj3LrKPnIVnwJ/IJlHc3al3DbSp5I2Mhh2MMIL6R4jCZthifD2MYRUAog3IjxRTS
+         0Mof2O7PnOijFNwfvwFBQYDjoPzDhYEu91fKAkvA=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: spread f2fs_set_inode_flags()
+Date:   Sun,  7 Oct 2018 19:06:15 +0800
+Message-Id: <20181007110615.6826-1-chao@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Taniya,
+From: Chao Yu <yuchao0@huawei.com>
 
-Thanks for the review, It would be great if you can strip the irrelevant
-context while replying, makes it easier for people to follow.
+This patch changes codes as below:
+- use f2fs_set_inode_flags() to update i_flags atomically to avoid
+potential race.
+- synchronize F2FS_I(inode)->i_flags to inode->i_flags in
+f2fs_new_inode().
+- use f2fs_set_inode_flags() to simply codes in f2fs_quota_{on,off}.
 
-On 06-10-18, 23:28, Taniya Das wrote:
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h  | 2 +-
+ fs/f2fs/namei.c | 2 ++
+ fs/f2fs/super.c | 5 ++---
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-> > +static struct clk_rcg2 pclk0_clk_src = {
-> > +	.cmd_rcgr = 0x4d000,
-> > +	.mnd_width = 8,
-> > +	.hid_width = 5,
-> > +	.parent_map = gcc_parent_map_12,
-> > +	.clkr.hw.init = &(struct clk_init_data){
-> > +		.name = "pclk0_clk_src",
-> > +		.parent_names = gcc_parent_names_12,
-> > +		.num_parents = 4,
-> > +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-> 
-> Please remove the NOCACHE flag for all display RCGs as there are no real
-> requirement.
-
-Thanks for the suggestion, will do
-
-> > +++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> > @@ -0,0 +1,166 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_QCS404_H
-> > +#define _DT_BINDINGS_CLK_QCOM_GCC_QCS404_H
-> > +
-> > +#define APSS_AHB_CLK_SRC				0
-> > +#define BLSP1_QUP0_I2C_APPS_CLK_SRC			1
-> > +#define BLSP1_QUP0_SPI_APPS_CLK_SRC			2
-> > +#define BLSP1_QUP1_I2C_APPS_CLK_SRC			3
-> > +#define BLSP1_QUP1_SPI_APPS_CLK_SRC			4
-> > +#define BLSP1_QUP2_I2C_APPS_CLK_SRC			5
-> > +#define BLSP1_QUP2_SPI_APPS_CLK_SRC			6
-> > +#define BLSP1_QUP3_I2C_APPS_CLK_SRC			7
-> > +#define BLSP1_QUP3_SPI_APPS_CLK_SRC			8
-> > +#define BLSP1_QUP4_I2C_APPS_CLK_SRC			9
-> > +#define BLSP1_QUP4_SPI_APPS_CLK_SRC			10
-> > +#define BLSP1_UART0_APPS_CLK_SRC			11
-> > +#define BLSP1_UART1_APPS_CLK_SRC			12
-> > +#define BLSP1_UART2_APPS_CLK_SRC			13
-> > +#define BLSP1_UART3_APPS_CLK_SRC			14
-> > +#define BLSP2_QUP0_I2C_APPS_CLK_SRC			15
-> > +#define BLSP2_QUP0_SPI_APPS_CLK_SRC			16
-> > +#define BLSP2_UART0_APPS_CLK_SRC			17
-> > +#define BYTE0_CLK_SRC					18
-> > +#define EMAC_CLK_SRC					19
-> > +#define EMAC_PTP_CLK_SRC				20
-> > +#define ESC0_CLK_SRC					21
-> > +#define GCC_APSS_AHB_CLK				22
-> > +#define GCC_APSS_AXI_CLK				23
-> > +#define GCC_BIMC_APSS_AXI_CLK				24
-> > +#define GCC_BIMC_GFX_CLK				25
-> > +#define GCC_BIMC_MDSS_CLK				26
-> > +#define GCC_BLSP1_AHB_CLK				27
-> > +#define GCC_BLSP1_QUP0_I2C_APPS_CLK			28
-> > +#define GCC_BLSP1_QUP0_SPI_APPS_CLK			29
-> > +#define GCC_BLSP1_QUP1_I2C_APPS_CLK			30
-> > +#define GCC_BLSP1_QUP1_SPI_APPS_CLK			31
-> > +#define GCC_BLSP1_QUP2_I2C_APPS_CLK			32
-> > +#define GCC_BLSP1_QUP2_SPI_APPS_CLK			33
-> > +#define GCC_BLSP1_QUP3_I2C_APPS_CLK			34
-> > +#define GCC_BLSP1_QUP3_SPI_APPS_CLK			35
-> > +#define GCC_BLSP1_QUP4_I2C_APPS_CLK			36
-> > +#define GCC_BLSP1_QUP4_SPI_APPS_CLK			37
-> > +#define GCC_BLSP1_UART0_APPS_CLK			38
-> > +#define GCC_BLSP1_UART1_APPS_CLK			39
-> > +#define GCC_BLSP1_UART2_APPS_CLK			40
-> > +#define GCC_BLSP1_UART3_APPS_CLK			41
-> > +#define GCC_BLSP2_AHB_CLK				42
-> > +#define GCC_BLSP2_QUP0_I2C_APPS_CLK			43
-> > +#define GCC_BLSP2_QUP0_SPI_APPS_CLK			44
-> > +#define GCC_BLSP2_UART0_APPS_CLK			45
-> > +#define GCC_BOOT_ROM_AHB_CLK				46
-> > +#define GCC_DCC_CLK					47
-> > +#define GCC_GENI_IR_H_CLK				48
-> > +#define GCC_ETH_AXI_CLK					49
-> > +#define GCC_ETH_PTP_CLK					50
-> > +#define GCC_ETH_RGMII_CLK				51
-> > +#define GCC_ETH_SLAVE_AHB_CLK				52
-> > +#define GCC_GENI_IR_S_CLK				53
-> > +#define GCC_GP1_CLK					54
-> > +#define GCC_GP2_CLK					55
-> > +#define GCC_GP3_CLK					56
-> > +#define GCC_MDSS_AHB_CLK				57
-> > +#define GCC_MDSS_AXI_CLK				58
-> > +#define GCC_MDSS_BYTE0_CLK				59
-> > +#define GCC_MDSS_ESC0_CLK				60
-> > +#define GCC_MDSS_HDMI_APP_CLK				61
-> > +#define GCC_MDSS_HDMI_PCLK_CLK				62
-> > +#define GCC_MDSS_MDP_CLK				63
-> > +#define GCC_MDSS_PCLK0_CLK				64
-> > +#define GCC_MDSS_VSYNC_CLK				65
-> > +#define GCC_OXILI_AHB_CLK				66
-> > +#define GCC_OXILI_GFX3D_CLK				67
-> > +#define GCC_PCIE_0_AUX_CLK				68
-> > +#define GCC_PCIE_0_CFG_AHB_CLK				69
-> > +#define GCC_PCIE_0_MSTR_AXI_CLK				70
-> > +#define GCC_PCIE_0_PIPE_CLK				71
-> > +#define GCC_PCIE_0_SLV_AXI_CLK				72
-> > +#define GCC_PCNOC_USB2_CLK				73
-> > +#define GCC_PCNOC_USB3_CLK				74
-> > +#define GCC_PDM2_CLK					75
-> > +#define GCC_PDM_AHB_CLK					76
-> > +#define VSYNC_CLK_SRC					77
-> > +#define GCC_PRNG_AHB_CLK				78
-> > +#define GCC_PWM0_XO512_CLK				79
-> > +#define GCC_PWM1_XO512_CLK				80
-> > +#define GCC_PWM2_XO512_CLK				81
-> > +#define GCC_SDCC1_AHB_CLK				82
-> > +#define GCC_SDCC1_APPS_CLK				83
-> > +#define GCC_SDCC1_ICE_CORE_CLK				84
-> > +#define GCC_SDCC2_AHB_CLK				85
-> > +#define GCC_SDCC2_APPS_CLK				86
-> > +#define GCC_SYS_NOC_USB3_CLK				87
-> > +#define GCC_USB20_MOCK_UTMI_CLK				88
-> > +#define GCC_USB2A_PHY_SLEEP_CLK				89
-> > +#define GCC_USB30_MASTER_CLK				90
-> > +#define GCC_USB30_MOCK_UTMI_CLK				91
-> > +#define GCC_USB30_SLEEP_CLK				92
-> > +#define GCC_USB3_PHY_AUX_CLK				93
-> > +#define GCC_USB3_PHY_PIPE_CLK				94
-> > +#define GCC_USB_HS_PHY_CFG_AHB_CLK			95
-> > +#define GCC_USB_HS_SYSTEM_CLK				96
-> > +#define GFX3D_CLK_SRC					97
-> > +#define GP1_CLK_SRC					98
-> > +#define GP2_CLK_SRC					99
-> > +#define GP3_CLK_SRC					100
-> > +#define GPLL0_OUT_MAIN					101
-> > +#define GPLL1_OUT_MAIN					102
-> > +#define GPLL3_OUT_MAIN					103
-> > +#define GPLL4_OUT_MAIN					104
-> > +#define HDMI_APP_CLK_SRC				105
-> > +#define HDMI_PCLK_CLK_SRC				106
-> > +#define MDP_CLK_SRC					107
-> > +#define PCIE_0_AUX_CLK_SRC				108
-> > +#define PCIE_0_PIPE_CLK_SRC				109
-> > +#define PCLK0_CLK_SRC					110
-> > +#define PDM2_CLK_SRC					111
-> > +#define SDCC1_APPS_CLK_SRC				112
-> > +#define SDCC1_ICE_CORE_CLK_SRC				113
-> > +#define SDCC2_APPS_CLK_SRC				114
-> > +#define USB20_MOCK_UTMI_CLK_SRC				115
-> > +#define USB30_MASTER_CLK_SRC				116
-> > +#define USB30_MOCK_UTMI_CLK_SRC				117
-> > +#define USB3_PHY_AUX_CLK_SRC				118
-> > +#define USB_HS_SYSTEM_CLK_SRC				119
-> > +#define GPLL0_AO_CLK_SRC				120
-> > +#define WCNSS_M_CLK					121
-> 
-> Please remove WCNSS_M_CLK.
-
-And the reason for that?
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 188a14bc9fcd..de9a5507f2ae 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3411,7 +3411,7 @@ static inline void f2fs_set_encrypted_inode(struct inode *inode)
+ {
+ #ifdef CONFIG_F2FS_FS_ENCRYPTION
+ 	file_set_encrypt(inode);
+-	inode->i_flags |= S_ENCRYPTED;
++	f2fs_set_inode_flags(inode);
+ #endif
+ }
+ 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index a285f3197bd7..4f8d4d8fc0e0 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -122,6 +122,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL)
+ 		set_inode_flag(inode, FI_PROJ_INHERIT);
+ 
++	f2fs_set_inode_flags(inode);
++
+ 	trace_f2fs_new_inode(inode, 0);
+ 	return inode;
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 79060c96da5b..5c561afbe376 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1939,8 +1939,7 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+ 
+ 	inode_lock(inode);
+ 	F2FS_I(inode)->i_flags |= F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL;
+-	inode_set_flags(inode, S_NOATIME | S_IMMUTABLE,
+-					S_NOATIME | S_IMMUTABLE);
++	f2fs_set_inode_flags(inode);
+ 	inode_unlock(inode);
+ 	f2fs_mark_inode_dirty_sync(inode, false);
+ 
+@@ -1965,7 +1964,7 @@ static int f2fs_quota_off(struct super_block *sb, int type)
+ 
+ 	inode_lock(inode);
+ 	F2FS_I(inode)->i_flags &= ~(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL);
+-	inode_set_flags(inode, 0, S_NOATIME | S_IMMUTABLE);
++	f2fs_set_inode_flags(inode);
+ 	inode_unlock(inode);
+ 	f2fs_mark_inode_dirty_sync(inode, false);
+ out_put:
 -- 
-~Vinod
+2.18.0
+
