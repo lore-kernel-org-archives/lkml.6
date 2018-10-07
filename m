@@ -2,112 +2,101 @@ Return-Path: <SRS0=94iy=MT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429C5C65C1B
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 16:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B481EC65C1B
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 16:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB2D2088F
-	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 16:42:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2szqLf9G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB2D2088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5FF66206B2
+	for <linux-kernel@archiver.kernel.org>; Sun,  7 Oct 2018 16:43:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF66206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbeJGXuJ (ORCPT
+        id S1728139AbeJGXvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 7 Oct 2018 19:50:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48500 "EHLO mail.kernel.org"
+        Sun, 7 Oct 2018 19:51:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9942 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726803AbeJGXuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 7 Oct 2018 19:50:09 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F28206B2;
-        Sun,  7 Oct 2018 16:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538930539;
-        bh=IwYNJAirhlmodu5hp+XsVP5bFcvJPmOV/t8rIL0ZKLs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=2szqLf9Gyl47glk7XI/efL4yMF/bBp7EG6a3kzKTMFgnTNPn7NfpsxqJdfUfRSThh
-         T/VtVyi+dJg4lwHgTQuDvxEzFi1DUdjRVn4n9TEA9wRsH9GqPqrVHuDwlhjiYvKnsw
-         opk/kEMFqB883tmft4R8kVc1gnwbyFSmCV/SSWws=
-Date:   Sun, 7 Oct 2018 17:42:14 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matheus Tavares Bernardino <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH] staging: iio: ad2s1210: fix 'assignment operator' style
- checks
-Message-ID: <20181007174214.2ecf61ee@archlinux>
-In-Reply-To: <CAHd-oW7Xpr-+1SuxsjduFhrRqh7TcGTqmJ22A7W7Oqk8o2E1Kg@mail.gmail.com>
-References: <CAHd-oW7Xpr-+1SuxsjduFhrRqh7TcGTqmJ22A7W7Oqk8o2E1Kg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726803AbeJGXvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 7 Oct 2018 19:51:18 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Sq7B4mM9z9ttBZ;
+        Sun,  7 Oct 2018 18:43:18 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id imktGuLurmfq; Sun,  7 Oct 2018 18:43:18 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Sq7B4Gfmz9ttBL;
+        Sun,  7 Oct 2018 18:43:18 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E6F188B780;
+        Sun,  7 Oct 2018 18:43:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Wi7ZNpDUfyuo; Sun,  7 Oct 2018 18:43:26 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 836608B74B;
+        Sun,  7 Oct 2018 18:43:26 +0200 (CEST)
+Subject: Re: [PATCH v5 1/9] book3s/64: avoid circular header inclusion in
+ mmu-hash.h
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <cover.1538687073.git.christophe.leroy@c-s.fr>
+ <3ae99c06f76fc89de00b801a6e839952850c7abb.1538687074.git.christophe.leroy@c-s.fr>
+ <8055896d-f1cd-3560-2f08-ab367270beae@c-s.fr>
+ <87r2h3i6np.fsf@concordia.ellerman.id.au>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <0a699e95-1f07-2ab1-47c2-84d7bce1bdda@c-s.fr>
+Date:   Sun, 7 Oct 2018 18:43:26 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <87r2h3i6np.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 5 Oct 2018 22:24:26 -0300
-Matheus Tavares Bernardino <matheus.bernardino@usp.br> wrote:
 
-> This patch fixes all "Assignment operator '=' should be on the previous
-> line" checks found in ad2s1210.c by checkpatch.pl.
+
+Le 06/10/2018 à 14:47, Michael Ellerman a écrit :
+> Christophe LEROY <christophe.leroy@c-s.fr> writes:
 > 
-> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-Hi Matheus,
-
-Good change, but unfortunately your email client as converted
-tabs into spaces so it cannot be applied.   Try git am 
-with this email and you'll see what I mean.
-See Documentation/process/email-clients.rst for some hints on this.
-
-Looking forward to V2 with that fixed!
-
-Thanks,
-
-Jonathan
-> ---
->  drivers/staging/iio/resolver/ad2s1210.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>> The serie has been successfully compiled tested at
+>> http://kisskb.ellerman.id.au/kisskb/head/358723b36b126a381d827c82d04ee226321416b2/
 > 
-> diff --git a/drivers/staging/iio/resolver/ad2s1210.c
-> b/drivers/staging/iio/resolver/ad2s1210.c
-> index ac13b99bd9cb..d4b1c2c010f2 100644
-> --- a/drivers/staging/iio/resolver/ad2s1210.c
-> +++ b/drivers/staging/iio/resolver/ad2s1210.c
-> @@ -301,8 +301,8 @@ static ssize_t ad2s1210_store_control(struct device *dev,
->              "ad2s1210: write control register fail\n");
->          goto error_ret;
->      }
-> -    st->resolution
-> -        = ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
-> +    st->resolution =
-> +        ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
->      if (st->pdata->gpioin) {
->          data = ad2s1210_read_resolution_pin(st);
->          if (data != st->resolution)
-> @@ -363,8 +363,8 @@ static ssize_t ad2s1210_store_resolution(struct device *dev,
->          dev_err(dev, "ad2s1210: setting resolution fail\n");
->          goto error_ret;
->      }
-> -    st->resolution
-> -        = ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
-> +    st->resolution =
-> +        ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
->      if (st->pdata->gpioin) {
->          data = ad2s1210_read_resolution_pin(st);
->          if (data != st->resolution)
+> I guess we need to turn on BPF_JIT in some configs :)
+> 
+> This works (builds), but not runtime tested:
+> 
+> diff --git a/arch/powerpc/net/bpf_jit32.h b/arch/powerpc/net/bpf_jit32.h
+> index 6f4daacad296..dc50a8d4b3b9 100644
+> --- a/arch/powerpc/net/bpf_jit32.h
+> +++ b/arch/powerpc/net/bpf_jit32.h
+> @@ -106,9 +106,8 @@ DECLARE_LOAD_FUNC(sk_load_byte_msh);
+>   	} while (0)
+>   #else
+>   #define PPC_BPF_LOAD_CPU(r)     \
+> -	do { BUILD_BUG_ON(FIELD_SIZEOF(struct thread_info, cpu) != 4);		\
+> -		PPC_LHZ_OFFS(r, (1 & ~(THREAD_SIZE - 1)),			\
+> -				offsetof(struct thread_info, cpu));		\
+> +	do { BUILD_BUG_ON(FIELD_SIZEOF(struct task_struct, cpu) != 4);		\
+> +		PPC_LHZ_OFFS(r, 2, offsetof(struct task_struct, cpu));		\
+>   	} while(0)
+>   #endif
+>   #else
+> 
 
+Thanks, I'll take that.
+
+Christophe
