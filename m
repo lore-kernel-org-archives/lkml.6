@@ -2,126 +2,123 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C5FC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BD8C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4E820841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 815F42085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:41:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="o2RSJPOA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4E820841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMhOLlTc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815F42085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeJHRvd (ORCPT
+        id S1727635AbeJHRwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:51:33 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52342 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbeJHRvd (ORCPT
+        Mon, 8 Oct 2018 13:52:10 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36351 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbeJHRwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:51:33 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181008104027euoutp01f2241208892d399521fc91d78ec35b4b~bnAFdhQLD1400314003euoutp01N
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 10:40:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181008104027euoutp01f2241208892d399521fc91d78ec35b4b~bnAFdhQLD1400314003euoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538995227;
-        bh=+3YmCEeuseQ1z6FJUzkhevy8ADz2BdqnF8oCvtw4poQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=o2RSJPOADjaU5For2pInlnOkPligUy15EztRgmOfkla7yyjRzUVQGmdU+WXPBOjPz
-         g0DucLshul9eYI9D7kJTiB9E97ofSYxC70eKCF1CSQdkrZlj6/05YVKpl4OlZJbSXR
-         N3ZvdktNaNWH93OSbRpMyicvm4uUbn0gxZBXQr3I=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181008104026eucas1p189079ce61a7020c5ae6f9cf6d4baba68~bnAFADLTn2555025550eucas1p1A;
-        Mon,  8 Oct 2018 10:40:26 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 2D.48.04294.A143BBB5; Mon,  8
-        Oct 2018 11:40:26 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181008104026eucas1p254120530a8d1c441deba6a548c99b002~bnAESLW6H1306713067eucas1p2N;
-        Mon,  8 Oct 2018 10:40:26 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181008104025eusmtrp241ee19839473d41f6315b7423448bf91~bnAEBhHgN1514815148eusmtrp2Z;
-        Mon,  8 Oct 2018 10:40:25 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-74-5bbb341a8f5f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 65.E5.04128.9143BBB5; Mon,  8
-        Oct 2018 11:40:25 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181008104025eusmtip16551ad6c8a1f9ea89d2d38c5fbf0e5a0~bnADxvTPj2524125241eusmtip1c;
-        Mon,  8 Oct 2018 10:40:25 +0000 (GMT)
-Subject: Re: [PATCH] Video: vgastate: fixed a spacing coding style
-To:     Mehdi Bounya <bounya9mehdi@gmail.com>
-Cc:     linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mehdi Bounya <contact.mehdi@pm.me>,
-        Mehdi Bounya <mehdi.bounya@gmail.com>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date:   Mon, 8 Oct 2018 12:40:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <1535114948-18615-1-git-send-email-contact.mehdi@pm.me>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduznOV0pk93RBk+eK1lsO32I2WLV6YUs
-        Fif6PrBaXN41h83izKyvjA6sHjtn3WX3OLrnHJvH501yAcxRXDYpqTmZZalF+nYJXBmXL05m
-        K1jBVHF2wQamBsZPjF2MnBwSAiYSX/btZe9i5OIQEljBKPHh7DRmCOcLo8S+981gVUICnxkl
-        Di10gOk40fyeDaJoOaPEsQffodrfM0rMntjLBlIlLOAkMfd/J1i3iICmxNvrhxhBipgFuhgl
-        XjXeYQZJsAlYSUxsXwVWxCKgIrGxu5+pi5GDQ1QgQqL/jDpImFdAUOLkzCcsIDangIvE/cZJ
-        YOXMAgYSRxbNYYWw5SW2v50DdraEQDO7xLHlf9ggmsskDh/8wARxtovE2h/32SFsYYlXx7dA
-        2TIS/3fOZ4Jons4o8ebXUhYIZz2jxJozx6C6rSUOH7/ICmE7Slz6+Zwd5FIJAT6JG28FIa7g
-        k5i0bTozRJhXoqNNCKJaTWLDsg1sMLu6dq6EKvGQ6D2tOYFRcRaSN2cheW0WktcWMDKvYhRP
-        LS3OTU8tNspLLdcrTswtLs1L10vOz93ECEwjp/8d/7KDcdefpEOMAhyMSjy8KwJ2RQuxJpYV
-        V+YeYpTgYFYS4RXdDhTiTUmsrEotyo8vKs1JLT7EKM3BoiTOu2zexmghgfTEktTs1NSC1CKY
-        LBMHp1QDo9nBqPNss8Pc7ST/Mu0wfOvV2sK5ZZ36sqRWgcth3ceLmt3W/t5mEdwbxL/t/tb7
-        8veyO66dmipza/uTU0vu9L5UnfRervb6wqsHohV4VRl4k/LW+d3IXqtXZN+mt/BVk8kD+yLv
-        jp5jMj8upc3Tmv01wmJe/5yeX9Gvl/15xf794cfOMxblr5RYijMSDbWYi4oTAYFuEiQfAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsVy+t/xu7qSJrujDW7NMLDYdvoQs8Wq0wtZ
-        LE70fWC1uLxrDpvFmVlfGR1YPXbOusvucXTPOTaPz5vkApij9GyK8ktLUhUy8otLbJWiDS2M
-        9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIuX5zMVrCCqeLsgg1MDYyfGLsYOTkk
-        BEwkTjS/Z+ti5OIQEljKKLH69B0ghwMoISNxfH0ZRI2wxJ9rXVA1bxkllvXdZQFJCAs4Scz9
-        3wk2SERAU+Lt9UOMEEXTGSUm93wH62AW6GKUeNE3mx2kik3ASmJi+yqwDl4BO4mT7UeYQWwW
-        ARWJjd39TCC2qECExK2HHSwQNYISJ2c+AbM5BVwk7jdOAutlFtCT2HH9FyuELS+x/e0c5gmM
-        grOQtMxCUjYLSdkCRuZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgfGx7djPLTsYu94FH2IU
-        4GBU4uFdEbArWog1say4MvcQowQHs5IIr+h2oBBvSmJlVWpRfnxRaU5q8SFGU6AnJjJLiSbn
-        A2M3ryTe0NTQ3MLS0NzY3NjMQkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QDo/qmpAuz5OdE
-        mEWKSAuG6MUn7JY8/vTHtvCEu35Jv6c8Ms5d/rDklkPo+94rj56W1yz7vvpY53b3QGMTLeMY
-        p7SZq9XDqrd+jnN/2fVV4tV9pXJj23S+0DNnn1WFan3Vjvqc3bf1ivhujc4ml5UXP1dcX5TV
-        ERZs0NLzRmZnyOdChdiVZaVySizFGYmGWsxFxYkAqxdm9aUCAAA=
-Message-Id: <20181008104026eucas1p254120530a8d1c441deba6a548c99b002~bnAESLW6H1306713067eucas1p2N@eucas1p2.samsung.com>
-X-CMS-MailID: 20181008104026eucas1p254120530a8d1c441deba6a548c99b002
-X-Msg-Generator: CA
-X-RootMTR: 20180824124948epcas3p48f943b2815163971258231dcbcbed6a4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180824124948epcas3p48f943b2815163971258231dcbcbed6a4
-References: <CGME20180824124948epcas3p48f943b2815163971258231dcbcbed6a4@epcas3p4.samsung.com>
-        <1535114948-18615-1-git-send-email-contact.mehdi@pm.me>
+        Mon, 8 Oct 2018 13:52:10 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y16so20254512wrw.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 03:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tKiqz77Jmwp7LmxADxlYoUbWc1fWcR9xCmZHpl3hCso=;
+        b=LMhOLlTchVLqol1DPJ4L1uPyj7O6Zj+9kDHePani4HJsbM8lyMeC47EWxCWOHDnJfC
+         8J0uOMyhVNqt1SF+5W8gLf+aAiqaH2tFLgjbAbIV1aN/cPUEMjiIg0z+V62f7IYQGZpS
+         bY7jBv0lRKPYGgBSFZJgvG940eIfU1cl6FjvlSNMvgqTzlqKh5VIYslR6iADQZYDBazB
+         JLB/wSUNL3wx8CDA9OphWVFrGiJb8uNwvWxkzm/xoJOuX/SIrlYAYpJSfrmhNiBOphva
+         M09V1DEdjqk5cLYdbahQzMow2ykptsMMLacGhBDmrbizL3YEp0xzHda/QnxIWxErlAKk
+         TEjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tKiqz77Jmwp7LmxADxlYoUbWc1fWcR9xCmZHpl3hCso=;
+        b=rr1c4tywbSyhc+xdFiMqDvgQXQucv8oghtmXhYA+Ejnye7zQrvvu+q+Y3I+UkSHDeq
+         I/sYfNcHvIubRAF2MxBs+uv++82MjV/52+dYDbT+KVjb3908pgnDf0nou8t4wC4UyMv5
+         pd3iLcWRklY8RFPQQRIBoHLr3nZ1KWKGT5rKBt7MFUy1LECExN53CUvfjckrq9sRWhE8
+         +pDWNYekGEl16DDSdXKjNlsyadjjaBLpR4SajG7Hdvxud7fiOZ+6anDkBXvEF0qYhRH0
+         LBfwF/KF8758VAzF/HawJ8NikEJnhIvcQ9CJborrMOJZb4FMsJpusSQuNiy+vE8UV6sM
+         8oHQ==
+X-Gm-Message-State: ABuFfog/z+JqFGhF8Yr6sCs3dAeTfTIxmDJZ18OE3Pa2gu9TVqpkFmrj
+        GpvFHUAusCo5N9qiW0O3HIY=
+X-Google-Smtp-Source: ACcGV63xOb+BeM823lhqu6q8hlWASgQhau2pAtUQNRIpfe8TJX2jroDe5uF3UHW8R3rkSbZgdH/lHw==
+X-Received: by 2002:adf:bc13:: with SMTP id s19-v6mr17047751wrg.255.1538995264724;
+        Mon, 08 Oct 2018 03:41:04 -0700 (PDT)
+Received: from ltourlonias-VirtualBox (c2fa8d22.fsp.oleane.fr. [194.250.141.34])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm15271872wrb.30.2018.10.08.03.41.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 03:41:03 -0700 (PDT)
+From:   Loic Tourlonias <loic.tourlonias.lkml@gmail.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Loic Tourlonias <loic.tourlonias.lkml@gmail.com>
+Subject: [PATCH] staging: erofs: add SPDX identifer
+Date:   Mon,  8 Oct 2018 12:41:00 +0200
+Message-Id: <20181008104100.2369-1-loic.tourlonias.lkml@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add SPDX identifier to simplify header and remove whole license text
 
-On 08/24/2018 02:49 PM, Mehdi Bounya wrote:
-> Removed a space between function name and open parant.
-> 
-> Signed-off-by: Mehdi Bounya <mehdi.bounya@gmail.com>
+Signed-off-by: Loic Tourlonias <loic.tourlonias.lkml@gmail.com>
+---
+ drivers/staging/erofs/lz4defs.h | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
 
-Patch queued for 4.20, thanks.
+diff --git a/drivers/staging/erofs/lz4defs.h b/drivers/staging/erofs/lz4defs.h
+index 00a0b58a0871..bdb1022981d8 100644
+--- a/drivers/staging/erofs/lz4defs.h
++++ b/drivers/staging/erofs/lz4defs.h
+@@ -1,32 +1,13 @@
+ #ifndef __LZ4DEFS_H__
+ #define __LZ4DEFS_H__
+ 
++// SPDX-License-Identifier: BSD-2-Clause
+ /*
+  * lz4defs.h -- common and architecture specific defines for the kernel usage
+ 
+  * LZ4 - Fast LZ compression algorithm
+  * Copyright (C) 2011-2016, Yann Collet.
+- * BSD 2-Clause License (http://www.opensource.org/licenses/bsd-license.php)
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions are
+- * met:
+- *	* Redistributions of source code must retain the above copyright
+- *	  notice, this list of conditions and the following disclaimer.
+- *	* Redistributions in binary form must reproduce the above
+- * copyright notice, this list of conditions and the following disclaimer
+- * in the documentation and/or other materials provided with the
+- * distribution.
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
+  * You can contact the author at :
+  *	- LZ4 homepage : http://www.lz4.org
+  *	- LZ4 source repository : https://github.com/lz4/lz4
+-- 
+2.17.1
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
