@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82558C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E5EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E2012087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9C32089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbcFHpBd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2012087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZQIIr51"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9C32089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeJIBsF (ORCPT
+        id S1728095AbeJIBsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbeJIBsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:04 -0400
+        id S1727068AbeJIBsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C2B92087D;
-        Mon,  8 Oct 2018 18:35:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D836B2145D;
+        Mon,  8 Oct 2018 18:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023701;
-        bh=IlGS0CExd7HjYH5VP3y7TV28aroRvxRjLxEVJgKm/tM=;
+        s=default; t=1539023704;
+        bh=RN62Xq106SAQoKeR8q5QpXNy+t5rnwkJ10wRSm4Je4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jbcFHpBdpSF5KPdDFyGfXuPHuuhANeGy/tVX8YrSQkFUKz3CDYUoTbKaSRsLLwRVY
-         vOWNIWA7VQ8zVxTy31/aKJq8MUoS7/y+2cWcgNw0fe54i2mh3Wy1DdTyifcOZv8aAk
-         prSonnM4i8Fs+snGpoTmqvlp9j3AxwG5SyDh7JZI=
+        b=CZQIIr51Yl6CFuL/gJ6U6IujgWOU7I2IPYMcdRbbNMUTKV7fyoKPsXZGZjj3KVtUe
+         17kAcJyMhOH8sxsrqTURaO1UGMCXP2w21F+1/zoaTh2yZmMuUSeJvzHCzdS5gwOdN5
+         /OtzIWLgA35b439UwiGE5MYspW8s4J7d2iCLwpy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 021/113] powerpc/powernv/ioda2: Reduce upper limit for DMA window size
-Date:   Mon,  8 Oct 2018 20:30:22 +0200
-Message-Id: <20181008175531.875171518@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 048/113] spi: rspi: Fix invalid SPI use during system suspend
+Date:   Mon,  8 Oct 2018 20:30:49 +0200
+Message-Id: <20181008175533.390638198@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,40 +63,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit d3d4ffaae439981e1e441ebb125aa3588627c5d8 ]
+commit c1ca59c22c56930b377a665fdd1b43351887830b upstream.
 
-We use PHB in mode1 which uses bit 59 to select a correct DMA window.
-However there is mode2 which uses bits 59:55 and allows up to 32 DMA
-windows per a PE.
+If the SPI queue is running during system suspend, the system may lock
+up.
 
-Even though documentation does not clearly specify that, it seems that
-the actual hardware does not support bits 59:55 even in mode1, in other
-words we can create a window as big as 1<<58 but DMA simply won't work.
+Fix this by stopping/restarting the queue during system suspend/resume,
+by calling spi_master_suspend()/spi_master_resume() from the PM
+callbacks.  In-kernel users will receive an -ESHUTDOWN error while
+system suspend/resume is in progress.
 
-This reduces the upper limit from 59 to 55 bits to let the userspace know
-about the hardware limits.
+Based on a patch for sh-msiof by Gaku Inami.
 
-Fixes: 7aafac11e3 "powerpc/powernv/ioda2: Gracefully fail if too many TCE levels requested"
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/platforms/powernv/pci-ioda.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -2270,7 +2270,7 @@ static long pnv_pci_ioda2_table_alloc_pa
- 	level_shift = entries_shift + 3;
- 	level_shift = max_t(unsigned, level_shift, PAGE_SHIFT);
+---
+ drivers/spi/spi-rspi.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1303,12 +1303,36 @@ static const struct platform_device_id s
  
--	if ((level_shift - 3) * levels + page_shift >= 60)
-+	if ((level_shift - 3) * levels + page_shift >= 55)
- 		return -EINVAL;
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
  
- 	/* Allocate TCE table */
++#ifdef CONFIG_PM_SLEEP
++static int rspi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rspi_data *rspi = platform_get_drvdata(pdev);
++
++	return spi_master_suspend(rspi->master);
++}
++
++static int rspi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rspi_data *rspi = platform_get_drvdata(pdev);
++
++	return spi_master_resume(rspi->master);
++}
++
++static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
++#define DEV_PM_OPS	&rspi_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static struct platform_driver rspi_driver = {
+ 	.probe =	rspi_probe,
+ 	.remove =	rspi_remove,
+ 	.id_table =	spi_driver_ids,
+ 	.driver		= {
+ 		.name = "renesas_spi",
++		.pm = DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(rspi_of_match),
+ 	},
+ };
 
 
