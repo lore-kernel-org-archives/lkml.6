@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AADC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF1BC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C82E2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C9AB2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGc51NiF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C82E2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLKaJDgU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9AB2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeJIBuF (ORCPT
+        id S1728772AbeJIBuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbeJIBuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:04 -0400
+        id S1726529AbeJIBuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A78182064A;
-        Mon,  8 Oct 2018 18:37:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9506B2087D;
+        Mon,  8 Oct 2018 18:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023821;
-        bh=cd6SnLS71X+bV/7Q7NiLeo/Xqa8kQlyaobnOlwBdOFs=;
+        s=default; t=1539023824;
+        bh=hoq3dbOftU5Vbvjvk8ONskX1qvc5XhkyYQ6x1nQQzkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bGc51NiF03seqaowGXzjzxySU7xTt4gbUymMoZi+EiES6nEoXKp6YoC3JGCxIMsH2
-         XwFBedBhCm/Br7wSceLTwvlYaAaYCPe8rrLVNze5W3/4K8DaLmYDIuCs/BsuxfxAr8
-         eoHnGakSodEaYpf8GV3gU/WHaNt95XwNbrsIUHO0=
+        b=nLKaJDgUkscVR7gXRGIch+Wq45FXZMrpg5vQuUhM3b0AkPTg7RO2vGUPTrMHtOpzy
+         4Oyg6B++mUK9viKfjoVc9xJzyyCim06iZYn4Ryp5p+x6at7a6Vvw4gxygA0e3jLW65
+         SxLd6awXzYkQzVAOyEy6tORSXZx+2zDf94A1sBM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 095/113] RDMA/ucma: check fd type in ucma_migrate_id()
-Date:   Mon,  8 Oct 2018 20:31:36 +0200
-Message-Id: <20181008175536.500248706@linuxfoundation.org>
+Subject: [PATCH 4.4 096/113] USB: yurex: Check for truncation in yurex_read()
+Date:   Mon,  8 Oct 2018 20:31:37 +0200
+Message-Id: <20181008175536.543068387@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,55 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-[ Upstream commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 ]
+[ Upstream commit 14427b86837a4baf1c121934c6599bdb67dfa9fc ]
 
-The current code grabs the private_data of whatever file descriptor
-userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-potentially causing a type confusion.
+snprintf() always returns the full length of the string it could have
+printed, even if it was truncated because the buffer was too small.
+So in case the counter value is truncated, we will over-read from
+in_buffer and over-write to the caller's buffer.
 
-This is probably fine in practice because the pointer is only used for
-comparisons, it is never actually dereferenced; and even in the
-comparisons, it is unlikely that a file from another filesystem would have
-a ->private_data pointer that happens to also be valid in this context.
-But ->private_data is not always guaranteed to be a valid pointer to an
-object owned by the file's filesystem; for example, some filesystems just
-cram numbers in there.
+I don't think it's actually possible for this to happen, but in case
+truncation occurs, WARN and return -EIO.
 
-Check the type of the supplied file descriptor to be safe, analogous to how
-other places in the kernel do it.
-
-Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/ucma.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/misc/yurex.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -123,6 +123,8 @@ static DEFINE_MUTEX(mut);
- static DEFINE_IDR(ctx_idr);
- static DEFINE_IDR(multicast_idr);
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -431,6 +431,9 @@ static ssize_t yurex_read(struct file *f
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 	mutex_unlock(&dev->io_mutex);
  
-+static const struct file_operations ucma_fops;
++	if (WARN_ON_ONCE(len >= sizeof(in_buffer)))
++		return -EIO;
 +
- static inline struct ucma_context *_ucma_find_context(int id,
- 						      struct ucma_file *file)
- {
-@@ -1535,6 +1537,10 @@ static ssize_t ucma_migrate_id(struct uc
- 	f = fdget(cmd.fd);
- 	if (!f.file)
- 		return -ENOENT;
-+	if (f.file->f_op != &ucma_fops) {
-+		ret = -EINVAL;
-+		goto file_put;
-+	}
+ 	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
+ }
  
- 	/* Validate current fd and prevent destruction of id. */
- 	ctx = ucma_get_ctx(f.file->private_data, cmd.id);
 
 
