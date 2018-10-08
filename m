@@ -2,146 +2,139 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB7EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76747C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEEBB2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEEBB2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 191992064E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:50:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hjuHNu9v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191992064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJHR6r (ORCPT
+        id S1727284AbeJHSBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:58:47 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44248 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeJHR6q (ORCPT
+        Mon, 8 Oct 2018 14:01:32 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55896 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbeJHSBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:58:46 -0400
-Received: by mail-lf1-f67.google.com with SMTP id m18-v6so13567105lfl.11;
-        Mon, 08 Oct 2018 03:47:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cnJqKGfKCJn6THfdu0w+U8mp3PA/UTX51c6e69INi9o=;
-        b=FajzgdHibbsC7lU/qaufFiVDeaaCBagTQScXmJS6znJyuBl2/7aiKUt2jjxljheniW
-         sHPl5Bw8VMfoDPE0SAPuw10/AXHHhMgBNG8D10YzJL84mVpQEiDxtHq8zcrWtZ9PW71M
-         WiD3754smSLFE2OKFa2W+P+9RVrE8O1Zs0a0sWZsPZPAgEWWZY5QGTadjCW7USq2O4Lc
-         mkixQdNa8NMtrZ0AqivYREjJ/WMKvwYWA3M8CjQKH5jwR9eAyLWAFWQZMIeT1SLevoi7
-         jlEhgXJyiUtbffWr4xNjRfHrM2s0sIcKNnvPi44Zx6lGj2WwatDbr49ytBx6uBjZqWl9
-         GLgw==
-X-Gm-Message-State: ABuFfohL3Acgo3wJhF7/IGEF6omjVinCm54t/9EFgSnljKthc9yHVQ4J
-        vRNLBNWRgtuZZgMgzxOgbNDD8nQ1cbR+xmpbjdc=
-X-Google-Smtp-Source: ACcGV61pB2vwPNyHB6fkOMZ97n+/c4OwSck8WviBAk965P28UkIHwr7nE7HJStr/AhCt/m3GehT0iQEbZ0IYRvmKCWA=
-X-Received: by 2002:a19:6d0e:: with SMTP id i14-v6mr12760275lfc.57.1538995657922;
- Mon, 08 Oct 2018 03:47:37 -0700 (PDT)
+        Mon, 8 Oct 2018 14:01:31 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181008105024euoutp0104f004c9cab5838e733baae31f414a1c~bnIxbevD-1892118921euoutp01N
+        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 10:50:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181008105024euoutp0104f004c9cab5838e733baae31f414a1c~bnIxbevD-1892118921euoutp01N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538995824;
+        bh=S9CqCYVrjA8jBJ1nZ7y9g4sdfaZBx0Wh3OSuKwxwORw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=hjuHNu9vD5eL/nucPTbYI9q7kziSD2tYQb3rqYFg/aSm4yzXtsPC2tNFSZElUfdJs
+         Ig9QwBi3MjDWKxiFXTlTd8GmQ+K1M0deVqF++XR2bCPPSxuJuodyvpKjWedoGLn0DU
+         TbyOlj0yuT9uvrcshmiq1ym3ue5Yy4VSN9IWAsDE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181008105023eucas1p20bf711f9d0bd1573fd2927ee4ff4ff21~bnIw0mwp31725217252eucas1p26;
+        Mon,  8 Oct 2018 10:50:23 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 51.DF.04441.F663BBB5; Mon,  8
+        Oct 2018 11:50:23 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181008105022eucas1p1b747f75b0dbe07f781e5cfee83829773~bnIwD11nn2266022660eucas1p1o;
+        Mon,  8 Oct 2018 10:50:22 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181008105022eusmtrp2233474beb5f42e221429b848d3b6fb79~bnIvy1_RO1727517275eusmtrp2W;
+        Mon,  8 Oct 2018 10:50:22 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-4d-5bbb366f70f9
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0F.27.04128.E663BBB5; Mon,  8
+        Oct 2018 11:50:22 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181008105022eusmtip2ecd98666753c34c8731a2ff7ab824363~bnIvdgVLG2539325393eusmtip2c;
+        Mon,  8 Oct 2018 10:50:22 +0000 (GMT)
+Subject: Re: [PATCH v4] video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup
+ table
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     linux-fbdev@lists.infradead.org, linux-omap@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date:   Mon, 8 Oct 2018 12:50:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
-In-Reply-To: <20181003132212.12619-1-boris.brezillon@bootlin.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 8 Oct 2018 12:47:21 +0200
-Message-ID: <CAK8P3a2C+FHiPnHKEAanhD=RpqDG1VywTEGhpdBvvKQ8zmwdUA@mail.gmail.com>
-Subject: Re: [PATCH v8 00/10] Add the I3C subsystem
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>, mshettel@codeaurora.org,
-        swboyd@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181003130326.10283-1-jmkrzyszt@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZduznOd18s93RBi8Oi1lc+fqezeLKtlnM
+        Fg+/72CzuLxrDpvF7CX9LA6sHjtn3WX3uN99nMlj85J6j8+b5AJYorhsUlJzMstSi/TtErgy
+        dj1fzFrQxl5xddYltgbGe6xdjBwcEgImEgu6M7oYuTiEBFYwSrR2HmCEcL4wSnRt/8gK4Xxm
+        lDj/dgp7FyMnWMeX941QieWMEuv7LzBBOO8ZJTbe72AFqRIWCJGY+GonE4gtIqAj8XJPO1gR
+        s0ADo0Tbnl5mkASbgJXExPZVjCCHsAioSHzodwExRQUiJPrPqINU8AoISpyc+YQFJMwpYCnR
+        cMcYJMwsYCBxZNEcVghbXmL72znMINMlBPrZJfpvzWWE6C2T2HOgiwniTReJWTM9Ie4Xlnh1
+        fAvULzIS/3fOZ4Lonc4o8ebXUhYIZz2jxJozx5ggqqwlDh+/yAphO0r8uHoKaiifxI23ghBH
+        8ElM2jadGSLMK9HRJgRRrSaxYdkGNphdXTtXMkPYHhJ9i/6wTWBUnIXky1lIXpuF5LUFjMyr
+        GMVTS4tz01OLDfNSy/WKE3OLS/PS9ZLzczcxAlPJ6X/HP+1g/Hop6RCjAAejEg/vyoBd0UKs
+        iWXFlbmHGCU4mJVEeEW3A4V4UxIrq1KL8uOLSnNSiw8xSnOwKInzLpu3MVpIID2xJDU7NbUg
+        tQgmy8TBKdXAKKk/XX9XQI+px8dudVapmuk/WWwvSggYuTaleXGf3LR5nuSyBq/8W77dS66/
+        VPa/slXmF0NOxTbRu4p1D5JWzZmW+Vt/Vq/O7sISRRlvwf3O5l1r085FK7tlVYllzI2/Jbhe
+        q9UwWeDVg5yn9Zv1Nxxnl9h/tejS3ZqENfZp73sPrzOe4a+nxFKckWioxVxUnAgA7FI+/yED
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsVy+t/xe7p5ZrujDf6/k7a48vU9m8WVbbOY
+        LR5+38FmcXnXHDaL2Uv6WRxYPXbOusvucb/7OJPH5iX1Hp83yQWwROnZFOWXlqQqZOQXl9gq
+        RRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehl7Hq+mLWgjb3i6qxLbA2M91i7
+        GDk5JARMJL68bwSzhQSWMkrcXxzexcgBFJeROL6+DKJEWOLPtS62LkYuoJK3jBLfZs1lBkkI
+        C4RITHy1kwnEFhHQkXi5p50Jomg3o8SVCWeYQRxmgQZGiT0r+tlAqtgErCQmtq9iBLF5Bewk
+        pvxpYQPZxiKgIvGh3wUkLCoQIXHrYQcLRImgxMmZT1hASjgFLCUa7hiDhJkF9CR2XP/FCmHL
+        S2x/O4d5AqPgLCQds5CUzUJStoCReRWjSGppcW56brGRXnFibnFpXrpecn7uJkZghGw79nPL
+        Dsaud8GHGAU4GJV4eFcE7IoWYk0sK67MPcQowcGsJMIruh0oxJuSWFmVWpQfX1Sak1p8iNEU
+        6IWJzFKiyfnA6M0riTc0NTS3sDQ0NzY3NrNQEuc9b1AZJSSQnliSmp2aWpBaBNPHxMEp1cCo
+        sn2xoPqLo7VRD301NYRjv20NL1n5R873vnpOyrriqQ1bgpJuh39Q0HDJYLhRmdq5+/mJpLxA
+        3/PLLm3Z9d/m30GVxqrI8sq5QtWbl77X4digolN47PnfO9+mvDD9vTPP9+vWgL5MmT+Kweuv
+        T50mLrN/6bf1L34n7vi8UyC3M7v3fdLW7wy3lFiKMxINtZiLihMBD1Tmj6YCAAA=
+Message-Id: <20181008105022eucas1p1b747f75b0dbe07f781e5cfee83829773~bnIwD11nn2266022660eucas1p1o@eucas1p1.samsung.com>
+X-CMS-MailID: 20181008105022eucas1p1b747f75b0dbe07f781e5cfee83829773
+X-Msg-Generator: CA
+X-RootMTR: 20181003130232epcas2p4eba2a06d977e2f23014c2a5d5256630f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181003130232epcas2p4eba2a06d977e2f23014c2a5d5256630f
+References: <20180909225605.16463-2-jmkrzyszt@gmail.com>
+        <CGME20181003130232epcas2p4eba2a06d977e2f23014c2a5d5256630f@epcas2p4.samsung.com>
+        <20181003130326.10283-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> Sorry for the huge delay between v7 and v8 despite the small amount of
-> things I was asked to fix/rework.
->
-> This patch series is adding a new subsystem to support I3C devices.
->
-> This is just adding support for basic features. Extra features will
-> be added afterwards.
->
-> There are a few design choices that are worth mentioning because they
-> impact the way I3C device drivers can interact with their devices:
->
-> - all functions used to send I3C/I2C frames must be called in
->   non-atomic context. Mainly done this way to ease implementation, but
->   this is still open to discussion. Please let me know if you think it's
->   worth considering an asynchronous model here
-> - the I3C bus and I3C master controller are now tightly coupled even
->   though they're still allocated separately. There's now a 1:1
->   relationship between these objects, and the I3C master is no longer
->   represented under the I3C bus object.
->   Arnd, let me know if you had something different in mind, and I'll
->   rework the implementation accordingly.
 
-I looked at the entire series again and I'm rather happy with how
-it turned out. I've commented on a tiny issue about the readsl()
-that should be easy to resolve one way or another, with that
-you can add my
+On 10/03/2018 03:03 PM, Janusz Krzysztofik wrote:
+> Now as Amstrad Delta board - the only user of this driver - provides
+> GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
+> use the table to locate required GPIO pins.
+> 
+> Declare static variables for storing GPIO descriptors and replace
+> gpio_ function calls with their gpiod_ equivalents. Move GPIO lookup
+> to the driver probe function so device initialization can be deferred
+> instead of aborted if a GPIO pin is not yet available.
+> 
+> Pin naming used by the driver should be followed while respective GPIO
+> lookup table is initialized by a board init code.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Patch queued for 4.20, thanks.
 
-There is one additional issue that we've talked about previously
-and that I'd like to hear about from GregKH or maybe other
-subsystem maintainers: In the current version, you have a single
-'bus_type' object, and this is used to represent both a 'host' and
-a 'device'. I think we concluded that this is done in other
-subsystems as well, and that this is fitting here because a
-host (master device) can hand over being a master to another
-device (slave), which then becomes the host and sees this
-one as a slave. Also a lot of the sysfs attributes are the same
-because of this relationship.
-
-It also means that you get a mix of things in sysfs:
-
-/sys/devices/i3c/<bus>
-/sys/devices/i3c/<device>
-/sys/devices/i3c/<bus>/<device>
-
-which is a bit like what we have on USB where we can have hub
-devices that are again parents of other USB devices, but I don't
-think we can have i3c hubs or multiplexers in the same way, so
-it's only a single level.
-
-I'm ok with this model after our previous discussion and couldn't
-come up with a better one. If anyone else still sees it as
-problematic and has a better idea, please let us know now.
-
-         Arnd
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
