@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D26C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A52C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CB521479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62F2320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYFcOrKw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CB521479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnkZuUEx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F2320C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeJIBq5 (ORCPT
+        id S1727481AbeJIBq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:46:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57378 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:46:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727376AbeJIBqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:46:53 -0400
+        id S1727376AbeJIBq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:46:59 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C95B82089D;
-        Mon,  8 Oct 2018 18:33:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55DE120C0A;
+        Mon,  8 Oct 2018 18:33:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023631;
-        bh=GLGdy9ZKzUSAZFitwPHn+YDLaJVF878wgcg81n/HyJY=;
+        s=default; t=1539023636;
+        bh=FzGdv/j4aM0sDQSLdOIcq5jFUCOB8TPHvj56oRRkMoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XYFcOrKw1S8ZJjRx336187aheE72X0I4MuxvU9CWPrkhqYQuv0k5fm3DMGY1KTDI4
-         4POilPXPRXkQQAlnHshGAjTFRu4DMVJ4bGwLJ9UHd9kw3k/XspqBJug/poH3QqLB0u
-         YvlSMS5UF7wvYMh5K/WGbGK86toAE1SaPd3aZi8U=
+        b=fnkZuUEx0L6Mk1FjyhLDHKw3cZT/turHfXjoTpiZcLmc10QSxolLrBcOjzGlLSEJ5
+         2LjzOeeOlLZSZ9MUW3LRvoZw3Lzw3byTexmrlh7DvwH7zmn/m4VvDVrEehz30QMpL6
+         JbQELryE9LVs2AXuCV47S4XmOxaQerwhwaef5jBY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
+        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 022/113] alarmtimer: Prevent overflow for relative nanosleep
-Date:   Mon,  8 Oct 2018 20:30:23 +0200
-Message-Id: <20181008175531.915728942@linuxfoundation.org>
+Subject: [PATCH 4.4 032/113] ath10k: protect ath10k_htt_rx_ring_free with rx_ring.lock
+Date:   Mon,  8 Oct 2018 20:30:33 +0200
+Message-Id: <20181008175532.406515701@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -64,51 +63,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Ben Greear <greearb@candelatech.com>
 
-[ Upstream commit 5f936e19cc0ef97dbe3a56e9498922ad5ba1edef ]
+[ Upstream commit 168f75f11fe68455e0d058a818ebccfc329d8685 ]
 
-Air Icy reported:
+While debugging driver crashes related to a buggy firmware
+crashing under load, I noticed that ath10k_htt_rx_ring_free
+could be called without being under lock.  I'm not sure if this
+is the root cause of the crash or not, but it seems prudent to
+protect it.
 
-  UBSAN: Undefined behaviour in kernel/time/alarmtimer.c:811:7
-  signed integer overflow:
-  1529859276030040771 + 9223372036854775807 cannot be represented in type 'long long int'
-  Call Trace:
-   alarm_timer_nsleep+0x44c/0x510 kernel/time/alarmtimer.c:811
-   __do_sys_clock_nanosleep kernel/time/posix-timers.c:1235 [inline]
-   __se_sys_clock_nanosleep kernel/time/posix-timers.c:1213 [inline]
-   __x64_sys_clock_nanosleep+0x326/0x4e0 kernel/time/posix-timers.c:1213
-   do_syscall_64+0xb8/0x3a0 arch/x86/entry/common.c:290
+Originally tested on 4.16+ kernel with ath10k-ct 10.4 firmware
+running on 9984 NIC.
 
-alarm_timer_nsleep() uses ktime_add() to add the current time and the
-relative expiry value. ktime_add() has no sanity checks so the addition
-can overflow when the relative timeout is large enough.
-
-Use ktime_add_safe() which has the necessary sanity checks in place and
-limits the result to the valid range.
-
-Fixes: 9a7adcf5c6de ("timers: Posix interface for alarm-timers")
-Reported-by: Team OWL337 <icytxw@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1807020926360.1595@nanos.tec.linutronix.de
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/time/alarmtimer.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/htt_rx.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -773,7 +773,8 @@ static int alarm_timer_nsleep(const cloc
- 	/* Convert (if necessary) to absolute time */
- 	if (flags != TIMER_ABSTIME) {
- 		ktime_t now = alarm_bases[type].gettime();
--		exp = ktime_add(now, exp);
-+
-+		exp = ktime_add_safe(now, exp);
- 	}
+--- a/drivers/net/wireless/ath/ath10k/htt_rx.c
++++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
+@@ -212,11 +212,12 @@ int ath10k_htt_rx_ring_refill(struct ath
+ 	spin_lock_bh(&htt->rx_ring.lock);
+ 	ret = ath10k_htt_rx_ring_fill_n(htt, (htt->rx_ring.fill_level -
+ 					      htt->rx_ring.fill_cnt));
+-	spin_unlock_bh(&htt->rx_ring.lock);
  
- 	if (alarmtimer_do_nsleep(&alarm, exp))
+ 	if (ret)
+ 		ath10k_htt_rx_ring_free(htt);
+ 
++	spin_unlock_bh(&htt->rx_ring.lock);
++
+ 	return ret;
+ }
+ 
+@@ -230,7 +231,9 @@ void ath10k_htt_rx_free(struct ath10k_ht
+ 	skb_queue_purge(&htt->rx_compl_q);
+ 	skb_queue_purge(&htt->rx_in_ord_compl_q);
+ 
++	spin_lock_bh(&htt->rx_ring.lock);
+ 	ath10k_htt_rx_ring_free(htt);
++	spin_unlock_bh(&htt->rx_ring.lock);
+ 
+ 	dma_free_coherent(htt->ar->dev,
+ 			  (htt->rx_ring.size *
 
 
