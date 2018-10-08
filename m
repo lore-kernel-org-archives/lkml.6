@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCEAC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0FBC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68BD5214C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86A94214C5
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIxQILPN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68BD5214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtPQvauv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A94214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730274AbeJIBzi (ORCPT
+        id S1730288AbeJIBzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43256 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbeJIBzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:37 -0400
+        id S1729556AbeJIBzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3956121479;
-        Mon,  8 Oct 2018 18:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E333214C3;
+        Mon,  8 Oct 2018 18:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024152;
-        bh=otSVH3572LdnUgByaUPc4jDWbfAAiZlQ6sagvmeOxwQ=;
+        s=default; t=1539024155;
+        bh=kWKgC11bD+/J70EVnM1clcCPK+k86goWkxqceXomDeM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BIxQILPNz5anQxztsZvLBebs3W4zDYbP7VeQdbDjIXOb+mSTj8eh6/jvXx2Dc12Qd
-         nc1sPBiUGeWXOImOmR16UI/ecZzMkEoDgXu64YULISFvuXDuWKmqDoa4vBTP2TFs1p
-         1USRPuPYU6ryHeg1DKMNZlJPoc13jYdan1lu552c=
+        b=CtPQvauvp+hu/g0i68OeF2feZXxTjK9ZiacGpXJWfkcnVsxowDBV/hzo6LKmstL6K
+         u8gzf1/KTV0F8Y8oRe1cbflo7QxEYiWyuxPytJvcakrkYKtJJbmx/ORioWBYGmOmtP
+         PecFXXE5NB58ww+wKsXs2VZlv9UHH1qRiV8YHBKs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 39/94] tools/vm/page-types.c: fix "defined but not used" warning
-Date:   Mon,  8 Oct 2018 20:31:20 +0200
-Message-Id: <20181008175606.860734955@linuxfoundation.org>
+        stable@vger.kernel.org, Kenneth Penza <kpenza@gmail.com>,
+        Daniel Black <daniel@linux.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Konstantin Khlebnikov <khlebnikov@openvz.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.14 40/94] mm: madvise(MADV_DODUMP): allow hugetlbfs pages
+Date:   Mon,  8 Oct 2018 20:31:21 +0200
+Message-Id: <20181008175606.903791795@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -66,38 +65,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Daniel Black <daniel@linux.ibm.com>
 
-[ Upstream commit 7ab660f8baecfe26c1c267fa8e64d2073feae2bb ]
+commit d41aa5252394c065d1f04d1ceea885b70d00c9c6 upstream.
 
-debugfs_known_mountpoints[] is not used any more, so let's remove it.
+Reproducer, assuming 2M of hugetlbfs available:
 
-Link: http://lkml.kernel.org/r/1535102651-19418-1-git-send-email-n-horiguchi@ah.jp.nec.com
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
+Hugetlbfs mounted, size=2M and option user=testuser
+
+  # mount | grep ^hugetlbfs
+  hugetlbfs on /dev/hugepages type hugetlbfs (rw,pagesize=2M,user=dan)
+  # sysctl vm.nr_hugepages=1
+  vm.nr_hugepages = 1
+  # grep Huge /proc/meminfo
+  AnonHugePages:         0 kB
+  ShmemHugePages:        0 kB
+  HugePages_Total:       1
+  HugePages_Free:        1
+  HugePages_Rsvd:        0
+  HugePages_Surp:        0
+  Hugepagesize:       2048 kB
+  Hugetlb:            2048 kB
+
+Code:
+
+  #include <sys/mman.h>
+  #include <stddef.h>
+  #define SIZE 2*1024*1024
+  int main()
+  {
+    void *ptr;
+    ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_HUGETLB | MAP_ANONYMOUS, -1, 0);
+    madvise(ptr, SIZE, MADV_DONTDUMP);
+    madvise(ptr, SIZE, MADV_DODUMP);
+  }
+
+Compile and strace:
+
+  mmap(NULL, 2097152, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB, -1, 0) = 0x7ff7c9200000
+  madvise(0x7ff7c9200000, 2097152, MADV_DONTDUMP) = 0
+  madvise(0x7ff7c9200000, 2097152, MADV_DODUMP) = -1 EINVAL (Invalid argument)
+
+hugetlbfs pages have VM_DONTEXPAND in the VmFlags driver pages based on
+author testing with analysis from Florian Weimer[1].
+
+The inclusion of VM_DONTEXPAND into the VM_SPECIAL defination was a
+consequence of the large useage of VM_DONTEXPAND in device drivers.
+
+A consequence of [2] is that VM_DONTEXPAND marked pages are unable to be
+marked DODUMP.
+
+A user could quite legitimately madvise(MADV_DONTDUMP) their hugetlbfs
+memory for a while and later request that madvise(MADV_DODUMP) on the same
+memory.  We correct this omission by allowing madvice(MADV_DODUMP) on
+hugetlbfs pages.
+
+[1] https://stackoverflow.com/questions/52548260/madvisedodump-on-the-same-ptr-size-as-a-successful-madvisedontdump-fails-wit
+[2] commit 0103bd16fb90 ("mm: prepare VM_DONTDUMP for using in drivers")
+
+Link: http://lkml.kernel.org/r/20180930054629.29150-1-daniel@linux.ibm.com
+Link: https://lists.launchpad.net/maria-discuss/msg05245.html
+Fixes: 0103bd16fb90 ("mm: prepare VM_DONTDUMP for using in drivers")
+Reported-by: Kenneth Penza <kpenza@gmail.com>
+Signed-off-by: Daniel Black <daniel@linux.ibm.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Konstantin Khlebnikov <khlebnikov@openvz.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/vm/page-types.c |    6 ------
- 1 file changed, 6 deletions(-)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -155,12 +155,6 @@ static const char * const page_flag_name
- };
- 
- 
--static const char * const debugfs_known_mountpoints[] = {
--	"/sys/kernel/debug",
--	"/debug",
--	0,
--};
--
- /*
-  * data structures
-  */
+---
+ mm/madvise.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -96,7 +96,7 @@ static long madvise_behavior(struct vm_a
+ 		new_flags |= VM_DONTDUMP;
+ 		break;
+ 	case MADV_DODUMP:
+-		if (new_flags & VM_SPECIAL) {
++		if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL) {
+ 			error = -EINVAL;
+ 			goto out;
+ 		}
 
 
