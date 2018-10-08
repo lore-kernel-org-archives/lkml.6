@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE8CC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D9EC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1622089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857592089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkYHZh/K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1622089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz0n6Ohb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 857592089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeJIBqR (ORCPT
+        id S1726995AbeJIBqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:46:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56274 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:46:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726391AbeJIBqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:46:16 -0400
+        id S1726391AbeJIBqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:46:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE48F2089D;
-        Mon,  8 Oct 2018 18:33:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B9E720C0A;
+        Mon,  8 Oct 2018 18:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023593;
-        bh=cl8RiUQedHL2BAs1X3hB58R2WG3AiN9SxRrZ8gU3HQQ=;
+        s=default; t=1539023596;
+        bh=4nelSMHemThQ1qwDyfJxHx9Bvc385uUdRBSTtSVmPy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LkYHZh/KVxzXhiGxB1ThvNr7oKhHmSL2T8ZRBDgx9M4RLU2LfYpbdQNaqsIQt4PYY
-         ncINje0/Ny3cWGiNqtVqfo9eixGqGw/Y+MHzZiG77uW8eaXSrSO2JDFjbzyiVj9a5O
-         K8Czam/n1naxOm2xt38Lb1oVOTUuhRbeNSdP4jAA=
+        b=iz0n6Ohb0LHyj1GyDfuZf/H/dpMLexS0iHgeJqe1BsVjpFOh1cZP0huN0mo4pX45Z
+         7SIP4IgqxS08+9umM1JMgsvWQy88DsDpfq+AUlAFBV73WdGuNlGW3jdwc4uVfUQ0Xf
+         F5lxoPKlRamtF/HnSsTNxoTAHJ3B82jzDS7+bOPE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 019/113] scsi: ibmvscsi: Improve strings handling
-Date:   Mon,  8 Oct 2018 20:30:20 +0200
-Message-Id: <20181008175531.783917170@linuxfoundation.org>
+Subject: [PATCH 4.4 002/113] tsl2550: fix lux1_input error in low light
+Date:   Mon,  8 Oct 2018 20:30:03 +0200
+Message-Id: <20181008175530.982421952@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -65,60 +62,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Matt Ranostay <matt.ranostay@konsulko.com>
 
-[ Upstream commit 1262dc09dc9ae7bf4ad00b6a2c5ed6a6936bcd10 ]
+[ Upstream commit ce054546cc2c26891cefa2f284d90d93b52205de ]
 
-Currently an open firmware property is copied into partition_name variable
-without keeping a room for \0.
+ADC channel 0 photodiode detects both infrared + visible light,
+but ADC channel 1 just detects infrared. However, the latter is a bit
+more sensitive in that range so complete darkness or low light causes
+a error condition in which the chan0 - chan1 is negative that
+results in a -EAGAIN.
 
-Later one, this variable (partition_name), which is 97 bytes long, is
-strncpyed into ibmvcsci_host_data->madapter_info->partition_name, which is
-96 bytes long, possibly truncating it 'again' and removing the \0.
+This patch changes the resulting lux1_input sysfs attribute message from
+"Resource temporarily unavailable" to a user-grokable lux value of 0.
 
-This patch simply decreases the partition name to 96 and just copy using
-strlcpy() which guarantees that the string is \0 terminated. I think there
-is no issue if this there is a truncation in this very first copy, i.e,
-when the open firmware property is read and copied into the driver for the
-very first time;
-
-This issue also causes the following warning on GCC 8:
-
-	drivers/scsi/ibmvscsi/ibmvscsi.c:281:2: warning:  strncpy  output may be truncated copying 96 bytes from a string of length 96 [-Wstringop-truncation]
-	...
-	inlined from  ibmvscsi_probe  at drivers/scsi/ibmvscsi/ibmvscsi.c:2221:7:
-	drivers/scsi/ibmvscsi/ibmvscsi.c:265:3: warning:  strncpy  specified bound 97 equals destination size [-Wstringop-truncation]
-
-CC: Bart Van Assche <bart.vanassche@wdc.com>
-CC: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Acked-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ibmvscsi/ibmvscsi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/tsl2550.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/ibmvscsi/ibmvscsi.c
-+++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
-@@ -93,7 +93,7 @@ static int max_requests = IBMVSCSI_MAX_R
- static int max_events = IBMVSCSI_MAX_REQUESTS_DEFAULT + 2;
- static int fast_fail = 1;
- static int client_reserve = 1;
--static char partition_name[97] = "UNKNOWN";
-+static char partition_name[96] = "UNKNOWN";
- static unsigned int partition_number = -1;
+--- a/drivers/misc/tsl2550.c
++++ b/drivers/misc/tsl2550.c
+@@ -177,7 +177,7 @@ static int tsl2550_calculate_lux(u8 ch0,
+ 		} else
+ 			lux = 0;
+ 	else
+-		return -EAGAIN;
++		return 0;
  
- static struct scsi_transport_template *ibmvscsi_transport_template;
-@@ -261,7 +261,7 @@ static void gather_partition_info(void)
- 
- 	ppartition_name = of_get_property(rootdn, "ibm,partition-name", NULL);
- 	if (ppartition_name)
--		strncpy(partition_name, ppartition_name,
-+		strlcpy(partition_name, ppartition_name,
- 				sizeof(partition_name));
- 	p_number_ptr = of_get_property(rootdn, "ibm,partition-no", NULL);
- 	if (p_number_ptr)
+ 	/* LUX range check */
+ 	return lux > TSL2550_MAX_LUX ? TSL2550_MAX_LUX : lux;
 
 
