@@ -2,57 +2,79 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A55C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4253C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB252089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:53:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB252089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9029F20890
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:53:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuYCuyg1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9029F20890
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbeJHXFr (ORCPT
+        id S1726691AbeJHXGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:05:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:53544 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbeJHXFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:05:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 08:53:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
-   d="scan'208";a="95662383"
-Received: from ddalessa-mobl2.amr.corp.intel.com (HELO [10.254.206.32]) ([10.254.206.32])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Oct 2018 08:50:52 -0700
-Subject: Re: [PATCH v3 0/3] get_user_pages*() and RDMA: first steps
-To:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-References: <20181006024949.20691-1-jhubbard@nvidia.com>
-From:   Dennis Dalessandro <dennis.dalessandro@intel.com>
-Message-ID: <8973680e-4391-48cf-e979-1e9a10be0968@intel.com>
-Date:   Mon, 8 Oct 2018 11:50:50 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 8 Oct 2018 19:06:08 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34176 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbeJHXGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 19:06:07 -0400
+Received: by mail-ot1-f67.google.com with SMTP id i12-v6so20417432otl.1;
+        Mon, 08 Oct 2018 08:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xgcFrayUMiyqhcI9wRtyyi9GoM8fznnVQDQtwVhO39A=;
+        b=QuYCuyg1eVdezNXe+bLfpigm54SEwuJyaPMbSScnHlz2Tg5sa+sOFz39RfErbDNqoU
+         HRnYgSAe59os02JQNa7FtFQMA6X3GhWUAJ2dCYTU8AZM2nyX8rilcWfNZs8iToYJst4G
+         P9tievS4HIWgxqd2ves+lGiYOgvdTA5qLTKRbZdV/h7DFMNTvKbB5cCTId8RS1yydadr
+         oEsjNWj3WoK1NLXuw5uIcTqEanulGBX8NR2IGHu9akQIn0dEFe8xLP8le4y5zzWc9d4r
+         a4G2tjtCEUovgr3UEmdPfXJczMZ53R5S9H9rVzkrNKnujd9MTPPF3YvyIiSP+SEqlcJo
+         JmrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xgcFrayUMiyqhcI9wRtyyi9GoM8fznnVQDQtwVhO39A=;
+        b=bfDGef89cA+h2MqcIv7Emv+Lg9F0NAlIPkcYn3lvd7n3JbZShHa9vuSsToFD4agRFA
+         lRkmW1VWKREnuzJjAgFCUFYZYmuqS6bE35VLJfzX3G3CDYnYztntTaseNhhfs49snpUN
+         Yq6EqZ8pP9UjmOlro4pzZUxZR77uh71CDglO7bDhc2Rjv9u30RGGHg2s07fmwTZA6lDs
+         h68MtkhjqJrbU+aQ1XqZkZxoBei+GqglBy9CrRZzwkaVVB51aO7hOqvCW4fx5tqKhaQX
+         ks51nyhOh7FZheIJ9zGSREr9JuNF/LPOkVZ61odNH0y20xlQcGosFESQfAN2NRIxTOMm
+         lsQg==
+X-Gm-Message-State: ABuFfogBq0m7gANgKIX8wmV5HBc0IbidcFDTKeUbbZiFBF+rs0OcZ8OH
+        15rVGio/oqT/oRLUgRa68x8YY6gT
+X-Google-Smtp-Source: ACcGV63L5kKq2txJnFPculwW65X5iQ12ETLvKPxtvJ6dZrIVgQ1MvIzPYBX9OhCWeuiIbqO4j24lHw==
+X-Received: by 2002:a9d:beb:: with SMTP id 98-v6mr3607033oth.364.1539014024225;
+        Mon, 08 Oct 2018 08:53:44 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id b49sm8308186otb.33.2018.10.08.08.53.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 08:53:42 -0700 (PDT)
+Subject: Re: [PATCH] rtlwifi: rtl8821ae: replace
+ _rtl8821ae_mrate_idx_to_arfr_id with generic version
+To:     Colin King <colin.king@canonical.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181008085028.23874-1-colin.king@canonical.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <aac8eec4-d4e7-93c3-d42c-8960d16629d6@lwfinger.net>
+Date:   Mon, 8 Oct 2018 10:53:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181006024949.20691-1-jhubbard@nvidia.com>
+In-Reply-To: <20181008085028.23874-1-colin.king@canonical.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -61,37 +83,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/5/2018 10:49 PM, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
+On 10/8/18 3:50 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Changes since v2:
+> Function _rtl8821ae_mrate_idx_to_arfr_id is functionally identical to
+> the generic version rtl_mrate_idx_to_arfr_id, so remove
+> _rtl8821ae_mrate_idx_to_arfr_id and use the generic one instead.
 > 
-> -- Absorbed more dirty page handling logic into the put_user_page*(), and
->     handled some page releasing loops in infiniband more thoroughly, as per
->     Jason Gunthorpe's feedback.
+> This also fixes a missing break statement found by CoverityScan in
+> _rtl8821ae_mrate_idx_to_arfr_id, namely: CID#1167237 ("Missing break
+> in switch")
 > 
-> -- Fixed a bug in the put_user_pages*() routines' loops (thanks to
->     Ralph Campbell for spotting it).
+> Thanks to Joe Perches for spotting this when I submitted an earlier patch.
 > 
-> Changes since v1:
+> Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   .../wireless/realtek/rtlwifi/rtl8821ae/hw.c   | 71 +------------------
+>   1 file changed, 1 insertion(+), 70 deletions(-)
 > 
-> -- Renamed release_user_pages*() to put_user_pages*(), from Jan's feedback.
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+> index 317c1b3101da..ba258318ee9f 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+> @@ -3404,75 +3404,6 @@ static void rtl8821ae_update_hal_rate_table(struct ieee80211_hw *hw,
+>   		 "%x\n", rtl_read_dword(rtlpriv, REG_ARFR0));
+>   }
+>   
+> -static u8 _rtl8821ae_mrate_idx_to_arfr_id(
+> -	struct ieee80211_hw *hw, u8 rate_index,
+> -	enum wireless_mode wirelessmode)
+> -{
+> -	struct rtl_priv *rtlpriv = rtl_priv(hw);
+> -	struct rtl_phy *rtlphy = &rtlpriv->phy;
+> -	u8 ret = 0;
+> -	switch (rate_index) {
+> -	case RATR_INX_WIRELESS_NGB:
+> -		if (rtlphy->rf_type == RF_1T1R)
+> -			ret = 1;
+> -		else
+> -			ret = 0;
+> -		; break;
+> -	case RATR_INX_WIRELESS_N:
+> -	case RATR_INX_WIRELESS_NG:
+> -		if (rtlphy->rf_type == RF_1T1R)
+> -			ret = 5;
+> -		else
+> -			ret = 4;
+> -		; break;
+> -	case RATR_INX_WIRELESS_NB:
+> -		if (rtlphy->rf_type == RF_1T1R)
+> -			ret = 3;
+> -		else
+> -			ret = 2;
+> -		; break;
+> -	case RATR_INX_WIRELESS_GB:
+> -		ret = 6;
+> -		break;
+> -	case RATR_INX_WIRELESS_G:
+> -		ret = 7;
+> -		break;
+> -	case RATR_INX_WIRELESS_B:
+> -		ret = 8;
+> -		break;
+> -	case RATR_INX_WIRELESS_MC:
+> -		if ((wirelessmode == WIRELESS_MODE_B)
+> -			|| (wirelessmode == WIRELESS_MODE_G)
+> -			|| (wirelessmode == WIRELESS_MODE_N_24G)
+> -			|| (wirelessmode == WIRELESS_MODE_AC_24G))
+> -			ret = 6;
+> -		else
+> -			ret = 7;
+> -	case RATR_INX_WIRELESS_AC_5N:
+> -		if (rtlphy->rf_type == RF_1T1R)
+> -			ret = 10;
+> -		else
+> -			ret = 9;
+> -		break;
+> -	case RATR_INX_WIRELESS_AC_24N:
+> -		if (rtlphy->current_chan_bw == HT_CHANNEL_WIDTH_80) {
+> -			if (rtlphy->rf_type == RF_1T1R)
+> -				ret = 10;
+> -			else
+> -				ret = 9;
+> -		} else {
+> -			if (rtlphy->rf_type == RF_1T1R)
+> -				ret = 11;
+> -			else
+> -				ret = 12;
+> -		}
+> -		break;
+> -	default:
+> -		ret = 0; break;
+> -	}
+> -	return ret;
+> -}
+> -
+>   static u32 _rtl8821ae_rate_to_bitmap_2ssvht(__le16 vht_rate)
+>   {
+>   	u8 i, j, tmp_rate;
+> @@ -3761,7 +3692,7 @@ static void rtl8821ae_update_hal_rate_mask(struct ieee80211_hw *hw,
+>   		break;
+>   	}
+>   
+> -	ratr_index = _rtl8821ae_mrate_idx_to_arfr_id(hw, ratr_index, wirelessmode);
+> +	ratr_index = rtl_mrate_idx_to_arfr_id(hw, ratr_index, wirelessmode);
+>   	sta_entry->ratr_index = ratr_index;
+>   	ratr_bitmap = _rtl8821ae_set_ra_vht_ratr_bitmap(hw, wirelessmode,
+>   							ratr_bitmap);
 > 
-> -- Removed the goldfish.c changes, and instead, only included a single
->     user (infiniband) of the new functions. That is because goldfish.c no
->     longer has a name collision (it has a release_user_pages() routine), and
->     also because infiniband exercises both the put_user_page() and
->     put_user_pages*() paths.
-> 
-> -- Updated links to discussions and plans, so as to be sure to include
->     bounce buffers, thanks to Jerome's feedback.
-> 
-> Also:
-> 
-> -- Dennis, thanks for your earlier review, and I have not yet added your
->     Reviewed-by tag, because this revision changes the things that you had
->     previously reviewed, thus potentially requiring another look.
 
-This spin looks fine to me.
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Thanks,
+
+Larry
+
