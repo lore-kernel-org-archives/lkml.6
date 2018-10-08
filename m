@@ -2,141 +2,241 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6D5C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649FBC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B7F7213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:18:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B7F7213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 09C9C2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:22:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="bu92eMXQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C9C2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbeJHXac (ORCPT
+        id S1726492AbeJHXe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:30:32 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:43740 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeJHXac (ORCPT
+        Mon, 8 Oct 2018 19:34:28 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50710 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJHXe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:30:32 -0400
-Received: by mail-io1-f71.google.com with SMTP id y6-v6so9220972ioc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:18:03 -0700 (PDT)
+        Mon, 8 Oct 2018 19:34:28 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i8-v6so2625386wmg.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:21:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Puy0dHBha4s/npAf1cLvCd9OaxBxe3baF9envUyvhcs=;
+        b=bu92eMXQ92Bs9bhIHTmoXhhLi4roaaOwbTLCFQi+sq29nidFN3prWK6TZdHHyC6pB2
+         TuhRq7lH8/iJpGNcqiY8lyrVDosmLTVn+zHZdm2lar8T9usO+fwWlVBRgln169wE96yB
+         qj4GKByZ4+uAL4jJ2JOe0IuetRxdLANogfHfBEiZ7odxGJtRnNMwW8P4r8YelWFXIjzS
+         ITsv8AWoUOWNk6WWIyTKKzqKa+QtI4KWAde1to+5Fs55k+/D+TxrxLWsnuVbJBARjOSj
+         09uqfkFZwjV0CIR3tSIZ9ChOi1gSRsbbBE/Gd0E7heIDED8rJ+y0y7nMnw7UuEmlVcu7
+         HoHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=oDWU14pljHynB+bZj2gtkf6pI6oZdNRGExeBJu2E0T0=;
-        b=PR01Hnk7kEcBYyWojD1tqDskhIi8ubbUjVrHdYcGUAeR3DV1OwzspulsAWI8JDJzXp
-         f+KmClEgTpGYYrzsi3r+wKpDjuuYWnklHvQQxzAAV3S+wU5ZETds2MNa2nKTfRj1t5T/
-         LfG8QylfWwNp8r2jhI8WHQ/KPOWo5ON0d11I2YBqwFmmTPWqf+uEXFZtBP9rfLbdosU7
-         Gv3y4dxOMVFdlm5r7AZDOOjJdteCyte2j7zVXUJtx16vS0j8YFcwxrusx+cJi8bogsoA
-         mW9I1/a74ttoLUUjtQ31Q7cu9P496FAnpdiTJdOmvPJobbUc9iccU6JtzOluTKn5Wc9j
-         Ingw==
-X-Gm-Message-State: ABuFfohA6oJnpmb9awHSpmcVJBWxljMBp53qAP1lM6Q/yZYV+lZc2n3u
-        tPZ2Q9YIx2nYgi2nMR+GIT+So/xADQ3Xs8I49F5gt6757uNj
-X-Google-Smtp-Source: ACcGV63QWX4GTRZ6PX7oiSDMryn6aW2/RSm/VchfPyVgedkE2qSnFuzqPzJkHMKfrs7UqYl+wcOB58LmtvGrQWyqira8STzGvCyq
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Puy0dHBha4s/npAf1cLvCd9OaxBxe3baF9envUyvhcs=;
+        b=EatWGKK71R8IeERGbsl/ZtrWuOpjx/g/v4/2QqacRslU7eDgKrrjhbmHw/Ar68Cs8G
+         YfRmQuNlRPgI4MBJIvI8Ik95k1xZYhHS42xlnJvhZyFqnhywfNO2gh8kw/dwTg9P8I+u
+         Qy/WFrsFXIv2PUMmIBYIzTcmrYB1ljVS78JwU8v6O268rbMGGNibe4PLc8FsUmmPFugf
+         a2cK0zvqC7NNwf+/iZfJj8bM8wQwsFGmkq15jhVo70ak8U3gzC4RTb8KNtdODCVleppw
+         kNpc/ZAyPtSsKRHT4O4pROoMI5uxpRo9xJIbAqT1PAdOmx4VJvTfzXtf/yAE21jaevB/
+         ynoQ==
+X-Gm-Message-State: ABuFfoh8Gw7qBhS7QwnXkmSt3E/6YfeZ3RqhdBS25CmxjXCi2l/EC1JL
+        Ce30/0YAEwJfHrDUqJH6FRCWcw==
+X-Google-Smtp-Source: ACcGV61Aw02Lf8bO1trGw/0Q5TdY4j2XidzoRkiGH9ifBL/CCM22HQSeaR3K7B1IwnesuNFmEH7lCQ==
+X-Received: by 2002:a1c:3ad3:: with SMTP id h202-v6mr15693455wma.120.1539015715879;
+        Mon, 08 Oct 2018 09:21:55 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id z69-v6sm9978772wmz.18.2018.10.08.09.21.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 09:21:55 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 18:21:48 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Jann Horn <jannh@google.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io>
+ <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:7:: with SMTP id 7-v6mr17360779ita.33.1539015482755;
- Mon, 08 Oct 2018 09:18:02 -0700 (PDT)
-Date:   Mon, 08 Oct 2018 09:18:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002753c60577b9f707@google.com>
-Subject: WARNING in ext4_invalidatepage
-From:   syzbot <syzbot+85da7ac734f7ba432ee4@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> >
+> > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+> > > version which can acquire filters is useful. There are at least two reasons
+> > > this is preferable, even though it uses ptrace:
+> > >
+> > > 1. You can control tasks that aren't cooperating with you
+> > > 2. You can control tasks whose filters block sendmsg() and socket(); if the
+> > >    task installs a filter which blocks these calls, there's no way with
+> > >    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+> >
+> > So for the slow of mind aka me:
+> > I'm not sure I completely understand this problem. Can you outline how
+> > sendmsg() and socket() are involved in this?
+> >
+> > I'm also not sure that this holds (but I might misunderstand the
+> > problem) afaict, you could do try to get the fd out via CLONE_FILES and
+> > other means so something like:
+> >
+> > // let's pretend the libc wrapper for clone actually has sane semantics
+> > pid = clone(CLONE_FILES);
+> > if (pid == 0) {
+> >         fd = seccomp(SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_NEW_LISTENER, &prog);
+> >
+> >         // Now this fd will be valid in both parent and child.
+> >         // If you haven't blocked it you can inform the parent what
+> >         // the fd number is via pipe2(). If you have blocked it you can
+> >         // use dup2() and dup to a known fd number.
+> > }
+> >
+> > >
+> > > v2: fix a bug where listener mode was not unset when an unused fd was not
+> > >     available
+> > > v3: fix refcounting bug (Oleg)
+> > > v4: * change the listener's fd flags to be 0
+> > >     * rename GET_LISTENER to NEW_LISTENER (Matthew)
+> > > v5: * add capable(CAP_SYS_ADMIN) requirement
+> > > v7: * point the new listener at the right filter (Jann)
+> > >
+> > > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> > > CC: Kees Cook <keescook@chromium.org>
+> > > CC: Andy Lutomirski <luto@amacapital.net>
+> > > CC: Oleg Nesterov <oleg@redhat.com>
+> > > CC: Eric W. Biederman <ebiederm@xmission.com>
+> > > CC: "Serge E. Hallyn" <serge@hallyn.com>
+> > > CC: Christian Brauner <christian.brauner@ubuntu.com>
+> > > CC: Tyler Hicks <tyhicks@canonical.com>
+> > > CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> > > ---
+> > >  include/linux/seccomp.h                       |  7 ++
+> > >  include/uapi/linux/ptrace.h                   |  2 +
+> > >  kernel/ptrace.c                               |  4 ++
+> > >  kernel/seccomp.c                              | 31 +++++++++
+> > >  tools/testing/selftests/seccomp/seccomp_bpf.c | 68 +++++++++++++++++++
+> > >  5 files changed, 112 insertions(+)
+> > >
+> > > diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> > > index 017444b5efed..234c61b37405 100644
+> > > --- a/include/linux/seccomp.h
+> > > +++ b/include/linux/seccomp.h
+> > > @@ -83,6 +83,8 @@ static inline int seccomp_mode(struct seccomp *s)
+> > >  #ifdef CONFIG_SECCOMP_FILTER
+> > >  extern void put_seccomp_filter(struct task_struct *tsk);
+> > >  extern void get_seccomp_filter(struct task_struct *tsk);
+> > > +extern long seccomp_new_listener(struct task_struct *task,
+> > > +                              unsigned long filter_off);
+> > >  #else  /* CONFIG_SECCOMP_FILTER */
+> > >  static inline void put_seccomp_filter(struct task_struct *tsk)
+> > >  {
+> > > @@ -92,6 +94,11 @@ static inline void get_seccomp_filter(struct task_struct *tsk)
+> > >  {
+> > >       return;
+> > >  }
+> > > +static inline long seccomp_new_listener(struct task_struct *task,
+> > > +                                     unsigned long filter_off)
+> > > +{
+> > > +     return -EINVAL;
+> > > +}
+> > >  #endif /* CONFIG_SECCOMP_FILTER */
+> > >
+> > >  #if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
+> > > diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+> > > index d5a1b8a492b9..e80ecb1bd427 100644
+> > > --- a/include/uapi/linux/ptrace.h
+> > > +++ b/include/uapi/linux/ptrace.h
+> > > @@ -73,6 +73,8 @@ struct seccomp_metadata {
+> > >       __u64 flags;            /* Output: filter's flags */
+> > >  };
+> > >
+> > > +#define PTRACE_SECCOMP_NEW_LISTENER  0x420e
+> > > +
+> > >  /* Read signals from a shared (process wide) queue */
+> > >  #define PTRACE_PEEKSIGINFO_SHARED    (1 << 0)
+> > >
+> > > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> > > index 21fec73d45d4..289960ac181b 100644
+> > > --- a/kernel/ptrace.c
+> > > +++ b/kernel/ptrace.c
+> > > @@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
+> > >               ret = seccomp_get_metadata(child, addr, datavp);
+> > >               break;
+> > >
+> > > +     case PTRACE_SECCOMP_NEW_LISTENER:
+> > > +             ret = seccomp_new_listener(child, addr);
+> > > +             break;
+> > > +
+> > >       default:
+> > >               break;
+> > >       }
+> > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > index 44a31ac8373a..17685803a2af 100644
+> > > --- a/kernel/seccomp.c
+> > > +++ b/kernel/seccomp.c
+> > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > >
+> > >       return ret;
+> > >  }
+> > > +
+> > > +long seccomp_new_listener(struct task_struct *task,
+> > > +                       unsigned long filter_off)
+> > > +{
+> > > +     struct seccomp_filter *filter;
+> > > +     struct file *listener;
+> > > +     int fd;
+> > > +
+> > > +     if (!capable(CAP_SYS_ADMIN))
+> > > +             return -EACCES;
+> >
+> > I know this might have been discussed a while back but why exactly do we
+> > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > use ptrace from in there?
+> 
+> See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> . Basically, the problem is that this doesn't just give you capability
+> over the target task, but also over every other task that has the same
+> filter installed; you need some sort of "is the caller capable over
+> the filter and anyone who uses it" check.
 
-syzbot found the following crash on:
-
-HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=161588d6400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=85da7ac734f7ba432ee4
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+85da7ac734f7ba432ee4@syzkaller.appspotmail.com
-
-WARNING: CPU: 1 PID: 17203 at fs/ext4/inode.c:3353  
-ext4_invalidatepage+0x1c7/0x5b0 fs/ext4/inode.c:3353
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 17203 Comm: syz-executor5 Not tainted 4.19.0-rc6+ #48
-kobject: 'loop3' (000000002393f9b0): kobject_uevent_env
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-kobject: 'loop3' (000000002393f9b0): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
-RIP: 0010:ext4_invalidatepage+0x1c7/0x5b0 fs/ext4/inode.c:3353
-Code: 80 3c 02 00 0f 85 a7 03 00 00 4d 8b 6d 00 31 ff 49 c1 ed 11 41 83 e5  
-01 4c 89 ee e8 43 ea 67 ff 4d 85 ed 74 07 e8 09 e9 67 ff <0f> 0b e8 02 e9  
-67 ff 8b b5 34 ff ff ff 44 89 fa 4c 89 e7 e8 91 3a
-RSP: 0018:ffff88018590ec78 EFLAGS: 00010212
-RAX: 0000000000040000 RBX: 1ffff10030b21d91 RCX: ffffc9000dae4000
-RDX: 0000000000000ece RSI: ffffffff8216ec87 RDI: 0000000000000007
-RBP: ffff88018590ed50 R08: ffff880183018300 R09: fffff94000ceffc6
-R10: fffff94000ceffc6 R11: ffffea000677fe33 R12: ffffea000677fe00
-R13: 0000000000000001 R14: ffffea000677fe08 R15: 0000000000001000
-  do_invalidatepage mm/truncate.c:165 [inline]
-  truncate_cleanup_page+0x5ac/0xa90 mm/truncate.c:187
-  truncate_inode_page+0x107/0x1a0 mm/truncate.c:229
-  truncate_inode_pages_range+0x1382/0x2d50 mm/truncate.c:451
-  truncate_inode_pages+0x24/0x30 mm/truncate.c:478
-  swap_inode_boot_loader fs/ext4/ioctl.c:123 [inline]
-  ext4_ioctl+0x1e3b/0x4210 fs/ext4/ioctl.c:865
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457579
-Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fa151655c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
-RDX: 0000000020000000 RSI: 0000000000006611 RDI: 0000000000000006
-RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa1516566d4
-R13: 00000000004bf60e R14: 00000000004cf4a8 R15: 00000000ffffffff
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Thanks.
+But then this new ptrace feature as it stands is imho currently broken.
+If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+if you are ns_cpabable(CAP_SYS_ADMIN) then either the new ptrace() api
+extension should be fixed to allow for this too or the seccomp() way of
+retrieving the pid - which I really think we want - needs to be fixed to
+require capable(CAP_SYS_ADMIN) too.
+The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+the preferred way to solve this.
+Everything else will just be confusing.
