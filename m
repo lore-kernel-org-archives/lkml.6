@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FC0C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8B4C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF42F21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 132C721479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8Qaafz8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF42F21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdHfRkPF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132C721479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbeJIBzB (ORCPT
+        id S1730131AbeJIBzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42550 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729388AbeJIBzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:00 -0400
+        id S1729698AbeJIBzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 314222087D;
-        Mon,  8 Oct 2018 18:41:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E996B2064A;
+        Mon,  8 Oct 2018 18:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024115;
-        bh=YL/cQBf4WJA6l6lJiAKDXPfsJgVRatIxVRL4ZJc234Q=;
+        s=default; t=1539024118;
+        bh=2x+4E1wt+vgvq0wjj+aVU5IhygXGauqWB+0s1pVznd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m8Qaafz87h+bzHtiSm8oIaY+d3z8h/bY8eqANhoMnyfW0KuhWanxabCfn0ipNTlQw
-         ohEdHTq6hVNDicpQPHQuZwLBz82vQrLWN7RyeqVyT6LHipO6UqFx77K3dIUMPTG0nH
-         lsPIqXFtwE6QUfSjEzkX1rGk/EG1XlSMKxamE++M=
+        b=pdHfRkPFGPR4jGVU33Y/tUvZbyRvAys2mJgpQqrehzPoOQvEZQOIrO4tRN/jYQK+e
+         +u0z7AXK3zW0D3VK1spjGTG7Tt31FEJn5ifwjCT8/JFlEcbOtJUTBiGMZHvDtTPBHO
+         XkRZihbhTt8CZYsaLPtGL3uvyojnKhX0AG3f6SDE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH 4.14 03/94] serial: mvebu-uart: Fix reporting of effective CSIZE to userspace
-Date:   Mon,  8 Oct 2018 20:30:44 +0200
-Message-Id: <20181008175605.221329159@linuxfoundation.org>
+        stable@vger.kernel.org, Len Brown <len.brown@intel.com>,
+        Alakesh Haloi <alakeshh@amazon.com>
+Subject: [PATCH 4.14 04/94] tools/power turbostat: fix possible sprintf buffer overflow
+Date:   Mon,  8 Oct 2018 20:30:45 +0200
+Message-Id: <20181008175605.268740961@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -61,40 +62,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Len Brown <len.brown@intel.com>
 
-commit e0bf2d4982fe7d9ddaf550dd023803ea286f47fc upstream.
+commit 46c2797826cc6d1ae36fcbd966e76f9fa1907eef upstream.
 
-Apparently, this driver (or the hardware) does not support character
-length settings. It's apparently running in 8-bit mode, but it makes
-userspace believe it's in 5-bit mode. That makes tcsetattr with CS8
-incorrectly fail, breaking e.g. getty from busybox, thus the login shell
-on ttyMVx.
-
-Fix by hard-wiring CS8 into c_cflag.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Fixes: 30530791a7a0 ("serial: mvebu-uart: initial support for Armada-3700 serial port")
-Cc: stable <stable@vger.kernel.org> # 4.6+
+Signed-off-by: Len Brown <len.brown@intel.com>
+Cc: Alakesh Haloi <alakeshh@amazon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/mvebu-uart.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/power/x86/turbostat/turbostat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/mvebu-uart.c
-+++ b/drivers/tty/serial/mvebu-uart.c
-@@ -327,8 +327,10 @@ static void mvebu_uart_set_termios(struc
- 	if ((termios->c_cflag & CREAD) == 0)
- 		port->ignore_status_mask |= STAT_RX_RDY | STAT_BRK_ERR;
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -1485,7 +1485,7 @@ int get_mp(int cpu, struct msr_counter *
+ 		if (get_msr(cpu, mp->msr_num, counterp))
+ 			return -1;
+ 	} else {
+-		char path[128];
++		char path[128 + PATH_BYTES];
  
--	if (old)
-+	if (old) {
- 		tty_termios_copy_hw(termios, old);
-+		termios->c_cflag |= CS8;
-+	}
- 
- 	baud = uart_get_baud_rate(port, termios, old, 0, 460800);
- 	uart_update_timeout(port, termios->c_cflag, baud);
+ 		if (mp->flags & SYSFS_PERCPU) {
+ 			sprintf(path, "/sys/devices/system/cpu/cpu%d/%s",
 
 
