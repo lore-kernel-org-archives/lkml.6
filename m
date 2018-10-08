@@ -6,298 +6,226 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795C3C67879
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69ED8C67879
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9502075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9502075C
+	by mail.kernel.org (Postfix) with ESMTP id 252072075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:47:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 252072075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeJIGB1 (ORCPT
+        id S1726703AbeJIGBf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 02:01:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40510 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 02:01:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58982 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbeJIGB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 02:01:26 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726666AbeJIGBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 02:01:34 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69D0B7D0F4;
-        Mon,  8 Oct 2018 22:47:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DC50B61476;
+        Mon,  8 Oct 2018 22:47:35 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F117810021B2;
-        Mon,  8 Oct 2018 22:47:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7164E2618B;
+        Mon,  8 Oct 2018 22:47:34 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net 01/10] rxrpc: Fix some missed refs to init_net
+Subject: [PATCH net 02/10] rxrpc: Fix the data_ready handler
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     dhowells@redhat.com, pabeni@redhat.com, eric.dumazet@gmail.com,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Mon, 08 Oct 2018 23:47:26 +0100
-Message-ID: <153903884616.17944.8454555875071108288.stgit@warthog.procyon.org.uk>
+Date:   Mon, 08 Oct 2018 23:47:33 +0100
+Message-ID: <153903885366.17944.9795992149237942599.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153903883882.17944.17642727588248415623.stgit@warthog.procyon.org.uk>
 References: <153903883882.17944.17642727588248415623.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 08 Oct 2018 22:47:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 08 Oct 2018 22:47:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix some refs to init_net that should've been changed to the appropriate
-network namespace.
+Fix the rxrpc_data_ready() function to pick up all packets and to not miss
+any.  There are two problems:
 
-Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
+ (1) The sk_data_ready pointer on the UDP socket is set *after* it is
+     bound.  This means that it's open for business before we're ready to
+     dequeue packets and there's a tiny window exists in which a packet can
+     sneak onto the receive queue, but we never know about it.
+
+     Fix this by setting the pointers on the socket prior to binding it.
+
+ (2) skb_recv_udp() will return an error (such as ENETUNREACH) if there was
+     an error on the transmission side, even though we set the
+     sk_error_report hook.  Because rxrpc_data_ready() returns immediately
+     in such a case, it never actually removes its packet from the receive
+     queue.
+
+     Fix this by abstracting out the UDP dequeuing and checksumming into a
+     separate function that keeps hammering on skb_recv_udp() until it
+     returns -EAGAIN, passing the packets extracted to the remainder of the
+     function.
+
+and two potential problems:
+
+ (3) It might be possible in some circumstances or in the future for
+     packets to be being added to the UDP receive queue whilst rxrpc is
+     running consuming them, so the data_ready() handler might get called
+     less often than once per packet.
+
+     Allow for this by fully draining the queue on each call as (2).
+
+ (4) If a packet fails the checksum check, the code currently returns after
+     discarding the packet without checking for more.
+
+     Allow for this by fully draining the queue on each call as (2).
+
+Fixes: 17926a79320a ("[AF_RXRPC]: Provide secure RxRPC sockets for use by userspace and kernel both")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Acked-by: Paolo Abeni <pabeni@redhat.com>
 ---
 
- net/rxrpc/ar-internal.h |   10 ++++++----
- net/rxrpc/call_accept.c |    2 +-
- net/rxrpc/call_object.c |    4 ++--
- net/rxrpc/conn_client.c |   10 ++++++----
- net/rxrpc/input.c       |    4 ++--
- net/rxrpc/peer_object.c |   28 +++++++++++++++++-----------
- 6 files changed, 34 insertions(+), 24 deletions(-)
+ net/rxrpc/input.c        |   68 ++++++++++++++++++++++++++--------------------
+ net/rxrpc/local_object.c |   11 ++++---
+ 2 files changed, 44 insertions(+), 35 deletions(-)
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index ef9554131434..63c43b3a2096 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -891,8 +891,9 @@ extern unsigned long rxrpc_conn_idle_client_fast_expiry;
- extern struct idr rxrpc_client_conn_ids;
- 
- void rxrpc_destroy_client_conn_ids(void);
--int rxrpc_connect_call(struct rxrpc_call *, struct rxrpc_conn_parameters *,
--		       struct sockaddr_rxrpc *, gfp_t);
-+int rxrpc_connect_call(struct rxrpc_sock *, struct rxrpc_call *,
-+		       struct rxrpc_conn_parameters *, struct sockaddr_rxrpc *,
-+		       gfp_t);
- void rxrpc_expose_client_call(struct rxrpc_call *);
- void rxrpc_disconnect_client_call(struct rxrpc_call *);
- void rxrpc_put_client_conn(struct rxrpc_connection *);
-@@ -1045,10 +1046,11 @@ void rxrpc_peer_keepalive_worker(struct work_struct *);
-  */
- struct rxrpc_peer *rxrpc_lookup_peer_rcu(struct rxrpc_local *,
- 					 const struct sockaddr_rxrpc *);
--struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *,
-+struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_sock *, struct rxrpc_local *,
- 				     struct sockaddr_rxrpc *, gfp_t);
- struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *, gfp_t);
--void rxrpc_new_incoming_peer(struct rxrpc_local *, struct rxrpc_peer *);
-+void rxrpc_new_incoming_peer(struct rxrpc_sock *, struct rxrpc_local *,
-+			     struct rxrpc_peer *);
- void rxrpc_destroy_all_peers(struct rxrpc_net *);
- struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *);
- struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *);
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index 9c7f26d06a52..f55f67894465 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -287,7 +287,7 @@ static struct rxrpc_call *rxrpc_alloc_incoming_call(struct rxrpc_sock *rx,
- 					  (peer_tail + 1) &
- 					  (RXRPC_BACKLOG_MAX - 1));
- 
--			rxrpc_new_incoming_peer(local, peer);
-+			rxrpc_new_incoming_peer(rx, local, peer);
- 		}
- 
- 		/* Now allocate and set up the connection */
-diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-index 799f75b6900d..0ca2c2dfd196 100644
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -287,7 +287,7 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
- 	/* Set up or get a connection record and set the protocol parameters,
- 	 * including channel number and call ID.
- 	 */
--	ret = rxrpc_connect_call(call, cp, srx, gfp);
-+	ret = rxrpc_connect_call(rx, call, cp, srx, gfp);
- 	if (ret < 0)
- 		goto error;
- 
-@@ -339,7 +339,7 @@ int rxrpc_retry_client_call(struct rxrpc_sock *rx,
- 	/* Set up or get a connection record and set the protocol parameters,
- 	 * including channel number and call ID.
- 	 */
--	ret = rxrpc_connect_call(call, cp, srx, gfp);
-+	ret = rxrpc_connect_call(rx, call, cp, srx, gfp);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index 8acf74fe24c0..521189f4b666 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -276,7 +276,8 @@ static bool rxrpc_may_reuse_conn(struct rxrpc_connection *conn)
-  * If we return with a connection, the call will be on its waiting list.  It's
-  * left to the caller to assign a channel and wake up the call.
-  */
--static int rxrpc_get_client_conn(struct rxrpc_call *call,
-+static int rxrpc_get_client_conn(struct rxrpc_sock *rx,
-+				 struct rxrpc_call *call,
- 				 struct rxrpc_conn_parameters *cp,
- 				 struct sockaddr_rxrpc *srx,
- 				 gfp_t gfp)
-@@ -289,7 +290,7 @@ static int rxrpc_get_client_conn(struct rxrpc_call *call,
- 
- 	_enter("{%d,%lx},", call->debug_id, call->user_call_ID);
- 
--	cp->peer = rxrpc_lookup_peer(cp->local, srx, gfp);
-+	cp->peer = rxrpc_lookup_peer(rx, cp->local, srx, gfp);
- 	if (!cp->peer)
- 		goto error;
- 
-@@ -683,7 +684,8 @@ static int rxrpc_wait_for_channel(struct rxrpc_call *call, gfp_t gfp)
-  * find a connection for a call
-  * - called in process context with IRQs enabled
-  */
--int rxrpc_connect_call(struct rxrpc_call *call,
-+int rxrpc_connect_call(struct rxrpc_sock *rx,
-+		       struct rxrpc_call *call,
- 		       struct rxrpc_conn_parameters *cp,
- 		       struct sockaddr_rxrpc *srx,
- 		       gfp_t gfp)
-@@ -696,7 +698,7 @@ int rxrpc_connect_call(struct rxrpc_call *call,
- 	rxrpc_discard_expired_client_conns(&rxnet->client_conn_reaper);
- 	rxrpc_cull_active_client_conns(rxnet);
- 
--	ret = rxrpc_get_client_conn(call, cp, srx, gfp);
-+	ret = rxrpc_get_client_conn(rx, call, cp, srx, gfp);
- 	if (ret < 0)
- 		goto out;
- 
 diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 800f5b8a1baa..c5af9955665b 100644
+index c5af9955665b..c3114fa66c92 100644
 --- a/net/rxrpc/input.c
 +++ b/net/rxrpc/input.c
-@@ -1156,12 +1156,12 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 	/* we'll probably need to checksum it (didn't call sock_recvmsg) */
- 	if (skb_checksum_complete(skb)) {
- 		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
--		__UDP_INC_STATS(&init_net, UDP_MIB_INERRORS, 0);
-+		__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INERRORS, 0);
- 		_leave(" [CSUM failed]");
- 		return;
- 	}
+@@ -1121,7 +1121,7 @@ int rxrpc_extract_header(struct rxrpc_skb_priv *sp, struct sk_buff *skb)
+  * shut down and the local endpoint from going away, thus sk_user_data will not
+  * be cleared until this function returns.
+  */
+-void rxrpc_data_ready(struct sock *udp_sk)
++void rxrpc_input_packet(struct sock *udp_sk, struct sk_buff *skb)
+ {
+ 	struct rxrpc_connection *conn;
+ 	struct rxrpc_channel *chan;
+@@ -1130,39 +1130,11 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 	struct rxrpc_local *local = udp_sk->sk_user_data;
+ 	struct rxrpc_peer *peer = NULL;
+ 	struct rxrpc_sock *rx = NULL;
+-	struct sk_buff *skb;
+ 	unsigned int channel;
+-	int ret, skew = 0;
++	int skew = 0;
  
--	__UDP_INC_STATS(&init_net, UDP_MIB_INDATAGRAMS, 0);
-+	__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INDATAGRAMS, 0);
+ 	_enter("%p", udp_sk);
  
+-	ASSERT(!irqs_disabled());
+-
+-	skb = skb_recv_udp(udp_sk, 0, 1, &ret);
+-	if (!skb) {
+-		if (ret == -EAGAIN)
+-			return;
+-		_debug("UDP socket error %d", ret);
+-		return;
+-	}
+-
+-	if (skb->tstamp == 0)
+-		skb->tstamp = ktime_get_real();
+-
+-	rxrpc_new_skb(skb, rxrpc_skb_rx_received);
+-
+-	_net("recv skb %p", skb);
+-
+-	/* we'll probably need to checksum it (didn't call sock_recvmsg) */
+-	if (skb_checksum_complete(skb)) {
+-		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
+-		__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INERRORS, 0);
+-		_leave(" [CSUM failed]");
+-		return;
+-	}
+-
+-	__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INDATAGRAMS, 0);
+-
  	/* The UDP protocol already released all skb resources;
  	 * we are free to add our own data there.
-diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
-index 01a9febfa367..2d39eaf19620 100644
---- a/net/rxrpc/peer_object.c
-+++ b/net/rxrpc/peer_object.c
-@@ -153,8 +153,10 @@ struct rxrpc_peer *rxrpc_lookup_peer_rcu(struct rxrpc_local *local,
-  * assess the MTU size for the network interface through which this peer is
-  * reached
-  */
--static void rxrpc_assess_MTU_size(struct rxrpc_peer *peer)
-+static void rxrpc_assess_MTU_size(struct rxrpc_sock *rx,
-+				  struct rxrpc_peer *peer)
- {
-+	struct net *net = sock_net(&rx->sk);
- 	struct dst_entry *dst;
- 	struct rtable *rt;
- 	struct flowi fl;
-@@ -169,7 +171,7 @@ static void rxrpc_assess_MTU_size(struct rxrpc_peer *peer)
- 	switch (peer->srx.transport.family) {
- 	case AF_INET:
- 		rt = ip_route_output_ports(
--			&init_net, fl4, NULL,
-+			net, fl4, NULL,
- 			peer->srx.transport.sin.sin_addr.s_addr, 0,
- 			htons(7000), htons(7001), IPPROTO_UDP, 0, 0);
- 		if (IS_ERR(rt)) {
-@@ -188,7 +190,7 @@ static void rxrpc_assess_MTU_size(struct rxrpc_peer *peer)
- 		       sizeof(struct in6_addr));
- 		fl6->fl6_dport = htons(7001);
- 		fl6->fl6_sport = htons(7000);
--		dst = ip6_route_output(&init_net, NULL, fl6);
-+		dst = ip6_route_output(net, NULL, fl6);
- 		if (dst->error) {
- 			_leave(" [route err %d]", dst->error);
- 			return;
-@@ -240,10 +242,11 @@ struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *local, gfp_t gfp)
- /*
-  * Initialise peer record.
-  */
--static void rxrpc_init_peer(struct rxrpc_peer *peer, unsigned long hash_key)
-+static void rxrpc_init_peer(struct rxrpc_sock *rx, struct rxrpc_peer *peer,
-+			    unsigned long hash_key)
- {
- 	peer->hash_key = hash_key;
--	rxrpc_assess_MTU_size(peer);
-+	rxrpc_assess_MTU_size(rx, peer);
- 	peer->mtu = peer->if_mtu;
- 	peer->rtt_last_req = ktime_get_real();
- 
-@@ -275,7 +278,8 @@ static void rxrpc_init_peer(struct rxrpc_peer *peer, unsigned long hash_key)
- /*
-  * Set up a new peer.
-  */
--static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
-+static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_sock *rx,
-+					    struct rxrpc_local *local,
- 					    struct sockaddr_rxrpc *srx,
- 					    unsigned long hash_key,
- 					    gfp_t gfp)
-@@ -287,7 +291,7 @@ static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
- 	peer = rxrpc_alloc_peer(local, gfp);
- 	if (peer) {
- 		memcpy(&peer->srx, srx, sizeof(*srx));
--		rxrpc_init_peer(peer, hash_key);
-+		rxrpc_init_peer(rx, peer, hash_key);
+ 	 */
+@@ -1181,6 +1153,8 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 		}
  	}
  
- 	_leave(" = %p", peer);
-@@ -299,14 +303,15 @@ static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
-  * since we've already done a search in the list from the non-reentrant context
-  * (the data_ready handler) that is the only place we can add new peers.
-  */
--void rxrpc_new_incoming_peer(struct rxrpc_local *local, struct rxrpc_peer *peer)
-+void rxrpc_new_incoming_peer(struct rxrpc_sock *rx, struct rxrpc_local *local,
-+			     struct rxrpc_peer *peer)
- {
- 	struct rxrpc_net *rxnet = local->rxnet;
- 	unsigned long hash_key;
++	if (skb->tstamp == 0)
++		skb->tstamp = ktime_get_real();
+ 	trace_rxrpc_rx_packet(sp);
  
- 	hash_key = rxrpc_peer_hash_key(local, &peer->srx);
- 	peer->local = local;
--	rxrpc_init_peer(peer, hash_key);
-+	rxrpc_init_peer(rx, peer, hash_key);
+ 	switch (sp->hdr.type) {
+@@ -1398,3 +1372,37 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 	rxrpc_reject_packet(local, skb);
+ 	_leave(" [badmsg]");
+ }
++
++void rxrpc_data_ready(struct sock *udp_sk)
++{
++	struct sk_buff *skb;
++	int ret;
++
++	for (;;) {
++		skb = skb_recv_udp(udp_sk, 0, 1, &ret);
++		if (!skb) {
++			if (ret == -EAGAIN)
++				return;
++
++			/* If there was a transmission failure, we get an error
++			 * here that we need to ignore.
++			 */
++			_debug("UDP socket error %d", ret);
++			continue;
++		}
++
++		rxrpc_new_skb(skb, rxrpc_skb_rx_received);
++
++		/* we'll probably need to checksum it (didn't call sock_recvmsg) */
++		if (skb_checksum_complete(skb)) {
++			rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
++			__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INERRORS, 0);
++			_debug("csum failed");
++			continue;
++		}
++
++		__UDP_INC_STATS(sock_net(udp_sk), UDP_MIB_INDATAGRAMS, 0);
++
++		rxrpc_input_packet(udp_sk, skb);
++	}
++}
+diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
+index 94d234e9c685..30862f44c9f1 100644
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -122,6 +122,12 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 		return ret;
+ 	}
  
- 	spin_lock(&rxnet->peer_hash_lock);
- 	hash_add_rcu(rxnet->peer_hash, &peer->hash_link, hash_key);
-@@ -317,7 +322,8 @@ void rxrpc_new_incoming_peer(struct rxrpc_local *local, struct rxrpc_peer *peer)
- /*
-  * obtain a remote transport endpoint for the specified address
-  */
--struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
-+struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_sock *rx,
-+				     struct rxrpc_local *local,
- 				     struct sockaddr_rxrpc *srx, gfp_t gfp)
- {
- 	struct rxrpc_peer *peer, *candidate;
-@@ -337,7 +343,7 @@ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
- 		/* The peer is not yet present in hash - create a candidate
- 		 * for a new record and then redo the search.
- 		 */
--		candidate = rxrpc_create_peer(local, srx, hash_key, gfp);
-+		candidate = rxrpc_create_peer(rx, local, srx, hash_key, gfp);
- 		if (!candidate) {
- 			_leave(" = NULL [nomem]");
- 			return NULL;
++	/* set the socket up */
++	sock = local->socket->sk;
++	sock->sk_user_data	= local;
++	sock->sk_data_ready	= rxrpc_data_ready;
++	sock->sk_error_report	= rxrpc_error_report;
++
+ 	/* if a local address was supplied then bind it */
+ 	if (local->srx.transport_len > sizeof(sa_family_t)) {
+ 		_debug("bind");
+@@ -191,11 +197,6 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 		BUG();
+ 	}
+ 
+-	/* set the socket up */
+-	sock = local->socket->sk;
+-	sock->sk_user_data	= local;
+-	sock->sk_data_ready	= rxrpc_data_ready;
+-	sock->sk_error_report	= rxrpc_error_report;
+ 	_leave(" = 0");
+ 	return 0;
+ 
 
