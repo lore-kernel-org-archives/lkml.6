@@ -2,131 +2,167 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E04C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EAEC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 566372085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65D2920841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zd0uf7np"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 566372085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssEg3uvb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D2920841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbeJHK6S (ORCPT
+        id S1726096AbeJHLBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 06:58:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:59509 "EHLO ozlabs.org"
+        Mon, 8 Oct 2018 07:01:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725760AbeJHK6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 06:58:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1725760AbeJHLBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 07:01:33 -0400
+Received: from localhost (unknown [171.76.86.221])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42T5tv2nNwz9s9J;
-        Mon,  8 Oct 2018 14:48:39 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538970519;
-        bh=MCmZSI+x8G3eZ625CvfAJRSjZ7mtqrv/80NWr+hppcs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Zd0uf7np3oFWDqc9P9QoBzO1PFsWyTEHVbcQEdzAemekFEOKG305feuiuhUb2ucX8
-         6l0ZeRznqLX/jd/y2vqMI+iw2MqQEFMInTSfEdPdnoi2shd8OqocGA+6KmU7QBfCcC
-         LCMbXwmeB0E/onHas1jDmer8uDVq1uT3n5HyF+0obQUH8mhZ0IwHKmpoZsvwLKbUAR
-         zvLwwhXIIcvSatZK7QKozJatrvPYW/58OO3q/mBst6tHDFQQczB426eyeu1xR6y6ft
-         MfbG/bCJvf9yru73zwYMVB3oGRy9tjSkBaYtM8EW4ZBkrY5GuvHNeEwbWfj8joTIpp
-         lBAG80fpXY4OQ==
-Date:   Mon, 8 Oct 2018 14:48:38 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the drivers-x86 tree with the tip tree
-Message-ID: <20181008144838.60d8ad83@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 4189E20841;
+        Mon,  8 Oct 2018 03:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538970715;
+        bh=9ADOkQWBAsYwKhFTpDDyiJVX9uXWOciR+OCpl0iJmYs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ssEg3uvbB5FEs8kofvCm9fpjd/CqYpTVBTFI3XpbAFFY4gIAMYd0URnq1rFmCKdC4
+         p0sm32k/w1/VrrxOIGvQjl9obrmrWjX98yhRIG4cD+82P26SyQTx8TUOQC/FgkHeBj
+         E50xuJxx0MDpf+oiMRUUtrkaFUlAqa0xklzDArt8=
+Date:   Mon, 8 Oct 2018 09:21:44 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Shefali Jain <shefjain@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver
+ for QCS404
+Message-ID: <20181008035144.GD2372@vkoul-mobl>
+References: <20180921185936.9590-1-vkoul@kernel.org>
+ <20180921185936.9590-2-vkoul@kernel.org>
+ <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
+ <20181003062103.GN19792@vkoul-mobl>
+ <153896630923.119890.17169150168947487135@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M7VLhcGUxPcnz2GqlmFUqhf"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153896630923.119890.17169150168947487135@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/M7VLhcGUxPcnz2GqlmFUqhf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 07-10-18, 19:38, Stephen Boyd wrote:
+> Quoting Vinod (2018-10-02 23:21:03)
+> > Hi Stephen,
+> > 
+> > Thanks for the comments,
+> > 
+> > On 01-10-18, 10:19, Stephen Boyd wrote:
+> > > Quoting Vinod Koul (2018-09-21 11:59:36)
+> > > > From: Shefali Jain <shefjain@codeaurora.org>
+> > > > 
+> > > > Add the clocks supported in global clock controller which clock the
+> > > > peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clocks
+> > > > to the clock framework for the clients to be able to request for them.
+> > > > 
+> > > > Signed-off-by: Shefali Jain <shefjain@codeaurora.org>
+> > > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > > > Co-developed-by: Taniya Das <tdas@codeaurora.org>
+> > > > Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+> > > > [rebase and tidyup for upstream]
+> > > 
+> > > Who did the tidying?
+> > 
+> > both of us :)
+> 
+> OK, please add the username of both people per the kernel sign off
+> standards.
+> 
+> > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
-Hi all,
+Sorry not sure I understand, Bjorn and me did cleanup and we signed-off
+per process, did I miss something?
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in:
+> > > > +#include <linux/kernel.h>
+> > > > +#include <linux/platform_device.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/of.h>
+> > > > +#include <linux/clk.h>
+> > > 
+> > > Please don't include this.
+> > 
+> > OK will check if this is required, any reason for not including this?
+> 
+> So we can easily split clk consumers and clk providers.
 
-  drivers/platform/x86/intel_mid_powerbtn.c
+That was my thought, thanks for confirming :)
 
-between commit:
+> > > > +static struct clk_branch gcc_pwm1_xo512_clk = {
+> > > > +       .halt_reg = 0x49004,
+> > > > +       .halt_check = BRANCH_HALT,
+> > > > +       .clkr = {
+> > > > +               .enable_reg = 0x49004,
+> > > > +               .enable_mask = BIT(0),
+> > > > +               .hw.init = &(struct clk_init_data){
+> > > > +                       .name = "gcc_pwm1_xo512_clk",
+> > > > +                       .ops = &clk_branch2_ops,
+> > > 
+> > > Do these pwm clks have a parent clk of the XO?
+> > 
+> > Yes they do
+> 
+> Cool, we should add them or add a comment explaining why they don't have
+> parents listed here.
 
-  f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
+ok
 
-from the tip tree and commit:
+> > > > +       [GCC_USB_HS_PHY_CFG_AHB_CLK] = &gcc_usb_hs_phy_cfg_ahb_clk.clkr,
+> > > > +       [GCC_USB_HS_SYSTEM_CLK] = &gcc_usb_hs_system_clk.clkr,
+> > > > +       [GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
+> > > > +       [GP1_CLK_SRC] = &gp1_clk_src.clkr,
+> > > 
+> > > Why are some of these missing GCC_ prefix?
+> > 
+> > will add..
+> 
+> Thanks!
 
-  a8b60e484f3d ("platform/x86: intel_mid_powerbtn: Get rid of custom ICPU()=
- macro")
+Btw Taniya also commented on this, do you want this as GCC_ or as per hw
+documentation?
 
-from the drivers-x86 tree.
+> > > > +       clk_prepare_enable(apss_ahb_clk_src.clkr.hw.clk);
+> > > > +       clk_prepare_enable(gpll0_ao_out_main.clkr.hw.clk);
+> > > 
+> > > And these should be marked as critical clocks.
+> > 
+> > Okay and how do we go about doing that?
+> 
+> You mark the clk flags with CLK_IS_CRITICAL.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Thanks will do.
 
---=20
-Cheers,
-Stephen Rothwell
 
-diff --cc drivers/platform/x86/intel_mid_powerbtn.c
-index 5ad44204a9c3,a8c0fbb7f799..000000000000
---- a/drivers/platform/x86/intel_mid_powerbtn.c
-+++ b/drivers/platform/x86/intel_mid_powerbtn.c
-@@@ -121,12 -112,9 +112,9 @@@ static const struct mid_pb_ddata mrfld_
-  	.setup	=3D mrfld_setup,
-  };
- =20
-- #define ICPU(model, ddata)	\
-- 	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (kernel_ulong_t)&ddata }
--=20
-  static const struct x86_cpu_id mid_pb_cpu_ids[] =3D {
-- 	ICPU(INTEL_FAM6_ATOM_SALTWELL_MID,		mfld_ddata),
-- 	ICPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	mrfld_ddata),
- -	INTEL_CPU_FAM6(ATOM_PENWELL,		mfld_ddata),
- -	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		mrfld_ddata),
-++	INTEL_CPU_FAM6(ATOM_SALTWELL_MID,	mfld_ddata),
-++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	mrfld_ddata),
-  	{}
-  };
- =20
-
---Sig_/M7VLhcGUxPcnz2GqlmFUqhf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu605YACgkQAVBC80lX
-0Gy/ywf+JPsYvBPso7IaaUdSTrQmYtjcFcCJVpPZJKuqG9JLGQzOUhbGzDb9eoNi
-RaXTmLFVfKZk/P6WoXMEpHTl3hegI7Yd2JXTrbjLR49nOly/fDuF5lsb9hQS0FYX
-ZLTYd6Gjo4r6NvTsvui+dBib1cYrXzIyEIBSeqrbig0IMsBN/0BU6igPQtmJGwFc
-9r17zCiU6qfUPhmckRQMp9NWretboihD4qIKVgU4sIaTOi3M10K4ueJbrcv2UZw6
-Jc+yNGWHu5PhomlTeSox7n01DczYM5N6jZTAP4Ual8bTlv6SSp8zsZ5yuV1Pdmik
-EnqUpWPvAGm8lJCqM9GaGB5du1c1nw==
-=lCkY
------END PGP SIGNATURE-----
-
---Sig_/M7VLhcGUxPcnz2GqlmFUqhf--
+-- 
+~Vinod
