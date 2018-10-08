@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161FEC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941C7C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D254A214C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6276B2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYXrRSIc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D254A214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvbFToik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6276B2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbeJIB5a (ORCPT
+        id S1730755AbeJIB5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45410 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbeJIB53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:29 -0400
+        id S1728026AbeJIB5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 842722064A;
-        Mon,  8 Oct 2018 18:44:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49A8A2064A;
+        Mon,  8 Oct 2018 18:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024264;
-        bh=G8Ed9Ium8y4ZXWhlhH1hqOuPCGVOSH7XjLAw5ax9hgM=;
+        s=default; t=1539024266;
+        bh=WEvr1WTZ4LEYJpfVPbJvGgz7B+Hs2YbWyaAiYgAAaj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rYXrRSIcNI9Ldl6x5ggz4xllzHR5yJNgT5GhR1DqP1DdhHOxYnqhsfxKj/dS1jVMS
-         jYu334PKAyN7hISfX2YEO2nA58a/r2Bo2r/nL5YCltfAD/7wJeExA746MIEE+6yrJN
-         Hw4YHHl/ujiOC3CLk3zG8cc1+7zBhJfWUiY7Zx6Q=
+        b=IvbFToikPDBEO7cUZBmJqEnOMrPMTf43DcQIchJpXqxvEzsQKaqVq4Ww9ZZysnAwg
+         scnsov69PIuKK/OQ2JuRTwnOQuXMe3fvFJzof7WyvUfB1jYMMHVmjKHUt+TNazW/OM
+         vSzsuibWAUd85iRn/rV0UJ10E6sXiBnQxKo+L+HI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wei Liu <wei.liu2@citrix.com>,
+        stable@vger.kernel.org, Olaf Hering <olaf@aepfle.de>,
+        Juergen Gross <jgross@suse.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 76/94] xen/manage: dont complain about an empty value in control/sysrq node
-Date:   Mon,  8 Oct 2018 20:31:57 +0200
-Message-Id: <20181008175610.154930401@linuxfoundation.org>
+Subject: [PATCH 4.14 77/94] xen: avoid crash in disable_hotplug_cpu
+Date:   Mon,  8 Oct 2018 20:31:58 +0200
+Message-Id: <20181008175610.196887565@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,46 +64,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Olaf Hering <olaf@aepfle.de>
 
-[ Upstream commit 87dffe86d406bee8782cac2db035acb9a28620a7 ]
+[ Upstream commit 3366cdb6d350d95466ee430ac50f3c8415ca8f46 ]
 
-When guest receives a sysrq request from the host it acknowledges it by
-writing '\0' to control/sysrq xenstore node. This, however, make xenstore
-watch fire again but xenbus_scanf() fails to parse empty value with "%c"
-format string:
+The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
 
- sysrq: SysRq : Emergency Sync
- Emergency Sync complete
- xen:manage: Error -34 reading sysrq code in control/sysrq
+BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+RIP: e030:device_offline+0x9/0xb0
+Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+Call Trace:
+ handle_vcpu_hotplug_event+0xb5/0xc0
+ xenwatch_thread+0x80/0x140
+ ? wait_woken+0x80/0x80
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x40/0x40
+ ret_from_fork+0x3a/0x50
 
-Ignore -ERANGE the same way we already ignore -ENOENT, empty value in
-control/sysrq is totally legal.
+This happens because handle_vcpu_hotplug_event is called twice. In the
+first iteration cpu_present is still true, in the second iteration
+cpu_present is false which causes get_cpu_device to return NULL.
+In case of cpu#0, cpu_online is apparently always true.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Fix this crash by checking if the cpu can be hotplugged, which is false
+for a cpu that was just removed.
+
+Also check if the cpu was actually offlined by device_remove, otherwise
+leave the cpu_present state as it is.
+
+Rearrange to code to do all work with device_hotplug_lock held.
+
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/manage.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/xen/cpu_hotplug.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/xen/manage.c
-+++ b/drivers/xen/manage.c
-@@ -283,9 +283,11 @@ static void sysrq_handler(struct xenbus_
- 		/*
- 		 * The Xenstore watch fires directly after registering it and
- 		 * after a suspend/resume cycle. So ENOENT is no error but
--		 * might happen in those cases.
-+		 * might happen in those cases. ERANGE is observed when we get
-+		 * an empty value (''), this happens when we acknowledge the
-+		 * request by writing '\0' below.
- 		 */
--		if (err != -ENOENT)
-+		if (err != -ENOENT && err != -ERANGE)
- 			pr_err("Error %d reading sysrq code in control/sysrq\n",
- 			       err);
- 		xenbus_transaction_end(xbt, 1);
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -19,15 +19,16 @@ static void enable_hotplug_cpu(int cpu)
+ 
+ static void disable_hotplug_cpu(int cpu)
+ {
+-	if (cpu_online(cpu)) {
+-		lock_device_hotplug();
++	if (!cpu_is_hotpluggable(cpu))
++		return;
++	lock_device_hotplug();
++	if (cpu_online(cpu))
+ 		device_offline(get_cpu_device(cpu));
+-		unlock_device_hotplug();
+-	}
+-	if (cpu_present(cpu))
++	if (!cpu_online(cpu) && cpu_present(cpu)) {
+ 		xen_arch_unregister_cpu(cpu);
+-
+-	set_cpu_present(cpu, false);
++		set_cpu_present(cpu, false);
++	}
++	unlock_device_hotplug();
+ }
+ 
+ static int vcpu_online(unsigned int cpu)
 
 
