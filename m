@@ -2,172 +2,646 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 031BEC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9CAC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1562075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 583DE2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="NKzfCdHx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1562075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8RsJemJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 583DE2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeJHVqE (ORCPT
+        id S1726562AbeJHVqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:46:04 -0400
-Received: from mail-eopbgr700069.outbound.protection.outlook.com ([40.107.70.69]:10688
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726078AbeJHVqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:46:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5KSx7+sb+9hOTWVET/ZKGahg+4S97XhdEc2Pg3DCeiA=;
- b=NKzfCdHx27+aW9tWGaIkBUptR31V7qK0kgpH4UOuyFnB8oMiJ2ZRLz+MrpT/YduvGnbVwytsr+a3RbOYS9aSRzp44P3TAQmVgctk3HTT11F4q8ffvmkVrCHma0DGH3ZDppx/QUdOtvE8ZpA4yqS0aYrFJDLVsK/1OInlHaHz890=
-Received: from BN6PR12MB1809.namprd12.prod.outlook.com (10.175.101.146) by
- BN6PR12MB1220.namprd12.prod.outlook.com (10.168.227.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.25; Mon, 8 Oct 2018 14:33:58 +0000
-Received: from BN6PR12MB1809.namprd12.prod.outlook.com
- ([fe80::9df7:7ad5:5b10:aeee]) by BN6PR12MB1809.namprd12.prod.outlook.com
- ([fe80::9df7:7ad5:5b10:aeee%5]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
- 14:33:56 +0000
-From:   "Deucher, Alexander" <Alexander.Deucher@amd.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Zhu, Rex" <Rex.Zhu@amd.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: RE: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
- smu7/8
-Thread-Topic: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
- smu7/8
-Thread-Index: AQHUVARg2MOAZvRixUSipQEGskb4iKUVfsWA
-Date:   Mon, 8 Oct 2018 14:33:56 +0000
-Message-ID: <BN6PR12MB18092FFEF5BB3861912C8535F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
-References: <20180924113103.999624566@linuxfoundation.org>
- <20180924113125.488862921@linuxfoundation.org>
-In-Reply-To: <20180924113125.488862921@linuxfoundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Deucher@amd.com; 
-x-originating-ip: [71.219.49.5]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR12MB1220;20:+WDC+iGrzIuUoy3FdpjPDzvesoNABWhqJA5nf75kD7GyObHIYN9pBu1XtXgamrr/QOyl0RYmSPePHIZZngCX6d0CGY38gLnPDhYrLvkwbFcuNyB5aPGdoX0QshTwmWwt3N/x+RX/iSykrI3pAajXTzyERhom/cwhDXBFReLBgS9CMO7Lc3ZRNlQI9B6lXIkjLiulzLVej9LCjK14O8dw8roIc2xQafQyYh1F4XyLhxdbntj3R6Aj0rveAIHUCu+l
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(346002)(136003)(396003)(13464003)(189003)(199004)(6116002)(3846002)(54906003)(110136005)(6506007)(256004)(76176011)(71190400001)(2900100001)(476003)(305945005)(7696005)(478600001)(72206003)(446003)(486006)(229853002)(53546011)(26005)(6436002)(102836004)(14454004)(86362001)(11346002)(186003)(966005)(71200400001)(66066001)(9686003)(7736002)(99286004)(33656002)(5660300001)(74316002)(6306002)(81156014)(2501003)(106356001)(8676002)(5250100002)(6246003)(53936002)(68736007)(97736004)(8936002)(105586002)(4326008)(55016002)(316002)(25786009)(2906002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1220;H:BN6PR12MB1809.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 76e4539c-57a8-4a35-819a-08d62d2b13f6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1220;
-x-ms-traffictypediagnostic: BN6PR12MB1220:
-x-microsoft-antispam-prvs: <BN6PR12MB1220E864B545B77BCC260BDAF7E60@BN6PR12MB1220.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051);SRVR:BN6PR12MB1220;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1220;
-x-forefront-prvs: 081904387B
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: etwMPfMXhE9dnoC+lrRZ/OwRdSbh7Kyh6+lF4XnVDajz+4NOOnFn5659NE3W0arzrEfNonMGGouUOX4tpJCs2KYGfvYR5p5qJRemiJWuMDAsOzZsQn/isBabjbu5pESWsvRm7bJI9ITFbuDK0rwhxzJCeOy74TYnljyXgBvtEfVtoG1mpl4T9D8NiBeU31dyhBYQhvy9IZpk2bk7nCO8zuxqTQzUTU3Ak0upfqak17o9DpLGyIvrJZ3mlQmF+FcBzao5zSwjuvQubo09mwIoeyIOLRHSl2ic/mF/quBF0S2rzB2xYNH6gAOIddc58gdCQ8k8MfX84rpqvZ6TTfQPrLdtLwdZUCxgeE/844waHco=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 8 Oct 2018 17:46:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbeJHVqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:46:51 -0400
+Received: from dragon (unknown [45.56.155.247])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 762E02075C;
+        Mon,  8 Oct 2018 14:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539009289;
+        bh=WQOtIP6LmXsnnHVRNS1ii5CC225pT3vc6yPCEu3IF1A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l8RsJemJpCgLOpPo6gKj5kxSvTtuPs/lXbdsmqW5fKC1QXlfG/97Iq4LqdbWdTxIa
+         UflwyP++1E3tgcw8r5DBJKypRNQT8srh+jOGahn2xqXQa0JoKJJn+0SAi6bqUJtfdO
+         zsHUEx448NzvIUfiue5A7tjAr+2B2Fy9eKXp8WyA=
+Date:   Mon, 8 Oct 2018 22:34:20 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Stefan Agner <stefan@agner.ch>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v2] ARM: dts: Add support for Liebherr's BK4 device
+ (vf610 based)
+Message-ID: <20181008143416.GR3587@dragon>
+References: <20180921152726.31742-1-lukma@denx.de>
+ <20180927221831.23659-1-lukma@denx.de>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76e4539c-57a8-4a35-819a-08d62d2b13f6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 14:33:56.0800
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1220
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927221831.23659-1-lukma@denx.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHcmVnIEtyb2FoLUhhcnRtYW4g
-PGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPg0KPiBTZW50OiBNb25kYXksIFNlcHRlbWJlciAy
-NCwgMjAxOCA3OjUzIEFNDQo+IFRvOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IENj
-OiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsNCj4gc3Rh
-YmxlQHZnZXIua2VybmVsLm9yZzsgV2VudGxhbmQsIEhhcnJ5IDxIYXJyeS5XZW50bGFuZEBhbWQu
-Y29tPjsNCj4gRGV1Y2hlciwgQWxleGFuZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPjsg
-Wmh1LCBSZXgNCj4gPFJleC5aaHVAYW1kLmNvbT47IFNhc2hhIExldmluIDxhbGV4YW5kZXIubGV2
-aW5AbWljcm9zb2Z0LmNvbT4NCj4gU3ViamVjdDogW1BBVENIIDQuMTggMjIyLzIzNV0gZHJtL2Ft
-ZC9wcDogU2VuZCBraHogY2xvY2sgdmFsdWVzIHRvIERDIGZvcg0KPiBzbXU3LzgNCj4gDQo+IDQu
-MTgtc3RhYmxlIHJldmlldyBwYXRjaC4gIElmIGFueW9uZSBoYXMgYW55IG9iamVjdGlvbnMsIHBs
-ZWFzZSBsZXQgbWUga25vdy4NCj4gDQoNClRoaXMgcmVncmVzc2VzIHBvd2VyIHVzYWdlIG9uIDQu
-MTguICBQbGVhc2UgcmV2ZXJ0Lg0KaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVn
-LmNnaT9pZD0yMDEyNzUNCg0KVGhhbmtzLA0KDQpBbGV4DQoNCj4gLS0tLS0tLS0tLS0tLS0tLS0t
-DQo+IA0KPiBGcm9tOiBIYXJyeSBXZW50bGFuZCA8aGFycnkud2VudGxhbmRAYW1kLmNvbT4NCj4g
-DQo+IFsgVXBzdHJlYW0gY29tbWl0IGMzY2I0MjRhMDg2OTIxZjZiYjA0NDliMTBkOTk4MzUyYTc1
-NmQ2ZDUgXQ0KPiANCj4gVGhlIHByZXZpb3VzIGNoYW5nZSB3YXNuJ3QgY292ZXJpbmcgc211IDcg
-YW5kIDggYW5kIHRoZXJlZm9yZSBEQyB3YXMNCj4gc2VlaW5nIHdyb25nIGNsb2NrIHZhbHVlcy4N
-Cj4gDQo+IFRoaXMgZml4ZXMgYW4gaXNzdWUgd2hlcmUgdGhlIHBpcGVzIHNlZW0gdG8gaGFuZyB3
-aXRoIGEgNGsgRFAgYW5kIDEwODBwDQo+IEhETUkgZGlzcGxheS4NCj4gDQo+IEZpeGVzOiBjM2Rm
-NTBhYmM4NGIgKCJkcm0vYW1kL3BwOiBDb252ZXJ0IGNsb2NrIHVuaXQgdG8gS0h6IGFzIGRlZmlu
-ZWQiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBIYXJyeSBXZW50bGFuZCA8aGFycnkud2VudGxhbmRAYW1k
-LmNvbT4NCj4gQWNrZWQtYnk6IEFsZXggRGV1Y2hlciA8YWxleGFuZGVyLmRldWNoZXJAYW1kLmNv
-bT4NCj4gQ2M6cmV4LnpodUBhbWQuY29tDQo+IFNpZ25lZC1vZmYtYnk6IEFsZXggRGV1Y2hlciA8
-YWxleGFuZGVyLmRldWNoZXJAYW1kLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4g
-PGFsZXhhbmRlci5sZXZpbkBtaWNyb3NvZnQuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBHcmVnIEty
-b2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPg0KPiAtLS0NCj4gIGRyaXZl
-cnMvZ3B1L2RybS9hbWQvcG93ZXJwbGF5L2h3bWdyL3NtdTdfaHdtZ3IuYyB8ICAgIDggKysrKy0t
-LS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvcG93ZXJwbGF5L2h3bWdyL3NtdThfaHdtZ3IuYyB8
-ICAgIDYgKysrLS0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgNyBkZWxl
-dGlvbnMoLSkNCj4gDQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvcG93ZXJwbGF5L2h3bWdy
-L3NtdTdfaHdtZ3IuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL3Bvd2VycGxheS9od21n
-ci9zbXU3X2h3bWdyLmMNCj4gQEAgLTQ1NTUsMTIgKzQ1NTUsMTIgQEAgc3RhdGljIGludCBzbXU3
-X2dldF9zY2xrcyhzdHJ1Y3QgcHBfaHdtZw0KPiAgCQkJcmV0dXJuIC1FSU5WQUw7DQo+ICAJCWRl
-cF9zY2xrX3RhYmxlID0gdGFibGVfaW5mby0+dmRkX2RlcF9vbl9zY2xrOw0KPiAgCQlmb3IgKGkg
-PSAwOyBpIDwgZGVwX3NjbGtfdGFibGUtPmNvdW50OyBpKyspDQo+IC0JCQljbG9ja3MtPmNsb2Nr
-W2ldID0gZGVwX3NjbGtfdGFibGUtPmVudHJpZXNbaV0uY2xrOw0KPiArCQkJY2xvY2tzLT5jbG9j
-a1tpXSA9IGRlcF9zY2xrX3RhYmxlLT5lbnRyaWVzW2ldLmNsayAqIDEwOw0KPiAgCQljbG9ja3Mt
-PmNvdW50ID0gZGVwX3NjbGtfdGFibGUtPmNvdW50Ow0KPiAgCX0gZWxzZSBpZiAoaHdtZ3ItPnBw
-X3RhYmxlX3ZlcnNpb24gPT0gUFBfVEFCTEVfVjApIHsNCj4gIAkJc2Nsa190YWJsZSA9IGh3bWdy
-LT5keW5fc3RhdGUudmRkY19kZXBlbmRlbmN5X29uX3NjbGs7DQo+ICAJCWZvciAoaSA9IDA7IGkg
-PCBzY2xrX3RhYmxlLT5jb3VudDsgaSsrKQ0KPiAtCQkJY2xvY2tzLT5jbG9ja1tpXSA9IHNjbGtf
-dGFibGUtPmVudHJpZXNbaV0uY2xrOw0KPiArCQkJY2xvY2tzLT5jbG9ja1tpXSA9IHNjbGtfdGFi
-bGUtPmVudHJpZXNbaV0uY2xrICogMTA7DQo+ICAJCWNsb2Nrcy0+Y291bnQgPSBzY2xrX3RhYmxl
-LT5jb3VudDsNCj4gIAl9DQo+IA0KPiBAQCAtNDU5Miw3ICs0NTkyLDcgQEAgc3RhdGljIGludCBz
-bXU3X2dldF9tY2xrcyhzdHJ1Y3QgcHBfaHdtZw0KPiAgCQkJcmV0dXJuIC1FSU5WQUw7DQo+ICAJ
-CWRlcF9tY2xrX3RhYmxlID0gdGFibGVfaW5mby0+dmRkX2RlcF9vbl9tY2xrOw0KPiAgCQlmb3Ig
-KGkgPSAwOyBpIDwgZGVwX21jbGtfdGFibGUtPmNvdW50OyBpKyspIHsNCj4gLQkJCWNsb2Nrcy0+
-Y2xvY2tbaV0gPSBkZXBfbWNsa190YWJsZS0+ZW50cmllc1tpXS5jbGs7DQo+ICsJCQljbG9ja3Mt
-PmNsb2NrW2ldID0gZGVwX21jbGtfdGFibGUtPmVudHJpZXNbaV0uY2xrICogMTA7DQo+ICAJCQlj
-bG9ja3MtPmxhdGVuY3lbaV0gPSBzbXU3X2dldF9tZW1fbGF0ZW5jeShod21nciwNCj4gIAkJCQkJ
-CWRlcF9tY2xrX3RhYmxlLQ0KPiA+ZW50cmllc1tpXS5jbGspOw0KPiAgCQl9DQo+IEBAIC00NjAw
-LDcgKzQ2MDAsNyBAQCBzdGF0aWMgaW50IHNtdTdfZ2V0X21jbGtzKHN0cnVjdCBwcF9od21nDQo+
-ICAJfSBlbHNlIGlmIChod21nci0+cHBfdGFibGVfdmVyc2lvbiA9PSBQUF9UQUJMRV9WMCkgew0K
-PiAgCQltY2xrX3RhYmxlID0gaHdtZ3ItDQo+ID5keW5fc3RhdGUudmRkY19kZXBlbmRlbmN5X29u
-X21jbGs7DQo+ICAJCWZvciAoaSA9IDA7IGkgPCBtY2xrX3RhYmxlLT5jb3VudDsgaSsrKQ0KPiAt
-CQkJY2xvY2tzLT5jbG9ja1tpXSA9IG1jbGtfdGFibGUtPmVudHJpZXNbaV0uY2xrOw0KPiArCQkJ
-Y2xvY2tzLT5jbG9ja1tpXSA9IG1jbGtfdGFibGUtPmVudHJpZXNbaV0uY2xrICogMTA7DQo+ICAJ
-CWNsb2Nrcy0+Y291bnQgPSBtY2xrX3RhYmxlLT5jb3VudDsNCj4gIAl9DQo+ICAJcmV0dXJuIDA7
-DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvcG93ZXJwbGF5L2h3bWdyL3NtdThfaHdtZ3Iu
-Yw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL3Bvd2VycGxheS9od21nci9zbXU4X2h3bWdy
-LmMNCj4gQEAgLTE2MDUsMTcgKzE2MDUsMTcgQEAgc3RhdGljIGludCBzbXU4X2dldF9jbG9ja19i
-eV90eXBlKHN0cnVjdA0KPiAgCXN3aXRjaCAodHlwZSkgew0KPiAgCWNhc2UgYW1kX3BwX2Rpc3Bf
-Y2xvY2s6DQo+ICAJCWZvciAoaSA9IDA7IGkgPCBjbG9ja3MtPmNvdW50OyBpKyspDQo+IC0JCQlj
-bG9ja3MtPmNsb2NrW2ldID0gZGF0YS0+c3lzX2luZm8uZGlzcGxheV9jbG9ja1tpXTsNCj4gKwkJ
-CWNsb2Nrcy0+Y2xvY2tbaV0gPSBkYXRhLT5zeXNfaW5mby5kaXNwbGF5X2Nsb2NrW2ldICogMTA7
-DQo+ICAJCWJyZWFrOw0KPiAgCWNhc2UgYW1kX3BwX3N5c19jbG9jazoNCj4gIAkJdGFibGUgPSBo
-d21nci0+ZHluX3N0YXRlLnZkZGNfZGVwZW5kZW5jeV9vbl9zY2xrOw0KPiAgCQlmb3IgKGkgPSAw
-OyBpIDwgY2xvY2tzLT5jb3VudDsgaSsrKQ0KPiAtCQkJY2xvY2tzLT5jbG9ja1tpXSA9IHRhYmxl
-LT5lbnRyaWVzW2ldLmNsazsNCj4gKwkJCWNsb2Nrcy0+Y2xvY2tbaV0gPSB0YWJsZS0+ZW50cmll
-c1tpXS5jbGsgKiAxMDsNCj4gIAkJYnJlYWs7DQo+ICAJY2FzZSBhbWRfcHBfbWVtX2Nsb2NrOg0K
-PiAgCQljbG9ja3MtPmNvdW50ID0gU01VOF9OVU1fTkJQTUVNT1JZQ0xPQ0s7DQo+ICAJCWZvciAo
-aSA9IDA7IGkgPCBjbG9ja3MtPmNvdW50OyBpKyspDQo+IC0JCQljbG9ja3MtPmNsb2NrW2ldID0g
-ZGF0YS0NCj4gPnN5c19pbmZvLm5icF9tZW1vcnlfY2xvY2tbY2xvY2tzLT5jb3VudCAtIDEgLSBp
-XTsNCj4gKwkJCWNsb2Nrcy0+Y2xvY2tbaV0gPSBkYXRhLQ0KPiA+c3lzX2luZm8ubmJwX21lbW9y
-eV9jbG9ja1tjbG9ja3MtPmNvdW50IC0gMQ0KPiArLSBpXSAqIDEwOw0KPiAgCQlicmVhazsNCj4g
-IAlkZWZhdWx0Og0KPiAgCQlyZXR1cm4gLTE7DQo+IA0KDQo=
+On Fri, Sep 28, 2018 at 12:18:31AM +0200, Lukasz Majewski wrote:
+> This commit adds DTS support for BK4 device from Liebherr. It
+> uses vf610 SoC from NXP.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+> Changes for v2:
+> 
+> - Rename enet_ext and audio_ext oscillator names
+> - Move regulators from simple-bus (and rename to reg_3p3v: regulator-3p3v)
+> - Add stdout-path property to chosen node
+> - Move iomuxc node to the end (as it is so large)
+> - Sort with alphabetical order
+> - Rename the default pinctrl to "hog"
+> - Move LED pins definition from "hog" to "led" group
+> - Add more descriptive names to default pins pinmux definition
+> - Use spi-slave property to describe node working in this mode
+> - Rename the spidev3 node to slave
+> - Introduce new compatible name (lwn,bk4) for spidev driver (to avoid
+>   confusion)
+> - Update some compatibles to match current kernel
+> ---
+>  arch/arm/boot/dts/Makefile      |   1 +
+>  arch/arm/boot/dts/vf610-bk4.dts | 499 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 500 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/vf610-bk4.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index b5bd3de87c33..e6f159895fa9 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -577,6 +577,7 @@ dtb-$(CONFIG_SOC_LS1021A) += \
+>  	ls1021a-twr.dtb
+>  dtb-$(CONFIG_SOC_VF610) += \
+>  	vf500-colibri-eval-v3.dtb \
+> +	vf610-bk4.dtb \
+>  	vf610-colibri-eval-v3.dtb \
+>  	vf610m4-colibri.dtb \
+>  	vf610-cosmic.dtb \
+> diff --git a/arch/arm/boot/dts/vf610-bk4.dts b/arch/arm/boot/dts/vf610-bk4.dts
+> new file mode 100644
+> index 000000000000..78c5723d6f64
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/vf610-bk4.dts
+> @@ -0,0 +1,499 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2018
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "vf610.dtsi"
+> +
+> +/ {
+> +	model = "Liebherr BK4 controller";
+> +	compatible = "lwn,bk4", "fsl,vf610";
+> +
+> +	chosen {
+> +		stdout-path = &uart1;
+> +	};
+> +
+> +	memory@80000000 {
+> +		reg = <0x80000000 0x8000000>;
+> +	};
+> +
+> +	audio_ext: oscillator-audio {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <24576000>;
+> +	};
+> +
+> +	enet_ext: oscillator-ethernet {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <50000000>;
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_gpio_leds>;
+> +
+> +		/* LED D5 */
+> +		led0: heartbeat {
+> +			label = "heartbeat";
+> +			gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +
+> +	reg_3p3v: regulator-3p3v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "3P3V";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	reg_vcc_3v3_mcu: regulator-vcc_3v3_mcu {
+
+We usually use hyphen rather than underscore in node name for all cases.
+In this case, naming it regulator-vcc3v3mcu looks good to me.
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_3v3_mcu";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +};
+> +
+> +&adc0 {
+> +	vref-supply = <&reg_vcc_3v3_mcu>;
+> +	status = "okay";
+> +};
+> +
+> +&adc1 {
+> +	vref-supply = <&reg_vcc_3v3_mcu>;
+> +	status = "okay";
+> +};
+> +
+> +&can0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_can0>;
+> +	status = "okay";
+> +};
+> +
+> +&can1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_can1>;
+> +	status = "okay";
+> +};
+> +
+> +&clks {
+> +	clocks = <&sxosc>, <&fxosc>, <&enet_ext>, <&audio_ext>;
+> +	clock-names = "sxosc", "fxosc", "enet_ext", "audio_ext";
+> +};
+> +
+> +&dspi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_dspi0>;
+> +	bus-num = <0>;
+> +	status = "okay";
+> +
+> +	spidev0@0 {
+> +		compatible = "lwn,bk4";
+> +		spi-max-frequency = <30000000>;
+> +		reg = <0>;
+> +		fsl,spi-cs-sck-delay = <200>;
+> +		fsl,spi-sck-cs-delay = <400>;
+> +	};
+> +};
+> +
+> +&dspi3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_dspi3>;
+> +	bus-num = <3>;
+> +	status = "okay";
+> +	spi-slave;
+> +
+> +	slave@0 {
+> +		compatible = "lwn,bk4";
+> +		spi-max-frequency = <30000000>;
+> +		reg = <0>;
+> +	};
+> +};
+> +
+> +&edma0 {
+> +	status = "okay";
+> +};
+> +
+> +&edma1 {
+> +	status = "okay";
+> +};
+> +
+> +&esdhc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_esdhc1>;
+> +	bus-width = <4>;
+> +	cd-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
+> +	status = "okay";
+> +};
+> +
+> +&fec0 {
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy0>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_fec0>;
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+
+Please have a newline between properties and child node.
+
+> +		ethphy0: ethernet-phy@1 {
+> +			reg = <1>;
+> +			clocks = <&clks VF610_CLK_ENET_50M>;
+> +			clock-names = "rmii-ref";
+> +		};
+> +	};
+> +};
+> +
+> +&fec1 {
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy1>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_fec1>;
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+
+Ditto
+
+> +		ethphy1: ethernet-phy@1 {
+> +			reg = <1>;
+> +			clocks = <&clks VF610_CLK_ENET_50M>;
+> +			clock-names = "rmii-ref";
+> +		};
+> +	};
+> +};
+> +
+> +&i2c2 {
+> +	clock-frequency = <400000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c2>;
+> +	status = "okay";
+> +
+> +	eeprom: eeprom@50 {
+
+It might be better to label the node with model name as below.
+
+	24c256: eeprom
+
+> +		compatible = "atmel,24c256";
+> +		reg = <0x50>;
+> +	};
+> +
+> +	rtc: rtc@68 {
+
+	m41t62: rtc
+
+> +		compatible = "st,m41t62";
+> +		reg = <0x68>;
+> +	};
+> +};
+> +
+> +&nfc {
+> +	assigned-clocks = <&clks VF610_CLK_NFC>;
+> +	assigned-clock-rates = <33000000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_nfc>;
+> +	status = "okay";
+> +
+> +	nand@0 {
+> +		compatible = "fsl,vf610-nfc-nandcs";
+> +		reg = <0>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		nand-bus-width = <16>;
+> +		nand-ecc-mode = "hw";
+> +		nand-ecc-strength = <24>;
+> +		nand-ecc-step-size = <2048>;
+> +		nand-on-flash-bbt;
+> +	};
+> +};
+> +
+> +&qspi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_qspi0>;
+> +	status = "okay";
+> +
+> +	flash0: n25q128a13@0 {
+
+Node name should be generic and label name should be specific.
+
+	n25q128a13_0: flash@0
+
+> +		compatible = "n25q128a13", "jedec,spi-nor";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		spi-max-frequency = <66000000>;
+> +		spi-rx-bus-width = <4>;
+> +		reg = <0>;
+> +	};
+> +
+> +	flash1: n25q128a13@1 {
+
+	n25q128a13_1: flash@1
+
+> +		compatible = "n25q128a13", "jedec,spi-nor";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		spi-max-frequency = <66000000>;
+> +		spi-rx-bus-width = <2>;
+> +		reg = <1>;
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart0>;
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart1>;
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2>;
+> +	status = "okay";
+> +};
+> +
+> +&uart3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart3>;
+> +	status = "okay";
+> +};
+> +
+> +&usbdev0 {
+> +	disable-over-current;
+> +	status = "okay";
+> +};
+> +
+> +&usbh1 {
+> +	disable-over-current;
+> +	status = "okay";
+> +};
+> +
+> +&usbmisc0 {
+> +	status = "okay";
+> +};
+> +
+> +&usbmisc1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbphy0 {
+> +	status = "okay";
+> +};
+> +
+> +&usbphy1 {
+> +	status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_hog>;
+> +
+> +	pinctrl_hog: hoggrp {
+> +		fsl,pins = <
+> +			/* One_Wire_PSU_EN */
+> +			VF610_PAD_PTC29__GPIO_102		0x1183
+> +			/* SPI ENABLE */
+> +			VF610_PAD_PTB26__GPIO_96		0x1183
+> +			/* EB control */
+> +			VF610_PAD_PTE14__GPIO_119		0x1183
+> +			VF610_PAD_PTE4__GPIO_109		0x1181
+> +			/* Feedback_Lines */
+> +			VF610_PAD_PTC31__GPIO_104		0x1181
+> +			VF610_PAD_PTA7__GPIO_134		0x1181
+> +			VF610_PAD_PTD9__GPIO_88		0x1181
+> +			VF610_PAD_PTE1__GPIO_106		0x1183
+> +			VF610_PAD_PTB2__GPIO_24		0x1181
+> +			VF610_PAD_PTB3__GPIO_25		0x1181
+> +			VF610_PAD_PTB1__GPIO_23		0x1181
+> +			/* SDHC Enable */
+> +			VF610_PAD_PTE19__GPIO_124		0x1183
+> +			/* SDHC Overcurrent */
+> +			VF610_PAD_PTB23__GPIO_93		0x1181
+> +			/* GPI */
+> +			VF610_PAD_PTE2__GPIO_107		0x1181
+> +			VF610_PAD_PTE3__GPIO_108		0x1181
+> +			VF610_PAD_PTE5__GPIO_110		0x1181
+> +			VF610_PAD_PTE6__GPIO_111		0x1181
+> +			/* GPO */
+> +			VF610_PAD_PTE0__GPIO_105		0x1183
+> +			VF610_PAD_PTE7__GPIO_112		0x1183
+> +			/* RS485 Control */
+> +			VF610_PAD_PTB8__GPIO_30		0x1183
+> +			VF610_PAD_PTB9__GPIO_31		0x1183
+> +			VF610_PAD_PTE8__GPIO_113		0x1183
+> +			/* MPBUS MPB_EN */
+> +			VF610_PAD_PTE28__GPIO_133		0x1183
+> +			/* MISC */
+> +			VF610_PAD_PTE10__GPIO_115		0x1183
+> +			VF610_PAD_PTE11__GPIO_116		0x1183
+> +			VF610_PAD_PTE17__GPIO_122		0x1183
+> +			VF610_PAD_PTC30__GPIO_103		0x1183
+> +			VF610_PAD_PTB0__GPIO_22		0x1181
+> +			/* RESETINFO */
+> +			VF610_PAD_PTE26__GPIO_131		0x1183
+> +			VF610_PAD_PTD6__GPIO_85		0x1181
+> +			VF610_PAD_PTE27__GPIO_132		0x1181
+> +			VF610_PAD_PTE13__GPIO_118		0x1181
+> +			VF610_PAD_PTE21__GPIO_126		0x1181
+> +			VF610_PAD_PTE22__GPIO_127		0x1181
+> +			/* EE_5V_EN */
+> +			VF610_PAD_PTE18__GPIO_123		0x1183
+> +			/* EE_5V_OC_N */
+> +			VF610_PAD_PTE25__GPIO_130		0x1181
+> +		>;
+> +	};
+> +
+> +	pinctrl_can0: can0grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTB14__CAN0_RX		0x1181
+> +			VF610_PAD_PTB15__CAN0_TX		0x1182
+> +		>;
+> +	};
+> +
+> +	pinctrl_can1: can1grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTB16__CAN1_RX		0x1181
+> +			VF610_PAD_PTB17__CAN1_TX		0x1182
+> +		>;
+> +	};
+> +
+> +	pinctrl_dspi0: dspi0grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTB18__DSPI0_CS1		0x1182
+> +			VF610_PAD_PTB19__DSPI0_CS0		0x1182
+> +			VF610_PAD_PTB20__DSPI0_SIN		0x1181
+> +			VF610_PAD_PTB21__DSPI0_SOUT		0x1182
+> +			VF610_PAD_PTB22__DSPI0_SCK		0x1182
+> +		>;
+> +	};
+> +
+> +	pinctrl_dspi3: dspi3grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTD10__DSPI3_CS0		0x1181
+> +			VF610_PAD_PTD11__DSPI3_SIN		0x1181
+> +			VF610_PAD_PTD12__DSPI3_SOUT		0x1182
+> +			VF610_PAD_PTD13__DSPI3_SCK		0x1181
+> +		>;
+> +	};
+> +
+> +	pinctrl_esdhc1: esdhc1grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTA24__ESDHC1_CLK		0x31ef
+> +			VF610_PAD_PTA25__ESDHC1_CMD		0x31ef
+> +			VF610_PAD_PTA26__ESDHC1_DAT0		0x31ef
+> +			VF610_PAD_PTA27__ESDHC1_DAT1		0x31ef
+> +			VF610_PAD_PTA28__ESDHC1_DATA2		0x31ef
+> +			VF610_PAD_PTA29__ESDHC1_DAT3		0x31ef
+> +			VF610_PAD_PTB28__GPIO_98		0x219d
+> +		>;
+> +	};
+> +
+> +	pinctrl_fec0: fec0grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTA6__RMII_CLKIN		0x30dd
+> +			VF610_PAD_PTC0__ENET_RMII0_MDC		0x30de
+> +			VF610_PAD_PTC1__ENET_RMII0_MDIO	0x30df
+> +			VF610_PAD_PTC2__ENET_RMII0_CRS		0x30dd
+> +			VF610_PAD_PTC3__ENET_RMII0_RXD1	0x30dd
+> +			VF610_PAD_PTC4__ENET_RMII0_RXD0	0x30dd
+> +			VF610_PAD_PTC5__ENET_RMII0_RXER	0x30dd
+> +			VF610_PAD_PTC6__ENET_RMII0_TXD1	0x30de
+> +			VF610_PAD_PTC7__ENET_RMII0_TXD0	0x30de
+> +			VF610_PAD_PTC8__ENET_RMII0_TXEN	0x30de
+> +		>;
+> +	};
+> +
+> +	pinctrl_fec1: fec1grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTC9__ENET_RMII1_MDC		0x30de
+> +			VF610_PAD_PTC10__ENET_RMII1_MDIO	0x30df
+> +			VF610_PAD_PTC11__ENET_RMII1_CRS	0x30dd
+> +			VF610_PAD_PTC12__ENET_RMII1_RXD1	0x30dd
+> +			VF610_PAD_PTC13__ENET_RMII1_RXD0	0x30dd
+> +			VF610_PAD_PTC14__ENET_RMII1_RXER	0x30dd
+> +			VF610_PAD_PTC15__ENET_RMII1_TXD1	0x30de
+> +			VF610_PAD_PTC16__ENET_RMII1_TXD0	0x30de
+> +			VF610_PAD_PTC17__ENET_RMII1_TXEN	0x30de
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpio_leds: gpio_leds {
+
+gpioledsgrp would be more consistent to others.
+
+> +		fsl,pins = <
+> +			/* Heart bit LED */
+> +			VF610_PAD_PTE12__GPIO_117	0x1183
+> +			/* LEDS */
+> +			VF610_PAD_PTE15__GPIO_120	0x1183
+> +			VF610_PAD_PTA12__GPIO_5	0x1183
+> +			VF610_PAD_PTA16__GPIO_6	0x1183
+> +			VF610_PAD_PTE9__GPIO_114	0x1183
+> +			VF610_PAD_PTE20__GPIO_125	0x1183
+> +			VF610_PAD_PTE23__GPIO_128	0x1183
+> +			VF610_PAD_PTE16__GPIO_121	0x1183
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c2: i2c2grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTA22__I2C2_SCL               0x34df
+> +			VF610_PAD_PTA23__I2C2_SDA               0x34df
+> +		>;
+> +	};
+> +
+> +	pinctrl_nfc: nfcgrp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTD23__NF_IO7		0x28df
+> +			VF610_PAD_PTD22__NF_IO6		0x28df
+> +			VF610_PAD_PTD21__NF_IO5		0x28df
+> +			VF610_PAD_PTD20__NF_IO4		0x28df
+> +			VF610_PAD_PTD19__NF_IO3		0x28df
+> +			VF610_PAD_PTD18__NF_IO2		0x28df
+> +			VF610_PAD_PTD17__NF_IO1		0x28df
+> +			VF610_PAD_PTD16__NF_IO0		0x28df
+> +			VF610_PAD_PTB24__NF_WE_B		0x28c2
+> +			VF610_PAD_PTB25__NF_CE0_B		0x28c2
+> +			VF610_PAD_PTB27__NF_RE_B		0x28c2
+> +			VF610_PAD_PTC26__NF_RB_B		0x283d
+> +			VF610_PAD_PTC27__NF_ALE		0x28c2
+> +			VF610_PAD_PTC28__NF_CLE		0x28c2
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart0: uart0grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTB10__UART0_TX		0x21a2
+> +			VF610_PAD_PTB11__UART0_RX		0x21a1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTB4__UART1_TX		0x21a2
+> +			VF610_PAD_PTB5__UART1_RX		0x21a1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2: uart2grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTB6__UART2_TX		0x21a2
+> +			VF610_PAD_PTB7__UART2_RX		0x21a1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart3: uart3grp {
+> +		fsl,pins = <
+> +			VF610_PAD_PTA20__UART3_TX		0x21a2
+> +			VF610_PAD_PTA21__UART3_RX		0x21a1
+> +		>;
+> +	};
+> +
+> +	pinctrl_qspi0: qspi0grp {
+
+This one is out of alphabetic order.
+
+Shawn
+
+> +		fsl,pins = <
+> +			VF610_PAD_PTD0__QSPI0_A_QSCK	0x397f
+> +			VF610_PAD_PTD1__QSPI0_A_CS0	0x397f
+> +			VF610_PAD_PTD2__QSPI0_A_DATA3	0x397f
+> +			VF610_PAD_PTD3__QSPI0_A_DATA2	0x397f
+> +			VF610_PAD_PTD4__QSPI0_A_DATA1	0x397f
+> +			VF610_PAD_PTD5__QSPI0_A_DATA0	0x397f
+> +			VF610_PAD_PTD7__QSPI0_B_QSCK	0x397f
+> +			VF610_PAD_PTD8__QSPI0_B_CS0	0x397f
+> +			VF610_PAD_PTD11__QSPI0_B_DATA1	0x397f
+> +			VF610_PAD_PTD12__QSPI0_B_DATA0	0x397f
+> +		>;
+> +	};
+> +};
+> -- 
+> 2.11.0
+> 
