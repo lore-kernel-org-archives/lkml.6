@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC51C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CD9C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5095214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BD5C214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFWSGmeZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5095214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfyM4Ven"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD5C214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731830AbeJICCV (ORCPT
+        id S1731842AbeJICCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51574 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeJICCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:20 -0400
+        id S1726991AbeJICCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:24 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4A821479;
-        Mon,  8 Oct 2018 18:49:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BDA4204FD;
+        Mon,  8 Oct 2018 18:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024554;
-        bh=3xsmlAiZWSj2MHtwpmhvdc8zVXj6pTszw4KMiVq2fPk=;
+        s=default; t=1539024556;
+        bh=6Bh1h+Hb0X8jvg/qdHYj3t04AEpAYqDSDW2J1rgKNBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TFWSGmeZvO40dFAzXlFMjISmUJdgTfDwWqIPIxpPdHh6+Asye9pw5dExS0U3C0g6y
-         GXNhj18QUaaIzBsArRmPpYovNGr5VLDmnftHZVM6Hb/8WbnBrkYevlQMBAvSl0o91L
-         d6AIiqVrx5q9xKXWllBXqVreI490KYpX6tlh5fQ4=
+        b=OfyM4Veno5jFxrcygZMN5AFGHeh4fwtEzN29B0fB0JdY3/QHRXOp5w7iF1VWS2dEr
+         EyrlWX8b0UB5RsqECZ6ppW9Ry7+SHDoAWrIuFQ4RR4ayDGwOTlprN84bdzLZXh8HE0
+         uUYuJ9ckzfD18niJME30vTAz7vYo+CUD8fBu4OZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Jann Horn <jannh@google.com>
-Subject: [PATCH 4.18 078/168] bpf: 32-bit RSH verification must truncate input before the ALU op
-Date:   Mon,  8 Oct 2018 20:30:58 +0200
-Message-Id: <20181008175623.031212077@linuxfoundation.org>
+        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 061/168] mac80211: Fix station bandwidth setting after channel switch
+Date:   Mon,  8 Oct 2018 20:30:41 +0200
+Message-Id: <20181008175622.371013842@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -62,59 +64,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Ilan Peer <ilan.peer@intel.com>
 
-commit b799207e1e1816b09e7a5920fbb2d5fcf6edd681 upstream.
+[ Upstream commit 0007e94355fdb71a1cf5dba0754155cba08f0666 ]
 
-When I wrote commit 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification"), I
-assumed that, in order to emulate 64-bit arithmetic with 32-bit logic, it
-is sufficient to just truncate the output to 32 bits; and so I just moved
-the register size coercion that used to be at the start of the function to
-the end of the function.
+When performing a channel switch flow for a managed interface, the
+flow did not update the bandwidth of the AP station and the rate
+scale algorithm. In case of a channel width downgrade, this would
+result with the rate scale algorithm using a bandwidth that does not
+match the interface channel configuration.
 
-That assumption is true for almost every op, but not for 32-bit right
-shifts, because those can propagate information towards the least
-significant bit. Fix it by always truncating inputs for 32-bit ops to 32
-bits.
+Fix this by updating the AP station bandwidth and rate scaling algorithm
+before the actual channel change in case of a bandwidth downgrade, or
+after the actual channel change in case of a bandwidth upgrade.
 
-Also get rid of the coerce_reg_to_size() after the ALU op, since that has
-no effect.
-
-Fixes: 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification")
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Ilan Peer <ilan.peer@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/bpf/verifier.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ net/mac80211/mlme.c |   53 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2865,6 +2865,15 @@ static int adjust_scalar_min_max_vals(st
- 	u64 umin_val, umax_val;
- 	u64 insn_bitness = (BPF_CLASS(insn->code) == BPF_ALU64) ? 64 : 32;
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -978,6 +978,10 @@ static void ieee80211_chswitch_work(stru
+ 	 */
  
-+	if (insn_bitness == 32) {
-+		/* Relevant for 32-bit RSH: Information can propagate towards
-+		 * LSB, so it isn't sufficient to only truncate the output to
-+		 * 32 bits.
-+		 */
-+		coerce_reg_to_size(dst_reg, 4);
-+		coerce_reg_to_size(&src_reg, 4);
-+	}
+ 	if (sdata->reserved_chanctx) {
++		struct ieee80211_supported_band *sband = NULL;
++		struct sta_info *mgd_sta = NULL;
++		enum ieee80211_sta_rx_bandwidth bw = IEEE80211_STA_RX_BW_20;
 +
- 	smin_val = src_reg.smin_value;
- 	smax_val = src_reg.smax_value;
- 	umin_val = src_reg.umin_value;
-@@ -3100,7 +3109,6 @@ static int adjust_scalar_min_max_vals(st
- 	if (BPF_CLASS(insn->code) != BPF_ALU64) {
- 		/* 32-bit ALU ops are (32,32)->32 */
- 		coerce_reg_to_size(dst_reg, 4);
--		coerce_reg_to_size(&src_reg, 4);
+ 		/*
+ 		 * with multi-vif csa driver may call ieee80211_csa_finish()
+ 		 * many times while waiting for other interfaces to use their
+@@ -986,6 +990,48 @@ static void ieee80211_chswitch_work(stru
+ 		if (sdata->reserved_ready)
+ 			goto out;
+ 
++		if (sdata->vif.bss_conf.chandef.width !=
++		    sdata->csa_chandef.width) {
++			/*
++			 * For managed interface, we need to also update the AP
++			 * station bandwidth and align the rate scale algorithm
++			 * on the bandwidth change. Here we only consider the
++			 * bandwidth of the new channel definition (as channel
++			 * switch flow does not have the full HT/VHT/HE
++			 * information), assuming that if additional changes are
++			 * required they would be done as part of the processing
++			 * of the next beacon from the AP.
++			 */
++			switch (sdata->csa_chandef.width) {
++			case NL80211_CHAN_WIDTH_20_NOHT:
++			case NL80211_CHAN_WIDTH_20:
++			default:
++				bw = IEEE80211_STA_RX_BW_20;
++				break;
++			case NL80211_CHAN_WIDTH_40:
++				bw = IEEE80211_STA_RX_BW_40;
++				break;
++			case NL80211_CHAN_WIDTH_80:
++				bw = IEEE80211_STA_RX_BW_80;
++				break;
++			case NL80211_CHAN_WIDTH_80P80:
++			case NL80211_CHAN_WIDTH_160:
++				bw = IEEE80211_STA_RX_BW_160;
++				break;
++			}
++
++			mgd_sta = sta_info_get(sdata, ifmgd->bssid);
++			sband =
++				local->hw.wiphy->bands[sdata->csa_chandef.chan->band];
++		}
++
++		if (sdata->vif.bss_conf.chandef.width >
++		    sdata->csa_chandef.width) {
++			mgd_sta->sta.bandwidth = bw;
++			rate_control_rate_update(local, sband, mgd_sta,
++						 IEEE80211_RC_BW_CHANGED);
++		}
++
+ 		ret = ieee80211_vif_use_reserved_context(sdata);
+ 		if (ret) {
+ 			sdata_info(sdata,
+@@ -996,6 +1042,13 @@ static void ieee80211_chswitch_work(stru
+ 			goto out;
+ 		}
+ 
++		if (sdata->vif.bss_conf.chandef.width <
++		    sdata->csa_chandef.width) {
++			mgd_sta->sta.bandwidth = bw;
++			rate_control_rate_update(local, sband, mgd_sta,
++						 IEEE80211_RC_BW_CHANGED);
++		}
++
+ 		goto out;
  	}
  
- 	__reg_deduce_bounds(dst_reg);
 
 
