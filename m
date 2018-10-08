@@ -2,905 +2,114 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DD4C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61FBC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DEA2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:23:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DEA2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 33D8320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:24:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7k+TYBe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D8320C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeJIDhK (ORCPT
+        id S1727068AbeJIDhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:37:10 -0400
-Received: from shell.v3.sk ([90.176.6.54]:45550 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJIDhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:37:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CB76CBCC94;
-        Mon,  8 Oct 2018 22:23:36 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id FrokLy8NzE66; Mon,  8 Oct 2018 22:23:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 69287BCCA4;
-        Mon,  8 Oct 2018 22:23:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NquLS8Ur2-Tb; Mon,  8 Oct 2018 22:23:27 +0200 (CEST)
-Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 214C8BCCA3;
-        Mon,  8 Oct 2018 22:23:27 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 2/2] misc: hx8837: add a HiMax HX8837 display controller driver
-Date:   Mon,  8 Oct 2018 22:23:21 +0200
-Message-Id: <20181008202321.128937-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181008202321.128937-1-lkundrak@v3.sk>
-References: <20181008202321.128937-1-lkundrak@v3.sk>
+        Mon, 8 Oct 2018 23:37:36 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40296 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJIDhf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:37:35 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n31-v6so8321483pgm.7;
+        Mon, 08 Oct 2018 13:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wBEyPiY0tb/FG3rRiXF4B43R1OWW8Wq+0elDJxeiWtI=;
+        b=b7k+TYBexuWY3TclWyLkws7JtrB4Ioob7ve1TZrr2vF8fPOTTty6oNGgJmMyR38sjx
+         ocS+cD6Sl2UubchCz42WMHoogz2l7yoT/Ztnyjjxj7z7KvVnPVdlbmeVp9ndRAREZ9je
+         1TGDFo0BcUibBLbqeTNST5hIeNN0eQ/nlAaKkBieG26pRWZ7lv49WTFPoF2I4am+F8Ji
+         cgjX7OAE6JPvhRh1Mop02Sb7OFmu/p7EQd8J6vnypOamUhis2dFqWxHNWC0G1jiDwEIA
+         /Gs93yBcf0ON5YrqQoKk+ospwrEZFKCAzyZk/nUwfSwlKYhiJ9sWV8dCgJj21lM6tFVw
+         FAyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wBEyPiY0tb/FG3rRiXF4B43R1OWW8Wq+0elDJxeiWtI=;
+        b=e3nfH3XL6X4IaOjqDetpseeZVCCHB+JucnStCOSWFDYrd/R6ruNrkSUpMJo8uhckd6
+         paPpMHbJaEayjjNe6xn0+8/ByzRZTqK0vRltQWY8rgOAOe2V9u9OUnMyt3UVTL7H62t1
+         uccJM0iPx1e7cEbzsJjBMysm/KddovQRdISsQrkBv8NdSahA1Y09leKn4OSXaAodyZyC
+         pZCtFmyjT+waCY1us2N8VooJTRskBjrtdRse7XXlMgP2YWDtS4JWFCXZCDt0zj1SIZvZ
+         bO1it2hvUTrdxEHF0zWS1flzjeI8CsOVEa3i/GxkgRxszvcAtMsn4qIKnfWEXbYEUvPI
+         XaSA==
+X-Gm-Message-State: ABuFfoj/RLtUQ7vV6F46HFtxwEGIx5PGaqdKky9xevr0Q/wtITXlNX77
+        UHcyzK0KRfCy3NQLtxV1SA4=
+X-Google-Smtp-Source: ACcGV62O9F+Fbov+2ey2vt8cg5iKC9xsF58M1gzt4zm0XfZTPZR/vbB564GouOAoIa1+5VPa5g3VOw==
+X-Received: by 2002:a62:5d0c:: with SMTP id r12-v6mr27016099pfb.123.1539030244543;
+        Mon, 08 Oct 2018 13:24:04 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm21011429pgn.39.2018.10.08.13.24.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 13:24:03 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 13:24:02 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, afd@ti.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (ina3221) Clamp shunt resistor value from DT
+Message-ID: <20181008202402.GA27003@roeck-us.net>
+References: <20181008200537.22062-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008200537.22062-1-nicoleotsuka@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HiMax HX8837 is a display controller used on OLPC platforms. It controlls
-backlight and is able to capture and freeze a frame when the LCD controll=
-er
-(and the rest of the plaform) is powered off.
+On Mon, Oct 08, 2018 at 01:05:37PM -0700, Nicolin Chen wrote:
+> The input->shunt_resistor is int type while the value from DT is
+> unsigned int. Meanwhile, a divide-by-zero error would happen if
+> the value is 0. So this patch just simply clamps the value.
+> 
 
-This driver is based on the same code as drivers/staging/olpc_dcon.
-I modernized it to use managed GPIO, device-tree bindings, sysfs attribtu=
-e
-groups, essentially fixing the staging driver's TODO.
+I think it would be better to validate the numbers here instead of 
+silently accepting bad values, and return -EINVAL if the property value
+is bad.
 
-Why I am not removing the staging driver now is because I've hobbled off
-some functionality too (with an intent to bring add it back eventually):
+Thanks,
+Guenter
 
-* I've removed parts that talk directly to the OLPC EC to turn off/on the
-  power. A separate patch will make the EC expose a regulator interface
-  that should be used instead.
-
-* Some work is likely needed to make XO 1 and XO 1.5 work. Both platforms
-  are DT-based and could use the same bindings, but I haven't checked
-  whether the cs5535 and vx855 GPIO drivers are good enough.
-
-What is there is the backlight control and the sysfs attributes to contro=
-l
-the freeze/unfreeze..
-
-I've also renamed the driver to use the actual chip name instead of the
-original name that I found too generic. This way the staging driver can b=
-e
-used on XO 1 and XO 1.5 for the time being, while my XO 1.75 can utilize
-this one.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
-Changes since v1:
-- Use interrupt bindings instead of gpio for the IRQ
-- Update the statement on XO 1/1.5 support in the commit message
-
- drivers/misc/Kconfig  |  16 +
- drivers/misc/Makefile |   1 +
- drivers/misc/hx8837.c | 741 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 758 insertions(+)
- create mode 100644 drivers/misc/hx8837.c
-
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3726eacdf65d..3eb6df0ea0a4 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -513,6 +513,22 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
-=20
-+config HX8837_DCON
-+        tristate "HiMax HX8837 Display Controller on OLPC"
-+        depends on I2C
-+        depends on BACKLIGHT_LCD_SUPPORT
-+        select BACKLIGHT_CLASS_DEVICE
-+        help
-+          In order to support very low power operation, the OLPC XO lapt=
-op uses a
-+          secondary Display Controller, or DCON.  This secondary control=
-ler
-+          is present in the video pipeline between the primary display
-+          controller (integrate into the processor or chipset) and the L=
-CD
-+          panel.  It allows the main processor/display controller to be
-+          completely powered off while still retaining an image on the d=
-isplay.
-+          This controller is only available on OLPC platforms.
-+
-+          Unless you have an OLPC XO laptop, you will want to say N.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index af22bbc3d00c..33689ae496b4 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+=3D aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+=3D pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+=3D ocxl/
- obj-$(CONFIG_MISC_RTSX)		+=3D cardreader/
-+obj-$(CONFIG_HX8837_DCON)	+=3D hx8837.o
-diff --git a/drivers/misc/hx8837.c b/drivers/misc/hx8837.c
-new file mode 100644
-index 000000000000..cff02ed54de3
---- /dev/null
-+++ b/drivers/misc/hx8837.c
-@@ -0,0 +1,741 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Mainly by David Woodhouse, somewhat modified by Jordan Crouse.
-+ * Modernized to use managed GPIO, device-tree, etc. by Lubomir Rintel.
-+ *
-+ * Copyright (C) 2006-2007  Red Hat, Inc.
-+ * Copyright (C) 2006-2007  Advanced Micro Devices, Inc.
-+ * Copyright (C) 2009       VIA Technology, Inc.
-+ * Copyright (C) 2010-2011  Andres Salomon <dilinger@queued.net>
-+ * Copyright (C) 2018       Lubomir Rintel <lkundrak@v3.sk>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/backlight.h>
-+#include <linux/console.h>
-+#include <linux/ctype.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/fb.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/notifier.h>
-+#include <linux/reboot.h>
-+
-+/* DCON registers */
-+
-+#define DCON_REG_ID		 0
-+#define DCON_REG_MODE		 1
-+
-+#define MODE_PASSTHRU		BIT(0)
-+#define MODE_SLEEP		BIT(1)
-+#define MODE_SLEEP_AUTO		BIT(2)
-+#define MODE_BL_ENABLE		BIT(3)
-+#define MODE_BLANK		BIT(4)
-+#define MODE_CSWIZZLE		BIT(5)
-+#define MODE_COL_AA		BIT(6)
-+#define MODE_MONO_LUMA		BIT(7)
-+#define MODE_SCAN_INT		BIT(8)
-+#define MODE_CLOCKDIV		BIT(9)
-+#define MODE_DEBUG		BIT(14)
-+#define MODE_SELFTEST		BIT(15)
-+
-+#define DCON_REG_HRES		0x2
-+#define DCON_REG_HTOTAL		0x3
-+#define DCON_REG_HSYNC_WIDTH	0x4
-+#define DCON_REG_VRES		0x5
-+#define DCON_REG_VTOTAL		0x6
-+#define DCON_REG_VSYNC_WIDTH	0x7
-+#define DCON_REG_TIMEOUT	0x8
-+#define DCON_REG_SCAN_INT	0x9
-+#define DCON_REG_BRIGHT		0xa
-+#define DCON_REG_MEM_OPT_A	0x41
-+#define DCON_REG_MEM_OPT_B	0x42
-+
-+/* Load Delay Locked Loop (DLL) settings for clock delay */
-+#define MEM_DLL_CLOCK_DELAY	BIT(0)
-+/* Memory controller power down function */
-+#define MEM_POWER_DOWN		BIT(8)
-+/* Memory controller software reset */
-+#define MEM_SOFT_RESET		BIT(0)
-+
-+/* Status values */
-+
-+#define DCONSTAT_SCANINT	0
-+#define DCONSTAT_SCANINT_DCON	1
-+#define DCONSTAT_DISPLAYLOAD	2
-+#define DCONSTAT_MISSED		3
-+
-+/* Source values */
-+
-+#define DCON_SOURCE_DCON        0
-+#define DCON_SOURCE_CPU         1
-+
-+struct hx8837_priv {
-+	struct i2c_client *client;
-+	struct fb_info *fbinfo;
-+	struct backlight_device *bl_dev;
-+
-+	wait_queue_head_t waitq;
-+	struct work_struct switch_source;
-+	struct notifier_block reboot_nb;
-+	struct notifier_block panic_nb;
-+
-+	/* Scanline to interrupt on during resume */
-+	ushort resumeline;
-+
-+	/* Shadow register for the DCON_REG_MODE register */
-+	u8 disp_mode;
-+
-+	/* The current backlight value - this saves us some smbus traffic */
-+	u8 bl_val;
-+
-+	/* Current source, initialized at probe time */
-+	int curr_src;
-+
-+	/* Desired source */
-+	int pending_src;
-+
-+	/* Variables used during switches */
-+	bool switched;
-+	ktime_t irq_time;
-+	ktime_t load_time;
-+
-+	/* Current output type; true =3D=3D mono, false =3D=3D color */
-+	bool mono;
-+	/* This get set while controlling fb blank state from the driver */
-+	bool ignore_fb_events;
-+
-+	struct gpio_desc *stat0_gpio;
-+	struct gpio_desc *stat1_gpio;
-+	struct gpio_desc *load_gpio;
-+};
-+
-+static irqreturn_t hx8837_interrupt(int irq, void *id);
-+
-+/* I2C structures */
-+
-+static unsigned short normal_i2c[] =3D { 0x0d, I2C_CLIENT_END };
-+
-+static s32 hx8837_write(struct hx8837_priv *priv, u8 reg, u16 val)
-+{
-+	return i2c_smbus_write_word_data(priv->client, reg, val);
-+}
-+
-+static s32 hx8837_read(struct hx8837_priv *priv, u8 reg)
-+{
-+	return i2c_smbus_read_word_data(priv->client, reg);
-+}
-+
-+static void hx8837_hw_init(struct hx8837_priv *priv, int is_init)
-+{
-+	/* SDRAM setup/hold time */
-+	hx8837_write(priv, 0x3a, 0xc040);
-+	hx8837_write(priv, DCON_REG_MEM_OPT_A, 0x0000);  /* clear option bits *=
-/
-+	hx8837_write(priv, DCON_REG_MEM_OPT_A,
-+		   MEM_DLL_CLOCK_DELAY | MEM_POWER_DOWN);
-+	hx8837_write(priv, DCON_REG_MEM_OPT_B, MEM_SOFT_RESET);
-+
-+	/* Colour swizzle, AA, no passthrough, backlight */
-+	if (is_init) {
-+		priv->disp_mode =3D MODE_PASSTHRU | MODE_BL_ENABLE |
-+				MODE_CSWIZZLE | MODE_COL_AA;
-+	}
-+	hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+
-+	/* Set the scanline to interrupt on during resume */
-+	hx8837_write(priv, DCON_REG_SCAN_INT, priv->resumeline);
-+}
-+
-+static void hx8837_set_backlight(struct hx8837_priv *priv, u8 level)
-+{
-+	hx8837_write(priv, DCON_REG_BRIGHT, level);
-+
-+	/* Purposely turn off the backlight when we go to level 0 */
-+	if (level =3D=3D 0) {
-+		priv->disp_mode &=3D ~MODE_BL_ENABLE;
-+		hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+	} else if (!(priv->disp_mode & MODE_BL_ENABLE)) {
-+		priv->disp_mode |=3D MODE_BL_ENABLE;
-+		hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+	}
-+}
-+
-+/* Set the output type to either color or mono */
-+static int hx8837_set_mono_mode(struct hx8837_priv *priv, bool enable_mo=
-no)
-+{
-+	if (priv->mono =3D=3D enable_mono)
-+		return 0;
-+
-+	priv->mono =3D enable_mono;
-+
-+	if (enable_mono) {
-+		priv->disp_mode &=3D ~(MODE_CSWIZZLE | MODE_COL_AA);
-+		priv->disp_mode |=3D MODE_MONO_LUMA;
-+	} else {
-+		priv->disp_mode &=3D ~(MODE_MONO_LUMA);
-+		priv->disp_mode |=3D MODE_CSWIZZLE | MODE_COL_AA;
-+	}
-+
-+	hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+	return 0;
-+}
-+
-+/* the DCON seems to get confused if we change DCONLOAD too
-+ * frequently -- i.e., approximately faster than frame time.
-+ * normally we don't change it this fast, so in general we won't
-+ * delay here.
-+ */
-+static void hx8837_load_holdoff(struct hx8837_priv *priv)
-+{
-+	ktime_t delta_t, now;
-+
-+	while (1) {
-+		now =3D ktime_get();
-+		delta_t =3D ktime_sub(now, priv->load_time);
-+		if (ktime_to_ns(delta_t) > NSEC_PER_MSEC * 20)
-+			break;
-+		mdelay(4);
-+	}
-+}
-+
-+static bool hx8837_blank_fb(struct hx8837_priv *priv, bool blank)
-+{
-+	int err;
-+
-+	console_lock();
-+	if (!lock_fb_info(priv->fbinfo)) {
-+		console_unlock();
-+		dev_err(&priv->client->dev, "unable to lock framebuffer\n");
-+		return false;
-+	}
-+
-+	priv->ignore_fb_events =3D true;
-+	err =3D fb_blank(priv->fbinfo,
-+		       blank ? FB_BLANK_POWERDOWN : FB_BLANK_UNBLANK);
-+	priv->ignore_fb_events =3D false;
-+	unlock_fb_info(priv->fbinfo);
-+	console_unlock();
-+
-+	if (err) {
-+		dev_err(&priv->client->dev, "couldn't %sblank framebuffer\n",
-+			blank ? "" : "un");
-+		return false;
-+	}
-+	return true;
-+}
-+
-+/* Set the source of the display (CPU or DCON) */
-+static void hx8837_source_switch(struct work_struct *work)
-+{
-+	struct hx8837_priv *priv =3D container_of(work, struct hx8837_priv,
-+							switch_source);
-+	struct device *dev =3D &priv->client->dev;
-+	int source =3D priv->pending_src;
-+
-+	if (priv->curr_src =3D=3D source)
-+		return;
-+
-+	hx8837_load_holdoff(priv);
-+
-+	priv->switched =3D false;
-+
-+	switch (source) {
-+	case DCON_SOURCE_CPU:
-+		dev_info(dev, "%s to CPU\n", __func__);
-+		/* Enable the scanline interrupt bit */
-+		if (hx8837_write(priv, DCON_REG_MODE,
-+			       priv->disp_mode | MODE_SCAN_INT))
-+			dev_err(dev, "couldn't enable scanline interrupt!\n");
-+		else
-+			/* Wait up to one second for the scanline interrupt */
-+			wait_event_timeout(priv->waitq, priv->switched, HZ);
-+
-+		if (!priv->switched)
-+			dev_err(dev, "Timeout entering CPU mode; expect a screen glitch.\n");
-+
-+		/* Turn off the scanline interrupt */
-+		if (hx8837_write(priv, DCON_REG_MODE, priv->disp_mode))
-+			dev_err(dev, "couldn't disable scanline interrupt!\n");
-+
-+		/*
-+		 * Ideally we'd like to disable interrupts here so that the
-+		 * fb unblanking and DCON turn on happen at a known time value;
-+		 * however, we can't do that right now with fb_blank
-+		 * messing with semaphores.
-+		 *
-+		 * For now, we just hope..
-+		 */
-+		if (!hx8837_blank_fb(priv, false)) {
-+			dev_err(dev, "Failed to enter CPU mode\n");
-+			priv->pending_src =3D DCON_SOURCE_DCON;
-+			return;
-+		}
-+
-+		/* And turn off the DCON */
-+		gpiod_set_value(priv->load_gpio, 1);
-+		priv->load_time =3D ktime_get();
-+
-+		dev_info(dev, "The CPU has control\n");
-+		break;
-+	case DCON_SOURCE_DCON:
-+		dev_info(dev, "%s to DCON\n", __func__);
-+
-+		/* Clear DCONLOAD - this implies that the DCON is in control */
-+		gpiod_set_value(priv->load_gpio, 0);
-+		priv->load_time =3D ktime_get();
-+
-+		wait_event_timeout(priv->waitq, priv->switched, HZ / 2);
-+
-+		if (!priv->switched) {
-+			dev_err(dev, "Timeout entering DCON mode; expect a screen glitch.\n")=
-;
-+		} else {
-+			ktime_t delta_t;
-+
-+			/* sometimes the DCON doesn't follow its own rules,
-+			 * and doesn't wait for two vsync pulses before
-+			 * ack'ing the frame load with an IRQ.  the result
-+			 * is that the display shows the *previously*
-+			 * loaded frame.  we can detect this by looking at
-+			 * the time between asserting DCONLOAD and the IRQ --
-+			 * if it's less than 20msec, then the DCON couldn't
-+			 * have seen two VSYNC pulses.  in that case we
-+			 * deassert and reassert, and hope for the best.
-+			 * see http://dev.laptop.org/ticket/9664
-+			 */
-+			delta_t =3D ktime_sub(priv->irq_time, priv->load_time);
-+			if (priv->switched && ktime_to_ns(delta_t)
-+			    < NSEC_PER_MSEC * 20) {
-+				dev_err(dev, "missed loading, retrying\n");
-+				gpiod_set_value(priv->load_gpio, 1);
-+				mdelay(41);
-+				gpiod_set_value(priv->load_gpio, 0);
-+				priv->load_time =3D ktime_get();
-+				mdelay(41);
-+			}
-+		}
-+
-+		hx8837_blank_fb(priv, true);
-+		dev_info(dev, "The DCON has control\n");
-+		break;
-+	default:
-+		WARN_ON(1);
-+	}
-+
-+	priv->curr_src =3D source;
-+}
-+
-+static void hx8837_set_source(struct hx8837_priv *priv, int arg)
-+{
-+	if (priv->pending_src =3D=3D arg)
-+		return;
-+
-+	priv->pending_src =3D arg;
-+
-+	if (priv->curr_src !=3D arg)
-+		schedule_work(&priv->switch_source);
-+}
-+
-+static void hx8837_set_source_sync(struct hx8837_priv *priv, int arg)
-+{
-+	hx8837_set_source(priv, arg);
-+	flush_scheduled_work();
-+}
-+
-+static int hx8837_bl_update(struct backlight_device *dev)
-+{
-+	struct hx8837_priv *priv =3D bl_get_data(dev);
-+	u8 level =3D dev->props.brightness & 0x0F;
-+
-+	priv->bl_val =3D level;
-+
-+	if (dev->props.power !=3D FB_BLANK_UNBLANK)
-+		level =3D 0;
-+
-+	if (dev->props.state & BL_CORE_FBBLANK)
-+		level =3D 0;
-+
-+	hx8837_set_backlight(priv, level);
-+
-+	return 0;
-+}
-+
-+static int hx8837_bl_get(struct backlight_device *dev)
-+{
-+	struct hx8837_priv *priv =3D bl_get_data(dev);
-+
-+	return priv->bl_val;
-+}
-+
-+static const struct backlight_ops hx8837_bl_ops =3D {
-+	.update_status =3D hx8837_bl_update,
-+	.get_brightness =3D hx8837_bl_get,
-+};
-+
-+static struct backlight_properties hx8837_bl_props =3D {
-+	.max_brightness =3D 15,
-+	.type =3D BACKLIGHT_RAW,
-+	.power =3D FB_BLANK_UNBLANK,
-+};
-+
-+static int hx8837_reboot_notify(struct notifier_block *nb, unsigned long=
- foo,
-+								void *bar)
-+{
-+	struct hx8837_priv *priv =3D container_of(nb, struct hx8837_priv,
-+								reboot_nb);
-+
-+	/* Turn off the DCON. Entirely. */
-+	hx8837_write(priv, DCON_REG_MODE, 0x39);
-+	hx8837_write(priv, DCON_REG_MODE, 0x32);
-+	return NOTIFY_DONE;
-+}
-+
-+static int hx8837_panic_notify(struct notifier_block *nb, unsigned long =
-e,
-+								void *p)
-+{
-+	struct hx8837_priv *priv =3D container_of(nb, struct hx8837_priv,
-+								panic_nb);
-+
-+	gpiod_set_value(priv->load_gpio, 1);
-+	return NOTIFY_DONE;
-+}
-+
-+static int hx8837_detect(struct i2c_client *client, struct i2c_board_inf=
-o *info)
-+{
-+	strlcpy(info->type, "hx8837", I2C_NAME_SIZE);
-+
-+	return 0;
-+}
-+
-+static ssize_t mode_show(struct device *dev, struct device_attribute *at=
-tr,
-+								char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%4.4X\n", priv->disp_mode);
-+}
-+
-+static ssize_t freeze_show(struct device *dev, struct device_attribute *=
-attr,
-+								char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", priv->curr_src =3D=3D DCON_SOURCE_DCON ? 1 =
-: 0);
-+}
-+
-+static ssize_t monochrome_show(struct device *dev,
-+	struct device_attribute *attr, char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", priv->mono);
-+}
-+
-+static ssize_t resumeline_show(struct device *dev,
-+	struct device_attribute *attr, char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", priv->resumeline);
-+}
-+
-+static ssize_t monochrome_store(struct device *dev,
-+			struct device_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	unsigned long enable_mono;
-+	int rc;
-+
-+	rc =3D kstrtoul(buf, 10, &enable_mono);
-+	if (rc)
-+		return rc;
-+
-+	hx8837_set_mono_mode(dev_get_drvdata(dev), enable_mono ? true : false);
-+
-+	return count;
-+}
-+
-+static ssize_t freeze_store(struct device *dev, struct device_attribute =
-*attr,
-+						const char *buf, size_t count)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+	unsigned long output;
-+	int ret;
-+
-+	ret =3D kstrtoul(buf, 10, &output);
-+	if (ret)
-+		return ret;
-+
-+	switch (output) {
-+	case 0:
-+		hx8837_set_source(priv, DCON_SOURCE_CPU);
-+		break;
-+	case 1:
-+		hx8837_set_source_sync(priv, DCON_SOURCE_DCON);
-+		break;
-+	case 2:  /* normally unused */
-+		hx8837_set_source(priv, DCON_SOURCE_DCON);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t resumeline_store(struct device *dev,
-+			struct device_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+	unsigned short rl;
-+	int rc;
-+
-+	rc =3D kstrtou16(buf, 10, &rl);
-+	if (rc)
-+		return rc;
-+
-+	priv->resumeline =3D rl;
-+	hx8837_write(dev_get_drvdata(dev), DCON_REG_SCAN_INT, priv->resumeline)=
-;
-+
-+	return count;
-+}
-+
-+
-+static DEVICE_ATTR_RO(mode);
-+static DEVICE_ATTR_RW(freeze);
-+static DEVICE_ATTR_RW(monochrome);
-+static DEVICE_ATTR_RW(resumeline);
-+
-+static struct attribute *hx8837_attrs[] =3D {
-+	&dev_attr_mode.attr,
-+	&dev_attr_freeze.attr,
-+	&dev_attr_monochrome.attr,
-+	&dev_attr_resumeline.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(hx8837);
-+
-+static int hx8837_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct hx8837_priv *priv;
-+	u16 ver;
-+	int rc;
-+
-+	if (num_registered_fb < 1)
-+		return -EPROBE_DEFER;
-+
-+	priv =3D devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->client =3D client;
-+	init_waitqueue_head(&priv->waitq);
-+	INIT_WORK(&priv->switch_source, hx8837_source_switch);
-+	priv->reboot_nb.notifier_call =3D hx8837_reboot_notify;
-+	priv->reboot_nb.priority =3D -1;
-+	priv->panic_nb.notifier_call =3D hx8837_panic_notify;
-+
-+	/*
-+	 * Perhaps we could add a phandle to the panel to a DT property so that
-+	 * we'll be able to guess it from the vertical resolution instead of
-+	 * hardwiring it?
-+	 */
-+	priv->resumeline =3D 898;
-+
-+	i2c_set_clientdata(client, priv);
-+
-+	priv->fbinfo =3D registered_fb[0];
-+
-+	priv->stat0_gpio =3D devm_gpiod_get_index(&client->dev, "stat", 0,
-+								GPIOD_IN);
-+	if (IS_ERR(priv->stat0_gpio)) {
-+		dev_err(&client->dev, "failed to request STAT0 GPIO\n");
-+		return PTR_ERR(priv->stat0_gpio);
-+	};
-+
-+	priv->stat1_gpio =3D devm_gpiod_get_index(&client->dev, "stat", 1,
-+								GPIOD_IN);
-+	if (IS_ERR(priv->stat1_gpio)) {
-+		dev_err(&client->dev, "failed to request STAT1 GPIO\n");
-+		return PTR_ERR(priv->stat1_gpio);
-+	};
-+
-+	priv->load_gpio =3D devm_gpiod_get(&client->dev, "load", GPIOD_IN);
-+	if (IS_ERR(priv->load_gpio)) {
-+		dev_err(&client->dev, "failed to request LOAD GPIO\n");
-+		return PTR_ERR(priv->load_gpio);
-+	};
-+
-+	ver =3D hx8837_read(priv, DCON_REG_ID);
-+	if ((ver >> 8) !=3D 0xDC) {
-+		dev_err(&client->dev, "DCON ID not 0xDCxx: 0x%04x.\n", ver);
-+		return -ENXIO;
-+	}
-+
-+	dev_info(&client->dev, "Discovered DCON version %x\n", ver & 0xFF);
-+
-+	if (ver < 0xdc02) {
-+		dev_err(&client->dev, "DCON v1 is unsupported, giving up.\n");
-+		return -ENODEV;
-+	}
-+
-+	/*
-+	 * Determine the current state by reading the GPIO bit; earlier
-+	 * stages of the boot process have established the state.
-+	 */
-+	priv->curr_src =3D gpiod_get_value(priv->load_gpio)
-+			? DCON_SOURCE_CPU : DCON_SOURCE_DCON;
-+	priv->pending_src =3D priv->curr_src;
-+
-+	/* Set the directions for the GPIO pins */
-+	gpiod_direction_input(priv->stat0_gpio);
-+	gpiod_direction_input(priv->stat1_gpio);
-+	gpiod_direction_output(priv->load_gpio,
-+		priv->curr_src =3D=3D DCON_SOURCE_CPU);
-+
-+	/* Register the interrupt handler */
-+	rc =3D devm_request_irq(&client->dev, client->irq, &hx8837_interrupt, 0=
-,
-+								"DCON", priv);
-+	if (rc) {
-+		dev_err(&client->dev, "IRQ request failed: %d\n", rc);
-+		return rc;
-+	}
-+
-+	hx8837_hw_init(priv, 1);
-+
-+	priv->bl_val =3D hx8837_read(priv, DCON_REG_BRIGHT) & 0x0F;
-+
-+	/* Add the backlight device for the DCON */
-+	hx8837_bl_props.brightness =3D priv->bl_val;
-+	priv->bl_dev =3D devm_backlight_device_register(&client->dev, "hx8837-b=
-l",
-+			&client->dev, priv, &hx8837_bl_ops, &hx8837_bl_props);
-+	if (IS_ERR(priv->bl_dev)) {
-+		dev_err(&client->dev, "cannot register backlight dev (%ld)\n",
-+			PTR_ERR(priv->bl_dev));
-+		priv->bl_dev =3D NULL;
-+	}
-+
-+	rc =3D devm_device_add_groups(&client->dev, hx8837_groups);
-+	if (rc) {
-+		dev_err(&client->dev, "failed to register sysfs groups\n");
-+		return rc;
-+	}
-+
-+	devm_register_reboot_notifier(&client->dev, &priv->reboot_nb);
-+	atomic_notifier_chain_register(&panic_notifier_list, &priv->panic_nb);
-+
-+	return 0;
-+}
-+
-+static int hx8837_remove(struct i2c_client *client)
-+{
-+	struct hx8837_priv *priv =3D i2c_get_clientdata(client);
-+
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					&priv->panic_nb);
-+
-+	cancel_work_sync(&priv->switch_source);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t hx8837_interrupt(int irq, void *id)
-+{
-+	struct hx8837_priv *priv =3D id;
-+	struct device *dev =3D &priv->client->dev;
-+	u8 status;
-+
-+	status =3D gpiod_get_value(priv->stat0_gpio);
-+	status |=3D gpiod_get_value(priv->stat1_gpio) << 1;
-+
-+
-+	switch (status & 3) {
-+	case 3:
-+		dev_dbg(dev, "DCONLOAD_MISSED interrupt\n");
-+		break;
-+
-+	case 2:	/* switch to DCON mode */
-+	case 1: /* switch to CPU mode */
-+		priv->switched =3D true;
-+		priv->irq_time =3D ktime_get();
-+		wake_up(&priv->waitq);
-+		break;
-+
-+	case 0:
-+		/* workaround resume case:  the DCON (on 1.5) doesn't
-+		 * ever assert status 0x01 when switching to CPU mode
-+		 * during resume.  this is because DCONLOAD is de-asserted
-+		 * _immediately_ upon exiting S3, so the actual release
-+		 * of the DCON happened long before this point.
-+		 * see http://dev.laptop.org/ticket/9869
-+		 */
-+		if (priv->curr_src !=3D priv->pending_src && !priv->switched) {
-+			priv->switched =3D true;
-+			priv->irq_time =3D ktime_get();
-+			wake_up(&priv->waitq);
-+			dev_dbg(dev, "switching w/ status 0/0\n");
-+		} else {
-+			dev_dbg(dev, "scanline interrupt w/CPU\n");
-+		}
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+#ifdef CONFIG_PM
-+static int hx8837_suspend(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct hx8837_priv *priv =3D i2c_get_clientdata(client);
-+
-+	hx8837_set_source_sync(priv, DCON_SOURCE_DCON);
-+
-+	return 0;
-+}
-+
-+static int hx8837_resume(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct hx8837_priv *priv =3D i2c_get_clientdata(client);
-+
-+	hx8837_set_source(priv, DCON_SOURCE_CPU);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM */
-+
-+static SIMPLE_DEV_PM_OPS(hx8837_pm_ops, hx8837_suspend, hx8837_resume);
-+
-+static const struct of_device_id hx8837_dt_ids[] =3D {
-+	{ .compatible =3D "himax,hx8837", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, hx8837_dt_ids);
-+
-+static const struct i2c_device_id hx8837_i2c_ids[] =3D {
-+	{ .name =3D "hx8837", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, hx8837_i2c_ids);
-+
-+static struct i2c_driver hx8837_driver =3D {
-+	.driver =3D {
-+		.name =3D "hx8837",
-+		.pm =3D &hx8837_pm_ops,
-+		.of_match_table =3D hx8837_dt_ids,
-+	},
-+	.class =3D I2C_CLASS_DDC | I2C_CLASS_HWMON,
-+	.id_table =3D hx8837_i2c_ids,
-+	.probe =3D hx8837_probe,
-+	.remove =3D hx8837_remove,
-+	.detect =3D hx8837_detect,
-+	.address_list =3D normal_i2c,
-+};
-+
-+module_i2c_driver(hx8837_driver);
-+
-+MODULE_DESCRIPTION("HX8837 Display Controller Driver");
-+MODULE_LICENSE("GPL v2");
---=20
-2.19.0
-
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/hwmon/ina3221.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+> index c3a497aed345..ce8f0a8c4982 100644
+> --- a/drivers/hwmon/ina3221.c
+> +++ b/drivers/hwmon/ina3221.c
+> @@ -536,8 +536,10 @@ static int ina3221_probe_child_from_dt(struct device *dev,
+>  	of_property_read_string(child, "label", &input->label);
+>  
+>  	/* Overwrite default shunt resistor value optionally */
+> -	if (!of_property_read_u32(child, "shunt-resistor-micro-ohms", &val))
+> +	if (!of_property_read_u32(child, "shunt-resistor-micro-ohms", &val)) {
+> +		val = clamp_val(val, 1, INT_MAX);
+>  		input->shunt_resistor = val;
+> +	}
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.17.1
+> 
