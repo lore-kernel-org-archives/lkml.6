@@ -7,44 +7,55 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E478C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1F3C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFF32087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62FA2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="amLbsXxV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEFF32087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVLMivIy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62FA2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbeJIB6K (ORCPT
+        id S1730921AbeJIB6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:58:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46206 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbeJIB6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:09 -0400
+        id S1730200AbeJIB6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23FFA2064A;
-        Mon,  8 Oct 2018 18:45:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D368D2064A;
+        Mon,  8 Oct 2018 18:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024303;
-        bh=cMHaAZtVQXtWJbS8jBZpsevcQGkOp9TkWkPqtkIGgpk=;
+        s=default; t=1539024306;
+        bh=Dds1G6JLi5hToRArz7J4zm8SYZZQHwpk3TWoaNprbrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=amLbsXxVxFbhi6SQ6mYfy/LnXyjyxPEARX9YIRb7ndC2KqjY8xGemLVYbQltohPDw
-         AjrNSEqDvlxb4vqFj8/Uw6VEsLQH9lP5RUWBggp9XQPoPXZZEvige4zACtZUJeWb/Z
-         EeNM3owcBVwK5HZ4JFzsDZZFwlbpKQI4Xb3Kk+Jw=
+        b=VVLMivIyTUOFDFBE4GC6Ski3zqxizGyIaHGCwQ9jWf8rc5XIVVvtOEADYLbC4DioB
+         NTrvpIPqmJWci8mAVa2UB0Nq0T2+iTliQIXGCGBMSrjUDcCJ3uFn8UskrSFGh1lqkW
+         v38npUtDhinkQaG/o19Z7YBCy54kZE15n+pMsnzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.14 91/94] tools: hv: fcopy: set error in case an unknown operation was requested
-Date:   Mon,  8 Oct 2018 20:32:12 +0200
-Message-Id: <20181008175610.889657954@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ken Chen <kenchen@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.14 92/94] proc: restrict kernel stack dumps to root
+Date:   Mon,  8 Oct 2018 20:32:13 +0200
+Message-Id: <20181008175610.936204107@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -62,32 +73,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-commit c2d68afba86d1ff01e7300c68bc16a9234dcd8e9 upstream.
+commit f8a00cef17206ecd1b30d3d9f99e10d9fa707aa7 upstream.
 
-'error' variable is left uninitialized in case we see an unknown operation.
-As we don't immediately return and proceed to pwrite() we need to set it
-to something, HV_E_FAIL sounds good enough.
+Currently, you can use /proc/self/task/*/stack to cause a stack walk on
+a task you control while it is running on another CPU.  That means that
+the stack can change under the stack walker.  The stack walker does
+have guards against going completely off the rails and into random
+kernel memory, but it can interpret random data from your kernel stack
+as instruction pointers and stack pointers.  This can cause exposure of
+kernel stack contents to userspace.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Cc: stable <stable@vger.kernel.org>
+Restrict the ability to inspect kernel stacks of arbitrary tasks to root
+in order to prevent a local attacker from exploiting racy stack unwinding
+to leak kernel task stack contents.  See the added comment for a longer
+rationale.
+
+There don't seem to be any users of this userspace API that can't
+gracefully bail out if reading from the file fails.  Therefore, I believe
+that this change is unlikely to break things.  In the case that this patch
+does end up needing a revert, the next-best solution might be to fake a
+single-entry stack based on wchan.
+
+Link: http://lkml.kernel.org/r/20180927153316.200286-1-jannh@google.com
+Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Ken Chen <kenchen@google.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/hv/hv_fcopy_daemon.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/proc/base.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/tools/hv/hv_fcopy_daemon.c
-+++ b/tools/hv/hv_fcopy_daemon.c
-@@ -233,6 +233,7 @@ int main(int argc, char *argv[])
- 			break;
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -431,6 +431,20 @@ static int proc_pid_stack(struct seq_fil
+ 	int err;
+ 	int i;
  
- 		default:
-+			error = HV_E_FAIL;
- 			syslog(LOG_ERR, "Unknown operation: %d",
- 				buffer.hdr.operation);
- 
++	/*
++	 * The ability to racily run the kernel stack unwinder on a running task
++	 * and then observe the unwinder output is scary; while it is useful for
++	 * debugging kernel issues, it can also allow an attacker to leak kernel
++	 * stack contents.
++	 * Doing this in a manner that is at least safe from races would require
++	 * some work to ensure that the remote task can not be scheduled; and
++	 * even then, this would still expose the unwinder as local attack
++	 * surface.
++	 * Therefore, this interface is restricted to root.
++	 */
++	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
++		return -EACCES;
++
+ 	entries = kmalloc(MAX_STACK_TRACE_DEPTH * sizeof(*entries), GFP_KERNEL);
+ 	if (!entries)
+ 		return -ENOMEM;
 
 
