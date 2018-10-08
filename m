@@ -2,158 +2,180 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DA2C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 053F1C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A16213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:24:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBAE12145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:26:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="cwW9G6sI";
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="MOgVh5Qy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A16213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=raspberrypi.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="SfojxlM7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBAE12145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJIAhY (ORCPT
+        id S1726559AbeJIAiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:37:24 -0400
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:2873 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726291AbeJIAhY (ORCPT
+        Mon, 8 Oct 2018 20:38:50 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52709 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbeJIAiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:37:24 -0400
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w98Gma8W013851
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 17:52:11 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=pp; bh=Abi7SKaikRz7HRu/sOiDuCJhbJ7ajtC2u1yo1pmr0oc=;
- b=cwW9G6sIE+hdXvAKoAf4qvFyYnEa9Bq03PYJlxZTO7/2x01r3eYMsVdWo7jWSNWlEpIp
- qylocaRRrzi0VfgzjNeGeRQ6fsl4FeZF9oIbblq6SVCdgGoIs2FMHS9AlQOYbeICwz1G
- QBma25hPeQy2Azqm23Sz8PLIS7RNkmHuQ9ibW5toxxKcPMNPdTDVUwFWSHouvzkH1cq2
- ODlNxiaFTrom5NBPapiZAkmbX8pEeADKQvDlPHqHjQjbwU/v5AreGhCxvAUKgGdiMtgu
- XxFBXvsMZox5LCaJVRa/RRg/E04m7nEhUdtWbyeCYIJwDQLmYeYBtrVqAtBeldB7h+2J 0g== 
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-        by mx07-00252a01.pphosted.com with ESMTP id 2mxjf0h7bd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 17:52:11 +0100
-Received: by mail-pf1-f199.google.com with SMTP id h76-v6so17596417pfd.10
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:52:11 -0700 (PDT)
+        Mon, 8 Oct 2018 20:38:50 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 189-v6so8907497wmw.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 10:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Abi7SKaikRz7HRu/sOiDuCJhbJ7ajtC2u1yo1pmr0oc=;
-        b=MOgVh5QyMwIjvFArTTd8qkw4yWJkTi7d0/QWttUuCIYQU2K4TZGzevs2KvdS+3c6k0
-         EOAlxEnlg1Y2K0KVu5LqnVFIS4x//O1EGerckGs8a1DEMEE/MCzEgLPaXmk4GaLveBbd
-         FmIBpFlj/WzRX95OGBnPbN4ZSA+JlrBG7GKIdAWR/4H0IvKa1WX1/O9t/mngYDBneV2G
-         tOPmATdFLDp0n7ysM728OYUA69nf3MuI+MOtrJ3ei/9YvdqaAFX4jcQL7prdCFUoBUT5
-         XX1uaISjpbdo+YmvpsiW18WCIn0OHJOjLnZypzOckHhaSY9gC/BrXrnVTO0aYN0kdu3P
-         7YyQ==
+         :cc:content-transfer-encoding;
+        bh=cS9LeFeJrRB5xEeA7YmkKAZLECJrSlbl++3/E4X+Jtw=;
+        b=SfojxlM7qlRxk4J9CLQhyLtrCovWqqhgrJ7NO//o/BqptTjq9++j2br8/Y4+9HD15w
+         3CPky4oAyxGxreexcG8fKCBhlPL0b3BTDfCMSQVOr+edS1oPqKFnRNSt93OhX6GXTJi/
+         8XEDIpSnVGRJz7OnP3dEeSgSOkkNwpuTab/7QBn9qADObvmrr4SQrxc8ZBntIJUDY9+b
+         Jw8WWCCYQsEIoKo95UDlUGWsYihWnIAqmnIf98b5jeJYQdXgdRlJh7FX5CUWzyNZIgqY
+         ltdu3WoBvrov1eLSZ55Wnlta9Rp3Eo8BaFYpKM/zuXewsCdO26PXKwR6dLr6+yLu1huP
+         SlLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Abi7SKaikRz7HRu/sOiDuCJhbJ7ajtC2u1yo1pmr0oc=;
-        b=SQt7BDrH3YJNwgkvvQTFLFNZyJwvJ7v2VTNNxS0JVxsGCl8JeI/7VXu7xRgzrQBb34
-         9Rykhq7SAYoP/UbrSS9bca0euNFRg8aYUIpRbBaOD4x+ikdzuV8k1Rh4zEM5/hvl3ebn
-         ugQy3dbqcwrhJOl5lH4zp32Fkw60tr/vEyBzghkklxYj9Mv5getYf6vhpqWz0uPhICki
-         CKXwkGqsoZWscHdKYEx8bvgBWSGo1eZi5erBrpbWLkz77PCg39wDEovXQxioxHoTtyBk
-         0Zhfr0kWtIHM/F650pfgOpyH5HQfvSvqMK9B/eHQyDNyLOkvV4Cku+uqbqzVUAPr4rhB
-         d7tg==
-X-Gm-Message-State: ABuFfohnya5OR1keiRC7MdVva3n57Cz3hmUbElagnVEw5eLtv3CuD3Fz
-        oSvpGffbzhuuutisOWAKz4bhonxeefBGhVMaFH2oDwjsySIASAudIno3MQ7b/erTTjW/uKrbj7o
-        ClDjd6ZHJ3jlyx/rfxDsgsUpo/GPHIhf3UWx6zZI=
-X-Received: by 2002:a63:8c4:: with SMTP id 187-v6mr21866382pgi.396.1539017529123;
-        Mon, 08 Oct 2018 09:52:09 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV60L9wNsdgPYcIcwcusELRl2ophzoO1VTcVDEZbC1AQYWLDcWE79O3R8MfL/skY6QJMUUtDcOyEPEJvUofsuCtI=
-X-Received: by 2002:a63:8c4:: with SMTP id 187-v6mr21866365pgi.396.1539017528840;
- Mon, 08 Oct 2018 09:52:08 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cS9LeFeJrRB5xEeA7YmkKAZLECJrSlbl++3/E4X+Jtw=;
+        b=Fnu6jxb95eFv2eMMagbxwDGQpEwgr7z/iwGsPkNjX59esidlyZ9rVG3DfPBDcONQEI
+         Y5gRbBKTo3xeaCQBbmVAAoXivIodn1/SdscYFAIVV0hE652LDJav38wzrpKBHXjTXzeq
+         yH9bHWXgEYRx3sXoHtseHfIg9aaqkD4db5pJ5HN5ACh78Zfv4cZQEhi7YzBGj0BKkGtL
+         k+oxHaEOgDRJWhnXuAjCJUkkIy9kH9ioFjvA9Y4bM6V0UyXadwbM64pjYuGuvu5eORMl
+         Rwi13J9UKPKpiQHAZlpeEF14AC3asNXIYvheT+JHFuTry6lho43goA2MQs43+gHUdqcq
+         FLog==
+X-Gm-Message-State: ABuFfojXZa9IXIwxq6EE2IlIHgRLy0PqKdpNn45mrTuB/hrilkBaom0A
+        F03sm1/ldIhwoS4S0BVWAVrUWF4UD39hya/KJvcEOA==
+X-Google-Smtp-Source: ACcGV62CJtd/SRVBRyIKZreHdkrsMJcBhy6J/RewrtluJsJutI30Vjgn2mzGLoD085iRzLGa47YWgaoTpi5+AVxZVm4=
+X-Received: by 2002:a1c:d4b:: with SMTP id 72-v6mr17114463wmn.102.1539019562875;
+ Mon, 08 Oct 2018 10:26:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181008145012.31312-1-colin.king@canonical.com> <d753df4f-e812-c366-0b1d-9ff804da0ab5@i2se.com>
-In-Reply-To: <d753df4f-e812-c366-0b1d-9ff804da0ab5@i2se.com>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.org>
-Date:   Mon, 8 Oct 2018 17:51:56 +0100
-Message-ID: <CAAoAYcO=qp7yb7392B_6wks2j2TaoxYXHtQPyH0kMkFMi+JW-A@mail.gmail.com>
-Subject: Re: [PATCH] staging: bcm2835-camera: remove extraneous setting of dev->colourfx.enable
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     colin.king@canonical.com, Eric Anholt <eric@anholt.net>,
-        Greg KH <gregkh@linuxfoundation.org>, f.fainelli@gmail.com,
-        rjui@broadcom.com, Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181006015110.653946300@goodmis.org> <20181006015720.634688468@goodmis.org>
+ <20181006121211.GA5663@hirez.programming.kicks-ass.net> <20181006093905.46276505@vmware.local.home>
+ <20181008072134.GB5663@hirez.programming.kicks-ass.net> <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
+ <20181008155757.GC5663@hirez.programming.kicks-ass.net> <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
+ <20181008163953.GD5663@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181008163953.GD5663@hirez.programming.kicks-ass.net>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Mon, 8 Oct 2018 10:25:51 -0700
+Message-ID: <CALCETrWuGh=1n2bEE9B0eeyzvnaD4y_Sx6MB+r9B5aFXzg8qBw@mail.gmail.com>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature "jump_function"
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        mhelsley@vmware.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_07:,,
- signatures=0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- Hi Stefan.
-
-Thanks for forwarding as the linux-rpi-kernel list hasn't sent it to me as yet.
-
-On Mon, 8 Oct 2018 at 16:48, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+On Mon, Oct 8, 2018 at 9:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> Hi Colin,
+> On Mon, Oct 08, 2018 at 09:29:56AM -0700, Andy Lutomirski wrote:
+> >
+> >
+> > > On Oct 8, 2018, at 8:57 AM, Peter Zijlstra <peterz@infradead.org> wro=
+te:
+> > >
+> > > On Mon, Oct 08, 2018 at 01:33:14AM -0700, Andy Lutomirski wrote:
+> > >>> Can't we hijack the relocation records for these functions before t=
+hey
+> > >>> get thrown out in the (final) link pass or something?
+> > >>
+> > >> I could be talking out my arse here, but I thought we could do this,
+> > >> too, then changed my mind.  The relocation records give us the
+> > >> location of the call or jump operand, but they don=E2=80=99t give th=
+e address
+> > >> of the beginning of the instruction.
+> > >
+> > > But that's like 1 byte before the operand, right? We could even doubl=
+e check
+> > > this by reading back that byte and ensuring it is in fact 0xE8 (CALL)=
+.
+> > >
+> > > AFAICT there is only the _1_ CALL encoding, and that is the 5 byte: E=
+8 <PLT32>,
+> > > so if we have the PLT32 location, we also have the instruction locati=
+on. Or am
+> > > I missing something?
+> >
+> > There=E2=80=99s also JMP and Jcc, any of which can be used for rail cal=
+ls, but
+> > those are also one byte. I suppose GCC is unlikely to emit a prefixed
+> > form of any of these. So maybe we really can assume they=E2=80=99re all=
+ one
+> > byte.
 >
-> Am 08.10.2018 um 16:50 schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently dev->colourfx.enable is being set twice, hence the first
-> > occurrance is redundant and can be removed, so remove it. This minor
-> > issue was introduced by commit 7b3ad5abf027 ("staging: Import the
-> > BCM2835 MMAL-based V4L2 camera driver.").
-> >
-> > Detected by CoverityScan CID#1419711 ("Unused value")
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/staging/vc04_services/bcm2835-camera/controls.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
-> > index a2c55cb2192a..99831dd4365d 100644
-> > --- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
-> > +++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
-> > @@ -588,7 +588,6 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
-> >
-> >       control = &dev->component[MMAL_COMPONENT_CAMERA]->control;
-> >
-> > -     dev->colourfx.enable = (ctrl->val & 0xff00) >> 8;
-> >       dev->colourfx.enable = ctrl->val & 0xff;
-> >
-> >       ret = vchiq_mmal_port_parameter_set(dev->instance, control,
+> Oh, I had not considered tail calls..
 >
-> as long as the current behavior is correct, i'm okay with this patch.
-> But the byte masking looks suspicious, so i hope Dave can clarify that.
+> > But there is a nasty potential special case: anything that takes the
+> > function=E2=80=99s address. This includes jump tables, computed gotos, =
+and
+> > plain old function pointers. And I suspect that any of these could
+> > have one of the rather large number of CALL/JMP/Jcc bytes before the
+> > relocation by coincidence.
+>
+> We can have objtool verify the CALL/JMP/Jcc only condition. So if
+> someone tries to take the address of a patchable function, it will error
+> out.
 
-It's writing to the wrong structure member.
-The function is used on the V4L2 control V4L2_CID_COLORFX_CBCR, which
-is defined as:
-V4L2_CID_COLORFX_CBCR (integer)
-Determines the Cb and Cr coefficients for V4L2_COLORFX_SET_CBCR color
-effect. Bits [7:0] of the supplied 32 bit value are interpreted as Cr
-component, bits [15:8] as Cb component and bits [31:16] must be zero.
+I think we should just ignore the sites that take the address and
+maybe issue a warning.  After all, GCC can create them all by itself.
+We'll always have a plain wrapper function, and I think we should just
+not patch code that takes its address.  So we do, roughly:
 
-ctrl->val should therefore be setting dev->colourfx.u and
-dev->colourfx.v with those masks. dev->colourfx.enable field should
-have been set when going through ctrl_set_image_effect for contol
-V4L2_CID_COLORFX set to V4L2_COLORFX_SET_CBCR.
+void default_foo(void);
 
-I've confirmed with qv4l2 that that is what is wrong. That's only been
-lurking there for almost 5 years - shows how often these weirder
-effects get used.
-I don't mind whether Colin's patch gets merged and then fixed up, or
-drop Colin's patch and apply the correct logic via a new patch.
+GLOBAL(foo)
+  jmp *current_foo(%rip)
+ENDPROC(foo)
 
-  Dave
+And code that does:
+
+foo();
+
+as a call, a tail call, a conditional tail call, etc, gets discovered
+by objtool + relocation processing or whatever and gets patched.  (And
+foo() itself gets patched, too, as a special case.  But we patch foo
+itself at some point during boot to turn it into a direct JMP.  Doing
+it this way means that the whole mechanism works from very early
+boot.)  And anything awful like:
+
+switch(whatever) {
+case 0:
+  foo();
+};
+
+that gets translated to a jump table and gets optimized such that it
+jumps straight to foo just gets left alone, since it still works.
+It's just a bit suboptimial.  Similarly, code that does:
+
+void (*ptr)(void);
+ptr =3D foo;
+
+gets a bona fide pointer to foo(), and any calls through the pointer
+land on foo() and jump to the current selected foo with only a single
+indirect branch / retpoline.
+
+Does this seem reasonable?  Is there a reason we should make it more
+restrictive?
