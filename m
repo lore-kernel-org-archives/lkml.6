@@ -2,157 +2,102 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B95C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F7CC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDC6420882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:20:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SNx8rEgX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC6420882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F3A4D20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:23:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A4D20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbeJHNau (ORCPT
+        id S1726445AbeJHNd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:30:50 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44776 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbeJHNau (ORCPT
+        Mon, 8 Oct 2018 09:33:28 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:43310 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbeJHNd2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:30:50 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g2-v6so7326805pgu.11
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 23:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GAkjZQTm5FFLHPFx6/v/cGxbUknhY8mc1Q8XmCTMgV8=;
-        b=SNx8rEgX/0QMfg7Q9KQP5F89kZQDKZK57+F+wb0lQI06gIsNeq0AmKUWbOHahxuHIr
-         U8bN9wZOu41GE9/mVF6ydmNHF+l+D3pIEXpmPLtsOBFzRt9Q3+esxlgqxgXRebGSTc31
-         6jlCMid0IdC+VWfUTf1YgrlmZJOUiIbiKje94=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GAkjZQTm5FFLHPFx6/v/cGxbUknhY8mc1Q8XmCTMgV8=;
-        b=G5/lLMc7b3lPltu0Lppu8eXelMyNVmuv0Weae7Am7+CuQ3Pw4EVgm/fNSUVLxJ1CkJ
-         4+cwTQryH2M5OHvMvqxxnMU2rN1mXqryreNOLg/4ZqjdxckpVzmVaGXQycZcjjkTAFdr
-         D2VLD1janLAgbVoo/zC84ev6IntLKeZMN6thacW2etwpo2JVC/UAG2qlceDHm3+Ey5Gt
-         lJHa+q5WXGBFy6m3UEjUbxU+Zsn99K0pfgmY+Jw8pATZDCuzJk7X32xcfywTSiadGtjd
-         8Ep4yUy3RUeEYttCWftEWXnzSX8NRcP6YXhyRoY/PASsKV/Rhd/JG3Fcrp634NogA68n
-         Hx5Q==
-X-Gm-Message-State: ABuFfoi2mGN7/Urh2i/VBCs7M8sY+yZjAc3QGhdMB4jAa97t1ouzfW3d
-        iM1bcb+1QHkO721yeKQAN/4UlQ==
-X-Google-Smtp-Source: ACcGV63IhrfDbCeF+58FMv8TIqG86xqLo9BJDKBvRZXGCiUewQ54kN7v1xy17wteS/pzgDtgJTBX+Q==
-X-Received: by 2002:a63:2d43:: with SMTP id t64-v6mr20158882pgt.128.1538979644585;
-        Sun, 07 Oct 2018 23:20:44 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id r18-v6sm13822678pgv.17.2018.10.07.23.20.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 07 Oct 2018 23:20:43 -0700 (PDT)
-Date:   Sun, 7 Oct 2018 23:23:33 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org,
-        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
- each remoteproc segment
-Message-ID: <20181008062333.GN12063@builder>
-References: <20180727152003.11663-1-sibis@codeaurora.org>
- <20180727152003.11663-2-sibis@codeaurora.org>
+        Mon, 8 Oct 2018 09:33:28 -0400
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w986Mcsv030411;
+        Mon, 8 Oct 2018 15:22:38 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Mon, 08 Oct 2018 15:22:38 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w986Mc4C030406
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 8 Oct 2018 15:22:38 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+To:     ytk.lee@samsung.com, "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mhocko@suse.com" <mhocko@suse.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
+ <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
+ <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p5>
+ <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
+Date:   Mon, 8 Oct 2018 15:22:37 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727152003.11663-2-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 27 Jul 08:19 PDT 2018, Sibi Sankar wrote:
-
-> Introduce custom dump function per remoteproc segment. It is responsible
-> for filling the device memory segment associated with coredump
+On 2018/10/08 15:14, Yong-Taek Lee wrote:
+>> On 2018/10/08 10:19, Yong-Taek Lee wrote:
+>>> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>>>         struct mm_struct *mm = NULL;
+>>>         struct task_struct *task;
+>>>         int err = 0;
+>>> +       int mm_users = 0;
+>>>
+>>>         task = get_proc_task(file_inode(file));
+>>>         if (!task)
+>>> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>>>                 struct task_struct *p = find_lock_task_mm(task);
+>>>
+>>>                 if (p) {
+>>> -                       if (atomic_read(&p->mm->mm_users) > 1) {
+>>> +                       mm_users = atomic_read(&p->mm->mm_users);
+>>> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p))) {
+>>
+>> How can this work (even before this patch)? When clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
+>> is requested, copy_process() calls copy_signal() in order to copy sig->oom_score_adj and
+>> sig->oom_score_adj_min before calling copy_mm() in order to increment mm->mm_users, doesn't it?
+>> Then, we will get two different "struct signal_struct" with different oom_score_adj/oom_score_adj_min
+>> but one "struct mm_struct" shared by two thread groups.
+>>
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
->  include/linux/remoteproc.h           |  3 +++
->  2 files changed, 13 insertions(+), 5 deletions(-)
+> Are you talking about race between __set_oom_adj and copy_process?
+> If so, i agree with your opinion. It can not set oom_score_adj properly for copied process if __set_oom_adj
+> check mm_users before copy_process calls copy_mm after copy_signal. Please correct me if i misunderstood anything.
+
+You understand it correctly.
+
+Reversing copy_signal() and copy_mm() is not sufficient either. We need to use a read/write lock
+(read lock for copy_process() and write lock for __set_oom_adj()) in order to make sure that
+the thread created by clone() becomes reachable from for_each_process() path in __set_oom_adj().
+
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 283b258f5e0f..ec56cd822b26 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
->  		phdr->p_align = 0;
->  
->  		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-> -		if (!ptr) {
-> -			dev_err(&rproc->dev,
-> +
-> +		if (segment->dump) {
-> +			segment->dump(rproc, ptr, segment->size, data + offset);
-
-rproc_da_to_va() is an exported symbol, so if you pass segment to the
-dump function the driver can, if it needs to, call the function itself.
-
-A typical use case, that I see, is to use the custom dump function to
-write out CPU or hardware state to the dump file, in which case the "da"
-won't be valid.
-
-
-So please make this call dump(rproc, segment, data + offset) and move
-the rproc_da_to_va() into the else block.
-
-> +		} else {
-> +			if (!ptr) {
-> +				dev_err(&rproc->dev,
->  				"invalid coredump segment (%pad, %zu)\n",
->  				&segment->da, segment->size);
-> -			memset(data + offset, 0xff, segment->size);
-> -		} else {
-> -			memcpy(data + offset, ptr, segment->size);
-> +				memset(data + offset, 0xff, segment->size);
-> +			} else {
-> +				memcpy(data + offset, ptr, segment->size);
-> +			}
->  		}
->  
->  		offset += phdr->p_filesz;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index e3c5d856b6da..0fbb01a9955c 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -399,6 +399,8 @@ enum rproc_crash_type {
->   * @node:	list node related to the rproc segment list
->   * @da:		device address of the segment
->   * @size:	size of the segment
-> + * @dump:	custom dump function to fill device memory segment associated
-> + *		with coredump
->   */
->  struct rproc_dump_segment {
->  	struct list_head node;
-> @@ -406,6 +408,7 @@ struct rproc_dump_segment {
->  	dma_addr_t da;
->  	size_t size;
->  
-> +	void (*dump)(struct rproc *rproc, void *ptr, size_t len, void *priv);
-
-"priv" isn't the best name to represent the memory to which you expect
-dump to write to. Please call it "dest".
-
->  	loff_t offset;
->  };
-
-Regards,
-Bjorn
+>>>                                 mm = p->mm;
+>>>                                 atomic_inc(&mm->mm_count);
+>>>                         }
+> 
