@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DC6C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A855C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB93C20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA4522087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyWpdHTj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB93C20C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="POX1tss3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4522087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbeJIBuL (ORCPT
+        id S1728802AbeJIBuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35944 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbeJIBuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:09 -0400
+        id S1726529AbeJIBuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E16C2089D;
-        Mon,  8 Oct 2018 18:37:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEED12089D;
+        Mon,  8 Oct 2018 18:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023826;
-        bh=Ygq4OuldNQAvU+a1N1ZBHfaMQRTGtIdhHYrQlTKoS+E=;
+        s=default; t=1539023829;
+        bh=KFiIjLtfhkrqmj9TtU/u9ndlDMNsvkEjEhllDPrQBpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OyWpdHTj5AcShbyCpZtbU2qrtul81ETNjmjkijP7rKdvotM37Klk4Uom5sR8aMWiS
-         dMWhEwInMVq/Ub98ah7d+gIS0r/FZYux/4igkmXLg0g+xBjwSsAXsLstlj5r9ZCMZ6
-         5f9WYPuhels1O4tYkwgjYl8j2HCJdvmgIW3Mku5k=
+        b=POX1tss313yD2oz2aBgC7tQaX27+2vHof++D7VJpo3TYVJMFGAGwNnI1dlkOpOsxx
+         jNgSx+jIyI9rIANbLj0d22x0cLJIpcBNBQ+o/NYfx61B/DYlA6pVqd6bbURfR4uYUA
+         oKw/iQ/3CDUj91kiWShGA85NVssCBvS0ubtofNZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 097/113] drm/nouveau/TBDdevinit: dont fail when PMU/PRE_OS is missing from VBIOS
-Date:   Mon,  8 Oct 2018 20:31:38 +0200
-Message-Id: <20181008175536.599827793@linuxfoundation.org>
+Subject: [PATCH 4.4 098/113] fs/cifs: suppress a string overflow warning
+Date:   Mon,  8 Oct 2018 20:31:39 +0200
+Message-Id: <20181008175536.645892441@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,33 +63,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-[ Upstream commit 0a6986c6595e9afd20ff7280dab36431c1e467f8 ]
+[ Upstream commit bcfb84a996f6fa90b5e6e2954b2accb7a4711097 ]
 
-This Falcon application doesn't appear to be present on some newer
-systems, so let's not fail init if we can't find it.
+A powerpc build of cifs with gcc v8.2.0 produces this warning:
 
-TBD: is there a way to determine whether it *should* be there?
+fs/cifs/cifssmb.c: In function ‘CIFSSMBNegotiate’:
+fs/cifs/cifssmb.c:605:3: warning: ‘strncpy’ writing 16 bytes into a region of size 1 overflows the destination [-Wstringop-overflow=]
+   strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Since we are already doing a strlen() on the source, change the strncpy
+to a memcpy().
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm204.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/cifs/cifssmb.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm204.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm204.c
-@@ -161,7 +161,8 @@ gm204_devinit_post(struct nvkm_devinit *
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -577,10 +577,15 @@ CIFSSMBNegotiate(const unsigned int xid,
  	}
  
- 	/* load and execute some other ucode image (bios therm?) */
--	return pmu_load(init, 0x01, post, NULL, NULL);
-+	pmu_load(init, 0x01, post, NULL, NULL);
-+	return 0;
- }
- 
- static const struct nvkm_devinit_func
+ 	count = 0;
++	/*
++	 * We know that all the name entries in the protocols array
++	 * are short (< 16 bytes anyway) and are NUL terminated.
++	 */
+ 	for (i = 0; i < CIFS_NUM_PROT; i++) {
+-		strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+-		count += strlen(protocols[i].name) + 1;
+-		/* null at end of source and target buffers anyway */
++		size_t len = strlen(protocols[i].name) + 1;
++
++		memcpy(pSMB->DialectsArray+count, protocols[i].name, len);
++		count += len;
+ 	}
+ 	inc_rfc1001_len(pSMB, count);
+ 	pSMB->ByteCount = cpu_to_le16(count);
 
 
