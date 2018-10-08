@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 628D5C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 844E9C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E359214C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D3C8214DC
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SK+MHcPM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E359214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOZgMGjw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D3C8214DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbeJICBA (ORCPT
+        id S1731557AbeJICBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:01:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49876 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:01:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728239AbeJICA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:00:59 -0400
+        id S1728239AbeJICBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:01:02 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F68D204FD;
-        Mon,  8 Oct 2018 18:47:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 156DC214C2;
+        Mon,  8 Oct 2018 18:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024472;
-        bh=2FHM7imDNLwTlUppCa6ZvIYx3O+BSlvO5RCQt+Ly+F4=;
+        s=default; t=1539024475;
+        bh=oLfD5pePvazR8pMVlAWlYLXI6itcODynxHkSj9/0aNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SK+MHcPMv4r+NowG2FWQc3IyhggkGvx/kLqsVD3mdpL+uJAdJ1jciEYZxxmRCV7zc
-         rl3ztdCgJSWXrybZCROL+/vJGJerTep0iIOdhMYAUVlxH1A/XlZGiIBh/QHgyUVhQx
-         u8Cuv26TmM2WDSDeEdugor5LuuGKD8TSA/2nIzcE=
+        b=MOZgMGjwIxCzF9GWu7xz+ibnlMj2SPiUWOD+h7Vz+ei74o2cVcLzI6Z2FIjMdj++w
+         pbqhOvQmxmN3DYv8pgOsorNhcYEny4gy9LGDL8HDsS10hKRk7aHSrjUxBHx0Suefjr
+         5XfWmSNGJQyNKcaxFLXXbrh0khNYwXT+QhUnusA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tushar Dave <tushar.n.dave@oracle.com>,
+        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 051/168] bpf: Fix bpf_msg_pull_data()
-Date:   Mon,  8 Oct 2018 20:30:31 +0200
-Message-Id: <20181008175621.993081117@linuxfoundation.org>
+Subject: [PATCH 4.18 052/168] bpf: avoid misuse of psock when TCP_ULP_BPF collides with another ULP
+Date:   Mon,  8 Oct 2018 20:30:32 +0200
+Message-Id: <20181008175622.029416852@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -63,57 +63,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tushar Dave <tushar.n.dave@oracle.com>
+From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 9db39f4d4f94b61e4b64b077f6ddb2bdfb533a88 ]
+[ Upstream commit 597222f72a94118f593e4f32bf58ae7e049a0df1 ]
 
-Helper bpf_msg_pull_data() mistakenly reuses variable 'offset' while
-linearizing multiple scatterlist elements. Variable 'offset' is used
-to find first starting scatterlist element
-    i.e. msg->data = sg_virt(&sg[first_sg]) + start - offset"
+Currently we check sk_user_data is non NULL to determine if the sk
+exists in a map. However, this is not sufficient to ensure the psock
+or the ULP ops are not in use by another user, such as kcm or TLS. To
+avoid this when adding a sock to a map also verify it is of the
+correct ULP type. Additionally, when releasing a psock verify that
+it is the TCP_ULP_BPF type before releasing the ULP. The error case
+where we abort an update due to ULP collision can cause this error
+path.
 
-Use different variable name while linearizing multiple scatterlist
-elements so that value contained in variable 'offset' won't get
-overwritten.
+For example,
 
-Fixes: 015632bb30da ("bpf: sk_msg program helper bpf_sk_msg_pull_data")
-Signed-off-by: Tushar Dave <tushar.n.dave@oracle.com>
+  __sock_map_ctx_update_elem()
+     [...]
+     err = tcp_set_ulp_id(sock, TCP_ULP_BPF) <- collides with TLS
+     if (err)                                <- so err out here
+        goto out_free
+     [...]
+  out_free:
+     smap_release_sock() <- calling tcp_cleanup_ulp releases the
+                            TLS ULP incorrectly.
+
+Fixes: 2f857d04601a ("bpf: sockmap, remove STRPARSER map_flags and add multi-map support")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/filter.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/bpf/sockmap.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -2282,7 +2282,7 @@ static const struct bpf_func_proto bpf_m
- BPF_CALL_4(bpf_msg_pull_data,
- 	   struct sk_msg_buff *, msg, u32, start, u32, end, u64, flags)
+--- a/kernel/bpf/sockmap.c
++++ b/kernel/bpf/sockmap.c
+@@ -1465,10 +1465,16 @@ static void smap_destroy_psock(struct rc
+ 	schedule_work(&psock->gc_work);
+ }
+ 
++static bool psock_is_smap_sk(struct sock *sk)
++{
++	return inet_csk(sk)->icsk_ulp_ops == &bpf_tcp_ulp_ops;
++}
++
+ static void smap_release_sock(struct smap_psock *psock, struct sock *sock)
  {
--	unsigned int len = 0, offset = 0, copy = 0;
-+	unsigned int len = 0, offset = 0, copy = 0, poffset = 0;
- 	int bytes = end - start, bytes_sg_total;
- 	struct scatterlist *sg = msg->sg_data;
- 	int first_sg, last_sg, i, shift;
-@@ -2338,16 +2338,15 @@ BPF_CALL_4(bpf_msg_pull_data,
- 	if (unlikely(!page))
- 		return -ENOMEM;
- 	p = page_address(page);
--	offset = 0;
- 
- 	i = first_sg;
- 	do {
- 		from = sg_virt(&sg[i]);
- 		len = sg[i].length;
--		to = p + offset;
-+		to = p + poffset;
- 
- 		memcpy(to, from, len);
--		offset += len;
-+		poffset += len;
- 		sg[i].length = 0;
- 		put_page(sg_page(&sg[i]));
- 
+ 	if (refcount_dec_and_test(&psock->refcnt)) {
+-		tcp_cleanup_ulp(sock);
++		if (psock_is_smap_sk(sock))
++			tcp_cleanup_ulp(sock);
+ 		write_lock_bh(&sock->sk_callback_lock);
+ 		smap_stop_sock(psock, sock);
+ 		write_unlock_bh(&sock->sk_callback_lock);
+@@ -1895,6 +1901,10 @@ static int __sock_map_ctx_update_elem(st
+ 	 * doesn't update user data.
+ 	 */
+ 	if (psock) {
++		if (!psock_is_smap_sk(sock)) {
++			err = -EBUSY;
++			goto out_progs;
++		}
+ 		if (READ_ONCE(psock->bpf_parse) && parse) {
+ 			err = -EBUSY;
+ 			goto out_progs;
 
 
