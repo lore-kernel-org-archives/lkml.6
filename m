@@ -2,197 +2,171 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A97DC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E1FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC022085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675A02085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="hHy6tkNS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC022085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CVPrfMik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675A02085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeJIBY4 (ORCPT
+        id S1726582AbeJIBZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:24:56 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45734 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726291AbeJIBY4 (ORCPT
+        Mon, 8 Oct 2018 21:25:50 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43327 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeJIBZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:24:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CF00E8EE2EC;
-        Mon,  8 Oct 2018 11:11:59 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id L8pXsVoE8cki; Mon,  8 Oct 2018 11:11:59 -0700 (PDT)
-Received: from [153.66.254.242] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1F4A28EE0FD;
-        Mon,  8 Oct 2018 11:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1539022319;
-        bh=9vU4KomJP0X7xWdCDIEoSDqayhHio+fLufhphGNv7eE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=hHy6tkNSikUwowwdjWW4p4uhf7QIb7iMSTMTW+alTybUQY03QbcDbSZqyEi8e5tZV
-         ChxsYEYC2g1ie+iSVDU52Bf+72Du5lXeWvmMWYIdWnPSRP9l8QSBU8WNotl81q9UEZ
-         jqAeD1kruntYysXxpiaYnBsY67Pdiix23xqHsL78=
-Message-ID: <1539022317.4344.17.camel@HansenPartnership.com>
-Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tim.Bird@sony.com, ksummit-discuss@lists.linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Mon, 08 Oct 2018 11:11:57 -0700
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF80518843@USCULXMSG01.am.sony.com>
-References: <1538861738.4088.5.camel@HansenPartnership.com>
-         <1538861851.4088.7.camel@HansenPartnership.com>
-         <ECADFF3FD767C149AD96A924E7EA6EAF80516F31@USCULXMSG01.am.sony.com>
-         <1538883209.4088.14.camel@HansenPartnership.com>
-         <ECADFF3FD767C149AD96A924E7EA6EAF80517411@USCULXMSG01.am.sony.com>
-         <1539007780.4344.3.camel@HansenPartnership.com>
-         <ECADFF3FD767C149AD96A924E7EA6EAF80518843@USCULXMSG01.am.sony.com>
+        Mon, 8 Oct 2018 21:25:49 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 80-v6so8173130pgh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 11:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SKwgs8tPCitfGq4BZQNjNCY4NETlWIq/kzgxU9sjoS8=;
+        b=CVPrfMikIBUIWhVNKeQr4BHm0aArVcQIaKliigyJUqeF9nOp42+NfJfWvHZvht39ah
+         tM8L7ZsYM7z5WLwXg1iv5bEm6/JBZPqsx9E5KpV1upULvPSRL3TEefQcKOIry1/kP2CH
+         ZRPcVOR/7ptyK8WBQmU4yFgn0PmiJ3KyOET1XxabToW51Mg8pkFIDyUkRz9H1QZr3ZZ+
+         LbabXMvcv7VFzPhyvkuZmM5wbT483hrDNmT/jinUVh0LYnIgZo0x2bE2WJeSksk7C9Pa
+         QJKvkkwCFfy+qVdHmZSsQVfLoCeZq/mrewfYSOOVua9LKmIkDWiVNW6gr9q4Cz03W7jN
+         A6Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SKwgs8tPCitfGq4BZQNjNCY4NETlWIq/kzgxU9sjoS8=;
+        b=VkpCAJJde+D6sIckh6gnHUiGypP0JuD6jo6TOtE+6ugOXDJjkYV/Lo3/QzMPWQBYUu
+         YetrDOBf+zGA1bb4XVeuXKGFlRazDVzELiZrTNr44oMTVxOvlpTv3R/xMJ5YqT4mGuuJ
+         +u6kB7MJfSt7e00kNz5E034yrf3Ym9HUhJKt5Xg0fpl7gZKcwK8ygnjLoLAQS9bU0KrT
+         xFhDOB7tA0k8S9nNioSW5sCL8VQdC5qL7LtXqMTai1qD826QvvwkPKAIaFr0AyUY+fmK
+         RqghNubbNe1t0YBWttKqeiih9WBct/QQKrkGwCGOhtEsSyUnSMbJzlMQMhxhCRtUBwYJ
+         kMCA==
+X-Gm-Message-State: ABuFfohXeyG7T4pqSpfcGhfDcuSLsRQkz/fvcStiGjJuEwJ7nxGJuert
+        z+Pp5YrMJldBr+kyTpHgX/9MKhDhSG8t1XXEg7Dvkg==
+X-Google-Smtp-Source: ACcGV62c5cqYG0yHevrC0bmfWu9nWXgHqTv3zZcobn81APfe54xcHpZK0LjYddaq/qH2yAmRVtsuJhFKt/F3oiEmXPM=
+X-Received: by 2002:a63:a047:: with SMTP id u7-v6mr22336634pgn.145.1539022372215;
+ Mon, 08 Oct 2018 11:12:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181004183047.GA1885@flashbox> <1538678069.230807.6.camel@acm.org>
+ <20181004184540.GA17513@flashbox> <CAKwvOd=FrGZ-oh5Q9RGQD2GNORZrqwAZUzNYN+hTKkp5wrfrqw@mail.gmail.com>
+ <20181005065754.GA18637@flashbox>
+In-Reply-To: <20181005065754.GA18637@flashbox>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 8 Oct 2018 11:12:40 -0700
+Message-ID: <CAKwvOdm8+zF48Osasi_7TrJAz51Zt+m2-7qMASLhT+M0NG4WjA@mail.gmail.com>
+Subject: Re: -Wswitch Clang warnings in drivers/scsi
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     bvanassche@acm.org,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-08 at 17:58 +0000, Tim.Bird@sony.com wrote:
-> > -----Original Message-----
-> > From: James Bottomley
-> > 
-> > On Mon, 2018-10-08 at 13:51 +0000, Tim.Bird@sony.com wrote:
-> > > > -----Original Message-----
-> > > > From: James Bottomley
-> > > > On Sat, 2018-10-06 at 21:43 +0000, Tim.Bird@sony.com wrote:
-> > > > > > -----Original Message-----
-> > > > > > From: James Bottomley
-> > > > > > 
-> > > > > > Significant concern has been expressed about the
-> > > > > > responsibilities outlined in the enforcement clause of the
-> > > > > > new
-> > > > > > code of conduct.  Since there is concern that this becomes
-> > > > > > binding on the release of the 4.19 kernel, strip the
-> > > > > > enforcement clauses to give the community time to consider
-> > > > > > and
-> > > > > > debate how this should be handled.
-> > > > > > 
-> > > > > > Signed-off-by: James Bottomley
-> > > > > > <James.Bottomley@HansenPartnership.com>
-> > > > > > ---
-> > > > > >  Documentation/process/code-of-conduct.rst | 15 ---------
-> > > > > > ------
-> > > > > >  1 file changed, 15 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/Documentation/process/code-of-conduct.rst
-> > > > > > b/Documentation/process/code-of-conduct.rst
-> > > > > > index aa40e34e7785..4dd90987305b 100644
-> > > > > > --- a/Documentation/process/code-of-conduct.rst
-> > > > > > +++ b/Documentation/process/code-of-conduct.rst
-> > > > > > @@ -59,21 +59,6 @@ address, posting via an official social
-> > > > > > media account, or acting as an appointed representative at
-> > > > > > an
-> > > > > > online or offline event. Representation of a project may be
-> > > > > >  further defined and clarified by project maintainers.
-> > > > > > 
-> > > > > > -Enforcement
-> > > > > > -===========
-> > > > > > -
-> > > > > > -Instances of abusive, harassing, or otherwise unacceptable
-> > > > > > behavior may be
-> > > > > > -reported by contacting the Technical Advisory Board (TAB)
-> > > > > > at
-> > > > > > -<tab@lists.linux-foundation.org>. All complaints will be
-> > > > > > reviewed and
-> > > > > > -investigated and will result in a response that is deemed
-> > > > > > necessary and
-> > > > > > -appropriate to the circumstances. The TAB is obligated to
-> > > > > > maintain
-> > > > > > -confidentiality with regard to the reporter of an
-> > > > > > incident.  Further details of
-> > > > > > -specific enforcement policies may be posted separately.
-> > > > > 
-> > > > > I think it's OK to leave the above section, as it doesn't
-> > > > > speak
-> > > > > to enforcement, but rather is just a set of reporting
-> > > > > instructions, with an assurance of confidentiality.  This
-> > > > > seems
-> > > > > to me not to be the objectionable part of this section.
-> > > > > (IOW, I would omit this removal from the patch).
-> > > > 
-> > > > So I did think about that, but it struck me that with both
-> > > > paragraphs removed, the current CoC is very similar to the
-> > > > status quo: namely every subsystem handles their own issues and
-> > > > that's formalised by the "Our Responsibilities" section.  That
-> > > > also makes me think that whether we want a centralised channel
-> > > > of reporting or enforcement and what it should be also ought to
-> > > > be part of the debate.  The TAB was created to channel
-> > > > community technical input into the Linux Foundation.  That's
-> > > > not to say it can't provide the reporting and arbitration
-> > > > structure, but if we're going to do it right we should debate
-> > > > the expansion of its duties (and powers).
-> > > 
-> > > When the Code of Conflict was adopted 3 years ago, we already
-> > > created the central reporting mechanism, so I actually think
-> > > leaving (ie including) the above paragraph is closer to the
-> > > status quo.  I think it's the expanded powers and duties (or
-> > > perception thereof) that are causing concern and I think debating
-> > > those to clarify intent, and adopting changes as needed  to
-> > > ameliorate concerns is worthwhile. 
-> > If we want to go back to the status quo, then a plain revert is the
-> > patch series I should submit.
-> 
-> Let me try to be more clear.  I don't want to go back to the status
-> quo. I was saying that if we keep this document, but omit the central
-> reporting mechanism, that is a large departure from the status quo,
-> because the Code of Conflict already established that.  And I think
-> that having an ombudsman-type role somewhere in the community
-> is beneficial.
+On Thu, Oct 4, 2018 at 11:57 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Thu, Oct 04, 2018 at 02:16:49PM -0700, Nick Desaulniers wrote:
+> > On Thu, Oct 4, 2018 at 11:45 AM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > On Thu, Oct 04, 2018 at 11:34:29AM -0700, Bart Van Assche wrote:
+> > > > On Thu, 2018-10-04 at 11:30 -0700, Nathan Chancellor wrote:
+> > > > > Hi SCSI folks,
+> > > > >
+> > > > > In an effort to get the kernel building warning free with Clang, we've
+> > > > > come across an interesting occurrence in a few scsi drivers:
+> > > > >
+> > > > > drivers/scsi/hpsa.c:6533:7: warning: overflow converting case value to switch condition type (2148024833 to 18446744071562609153) [-Wswitch]
+> > > > >         case CCISS_GETPCIINFO:
+> > > > >              ^
+> > > > > ./include/uapi/linux/cciss_ioctl.h:65:26: note: expanded from macro 'CCISS_GETPCIINFO'
+> > > > > #define CCISS_GETPCIINFO _IOR(CCISS_IOC_MAGIC, 1, cciss_pci_info_struct)
+> > > > >                          ^
+> > > > > ./include/uapi/asm-generic/ioctl.h:86:28: note: expanded from macro '_IOR'
+> > > > > #define _IOR(type,nr,size)      _IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(size)))
+> > > > >                                 ^
+> > > > > ./include/uapi/asm-generic/ioctl.h:70:2: note: expanded from macro '_IOC'
+> > > > >         (((dir)  << _IOC_DIRSHIFT) | \
+> > > > >         ^
+> > > > >
+> > > > > I see this warning in drivers/scsi/hpsa.c and drivers/scsi/smartpqi/smartpqi_init.c
+> > > > > on an arm64 allyesconfig build and it has also been reported in a couple of files in
+> > > > > drivers/scsi/cxlflash.
+> > > > >
+> > > > > As the warning states, there is an overflow because the switch statement's value is of
+> > > > > type int but the switch value is greater than INT_MAX. I did a brief sweep of the tree
+> > > > > and it seems that all uses of _IOC in switch statement values either are small enough
+> > > > > to fit into size int or the value is of size unsigned int.
+> > > > >
+> > > > > I am unsure of the implications of using a smaller _IOC value or converting all ioctls
+> > > > > to expect a cmd of type unsigned int (especially since that has userspace implications)
+> > > > > but I didn't see any negative ioctl commands. Some clarity and insight would be
+> > > > > appreciated.
+> > > >
+> > > > Have you verified how gcc compiles these switch statements? Maybe gcc supports
+> > > > switch / case statements on integral types that are larger than an int?
+> >
+> > GCC just doesn't warn when the case expression is greater than the
+> > maximal representable value and thus would wrap (or appears to, this
+> > is probably undefined behavior).  Using an unsigned int here is no
+> > functional change:
+> > https://godbolt.org/z/1IyYV4
+> >
+> > GCC and Clang do effectively the same thing as each other, and in the
+> > cases of switching on an unsigned int vs signed int.
+> >
+>
+> Regardless of how the overflow is handled within the switch statement,
+> the overflow is also happening when passing in these values to the ioctl,
+> right? I mean these case values are defined in the uapi files so that
+> userspace can easily pass them in to the ioctl, meaning those values are
+> being passed in as a signed integer and I would assume subsequently
+> overflowing unless I'm just missing something here.
 
-The purpose of this patch is not to be the final point but to take us
-up to a useful starting point for Shuah's CoC debate proposal at the
-kernel summit (and beyond).  Shuah asked that I clarify this in the
-commit message, so I will in v2.
+The kernel compiles its code with -fno-strict-overflow, which sets
+-fwrapv, which makes signed integer overflow defined to wrap (the
+default by the C standard is that signed integer overflow is undefined
+behavior).  So while the kernel might be safe from undefined behavior,
+the wrapped value being provided to userspace might be a problem.  If
+userspace tries to use these definitions, I suspect they will likely
+trigger the overflow at runtime.
 
-> I believe parts of the Code of Conduct are an improvement over the
-> Code of Conflict, so my personal preference would be to keep it
-> and try to adjust it moving forward.  I think your patches, with
-> clear suggestions for improvements (or for deletions in the case
-> where we want more debate on particular sections before adopting
-> them) is a good approach, and I like that process as opposed to
-> starting over from scratch.
+>
+> Nathan
+>
+> > > >
+> > > > Bart.
+> > >
+> > > Hi Bart,
+> > >
+> > > That is entirely possible, I will do some research. I did build with GCC
+> > > to see if there was any warning and there isn't so I'll be curious to
+> > > see what is happening at a lower level.
+> > >
+> > > Thanks for the comment!
+> > > Nathan
+> >
+> >
+> >
+> > --
+> > Thanks,
+> > ~Nick Desaulniers
 
-OK, so you're happy with the current patch as the starting not the
-ending point?
 
-> > > I believe that in the vast majority of cases, the TAB will end up
-> > > performing a mediator role to smooth hurt feelings and remind and
-> > > encourage improved communication - very similar to what we've
-> > > done in the past.  I really believe that bans will continue to be
-> > > very few and far between, as they have been historically (I can
-> > > only think of 3 in the past decade.)
-> > 
-> > That might very well be the position the discussion arrives at;
-> > however, I really think making the process fully transparent this
-> > time requires not prejudging the outcome.
-> 
-> I don't understand your point here.  Can you elaborate?
 
-Yes: I could foresee an outcome where the kernel community decides to
-vest CoC enforcement in a different body from the TAB, or even in no
-body but an informal maintainers list.  I'm not saying that *will*
-happen, merely that it's an outcome that should not be foreclosed at
-this point.
-
-James
-
+-- 
+Thanks,
+~Nick Desaulniers
