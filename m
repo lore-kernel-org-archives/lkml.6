@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B581DC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C57DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75AA22154C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2338F21565
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpyGvvVC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AA22154C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="feC9Eko4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2338F21565
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbeJHWjX (ORCPT
+        id S1728807AbeJHWj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728738AbeJHWjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:23 -0400
+        id S1728738AbeJHWjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AD5821523;
-        Mon,  8 Oct 2018 15:27:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA8CE2150B;
+        Mon,  8 Oct 2018 15:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012427;
-        bh=k1M8TSRJ98BVeo1dFh8hRk8pxpH7TeuO96cnC8UQaFE=;
+        s=default; t=1539012429;
+        bh=NwMBx61baqYkjWB4UFE2LysvHYdeFbptIuL0ERK0Bnc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cpyGvvVC25lHyYqeqk0X8CJ6y6jh0nSq/HMl+KGTYA5reTyUYJg6C7Ambo+sy/Bi+
-         C32k+lRz0f5iICcYhfGe6X3xyFFNmPM4luWffZwvaDgD8M3DsZtZLhSWw78ObBTPLa
-         6+FWwWwxe/9ogKfLpw8NA/wByq0cE9Xpke6vPdy8=
+        b=feC9Eko4xHlEiy4cmztCVVbfxFsmfaJ90KhCFmwX2a+P+XI/EibuI148/xnL8Klro
+         qJGgwwIUlozquGdbTy8nOMzNzTqxsxO7+34WTPYnS3pDIBhYWUgf0ZMZg2MmiFO/nf
+         En9mUAm2YLh/8CBk/QOVtDnA4m4p+uOdkzbuahIo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 02/23] batman-adv: Fix segfault when writing to throughput_override
-Date:   Mon,  8 Oct 2018 11:26:42 -0400
-Message-Id: <20181008152703.70891-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 04/23] batman-adv: Prevent duplicated nc_node entry
+Date:   Mon,  8 Oct 2018 11:26:44 -0400
+Message-Id: <20181008152703.70891-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
 References: <20181008152703.70891-1-sashal@kernel.org>
@@ -55,49 +55,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit b9fd14c20871e6189f635e49b32d7789e430b3c8 ]
+[ Upstream commit fa122fec8640eb7186ce5a41b83a4c1744ceef8f ]
 
-The per hardif sysfs file "batman_adv/throughput_override" prints the
-resulting change as info text when the users writes to this file. It uses
-the helper function batadv_info to add it at the same time to the kernel
-ring buffer and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG
-is enabled).
+The function batadv_nc_get_nc_node is responsible for adding new nc_nodes
+to the in_coding_list and out_coding_list. It first checks whether the
+entry already is in the list or not. If it is, then the creation of a new
+entry is aborted.
 
-The function batadv_info requires as first parameter the batman-adv softif
-net_device. This parameter is then used to find the private buffer which
-contains the debug log for this batman-adv interface. But
-batadv_store_throughput_override used as first argument the slave
-net_device. This slave device doesn't have the batadv_priv private data
-which is access by batadv_info.
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
 
-Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
-to a segfault or to memory corruption.
+The check and the manipulation of the list must therefore be in the same
+locked code section.
 
-Fixes: 0b5ecc6811bd ("batman-adv: add throughput override attribute to hard_ifaces")
+Fixes: d56b1705e28c ("batman-adv: network coding - detect coding nodes and remove these after timeout")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/sysfs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/batman-adv/network-coding.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/net/batman-adv/sysfs.c b/net/batman-adv/sysfs.c
-index 02d96f224c60..a3b5b76dc9de 100644
---- a/net/batman-adv/sysfs.c
-+++ b/net/batman-adv/sysfs.c
-@@ -1084,8 +1084,9 @@ static ssize_t batadv_store_throughput_override(struct kobject *kobj,
- 	if (old_tp_override == tp_override)
- 		goto out;
+diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-coding.c
+index e3baf697a35c..a7b5cf08d363 100644
+--- a/net/batman-adv/network-coding.c
++++ b/net/batman-adv/network-coding.c
+@@ -845,16 +845,27 @@ batadv_nc_get_nc_node(struct batadv_priv *bat_priv,
+ 	spinlock_t *lock; /* Used to lock list selected by "int in_coding" */
+ 	struct list_head *list;
  
--	batadv_info(net_dev, "%s: Changing from: %u.%u MBit to: %u.%u MBit\n",
--		    "throughput_override",
-+	batadv_info(hard_iface->soft_iface,
-+		    "%s: %s: Changing from: %u.%u MBit to: %u.%u MBit\n",
-+		    "throughput_override", net_dev->name,
- 		    old_tp_override / 10, old_tp_override % 10,
- 		    tp_override / 10, tp_override % 10);
++	/* Select ingoing or outgoing coding node */
++	if (in_coding) {
++		lock = &orig_neigh_node->in_coding_list_lock;
++		list = &orig_neigh_node->in_coding_list;
++	} else {
++		lock = &orig_neigh_node->out_coding_list_lock;
++		list = &orig_neigh_node->out_coding_list;
++	}
++
++	spin_lock_bh(lock);
++
+ 	/* Check if nc_node is already added */
+ 	nc_node = batadv_nc_find_nc_node(orig_node, orig_neigh_node, in_coding);
  
+ 	/* Node found */
+ 	if (nc_node)
+-		return nc_node;
++		goto unlock;
+ 
+ 	nc_node = kzalloc(sizeof(*nc_node), GFP_ATOMIC);
+ 	if (!nc_node)
+-		return NULL;
++		goto unlock;
+ 
+ 	/* Initialize nc_node */
+ 	INIT_LIST_HEAD(&nc_node->list);
+@@ -863,22 +874,14 @@ batadv_nc_get_nc_node(struct batadv_priv *bat_priv,
+ 	kref_get(&orig_neigh_node->refcount);
+ 	nc_node->orig_node = orig_neigh_node;
+ 
+-	/* Select ingoing or outgoing coding node */
+-	if (in_coding) {
+-		lock = &orig_neigh_node->in_coding_list_lock;
+-		list = &orig_neigh_node->in_coding_list;
+-	} else {
+-		lock = &orig_neigh_node->out_coding_list_lock;
+-		list = &orig_neigh_node->out_coding_list;
+-	}
+-
+ 	batadv_dbg(BATADV_DBG_NC, bat_priv, "Adding nc_node %pM -> %pM\n",
+ 		   nc_node->addr, nc_node->orig_node->orig);
+ 
+ 	/* Add nc_node to orig_node */
+-	spin_lock_bh(lock);
+ 	kref_get(&nc_node->refcount);
+ 	list_add_tail_rcu(&nc_node->list, list);
++
++unlock:
+ 	spin_unlock_bh(lock);
+ 
+ 	return nc_node;
 -- 
 2.17.1
 
