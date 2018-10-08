@@ -2,164 +2,140 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8AEC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B242C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 188242145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 188242145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 4354E2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:23:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NtDNN2hc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4354E2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbeJHXfD (ORCPT
+        id S1726647AbeJHXgA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:35:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36219 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeJHXfD (ORCPT
+        Mon, 8 Oct 2018 19:36:00 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42048 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbeJHXgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:35:03 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g9YIe-0004j8-N3; Mon, 08 Oct 2018 16:22:28 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][drm-next] drm/amdgpu/powerplay: fix missing break in switch statements
-Date:   Mon,  8 Oct 2018 17:22:28 +0100
-Message-Id: <20181008162228.4599-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Oct 2018 19:36:00 -0400
+Received: by mail-pf1-f194.google.com with SMTP id f26-v6so8453433pfn.9
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q+GE5EQyYPulWX4UbfdJGXuAQGzapTUeuq3TcN4JYZ8=;
+        b=NtDNN2hcUf0K0hleAMQekT6K0jEi6wkY3Bq09CY8rFAqrxBF5BTW26A+tB8y7aK7Bs
+         Vow0VFyUE1BZFJ1lOkK//pgRC9QEG2WfY2NdNhGu7FGLMBkmFJvtt02g4gpOyfDH7h+d
+         A/2W7HFWttBIKSO6lcODx5mbhNEZkRR7vvccA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q+GE5EQyYPulWX4UbfdJGXuAQGzapTUeuq3TcN4JYZ8=;
+        b=l3v7kY8YKB/2UujHjCcqydnSG6ZUuRiY3CwA6adetJlZx5Bez0ai6N5+pfNUiG9ezh
+         G/KxX1MnzKqk4jujNOM92hBzt4NUO0NHUS0OUcJXr7NpwNHSZzTpA/0Ud/hujoSPX+Fg
+         W6mX1JQCcFrNsMrw1ylfup7YuObGXlMP8rTjbZQ6eTsrZ69lJHOBiiMc6MNSd5GvPvQk
+         Dc8+VblO66fPp6eq42lXKCwF20A0I5ICbZ7XIeM7ca6PTXHWR67D+tDVKvUcJiamy1TB
+         5SkBu8H2bVUiXeV26pNlEGy+Kpa11YUJnVI9v3WKQiAIKxDLT6gQAZ778MluzQDbrOep
+         UyVw==
+X-Gm-Message-State: ABuFfogls5Dy22Kk/R3q5TfM5MzTNnsBpMkXzwkIYsRK6F0pzrACuU3H
+        TJaLCTvSjyfu9j44Rfwl0jmCZw==
+X-Google-Smtp-Source: ACcGV63k6nZVSAXfAumI1AOvaw62Jp+O6Cyjc4nzYNZd3OsEwuwlVLjwmpn6VuXUw1pMA4KxlA1sBQ==
+X-Received: by 2002:a65:43cd:: with SMTP id n13-v6mr21681316pgp.185.1539015809334;
+        Mon, 08 Oct 2018 09:23:29 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id o9-v6sm29192239pgn.30.2018.10.08.09.23.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 09:23:28 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 09:23:25 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Arun Kumar Neelakantam <aneela@codeaurora.org>, ohad@wizery.com,
+        clew@codeaurora.org, sricharan@codeaurora.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 0/4] Add TIOCM Signals support for RPMSG char devices
+Message-ID: <20181008162325.GA1331@tuxbook-pro>
+References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+ <a64808ba-3c67-3ee9-9c13-3787e5ce7ab1@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a64808ba-3c67-3ee9-9c13-3787e5ce7ab1@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon 08 Oct 06:08 PDT 2018, Arnaud Pouliquen wrote:
 
-There are several switch statements that are missing break statements.
-Add missing breaks to handle any fall-throughs corner cases.
+> Hi Arun, Bjorn,
+> 
+> On 10/08/2018 08:38 AM, Arun Kumar Neelakantam wrote:
+> > Glink transport support signals to exchange state notification between
+> > local and remote side clients. Adding support to send/receive the signal
+> > command and notify the clients through callback and POLL notification.
+> 
+> Please correct me if i'm wrong...My concern here is that this patchset
+> implements a rpmsg service in the rpmsg core. I would separate this from
+> the rpmsg core, as this is not part of the rpmsg protocol but seems
+> linked to the serial protocol itself.
+> Could it be implemented in rpmsg_char, using a dedicated channel...?
+> 
 
-Detected by CoverityScan, CID#1457175 ("Missing break in switch")
+rpmsg_char does expose a rpmsg channel (be it virtio, smd or glink) to
+user space. This patch series add support for invoking TIOCMGET and
+TIOCMSET on these channels.
 
-Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
- 5 files changed, 10 insertions(+)
+In addition to adding the client side of this to rpmsg_char it provides
+this support for glink, but the same mechanism exists in smd - while
+this is not supported (today) by the virtio rpmsg.
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-index 18643e06bc6f..669bd0c2a16c 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-@@ -2269,11 +2269,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
- 		}
-+		break;
- 	}
- 	pr_debug("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-index ec14798e87b6..bddd6d09f887 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-@@ -2331,6 +2331,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2340,6 +2341,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-index 73aa368a454e..2d4c7f167b88 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-@@ -2237,11 +2237,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-index ae8378ed32ee..a2ba5b012866 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-@@ -2619,6 +2619,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2628,6 +2629,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-index 3d415fabbd93..9f71512b2510 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-@@ -2185,6 +2185,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2194,6 +2195,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
--- 
-2.17.1
 
+I'm uncertain of how we could implement this mechanism for virtio rpmsg,
+given that it as a transport doesn't really have a concept of
+channels/flows - but it's really useful to have!
+
+PS. rpmsg_set_signals() can be called from any rpmsg device to perform
+flow control of the communication channel.
+
+Regards,
+Bjorn
+
+> Regards
+> Arnaud
+> 
+> > 
+> > Changes since v1:
+> > - Split the patches as per functional areas like core, char, glink
+> > - Add set, clear mask for TIOCMSET
+> > - Merge the char signal callback and POLLPRI patches
+> > 
+> > Changes since v2:
+> > - Modify the rpmsg_get_signals function prototype
+> > 
+> > Changes since v3:
+> > - Correct the TICOMGET case handling as per new rpmsg_get_signals prototype
+> > - Update the rpmsg_get_signals function header
+> > 
+> > Arun Kumar Neelakantam (4):
+> >   rpmsg: core: Add signal API support
+> >   rpmsg: glink: Add support to handle signals command
+> >   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+> >   rpmsg: char: Add signal callback and POLLPRI support
+> > 
+> >  drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
+> >  drivers/rpmsg/rpmsg_char.c        |  74 +++++++++++++++++++++-
+> >  drivers/rpmsg/rpmsg_core.c        |  41 +++++++++++++
+> >  drivers/rpmsg/rpmsg_internal.h    |   5 ++
+> >  include/linux/rpmsg.h             |  26 ++++++++
+> >  5 files changed, 269 insertions(+), 3 deletions(-)
+> > 
