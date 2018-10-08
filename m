@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EFCC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96A7C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFE221479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8014520645
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDJvR3A/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFE221479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIkZdRNy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8014520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732733AbeJICG2 (ORCPT
+        id S1732745AbeJICGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:06:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56828 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:06:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbeJICG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:06:28 -0400
+        id S1729253AbeJICGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:06:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 425D120645;
-        Mon,  8 Oct 2018 18:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 481A520645;
+        Mon,  8 Oct 2018 18:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024799;
-        bh=qP6/LWX7UQuhJHAMX+b0FgMKpTgSn+znpm3asnV/aG0=;
+        s=default; t=1539024802;
+        bh=wgt+RRxeeByxfBgYqsUc2TAJITqPrStTfmKY6dzKdpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tDJvR3A/pVCgB0qqRyDltjNwLHPbgNVuIHPvTggWIUXGC1g+EdIWbPIM/qqhQrHkv
-         7hT9EpSZbCAflIkPhcr1PFu7su6MHpMDxhFEkso64f0tVjc2njbsh02egcpHJwmYp3
-         8ck5ZOKK76BQKlTPWmQvYkXIUQUK41hoWMH4OJQQ=
+        b=EIkZdRNyx9O8m/gGlQFKAYDMM4F1LQKZAxEftwthnTJu5OeABL4Vh8Wqzl+fpryg0
+         tDIhOPRQOR3ELzY/0GEx4bxBfYjsLGQLOKJ5xGmz4BU1D2dAJ7PLkh4rOXGPyeMLEu
+         JSK5M9sBvlhZHTS+cftp8ZU3ZzDdeq6nHF76GvFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 157/168] ALSA: hda/realtek - Cannot adjust speakers volume on Dell XPS 27 7760
-Date:   Mon,  8 Oct 2018 20:32:17 +0200
-Message-Id: <20181008175626.021127618@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.18 158/168] crypto: qat - Fix KASAN stack-out-of-bounds bug in adf_probe()
+Date:   Mon,  8 Oct 2018 20:32:18 +0200
+Message-Id: <20181008175626.059877619@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -63,35 +62,219 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Waiman Long <longman@redhat.com>
 
-commit 709ae62e8e6d9ac4df7dadb3b8ae432675c45ef9 upstream.
+commit ba439a6cbfa2936a6713f64cb499de7943673fe3 upstream.
 
-The issue is the same as commit dd9aa335c880 ("ALSA: hda/realtek - Can't
-adjust speaker's volume on a Dell AIO"), the output requires to connect
-to a node with Amp-out capability.
+The following KASAN warning was printed when booting a 64-bit kernel
+on some systems with Intel CPUs:
 
-Applying the same fixup ALC298_FIXUP_SPK_VOLUME can fix the issue.
+[   44.512826] ==================================================================
+[   44.520165] BUG: KASAN: stack-out-of-bounds in find_first_bit+0xb0/0xc0
+[   44.526786] Read of size 8 at addr ffff88041e02fc50 by task kworker/0:2/124
 
-BugLink: https://bugs.launchpad.net/bugs/1775068
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+[   44.535253] CPU: 0 PID: 124 Comm: kworker/0:2 Tainted: G               X --------- ---  4.18.0-12.el8.x86_64+debug #1
+[   44.545858] Hardware name: Intel Corporation PURLEY/PURLEY, BIOS BKVDTRL1.86B.0005.D08.1712070559 12/07/2017
+[   44.555682] Workqueue: events work_for_cpu_fn
+[   44.560043] Call Trace:
+[   44.562502]  dump_stack+0x9a/0xe9
+[   44.565832]  print_address_description+0x65/0x22e
+[   44.570683]  ? find_first_bit+0xb0/0xc0
+[   44.570689]  kasan_report.cold.6+0x92/0x19f
+[   44.578726]  find_first_bit+0xb0/0xc0
+[   44.578737]  adf_probe+0x9eb/0x19a0 [qat_c62x]
+[   44.578751]  ? adf_remove+0x110/0x110 [qat_c62x]
+[   44.591490]  ? mark_held_locks+0xc8/0x140
+[   44.591498]  ? _raw_spin_unlock+0x30/0x30
+[   44.591505]  ? trace_hardirqs_on_caller+0x381/0x570
+[   44.604418]  ? adf_remove+0x110/0x110 [qat_c62x]
+[   44.604427]  local_pci_probe+0xd4/0x180
+[   44.604432]  ? pci_device_shutdown+0x110/0x110
+[   44.617386]  work_for_cpu_fn+0x51/0xa0
+[   44.621145]  process_one_work+0x8fe/0x16e0
+[   44.625263]  ? pwq_dec_nr_in_flight+0x2d0/0x2d0
+[   44.629799]  ? lock_acquire+0x14c/0x400
+[   44.633645]  ? move_linked_works+0x12e/0x2a0
+[   44.637928]  worker_thread+0x536/0xb50
+[   44.641690]  ? __kthread_parkme+0xb6/0x180
+[   44.645796]  ? process_one_work+0x16e0/0x16e0
+[   44.650160]  kthread+0x30c/0x3d0
+[   44.653400]  ? kthread_create_worker_on_cpu+0xc0/0xc0
+[   44.658457]  ret_from_fork+0x3a/0x50
+
+[   44.663557] The buggy address belongs to the page:
+[   44.668350] page:ffffea0010780bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+[   44.676356] flags: 0x17ffffc0000000()
+[   44.680023] raw: 0017ffffc0000000 ffffea0010780bc8 ffffea0010780bc8 0000000000000000
+[   44.687769] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[   44.695510] page dumped because: kasan: bad access detected
+
+[   44.702578] Memory state around the buggy address:
+[   44.707372]  ffff88041e02fb00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   44.714593]  ffff88041e02fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   44.721810] >ffff88041e02fc00: 00 00 00 00 00 00 f1 f1 f1 f1 04 f2 f2 f2 f2 f2
+[   44.729028]                                                  ^
+[   44.734864]  ffff88041e02fc80: f2 f2 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00 00
+[   44.742082]  ffff88041e02fd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   44.749299] ==================================================================
+
+Looking into the code:
+
+  int ret, bar_mask;
+    :
+  for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+
+It is casting a 32-bit integer pointer to a 64-bit unsigned long
+pointer. There are two problems here. First, the 32-bit pointer address
+may not be 64-bit aligned. Secondly, it is accessing an extra 4 bytes.
+
+This is fixed by changing the bar_mask type to unsigned long.
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/qat/qat_c3xxx/adf_drv.c      |    6 +++---
+ drivers/crypto/qat/qat_c3xxxvf/adf_drv.c    |    6 +++---
+ drivers/crypto/qat/qat_c62x/adf_drv.c       |    6 +++---
+ drivers/crypto/qat/qat_c62xvf/adf_drv.c     |    6 +++---
+ drivers/crypto/qat/qat_dh895xcc/adf_drv.c   |    6 +++---
+ drivers/crypto/qat/qat_dh895xccvf/adf_drv.c |    6 +++---
+ 6 files changed, 18 insertions(+), 18 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6455,6 +6455,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1028, 0x0706, "Dell Inspiron 7559", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
- 	SND_PCI_QUIRK(0x1028, 0x0725, "Dell Inspiron 3162", ALC255_FIXUP_DELL_SPK_NOISE),
- 	SND_PCI_QUIRK(0x1028, 0x075b, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
-+	SND_PCI_QUIRK(0x1028, 0x075c, "Dell XPS 27 7760", ALC298_FIXUP_SPK_VOLUME),
- 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
- 	SND_PCI_QUIRK(0x1028, 0x07b0, "Dell Precision 7520", ALC295_FIXUP_DISABLE_DAC3),
- 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
+--- a/drivers/crypto/qat/qat_c3xxx/adf_drv.c
++++ b/drivers/crypto/qat/qat_c3xxx/adf_drv.c
+@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pde
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C3XXX_PCI_DEVICE_ID:
+@@ -235,8 +236,7 @@ static int adf_probe(struct pci_dev *pde
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+--- a/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
++++ b/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
+@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pde
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C3XXXIOV_PCI_DEVICE_ID:
+@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pde
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+--- a/drivers/crypto/qat/qat_c62x/adf_drv.c
++++ b/drivers/crypto/qat/qat_c62x/adf_drv.c
+@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pde
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C62X_PCI_DEVICE_ID:
+@@ -235,8 +236,7 @@ static int adf_probe(struct pci_dev *pde
+ 	/* Find and map all the device's BARS */
+ 	i = (hw_data->fuses & ADF_DEVICE_FUSECTL_MASK) ? 1 : 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+--- a/drivers/crypto/qat/qat_c62xvf/adf_drv.c
++++ b/drivers/crypto/qat/qat_c62xvf/adf_drv.c
+@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pde
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C62XIOV_PCI_DEVICE_ID:
+@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pde
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+--- a/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
++++ b/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
+@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pde
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_DH895XCC_PCI_DEVICE_ID:
+@@ -237,8 +238,7 @@ static int adf_probe(struct pci_dev *pde
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+--- a/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
++++ b/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
+@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pde
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_DH895XCCIOV_PCI_DEVICE_ID:
+@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pde
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
 
 
