@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609B2C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F0AC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 254DB214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 206D52087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vzFFurcS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 254DB214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Rw5V7Lx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 206D52087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbeJIBz0 (ORCPT
+        id S1730243AbeJIBz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbeJIBzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:25 -0400
+        id S1729556AbeJIBz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:28 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12C49214C4;
-        Mon,  8 Oct 2018 18:42:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E465B21479;
+        Mon,  8 Oct 2018 18:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024140;
-        bh=OmGm8fuACCBSTjq3Oe0K9Too1Lx25h9hPz5lAU4iP/M=;
+        s=default; t=1539024143;
+        bh=MftI0iGgRXpj2EoQXS9STCUb7G3LQc/v/lwsRdK51tA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vzFFurcSB+ru51wBGyNhbc8lATW1/Imww4KxR73Lu07P/MUuvOXkiUetIyT3uWoGG
-         TXypEBWd5kyRlOqCze6jSUgB5INK1bBGAJptzsrzfAcMXIZJMK2DHxVACbbojUH/gt
-         77/w+ivs/XheTjehxxDxdngUM8usrG2ZixQo0eEA=
+        b=1Rw5V7LxvCYXKL5enebCAOPEZ/itfYueuDXgxs/LFvDWmR37QPBKPQC3r56q5nbVP
+         05fJ1swju21OUyN0BhoCuF6lse0o04tHgYOoI+KOzgLQCGrOoIe07eDjJWlg+/gAep
+         yqkTbQRF7BW49far7RAIblSsf+Erc6er24F7Dgoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 35/94] mac80211: Fix station bandwidth setting after channel switch
-Date:   Mon,  8 Oct 2018 20:31:16 +0200
-Message-Id: <20181008175606.682254934@linuxfoundation.org>
+Subject: [PATCH 4.14 36/94] mac80211: dont Tx a deauth frame if the AP forbade Tx
+Date:   Mon,  8 Oct 2018 20:31:17 +0200
+Message-Id: <20181008175606.730571594@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,104 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 0007e94355fdb71a1cf5dba0754155cba08f0666 ]
+[ Upstream commit 6c18b27d6e5c6a7206364eae2b47bc8d8b2fa68f ]
 
-When performing a channel switch flow for a managed interface, the
-flow did not update the bandwidth of the AP station and the rate
-scale algorithm. In case of a channel width downgrade, this would
-result with the rate scale algorithm using a bandwidth that does not
-match the interface channel configuration.
+If the driver fails to properly prepare for the channel
+switch, mac80211 will disconnect. If the CSA IE had mode
+set to 1, it means that the clients are not allowed to send
+any Tx on the current channel, and that includes the
+deauthentication frame.
 
-Fix this by updating the AP station bandwidth and rate scaling algorithm
-before the actual channel change in case of a bandwidth downgrade, or
-after the actual channel change in case of a bandwidth upgrade.
+Make sure that we don't send the deauthentication frame in
+this case.
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
+In iwlwifi, this caused a failure to flush queues since the
+firmware already closed the queues after having parsed the
+CSA IE. Then mac80211 would wait until the deauthentication
+frame would go out (drv_flush(drop=false)) and that would
+never happen.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mlme.c |   53 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ net/mac80211/mlme.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 --- a/net/mac80211/mlme.c
 +++ b/net/mac80211/mlme.c
-@@ -988,6 +988,10 @@ static void ieee80211_chswitch_work(stru
- 	 */
+@@ -1280,6 +1280,16 @@ ieee80211_sta_process_chanswitch(struct
+ 					 cbss->beacon_interval));
+ 	return;
+  drop_connection:
++	/*
++	 * This is just so that the disconnect flow will know that
++	 * we were trying to switch channel and failed. In case the
++	 * mode is 1 (we are not allowed to Tx), we will know not to
++	 * send a deauthentication frame. Those two fields will be
++	 * reset when the disconnection worker runs.
++	 */
++	sdata->vif.csa_active = true;
++	sdata->csa_block_tx = csa_ie.mode;
++
+ 	ieee80211_queue_work(&local->hw, &ifmgd->csa_connection_drop_work);
+ 	mutex_unlock(&local->chanctx_mtx);
+ 	mutex_unlock(&local->mtx);
+@@ -2450,6 +2460,7 @@ static void __ieee80211_disconnect(struc
+ 	struct ieee80211_local *local = sdata->local;
+ 	struct ieee80211_if_managed *ifmgd = &sdata->u.mgd;
+ 	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
++	bool tx;
  
- 	if (sdata->reserved_chanctx) {
-+		struct ieee80211_supported_band *sband = NULL;
-+		struct sta_info *mgd_sta = NULL;
-+		enum ieee80211_sta_rx_bandwidth bw = IEEE80211_STA_RX_BW_20;
-+
- 		/*
- 		 * with multi-vif csa driver may call ieee80211_csa_finish()
- 		 * many times while waiting for other interfaces to use their
-@@ -996,6 +1000,48 @@ static void ieee80211_chswitch_work(stru
- 		if (sdata->reserved_ready)
- 			goto out;
- 
-+		if (sdata->vif.bss_conf.chandef.width !=
-+		    sdata->csa_chandef.width) {
-+			/*
-+			 * For managed interface, we need to also update the AP
-+			 * station bandwidth and align the rate scale algorithm
-+			 * on the bandwidth change. Here we only consider the
-+			 * bandwidth of the new channel definition (as channel
-+			 * switch flow does not have the full HT/VHT/HE
-+			 * information), assuming that if additional changes are
-+			 * required they would be done as part of the processing
-+			 * of the next beacon from the AP.
-+			 */
-+			switch (sdata->csa_chandef.width) {
-+			case NL80211_CHAN_WIDTH_20_NOHT:
-+			case NL80211_CHAN_WIDTH_20:
-+			default:
-+				bw = IEEE80211_STA_RX_BW_20;
-+				break;
-+			case NL80211_CHAN_WIDTH_40:
-+				bw = IEEE80211_STA_RX_BW_40;
-+				break;
-+			case NL80211_CHAN_WIDTH_80:
-+				bw = IEEE80211_STA_RX_BW_80;
-+				break;
-+			case NL80211_CHAN_WIDTH_80P80:
-+			case NL80211_CHAN_WIDTH_160:
-+				bw = IEEE80211_STA_RX_BW_160;
-+				break;
-+			}
-+
-+			mgd_sta = sta_info_get(sdata, ifmgd->bssid);
-+			sband =
-+				local->hw.wiphy->bands[sdata->csa_chandef.chan->band];
-+		}
-+
-+		if (sdata->vif.bss_conf.chandef.width >
-+		    sdata->csa_chandef.width) {
-+			mgd_sta->sta.bandwidth = bw;
-+			rate_control_rate_update(local, sband, mgd_sta,
-+						 IEEE80211_RC_BW_CHANGED);
-+		}
-+
- 		ret = ieee80211_vif_use_reserved_context(sdata);
- 		if (ret) {
- 			sdata_info(sdata,
-@@ -1006,6 +1052,13 @@ static void ieee80211_chswitch_work(stru
- 			goto out;
- 		}
- 
-+		if (sdata->vif.bss_conf.chandef.width <
-+		    sdata->csa_chandef.width) {
-+			mgd_sta->sta.bandwidth = bw;
-+			rate_control_rate_update(local, sband, mgd_sta,
-+						 IEEE80211_RC_BW_CHANGED);
-+		}
-+
- 		goto out;
+ 	sdata_lock(sdata);
+ 	if (!ifmgd->associated) {
+@@ -2457,6 +2468,8 @@ static void __ieee80211_disconnect(struc
+ 		return;
  	}
  
++	tx = !sdata->csa_block_tx;
++
+ 	/* AP is probably out of range (or not reachable for another reason) so
+ 	 * remove the bss struct for that AP.
+ 	 */
+@@ -2464,7 +2477,7 @@ static void __ieee80211_disconnect(struc
+ 
+ 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH,
+ 			       WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY,
+-			       true, frame_buf);
++			       tx, frame_buf);
+ 	mutex_lock(&local->mtx);
+ 	sdata->vif.csa_active = false;
+ 	ifmgd->csa_waiting_bcn = false;
+@@ -2475,7 +2488,7 @@ static void __ieee80211_disconnect(struc
+ 	}
+ 	mutex_unlock(&local->mtx);
+ 
+-	ieee80211_report_disconnect(sdata, frame_buf, sizeof(frame_buf), true,
++	ieee80211_report_disconnect(sdata, frame_buf, sizeof(frame_buf), tx,
+ 				    WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY);
+ 
+ 	sdata_unlock(sdata);
 
 
