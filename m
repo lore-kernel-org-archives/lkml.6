@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF1BC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DC6C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9AB2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB93C20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLKaJDgU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9AB2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyWpdHTj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB93C20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbeJIBuI (ORCPT
+        id S1728788AbeJIBuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35856 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbeJIBuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:07 -0400
+        id S1726529AbeJIBuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9506B2087D;
-        Mon,  8 Oct 2018 18:37:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E16C2089D;
+        Mon,  8 Oct 2018 18:37:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023824;
-        bh=hoq3dbOftU5Vbvjvk8ONskX1qvc5XhkyYQ6x1nQQzkc=;
+        s=default; t=1539023826;
+        bh=Ygq4OuldNQAvU+a1N1ZBHfaMQRTGtIdhHYrQlTKoS+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nLKaJDgUkscVR7gXRGIch+Wq45FXZMrpg5vQuUhM3b0AkPTg7RO2vGUPTrMHtOpzy
-         4Oyg6B++mUK9viKfjoVc9xJzyyCim06iZYn4Ryp5p+x6at7a6Vvw4gxygA0e3jLW65
-         SxLd6awXzYkQzVAOyEy6tORSXZx+2zDf94A1sBM0=
+        b=OyWpdHTj5AcShbyCpZtbU2qrtul81ETNjmjkijP7rKdvotM37Klk4Uom5sR8aMWiS
+         dMWhEwInMVq/Ub98ah7d+gIS0r/FZYux/4igkmXLg0g+xBjwSsAXsLstlj5r9ZCMZ6
+         5f9WYPuhels1O4tYkwgjYl8j2HCJdvmgIW3Mku5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 096/113] USB: yurex: Check for truncation in yurex_read()
-Date:   Mon,  8 Oct 2018 20:31:37 +0200
-Message-Id: <20181008175536.543068387@linuxfoundation.org>
+Subject: [PATCH 4.4 097/113] drm/nouveau/TBDdevinit: dont fail when PMU/PRE_OS is missing from VBIOS
+Date:   Mon,  8 Oct 2018 20:31:38 +0200
+Message-Id: <20181008175536.599827793@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,37 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 14427b86837a4baf1c121934c6599bdb67dfa9fc ]
+[ Upstream commit 0a6986c6595e9afd20ff7280dab36431c1e467f8 ]
 
-snprintf() always returns the full length of the string it could have
-printed, even if it was truncated because the buffer was too small.
-So in case the counter value is truncated, we will over-read from
-in_buffer and over-write to the caller's buffer.
+This Falcon application doesn't appear to be present on some newer
+systems, so let's not fail init if we can't find it.
 
-I don't think it's actually possible for this to happen, but in case
-truncation occurs, WARN and return -EIO.
+TBD: is there a way to determine whether it *should* be there?
 
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/misc/yurex.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm204.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -431,6 +431,9 @@ static ssize_t yurex_read(struct file *f
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 	mutex_unlock(&dev->io_mutex);
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm204.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm204.c
+@@ -161,7 +161,8 @@ gm204_devinit_post(struct nvkm_devinit *
+ 	}
  
-+	if (WARN_ON_ONCE(len >= sizeof(in_buffer)))
-+		return -EIO;
-+
- 	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
+ 	/* load and execute some other ucode image (bios therm?) */
+-	return pmu_load(init, 0x01, post, NULL, NULL);
++	pmu_load(init, 0x01, post, NULL, NULL);
++	return 0;
  }
  
+ static const struct nvkm_devinit_func
 
 
