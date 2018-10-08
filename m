@@ -2,109 +2,131 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C981EC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ED5C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E5920858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8462720841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:08:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzZ00aAz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E5920858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="hr7VqVS2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8462720841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeJHVSE (ORCPT
+        id S1726442AbeJHVUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbeJHVSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:18:04 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        Mon, 8 Oct 2018 17:20:21 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42758 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726056AbeJHVUV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:20:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id BC4D48EE2EC;
+        Mon,  8 Oct 2018 07:08:26 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 88DPsMC4owcH; Mon,  8 Oct 2018 07:08:26 -0700 (PDT)
+Received: from [153.66.254.242] (unknown [50.35.68.20])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A75322087C;
-        Mon,  8 Oct 2018 14:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539007570;
-        bh=qGvtHr+CMDmWHX/83L83F2IdY3owtawwH/qDYioZ4r0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RzZ00aAzIvkDelqTH9UDyDdngojHbeCEZUwp+PJJ5ulS2sWJ7+nhu9RuNvsoq3AU+
-         TK+dQjy/WxjK4dmjjKrn2fK0SnKMnj9HIuZ0b5u4sBYk1P2fZWiQRFjoPSyFdAGDfG
-         8pWq/TJc13hnZdnmnBci6SWPk0hDTuHt0LULZbQQ=
-Received: by mail-qt1-f177.google.com with SMTP id q41-v6so20994480qtq.10;
-        Mon, 08 Oct 2018 07:06:10 -0700 (PDT)
-X-Gm-Message-State: ABuFfohd9nZ5NZb6hN0cVJ7JTsBH12cIEbtrQBWjS8L/B902/nJOP7le
-        rpm5LnI8zuJKR6aMFy6LJyH7f49lcjLww4KSCg==
-X-Google-Smtp-Source: ACcGV62KsUUpKLXT6piTWeTHL1QHKqJZ3HIWz14HO1selX1eMzsXiqgETACADOTZicacT/pVeWAgcOMP379shaQTGjI=
-X-Received: by 2002:a0c:b5d3:: with SMTP id o19-v6mr19705377qvf.218.1539007569885;
- Mon, 08 Oct 2018 07:06:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
- <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
-In-Reply-To: <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 8 Oct 2018 09:05:58 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
-Message-ID: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
-Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-To:     Simon Horman <horms@verge.net.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 17F468EE0FD;
+        Mon,  8 Oct 2018 07:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1539007706;
+        bh=PKREqNPr12/NEXMbDEFMaQlgJ5I6kZugtL4sM+F1jfk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=hr7VqVS27kfNDrfdkm3O2gjKpbmfgO1sLeNS96DK5dTIk/gGpyqrw6NszkdYbMNOK
+         ynmQx7eZ/xIR20ONpiMjXC0BYxaOpCtudd2xGq9sVbDDTuzKeOes/TJHMXcOM7Cfsl
+         4W5kAYJSBY8k6HQiPTa2YGHkiIQLIptzZCYABh+0=
+Message-ID: <1539007704.4344.2.camel@HansenPartnership.com>
+Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the
+ ambiguity about collecting email addresses
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>
+Date:   Mon, 08 Oct 2018 07:08:24 -0700
+In-Reply-To: <CAPM=9tz3Z=vD6qWUL2boZGEAgMeC_o9euBXFu2V58RHOn6gR9g@mail.gmail.com>
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+         <1538861799.4088.6.camel@HansenPartnership.com>
+         <CAPM=9tz3Z=vD6qWUL2boZGEAgMeC_o9euBXFu2V58RHOn6gR9g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 3:02 AM Simon Horman <horms@verge.net.au> wrote:
->
-> On Fri, Oct 05, 2018 at 11:58:41AM -0500, Rob Herring wrote:
-> > Convert Renesas SoC bindings to DT schema format using json-schema.
-> >
-> > Cc: Simon Horman <horms@verge.net.au>
-> > Cc: Magnus Damm <magnus.damm@gmail.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
->
-> This seems fine to me other than that it does not seem
-> to apply cleanly to next.
->
-> shmobile.txt sees a couple of updates per release cycle so from my point of
-> view it would ideal if this change could hit -rc1 to allow patches for
-> v4.21 to be accepted smoothly (already one from Sergei will need rebasing).
+On Mon, 2018-10-08 at 08:25 +1000, Dave Airlie wrote:
+> On Sun, 7 Oct 2018 at 07:36, James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > From 4a614e9440148894207bef5bf69e74071baceb3b Mon Sep 17 00:00:00
+> > 2001
+> > From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > Date: Sat, 6 Oct 2018 14:21:56 -0700
+> > Subject: [PATCH 1/2] code-of-conduct: Fix the ambiguity about
+> > collecting email  addresses
+> > 
+> > The current code of conduct has an ambiguity in the it considers
+> > publishing private information such as email addresses unacceptable
+> > behaviour.  Since the Linux kernel collects and publishes email
+> > addresses as part of the patch process, add an exception clause for
+> > email addresses ordinarily collected by the project to correct this
+> > ambiguity.
+> > 
+> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c
+> > om>
+> > ---
+> >  Documentation/process/code-of-conduct.rst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/process/code-of-conduct.rst
+> > b/Documentation/process/code-of-conduct.rst
+> > index ab7c24b5478c..aa40e34e7785 100644
+> > --- a/Documentation/process/code-of-conduct.rst
+> > +++ b/Documentation/process/code-of-conduct.rst
+> > @@ -31,7 +31,7 @@ Examples of unacceptable behavior by participants
+> > include:
+> >  * Trolling, insulting/derogatory comments, and personal or
+> > political attacks
+> >  * Public or private harassment
+> >  * Publishing others’ private information, such as a physical or
+> > electronic
+> > -  address, without explicit permission
+> > +  address not ordinarily collected by the project, without
+> > explicit permission
+> >  * Other conduct which could reasonably be considered inappropriate
+> > in a professional setting
+> > 
+> 
+> I agree we want something like this, the question is whether we want
+> to change the CoC text from upstream, or clarify it in a separate
+> section.
 
-When we get to the point of merging (which isn't going to be 4.20),
-you and other maintainers can probably take all these patches. Other
-than the few restructuring patches, the only dependency is the build
-support which isn't a dependency to apply it, but build it. I plan to
-build any patches as part of reviewing at least early on. OTOH, the
-build support is small enough and self contained that maybe it can
-just be applied for 4.20.
+A Code of Conduct should be clear and not hedged around with footnotes
+and interpretations in my opinion, which is why I offered the patch
+like this.
 
-Rob
+> This isn't a legally binding license or anything, but departing from
+> the upstream wording makes it tricker to merge new upstream versions
+> if they are considered appropriate.
+
+The way I look at this is that it's very much like a vendor driver. 
+Some are mirror images of the source because we work closely with them;
+others could be forks.  However, the process for vendor drivers is that
+we make them work for us first and then see how the vendor wants to
+handle it.
+
+Once we agree the shape of what we need I promise to try to push it
+back into the source ... is that good enough compromise?
+
+James
+
