@@ -2,138 +2,128 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78B4C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87FBC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5985B2064E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:17:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B4022075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:18:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N5IHKZfF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5985B2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LaRUIYzF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4022075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeJHR2H (ORCPT
+        id S1727476AbeJHR3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:28:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40827 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbeJHR2H (ORCPT
+        Mon, 8 Oct 2018 13:29:06 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44188 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbeJHR3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:28:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id s5-v6so8146870pfj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 03:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DiOOxEqDanhgutW/0IuAYDiXhY1M1+Js3XIKYvcLGqg=;
-        b=N5IHKZfFyo8KF19XiZmHuhwjgzQ/H9tgzJ2N6GUemxDKv2MY/8V6Be/76tECAO19Ui
-         tkLllpWmqAnjKcO5LgFYQJEDyLjUW1gd+0H38wXLEbHqjpEURMRU117Ao0FT7qG6WAKa
-         GmQA90IbLFIY8OxKNkxqFKRE+81Noh0S2Fq50=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DiOOxEqDanhgutW/0IuAYDiXhY1M1+Js3XIKYvcLGqg=;
-        b=IhTfm+9NtlepZ4vOnKpP4+Uuki8UrHPF96lE8MdV8VShsm3LGfuBALl8gM3oYA/9Eg
-         +8LblutrTPNWBOEv6yovEVz9uw13t+plRKD4Y1WY+u+xhKo2+LOAokejjDRtlSb8zl7/
-         yVjhNmzuEdPzvOZFzEb9op2LiM7GOyccA19l1+Jm7GnlbV8qjiYsnhEZe5UVMEULNAG0
-         214eOPRAU88qwgB5c6kVlu0hXYeXG8z/dUu6xPf48oXVMNYTB8HVAmHeo9jpbeCVEOBX
-         MwuxIeay3k82kvmVX8hLc7xY9VCXt8iidf3f8//oJvJpEBV9odd+Yea4Kk0LY/vOyz8Q
-         d4/Q==
-X-Gm-Message-State: ABuFfohemf53NuMkS/cfV5EcR1kmBp6aVNj/hmcaF8gAuLRGx7AwsWA8
-        eGxQhAS++hrawOtgbqtuXiX6gA==
-X-Google-Smtp-Source: ACcGV600It/E5UFu5ade/U1z9gN/BLRQA9HvsgtRPEsFAAHCqqgweRiqmQjyZ7grBtYJLgYvJ7UKCQ==
-X-Received: by 2002:a63:ea43:: with SMTP id l3-v6mr20655352pgk.427.1538993827990;
-        Mon, 08 Oct 2018 03:17:07 -0700 (PDT)
-Received: from jfw540.solutionip.com (165084180235.ctinets.com. [165.84.180.235])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm24601032pfg.180.2018.10.08.03.17.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 03:17:07 -0700 (PDT)
-From:   Jerome Forissier <jerome.forissier@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Maydell <peter.maydell@linaro.org>,
-        Etienne Carriere <etienne.carriere@linaro.org>,
-        tee-dev@lists.linaro.org,
-        Jerome Forissier <jerome.forissier@linaro.org>
-Subject: [PATCH v2] Documentation: dt: Add binding for /secure-chosen/stdout-path
-Date:   Mon,  8 Oct 2018 18:16:42 +0800
-Message-Id: <20181008101642.8040-1-jerome.forissier@linaro.org>
-X-Mailer: git-send-email 2.15.1
+        Mon, 8 Oct 2018 13:29:05 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181008101805euoutp01d9ec563c77bb1d191abd65279ff161a5~bmsjVItdu0268802688euoutp01E
+        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 10:18:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181008101805euoutp01d9ec563c77bb1d191abd65279ff161a5~bmsjVItdu0268802688euoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538993885;
+        bh=Sd0bspLALVIth+6jrYTHrw0m9UpZdfogp7KhfV4/7Do=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=LaRUIYzFKEEb2refNmGnViZ+D2VNnKFRaZTj+xnza3Tz8WRLNvnlILARxotwPYpxK
+         hwd5jzgZ4BeBKKSe7x96sZcvYTltXRALH8CV3DRk0u9BG7orw+9C9/9NsTMH8pl941
+         BUN7ESi5xppOdtPs6YvZj27mzRFWDsQLCFwCRGPo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181008101804eucas1p2b478416b3e50985682523299f455b3ab~bmsixT0Hs1883918839eucas1p2s;
+        Mon,  8 Oct 2018 10:18:04 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 70.C9.04806.CDE2BBB5; Mon,  8
+        Oct 2018 11:18:04 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181008101803eucas1p1a349978a3ea9637a7901c465bc5bff9a~bmsh9q_lm1440414404eucas1p1y;
+        Mon,  8 Oct 2018 10:18:03 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181008101803eusmtrp1f1d17831694809467818966ba86e58a8~bmshs7HNp1374113741eusmtrp1b;
+        Mon,  8 Oct 2018 10:18:03 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-89-5bbb2edcc903
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E5.63.04284.BDE2BBB5; Mon,  8
+        Oct 2018 11:18:03 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181008101803eusmtip2f24f9137e5f0c8a18790bbb2cac66227~bmshfFyoZ1589615896eusmtip2t;
+        Mon,  8 Oct 2018 10:18:03 +0000 (GMT)
+Subject: Re: [PATCH] video: fbdev: add the dependency of broadsheetfb in
+ Kconfig
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date:   Mon, 8 Oct 2018 12:18:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180727081257.3571-1-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRT23f3wbjh5nYoni8IVGYJmH5BpVFY/RoFISUor3MqLk9wmu2op
+        FIKksTSzIHNatIGmQ9yUULfUxMIlW4IklrCU2ReJskBFnCtz3gn+e55zznPO87y8DCGppmKZ
+        Ak0xq9MoC6W0iOwZWR1LdCe9kSePVtEpnfVGQcrEspdO+fDwD5Xyyd5MnyZlNsPXUNnMA4dA
+        tti9O5O4IjqRxxYWlLK6gycVItXvPi9VVEvcttWOkxVoUKBHQgbwUZgdWaX0SMRIcBuCtZl5
+        midLCH4OVBI8WURgN9WRW5K3lTXBxisETW1Pg3ovAuPkHNIjhonEF+FXS0ZAEIXjwdlqpwKY
+        wApwmqY3F9E4FeqrzSiASbwPnnssdEAajXOgzhUfKItxBIw2ft8cF+I0mPZaQvk1yfDe1Bxc
+        uQd6F5o3/QBeo2H8h5/kxaWwvjJG86bPwbrHR/A4EuYcr0N5vAucT2pIXtyAYN7XEiQWBB2u
+        keArpcE7xzjF43ToMPuogFPA4fBlIYJ3EQ6PexoIviyG+1USfno/WFut9NYtva096EEG7voJ
+        4hGKM2zLadiWzbAt20tEmFEMW8Kp81nuiIa9lcQp1VyJJj/phlbdjTa+h/OfY7kPDfqvDyPM
+        IGmYODPDLpdQylKuTD2MgCGkUeLo3o2SOE9ZVs7qtLm6kkKWG0Y7GVIaI2590SWX4HxlMXuT
+        ZYtY3VZXwAhjK1CI+by/+ljnkKqrp/9lf65Qe889YHNlXNOE6A/P+BaWlcPF2sn1BGtcv8Lr
+        adz7d5Hc0RBHZM9O5a0WTJkUK23l7ZePnzmQ+s1zocgdfsrllbu8Rq4Mo6WWviYpHrmUdTcx
+        O8f/eVZxlpswCp8tq8Lw/MeBsax0y9BVwR2rlORUykMJhI5T/gdeNfQQGgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4Pd3berujDRpXCVism7iQyeLK1/ds
+        Fif6PrBaXN41h82BxWPnrLvsHve7jzN5fN4kF8AcpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFn
+        ZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfxcsd71oJe5oqdvRdZGhj3MXUxcnJICJhI7G/u
+        Ye5i5OIQEljKKHFmw14ghwMoISNxfH0ZRI2wxJ9rXWwQNW8ZJWbOaGQCqREWCJJ4vtQPpEZE
+        QF3i9LJdrBA1fYwSZ2etAqthFkiQeDYvBaSGTcBKYmL7KkYQm1fATuLJ7CWsIDaLgIrE3Ifr
+        2UBsUYEIiVsPO1ggagQlTs58AmZzClhL3Hu/nh3EZhbQk9hx/RcrhC0vsf3tHOYJjIKzkLTM
+        QlI2C0nZAkbmVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIHxsO3Yz807GC9tDD7EKMDBqMTD
+        G+C3K1qINbGsuDL3EKMEB7OSCK/odqAQb0piZVVqUX58UWlOavEhRlOgJyYyS4km5wNjNa8k
+        3tDU0NzC0tDc2NzYzEJJnPe8QWWUkEB6YklqdmpqQWoRTB8TB6dUA2P1iwSlzWwvODyjz8TO
+        iDHtcTc+9d3bWffX4rbWy8Iv10l0vhQ/y/OXzYPHW+PbTYbtrYqBp+adbNrExpksHLXZZ11I
+        2eRrv5wtp2Vym/94PmtPyGWLDOaTXDcEuJ9mr/qj5ygQJh7LOkHWuKXT4/Jsr9dWha6f9hnO
+        fs2zd5f9HclHW/3se5RYijMSDbWYi4oTAb+pKLudAgAA
+Message-Id: <20181008101803eucas1p1a349978a3ea9637a7901c465bc5bff9a~bmsh9q_lm1440414404eucas1p1y@eucas1p1.samsung.com>
+X-CMS-MailID: 20181008101803eucas1p1a349978a3ea9637a7901c465bc5bff9a
+X-Msg-Generator: CA
+X-RootMTR: 20180727081315epcas2p42a5d377bdbf3e8e6d2e18c2d1189d9d0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180727081315epcas2p42a5d377bdbf3e8e6d2e18c2d1189d9d0
+References: <CGME20180727081315epcas2p42a5d377bdbf3e8e6d2e18c2d1189d9d0@epcas2p4.samsung.com>
+        <20180727081257.3571-1-baijiaju1990@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some platforms may use a single device tree to describe two address
-spaces, as described in d9f43babb998 ("Documentation: dt: Add bindings
-for Secure-only devices"). For these platforms it makes sense to define
-a secure counterpart of /chosen, namely: /secure-chosen. This new node
-is meant to be used by the secure firmware to pass data to the secure
-OS. Only the stdout-path property is supported for now.
 
-Signed-off-by: Jerome Forissier <jerome.forissier@linaro.org>
----
+On 07/27/2018 10:12 AM, Jia-Ju Bai wrote:
+> broadsheetfb is a platform driver and it should not be used on x86.
+> It should be used only by single ARM PXA board, so adding the 
+> dependency in Kconfig.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-Notes:
-    Sending this again, slightly modified. Previous submission was in March
-    2017 [1]. Since then, OP-TEE has implemented this binding for platforms
-    that use DT [2] (fallback to /chosen/stdout-path to be implemented in
-    [3]). A patch for QEMU has been proposed [4], to which the maintainer
-    responded "Are the DT bindings upstream yet?" ;-)
-    
-    [1] https://patchwork.kernel.org/patch/9602401/
-    [2] https://github.com/OP-TEE/optee_os/commit/4dc31c52544a
-    [3] https://github.com/OP-TEE/optee_os/pull/2569
-    [4] https://patchwork.ozlabs.org/patch/979345/
-    
-    Changes since v1:
-    - Use "should" instead of "may" ("...the Secure OS should use the value
-    of /chosen/stdout-path...").
+Patch queued for 4.20, thanks.
 
- Documentation/devicetree/bindings/arm/secure.txt | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/secure.txt b/Documentation/devicetree/bindings/arm/secure.txt
-index e31303fb233a..f27bbff2c780 100644
---- a/Documentation/devicetree/bindings/arm/secure.txt
-+++ b/Documentation/devicetree/bindings/arm/secure.txt
-@@ -32,7 +32,8 @@ describe the view of Secure world using the standard bindings. These
- secure- bindings only need to be used where both the Secure and Normal
- world views need to be described in a single device tree.
- 
--Valid Secure world properties:
-+Valid Secure world properties
-+-----------------------------
- 
- - secure-status : specifies whether the device is present and usable
-   in the secure world. The combination of this with "status" allows
-@@ -51,3 +52,19 @@ Valid Secure world properties:
-    status = "disabled"; secure-status = "okay";     /* S-only */
-    status = "disabled";                             /* disabled in both */
-    status = "disabled"; secure-status = "disabled"; /* disabled in both */
-+
-+The secure-chosen node
-+----------------------
-+
-+Similar to the /chosen node which serves as a place for passing data
-+between firmware and the operating system, the /secure-chosen node may
-+be used to pass data to the Secure OS. Only the properties defined
-+below may appear in the /secure-chosen node.
-+
-+- stdout-path : specifies the device to be used by the Secure OS for
-+  its console output. The syntax is the same as for /chosen/stdout-path.
-+  If the /secure-chosen node exists but the stdout-path property is not
-+  present, the Secure OS should not perform any console output. If
-+  /secure-chosen does not exist, the Secure OS should use the value of
-+  /chosen/stdout-path instead (that is, use the same device as the
-+  Normal world OS).
--- 
-2.15.1
-
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
