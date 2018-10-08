@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C2BC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9673DC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C355921479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:17:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C355921479
+	by mail.kernel.org (Postfix) with ESMTP id 49A132086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:19:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A132086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbeJHN1T (ORCPT
+        id S1726330AbeJHN31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:27:19 -0400
-Received: from mga04.intel.com ([192.55.52.120]:32787 "EHLO mga04.intel.com"
+        Mon, 8 Oct 2018 09:29:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:54060 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725925AbeJHN1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:27:19 -0400
+        id S1725857AbeJHN31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 09:29:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2018 23:17:14 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2018 23:19:22 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,355,1534834800"; 
-   d="scan'208";a="76213004"
+   d="scan'208";a="76213381"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Oct 2018 23:17:14 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 07 Oct 2018 23:19:20 -0700
 Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
-        by linux.intel.com (Postfix) with ESMTP id 57FA8580409;
-        Sun,  7 Oct 2018 23:17:12 -0700 (PDT)
-Subject: [PATCH v11 2/3]: perf record: enable asynchronous trace writing
+        by linux.intel.com (Postfix) with ESMTP id 5D2C0580409;
+        Sun,  7 Oct 2018 23:19:18 -0700 (PDT)
+Subject: [PATCH v11 3/3]: perf record: extend trace writing to multi AIO
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
@@ -46,8 +46,8 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <31b0ae5f-e1b5-4255-11af-46c8ebe8e2be@linux.intel.com>
-Date:   Mon, 8 Oct 2018 09:17:11 +0300
+Message-ID: <3c3d65dc-b2f6-b102-1805-a05ee6755653@linux.intel.com>
+Date:   Mon, 8 Oct 2018 09:19:17 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -61,404 +61,378 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Trace file offset is read once before mmaps iterating loop and written
-back after all performance data enqueued for aio writing. Trace file offset 
-is incremented linearly after every successful aio write operation. 
+Multi AIO trace writing allows caching more kernel data into userspace 
+memory postponing trace writing for the sake of overall profiling data 
+thruput increase. It could be seen as kernel data buffer extension into
+userspace memory.
 
-record__aio_sync() blocks till completion of started AIO operation 
-and then proceeds.
+With aio-cblocks option value different from 0, current default value, 
+tool has capability to cache more and more data into user space
+along with delegating spill to AIO.
 
-record__mmap_read_sync() implements a barrier for all incomplete
-aio write requests.
+That allows avoiding suspend at record__aio_sync() between calls of 
+record__mmap_read_evlist() and increase profiling data thruput for 
+the cost of userspace memory.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- Changes in v11:
- - replacing the both lseek() syscalls in every loop iteration by the only 
-   two syscalls just before and after the loop at record__mmap_read_evlist() 
-   and advancing *in-flight* off file pos value at perf_mmap__aio_push()
- Changes in v10:
- - avoided lseek() setting file pos back in case of record__aio_write() failure
- - compacted code selecting between serial and AIO streaming
- - optimized call places of record__mmap_read_sync()
- Changes in v9:
- - enable AIO streaming only when --aio-cblocks option is specified explicitly
- Changes in v8:
- - split AIO completion check into separate record__aio_complete()
- Changes in v6:
- - handled errno == EAGAIN case from aio_write();
- Changes in v5:
- - data loss metrics decreased from 25% to 2x in trialed configuration;
- - avoided nanosleep() prior calling aio_suspend();
- - switched to per cpu multi record__aio_sync() aio
- - record_mmap_read_sync() now does global barrier just before 
-   switching trace file or collection stop;
- - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
- Changes in v4:
- - converted void *bf to struct perf_mmap *md in signatures
- - written comment in perf_mmap__push() just before perf_mmap__get();
- - written comment in record__mmap_read_sync() on possible restarting 
-   of aio_write() operation and releasing perf_mmap object after all;
- - added perf_mmap__put() for the cases of failed aio_write();
- Changes in v3:
- - written comments about nanosleep(0.5ms) call prior aio_suspend()
-   to cope with intrusiveness of its implementation in glibc;
- - written comments about rationale behind coping profiling data 
-   into mmap->data buffer;
+Changes in v10:
+- added description of aio-cblocks option into perf-record.txt
 ---
- tools/perf/builtin-record.c | 168 ++++++++++++++++++++++++++++++++++++++++++--
- tools/perf/perf.h           |   3 +
- tools/perf/util/mmap.c      |  76 ++++++++++++++++++++
- tools/perf/util/mmap.h      |   5 ++
- 4 files changed, 246 insertions(+), 6 deletions(-)
+ tools/perf/Documentation/perf-record.txt |  6 +++
+ tools/perf/builtin-record.c              | 58 +++++++++++++++++++-----
+ tools/perf/util/evlist.c                 |  6 +--
+ tools/perf/util/evlist.h                 |  2 +-
+ tools/perf/util/mmap.c                   | 76 ++++++++++++++++++++++----------
+ tools/perf/util/mmap.h                   |  7 +--
+ 6 files changed, 115 insertions(+), 40 deletions(-)
 
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 246dee081efd..7f43a05908ed 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -435,6 +435,12 @@ Specify vmlinux path which has debuginfo.
+ --buildid-all::
+ Record build-id of all DSOs regardless whether it's actually hit or not.
+ 
++--aio-cblocks <n>
++Use <n> control blocks for asynchronous (Posix AIO) trace writing (max: 4).
++Default value is 0 that enables serial (none-AIO) trace writing mode.
++AIO mode is supported only when linking Perf tool binary with libc library
++providing implementation for Posix AIO API.
++
+ --all-kernel::
+ Configure all used events to run in kernel space.
+ 
 diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0980dfe3396b..c66ae23e3939 100644
+index c66ae23e3939..016f521fcaf0 100644
 --- a/tools/perf/builtin-record.c
 +++ b/tools/perf/builtin-record.c
-@@ -124,6 +124,112 @@ static int record__write(struct record *rec, struct perf_mmap *map __maybe_unuse
- 	return 0;
- }
- 
-+#ifdef HAVE_AIO_SUPPORT
-+static int record__aio_write(struct aiocb *cblock, int trace_fd,
-+		void *buf, size_t size, off_t off)
-+{
-+	int rc;
-+
-+	cblock->aio_fildes = trace_fd;
-+	cblock->aio_buf    = buf;
-+	cblock->aio_nbytes = size;
-+	cblock->aio_offset = off;
-+	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
-+
-+	do {
-+		rc = aio_write(cblock);
-+		if (rc == 0) {
-+			break;
-+		} else if (errno != EAGAIN) {
-+			cblock->aio_fildes = -1;
-+			pr_err("failed to queue perf data, error: %m\n");
-+			break;
-+		}
-+	} while (1);
-+
-+	return rc;
-+}
-+
-+static int record__aio_complete(struct perf_mmap *md, struct aiocb *cblock)
-+{
-+	void *rem_buf;
-+	off_t rem_off;
-+	size_t rem_size;
-+	int rc, aio_errno;
-+	ssize_t aio_ret, written;
-+
-+	aio_errno = aio_error(cblock);
-+	if (aio_errno == EINPROGRESS)
-+		return 0;
-+
-+	written = aio_ret = aio_return(cblock);
-+	if (aio_ret < 0) {
-+		if (aio_errno != EINTR)
-+			pr_err("failed to write perf data, error: %m\n");
-+		written = 0;
-+	}
-+
-+	rem_size = cblock->aio_nbytes - written;
-+
-+	if (rem_size == 0) {
-+		cblock->aio_fildes = -1;
-+		/*
-+		 * md->refcount is incremented in perf_mmap__push() for
-+		 * every enqueued aio write request so decrement it because
-+		 * the request is now complete.
-+		 */
-+		perf_mmap__put(md);
-+		rc = 1;
-+	} else {
-+		/*
-+		 * aio write request may require restart with the
-+		 * reminder if the kernel didn't write whole
-+		 * chunk at once.
-+		 */
-+		rem_off = cblock->aio_offset + written;
-+		rem_buf = (void *)(cblock->aio_buf + written);
-+		record__aio_write(cblock, cblock->aio_fildes,
-+				rem_buf, rem_size, rem_off);
-+		rc = 0;
-+	}
-+
-+	return rc;
-+}
-+
-+static void record__aio_sync(struct perf_mmap *md)
-+{
-+	struct aiocb *cblock = &md->cblock;
-+	struct timespec timeout = { 0, 1000 * 1000  * 1 }; /* 1ms */
-+
-+	do {
-+		if (cblock->aio_fildes == -1 || record__aio_complete(md, cblock))
-+			return;
-+
-+		while (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
-+			if (!(errno == EAGAIN || errno == EINTR))
-+				pr_err("failed to sync perf data, error: %m\n");
-+		}
-+	} while (1);
-+}
-+
-+static int record__aio_pushfn(void *to, struct aiocb *cblock, void *bf, size_t size, off_t off)
-+{
-+	struct record *rec = to;
-+	int ret, trace_fd = rec->session->data->file.fd;
-+
-+	rec->samples++;
-+
-+	ret = record__aio_write(cblock, trace_fd, bf, size, off);
-+	if (!ret) {
-+		rec->bytes_written += size;
-+		if (switch_output_size(rec))
-+			trigger_hit(&switch_output_trigger);
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- static int process_synthesized_event(struct perf_tool *tool,
- 				     union perf_event *event,
- 				     struct perf_sample *sample __maybe_unused,
-@@ -136,7 +242,6 @@ static int process_synthesized_event(struct perf_tool *tool,
- static int record__pushfn(struct perf_mmap *map, void *to, void *bf, size_t size)
- {
- 	struct record *rec = to;
--
- 	rec->samples++;
- 	return record__write(rec, map, bf, size);
- }
-@@ -513,6 +618,25 @@ static struct perf_event_header finished_round_event = {
- 	.type = PERF_RECORD_FINISHED_ROUND,
- };
- 
-+#ifdef HAVE_AIO_SUPPORT
-+static void record__mmap_read_sync(struct record *rec)
-+{
-+	int i;
-+	struct perf_evlist *evlist = rec->evlist;
-+	struct perf_mmap *maps = evlist->mmap;
-+
-+	if (!rec->opts.nr_cblocks)
-+		return;
-+
-+	for (i = 0; i < evlist->nr_mmaps; i++) {
-+		struct perf_mmap *map = &maps[i];
-+
-+		if (map->base)
-+			record__aio_sync(map);
-+	}
-+}
-+#endif
-+
- static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
- 				    bool overwrite)
- {
-@@ -520,7 +644,10 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 	int i;
- 	int rc = 0;
- 	struct perf_mmap *maps;
--
-+#ifdef HAVE_AIO_SUPPORT
-+	int trace_fd = rec->data.file.fd;
-+	off_t off;
-+#endif
- 	if (!evlist)
- 		return 0;
- 
-@@ -531,14 +658,34 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
- 		return 0;
- 
-+#ifdef HAVE_AIO_SUPPORT
-+	off = lseek(trace_fd, 0, SEEK_CUR);
-+#endif
- 	for (i = 0; i < evlist->nr_mmaps; i++) {
- 		struct perf_mmap *map = &maps[i];
- 
- 		if (map->base) {
--			if (perf_mmap__push(map, rec, record__pushfn) != 0) {
--				rc = -1;
--				goto out;
-+#ifdef HAVE_AIO_SUPPORT
-+			if (!rec->opts.nr_cblocks) {
-+#endif
-+				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
-+					rc = -1;
-+					goto out;
-+				}
-+#ifdef HAVE_AIO_SUPPORT
-+			} else {
-+				/*
-+				 * Call record__aio_sync() to wait till map->data buffer
-+				 * becomes available after previous aio write request.
-+				 */
-+				record__aio_sync(map);
-+				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
-+					lseek(trace_fd, off, SEEK_SET);
-+					rc = -1;
-+					goto out;
-+				}
- 			}
-+#endif
- 		}
- 
- 		if (map->auxtrace_mmap.base && !rec->opts.auxtrace_snapshot_mode &&
-@@ -547,7 +694,9 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 			goto out;
- 		}
- 	}
--
-+#ifdef HAVE_AIO_SUPPORT
-+	lseek(trace_fd, off, SEEK_SET);
-+#endif
- 	/*
- 	 * Mark the round finished in case we wrote
- 	 * at least one event.
-@@ -650,6 +799,9 @@ record__switch_output(struct record *rec, bool at_exit)
- 	/* Same Size:      "2015122520103046"*/
- 	char timestamp[] = "InvalidTimestamp";
- 
-+#ifdef HAVE_AIO_SUPPORT
-+	record__mmap_read_sync(rec);
-+#endif
- 	record__synthesize(rec, true);
- 	if (target__none(&rec->opts.target))
- 		record__synthesize_workload(rec, true);
-@@ -1157,6 +1309,10 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		record__synthesize_workload(rec, true);
- 
- out_child:
-+
-+#ifdef HAVE_AIO_SUPPORT
-+	record__mmap_read_sync(rec);
-+#endif
- 	if (forks) {
- 		int exit_status;
- 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 21bf7f5a3cf5..ef700d8bb610 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -82,6 +82,9 @@ struct record_opts {
- 	bool         use_clockid;
- 	clockid_t    clockid;
- 	unsigned int proc_map_timeout;
-+#ifdef HAVE_AIO_SUPPORT
-+	int	     nr_cblocks;
-+#endif
- };
- 
- struct option;
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index db8f16f8a363..ecaa5b5eb3ed 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -367,6 +367,82 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+@@ -196,16 +196,35 @@ static int record__aio_complete(struct perf_mmap *md, struct aiocb *cblock)
  	return rc;
  }
  
+-static void record__aio_sync(struct perf_mmap *md)
++static int record__aio_sync(struct perf_mmap *md, bool sync_all)
+ {
+-	struct aiocb *cblock = &md->cblock;
++	struct aiocb **aiocb = md->aiocb;
++	struct aiocb *cblocks = md->cblocks;
+ 	struct timespec timeout = { 0, 1000 * 1000  * 1 }; /* 1ms */
++	int i, do_suspend;
+ 
+ 	do {
+-		if (cblock->aio_fildes == -1 || record__aio_complete(md, cblock))
+-			return;
++		do_suspend = 0;
++		for (i = 0; i < md->nr_cblocks; ++i) {
++			if (cblocks[i].aio_fildes == -1 || record__aio_complete(md, &cblocks[i])) {
++				if (sync_all)
++					aiocb[i] = NULL;
++				else
++					return i;
++			} else {
++				/*
++				 * Started aio write is not complete yet
++				 * so it has to be waited before the
++				 * next allocation.
++				 */
++				aiocb[i] = &cblocks[i];
++				do_suspend = 1;
++			}
++		}
++		if (!do_suspend)
++			return -1;
+ 
+-		while (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
++		while (aio_suspend((const struct aiocb **)aiocb, md->nr_cblocks, &timeout)) {
+ 			if (!(errno == EAGAIN || errno == EINTR))
+ 				pr_err("failed to sync perf data, error: %m\n");
+ 		}
+@@ -430,11 +449,14 @@ static int record__mmap_evlist(struct record *rec,
+ 			       struct perf_evlist *evlist)
+ {
+ 	struct record_opts *opts = &rec->opts;
++	int nr_cblocks = 0;
+ 	char msg[512];
+-
 +#ifdef HAVE_AIO_SUPPORT
-+int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-+			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
-+			off_t *off)
-+{
-+	u64 head = perf_mmap__read_head(md);
-+	unsigned char *data = md->base + page_size;
-+	unsigned long size, size0 = 0;
-+	void *buf;
-+	int rc = 0;
-+
-+	rc = perf_mmap__read_init(md);
-+	if (rc < 0)
-+		return (rc == -EAGAIN) ? 0 : -1;
-+
-+	/*
-+	 * md->base data is copied into md->data buffer to
-+	 * release space in the kernel buffer as fast as possible,
-+	 * thru perf_mmap__consume() below.
-+	 *
-+	 * That lets the kernel to proceed with storing more
-+	 * profiling data into the kernel buffer earlier than other
-+	 * per-cpu kernel buffers are handled.
-+	 *
-+	 * Coping can be done in two steps in case the chunk of
-+	 * profiling data crosses the upper bound of the kernel buffer.
-+	 * In this case we first move part of data from md->start
-+	 * till the upper bound and then the reminder from the
-+	 * beginning of the kernel buffer till the end of
-+	 * the data chunk.
-+	 */
-+
-+	size = md->end - md->start;
-+
-+	if ((md->start & md->mask) + size != (md->end & md->mask)) {
-+		buf = &data[md->start & md->mask];
-+		size = md->mask + 1 - (md->start & md->mask);
-+		md->start += size;
-+		memcpy(md->data, buf, size);
-+		size0 = size;
-+	}
-+
-+	buf = &data[md->start & md->mask];
-+	size = md->end - md->start;
-+	md->start += size;
-+	memcpy(md->data + size0, buf, size);
-+
-+	/*
-+	 * Increment md->refcount to guard md->data buffer
-+	 * from premature deallocation because md object can be
-+	 * released earlier than aio write request started
-+	 * on mmap->data is complete.
-+	 *
-+	 * perf_mmap__put() is done at record__aio_complete()
-+	 * after started request completion.
-+	 */
-+	perf_mmap__get(md);
-+
-+	md->prev = head;
-+	perf_mmap__consume(md);
-+
-+	rc = push(to, &md->cblock, md->data, size0 + size, *off);
-+	if (!rc) {
-+		*off += size0 + size;
-+	} else {
-+		/*
-+		 * Decrement md->refcount back if aio write
-+		 * operation failed to start.
-+		 */
-+		perf_mmap__put(md);
-+	}
-+
-+	return rc;
-+}
++	nr_cblocks = opts->nr_cblocks;
++#endif
+ 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
+ 				 opts->auxtrace_mmap_pages,
+-				 opts->auxtrace_snapshot_mode) < 0) {
++				 opts->auxtrace_snapshot_mode, nr_cblocks) < 0) {
+ 		if (errno == EPERM) {
+ 			pr_err("Permission error mapping pages.\n"
+ 			       "Consider increasing "
+@@ -632,7 +654,7 @@ static void record__mmap_read_sync(struct record *rec)
+ 		struct perf_mmap *map = &maps[i];
+ 
+ 		if (map->base)
+-			record__aio_sync(map);
++			record__aio_sync(map, true);
+ 	}
+ }
+ #endif
+@@ -674,12 +696,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 				}
+ #ifdef HAVE_AIO_SUPPORT
+ 			} else {
++				int idx;
+ 				/*
+ 				 * Call record__aio_sync() to wait till map->data buffer
+ 				 * becomes available after previous aio write request.
+ 				 */
+-				record__aio_sync(map);
+-				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
++				idx = record__aio_sync(map, false);
++				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn, &off) != 0) {
+ 					lseek(trace_fd, off, SEEK_SET);
+ 					rc = -1;
+ 					goto out;
+@@ -1446,6 +1469,10 @@ static int perf_record_config(const char *var, const char *value, void *cb)
+ 		var = "call-graph.record-mode";
+ 		return perf_default_config(var, value, cb);
+ 	}
++#ifdef HAVE_AIO_SUPPORT
++	if (!strcmp(var, "record.aio-cblocks"))
++		rec->opts.nr_cblocks = strtol(value, NULL, 0);
++#endif
+ 
+ 	return 0;
+ }
+@@ -1837,6 +1864,10 @@ static struct option __record_options[] = {
+ 			  "signal"),
+ 	OPT_BOOLEAN(0, "dry-run", &dry_run,
+ 		    "Parse options then exit"),
++#ifdef HAVE_AIO_SUPPORT
++	OPT_INTEGER(0, "aio-cblocks", &record.opts.nr_cblocks,
++		    "Max number of simultaneous per-mmap trace writes (default: 0 - serial, max: 4)"),
++#endif
+ 	OPT_END()
+ };
+ 
+@@ -2029,6 +2060,13 @@ int cmd_record(int argc, const char **argv)
+ 		goto out;
+ 	}
+ 
++#ifdef HAVE_AIO_SUPPORT
++	if (rec->opts.nr_cblocks > 4)
++		rec->opts.nr_cblocks = 4;
++	if (verbose > 0)
++		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
 +#endif
 +
- /*
-  * Mandatory for overwrite mode
-  * The direction of overwrite mode is backward.
+ 	err = __cmd_record(&record, argc, argv);
+ out:
+ 	perf_evlist__delete(rec->evlist);
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index af2f8c965d7a..2dad3a4e50e0 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1018,7 +1018,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
+  */
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite)
++			 bool auxtrace_overwrite, int nr_cblocks __maybe_unused)
+ {
+ 	struct perf_evsel *evsel;
+ 	const struct cpu_map *cpus = evlist->cpus;
+@@ -1030,7 +1030,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 */
+ 	struct mmap_params mp;
+ #ifdef HAVE_AIO_SUPPORT
+-	mp.nr_cblocks = 0;
++	mp.nr_cblocks = nr_cblocks;
+ #endif
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+@@ -1062,7 +1062,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
+ {
+-	return perf_evlist__mmap_ex(evlist, pages, 0, false);
++	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
+ }
+ 
+ int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..2464463879b4 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -162,7 +162,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
+ 
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite);
++			 bool auxtrace_overwrite, int nr_cblocks);
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
+ void perf_evlist__munmap(struct perf_evlist *evlist);
+ 
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index ecaa5b5eb3ed..d33511490632 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -156,8 +156,16 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ #ifdef HAVE_AIO_SUPPORT
+ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ {
+-	if (map->data)
+-		zfree(&map->data);
++	int i;
++
++	if (map->aiocb)
++		zfree(&map->aiocb);
++	if (map->cblocks)
++		zfree(&map->cblocks);
++	for (i = 0; i < map->nr_cblocks; ++i) {
++		if (map->data[i])
++			zfree(&map->data[i]);
++	}
+ }
+ #endif
+ 
+@@ -178,28 +186,50 @@ void perf_mmap__munmap(struct perf_mmap *map)
+ #ifdef HAVE_AIO_SUPPORT
+ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ {
+-	int delta_max;
++	int delta_max, i, prio;
+ 
+ 	map->nr_cblocks = mp->nr_cblocks;
+ 	if (map->nr_cblocks) {
+-		map->data = malloc(perf_mmap__mmap_len(map));
++		map->aiocb = calloc(map->nr_cblocks, sizeof(struct aiocb *));
++		if (!map->aiocb) {
++			pr_debug2("failed to allocate aiocb for data buffer, error %m\n");
++			return -1;
++		}
++		map->cblocks = calloc(map->nr_cblocks, sizeof(struct aiocb));
++		if (!map->cblocks) {
++			pr_debug2("failed to allocate cblocks for data buffer, error %m\n");
++			return -1;
++		}
++		map->data = calloc(map->nr_cblocks, sizeof(void *));
+ 		if (!map->data) {
+ 			pr_debug2("failed to allocate data buffer, error %m\n");
+ 			return -1;
+ 		}
+-		/*
+-		 * Use cblock.aio_fildes value different from -1
+-		 * to denote started aio write operation on the
+-		 * cblock so it requires explicit record__aio_sync()
+-		 * call prior the cblock may be reused again.
+-		 */
+-		map->cblock.aio_fildes = -1;
+-		/*
+-		 * Allocate cblock with max priority delta to
+-		 * have faster aio write system calls.
+-		 */
+ 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+-		map->cblock.aio_reqprio = delta_max;
++		for (i = 0; i < map->nr_cblocks; ++i) {
++			map->data[i] = malloc(perf_mmap__mmap_len(map));
++			if (!map->data[i]) {
++				pr_debug2("failed to allocate data buffer area, error %m");
++				return -1;
++			}
++			/*
++			 * Use cblock.aio_fildes value different from -1
++			 * to denote started aio write operation on the
++			 * cblock so it requires explicit record__aio_sync()
++			 * call prior the cblock may be reused again.
++			 */
++			map->cblocks[i].aio_fildes = -1;
++			/*
++			 * Allocate cblocks with priority delta to have
++			 * faster aio write system calls because queued requests
++			 * are kept in separate per-prio queues and adding
++			 * a new request will iterate thru shorter per-prio
++			 * list. Blocks with numbers higher than
++			 *  _SC_AIO_PRIO_DELTA_MAX go with priority 0.
++			 */
++			prio = delta_max - i;
++			map->cblocks[i].aio_reqprio = prio >= 0 ? prio : 0;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -368,7 +398,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+ }
+ 
+ #ifdef HAVE_AIO_SUPPORT
+-int perf_mmap__aio_push(struct perf_mmap *md, void *to,
++int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
+ 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
+ 			off_t *off)
+ {
+@@ -383,7 +413,7 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
+ 		return (rc == -EAGAIN) ? 0 : -1;
+ 
+ 	/*
+-	 * md->base data is copied into md->data buffer to
++	 * md->base data is copied into md->data[idx] buffer to
+ 	 * release space in the kernel buffer as fast as possible,
+ 	 * thru perf_mmap__consume() below.
+ 	 *
+@@ -405,20 +435,20 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
+ 		buf = &data[md->start & md->mask];
+ 		size = md->mask + 1 - (md->start & md->mask);
+ 		md->start += size;
+-		memcpy(md->data, buf, size);
++		memcpy(md->data[idx], buf, size);
+ 		size0 = size;
+ 	}
+ 
+ 	buf = &data[md->start & md->mask];
+ 	size = md->end - md->start;
+ 	md->start += size;
+-	memcpy(md->data + size0, buf, size);
++	memcpy(md->data[idx] + size0, buf, size);
+ 
+ 	/*
+-	 * Increment md->refcount to guard md->data buffer
++	 * Increment md->refcount to guard md->data[idx] buffer
+ 	 * from premature deallocation because md object can be
+ 	 * released earlier than aio write request started
+-	 * on mmap->data is complete.
++	 * on mmap->data[idx] is complete.
+ 	 *
+ 	 * perf_mmap__put() is done at record__aio_complete()
+ 	 * after started request completion.
+@@ -428,7 +458,7 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
+ 	md->prev = head;
+ 	perf_mmap__consume(md);
+ 
+-	rc = push(to, &md->cblock, md->data, size0 + size, *off);
++	rc = push(to, &md->cblocks[idx], md->data[idx], size0 + size, *off);
+ 	if (!rc) {
+ 		*off += size0 + size;
+ 	} else {
 diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 1b63b6cc7cf9..8618223ae675 100644
+index 8618223ae675..67af594b57eb 100644
 --- a/tools/perf/util/mmap.h
 +++ b/tools/perf/util/mmap.h
-@@ -105,6 +105,11 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- 
+@@ -30,8 +30,9 @@ struct perf_mmap {
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
+ #ifdef HAVE_AIO_SUPPORT
+-	void 		 *data;
+-	struct aiocb	 cblock;
++	void		 **data;
++	struct aiocb	 *cblocks;
++	struct aiocb	 **aiocb;
+ 	int		 nr_cblocks;
+ #endif
+ };
+@@ -106,7 +107,7 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
  int perf_mmap__push(struct perf_mmap *md, void *to,
  		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
-+#ifdef HAVE_AIO_SUPPORT
-+int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-+			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
-+			off_t *off);
-+#endif
- 
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
- 
+ #ifdef HAVE_AIO_SUPPORT
+-int perf_mmap__aio_push(struct perf_mmap *md, void *to,
++int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
+ 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
+ 			off_t *off);
+ #endif
