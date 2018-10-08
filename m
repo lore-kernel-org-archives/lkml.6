@@ -2,140 +2,131 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A095C6787E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3D9ECDE2B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE282085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CFE20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:15:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kxGYsdiF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE282085B
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vkg8J2U/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CFE20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbeJHKUi (ORCPT
+        id S1726670AbeJHKY7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 06:20:38 -0400
-Received: from mail-he1eur01on0054.outbound.protection.outlook.com ([104.47.0.54]:63383
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Mon, 8 Oct 2018 06:24:59 -0400
+Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:4512
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725760AbeJHKUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 06:20:38 -0400
+        id S1725760AbeJHKY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 06:24:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wdxfVMQAUKuB5HYhSzPtUisjFODzr1BNOJSzi5OOWIw=;
- b=kxGYsdiFZqLBZ3isOFyRqumnlrf2RfH26CGa/SehD2dyZ8NN2rQsvaTregy4iyoQzyBaGPLrmf8Dt8n5u//fVeKCZyj+FK5fpfxg7teSHDheS4vQy2BuFeZV6DHf5SYAWCyf8phZ3yLjYK3VQV0FAEXAQahZabCuHV4UylZR7eI=
-Received: from DB6PR0401MB2232.eurprd04.prod.outlook.com (10.168.54.22) by
- DB6PR0401MB2582.eurprd04.prod.outlook.com (10.169.225.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.21; Mon, 8 Oct 2018 03:11:06 +0000
-Received: from DB6PR0401MB2232.eurprd04.prod.outlook.com
- ([fe80::2988:b6e2:44fe:4311]) by DB6PR0401MB2232.eurprd04.prod.outlook.com
- ([fe80::2988:b6e2:44fe:4311%8]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
- 03:11:06 +0000
-From:   "Y.b. Lu" <yangbo.lu@nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: RE: [v2, 1/5] net: dpaa2: move DPAA2 PTP driver out of staging/
-Thread-Topic: [v2, 1/5] net: dpaa2: move DPAA2 PTP driver out of staging/
-Thread-Index: AQHUV8ZPKu1tHExVGkqxDRFy68gG36UHqp4AgA0Nd0A=
-Date:   Mon, 8 Oct 2018 03:11:05 +0000
-Message-ID: <DB6PR0401MB2232FA836E1C9139309D43D1F8E60@DB6PR0401MB2232.eurprd04.prod.outlook.com>
-References: <20180929072645.20027-1-yangbo.lu@nxp.com>
- <20180929194616.GA11532@lunn.ch>
-In-Reply-To: <20180929194616.GA11532@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yangbo.lu@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0401MB2582;6:SW7ExkrS5a+n4ayuRSaW18csoide/n/OHssJ7Awr+6cbjlHtJMy3cDc5H0+tZT24/ZGV8izeEq5/quMDqaV1olRWlRHo8ZQ+fk/JM4x8QD7sdLMOaAp+JBnY4ECqPt/40F1XytL9tJWp3jCY+Itgk11XyV/zROGFyxFPPjyy9odDnnCE3mXjJtE4NvqWpeq4D0wJF5yHKRF2LoN0JI6OFFo/ee6NRs0K3Jw0C1h3+5zEJm8rs8bBtPKN9MlHStyj1/DGcMPX+1WJCB0UHjN7IOVAAy/NyystQo+3EffTYtOMX+pCP1hri5CCe1HXGqfzQ6Vp16mbjEfqlhdPSYQc+eHV6fZZgqvb/WZ8HTqgZUSxGhy1Y/q9jEZ7ZC3QRE+HIXNPbkBeoMaSIAZpFqHXchcUOPq6WBNquHzpI6tgQcl6MpR52LJeGQRicJgblfZ4vHMhSsDiSrnlIaDO4G+kQw==;5:2A8KylNklUJeT+XblZTzDeY6I5J6H1ARDuEs19F6QSl+AY0HZPSWpgMxz0Eqizpu1QHwNZ2GZXAgmQj2/0U1Vjo2B3NuPmzvjwD098m7OdIJxFbpuwqn01o/2mme0dx0kQkQORiJn/zREFLr3nPzXVGkzG+ju5KJEyoDpw4lxEc=;7:b61yEGLzklAxqhkReNHGg92dmsUi1WoMuSRP1oB1KCHMQ+iXJAVae/S2Eg74ue+1OK2dcNDkGUlrARlS8VJAFP2uaiUQaaT5RWyOaDHGWyMV2Cl+6fPnbqjdSy26V0L0Rar8q+Gc2bPyg/3BX8y9y1QQHO3iQ9FqkFHbIWuoaEQZFaBCZHNTdv02W7XjKf01htNBuOczpWUKW17/l1S5Sa8/PbxBq+vbJan6i9GyeecaDvfhCKOT9RNEQrcBkrUQ
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a15b76bf-121e-43de-e0f0-08d62ccbafef
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0401MB2582;
-x-ms-traffictypediagnostic: DB6PR0401MB2582:
-x-microsoft-antispam-prvs: <DB6PR0401MB25824D54B615FEFEF185BAFCF8E60@DB6PR0401MB2582.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:DB6PR0401MB2582;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2582;
-x-forefront-prvs: 081904387B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(366004)(376002)(39860400002)(136003)(13464003)(199004)(189003)(14454004)(305945005)(54906003)(2900100001)(74316002)(66066001)(81156014)(81166006)(110136005)(99286004)(8676002)(68736007)(7696005)(478600001)(6116002)(6506007)(3846002)(5250100002)(53546011)(7736002)(8936002)(76176011)(71190400001)(71200400001)(256004)(14444005)(6636002)(39060400002)(106356001)(316002)(5660300001)(6246003)(4326008)(86362001)(26005)(105586002)(33656002)(97736004)(102836004)(486006)(55016002)(25786009)(9686003)(53936002)(476003)(446003)(11346002)(2906002)(186003)(6436002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2582;H:DB6PR0401MB2232.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: kAPdUmkkiOfFptEkViw84O9YV7q/Mcl3jauatEYQqohb6sQ62AYaLoXdepSVNfit8bSgJ1kRwHR1Ta4qvJv1JPEDfD2Efc/FRzVtzFp4OuBVXf3u1iGzYBN1vCyI1u16yOb5C1xaMioB8bU/w37X9vsBB1ZqFXWjQfOEii48EGCV2hKQNlnDf/aJrMhnoMBb7CEDHMEqqRw/eOkSVAw0JzSVngLyR4YUVnv9pLbVCp+oIiduZzMkHnRw0PvwJU0E2G55+gTKK0hNkH9KDCdby61u5oARJMq8xGEAIAEzox2ODOADJDYDcylZIOYlHBtl/LBI4PXdE8aaH92NdFUp3q9zjrF1LDuJGRwFezeOepI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=cNQXXsxivm5jb1Pgky5dOWVI7CUloCCxgekmVYeeiOg=;
+ b=Vkg8J2U/fNTyD99kL3PP/S86aNkDT2SnX26ENCY7TiZ9ULlhD3n8IQhrHqXZTpe8OB/rQa6MLwzHD54E8hrl3pxayehBvb24kAbo4950KGqGWqtNIc3nop+VK5phFKWUnKBgZ2A3lNJPiN84x6rKwvkIx1vTxvwouRSYk2p+ans=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+Received: from mega.ap.freescale.net (119.31.174.73) by
+ AM3PR04MB1220.eurprd04.prod.outlook.com (2a01:111:e400:586d::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1207.28; Mon, 8 Oct
+ 2018 03:15:18 +0000
+From:   Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, leoyang.li@nxp.com, shawnguo@kernel.org,
+        mark.rutland@arm.com, bhelgaas@google.com, Mingkai.Hu@nxp.com,
+        Minghuan.Lian@nxp.com
+Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Subject: [PATCH 0/4] dts/layerscape-pci: removed unsuitable compatible string
+Date:   Mon,  8 Oct 2018 11:14:24 +0800
+Message-Id: <20181008031428.25293-1-Zhiqiang.Hou@nxp.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.73]
+X-ClientProxiedBy: HK0PR03CA0085.apcprd03.prod.outlook.com
+ (2603:1096:203:72::25) To AM3PR04MB1220.eurprd04.prod.outlook.com
+ (2a01:111:e400:586d::25)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ca09c294-20ca-43fd-9a06-08d62ccc48cc
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1220;
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;3:Bb6ktmZqdE2R/+YqMtdvAlcpkgv9u6YBxM1iZIm80f3dhCx1dk1IiBWS5T4ciltft3QrEHQUZ/kw9eB6e9l+aFbcJJ1yywHn5ths7Uwqj1YsZJcqfRKT39Zja0TxdDjyQT015LBOvRo/KzLoQKKv8NQSzTaQh3MCkMQyAleTu+zi7c/2/H4jbWKY2LdneRChkdG02o+HSNHuKTWet77Dpxtm2ZJ/k1SDsStImuhMotoYDvp/QE0awm/oENEk/frK;25:7icfhwF1g2e8e5PqtvDtymjzvWzUi3QZtuXT9gLJHuNT56Dwbf+0nTWE3eBSMksAK6QGo9s0oFLHKz9vuSri8r0fPfsIwX8NbmVKyg/VZsuXQDeCOWpZDuwTEMThS/NVOrOxCXAYdkm9KXRBBCQmeS/xF7CuqdeZsjijN741pSc8Ybs898HmPo00sBOprMfkAhpp7VdwCZPH0NGznvWiCCtM4v1WF4o9G5Km0fs04Pxq9G+PpPrOq/zDIo0Fq2iS2YYIYMn5FcSgnq3821inF01RUOPCredbxOPXSnAlLMcGxVz3TmJxXnA36OWXqq23MPectuuI2Y6mALCZHobgpg==;31:502cSAq9Y/29BEFhYW2PT6a1x95wrCUa39IGbd/JtsVRZ0wITYAxbErPr3IhVDfjqLPWzFA/dqIzVd2LUb0MQStgoX5yEHr2C6nwyPC+iP8zW+NSZQ0sW5xeH9AkProfMM0G7CJtAfP7kW5Wr/dzebygMCR2YuV5/38pFBLXgOGejZMsgPL5XlgQszE84QTmJwN8hmUd8eNgEvDw0Di/5GuPRKLG7iwERPZJryQifnM=
+X-MS-TrafficTypeDiagnostic: AM3PR04MB1220:
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;20:UBa2ht+09wXU+9RVu/LPlr7sV4l+uozhC47V79fvz3Z/Rt8dDFcwa1MZ4WDoVyQPzt/4azYfshcwmJSduP6vr5GEIBE9diPp4R60qZvQTQ67fYiiq9L3+Iv5oYx7zJNMvNB9EvcNAV3b6qIFsaSwHgmsVl7JszBsfSEw18fjJMjhwbhNtpUHko3tzhxAT5CRdl+I+wsNuRQVtlwXkxPdyHtqJbKmH+hdbTXUwLeepbuexZPhOs3d3Qaf7MFL2gzhUyqfzt0COd1RGSUyCf0DS1WEgqN1bb4mu33nx9Z/t7atbx68SmyuQCSe9LnJT41UlYryEt+Az9HpfkeRclGQOFh4/osf5K5CRG5WBdtj5k4MfXH558Gt2OFern0ZgyYXhYc6XISQtqXdPGd8r4V19Om5WmAyVkFyW5DI8qPTnZoLtKooggikzlhwOV5zDA/zGf/BRzjhTTcVcqVXgFg+TM58tAgnrKFTSEMvC6pPeulAUQk9DcOMPg0LxRqOkFE8;4:rMtLEJgKlPOvsZZ0n2cP3C5mG/QeOF0L/VxRW6BLXs7cEzN5HvJLghZpNWAOugl5u7lZq7e+iZ4G41gIKKsfhCHuRm9FMl2UaE2KJi9ZV6+897oJmlaaRLDyLyRWcS3odJuYNdz4BolV5uoJgtMi88jq3LhGPEY6X9T2CWK8e9YYyggWUFQrHoSXU85AJ833ZHakZHj5wSHMDJYIFJ+hjjBTrlB5D96jD0/qdhAUa3DbDzt+mTsG+Pr/gOOZNuWeVbyBUaQQh3JFUMEzdaQxMHlqrtlkogdVKAZRUKYaobTQgPj0oZi81Z4D3U+M0Pw3
+X-Microsoft-Antispam-PRVS: <AM3PR04MB122021C4C221554EA6B97C3084E60@AM3PR04MB1220.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991055);SRVR:AM3PR04MB1220;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1220;
+X-Forefront-PRVS: 081904387B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(366004)(136003)(199004)(189003)(25786009)(16586007)(4326008)(316002)(2616005)(956004)(52116002)(51416003)(476003)(86362001)(48376002)(53936002)(6512007)(486006)(2906002)(68736007)(1076002)(305945005)(7736002)(50466002)(5660300001)(6506007)(36756003)(386003)(50226002)(3846002)(6116002)(97736004)(14444005)(8936002)(478600001)(66066001)(186003)(6486002)(6666003)(16526019)(6636002)(81156014)(106356001)(81166006)(105586002)(8676002)(47776003)(26005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1220;H:mega.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1220;23:Bm7yiV50+QVTyfOXYUAeDZF4gnfDzBpqTD1DCbjYD?=
+ =?us-ascii?Q?kv64UQpp8EGa/oxFqKig4W5gEyucLwODIoyS/EF0P3PqlgJpa8RW2+Odw4mB?=
+ =?us-ascii?Q?gax2E0HHOLhds/SLj1hXzKnH/+w9UvIMyGEkUFssu18TN+qGMWwfW4A9eXNB?=
+ =?us-ascii?Q?DXrVoZ6FCUVBJKiK52s6tsuYe/XwRce0eitcR64MoqrAC1pWgPLjSRrOLbvz?=
+ =?us-ascii?Q?ePPiu4dvKRtjTI11VWuRtxNFnKWfUZzTBn0ifuGHoa2CGgb/2yIKvBVANyf8?=
+ =?us-ascii?Q?YSPiJbjm0JieozjxOrGdSHqevbtEeBRk0rd1P3l/KaYWBwYZeuZu9tyXgKDi?=
+ =?us-ascii?Q?MKY1jJTVO6KIaC/j+wIkXMTf7LH6sR145dgu/jqppxRrxsAJA+YR7FT2AJur?=
+ =?us-ascii?Q?e6BayDZwBY/aeTog59GkGEf4I3ohrCjW5p9xvDBljOQb/HOr/gylhORUrT7B?=
+ =?us-ascii?Q?c8KvtaBKDlyIJAKyP0sViK7gj2/lVzIa2SccitpQ8wo4kdW8m2MBltYnEGbq?=
+ =?us-ascii?Q?IkbY/mI/n92KZjzjoMcpJ/uy41fvkQ1n39Z09kcKUyqLTFjmdUSINJCirDLz?=
+ =?us-ascii?Q?zpvisVGt0sNqlFnJAnYuRg+jAImnM+STyzK0C3QLMQxR87fIiThxeUgiX3Zq?=
+ =?us-ascii?Q?3v7lo/uA8Ib+nQZA1ZWB9m398kfs0OVze2FUI7l+mYK4oU6IRZSSnnV4YksZ?=
+ =?us-ascii?Q?UWvMaU0h994x/cmfWnqwwFfEJLy/XoR+laXgPqQ5joZONiXQSPuudVOqZB+Z?=
+ =?us-ascii?Q?zXPZqhaIQbAC8x5XswOB1JLZ+ZDs3NOP9aLvw2+8D6wvfxFY26HlrKtTmQOK?=
+ =?us-ascii?Q?Jc5u9kpRcUhhb5QxGzvsWR4Ml2KuXg13fzVrnbQZ3Y1w15GQbJqsVPL0+MIE?=
+ =?us-ascii?Q?3nq5pZYT3gEEi1YyMs2WYTlKJNcj1T91qzh9DdzfEiXCISXOt9+4kEUdQSCQ?=
+ =?us-ascii?Q?ajBhsElciVx7IdnxpfqFCWIHf+POl918DHQEAf4Wd0MAmdhvxs85AyOa+TJn?=
+ =?us-ascii?Q?6n6K1KvWaZiThfs3qXc592r7ddo+bMc972+12Pn5nGkpzZj1zxHG1LDofE3M?=
+ =?us-ascii?Q?Jd5G723Gwo/q4sASa0pp3mpjk4DJplobbjWY4+z9nJC9D39H/bGxFIlbLAcg?=
+ =?us-ascii?Q?bwOzlz1f/1Q6/mnSC+nLQAXEojefq3/TW/6xcBkleGikXi7b7AUmuTmvcETG?=
+ =?us-ascii?Q?XNSER2kK8Nq53w=3D?=
+X-Microsoft-Antispam-Message-Info: YPgwO/2zU/q9sq6/NY3xetn65Dc8QRJk6Fuy0rFyW1N5o0u7bu1zF7pmiuF8xkbNJvQfnGpVhUyHLjrneNg8C+Gy+ZNwjegj1Ufkl6e69iiciqY3XZus9WIFDkq6EB9ewPSXJEY7pOfjHBFmx4fvx95rw2Nx6sZki2dKg3xzeDfPmS6vzzG6h7q80rzUeTNTxIZBxB/ww2htl9SghpYn6jTvUTezAfInJGvk0FoBiXpr8g+guhIi0OkziSxxocB9bHE0pklPG/gO+hW7AUxoY8aWZptaSE9hdKs30uYT2TbWAnduRNh5sxB/MeBsDzxAhShEVTwofSlRG/STgtSf9CiZZ67AsLaX6a/xjrHWLd8=
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;6:B7yqWMZHNKhXMIELMe3eGTjLduLpwGmHPicMbC+cnOHjb5OofIRH9j5k8JVmrn6jzv6MmFmdpyada0SXB+iG08BRT8+anTaJSvryLT8H4/LKzBSOYnn4ANW2SMZ4cw92kWazuo53X+fhAalHYW5+OBryvkdCoRZjlOTmGfqxQZS6Ydxu53QCq+9MDhNM6i+88Mle5OZLYg4JK6FGp3z/QnJVnH07qjoy8vWL0KRb37IjrSit1tXqNN67yUxp3K3HhNqNHJDvU05s/4n6hc87RIouHVFvweHP3vhC/3fRaI5LeBhnVbOJHUDtc73nX4ZHH+w2y2qTe9xf6BB8paUbFsun8l8cylhwc7jm7HTVFJvwkIE/zbPw6UWe6lCkM0oRE9c1h9J5NdLGYlgqLANmkyRDzCq+Q8Riotc9oENXbbFeTLwk2hJ4q5rppTcGoE8/teMs8vIsigmr9Pa5iurjDw==;5:Oevh0Uj22L3ubGwLbEcwCgYRMwrxd9IvokBYsVrfF1WI9FQjg4CiIvDh0uSBQUPy0fBnm8vszPQXC7Ns4tjoQf8ew/htA9rlWlTjr2kfktXrzAKvMl2yK+Xu9cxs1LXffUWvk4QjReOulNSjxWNI/88bIvCaHFVBioYmQNyMkBc=;7:0jE5OHcg1U29CHe24DDkdXf2D3xBk2YxBvJ8AlPzKEzY/tNzBV5WhulljO6sicR3Qxyf74op9uuQasVNrlSLIi2kEN/YU+oe446R2ihqD15z18B6Wj7WbI+zaB2AoZLpvB/4oShp2++CuxlAOSaHjSWcdLN3SlJQmL9G3MlIMKTMiY7vEsm8hHp7ZCvkd59rfbTgh30hwPBfNxMRLpnXllG32MI00eKHnofnQZTNFb6LEfT5kSJeshgOZgdxjlm8
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a15b76bf-121e-43de-e0f0-08d62ccbafef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 03:11:05.9559
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2018 03:15:18.7421
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2582
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca09c294-20ca-43fd-9a06-08d62ccc48cc
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1220
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-Sorry for late. Just come back from holiday.
+Removed the compatible string "snps,dw-pcie" from FSL layerscape-pci compatible
+string list.
 
-Hi Ioana,
+Hou Zhiqiang (4):
+  doc/layerscape-pci: update the PCIe compatible strings
+  doc/layerscape-pci: removed unsuitable compatible string
+  dts/arm/ls1021a: Clean PCIe controller compatible strings
+  dts/arm64/layerscape: Clean PCIe controller compatible strings
 
-Could you generate an additional patch for dpaa2_eth to address Andrew's co=
-mments?
-There was also a warning when checked patch. FSL_DPAA2_ETH needed more desc=
-ription.
+ .../devicetree/bindings/pci/layerscape-pci.txt       |  7 ++++---
+ arch/arm/boot/dts/ls1021a.dtsi                       |  4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi       |  2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi       |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi       |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi       |  8 ++++----
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi       | 12 ++++--------
+ 8 files changed, 24 insertions(+), 27 deletions(-)
 
-WARNING: please write a paragraph that describes the config symbol fully
-#66: FILE: drivers/net/ethernet/freescale/dpaa2/Kconfig:1:
-+config FSL_DPAA2_ETH
+-- 
+2.17.1
 
-Thanks a lot.
-
-Best regards,
-Yangbo Lu
-
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Sunday, September 30, 2018 3:46 AM
-> To: Y.b. Lu <yangbo.lu@nxp.com>
-> Cc: linux-kernel@vger.kernel.org; devel@driverdev.osuosl.org;
-> netdev@vger.kernel.org; Richard Cochran <richardcochran@gmail.com>;
-> David S . Miller <davem@davemloft.net>; Ioana Ciocoi Radulescu
-> <ruxandra.radulescu@nxp.com>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>
-> Subject: Re: [v2, 1/5] net: dpaa2: move DPAA2 PTP driver out of staging/
->=20
-> > +++ b/drivers/net/ethernet/freescale/dpaa2/Kconfig
-> > @@ -0,0 +1,15 @@
-> > +config FSL_DPAA2_ETH
-> > +	tristate "Freescale DPAA2 Ethernet"
-> > +	depends on FSL_MC_BUS && FSL_MC_DPIO
->=20
-> Could you add in here COMPILE_TEST?
->=20
-> > +	depends on NETDEVICES && ETHERNET
->=20
-> With the move out of staging, i don't think these two are required.
->=20
->      Andrew
