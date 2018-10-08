@@ -2,197 +2,128 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0579DC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2481C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DCD2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DCD2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AF2D2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:17:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWns1hS3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF2D2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbeJIA2L (ORCPT
+        id S1726481AbeJIA3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:28:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53408 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJIA2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:28:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D668BED1;
-        Mon,  8 Oct 2018 10:15:28 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C28D83F5D3;
-        Mon,  8 Oct 2018 10:15:26 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 18:15:24 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     mingo@kernel.org
-Cc:     arnd@arndb.de, aryabinin@virtuozzo.com, boqun.feng@gmail.com,
-        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
-        linuxdrivers@attotech.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv3 0/6] atomics: generate atomic headers / instrument arm64
-Message-ID: <20181008171523.rw34hyaqap2yb3py@lakrids.cambridge.arm.com>
-References: <20180904104830.2975-1-mark.rutland@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904104830.2975-1-mark.rutland@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 8 Oct 2018 20:29:41 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44919 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJIA3k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 20:29:40 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r9-v6so8519166pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 10:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CN5s4ecUj3pRaRBc5F3N9iKtufjq28Ma2Mtwvzmhwvk=;
+        b=dWns1hS3LQOD2KVT0K6ESnWaao0gmLhx41081rKNIPthLpS42aVeGylCgnSwvR+HrM
+         0kM5Elrfw/6J9bS79uzRnieYgckNSoNvaa9zt7Y04KERCGtbgVdgLv9dsfr/WfctPXNV
+         RRHsACNno2glKZxuWoXtwl/PqSc02R6VYbouo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CN5s4ecUj3pRaRBc5F3N9iKtufjq28Ma2Mtwvzmhwvk=;
+        b=r3CsOjXQPIqf46QOsUVZmFtjR5n7KOKD7i7nYVsfVMuwUBrgcVElWPVS1qolLCcRIR
+         u/G27ZD5E5N5hEs2BdHutOhpxr0VN6w3UiDCLBgrzgn4K8OAQNyq6FEb83llgPtj9tKg
+         mdI9KijZ03NIA9kS3OQsBbQ2/sxFU0Zj+sU2RBOX/I8ZFpwba9TBhM2qk16dmj/sOqKc
+         MA9j4qB9lU1sq3HC0Ksk+vu35dxFsiNlZcIyMiJeUr7iMAq9OHDsqfHdjHfNm1S8WQis
+         OtM5z2acDfWT0HLwjYol8llmREqwkfa39R566lEpQxr/cBYmFryFDzPF1rYR0q8QTB0r
+         FtIA==
+X-Gm-Message-State: ABuFfoiqkQYBVJRFoK/w9wwbB5iI+a1TWFrZG5ihLGhJ07cmW+8++e7+
+        KPQmCeMSTiTHEvGERKpHwNT8
+X-Google-Smtp-Source: ACcGV63Xl/ug1qVoaqEwmXVQL4i/bmJvGXNSIAStTJmXckElj4a8fcpOwiGVVcBHsan+QKZW9ZYiKw==
+X-Received: by 2002:a62:71c4:: with SMTP id m187-v6mr25858021pfc.232.1539019017811;
+        Mon, 08 Oct 2018 10:16:57 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:996:3731:9fd:1785:d893:1e98])
+        by smtp.gmail.com with ESMTPSA id y24-v6sm8288974pfn.123.2018.10.08.10.16.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 10:16:57 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     vkoul@kernel.org
+Cc:     afaerber@suse.de, dmaengine@vger.kernel.org,
+        liuwei@actions-semi.com, 96boards@ucrobotics.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        pn@denx.de, edgar.righi@lsitec.org.br,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] dmaengine: owl: Fix warnings generated during build
+Date:   Mon,  8 Oct 2018 22:46:31 +0530
+Message-Id: <20181008171631.5603-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 11:48:24AM +0100, Mark Rutland wrote:
-> Hi Ingo,
-> 
-> As previously requested, this is a (trivial) rebase of the remaining generated
-> atomic patches atop of v4.19-rc2, avoiding any potential conflict with Peter's
-> ldsem atomic cleanup patch that got taken through the tty tree.
-> 
-> Are you still happy to pick this up? Full blurb below.
+Following warnings are generated when compiled with W=1,
 
-Ping!
+drivers/dma/owl-dma.c:170: warning: Function parameter or member 'cyclic'
+not described in 'owl_dma_txd'
+drivers/dma/owl-dma.c:198: warning: Function parameter or member 'cfg' not
+described in 'owl_dma_vchan'
+drivers/dma/owl-dma.c:198: warning: Function parameter or member 'drq' not
+described in 'owl_dma_vchan'
+drivers/dma/owl-dma.c:225: warning: Function parameter or member 'irq' not
+described in 'owl_dma'
 
-Do you have any comments, or would you be happy to queue this?
+Fix this by adding comments for relevant struct members to appear in
+kernel-doc.
 
-I'm happy to resend come rc1, if you'd prefer?
+Fixes: d64e1b3f5cce ("dmaengine: owl: Add Slave and Cyclic mode support for
+Actions Semi Owl S900 SoC")
 
-Thanks,
-Mark.
+Reported-by: Vinod Koul <vinod.koul@linaro.org>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/dma/owl-dma.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> This series scripts the generation of the various atomic headers, to ensure
-> that the various atomic APIs remain consistent, reducing the risk of human
-> error, and simplifying future rework. This fleshes out the instrumented atomics
-> such that arm64 can be migrated over to them.
-> 
-> Since v1 [1]:
-> * Use 'p' instead of 'I' for pointer to base int type
-> * Use Peter's patch for ldsem
-> * Rename atomic acquire/release barriers
-> * Handle xchg/cmpxchg variants
-> * Typo fixes
-> * Migrate arm64 to instrumented atomics
-> 
-> Since v2 [4]:
-> * rebase to v4.19-rc2 to solve potential conflicts with ldsem patch
-> 
-> The series is based on my atomic API cleanup patches [2], which have been
-> queued in the tip locking/core branch.
-> 
-> The first six patches clean up some issues with the existing atomic
-> instrumentation, with patch six introducing the header generation
-> infrastructure. The subsequent three patches migrate to each generated header
-> in turn, with the final patch moving arm64 over to the instrumented atomics.
-> 
-> The scripts themselves are mostly POSIX sh (modulo local), without bashisms,
-> and work in dash and bash.
-> 
-> Per Linus request that it is possible to use git grep to inspect the atomic
-> headers [3], the headers are committed (and not generated by kbuild). Since we
-> now expand the fallback definitions inline, each *should* be easier to find
-> with grep. Each header also has a comment at the top with a path to the script
-> used to generate it. 
-> 
-> That scripting comes to ~900 lines, and replaces ~1700 lines of hand-written
-> boilerplate with ~4700 lines of generated code. Some of that increase in line
-> count is due to filling in missing portions of the API (e.g. adding all the
-> ordering variants to the instrumented atomics), while some of that is due to
-> expanding fallbacks in place, and consistently spreading these across multiple
-> lines.
-> 
-> I've build-tested this for x86_64 and arm64 (with and without LSE), and given
-> this some basic boot testing.
-> 
-> I've pushed the series out to my atomics/generated branch [3], based atop of
-> v4.19-rc2.
-> 
-> Thanks,
-> Mark.
-> 
-> [1] https://lkml.kernel.org/r/20180529180746.29684-1-mark.rutland@arm.com
-> [2] https://lkml.kernel.org/r/20180621121321.4761-1-mark.rutland@arm.com
-> [3] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/generated
-> [4] https://lkml.kernel.org/r/20180625105952.3756-1-mark.rutland@arm.com
-> 
-> Mark Rutland (6):
->   atomics: add common header generation files
->   atomics: switch to generated fallbacks
->   atomics: switch to generated atomic-long
->   atomics: switch to generated instrumentation
->   atomics: check generated headers are up-to-date
->   arm64: use instrumented atomics
-> 
->  Kbuild                                       |   18 +-
->  MAINTAINERS                                  |    1 +
->  arch/arm64/include/asm/atomic.h              |  237 +--
->  arch/arm64/include/asm/atomic_ll_sc.h        |   28 +-
->  arch/arm64/include/asm/atomic_lse.h          |   38 +-
->  arch/arm64/include/asm/cmpxchg.h             |   60 +-
->  arch/arm64/include/asm/sync_bitops.h         |   16 +-
->  include/asm-generic/atomic-instrumented.h    | 1688 ++++++++++++++++---
->  include/asm-generic/atomic-long.h            | 1173 ++++++++++---
->  include/linux/atomic-fallback.h              | 2294 ++++++++++++++++++++++++++
->  include/linux/atomic.h                       | 1241 +-------------
->  scripts/atomic/atomic-tbl.sh                 |  186 +++
->  scripts/atomic/atomics.tbl                   |   41 +
->  scripts/atomic/check-atomics.sh              |   19 +
->  scripts/atomic/fallbacks/acquire             |    9 +
->  scripts/atomic/fallbacks/add_negative        |   16 +
->  scripts/atomic/fallbacks/add_unless          |   16 +
->  scripts/atomic/fallbacks/andnot              |    7 +
->  scripts/atomic/fallbacks/dec                 |    7 +
->  scripts/atomic/fallbacks/dec_and_test        |   15 +
->  scripts/atomic/fallbacks/dec_if_positive     |   15 +
->  scripts/atomic/fallbacks/dec_unless_positive |   14 +
->  scripts/atomic/fallbacks/fence               |   11 +
->  scripts/atomic/fallbacks/fetch_add_unless    |   23 +
->  scripts/atomic/fallbacks/inc                 |    7 +
->  scripts/atomic/fallbacks/inc_and_test        |   15 +
->  scripts/atomic/fallbacks/inc_not_zero        |   14 +
->  scripts/atomic/fallbacks/inc_unless_negative |   14 +
->  scripts/atomic/fallbacks/read_acquire        |    7 +
->  scripts/atomic/fallbacks/release             |    8 +
->  scripts/atomic/fallbacks/set_release         |    7 +
->  scripts/atomic/fallbacks/sub_and_test        |   16 +
->  scripts/atomic/fallbacks/try_cmpxchg         |   11 +
->  scripts/atomic/gen-atomic-fallback.sh        |  181 ++
->  scripts/atomic/gen-atomic-instrumented.sh    |  182 ++
->  scripts/atomic/gen-atomic-long.sh            |  101 ++
->  36 files changed, 5909 insertions(+), 1827 deletions(-)
->  create mode 100644 include/linux/atomic-fallback.h
->  create mode 100755 scripts/atomic/atomic-tbl.sh
->  create mode 100644 scripts/atomic/atomics.tbl
->  create mode 100755 scripts/atomic/check-atomics.sh
->  create mode 100644 scripts/atomic/fallbacks/acquire
->  create mode 100644 scripts/atomic/fallbacks/add_negative
->  create mode 100644 scripts/atomic/fallbacks/add_unless
->  create mode 100644 scripts/atomic/fallbacks/andnot
->  create mode 100644 scripts/atomic/fallbacks/dec
->  create mode 100644 scripts/atomic/fallbacks/dec_and_test
->  create mode 100644 scripts/atomic/fallbacks/dec_if_positive
->  create mode 100644 scripts/atomic/fallbacks/dec_unless_positive
->  create mode 100644 scripts/atomic/fallbacks/fence
->  create mode 100644 scripts/atomic/fallbacks/fetch_add_unless
->  create mode 100644 scripts/atomic/fallbacks/inc
->  create mode 100644 scripts/atomic/fallbacks/inc_and_test
->  create mode 100644 scripts/atomic/fallbacks/inc_not_zero
->  create mode 100644 scripts/atomic/fallbacks/inc_unless_negative
->  create mode 100644 scripts/atomic/fallbacks/read_acquire
->  create mode 100644 scripts/atomic/fallbacks/release
->  create mode 100644 scripts/atomic/fallbacks/set_release
->  create mode 100644 scripts/atomic/fallbacks/sub_and_test
->  create mode 100644 scripts/atomic/fallbacks/try_cmpxchg
->  create mode 100755 scripts/atomic/gen-atomic-fallback.sh
->  create mode 100755 scripts/atomic/gen-atomic-instrumented.sh
->  create mode 100755 scripts/atomic/gen-atomic-long.sh
-> 
-> -- 
-> 2.11.0
-> 
+diff --git a/drivers/dma/owl-dma.c b/drivers/dma/owl-dma.c
+index 1d26db4c9229..90bbcef99ef8 100644
+--- a/drivers/dma/owl-dma.c
++++ b/drivers/dma/owl-dma.c
+@@ -162,6 +162,7 @@ struct owl_dma_lli {
+  * struct owl_dma_txd - Wrapper for struct dma_async_tx_descriptor
+  * @vd: virtual DMA descriptor
+  * @lli_list: link list of lli nodes
++ * @cyclic: flag to indicate cyclic transfers
+  */
+ struct owl_dma_txd {
+ 	struct virt_dma_desc	vd;
+@@ -188,6 +189,8 @@ struct owl_dma_pchan {
+  * @vc: wrappped virtual channel
+  * @pchan: the physical channel utilized by this channel
+  * @txd: active transaction on this channel
++ * @cfg: slave configuration for this channel
++ * @drq: physical DMA request ID for this channel
+  */
+ struct owl_dma_vchan {
+ 	struct virt_dma_chan	vc;
+@@ -204,6 +207,7 @@ struct owl_dma_vchan {
+  * @clk: clock for the DMA controller
+  * @lock: a lock to use when change DMA controller global register
+  * @lli_pool: a pool for the LLI descriptors
++ * @irq: interrupt ID for the DMA controller
+  * @nr_pchans: the number of physical channels
+  * @pchans: array of data for the physical channels
+  * @nr_vchans: the number of physical channels
+-- 
+2.17.1
+
