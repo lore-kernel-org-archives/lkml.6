@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B526C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C6AC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15320214FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1C092089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JslB8tbI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15320214FA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqIIEVrL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C092089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJHWiE (ORCPT
+        id S1727400AbeJHWiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56288 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeJHWiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:03 -0400
+        id S1727034AbeJHWiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 003552089D;
-        Mon,  8 Oct 2018 15:25:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 775522089D;
+        Mon,  8 Oct 2018 15:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012348;
-        bh=PtC5GPjln3PJHAY06Uf2tyEiTgpacxpkWuxo7aNABdQ=;
+        s=default; t=1539012352;
+        bh=F+ECAOT6aYPdsOB/wj0MyeryCyaGuDke5UA2ORJDJVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JslB8tbISzVi0ql9bbA8vYIT3aSTqx8j/fVcZTqFRXSP6k/ss3A5SYyn4jblVdWqq
-         fD1GWF6z9zz31DaUNoTs3WG5cjNkjd5T2pXDwugBb1ymh/Jk6PAfnk/+wMu8AKn47t
-         /T7qQORlj6RxiaQV6M1LYqqtCvTL8M5xE/O9PCJU=
+        b=bqIIEVrLifdSkGD3yo1CWneWR9+kgQistfsNXzG+70YihCJgo/vNXc9iQVOBeMJ5x
+         YXLPoP8zPbHsxRhHdkOHpb/0svWdB6kMZEdtc3+nB4eE+9hLsBmtvFsSDzNfU/5z6l
+         ILVnHKdBNNgGPGF2fVCs3dAxZ1s1mSWKEnhAuCek=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 23/58] Input: atakbd - fix Atari keymap
-Date:   Mon,  8 Oct 2018 11:24:48 -0400
-Message-Id: <20181008152523.70705-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 26/58] net: stmmac: Fixup the tail addr setting in xmit path
+Date:   Mon,  8 Oct 2018 11:24:51 -0400
+Message-Id: <20181008152523.70705-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -54,135 +57,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Schwab <schwab@linux-m68k.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-[ Upstream commit 9e62df51be993035c577371ffee5477697a56aad ]
+[ Upstream commit 0431100b3d82c509729ece1ab22ada2484e209c1 ]
 
-Fix errors in Atari keymap (mostly in keypad, help and undo keys).
+Currently we are always setting the tail address of descriptor list to
+the end of the pre-allocated list.
 
-Patch provided on debian-68k ML by Andreas Schwab <schwab@linux-m68k.org>,
-keymap array size and unhandled scancode limit adjusted to 0x73 by me.
+According to databook this is not correct. Tail address should point to
+the last available descriptor + 1, which means we have to update the
+tail address everytime we call the xmit function.
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This should make no impact in older versions of MAC but in newer
+versions there are some DMA features which allows the IP to fetch
+descriptors in advance and in a non sequential order so its critical
+that we set the tail address correctly.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Fixes: f748be531d70 ("stmmac: support new GMAC4")
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/input/keyboard/atakbd.c | 64 ++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 38 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
-index f1235831283d..524a72bee55a 100644
---- a/drivers/input/keyboard/atakbd.c
-+++ b/drivers/input/keyboard/atakbd.c
-@@ -79,8 +79,7 @@ MODULE_LICENSE("GPL");
-  */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 04de46601c87..1c6ba74e294b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2186,8 +2186,7 @@ static int stmmac_init_dma_engine(struct stmmac_priv *priv)
+ 		stmmac_init_tx_chan(priv, priv->ioaddr, priv->plat->dma_cfg,
+ 				    tx_q->dma_tx_phy, chan);
  
+-		tx_q->tx_tail_addr = tx_q->dma_tx_phy +
+-			    (DMA_TX_SIZE * sizeof(struct dma_desc));
++		tx_q->tx_tail_addr = tx_q->dma_tx_phy;
+ 		stmmac_set_tx_tail_ptr(priv, priv->ioaddr,
+ 				       tx_q->tx_tail_addr, chan);
+ 	}
+@@ -2982,6 +2981,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
  
--static unsigned char atakbd_keycode[0x72] = {	/* American layout */
--	[0]	 = KEY_GRAVE,
-+static unsigned char atakbd_keycode[0x73] = {	/* American layout */
- 	[1]	 = KEY_ESC,
- 	[2]	 = KEY_1,
- 	[3]	 = KEY_2,
-@@ -121,9 +120,9 @@ static unsigned char atakbd_keycode[0x72] = {	/* American layout */
- 	[38]	 = KEY_L,
- 	[39]	 = KEY_SEMICOLON,
- 	[40]	 = KEY_APOSTROPHE,
--	[41]	 = KEY_BACKSLASH,	/* FIXME, '#' */
-+	[41]	 = KEY_GRAVE,
- 	[42]	 = KEY_LEFTSHIFT,
--	[43]	 = KEY_GRAVE,		/* FIXME: '~' */
-+	[43]	 = KEY_BACKSLASH,
- 	[44]	 = KEY_Z,
- 	[45]	 = KEY_X,
- 	[46]	 = KEY_C,
-@@ -149,45 +148,34 @@ static unsigned char atakbd_keycode[0x72] = {	/* American layout */
- 	[66]	 = KEY_F8,
- 	[67]	 = KEY_F9,
- 	[68]	 = KEY_F10,
--	[69]	 = KEY_ESC,
--	[70]	 = KEY_DELETE,
--	[71]	 = KEY_KP7,
--	[72]	 = KEY_KP8,
--	[73]	 = KEY_KP9,
-+	[71]	 = KEY_HOME,
-+	[72]	 = KEY_UP,
- 	[74]	 = KEY_KPMINUS,
--	[75]	 = KEY_KP4,
--	[76]	 = KEY_KP5,
--	[77]	 = KEY_KP6,
-+	[75]	 = KEY_LEFT,
-+	[77]	 = KEY_RIGHT,
- 	[78]	 = KEY_KPPLUS,
--	[79]	 = KEY_KP1,
--	[80]	 = KEY_KP2,
--	[81]	 = KEY_KP3,
--	[82]	 = KEY_KP0,
--	[83]	 = KEY_KPDOT,
--	[90]	 = KEY_KPLEFTPAREN,
--	[91]	 = KEY_KPRIGHTPAREN,
--	[92]	 = KEY_KPASTERISK,	/* FIXME */
--	[93]	 = KEY_KPASTERISK,
--	[94]	 = KEY_KPPLUS,
--	[95]	 = KEY_HELP,
-+	[80]	 = KEY_DOWN,
-+	[82]	 = KEY_INSERT,
-+	[83]	 = KEY_DELETE,
- 	[96]	 = KEY_102ND,
--	[97]	 = KEY_KPASTERISK,	/* FIXME */
--	[98]	 = KEY_KPSLASH,
-+	[97]	 = KEY_UNDO,
-+	[98]	 = KEY_HELP,
- 	[99]	 = KEY_KPLEFTPAREN,
- 	[100]	 = KEY_KPRIGHTPAREN,
- 	[101]	 = KEY_KPSLASH,
- 	[102]	 = KEY_KPASTERISK,
--	[103]	 = KEY_UP,
--	[104]	 = KEY_KPASTERISK,	/* FIXME */
--	[105]	 = KEY_LEFT,
--	[106]	 = KEY_RIGHT,
--	[107]	 = KEY_KPASTERISK,	/* FIXME */
--	[108]	 = KEY_DOWN,
--	[109]	 = KEY_KPASTERISK,	/* FIXME */
--	[110]	 = KEY_KPASTERISK,	/* FIXME */
--	[111]	 = KEY_KPASTERISK,	/* FIXME */
--	[112]	 = KEY_KPASTERISK,	/* FIXME */
--	[113]	 = KEY_KPASTERISK	/* FIXME */
-+	[103]	 = KEY_KP7,
-+	[104]	 = KEY_KP8,
-+	[105]	 = KEY_KP9,
-+	[106]	 = KEY_KP4,
-+	[107]	 = KEY_KP5,
-+	[108]	 = KEY_KP6,
-+	[109]	 = KEY_KP1,
-+	[110]	 = KEY_KP2,
-+	[111]	 = KEY_KP3,
-+	[112]	 = KEY_KP0,
-+	[113]	 = KEY_KPDOT,
-+	[114]	 = KEY_KPENTER,
- };
+ 	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
  
- static struct input_dev *atakbd_dev;
-@@ -195,7 +183,7 @@ static struct input_dev *atakbd_dev;
- static void atakbd_interrupt(unsigned char scancode, char down)
- {
++	tx_q->tx_tail_addr = tx_q->dma_tx_phy + (tx_q->cur_tx * sizeof(*desc));
+ 	stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr, queue);
  
--	if (scancode < 0x72) {		/* scancodes < 0xf2 are keys */
-+	if (scancode < 0x73) {		/* scancodes < 0xf3 are keys */
+ 	return NETDEV_TX_OK;
+@@ -3189,6 +3189,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
  
- 		// report raw events here?
+ 	stmmac_enable_dma_transmission(priv, priv->ioaddr);
  
-@@ -209,7 +197,7 @@ static void atakbd_interrupt(unsigned char scancode, char down)
- 			input_report_key(atakbd_dev, scancode, down);
- 			input_sync(atakbd_dev);
- 		}
--	} else				/* scancodes >= 0xf2 are mouse data, most likely */
-+	} else				/* scancodes >= 0xf3 are mouse data, most likely */
- 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
++	tx_q->tx_tail_addr = tx_q->dma_tx_phy + (tx_q->cur_tx * sizeof(*desc));
+ 	stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr, queue);
  
- 	return;
+ 	return NETDEV_TX_OK;
 -- 
 2.17.1
 
