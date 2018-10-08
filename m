@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C581C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF73C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32452087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072332087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ci/bEuT6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32452087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQdLTvd6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072332087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbeJIByY (ORCPT
+        id S1729973AbeJIBy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41848 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728156AbeJIByY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:24 -0400
+        id S1727965AbeJIBy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFE2D2064A;
-        Mon,  8 Oct 2018 18:41:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA9E22064A;
+        Mon,  8 Oct 2018 18:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024079;
-        bh=LcHVTKCQ0WOD1e3qssd0UUfRi2PvBFOlLOFdas6f2PQ=;
+        s=default; t=1539024082;
+        bh=aq/Lut9Fa/HZwjm7fYc4lBWMX6P1UBVH0HJc3YJS3RM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ci/bEuT6dV/yrDDAnb8+EA9qjP6EOgvEy+7tri7DyYkX5sJsb/0ZGhufPwOU/HS+t
-         4fvLPk6xKtxDK3ydDoK/roJfCoq3RcxXDCn9LtEQVlrdz51mDDpb+9+ig1htVe3+Mh
-         4Y051BnitADlwyBAhHNYpiIO10ANAdXFmNmC0Ww0=
+        b=EQdLTvd6s+t8R7eVPVShHI8BbMLn3XZ4HT3/MkLVhCvOaKBFzawPOzoEdKZHbdonF
+         DC7w9ob0UKdCBaLi2QetoAnNdhK5PvLdscBfQedPFUKVAlG457UnzaD+6nAY9nsXoL
+         6sKluu4d/cuEC4gjP/WEWWEUw0RnKIk+UOA8ATdw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuan-Chi Pang <fu3mo6goo@gmail.com>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 13/94] mac80211: mesh: fix HWMP sequence numbering to follow standard
-Date:   Mon,  8 Oct 2018 20:30:54 +0200
-Message-Id: <20181008175605.689013566@linuxfoundation.org>
+Subject: [PATCH 4.14 14/94] mac80211: avoid kernel panic when building AMSDU from non-linear SKB
+Date:   Mon,  8 Oct 2018 20:30:55 +0200
+Message-Id: <20181008175605.730869734@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,36 +64,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 1f631c3201fe5491808df143d8fcba81b3197ffd ]
+[ Upstream commit 166ac9d55b0ab70b644e429be1f217fe8393cbd7 ]
 
-IEEE 802.11-2016 14.10.8.3 HWMP sequence numbering says:
-If it is a target mesh STA, it shall update its own HWMP SN to
-maximum (current HWMP SN, target HWMP SN in the PREQ element) + 1
-immediately before it generates a PREP element in response to a
-PREQ element.
+When building building AMSDU from non-linear SKB, we hit a
+kernel panic when trying to push the padding to the tail.
+Instead, put the padding at the head of the next subframe.
+This also fixes the A-MSDU subframes to not have the padding
+accounted in the length field and not have pad at all for
+the last subframe, both required by the spec.
 
-Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Reviewed-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mesh_hwmp.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/mac80211/tx.c |   38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -572,6 +572,10 @@ static void hwmp_preq_frame_process(stru
- 		forward = false;
- 		reply = true;
- 		target_metric = 0;
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3022,27 +3022,18 @@ void ieee80211_clear_fast_xmit(struct st
+ }
+ 
+ static bool ieee80211_amsdu_realloc_pad(struct ieee80211_local *local,
+-					struct sk_buff *skb, int headroom,
+-					int *subframe_len)
++					struct sk_buff *skb, int headroom)
+ {
+-	int amsdu_len = *subframe_len + sizeof(struct ethhdr);
+-	int padding = (4 - amsdu_len) & 3;
+-
+-	if (skb_headroom(skb) < headroom || skb_tailroom(skb) < padding) {
++	if (skb_headroom(skb) < headroom) {
+ 		I802_DEBUG_INC(local->tx_expand_skb_head);
+ 
+-		if (pskb_expand_head(skb, headroom, padding, GFP_ATOMIC)) {
++		if (pskb_expand_head(skb, headroom, 0, GFP_ATOMIC)) {
+ 			wiphy_debug(local->hw.wiphy,
+ 				    "failed to reallocate TX buffer\n");
+ 			return false;
+ 		}
+ 	}
+ 
+-	if (padding) {
+-		*subframe_len += padding;
+-		skb_put_zero(skb, padding);
+-	}
+-
+ 	return true;
+ }
+ 
+@@ -3066,8 +3057,7 @@ static bool ieee80211_amsdu_prepare_head
+ 	if (info->control.flags & IEEE80211_TX_CTRL_AMSDU)
+ 		return true;
+ 
+-	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr),
+-					 &subframe_len))
++	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr)))
+ 		return false;
+ 
+ 	data = skb_push(skb, sizeof(*amsdu_hdr));
+@@ -3133,7 +3123,8 @@ static bool ieee80211_amsdu_aggregate(st
+ 	void *data;
+ 	bool ret = false;
+ 	unsigned int orig_len;
+-	int n = 1, nfrags;
++	int n = 1, nfrags, pad = 0;
++	u16 hdrlen;
+ 
+ 	if (!ieee80211_hw_check(&local->hw, TX_AMSDU))
+ 		return false;
+@@ -3184,8 +3175,19 @@ static bool ieee80211_amsdu_aggregate(st
+ 	if (max_frags && nfrags > max_frags)
+ 		goto out;
+ 
+-	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) + 2,
+-					 &subframe_len))
++	/*
++	 * Pad out the previous subframe to a multiple of 4 by adding the
++	 * padding to the next one, that's being added. Note that head->len
++	 * is the length of the full A-MSDU, but that works since each time
++	 * we add a new subframe we pad out the previous one to a multiple
++	 * of 4 and thus it no longer matters in the next round.
++	 */
++	hdrlen = fast_tx->hdr_len - sizeof(rfc1042_header);
++	if ((head->len - hdrlen) & 3)
++		pad = 4 - ((head->len - hdrlen) & 3);
 +
-+		if (SN_GT(target_sn, ifmsh->sn))
-+			ifmsh->sn = target_sn;
++	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
++						     2 + pad))
+ 		goto out;
+ 
+ 	ret = true;
+@@ -3197,6 +3199,8 @@ static bool ieee80211_amsdu_aggregate(st
+ 	memcpy(data, &len, 2);
+ 	memcpy(data + 2, rfc1042_header, sizeof(rfc1042_header));
+ 
++	memset(skb_push(skb, pad), 0, pad);
 +
- 		if (time_after(jiffies, ifmsh->last_sn_update +
- 					net_traversal_jiffies(sdata)) ||
- 		    time_before(jiffies, ifmsh->last_sn_update)) {
+ 	head->len += skb->len;
+ 	head->data_len += skb->len;
+ 	*frag_tail = skb;
 
 
