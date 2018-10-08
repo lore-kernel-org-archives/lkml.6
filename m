@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D69EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36D7C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39CB2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA5F72087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bE57XVIV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39CB2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwdCUT0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5F72087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731787AbeJICCJ (ORCPT
+        id S1731798AbeJICCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51360 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:02:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeJICCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:08 -0400
+        id S1726991AbeJICCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 672C9214C4;
-        Mon,  8 Oct 2018 18:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F28321508;
+        Mon,  8 Oct 2018 18:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024542;
-        bh=D0UgKun6HLGWNIX1WN23TR9gVy4pCUK4zsKu2TWHsT8=;
+        s=default; t=1539024545;
+        bh=zu3NtjZLN/NzA2S/Lyal5ImadyqG8QwsFt3nX47odjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bE57XVIVarVvL0N4od41M+sgNuTiG2t/HyNzO1qjyW70uqMAhA/7REkIW/F6+mkC8
-         /RukoBbGSLgi0/4zVT81C/jc11SdgUARWw7DlQfKNX0nbM6REFu6FjPSwqQLrwy1WQ
-         FHkFXNkqb5zLkI0Xyw7MiXPvQ76Z1TZebykoAWuc=
+        b=JwdCUT0KWcQ30JmYRReI8OG+28VUXh9mD5YOaJfAypGgN3pzZ5/xs2dKvz0o/msFD
+         WTUKfgcu+JMPpRvArjneR3/0v7ez9S0dL6nOyPSlqfkDkvBeRC8ivEQHBQhZBG9JyT
+         h7SUgRpBTEFuu8P6fKPVO16MhRBNHZCtR+ey4/Cc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+8ab6f1042021b4eed062@syzkaller.appspotmail.com,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
+        stable@vger.kernel.org, Ionela Voinescu <ionela.voinescu@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 074/168] ceph: avoid a use-after-free in ceph_destroy_options()
-Date:   Mon,  8 Oct 2018 20:30:54 +0200
-Message-Id: <20181008175622.886820917@linuxfoundation.org>
+Subject: [PATCH 4.18 075/168] firmware: arm_scmi: fix divide by zero when sustained_perf_level is zero
+Date:   Mon,  8 Oct 2018 20:30:55 +0200
+Message-Id: <20181008175622.924936054@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,77 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-[ Upstream commit 8aaff15168cfbc7c8980fdb0e8a585f1afe56ec0 ]
+[ Upstream commit 96d529bac562574600eda85726fcfa3eef6dde8e ]
 
-syzbot reported a use-after-free in ceph_destroy_options(), called from
-ceph_mount().  The problem was that create_fs_client() consumed the opt
-pointer on some errors, but not on all of them.  Make sure it always
-consumes both libceph and ceph options.
+Firmware can provide zero as values for sustained performance level and
+corresponding sustained frequency in kHz in order to hide the actual
+frequencies and provide only abstract values. It may endup with divide
+by zero scenario resulting in kernel panic.
 
-Reported-by: syzbot+8ab6f1042021b4eed062@syzkaller.appspotmail.com
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Let's set the multiplication factor to one if either one or both of them
+(sustained_perf_level and sustained_freq) are set to zero.
+
+Fixes: a9e3fbfaa0ff ("firmware: arm_scmi: add initial support for performance protocol")
+Reported-by: Ionela Voinescu <ionela.voinescu@arm.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ceph/super.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ drivers/firmware/arm_scmi/perf.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -603,6 +603,8 @@ static int extra_mon_dispatch(struct cep
- 
- /*
-  * create a new fs client
-+ *
-+ * Success or not, this function consumes @fsopt and @opt.
-  */
- static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 					struct ceph_options *opt)
-@@ -610,17 +612,20 @@ static struct ceph_fs_client *create_fs_
- 	struct ceph_fs_client *fsc;
- 	int page_count;
- 	size_t size;
--	int err = -ENOMEM;
-+	int err;
- 
- 	fsc = kzalloc(sizeof(*fsc), GFP_KERNEL);
--	if (!fsc)
--		return ERR_PTR(-ENOMEM);
-+	if (!fsc) {
-+		err = -ENOMEM;
-+		goto fail;
-+	}
- 
- 	fsc->client = ceph_create_client(opt, fsc);
- 	if (IS_ERR(fsc->client)) {
- 		err = PTR_ERR(fsc->client);
- 		goto fail;
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -166,7 +166,13 @@ scmi_perf_domain_attributes_get(const st
+ 					le32_to_cpu(attr->sustained_freq_khz);
+ 		dom_info->sustained_perf_level =
+ 					le32_to_cpu(attr->sustained_perf_level);
+-		dom_info->mult_factor =	(dom_info->sustained_freq_khz * 1000) /
++		if (!dom_info->sustained_freq_khz ||
++		    !dom_info->sustained_perf_level)
++			/* CPUFreq converts to kHz, hence default 1000 */
++			dom_info->mult_factor =	1000;
++		else
++			dom_info->mult_factor =
++					(dom_info->sustained_freq_khz * 1000) /
+ 					dom_info->sustained_perf_level;
+ 		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
  	}
-+	opt = NULL; /* fsc->client now owns this */
- 
- 	fsc->client->extra_mon_dispatch = extra_mon_dispatch;
- 	fsc->client->osdc.abort_on_full = true;
-@@ -678,6 +683,9 @@ fail_client:
- 	ceph_destroy_client(fsc->client);
- fail:
- 	kfree(fsc);
-+	if (opt)
-+		ceph_destroy_options(opt);
-+	destroy_mount_options(fsopt);
- 	return ERR_PTR(err);
- }
- 
-@@ -1042,8 +1050,6 @@ static struct dentry *ceph_mount(struct
- 	fsc = create_fs_client(fsopt, opt);
- 	if (IS_ERR(fsc)) {
- 		res = ERR_CAST(fsc);
--		destroy_mount_options(fsopt);
--		ceph_destroy_options(opt);
- 		goto out_final;
- 	}
- 
 
 
