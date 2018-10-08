@@ -2,176 +2,158 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1912DC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D993C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C100520878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:48:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cGjCK1rj";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cGjCK1rj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C100520878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 508882087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:50:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508882087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeJHP7C (ORCPT
+        id S1727253AbeJHQBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:59:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55760 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbeJHP7C (ORCPT
+        Mon, 8 Oct 2018 12:01:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56007 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeJHQBP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:59:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B110C6079B; Mon,  8 Oct 2018 08:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538988503;
-        bh=+UDoz/CQpBmm3zwZmk5icXGeEEQUNqmd0CErF1xevI4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cGjCK1rj1BcVNMFjr5QYkbXBN37j66gTDbqQbwrdkqwuh+zNA/3PNgbBtAsAs/es2
-         ncApPB6X39prrwavpf/d+FUAYln2pHJsMJ4OVxe60n/Ym8yluz/QyvUW78fKeTxyNf
-         etAiJPCKUh3Y4yBWRuYM6oBQQC8sRlqW4r9N/YXs=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id E542B6078C;
-        Mon,  8 Oct 2018 08:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538988503;
-        bh=+UDoz/CQpBmm3zwZmk5icXGeEEQUNqmd0CErF1xevI4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cGjCK1rj1BcVNMFjr5QYkbXBN37j66gTDbqQbwrdkqwuh+zNA/3PNgbBtAsAs/es2
-         ncApPB6X39prrwavpf/d+FUAYln2pHJsMJ4OVxe60n/Ym8yluz/QyvUW78fKeTxyNf
-         etAiJPCKUh3Y4yBWRuYM6oBQQC8sRlqW4r9N/YXs=
+        Mon, 8 Oct 2018 12:01:15 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g9RFE-00032H-UD; Mon, 08 Oct 2018 08:50:29 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtlwifi: rtl8821ae: replace _rtl8821ae_mrate_idx_to_arfr_id with generic version
+Date:   Mon,  8 Oct 2018 09:50:28 +0100
+Message-Id: <20181008085028.23874-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 08 Oct 2018 16:48:22 +0800
-From:   cang@codeaurora.org
-To:     Evan Green <evgreen@chromium.org>
-Cc:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, venkatg@codeaurora.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] scsi: ufs: add 2 lane support
-In-Reply-To: <CAE=gft6f9a2RoAvXR4+2tKZE-3chobb_HfbMDErfU1Q=_8uYwA@mail.gmail.com>
-References: <20180302082346.8188-1-cang@codeaurora.org>
- <CAE=gft6f9a2RoAvXR4+2tKZE-3chobb_HfbMDErfU1Q=_8uYwA@mail.gmail.com>
-Message-ID: <dfebd55dc6df88916876388dcdad3aa4@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2018-10-04 02:34, Evan Green wrote:
-> Hi,
-> 
-> On Wed, Oct 3, 2018 at 11:19 AM Can Guo <cang@codeaurora.org> wrote:
->> 
->> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> 
->> Qcom ufs controller v3.1.0 supports 2 lanes, add support
->> to configure 2 lanes during phy initialization.
-> 
-> I'm reviving this old chestnut, sorry I missed it initially. This
-> description is a little terse, and I'm actually confused about it. The
-> description makes it sounds like this patch is adding support for
-> 2-lane UFS controllers, but the patch itself appears to only make the
-> UFS controller tolerant of a missing lane (or more specifically, a
-> missing lane clock). Can you describe a little more about what's going
-> on here, and perhaps fix the description?
-> 
-> I notice that the global clock controller has clocks for TX symbol 0,
-> and RX symbol 1, but seems to be missing GCC_UFS_PHY_TX_SYMBOL_1_CLK.
-> Was that an oversight, or is it really not there?
-> 
+Function _rtl8821ae_mrate_idx_to_arfr_id is functionally identical to
+the generic version rtl_mrate_idx_to_arfr_id, so remove 
+_rtl8821ae_mrate_idx_to_arfr_id and use the generic one instead.
 
-You are right. The name and commit message are not representing itself
-correctly as most of the original commit has been upstreamed already.
-I uploaded a new patch to address it.
+This also fixes a missing break statement found by CoverityScan in
+_rtl8821ae_mrate_idx_to_arfr_id, namely: CID#1167237 ("Missing break
+in switch")
 
-As per Qcom's design Tx Lane1 clock derives from Tx Lane0. So only
-one Tx Lane0 clock would make 2 Tx lanes work.
+Thanks to Joe Perches for spotting this when I submitted an earlier patch.
 
->> 
->> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
->>  drivers/scsi/ufs/ufs-qcom.c | 20 +++++++++-----------
->>  1 file changed, 9 insertions(+), 11 deletions(-)
->> 
->> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
->> index 2b38db2..51889ad 100644
->> --- a/drivers/scsi/ufs/ufs-qcom.c
->> +++ b/drivers/scsi/ufs/ufs-qcom.c
->> @@ -113,10 +113,10 @@ static void ufs_qcom_disable_lane_clks(struct 
->> ufs_qcom_host *host)
->>         if (!host->is_lane_clks_enabled)
->>                 return;
->> 
->> -       if (host->hba->lanes_per_direction > 1)
->> +       if (host->tx_l1_sync_clk)
->>                 clk_disable_unprepare(host->tx_l1_sync_clk);
->>         clk_disable_unprepare(host->tx_l0_sync_clk);
->> -       if (host->hba->lanes_per_direction > 1)
->> +       if (host->rx_l1_sync_clk)
->>                 clk_disable_unprepare(host->rx_l1_sync_clk);
->>         clk_disable_unprepare(host->rx_l0_sync_clk);
->> 
->> @@ -147,18 +147,15 @@ static int ufs_qcom_enable_lane_clks(struct 
->> ufs_qcom_host *host)
->>                 if (err)
->>                         goto disable_tx_l0;
->> 
->> -               err = ufs_qcom_host_clk_enable(dev, 
->> "tx_lane1_sync_clk",
->> -                       host->tx_l1_sync_clk);
->> -               if (err)
->> -                       goto disable_rx_l1;
->> +               /* The tx lane1 clk could be muxed, hence keep this 
->> optional */
-> 
-> I'm confused by this comment. What do you mean the clock could be 
-> muxed?
-> 
->> +               if (host->tx_l1_sync_clk)
->> +                       ufs_qcom_host_clk_enable(dev, 
->> "tx_lane1_sync_clk",
->> +                                                
->> host->tx_l1_sync_clk);
->>         }
->> 
->>         host->is_lane_clks_enabled = true;
->>         goto out;
->> 
->> -disable_rx_l1:
->> -       if (host->hba->lanes_per_direction > 1)
->> -               clk_disable_unprepare(host->rx_l1_sync_clk);
->>  disable_tx_l0:
->>         clk_disable_unprepare(host->tx_l0_sync_clk);
->>  disable_rx_l0:
->> @@ -189,8 +186,9 @@ static int ufs_qcom_init_lane_clks(struct 
->> ufs_qcom_host *host)
->>                 if (err)
->>                         goto out;
->> 
->> -               err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
->> -                       &host->tx_l1_sync_clk);
->> +               /* The tx lane1 clk could be muxed, hence keep this 
->> optional */
->> +               ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
->> +                                       &host->tx_l1_sync_clk);
->>         }
->>  out:
->>         return err;
+Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../wireless/realtek/rtlwifi/rtl8821ae/hw.c   | 71 +------------------
+ 1 file changed, 1 insertion(+), 70 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+index 317c1b3101da..ba258318ee9f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+@@ -3404,75 +3404,6 @@ static void rtl8821ae_update_hal_rate_table(struct ieee80211_hw *hw,
+ 		 "%x\n", rtl_read_dword(rtlpriv, REG_ARFR0));
+ }
+ 
+-static u8 _rtl8821ae_mrate_idx_to_arfr_id(
+-	struct ieee80211_hw *hw, u8 rate_index,
+-	enum wireless_mode wirelessmode)
+-{
+-	struct rtl_priv *rtlpriv = rtl_priv(hw);
+-	struct rtl_phy *rtlphy = &rtlpriv->phy;
+-	u8 ret = 0;
+-	switch (rate_index) {
+-	case RATR_INX_WIRELESS_NGB:
+-		if (rtlphy->rf_type == RF_1T1R)
+-			ret = 1;
+-		else
+-			ret = 0;
+-		; break;
+-	case RATR_INX_WIRELESS_N:
+-	case RATR_INX_WIRELESS_NG:
+-		if (rtlphy->rf_type == RF_1T1R)
+-			ret = 5;
+-		else
+-			ret = 4;
+-		; break;
+-	case RATR_INX_WIRELESS_NB:
+-		if (rtlphy->rf_type == RF_1T1R)
+-			ret = 3;
+-		else
+-			ret = 2;
+-		; break;
+-	case RATR_INX_WIRELESS_GB:
+-		ret = 6;
+-		break;
+-	case RATR_INX_WIRELESS_G:
+-		ret = 7;
+-		break;
+-	case RATR_INX_WIRELESS_B:
+-		ret = 8;
+-		break;
+-	case RATR_INX_WIRELESS_MC:
+-		if ((wirelessmode == WIRELESS_MODE_B)
+-			|| (wirelessmode == WIRELESS_MODE_G)
+-			|| (wirelessmode == WIRELESS_MODE_N_24G)
+-			|| (wirelessmode == WIRELESS_MODE_AC_24G))
+-			ret = 6;
+-		else
+-			ret = 7;
+-	case RATR_INX_WIRELESS_AC_5N:
+-		if (rtlphy->rf_type == RF_1T1R)
+-			ret = 10;
+-		else
+-			ret = 9;
+-		break;
+-	case RATR_INX_WIRELESS_AC_24N:
+-		if (rtlphy->current_chan_bw == HT_CHANNEL_WIDTH_80) {
+-			if (rtlphy->rf_type == RF_1T1R)
+-				ret = 10;
+-			else
+-				ret = 9;
+-		} else {
+-			if (rtlphy->rf_type == RF_1T1R)
+-				ret = 11;
+-			else
+-				ret = 12;
+-		}
+-		break;
+-	default:
+-		ret = 0; break;
+-	}
+-	return ret;
+-}
+-
+ static u32 _rtl8821ae_rate_to_bitmap_2ssvht(__le16 vht_rate)
+ {
+ 	u8 i, j, tmp_rate;
+@@ -3761,7 +3692,7 @@ static void rtl8821ae_update_hal_rate_mask(struct ieee80211_hw *hw,
+ 		break;
+ 	}
+ 
+-	ratr_index = _rtl8821ae_mrate_idx_to_arfr_id(hw, ratr_index, wirelessmode);
++	ratr_index = rtl_mrate_idx_to_arfr_id(hw, ratr_index, wirelessmode);
+ 	sta_entry->ratr_index = ratr_index;
+ 	ratr_bitmap = _rtl8821ae_set_ra_vht_ratr_bitmap(hw, wirelessmode,
+ 							ratr_bitmap);
+-- 
+2.17.1
+
