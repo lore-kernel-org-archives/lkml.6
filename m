@@ -2,91 +2,117 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0479C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFD5C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD8852145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:33:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvitVKTu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD8852145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B8D4B21471
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:34:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D4B21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeJIAqf (ORCPT
+        id S1726600AbeJIArH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:46:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54648 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 20:47:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49522 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJIAqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:46:35 -0400
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726481AbeJIArH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 20:47:07 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FD2A213A2;
-        Mon,  8 Oct 2018 17:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539020028;
-        bh=aX77AzjIuRa4h1orarTscvef2pLVDNeHuJtMdUXHnrE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JvitVKTunPJ/ddJ+l6SaKiGMVPDFDYYwqPvzxrdVFDkjHR4cbbBaKfTP/ltGN6S8P
-         68fnGGbO8yX/WeykRHdY3hUzJrHn1aYgH1L4LyuscSof8KqMTmwwgYmyjn51Wbxpjv
-         IJJSqd9EWP9KwoMQtMf2m+CYI/xoxWMiz4weO7Uw=
-Date:   Mon, 8 Oct 2018 12:33:47 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Duyck <alexander.h.duyck@intel.com>
-Subject: Re: [PATCH] PCI: expand the "PF" acronym in Kconfig help text
-Message-ID: <20181008173347.GO120535@bhelgaas-glaptop.roam.corp.google.com>
-References: <fceb7567-dae1-f393-b2e9-bce6e1fa5159@infradead.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 529E331500B8;
+        Mon,  8 Oct 2018 17:34:20 +0000 (UTC)
+Received: from treble (ovpn-121-208.rdu2.redhat.com [10.10.121.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BE6960C62;
+        Mon,  8 Oct 2018 17:34:19 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 12:34:17 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: unwind_init() takes 100 ms
+Message-ID: <20181008173417.crlfndi3p5pevnx3@treble>
+References: <81a1ff79-b303-c384-f926-c9618afac8f0@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <fceb7567-dae1-f393-b2e9-bce6e1fa5159@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <81a1ff79-b303-c384-f926-c9618afac8f0@molgen.mpg.de>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 08 Oct 2018 17:34:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 08:56:33PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Mon, Oct 08, 2018 at 11:52:46AM +0200, Paul Menzel wrote:
+> Dear Josh, dear Linux folks,
 > 
-> Tell users what a PCI PF is in the PCI_PF_STUB config help text.
 > 
-> Fixes: a8ccf8a66663 ("PCI/IOV: Add pci-pf-stub driver for PFs that only enable VFs")
+> Trying to decrease the boot time of the 64-bit Linux kernel (Linux 4.19-rc7
+> (0238df64)) on a Asus F2A85-M PRO with an AMD processor, I noticed
+> `unwind_init()` called from `setup_arch()` `arch/x86/kernel/setup.c` takes
+> over 100 ms to initialize according to Linux time stamps (which are present
+> for early boot now).
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Alexander Duyck <alexander.h.duyck@intel.com>
+> ```
+> […]
+> [    0.047650] ACPI: HPET id: 0x10228210 base: 0xfed00000
+> [    0.047653] smpboot: Allowing 4 CPUs, 2 hotplug CPUs
+> [    0.047670] [mem 0x8f000000-0xfebfffff] available for PCI devices
+> [    0.047672] clocksource: refined-jiffies: mask: 0xffffffff max_cycles:
+> 0xffffffff, max_idle_ns: 1910969940391419 ns
+> [    0.151426] setup_percpu: NR_CPUS:64 nr_cpumask_bits:64 nr_cpu_ids:4
+> nr_node_ids:1
+> [    0.151892] percpu: Embedded 44 pages/cpu @(____ptrval____) s142552 r8192
+> d29480 u524288
+> […]
+> ```
+> 
+> That’s a third of the time to get to unpacking the initramfs.
+> 
+> Therefore, I have several questions.
+> 
+> 1.  Can you reproduce that on your systems?
 
-Applied with Alexander's ack to for-linus for v4.19.
+I haven't tried to reproduce, but it wouldn't surprise me because it
+sorts the big ORC table during boot.
 
-> ---
->  drivers/pci/Kconfig |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> --- lnx-419-rc6.orig/drivers/pci/Kconfig
-> +++ lnx-419-rc6/drivers/pci/Kconfig
-> @@ -73,9 +73,9 @@ config PCI_PF_STUB
->  	depends on PCI_IOV
->  	help
->  	  Say Y or M here if you want to enable support for devices that
-> -	  require SR-IOV support, while at the same time the PF itself is
-> -	  not providing any actual services on the host itself such as
-> -	  storage or networking.
-> +	  require SR-IOV support, while at the same time the PF (Physical
-> +	  Function) itself is not providing any actual services on the
-> +	  host itself such as storage or networking.
->  
->  	  When in doubt, say N.
->  
-> 
-> 
+> 2.  Can this be decreased or moved out of the “hot path”?
+
+It would be better to sort it at build time, but I haven't had a chance
+to implement that yet.  I'll try to get to it one of these days...
+
+> 3.  If not, how can this be disabled? I was unable to do so in the
+> configuration menu. I could always select an unwinder under *Kernel
+> hacking*, and was not able to disable it.
+
+If you select CONFIG_UNWINDER_FRAME_POINTER, the boot time penalty
+should go away.
+
+Or do CONFIG_EXPERT and CONFIG_UNWINDER_GUESS if you don't want the
+general slowdown caused by frame pointers.
+
+> 4.  Would a command line parameter be reasonable `disable_unwind`, so people
+> could decrease their boot time with distribution kernels, and easily turn it
+> back on, when they need a stacktrace without having to rebuild the Linux
+> kernel?
+
+I think a boot cmdline option to disable ORC would be ok.  However,
+disabling ORC would need to fall back to the "guess" unwinder.
+Otherwise it would make debugging impossible.  That shouldn't be too
+hard, but it would require restructuring the code a bit.
+
+I'm not sure about a runtime toggle though.  It might be racy and I'd
+rather avoid that completely, unless there's a solid justification for
+it.
+
+-- 
+Josh
