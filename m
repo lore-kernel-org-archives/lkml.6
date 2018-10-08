@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE34C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6190C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBBC221557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:29:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BB7C21565
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXRzUECH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBC221557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOUERfYm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB7C21565
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbeJHWjk (ORCPT
+        id S1728984AbeJHWld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59126 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:41:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbeJHWjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:39 -0400
+        id S1726481AbeJHWjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD75421533;
-        Mon,  8 Oct 2018 15:27:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CCEA21565;
+        Mon,  8 Oct 2018 15:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012444;
-        bh=PjjfhhsQjObJs/kvUaHpaPWUBPbkGDh42GW+jS5kgRg=;
+        s=default; t=1539012442;
+        bh=WZj5ZHPkULr+6aTfzFDmonGv7PXtpKUQYLwEqPBq3As=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXRzUECHH931xf8tndBD2WC9AOj5SeKl2sBXCDHu1Jepqg3/veUdNBuq0qivIH7I0
-         4xWC48WcqFW6UwyPUGxtFe8NPLjKQpB5mflTwXP6t3bU/t1e2x/tOXLMnnb6k4krjf
-         CE8G1PFS43aSyBkXcqduT0DYXy2ocWMff/zccWR4=
+        b=SOUERfYm6QE+Lgc6XI7GcI+QNX8MovqU7XWfjyfP9AzpoTSxThVWzrogMdjtkMkuJ
+         pr5Y8+PBd7mYszidp8lFkc75SCsb5fbBi5P0L4oEOCh8iluMW2OVcpyQO54GqUUSvp
+         mvvgNXlfuWeybzwPvAhZeiOX2Xlze9LcKX4yQmxE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 21/23] powerpc/tm: Fix userspace r13 corruption
-Date:   Mon,  8 Oct 2018 11:27:01 -0400
-Message-Id: <20181008152703.70891-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 19/23] net/mlx4: Use cpumask_available for eq->affinity_mask
+Date:   Mon,  8 Oct 2018 11:26:59 -0400
+Message-Id: <20181008152703.70891-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
 References: <20181008152703.70891-1-sashal@kernel.org>
@@ -53,66 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Neuling <mikey@neuling.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit cf13435b730a502e814c63c84d93db131e563f5f ]
+[ Upstream commit 8ac1ee6f4d62e781e3b3fd8b9c42b70371427669 ]
 
-When we treclaim we store the userspace checkpointed r13 to a scratch
-SPR and then later save the scratch SPR to the user thread struct.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
 
-Unfortunately, this doesn't work as accessing the user thread struct
-can take an SLB fault and the SLB fault handler will write the same
-scratch SPRG that now contains the userspace r13.
+drivers/net/ethernet/mellanox/mlx4/eq.c:243:11: warning: address of
+array 'eq->affinity_mask' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
+            ~~~~~^~~~~~~~~~~~~
+1 warning generated.
 
-To fix this, we store r13 to the kernel stack (which can't fault)
-before we access the user thread struct.
+Use cpumask_available, introduced in commit f7e30f01a9e2 ("cpumask: Add
+helper cpumask_available()"), which does the proper checking and avoids
+this warning.
 
-Found by running P8 guest + powervm + disable_1tb_segments + TM. Seen
-as a random userspace segfault with r13 looking like a kernel address.
-
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Reviewed-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://github.com/ClangBuiltLinux/linux/issues/86
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/kernel/tm.S | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/eq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/tm.S b/arch/powerpc/kernel/tm.S
-index 3a2d04134da9..b0b99aadf504 100644
---- a/arch/powerpc/kernel/tm.S
-+++ b/arch/powerpc/kernel/tm.S
-@@ -166,13 +166,20 @@ _GLOBAL(tm_reclaim)
- 	std	r1, PACATMSCRATCH(r13)
- 	ld	r1, PACAR1(r13)
+diff --git a/drivers/net/ethernet/mellanox/mlx4/eq.c b/drivers/net/ethernet/mellanox/mlx4/eq.c
+index 0509996957d9..e70d6fe504b8 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
+@@ -240,7 +240,8 @@ static void mlx4_set_eq_affinity_hint(struct mlx4_priv *priv, int vec)
+ 	struct mlx4_dev *dev = &priv->dev;
+ 	struct mlx4_eq *eq = &priv->eq_table.eq[vec];
  
--	/* Store the PPR in r11 and reset to decent value */
- 	std	r11, GPR11(r1)			/* Temporary stash */
+-	if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
++	if (!cpumask_available(eq->affinity_mask) ||
++	    cpumask_empty(eq->affinity_mask))
+ 		return;
  
-+	/*
-+	 * Store r13 away so we can free up the scratch SPR for the SLB fault
-+	 * handler (needed once we start accessing the thread_struct).
-+	 */
-+	GET_SCRATCH0(r11)
-+	std	r11, GPR13(r1)
-+
- 	/* Reset MSR RI so we can take SLB faults again */
- 	li	r11, MSR_RI
- 	mtmsrd	r11, 1
- 
-+	/* Store the PPR in r11 and reset to decent value */
- 	mfspr	r11, SPRN_PPR
- 	HMT_MEDIUM
- 
-@@ -201,7 +208,7 @@ _GLOBAL(tm_reclaim)
- 	ld	r4, GPR7(r1)			/* user r7 */
- 	ld	r5, GPR11(r1)			/* user r11 */
- 	ld	r6, GPR12(r1)			/* user r12 */
--	GET_SCRATCH0(8)				/* user r13 */
-+	ld	r8, GPR13(r1)			/* user r13 */
- 	std	r3, GPR1(r7)
- 	std	r4, GPR7(r7)
- 	std	r5, GPR11(r7)
+ 	hint_err = irq_set_affinity_hint(eq->irq, eq->affinity_mask);
 -- 
 2.17.1
 
