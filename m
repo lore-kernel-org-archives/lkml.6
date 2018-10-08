@@ -2,119 +2,102 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86887C677D1
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADAFC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C9A820858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:34:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByYxSNoD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C9A820858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A7A812075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:37:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A812075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbeJHTp4 (ORCPT
+        id S1726468AbeJHTs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 15:45:56 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43630 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbeJHTpz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 15:45:55 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y20-v6so10779822eds.10;
-        Mon, 08 Oct 2018 05:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aiAgeQE8+ls6axisZMjCnRhqfBbp++OqABECBH9ceQ0=;
-        b=ByYxSNoDfBp7BIKZ/ujJXTkJTgcJOE1EVc9c3hv9N+MRE7C0i7tPmeENCqhkGm3rsc
-         9Ak0Tf34sg6CAo5wckR9j5sxaVxdPEOgB+RQhKB08VfeQwKZWOyFNNluD1aO4hTTeUzh
-         dk5YANHPgOCpyKZSCf8hsRM+5yVO6tN/hXVqi9FVCBM2GZxKzsaYfOyVG7UJQE7mE1N8
-         wdViiIqQRKL8GLliATOw14K3gIQlRhjCwPfTLwRyOZ4aTX6OZiLPDUBmd7vbuMdQkhAH
-         ItGf1vBmOQUafValIlhJHWuznileW0vSfFoid6wKUT9/0AMNQ7zF5RYlNsa3BVbTl6Yj
-         mNxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aiAgeQE8+ls6axisZMjCnRhqfBbp++OqABECBH9ceQ0=;
-        b=KM9BICqEV4CNC2tJov2YDeqFYvRPW2tIjPdkz+tsZZ1+xjJegEk25p98G/xMSu/krm
-         J452B1pIsXflQd9untO5GEGZpAW9d9cHrrDfhurv2unKQ1zP2uwc2q/S0yAk+UBw3Pux
-         2r87Auhmn58i3R0AxA8FzjJ8BEJ4qPpdvZY4ghUV8gbhrAkSa7NTDjLOY5kEeZW27tA5
-         xLXHY9a5/K1Am0BIrtrJ9Bv2XlA72Yj1qInEOnRfaV79rklGeT22StECm+Jq+ZqZ8+WG
-         tggiJfHU1qKwOmlruw9qNuRY8OcsHTzW0JUSpVqKzkvoK3z4hvwbOCL5Qta/4kG+6Q7W
-         +p6w==
-X-Gm-Message-State: ABuFfogtjyghcxHgLfeOqnTMr+iav4gYu5f2KNIeRcfJ8pBJm9pPoAPV
-        TVFNmahVLQIxhIIqbBp9Yi0AIWSn8gxs8VGy7vE=
-X-Google-Smtp-Source: ACcGV63jnfPKffeWlwkuEvUKMnD+QQn2Je+nsultbRsduaq/FAg40811aYKQ5jENFvq8vucH6LJGu/KQ5n1xESVI8Vo=
-X-Received: by 2002:a17:906:2d4a:: with SMTP id e10-v6mr2337554eji.105.1539002063699;
- Mon, 08 Oct 2018 05:34:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
- <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
- <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com> <2d2878e5a44c496cb0937f02d64e0b38@AcuMS.aculab.com>
-In-Reply-To: <2d2878e5a44c496cb0937f02d64e0b38@AcuMS.aculab.com>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Mon, 8 Oct 2018 20:34:12 +0800
-Message-ID: <CAEUhbmV3SoPLZeN2EOm8h0xfKqN1FBZmJjhv6ygQovHZVA9ZRg@mail.gmail.com>
-Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious interrupt" quirk
-To:     David.Laight@aculab.com
-Cc:     helgaas@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Mon, 8 Oct 2018 15:48:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42410 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725941AbeJHTs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 15:48:57 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 93271C050DFE;
+        Mon,  8 Oct 2018 12:37:26 +0000 (UTC)
+Received: from krava (unknown [10.43.17.152])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E32E320165DD;
+        Mon,  8 Oct 2018 12:37:24 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 14:37:24 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v11 1/3]: perf util: map data buffer for preserving
+ collected data
+Message-ID: <20181008123724.GC18757@krava>
+References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
+ <0ff162a6-67ab-9e73-8d7e-fa57c932ee45@linux.intel.com>
+ <20181008105049.GC17270@krava>
+ <43747adb-4591-e0ff-f173-525a5f5d47b4@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43747adb-4591-e0ff-f173-525a5f5d47b4@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 08 Oct 2018 12:37:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On Mon, Oct 08, 2018 at 02:55:13PM +0300, Alexey Budankov wrote:
+> Hi,
+> 
+> On 08.10.2018 13:50, Jiri Olsa wrote:
+> > On Mon, Oct 08, 2018 at 09:14:29AM +0300, Alexey Budankov wrote:
+> >>
+> <SNIP>
+> >> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> >> index f6d1a03c7523..2e90f4ce9214 100644
+> >> --- a/tools/perf/Makefile.config
+> >> +++ b/tools/perf/Makefile.config
+> >> @@ -355,6 +355,11 @@ endif # NO_LIBELF
+> >>  
+> >>  ifeq ($(feature-glibc), 1)
+> >>    CFLAGS += -DHAVE_GLIBC_SUPPORT
+> >> +  ifndef NO_AIO
+> > 
+> > hum, do we need NO_AIO? we have the --aio option to enable that right?
+> 
+> Right. Enable that *in runtime*.
+> 
+> > I guess BIONIC does not support aio, but but will it fail when it's
+> > compiled in there?
+> 
+> Please see updated section of the cover letter for more information 
+> regarding this. Possible compilation issues is that's why we better 
+> have this capability in advance:
+>   
+>   objdump -T tools/perf/perf | grep aio
+> 
+>   0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_suspend64
+>   0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_return64
+>   0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_error64
+>   0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_write64
+> 
+> IMHO, it is worth implementing NO_AIO define.
 
-On Mon, Oct 8, 2018 at 6:06 PM David Laight <David.Laight@aculab.com> wrote:
->
-> From: Bin Meng
-> > Sent: 08 October 2018 10:44
-> ...
-> > Correct, disable the shared interrupt line keeps all devices using
-> > that line from working, which is current kernel's behavior w/o this
-> > quirk handling: it disables the (shared) interrupt line after 100.000+
-> > generated interrupts. But the side effect is that other devices become
-> > unusable after that (eg: USB devices which share the same interrupt
-> > line with the Intel GPU). That's why the original commit, f67fd55fa96f
-> > ("PCI: Add quirk for still enabled interrupts on Intel Sandy Bridge
-> > GPUs") disables the GPU's interrupt directly, which should really be
-> > done by the VGA BIOS itself (a buggy VBIOS!).
->
-> Shouldn't the kernel just disable all PCI(e) interrupts by writing
-> 1 to the config space control register bit during grope?
-> Can it ever by right for this to be set?
->
+ok, if there are c libs that won't compile with that,
+then sure, we need it
 
-Do you mean PCI_COMMAND_INTX_DISABLE bit of the command register in
-the configuration space? Setting this bit indeed could disable the
-INTx interrupt, but it does not work for all PCI devices as this bit
-was introduced in PCI spec v2.3.
-
-> Apart from VGA the 'bus master' bit also needs to be clear.
->
-> ISTR some very early PCI systems which failed to reset the PCI
-> bus during reboot - at least the 'bus master' bit remained
-> set for an ethernet card.
-> On a private LAN the OS got reinstalled and rebooted without
-> using all the ethernet receive buffers and then died because
-> a receive frame got written into 'random' memory.
-
-Regards,
-Bin
+thanks,
+jirka
