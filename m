@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0909C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031B6C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8953A2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C26682087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wOhfyUdA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8953A2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="owNs9lZF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26682087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730872AbeJIB6C (ORCPT
+        id S1730883AbeJIB6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:58:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45980 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbeJIB6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:00 -0400
+        id S1730200AbeJIB6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C3122064A;
-        Mon,  8 Oct 2018 18:44:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F18A2064A;
+        Mon,  8 Oct 2018 18:44:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024295;
-        bh=2ElbHuYDfDjmNFa8FJtDGJTxuc2bJdJx0pe9UKa11sE=;
+        s=default; t=1539024297;
+        bh=0KhZTocW8pBbyycCu/1vsLIPhEeDtrZsWOMpZ4S5cm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wOhfyUdAGP47ncgs8nCg34sKLEEGiEmSqC0VUW94wykPpBvQPiYrwHsGUMwCuMRpP
-         hEdYiXjkAu7mG9P5uwQgqHlWe7qXi8drDvZJ657cv1GT1sPq4mhf1eALwbSGcc5kQY
-         KlWJ/xsrmUKum1zSJlBvaRFq5n/UYSyeIlopMknU=
+        b=owNs9lZFBgHEmuhjbpvQZs3HQKkrsbe8fqvXo0jN5WnEIXoOoMPnGI8AXIdDBDkHP
+         qvna5f4Bcwmrd21hMHGFNCHZUS5+FLlTXeWQzJo6WcxGZwY+h9V+rLVYDgAXBsB3al
+         5OA0X6syJnNR9Qy7g3WlfJTHZH41kw7KDrZDfh+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 88/94] crypto: caam/jr - fix ablkcipher_edesc pointer arithmetic
-Date:   Mon,  8 Oct 2018 20:32:09 +0200
-Message-Id: <20181008175610.746392786@linuxfoundation.org>
+        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        Jan Lorenzen <jl@newtec.dk>, Jim Paris <jim@jtan.com>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 89/94] gpiolib: Free the last requested descriptor
+Date:   Mon,  8 Oct 2018 20:32:10 +0200
+Message-Id: <20181008175610.789945857@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,56 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-commit 13cc6f48c7434ce46ba6dbc90003a136a263d75a upstream.
+commit 19a4fbffc94e41abaa2a623a25ce2641d69eccf0 upstream.
 
-In some cases the zero-length hw_desc array at the end of
-ablkcipher_edesc struct requires for 4B of tail padding.
+The current code only frees N-1 gpios if an error occurs during
+gpiod_set_transitory, gpiod_direction_output or gpiod_direction_input.
+Leading to gpios that cannot be used by userspace nor other drivers.
 
-Due to tail padding and the way pointers to S/G table and IV
-are computed:
-	edesc->sec4_sg = (void *)edesc + sizeof(struct ablkcipher_edesc) +
-			 desc_bytes;
-	iv = (u8 *)edesc->hw_desc + desc_bytes + sec4_sg_bytes;
-first 4 bytes of IV are overwritten by S/G table.
-
-Update computation of pointer to S/G table to rely on offset of hw_desc
-member and not on sizeof() operator.
-
-Cc: <stable@vger.kernel.org> # 4.13+
-Fixes: 115957bb3e59 ("crypto: caam - fix IV DMA mapping and updating")
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Timur Tabi <timur@codeaurora.org>
+Cc: stable@vger.kernel.org
+Fixes: ab3dbcf78f60f46d ("gpioib: do not free unrequested descriptors)
+Reported-by: Jan Lorenzen <jl@newtec.dk>
+Reported-by: Jim Paris <jim@jtan.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/caamalg.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -1511,8 +1511,8 @@ static struct ablkcipher_edesc *ablkciph
- 	edesc->src_nents = src_nents;
- 	edesc->dst_nents = dst_nents;
- 	edesc->sec4_sg_bytes = sec4_sg_bytes;
--	edesc->sec4_sg = (void *)edesc + sizeof(struct ablkcipher_edesc) +
--			 desc_bytes;
-+	edesc->sec4_sg = (struct sec4_sg_entry *)((u8 *)edesc->hw_desc +
-+						  desc_bytes);
- 	edesc->iv_dir = DMA_TO_DEVICE;
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -489,7 +489,7 @@ static int linehandle_create(struct gpio
+ 		if (ret)
+ 			goto out_free_descs;
+ 		lh->descs[i] = desc;
+-		count = i;
++		count = i + 1;
  
- 	/* Make sure IV is located in a DMAable area */
-@@ -1715,8 +1715,8 @@ static struct ablkcipher_edesc *ablkciph
- 	edesc->src_nents = src_nents;
- 	edesc->dst_nents = dst_nents;
- 	edesc->sec4_sg_bytes = sec4_sg_bytes;
--	edesc->sec4_sg = (void *)edesc + sizeof(struct ablkcipher_edesc) +
--			 desc_bytes;
-+	edesc->sec4_sg = (struct sec4_sg_entry *)((u8 *)edesc->hw_desc +
-+						  desc_bytes);
- 	edesc->iv_dir = DMA_FROM_DEVICE;
- 
- 	/* Make sure IV is located in a DMAable area */
+ 		if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+ 			set_bit(FLAG_ACTIVE_LOW, &desc->flags);
 
 
