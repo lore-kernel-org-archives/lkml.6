@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64567C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82558C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D99E2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E2012087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMT3dRHq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D99E2089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbcFHpBd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2012087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeJIBsC (ORCPT
+        id S1728081AbeJIBsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59852 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbeJIBsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:01 -0400
+        id S1727068AbeJIBsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:04 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 651262087D;
-        Mon,  8 Oct 2018 18:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C2B92087D;
+        Mon,  8 Oct 2018 18:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023698;
-        bh=dj4eAE3raqR5mINibA8/Q2h+7NAjlw8Kxv83wJizv1w=;
+        s=default; t=1539023701;
+        bh=IlGS0CExd7HjYH5VP3y7TV28aroRvxRjLxEVJgKm/tM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jMT3dRHqFUaKhxfQ0UIW73s5mXY43AjX9fR9muCbM3P0pC1GlJ0whc9B8tMfY/OM4
-         SpX8K0LwJRAQJMpfqkkLqtzjXOG2JxdVDSFCOalMNbYiXAPQmbnCkofiyDCtX/NnEp
-         PwtLiNDMWc10ul1hch14rSXO0mitizjAZoKZGtv4=
+        b=jbcFHpBdpSF5KPdDFyGfXuPHuuhANeGy/tVX8YrSQkFUKz3CDYUoTbKaSRsLLwRVY
+         vOWNIWA7VQ8zVxTy31/aKJq8MUoS7/y+2cWcgNw0fe54i2mh3Wy1DdTyifcOZv8aAk
+         prSonnM4i8Fs+snGpoTmqvlp9j3AxwG5SyDh7JZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 030/113] media: tm6000: add error handling for dvb_register_adapter
-Date:   Mon,  8 Oct 2018 20:30:31 +0200
-Message-Id: <20181008175532.327714943@linuxfoundation.org>
+Subject: [PATCH 4.4 021/113] powerpc/powernv/ioda2: Reduce upper limit for DMA window size
+Date:   Mon,  8 Oct 2018 20:30:22 +0200
+Message-Id: <20181008175531.875171518@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -64,38 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
+[ Upstream commit d3d4ffaae439981e1e441ebb125aa3588627c5d8 ]
 
-When dvb_register_adapter fails, the lack of error-handling code may
-cause unexpected results.
+We use PHB in mode1 which uses bit 59 to select a correct DMA window.
+However there is mode2 which uses bits 59:55 and allows up to 32 DMA
+windows per a PE.
 
-This patch adds error-handling code after calling dvb_register_adapter.
+Even though documentation does not clearly specify that, it seems that
+the actual hardware does not support bits 59:55 even in mode1, in other
+words we can create a window as big as 1<<58 but DMA simply won't work.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This reduces the upper limit from 59 to 55 bits to let the userspace know
+about the hardware limits.
+
+Fixes: 7aafac11e3 "powerpc/powernv/ioda2: Gracefully fail if too many TCE levels requested"
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/platforms/powernv/pci-ioda.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -275,6 +275,11 @@ static int register_dvb(struct tm6000_co
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -2270,7 +2270,7 @@ static long pnv_pci_ioda2_table_alloc_pa
+ 	level_shift = entries_shift + 3;
+ 	level_shift = max_t(unsigned, level_shift, PAGE_SHIFT);
  
- 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
- 					THIS_MODULE, &dev->udev->dev, adapter_nr);
-+	if (ret < 0) {
-+		pr_err("tm6000: couldn't register the adapter!\n");
-+		goto err;
-+	}
-+
- 	dvb->adapter.priv = dev;
+-	if ((level_shift - 3) * levels + page_shift >= 60)
++	if ((level_shift - 3) * levels + page_shift >= 55)
+ 		return -EINVAL;
  
- 	if (dvb->frontend) {
+ 	/* Allocate TCE table */
 
 
