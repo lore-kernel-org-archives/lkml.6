@@ -6,71 +6,149 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7368BC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B443C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C18204EC
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C18204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 42D122085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:37:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42D122085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeJHVsw (ORCPT
+        id S1726647AbeJHVtG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:48:52 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13605 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726078AbeJHVsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:48:52 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 132FFA6103F01;
-        Mon,  8 Oct 2018 22:36:46 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 8 Oct 2018
- 22:36:42 +0800
-Subject: Re: [PATCH v2] staging: erofs: add SPDX identifer
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
-        Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-References: <20181008141409.2624-1-loic.tourlonias.lkml@gmail.com>
- <20181008142228.GB13359@kroah.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
-Date:   Mon, 8 Oct 2018 22:36:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 8 Oct 2018 17:49:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbeJHVtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:49:06 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88C66204EC;
+        Mon,  8 Oct 2018 14:37:00 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 10:36:59 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        Ingo Molnar <mingo@kernel.org>, tsoni@codeaurora.org,
+        Anton Vorontsov <anton@enomsg.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>, devicetree@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
+        Jason Baron <jbaron@akamai.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Tony Luck <tony.luck@intel.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bryan Huntsman <bryanh@codeaurora.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Colin Cross <ccross@android.com>, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 3/6] tracing: Add tp_pstore cmdline to have tracepoints
+ go to pstore
+Message-ID: <20181008103659.5bc14b28@gandalf.local.home>
+In-Reply-To: <08f1fadc-3ce7-4bef-ba17-e038b8450fc8@codeaurora.org>
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+        <f65e9fa6e047b9b14d4f64362f9fe1f89b306050.1536430404.git.saiprakash.ranjan@codeaurora.org>
+        <CAEXW_YRQtJb=3V0RKHSAejfQXKssh5qBp7nmD1OUC-wTyqGDEQ@mail.gmail.com>
+        <1f546234-bd7b-448a-3666-3f8baa249608@codeaurora.org>
+        <08f1fadc-3ce7-4bef-ba17-e038b8450fc8@codeaurora.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181008142228.GB13359@kroah.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Mon, 8 Oct 2018 19:46:15 +0530
+Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
 
-On 2018/10/8 22:22, Greg Kroah-Hartman wrote:
-> Why delete that line?
+> Hi Joel,
 > 
-> But wait, why do we even have this file at all?  What's wrong with the
-> lib/lz4/ code that we have in the kernel today?  Shouldn't the code
-> using these files be moved over to use the lib/ code instead and this
-> file be deleted?
+> Sorry for the long delay in updating this thread.
+> But I just observed one weird behaviour in ftrace-ramoops when I was 
+> trying to use binary record instead of rendering text for event-ramoops.
+> 
+> Even though we set the ftrace-size in device tree for ramoops, the 
+> actual ftrace-ramoops record seems to have more records than specified size.
+> Is this expected or some bug?
 
-EROFS uses customized LZ4 decompression code for now (which has been offically
-supported in lz4 1.8.3, I have updated it in
-https://ozlabs.org/~akpm/mmots/broken-out/lib-lz4-update-lz4-decompressor-module.patch
-if it is shown up in Linux 4.20, I will remove all the customized LZ4 decompression code),
-but lib/ code lz4def.h isn't export to include/.
-
-Thanks,
-Gao Xiang
+If ftrace-ramoops is using logic similar to the ftrace ring buffer,
+then yes, it will be able to store more events than specified. The
+ftrace ring buffer is broken up into pages, and everything is rounded
+up to the nearest page (note, the data may be smaller than a page,
+because each page also contains a header).
 
 > 
-> thanks,
+> Below is the ftrace-ramoops size passed in dtsi for db410c and we can 
+> see that the ftrace record is more.
 > 
-> greg k-h
+> # cat /sys/module/ramoops/parameters/ftrace_size
+> 131072
+
+I'm assuming this too is like the ftrace ring buffer, where the size is
+per cpu (and why you do a search per cpu below).
+
+> #
+> # cat /sys/fs/pstore/ftrace-ramoops-0 | wc -c
+> 560888
+> #
+> # cat /sys/fs/pstore/ftrace-ramoops-0 | grep CPU:0 | wc -c
+> 137758
+> #
+> # cat /sys/fs/pstore/ftrace-ramoops-0 | grep CPU:1 | wc -c
+> 140560
+> #
+> # cat /sys/fs/pstore/ftrace-ramoops-0 | grep CPU:2 | wc -c
+> 141174
+> #
+> # cat /sys/fs/pstore/ftrace-ramoops-0 | grep CPU:3 | wc -c
+> 141396
+> #
+> 
+
+If you are using binary record, isn't this what you want? The
+ftrace_size is the size of how much binary data is stored. When you
+translate the binary into human text, the text should be bigger.
+
+> I don't see this in console or dmesg ramoops and also with the 
+> event-ramoops which I have posted since we don't use binary record, only 
+> ftrace-ramoops uses binary record to store trace data.
+> 
+> Also regarding the warning on "event_call->event.funcs->trace()" call,
+> I see it everytime without spinlock. Also we see output_printk using 
+> spinlock when making this call. I could not find a way to pass event 
+> buffer size and allocate in pstore. Steven can give some hints with this 
+> I guess.
+> 
+> Steven Rostedt gave some reviews about using raw_spinlocks for this call 
+> earlier in this thread. So is it right to not use spinlocks for trace 
+> events?
+
+Correct.
+
+> 
+> One difference I see in ftrace-ramoops and event-ramoops is that 
+> ftrace-ramoops  is not started on boot and event-ramoops logging can be 
+> enabled from boot (late initcall however).
+> 
+> Do let me know if you have any way to avoid this warning which is a race 
+> I think without spinlock.
+
+I guess I need to look at that code again too.
+
+-- Steve
+
