@@ -2,881 +2,153 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61762C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D45C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7CEF20858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7CEF20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 86E5C20858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E5C20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJIDIH convert rfc822-to-8bit (ORCPT
+        id S1726918AbeJIDIM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:08:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726391AbeJIDIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:08:06 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3D8220858;
-        Mon,  8 Oct 2018 19:54:40 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 15:54:39 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] tools/lib/traceevent, tools/perf: Move struct
- tep_handler definition in a local header file
-Message-ID: <20181008155439.3a9cd66e@gandalf.local.home>
-In-Reply-To: <20181008173224.GP3541@kernel.org>
-References: <20181005122225.522155df@gandalf.local.home>
-        <20181005122846.4b974dbd@gandalf.local.home>
-        <20181008173224.GP3541@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        Mon, 8 Oct 2018 23:08:12 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:40944 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726846AbeJIDII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:08:08 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w98Jsi05009312
+        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 15:54:44 -0400
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w98JscE9001253
+        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 15:54:44 -0400
+Received: by mail-qk1-f199.google.com with SMTP id u86-v6so22464645qku.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 12:54:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:mime-version
+         :content-transfer-encoding:date:message-id;
+        bh=8JYLEKvhA+aDGBa2pLeNYCJrxFpKdSPMeqpc2WgnBoM=;
+        b=tI3obKhvePNMIYMMhop5OQiHdCF9Y6lz++rFAA0eOCTu2uLgWM3mDubkLRJjqAgkYN
+         bGkrXf0PZP5pwdY5c7OR5a+zW4KbK3Myp5nDZ1XG1RFEEBPRdtKj5Ik5k6BYG8xkWUuo
+         RVP4HrBQ1VfcsScvUtj/jj1giKNvh27MjcatYEc5gZWDdY7iMwfmkIkGECE1CKxSEqVD
+         hFIyqV8Ns/AUU8hNL1PyXjtMW2r5NNFbJtIofvPhv78yDkI/luftotz0b52jVlpiemaV
+         NtH8lYgvhs+7nNhVCwMNsHzOtWPIkAUW5JT/JAUY18WpVlSmsmcov5pf9hPn45gUTNHM
+         S0hA==
+X-Gm-Message-State: ABuFfohdRgqajPn66kOlTxTKcgyuT64eSztSKlrEi75Y+b5Gec6MJ95/
+        AXJibFusI5XBclLL2x8w3bMEit5ohTOa1I0mdFTpmANorNCjTkADEnPMgJpM8OkBTf+hYA0loIY
+        PHqt4q+gre1PvCm2xNIh2nExTlR1MyCFu0Q4=
+X-Received: by 2002:ac8:2e11:: with SMTP id r17-v6mr20732111qta.12.1539028478020;
+        Mon, 08 Oct 2018 12:54:38 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV63Ox0UN3BG73iF5CnmrmXZZeY6X94Sr9WG22asXPjKndc5DoAMINGQoPcElmkUqcVlrovDeRQ==
+X-Received: by 2002:ac8:2e11:: with SMTP id r17-v6mr20732086qta.12.1539028477521;
+        Mon, 08 Oct 2018 12:54:37 -0700 (PDT)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id y50-v6sm9504785qta.60.2018.10.08.12.54.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 12:54:35 -0700 (PDT)
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From:   valdis.kletnieks@vt.edu
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: [BUG] ext4 null pointer crash in linux-next
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1539028475_2640P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 08 Oct 2018 15:54:35 -0400
+Message-ID: <36243.1539028475@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 8 Oct 2018 14:32:24 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+--==_Exmh_1539028475_2640P
+Content-Type: text/plain; charset=us-ascii
 
-> Em Fri, Oct 05, 2018 at 12:28:46PM -0400, Steven Rostedt escreveu:
-> > On Fri, 5 Oct 2018 12:22:25 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> >   
-> > > +/**
-> > > + * tep_get_first_event - returns the first event in the events array
-> > > + * @tep: a handle to the tep_handle
-> > > + *
-> > > + * This returns pointer to the first element of the events array
-> > > + * If @tep is NULL, NULL is returned.
-> > > + */
-> > > +struct tep_event_format *tep_get_first_event(struct tep_handle *tep)
-> > > +{
-> > > +	if(tep && tep->events)
-> > > +		return tep->events[0];
-> > > +
-> > > +	return NULL;
-> > > +}
-> > > +  
-> > 
-> > Hold off on pulling this in. This patch has some whitespace issues that
-> > need to be cleaned up.  
-> 
-> Ah, that if( thing? ?I can fix it here, holler if there is more than
-> that.
+I'm seeing a fairly replicable crash/hang with a traceback implicating ext4 (or
+possibly the block layer). next-20180918 seemed stable, but next-20180926 and
+-next-20181005 have a habit of crashing while dnf is updating software (so far,
+I've hit it 6 times with identical tracebacks while attempting to update software
 
-Well, here's a fixed up version anyway...
+This ringing any bells, or did I just buy myself another git bisect? Google says
+that ext4_mpage_readpages from the traceback hasn't been referenced in the
+last 2 months...
 
--- Steve
+[  680.692888] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[  680.692895] PGD 0 P4D 0
+[  680.692901] Oops: 0000 [#1] PREEMPT SMP PTI
+[  680.692905] CPU: 3 PID: 15464 Comm: sh Tainted: G           O    T 4.19.0-rc6-next-20181005-dirty #621
+[  680.692908] Hardware name: Dell Inc. Latitude E6530/07Y85M, BIOS A21 02/21/2018
+[  680.692915] RIP: 0010:__get_request+0x31/0x7e0
+[  680.692918] Code: 89 e5 41 57 41 56 41 55 49 89 fd 41 54 41 89 f4 53 48 83 ec 50 48 8b 1f 48 85 d2 48 89 55 b8 89 4d c0 44 89 45 c4 48 8b 43 18 <48> 8b 00 48 89 45 b0 0f 84 ba 03 00 00 48 8b 42 58 48 85 c0 48 89
+[  680.692921] RSP: 0018:ffff9fa98d93f578 EFLAGS: 00010086
+[  680.692925] RAX: 0000000000000000 RBX: ffff975ad40e7040 RCX: 0000000000000000
+[  680.692927] RDX: ffff975aac306e00 RSI: 0000000000080000 RDI: ffff975acce39840
+[  680.692930] RBP: ffff9fa98d93f5f0 R08: 0000000000600000 R09: 0000000000000001
+[  680.692933] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000080000
+[  680.692935] R13: ffff975acce39840 R14: ffff975aac306e00 R15: ffff975acce398c0
+[  680.692938] FS:  00007f8fb7876740(0000) GS:ffff975adda00000(0000) knlGS:0000000000000000
+[  680.692941] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  680.692944] CR2: 0000000000000000 CR3: 00000003ebc64006 CR4: 00000000001606e0
+[  680.692946] Call Trace:
+[  680.692957]  get_request+0x214/0x8b0
+[  680.692964]  ? remove_wait_queue+0x70/0x70
+[  680.692971]  blk_queue_bio+0x23b/0x760
+[  680.692977]  generic_make_request+0x2fe/0x570
+[  680.692983]  submit_bio+0x4d/0x190
+[  680.692987]  ? submit_bio+0x4d/0x190
+[  680.692992]  ? bio_add_page+0x4b/0x60
+[  680.692997]  ext4_mpage_readpages+0x814/0xed4
+[  680.693002]  ? get_page_from_freelist+0x42c/0x1bd0
+[  680.693015]  ext4_readpages+0x55/0x60
+[  680.693020]  read_pages+0x72/0x190
+[  680.693031]  __do_page_cache_readahead+0x1f6/0x220
+[  680.693045]  ondemand_readahead+0x2ae/0x4f0
+[  680.693055]  page_cache_sync_readahead+0x112/0x250
+[  680.693065]  generic_file_buffered_read+0x542/0xf70
+[  680.693079]  ? _raw_spin_unlock_irqrestore+0x78/0xa0
+[  680.693087]  ? avc_update_node+0x1b6/0x2c0
+[  680.693095]  generic_file_read_iter+0xd0/0x140
+[  680.693102]  ext4_file_read_iter+0x6c/0x80
+[  680.693107]  new_sync_read+0x121/0x1a0
+[  680.693116]  __vfs_read+0x49/0x60
+[  680.693120]  vfs_read+0x152/0x250
+[  680.693126]  kernel_read+0x43/0x60
+[  680.693131]  prepare_binprm+0x19b/0x1f0
+[  680.693136]  __do_execve_file+0x5ca/0xbc0
+[  680.693142]  __x64_sys_execve+0x38/0x50
+[  680.693148]  do_syscall_64+0x8f/0xa52
+[  680.693152]  ? trace_hardirqs_off_caller+0x22/0x150
+[  680.693156]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[  680.693162]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  680.693165] RIP: 0033:0x7f8fb7942b5b
+[  680.693169] Code: 41 89 01 eb da 66 2e 0f 1f 84 00 00 00 00 00 f7 d8 64 41 89 01 eb d6 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 3b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d fd 62 0f 00 f7 d8 64 89 01 48
 
 
-From 96dd7937a31d3a715c450c9a67f62a0022cd6a7c Mon Sep 17 00:00:00 2001
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Date: Mon, 8 Oct 2018 15:55:00 +0300
-Subject: [PATCH] tools/lib/traceevent, tools/perf: Move struct tep_handler
- definition in a local header file
 
-As traceevent is going to be transferred into a proper library,
-its local data should be protected from the library users.
-This patch capsulates struct tep_handler into a local header,
-not visible outside of the library. It implements also a bunch
-of new APIs, which library users can use to access tep_handler members.
-Version 3 of the patch - fixed whitespace issues.
+--==_Exmh_1539028475_2640P
+Content-Type: application/pgp-signature
 
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- tools/lib/traceevent/Build               |   1 +
- tools/lib/traceevent/event-parse-api.c   | 275 +++++++++++++++++++++++++++++++
- tools/lib/traceevent/event-parse-local.h |  92 +++++++++++
- tools/lib/traceevent/event-parse.c       |   2 +
- tools/lib/traceevent/event-parse.h       | 230 ++++----------------------
- tools/lib/traceevent/event-plugin.c      |   1 +
- tools/lib/traceevent/parse-filter.c      |   1 +
- tools/perf/util/trace-event-parse.c      |  25 +--
- tools/perf/util/trace-event-read.c       |   2 +-
- 9 files changed, 417 insertions(+), 212 deletions(-)
- create mode 100644 tools/lib/traceevent/event-parse-api.c
- create mode 100644 tools/lib/traceevent/event-parse-local.h
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
 
-diff --git a/tools/lib/traceevent/Build b/tools/lib/traceevent/Build
-index 0050c145d806..ba54bfce0b0b 100644
---- a/tools/lib/traceevent/Build
-+++ b/tools/lib/traceevent/Build
-@@ -5,6 +5,7 @@ libtraceevent-y += parse-filter.o
- libtraceevent-y += parse-utils.o
- libtraceevent-y += kbuffer-parse.o
- libtraceevent-y += tep_strerror.o
-+libtraceevent-y += event-parse-api.o
- 
- plugin_jbd2-y         += plugin_jbd2.o
- plugin_hrtimer-y      += plugin_hrtimer.o
-diff --git a/tools/lib/traceevent/event-parse-api.c b/tools/lib/traceevent/event-parse-api.c
-new file mode 100644
-index 000000000000..3b9371fb41cf
---- /dev/null
-+++ b/tools/lib/traceevent/event-parse-api.c
-@@ -0,0 +1,275 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * Copyright (C) 2009, 2010 Red Hat Inc, Steven Rostedt <srostedt@redhat.com>
-+ *
-+ */
-+
-+#include "event-parse.h"
-+#include "event-parse-local.h"
-+#include "event-utils.h"
-+
-+/**
-+ * tep_get_first_event - returns the first event in the events array
-+ * @tep: a handle to the tep_handle
-+ *
-+ * This returns pointer to the first element of the events array
-+ * If @tep is NULL, NULL is returned.
-+ */
-+struct tep_event_format *tep_get_first_event(struct tep_handle *tep)
-+{
-+	if (tep && tep->events)
-+		return tep->events[0];
-+
-+	return NULL;
-+}
-+
-+/**
-+ * tep_get_events_count - get the number of defined events
-+ * @tep: a handle to the tep_handle
-+ *
-+ * This returns number of elements in event array
-+ * If @tep is NULL, 0 is returned.
-+ */
-+int tep_get_events_count(struct tep_handle *tep)
-+{
-+	if (tep)
-+		return tep->nr_events;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_flag - set event parser flag
-+ * @tep: a handle to the tep_handle
-+ * @flag: flag, or combination of flags to be set
-+ * can be any combination from enum tep_flag
-+ *
-+ * This sets a flag or mbination of flags  from enum tep_flag
-+ */
-+void tep_set_flag(struct tep_handle *tep, int flag)
-+{
-+	if (tep)
-+		tep->flags |= flag;
-+}
-+
-+unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data)
-+{
-+	unsigned short swap;
-+
-+	if (!pevent || pevent->host_bigendian == pevent->file_bigendian)
-+		return data;
-+
-+	swap = ((data & 0xffULL) << 8) |
-+		((data & (0xffULL << 8)) >> 8);
-+
-+	return swap;
-+}
-+
-+unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data)
-+{
-+	unsigned int swap;
-+
-+	if (!pevent || pevent->host_bigendian == pevent->file_bigendian)
-+		return data;
-+
-+	swap = ((data & 0xffULL) << 24) |
-+		((data & (0xffULL << 8)) << 8) |
-+		((data & (0xffULL << 16)) >> 8) |
-+		((data & (0xffULL << 24)) >> 24);
-+
-+	return swap;
-+}
-+
-+unsigned long long
-+__tep_data2host8(struct tep_handle *pevent, unsigned long long data)
-+{
-+	unsigned long long swap;
-+
-+	if (!pevent || pevent->host_bigendian == pevent->file_bigendian)
-+		return data;
-+
-+	swap = ((data & 0xffULL) << 56) |
-+		((data & (0xffULL << 8)) << 40) |
-+		((data & (0xffULL << 16)) << 24) |
-+		((data & (0xffULL << 24)) << 8) |
-+		((data & (0xffULL << 32)) >> 8) |
-+		((data & (0xffULL << 40)) >> 24) |
-+		((data & (0xffULL << 48)) >> 40) |
-+		((data & (0xffULL << 56)) >> 56);
-+
-+	return swap;
-+}
-+
-+/**
-+ * tep_get_header_page_size - get size of the header page
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns size of the header page
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_header_page_size(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->header_page_size_size;
-+	return 0;
-+}
-+
-+/**
-+ * tep_get_cpus - get the number of CPUs
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns the number of CPUs
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_cpus(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->cpus;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_cpus - set the number of CPUs
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This sets the number of CPUs
-+ */
-+void tep_set_cpus(struct tep_handle *pevent, int cpus)
-+{
-+	if (pevent)
-+		pevent->cpus = cpus;
-+}
-+
-+/**
-+ * tep_get_long_size - get the size of a long integer on the current machine
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns the size of a long integer on the current machine
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_long_size(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->long_size;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_long_size - set the size of a long integer on the current machine
-+ * @pevent: a handle to the tep_handle
-+ * @size: size, in bytes, of a long integer
-+ *
-+ * This sets the size of a long integer on the current machine
-+ */
-+void tep_set_long_size(struct tep_handle *pevent, int long_size)
-+{
-+	if (pevent)
-+		pevent->long_size = long_size;
-+}
-+
-+/**
-+ * tep_get_page_size - get the size of a memory page on the current machine
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns the size of a memory page on the current machine
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_page_size(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->page_size;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_page_size - set the size of a memory page on the current machine
-+ * @pevent: a handle to the tep_handle
-+ * @_page_size: size of a memory page, in bytes
-+ *
-+ * This sets the size of a memory page on the current machine
-+ */
-+void tep_set_page_size(struct tep_handle *pevent, int _page_size)
-+{
-+	if (pevent)
-+		pevent->page_size = _page_size;
-+}
-+
-+/**
-+ * tep_is_file_bigendian - get if the file is in big endian order
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns if the file is in big endian order
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_is_file_bigendian(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->file_bigendian;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_file_bigendian - set if the file is in big endian order
-+ * @pevent: a handle to the tep_handle
-+ * @endian: non zero, if the file is in big endian order
-+ *
-+ * This sets if the file is in big endian order
-+ */
-+void tep_set_file_bigendian(struct tep_handle *pevent, enum tep_endian endian)
-+{
-+	if (pevent)
-+		pevent->file_bigendian = endian;
-+}
-+
-+/**
-+ * tep_is_host_bigendian - get if the order of the current host is big endian
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This gets if the order of the current host is big endian
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_is_host_bigendian(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->host_bigendian;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_host_bigendian - set the order of the local host
-+ * @pevent: a handle to the tep_handle
-+ * @endian: non zero, if the local host has big endian order
-+ *
-+ * This sets the order of the local host
-+ */
-+void tep_set_host_bigendian(struct tep_handle *pevent, enum tep_endian endian)
-+{
-+	if (pevent)
-+		pevent->host_bigendian = endian;
-+}
-+
-+/**
-+ * tep_is_latency_format - get if the latency output format is configured
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This gets if the latency output format is configured
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_is_latency_format(struct tep_handle *pevent)
-+{
-+	if (pevent)
-+		return pevent->latency_format;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_latency_format - set the latency output format
-+ * @pevent: a handle to the tep_handle
-+ * @lat: non zero for latency output format
-+ *
-+ * This sets the latency output format
-+ */
-+void tep_set_latency_format(struct tep_handle *pevent, int lat)
-+{
-+	if (pevent)
-+		pevent->latency_format = lat;
-+}
-diff --git a/tools/lib/traceevent/event-parse-local.h b/tools/lib/traceevent/event-parse-local.h
-new file mode 100644
-index 000000000000..b9bddde577f8
---- /dev/null
-+++ b/tools/lib/traceevent/event-parse-local.h
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * Copyright (C) 2009, 2010 Red Hat Inc, Steven Rostedt <srostedt@redhat.com>
-+ *
-+ */
-+
-+#ifndef _PARSE_EVENTS_INT_H
-+#define _PARSE_EVENTS_INT_H
-+
-+struct cmdline;
-+struct cmdline_list;
-+struct func_map;
-+struct func_list;
-+struct event_handler;
-+struct func_resolver;
-+
-+struct tep_handle {
-+	int ref_count;
-+
-+	int header_page_ts_offset;
-+	int header_page_ts_size;
-+	int header_page_size_offset;
-+	int header_page_size_size;
-+	int header_page_data_offset;
-+	int header_page_data_size;
-+	int header_page_overwrite;
-+
-+	enum tep_endian file_bigendian;
-+	enum tep_endian host_bigendian;
-+
-+	int latency_format;
-+
-+	int old_format;
-+
-+	int cpus;
-+	int long_size;
-+	int page_size;
-+
-+	struct cmdline *cmdlines;
-+	struct cmdline_list *cmdlist;
-+	int cmdline_count;
-+
-+	struct func_map *func_map;
-+	struct func_resolver *func_resolver;
-+	struct func_list *funclist;
-+	unsigned int func_count;
-+
-+	struct printk_map *printk_map;
-+	struct printk_list *printklist;
-+	unsigned int printk_count;
-+
-+
-+	struct tep_event_format **events;
-+	int nr_events;
-+	struct tep_event_format **sort_events;
-+	enum tep_event_sort_type last_type;
-+
-+	int type_offset;
-+	int type_size;
-+
-+	int pid_offset;
-+	int pid_size;
-+
-+	int pc_offset;
-+	int pc_size;
-+
-+	int flags_offset;
-+	int flags_size;
-+
-+	int ld_offset;
-+	int ld_size;
-+
-+	int print_raw;
-+
-+	int test_filters;
-+
-+	int flags;
-+
-+	struct tep_format_field *bprint_ip_field;
-+	struct tep_format_field *bprint_fmt_field;
-+	struct tep_format_field *bprint_buf_field;
-+
-+	struct event_handler *handlers;
-+	struct tep_function_handler *func_handlers;
-+
-+	/* cache */
-+	struct tep_event_format *last_event;
-+
-+	char *trace_clock;
-+};
-+
-+#endif /* _PARSE_EVENTS_INT_H */
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 233179a712d6..3692f29fee46 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -22,6 +22,8 @@
- 
- #include <netinet/in.h>
- #include "event-parse.h"
-+
-+#include "event-parse-local.h"
- #include "event-utils.h"
- #include "trace-seq.h"
- 
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 9c29a5f7aa39..856334677c59 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -405,154 +405,23 @@ void tep_print_plugins(struct trace_seq *s,
- 			const char *prefix, const char *suffix,
- 			const struct tep_plugin_list *list);
- 
--struct cmdline;
--struct cmdline_list;
--struct func_map;
--struct func_list;
--struct event_handler;
--struct func_resolver;
--
-+/* tep_handle */
- typedef char *(tep_func_resolver_t)(void *priv,
- 				    unsigned long long *addrp, char **modp);
-+void tep_set_flag(struct tep_handle *tep, int flag);
-+unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data);
-+unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data);
-+unsigned long long
-+__tep_data2host8(struct tep_handle *pevent, unsigned long long data);
- 
--struct tep_handle {
--	int ref_count;
--
--	int header_page_ts_offset;
--	int header_page_ts_size;
--	int header_page_size_offset;
--	int header_page_size_size;
--	int header_page_data_offset;
--	int header_page_data_size;
--	int header_page_overwrite;
--
--	int file_bigendian;
--	int host_bigendian;
--
--	int latency_format;
--
--	int old_format;
--
--	int cpus;
--	int long_size;
--	int page_size;
--
--	struct cmdline *cmdlines;
--	struct cmdline_list *cmdlist;
--	int cmdline_count;
--
--	struct func_map *func_map;
--	struct func_resolver *func_resolver;
--	struct func_list *funclist;
--	unsigned int func_count;
--
--	struct printk_map *printk_map;
--	struct printk_list *printklist;
--	unsigned int printk_count;
--
--
--	struct tep_event_format **events;
--	int nr_events;
--	struct tep_event_format **sort_events;
--	enum tep_event_sort_type last_type;
--
--	int type_offset;
--	int type_size;
--
--	int pid_offset;
--	int pid_size;
--
-- 	int pc_offset;
--	int pc_size;
--
--	int flags_offset;
--	int flags_size;
--
--	int ld_offset;
--	int ld_size;
--
--	int print_raw;
--
--	int test_filters;
--
--	int flags;
--
--	struct tep_format_field *bprint_ip_field;
--	struct tep_format_field *bprint_fmt_field;
--	struct tep_format_field *bprint_buf_field;
--
--	struct event_handler *handlers;
--	struct tep_function_handler *func_handlers;
--
--	/* cache */
--	struct tep_event_format *last_event;
--
--	char *trace_clock;
--};
--
--static inline void tep_set_flag(struct tep_handle *pevent, int flag)
--{
--	pevent->flags |= flag;
--}
--
--static inline unsigned short
--__tep_data2host2(struct tep_handle *pevent, unsigned short data)
--{
--	unsigned short swap;
--
--	if (pevent->host_bigendian == pevent->file_bigendian)
--		return data;
--
--	swap = ((data & 0xffULL) << 8) |
--		((data & (0xffULL << 8)) >> 8);
--
--	return swap;
--}
--
--static inline unsigned int
--__tep_data2host4(struct tep_handle *pevent, unsigned int data)
--{
--	unsigned int swap;
--
--	if (pevent->host_bigendian == pevent->file_bigendian)
--		return data;
--
--	swap = ((data & 0xffULL) << 24) |
--		((data & (0xffULL << 8)) << 8) |
--		((data & (0xffULL << 16)) >> 8) |
--		((data & (0xffULL << 24)) >> 24);
--
--	return swap;
--}
--
--static inline unsigned long long
--__tep_data2host8(struct tep_handle *pevent, unsigned long long data)
--{
--	unsigned long long swap;
--
--	if (pevent->host_bigendian == pevent->file_bigendian)
--		return data;
--
--	swap = ((data & 0xffULL) << 56) |
--		((data & (0xffULL << 8)) << 40) |
--		((data & (0xffULL << 16)) << 24) |
--		((data & (0xffULL << 24)) << 8) |
--		((data & (0xffULL << 32)) >> 8) |
--		((data & (0xffULL << 40)) >> 24) |
--		((data & (0xffULL << 48)) >> 40) |
--		((data & (0xffULL << 56)) >> 56);
--
--	return swap;
--}
--
--#define tep_data2host2(pevent, ptr)		__tep_data2host2(pevent, *(unsigned short *)(ptr))
--#define tep_data2host4(pevent, ptr)		__tep_data2host4(pevent, *(unsigned int *)(ptr))
--#define tep_data2host8(pevent, ptr)					\
-+#define tep_data2host2(pevent, ptr)	__tep_data2host2(pevent, *(unsigned short *)(ptr))
-+#define tep_data2host4(pevent, ptr)	__tep_data2host4(pevent, *(unsigned int *)(ptr))
-+#define tep_data2host8(pevent, ptr)	\
- ({								\
- 	unsigned long long __val;				\
- 								\
- 	memcpy(&__val, (ptr), sizeof(unsigned long long));	\
--	__tep_data2host8(pevent, __val);				\
-+	__tep_data2host8(pevent, __val);			\
- })
- 
- static inline int tep_host_bigendian(void)
-@@ -655,11 +524,12 @@ unsigned long long tep_read_number(struct tep_handle *pevent, const void *ptr, i
- int tep_read_number_field(struct tep_format_field *field, const void *data,
- 			  unsigned long long *value);
- 
-+struct tep_event_format *tep_get_first_event(struct tep_handle *tep);
-+int tep_get_events_count(struct tep_handle *tep);
- struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id);
- 
- struct tep_event_format *
- tep_find_event_by_name(struct tep_handle *pevent, const char *sys, const char *name);
--
- struct tep_event_format *
- tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record);
- 
-@@ -689,65 +559,23 @@ struct tep_event_format **tep_list_events(struct tep_handle *pevent, enum tep_ev
- struct tep_format_field **tep_event_common_fields(struct tep_event_format *event);
- struct tep_format_field **tep_event_fields(struct tep_event_format *event);
- 
--static inline int tep_get_cpus(struct tep_handle *pevent)
--{
--	return pevent->cpus;
--}
--
--static inline void tep_set_cpus(struct tep_handle *pevent, int cpus)
--{
--	pevent->cpus = cpus;
--}
--
--static inline int tep_get_long_size(struct tep_handle *pevent)
--{
--	return pevent->long_size;
--}
--
--static inline void tep_set_long_size(struct tep_handle *pevent, int long_size)
--{
--	pevent->long_size = long_size;
--}
--
--static inline int tep_get_page_size(struct tep_handle *pevent)
--{
--	return pevent->page_size;
--}
--
--static inline void tep_set_page_size(struct tep_handle *pevent, int _page_size)
--{
--	pevent->page_size = _page_size;
--}
--
--static inline int tep_is_file_bigendian(struct tep_handle *pevent)
--{
--	return pevent->file_bigendian;
--}
--
--static inline void tep_set_file_bigendian(struct tep_handle *pevent, int endian)
--{
--	pevent->file_bigendian = endian;
--}
--
--static inline int tep_is_host_bigendian(struct tep_handle *pevent)
--{
--	return pevent->host_bigendian;
--}
--
--static inline void tep_set_host_bigendian(struct tep_handle *pevent, int endian)
--{
--	pevent->host_bigendian = endian;
--}
--
--static inline int tep_is_latency_format(struct tep_handle *pevent)
--{
--	return pevent->latency_format;
--}
--
--static inline void tep_set_latency_format(struct tep_handle *pevent, int lat)
--{
--	pevent->latency_format = lat;
--}
-+enum tep_endian {
-+	TEP_LITTLE_ENDIAN = 0,
-+	TEP_BIG_ENDIAN
-+};
-+int tep_get_cpus(struct tep_handle *pevent);
-+void tep_set_cpus(struct tep_handle *pevent, int cpus);
-+int tep_get_long_size(struct tep_handle *pevent);
-+void tep_set_long_size(struct tep_handle *pevent, int long_size);
-+int tep_get_page_size(struct tep_handle *pevent);
-+void tep_set_page_size(struct tep_handle *pevent, int _page_size);
-+int tep_is_file_bigendian(struct tep_handle *pevent);
-+void tep_set_file_bigendian(struct tep_handle *pevent, enum tep_endian endian);
-+int tep_is_host_bigendian(struct tep_handle *pevent);
-+void tep_set_host_bigendian(struct tep_handle *pevent, enum tep_endian endian);
-+int tep_is_latency_format(struct tep_handle *pevent);
-+void tep_set_latency_format(struct tep_handle *pevent, int lat);
-+int tep_get_header_page_size(struct tep_handle *pevent);
- 
- struct tep_handle *tep_alloc(void);
- void tep_free(struct tep_handle *pevent);
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index 46eb64eb0c2e..e74f16c88398 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -14,6 +14,7 @@
- #include <unistd.h>
- #include <dirent.h>
- #include "event-parse.h"
-+#include "event-parse-local.h"
- #include "event-utils.h"
- #include "trace-seq.h"
- 
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index d64b6128fa7d..ed87cb56713d 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -11,6 +11,7 @@
- #include <sys/types.h>
- 
- #include "event-parse.h"
-+#include "event-parse-local.h"
- #include "event-utils.h"
- 
- #define COMM "COMM"
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index a4d7de1c96d1..9b78160e23a2 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -37,10 +37,11 @@ static int get_common_field(struct scripting_context *context,
- 	struct tep_format_field *field;
- 
- 	if (!*size) {
--		if (!pevent->events)
-+
-+		event = tep_get_first_event(pevent);
-+		if (!event)
- 			return 0;
- 
--		event = pevent->events[0];
- 		field = tep_find_common_field(event, type);
- 		if (!field)
- 			return 0;
-@@ -192,25 +193,29 @@ struct tep_event_format *trace_find_next_event(struct tep_handle *pevent,
- 					       struct tep_event_format *event)
- {
- 	static int idx;
-+	int events_count;
-+	struct tep_event_format *all_events;
- 
--	if (!pevent || !pevent->events)
-+	all_events = tep_get_first_event(pevent);
-+	events_count = tep_get_events_count(pevent);
-+	if (!pevent || !all_events || events_count < 1)
- 		return NULL;
- 
- 	if (!event) {
- 		idx = 0;
--		return pevent->events[0];
-+		return all_events;
- 	}
- 
--	if (idx < pevent->nr_events && event == pevent->events[idx]) {
-+	if (idx < events_count && event == (all_events + idx)) {
- 		idx++;
--		if (idx == pevent->nr_events)
-+		if (idx == events_count)
- 			return NULL;
--		return pevent->events[idx];
-+		return (all_events + idx);
- 	}
- 
--	for (idx = 1; idx < pevent->nr_events; idx++) {
--		if (event == pevent->events[idx - 1])
--			return pevent->events[idx];
-+	for (idx = 1; idx < events_count; idx++) {
-+		if (event == (all_events + (idx - 1)))
-+			return (all_events + idx);
- 	}
- 	return NULL;
- }
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index b98ee2a2eb44..cdf6de82a507 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -241,7 +241,7 @@ static int read_header_files(struct tep_handle *pevent)
- 		 * The commit field in the page is of type long,
- 		 * use that instead, since it represents the kernel.
- 		 */
--		tep_set_long_size(pevent, pevent->header_page_size_size);
-+		tep_set_long_size(pevent, tep_get_header_page_size(pevent));
- 	}
- 	free(header_page);
- 
--- 
-2.13.6
+iQEVAwUBW7u1+40DS38y7CIcAQK3lwgAo6YdaS1o78aU57SBUJpn/3Pp/4xdnJDB
+jXozpDUwaCwAU6Py3Utb8e+dMkIxJGBRe3dpWx5zN8eABQfkeZu9o9S9zYzeG5lG
+2xiwHC18sBZ7OHK/y0BdN7y3Vc6DA3bZ/U6lXsnt6wk4eeKM0U1niX2f51bMIYNL
+ojYFTMFX++NVIQEY8QHZKJRwTU1GyP799rURWswOcjvhVsAJRUJahHJBm/5VYfBB
+CncJQXGkcD60Juc12DzEk7kD6W3M0oAckQxeviQxsSImjBcyTV5I7klJY36/aqfR
+LbXIQNFiVAT32tyJdWiT7i2sUT0VH7S6LpxdHjKCVUwKqnUdY9l9IQ==
+=BZRg
+-----END PGP SIGNATURE-----
 
+--==_Exmh_1539028475_2640P--
