@@ -2,128 +2,197 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAC4C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0579DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2E6E2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:12:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETw6/JAq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E6E2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 87DCD2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:15:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DCD2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbeJIAYs (ORCPT
+        id S1726451AbeJIA2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:24:48 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35078 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeJIAYs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:24:48 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r191-v6so14482773lff.2;
-        Mon, 08 Oct 2018 10:12:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cKazQ0Pqe6c+DGtZXkqDT7kCtMn3+E8bbGSOPlALkdo=;
-        b=ETw6/JAq80FvYJD9E7QKSzSZWdDtNtQLS0kbRPTixorVCf5oD0qekiw2NhVNy/ZkTk
-         VLrLiU1YkW3KEtU+PYT9yanD1WcA5LUi7H61g2BcQZLBbD31Kc+PN0FblLcxw3tgiXeG
-         XeHl66AKT/jVtUd9tCA6QKEe8LpUUZc9an0KKOzBe4VD5qC+zDeSvs97AtZ8Jm1jsAXG
-         Eyw4YJI0j2ZEWuA3Ri21m+63ObF2SBPzhMcIWa+DkfTbwAvz/3A0bBiaYKAxuqqVfoEy
-         QaC+KrAabDiaClrahQl6SLxZOfaTi8F8h5YWUdqWhq3IfML8M4DeoWk29Qw/f5PnVJp9
-         X8XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cKazQ0Pqe6c+DGtZXkqDT7kCtMn3+E8bbGSOPlALkdo=;
-        b=A/5X2DtkXi8naLIaMsQtjARJNvPHryqREMRl8+FHBQ9+a0RZmLqro9r/bJDoBC94PX
-         Dsf/pJNKSba3WuEAfTV5ue/aKEapyfqDwE37Hqfbka025ro8xEaUBNsPD3dnoJURG47K
-         xZnmdJWBw8RFCnIpILtG39ne4MXWnL3eEpdYd9WUttuA6+MR6BnPFRtjlwl4yEBh+Jb7
-         nWirPoiAJIZPPhec7DFkMZdB9YOpMgm3Tr3zjiSw/ER1I0CXj+vc6o/3ZiFys7wqCrpZ
-         SEIy6qIYLRuhhIbBClKXmdmE5+hnD86N4PqXEsULOYf0iB8lFVs7ZXz11ZviAXGhSMFJ
-         nB1Q==
-X-Gm-Message-State: ABuFfojjr4X93GoBYLdZrPnuVHU/IyK4DNJej1HUikiIgf7F36HJuONA
-        0H5mhBn8ZgCcUyklU6j0W126Bok7kh5z11AD8mY=
-X-Google-Smtp-Source: ACcGV61YDXsEV8+59EpCKb9NoJYpkgWs7e8TcWk+6qHx/k1xeEOIMS1pUe+3hZeCsEnqyUlFoJVFmg7L/d80MAbYE5U=
-X-Received: by 2002:a19:5a8f:: with SMTP id y15-v6mr12739416lfk.15.1539018724448;
- Mon, 08 Oct 2018 10:12:04 -0700 (PDT)
+        Mon, 8 Oct 2018 20:28:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53408 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbeJIA2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 20:28:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D668BED1;
+        Mon,  8 Oct 2018 10:15:28 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C28D83F5D3;
+        Mon,  8 Oct 2018 10:15:26 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 18:15:24 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     mingo@kernel.org
+Cc:     arnd@arndb.de, aryabinin@virtuozzo.com, boqun.feng@gmail.com,
+        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
+        linuxdrivers@attotech.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 0/6] atomics: generate atomic headers / instrument arm64
+Message-ID: <20181008171523.rw34hyaqap2yb3py@lakrids.cambridge.arm.com>
+References: <20180904104830.2975-1-mark.rutland@arm.com>
 MIME-Version: 1.0
-References: <20181008152523.70705-1-sashal@kernel.org> <20181008152523.70705-24-sashal@kernel.org>
-In-Reply-To: <20181008152523.70705-24-sashal@kernel.org>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Mon, 8 Oct 2018 10:11:53 -0700
-Message-ID: <CAKdAkRSoq_U1rkO+6gbautYpS1fFn3icLY3Dtx0geXNC7MwvbA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.18 24/58] Input: atakbd - fix Atari CapsLock behaviour
-To:     sashal@kernel.org
-Cc:     "3.8+" <stable@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        alexander.levin@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904104830.2975-1-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 8:25 AM Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Michael Schmitz <schmitzmic@gmail.com>
->
-> [ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
->
-> The CapsLock key on Atari keyboards is not a toggle, it does send the
-> normal make and break scancodes.
->
-> Drop the CapsLock toggle handling code, which did cause the CapsLock
-> key to merely act as a Shift key.
+On Tue, Sep 04, 2018 at 11:48:24AM +0100, Mark Rutland wrote:
+> Hi Ingo,
+> 
+> As previously requested, this is a (trivial) rebase of the remaining generated
+> atomic patches atop of v4.19-rc2, avoiding any potential conflict with Peter's
+> ldsem atomic cleanup patch that got taken through the tty tree.
+> 
+> Are you still happy to pick this up? Full blurb below.
 
-This has been broken for 10+ years. Does it really make sense to
-promote it to stable?
+Ping!
 
->
-> Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-> Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-> Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> ---
->  drivers/input/keyboard/atakbd.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
-> index 524a72bee55a..fdeda0b0fbd6 100644
-> --- a/drivers/input/keyboard/atakbd.c
-> +++ b/drivers/input/keyboard/atakbd.c
-> @@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned char scancode, char down)
->
->                 scancode = atakbd_keycode[scancode];
->
-> -               if (scancode == KEY_CAPSLOCK) { /* CapsLock is a toggle switch key on Amiga */
-> -                       input_report_key(atakbd_dev, scancode, 1);
-> -                       input_report_key(atakbd_dev, scancode, 0);
-> -                       input_sync(atakbd_dev);
-> -               } else {
-> -                       input_report_key(atakbd_dev, scancode, down);
-> -                       input_sync(atakbd_dev);
-> -               }
-> +               input_report_key(atakbd_dev, scancode, down);
-> +               input_sync(atakbd_dev);
->         } else                          /* scancodes >= 0xf3 are mouse data, most likely */
->                 printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
->
-> --
-> 2.17.1
->
+Do you have any comments, or would you be happy to queue this?
 
+I'm happy to resend come rc1, if you'd prefer?
 
--- 
-Dmitry
+Thanks,
+Mark.
+
+> This series scripts the generation of the various atomic headers, to ensure
+> that the various atomic APIs remain consistent, reducing the risk of human
+> error, and simplifying future rework. This fleshes out the instrumented atomics
+> such that arm64 can be migrated over to them.
+> 
+> Since v1 [1]:
+> * Use 'p' instead of 'I' for pointer to base int type
+> * Use Peter's patch for ldsem
+> * Rename atomic acquire/release barriers
+> * Handle xchg/cmpxchg variants
+> * Typo fixes
+> * Migrate arm64 to instrumented atomics
+> 
+> Since v2 [4]:
+> * rebase to v4.19-rc2 to solve potential conflicts with ldsem patch
+> 
+> The series is based on my atomic API cleanup patches [2], which have been
+> queued in the tip locking/core branch.
+> 
+> The first six patches clean up some issues with the existing atomic
+> instrumentation, with patch six introducing the header generation
+> infrastructure. The subsequent three patches migrate to each generated header
+> in turn, with the final patch moving arm64 over to the instrumented atomics.
+> 
+> The scripts themselves are mostly POSIX sh (modulo local), without bashisms,
+> and work in dash and bash.
+> 
+> Per Linus request that it is possible to use git grep to inspect the atomic
+> headers [3], the headers are committed (and not generated by kbuild). Since we
+> now expand the fallback definitions inline, each *should* be easier to find
+> with grep. Each header also has a comment at the top with a path to the script
+> used to generate it. 
+> 
+> That scripting comes to ~900 lines, and replaces ~1700 lines of hand-written
+> boilerplate with ~4700 lines of generated code. Some of that increase in line
+> count is due to filling in missing portions of the API (e.g. adding all the
+> ordering variants to the instrumented atomics), while some of that is due to
+> expanding fallbacks in place, and consistently spreading these across multiple
+> lines.
+> 
+> I've build-tested this for x86_64 and arm64 (with and without LSE), and given
+> this some basic boot testing.
+> 
+> I've pushed the series out to my atomics/generated branch [3], based atop of
+> v4.19-rc2.
+> 
+> Thanks,
+> Mark.
+> 
+> [1] https://lkml.kernel.org/r/20180529180746.29684-1-mark.rutland@arm.com
+> [2] https://lkml.kernel.org/r/20180621121321.4761-1-mark.rutland@arm.com
+> [3] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/generated
+> [4] https://lkml.kernel.org/r/20180625105952.3756-1-mark.rutland@arm.com
+> 
+> Mark Rutland (6):
+>   atomics: add common header generation files
+>   atomics: switch to generated fallbacks
+>   atomics: switch to generated atomic-long
+>   atomics: switch to generated instrumentation
+>   atomics: check generated headers are up-to-date
+>   arm64: use instrumented atomics
+> 
+>  Kbuild                                       |   18 +-
+>  MAINTAINERS                                  |    1 +
+>  arch/arm64/include/asm/atomic.h              |  237 +--
+>  arch/arm64/include/asm/atomic_ll_sc.h        |   28 +-
+>  arch/arm64/include/asm/atomic_lse.h          |   38 +-
+>  arch/arm64/include/asm/cmpxchg.h             |   60 +-
+>  arch/arm64/include/asm/sync_bitops.h         |   16 +-
+>  include/asm-generic/atomic-instrumented.h    | 1688 ++++++++++++++++---
+>  include/asm-generic/atomic-long.h            | 1173 ++++++++++---
+>  include/linux/atomic-fallback.h              | 2294 ++++++++++++++++++++++++++
+>  include/linux/atomic.h                       | 1241 +-------------
+>  scripts/atomic/atomic-tbl.sh                 |  186 +++
+>  scripts/atomic/atomics.tbl                   |   41 +
+>  scripts/atomic/check-atomics.sh              |   19 +
+>  scripts/atomic/fallbacks/acquire             |    9 +
+>  scripts/atomic/fallbacks/add_negative        |   16 +
+>  scripts/atomic/fallbacks/add_unless          |   16 +
+>  scripts/atomic/fallbacks/andnot              |    7 +
+>  scripts/atomic/fallbacks/dec                 |    7 +
+>  scripts/atomic/fallbacks/dec_and_test        |   15 +
+>  scripts/atomic/fallbacks/dec_if_positive     |   15 +
+>  scripts/atomic/fallbacks/dec_unless_positive |   14 +
+>  scripts/atomic/fallbacks/fence               |   11 +
+>  scripts/atomic/fallbacks/fetch_add_unless    |   23 +
+>  scripts/atomic/fallbacks/inc                 |    7 +
+>  scripts/atomic/fallbacks/inc_and_test        |   15 +
+>  scripts/atomic/fallbacks/inc_not_zero        |   14 +
+>  scripts/atomic/fallbacks/inc_unless_negative |   14 +
+>  scripts/atomic/fallbacks/read_acquire        |    7 +
+>  scripts/atomic/fallbacks/release             |    8 +
+>  scripts/atomic/fallbacks/set_release         |    7 +
+>  scripts/atomic/fallbacks/sub_and_test        |   16 +
+>  scripts/atomic/fallbacks/try_cmpxchg         |   11 +
+>  scripts/atomic/gen-atomic-fallback.sh        |  181 ++
+>  scripts/atomic/gen-atomic-instrumented.sh    |  182 ++
+>  scripts/atomic/gen-atomic-long.sh            |  101 ++
+>  36 files changed, 5909 insertions(+), 1827 deletions(-)
+>  create mode 100644 include/linux/atomic-fallback.h
+>  create mode 100755 scripts/atomic/atomic-tbl.sh
+>  create mode 100644 scripts/atomic/atomics.tbl
+>  create mode 100755 scripts/atomic/check-atomics.sh
+>  create mode 100644 scripts/atomic/fallbacks/acquire
+>  create mode 100644 scripts/atomic/fallbacks/add_negative
+>  create mode 100644 scripts/atomic/fallbacks/add_unless
+>  create mode 100644 scripts/atomic/fallbacks/andnot
+>  create mode 100644 scripts/atomic/fallbacks/dec
+>  create mode 100644 scripts/atomic/fallbacks/dec_and_test
+>  create mode 100644 scripts/atomic/fallbacks/dec_if_positive
+>  create mode 100644 scripts/atomic/fallbacks/dec_unless_positive
+>  create mode 100644 scripts/atomic/fallbacks/fence
+>  create mode 100644 scripts/atomic/fallbacks/fetch_add_unless
+>  create mode 100644 scripts/atomic/fallbacks/inc
+>  create mode 100644 scripts/atomic/fallbacks/inc_and_test
+>  create mode 100644 scripts/atomic/fallbacks/inc_not_zero
+>  create mode 100644 scripts/atomic/fallbacks/inc_unless_negative
+>  create mode 100644 scripts/atomic/fallbacks/read_acquire
+>  create mode 100644 scripts/atomic/fallbacks/release
+>  create mode 100644 scripts/atomic/fallbacks/set_release
+>  create mode 100644 scripts/atomic/fallbacks/sub_and_test
+>  create mode 100644 scripts/atomic/fallbacks/try_cmpxchg
+>  create mode 100755 scripts/atomic/gen-atomic-fallback.sh
+>  create mode 100755 scripts/atomic/gen-atomic-instrumented.sh
+>  create mode 100755 scripts/atomic/gen-atomic-long.sh
+> 
+> -- 
+> 2.11.0
+> 
