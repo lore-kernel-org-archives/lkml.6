@@ -2,131 +2,206 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E1AC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF3DC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E5C20841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:41:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NHbKuxGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E5C20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EA8E20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:42:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA8E20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727396AbeJHRwy (ORCPT
+        id S1727715AbeJHRxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:52:54 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52822 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbeJHRwy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:52:54 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181008104148euoutp01d195a93f7e6b7d46443ae5c10458298e~bnBQ5gQY71496414964euoutp01w
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 10:41:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181008104148euoutp01d195a93f7e6b7d46443ae5c10458298e~bnBQ5gQY71496414964euoutp01w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538995308;
-        bh=B84lC24EbdL3Q9SRo+kvelyWDAeOG2H7kJoUL56ABJ4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=NHbKuxGe9i56cyZYW+dGQxf3zJfgNnwkvIEiWgkRpDJ6MBrtX/7QuD05pX+vh9HHL
-         JN+U3dKA8MILEp8iywJUT//8gsAbRBI36QTMye8NLQwyi0bt7HFsyi5J+//BpLX1qn
-         H8bxQVaA5/FcwG2YcNAXI5qCCZTmNwt7pqJPUHOg=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181008104147eucas1p137823d340f3a40cd3f88fe16075664e2~bnBQdm8xi1612016120eucas1p1U;
-        Mon,  8 Oct 2018 10:41:47 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3A.78.04294.B643BBB5; Mon,  8
-        Oct 2018 11:41:47 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181008104146eucas1p206774c188cefcfd36e33b467ed7b67ad~bnBPnnsKU2190121901eucas1p2U;
-        Mon,  8 Oct 2018 10:41:46 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181008104146eusmtrp1d9800a0b101f7850a7844b53f27a369e~bnBPXAqaa2059120591eusmtrp1j;
-        Mon,  8 Oct 2018 10:41:46 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-6c-5bbb346b87cc
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 85.C6.04284.A643BBB5; Mon,  8
-        Oct 2018 11:41:46 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181008104146eusmtip232fcd89cea30648d3e562bd7948a097d~bnBPIeThs2343823438eusmtip2n;
-        Mon,  8 Oct 2018 10:41:46 +0000 (GMT)
-Subject: Re: [PATCH] fbdev: Convert to using %pOFn instead of
- device_node.name
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date:   Mon, 8 Oct 2018 12:41:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Mon, 8 Oct 2018 13:53:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27062 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726794AbeJHRxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:53:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 03:42:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,356,1534834800"; 
+   d="scan'208";a="270452516"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Oct 2018 03:41:57 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1g9Sz5-0006Wz-Uj; Mon, 08 Oct 2018 13:41:55 +0300
+Date:   Mon, 8 Oct 2018 13:41:55 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the pm tree
+Message-ID: <20181008104155.GA15943@smile.fi.intel.com>
+References: <20181008134020.790092fe@canb.auug.org.au>
+ <2496155.cNn8ibJ9FC@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180828015252.28511-49-robh@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42LZduzned1sk93RBh97VS2ufH3PZnGi7wOr
-        xeVdc9gs/u/Zwe7A4rFpVSebx/3u40wenzfJBTBHcdmkpOZklqUW6dslcGXM/n2TteAjc8Wr
-        iydYGxgXMHcxcnJICJhItG6bz9LFyMUhJLCCUWLnqpmsEM4XRonL0z6zQTifGSWmLbzIDtOy
-        bt1+dojEckaJ6dOPMkI47xklvvU0AmU4OIQFAiTW/tYEaRARUJT43TaNFSTMLJAgsXuRGUiY
-        TcBKYmL7KkYQm0VAReLp3Y2MICWiAhES/WfUQcK8AoISJ2c+YQGxOQXMJK5NbGMFsZkFDCSO
-        LJoDZctLbH87B+qb32wSt89zQ/SWSVzfNpMFIu4isex0LyOELSzx6vgWqFdkJE5P7gH7XkJg
-        OqPEm19LoZz1jBJrzhxjgqiyljh8/CIrhO0o8XtpJxPIoRICfBI33gpCHMEnMWnbdGaIMK9E
-        R5sQRLWaxIZlG9hgdnXtXAl1p4fE5ustjBMYFWcheXMWktdmIXltASPzKkbx1NLi3PTUYqO8
-        1HK94sTc4tK8dL3k/NxNjMDEcfrf8S87GHf9STrEKMDBqMTDuyJgV7QQa2JZcWXuIUYJDmYl
-        EV7R7UAh3pTEyqrUovz4otKc1OJDjNIcLErivMvmbYwWEkhPLEnNTk0tSC2CyTJxcEo1MGpM
-        PH+J78kMB4v93yvk9ngZ5HxXjXM5Ey5W5G4S6Llv43Wl0mf5sVbLqo9Gxx8u97ose+tdX8nP
-        Zp+il3kPN2ifCNxk18L8WKdxzo7fVppnLyl59j/h45y/5+7XCVaH+hS0k84sZpM+73lBXLAj
-        IUPh8ZLQ3Z7sP/7yyxpP9ll2n9Vw3foZskosxRmJhlrMRcWJAFXSyE4YAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42I5/e/4Pd0sk93RBnPva1hc+fqezeJE3wdW
-        i8u75rBZ/N+zg92BxWPTqk42j/vdx5k8Pm+SC2CO0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAz
-        MrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MuY/fsma8FH5opXF0+wNjAuYO5i5OSQEDCRWLdu
-        P3sXIxeHkMBSRonfMxYAORxACRmJ4+vLIGqEJf5c62KDqHnLKPFixyU2kISwgJ/Eif9PwQaJ
-        CChK/G6bxgpRtIVR4tLpr6wgCWaBBIkVb9vBbDYBK4mJ7asYQWxeATuJH1c2MoHYLAIqEk/v
-        bgSLiwpESNx62MECUSMocXLmEzCbU8BM4trENqiZehI7rv+CsuUltr+dwzyBUXAWkpZZSMpm
-        ISlbwMi8ilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzAmth37uXkH46WNwYcYBTgYlXh4A/x2
-        RQuxJpYVV+YeYpTgYFYS4RXdDhTiTUmsrEotyo8vKs1JLT7EaAr0xERmKdHkfGC85pXEG5oa
-        mltYGpobmxubWSiJ8543qIwSEkhPLEnNTk0tSC2C6WPi4JRqYOx+1c37JJe9t3k3f+ra2IZZ
-        kzusZ645XjC96v/PB48uy6xMW/bPzOBu29mY+X59E6W+hWfwhgglL61cqWJ8SiXGWlQodt7a
-        4rfLdha0nuRLzxRdIZHVWGL09xnT1W+Pv4rkfXL/GhxWNXHK2eXcE9d2BggdU86pccr9wbF0
-        y1+mu7wfz15ftVCJpTgj0VCLuag4EQCBLBV5nwIAAA==
-Message-Id: <20181008104146eucas1p206774c188cefcfd36e33b467ed7b67ad~bnBPnnsKU2190121901eucas1p2U@eucas1p2.samsung.com>
-X-CMS-MailID: 20181008104146eucas1p206774c188cefcfd36e33b467ed7b67ad
-X-Msg-Generator: CA
-X-RootMTR: 20180828015547epcas1p421d327fc2f675bcf45431bb3fe9e678f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180828015547epcas1p421d327fc2f675bcf45431bb3fe9e678f
-References: <20180828015252.28511-1-robh@kernel.org>
-        <CGME20180828015547epcas1p421d327fc2f675bcf45431bb3fe9e678f@epcas1p4.samsung.com>
-        <20180828015252.28511-49-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2496155.cNn8ibJ9FC@aspire.rjw.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 08/28/2018 03:52 AM, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+On Mon, Oct 08, 2018 at 12:05:02PM +0200, Rafael J. Wysocki wrote:
+> On Monday, October 8, 2018 4:40:20 AM CEST Stephen Rothwell wrote:
+> > 
+> > --Sig_/8A/3tsSoWQOAryCmuI_nxw6
+> > Content-Type: text/plain; charset=US-ASCII
+> > Content-Transfer-Encoding: quoted-printable
+> > 
+> > Hi all,
+> > 
+> > Today's linux-next merge of the tip tree got a conflict in:
+> > 
+> >   drivers/idle/intel_idle.c
+> > 
+> > between commit:
+> > 
+> >   a4a008e53c9e ("intel_idle: Get rid of custom ICPU() macro")
+> > 
+> > from the pm tree and commit:
+> > 
+> >   f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
+> > 
+> > from the tip tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > --=20
+> > Cheers,
+> > Stephen Rothwell
+> > 
+> > diff --cc drivers/idle/intel_idle.c
+> > index 791b8a366e6e,c4bb67ed8da3..000000000000
+> > --- a/drivers/idle/intel_idle.c
+> > +++ b/drivers/idle/intel_idle.c
+> > @@@ -1066,43 -1066,46 +1066,43 @@@ static const struct idle_cpu idle_cpu_d
+> >   	.disable_promotion_to_c1e =3D true,
+> >   };
+> >  =20
+> >  -#define ICPU(model, cpu) \
+> >  -	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&cpu }
+> >  -
+> >   static const struct x86_cpu_id intel_idle_ids[] __initconst =3D {
+> >  -	ICPU(INTEL_FAM6_NEHALEM_EP,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_NEHALEM,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_NEHALEM_G,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_WESTMERE,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_WESTMERE_EP,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_NEHALEM_EX,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_ATOM_BONNELL,		idle_cpu_atom),
+> >  -	ICPU(INTEL_FAM6_ATOM_BONNELL_MID,		idle_cpu_lincroft),
+> >  -	ICPU(INTEL_FAM6_WESTMERE_EX,		idle_cpu_nehalem),
+> >  -	ICPU(INTEL_FAM6_SANDYBRIDGE,		idle_cpu_snb),
+> >  -	ICPU(INTEL_FAM6_SANDYBRIDGE_X,		idle_cpu_snb),
+> >  -	ICPU(INTEL_FAM6_ATOM_SALTWELL,		idle_cpu_atom),
+> >  -	ICPU(INTEL_FAM6_ATOM_SILVERMONT,	idle_cpu_byt),
+> >  -	ICPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	idle_cpu_tangier),
+> >  -	ICPU(INTEL_FAM6_ATOM_AIRMONT,		idle_cpu_cht),
+> >  -	ICPU(INTEL_FAM6_IVYBRIDGE,		idle_cpu_ivb),
+> >  -	ICPU(INTEL_FAM6_IVYBRIDGE_X,		idle_cpu_ivt),
+> >  -	ICPU(INTEL_FAM6_HASWELL_CORE,		idle_cpu_hsw),
+> >  -	ICPU(INTEL_FAM6_HASWELL_X,		idle_cpu_hsw),
+> >  -	ICPU(INTEL_FAM6_HASWELL_ULT,		idle_cpu_hsw),
+> >  -	ICPU(INTEL_FAM6_HASWELL_GT3E,		idle_cpu_hsw),
+> >  -	ICPU(INTEL_FAM6_ATOM_SILVERMONT_X,	idle_cpu_avn),
+> >  -	ICPU(INTEL_FAM6_BROADWELL_CORE,		idle_cpu_bdw),
+> >  -	ICPU(INTEL_FAM6_BROADWELL_GT3E,		idle_cpu_bdw),
+> >  -	ICPU(INTEL_FAM6_BROADWELL_X,		idle_cpu_bdw),
+> >  -	ICPU(INTEL_FAM6_BROADWELL_XEON_D,	idle_cpu_bdw),
+> >  -	ICPU(INTEL_FAM6_SKYLAKE_MOBILE,		idle_cpu_skl),
+> >  -	ICPU(INTEL_FAM6_SKYLAKE_DESKTOP,	idle_cpu_skl),
+> >  -	ICPU(INTEL_FAM6_KABYLAKE_MOBILE,	idle_cpu_skl),
+> >  -	ICPU(INTEL_FAM6_KABYLAKE_DESKTOP,	idle_cpu_skl),
+> >  -	ICPU(INTEL_FAM6_SKYLAKE_X,		idle_cpu_skx),
+> >  -	ICPU(INTEL_FAM6_XEON_PHI_KNL,		idle_cpu_knl),
+> >  -	ICPU(INTEL_FAM6_XEON_PHI_KNM,		idle_cpu_knl),
+> >  -	ICPU(INTEL_FAM6_ATOM_GOLDMONT,		idle_cpu_bxt),
+> >  -	ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	idle_cpu_bxt),
+> >  -	ICPU(INTEL_FAM6_ATOM_GOLDMONT_X,	idle_cpu_dnv),
+> >  +	INTEL_CPU_FAM6(NEHALEM_EP,		idle_cpu_nehalem),
+> >  +	INTEL_CPU_FAM6(NEHALEM,			idle_cpu_nehalem),
+> >  +	INTEL_CPU_FAM6(NEHALEM_G,		idle_cpu_nehalem),
+> >  +	INTEL_CPU_FAM6(WESTMERE,		idle_cpu_nehalem),
+> >  +	INTEL_CPU_FAM6(WESTMERE_EP,		idle_cpu_nehalem),
+> >  +	INTEL_CPU_FAM6(NEHALEM_EX,		idle_cpu_nehalem),
+> > - 	INTEL_CPU_FAM6(ATOM_PINEVIEW,		idle_cpu_atom),
+> > - 	INTEL_CPU_FAM6(ATOM_LINCROFT,		idle_cpu_lincroft),
+> > ++	INTEL_CPU_FAM6(ATOM_BONNELL,		idle_cpu_atom),
+> > ++	INTEL_CPU_FAM6(ATOM_BONNELL_MID,	idle_cpu_lincroft),
+> >  +	INTEL_CPU_FAM6(WESTMERE_EX,		idle_cpu_nehalem),
+> >  +	INTEL_CPU_FAM6(SANDYBRIDGE,		idle_cpu_snb),
+> >  +	INTEL_CPU_FAM6(SANDYBRIDGE_X,		idle_cpu_snb),
+> > - 	INTEL_CPU_FAM6(ATOM_CEDARVIEW,		idle_cpu_atom),
+> > - 	INTEL_CPU_FAM6(ATOM_SILVERMONT1,	idle_cpu_byt),
+> > - 	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		idle_cpu_tangier),
+> > ++	INTEL_CPU_FAM6(ATOM_SALTWELL,		idle_cpu_atom),
+> > ++	INTEL_CPU_FAM6(ATOM_SILVERMONT,		idle_cpu_byt),
+> > ++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	idle_cpu_tangier),
+> >  +	INTEL_CPU_FAM6(ATOM_AIRMONT,		idle_cpu_cht),
+> >  +	INTEL_CPU_FAM6(IVYBRIDGE,		idle_cpu_ivb),
+> >  +	INTEL_CPU_FAM6(IVYBRIDGE_X,		idle_cpu_ivt),
+> >  +	INTEL_CPU_FAM6(HASWELL_CORE,		idle_cpu_hsw),
+> >  +	INTEL_CPU_FAM6(HASWELL_X,		idle_cpu_hsw),
+> >  +	INTEL_CPU_FAM6(HASWELL_ULT,		idle_cpu_hsw),
+> >  +	INTEL_CPU_FAM6(HASWELL_GT3E,		idle_cpu_hsw),
+> > - 	INTEL_CPU_FAM6(ATOM_SILVERMONT2,	idle_cpu_avn),
+> > ++	INTEL_CPU_FAM6(ATOM_SILVERMONT_X,	idle_cpu_avn),
+> >  +	INTEL_CPU_FAM6(BROADWELL_CORE,		idle_cpu_bdw),
+> >  +	INTEL_CPU_FAM6(BROADWELL_GT3E,		idle_cpu_bdw),
+> >  +	INTEL_CPU_FAM6(BROADWELL_X,		idle_cpu_bdw),
+> >  +	INTEL_CPU_FAM6(BROADWELL_XEON_D,	idle_cpu_bdw),
+> >  +	INTEL_CPU_FAM6(SKYLAKE_MOBILE,		idle_cpu_skl),
+> >  +	INTEL_CPU_FAM6(SKYLAKE_DESKTOP,		idle_cpu_skl),
+> >  +	INTEL_CPU_FAM6(KABYLAKE_MOBILE,		idle_cpu_skl),
+> >  +	INTEL_CPU_FAM6(KABYLAKE_DESKTOP,	idle_cpu_skl),
+> >  +	INTEL_CPU_FAM6(SKYLAKE_X,		idle_cpu_skx),
+> >  +	INTEL_CPU_FAM6(XEON_PHI_KNL,		idle_cpu_knl),
+> >  +	INTEL_CPU_FAM6(XEON_PHI_KNM,		idle_cpu_knl),
+> >  +	INTEL_CPU_FAM6(ATOM_GOLDMONT,		idle_cpu_bxt),
+> > - 	INTEL_CPU_FAM6(ATOM_GEMINI_LAKE,	idle_cpu_bxt),
+> > - 	INTEL_CPU_FAM6(ATOM_DENVERTON,		idle_cpu_dnv),
+> > ++	INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS,	idle_cpu_bxt),
+> > ++	INTEL_CPU_FAM6(ATOM_GOLDMONT_X,		idle_cpu_dnv),
+> >   	{}
+> >   };
+> >  =20
+> > 
+> > --Sig_/8A/3tsSoWQOAryCmuI_nxw6
+> > Content-Type: application/pgp-signature
+> > Content-Description: OpenPGP digital signature
+> > 
+> > 
+> > --Sig_/8A/3tsSoWQOAryCmuI_nxw6--
+> > 
 > 
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> This looks good to me.  Andy?
 
-Patch queued for 4.20, thanks.
+Either to me.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
