@@ -2,144 +2,120 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957DBC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1424C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3948520841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:37:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3948520841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 6B8B120841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:38:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sGQO4j0i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8B120841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeJHRsF (ORCPT
+        id S1726982AbeJHRtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:48:05 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34710 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbeJHRsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:48:05 -0400
-Received: by mail-qk1-f195.google.com with SMTP id p6-v6so11762447qkg.1;
-        Mon, 08 Oct 2018 03:37:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ABAzHvy42/tuYULpp/Kx5+SxMsW4Nke/wMSs9iUcpHc=;
-        b=lWo1eimbZvfBtXD6fF2UTnXbEDGNbrrp+TEifioPhlQGsbBSQerg1TYNRKVLWoSbVs
-         VMiiUCJ0PqqXLfFh8ln8SVcMVNhkYFF8irHBnx6Z1xFKb+PoiVh5rYq5I/vljqOCX5j1
-         9snR5PmSNU/6+/G8hF2OgF+ihEa3o8nK4TDj2/V7N2thqLSbm4eDAenVU9EtBY54ryCT
-         RBskVh4KepShJvlZct5z8YzW6sbstZV/6X0d/IF9f3s1VJ3bn9MfpzYWPq2BVqmVRFtD
-         dWzif/Gp9lAJ8PrPp/GwLkXIDtkQZhlw+0LQqwz34uaPUwweVIzrstYB/VkilgtSgEXJ
-         sJXQ==
-X-Gm-Message-State: ABuFfojV9y6t0zdtFM32IC4AafFUrgCCTM80ketp7IXL67VEl6rJDSld
-        nwsVWtB14ZV+wG77ON5A6R6npCDaU6AygOWwCo4=
-X-Google-Smtp-Source: ACcGV63zXQFCk50m2EUEU9lrbK+4uyARnWqdK6AqV8jqbOOA4wdPAN12MRlvG7lO4uxL+2L/6mXzc/1sNd1jgE0+k8E=
-X-Received: by 2002:a37:e21a:: with SMTP id g26-v6mr17611823qki.330.1538995020814;
- Mon, 08 Oct 2018 03:37:00 -0700 (PDT)
+        Mon, 8 Oct 2018 13:49:47 -0400
+Received: from mail-eopbgr40059.outbound.protection.outlook.com ([40.107.4.59]:30689
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726330AbeJHRtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:49:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KvZuuU+b6Fe8TqbAd0Zg8J7n1nC8vAauVy2CROTO6rA=;
+ b=sGQO4j0ivHro+O22K6dS+79XsT1eHnQSW3P5USE8f/nxsc2ns5we+NLLHl3EL7251mWXiaoX5ZMTj1tYMuN8R13sUzkGKW8xrOU1ECrZxcY3Vr1Pd8xXh6UdYvv8j75ma3bzGtaGbLos5K4FFbxonmBXiDyEiQB6tuzYGVbNS3I=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB4353.eurprd04.prod.outlook.com (52.134.125.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.26; Mon, 8 Oct 2018 10:38:39 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::25a0:3167:d718:91c1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::25a0:3167:d718:91c1%3]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
+ 10:38:39 +0000
+From:   "A.s. Dong" <aisheng.dong@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dongas86@gmail.com" <dongas86@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: RE: [PATCH 1/1] MAINTAINERS: imx: include drivers/firmware/imx path
+Thread-Topic: [PATCH 1/1] MAINTAINERS: imx: include drivers/firmware/imx path
+Thread-Index: AQHUXkMvvHcqFpueP0qHSdZ6R8hfv6UU9PgAgAA0hrA=
+Date:   Mon, 8 Oct 2018 10:38:39 +0000
+Message-ID: <AM0PR04MB421161DEADF1439C2D8BBB7D80E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1538918657-2032-1-git-send-email-aisheng.dong@nxp.com>
+ <20181008073010.GO3587@dragon>
+In-Reply-To: <20181008073010.GO3587@dragon>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4353;6:rX8nxI486rrv1rz/kJ4TmudI/VQ3dxSxAr15krfeRK+9BD0wMFRSkJYgQOiMUMgrmEKfVlb6rJkVN6IisG8KSbM8+EA4Yv1HjkfFLO2Jca2fvOMlI6hQxhSWrzPAYCXdf5mus8l3gx4xHdu7POgcfQJtV+sT7vdReMo3llG0PJjBXo8uC8E4HmdMjsvCdYA5DjgRg9vKFv0+7/oz9HnSrEvwU9F7JTHGqV+pXdl2PuAIGJHZsL8LbTPXPFii9TNPlEd2pDIW7EShGKv9CftH5BD2QJTa55OUyFacDih050Kq5n93Xg0mqw52Oh8x1A6ou8iEDLX0I6zUW+iYJbJaU1fQjNNaZmtr/6NXs3rUx9vlPiB5vWRCIeGU9tDIHaugnfeuuxjir4x9yo5ksBiyV56SUFh14wIPEb5+vEjIY5sWMo3TkNV6t6yiwx1TFM0JPnNee9oJXdlpjDP1T3Riaw==;5:BrV1RcgNgQoCwxR6aisuQPUXli5Wlp3uRpkl9lEuZCv1cJwsAd1gi/DEOxOA/1CwliuHwiTOdvb1Wz8baExtqrZzB75pinusBSpT+qmrAoz6vOtjQznJ/reMk75jA5iry6Qbdyj+XT3cbjnlA77hLFhUsJw7PrcLcuEUYPC4oYI=;7:ysAxzVHJqCIySkSnIgO+m8ll8RPCSVMT/wrrGnhVveIzpEL+YS+4VZGfRrsavYTZsuLYudHiX+gfvYj0/5F91X9zXEibKp5YupWIOy//K5W55IrLkwjPkn+ea8wSBpp0/oDHEVecjZxRRW7rxEht9FS7YUgkq0xCBbTN1QhZTkJt0IFAsdjFLJIlMk/XTYx/BdH++8UVvRTj/jG3X5aoHEf7GNEf1d1fBHpa7DV5Qm04scXn2XNpfQNQ/ISnfo7m
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 087a49ac-8a84-4ebd-dd93-08d62d0a35fd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4353;
+x-ms-traffictypediagnostic: AM0PR04MB4353:
+x-microsoft-antispam-prvs: <AM0PR04MB4353D064EDD54C2E5702329480E60@AM0PR04MB4353.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051);SRVR:AM0PR04MB4353;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4353;
+x-forefront-prvs: 081904387B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(136003)(396003)(376002)(189003)(199004)(6506007)(68736007)(6116002)(97736004)(3846002)(99286004)(11346002)(5250100002)(55016002)(9686003)(446003)(7696005)(53936002)(229853002)(2906002)(6436002)(76176011)(2900100001)(33656002)(54906003)(66066001)(71200400001)(5660300001)(71190400001)(102836004)(106356001)(4326008)(486006)(74316002)(186003)(476003)(6246003)(7736002)(316002)(105586002)(478600001)(305945005)(39060400002)(6916009)(256004)(14444005)(8676002)(14454004)(86362001)(8936002)(26005)(81166006)(25786009)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4353;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: raNBvrTcAu8Y1nGKGwuIWRsop2LYssSIRnuLO2bMWuiOgyEI0oV32WbDbDQ76H4nIEl2B45hAGaon+TZiywR1eK855LHkOq0XWQGUzspQSvZkRNN7YxRdZrRCeIPNpPAzp96SpKeWWBifxl8Nhjag8puYAJC4Gk5BFZ8TmmTF+q6Iin/zG6MbKWyzMmp7w/c+Hqk6lun9/Q63715lkISMk/DbVUVzlI9EOaOgM5nomrwKBhTy+cshpbwMCG1xZp84TJV4cshP48Pd83m3/NYmw6TmaEd9eNCUUSCMTNQf4jDyqtakLeu9DEK3rruurTFFaye6/OFWu5+08M0R/6CX9ZPnLAsRXBoNTaaCcXnak4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
- <20181003132212.12619-8-boris.brezillon@bootlin.com> <CAK8P3a21t7pQ2uYWgu2+VZZNYc+pz_w3WCL7YVUEzqqyOFLvnA@mail.gmail.com>
- <20181008122101.7b391070@bbrezillon>
-In-Reply-To: <20181008122101.7b391070@bbrezillon>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 8 Oct 2018 12:36:44 +0200
-Message-ID: <CAK8P3a3Sck0yYzH-Ks=CvHJLgZ1VrUjHvzw2XL7C_GC515=VVg@mail.gmail.com>
-Subject: Re: [PATCH v8 07/10] i3c: master: Add driver for Cadence IP
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>, mshettel@codeaurora.org,
-        swboyd@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 087a49ac-8a84-4ebd-dd93-08d62d0a35fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 10:38:39.7736
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4353
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 12:21 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> On Mon, 8 Oct 2018 12:06:30 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
->
-> > On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
-> > <boris.brezillon@bootlin.com> wrote:
-> > >
-> > > Add a driver for Cadence I3C master IP.
-> > >
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > ---
+> > diff --git a/MAINTAINERS b/MAINTAINERS index 9ad052a..d1fb824 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1462,6 +1462,7 @@ F:	arch/arm/mach-mxs/
+> >  F:	arch/arm/boot/dts/imx*
+> >  F:	arch/arm/configs/imx*_defconfig
+> >  F:	drivers/clk/imx/
+> > +F:	drivers/firmware/imx/
+>=20
+> Please add include/linux/firmware/imx/ too.
+>=20
+
+Sorry for missing it. Will update now.
+
+Regards
+Dong Aisheng
+
+> Shawn
+>=20
+> >  F:	drivers/soc/imx/
+> >  F:	include/soc/imx/
 > >
-> > > Changes in v7:
-> > > - Fix readsl/writesl() usage
-> > > - Add a depends on ARM || ARM64 || XTENSA to forbid selection of this
-> > >   driver on platforms that are not implementing readsl/writesl
+> > --
+> > 2.7.4
 > >
-> > Most architectures include asm-generic/io.h, which contains a generic
-> > implementation of readsl(). Maybe that #ifdef could be extended here?
-> > I remember discussing this with you not so long ago, which led to
-> > commit 0bbf47eab469 ("ia64: use asm-generic/io.h"). Do we have
-> > a list of architectures that don't include asm-generic/io.h? Maybe
-> > the 'depends on' could be for the set of architectures that fail here.
->
-> Well, we started patching 2 archs (ia64 and sparc) based on kbuild
-> robots failure report, and then I received other reports (still from
-> kbuild robots) long after the initial ones. I can't tell for sure which
-> archs are not implementing those functions, hence the conservative
-> approach taken here.
-
-I think it's a fairly safe assumption that architectures which include
-asm-generic/io.h will be fine here. If one of them is broken, that
-can be fixed individually. Looking at the ones that don't include this
-file:
-
-grep -L asm-generic/io.h arch/*/include/asm/io*.h
-arch/alpha/include/asm/io.h        # missing readsl
-arch/hexagon/include/asm/io.h   # has its own readsl
-arch/mips/include/asm/io.h         # missing readsl (but used from ide.h?)
-arch/parisc/include/asm/io.h       # missing readsl
-arch/powerpc/include/asm/io.h   # has its own readsl
-arch/sh/include/asm/io.h             # has its own readsl
-arch/sparc/include/asm/io.h        # has its own readsl
-
-Based on this, I would try what happens on mips, and make it depend
-on !(ALPHA || PARISC)
-
-Another option is to just use ioread32_rep(), which should be
-available everywhere and has almost the same behavior as
-readsl(). The only difference is that on architectures like x86
-it takes a few extra cycles to look at the address.
-
-        Arnd
