@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFCDC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B030BC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367A12087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70BBA214C3
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTzgiMue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367A12087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxf7sezH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70BBA214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbeJIB5T (ORCPT
+        id S1730703AbeJIB5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45218 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729988AbeJIB5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:18 -0400
+        id S1729988AbeJIB5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:21 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DB0A2064A;
-        Mon,  8 Oct 2018 18:44:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FE3C2064A;
+        Mon,  8 Oct 2018 18:44:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024253;
-        bh=3Yh+HglZMfqPiurzcB7D1604rp7SutvMqOQjPnbukJc=;
+        s=default; t=1539024255;
+        bh=BdBR/rjRK8yg0IgtIsck7juoIOJM+1v9bIJQUHoLU78=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aTzgiMueuczZ19KaiQ2m0ZuyXyTJglk5xqNyujKa9atRjj9EaqRNx9SVqwa7rNfEx
-         5IED7lvKn7mvb2zBuMGhqsUSRBIkV9tJMHUUfRKvxlxVXSP4KV/YMLup/VeovVYGPv
-         YFt/jnwQsESQNviwMMVnTnxvDwrdagkFCTXgRbG0=
+        b=lxf7sezHMMKAMeuS2tFXXOm1sppTrtJWIs08lEJnJWs4W2aAlcrN/aVxjhzVgqEfk
+         wh4pOJQz/6oHpytnvmpXioijcuF1QROzbjdD04UVQCXYffrMB8hRczzyReBUMTWkpy
+         OiWFvsyVhkkN1AOaPIz+j1kK2/n8nrVnRJupmsoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org, Wenjia Zhang <wenjia@linux.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 72/94] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
-Date:   Mon,  8 Oct 2018 20:31:53 +0200
-Message-Id: <20181008175609.987808262@linuxfoundation.org>
+Subject: [PATCH 4.14 73/94] s390/qeth: use vzalloc for QUERY OAT buffer
+Date:   Mon,  8 Oct 2018 20:31:54 +0200
+Message-Id: <20181008175610.024161696@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,69 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Wenjia Zhang <wenjia@linux.ibm.com>
 
-[ Upstream commit 6ad569019999300afd8e614d296fdc356550b77f ]
+[ Upstream commit aec45e857c5538664edb76a60dd452e3265f37d1 ]
 
-After system suspend, sometimes the r8169 doesn't work when ethernet
-cable gets pluggued.
+qeth_query_oat_command() currently allocates the kernel buffer for
+the SIOC_QETH_QUERY_OAT ioctl with kzalloc. So on systems with
+fragmented memory, large allocations may fail (eg. the qethqoat tool by
+default uses 132KB).
 
-This issue happens because rtl_reset_work() doesn't get called from
-rtl8169_runtime_resume(), after system suspend.
+Solve this issue by using vzalloc, backing the allocation with
+non-contiguous memory.
 
-In rtl_task(), RTL_FLAG_TASK_* only gets cleared if this condition is
-met:
-if (!netif_running(dev) ||
-    !test_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags))
-    ...
-
-If RTL_FLAG_TASK_ENABLED was cleared during system suspend while
-RTL_FLAG_TASK_RESET_PENDING was set, the next rtl_schedule_task() won't
-schedule task as the flag is still there.
-
-So in addition to clearing RTL_FLAG_TASK_ENABLED, also clears other
-flags.
-
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Wenjia Zhang <wenjia@linux.ibm.com>
+Reviewed-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/s390/net/qeth_core_main.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -760,7 +760,7 @@ struct rtl8169_tc_offsets {
- };
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -23,6 +23,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/netdev_features.h>
+ #include <linux/skbuff.h>
++#include <linux/vmalloc.h>
  
- enum rtl_flag {
--	RTL_FLAG_TASK_ENABLED,
-+	RTL_FLAG_TASK_ENABLED = 0,
- 	RTL_FLAG_TASK_SLOW_PENDING,
- 	RTL_FLAG_TASK_RESET_PENDING,
- 	RTL_FLAG_TASK_PHY_PENDING,
-@@ -7657,7 +7657,8 @@ static int rtl8169_close(struct net_devi
- 	rtl8169_update_counters(dev);
+ #include <net/iucv/af_iucv.h>
+ #include <net/dsfield.h>
+@@ -4728,7 +4729,7 @@ static int qeth_query_oat_command(struct
  
- 	rtl_lock_work(tp);
--	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
-+	/* Clear all task flags */
-+	bitmap_zero(tp->wk.flags, RTL_FLAG_MAX);
+ 	priv.buffer_len = oat_data.buffer_len;
+ 	priv.response_len = 0;
+-	priv.buffer =  kzalloc(oat_data.buffer_len, GFP_KERNEL);
++	priv.buffer = vzalloc(oat_data.buffer_len);
+ 	if (!priv.buffer) {
+ 		rc = -ENOMEM;
+ 		goto out;
+@@ -4769,7 +4770,7 @@ static int qeth_query_oat_command(struct
+ 			rc = -EFAULT;
  
- 	rtl8169_down(dev);
- 	rtl_unlock_work(tp);
-@@ -7838,7 +7839,9 @@ static void rtl8169_net_suspend(struct n
- 
- 	rtl_lock_work(tp);
- 	napi_disable(&tp->napi);
--	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
-+	/* Clear all task flags */
-+	bitmap_zero(tp->wk.flags, RTL_FLAG_MAX);
-+
- 	rtl_unlock_work(tp);
- 
- 	rtl_pll_power_down(tp);
+ out_free:
+-	kfree(priv.buffer);
++	vfree(priv.buffer);
+ out:
+ 	return rc;
+ }
 
 
