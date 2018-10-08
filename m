@@ -2,88 +2,114 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34CDC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAC1C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA2E204EC
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:43:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA2E204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D94982085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:44:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qr2I514y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94982085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbeJHVz7 (ORCPT
+        id S1726663AbeJHV4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:55:59 -0400
-Received: from mga01.intel.com ([192.55.52.88]:42914 "EHLO mga01.intel.com"
+        Mon, 8 Oct 2018 17:56:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbeJHVz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:55:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 07:43:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
-   d="scan'208";a="80841113"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 08 Oct 2018 07:43:41 -0700
-Received: from [10.252.30.144] (abudanko-mobl.ccr.corp.intel.com [10.252.30.144])
-        by linux.intel.com (Postfix) with ESMTP id A22DB5801E6;
-        Mon,  8 Oct 2018 07:43:39 -0700 (PDT)
-Subject: Re: [PATCH v11 1/3]: perf util: map data buffer for preserving
- collected data
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
- <0ff162a6-67ab-9e73-8d7e-fa57c932ee45@linux.intel.com>
- <20181008105057.GD17270@krava>
- <f8ac7176-26a4-7114-3807-abdaffaa897c@linux.intel.com>
- <20181008123859.GD18757@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <cc781e40-c162-9581-9573-d994785c4cc1@linux.intel.com>
-Date:   Mon, 8 Oct 2018 17:43:38 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726078AbeJHV4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:56:19 -0400
+Received: from dragon (unknown [45.56.155.247])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17EA2204EC;
+        Mon,  8 Oct 2018 14:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539009855;
+        bh=TugipAl2saPxY93/aeLyf7sHBqG8igNhIjaXpLUsDS0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qr2I514y8PJVOhtT4Ex7TgUn8bkeOxPA+grIiNHDKyZE4PEFGRt5VL5h9iFat5IMx
+         V8FhbN3s3YjzEQ09WxkyRJ0VbQGSZY0Frb/aP2GaHLkR7ljFe9K2NqtKfC7+MdQGwp
+         N3VcrfmdmBD7VJcw3Lh7MPoXIFHfc5fz6LAeVfqk=
+Date:   Mon, 8 Oct 2018 22:43:52 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: misc: bk4: Add device tree binding for
+ Liebherr's BK4 SPI bus
+Message-ID: <20181008144350.GS3587@dragon>
+References: <20180927222655.24482-1-lukma@denx.de>
 MIME-Version: 1.0
-In-Reply-To: <20181008123859.GD18757@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927222655.24482-1-lukma@denx.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 08.10.2018 15:38, Jiri Olsa wrote:
-> On Mon, Oct 08, 2018 at 03:03:18PM +0300, Alexey Budankov wrote:
-<SNIP>
->>
->> Well, let's go with stub functions design as opposite to pure 
->> conditional compilation. However this may, probably, result in 
->> unintended Perf tool binary size growth, even if NO_AIO is 
->> defined during compilation.
+On Fri, Sep 28, 2018 at 12:26:55AM +0200, Lukasz Majewski wrote:
+> Add Device Tree binding document for Liebherr's BK4 external SPI bus.
 > 
-> hum, empty functions are be optimized out
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
-Yes, but there will be references to stubs in else branch of 
-record__mmap_read_evlist() so I am not sure that *all* compilers 
-are smart enough to recognize and still optimize it out.
+There should really be a patch series consisting of this one and spidev
+change [1].
 
-Thanks,
-Alexey
+Since spidev has already been picked up, having a series including this
+and dts change would be the second option.  With DT folks' ACK, I can
+send bindings change together with DTS using it.
 
+Shawn
+
+[1] https://lkml.org/lkml/2018/9/28/48
+
+> ---
+>  Documentation/devicetree/bindings/misc/lwn-bk4.txt | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/lwn-bk4.txt
 > 
-> jirka
+> diff --git a/Documentation/devicetree/bindings/misc/lwn-bk4.txt b/Documentation/devicetree/bindings/misc/lwn-bk4.txt
+> new file mode 100644
+> index 000000000000..d6a8c188c087
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/lwn-bk4.txt
+> @@ -0,0 +1,26 @@
+> +* Liebherr's BK4 controller external SPI
+> +
+> +A device which handles data acquisition from compatible industrial
+> +peripherals.
+> +The SPI is used for data and management purposes in both master and
+> +slave modes.
+> +
+> +Required properties:
+> +
+> +- compatible : Should be "lwn,bk4"
+> +
+> +Required SPI properties:
+> +
+> +- reg : Should be address of the device chip select within
+> +  the controller.
+> +
+> +- spi-max-frequency : Maximum SPI clocking speed of device in Hz, should be
+> +  30MHz at most for the Liebherr's BK4 external bus.
+> +
+> +Example:
+> +
+> +spidev0: spi@0 {
+> +	compatible = "lwn,bk4";
+> +	spi-max-frequency = <30000000>;
+> +	reg = <0>;
+> +};
+> -- 
+> 2.11.0
 > 
