@@ -2,104 +2,146 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07489C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CB3C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE8DF2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A0C2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:34:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f4re+ohg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE8DF2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Zf1roaVN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A0C2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbeJHXoy (ORCPT
+        id S1726701AbeJHXqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:44:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44830 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbeJHXox (ORCPT
+        Mon, 8 Oct 2018 19:46:33 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:51614 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeJHXqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:44:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r9-v6so8464161pff.11
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TzKRxyCHqF26dJMlvbN+uiJtZzu1cpTCP8N1Afaqyeg=;
-        b=f4re+ohgd8+bHH1zc1NzxEnZ/VIL946udSZFI13xHwdmXfEktAkaxM7XRDukmD6au1
-         xV1akM4i8SOVIgCLSFEIL+Q+nmmawUgQ2O8vAwz1zou7LniaemaBtqa39YaLnjRpf2ao
-         T6D37JjWV40tz+UNbflvqzM/Y6TrRVmvWKUnM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TzKRxyCHqF26dJMlvbN+uiJtZzu1cpTCP8N1Afaqyeg=;
-        b=qFaedKaHoiZ/iVXQyIORYePXu48OwDJPguo7msK1QOk7D8r81R9n8h/3Ghavqs8qNx
-         HL8X79VCqecGR/jTEYP9oVF2zV89yb50b7rt/FSWSWAktyp3GrGyuE5/NSRT1mySLYoW
-         yO70iCxWAXbSCchfNbItPbbSnQIAf1MB2A5Ox+X3nwY+TBunYAYYfmNAurqWjHMuccTL
-         EyETMo+M0jRcAY/5Ji/dLP+ljx3UieR6FIZYHXpMN5CXmcS4vX+e9a6IzKtTQsiICYhK
-         ge6kp4BLn+el8164+c7LXq5rCBfAog9LJoYa+jWvSUvNqoVOJM6f5lk5wANmLpTcyX0q
-         Q89w==
-X-Gm-Message-State: ABuFfoiRuvaUHTC46dUgamezIAhbEoYy0GT3VQgg43KFaPeuRPXNu3FU
-        DG9UAcWsXBvE0XJiFv9u98v+zw==
-X-Google-Smtp-Source: ACcGV60JFCcBPzGRXo7vWlzrn7YlQ9Zo5EfwMG7KMCyFILUpD4xbhvGU21xGRez+6mGuriO3iiGBGw==
-X-Received: by 2002:a62:62c3:: with SMTP id w186-v6mr14937144pfb.5.1539016341266;
-        Mon, 08 Oct 2018 09:32:21 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id 3-v6sm29832077pga.12.2018.10.08.09.32.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 09:32:20 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH 4/4] gpio: Clarify kerneldoc on gpiochip_set_chained_irqchip()
-Date:   Mon,  8 Oct 2018 09:32:16 -0700
-Message-Id: <20181008163216.97436-5-swboyd@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-In-Reply-To: <20181008163216.97436-1-swboyd@chromium.org>
-References: <20181008163216.97436-1-swboyd@chromium.org>
+        Mon, 8 Oct 2018 19:46:33 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w98GXl70063650;
+        Mon, 8 Oct 2018 11:33:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539016427;
+        bh=QZb5zFeP2oUOk1KgdUCVFXMPEQEWPKwMv+6YIFzezF4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Zf1roaVN5Yhpza+ArK3u6p6RSSrw6Do0hIhXzhCCVMXup7tvfEo7XcfeSg8pFiue9
+         4d1e5Dy0UAS+W88ShrE6GABUI7ul5lhIcomcWUAE9JQtHntfjdcMj5rpXMWnzGb6FG
+         n34jI1vIBe+TUm/TFztIXmewydu3UYixIyM8Hvvo=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w98GXkZb008631;
+        Mon, 8 Oct 2018 11:33:47 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 8 Oct
+ 2018 11:33:46 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 8 Oct 2018 11:33:46 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w98GXknU001500;
+        Mon, 8 Oct 2018 11:33:46 -0500
+Subject: Re: [PATCH] samples/rpmsg: Introduce a module parameter for message
+ count
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180911174643.26199-1-s-anna@ti.com>
+ <20181006062231.GF12063@builder>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <d14448ad-21c1-0a1a-0264-2efece209fc6@ti.com>
+Date:   Mon, 8 Oct 2018 11:33:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181006062231.GF12063@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This doesn't support nested anymore, so drivers shouldn't call it with
-the handler set to NULL.
+Hi Bjorn,
 
-Cc: Evan Green <evgreen@chromium.org>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/gpio/gpiolib.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 10/06/2018 01:22 AM, Bjorn Andersson wrote:
+> On Tue 11 Sep 10:46 PDT 2018, Suman Anna wrote:
+> 
+>> The current rpmsg_client_sample uses a fixed number of messages to
+>> be sent to each instance. This is currently set at 100. Introduce
+>> an optional module parameter 'count' so that the number of messages
+>> to be exchanged can be made flexible.
+>>
+> 
+> Rather than sending N messages as fast as possible to any sample channel
+> that comes up, how about making the sample create a debugfs entry that
+> we can write messages to from user space?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 37c6fc73b179..1729d0f698e7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1693,8 +1693,7 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
-  * @parent_irq: the irq number corresponding to the parent IRQ for this
-  * chained irqchip
-  * @parent_handler: the parent interrupt handler for the accumulated IRQ
-- * coming out of the gpiochip. If the interrupt is nested rather than
-- * cascaded, pass NULL in this handler argument
-+ * coming out of the gpiochip.
-  */
- void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 				  struct irq_chip *irqchip,
--- 
-Sent by a computer through tubes
+This sample demonstrates a kernel-level rpmsg usage, and I would prefer
+to maintain the current simplicity, and not add in any userspace
+interaction. That perhaps can be done as a different sample. I use this
+sample to serve as the basic test for checking the rpmsg transport
+functionality with multiple remoteprocs and/or multiple instances per
+remoteproc at the same time. The count parameter helps me with both
+early Silicon development, as well as exercising increased message
+exchanges so that the vring buffers are cycled.
+
+> 
+> That would make it possible to improve the handling of multiple
+> remoteprocs and would allow for a variation in message lengths etc.
+
+FWIW, this already support multiple instances from the same remoteproc
+or different remoteproc.
+
+regards
+Suman
+
+
+> 
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  samples/rpmsg/rpmsg_client_sample.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
+>> index f161dfd3e70a..9b6b27ea504f 100644
+>> --- a/samples/rpmsg/rpmsg_client_sample.c
+>> +++ b/samples/rpmsg/rpmsg_client_sample.c
+>> @@ -22,7 +22,9 @@
+>>  #include <linux/rpmsg.h>
+>>  
+>>  #define MSG		"hello world!"
+>> -#define MSG_LIMIT	100
+>> +
+>> +static int count = 100;
+>> +module_param(count, int, 0644);
+>>  
+>>  struct instance_data {
+>>  	int rx_count;
+>> @@ -41,7 +43,7 @@ static int rpmsg_sample_cb(struct rpmsg_device *rpdev, void *data, int len,
+>>  		       data, len,  true);
+>>  
+>>  	/* samples should not live forever */
+>> -	if (idata->rx_count >= MSG_LIMIT) {
+>> +	if (idata->rx_count >= count) {
+>>  		dev_info(&rpdev->dev, "goodbye!\n");
+>>  		return 0;
+>>  	}
+>> -- 
+>> 2.18.0
+>>
 
