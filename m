@@ -7,55 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771B1C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 045B1C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4182F21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B11EF214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bx27OSuJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4182F21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhLtpj9n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B11EF214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbeJIBxl (ORCPT
+        id S1729780AbeJIBxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:53:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41010 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:53:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbeJIBxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:53:39 -0400
+        id S1727315AbeJIBxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:53:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E28602064A;
-        Mon,  8 Oct 2018 18:40:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D93C52087D;
+        Mon,  8 Oct 2018 18:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024035;
-        bh=crkLwHpoFufmVGL2aymwZFqa7GcvFFhVpXiK2l9Mdds=;
+        s=default; t=1539024038;
+        bh=xgZs6v//cJFnPLU+rdy45awIZYOREor9PUuGTQPlSPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bx27OSuJEuF27CnWnW2pOuPouEbBU+KVbqQfawoGMwsLp938OidLRfZ4UA7WesgbS
-         /K6NcpxQ+x//UxifgWPtCj0vdKAH9hqCP1XvwsoEIfF8M3XXk3ldEqxsQwaSiKdo8K
-         ejlZ8xAmTc+qKPxtJi8OVIB48sRso215oJykD4v4=
+        b=JhLtpj9nud8R6766EJksRoX36xkxRzlLDYec39YNjhqG1oHIm4npgA6nq7MfK3VCa
+         R6UTZy28xv8PCgJugbgN5XT00uyrC2m8jAgi2COg3xg6rzqgVC2007CPcKuy/jTIFO
+         IxmF8T8aTCNHCkwAC6U2EeZWgsMAklYs0BHTuqGg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ken Chen <kenchen@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.9 58/59] proc: restrict kernel stack dumps to root
-Date:   Mon,  8 Oct 2018 20:32:05 +0200
-Message-Id: <20181008175553.092801654@linuxfoundation.org>
+        stable@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 41/59] dm thin metadata: try to avoid ever aborting transactions
+Date:   Mon,  8 Oct 2018 20:31:48 +0200
+Message-Id: <20181008175550.722285235@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -73,73 +63,260 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Joe Thornber <ejt@redhat.com>
 
-commit f8a00cef17206ecd1b30d3d9f99e10d9fa707aa7 upstream.
+[ Upstream commit 3ab91828166895600efd9cdc3a0eb32001f7204a ]
 
-Currently, you can use /proc/self/task/*/stack to cause a stack walk on
-a task you control while it is running on another CPU.  That means that
-the stack can change under the stack walker.  The stack walker does
-have guards against going completely off the rails and into random
-kernel memory, but it can interpret random data from your kernel stack
-as instruction pointers and stack pointers.  This can cause exposure of
-kernel stack contents to userspace.
+Committing a transaction can consume some metadata of it's own, we now
+reserve a small amount of metadata to cover this.  Free metadata
+reported by the kernel will not include this reserve.
 
-Restrict the ability to inspect kernel stacks of arbitrary tasks to root
-in order to prevent a local attacker from exploiting racy stack unwinding
-to leak kernel task stack contents.  See the added comment for a longer
-rationale.
+If any of the reserve has been used after a commit we enter a new
+internal state PM_OUT_OF_METADATA_SPACE.  This is reported as
+PM_READ_ONLY, so no userland changes are needed.  If the metadata
+device is resized the pool will move back to PM_WRITE.
 
-There don't seem to be any users of this userspace API that can't
-gracefully bail out if reading from the file fails.  Therefore, I believe
-that this change is unlikely to break things.  In the case that this patch
-does end up needing a revert, the next-best solution might be to fake a
-single-entry stack based on wchan.
+These changes mean we never need to abort and rollback a transaction due
+to running out of metadata space.  This is particularly important
+because there have been a handful of reports of data corruption against
+DM thin-provisioning that can all be attributed to the thin-pool having
+ran out of metadata space.
 
-Link: http://lkml.kernel.org/r/20180927153316.200286-1-jannh@google.com
-Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Ken Chen <kenchen@google.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/proc/base.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/md/dm-thin-metadata.c |   36 ++++++++++++++++++++
+ drivers/md/dm-thin.c          |   73 +++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 100 insertions(+), 9 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -454,6 +454,20 @@ static int proc_pid_stack(struct seq_fil
- 	int err;
- 	int i;
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -190,6 +190,12 @@ struct dm_pool_metadata {
+ 	sector_t data_block_size;
  
-+	/*
-+	 * The ability to racily run the kernel stack unwinder on a running task
-+	 * and then observe the unwinder output is scary; while it is useful for
-+	 * debugging kernel issues, it can also allow an attacker to leak kernel
-+	 * stack contents.
-+	 * Doing this in a manner that is at least safe from races would require
-+	 * some work to ensure that the remote task can not be scheduled; and
-+	 * even then, this would still expose the unwinder as local attack
-+	 * surface.
-+	 * Therefore, this interface is restricted to root.
+ 	/*
++	 * We reserve a section of the metadata for commit overhead.
++	 * All reported space does *not* include this.
 +	 */
-+	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
-+		return -EACCES;
++	dm_block_t metadata_reserve;
 +
- 	entries = kmalloc(MAX_STACK_TRACE_DEPTH * sizeof(*entries), GFP_KERNEL);
- 	if (!entries)
- 		return -ENOMEM;
++	/*
+ 	 * Set if a transaction has to be aborted but the attempt to roll back
+ 	 * to the previous (good) transaction failed.  The only pool metadata
+ 	 * operation possible in this state is the closing of the device.
+@@ -827,6 +833,22 @@ static int __commit_transaction(struct d
+ 	return dm_tm_commit(pmd->tm, sblock);
+ }
+ 
++static void __set_metadata_reserve(struct dm_pool_metadata *pmd)
++{
++	int r;
++	dm_block_t total;
++	dm_block_t max_blocks = 4096; /* 16M */
++
++	r = dm_sm_get_nr_blocks(pmd->metadata_sm, &total);
++	if (r) {
++		DMERR("could not get size of metadata device");
++		pmd->metadata_reserve = max_blocks;
++	} else {
++		sector_div(total, 10);
++		pmd->metadata_reserve = min(max_blocks, total);
++	}
++}
++
+ struct dm_pool_metadata *dm_pool_metadata_open(struct block_device *bdev,
+ 					       sector_t data_block_size,
+ 					       bool format_device)
+@@ -860,6 +882,8 @@ struct dm_pool_metadata *dm_pool_metadat
+ 		return ERR_PTR(r);
+ 	}
+ 
++	__set_metadata_reserve(pmd);
++
+ 	return pmd;
+ }
+ 
+@@ -1831,6 +1855,13 @@ int dm_pool_get_free_metadata_block_coun
+ 	down_read(&pmd->root_lock);
+ 	if (!pmd->fail_io)
+ 		r = dm_sm_get_nr_free(pmd->metadata_sm, result);
++
++	if (!r) {
++		if (*result < pmd->metadata_reserve)
++			*result = 0;
++		else
++			*result -= pmd->metadata_reserve;
++	}
+ 	up_read(&pmd->root_lock);
+ 
+ 	return r;
+@@ -1943,8 +1974,11 @@ int dm_pool_resize_metadata_dev(struct d
+ 	int r = -EINVAL;
+ 
+ 	down_write(&pmd->root_lock);
+-	if (!pmd->fail_io)
++	if (!pmd->fail_io) {
+ 		r = __resize_space_map(pmd->metadata_sm, new_count);
++		if (!r)
++			__set_metadata_reserve(pmd);
++	}
+ 	up_write(&pmd->root_lock);
+ 
+ 	return r;
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -200,7 +200,13 @@ struct dm_thin_new_mapping;
+ enum pool_mode {
+ 	PM_WRITE,		/* metadata may be changed */
+ 	PM_OUT_OF_DATA_SPACE,	/* metadata may be changed, though data may not be allocated */
++
++	/*
++	 * Like READ_ONLY, except may switch back to WRITE on metadata resize. Reported as READ_ONLY.
++	 */
++	PM_OUT_OF_METADATA_SPACE,
+ 	PM_READ_ONLY,		/* metadata may not be changed */
++
+ 	PM_FAIL,		/* all I/O fails */
+ };
+ 
+@@ -1386,7 +1392,35 @@ static void set_pool_mode(struct pool *p
+ 
+ static void requeue_bios(struct pool *pool);
+ 
+-static void check_for_space(struct pool *pool)
++static bool is_read_only_pool_mode(enum pool_mode mode)
++{
++	return (mode == PM_OUT_OF_METADATA_SPACE || mode == PM_READ_ONLY);
++}
++
++static bool is_read_only(struct pool *pool)
++{
++	return is_read_only_pool_mode(get_pool_mode(pool));
++}
++
++static void check_for_metadata_space(struct pool *pool)
++{
++	int r;
++	const char *ooms_reason = NULL;
++	dm_block_t nr_free;
++
++	r = dm_pool_get_free_metadata_block_count(pool->pmd, &nr_free);
++	if (r)
++		ooms_reason = "Could not get free metadata blocks";
++	else if (!nr_free)
++		ooms_reason = "No free metadata blocks";
++
++	if (ooms_reason && !is_read_only(pool)) {
++		DMERR("%s", ooms_reason);
++		set_pool_mode(pool, PM_OUT_OF_METADATA_SPACE);
++	}
++}
++
++static void check_for_data_space(struct pool *pool)
+ {
+ 	int r;
+ 	dm_block_t nr_free;
+@@ -1412,14 +1446,16 @@ static int commit(struct pool *pool)
+ {
+ 	int r;
+ 
+-	if (get_pool_mode(pool) >= PM_READ_ONLY)
++	if (get_pool_mode(pool) >= PM_OUT_OF_METADATA_SPACE)
+ 		return -EINVAL;
+ 
+ 	r = dm_pool_commit_metadata(pool->pmd);
+ 	if (r)
+ 		metadata_operation_failed(pool, "dm_pool_commit_metadata", r);
+-	else
+-		check_for_space(pool);
++	else {
++		check_for_metadata_space(pool);
++		check_for_data_space(pool);
++	}
+ 
+ 	return r;
+ }
+@@ -1485,6 +1521,19 @@ static int alloc_data_block(struct thin_
+ 		return r;
+ 	}
+ 
++	r = dm_pool_get_free_metadata_block_count(pool->pmd, &free_blocks);
++	if (r) {
++		metadata_operation_failed(pool, "dm_pool_get_free_metadata_block_count", r);
++		return r;
++	}
++
++	if (!free_blocks) {
++		/* Let's commit before we use up the metadata reserve. */
++		r = commit(pool);
++		if (r)
++			return r;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1516,6 +1565,7 @@ static int should_error_unserviceable_bi
+ 	case PM_OUT_OF_DATA_SPACE:
+ 		return pool->pf.error_if_no_space ? -ENOSPC : 0;
+ 
++	case PM_OUT_OF_METADATA_SPACE:
+ 	case PM_READ_ONLY:
+ 	case PM_FAIL:
+ 		return -EIO;
+@@ -2479,8 +2529,9 @@ static void set_pool_mode(struct pool *p
+ 		error_retry_list(pool);
+ 		break;
+ 
++	case PM_OUT_OF_METADATA_SPACE:
+ 	case PM_READ_ONLY:
+-		if (old_mode != new_mode)
++		if (!is_read_only_pool_mode(old_mode))
+ 			notify_of_pool_mode_change(pool, "read-only");
+ 		dm_pool_metadata_read_only(pool->pmd);
+ 		pool->process_bio = process_bio_read_only;
+@@ -3418,6 +3469,10 @@ static int maybe_resize_metadata_dev(str
+ 		DMINFO("%s: growing the metadata device from %llu to %llu blocks",
+ 		       dm_device_name(pool->pool_md),
+ 		       sb_metadata_dev_size, metadata_dev_size);
++
++		if (get_pool_mode(pool) == PM_OUT_OF_METADATA_SPACE)
++			set_pool_mode(pool, PM_WRITE);
++
+ 		r = dm_pool_resize_metadata_dev(pool->pmd, metadata_dev_size);
+ 		if (r) {
+ 			metadata_operation_failed(pool, "dm_pool_resize_metadata_dev", r);
+@@ -3721,7 +3776,7 @@ static int pool_message(struct dm_target
+ 	struct pool_c *pt = ti->private;
+ 	struct pool *pool = pt->pool;
+ 
+-	if (get_pool_mode(pool) >= PM_READ_ONLY) {
++	if (get_pool_mode(pool) >= PM_OUT_OF_METADATA_SPACE) {
+ 		DMERR("%s: unable to service pool target messages in READ_ONLY or FAIL mode",
+ 		      dm_device_name(pool->pool_md));
+ 		return -EOPNOTSUPP;
+@@ -3795,6 +3850,7 @@ static void pool_status(struct dm_target
+ 	dm_block_t nr_blocks_data;
+ 	dm_block_t nr_blocks_metadata;
+ 	dm_block_t held_root;
++	enum pool_mode mode;
+ 	char buf[BDEVNAME_SIZE];
+ 	char buf2[BDEVNAME_SIZE];
+ 	struct pool_c *pt = ti->private;
+@@ -3865,9 +3921,10 @@ static void pool_status(struct dm_target
+ 		else
+ 			DMEMIT("- ");
+ 
+-		if (pool->pf.mode == PM_OUT_OF_DATA_SPACE)
++		mode = get_pool_mode(pool);
++		if (mode == PM_OUT_OF_DATA_SPACE)
+ 			DMEMIT("out_of_data_space ");
+-		else if (pool->pf.mode == PM_READ_ONLY)
++		else if (is_read_only_pool_mode(mode))
+ 			DMEMIT("ro ");
+ 		else
+ 			DMEMIT("rw ");
 
 
