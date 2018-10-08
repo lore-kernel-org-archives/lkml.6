@@ -2,102 +2,190 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A66C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F34EC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E112085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D818E2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gwL+2hdV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E112085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KQRmLHat";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KQRmLHat"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D818E2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbeJHLmP (ORCPT
+        id S1726373AbeJHLod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 07:42:15 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45434 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725760AbeJHLmP (ORCPT
+        Mon, 8 Oct 2018 07:44:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40508 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725760AbeJHLod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 07:42:15 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u12-v6so4607688pfn.12
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 21:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=C9YKkDG+9wx0SGJSSRCxutx38MY2RxzBXc1u2dlLtvA=;
-        b=gwL+2hdVxsqQ2npU9IWJj91bw1/TyUjp2aSWx57BPr+GjUTfbDRo5IwII7MVHD8Vvb
-         qTl0uda8JusRAAQNchQpuDMJaKzGpcKTrjJEDG0MeuyyIrZPF+uvkrQaX4r33O/SjLpK
-         640MBbzlbGAS1U5/EXzyi/MM/5yXgjymg8Eag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=C9YKkDG+9wx0SGJSSRCxutx38MY2RxzBXc1u2dlLtvA=;
-        b=MjlHULAOyrpcZwd7f0eqUfW45+Sz7JH9vNeJHnMVT2iJ/AV4ueo8ZImJS+5JV1tPiT
-         oPhtjxU0mbn2tNM9GV2jHmQM08C4m5wcBZuAlxO4oV30EnM229q0z3eiqDsJgY1y3Jxr
-         hOvgqnhXtLCGuX/bvjkREyXUyS2ta5UqE36mMnjB/Ff1ReWMPJ/vkK2zmlJNGpBGbLJy
-         wUC0aDrCJunfUmv93ScVjBTmiE8y6ItabqPgGPZuJ20Pn+XM86O9bwA0gEZlvJajdIL9
-         oLrJTmxa21KrrSHwwhcx9cd2FmAASV6jMD2A6bEHee/MAbrSr9e24ISBsGYVp+/5EUAF
-         jpTQ==
-X-Gm-Message-State: ABuFfogFJhlZBSXgHgGThVQVE7P6t4Bv1VYyiS7e4VULgwZ51Q3FM49X
-        dt9m0ns6e6VSvplt7mfPmXD8Pw==
-X-Google-Smtp-Source: ACcGV610ZsXWLiqSETh6GiQI3TkaavsmT45CbNHfKsPidBDbpkWtwG/d7oMaFiaqhoxyXNr/u059NA==
-X-Received: by 2002:a62:5a83:: with SMTP id o125-v6mr23552071pfb.117.1538973152032;
-        Sun, 07 Oct 2018 21:32:32 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id o76-v6sm22290639pfi.162.2018.10.07.21.32.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 07 Oct 2018 21:32:31 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <62816605-0cc9-3743-e98c-682bf7996c6c@arm.com>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20181001215337.13358-1-swboyd@chromium.org>
- <62816605-0cc9-3743-e98c-682bf7996c6c@arm.com>
-Message-ID: <153897315026.119890.9913725764215566223@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] dma-debug: Check for drivers mapping invalid addresses in
- dma_map_single()
-Date:   Sun, 07 Oct 2018 21:32:30 -0700
+        Mon, 8 Oct 2018 07:44:33 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E4A6B60C62; Mon,  8 Oct 2018 04:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538973288;
+        bh=g4MtXne5Kbhz0irwNFy3uq+4cp9ucn8ThsYOHZ8o9fI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KQRmLHat96OirHp+aGAN3HsiHsQZfxFx2dK1t+Xxja2/0v/C0wEtmisE0BBD4uhc/
+         wMLW9O7rdr+nbEmzQWTy3yQfAQwKXvgIHjrmgCCkaeujTUJSrdW+rXqlLcv82QBRLQ
+         eft6P+MDwxbXmMB05rLq8QgkDWwuWtzywbYEDWtY=
+Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7425E6031A;
+        Mon,  8 Oct 2018 04:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538973288;
+        bh=g4MtXne5Kbhz0irwNFy3uq+4cp9ucn8ThsYOHZ8o9fI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KQRmLHat96OirHp+aGAN3HsiHsQZfxFx2dK1t+Xxja2/0v/C0wEtmisE0BBD4uhc/
+         wMLW9O7rdr+nbEmzQWTy3yQfAQwKXvgIHjrmgCCkaeujTUJSrdW+rXqlLcv82QBRLQ
+         eft6P+MDwxbXmMB05rLq8QgkDWwuWtzywbYEDWtY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7425E6031A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        evgreen@chromium.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Can Guo <cang@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/1] scsi: ufs: make UFS Tx lane1 clock optional
+Date:   Sun,  7 Oct 2018 21:34:34 -0700
+Message-Id: <1538973275-5961-1-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Robin Murphy (2018-10-02 07:01:42)
-> On 01/10/18 22:53, Stephen Boyd wrote:
-> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> > index d23fc45c8208..99ccba66c06a 100644
-> > --- a/include/linux/dma-mapping.h
-> > +++ b/include/linux/dma-mapping.h
-> > @@ -231,6 +231,7 @@ static inline dma_addr_t dma_map_single_attrs(struc=
-t device *dev, void *ptr,
-> >       dma_addr_t addr;
-> >   =
+From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 
-> >       BUG_ON(!valid_dma_direction(dir));
-> > +     debug_dma_check_single(dev, ptr, size);
-> =
+The UFS Tx lane1 clock could be muxed, hence keep it optional by ignoring
+it if it is not provided in device tree.
 
-> Ahem...
-> =
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+---
+ drivers/scsi/ufs/ufs-qcom.c | 46 ++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-> With that (and below) fixed so that it actually compiles,
-> =
-
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-Thanks for checking! ;)
+diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+index 2b38db2..a6e2ed3 100644
+--- a/drivers/scsi/ufs/ufs-qcom.c
++++ b/drivers/scsi/ufs/ufs-qcom.c
+@@ -85,13 +85,10 @@ static int ufs_qcom_host_clk_get(struct device *dev,
+ 	int err = 0;
+ 
+ 	clk = devm_clk_get(dev, name);
+-	if (IS_ERR(clk)) {
++	if (IS_ERR(clk))
+ 		err = PTR_ERR(clk);
+-		dev_err(dev, "%s: failed to get %s err %d",
+-				__func__, name, err);
+-	} else {
++	else
+ 		*clk_out = clk;
+-	}
+ 
+ 	return err;
+ }
+@@ -113,10 +110,10 @@ static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
+ 	if (!host->is_lane_clks_enabled)
+ 		return;
+ 
+-	if (host->hba->lanes_per_direction > 1)
++	if (host->tx_l1_sync_clk)
+ 		clk_disable_unprepare(host->tx_l1_sync_clk);
+ 	clk_disable_unprepare(host->tx_l0_sync_clk);
+-	if (host->hba->lanes_per_direction > 1)
++	if (host->rx_l1_sync_clk)
+ 		clk_disable_unprepare(host->rx_l1_sync_clk);
+ 	clk_disable_unprepare(host->rx_l0_sync_clk);
+ 
+@@ -141,24 +138,21 @@ static int ufs_qcom_enable_lane_clks(struct ufs_qcom_host *host)
+ 	if (err)
+ 		goto disable_rx_l0;
+ 
+-	if (host->hba->lanes_per_direction > 1) {
++	if (host->rx_l1_sync_clk) {
+ 		err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
+ 			host->rx_l1_sync_clk);
+ 		if (err)
+ 			goto disable_tx_l0;
+-
+-		err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+-			host->tx_l1_sync_clk);
+-		if (err)
+-			goto disable_rx_l1;
+ 	}
+ 
++	/* The tx lane1 clk could be muxed, hence keep this optional */
++	if (host->tx_l1_sync_clk)
++		ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
++					 host->tx_l1_sync_clk);
++
+ 	host->is_lane_clks_enabled = true;
+ 	goto out;
+ 
+-disable_rx_l1:
+-	if (host->hba->lanes_per_direction > 1)
+-		clk_disable_unprepare(host->rx_l1_sync_clk);
+ disable_tx_l0:
+ 	clk_disable_unprepare(host->tx_l0_sync_clk);
+ disable_rx_l0:
+@@ -174,23 +168,33 @@ static int ufs_qcom_init_lane_clks(struct ufs_qcom_host *host)
+ 
+ 	err = ufs_qcom_host_clk_get(dev,
+ 			"rx_lane0_sync_clk", &host->rx_l0_sync_clk);
+-	if (err)
++	if (err) {
++		dev_err(dev, "%s: failed to get rx_lane0_sync_clk, err %d",
++				__func__, err);
+ 		goto out;
++	}
+ 
+ 	err = ufs_qcom_host_clk_get(dev,
+ 			"tx_lane0_sync_clk", &host->tx_l0_sync_clk);
+-	if (err)
++	if (err) {
++		dev_err(dev, "%s: failed to get tx_lane0_sync_clk, err %d",
++				__func__, err);
+ 		goto out;
++	}
+ 
+ 	/* In case of single lane per direction, don't read lane1 clocks */
+ 	if (host->hba->lanes_per_direction > 1) {
+ 		err = ufs_qcom_host_clk_get(dev, "rx_lane1_sync_clk",
+ 			&host->rx_l1_sync_clk);
+-		if (err)
++		if (err) {
++			dev_err(dev, "%s: failed to get rx_lane1_sync_clk, err %d",
++					__func__, err);
+ 			goto out;
++		}
+ 
+-		err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+-			&host->tx_l1_sync_clk);
++		/* The tx lane1 clk could be muxed, hence keep this optional */
++		ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
++					&host->tx_l1_sync_clk);
+ 	}
+ out:
+ 	return err;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
