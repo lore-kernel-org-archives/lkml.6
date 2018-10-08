@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC2FC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22479C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F03B82087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF6CC21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzXg9H6w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03B82087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIcbrrk5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6CC21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729177AbeJIBv1 (ORCPT
+        id S1729193AbeJIBva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38240 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:26 -0400
+        id S1726427AbeJIBv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CDF12087D;
-        Mon,  8 Oct 2018 18:38:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F5032064A;
+        Mon,  8 Oct 2018 18:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023902;
-        bh=BA94qm9vOKOZbNAvBqufLthv3icEf7U1z1Vdyw39VcM=;
+        s=default; t=1539023905;
+        bh=3bCuaWKF1Zcl1y0LMI/ypIzuzEfDlWSvkeK18H2dkk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SzXg9H6wiVpUsA4bEVCCydpoVTcMP69GY0Q9wd1VkjxRoUjfJ6LhT0C2Lr00eu2Z/
-         ZJ1JUyn8qawNS6zpAmY6tOXu8kE2NAgWlFE4ILTZx/bdioN9LbOnmF65GgcOX4W1pW
-         oE/NtuBVXAd+J3klhNbt5gsE2uAjvKNLcCHDIk4g=
+        b=sIcbrrk5wB+w2IU6la1a3fgnZcWLBmQfO7tYB7Ap2pqIESLv2N7orsTDJmO3T8fai
+         Dv53TV+wnp/xsQCUIGvuPI5S3SGs+A5PJY/o3rYluYTvHmqndHAmzubaIFu/Qcs3cu
+         BfL2fauT8Jqn9wrnxe8aFHoVm+O1UFiNNtRARy4g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Eugeniy Paltsev <paltsev@synopsys.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 11/59] gpio: Fix crash due to registration race
-Date:   Mon,  8 Oct 2018 20:31:18 +0200
-Message-Id: <20181008175547.749375637@linuxfoundation.org>
+Subject: [PATCH 4.9 12/59] ARC: atomics: unbork atomic_fetch_##op()
+Date:   Mon,  8 Oct 2018 20:31:19 +0200
+Message-Id: <20181008175547.799895210@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -63,68 +64,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit d49b48f088c323dbacae44dfbe56d9c985c8a2a1 ]
+[ Upstream commit 3fcbb8260a87efb691d837e8cd24e81f65b3eb70 ]
 
-gpiochip_add_data_with_key() adds the gpiochip to the gpio_devices list
-before of_gpiochip_add() is called, but it's only the latter which sets
-the ->of_xlate function pointer.  gpiochip_find() can be called by
-someone else between these two actions, and it can find the chip and
-call of_gpiochip_match_node_and_xlate() which leads to the following
-crash due to a NULL ->of_xlate().
+In 4.19-rc1, Eugeniy reported weird boot and IO errors on ARC HSDK
 
- Unhandled prefetch abort: page domain fault (0x01b) at 0x00000000
- Modules linked in: leds_gpio(+) gpio_generic(+)
- CPU: 0 PID: 830 Comm: insmod Not tainted 4.18.0+ #43
- Hardware name: ARM-Versatile Express
- PC is at   (null)
- LR is at of_gpiochip_match_node_and_xlate+0x2c/0x38
- Process insmod (pid: 830, stack limit = 0x(ptrval))
-  (of_gpiochip_match_node_and_xlate) from  (gpiochip_find+0x48/0x84)
-  (gpiochip_find) from  (of_get_named_gpiod_flags+0xa8/0x238)
-  (of_get_named_gpiod_flags) from  (gpiod_get_from_of_node+0x2c/0xc8)
-  (gpiod_get_from_of_node) from  (devm_fwnode_get_index_gpiod_from_child+0xb8/0x144)
-  (devm_fwnode_get_index_gpiod_from_child) from  (gpio_led_probe+0x208/0x3c4 [leds_gpio])
-  (gpio_led_probe [leds_gpio]) from  (platform_drv_probe+0x48/0x9c)
-  (platform_drv_probe) from  (really_probe+0x1d0/0x3d4)
-  (really_probe) from  (driver_probe_device+0x78/0x1c0)
-  (driver_probe_device) from  (__driver_attach+0x120/0x13c)
-  (__driver_attach) from  (bus_for_each_dev+0x68/0xb4)
-  (bus_for_each_dev) from  (bus_add_driver+0x1a8/0x268)
-  (bus_add_driver) from  (driver_register+0x78/0x10c)
-  (driver_register) from  (do_one_initcall+0x54/0x1fc)
-  (do_one_initcall) from  (do_init_module+0x64/0x1f4)
-  (do_init_module) from  (load_module+0x2198/0x26ac)
-  (load_module) from  (sys_finit_module+0xe0/0x110)
-  (sys_finit_module) from  (ret_fast_syscall+0x0/0x54)
+| INFO: task syslogd:77 blocked for more than 10 seconds.
+|       Not tainted 4.19.0-rc1-00007-gf213acea4e88 #40
+| "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+| message.
+| syslogd         D    0    77     76 0x00000000
+|
+| Stack Trace:
+|  __switch_to+0x0/0xac
+|  __schedule+0x1b2/0x730
+|  io_schedule+0x5c/0xc0
+|  __lock_page+0x98/0xdc
+|  find_lock_entry+0x38/0x100
+|  shmem_getpage_gfp.isra.3+0x82/0xbfc
+|  shmem_fault+0x46/0x138
+|  handle_mm_fault+0x5bc/0x924
+|  do_page_fault+0x100/0x2b8
+|  ret_from_exception+0x0/0x8
 
-One way to fix this would be to rework the hairy registration sequence
-in gpiochip_add_data_with_key(), but since I'd probably introduce a
-couple of new bugs if I attempted that, simply add a check for a
-non-NULL of_xlate function pointer in
-of_gpiochip_match_node_and_xlate().  This works since the driver looking
-for the gpio will simply fail to find the gpio and defer its probe and
-be reprobed when the driver which is registering the gpiochip has fully
-completed its probe.
+He bisected to 84c6591103db ("locking/atomics,
+asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*()")
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This commit however only unmasked the real issue introduced by commit
+4aef66c8ae9 ("locking/atomic, arch/arc: Fix build") which missed the
+retry-if-scond-failed branch in atomic_fetch_##op() macros.
+
+The bisected commit started using atomic_fetch_##op() macros for building
+the rest of atomics.
+
+Fixes: 4aef66c8ae9 ("locking/atomic, arch/arc: Fix build")
+Reported-by: Eugeniy Paltsev <paltsev@synopsys.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: wrote changelog]
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib-of.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arc/include/asm/atomic.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -31,6 +31,7 @@ static int of_gpiochip_match_node_and_xl
- 	struct of_phandle_args *gpiospec = data;
- 
- 	return chip->gpiodev->dev.of_node == gpiospec->np &&
-+				chip->of_xlate &&
- 				chip->of_xlate(chip, gpiospec, NULL) >= 0;
- }
- 
+--- a/arch/arc/include/asm/atomic.h
++++ b/arch/arc/include/asm/atomic.h
+@@ -84,7 +84,7 @@ static inline int atomic_fetch_##op(int
+ 	"1:	llock   %[orig], [%[ctr]]		\n"		\
+ 	"	" #asm_op " %[val], %[orig], %[i]	\n"		\
+ 	"	scond   %[val], [%[ctr]]		\n"		\
+-	"						\n"		\
++	"	bnz     1b				\n"		\
+ 	: [val]	"=&r"	(val),						\
+ 	  [orig] "=&r" (orig)						\
+ 	: [ctr]	"r"	(&v->counter),					\
 
 
