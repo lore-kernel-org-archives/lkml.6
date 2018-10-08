@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAD5C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BEDC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59E220652
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C7F20644
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIb+uZJR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59E220652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKbIZ+kk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C7F20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeJHWtX (ORCPT
+        id S1727810AbeJHWte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:49:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56324 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:49:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726458AbeJHWiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:04 -0400
+        id S1727258AbeJHWiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8673214FF;
-        Mon,  8 Oct 2018 15:25:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26FAD21529;
+        Mon,  8 Oct 2018 15:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012349;
-        bh=S34kyZAKiyhY+RnYNCLvJcaVMoEV3jmaQ6l+KeZQG2I=;
+        s=default; t=1539012347;
+        bh=S6R3XaiAkauCrW1dI8c1MYAQO1JgED+psD5LOzxQxvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mIb+uZJReZLqL1uQ63+GRprCWB88PJOXOBzOti55TGsIzpML6FnbZzymNtYtcQF5/
-         87+BcooCj9oYc7ln+xrKpliUB/jsn1pflxe3izvIdbaTmP2BPZvyWl/Oj3Tulx6Gs/
-         rj5fH7+g1xsBiKzvaJkjMgXekA4zhi0KCFe80zf8=
+        b=HKbIZ+kkyIMR5jmyzSVlecJJtTgUmCBYVUFfWNBLNeXgHAoBUpzQupTeiSBklWjf4
+         ZYMxQarUTwfY+Aq27tdR9/tyjRCyTiNpxZWYdJf5993hMaKPzW5g1Jem4w563et73y
+         BbW684XQ3xh7N4tUG7jB6TntmshVqedMqdncdY24=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 24/58] Input: atakbd - fix Atari CapsLock behaviour
-Date:   Mon,  8 Oct 2018 11:24:49 -0400
-Message-Id: <20181008152523.70705-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 22/58] intel_th: pci: Add Ice Lake PCH support
+Date:   Mon,  8 Oct 2018 11:24:47 -0400
+Message-Id: <20181008152523.70705-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,45 +53,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
+[ Upstream commit 59d08d00d43c644ee2011d7ff1807bdd69f31fe0 ]
 
-The CapsLock key on Atari keyboards is not a toggle, it does send the
-normal make and break scancodes.
+This adds Intel(R) Trace Hub PCI ID for Ice Lake PCH.
 
-Drop the CapsLock toggle handling code, which did cause the CapsLock
-key to merely act as a Shift key.
-
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/input/keyboard/atakbd.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/hwtracing/intel_th/pci.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
-index 524a72bee55a..fdeda0b0fbd6 100644
---- a/drivers/input/keyboard/atakbd.c
-+++ b/drivers/input/keyboard/atakbd.c
-@@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned char scancode, char down)
- 
- 		scancode = atakbd_keycode[scancode];
- 
--		if (scancode == KEY_CAPSLOCK) {	/* CapsLock is a toggle switch key on Amiga */
--			input_report_key(atakbd_dev, scancode, 1);
--			input_report_key(atakbd_dev, scancode, 0);
--			input_sync(atakbd_dev);
--		} else {
--			input_report_key(atakbd_dev, scancode, down);
--			input_sync(atakbd_dev);
--		}
-+		input_report_key(atakbd_dev, scancode, down);
-+		input_sync(atakbd_dev);
- 	} else				/* scancodes >= 0xf3 are mouse data, most likely */
- 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
+diff --git a/drivers/hwtracing/intel_th/pci.c b/drivers/hwtracing/intel_th/pci.c
+index c2e55e5d97f6..1cf6290d6435 100644
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -160,6 +160,11 @@ static const struct pci_device_id intel_th_pci_id_table[] = {
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x18e1),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
++	{
++		/* Ice Lake PCH */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x34a6),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
+ 	{ 0 },
+ };
  
 -- 
 2.17.1
