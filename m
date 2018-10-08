@@ -2,99 +2,125 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,
+	URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F5BC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A225C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4EC21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C804F21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:48:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCBd34nN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4EC21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uI4EeOSy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C804F21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeJIBAO (ORCPT
+        id S1726503AbeJIBBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:00:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59594 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:01:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJIBAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:00:14 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        id S1726391AbeJIBBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:01:45 -0400
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F40CB214FA
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 17:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95C26214C2;
+        Mon,  8 Oct 2018 17:48:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539020844;
-        bh=8D+awCa3qqzmyCe4kPPrdC/Oz1P+gaNIc4Pgm4R8TQ0=;
+        s=default; t=1539020933;
+        bh=hKGxC9mClSj0Q9VkNXekYZB/ApxJUfM7F+dIV5gSw54=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WCBd34nN0x3YGlpO1ZgJ32kG4QMgmPDHbdWNHtjYMsRXQOPIjyuuhKJMk8TBcjAjV
-         pPQYVHZd7KUFQ4yLBHM1ApoXsNrSmqaKLh+Ns7gxfJ3k9F4z0s6xrfXGcsqMFJlFus
-         QXjdrAJkJ2etQzXJFV9vXMsNTcIeVO6CS2Zg3Gxs=
-Received: by mail-wr1-f41.google.com with SMTP id e4-v6so21796336wrs.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 10:47:23 -0700 (PDT)
-X-Gm-Message-State: ABuFfoipC9uynXpZRHJSCDN8s4Xkd6DGXzPnSJVR/5U2vfYaiC6Eff10
-        +5tJukHF1rKk2dYfIl9G4OUYialgFRy7yP7+PxeVgg==
-X-Google-Smtp-Source: ACcGV61PJYsT03GZuICP/A2bwvvB6W7CcgAsB4Iyb2LU+PXg4nOjcqMhdRAK3qb9pyy7Qxae1rnQkxuClLQv1WEch0A=
-X-Received: by 2002:adf:9792:: with SMTP id s18-v6mr18167234wrb.283.1539020842298;
- Mon, 08 Oct 2018 10:47:22 -0700 (PDT)
+        b=uI4EeOSyyi2qnOL8ZWAyErxKum4YXGFoBkrM6+JB6IEdOZpwhhdXI5t9BXMMHPR5z
+         /TXXLygw90TjTSLCkAchxxJOC3UfmxLRn3LG/lOYAnDOs9wjkWLrQTCut0OCHlTOX9
+         zBu5O3pS7rdhb0uvY2oZi3/uszc+7qN5dl2ekphU=
+Received: by mail-qt1-f173.google.com with SMTP id o17-v6so5925038qtr.1;
+        Mon, 08 Oct 2018 10:48:53 -0700 (PDT)
+X-Gm-Message-State: ABuFfohqBgk0X4np9iMDqnvkkEKK/beVRa57TtNDCi30nnY2A1JqPoZV
+        DpsuwImLZKIbHyDjiqtRazrUeDZZ9UKiDUhiAA==
+X-Google-Smtp-Source: ACcGV63p4ALi5/cdA4XikmKhZERkoOOYtEzI1u17ZXU9djdOntuJd3JLwME/JHCdmrdZ49rwhz1fkmOQIWDC5+JW1y4=
+X-Received: by 2002:ac8:190e:: with SMTP id t14-v6mr19983763qtj.327.1539020932849;
+ Mon, 08 Oct 2018 10:48:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181006015110.653946300@goodmis.org> <20181006015720.634688468@goodmis.org>
- <20181006121211.GA5663@hirez.programming.kicks-ass.net> <20181006093905.46276505@vmware.local.home>
- <20181008072134.GB5663@hirez.programming.kicks-ass.net> <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
- <20181008155757.GC5663@hirez.programming.kicks-ass.net> <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
- <20181008163953.GD5663@hirez.programming.kicks-ass.net> <CALCETrWuGh=1n2bEE9B0eeyzvnaD4y_Sx6MB+r9B5aFXzg8qBw@mail.gmail.com>
- <CAKv+Gu-08i6QEahyYhBtCBmpOYNuxirgdsgGvRw+Y0DX3+DVNQ@mail.gmail.com> <nycvar.YFH.7.76.1810081944030.14430@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1810081944030.14430@cbobk.fhfr.pm>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 8 Oct 2018 10:47:10 -0700
-X-Gmail-Original-Message-ID: <CALCETrVHRV6nVANL7i1qGBY3vp9kfY_S1tvnhiL+iowr5RDzxg@mail.gmail.com>
-Message-ID: <CALCETrVHRV6nVANL7i1qGBY3vp9kfY_S1tvnhiL+iowr5RDzxg@mail.gmail.com>
-Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature "jump_function"
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+References: <20181002132459.032960735@linuxfoundation.org> <af80bbc1-6753-01d2-1ecb-830720b38f48@roeck-us.net>
+ <20181003162539.GA4653@kroah.com> <20181003172440.GA7955@roeck-us.net>
+ <CAL_Jsq+GBDB21tSDTq7p39SvQEGq1R3ZPeH7Yx+9fHttx3v9Ew@mail.gmail.com>
+ <20181003180847.GA15682@roeck-us.net> <20181007141808.GA14337@roeck-us.net>
+In-Reply-To: <20181007141808.GA14337@roeck-us.net>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 8 Oct 2018 12:48:41 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+0t+x4GSPUW-0Qhcsng1Z+0qn_72XpmX5At00FtT5V4g@mail.gmail.com>
+Message-ID: <CAL_Jsq+0t+x4GSPUW-0Qhcsng1Z+0qn_72XpmX5At00FtT5V4g@mail.gmail.com>
+Subject: Re: [PATCH 4.18 000/228] 4.18.12-stable review
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        mhelsley@vmware.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Andrew Lutomirski <luto@kernel.org>
+        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org,
+        patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 10:44 AM Jiri Kosina <jikos@kernel.org> wrote:
+On Sun, Oct 7, 2018 at 9:19 AM Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> On Mon, 8 Oct 2018, Ard Biesheuvel wrote:
->
-> > Does that mean that architectures could opt out of doing the whole
-> > objtool + relocation processing thing, and instead take the hit of
-> > going through the trampoline for all calls?
->
-> There are architectures that aren't [currently] supported by objtool at
-> all anyway.
->
+> On Wed, Oct 03, 2018 at 11:08:47AM -0700, Guenter Roeck wrote:
+> > On Wed, Oct 03, 2018 at 12:53:11PM -0500, Rob Herring wrote:
+> > > On Wed, Oct 3, 2018 at 12:24 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > > >
+> > > > On Wed, Oct 03, 2018 at 09:25:39AM -0700, Greg Kroah-Hartman wrote:
+> > > > > On Wed, Oct 03, 2018 at 05:59:09AM -0700, Guenter Roeck wrote:
+> > > > > > On 10/02/2018 06:21 AM, Greg Kroah-Hartman wrote:
+> > > > > > > This is the start of the stable review cycle for the 4.18.12 release.
+> > > > > > > There are 228 patches in this series, all will be posted as a response
+> > > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > > let me know.
+> > > > > > >
+> > > > > > > Responses should be made by Thu Oct  4 13:24:08 UTC 2018.
+> > > > > > > Anything received after that time might be too late.
+> > > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > Build results:
+> > > > > >     total: 137 pass: 137 fail: 0
+> > > > > > Qemu test results:
+> > > > > >     total: 321 pass: 320 fail: 1
+> > > > > > Failed tests:
+> > > > > >     powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
+> > > > >
+> > > > > What is the status of that powerpc failure fix?  What's the odds it can
+> > > > > get into mainline soon?
+> > > > >
+> > > >
+> > > > The fix has been -next for about a week.
+> > > >
+> > > > da08d8cb8cfc of: unittest: Disable interrupt node tests for old world MAC systems
+> > > >
+> > > > You'll have to ask Rob (copied) if he plans to send a pull request before
+> > > > the next commit window opens.
+> > >
+> > > I wasn't planning to as it's just for the unittest and has been that
+> > > way for how long? Why's the unittest enabled for a defconfig anyways?
+> > >
+> >
+> > I enabled it to improve test coverage for stable releases. This is how
+> > I found the problem in the first place. Are you suggesting that I should
+> > not run DT unit tests for stable release candidates ?
+> >
+> I have now disabled CONFIG_OF_UNITTEST in my tests.
 
-The the credit of most architectures, though, the only reason x86
-would want to use objtool instead of digging the results directly out
-of the relocation data is that x86 has an overcomplicated instruction
-encoding and there's no fully reliable way to find the address of the
-instruction that contains a given relocation without fully
-disassembling the binary.
+Well no, that wasn't what I was suggesting. I'll send it to Greg this week.
+
+Are there details on how you run qemu?
+
+Rob
+
+>
+> Guenter
