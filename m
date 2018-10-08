@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A71BC00449
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610ACC64EB8
 	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51F72077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51F72077C
+	by mail.kernel.org (Postfix) with ESMTP id 292CE2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:07:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292CE2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeJHLQ5 (ORCPT
+        id S1726573AbeJHLQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 07:16:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51075 "EHLO
+        Mon, 8 Oct 2018 07:16:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51517 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725760AbeJHLQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 07:16:56 -0400
+        id S1725760AbeJHLQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 07:16:58 -0400
 Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
         (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9846Yku459575
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9846ZBL459576
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 7 Oct 2018 21:06:34 -0700
+        Sun, 7 Oct 2018 21:06:35 -0700
 Received: from carbon-x1.hos.anvin.org (localhost [127.0.0.1])
-        by carbon-x1.hos.anvin.org (8.15.2/8.15.2) with ESMTP id w9846Txd1248328;
+        by carbon-x1.hos.anvin.org (8.15.2/8.15.2) with ESMTP id w9846Tn51248332;
         Sun, 7 Oct 2018 21:06:29 -0700
 Received: (from hpa@localhost)
-        by carbon-x1.hos.anvin.org (8.15.2/8.15.2/Submit) id w9846Ttt1248327;
+        by carbon-x1.hos.anvin.org (8.15.2/8.15.2/Submit) id w9846Twp1248331;
         Sun, 7 Oct 2018 21:06:29 -0700
 X-Authentication-Warning: carbon-x1.hos.anvin.org: hpa set sender to hpa@zytor.com using -f
 From:   "H. Peter Anvin" <hpa@zytor.com>
@@ -51,9 +51,9 @@ Cc:     Tobias Klausmann <klausman@schwarzvogel.de>,
         linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
         Johan Hovold <johan@kernel.org>,
         Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
-Subject: [PATCH stable v2 1/2] arch/alpha, termios: implement BOTHER, IBSHIFT and termios2
-Date:   Sun,  7 Oct 2018 21:06:19 -0700
-Message-Id: <20181008040620.1248277-2-hpa@zytor.com>
+Subject: [PATCH stable v2 2/2] termios, tty/tty_baudrate.c: simplify, auto-generate baud table
+Date:   Sun,  7 Oct 2018 21:06:20 -0700
+Message-Id: <20181008040620.1248277-3-hpa@zytor.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008040620.1248277-1-hpa@zytor.com>
 References: <20181008040620.1248277-1-hpa@zytor.com>
@@ -64,21 +64,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
 
-Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
-using arbitrary flags. Because BOTHER is not defined, the general
-Linux code doesn't allow setting arbitrary baud rates, and because
-CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
-drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
+Now when all architectures define BOTHER and IBSHIFT, we can
+unconditionally rely on these constants. Furthermore, the code can be
+significantly simplified in a number of places.
 
-Resolve both problems by #defining BOTHER to 037 on Alpha.
+Rather than having two tables and needing to be able to keep them in
+sync at all times, have one auto-generated table. This also lets us
+avoid the fact that architectures that have CBAUDEX == 0 have BOTHER
+in a different location that those that don't.
 
-However, userspace still needs to know if setting BOTHER is actually
-safe given legacy kernels (does anyone actually care about that on
-Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
-though they use the same structure. Define struct termios2 just for
-compatibility; it is the exact same structure as struct termios. In a
-future patchset, this will be cleaned up so the uapi headers are
-usable from libc.
+The code for masking CBAUDEX as a fallback is never exercised on any
+architecture, because for all architectures, either the baud rate
+table is completely defined for all CBAUD values, or CBAUDEX == 0, so
+we can just remove it.
+
+Finally, this patch avoids overrunning the baud_table[] for
+architectures with CBAUDEX == 0.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -98,90 +99,304 @@ Cc: Johan Hovold <johan@kernel.org>
 Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Cc: <stable@vger.kernel.org>
 ---
- arch/alpha/include/asm/termios.h       |  8 +++++++-
- arch/alpha/include/uapi/asm/ioctls.h   |  5 +++++
- arch/alpha/include/uapi/asm/termbits.h | 17 +++++++++++++++++
- 3 files changed, 29 insertions(+), 1 deletion(-)
+ drivers/tty/.gitignore     |   1 +
+ drivers/tty/Makefile       |  16 ++++
+ drivers/tty/bmacros.c      |   2 +
+ drivers/tty/tty_baudrate.c | 182 ++++++++++++++-----------------------
+ 4 files changed, 85 insertions(+), 116 deletions(-)
+ create mode 100644 drivers/tty/.gitignore
+ create mode 100644 drivers/tty/bmacros.c
 
-diff --git a/arch/alpha/include/asm/termios.h b/arch/alpha/include/asm/termios.h
-index 6a8c53dec57e..b7c77bb1bfd2 100644
---- a/arch/alpha/include/asm/termios.h
-+++ b/arch/alpha/include/asm/termios.h
-@@ -73,9 +73,15 @@
- })
+diff --git a/drivers/tty/.gitignore b/drivers/tty/.gitignore
+new file mode 100644
+index 000000000000..d436c18a912c
+--- /dev/null
++++ b/drivers/tty/.gitignore
+@@ -0,0 +1 @@
++bmacros.h
+diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+index c72cafdf32b4..489b222ab1ce 100644
+--- a/drivers/tty/Makefile
++++ b/drivers/tty/Makefile
+@@ -35,3 +35,19 @@ obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
+ obj-$(CONFIG_VCC)		+= vcc.o
  
- #define user_termios_to_kernel_termios(k, u) \
--	copy_from_user(k, u, sizeof(struct termios))
-+	copy_from_user(k, u, sizeof(struct termios2))
- 
- #define kernel_termios_to_user_termios(u, k) \
-+	copy_to_user(u, k, sizeof(struct termios2))
+ obj-y += ipwireless/
 +
-+#define user_termios_to_kernel_termios_1(k, u) \
-+	copy_from_user(k, u, sizeof(struct termios))
++#
++# Rules for generating the baud rate table
++#
++CFLAGS_bmacros.o += -Wp,-dM
 +
-+#define kernel_termios_to_user_termios_1(u, k) \
- 	copy_to_user(u, k, sizeof(struct termios))
- 
- #endif	/* _ALPHA_TERMIOS_H */
-diff --git a/arch/alpha/include/uapi/asm/ioctls.h b/arch/alpha/include/uapi/asm/ioctls.h
-index 3729d92d3fa8..dc8c20ac7191 100644
---- a/arch/alpha/include/uapi/asm/ioctls.h
-+++ b/arch/alpha/include/uapi/asm/ioctls.h
-@@ -32,6 +32,11 @@
- #define TCXONC		_IO('t', 30)
- #define TCFLSH		_IO('t', 31)
- 
-+#define TCGETS2		_IOR('T', 42, struct termios2)
-+#define TCSETS2		_IOW('T', 43, struct termios2)
-+#define TCSETSW2	_IOW('T', 44, struct termios2)
-+#define TCSETSF2	_IOW('T', 45, struct termios2)
++$(obj)/tty_baudrate.o: $(obj)/bmacros.h
 +
- #define TIOCSWINSZ	_IOW('t', 103, struct winsize)
- #define TIOCGWINSZ	_IOR('t', 104, struct winsize)
- #define	TIOCSTART	_IO('t', 110)		/* start output, like ^Q */
-diff --git a/arch/alpha/include/uapi/asm/termbits.h b/arch/alpha/include/uapi/asm/termbits.h
-index de6c8360fbe3..4575ba34a0ea 100644
---- a/arch/alpha/include/uapi/asm/termbits.h
-+++ b/arch/alpha/include/uapi/asm/termbits.h
-@@ -26,6 +26,19 @@ struct termios {
- 	speed_t c_ospeed;		/* output speed */
++quiet_cmd_bmacros = BMACROS $@
++      cmd_bmacros =  ( \
++	sed -nr -e 's/^.define B([0-9]+) .*$$/BTBL(B\1,\1)/p' $< \
++		| sort -n -k1.7 > $@ ) || (rm -f $@ ; echo false)
++
++targets += bmacros.h
++$(obj)/bmacros.h: $(obj)/bmacros.i FORCE
++	$(call if_changed,bmacros)
+diff --git a/drivers/tty/bmacros.c b/drivers/tty/bmacros.c
+new file mode 100644
+index 000000000000..0af865ff00de
+--- /dev/null
++++ b/drivers/tty/bmacros.c
+@@ -0,0 +1,2 @@
++/* This file is used to extract the B... macros from header files */
++#include <linux/termios.h>
+diff --git a/drivers/tty/tty_baudrate.c b/drivers/tty/tty_baudrate.c
+index 7576ceace571..ec6d3d93ffac 100644
+--- a/drivers/tty/tty_baudrate.c
++++ b/drivers/tty/tty_baudrate.c
+@@ -9,43 +9,48 @@
+ #include <linux/tty.h>
+ #include <linux/export.h>
+ 
+-
+ /*
+- * Routine which returns the baud rate of the tty
+- *
+- * Note that the baud_table needs to be kept in sync with the
+- * include/asm/termbits.h file.
++ * Routine which returns the baud rate of the tty.  The B... constants
++ * are extracted from the appropriate header files via
++ * bmacros.c -> bmacros.h.
+  */
+-static const speed_t baud_table[] = {
+-	0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800,
+-	9600, 19200, 38400, 57600, 115200, 230400, 460800,
+-#ifdef __sparc__
+-	76800, 153600, 307200, 614400, 921600
+-#else
+-	500000, 576000, 921600, 1000000, 1152000, 1500000, 2000000,
+-	2500000, 3000000, 3500000, 4000000
++
++/* CBAUD mask with CBAUDEX removed */
++#define CBAUDNX (CBAUD & ~CBAUDEX)
++
++/* Lowest bit in CBAUDEX, if any.  CBAUDEX is assumed contiguous. */
++#define CBAUDEL (CBAUDEX & ~(CBAUDEX << 1))
++#if CBAUDEL & (CBAUDEL-1)
++# error "CBAUDEX is not contiguous"
+ #endif
+-};
+ 
+-#ifndef __sparc__
+-static const tcflag_t baud_bits[] = {
+-	B0, B50, B75, B110, B134, B150, B200, B300, B600,
+-	B1200, B1800, B2400, B4800, B9600, B19200, B38400,
+-	B57600, B115200, B230400, B460800, B500000, B576000,
+-	B921600, B1000000, B1152000, B1500000, B2000000, B2500000,
+-	B3000000, B3500000, B4000000
+-};
+-#else
+-static const tcflag_t baud_bits[] = {
+-	B0, B50, B75, B110, B134, B150, B200, B300, B600,
+-	B1200, B1800, B2400, B4800, B9600, B19200, B38400,
+-	B57600, B115200, B230400, B460800, B76800, B153600,
+-	B307200, B614400, B921600
++/* Convert from B... constant to table position */
++#define BPOS(x) (((x) & CBAUDNX) + \
++		 (CBAUDEX ? ((x) & CBAUDEX)/CBAUDEL*(CBAUDNX+1) : 0))
++
++/* Convert from table position to B... constant */
++#define BVAL(x) (((x) & CBAUDNX) + (((x)/(CBAUDNX+1)*CBAUDEX) & CBAUDEX))
++
++/* Entry into the baud_table */
++#define BTBL(b,v) [BPOS(b)] = (v),
++
++static const speed_t baud_table[] = {
++#include "bmacros.h"
  };
+-#endif
  
-+/* Alpha has identical termios and termios2 */
+ static int n_baud_table = ARRAY_SIZE(baud_table);
+ 
++/* Helper function; will be called with cbaud already masked */
++static speed_t _tty_termios_baud_rate(unsigned int cbaud, speed_t bother_speed)
++{
++	/* Magic token for arbitrary speed via c_ispeed/c_ospeed */
++	if (cbaud == BOTHER)
++		return bother_speed;
 +
-+struct termios2 {
-+	tcflag_t c_iflag;		/* input mode flags */
-+	tcflag_t c_oflag;		/* output mode flags */
-+	tcflag_t c_cflag;		/* control mode flags */
-+	tcflag_t c_lflag;		/* local mode flags */
-+	cc_t c_cc[NCCS];		/* control characters */
-+	cc_t c_line;			/* line discipline (== c_cc[19]) */
-+	speed_t c_ispeed;		/* input speed */
-+	speed_t c_ospeed;		/* output speed */
-+};
++	cbaud = BPOS(cbaud);
++	return (cbaud >= n_baud_table) ? 0 : baud_table[cbaud];
++}
 +
- /* Alpha has matching termios and ktermios */
+ /**
+  *	tty_termios_baud_rate
+  *	@termios: termios structure
+@@ -60,24 +65,8 @@ static int n_baud_table = ARRAY_SIZE(baud_table);
  
- struct ktermios {
-@@ -152,6 +165,7 @@ struct ktermios {
- #define B3000000  00034
- #define B3500000  00035
- #define B4000000  00036
-+#define BOTHER    00037
+ speed_t tty_termios_baud_rate(struct ktermios *termios)
+ {
+-	unsigned int cbaud;
+-
+-	cbaud = termios->c_cflag & CBAUD;
+-
+-#ifdef BOTHER
+-	/* Magic token for arbitrary speed via c_ispeed/c_ospeed */
+-	if (cbaud == BOTHER)
+-		return termios->c_ospeed;
+-#endif
+-	if (cbaud & CBAUDEX) {
+-		cbaud &= ~CBAUDEX;
+-
+-		if (cbaud < 1 || cbaud + 15 > n_baud_table)
+-			termios->c_cflag &= ~CBAUDEX;
+-		else
+-			cbaud += 15;
+-	}
+-	return baud_table[cbaud];
++	return _tty_termios_baud_rate(termios->c_cflag & CBAUD,
++				      termios->c_ospeed);
+ }
+ EXPORT_SYMBOL(tty_termios_baud_rate);
  
- #define CSIZE	00001400
- #define   CS5	00000000
-@@ -169,6 +183,9 @@ struct ktermios {
- #define CMSPAR	  010000000000		/* mark or space (stick) parity */
- #define CRTSCTS	  020000000000		/* flow control */
+@@ -95,28 +84,15 @@ EXPORT_SYMBOL(tty_termios_baud_rate);
  
-+#define CIBAUD	07600000
-+#define IBSHIFT	16
+ speed_t tty_termios_input_baud_rate(struct ktermios *termios)
+ {
+-#ifdef IBSHIFT
+-	unsigned int cbaud = (termios->c_cflag >> IBSHIFT) & CBAUD;
+-
+-	if (cbaud == B0)
+-		return tty_termios_baud_rate(termios);
+-#ifdef BOTHER
+-	/* Magic token for arbitrary speed via c_ispeed*/
+-	if (cbaud == BOTHER)
+-		return termios->c_ispeed;
+-#endif
+-	if (cbaud & CBAUDEX) {
+-		cbaud &= ~CBAUDEX;
++	unsigned int cbaud;
++	speed_t bother_speed = termios->c_ispeed;
+ 
+-		if (cbaud < 1 || cbaud + 15 > n_baud_table)
+-			termios->c_cflag &= ~(CBAUDEX << IBSHIFT);
+-		else
+-			cbaud += 15;
++	cbaud = (termios->c_cflag >> IBSHIFT) & CBAUD;
++	if (cbaud == B0) {
++		cbaud = termios->c_cflag & CBAUD;
++		bother_speed = termios->c_ospeed;
+ 	}
+-	return baud_table[cbaud];
+-#else	/* IBSHIFT */
+-	return tty_termios_baud_rate(termios);
+-#endif	/* IBSHIFT */
++	return _tty_termios_baud_rate(cbaud, bother_speed);
+ }
+ EXPORT_SYMBOL(tty_termios_input_baud_rate);
+ 
+@@ -145,38 +121,27 @@ EXPORT_SYMBOL(tty_termios_input_baud_rate);
+ void tty_termios_encode_baud_rate(struct ktermios *termios,
+ 				  speed_t ibaud, speed_t obaud)
+ {
+-	int i = 0;
+-	int ifound = -1, ofound = -1;
++	int i;
++	unsigned int ifound, ofound;
+ 	int iclose = ibaud/50, oclose = obaud/50;
+-	int ibinput = 0;
++	bool ibinput = false;
+ 
+-	if (obaud == 0)			/* CD dropped 		  */
++	if (obaud == 0)			/* CD dropped		  */
+ 		ibaud = 0;		/* Clear ibaud to be sure */
+ 
+ 	termios->c_ispeed = ibaud;
+ 	termios->c_ospeed = obaud;
+ 
+-#ifdef IBSHIFT
+-	if ((termios->c_cflag >> IBSHIFT) & CBAUD)
+-		ibinput = 1;	/* An input speed was specified */
+-#endif
+-#ifdef BOTHER
++	ibinput = ((termios->c_cflag >> IBSHIFT) & CBAUD) != B0;
 +
- /* c_lflag bits */
- #define ISIG	0x00000080
- #define ICANON	0x00000100
+ 	/* If the user asked for a precise weird speed give a precise weird
+ 	   answer. If they asked for a Bfoo speed they may have problems
+ 	   digesting non-exact replies so fuzz a bit */
+ 
+-	if ((termios->c_cflag & CBAUD) == BOTHER) {
++	if ((termios->c_cflag & CBAUD) == BOTHER)
+ 		oclose = 0;
+-		if (!ibinput)
+-			iclose = 0;
+-	}
+ 	if (((termios->c_cflag >> IBSHIFT) & CBAUD) == BOTHER)
+ 		iclose = 0;
+-#endif
+-	termios->c_cflag &= ~CBAUD;
+-#ifdef IBSHIFT
+-	termios->c_cflag &= ~(CBAUD << IBSHIFT);
+-#endif
+ 
+ 	/*
+ 	 *	Our goal is to find a close match to the standard baud rate
+@@ -184,43 +149,28 @@ void tty_termios_encode_baud_rate(struct ktermios *termios,
+ 	 *	match then report back the speed as a POSIX Bxxxx value by
+ 	 *	preference
+ 	 */
+-
+-	do {
++	ofound = ifound = BOTHER;
++	for (i = 0; i < n_baud_table; i++) {
+ 		if (obaud - oclose <= baud_table[i] &&
+ 		    obaud + oclose >= baud_table[i]) {
+-			termios->c_cflag |= baud_bits[i];
+-			ofound = i;
++			ofound = BVAL(i);
++			break;
+ 		}
+-		if (ibaud - iclose <= baud_table[i] &&
+-		    ibaud + iclose >= baud_table[i]) {
+-			/* For the case input == output don't set IBAUD bits
+-			   if the user didn't do so */
+-			if (ofound == i && !ibinput)
+-				ifound  = i;
+-#ifdef IBSHIFT
+-			else {
+-				ifound = i;
+-				termios->c_cflag |= (baud_bits[i] << IBSHIFT);
++	}
++	if (!ibinput) {
++		ifound = 0;
++	} else {
++		for (i = 0; i < n_baud_table; i++) {
++			if (ibaud - iclose <= baud_table[i] &&
++			    ibaud + iclose >= baud_table[i]) {
++				ifound  = BVAL(i);
++				break;
+ 			}
+-#endif
+ 		}
+-	} while (++i < n_baud_table);
++	}
+ 
+-	/*
+-	 *	If we found no match then use BOTHER if provided or warn
+-	 *	the user their platform maintainer needs to wake up if not.
+-	 */
+-#ifdef BOTHER
+-	if (ofound == -1)
+-		termios->c_cflag |= BOTHER;
+-	/* Set exact input bits only if the input and output differ or the
+-	   user already did */
+-	if (ifound == -1 && (ibaud != obaud || ibinput))
+-		termios->c_cflag |= (BOTHER << IBSHIFT);
+-#else
+-	if (ifound == -1 || ofound == -1)
+-		pr_warn_once("tty: Unable to return correct speed data as your architecture needs updating.\n");
+-#endif
++	termios->c_cflag &= ~(CBAUD | (CBAUD << IBSHIFT));
++	termios->c_cflag |= ofound | (ifound << IBSHIFT);
+ }
+ EXPORT_SYMBOL_GPL(tty_termios_encode_baud_rate);
+ 
 -- 
 2.17.1
 
