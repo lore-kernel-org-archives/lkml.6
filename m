@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115F9C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC25CC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCCB52089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9293820C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDh+z50I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCB52089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oh0CSZ9o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9293820C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbeJIBpu (ORCPT
+        id S1726697AbeJIBpx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55376 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbeJIBpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:45:49 -0400
+        id S1726434AbeJIBpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:45:52 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D88862089D;
-        Mon,  8 Oct 2018 18:32:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F2602087D;
+        Mon,  8 Oct 2018 18:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023567;
-        bh=NLIyqUPgRwQtrXYFuVOofXRFCywQEYnv+uxPVquxTZo=;
+        s=default; t=1539023570;
+        bh=sfDcnVu8XfsGX/eMrsiLVl46oLmxdsg8FIx2B7NgxqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZDh+z50IHSBYRtRmw+/1Pl5KJ5XzmM/yza/yohbOdC8ox1c0O/mtp+QlG8mGvfR0C
-         83Iuh4VxKFh6wlGYc/1S+WVz0DhnASoo27WDDi+Ss3KlSI/t6+pe72cVmU++/zG+A8
-         HIlvCdjcRIeioc7B9PbSjYaZVA3cbsBIz3tSA0WU=
+        b=Oh0CSZ9ot9co26T1LVRsom+i3HKLl0Taay27S792wBoDrTHX07xTXPATeWmD8iKX7
+         6XdfTkyWoZSZc2AlBwOB1z33wtdjs4kSqIxKAjDCP02Aw/1zRD9+htKPkEfmhHbkjl
+         JqHjcBMZQdOGk7c9HabgNoCRFRh2XVP3tx+4Ev2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Scott <michael@opensourcefoundries.com>,
-        Alexander Aring <aring@mojatatu.com>,
-        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
+        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 010/113] 6lowpan: iphc: reset mac_header after decompress to fix panic
-Date:   Mon,  8 Oct 2018 20:30:11 +0200
-Message-Id: <20181008175531.347067225@linuxfoundation.org>
+Subject: [PATCH 4.4 011/113] md-cluster: clear another nodes suspend_area after the copy is finished
+Date:   Mon,  8 Oct 2018 20:30:12 +0200
+Message-Id: <20181008175531.394633401@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -66,51 +63,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Scott <michael@opensourcefoundries.com>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-[ Upstream commit 03bc05e1a4972f73b4eb8907aa373369e825c252 ]
+[ Upstream commit 010228e4a932ca1e8365e3b58c8e1e44c16ff793 ]
 
-After decompression of 6lowpan socket data, an IPv6 header is inserted
-before the existing socket payload.  After this, we reset the
-network_header value of the skb to account for the difference in payload
-size from prior to decompression + the addition of the IPv6 header.
+When one node leaves cluster or stops the resyncing
+(resync or recovery) array, then other nodes need to
+call recover_bitmaps to continue the unfinished task.
 
-However, we fail to reset the mac_header value.
+But we need to clear suspend_area later after other
+nodes copy the resync information to their bitmap
+(by call bitmap_copy_from_slot). Otherwise, all nodes
+could write to the suspend_area even the suspend_area
+is not handled by any node, because area_resyncing
+returns 0 at the beginning of raid1_write_request.
+Which means one node could write suspend_area while
+another node is resyncing the same area, then data
+could be inconsistent.
 
-Leaving the mac_header value untouched here, can cause a calculation
-error in net/packet/af_packet.c packet_rcv() function when an
-AF_PACKET socket is opened in SOCK_RAW mode for use on a 6lowpan
-interface.
+So let's clear suspend_area later to avoid above issue
+with the protection of bm lock. Also it is straightforward
+to clear suspend_area after nodes have copied the resync
+info to bitmap.
 
-On line 2088, the data pointer is moved backward by the value returned
-from skb_mac_header().  If skb->data is adjusted so that it is before
-the skb->head pointer (which can happen when an old value of mac_header
-is left in place) the kernel generates a panic in net/core/skbuff.c
-line 1717.
-
-This panic can be generated by BLE 6lowpan interfaces (such as bt0) and
-802.15.4 interfaces (such as lowpan0) as they both use the same 6lowpan
-sources for compression and decompression.
-
-Signed-off-by: Michael Scott <michael@opensourcefoundries.com>
-Acked-by: Alexander Aring <aring@mojatatu.com>
-Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/6lowpan/iphc.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/md-cluster.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/net/6lowpan/iphc.c
-+++ b/net/6lowpan/iphc.c
-@@ -569,6 +569,7 @@ int lowpan_header_decompress(struct sk_b
- 		hdr.hop_limit, &hdr.daddr);
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -239,15 +239,6 @@ static void recover_bitmaps(struct md_th
+ 	while (cinfo->recovery_map) {
+ 		slot = fls64((u64)cinfo->recovery_map) - 1;
  
- 	skb_push(skb, sizeof(hdr));
-+	skb_reset_mac_header(skb);
- 	skb_reset_network_header(skb);
- 	skb_copy_to_linear_data(skb, &hdr, sizeof(hdr));
- 
+-		/* Clear suspend_area associated with the bitmap */
+-		spin_lock_irq(&cinfo->suspend_lock);
+-		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
+-			if (slot == s->slot) {
+-				list_del(&s->list);
+-				kfree(s);
+-			}
+-		spin_unlock_irq(&cinfo->suspend_lock);
+-
+ 		snprintf(str, 64, "bitmap%04d", slot);
+ 		bm_lockres = lockres_init(mddev, str, NULL, 1);
+ 		if (!bm_lockres) {
+@@ -266,6 +257,16 @@ static void recover_bitmaps(struct md_th
+ 			pr_err("md-cluster: Could not copy data from bitmap %d\n", slot);
+ 			goto dlm_unlock;
+ 		}
++
++		/* Clear suspend_area associated with the bitmap */
++		spin_lock_irq(&cinfo->suspend_lock);
++		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
++			if (slot == s->slot) {
++				list_del(&s->list);
++				kfree(s);
++			}
++		spin_unlock_irq(&cinfo->suspend_lock);
++
+ 		if (hi > 0) {
+ 			/* TODO:Wait for current resync to get over */
+ 			set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
 
 
