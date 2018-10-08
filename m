@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAE5C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C6FC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADB421479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D44F21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDgl28Kp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADB421479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DW6ku7YC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D44F21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbeJIBzx (ORCPT
+        id S1730339AbeJIBz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43580 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeJIBzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:52 -0400
+        id S1726672AbeJIBzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:55 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FBBD2064A;
-        Mon,  8 Oct 2018 18:42:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 873C22087D;
+        Mon,  8 Oct 2018 18:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024167;
-        bh=o2WP7FwsLnq8HecDCs/4f5w8X40/MnDT6w17RP+eS4w=;
+        s=default; t=1539024170;
+        bh=CfDAD9/4XWtwyChy0X0OaY8llMRdJGXPutjH/GA6/iQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BDgl28KplKSURlcwiaxUuJT32MN0r9AhJn21UT9VoDBI/7vTDjZnN9vGPEWoKZEb5
-         GnZ6Skt2U2jyQQQu4btE/rGZVyhXSEojUneFNpkv1w+B5gnDm1UomludSIL1s2mLiX
-         tG+/Sa/xCU2EKMmHVoYaUkfkxdYqP6PWFmO6i4Ek=
+        b=DW6ku7YCXwobYmzQyt2Se2Ow2dpLAp+J0wx4D64Xa7+bqswUS7oYWfWdojnHTWyba
+         far2L0Q9O9uJK/YQx6heWCQ0xdexZCeyCyfXXCK2BD9SpgPrrH3RZf6iyfVIr3MCnh
+         uDfYIkRyz7nZvEK+2RPAN3NbhoEe+wpdD/2DgfUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
+        Neil Brown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 44/94] usb: gadget: fotg210-udc: Fix memory leak of fotg210->ep[i]
-Date:   Mon,  8 Oct 2018 20:31:25 +0200
-Message-Id: <20181008175607.084122238@linuxfoundation.org>
+Subject: [PATCH 4.14 27/94] RAID10 BUG_ON in raise_barrier when force is true and conf->barrier is 0
+Date:   Mon,  8 Oct 2018 20:31:08 +0200
+Message-Id: <20181008175606.314469338@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,87 +63,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Xiao Ni <xni@redhat.com>
 
-[ Upstream commit c37bd52836296ecc9a0fc8060b819089aebdbcde ]
+[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
 
-There is no deallocation of fotg210->ep[i] elements, allocated at
-fotg210_udc_probe.
+In raid10 reshape_request it gets max_sectors in read_balance. If the underlayer disks
+have bad blocks, the max_sectors is less than last. It will call goto read_more many
+times. It calls raise_barrier(conf, sectors_done != 0) every time. In this condition
+sectors_done is not 0. So the value passed to the argument force of raise_barrier is
+true.
 
-The patch adds deallocation of fotg210->ep array elements and simplifies
-error path of fotg210_udc_probe().
+In raise_barrier it checks conf->barrier when force is true. If force is true and
+conf->barrier is 0, it panic. In this case reshape_request submits bio to under layer
+disks. And in the callback function of the bio it calls lower_barrier. If the bio
+finishes before calling raise_barrier again, it can trigger the BUG_ON.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Add one pair of raise_barrier/lower_barrier to fix this bug.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Suggested-by: Neil Brown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/fotg210-udc.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/md/raid10.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/udc/fotg210-udc.c
-+++ b/drivers/usb/gadget/udc/fotg210-udc.c
-@@ -1066,12 +1066,15 @@ static const struct usb_gadget_ops fotg2
- static int fotg210_udc_remove(struct platform_device *pdev)
- {
- 	struct fotg210_udc *fotg210 = platform_get_drvdata(pdev);
-+	int i;
- 
- 	usb_del_gadget_udc(&fotg210->gadget);
- 	iounmap(fotg210->reg);
- 	free_irq(platform_get_irq(pdev, 0), fotg210);
- 
- 	fotg210_ep_free_request(&fotg210->ep[0]->ep, fotg210->ep0_req);
-+	for (i = 0; i < FOTG210_MAX_NUM_EP; i++)
-+		kfree(fotg210->ep[i]);
- 	kfree(fotg210);
- 
- 	return 0;
-@@ -1102,7 +1105,7 @@ static int fotg210_udc_probe(struct plat
- 	/* initialize udc */
- 	fotg210 = kzalloc(sizeof(struct fotg210_udc), GFP_KERNEL);
- 	if (fotg210 == NULL)
--		goto err_alloc;
-+		goto err;
- 
- 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
- 		_ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
-@@ -1114,7 +1117,7 @@ static int fotg210_udc_probe(struct plat
- 	fotg210->reg = ioremap(res->start, resource_size(res));
- 	if (fotg210->reg == NULL) {
- 		pr_err("ioremap error.\n");
--		goto err_map;
-+		goto err_alloc;
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4394,11 +4394,12 @@ static sector_t reshape_request(struct m
+ 		allow_barrier(conf);
  	}
  
- 	spin_lock_init(&fotg210->lock);
-@@ -1162,7 +1165,7 @@ static int fotg210_udc_probe(struct plat
- 	fotg210->ep0_req = fotg210_ep_alloc_request(&fotg210->ep[0]->ep,
- 				GFP_KERNEL);
- 	if (fotg210->ep0_req == NULL)
--		goto err_req;
-+		goto err_map;
++	raise_barrier(conf, 0);
+ read_more:
+ 	/* Now schedule reads for blocks from sector_nr to last */
+ 	r10_bio = raid10_alloc_init_r10buf(conf);
+ 	r10_bio->state = 0;
+-	raise_barrier(conf, sectors_done != 0);
++	raise_barrier(conf, 1);
+ 	atomic_set(&r10_bio->remaining, 0);
+ 	r10_bio->mddev = mddev;
+ 	r10_bio->sector = sector_nr;
+@@ -4494,6 +4495,8 @@ read_more:
+ 	if (sector_nr <= last)
+ 		goto read_more;
  
- 	fotg210_init(fotg210);
- 
-@@ -1190,12 +1193,14 @@ err_req:
- 	fotg210_ep_free_request(&fotg210->ep[0]->ep, fotg210->ep0_req);
- 
- err_map:
--	if (fotg210->reg)
--		iounmap(fotg210->reg);
-+	iounmap(fotg210->reg);
- 
- err_alloc:
-+	for (i = 0; i < FOTG210_MAX_NUM_EP; i++)
-+		kfree(fotg210->ep[i]);
- 	kfree(fotg210);
- 
-+err:
- 	return ret;
- }
- 
++	lower_barrier(conf);
++
+ 	/* Now that we have done the whole section we can
+ 	 * update reshape_progress
+ 	 */
 
 
