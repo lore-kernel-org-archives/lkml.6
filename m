@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06183C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 865DCC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9E0F204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4568220645
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FokKXolj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E0F204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1yvrPdB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4568220645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732809AbeJICGz (ORCPT
+        id S1732817AbeJICG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57330 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:06:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727670AbeJICGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:06:54 -0400
+        id S1727670AbeJICG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:06:57 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D83FA21479;
-        Mon,  8 Oct 2018 18:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3AE621479;
+        Mon,  8 Oct 2018 18:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024826;
-        bh=iwYFuN61bzDpcpfrf2dWVcQjFaa3LSQ7ihNKu9SSZrA=;
+        s=default; t=1539024829;
+        bh=aupAkWcA6lkxDz4iYf5q9bORRPeGshpxP4IHba95Kzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FokKXoljgvc6XFwPOqewZ4CNonVYaqDfdStVB97KHrlXY1dNxMCg0b9YKtUN78Mjc
-         FxHOIfa15ROfl+xEIwF7hotCV29w8yeFUi24h5VbqBuHNcPWlMltx91DW7NJpHTTSX
-         ochhZyMGFhQnt2QlVM+g/64WSe4E9ccsoywM5yq4=
+        b=N1yvrPdBGT7WXYlV45ceWRLIaPSBW3laMc0L0cV0xmpQS7E23+jpPWr91X77mnZFF
+         5wv6M5U/yCBtEfJq4P4FWtxjLx1lMc+N5G4J8PxEQL0djkbGBjROiEqhoq8Zy8eA/8
+         vpRwQBFK9joxk1CXwVhzM/Mhh+6jzLj3XyQIdhW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joshua Abraham <j.abraham1776@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, Jiri Kosina <jikos@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 142/168] xen: fix GCC warning and remove duplicate EVTCHN_ROW/EVTCHN_COL usage
-Date:   Mon,  8 Oct 2018 20:32:02 +0200
-Message-Id: <20181008175625.427523517@linuxfoundation.org>
+Subject: [PATCH 4.18 143/168] x86/APM: Fix build warning when PROC_FS is not enabled
+Date:   Mon,  8 Oct 2018 20:32:03 +0200
+Message-Id: <20181008175625.465225053@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,34 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Abraham <j.abraham1776@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 4dca864b59dd150a221730775e2f21f49779c135 ]
+[ Upstream commit 002b87d2aace62b4f3841c3aa43309d2380092be ]
 
-This patch removes duplicate macro useage in events_base.c.
+Fix build warning in apm_32.c when CONFIG_PROC_FS is not enabled:
 
-It also fixes gcc warning:
-variable ‘col’ set but not used [-Wunused-but-set-variable]
+../arch/x86/kernel/apm_32.c:1643:12: warning: 'proc_apm_show' defined but not used [-Wunused-function]
+ static int proc_apm_show(struct seq_file *m, void *v)
 
-Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fixes: 3f3942aca6da ("proc: introduce proc_create_single{,_data}")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: Jiri Kosina <jikos@kernel.org>
+Link: https://lkml.kernel.org/r/be39ac12-44c2-4715-247f-4dcc3c525b8b@infradead.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/events/events_base.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apm_32.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -138,7 +138,7 @@ static int set_evtchn_to_irq(unsigned ev
- 		clear_evtchn_to_irq_row(row);
- 	}
- 
--	evtchn_to_irq[EVTCHN_ROW(evtchn)][EVTCHN_COL(evtchn)] = irq;
-+	evtchn_to_irq[row][col] = irq;
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -1640,6 +1640,7 @@ static int do_open(struct inode *inode,
  	return 0;
  }
  
++#ifdef CONFIG_PROC_FS
+ static int proc_apm_show(struct seq_file *m, void *v)
+ {
+ 	unsigned short	bx;
+@@ -1719,6 +1720,7 @@ static int proc_apm_show(struct seq_file
+ 		   units);
+ 	return 0;
+ }
++#endif
+ 
+ static int apm(void *unused)
+ {
 
 
