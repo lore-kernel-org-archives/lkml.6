@@ -2,114 +2,107 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0D9C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193CFC676CF
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D868A20652
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:55:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D868A20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D2E5120652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:57:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E5120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeJHTHE (ORCPT
+        id S1727796AbeJHTIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 15:07:04 -0400
-Received: from mga02.intel.com ([134.134.136.20]:42918 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726656AbeJHTHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 15:07:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 04:55:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,356,1534834800"; 
-   d="scan'208";a="269433988"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Oct 2018 04:55:17 -0700
-Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
-        by linux.intel.com (Postfix) with ESMTP id 062FA580034;
-        Mon,  8 Oct 2018 04:55:14 -0700 (PDT)
-Subject: Re: [PATCH v11 1/3]: perf util: map data buffer for preserving
- collected data
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
- <0ff162a6-67ab-9e73-8d7e-fa57c932ee45@linux.intel.com>
- <20181008105049.GC17270@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <43747adb-4591-e0ff-f173-525a5f5d47b4@linux.intel.com>
-Date:   Mon, 8 Oct 2018 14:55:13 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 8 Oct 2018 15:08:34 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:62026 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeJHTIe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 15:08:34 -0400
+Received: from droid10.amlogic.com (10.18.11.213) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Mon, 8 Oct 2018
+ 19:57:47 +0800
+From:   Hanjie Lin <hanjie.lin@amlogic.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     Hanjie Lin <hanjie.lin@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/2] add the Amlogic Meson PCIe controller driver
+Date:   Mon, 8 Oct 2018 19:57:11 +0800
+Message-ID: <1538999834-156423-1-git-send-email-hanjie.lin@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20181008105049.GC17270@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.213]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+PCI core. This patchset add the driver and dt-bindings of the controller.
 
-On 08.10.2018 13:50, Jiri Olsa wrote:
-> On Mon, Oct 08, 2018 at 09:14:29AM +0300, Alexey Budankov wrote:
->>
-<SNIP>
->> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
->> index f6d1a03c7523..2e90f4ce9214 100644
->> --- a/tools/perf/Makefile.config
->> +++ b/tools/perf/Makefile.config
->> @@ -355,6 +355,11 @@ endif # NO_LIBELF
->>  
->>  ifeq ($(feature-glibc), 1)
->>    CFLAGS += -DHAVE_GLIBC_SUPPORT
->> +  ifndef NO_AIO
-> 
-> hum, do we need NO_AIO? we have the --aio option to enable that right?
+Changes since v3: [2]
+ - modify subject format
+ - update Kconfig
+ - update MAINTAINER file
+ - add comment and error handle for meson_pcie_get_mem_shared() 
+ - drop useless initialization code
+ - add comment for meson_size_to_payload()
+ - optimize meson_pcie_establish_link() return code
+ - optimize meson_pcie_enable_interrupts() redundant function
+ - drop device_attch related code
+ - drop dw_pcie_ops read_dbi and write_dbi function
+ - add error handle for meson_add_pcie_port() when probe
 
-Right. Enable that *in runtime*.
+Changes since v2: [1]
+ - abandon phy driver, move reset to the controller
+ - use devm_add_action_or_reset() to use clock res
+ - format correcting
 
-> I guess BIONIC does not support aio, but but will it fail when it's
-> compiled in there?
+Changes since v1: [0]
+ - use gpio lib instead open code
+ - move 'apb' and 'port' reset from phy driver
+ - format correcting
 
-Please see updated section of the cover letter for more information 
-regarding this. Possible compilation issues is that's why we better 
-have this capability in advance:
-  
-  objdump -T tools/perf/perf | grep aio
+[0] : https://lkml.kernel.org/r/1534227522-186798-1-git-send-email-hanjie.lin@amlogic.com
+[1] : https://lkml.kernel.org/r/1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com
+[2] : https://lkml.kernel.org/r/1537509820-52040-1-git-send-email-hanjie.lin@amlogic.com
 
-  0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_suspend64
-  0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_return64
-  0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_error64
-  0000000000000000      DF *UND*	0000000000000000  GLIBC_2.2.5 aio_write64
 
-IMHO, it is worth implementing NO_AIO define.
+Yue Wang (2):
+  dt-bindings: PCI: meson: add DT bindings for Amlogic Meson PCIe
+    controller
+  PCI: amlogic: Add the Amlogic Meson PCIe controller driver
 
-Thanks,
-Alexey
+ .../devicetree/bindings/pci/amlogic,meson-pcie.txt |  70 +++
+ MAINTAINERS                                        |   7 +
+ drivers/pci/controller/dwc/Kconfig                 |  10 +
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pci-meson.c             | 593 +++++++++++++++++++++
+ 5 files changed, 681 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+ create mode 100644 drivers/pci/controller/dwc/pci-meson.c
 
-> 
-> jirka
-> 
->> +    ifndef BIONIC
->> +        CFLAGS += -DHAVE_AIO_SUPPORT
->> +    endif
->> +  endif
->>  endif
-> 
-> SNIP
-> 
+-- 
+2.7.4
+
