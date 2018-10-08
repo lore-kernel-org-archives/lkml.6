@@ -2,179 +2,142 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9D8C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186CEC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED589213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7E23213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:43:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="sZsRMPhP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED589213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="W37Hj22V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E23213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbeJIAz7 (ORCPT
+        id S1726607AbeJIA4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:55:59 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35546 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeJIAz6 (ORCPT
+        Mon, 8 Oct 2018 20:56:09 -0400
+Received: from mta-p2.oit.umn.edu ([134.84.196.202]:60742 "EHLO
+        mta-p2.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbeJIA4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:55:58 -0400
-Received: by mail-wm1-f65.google.com with SMTP id e187-v6so9148288wmf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 10:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=87y+dBXghhm1k2vW8F/DVQb3eCe9K78iRMnlRfNMH5w=;
-        b=sZsRMPhPR3MFK0oJvP3BjTK9fo6BFLPtccwCAhh/Gj7lV4XftO7vpf5QZwa1CkQRdC
-         TAu1dRDE0AcIVauzmpRAiSpvTBEPFOtvl/CrKk5yEt4r/iI7we3DJjJEjHrqN0Aal1AJ
-         O628m0ggB+JY6n60A/ivh1tAqWsHoJjX5T4ncZ2qke6KJVg0YWirQRq8x5QqmsLdmcUb
-         n1I31vriDf6fSfO+kMhdlHr8jTFdDpcW/1eR5ilWha69yUOtPHU43/Gj+DwrwI0RQwaI
-         wrFuK9ZU9SO/8FTmClnysFg1EeuT9Cb6QUndwW18M+t7xvNZDy9OejVjGnnf9fLKu6Ec
-         IBNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=87y+dBXghhm1k2vW8F/DVQb3eCe9K78iRMnlRfNMH5w=;
-        b=uLuJe8AmXTttil7JTFHSmwHREtfL99wi/b4T/0cAVxLIbRBIkamlEeEEQ2XCRBJVP1
-         U+ZfcxPa0HU+ZIm/V0bAVxSLm9xqCKR6kJahuGVybHy8W+U0QPZ/Z0NuY48YP8urX+GS
-         65k9t7mY1gl4zywf6bq+vJyS+dRJnsj9JWNCLHyaXAmtwqr5F8Dwqu+/2En9uygoaVzz
-         g0e5pQ88lHEDTsVryZJ75H1h1Lo6ZvN7+9HGBd3a440CSkmgnhopv7XH3Rf24q20kK3s
-         EpNTMtp8X4EFYx4xjYXJ+uMBPqON9jYXSiw1aZ/2b3nrAV8rtVs4VP1hSGLRXa6S7quz
-         eKrA==
-X-Gm-Message-State: ABuFfohVKdaLvOFqd23NmxLrvYX3jnZs0KgHVW2TynHYp07u49SGmwBZ
-        VeM5H9XA3fZ+rV7nhUCstkLHm0qY2HHXdLJqZDTuEg==
-X-Google-Smtp-Source: ACcGV61mjusq6FXufniEesof0tppLnI/K4GNJvXAk2dmY7B3UybdYYMRi4m9K6Cm80Ac6pDejGBmQBgrX1B5Hj2AAgg=
-X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr16135058wmf.19.1539020587537;
- Mon, 08 Oct 2018 10:43:07 -0700 (PDT)
+        Mon, 8 Oct 2018 20:56:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mta-p2.oit.umn.edu (Postfix) with ESMTP id 4E2F1629;
+        Mon,  8 Oct 2018 17:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
+        content-type:content-type:subject:subject:message-id:date:date
+        :from:from:in-reply-to:references:mime-version:received:received
+        :received; s=20160920; t=1539020598; x=1540834999; bh=6+crBoWQ0W
+        Eqsb+PFYKpnRZPl03KiO+SyHIHOzzkodc=; b=W37Hj22VPtfJdGW2gKfmYUY0+T
+        vUiMxC65poff67psU617vGh4XgK3LCjdZtfFMu0pNsNeE32CdfHsCbsDQktnBzZ2
+        KyfYoVBcGpnmZZtIxCU8KwcTCuPQge9FTbJP8RjGNHS+K+Ozdj+LGNwTmDmF3Ljq
+        bMjz/HMx3zbyK7dCUuNir/+rLA/EAUMa1lfAKUAFHgFHMWZVyVIt3nReqTEX05Aw
+        eNV8iOUN1t30pk02QGpC7U7itlGQ3wlOTXcyJcbFFbDH3XJz6v907DxIRzmHQefk
+        693N3tlcApoDWegT6+FxEpI0gQmU/hgPT7GQVmRs1GrJrHQi6PjTAiQy6RTw==
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p2.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p2.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NOdrSd3eNi2M; Mon,  8 Oct 2018 12:43:18 -0500 (CDT)
+Received: from mail-it1-f172.google.com (mail-it1-f172.google.com [209.85.166.172])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wang6495)
+        by mta-p2.oit.umn.edu (Postfix) with ESMTPSA id 0F41C60A;
+        Mon,  8 Oct 2018 12:43:18 -0500 (CDT)
+Received: by mail-it1-f172.google.com with SMTP id l191-v6so12568372ita.4;
+        Mon, 08 Oct 2018 10:43:18 -0700 (PDT)
+X-Gm-Message-State: ABuFfogF3JlI1LzXqGnwQPWXtqvJXDSOrZ04Q6y9GsaBArgarNUayC7r
+        Pr/MQSRHEJ4rx0TwInwnrjeYH6i/FrgOjVybwTY=
+X-Google-Smtp-Source: ACcGV62WTaG3tfoOqwRUXNK+YIeFxKfw0arow9XlWdN0lpSPn4RbIuLv052F+D9NHM7SQ5DiVROQvusrobq1jHGAPdQ=
+X-Received: by 2002:a02:b476:: with SMTP id w51-v6mr18270996jaj.140.1539020597741;
+ Mon, 08 Oct 2018 10:43:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181006015110.653946300@goodmis.org> <20181006015720.634688468@goodmis.org>
- <20181006121211.GA5663@hirez.programming.kicks-ass.net> <20181006093905.46276505@vmware.local.home>
- <20181008072134.GB5663@hirez.programming.kicks-ass.net> <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
- <20181008155757.GC5663@hirez.programming.kicks-ass.net> <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
- <20181008163953.GD5663@hirez.programming.kicks-ass.net> <CALCETrWuGh=1n2bEE9B0eeyzvnaD4y_Sx6MB+r9B5aFXzg8qBw@mail.gmail.com>
- <CAKv+Gu-08i6QEahyYhBtCBmpOYNuxirgdsgGvRw+Y0DX3+DVNQ@mail.gmail.com>
-In-Reply-To: <CAKv+Gu-08i6QEahyYhBtCBmpOYNuxirgdsgGvRw+Y0DX3+DVNQ@mail.gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 8 Oct 2018 10:42:54 -0700
-Message-ID: <CALCETrWMvtH4tS5jkZcEP=YuwV6XOtRqx-0TF5dCTABa_zC-Xg@mail.gmail.com>
-Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature "jump_function"
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        mhelsley@vmware.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        Andrew Lutomirski <luto@kernel.org>
+References: <1538923466-29705-1-git-send-email-wang6495@umn.edu> <20181008104350.7776c729@w520.home>
+In-Reply-To: <20181008104350.7776c729@w520.home>
+From:   Wenwen Wang <wang6495@umn.edu>
+Date:   Mon, 8 Oct 2018 12:42:40 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7fJAFhV+8q=_es6OCmx3=5U7UfsyRmP8VTUbE5UMGgj-Q@mail.gmail.com>
+Message-ID: <CAAa=b7fJAFhV+8q=_es6OCmx3=5U7UfsyRmP8VTUbE5UMGgj-Q@mail.gmail.com>
+Subject: Re: [PATCH] drivers/vfio: Fix a redundant copy bug
+To:     alex.williamson@redhat.com
+Cc:     Kangjie Lu <kjlu@umn.edu>, kvm@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 10:30 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
+On Mon, Oct 8, 2018 at 11:43 AM Alex Williamson
+<alex.williamson@redhat.com> wrote:
 >
-> On 8 October 2018 at 19:25, Andy Lutomirski <luto@amacapital.net> wrote:
-> > On Mon, Oct 8, 2018 at 9:40 AM Peter Zijlstra <peterz@infradead.org> wr=
-ote:
-> >>
-> >> On Mon, Oct 08, 2018 at 09:29:56AM -0700, Andy Lutomirski wrote:
-> >> >
-> >> >
-> >> > > On Oct 8, 2018, at 8:57 AM, Peter Zijlstra <peterz@infradead.org> =
-wrote:
-> >> > >
-> >> > > On Mon, Oct 08, 2018 at 01:33:14AM -0700, Andy Lutomirski wrote:
-> >> > >>> Can't we hijack the relocation records for these functions befor=
-e they
-> >> > >>> get thrown out in the (final) link pass or something?
-> >> > >>
-> >> > >> I could be talking out my arse here, but I thought we could do th=
-is,
-> >> > >> too, then changed my mind.  The relocation records give us the
-> >> > >> location of the call or jump operand, but they don=E2=80=99t give=
- the address
-> >> > >> of the beginning of the instruction.
-> >> > >
-> >> > > But that's like 1 byte before the operand, right? We could even do=
-uble check
-> >> > > this by reading back that byte and ensuring it is in fact 0xE8 (CA=
-LL).
-> >> > >
-> >> > > AFAICT there is only the _1_ CALL encoding, and that is the 5 byte=
-: E8 <PLT32>,
-> >> > > so if we have the PLT32 location, we also have the instruction loc=
-ation. Or am
-> >> > > I missing something?
-> >> >
-> >> > There=E2=80=99s also JMP and Jcc, any of which can be used for rail =
-calls, but
-> >> > those are also one byte. I suppose GCC is unlikely to emit a prefixe=
-d
-> >> > form of any of these. So maybe we really can assume they=E2=80=99re =
-all one
-> >> > byte.
-> >>
-> >> Oh, I had not considered tail calls..
-> >>
-> >> > But there is a nasty potential special case: anything that takes the
-> >> > function=E2=80=99s address. This includes jump tables, computed goto=
-s, and
-> >> > plain old function pointers. And I suspect that any of these could
-> >> > have one of the rather large number of CALL/JMP/Jcc bytes before the
-> >> > relocation by coincidence.
-> >>
-> >> We can have objtool verify the CALL/JMP/Jcc only condition. So if
-> >> someone tries to take the address of a patchable function, it will err=
-or
-> >> out.
-> >
-> > I think we should just ignore the sites that take the address and
-> > maybe issue a warning.  After all, GCC can create them all by itself.
-> > We'll always have a plain wrapper function, and I think we should just
-> > not patch code that takes its address.  So we do, roughly:
-> >
-> > void default_foo(void);
-> >
-> > GLOBAL(foo)
-> >   jmp *current_foo(%rip)
-> > ENDPROC(foo)
-> >
-> > And code that does:
-> >
-> > foo();
-> >
-> > as a call, a tail call, a conditional tail call, etc, gets discovered
-> > by objtool + relocation processing or whatever and gets patched.  (And
-> > foo() itself gets patched, too, as a special case.  But we patch foo
-> > itself at some point during boot to turn it into a direct JMP.  Doing
-> > it this way means that the whole mechanism works from very early
-> > boot.)
+> Hi,
 >
-> Does that mean that architectures could opt out of doing the whole
-> objtool + relocation processing thing, and instead take the hit of
-> going through the trampoline for all calls?
+> On Sun,  7 Oct 2018 09:44:25 -0500
+> Wenwen Wang <wang6495@umn.edu> wrote:
 >
+> > In vfio_spapr_iommu_eeh_ioctl(), if the ioctl command is VFIO_EEH_PE_OP,
+> > the user-space buffer 'arg' is copied to the kernel object 'op' and the
+> > 'argsz' and 'flags' fields of 'op' are checked. If the check fails, an
+> > error code EINVAL is returned. Otherwise, 'op.op' is further checked
+> > through a switch statement to invoke related handlers. If 'op.op' is
+> > VFIO_EEH_PE_INJECT_ERR, the whole user-space buffer 'arg' is copied again
+> > to 'op' to obtain the err information. However, in the following execution
+> > of this case, the fields of 'op', except the field 'err', are actually not
+> > used. That is, the second copy has a redundant part. Therefore, for both
+> > performance and security reasons, the redundant part of the second copy
+> > should be removed.
+>
+> Redundant, yes.  Performance-wise it's 12 bytes on a non-performance
+> path, so theoretically yes, but in practice maybe it's a simplicity
+> trade-off.  Security?  I don't see it, please explain.
+>
+> > This patch removes such a part in the second copy. It only copies the 'err'
+> > information from the buffer 'arg'.
+> >
+> > Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> > ---
+> >  drivers/vfio/vfio_spapr_eeh.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/vfio/vfio_spapr_eeh.c b/drivers/vfio/vfio_spapr_eeh.c
+> > index 38edeb4..5bc4b60 100644
+> > --- a/drivers/vfio/vfio_spapr_eeh.c
+> > +++ b/drivers/vfio/vfio_spapr_eeh.c
+> > @@ -86,10 +86,10 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
+> >                       ret = eeh_pe_configure(pe);
+> >                       break;
+> >               case VFIO_EEH_PE_INJECT_ERR:
+> > -                     minsz = offsetofend(struct vfio_eeh_pe_op, err.mask);
+> > -                     if (op.argsz < minsz)
+> > +                     if (op.argsz < sizeof(op))
+> >                               return -EINVAL;
+>
+> The original code is written such that new operations can be added,
+> possibly with new entries in the struct vfio_eeh_pe_op union, which
+> might change sizeof(op) to be more than necessary for a
+> VFIO_EEH_PE_INJECT_ERR op.  Existing userspace suddenly wouldn't work
+> without effectively reverting this change.  This is a subtle dependency
+> that is not worth the above code change, imo.
+>
+> > -                     if (copy_from_user(&op, (void __user *)arg, minsz))
+> > +                     if (copy_from_user(&op.err, (char __user *)arg +
+> > +                                             minsz, sizeof(op.err)))
+> >                               return -EFAULT;
+>
+> Please rework with the assumption that the union in struct
+> vfio_eeh_pe_op can be expanded and must not break existing userspace.
 
-I don't see why not.
+Thanks for your suggestion. I will resubmit the patch.
 
---Andy
+Wenwen
+
+> Thanks,
+>
+> Alex
