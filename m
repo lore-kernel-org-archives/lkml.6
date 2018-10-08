@@ -2,143 +2,97 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B75DAC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73991C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C79F205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A6E420652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:38:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uu2uIgUJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C79F205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tguOTfT1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6E420652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbeJHUtJ (ORCPT
+        id S1726678AbeJHUtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:49:09 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37958 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbeJHUtI (ORCPT
+        Mon, 8 Oct 2018 16:49:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33900 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeJHUtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:49:08 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f8-v6so1443196pgq.5;
-        Mon, 08 Oct 2018 06:37:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6aONoaXIzkWA5edBXyaot+zmKh6isNaHJTf5YXUhZC0=;
-        b=uu2uIgUJhX76HgJ9X7Ls7dR+X0Lo888Ttl7zgkc6ui9BiOw5NB2CGjVxPqgkggRiDR
-         awVd3eLIbEuYvQnI4Irqm5wEqtSsKmzTsOnFHIOJMUQiP2G8uyjhNWjiHVRDenoN1XqN
-         VJPgVFWR4GzlEiUf0//Jd/GLrVSfZ3Nj6y14Uji2NwJ+NeUPsgfFRIMx6CLKT1x46n5E
-         33JEaIGp72xdKZLEEBpe8H8U0UyjA2OCpnNClF/67n5kAmg56XfVmHvoFsAjWdoP2Phz
-         +t5IiQgtpMUdqrKxaMwmt8Ovvf3LrCh9vyBEhcGL1na6rDFjiEeldZraXtI6vC8P7oMp
-         omIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6aONoaXIzkWA5edBXyaot+zmKh6isNaHJTf5YXUhZC0=;
-        b=ReufkgasIc4QF7CkPuI4EEIBVeTLdXfyF6ZxjFFHWjXJKJ8HOnzTbPRrUIowXhgYbs
-         Lt6y+Mp3igce6xYE3VOU7X7/J4jJ6mQMgeFO/2PFzSexuuubpQ2c/VNrowL/Y/EYhuTU
-         WmIkLXsMQvrvwcpW9dsEmYfPR73V9BlqzYC8kVxDZgasarylGcU6jiTsbJSg9bdZ+m/b
-         0IQHV65++wvWA1/DFK+zg6UkW2gP0P3Ueu4isiivke4yEIyPqI6+ZgF99GA90kImwanB
-         w084uFbEs++AWfFuvw8IYvyEHMB8XiHjEtNjga2Pa4ptL19hHKOUZBunxlxjMe9MI63t
-         5aMQ==
-X-Gm-Message-State: ABuFfoiTVdrGuzGCqC/TBiPkruQXPNTwEJE4PqFtqmwFnjZ8OXGrI31v
-        AaLFV7Ys/iWHohEbJmPNrTg=
-X-Google-Smtp-Source: ACcGV60XvaKbRa5L9z7IZBAr5COxUfWkLFJUd2IUtnddHvzZ6y3koNtFluSrBhPtz0dDYkEY/BcbRA==
-X-Received: by 2002:a62:9fc4:: with SMTP id v65-v6mr25364534pfk.130.1539005841685;
-        Mon, 08 Oct 2018 06:37:21 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id l2-v6sm16404567pgp.20.2018.10.08.06.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 06:37:21 -0700 (PDT)
-Subject: Re: [PATCH v2] usb: typec: tcpm: Report back negotiated PPS voltage
- and current
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        support.opensource@diasemi.com
-References: <20181008125359.2D56E3FB79@swsrvapps-01.diasemi.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b318a285-331c-3e7e-dbbc-04446aacf302@roeck-us.net>
-Date:   Mon, 8 Oct 2018 06:37:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 8 Oct 2018 16:49:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KRLGvdgV7yJaJM/2A9dS7h4FdA9IzgGl5Wq7tpW7wrg=; b=tguOTfT15qwDR5m1OXvNTcrKP
+        HvfZod27X83TsuIRDoDZzZuU7sXk3MI5O+r5/3/ND/JGi0ZZYWxf3mmXh9XHcVwcbJFZbtmrmNo6N
+        74khElosi4CFRVp/AS5XnWhwI5tF4r1tWOU1AOOs6T/ov0GuYp+hSuF8jLMtOnIsozz8Y=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g9VjN-0002ek-CP; Mon, 08 Oct 2018 13:37:53 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id F100E1122339; Mon,  8 Oct 2018 14:37:52 +0100 (BST)
+Date:   Mon, 8 Oct 2018 14:37:52 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     masonccyang@mxic.com.tw, tpiepho@impinj.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v4 1/2] spi: Add MXIC controller driver
+Message-ID: <20181008133752.GF5684@sirena.org.uk>
+References: <1538965532-8908-1-git-send-email-masonccyang@mxic.com.tw>
+ <1538965532-8908-2-git-send-email-masonccyang@mxic.com.tw>
+ <20181008103812.106389c1@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <20181008125359.2D56E3FB79@swsrvapps-01.diasemi.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vA66WO2vHvL/CRSR"
+Content-Disposition: inline
+In-Reply-To: <20181008103812.106389c1@bbrezillon>
+X-Cookie: There's no time like the pleasant.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/08/2018 05:53 AM, Adam Thomson wrote:
-> Currently when requesting a specific voltage or current through
-> the psy interface, for PPS, when reading back from that interface
-> the values will always be the same as previously given, if the
-> request was successful. However PPS only allows for 20mV voltage
-> steps and 50mA current steps, and the psy class expects microvolt
-> and micro amp requests, so inbetween values can be provided through
-> this interface. Really when reading back the true values negotiated
-> should be given, and not the ones originally asked for.
-> 
-> To report the actual values negotiated with the Source, the values
-> stored are now rounded down to the relevant step units prior to
-> building the PPS request, so that those values are later correctly
-> reported through the psy interface. In addition this improves the
-> adjustments made to meet the operating power requirements of the
-> platform, which previously could have been slightly out due to not
-> using valid PPS units of voltage and current.
-> 
-> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+--vA66WO2vHvL/CRSR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> ---
-> Changes are based on usb-testing (e7a2c3fa2857)
-> 
-> Changes in v2:
->   - Rounding down of PPS voltage and current values moved to relevant API
->     functions so stored values are correctly updated prior to all subsequent
->     usage and decision making, as discuessed with Guenter.
-> 
->   drivers/usb/typec/tcpm/tcpm.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index b06eac8..dbbd71f 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -4113,6 +4113,9 @@ static int tcpm_pps_set_op_curr(struct tcpm_port *port, u16 op_curr)
->   		goto port_unlock;
->   	}
->   
-> +	/* Round down operating current to align with PPS valid steps */
-> +	op_curr = op_curr - (op_curr % RDO_PROG_CURR_MA_STEP);
-> +
->   	reinit_completion(&port->pps_complete);
->   	port->pps_data.op_curr = op_curr;
->   	port->pps_status = 0;
-> @@ -4166,6 +4169,9 @@ static int tcpm_pps_set_out_volt(struct tcpm_port *port, u16 out_volt)
->   		goto port_unlock;
->   	}
->   
-> +	/* Round down output voltage to align with PPS valid steps */
-> +	out_volt = out_volt - (out_volt % RDO_PROG_VOLT_MV_STEP);
-> +
->   	reinit_completion(&port->pps_complete);
->   	port->pps_data.out_volt = out_volt;
->   	port->pps_status = 0;
-> 
+On Mon, Oct 08, 2018 at 10:38:12AM +0200, Boris Brezillon wrote:
 
+> This is wrong, ->cur_speed_hz should be updated in
+> mxic_prepare_transfer_hardware() or mxic_spi_clk_check(), not when
+> ->setup() is called. Also, you seem to ignore the xfer->speed_hz value,
+> which might be different from spi->max_speed_hz. Maybe the
+> ->prepare_transfer() hook is not the right place to do this
+> ->cur_speed_hz selection in the end.
+
+xfer->speed_hz should always be filled in so it's the only one you need
+to pay attention to (as the code Boris proposed does).
+
+--vA66WO2vHvL/CRSR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu7XbAACgkQJNaLcl1U
+h9Azggf+KEqx8zCV97yIui9BQiy+hHtNztRjvGmyBDUh20puENxqOTeWCYwoat8g
+tnlAllUGejF3B1Dfv3sgGinOrXrvfpLexIL59YZp76X9DN+sEliRyR98dvvgKp2L
+38b5xMG1+gzHS0Agv+8cGVuWocAVCyr2jH++siOVJZ/liJEatZl/jtvGNsAztDeg
+/sHLWbdckRtd/63c43o6sXbn3jAA06lyto1EFauYt4V63beRC3p8OXasmPU/fwn5
+i0N7MX1Zs3xx4hJENMgGAMF/e8Vrj7bD5cVH4YEd+sRAAd2/njTBdf1AVrk5/7dj
+/V8SPMbNr4Y+RwHIodVt8hs2KvUY5w==
+=XY4n
+-----END PGP SIGNATURE-----
+
+--vA66WO2vHvL/CRSR--
