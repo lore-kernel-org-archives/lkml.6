@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590F7C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC51C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15081204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5095214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPjRkdo5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15081204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFWSGmeZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5095214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731820AbeJICCU (ORCPT
+        id S1731830AbeJICCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51526 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:02:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeJICCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:19 -0400
+        id S1726991AbeJICCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8950204FD;
-        Mon,  8 Oct 2018 18:49:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B4A821479;
+        Mon,  8 Oct 2018 18:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024551;
-        bh=Xy0NDSMalLyLLwv3RLLTJ9gpHv6Inln2N0MoaCIfkhA=;
+        s=default; t=1539024554;
+        bh=3xsmlAiZWSj2MHtwpmhvdc8zVXj6pTszw4KMiVq2fPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XPjRkdo5zdMczxVBso8WHcCY13/r2HMnSJR+7jCE9fMAKLORPtxDBYOj2ssAhMj/i
-         +I/EncKVLeNLC8HWwwjGJR03EzTtwD7I+nzbtuYrZ6kBfkBDQs6cLhtO6EVZLNeHzF
-         4qB/sCGjUZ8pjfOFm/oyM4ZRDR9s0llmnXLVnmCc=
+        b=TFWSGmeZvO40dFAzXlFMjISmUJdgTfDwWqIPIxpPdHh6+Asye9pw5dExS0U3C0g6y
+         GXNhj18QUaaIzBsArRmPpYovNGr5VLDmnftHZVM6Hb/8WbnBrkYevlQMBAvSl0o91L
+         d6AIiqVrx5q9xKXWllBXqVreI490KYpX6tlh5fQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kenneth Penza <kpenza@gmail.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Konstantin Khlebnikov <khlebnikov@openvz.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.18 077/168] mm: madvise(MADV_DODUMP): allow hugetlbfs pages
-Date:   Mon,  8 Oct 2018 20:30:57 +0200
-Message-Id: <20181008175622.996113321@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Jann Horn <jannh@google.com>
+Subject: [PATCH 4.18 078/168] bpf: 32-bit RSH verification must truncate input before the ALU op
+Date:   Mon,  8 Oct 2018 20:30:58 +0200
+Message-Id: <20181008175623.031212077@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -65,89 +62,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Black <daniel@linux.ibm.com>
+From: Jann Horn <jannh@google.com>
 
-commit d41aa5252394c065d1f04d1ceea885b70d00c9c6 upstream.
+commit b799207e1e1816b09e7a5920fbb2d5fcf6edd681 upstream.
 
-Reproducer, assuming 2M of hugetlbfs available:
+When I wrote commit 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification"), I
+assumed that, in order to emulate 64-bit arithmetic with 32-bit logic, it
+is sufficient to just truncate the output to 32 bits; and so I just moved
+the register size coercion that used to be at the start of the function to
+the end of the function.
 
-Hugetlbfs mounted, size=2M and option user=testuser
+That assumption is true for almost every op, but not for 32-bit right
+shifts, because those can propagate information towards the least
+significant bit. Fix it by always truncating inputs for 32-bit ops to 32
+bits.
 
-  # mount | grep ^hugetlbfs
-  hugetlbfs on /dev/hugepages type hugetlbfs (rw,pagesize=2M,user=dan)
-  # sysctl vm.nr_hugepages=1
-  vm.nr_hugepages = 1
-  # grep Huge /proc/meminfo
-  AnonHugePages:         0 kB
-  ShmemHugePages:        0 kB
-  HugePages_Total:       1
-  HugePages_Free:        1
-  HugePages_Rsvd:        0
-  HugePages_Surp:        0
-  Hugepagesize:       2048 kB
-  Hugetlb:            2048 kB
+Also get rid of the coerce_reg_to_size() after the ALU op, since that has
+no effect.
 
-Code:
-
-  #include <sys/mman.h>
-  #include <stddef.h>
-  #define SIZE 2*1024*1024
-  int main()
-  {
-    void *ptr;
-    ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_HUGETLB | MAP_ANONYMOUS, -1, 0);
-    madvise(ptr, SIZE, MADV_DONTDUMP);
-    madvise(ptr, SIZE, MADV_DODUMP);
-  }
-
-Compile and strace:
-
-  mmap(NULL, 2097152, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB, -1, 0) = 0x7ff7c9200000
-  madvise(0x7ff7c9200000, 2097152, MADV_DONTDUMP) = 0
-  madvise(0x7ff7c9200000, 2097152, MADV_DODUMP) = -1 EINVAL (Invalid argument)
-
-hugetlbfs pages have VM_DONTEXPAND in the VmFlags driver pages based on
-author testing with analysis from Florian Weimer[1].
-
-The inclusion of VM_DONTEXPAND into the VM_SPECIAL defination was a
-consequence of the large useage of VM_DONTEXPAND in device drivers.
-
-A consequence of [2] is that VM_DONTEXPAND marked pages are unable to be
-marked DODUMP.
-
-A user could quite legitimately madvise(MADV_DONTDUMP) their hugetlbfs
-memory for a while and later request that madvise(MADV_DODUMP) on the same
-memory.  We correct this omission by allowing madvice(MADV_DODUMP) on
-hugetlbfs pages.
-
-[1] https://stackoverflow.com/questions/52548260/madvisedodump-on-the-same-ptr-size-as-a-successful-madvisedontdump-fails-wit
-[2] commit 0103bd16fb90 ("mm: prepare VM_DONTDUMP for using in drivers")
-
-Link: http://lkml.kernel.org/r/20180930054629.29150-1-daniel@linux.ibm.com
-Link: https://lists.launchpad.net/maria-discuss/msg05245.html
-Fixes: 0103bd16fb90 ("mm: prepare VM_DONTDUMP for using in drivers")
-Reported-by: Kenneth Penza <kpenza@gmail.com>
-Signed-off-by: Daniel Black <daniel@linux.ibm.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Konstantin Khlebnikov <khlebnikov@openvz.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 468f6eafa6c4 ("bpf: fix 32-bit ALU op verification")
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/madvise.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bpf/verifier.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -96,7 +96,7 @@ static long madvise_behavior(struct vm_a
- 		new_flags |= VM_DONTDUMP;
- 		break;
- 	case MADV_DODUMP:
--		if (new_flags & VM_SPECIAL) {
-+		if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL) {
- 			error = -EINVAL;
- 			goto out;
- 		}
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2865,6 +2865,15 @@ static int adjust_scalar_min_max_vals(st
+ 	u64 umin_val, umax_val;
+ 	u64 insn_bitness = (BPF_CLASS(insn->code) == BPF_ALU64) ? 64 : 32;
+ 
++	if (insn_bitness == 32) {
++		/* Relevant for 32-bit RSH: Information can propagate towards
++		 * LSB, so it isn't sufficient to only truncate the output to
++		 * 32 bits.
++		 */
++		coerce_reg_to_size(dst_reg, 4);
++		coerce_reg_to_size(&src_reg, 4);
++	}
++
+ 	smin_val = src_reg.smin_value;
+ 	smax_val = src_reg.smax_value;
+ 	umin_val = src_reg.umin_value;
+@@ -3100,7 +3109,6 @@ static int adjust_scalar_min_max_vals(st
+ 	if (BPF_CLASS(insn->code) != BPF_ALU64) {
+ 		/* 32-bit ALU ops are (32,32)->32 */
+ 		coerce_reg_to_size(dst_reg, 4);
+-		coerce_reg_to_size(&src_reg, 4);
+ 	}
+ 
+ 	__reg_deduce_bounds(dst_reg);
 
 
