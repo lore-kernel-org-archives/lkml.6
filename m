@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA61EC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306F9C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92AE5214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6822064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mys3RQ8K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AE5214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQqbvm+H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6822064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeJIBtW (ORCPT
+        id S1728572AbeJIBtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34318 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbeJIBtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:20 -0400
+        id S1726781AbeJIBtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:25 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA602064A;
-        Mon,  8 Oct 2018 18:36:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3ABA20C0A;
+        Mon,  8 Oct 2018 18:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023777;
-        bh=CXkyJ0DuYXI8KN20Zh4Axzp9LlL+aaU9HpT6vXvdvrA=;
+        s=default; t=1539023782;
+        bh=Rnf59snmntF8LuyGz0ihTE1Y5tqq24DkxZORkT6WE24=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mys3RQ8Kb/nrpNJc4HDt0x7jrcE4SuSBRt2DgK6buO2/hihR6SfGxNmkdpRevXpkR
-         GD/2Ejv54AkbwyezdSImz/Ls5uQ3Zg0AZOEDALxzw4m9igwD+jDud12z2LjUuGfMzR
-         FWkxROLABj3dgWtPnoZ8Q6Y7P3mJLmyROS7mIbuY=
+        b=cQqbvm+HF7pTcMZP9/6by7IBfi8BbqvIJjvlesVBPPO1P0LPcCdh4mCl5rJ3XbAcT
+         Iw2/Iq4z9g/kF3VLNvocdVv56+ftC3q0sBXi8hsG/FR1EkQsLns3nEinaBYib1WqnR
+         DmGjDEUVziwCBuo4QtxDAQlzVgi/gHB9BQCzB1oM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 4.4 056/113] Revert "usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()"
-Date:   Mon,  8 Oct 2018 20:30:57 +0200
-Message-Id: <20181008175534.100207083@linuxfoundation.org>
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 047/113] spi: sh-msiof: Fix handling of write value for SISTR register
+Date:   Mon,  8 Oct 2018 20:30:48 +0200
+Message-Id: <20181008175533.262791334@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,35 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-commit e871db8d78df1c411032cbb3acfdf8930509360e upstream.
+commit 31a5fae4c5a009898da6d177901d5328051641ff upstream.
 
-This reverts commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427.
+This patch changes writing to the SISTR register according to the H/W
+user's manual.
 
-The bug the patch describes to, has been already fixed in commit
-2df6948428542 ("USB: cdc-wdm: don't enable interrupts in USB-giveback")
-so need to this, revert it.
+The TDREQ bit and RDREQ bits of SISTR are read-only, and must be written
+their initial values of zero.
 
-Fixes: 6e22e3af7bb3 ("usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+[geert: reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-wdm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-sh-msiof.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -453,7 +453,7 @@ static int clear_wdm_read_flag(struct wd
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -374,7 +374,8 @@ static void sh_msiof_spi_set_mode_regs(s
  
- 	set_bit(WDM_RESPONDING, &desc->flags);
- 	spin_unlock_irq(&desc->iuspin);
--	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
-+	rv = usb_submit_urb(desc->response, GFP_KERNEL);
- 	spin_lock_irq(&desc->iuspin);
- 	if (rv) {
- 		dev_err(&desc->intf->dev,
+ static void sh_msiof_reset_str(struct sh_msiof_spi_priv *p)
+ {
+-	sh_msiof_write(p, STR, sh_msiof_read(p, STR));
++	sh_msiof_write(p, STR,
++		       sh_msiof_read(p, STR) & ~(STR_TDREQ | STR_RDREQ));
+ }
+ 
+ static void sh_msiof_spi_write_fifo_8(struct sh_msiof_spi_priv *p,
 
 
