@@ -2,130 +2,142 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA02DC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4FFC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 652772145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6886220841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:59:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f2P4smmK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652772145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qCgQByCJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6886220841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbeJIFLl (ORCPT
+        id S1726393AbeJIFN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 01:11:41 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:40797 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeJIFLl (ORCPT
+        Tue, 9 Oct 2018 01:13:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42578 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeJIFN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 01:11:41 -0400
-Received: by mail-yw1-f65.google.com with SMTP id l79-v6so8714884ywc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 14:57:51 -0700 (PDT)
+        Tue, 9 Oct 2018 01:13:28 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g15-v6so19743715wru.9;
+        Mon, 08 Oct 2018 14:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=adb+csjHuh8r2n+XAl2fzZhXMg6U3zxIwhUI/NO8vvA=;
-        b=f2P4smmKPxfCEB8ziBNLmSuXfnh9kUx1jd+luW7yJqAHgy9V+2SJ9FR/S27X3uW2w2
-         zD7f74+Mw/zgkkksUDVL/CvkJotecx6Jalt3dpm4+KMR8s8YtUbwnC3R0BvBG4cIkFuN
-         XArWIhCXIQEIUwkxS2lpj9Yx+ddEaiqHWEWtg=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=qU0eRgmweVkgFEFZ1svtx4VKHMxtBUv/4ycPIHoxpXE=;
+        b=qCgQByCJUlU8UHJ5mZgF54T70YF/UO6gy/aNO7joKdSeyzC9Iw5IT2dy+ABq6r11eX
+         YAD1eyiGegWxBp5XlwgQNBmnEXCT/o02fS3B09In/e0ID1r89o3hB4KdEYpBgLMFXg7M
+         6nhb3Gh+Na0P/Ebz3HRG71VzSe9k8EBBFkK9/DkL0X28wD9mdtEHtg+/hrbbznhHcLnN
+         2euzcTUa61nnPPMhJx9IhsIHNg5RRzFgzt7LPbIj+H+FvP51PTskSC46eg5hFUACxG7G
+         wtyPWw6cHD0Gnd1Ef9jLzqnPBNETVMOtqYlMI4TLgdcAu1wRcpW8PsY5N8XBG/uzVhUZ
+         oCng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=adb+csjHuh8r2n+XAl2fzZhXMg6U3zxIwhUI/NO8vvA=;
-        b=F3dxD5GkYZfXTX9yJ9i+v5gDW8ksklgzrGCRIX8M08pl/5665NXW5HMvZFUh+wdStR
-         7eIRbw4G+UemW//FFIZUSgh0K/3hFYeJhx/gWlhDgKbDlKmsx0ZtYYuK6mno8Y1jEiLm
-         aDI03/3V7ZZxWKKEH41uKgSdX6HbPd2YmP1I4Xs68PLbqgXZ8KD4dtxKYEO0yxBqhL3v
-         g7IVSjVD274PGC+ceIa+YCwAtoBmskXM633Kc7fnlFQB726ov7SW+E4TxIxerwZeL5gd
-         dIluJdUltN3j61UraIuvN1iBRhbpWDrq7Om/HUt2uuf8wd+ghjTux/zH7CMM6t/ChoKy
-         Jybw==
-X-Gm-Message-State: ABuFfoj9zjql/ad5JE+skm1dLPBupw0FQgV5Pc8G5TJp8HGw4jGG0KwL
-        6kBLbwNZ5HPNLS3a8LUs6IhcOLSV7c0=
-X-Google-Smtp-Source: ACcGV63IzHEYysJqHloBoHPMsy17lOGGqMlEnCczDeJIu0Yzq7bqlyrdO39Y5bHEExrhiTkLHQXQEw==
-X-Received: by 2002:a81:1393:: with SMTP id 141-v6mr13679820ywt.73.1539035870864;
-        Mon, 08 Oct 2018 14:57:50 -0700 (PDT)
-Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
-        by smtp.gmail.com with ESMTPSA id q6-v6sm761738ywh.41.2018.10.08.14.57.49
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=qU0eRgmweVkgFEFZ1svtx4VKHMxtBUv/4ycPIHoxpXE=;
+        b=XwkvLNDJjNHPo33fpfBU9CU/smUfRxtpugt4nV1Hwn/SzvQ6Q0b7x3K8v6mt4JH0sz
+         8Im7IntlG965eQnYVi7JfcPu6TOhhXb5uPSO6QVPTBPu+oyCU/TImqNRagzNrJhOT5Nv
+         4bn9nc/pyk/2KiCiuIniprEDGuoUhDaRUJSlJw5+SBPNeNwHcNBZ26LVYOm11IveMVRW
+         UgTolnJ7Wmy/o5G8pV+eZDMoMKymREx9q0KdRcBVyJ5LscFL5d+TE2VU6PuujWx3fJZn
+         ppciCuL1xJzpomhBcT35ji+QIf3xfC1sG6jktUKAQdlyTK2PKDVHkVyyj1/UNDWhEPfT
+         iXKQ==
+X-Gm-Message-State: ABuFfogSMy5sw87CXANUjeRl+zb+u7r9msIm9h2i/z0y5iHvWrHdgRnk
+        fW5G835SqOMdMuki84y4288cWG2Z
+X-Google-Smtp-Source: ACcGV60eOHOaWybrZ2+NLwM5QYqnPCcR0klNQaG9vsTSRv3RwITGvpTGouGmL7ds2UyyoDFq+SvtsA==
+X-Received: by 2002:adf:f785:: with SMTP id q5-v6mr16651004wrp.86.1539035976329;
+        Mon, 08 Oct 2018 14:59:36 -0700 (PDT)
+Received: from [172.30.1.166] (nat-wv.mentorg.com. [192.94.38.34])
+        by smtp.gmail.com with ESMTPSA id e21-v6sm10993073wma.8.2018.10.08.14.59.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 14:57:49 -0700 (PDT)
-Received: by mail-yw1-f54.google.com with SMTP id a197-v6so8713968ywh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 14:57:49 -0700 (PDT)
-X-Received: by 2002:a81:2908:: with SMTP id p8-v6mr14716384ywp.407.1539035869058;
- Mon, 08 Oct 2018 14:57:49 -0700 (PDT)
+        Mon, 08 Oct 2018 14:59:35 -0700 (PDT)
+Subject: Re: [PATCH v4 02/11] gpu: ipu-csi: Swap fields according to
+ input/output field types
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
+References: <20181004185401.15751-1-slongerbeam@gmail.com>
+ <20181004185401.15751-3-slongerbeam@gmail.com>
+ <1538732679.3545.5.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <e2ae98c2-a6a3-19b9-bd85-664e5f80c4ab@gmail.com>
+Date:   Mon, 8 Oct 2018 14:59:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 14:57:48 -0700 (PDT)
-In-Reply-To: <20181008202901.7894-1-bp@alien8.de>
-References: <20181008202901.7894-1-bp@alien8.de>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 8 Oct 2018 14:57:48 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKkAf1z1bGjTNn7F-Qf=3eObFD4WS_BYgKONCHd-Ge5dw@mail.gmail.com>
-Message-ID: <CAGXu5jKkAf1z1bGjTNn7F-Qf=3eObFD4WS_BYgKONCHd-Ge5dw@mail.gmail.com>
-Subject: Re: [PATCH] kernel/panic: Do not append newline to the stack
- protector panic string
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1538732679.3545.5.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 1:29 PM, Borislav Petkov <bp@alien8.de> wrote:
-> From: Borislav Petkov <bp@suse.de>
+Hi Philipp,
+
+
+On 10/05/2018 02:44 AM, Philipp Zabel wrote:
+> Hi Steve,
 >
-> ... because panic() itself already does this. Otherwise you have
-> line-broken trailer:
+> On Thu, 2018-10-04 at 11:53 -0700, Steve Longerbeam wrote:
 >
->   [    1.836965] ---[ end Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: pgd_alloc+0x29e/0x2a0
->   [    1.836965]  ]---
 >
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
-Andrew, can you take this?
-
--Kees
-
-> ---
->  kernel/panic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> +
+>> +		/* framelines for NTSC / PAL */
+>> +		height = (std & V4L2_STD_525_60) ? 525 : 625;
+> I think this is a bit convoluted. Instead of initializing std, then
+> possibly changing it, and then comparing to the inital value, and then
+> checking it again to determine the new height, why not just:
 >
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 8b2e002d52eb..837a94b7024d 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -631,7 +631,7 @@ device_initcall(register_warn_debugfs);
->   */
->  __visible void __stack_chk_fail(void)
->  {
-> -       panic("stack-protector: Kernel stack is corrupted in: %pB\n",
-> +       panic("stack-protector: Kernel stack is corrupted in: %pB",
->                 __builtin_return_address(0));
->  }
->  EXPORT_SYMBOL(__stack_chk_fail);
-> --
-> 2.19.0.271.gfe8321ec057f
+> 		if (width == 720 && height == 480) {
+> 			std = V4L2_STD_NTSC;
+> 			height = 525;
+> 		} else if (width == 720 && height == 576) {
+> 			std = V4L2_STD_PAL;
+> 			height = 625;
+> 		} else {
+> 			dev_err(csi->ipu->dev,
+> 				"Unsupported interlaced video mode\n");
+> 			ret = -EINVAL;
+> 			goto out_unlock;
+> 		}
 >
+> ?
 
+Yes that was a bit convoluted, fixed.
 
+>
+>>   
+>>   	/*
+>>   	 * if cycles is set, we need to handle this over multiple cycles as
+>>   	 * generic/bayer data
+>>   	 */
+>> -	if (is_parallel_bus(&priv->upstream_ep) && incc->cycles) {
+>> -		if_fmt.width *= incc->cycles;
+> If the input format width passed to ipu_csi_init_interface is not
+> multiplied by the number of cycles per pixel anymore, width in the
+> CSI_SENS_FRM_SIZE register will be set to the unmultiplied value from
+> infmt.
+> This breaks 779680e2e793 ("media: imx: add support for RGB565_2X8 on
+> parallel bus").
 
--- 
-Kees Cook
-Pixel Security
+Oops, that was a mistake, thanks for catching, fixed.
+
+Steve
+
