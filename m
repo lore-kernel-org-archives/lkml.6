@@ -2,200 +2,178 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCF5C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F002C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D62942075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFAB72075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:33:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="hgUs8HhH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D62942075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XoR0EDFD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFAB72075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbeJHVpG (ORCPT
+        id S1726666AbeJHVp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:45:06 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:17761 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeJHVpG (ORCPT
+        Mon, 8 Oct 2018 17:45:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50030 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeJHVp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:45:06 -0400
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w98EWh6P022306;
-        Mon, 8 Oct 2018 23:32:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w98EWh6P022306
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539009164;
-        bh=FMPp4kZkkPloIlzRNQSVTTzcWD/V7btEG7iv2ODO3p4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hgUs8HhHEGRVSSfHC8YlAR/ZYfB2/uCDApmDvv4MUTrWRdToklnhQdAIAjay0jYD+
-         Zz07Wt0r52Hk3rGfAcF3WRpOnZCaotQb4R3zA6WLe76zm4QHpT3QzpYLNU9bLCHDFA
-         LvKndZ5nEccC0aUIvb/TEktBwXniYWx7AFsi8D/z9tlaULT18JzrZwqF1s4LKbWDac
-         7qYu7ECEeZWkVwwwLFRsN/lyg6wbEHEIRNRqv4LniBxyTtysCiY2xx8B70W+a03Gc6
-         HJiEKSGEly1CVS1moSG1U1e3N68qTwBW4cKgWQM4bRPL08zMhJK01tAtGvYBeEzSOE
-         l6HV8fDMQrNcg==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id r83so1517489vsc.4;
-        Mon, 08 Oct 2018 07:32:43 -0700 (PDT)
-X-Gm-Message-State: ABuFfohUbS8PmMa3+EXtT0lYmQ93lKEwePJqrAdNo+ox3Xm9E/5uAMhe
-        E6JuymUwUWlnF38ep+/WlGSWOyOjIg9NwsWCeBc=
-X-Google-Smtp-Source: ACcGV63PMuWr1OCBLe9gw38yCBJToykUsmDK/wfTw5hl39lb2N6E2/xMZOqcT60PQL1y56qdlN7R0HWMhSxBPK9GiiA=
-X-Received: by 2002:a67:3793:: with SMTP id j19mr8311749vsi.215.1539009162209;
- Mon, 08 Oct 2018 07:32:42 -0700 (PDT)
+        Mon, 8 Oct 2018 17:45:26 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w98EIrwn125603;
+        Mon, 8 Oct 2018 14:33:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=8Ca29cEcxQ9w/B8KUCQY8ksPMLmfckimUa1oR6wpje8=;
+ b=XoR0EDFDPhE79onkOifei0rqBLJpQ8Bf47Xv9S31lVQJiuuRJi4KDNQ1Btop84wsxIPy
+ /r1Bvw+x0daUI0BfkMqnstXkBnDZyR/ozf5iXQ+zrlwoGgsWs5+VuOGl7h6u/ibM0rOI
+ H0Fz6zDLofojRHIxVw7CbsGaZc2LshB0LM3q3lboza7yg2Pc6OKGZ+cVJWBuCRYIibN4
+ f6397h2rYI4VuIhO0DKetQ11JgE79WaVFzanRTcQ9EmBOlZ2eHBb42OzlHFwoSbxLdzh
+ R2iqc04PXTAS3xFldo9aQcoM85ZLCiXm4ltVo3EfnfKZyLI9FVkHIUtRL/4uxF3t82Lw 6Q== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2mxmftf3w9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Oct 2018 14:33:06 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w98EX4JT017642
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 8 Oct 2018 14:33:05 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w98EX4ge029463;
+        Mon, 8 Oct 2018 14:33:04 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Oct 2018 14:33:04 +0000
+Subject: Re: [Xen-devel] [PATCH V3 2/2] Xen/PCIback: Implement PCI
+ flr/slot/bus reset with 'reset' SysFS attribute
+To:     =?UTF-8?B?UGFzaSBLw6Rya2vDpGluZW4=?= <pasik@iki.fi>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+Cc:     George Dunlap <George.Dunlap@citrix.com>,
+        Jan Beulich <JBeulich@suse.com>,
+        Juergen Gross <jgross@suse.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <8a3bc517-1255-4547-d244-5c400e44cc77@Oracle.COM>
+ <f19dbb09-ef22-2cf4-fb38-2a7c42b5dc48@Oracle.COM>
+ <5A377E020200007800197FFA@prv-mh.provo.novell.com>
+ <559ffd12-b541-8a69-60bd-fbe10e3dc159@oracle.com>
+ <20180916114306.GF18222@reaktio.net>
+ <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
+ <20180918071519.GG18222@reaktio.net>
+ <5E7DDB68-4E68-48A5-AEEC-EE1B21A50E9E@citrix.com>
+ <352310b3-ec9b-2ceb-83f0-4550718120c3@oracle.com>
+ <20180919090526.s3ahnemrt2ik2tx3@mac.bytemobile.com>
+ <20181003155104.GH5318@reaktio.net>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <f6b8e055-7afc-b4de-af88-425d799dcd28@oracle.com>
+Date:   Mon, 8 Oct 2018 10:32:45 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
- <20181005083313.2088252-1-arnd@arndb.de> <CANiq72mHDxe9-+pFf+dDuYXRz5YeyRYi6RW65tyo9-ENNngsCw@mail.gmail.com>
- <CAK7LNAT5h+Rku7DbD+kHGv7Kgk8FfuX4wwL_pwNOLSJbqw99MA@mail.gmail.com>
- <CAK7LNATycNLxzB=FtrBy9M4E6m9wx4Uhk=DQ7gcCMD2J_vfmfQ@mail.gmail.com> <5cbb504c-0506-cec8-d51b-00928cdb27fe@ideasonboard.com>
-In-Reply-To: <5cbb504c-0506-cec8-d51b-00928cdb27fe@ideasonboard.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 8 Oct 2018 23:32:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQNhMhoCXSRDQVrNkTLUyLO0_xYJm1o_dyao0-rSbpwzA@mail.gmail.com>
-Message-ID: <CAK7LNAQNhMhoCXSRDQVrNkTLUyLO0_xYJm1o_dyao0-rSbpwzA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
-To:     kieran.bingham+renesas@ideasonboard.com
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181003155104.GH5318@reaktio.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9039 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810080140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 7:01 PM Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
+On 10/3/18 11:51 AM, Pasi Kärkkäinen wrote:
+> On Wed, Sep 19, 2018 at 11:05:26AM +0200, Roger Pau Monné wrote:
+>> On Tue, Sep 18, 2018 at 02:09:53PM -0400, Boris Ostrovsky wrote:
+>>> On 9/18/18 5:32 AM, George Dunlap wrote:
+>>>>> On Sep 18, 2018, at 8:15 AM, Pasi Kärkkäinen <pasik@iki.fi> wrote:
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> On Mon, Sep 17, 2018 at 02:06:02PM -0400, Boris Ostrovsky wrote:
+>>>>>> What about the toolstack changes? Have they been accepted? I vaguely
+>>>>>> recall there was a discussion about those changes but don't remember how
+>>>>>> it ended.
+>>>>>>
+>>>>> I don't think toolstack/libxl patch has been applied yet either.
+>>>>>
+>>>>>
+>>>>> "[PATCH V1 0/1] Xen/Tools: PCI reset using 'reset' SysFS attribute":
+>>>>> https://lists.xen.org/archives/html/xen-devel/2017-12/msg00664.html
+>>>>>
+>>>>> "[PATCH V1 1/1] Xen/libxl: Perform PCI reset using 'reset' SysFS attribute":
+>>>>> https://lists.xen.org/archives/html/xen-devel/2017-12/msg00663.html
+>>>
+>>> Will this patch work for *BSD? Roger?
+>> At least FreeBSD don't support pci-passthrough, so none of this works
+>> ATM. There's no sysfs on BSD, so much of what's in libxl_pci.c will
+>> have to be moved to libxl_linux.c when BSD support is added.
+>>
+> Ok. That sounds like it's OK for the initial pci 'reset' implementation in xl/libxl to be linux-only.. 
 >
-> On 06/10/18 23:06, Masahiro Yamada wrote:
-> > On Sun, Oct 7, 2018 at 6:58 AM Masahiro Yamada
-> > <yamada.masahiro@socionext.com> wrote:
-> >>
-> >> Hi Miguel,
-> >>
-> >>
-> >> On Sun, Oct 7, 2018 at 6:18 AM Miguel Ojeda
-> >> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >>>
-> >>> On Fri, Oct 5, 2018 at 10:35 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >>>>
-> >>>> Building any configuration with 'make W=3D1' produces a warning:
-> >>>>
-> >>>> kernel/bounds.c:16:6: warnign: no previous prototype for 'foo' [-Wmi=
-ssing-prototypes]
-> >>>>
-> >>>> When also passing -Werror, this prevents us from building any
-> >>>> other files. Nobody ever calls the function, but we can't make
-> >>>> it 'static' either since we want the compiler output.
-> >>>>
-> >>>> Calling it 'main' instead however avoids the warning, because gcc
-> >>>> does not insist on having a declaration for main.
-> >>>
-> >>> I think marking the function as static __used should do the trick and
-> >>> would be less confusing.
-> >>
-> >>
-> >>
-> >>
-> >> I tried __used, but I still see the warning.
-> >>
-> >>
-> >> masahiro@grover:~/ref/linux$ git diff
-> >> diff --git a/kernel/bounds.c b/kernel/bounds.c
-> >> index c373e88..aee0101 100644
-> >> --- a/kernel/bounds.c
-> >> +++ b/kernel/bounds.c
-> >> @@ -13,7 +13,7 @@
-> >>  #include <linux/log2.h>
-> >>  #include <linux/spinlock_types.h>
-> >>
-> >> -void foo(void)
-> >> +void __used foo(void)
-> >>  {
-> >>         /* The enum constants to put into include/generated/bounds.h *=
-/
-> >>         DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
-> >> masahiro@grover:~/ref/linux$ make W=3D1  prepare
-> >>   CC      kernel/bounds.s
-> >> kernel/bounds.c:16:13: warning: no previous prototype for =E2=80=98foo=
-=E2=80=99
-> >> [-Wmissing-prototypes]
-> >>  void __used foo(void)
-> >>              ^
-> >>   CC      arch/x86/kernel/asm-offsets.s
-> >
-> >
-> >
-> > Sorry, I forgot to add 'static'.
-> >
-> > Adding both static and __used worked for me,
-> > and I like the idea.
-> >
->
-> Aha - I'd also tried converting to static in my earlier attempts, but
-> didn't realise we had __used!
->
-> updating as "static __used" causes the following diff:
->
-> diff -Nurp bounds.s.foo bounds.s.static-used
-> --- bounds.s.foo        2018-10-05 10:20:53.269941404 +0100
-> +++ bounds.s.static-used        2018-10-08 10:51:18.079309049 +0100
-> @@ -110,7 +110,6 @@
->  #NO_APP
->         .align  2
->         .p2align 3,,7
-> -       .global foo
->         .type   foo, %function
->  foo:
->         stp     x29, x30, [sp, -16]!    //,,,
->
->
-> I'd say this is a pretty good alternative fix - however I see Arnd's
-> version is already on it's way though akpm's tree...
->
-> https://ozlabs.org/~akpm/mmots/broken-out/kbuild-fix-kernel-boundsc-w%3D1=
--warning.patch
->
-> Anyway, as long as one of the variants gets there I'll be happy :)
+
+Are these two patches still needed? ISTR they were  written originally
+to deal with guest trying to use device that was previously assigned to
+another guest. But pcistub_put_pci_dev() calls
+__pci_reset_function_locked() which first tries FLR, and it looks like
+it was added relatively recently.
 
 
-I will leave it to Arnd.
-
-
-When we fix arch/{mips,sparc}/kernel/asm-offsets.c,
-'static __used' is just additions.
-
-The 'main(void)' solution would require a little bit restructuring.
-
-
-
-FWIW, with my quick analysis, the following should be fixed as well:
-
-arch/alpha/kernel/asm-offsets.c
-arch/c6x/kernel/asm-offsets.c
-arch/ia64/kernel/asm-offsets.c
-arch/ia64/kernel/nr-irqs.c
-arch/mips/kernel/asm-offsets.c
-arch/riscv/kernel/asm-offsets.c
-arch/sparc/kernel/asm-offsets.c
-arch/x86/kernel/asm-offsets.c
-arch/x86/um/shared/sysdep/kernel-offsets.h
-samples/bpf/syscall_nrs.c
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+-boris
