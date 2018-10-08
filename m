@@ -6,58 +6,56 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED8FC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEC7C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CE4D2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE4D2085B
+	by mail.kernel.org (Postfix) with ESMTP id DAF172087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:57:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF172087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeJHNH1 (ORCPT
+        id S1726932AbeJHNHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:07:27 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:48268 "EHLO
+        Mon, 8 Oct 2018 09:07:45 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:48278 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbeJHNH1 (ORCPT
+        with ESMTP id S1726013AbeJHNHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:07:27 -0400
-Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
+        Mon, 8 Oct 2018 09:07:45 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 510EF142D15EA;
-        Sun,  7 Oct 2018 22:57:27 -0700 (PDT)
-Date:   Sun, 07 Oct 2018 22:57:26 -0700 (PDT)
-Message-Id: <20181007.225726.457975328875903193.davem@davemloft.net>
-To:     keescook@chromium.org
-Cc:     allen.pais@oracle.com, pombredanne@nexb.com,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sparc64: viohs: Remove VLA usage
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 86CC5142D15EA;
+        Sun,  7 Oct 2018 22:57:45 -0700 (PDT)
+Date:   Sun, 07 Oct 2018 22:57:45 -0700 (PDT)
+Message-Id: <20181007.225745.1952895704234282902.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     rob.gardner@oracle.com, jonathan.helman@oracle.com,
+        sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] oradax: remove redundant null check before kfree
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180905220351.GA48213@beast>
-References: <20180905220351.GA48213@beast>
+In-Reply-To: <20180907103500.17453-1-colin.king@canonical.com>
+References: <20180907103500.17453-1-colin.king@canonical.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 07 Oct 2018 22:57:27 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 07 Oct 2018 22:57:45 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 5 Sep 2018 15:03:51 -0700
+From: Colin King <colin.king@canonical.com>
+Date: Fri,  7 Sep 2018 11:35:00 +0100
 
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> allocates a fixed size array for the maximum number of cookies and
-> adds a runtime sanity check.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1
-> RqZWA@mail.gmail.com
+> A null check before a kfree is redundant, so remove it.
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
 Applied.
