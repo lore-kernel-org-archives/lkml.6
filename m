@@ -2,368 +2,181 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B51C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69732C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8C12064E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:08:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8C12064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 21C502064E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:09:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C502064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeJHRTa (ORCPT
+        id S1727627AbeJHRUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:19:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38917 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbeJHRSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:18:49 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 831C4207CC; Mon,  8 Oct 2018 12:07:49 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3A9C8207F3;
-        Mon,  8 Oct 2018 12:07:39 +0200 (CEST)
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com
-Cc:     allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next v3 1/6] net: phy: mscc: migrate to phy_select/restore_page functions
-Date:   Mon,  8 Oct 2018 12:07:23 +0200
-Message-Id: <20181008100728.24959-2-quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181008100728.24959-1-quentin.schulz@bootlin.com>
-References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+        Mon, 8 Oct 2018 13:20:06 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42725 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbeJHRUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:20:06 -0400
+Received: from 79.184.255.62.ipv4.supernova.orange.pl (79.184.255.62) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 1f0a8dd1ce5b11ab; Mon, 8 Oct 2018 12:09:07 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the pm tree
+Date:   Mon, 08 Oct 2018 12:06:02 +0200
+Message-ID: <4344904.ysa79Efigr@aspire.rjw.lan>
+In-Reply-To: <20181008134449.64aad97e@canb.auug.org.au>
+References: <20181008134449.64aad97e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Microsemi PHYs have multiple banks of registers (called pages).
-Registers can only be accessed from one page, if we need a register from
-another page, we need to switch the page and the registers of all other
-pages are not accessible anymore.
+On Monday, October 8, 2018 4:44:49 AM CEST Stephen Rothwell wrote:
+> 
+> --Sig_/bNRy8ryxcqLmcoGqvlETGhp
+> Content-Type: text/plain; charset=US-ASCII
+> Content-Transfer-Encoding: quoted-printable
+> 
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   drivers/powercap/intel_rapl.c
+> 
+> between commit:
+> 
+>   17ed15183c24 ("powercap: RAPL: Get rid of custom RAPL_CPU() macro")
+> 
+> from the pm tree and commit:
+> 
+>   f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
+> 
+> from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> --=20
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/powercap/intel_rapl.c
+> index bb92874b1175,8cbfcce57a06..000000000000
+> --- a/drivers/powercap/intel_rapl.c
+> +++ b/drivers/powercap/intel_rapl.c
+> @@@ -1133,40 -1133,47 +1133,40 @@@ static const struct rapl_defaults rapl_
+>   	.compute_time_window =3D rapl_compute_time_window_atom,
+>   };
+>  =20
+>  -#define RAPL_CPU(_model, _ops) {			\
+>  -		.vendor =3D X86_VENDOR_INTEL,		\
+>  -		.family =3D 6,				\
+>  -		.model =3D _model,			\
+>  -		.driver_data =3D (kernel_ulong_t)&_ops,	\
+>  -		}
+>  -
+>   static const struct x86_cpu_id rapl_ids[] __initconst =3D {
+>  -	RAPL_CPU(INTEL_FAM6_SANDYBRIDGE,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_SANDYBRIDGE_X,	rapl_defaults_core),
+>  -
+>  -	RAPL_CPU(INTEL_FAM6_IVYBRIDGE,		rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_IVYBRIDGE_X,	rapl_defaults_core),
+>  -
+>  -	RAPL_CPU(INTEL_FAM6_HASWELL_CORE,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_HASWELL_ULT,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_HASWELL_GT3E,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_HASWELL_X,		rapl_defaults_hsw_server),
+>  -
+>  -	RAPL_CPU(INTEL_FAM6_BROADWELL_CORE,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_BROADWELL_GT3E,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_BROADWELL_XEON_D,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_BROADWELL_X,	rapl_defaults_hsw_server),
+>  -
+>  -	RAPL_CPU(INTEL_FAM6_SKYLAKE_DESKTOP,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_SKYLAKE_MOBILE,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_SKYLAKE_X,		rapl_defaults_hsw_server),
+>  -	RAPL_CPU(INTEL_FAM6_KABYLAKE_MOBILE,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_KABYLAKE_DESKTOP,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_CANNONLAKE_MOBILE,	rapl_defaults_core),
+>  -
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_SILVERMONT,	rapl_defaults_byt),
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_AIRMONT,	rapl_defaults_cht),
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	rapl_defaults_tng),
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_AIRMONT_MID,	rapl_defaults_ann),
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	rapl_defaults_core),
+>  -	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT_X,	rapl_defaults_core),
+>  -
+>  -	RAPL_CPU(INTEL_FAM6_XEON_PHI_KNL,	rapl_defaults_hsw_server),
+>  -	RAPL_CPU(INTEL_FAM6_XEON_PHI_KNM,	rapl_defaults_hsw_server),
+>  +	INTEL_CPU_FAM6(SANDYBRIDGE,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(SANDYBRIDGE_X,		rapl_defaults_core),
+>  +
+>  +	INTEL_CPU_FAM6(IVYBRIDGE,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(IVYBRIDGE_X,		rapl_defaults_core),
+>  +
+>  +	INTEL_CPU_FAM6(HASWELL_CORE,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(HASWELL_ULT,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(HASWELL_GT3E,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(HASWELL_X,		rapl_defaults_hsw_server),
+>  +
+>  +	INTEL_CPU_FAM6(BROADWELL_CORE,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(BROADWELL_GT3E,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(BROADWELL_XEON_D,	rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(BROADWELL_X,		rapl_defaults_hsw_server),
+>  +
+>  +	INTEL_CPU_FAM6(SKYLAKE_DESKTOP,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(SKYLAKE_MOBILE,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(SKYLAKE_X,		rapl_defaults_hsw_server),
+>  +	INTEL_CPU_FAM6(KABYLAKE_MOBILE,		rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(KABYLAKE_DESKTOP,	rapl_defaults_core),
+>  +	INTEL_CPU_FAM6(CANNONLAKE_MOBILE,	rapl_defaults_core),
+>  +
+> - 	INTEL_CPU_FAM6(ATOM_SILVERMONT1,	rapl_defaults_byt),
+> ++	INTEL_CPU_FAM6(ATOM_SILVERMONT,		rapl_defaults_byt),
+>  +	INTEL_CPU_FAM6(ATOM_AIRMONT,		rapl_defaults_cht),
+> - 	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		rapl_defaults_tng),
+> - 	INTEL_CPU_FAM6(ATOM_MOOREFIELD,		rapl_defaults_ann),
+> ++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	rapl_defaults_tng),
+> ++	INTEL_CPU_FAM6(ATOM_AIRMONT_MID,	rapl_defaults_ann),
+>  +	INTEL_CPU_FAM6(ATOM_GOLDMONT,		rapl_defaults_core),
+> - 	INTEL_CPU_FAM6(ATOM_GEMINI_LAKE,	rapl_defaults_core),
+> - 	INTEL_CPU_FAM6(ATOM_DENVERTON,		rapl_defaults_core),
+> ++	INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS,	rapl_defaults_core),
+> ++	INTEL_CPU_FAM6(ATOM_GOLDMONT_X,		rapl_defaults_core),
+>  +
+>  +	INTEL_CPU_FAM6(XEON_PHI_KNL,		rapl_defaults_hsw_server),
+>  +	INTEL_CPU_FAM6(XEON_PHI_KNM,		rapl_defaults_hsw_server),
+>   	{}
+>   };
+>   MODULE_DEVICE_TABLE(x86cpu, rapl_ids);
+> 
+> --Sig_/bNRy8ryxcqLmcoGqvlETGhp
+> Content-Type: application/pgp-signature
+> Content-Description: OpenPGP digital signature
+> 
+> 
+> --Sig_/bNRy8ryxcqLmcoGqvlETGhp--
 
-Basically, to read register 5 from page 0, 1, 2, etc., you do the same
-phy_read(phydev, 5); but you need to set the desired page beforehand.
+This looks good to me too.  Andy, any concerns?
 
-In order to guarantee that two concurrent functions do not change the
-page, we need to do some locking per page. This can be achieved with the
-use of phy_select_page and phy_restore_page functions but phy_write/read
-calls in-between those two functions shall be replaced by their
-lock-free alternative __phy_write/read.
-
-Let's migrate this driver to those functions.
-
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- drivers/net/phy/mscc.c | 146 +++++++++++++++++------------------------
- 1 file changed, 62 insertions(+), 84 deletions(-)
-
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index 7d0384e26c99..52198be46c68 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -140,12 +140,14 @@ static const struct vsc8531_edge_rate_table edge_table[] = {
- };
- #endif /* CONFIG_OF_MDIO */
- 
--static int vsc85xx_phy_page_set(struct phy_device *phydev, u16 page)
-+static int vsc85xx_phy_read_page(struct phy_device *phydev)
- {
--	int rc;
-+	return __phy_read(phydev, MSCC_EXT_PAGE_ACCESS);
-+}
- 
--	rc = phy_write(phydev, MSCC_EXT_PAGE_ACCESS, page);
--	return rc;
-+static int vsc85xx_phy_write_page(struct phy_device *phydev, int page)
-+{
-+	return __phy_write(phydev, MSCC_EXT_PAGE_ACCESS, page);
- }
- 
- static int vsc85xx_led_cntl_set(struct phy_device *phydev,
-@@ -197,22 +199,17 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
- 	if (rc != 0)
- 		return rc;
- 
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED);
--	if (rc != 0)
--		return rc;
-+	reg_val = 0;
- 
--	reg_val = phy_read(phydev, MSCC_PHY_EXT_MODE_CNTL);
--	reg_val &= ~(FORCE_MDI_CROSSOVER_MASK);
- 	if (mdix == ETH_TP_MDI)
--		reg_val |= FORCE_MDI_CROSSOVER_MDI;
-+		reg_val = FORCE_MDI_CROSSOVER_MDI;
- 	else if (mdix == ETH_TP_MDI_X)
--		reg_val |= FORCE_MDI_CROSSOVER_MDIX;
--	rc = phy_write(phydev, MSCC_PHY_EXT_MODE_CNTL, reg_val);
--	if (rc != 0)
--		return rc;
-+		reg_val = FORCE_MDI_CROSSOVER_MDIX;
- 
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
--	if (rc != 0)
-+	rc = phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
-+			      MSCC_PHY_EXT_MODE_CNTL, FORCE_MDI_CROSSOVER_MASK,
-+			      reg_val);
-+	if (rc < 0)
- 		return rc;
- 
- 	return genphy_restart_aneg(phydev);
-@@ -220,30 +217,24 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
- 
- static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
- {
--	int rc;
- 	u16 reg_val;
- 
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED);
--	if (rc != 0)
--		goto out;
-+	reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
-+				 MSCC_PHY_ACTIPHY_CNTL);
-+	if (reg_val < 0)
-+		return reg_val;
- 
--	reg_val = phy_read(phydev, MSCC_PHY_ACTIPHY_CNTL);
- 	reg_val &= DOWNSHIFT_CNTL_MASK;
- 	if (!(reg_val & DOWNSHIFT_EN))
- 		*count = DOWNSHIFT_DEV_DISABLE;
- 	else
- 		*count = ((reg_val & ~DOWNSHIFT_EN) >> DOWNSHIFT_CNTL_POS) + 2;
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
- 
--out:
--	return rc;
-+	return 0;
- }
- 
- static int vsc85xx_downshift_set(struct phy_device *phydev, u8 count)
- {
--	int rc;
--	u16 reg_val;
--
- 	if (count == DOWNSHIFT_DEV_DEFAULT_COUNT) {
- 		/* Default downshift count 3 (i.e. Bit3:2 = 0b01) */
- 		count = ((1 << DOWNSHIFT_CNTL_POS) | DOWNSHIFT_EN);
-@@ -255,21 +246,9 @@ static int vsc85xx_downshift_set(struct phy_device *phydev, u8 count)
- 		count = (((count - 2) << DOWNSHIFT_CNTL_POS) | DOWNSHIFT_EN);
- 	}
- 
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED);
--	if (rc != 0)
--		goto out;
--
--	reg_val = phy_read(phydev, MSCC_PHY_ACTIPHY_CNTL);
--	reg_val &= ~(DOWNSHIFT_CNTL_MASK);
--	reg_val |= count;
--	rc = phy_write(phydev, MSCC_PHY_ACTIPHY_CNTL, reg_val);
--	if (rc != 0)
--		goto out;
--
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
--
--out:
--	return rc;
-+	return phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
-+				MSCC_PHY_ACTIPHY_CNTL, DOWNSHIFT_CNTL_MASK,
-+				count);
- }
- 
- static int vsc85xx_wol_set(struct phy_device *phydev,
-@@ -283,46 +262,48 @@ static int vsc85xx_wol_set(struct phy_device *phydev,
- 	u8 *mac_addr = phydev->attached_dev->dev_addr;
- 
- 	mutex_lock(&phydev->lock);
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED_2);
--	if (rc != 0)
-+	rc = phy_select_page(phydev, MSCC_PHY_PAGE_EXTENDED_2);
-+	if (rc < 0) {
-+		rc = phy_restore_page(phydev, rc, rc);
- 		goto out_unlock;
-+	}
- 
- 	if (wol->wolopts & WAKE_MAGIC) {
- 		/* Store the device address for the magic packet */
- 		for (i = 0; i < ARRAY_SIZE(pwd); i++)
- 			pwd[i] = mac_addr[5 - (i * 2 + 1)] << 8 |
- 				 mac_addr[5 - i * 2];
--		phy_write(phydev, MSCC_PHY_WOL_LOWER_MAC_ADDR, pwd[0]);
--		phy_write(phydev, MSCC_PHY_WOL_MID_MAC_ADDR, pwd[1]);
--		phy_write(phydev, MSCC_PHY_WOL_UPPER_MAC_ADDR, pwd[2]);
-+		__phy_write(phydev, MSCC_PHY_WOL_LOWER_MAC_ADDR, pwd[0]);
-+		__phy_write(phydev, MSCC_PHY_WOL_MID_MAC_ADDR, pwd[1]);
-+		__phy_write(phydev, MSCC_PHY_WOL_UPPER_MAC_ADDR, pwd[2]);
- 	} else {
--		phy_write(phydev, MSCC_PHY_WOL_LOWER_MAC_ADDR, 0);
--		phy_write(phydev, MSCC_PHY_WOL_MID_MAC_ADDR, 0);
--		phy_write(phydev, MSCC_PHY_WOL_UPPER_MAC_ADDR, 0);
-+		__phy_write(phydev, MSCC_PHY_WOL_LOWER_MAC_ADDR, 0);
-+		__phy_write(phydev, MSCC_PHY_WOL_MID_MAC_ADDR, 0);
-+		__phy_write(phydev, MSCC_PHY_WOL_UPPER_MAC_ADDR, 0);
- 	}
- 
- 	if (wol_conf->wolopts & WAKE_MAGICSECURE) {
- 		for (i = 0; i < ARRAY_SIZE(pwd); i++)
- 			pwd[i] = wol_conf->sopass[5 - (i * 2 + 1)] << 8 |
- 				 wol_conf->sopass[5 - i * 2];
--		phy_write(phydev, MSCC_PHY_WOL_LOWER_PASSWD, pwd[0]);
--		phy_write(phydev, MSCC_PHY_WOL_MID_PASSWD, pwd[1]);
--		phy_write(phydev, MSCC_PHY_WOL_UPPER_PASSWD, pwd[2]);
-+		__phy_write(phydev, MSCC_PHY_WOL_LOWER_PASSWD, pwd[0]);
-+		__phy_write(phydev, MSCC_PHY_WOL_MID_PASSWD, pwd[1]);
-+		__phy_write(phydev, MSCC_PHY_WOL_UPPER_PASSWD, pwd[2]);
- 	} else {
--		phy_write(phydev, MSCC_PHY_WOL_LOWER_PASSWD, 0);
--		phy_write(phydev, MSCC_PHY_WOL_MID_PASSWD, 0);
--		phy_write(phydev, MSCC_PHY_WOL_UPPER_PASSWD, 0);
-+		__phy_write(phydev, MSCC_PHY_WOL_LOWER_PASSWD, 0);
-+		__phy_write(phydev, MSCC_PHY_WOL_MID_PASSWD, 0);
-+		__phy_write(phydev, MSCC_PHY_WOL_UPPER_PASSWD, 0);
- 	}
- 
--	reg_val = phy_read(phydev, MSCC_PHY_WOL_MAC_CONTROL);
-+	reg_val = __phy_read(phydev, MSCC_PHY_WOL_MAC_CONTROL);
- 	if (wol_conf->wolopts & WAKE_MAGICSECURE)
- 		reg_val |= SECURE_ON_ENABLE;
- 	else
- 		reg_val &= ~SECURE_ON_ENABLE;
--	phy_write(phydev, MSCC_PHY_WOL_MAC_CONTROL, reg_val);
-+	__phy_write(phydev, MSCC_PHY_WOL_MAC_CONTROL, reg_val);
- 
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
--	if (rc != 0)
-+	rc = phy_restore_page(phydev, rc, rc > 0 ? 0 : rc);
-+	if (rc < 0)
- 		goto out_unlock;
- 
- 	if (wol->wolopts & WAKE_MAGIC) {
-@@ -359,17 +340,17 @@ static void vsc85xx_wol_get(struct phy_device *phydev,
- 	struct ethtool_wolinfo *wol_conf = wol;
- 
- 	mutex_lock(&phydev->lock);
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED_2);
--	if (rc != 0)
-+	rc = phy_select_page(phydev, MSCC_PHY_PAGE_EXTENDED_2);
-+	if (rc < 0)
- 		goto out_unlock;
- 
--	reg_val = phy_read(phydev, MSCC_PHY_WOL_MAC_CONTROL);
-+	reg_val = __phy_read(phydev, MSCC_PHY_WOL_MAC_CONTROL);
- 	if (reg_val & SECURE_ON_ENABLE)
- 		wol_conf->wolopts |= WAKE_MAGICSECURE;
- 	if (wol_conf->wolopts & WAKE_MAGICSECURE) {
--		pwd[0] = phy_read(phydev, MSCC_PHY_WOL_LOWER_PASSWD);
--		pwd[1] = phy_read(phydev, MSCC_PHY_WOL_MID_PASSWD);
--		pwd[2] = phy_read(phydev, MSCC_PHY_WOL_UPPER_PASSWD);
-+		pwd[0] = __phy_read(phydev, MSCC_PHY_WOL_LOWER_PASSWD);
-+		pwd[1] = __phy_read(phydev, MSCC_PHY_WOL_MID_PASSWD);
-+		pwd[2] = __phy_read(phydev, MSCC_PHY_WOL_UPPER_PASSWD);
- 		for (i = 0; i < ARRAY_SIZE(pwd); i++) {
- 			wol_conf->sopass[5 - i * 2] = pwd[i] & 0x00ff;
- 			wol_conf->sopass[5 - (i * 2 + 1)] = (pwd[i] & 0xff00)
-@@ -377,9 +358,8 @@ static void vsc85xx_wol_get(struct phy_device *phydev,
- 		}
- 	}
- 
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
--
- out_unlock:
-+	phy_restore_page(phydev, rc, rc > 0 ? 0 : rc);
- 	mutex_unlock(&phydev->lock);
- }
- 
-@@ -474,21 +454,11 @@ static int vsc85xx_dt_led_modes_get(struct phy_device *phydev,
- static int vsc85xx_edge_rate_cntl_set(struct phy_device *phydev, u8 edge_rate)
- {
- 	int rc;
--	u16 reg_val;
- 
- 	mutex_lock(&phydev->lock);
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED_2);
--	if (rc != 0)
--		goto out_unlock;
--	reg_val = phy_read(phydev, MSCC_PHY_WOL_MAC_CONTROL);
--	reg_val &= ~(EDGE_RATE_CNTL_MASK);
--	reg_val |= (edge_rate << EDGE_RATE_CNTL_POS);
--	rc = phy_write(phydev, MSCC_PHY_WOL_MAC_CONTROL, reg_val);
--	if (rc != 0)
--		goto out_unlock;
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
--
--out_unlock:
-+	rc = phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED_2,
-+			      MSCC_PHY_WOL_MAC_CONTROL, EDGE_RATE_CNTL_MASK,
-+			      edge_rate << EDGE_RATE_CNTL_POS);
- 	mutex_unlock(&phydev->lock);
- 
- 	return rc;
-@@ -537,17 +507,17 @@ static int vsc85xx_default_config(struct phy_device *phydev)
- 
- 	phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
- 	mutex_lock(&phydev->lock);
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_EXTENDED_2);
--	if (rc != 0)
-+	rc = phy_select_page(phydev, MSCC_PHY_PAGE_EXTENDED_2);
-+	if (rc < 0)
- 		goto out_unlock;
- 
- 	reg_val = phy_read(phydev, MSCC_PHY_RGMII_CNTL);
- 	reg_val &= ~(RGMII_RX_CLK_DELAY_MASK);
- 	reg_val |= (RGMII_RX_CLK_DELAY_1_1_NS << RGMII_RX_CLK_DELAY_POS);
- 	phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
--	rc = vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
- 
- out_unlock:
-+	rc = phy_restore_page(phydev, rc, rc > 0 ? 0 : rc);
- 	mutex_unlock(&phydev->lock);
- 
- 	return rc;
-@@ -699,6 +669,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.read_page	= &vsc85xx_phy_read_page,
-+	.write_page	= &vsc85xx_phy_write_page,
- },
- {
- 	.phy_id		= PHY_ID_VSC8531,
-@@ -720,6 +692,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.read_page	= &vsc85xx_phy_read_page,
-+	.write_page	= &vsc85xx_phy_write_page,
- },
- {
- 	.phy_id		= PHY_ID_VSC8540,
-@@ -741,6 +715,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.read_page	= &vsc85xx_phy_read_page,
-+	.write_page	= &vsc85xx_phy_write_page,
- },
- {
- 	.phy_id		= PHY_ID_VSC8541,
-@@ -762,6 +738,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.read_page	= &vsc85xx_phy_read_page,
-+	.write_page	= &vsc85xx_phy_write_page,
- }
- 
- };
--- 
-2.17.1
 
