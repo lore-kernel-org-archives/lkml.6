@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5007C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CB2C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B90214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B7FE21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mde2FX0x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B90214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTdjbDJc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7FE21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729994AbeJIByd (ORCPT
+        id S1730008AbeJIByh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42036 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728191AbeJIByc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:32 -0400
+        id S1728191AbeJIByg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:36 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FA1D2087D;
-        Mon,  8 Oct 2018 18:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A3FB21479;
+        Mon,  8 Oct 2018 18:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024087;
-        bh=Bxn8UVFcwXgX88L+DCftfcC/yq2+JnctzgQ5A+nYqfQ=;
+        s=default; t=1539024090;
+        bh=xJUtztpDObJZFGB5h6J5cD6OgkC40h8gTvz/fo3EU4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mde2FX0xPcXCBzCiI71rrLYkfhnk/k5WKJjeibzuyyaqe4O078Hl6ey/r2WPaELZS
-         SM31htGRmbD5rpCeJa6HGvM7BeVWO4RaNY8GYmAxGLwcyiYP/FgT5+HuoQKQgrHHwa
-         40+Q1PdqNO4ShKYLWEAxpzOFSxpQaCeV8e3PcSbA=
+        b=fTdjbDJcMKP5uI7OrE6EaLaY3sMKrjgeaoa+OSu5ajvEBlqZC8DVFTR+UHM+bo12+
+         h8EQIekRNqyNaEQPLrcvvfC16slg8gGB7YcUDRFuKB5FXKqJnka07mD2WEt+OmhS8v
+         cfFAfNGpOf61mfK5xSaI3NnKkL81WrzyqSPcmakg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 16/94] gpiolib-acpi: Register GpioInt ACPI event handlers from a late_initcall
-Date:   Mon,  8 Oct 2018 20:30:57 +0200
-Message-Id: <20181008175605.823277187@linuxfoundation.org>
+Subject: [PATCH 4.14 17/94] net: hns: add the code for cleaning pkt in chip
+Date:   Mon,  8 Oct 2018 20:30:58 +0200
+Message-Id: <20181008175605.870252914@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -65,202 +63,500 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Peng Li <lipeng321@huawei.com>
 
-[ Upstream commit 78d3a92edbfb02e8cb83173cad84c3f2d5e1f070 ]
+[ Upstream commit 31fabbee8f5c658c3fa1603c66e9e4f51ea8c2c6 ]
 
-GpioInt ACPI event handlers may see there IRQ triggered immediately
-after requesting the IRQ (esp. level triggered ones). This means that they
-may run before any other (builtin) drivers have had a chance to register
-their OpRegion handlers, leading to errors like this:
+If there are packets in hardware when changing the speed
+or duplex, it may cause hardware hang up.
 
-[    1.133274] ACPI Error: No handler for Region [PMOP] ((____ptrval____)) [UserDefinedRegion] (20180531/evregion-132)
-[    1.133286] ACPI Error: Region UserDefinedRegion (ID=141) has no handler (20180531/exfldio-265)
-[    1.133297] ACPI Error: Method parse/execution failed \_SB.GPO2._L01, AE_NOT_EXIST (20180531/psparse-516)
+This patch adds the code for waiting chip to clean the all
+pkts(TX & RX) in chip when the driver uses the function named
+"adjust link".
 
-We already defer the manual initial trigger of edge triggered interrupts
-by running it from a late_initcall handler, this commit replaces this with
-deferring the entire acpi_gpiochip_request_interrupts() call till then,
-fixing the problem of some OpRegions not being registered yet.
+This patch cleans the pkts as follows:
+1) close rx of chip, close tx of protocol stack.
+2) wait rcb, ppe, mac to clean.
+3) adjust link
+4) open rx of chip, open tx of protocol stack.
 
-Note that this removes the need to have a list of edge triggered handlers
-which need to run, since the entire acpi_gpiochip_request_interrupts() call
-is now delayed, acpi_gpiochip_request_interrupt() can call these directly
-now.
-
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib-acpi.c |   84 +++++++++++++++++++++++++-------------------
- 1 file changed, 49 insertions(+), 35 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hnae.h          |    2 
+ drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c  |   67 ++++++++++++++++++++-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c |   36 +++++++++++
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c  |   44 +++++++++++++
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h  |    8 ++
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c |   29 +++++++++
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h |    3 
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c  |   23 +++++++
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h  |    1 
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c  |   23 +++++++
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h  |    1 
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h  |    1 
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c      |   21 +++++-
+ 13 files changed, 255 insertions(+), 4 deletions(-)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -25,7 +25,6 @@
- 
- struct acpi_gpio_event {
- 	struct list_head node;
--	struct list_head initial_sync_list;
- 	acpi_handle handle;
- 	unsigned int pin;
- 	unsigned int irq;
-@@ -49,10 +48,19 @@ struct acpi_gpio_chip {
- 	struct mutex conn_lock;
- 	struct gpio_chip *chip;
- 	struct list_head events;
-+	struct list_head deferred_req_irqs_list_entry;
- };
- 
--static LIST_HEAD(acpi_gpio_initial_sync_list);
--static DEFINE_MUTEX(acpi_gpio_initial_sync_list_lock);
-+/*
-+ * For gpiochips which call acpi_gpiochip_request_interrupts() before late_init
-+ * (so builtin drivers) we register the ACPI GpioInt event handlers from a
-+ * late_initcall_sync handler, so that other builtin drivers can register their
-+ * OpRegions before the event handlers can run.  This list contains gpiochips
-+ * for which the acpi_gpiochip_request_interrupts() has been deferred.
-+ */
-+static DEFINE_MUTEX(acpi_gpio_deferred_req_irqs_lock);
-+static LIST_HEAD(acpi_gpio_deferred_req_irqs_list);
-+static bool acpi_gpio_deferred_req_irqs_done;
- 
- static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
- {
-@@ -146,21 +154,6 @@ static struct gpio_desc *acpi_get_gpiod(
- 	return gpiochip_get_desc(chip, offset);
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.h
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
+@@ -486,6 +486,8 @@ struct hnae_ae_ops {
+ 			u8 *auto_neg, u16 *speed, u8 *duplex);
+ 	void (*toggle_ring_irq)(struct hnae_ring *ring, u32 val);
+ 	void (*adjust_link)(struct hnae_handle *handle, int speed, int duplex);
++	bool (*need_adjust_link)(struct hnae_handle *handle,
++				 int speed, int duplex);
+ 	int (*set_loopback)(struct hnae_handle *handle,
+ 			    enum hnae_loop loop_mode, int en);
+ 	void (*get_ring_bdnum_limit)(struct hnae_queue *queue,
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -155,6 +155,41 @@ static void hns_ae_put_handle(struct hna
+ 		hns_ae_get_ring_pair(handle->qs[i])->used_by_vf = 0;
  }
  
--static void acpi_gpio_add_to_initial_sync_list(struct acpi_gpio_event *event)
--{
--	mutex_lock(&acpi_gpio_initial_sync_list_lock);
--	list_add(&event->initial_sync_list, &acpi_gpio_initial_sync_list);
--	mutex_unlock(&acpi_gpio_initial_sync_list_lock);
--}
--
--static void acpi_gpio_del_from_initial_sync_list(struct acpi_gpio_event *event)
--{
--	mutex_lock(&acpi_gpio_initial_sync_list_lock);
--	if (!list_empty(&event->initial_sync_list))
--		list_del_init(&event->initial_sync_list);
--	mutex_unlock(&acpi_gpio_initial_sync_list_lock);
--}
--
- static irqreturn_t acpi_gpio_irq_handler(int irq, void *data)
++static int hns_ae_wait_flow_down(struct hnae_handle *handle)
++{
++	struct dsaf_device *dsaf_dev;
++	struct hns_ppe_cb *ppe_cb;
++	struct hnae_vf_cb *vf_cb;
++	int ret;
++	int i;
++
++	for (i = 0; i < handle->q_num; i++) {
++		ret = hns_rcb_wait_tx_ring_clean(handle->qs[i]);
++		if (ret)
++			return ret;
++	}
++
++	ppe_cb = hns_get_ppe_cb(handle);
++	ret = hns_ppe_wait_tx_fifo_clean(ppe_cb);
++	if (ret)
++		return ret;
++
++	dsaf_dev = hns_ae_get_dsaf_dev(handle->dev);
++	if (!dsaf_dev)
++		return -EINVAL;
++	ret = hns_dsaf_wait_pkt_clean(dsaf_dev, handle->dport_id);
++	if (ret)
++		return ret;
++
++	vf_cb = hns_ae_get_vf_cb(handle);
++	ret = hns_mac_wait_fifo_clean(vf_cb->mac_cb);
++	if (ret)
++		return ret;
++
++	mdelay(10);
++	return 0;
++}
++
+ static void hns_ae_ring_enable_all(struct hnae_handle *handle, int val)
  {
- 	struct acpi_gpio_event *event = data;
-@@ -290,7 +283,6 @@ static acpi_status acpi_gpiochip_request
- 	event->irq = irq;
- 	event->pin = pin;
- 	event->desc = desc;
--	INIT_LIST_HEAD(&event->initial_sync_list);
- 
- 	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
- 				   "ACPI:Event", event);
-@@ -312,10 +304,9 @@ static acpi_status acpi_gpiochip_request
- 	 * may refer to OperationRegions from other (builtin) drivers which
- 	 * may be probed after us.
- 	 */
--	if (handler == acpi_gpio_irq_handler &&
--	    (((irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
--	     ((irqflags & IRQF_TRIGGER_FALLING) && value == 0)))
--		acpi_gpio_add_to_initial_sync_list(event);
-+	if (((irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
-+	    ((irqflags & IRQF_TRIGGER_FALLING) && value == 0))
-+		handler(event->irq, event);
- 
- 	return AE_OK;
- 
-@@ -344,6 +335,7 @@ void acpi_gpiochip_request_interrupts(st
- 	struct acpi_gpio_chip *acpi_gpio;
- 	acpi_handle handle;
- 	acpi_status status;
-+	bool defer;
- 
- 	if (!chip->parent || !chip->to_irq)
- 		return;
-@@ -356,6 +348,16 @@ void acpi_gpiochip_request_interrupts(st
- 	if (ACPI_FAILURE(status))
- 		return;
- 
-+	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
-+	defer = !acpi_gpio_deferred_req_irqs_done;
-+	if (defer)
-+		list_add(&acpi_gpio->deferred_req_irqs_list_entry,
-+			 &acpi_gpio_deferred_req_irqs_list);
-+	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
-+
-+	if (defer)
-+		return;
-+
- 	acpi_walk_resources(handle, "_AEI",
- 			    acpi_gpiochip_request_interrupt, acpi_gpio);
- }
-@@ -386,11 +388,14 @@ void acpi_gpiochip_free_interrupts(struc
- 	if (ACPI_FAILURE(status))
- 		return;
- 
-+	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
-+	if (!list_empty(&acpi_gpio->deferred_req_irqs_list_entry))
-+		list_del_init(&acpi_gpio->deferred_req_irqs_list_entry);
-+	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
-+
- 	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
- 		struct gpio_desc *desc;
- 
--		acpi_gpio_del_from_initial_sync_list(event);
--
- 		if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
- 			disable_irq_wake(event->irq);
- 
-@@ -1101,6 +1106,7 @@ void acpi_gpiochip_add(struct gpio_chip
- 
- 	acpi_gpio->chip = chip;
- 	INIT_LIST_HEAD(&acpi_gpio->events);
-+	INIT_LIST_HEAD(&acpi_gpio->deferred_req_irqs_list_entry);
- 
- 	status = acpi_attach_data(handle, acpi_gpio_chip_dh, acpi_gpio);
- 	if (ACPI_FAILURE(status)) {
-@@ -1247,20 +1253,28 @@ bool acpi_can_fallback_to_crs(struct acp
- 	return con_id == NULL;
+ 	int q_num = handle->q_num;
+@@ -399,12 +434,41 @@ static int hns_ae_get_mac_info(struct hn
+ 	return hns_mac_get_port_info(mac_cb, auto_neg, speed, duplex);
  }
  
--/* Sync the initial state of handlers after all builtin drivers have probed */
--static int acpi_gpio_initial_sync(void)
-+/* Run deferred acpi_gpiochip_request_interrupts() */
-+static int acpi_gpio_handle_deferred_request_interrupts(void)
++static bool hns_ae_need_adjust_link(struct hnae_handle *handle, int speed,
++				    int duplex)
++{
++	struct hns_mac_cb *mac_cb = hns_get_mac_cb(handle);
++
++	return hns_mac_need_adjust_link(mac_cb, speed, duplex);
++}
++
+ static void hns_ae_adjust_link(struct hnae_handle *handle, int speed,
+ 			       int duplex)
  {
--	struct acpi_gpio_event *event, *ep;
-+	struct acpi_gpio_chip *acpi_gpio, *tmp;
-+
-+	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
-+	list_for_each_entry_safe(acpi_gpio, tmp,
-+				 &acpi_gpio_deferred_req_irqs_list,
-+				 deferred_req_irqs_list_entry) {
-+		acpi_handle handle;
+ 	struct hns_mac_cb *mac_cb = hns_get_mac_cb(handle);
  
--	mutex_lock(&acpi_gpio_initial_sync_list_lock);
--	list_for_each_entry_safe(event, ep, &acpi_gpio_initial_sync_list,
--				 initial_sync_list) {
--		acpi_evaluate_object(event->handle, NULL, NULL, NULL);
--		list_del_init(&event->initial_sync_list);
-+		handle = ACPI_HANDLE(acpi_gpio->chip->parent);
-+		acpi_walk_resources(handle, "_AEI",
-+				    acpi_gpiochip_request_interrupt, acpi_gpio);
+-	hns_mac_adjust_link(mac_cb, speed, duplex);
++	switch (mac_cb->dsaf_dev->dsaf_ver) {
++	case AE_VERSION_1:
++		hns_mac_adjust_link(mac_cb, speed, duplex);
++		break;
 +
-+		list_del_init(&acpi_gpio->deferred_req_irqs_list_entry);
- 	}
--	mutex_unlock(&acpi_gpio_initial_sync_list_lock);
++	case AE_VERSION_2:
++		/* chip need to clear all pkt inside */
++		hns_mac_disable(mac_cb, MAC_COMM_MODE_RX);
++		if (hns_ae_wait_flow_down(handle)) {
++			hns_mac_enable(mac_cb, MAC_COMM_MODE_RX);
++			break;
++		}
 +
-+	acpi_gpio_deferred_req_irqs_done = true;
-+	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
++		hns_mac_adjust_link(mac_cb, speed, duplex);
++		hns_mac_enable(mac_cb, MAC_COMM_MODE_RX);
++		break;
++
++	default:
++		break;
++	}
++
++	return;
+ }
  
+ static void hns_ae_get_ring_bdnum_limit(struct hnae_queue *queue,
+@@ -902,6 +966,7 @@ static struct hnae_ae_ops hns_dsaf_ops =
+ 	.get_status = hns_ae_get_link_status,
+ 	.get_info = hns_ae_get_mac_info,
+ 	.adjust_link = hns_ae_adjust_link,
++	.need_adjust_link = hns_ae_need_adjust_link,
+ 	.set_loopback = hns_ae_config_loopback,
+ 	.get_ring_bdnum_limit = hns_ae_get_ring_bdnum_limit,
+ 	.get_pauseparam = hns_ae_get_pauseparam,
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -257,6 +257,16 @@ static void hns_gmac_get_pausefrm_cfg(vo
+ 	*tx_pause_en = dsaf_get_bit(pause_en, GMAC_PAUSE_EN_TX_FDFC_B);
+ }
+ 
++static bool hns_gmac_need_adjust_link(void *mac_drv, enum mac_speed speed,
++				      int duplex)
++{
++	struct mac_driver *drv = (struct mac_driver *)mac_drv;
++	struct hns_mac_cb *mac_cb = drv->mac_cb;
++
++	return (mac_cb->speed != speed) ||
++		(mac_cb->half_duplex == duplex);
++}
++
+ static int hns_gmac_adjust_link(void *mac_drv, enum mac_speed speed,
+ 				u32 full_duplex)
+ {
+@@ -309,6 +319,30 @@ static void hns_gmac_set_promisc(void *m
+ 		hns_gmac_set_uc_match(mac_drv, en);
+ }
+ 
++int hns_gmac_wait_fifo_clean(void *mac_drv)
++{
++	struct mac_driver *drv = (struct mac_driver *)mac_drv;
++	int wait_cnt;
++	u32 val;
++
++	wait_cnt = 0;
++	while (wait_cnt++ < HNS_MAX_WAIT_CNT) {
++		val = dsaf_read_dev(drv, GMAC_FIFO_STATE_REG);
++		/* bit5~bit0 is not send complete pkts */
++		if ((val & 0x3f) == 0)
++			break;
++		usleep_range(100, 200);
++	}
++
++	if (wait_cnt >= HNS_MAX_WAIT_CNT) {
++		dev_err(drv->dev,
++			"hns ge %d fifo was not idle.\n", drv->mac_id);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
+ static void hns_gmac_init(void *mac_drv)
+ {
+ 	u32 port;
+@@ -690,6 +724,7 @@ void *hns_gmac_config(struct hns_mac_cb
+ 	mac_drv->mac_disable = hns_gmac_disable;
+ 	mac_drv->mac_free = hns_gmac_free;
+ 	mac_drv->adjust_link = hns_gmac_adjust_link;
++	mac_drv->need_adjust_link = hns_gmac_need_adjust_link;
+ 	mac_drv->set_tx_auto_pause_frames = hns_gmac_set_tx_auto_pause_frames;
+ 	mac_drv->config_max_frame_length = hns_gmac_config_max_frame_length;
+ 	mac_drv->mac_pausefrm_cfg = hns_gmac_pause_frm_cfg;
+@@ -717,6 +752,7 @@ void *hns_gmac_config(struct hns_mac_cb
+ 	mac_drv->get_strings = hns_gmac_get_strings;
+ 	mac_drv->update_stats = hns_gmac_update_stats;
+ 	mac_drv->set_promiscuous = hns_gmac_set_promisc;
++	mac_drv->wait_fifo_clean = hns_gmac_wait_fifo_clean;
+ 
+ 	return (void *)mac_drv;
+ }
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+@@ -114,6 +114,26 @@ int hns_mac_get_port_info(struct hns_mac
  	return 0;
  }
- /* We must use _sync so that this runs after the first deferred_probe run */
--late_initcall_sync(acpi_gpio_initial_sync);
-+late_initcall_sync(acpi_gpio_handle_deferred_request_interrupts);
+ 
++/**
++ *hns_mac_is_adjust_link - check is need change mac speed and duplex register
++ *@mac_cb: mac device
++ *@speed: phy device speed
++ *@duplex:phy device duplex
++ *
++ */
++bool hns_mac_need_adjust_link(struct hns_mac_cb *mac_cb, int speed, int duplex)
++{
++	struct mac_driver *mac_ctrl_drv;
++
++	mac_ctrl_drv = (struct mac_driver *)(mac_cb->priv.mac);
++
++	if (mac_ctrl_drv->need_adjust_link)
++		return mac_ctrl_drv->need_adjust_link(mac_ctrl_drv,
++			(enum mac_speed)speed, duplex);
++	else
++		return true;
++}
++
+ void hns_mac_adjust_link(struct hns_mac_cb *mac_cb, int speed, int duplex)
+ {
+ 	int ret;
+@@ -432,6 +452,16 @@ int hns_mac_vm_config_bc_en(struct hns_m
+ 	return 0;
+ }
+ 
++int hns_mac_wait_fifo_clean(struct hns_mac_cb *mac_cb)
++{
++	struct mac_driver *drv = hns_mac_get_drv(mac_cb);
++
++	if (drv->wait_fifo_clean)
++		return drv->wait_fifo_clean(drv);
++
++	return 0;
++}
++
+ void hns_mac_reset(struct hns_mac_cb *mac_cb)
+ {
+ 	struct mac_driver *drv = hns_mac_get_drv(mac_cb);
+@@ -1001,6 +1031,20 @@ static int hns_mac_get_max_port_num(stru
+ 		return  DSAF_MAX_PORT_NUM;
+ }
+ 
++void hns_mac_enable(struct hns_mac_cb *mac_cb, enum mac_commom_mode mode)
++{
++	struct mac_driver *mac_ctrl_drv = hns_mac_get_drv(mac_cb);
++
++	mac_ctrl_drv->mac_enable(mac_cb->priv.mac, mode);
++}
++
++void hns_mac_disable(struct hns_mac_cb *mac_cb, enum mac_commom_mode mode)
++{
++	struct mac_driver *mac_ctrl_drv = hns_mac_get_drv(mac_cb);
++
++	mac_ctrl_drv->mac_disable(mac_cb->priv.mac, mode);
++}
++
+ /**
+  * hns_mac_init - init mac
+  * @dsaf_dev: dsa fabric device struct pointer
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h
+@@ -356,6 +356,9 @@ struct mac_driver {
+ 	/*adjust mac mode of port,include speed and duplex*/
+ 	int (*adjust_link)(void *mac_drv, enum mac_speed speed,
+ 			   u32 full_duplex);
++	/* need adjust link */
++	bool (*need_adjust_link)(void *mac_drv, enum mac_speed speed,
++				 int duplex);
+ 	/* config autoegotaite mode of port*/
+ 	void (*set_an_mode)(void *mac_drv, u8 enable);
+ 	/* config loopbank mode */
+@@ -394,6 +397,7 @@ struct mac_driver {
+ 	void (*get_info)(void *mac_drv, struct mac_info *mac_info);
+ 
+ 	void (*update_stats)(void *mac_drv);
++	int (*wait_fifo_clean)(void *mac_drv);
+ 
+ 	enum mac_mode mac_mode;
+ 	u8 mac_id;
+@@ -427,6 +431,7 @@ void *hns_xgmac_config(struct hns_mac_cb
+ 
+ int hns_mac_init(struct dsaf_device *dsaf_dev);
+ void mac_adjust_link(struct net_device *net_dev);
++bool hns_mac_need_adjust_link(struct hns_mac_cb *mac_cb, int speed, int duplex);
+ void hns_mac_get_link_status(struct hns_mac_cb *mac_cb,	u32 *link_status);
+ int hns_mac_change_vf_addr(struct hns_mac_cb *mac_cb, u32 vmid, char *addr);
+ int hns_mac_set_multi(struct hns_mac_cb *mac_cb,
+@@ -463,5 +468,8 @@ int hns_mac_add_uc_addr(struct hns_mac_c
+ int hns_mac_rm_uc_addr(struct hns_mac_cb *mac_cb, u8 vf_id,
+ 		       const unsigned char *addr);
+ int hns_mac_clr_multicast(struct hns_mac_cb *mac_cb, int vfn);
++void hns_mac_enable(struct hns_mac_cb *mac_cb, enum mac_commom_mode mode);
++void hns_mac_disable(struct hns_mac_cb *mac_cb, enum mac_commom_mode mode);
++int hns_mac_wait_fifo_clean(struct hns_mac_cb *mac_cb);
+ 
+ #endif /* _HNS_DSAF_MAC_H */
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -2720,6 +2720,35 @@ void hns_dsaf_set_promisc_tcam(struct ds
+ 	soft_mac_entry->index = enable ? entry_index : DSAF_INVALID_ENTRY_IDX;
+ }
+ 
++int hns_dsaf_wait_pkt_clean(struct dsaf_device *dsaf_dev, int port)
++{
++	u32 val, val_tmp;
++	int wait_cnt;
++
++	if (port >= DSAF_SERVICE_NW_NUM)
++		return 0;
++
++	wait_cnt = 0;
++	while (wait_cnt++ < HNS_MAX_WAIT_CNT) {
++		val = dsaf_read_dev(dsaf_dev, DSAF_VOQ_IN_PKT_NUM_0_REG +
++			(port + DSAF_XGE_NUM) * 0x40);
++		val_tmp = dsaf_read_dev(dsaf_dev, DSAF_VOQ_OUT_PKT_NUM_0_REG +
++			(port + DSAF_XGE_NUM) * 0x40);
++		if (val == val_tmp)
++			break;
++
++		usleep_range(100, 200);
++	}
++
++	if (wait_cnt >= HNS_MAX_WAIT_CNT) {
++		dev_err(dsaf_dev->dev, "hns dsaf clean wait timeout(%u - %u).\n",
++			val, val_tmp);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
+ /**
+  * dsaf_probe - probo dsaf dev
+  * @pdev: dasf platform device
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h
+@@ -44,6 +44,8 @@ struct hns_mac_cb;
+ #define DSAF_ROCE_CREDIT_CHN	8
+ #define DSAF_ROCE_CHAN_MODE	3
+ 
++#define HNS_MAX_WAIT_CNT 10000
++
+ enum dsaf_roce_port_mode {
+ 	DSAF_ROCE_6PORT_MODE,
+ 	DSAF_ROCE_4PORT_MODE,
+@@ -463,5 +465,6 @@ int hns_dsaf_rm_mac_addr(
+ 
+ int hns_dsaf_clr_mac_mc_port(struct dsaf_device *dsaf_dev,
+ 			     u8 mac_id, u8 port_num);
++int hns_dsaf_wait_pkt_clean(struct dsaf_device *dsaf_dev, int port);
+ 
+ #endif /* __HNS_DSAF_MAIN_H__ */
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
+@@ -274,6 +274,29 @@ static void hns_ppe_exc_irq_en(struct hn
+ 	dsaf_write_dev(ppe_cb, PPE_INTEN_REG, msk_vlue & vld_msk);
+ }
+ 
++int hns_ppe_wait_tx_fifo_clean(struct hns_ppe_cb *ppe_cb)
++{
++	int wait_cnt;
++	u32 val;
++
++	wait_cnt = 0;
++	while (wait_cnt++ < HNS_MAX_WAIT_CNT) {
++		val = dsaf_read_dev(ppe_cb, PPE_CURR_TX_FIFO0_REG) & 0x3ffU;
++		if (!val)
++			break;
++
++		usleep_range(100, 200);
++	}
++
++	if (wait_cnt >= HNS_MAX_WAIT_CNT) {
++		dev_err(ppe_cb->dev, "hns ppe tx fifo clean wait timeout, still has %u pkt.\n",
++			val);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
+ /**
+  * ppe_init_hw - init ppe
+  * @ppe_cb: ppe device
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
+@@ -100,6 +100,7 @@ struct ppe_common_cb {
+ 
+ };
+ 
++int hns_ppe_wait_tx_fifo_clean(struct hns_ppe_cb *ppe_cb);
+ int hns_ppe_init(struct dsaf_device *dsaf_dev);
+ 
+ void hns_ppe_uninit(struct dsaf_device *dsaf_dev);
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+@@ -66,6 +66,29 @@ void hns_rcb_wait_fbd_clean(struct hnae_
+ 			"queue(%d) wait fbd(%d) clean fail!!\n", i, fbd_num);
+ }
+ 
++int hns_rcb_wait_tx_ring_clean(struct hnae_queue *qs)
++{
++	u32 head, tail;
++	int wait_cnt;
++
++	tail = dsaf_read_dev(&qs->tx_ring, RCB_REG_TAIL);
++	wait_cnt = 0;
++	while (wait_cnt++ < HNS_MAX_WAIT_CNT) {
++		head = dsaf_read_dev(&qs->tx_ring, RCB_REG_HEAD);
++		if (tail == head)
++			break;
++
++		usleep_range(100, 200);
++	}
++
++	if (wait_cnt >= HNS_MAX_WAIT_CNT) {
++		dev_err(qs->dev->dev, "rcb wait timeout, head not equal to tail.\n");
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
+ /**
+  *hns_rcb_reset_ring_hw - ring reset
+  *@q: ring struct pointer
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
+@@ -136,6 +136,7 @@ void hns_rcbv2_int_clr_hw(struct hnae_qu
+ void hns_rcb_init_hw(struct ring_pair_cb *ring);
+ void hns_rcb_reset_ring_hw(struct hnae_queue *q);
+ void hns_rcb_wait_fbd_clean(struct hnae_queue **qs, int q_num, u32 flag);
++int hns_rcb_wait_tx_ring_clean(struct hnae_queue *qs);
+ u32 hns_rcb_get_rx_coalesced_frames(
+ 	struct rcb_common_cb *rcb_common, u32 port_idx);
+ u32 hns_rcb_get_tx_coalesced_frames(
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+@@ -464,6 +464,7 @@
+ #define RCB_RING_INTMSK_TX_OVERTIME_REG		0x000C4
+ #define RCB_RING_INTSTS_TX_OVERTIME_REG		0x000C8
+ 
++#define GMAC_FIFO_STATE_REG			0x0000UL
+ #define GMAC_DUPLEX_TYPE_REG			0x0008UL
+ #define GMAC_FD_FC_TYPE_REG			0x000CUL
+ #define GMAC_TX_WATER_LINE_REG			0x0010UL
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -1212,11 +1212,26 @@ static void hns_nic_adjust_link(struct n
+ 	struct hnae_handle *h = priv->ae_handle;
+ 	int state = 1;
+ 
++	/* If there is no phy, do not need adjust link */
+ 	if (ndev->phydev) {
+-		h->dev->ops->adjust_link(h, ndev->phydev->speed,
+-					 ndev->phydev->duplex);
+-		state = ndev->phydev->link;
++		/* When phy link down, do nothing */
++		if (ndev->phydev->link == 0)
++			return;
++
++		if (h->dev->ops->need_adjust_link(h, ndev->phydev->speed,
++						  ndev->phydev->duplex)) {
++			/* because Hi161X chip don't support to change gmac
++			 * speed and duplex with traffic. Delay 200ms to
++			 * make sure there is no more data in chip FIFO.
++			 */
++			netif_carrier_off(ndev);
++			msleep(200);
++			h->dev->ops->adjust_link(h, ndev->phydev->speed,
++						 ndev->phydev->duplex);
++			netif_carrier_on(ndev);
++		}
+ 	}
++
+ 	state = state && h->dev->ops->get_status(h);
+ 
+ 	if (state != priv->link) {
 
 
