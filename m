@@ -2,93 +2,93 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59342C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B6BC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1695A2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:28:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xYX2q2Tv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1695A2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B06F12075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:28:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06F12075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeJHVkP (ORCPT
+        id S1726616AbeJHVkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:40:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbeJHVkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:40:15 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D8372075C;
-        Mon,  8 Oct 2018 14:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539008895;
-        bh=o1mnGNdcH60LR1/UDO1/SBCOxCEPw8HfaV0F+r+50Tg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xYX2q2TvzTlmxDbW5rkpPyJHUZs0bXqelthEJ96TRLvTcMdESCM3HPhgl04OBfsoD
-         akbsZKRmS1gTX8+ckZkTHC5AUlETHdL4phXZSAe3HF5f0pATShpjFSoSMHNuzw1WVg
-         jvfOSjKzUhBuWDJ6Dqr2y07IHtFFF4t0B+TV7WKc=
-Date:   Mon, 8 Oct 2018 16:28:13 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Linux 4.19-rc7
-Message-ID: <20181008142813.GB7310@kroah.com>
-References: <20181007154529.GA4493@kroah.com>
- <20181007223622.GA12196@roeck-us.net>
+        Mon, 8 Oct 2018 17:40:45 -0400
+Received: from mailoutvs9.siol.net ([185.57.226.200]:33022 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726379AbeJHVkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:40:45 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 25269520C5A;
+        Mon,  8 Oct 2018 16:28:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id YcDYi2KmUKeT; Mon,  8 Oct 2018 16:28:42 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id B83D1520D17;
+        Mon,  8 Oct 2018 16:28:42 +0200 (CEST)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id 3F4F6520D0D;
+        Mon,  8 Oct 2018 16:28:42 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
+        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 10/29] drm/sun4i: Rename DE2 registers related macros
+Date:   Mon, 08 Oct 2018 16:28:41 +0200
+Message-ID: <11072788.dZi9MDiihb@jernej-laptop>
+In-Reply-To: <20181008101828.hb4xtppbexwalbkk@flea>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net> <20181007093905.11253-11-jernej.skrabec@siol.net> <20181008101828.hb4xtppbexwalbkk@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181007223622.GA12196@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 07, 2018 at 03:36:22PM -0700, Guenter Roeck wrote:
-> On Sun, Oct 07, 2018 at 05:45:29PM +0200, Greg KH wrote:
-> > Hi all,
-> > 
-> > Yet again, it's time for a kernel -rc release.  This one is bigger than
-> > -rc6 was, for a variety of unrelated reasons it seems.  Lots of
-> > different trees being merged this week, much more so than the previous
-> > one.  Highlights include two sets of networking fixes, lots of different
-> > driver subsystem fixes, arm and arm64 and x86 and riscv and powerpc64
-> > fixes, as well as scheduler, iommu, and vfs fixes.  Not a huge quantity
-> > overall, just overall a lot of different things.
-> > 
-> > Given the current rate of change, and looking at the travel/conference
-> > schedule happening this month, it seems like we will be having a -rc8
-> > just to be sure 4.19 is solid as well as not having to be in the middle
-> > of a merge window during a conference week.  Please go test and make
-> > sure any remaining problems are sent in in time.
-> > 
+Dne ponedeljek, 08. oktober 2018 ob 12:18:28 CEST je Maxime Ripard napisal(a):
+> Hi,
 > 
-> Build results:
-> 	total: 135 pass: 135 fail: 0
-> Qemu test results:
-> 	total: 318 pass: 318 fail: 0
+> On Sun, Oct 07, 2018 at 11:38:46AM +0200, Jernej Skrabec wrote:
+> > In preparation to introduce DE3 support, change prefix from "SUN8I_" to
+> > "DE2_". Current prefix suggest that it's valid only for one family,
+> > whereas in reality, DE2 unit is used also on sun50i family.
+> > Additionally, it will be easier to distinguish DE3 specific macros by
+> > using "DE3_" prefix.
+> > 
+> > No functional change in this commit.
 > 
-> Details are available at https://kerneltests.org/builders/.
+> I'm not too sure about this one. There's basically two ways to look at
+> this: you described the first one, and the second one would be to
+> treat it as we do for the compatibles: the IP was introduced on one
+> SoC family, and then got used on some other ones.
 > 
-> Notes:
-> - sparc32:allmodconfig is no longer built.
->   Starting with v4.19, nds32:allmodconfig will be built instead.
-> - CONFIG_OF_UNITTEST is now disabled.
+> Trying to always match the one you have however have a quite big
+> maintainance cost, as can be shown by your patch: you always have to
+> adapt comments, function names, defines, etc. This creates a lot of
+> useless churns (ie, non-functional changes) in the drivers, that need
+> to be written in the first place, and then reviewed.
+> 
+> It's just not worth it.
 
-Ah, not building broken tests helps :)
+Well, using family neutral way would mean that there is no need anymore for 
+adaptation in the future, but as you wish.
 
-thanks for testing these and letting me know.
+What prefix should I use for DE3 specific registers?
 
-greg k-h
+Best regards,
+Jernej
+
+
+
