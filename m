@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6528BC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C518C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FAAB20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C6E20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSeaZY0e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAAB20C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJbxReJx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C6E20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbeJIBqW (ORCPT
+        id S1727081AbeJIBqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:46:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56446 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:46:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726391AbeJIBqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:46:21 -0400
+        id S1726391AbeJIBqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:46:23 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43A53214C2;
-        Mon,  8 Oct 2018 18:33:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBCAB2087D;
+        Mon,  8 Oct 2018 18:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023598;
-        bh=iXrCk7W5Gn6cGYb1c/yztWCGmQLGoIMWlWTJ/O3XwDA=;
+        s=default; t=1539023601;
+        bh=BIeUfadwax0MUz/LfmvwJJrbQyFJcsE4PjQtiUpcv5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OSeaZY0ebrFAe6gPPmIMPxpd7zlDqJdt1Qq4xmSyu6VRL4/orHO6YH2bspSeNoUp+
-         MPx2wrbljxhnCLjPqK9D3mWGrGHVz5qW6DnA+QAdtW1YLzuLU80S2/QEe+f/aC9fHl
-         iZAdc7I+CsyXDjR67tOJHNJpfeTb8mH7pn6tIihc=
+        b=UJbxReJx6Pb24gu6adeaVFreinPpq+++fpmQEx92+lUSO/xVZRXuI/+FeQnKSeapk
+         s0D1DBzSYKiUNZVNb3dZezQHv+p90wLaWaiYUQqVYNoFydWdDY7attIouDsYtLziY9
+         qxZNF/M2Aqvt0XNvi04TB23VNOjE47xoILJQrL7I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 020/113] usb: wusbcore: security: cast sizeof to int for comparison
-Date:   Mon,  8 Oct 2018 20:30:21 +0200
-Message-Id: <20181008175531.831525277@linuxfoundation.org>
+Subject: [PATCH 4.4 003/113] vmci: type promotion bug in qp_host_get_user_memory()
+Date:   Mon,  8 Oct 2018 20:30:04 +0200
+Message-Id: <20181008175531.043550308@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,48 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit d3ac5598c5010a8999978ebbcca3b1c6188ca36b ]
+[ Upstream commit 7fb2fd4e25fc1fb10dcb30b5519de257cfeae84c ]
 
-Comparing an int to a size, which is unsigned, causes the int to become
-unsigned, giving the wrong result.  usb_get_descriptor can return a
-negative error code.
+The problem is that if get_user_pages_fast() fails and returns a
+negative error code, it gets type promoted to a high positive value and
+treated as a success.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-int x;
-expression e,e1;
-identifier f;
-@@
-
-*x = f(...);
-... when != x = e1
-    when != if (x < 0 || ...) { ... return ...; }
-*x < sizeof(e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/wusbcore/security.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/vmw_vmci/vmci_queue_pair.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/wusbcore/security.c
-+++ b/drivers/usb/wusbcore/security.c
-@@ -230,7 +230,7 @@ int wusb_dev_sec_add(struct wusbhc *wusb
- 
- 	result = usb_get_descriptor(usb_dev, USB_DT_SECURITY,
- 				    0, secd, sizeof(*secd));
--	if (result < sizeof(*secd)) {
-+	if (result < (int)sizeof(*secd)) {
- 		dev_err(dev, "Can't read security descriptor or "
- 			"not enough data: %d\n", result);
- 		goto out;
+--- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
++++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
+@@ -755,7 +755,7 @@ static int qp_host_get_user_memory(u64 p
+ 	retval = get_user_pages_fast((uintptr_t) produce_uva,
+ 				     produce_q->kernel_if->num_pages, 1,
+ 				     produce_q->kernel_if->u.h.header_page);
+-	if (retval < produce_q->kernel_if->num_pages) {
++	if (retval < (int)produce_q->kernel_if->num_pages) {
+ 		pr_debug("get_user_pages_fast(produce) failed (retval=%d)",
+ 			retval);
+ 		qp_release_pages(produce_q->kernel_if->u.h.header_page,
+@@ -767,7 +767,7 @@ static int qp_host_get_user_memory(u64 p
+ 	retval = get_user_pages_fast((uintptr_t) consume_uva,
+ 				     consume_q->kernel_if->num_pages, 1,
+ 				     consume_q->kernel_if->u.h.header_page);
+-	if (retval < consume_q->kernel_if->num_pages) {
++	if (retval < (int)consume_q->kernel_if->num_pages) {
+ 		pr_debug("get_user_pages_fast(consume) failed (retval=%d)",
+ 			retval);
+ 		qp_release_pages(consume_q->kernel_if->u.h.header_page,
 
 
