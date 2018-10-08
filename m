@@ -2,221 +2,75 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F271EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7368BC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0062077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0062077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 35C18204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C18204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeJHVso (ORCPT
+        id S1726579AbeJHVsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:48:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbeJHVso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:48:44 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A99DC3001DB5;
-        Mon,  8 Oct 2018 14:36:42 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 18C0717A64;
-        Mon,  8 Oct 2018 14:36:42 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 10:36:40 -0400
-From:   Phil Auld <pauld@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [Patch] sched/fair: Avoid throttle_list starvation with low cfs quota
-Message-ID: <20181008143639.GA4019@pauld.bos.csb>
+        Mon, 8 Oct 2018 17:48:52 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13605 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726078AbeJHVsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:48:52 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 132FFA6103F01;
+        Mon,  8 Oct 2018 22:36:46 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 8 Oct 2018
+ 22:36:42 +0800
+Subject: Re: [PATCH v2] staging: erofs: add SPDX identifer
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
+        Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+References: <20181008141409.2624-1-loic.tourlonias.lkml@gmail.com>
+ <20181008142228.GB13359@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
+Date:   Mon, 8 Oct 2018 22:36:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 08 Oct 2018 14:36:42 +0000 (UTC)
+In-Reply-To: <20181008142228.GB13359@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Phil Auld" <pauld@redhat.com>
+Hi Greg,
 
-sched/fair: Avoid throttle_list starvation with low cfs quota
+On 2018/10/8 22:22, Greg Kroah-Hartman wrote:
+> Why delete that line?
+> 
+> But wait, why do we even have this file at all?  What's wrong with the
+> lib/lz4/ code that we have in the kernel today?  Shouldn't the code
+> using these files be moved over to use the lib/ code instead and this
+> file be deleted?
 
-With a very low cpu.cfs_quota_us setting, such as the minimum of 1000, 
-distribute_cfs_runtime may not empty the throttled_list before it runs 
-out of runtime to distribute. In that case, due to the change from 
-c06f04c7048 to put throttled entries at the head of the list, later entries 
-on the list will starve.  Essentially, the same X processes will get pulled 
-off the list, given CPU time and then, when expired, get put back on the 
-head of the list where distribute_cfs_runtime will give runtime to the same 
-set of processes leaving the rest.
+EROFS uses customized LZ4 decompression code for now (which has been offically
+supported in lz4 1.8.3, I have updated it in
+https://ozlabs.org/~akpm/mmots/broken-out/lib-lz4-update-lz4-decompressor-module.patch
+if it is shown up in Linux 4.20, I will remove all the customized LZ4 decompression code),
+but lib/ code lz4def.h isn't export to include/.
 
-Fix the issue by setting a bit in struct cfs_bandwidth when 
-distribute_cfs_runtime is running, so that the code in throttle_cfs_rq can 
-decide to put the throttled entry on the tail or the head of the list.  The 
-bit is set/cleared by the callers of distribute_cfs_runtime while they hold 
-cfs_bandwidth->lock. 
+Thanks,
+Gao Xiang
 
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: stable@vger.kernel.org
----
-
-This is easy to reproduce with a handful of cpu consumers. I use crash on 
-the live system. In some cases you can simply look at the throttled list and 
-see the later entries are not changing:
-
-crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-  1     ffff90b56cb2d200  -976050
-  2     ffff90b56cb2cc00  -484925
-  3     ffff90b56cb2bc00  -658814
-  4     ffff90b56cb2ba00  -275365
-  5     ffff90b166a45600  -135138
-  6     ffff90b56cb2da00  -282505
-  7     ffff90b56cb2e000  -148065
-  8     ffff90b56cb2fa00  -872591
-  9     ffff90b56cb2c000  -84687
- 10     ffff90b56cb2f000  -87237
- 11     ffff90b166a40a00  -164582
-crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-  1     ffff90b56cb2d200  -994147
-  2     ffff90b56cb2cc00  -306051
-  3     ffff90b56cb2bc00  -961321
-  4     ffff90b56cb2ba00  -24490
-  5     ffff90b166a45600  -135138
-  6     ffff90b56cb2da00  -282505
-  7     ffff90b56cb2e000  -148065
-  8     ffff90b56cb2fa00  -872591
-  9     ffff90b56cb2c000  -84687
- 10     ffff90b56cb2f000  -87237
- 11     ffff90b166a40a00  -164582
-
-Sometimes it is easier to see by finding a process getting starved and looking 
-at the sched_info:
-
-crash> task ffff8eb765994500 sched_info
-PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-  sched_info = {
-    pcount = 8, 
-    run_delay = 697094208, 
-    last_arrival = 240260125039, 
-    last_queued = 240260327513
-  }, 
-crash> task ffff8eb765994500 sched_info
-PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-  sched_info = {
-    pcount = 8, 
-    run_delay = 697094208, 
-    last_arrival = 240260125039, 
-    last_queued = 240260327513
-  }, 
-
-
- fair.c  |   22 +++++++++++++++++++---
- sched.h |    2 ++
- 2 files changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7fc4a371bdd2..f88e00705b55 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4476,9 +4476,13 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 
- 	/*
- 	 * Add to the _head_ of the list, so that an already-started
--	 * distribute_cfs_runtime will not see us
-+	 * distribute_cfs_runtime will not see us. If disribute_cfs_runtime is
-+	 * not running add to the tail so that later runqueues don't get starved.
- 	 */
--	list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-+	if (cfs_b->distribute_running)
-+		list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-+	else
-+		list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
- 
- 	/*
- 	 * If we're the first throttled task, make sure the bandwidth
-@@ -4622,14 +4626,16 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- 	 * in us over-using our runtime if it is all used during this loop, but
- 	 * only by limited amounts in that extreme case.
- 	 */
--	while (throttled && cfs_b->runtime > 0) {
-+	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
- 		runtime = cfs_b->runtime;
-+		cfs_b->distribute_running = 1;
- 		raw_spin_unlock(&cfs_b->lock);
- 		/* we can't nest cfs_b->lock while distributing bandwidth */
- 		runtime = distribute_cfs_runtime(cfs_b, runtime,
- 						 runtime_expires);
- 		raw_spin_lock(&cfs_b->lock);
- 
-+		cfs_b->distribute_running = 0;
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
- 
- 		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-@@ -4740,6 +4746,11 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 
- 	/* confirm we're still not at a refresh boundary */
- 	raw_spin_lock(&cfs_b->lock);
-+	if (cfs_b->distribute_running) {
-+		raw_spin_unlock(&cfs_b->lock);
-+		return;
-+	}
-+
- 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
- 		raw_spin_unlock(&cfs_b->lock);
- 		return;
-@@ -4749,6 +4760,9 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 		runtime = cfs_b->runtime;
- 
- 	expires = cfs_b->runtime_expires;
-+	if (runtime)
-+		cfs_b->distribute_running = 1;
-+
- 	raw_spin_unlock(&cfs_b->lock);
- 
- 	if (!runtime)
-@@ -4759,6 +4773,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 	raw_spin_lock(&cfs_b->lock);
- 	if (expires == cfs_b->runtime_expires)
- 		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-+	cfs_b->distribute_running = 0;
- 	raw_spin_unlock(&cfs_b->lock);
- }
- 
-@@ -4867,6 +4882,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- 	cfs_b->period_timer.function = sched_cfs_period_timer;
- 	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	cfs_b->slack_timer.function = sched_cfs_slack_timer;
-+	cfs_b->distribute_running = 0;
- }
- 
- static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 455fa330de04..9683f458aec7 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -346,6 +346,8 @@ struct cfs_bandwidth {
- 	int			nr_periods;
- 	int			nr_throttled;
- 	u64			throttled_time;
-+
-+	bool                    distribute_running;
- #endif
- };
- 
-
-
--- 
+> 
+> thanks,
+> 
+> greg k-h
