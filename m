@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8ECBC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DCDC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C262087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11BD821479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHj850cE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C262087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvPdfyLw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BD821479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeJIBsi (ORCPT
+        id S1728346AbeJIBsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32848 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeJIBsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:37 -0400
+        id S1726522AbeJIBsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F83B2064A;
-        Mon,  8 Oct 2018 18:35:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3642B2064A;
+        Mon,  8 Oct 2018 18:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023735;
-        bh=HTJIbMqqVt3X6Hcos3y+k9CrBGyshxmY3bsGVdsC4oM=;
+        s=default; t=1539023737;
+        bh=1qsdsInvphWP5dZZi7GOV0pLZ5WE2i6Gj9d0cxPE1FU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FHj850cEBpyhyDVOp4QeSTd+sP/i4qi5OSVTSVXKI7vcZlyhe00NJHkYCM3fY7bHp
-         K+xOpFSZpsDA1ICL6OafBumvSgf7W3MEEsMXuzBkfFU0YzMJryUupCr1Gk24uIQfsi
-         4BFSaKW15mBltvopZUegtfTnNifyjW3MwU0U0b7s=
+        b=jvPdfyLwAqiToa053rBrNtnZjKwabFE/NHxo48ZQUhcZw57rnhXqHLPQlE7I4584w
+         DoLFkghRHalybhBMMg+2jGbHovN0B5Hf2K+iKeMplZAvUa9fPkUdBwzVpRAuqlrK5q
+         a7koOQHAihLWLbIJqrQBNiaa+9fJrZtfMqK99E9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 049/113] spi: rspi: Fix interrupted DMA transfers
-Date:   Mon,  8 Oct 2018 20:30:50 +0200
-Message-Id: <20181008175533.431433219@linuxfoundation.org>
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 067/113] e1000: ensure to free old tx/rx rings in set_ringparam()
+Date:   Mon,  8 Oct 2018 20:31:08 +0200
+Message-Id: <20181008175534.635134018@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,58 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Bo Chen <chenbo@pdx.edu>
 
-commit 8dbbaa47b96f6ea5f09f922b4effff3c505cd8cf upstream.
+[ Upstream commit ee400a3f1bfe7004a3e14b81c38ccc5583c26295 ]
 
-When interrupted, wait_event_interruptible_timeout() returns
--ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
+In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new value
+and the old tx/rx rings are freed only when the device is up. There are resource
+leaks on old tx/rx rings when the device is not up. This bug is reported by COD,
+a tool for testing kernel module binaries I am building.
 
-    m25p80 spi0.0: SPI transfer failed: -512
-    spi_master spi0: failed to transfer one message from queue
+This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
+'e1000_set_ringparam()'.
 
-However, as the underlying DMA transfers may not have completed, all
-subsequent SPI transfers may start to fail:
-
-    spi_master spi0: receive timeout
-    qspi_transfer_out_in() returned -110
-    m25p80 spi0.0: SPI transfer failed: -110
-    spi_master spi0: failed to transfer one message from queue
-
-Fix this by calling dmaengine_terminate_all() not only for timeouts, but
-also for errors.
-
-This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
-by CTRL-C.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-rspi.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -587,11 +587,13 @@ static int rspi_dma_transfer(struct rspi
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -645,14 +645,14 @@ static int e1000_set_ringparam(struct ne
+ 		adapter->tx_ring = tx_old;
+ 		e1000_free_all_rx_resources(adapter);
+ 		e1000_free_all_tx_resources(adapter);
+-		kfree(tx_old);
+-		kfree(rx_old);
+ 		adapter->rx_ring = rxdr;
+ 		adapter->tx_ring = txdr;
+ 		err = e1000_up(adapter);
+ 		if (err)
+ 			goto err_setup;
+ 	}
++	kfree(tx_old);
++	kfree(rx_old);
  
- 	ret = wait_event_interruptible_timeout(rspi->wait,
- 					       rspi->dma_callbacked, HZ);
--	if (ret > 0 && rspi->dma_callbacked)
-+	if (ret > 0 && rspi->dma_callbacked) {
- 		ret = 0;
--	else if (!ret) {
--		dev_err(&rspi->master->dev, "DMA timeout\n");
--		ret = -ETIMEDOUT;
-+	} else {
-+		if (!ret) {
-+			dev_err(&rspi->master->dev, "DMA timeout\n");
-+			ret = -ETIMEDOUT;
-+		}
- 		if (tx)
- 			dmaengine_terminate_all(rspi->master->dma_tx);
- 		if (rx)
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return 0;
 
 
