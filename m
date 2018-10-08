@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0F1C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0909C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFAB2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8953A2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqKV1JPE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFAB2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wOhfyUdA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8953A2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730861AbeJIB56 (ORCPT
+        id S1730872AbeJIB6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45930 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730395AbeJIB55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:57 -0400
+        id S1730200AbeJIB6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:00 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC6F82064A;
-        Mon,  8 Oct 2018 18:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C3122064A;
+        Mon,  8 Oct 2018 18:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024292;
-        bh=TUxOw/XFnd5PQ7R/W9cooJvmXFQMPgPT+fUlIO+/mIw=;
+        s=default; t=1539024295;
+        bh=2ElbHuYDfDjmNFa8FJtDGJTxuc2bJdJx0pe9UKa11sE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lqKV1JPEl2Fqz74nkfQwG7fw1pd1XZqIAcvmcYBJKns4VmQb+S0U/vg+5J3qAy1+w
-         5gQoBt6x771KUSe44xTzslo6BGmAsn3tGdOUHCyifMRD1pVNZhECBwEDujdsclzmqM
-         +b85T37P85q370k143RWNlB/+h9asPsYyxekvxvM=
+        b=wOhfyUdAGP47ncgs8nCg34sKLEEGiEmSqC0VUW94wykPpBvQPiYrwHsGUMwCuMRpP
+         hEdYiXjkAu7mG9P5uwQgqHlWe7qXi8drDvZJ657cv1GT1sPq4mhf1eALwbSGcc5kQY
+         KlWJ/xsrmUKum1zSJlBvaRFq5n/UYSyeIlopMknU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 79/94] ovl: fix access beyond unterminated strings
-Date:   Mon,  8 Oct 2018 20:32:00 +0200
-Message-Id: <20181008175610.286599259@linuxfoundation.org>
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 88/94] crypto: caam/jr - fix ablkcipher_edesc pointer arithmetic
+Date:   Mon,  8 Oct 2018 20:32:09 +0200
+Message-Id: <20181008175610.746392786@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,42 +63,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Horia Geantă <horia.geanta@nxp.com>
 
-commit 601350ff58d5415a001769532f6b8333820e5786 upstream.
+commit 13cc6f48c7434ce46ba6dbc90003a136a263d75a upstream.
 
-KASAN detected slab-out-of-bounds access in printk from overlayfs,
-because string format used %*s instead of %.*s.
+In some cases the zero-length hw_desc array at the end of
+ablkcipher_edesc struct requires for 4B of tail padding.
 
-> BUG: KASAN: slab-out-of-bounds in string+0x298/0x2d0 lib/vsprintf.c:604
-> Read of size 1 at addr ffff8801c36c66ba by task syz-executor2/27811
->
-> CPU: 0 PID: 27811 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #36
-...
->  printk+0xa7/0xcf kernel/printk/printk.c:1996
->  ovl_lookup_index.cold.15+0xe8/0x1f8 fs/overlayfs/namei.c:689
+Due to tail padding and the way pointers to S/G table and IV
+are computed:
+	edesc->sec4_sg = (void *)edesc + sizeof(struct ablkcipher_edesc) +
+			 desc_bytes;
+	iv = (u8 *)edesc->hw_desc + desc_bytes + sec4_sg_bytes;
+first 4 bytes of IV are overwritten by S/G table.
 
-Reported-by: syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 359f392ca53e ("ovl: lookup index entry for copy up origin")
-Cc: <stable@vger.kernel.org> # v4.13
+Update computation of pointer to S/G table to rely on offset of hw_desc
+member and not on sizeof() operator.
+
+Cc: <stable@vger.kernel.org> # 4.13+
+Fixes: 115957bb3e59 ("crypto: caam - fix IV DMA mapping and updating")
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/namei.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/caam/caamalg.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -519,7 +519,7 @@ static struct dentry *ovl_lookup_index(s
- 			index = NULL;
- 			goto out;
- 		}
--		pr_warn_ratelimited("overlayfs: failed inode index lookup (ino=%lu, key=%*s, err=%i);\n"
-+		pr_warn_ratelimited("overlayfs: failed inode index lookup (ino=%lu, key=%.*s, err=%i);\n"
- 				    "overlayfs: mount with '-o index=off' to disable inodes index.\n",
- 				    d_inode(origin)->i_ino, name.len, name.name,
- 				    err);
+--- a/drivers/crypto/caam/caamalg.c
++++ b/drivers/crypto/caam/caamalg.c
+@@ -1511,8 +1511,8 @@ static struct ablkcipher_edesc *ablkciph
+ 	edesc->src_nents = src_nents;
+ 	edesc->dst_nents = dst_nents;
+ 	edesc->sec4_sg_bytes = sec4_sg_bytes;
+-	edesc->sec4_sg = (void *)edesc + sizeof(struct ablkcipher_edesc) +
+-			 desc_bytes;
++	edesc->sec4_sg = (struct sec4_sg_entry *)((u8 *)edesc->hw_desc +
++						  desc_bytes);
+ 	edesc->iv_dir = DMA_TO_DEVICE;
+ 
+ 	/* Make sure IV is located in a DMAable area */
+@@ -1715,8 +1715,8 @@ static struct ablkcipher_edesc *ablkciph
+ 	edesc->src_nents = src_nents;
+ 	edesc->dst_nents = dst_nents;
+ 	edesc->sec4_sg_bytes = sec4_sg_bytes;
+-	edesc->sec4_sg = (void *)edesc + sizeof(struct ablkcipher_edesc) +
+-			 desc_bytes;
++	edesc->sec4_sg = (struct sec4_sg_entry *)((u8 *)edesc->hw_desc +
++						  desc_bytes);
+ 	edesc->iv_dir = DMA_FROM_DEVICE;
+ 
+ 	/* Make sure IV is located in a DMAable area */
 
 
