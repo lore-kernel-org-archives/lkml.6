@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A86C677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E4DC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F93B214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29C67204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xifLF+5I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F93B214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WExYn2Gv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C67204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731768AbeJICCA (ORCPT
+        id S1731779AbeJICCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51194 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:02:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeJICCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:00 -0400
+        id S1726991AbeJICCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCAA1214C2;
-        Mon,  8 Oct 2018 18:48:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88688214C4;
+        Mon,  8 Oct 2018 18:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024533;
-        bh=XjkuIG4C+P9bgpp+lsbYRIKb8Hm+yLVmBGqqXCiv+0M=;
+        s=default; t=1539024536;
+        bh=mWjvlSQLvqOGjIot+fijj9vgQ8nmhDWLO9sGIWetaJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xifLF+5Iq2GnoH41Vbcf0zLj3PoERvd8gFM1LWM4YwMHbW49UuLFfJ70iaIPElt9L
-         9Pq1ryuwFrt8apCE/2y46l0jhwC6BCZkFUDBRodrHHqJfgv30CQj4Gnoh4QYHrn/BG
-         4u4T3TdfL+jgXGilMEJ4IOG7kqApjuIJi8oGLJrk=
+        b=WExYn2Gv1JtbDL0Tpvmy+mShBgnJmX49Xi3RougYfnrCgl1/+iXbYqic4Flr8xAcg
+         p9CNRaOcTZQOE7ley8YaKt3rX6HYFy9pWwbTZf/xoBNy0ITvjLTBXyapbblD+GGYZY
+         U9tgq79X5lL0+qb4oXxIAuYL73r9zujIC3vXdsnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Greentime Hu <greentime@andestech.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 072/168] tools/vm/page-types.c: fix "defined but not used" warning
-Date:   Mon,  8 Oct 2018 20:30:52 +0200
-Message-Id: <20181008175622.800390911@linuxfoundation.org>
+Subject: [PATCH 4.18 073/168] nds32: linker script: GCOV kernel may refers data in __exit
+Date:   Mon,  8 Oct 2018 20:30:53 +0200
+Message-Id: <20181008175622.847413184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -65,38 +63,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Greentime Hu <greentime@andestech.com>
 
-[ Upstream commit 7ab660f8baecfe26c1c267fa8e64d2073feae2bb ]
+[ Upstream commit 3350139c0ff3c95724b784f7109987d533cb3ecd ]
 
-debugfs_known_mountpoints[] is not used any more, so let's remove it.
+This patch is used to fix nds32 allmodconfig/allyesconfig build error
+because GCOV kernel embeds counters in the kernel for each line
+and a part of that embed in __exit text. So we need to keep the
+EXIT_TEXT and EXIT_DATA  if CONFIG_GCOV_KERNEL=y.
 
-Link: http://lkml.kernel.org/r/1535102651-19418-1-git-send-email-n-horiguchi@ah.jp.nec.com
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lkml.org/lkml/2018/9/1/125
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/vm/page-types.c |    6 ------
- 1 file changed, 6 deletions(-)
+ arch/nds32/kernel/vmlinux.lds.S |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -156,12 +156,6 @@ static const char * const page_flag_name
- };
+--- a/arch/nds32/kernel/vmlinux.lds.S
++++ b/arch/nds32/kernel/vmlinux.lds.S
+@@ -13,14 +13,26 @@ OUTPUT_ARCH(nds32)
+ ENTRY(_stext_lma)
+ jiffies = jiffies_64;
  
++#if defined(CONFIG_GCOV_KERNEL)
++#define NDS32_EXIT_KEEP(x)	x
++#else
++#define NDS32_EXIT_KEEP(x)
++#endif
++
+ SECTIONS
+ {
+ 	_stext_lma = TEXTADDR - LOAD_OFFSET;
+ 	. = TEXTADDR;
+ 	__init_begin = .;
+ 	HEAD_TEXT_SECTION
++	.exit.text : {
++		NDS32_EXIT_KEEP(EXIT_TEXT)
++	}
+ 	INIT_TEXT_SECTION(PAGE_SIZE)
+ 	INIT_DATA_SECTION(16)
++	.exit.data : {
++		NDS32_EXIT_KEEP(EXIT_DATA)
++	}
+ 	PERCPU_SECTION(L1_CACHE_BYTES)
+ 	__init_end = .;
  
--static const char * const debugfs_known_mountpoints[] = {
--	"/sys/kernel/debug",
--	"/debug",
--	0,
--};
--
- /*
-  * data structures
-  */
 
 
