@@ -2,76 +2,157 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0E9C6787D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72409C6787D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61BFA20882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:53:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLy2y7iL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61BFA20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 427C82087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:02:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427C82087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeJHKDF (ORCPT
+        id S1726386AbeJHKMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 06:03:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725760AbeJHKDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 06:03:05 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A38102086D;
-        Mon,  8 Oct 2018 02:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538967219;
-        bh=8KPPa0ezFypO+jjO0jIXdZajBKfRIwAS5lWubpn9+qY=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=FLy2y7iLAm7GDn9X27ahNCfl5Q82GDZ1n/5BhqslyDSCBDzkOmgy47CSSMkdUMNC0
-         J7F/pF2tpLDkV0/ebeLOVHOWqEOFQ1ff/QcUHqALjz4WKDdLRX4bYa9SEkxjGpOyq7
-         6D2yKRxYFk0l0loRYPAPrEOrMfF4iIxXhMyt/fw8=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 8 Oct 2018 06:12:23 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:48095 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725760AbeJHKMX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 06:12:23 -0400
+X-UUID: 011a7058029c4c6a960bbd9c2bd86b2f-20181008
+X-UUID: 011a7058029c4c6a960bbd9c2bd86b2f-20181008
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 2089238376; Mon, 08 Oct 2018 11:02:22 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 8 Oct
+ 2018 11:02:19 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 8 Oct 2018 11:02:17 +0800
+Message-ID: <1538967737.6246.5.camel@mhfsdcap03>
+Subject: Re: [PATCH v5 1/9] PCI: mediatek: Using slot's devfn for compare to
+ fix mtk_pcie_find_port logic
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     <bhelgaas@google.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
+        <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
+        <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yt.shen@mediatek.com>,
+        <sean.wang@mediatek.com>
+Date:   Mon, 8 Oct 2018 11:02:17 +0800
+In-Reply-To: <20181002105945.GA27736@e107981-ln.cambridge.arm.com>
+References: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
+         <1538129080-8206-2-git-send-email-honghui.zhang@mediatek.com>
+         <20181001143641.GB13049@red-moon>
+         <20181002105945.GA27736@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181005161126.704214-1-arnd@arndb.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20181005161126.704214-1-arnd@arndb.de>
-Message-ID: <153896721896.119890.15909768221713438779@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: keystone: add missing MODULE_LICENSE
-Date:   Sun, 07 Oct 2018 19:53:38 -0700
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Arnd Bergmann (2018-10-05 09:11:15)
-> A randconfig build showed that two clk modules have no license tag:
-> =
+On Tue, 2018-10-02 at 11:59 +0100, Lorenzo Pieralisi wrote:
+> On Mon, Oct 01, 2018 at 03:36:41PM +0100, Lorenzo Pieralisi wrote:
+> > On Fri, Sep 28, 2018 at 06:04:32PM +0800, honghui.zhang@mediatek.com wrote:
+> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > 
+> > > The Mediatek's host controller has two slots, each with it's own control
+> > > registers. The host driver need to identify which slot was connected
+> > > in order to access the device's configuration space. There's problem
+> > > for current host driver to find out which slot was connected to for
+> > > a given EP device.
+> > > 
+> > > Assuming each slot have connect with one EP device as below:
+> > > 
+> > >                 host bridge
+> > >   bus 0 --> __________|_______
+> > >            |                  |
+> > >            |                  |
+> > >          slot 0             slot 1
+> > >   bus 1 -->|        bus 2 --> |
+> > >            |                  |
+> > >          EP 0               EP 1
+> > > 
+> > > During PCI enumeration, system software will scan all the PCI device
+> > > starting from devfn 0. So it will get the proper port for slot0 and
+> > > slot1 device when using PCI_SLOT(devfn) for match. But it will get
+> > > the wrong slot for EP1: The devfn will be start from 0 when scanning
+> > > EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+> > > for port0's slot value. So the host driver should not using EP's devfn
+> > > but the slot's devfn(the slot which EP was connected to) for match.
+> > > 
+> > > This patch fix the mtk_pcie_find_port's logic by using the slot's
+> > > devfn for match if finding device connected to the subordinate bus.
+> > > 
+> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > ---
+> > >  drivers/pci/controller/pcie-mediatek.c | 17 ++++++++++++++++-
+> > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > > index 9999dae..264e03f 100644
+> > > --- a/drivers/pci/controller/pcie-mediatek.c
+> > > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > > @@ -337,10 +337,25 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+> > >  {
+> > >  	struct mtk_pcie *pcie = bus->sysdata;
+> > >  	struct mtk_pcie_port *port;
+> > > +	struct pci_dev *dev = NULL;
+> > > +
+> > > +	/*
+> > > +	 * Walk the bus hierarchy to get the devfn value
+> > > +	 * of the port in the root bus.
+> > > +	 */
+> > > +	while (bus && bus->number) {
+> > > +		dev = bus->self;
+> > > +		bus = dev->bus;
+> > 
+> > If you add:
+> > 
+> > devfn = dev->devfn;
+> > 
+> > here
+> > 
+> > > +	}
+> > > +
+> > > +	list_for_each_entry(port, &pcie->ports, list) {
+> > > +		/* Using slot's devfn to compare for subordinary bus. */
+> > > +		if (dev)
+> > > +			devfn = dev->devfn;
+> > 
+> > You can remove this ugly hunk altogether (and dev initialization
+> > to NULL).
+> 
+> Hi Honghui,
+> 
+> if you can make this change I would merge this series, it has been
+> been in the mailing lists for a while, I can make that change too
+> just let me know please.
+> 
 
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/keystone/gate.o
-> see include/linux/module.h for more information
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/keystone/pll.o
-> see include/linux/module.h for more information
-> =
+Hi, Lorenzo, sorry for the late reply.
 
-> Add the appropriate information from the comment at the start of the
-> two files.
-> =
+I tried your advise and it works fine.
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+I will send another version to fix this, as well as to add a fix tag in
+the commit message of patch 6.
 
-Applied to clk-next
+thanks
+
+> Thanks,
+> Lorenzo
+
 
