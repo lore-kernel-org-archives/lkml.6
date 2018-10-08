@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F924C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 917F6C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFAC2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B10E2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wZ9WSBdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EFAC2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Km/V0DEF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B10E2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbeJIBvF (ORCPT
+        id S1729095AbeJIBvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:04 -0400
+        id S1726427AbeJIBvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:06 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6EE52064A;
-        Mon,  8 Oct 2018 18:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A673E21479;
+        Mon,  8 Oct 2018 18:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023880;
-        bh=L0J7bJ86WbsTBa/C4ICEElfRQAkTmyPJ8yysGuNRgL0=;
+        s=default; t=1539023883;
+        bh=LW51ZGDGQxTz1CkNfBHR5lwFwLm+b6iELssFLDFKQU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wZ9WSBdqX4aYx5zyUjBMSHLqiFyRX+see4RHskInMwyADOm2SKzO5U151y9MLXGff
-         ABSPgPaL7p9OFiMFtRKxIesgE4ubWDsZ0jhdgoczw7dxPWYSxKyqE5OXtQLyTgI/MI
-         bLVIBHldUIfeTe/Wf9me+LKfmzrXv23GovI2Gnkg=
+        b=Km/V0DEFxSGE7dhedQ87iFJYLA2HCbn+nVcCutySudm09xQ048I9r7tMugL2rwFsT
+         ht36l3VSrnL8NvdFPEF+EGq2Q2zWqU5RXks34uaZa1C4loFR9A8X0nBxfKebKZsver
+         YWPfrWwTg3DFzWCPeK6hYc5Ps1uWcJQVy9ctwk+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 104/113] s390/qeth: dont dump past end of unknown HW header
-Date:   Mon,  8 Oct 2018 20:31:45 +0200
-Message-Id: <20181008175537.063285065@linuxfoundation.org>
+Subject: [PATCH 4.4 105/113] cifs: read overflow in is_valid_oplock_break()
+Date:   Mon,  8 Oct 2018 20:31:46 +0200
+Message-Id: <20181008175537.116966697@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,45 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 0ac1487c4b2de383b91ecad1be561b8f7a2c15f4 ]
+[ Upstream commit 097f5863b1a0c9901f180bbd56ae7d630655faaa ]
 
-For inbound data with an unsupported HW header format, only dump the
-actual HW header. We have no idea how much payload follows it, and what
-it contains. Worst case, we dump past the end of the Inbound Buffer and
-access whatever is located next in memory.
+We need to verify that the "data_offset" is within bounds.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_l2_main.c |    2 +-
- drivers/s390/net/qeth_l3_main.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/misc.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -523,7 +523,7 @@ static int qeth_l2_process_inbound_buffe
- 		default:
- 			dev_kfree_skb_any(skb);
- 			QETH_CARD_TEXT(card, 3, "inbunkno");
--			QETH_DBF_HEX(CTRL, 3, hdr, QETH_DBF_CTRL_LEN);
-+			QETH_DBF_HEX(CTRL, 3, hdr, sizeof(*hdr));
- 			continue;
- 		}
- 		work_done++;
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -1902,7 +1902,7 @@ static int qeth_l3_process_inbound_buffe
- 		default:
- 			dev_kfree_skb_any(skb);
- 			QETH_CARD_TEXT(card, 3, "inbunkno");
--			QETH_DBF_HEX(CTRL, 3, hdr, QETH_DBF_CTRL_LEN);
-+			QETH_DBF_HEX(CTRL, 3, hdr, sizeof(*hdr));
- 			continue;
- 		}
- 		work_done++;
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -406,9 +406,17 @@ is_valid_oplock_break(char *buffer, stru
+ 			(struct smb_com_transaction_change_notify_rsp *)buf;
+ 		struct file_notify_information *pnotify;
+ 		__u32 data_offset = 0;
++		size_t len = srv->total_read - sizeof(pSMBr->hdr.smb_buf_length);
++
+ 		if (get_bcc(buf) > sizeof(struct file_notify_information)) {
+ 			data_offset = le32_to_cpu(pSMBr->DataOffset);
+ 
++			if (data_offset >
++			    len - sizeof(struct file_notify_information)) {
++				cifs_dbg(FYI, "invalid data_offset %u\n",
++					 data_offset);
++				return true;
++			}
+ 			pnotify = (struct file_notify_information *)
+ 				((char *)&pSMBr->hdr.Protocol + data_offset);
+ 			cifs_dbg(FYI, "dnotify on %s Action: 0x%x\n",
 
 
