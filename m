@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C6FC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C3BC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D44F21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FE9A21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DW6ku7YC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D44F21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cY/tHOO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE9A21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbeJIBz4 (ORCPT
+        id S1730353AbeJIBz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43636 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeJIBzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:55 -0400
+        id S1726672AbeJIBz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:58 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 873C22087D;
-        Mon,  8 Oct 2018 18:42:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 487FD2087D;
+        Mon,  8 Oct 2018 18:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024170;
-        bh=CfDAD9/4XWtwyChy0X0OaY8llMRdJGXPutjH/GA6/iQ=;
+        s=default; t=1539024172;
+        bh=sqn/I/7VYEI6yC7hlj1koY5iiU2Qqk9qrlFYf75R8M0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DW6ku7YCXwobYmzQyt2Se2Ow2dpLAp+J0wx4D64Xa7+bqswUS7oYWfWdojnHTWyba
-         far2L0Q9O9uJK/YQx6heWCQ0xdexZCeyCyfXXCK2BD9SpgPrrH3RZf6iyfVIr3MCnh
-         uDfYIkRyz7nZvEK+2RPAN3NbhoEe+wpdD/2DgfUM=
+        b=cY/tHOO65F4vtuubCZZc5zE+LD5DaajrxE+AhyTY+qldVFzR7a2ve+Wo/nqitPUf1
+         LAxsf2uHw4F8c2H1UPlvCQKI7MqNMdHyR1hXMlTWLb+gxiAI0b09uVoG0BXAfbXkby
+         z8q/oQzM9uHuZDbcNd9RaLqMC63Y2MvVxyslghXk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        Neil Brown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 27/94] RAID10 BUG_ON in raise_barrier when force is true and conf->barrier is 0
-Date:   Mon,  8 Oct 2018 20:31:08 +0200
-Message-Id: <20181008175606.314469338@linuxfoundation.org>
+Subject: [PATCH 4.14 45/94] pinctrl: msm: Really mask level interrupts to prevent latching
+Date:   Mon,  8 Oct 2018 20:31:26 +0200
+Message-Id: <20181008175607.131565543@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,56 +65,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Ni <xni@redhat.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
+[ Upstream commit b55326dc969ea2d704a008d9a97583b128f54f4f ]
 
-In raid10 reshape_request it gets max_sectors in read_balance. If the underlayer disks
-have bad blocks, the max_sectors is less than last. It will call goto read_more many
-times. It calls raise_barrier(conf, sectors_done != 0) every time. In this condition
-sectors_done is not 0. So the value passed to the argument force of raise_barrier is
-true.
+The interrupt controller hardware in this pin controller has two status
+enable bits. The first "normal" status enable bit enables or disables
+the summary interrupt line being raised when a gpio interrupt triggers
+and the "raw" status enable bit allows or prevents the hardware from
+latching an interrupt into the status register for a gpio interrupt.
+Currently we just toggle the "normal" status enable bit in the mask and
+unmask ops so that the summary irq interrupt going to the CPU's
+interrupt controller doesn't trigger for the masked gpio interrupt.
 
-In raise_barrier it checks conf->barrier when force is true. If force is true and
-conf->barrier is 0, it panic. In this case reshape_request submits bio to under layer
-disks. And in the callback function of the bio it calls lower_barrier. If the bio
-finishes before calling raise_barrier again, it can trigger the BUG_ON.
+For a level triggered interrupt, the flow would be as follows: the pin
+controller sees the interrupt, latches the status into the status
+register, raises the summary irq to the CPU, summary irq handler runs
+and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+interrupt, the interrupt handler runs, and finally unmask the interrupt.
+When the interrupt handler completes, we expect that the interrupt line
+level will go back to the deasserted state so the genirq code can unmask
+the interrupt without it triggering again.
 
-Add one pair of raise_barrier/lower_barrier to fix this bug.
+If we only mask the interrupt by clearing the "normal" status enable bit
+then we'll ack the interrupt but it will continue to show up as pending
+in the status register because the raw status bit is enabled, the
+hardware hasn't deasserted the line, and thus the asserted state latches
+into the status register again. When the hardware deasserts the
+interrupt the pin controller still thinks there is a pending unserviced
+level interrupt because it latched it earlier. This behavior causes
+software to see an extra interrupt for level type interrupts each time
+the interrupt is handled.
 
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Suggested-by: Neil Brown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Let's fix this by clearing the raw status enable bit for level type
+interrupts so that the hardware stops latching the status of the
+interrupt after we ack it. We don't do this for edge type interrupts
+because it seems that toggling the raw status enable bit for edge type
+interrupts causes spurious edge interrupts.
+
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4394,11 +4394,12 @@ static sector_t reshape_request(struct m
- 		allow_barrier(conf);
- 	}
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -610,6 +610,29 @@ static void msm_gpio_irq_mask(struct irq
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
  
-+	raise_barrier(conf, 0);
- read_more:
- 	/* Now schedule reads for blocks from sector_nr to last */
- 	r10_bio = raid10_alloc_init_r10buf(conf);
- 	r10_bio->state = 0;
--	raise_barrier(conf, sectors_done != 0);
-+	raise_barrier(conf, 1);
- 	atomic_set(&r10_bio->remaining, 0);
- 	r10_bio->mddev = mddev;
- 	r10_bio->sector = sector_nr;
-@@ -4494,6 +4495,8 @@ read_more:
- 	if (sector_nr <= last)
- 		goto read_more;
- 
-+	lower_barrier(conf);
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	/*
++	 * There are two bits that control interrupt forwarding to the CPU. The
++	 * RAW_STATUS_EN bit causes the level or edge sensed on the line to be
++	 * latched into the interrupt status register when the hardware detects
++	 * an irq that it's configured for (either edge for edge type or level
++	 * for level type irq). The 'non-raw' status enable bit causes the
++	 * hardware to assert the summary interrupt to the CPU if the latched
++	 * status bit is set. There's a bug though, the edge detection logic
++	 * seems to have a problem where toggling the RAW_STATUS_EN bit may
++	 * cause the status bit to latch spuriously when there isn't any edge
++	 * so we can't touch that bit for edge type irqs and we have to keep
++	 * the bit set anyway so that edges are latched while the line is masked.
++	 *
++	 * To make matters more complicated, leaving the RAW_STATUS_EN bit
++	 * enabled all the time causes level interrupts to re-latch into the
++	 * status register because the level is still present on the line after
++	 * we ack it. We clear the raw status enable bit during mask here and
++	 * set the bit on unmask so the interrupt can't latch into the hardware
++	 * while it's masked.
++	 */
++	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK)
++		val &= ~BIT(g->intr_raw_status_bit);
 +
- 	/* Now that we have done the whole section we can
- 	 * update reshape_progress
- 	 */
+ 	val &= ~BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
+@@ -631,6 +654,7 @@ static void msm_gpio_irq_unmask(struct i
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	val |= BIT(g->intr_raw_status_bit);
+ 	val |= BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
 
 
