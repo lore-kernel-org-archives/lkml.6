@@ -2,96 +2,114 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A358C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74255C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C4C320C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4C320C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 275492086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:00:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1R8d4s4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275492086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeJHXLd (ORCPT
+        id S1726707AbeJHXM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:11:33 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:52087 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeJHXLd (ORCPT
+        Mon, 8 Oct 2018 19:12:58 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38210 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbeJHXM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:11:33 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MiMIY-1fWc0G0Pby-00fVlq; Mon, 08 Oct 2018 17:58:06 +0200
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MiMIY-1fWc0G0Pby-00fVlq; Mon, 08 Oct 2018 17:58:06 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>,
-        Biao Huang <biao.huang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        ZH Chen <zh.chen@mediatek.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] pinctrl: mediatek: select GPIOLIB
-Date:   Mon,  8 Oct 2018 17:57:43 +0200
-Message-Id: <20181008155803.3322412-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:jKClmhriWAs+MlCh/VHoLgZ7FuufsHBdIdLZvnRc92T0PrIv2Mt
- pqnzDF1iDFmAT97BPTYruszKs2Dh1ryF4X/qvJdgURwDc+dWGibS7BFKm2dBCze2pmO6ZdL
- cOFgcSzqQ6tNEmqPNpKK17xgJaxUywUfukXVCUnEnaetOPP0dxOHRdlLDQCP4MSeV8af/mQ
- /1kxbiD1eEIaloqTeVYIw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:se+1c5VYw8A=:mcRj2uevfsRj4JgRbeZt2O
- KlN6ebqNDMG12DmPGrc6I9HAOInKJY3WK/YXmrGCeL0oZBXSh8Tb2EPIw05HZIYKqdy7Cemfx
- mhaVebokG8CCV1uSaVfJDVPJm/BNYvN2kytlosFgBdutJgcD+dj7Bv7eHNegJGCZEWAW3W6+s
- 03DCUDJ0oZcurkOpJHD9N7A4o5i7+j8QTq0HRIxwG9/GnN9l/8ut3pVX9pIcUQwLXjeoBz/L8
- 5YH9fJn+bf2kP+rnlHlJrowjGM6b4ATF3dgsPYLs0RQmlC6XIzGkhw3L1Xb7YpnaXzoe60MI3
- Ekj8Nf56eokmSP2r/LR/N8El1iYT0av2ha5dPyVSKg7G2rbtgxUZNmKLvIBSQfJW7zcxusSaa
- VLtw+CiWtzxxiOgcfI6/6JelYswAVYg5xgp0+QLxQYYp78s6G5RcjLvSK7sqxEh/FkbjPugVw
- L+9vBkMScUDa84gzpdNOyLMSXpf4qt2AT7mfsBgHtGZEalMP4b0NMgh9ijxWeP49ua1WAiTh9
- sfsly1quxhB3NtLmbuJuxdYaH1Bns6P/PUG9Xyt3aLyOPWna7wUxOcbziGxWlNxFjy9n4Bxny
- uBjK0QEfEIaiz5lh1K8EhWCSUzR9a2oKiYbbX/6bpPb/QYAlearfYS7Y+E/dPHazt4axV51fo
- iYxO5bpXvOpB+ujDWCs/AG4Yoo3LehX90qMaZUMSicQzJrmrzID7W1PHSgENm2KfMxtU=
+        Mon, 8 Oct 2018 19:12:58 -0400
+Received: by mail-it1-f193.google.com with SMTP id i76-v6so12604423ita.3;
+        Mon, 08 Oct 2018 09:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J4/246FRXaFoFIMZTarL+KPjoi5SLQOe+iJLr5jF/7I=;
+        b=k1R8d4s4uSbkEox6wWNb6XBV1QlmUb2pU36boaBLIuO3xKBzGdwV8++RBH6oAdVpAm
+         y0mL55vIf2BTgl1AUIRV/gthuK+6MiV7XRUpld3lSCflO0gS8OCdyuV3XdPSnD6aRqwh
+         LWM4+SMhGFy91u1F+pVqCGdzJOS4kPsSLi4SKu0C/XhD6Pij1zy2JPhL1xdENKacxOgB
+         AuCnQlwyWE08sJOt5uli554yx1Z7VZy6451ewIzYJZ+Apik17x5fZSz+GaQBVh7Zm/AI
+         wdom+lVdbKynuSEsilrUVu7QQg8Rj7JKbPnHhIguaOG2S0zCja0e2msTJeFgGeQIPN3p
+         J+Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J4/246FRXaFoFIMZTarL+KPjoi5SLQOe+iJLr5jF/7I=;
+        b=bnYY1Ymwa9QDC1y2lLEPvsIPY0vD75N+grEKB3sol3tKnmbzEK5V2P6AzP0+nIFwlS
+         MdLlmZs/JDA77ILny29kqt5Y/UFeD7Z/TL7SmcV+QsJ0TqvE4MaHcn4Sq9JDK0MAbR6L
+         gVnV4thMcVDHaqvle1BXq5mf1PPai4DHCOYAHNbeQRwK/VT3wwsHj8QAP8tqdtN+0wW0
+         Bz1ebL4/bkoXyCS4TEHq1a9z+R/5nB36QKZuXoEEEY0oRI6xtScvKIxHA5G2FkstHSbL
+         QFAGitsnKhIRYG/mqwQ8IwB2Hf1RXYULw7RpFXVLM1i61aGsxJJenMGK+q9C4vslnxkO
+         uYPA==
+X-Gm-Message-State: ABuFfojOSw4yMTeESWxnzhpHxHvq5Hb3wElHNdojZv17JISA6JCBVDxr
+        04Z2JJdFhmkdRKxL04lHoiUk+L2KlYip9E1rcTg=
+X-Google-Smtp-Source: ACcGV630eVBhuxCfm7V3hfWXH3wtGdXrD6EnOcX5lz5CM0wMDmwfk5TqiIcsGWrgaC8dlX8oTfm5AV3nWc1UO6hxdTA=
+X-Received: by 2002:a24:cd02:: with SMTP id l2-v6mr15245017itg.70.1539014431298;
+ Mon, 08 Oct 2018 09:00:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181005161845.959919-1-arnd@arndb.de> <CAOi1vP8Wy0DjEWBWh05iSx-RJS41hTc1rs2TXdz_1mcNpf68Dg@mail.gmail.com>
+ <CAK8P3a0xpFdKC0AtBDC9UvMfwpx3HTbAdio4ApmYhrb2FakK9g@mail.gmail.com>
+In-Reply-To: <CAK8P3a0xpFdKC0AtBDC9UvMfwpx3HTbAdio4ApmYhrb2FakK9g@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 8 Oct 2018 18:00:19 +0200
+Message-ID: <CAOi1vP-bQR6aEbmyxUGtxTQACUbT2iEXr5Ld3w0p04_NWWxXuQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: use an enum instead of 'static const' to define constants
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>, pombredanne@nexb.com,
+        Luis Henriques <lhenriques@suse.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing the linux/gpio.h include means we no longer have a declaration
-of gpiochip_lock_as_irq() when CONFIG_GPIOLIB is disabled:
+On Mon, Oct 8, 2018 at 5:37 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Oct 8, 2018 at 4:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > On Fri, Oct 5, 2018 at 6:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > @@ -71,7 +71,7 @@
+> > >   * This ensures that no two versions who have different meanings for
+> > >   * the bit ever speak to each other.
+> > >   */
+> > > -
+> > > +enum ceph_features {
+> > >  DEFINE_CEPH_FEATURE( 0, 1, UID)
+> > >  DEFINE_CEPH_FEATURE( 1, 1, NOSRCADDR)
+> > >  DEFINE_CEPH_FEATURE_RETIRED( 2, 1, MONCLOCKCHECK, JEWEL, LUMINOUS)
+> > > @@ -170,13 +170,13 @@ DEFINE_CEPH_FEATURE(61, 1, CEPHX_V2)             // *do not share this bit*
+> > >
+> > >  DEFINE_CEPH_FEATURE(62, 1, RESERVED)           // do not use; used as a sentinal
+> > >  DEFINE_CEPH_FEATURE_DEPRECATED(63, 1, RESERVED_BROKEN, LUMINOUS) // client-facing
+> > > -
+> > > +};
+> >
+> > I don't particularly like this because it looks like lower constants
+> > are actually ints and the rest are unsigned longs, even though they all
+> > have ULL suffixes.  The standard seems to require that enum constants
+> > be representable as ints, is the non-pedantic behaviour documented
+> > somewhere?
+>
+> I had not realized that this is a gcc extension, or that it behaves slightly
+> differently from the standard C++ behavior that apparently adopted a
+> saner variant (all values in an enum have the same type).
+>
+> How about we just add a __maybe_unused to DEFINE_CEPH_FEATURE
+> then to shut up the warning?
 
-drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_request_resources':
-drivers/pinctrl/mediatek/mtk-eint.c:247:8: error: implicit declaration of function 'gpiochip_lock_as_irq'; did you mean 'spin_lock_irq'? [-Werror=implicit-function-declaration]
-drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_release_resources':
-drivers/pinctrl/mediatek/mtk-eint.c:272:2: error: implicit declaration of function 'gpiochip_unlock_as_irq'; did you mean 'spin_unlock_irq'? [-Werror=implicit-function-declaration]
+Fine with me.
 
-Select it explictly instead.
+Thanks,
 
-Fixes: 1c5fb66afa2a ("pinctrl: Include <linux/gpio/driver.h> nothing else")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/mediatek/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 05be5ddafec4..9d142e1da567 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -4,6 +4,7 @@ menu "MediaTek pinctrl drivers"
- config EINT_MTK
- 	bool "MediaTek External Interrupt Support"
- 	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
-+	select GPIOLIB
- 	select IRQ_DOMAIN
- 
- config PINCTRL_MTK
--- 
-2.18.0
-
+                Ilya
