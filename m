@@ -2,63 +2,64 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFB3C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F80C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D772204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A681204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:33:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tOo588cJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D772204FD
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="loj066Rt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A681204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeJHQoS (ORCPT
+        id S1727474AbeJHQoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 12:44:18 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33018 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHQoS (ORCPT
+        Mon, 8 Oct 2018 12:44:20 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54498 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbeJHQoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:44:18 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181008093328euoutp02b13b538a90d02aed1bba8be3ff1c70a3~bmFmWlVu41777817778euoutp02v
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 09:33:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181008093328euoutp02b13b538a90d02aed1bba8be3ff1c70a3~bmFmWlVu41777817778euoutp02v
+        Mon, 8 Oct 2018 12:44:19 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181008093330euoutp015a4ec50f7c120bbf332ecd120bc99835~bmFoVdqBT0989709897euoutp01d
+        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 09:33:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181008093330euoutp015a4ec50f7c120bbf332ecd120bc99835~bmFoVdqBT0989709897euoutp01d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538991208;
-        bh=2yfVDftmxn6b+N+BDZbGbwKfakj9kNYaq50m8UDxsfc=;
+        s=mail20170921; t=1538991210;
+        bh=2S59xOC/+wTN9XMCigxSAaYWZSnJEnKPlC3CXZCx6vA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tOo588cJfxatOZCo9L7MLI+Zd87au4jghkUYssijow79ZGDcqQpj0Vt3UETMWfM5U
-         IT0ijxFakoHL9gZneXQ3+GzvYFYUPnxkW8gRbEM5Ir82/VvJlBASO25gjtEB3xP8zd
-         Q7bKVAEkJhbCVQYzUzXpOb3u4A2EqanvkrEvRj+k=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181008093327eucas1p1bc29705b3c6f3fe7364e1ab3c736d692~bmFlQtyFU2623326233eucas1p1f;
-        Mon,  8 Oct 2018 09:33:27 +0000 (GMT)
+        b=loj066RtrlPOjzS8CJ4LQ8VR6HQol2U/eIpHpmrauAYXhLi4M+3O2CeX56MJfVdTD
+         OnwnGnjRh09X5p2IakQ1bHMLZga6uKtwZ/gYimTQlswOSc5G1j+DbONTJyT5D4hxwh
+         GdlslrBHUAF08NcKkaziEI4wFJgpHtA5jQB5DJLk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181008093329eucas1p29d8f6e2ac20fe3717db1da46e4ea11cb~bmFncN-581151211512eucas1p23;
+        Mon,  8 Oct 2018 09:33:29 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 58.A2.04806.6642BBB5; Mon,  8
-        Oct 2018 10:33:26 +0100 (BST)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 88.ED.04294.9642BBB5; Mon,  8
+        Oct 2018 10:33:29 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181008093326eucas1p24634c69cc44d324b377755af1f761241~bmFkaQ-gm0356403564eucas1p2g;
-        Mon,  8 Oct 2018 09:33:26 +0000 (GMT)
+        20181008093328eucas1p2c00d65c7f8451f7628f630934c992185~bmFmklSgF0357503575eucas1p25;
+        Mon,  8 Oct 2018 09:33:28 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181008093325eusmtrp18790e0437cd69f633ee50c0e55509ce5~bmFkIMfUd0078200782eusmtrp1f;
-        Mon,  8 Oct 2018 09:33:25 +0000 (GMT)
-X-AuditID: cbfec7f5-79db79c0000012c6-09-5bbb24666328
+        20181008093328eusmtrp1769f6136fea171d4336fcc4b8cd803e9~bmFmSzBvx0079300793eusmtrp16;
+        Mon,  8 Oct 2018 09:33:28 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-e2-5bbb2469d927
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F5.7B.04128.5642BBB5; Mon,  8
-        Oct 2018 10:33:25 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id AA.7B.04128.8642BBB5; Mon,  8
+        Oct 2018 10:33:28 +0100 (BST)
 Received: from AMDC2034.DIGITAL.local (unknown [106.120.51.41]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181008093325eusmtip21775678b4e4fc6fbdb7ad086c7043349~bmFjcf1n90534205342eusmtip2q;
-        Mon,  8 Oct 2018 09:33:25 +0000 (GMT)
+        20181008093327eusmtip28d701c1abd561954c98e3046356579e3~bmFlsZfmV0447104471eusmtip23;
+        Mon,  8 Oct 2018 09:33:27 +0000 (GMT)
 From:   Christoph Manszewski <c.manszewski@samsung.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
@@ -73,72 +74,201 @@ Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/2] drm/exynos: fimd: Add properties
-Date:   Mon,  8 Oct 2018 11:33:00 +0200
+Subject: [PATCH 1/2] drm/exynos: fimd: Make plane alpha configurable
+Date:   Mon,  8 Oct 2018 11:33:01 +0200
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20181003094053eucas1p107c7a8a60c48dd68625fdaa223ef1996~aD9p3GwpI1866618666eucas1p1B@eucas1p1.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7djPc7ppKrujDR6+0bG4te4cq0XvuZNM
-        FhtnrGe1OL57KaPFla/v2Swm3Z/AYvHi3kUWi/7Hr5ktzp/fwG5xtukNu8Wmx9dYLS7vmsNm
-        MeP8PiaLtUfuslvMmPySzYHfY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEVx2aSk
-        5mSWpRbp2yVwZSzrPctS0MNS8evqDZYGxrnMXYycHBICJhLzv51k72Lk4hASWMEoMX13AzOE
-        84VR4vWi30wQzmdGiQedH5hgWj4e7YNKLGeU+HevhRWu5fS2+6wgVWwCphK3735iA7FFBJQl
-        /k5cxQhSxCywlUVi78kbQO0cHMJARWvOS4PUsAioSrw98IAFYoOcxM1znWAHcgqUS6y/0wt2
-        k4TAJnaJyc23wBK8AmUSa069YIRocJGYuWUnVLOwxKvjW9ghbBmJ05N7WCCamxklbn25xgrh
-        TGCUOLi6C6rDWmLTjVdgFzELaEqs36UPEXaUWPL3JCNIWEKAT+LGW0GQMDOQOWnbdGaIMK9E
-        R5sQRLWaxOstW9hg1r74/BXqNA+J220tbJAAOsUoceh8F9sERvlZCMsWMDKuYhRPLS3OTU8t
-        Ns5LLdcrTswtLs1L10vOz93ECExAp/8d/7qDcd+fpEOMAhyMSjy8AX67ooVYE8uKK3MPMUpw
-        MCuJ8IpuBwrxpiRWVqUW5ccXleakFh9ilOZgURLnXTZvY7SQQHpiSWp2ampBahFMlomDU6qB
-        8VJtqPxDJZ2QR2eCCtXZDWb/fKPlJu6w2H3RrFrNVTJWjSkZ73yDpq/ZssEkUHWN/Orqq063
-        GSayJHzOtizJTVE2ZW5KrmTZmXhSNHMap3L327z9ZlGvY5ZrnnqzRzqLTyyp+6lM0IZYs9y7
-        YR6Vp8//679XctV7I0NoWuui4Fl6Lst4C+SUWIozEg21mIuKEwFXL1lkPAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e/4Pd1Uld3RBpcX61vcWneO1aL33Ekm
+In-Reply-To: <1538991182-12961-1-git-send-email-c.manszewski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7djPc7qZKrujDe42s1jcWneO1aL33Ekm
+        i40z1rNaHN+9lNHiytf3bBaT7k9gsXhx7yKLRf/j18wW589vYLc42/SG3WLT42usFpd3zWGz
+        mHF+H5PF2iN32S1mTH7J5sDvsWlVJ5vH9m8PWD3udx9n8ti8pN6jb8sqRo/Pm+QC2KK4bFJS
+        czLLUov07RK4MjZM2sNacFej4tvh66wNjEcVuxg5OSQETCQezOtl6mLk4hASWMEosWjlNWYI
+        5wujxKkbHawgVUICnxklfp9hg+loOneWFaJoOaPEusc9bHAdz5+/BKtiEzCVuH33E5gtIqAs
+        8XfiKkaQImaBrSwSe0/eYAJJCAu4SPyYu5kFxGYRUJW4un43E8QKOYmb5zqZQWxOAU+Jg3tW
+        sIA0SwhsYpe49uAhWIJXoEzi4mGIZgmgQRNXrYVqFpZ4dXwLO4QtI3F6cg9UczOjxK0v11gh
+        nAmMEgdXd0F1W0tsuvEKqJsD6D5NifW79CHCjhJHpvWxgIQlBPgkbrwVBAkzA5mTtk1nhgjz
+        SnS0CUFUq0m83rKFDWbti89fGSFsD4nVvw+yQ0Kok0ni8pZL7BMY5WchLFvAyLiKUTy1tDg3
+        PbXYKC+1XK84Mbe4NC9dLzk/dxMjMAGd/nf8yw7GXX+SDjEKcDAq8fCuCNgVLcSaWFZcmXuI
+        UYKDWUmEV3Q7UIg3JbGyKrUoP76oNCe1+BCjNAeLkjjvsnkbo4UE0hNLUrNTUwtSi2CyTByc
+        Ug2M8zhfTas3a7dj6shLLNBOXdh4d3WnYfT+Q2pJXXZXdoV0bAk/dehvO8Pv0/lx35ofPOlY
+        sPX2TemXKTPF8v7vq6y23i95OcxO0+nOPLbW31nmc4MCzmnrfY1xaLBgnHo8cEFW+a7qic25
+        V/dvVJ7yy2zRjIZCmZTJdyzF/+d8lv31NXzPk9Y8JZbijERDLeai4kQA9xbudzwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42I5/e/4Pd0Mld3RBle3sFncWneO1aL33Ekm
         i40z1rNaHN+9lNHiytf3bBaT7k9gsXhx7yKLRf/j18wW589vYLc42/SG3WLT42usFpd3zWGz
         mHF+H5PF2iN32S1mTH7J5sDvsWlVJ5vH9m8PWD3udx9n8ti8pN6jb8sqRo/Pm+QC2KL0bIry
-        S0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mpb1nmUp6GGp
-        +HX1BksD41zmLkZODgkBE4mPR/uYuhi5OIQEljJKHD06nR0iISMx72wfG4QtLPHnWheYLSTw
-        iVGi93YGiM0mYCpx++4nsLiIgLLE34mrGEEGMQscZJFo2XgGyOHgEAYqWnNeGqSGRUBV4u2B
-        BywgNq+Ah8SMIz8YIebLSdw81wl2EKdAucT6O73MELvKJD5N28c4gZFvASPDKkaR1NLi3PTc
-        YiO94sTc4tK8dL3k/NxNjMBY2Hbs55YdjF3vgg8xCnAwKvHwrgjYFS3EmlhWXJl7iFGCg1lJ
-        hFd0O1CINyWxsiq1KD++qDQntfgQoynQUROZpUST84FxmlcSb2hqaG5haWhubG5sZqEkznve
-        oDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgXFX3FX2HevuaCtFPMm/dr6jYIr8Iq4Jezxm3bRNsmE7
-        e8vm6BNJqRAfHbaDT99cemgTNiuLK3F20BrzAgfTHZs/d3w+7JR09myJ668fM2f/bZa9+22T
-        1dqbS4SfTr/2vOVv8pyF5e8yzXLmOk9XMWXsnr/68skYz28V2zS8997cd+aUZE/rs/93lFiK
-        MxINtZiLihMBaZj1vZsCAAA=
-Message-Id: <20181008093326eucas1p24634c69cc44d324b377755af1f761241~bmFkaQ-gm0356403564eucas1p2g@eucas1p2.samsung.com>
-X-CMS-MailID: 20181008093326eucas1p24634c69cc44d324b377755af1f761241
+        S0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0MjZM2sNacFej
+        4tvh66wNjEcVuxg5OSQETCSazp1l7WLk4hASWMooce5iNwtEQkZi3tk+NghbWOLPtS42iKJP
+        jBK/H7czgyTYBEwlbt/9BFYkIqAs8XfiKkaQImaBgywSLRvPMIIkhAVcJH7M3Qw2lUVAVeLq
+        +t1MIDavgIfEyeUHmCA2yEncPNcJNpRTwFPi4J4VLBDbtjJKzNnbyDqBkW8BI8MqRpHU0uLc
+        9NxiI73ixNzi0rx0veT83E2MwIjYduznlh2MXe+CDzEKcDAq8fCuCNgVLcSaWFZcmXuIUYKD
+        WUmEV3Q7UIg3JbGyKrUoP76oNCe1+BCjKdBVE5mlRJPzgdGaVxJvaGpobmFpaG5sbmxmoSTO
+        e96gMkpIID2xJDU7NbUgtQimj4mDU6qBkV1/+zLWg3xtP5QLHHMn3K7YlPlnanAgd+cVJc87
+        TS2WKyz09GWz3lw4ZVo/6b8G2/Rl762mODQ1/WnbLflELft2atq9lRbSb4KnPWvs80t4VPOh
+        WJWZa9/frij2A3f9+jj2Nx/nOnHLQT+61DQ78c7dBuN7J05Na7m7yX933h0hD59dCpL3lViK
+        MxINtZiLihMB01pxdJ4CAAA=
+Message-Id: <20181008093328eucas1p2c00d65c7f8451f7628f630934c992185~bmFmklSgF0357503575eucas1p25@eucas1p2.samsung.com>
+X-CMS-MailID: 20181008093328eucas1p2c00d65c7f8451f7628f630934c992185
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181008093326eucas1p24634c69cc44d324b377755af1f761241
+X-RootMTR: 20181008093328eucas1p2c00d65c7f8451f7628f630934c992185
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181008093326eucas1p24634c69cc44d324b377755af1f761241
+X-CMS-RootMailID: 20181008093328eucas1p2c00d65c7f8451f7628f630934c992185
 References: <20181003094053eucas1p107c7a8a60c48dd68625fdaa223ef1996~aD9p3GwpI1866618666eucas1p1B@eucas1p1.samsung.com>
-        <CGME20181008093326eucas1p24634c69cc44d324b377755af1f761241@eucas1p2.samsung.com>
+        <1538991182-12961-1-git-send-email-c.manszewski@samsung.com>
+        <CGME20181008093328eucas1p2c00d65c7f8451f7628f630934c992185@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The fimd hardware supports variable plane alpha. Currently planes
+are opaque, make this configurable.
 
-This patch series adds two new configurable properties
-to exynos_drm_fimd.
+Tested on TRATS2 with Exynos 4412 CPU, on top of exynos-drm-next.
 
-Patch 1 add window alpha property.
-Patch 2 add pixel blend mode property.
+Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 69 +++++++++++++++++++++++---------
+ include/video/samsung_fimd.h             |  1 +
+ 2 files changed, 51 insertions(+), 19 deletions(-)
 
-Regards,
-Chris
-
-
-Christoph Manszewski (2):
-  drm/exynos: fimd: Make plane alpha configurable
-  drm/exynos: fimd: Make pixel blend mode configurable
-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 87 ++++++++++++++++++++++++--------
- include/video/samsung_fimd.h             |  2 +
- 2 files changed, 69 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index b7f56935a46b..06d5d2422246 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -229,6 +229,21 @@ static const uint32_t fimd_formats[] = {
+ 	DRM_FORMAT_ARGB8888,
+ };
+ 
++static const unsigned int capabilities[WINDOWS_NR] = {
++	0,
++	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
++	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
++	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
++	EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
++};
++
++static inline void fimd_set_bits(struct fimd_context *ctx, u32 reg, u32 mask,
++				 u32 val)
++{
++	val = (val & mask) | (readl(ctx->regs + reg) & ~mask);
++	writel(val, ctx->regs + reg);
++}
++
+ static int fimd_enable_vblank(struct exynos_drm_crtc *crtc)
+ {
+ 	struct fimd_context *ctx = crtc->ctx;
+@@ -552,10 +567,38 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
+ 	writel(val, ctx->regs + VIDCON0);
+ }
+ 
++static void fimd_win_set_bldmod(struct fimd_context *ctx, unsigned int win,
++				struct drm_framebuffer *fb)
++{
++	struct exynos_drm_plane plane = ctx->planes[win];
++	struct exynos_drm_plane_state *state =
++		to_exynos_plane_state(plane.base.state);
++	unsigned int alpha = state->base.alpha;
++	u32 win_alpha = alpha >> 8;
++	u32 val = 0;
++
++	/* OSD alpha */
++	val = VIDISD14C_ALPHA0_R(alpha >> 4) |
++		VIDISD14C_ALPHA0_G(win_alpha >> 4) |
++		VIDISD14C_ALPHA0_B(win_alpha >> 4) |
++		VIDISD14C_ALPHA1_R(win_alpha >> 4) |
++		VIDISD14C_ALPHA1_G(win_alpha >> 4) |
++		VIDISD14C_ALPHA1_B(win_alpha >> 4);
++
++	writel(val, ctx->regs + VIDOSD_C(win));
++
++	val = VIDW_ALPHA_R(win_alpha & 0xf) | VIDW_ALPHA_G(win_alpha & 0xf) |
++		VIDW_ALPHA_G(win_alpha & 0xf);
++	writel(val, ctx->regs + VIDWnALPHA0(win));
++	writel(val, ctx->regs + VIDWnALPHA1(win));
++	fimd_set_bits(ctx, BLENDCON, BLENDCON_NEW_MASK,
++			BLENDCON_NEW_8BIT_ALPHA_VALUE);
++}
+ 
+ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+-				uint32_t pixel_format, int width)
++				struct drm_framebuffer *fb, int width)
+ {
++	uint32_t pixel_format = fb->format->format;
+ 	unsigned long val;
+ 
+ 	val = WINCONx_ENWIN;
+@@ -596,6 +639,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 			| WINCON1_BLD_PIX | WINCON1_ALPHA_SEL;
+ 		val |= WINCONx_WSWP;
+ 		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCON1_ALPHA_MUL;
+ 		break;
+ 	}
+ 
+@@ -607,7 +651,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 	 * still better to change dma-burst than displaying garbage.
+ 	 */
+ 
+-	if (width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
++	if (fb->width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+ 		val &= ~WINCONx_BURSTLEN_MASK;
+ 		val |= WINCONx_BURSTLEN_4WORD;
+ 	}
+@@ -615,22 +659,8 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 	writel(val, ctx->regs + WINCON(win));
+ 
+ 	/* hardware window 0 doesn't support alpha channel. */
+-	if (win != 0) {
+-		/* OSD alpha */
+-		val = VIDISD14C_ALPHA0_R(0xf) |
+-			VIDISD14C_ALPHA0_G(0xf) |
+-			VIDISD14C_ALPHA0_B(0xf) |
+-			VIDISD14C_ALPHA1_R(0xf) |
+-			VIDISD14C_ALPHA1_G(0xf) |
+-			VIDISD14C_ALPHA1_B(0xf);
+-
+-		writel(val, ctx->regs + VIDOSD_C(win));
+-
+-		val = VIDW_ALPHA_R(0xf) | VIDW_ALPHA_G(0xf) |
+-			VIDW_ALPHA_G(0xf);
+-		writel(val, ctx->regs + VIDWnALPHA0(win));
+-		writel(val, ctx->regs + VIDWnALPHA1(win));
+-	}
++	if (win != 0)
++		fimd_win_set_bldmod(ctx, win, fb);
+ }
+ 
+ static void fimd_win_set_colkey(struct fimd_context *ctx, unsigned int win)
+@@ -786,7 +816,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+ 		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
+ 	}
+ 
+-	fimd_win_set_pixfmt(ctx, win, fb->format->format, state->src.w);
++	fimd_win_set_pixfmt(ctx, win, fb, state->src.w);
+ 
+ 	/* hardware window 0 doesn't support color key. */
+ 	if (win != 0)
+@@ -988,6 +1018,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 		ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
+ 		ctx->configs[i].zpos = i;
+ 		ctx->configs[i].type = fimd_win_types[i];
++		ctx->configs[i].capabilities = capabilities[i];
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[i], i,
+ 					&ctx->configs[i]);
+ 		if (ret)
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index d8fc96ed11e9..f070b7c0d2cf 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -211,6 +211,7 @@
+ #define WINCON0_BPPMODE_24BPP_888		(0xb << 2)
+ 
+ #define WINCON1_LOCALSEL_CAMIF			(1 << 23)
++#define WINCON1_ALPHA_MUL			(1 << 7)
+ #define WINCON1_BLD_PIX				(1 << 6)
+ #define WINCON1_BPPMODE_MASK			(0xf << 2)
+ #define WINCON1_BPPMODE_SHIFT			2
 -- 
 2.7.4
 
