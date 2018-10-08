@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1812BC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 191F5C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5A2121479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8414214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR2WMRp8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A2121479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Ul6COg9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8414214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731459AbeJICAi (ORCPT
+        id S1731469AbeJICAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:00:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49354 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:00:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730798AbeJICAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:00:37 -0400
+        id S1730798AbeJICAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:00:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 821312087D;
-        Mon,  8 Oct 2018 18:47:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E4DB2064A;
+        Mon,  8 Oct 2018 18:47:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024451;
-        bh=hu7Hyg3w3TdtarDfoQLg2qPjtFBTNqdVDKXCW/PTs9k=;
+        s=default; t=1539024454;
+        bh=VReCybSeXXMV5o9rfd/idaZ8B6dU0Vcy1GT7ChqDifQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cR2WMRp8heSgB5908mJHQZHwswDFo4eEacaKZ3vx6WDPaD0o7AZlQVf9iFVs1fqKK
-         bsMkGZAwl1Mw+Tpfd7B/yOcOxFfxZzxZ09P7WMsTsUa+GBsHtDGno2zYdzYAxRTjdK
-         kUcN7leEZ5J8PL612gNezMpgABkYzc/kXGQudPaE=
+        b=1Ul6COg9FYTEiZvrArtNcNf/HRn0g3j1JxnMbdTOUJBMGD5Eqw8HX2bk2xi3vUYK+
+         zt8CkiuW6C0IjUpGM9xUaUb/UineZ04yNX4aNRKJn7aysTi845pZNNx8dsxM5ouAsN
+         pDEkvKKeD4W+jlaR9VvEeJ1Lh+N54yl1z8X1yp4E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniy Paltsev <paltsev@synopsys.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Dennis Zhou <dennisszhou@gmail.com>,
+        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 044/168] ARC: atomics: unbork atomic_fetch_##op()
-Date:   Mon,  8 Oct 2018 20:30:24 +0200
-Message-Id: <20181008175621.727112508@linuxfoundation.org>
+Subject: [PATCH 4.18 045/168] Revert "blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()"
+Date:   Mon,  8 Oct 2018 20:30:25 +0200
+Message-Id: <20181008175621.768097658@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -65,62 +66,196 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 
-[ Upstream commit 3fcbb8260a87efb691d837e8cd24e81f65b3eb70 ]
+[ Upstream commit 6b06546206868f723f2061d703a3c3c378dcbf4c ]
 
-In 4.19-rc1, Eugeniy reported weird boot and IO errors on ARC HSDK
+This reverts commit 4c6994806f708559c2812b73501406e21ae5dcd0.
 
-| INFO: task syslogd:77 blocked for more than 10 seconds.
-|       Not tainted 4.19.0-rc1-00007-gf213acea4e88 #40
-| "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-| message.
-| syslogd         D    0    77     76 0x00000000
-|
-| Stack Trace:
-|  __switch_to+0x0/0xac
-|  __schedule+0x1b2/0x730
-|  io_schedule+0x5c/0xc0
-|  __lock_page+0x98/0xdc
-|  find_lock_entry+0x38/0x100
-|  shmem_getpage_gfp.isra.3+0x82/0xbfc
-|  shmem_fault+0x46/0x138
-|  handle_mm_fault+0x5bc/0x924
-|  do_page_fault+0x100/0x2b8
-|  ret_from_exception+0x0/0x8
+Destroying blkgs is tricky because of the nature of the relationship. A
+blkg should go away when either a blkcg or a request_queue goes away.
+However, blkg's pin the blkcg to ensure they remain valid. To break this
+cycle, when a blkcg is offlined, blkgs put back their css ref. This
+eventually lets css_free() get called which frees the blkcg.
 
-He bisected to 84c6591103db ("locking/atomics,
-asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*()")
+The above commit (4c6994806f70) breaks this order of events by trying to
+destroy blkgs in css_free(). As the blkgs still hold references to the
+blkcg, css_free() is never called.
 
-This commit however only unmasked the real issue introduced by commit
-4aef66c8ae9 ("locking/atomic, arch/arc: Fix build") which missed the
-retry-if-scond-failed branch in atomic_fetch_##op() macros.
+The race between blkcg_bio_issue_check() and cgroup_rmdir() will be
+addressed in the following patch by delaying destruction of a blkg until
+all writeback associated with the blkcg has been finished.
 
-The bisected commit started using atomic_fetch_##op() macros for building
-the rest of atomics.
-
-Fixes: 4aef66c8ae9 ("locking/atomic, arch/arc: Fix build")
-Reported-by: Eugeniy Paltsev <paltsev@synopsys.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-[vgupta: wrote changelog]
+Fixes: 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+Cc: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/include/asm/atomic.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-cgroup.c         |   78 +++++++++------------------------------------
+ include/linux/blk-cgroup.h |    1 
+ 2 files changed, 16 insertions(+), 63 deletions(-)
 
---- a/arch/arc/include/asm/atomic.h
-+++ b/arch/arc/include/asm/atomic.h
-@@ -84,7 +84,7 @@ static inline int atomic_fetch_##op(int
- 	"1:	llock   %[orig], [%[ctr]]		\n"		\
- 	"	" #asm_op " %[val], %[orig], %[i]	\n"		\
- 	"	scond   %[val], [%[ctr]]		\n"		\
--	"						\n"		\
-+	"	bnz     1b				\n"		\
- 	: [val]	"=&r"	(val),						\
- 	  [orig] "=&r" (orig)						\
- 	: [ctr]	"r"	(&v->counter),					\
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -307,28 +307,11 @@ struct blkcg_gq *blkg_lookup_create(stru
+ 	}
+ }
+ 
+-static void blkg_pd_offline(struct blkcg_gq *blkg)
+-{
+-	int i;
+-
+-	lockdep_assert_held(blkg->q->queue_lock);
+-	lockdep_assert_held(&blkg->blkcg->lock);
+-
+-	for (i = 0; i < BLKCG_MAX_POLS; i++) {
+-		struct blkcg_policy *pol = blkcg_policy[i];
+-
+-		if (blkg->pd[i] && !blkg->pd[i]->offline &&
+-		    pol->pd_offline_fn) {
+-			pol->pd_offline_fn(blkg->pd[i]);
+-			blkg->pd[i]->offline = true;
+-		}
+-	}
+-}
+-
+ static void blkg_destroy(struct blkcg_gq *blkg)
+ {
+ 	struct blkcg *blkcg = blkg->blkcg;
+ 	struct blkcg_gq *parent = blkg->parent;
++	int i;
+ 
+ 	lockdep_assert_held(blkg->q->queue_lock);
+ 	lockdep_assert_held(&blkcg->lock);
+@@ -337,6 +320,13 @@ static void blkg_destroy(struct blkcg_gq
+ 	WARN_ON_ONCE(list_empty(&blkg->q_node));
+ 	WARN_ON_ONCE(hlist_unhashed(&blkg->blkcg_node));
+ 
++	for (i = 0; i < BLKCG_MAX_POLS; i++) {
++		struct blkcg_policy *pol = blkcg_policy[i];
++
++		if (blkg->pd[i] && pol->pd_offline_fn)
++			pol->pd_offline_fn(blkg->pd[i]);
++	}
++
+ 	if (parent) {
+ 		blkg_rwstat_add_aux(&parent->stat_bytes, &blkg->stat_bytes);
+ 		blkg_rwstat_add_aux(&parent->stat_ios, &blkg->stat_ios);
+@@ -379,7 +369,6 @@ static void blkg_destroy_all(struct requ
+ 		struct blkcg *blkcg = blkg->blkcg;
+ 
+ 		spin_lock(&blkcg->lock);
+-		blkg_pd_offline(blkg);
+ 		blkg_destroy(blkg);
+ 		spin_unlock(&blkcg->lock);
+ 	}
+@@ -1006,54 +995,21 @@ static struct cftype blkcg_legacy_files[
+  * @css: css of interest
+  *
+  * This function is called when @css is about to go away and responsible
+- * for offlining all blkgs pd and killing all wbs associated with @css.
+- * blkgs pd offline should be done while holding both q and blkcg locks.
+- * As blkcg lock is nested inside q lock, this function performs reverse
+- * double lock dancing.
++ * for shooting down all blkgs associated with @css.  blkgs should be
++ * removed while holding both q and blkcg locks.  As blkcg lock is nested
++ * inside q lock, this function performs reverse double lock dancing.
+  *
+  * This is the blkcg counterpart of ioc_release_fn().
+  */
+ static void blkcg_css_offline(struct cgroup_subsys_state *css)
+ {
+ 	struct blkcg *blkcg = css_to_blkcg(css);
+-	struct blkcg_gq *blkg;
+ 
+ 	spin_lock_irq(&blkcg->lock);
+ 
+-	hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
+-		struct request_queue *q = blkg->q;
+-
+-		if (spin_trylock(q->queue_lock)) {
+-			blkg_pd_offline(blkg);
+-			spin_unlock(q->queue_lock);
+-		} else {
+-			spin_unlock_irq(&blkcg->lock);
+-			cpu_relax();
+-			spin_lock_irq(&blkcg->lock);
+-		}
+-	}
+-
+-	spin_unlock_irq(&blkcg->lock);
+-
+-	wb_blkcg_offline(blkcg);
+-}
+-
+-/**
+- * blkcg_destroy_all_blkgs - destroy all blkgs associated with a blkcg
+- * @blkcg: blkcg of interest
+- *
+- * This function is called when blkcg css is about to free and responsible for
+- * destroying all blkgs associated with @blkcg.
+- * blkgs should be removed while holding both q and blkcg locks. As blkcg lock
+- * is nested inside q lock, this function performs reverse double lock dancing.
+- */
+-static void blkcg_destroy_all_blkgs(struct blkcg *blkcg)
+-{
+-	spin_lock_irq(&blkcg->lock);
+ 	while (!hlist_empty(&blkcg->blkg_list)) {
+ 		struct blkcg_gq *blkg = hlist_entry(blkcg->blkg_list.first,
+-						    struct blkcg_gq,
+-						    blkcg_node);
++						struct blkcg_gq, blkcg_node);
+ 		struct request_queue *q = blkg->q;
+ 
+ 		if (spin_trylock(q->queue_lock)) {
+@@ -1065,7 +1021,10 @@ static void blkcg_destroy_all_blkgs(stru
+ 			spin_lock_irq(&blkcg->lock);
+ 		}
+ 	}
++
+ 	spin_unlock_irq(&blkcg->lock);
++
++	wb_blkcg_offline(blkcg);
+ }
+ 
+ static void blkcg_css_free(struct cgroup_subsys_state *css)
+@@ -1073,8 +1032,6 @@ static void blkcg_css_free(struct cgroup
+ 	struct blkcg *blkcg = css_to_blkcg(css);
+ 	int i;
+ 
+-	blkcg_destroy_all_blkgs(blkcg);
+-
+ 	mutex_lock(&blkcg_pol_mutex);
+ 
+ 	list_del(&blkcg->all_blkcgs_node);
+@@ -1412,11 +1369,8 @@ void blkcg_deactivate_policy(struct requ
+ 
+ 	list_for_each_entry(blkg, &q->blkg_list, q_node) {
+ 		if (blkg->pd[pol->plid]) {
+-			if (!blkg->pd[pol->plid]->offline &&
+-			    pol->pd_offline_fn) {
++			if (pol->pd_offline_fn)
+ 				pol->pd_offline_fn(blkg->pd[pol->plid]);
+-				blkg->pd[pol->plid]->offline = true;
+-			}
+ 			pol->pd_free_fn(blkg->pd[pol->plid]);
+ 			blkg->pd[pol->plid] = NULL;
+ 		}
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -88,7 +88,6 @@ struct blkg_policy_data {
+ 	/* the blkg and policy id this per-policy data belongs to */
+ 	struct blkcg_gq			*blkg;
+ 	int				plid;
+-	bool				offline;
+ };
+ 
+ /*
 
 
