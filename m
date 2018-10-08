@@ -2,110 +2,95 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C19C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA327C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 760B120841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760B120841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 9668E20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:28:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9668E20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbeJHUjZ (ORCPT
+        id S1726616AbeJHUkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:39:25 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:41595 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726128AbeJHUjZ (ORCPT
+        Mon, 8 Oct 2018 16:40:35 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45707 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeJHUkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:39:25 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-24-jfUcPQ8pN6KrLuyHUcUvGg-1; Mon, 08 Oct 2018 14:27:37 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
- 8 Oct 2018 14:27:38 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 8 Oct 2018 14:27:38 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Bin Meng' <bmeng.cn@gmail.com>
-CC:     "helgaas@kernel.org" <helgaas@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        stable <stable@vger.kernel.org>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] pci: Add a few new IDs for Intel GPU "spurious interrupt"
- quirk
-Thread-Topic: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
- interrupt" quirk
-Thread-Index: AQHUXuuBTtSmrEla30a9wTOD32YprqUVGqcggAAdLQCAAB0d4A==
-Date:   Mon, 8 Oct 2018 13:27:38 +0000
-Message-ID: <8285ca0d4f6849df835de61dca991781@AcuMS.aculab.com>
-References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
- <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
- <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
- <2d2878e5a44c496cb0937f02d64e0b38@AcuMS.aculab.com>
- <CAEUhbmV3SoPLZeN2EOm8h0xfKqN1FBZmJjhv6ygQovHZVA9ZRg@mail.gmail.com>
-In-Reply-To: <CAEUhbmV3SoPLZeN2EOm8h0xfKqN1FBZmJjhv6ygQovHZVA9ZRg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: jfUcPQ8pN6KrLuyHUcUvGg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        Mon, 8 Oct 2018 16:40:35 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g9Vab-0005V7-Ai; Mon, 08 Oct 2018 15:28:49 +0200
+Message-ID: <1539005329.11512.26.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: Fix potential use-after-free in
+ __of_reset_control_get()
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Date:   Mon, 08 Oct 2018 15:28:49 +0200
+In-Reply-To: <CAMuHMdU_ECQxxD1HK5bq5QY7QnxzaBKSJsZFw+284oSnJfSFAA@mail.gmail.com>
+References: <20181008111435.25994-1-geert+renesas@glider.be>
+         <1539003375.11512.19.camel@pengutronix.de>
+         <CAMuHMdU_ECQxxD1HK5bq5QY7QnxzaBKSJsZFw+284oSnJfSFAA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQmluIE1lbmcNCj4gU2VudDogMDggT2N0b2JlciAyMDE4IDEzOjM0DQo+IEhpIERhdmlk
-LA0KPiANCj4gT24gTW9uLCBPY3QgOCwgMjAxOCBhdCA2OjA2IFBNIERhdmlkIExhaWdodCA8RGF2
-aWQuTGFpZ2h0QGFjdWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogQmluIE1lbmcNCj4g
-PiA+IFNlbnQ6IDA4IE9jdG9iZXIgMjAxOCAxMDo0NA0KPiA+IC4uLg0KPiA+ID4gQ29ycmVjdCwg
-ZGlzYWJsZSB0aGUgc2hhcmVkIGludGVycnVwdCBsaW5lIGtlZXBzIGFsbCBkZXZpY2VzIHVzaW5n
-DQo+ID4gPiB0aGF0IGxpbmUgZnJvbSB3b3JraW5nLCB3aGljaCBpcyBjdXJyZW50IGtlcm5lbCdz
-IGJlaGF2aW9yIHcvbyB0aGlzDQo+ID4gPiBxdWlyayBoYW5kbGluZzogaXQgZGlzYWJsZXMgdGhl
-IChzaGFyZWQpIGludGVycnVwdCBsaW5lIGFmdGVyIDEwMC4wMDArDQo+ID4gPiBnZW5lcmF0ZWQg
-aW50ZXJydXB0cy4gQnV0IHRoZSBzaWRlIGVmZmVjdCBpcyB0aGF0IG90aGVyIGRldmljZXMgYmVj
-b21lDQo+ID4gPiB1bnVzYWJsZSBhZnRlciB0aGF0IChlZzogVVNCIGRldmljZXMgd2hpY2ggc2hh
-cmUgdGhlIHNhbWUgaW50ZXJydXB0DQo+ID4gPiBsaW5lIHdpdGggdGhlIEludGVsIEdQVSkuIFRo
-YXQncyB3aHkgdGhlIG9yaWdpbmFsIGNvbW1pdCwgZjY3ZmQ1NWZhOTZmDQo+ID4gPiAoIlBDSTog
-QWRkIHF1aXJrIGZvciBzdGlsbCBlbmFibGVkIGludGVycnVwdHMgb24gSW50ZWwgU2FuZHkgQnJp
-ZGdlDQo+ID4gPiBHUFVzIikgZGlzYWJsZXMgdGhlIEdQVSdzIGludGVycnVwdCBkaXJlY3RseSwg
-d2hpY2ggc2hvdWxkIHJlYWxseSBiZQ0KPiA+ID4gZG9uZSBieSB0aGUgVkdBIEJJT1MgaXRzZWxm
-IChhIGJ1Z2d5IFZCSU9TISkuDQo+ID4NCj4gPiBTaG91bGRuJ3QgdGhlIGtlcm5lbCBqdXN0IGRp
-c2FibGUgYWxsIFBDSShlKSBpbnRlcnJ1cHRzIGJ5IHdyaXRpbmcNCj4gPiAxIHRvIHRoZSBjb25m
-aWcgc3BhY2UgY29udHJvbCByZWdpc3RlciBiaXQgZHVyaW5nIGdyb3BlPw0KPiA+IENhbiBpdCBl
-dmVyIGJ5IHJpZ2h0IGZvciB0aGlzIHRvIGJlIHNldD8NCj4gPg0KPiANCj4gRG8geW91IG1lYW4g
-UENJX0NPTU1BTkRfSU5UWF9ESVNBQkxFIGJpdCBvZiB0aGUgY29tbWFuZCByZWdpc3RlciBpbg0K
-PiB0aGUgY29uZmlndXJhdGlvbiBzcGFjZT8gU2V0dGluZyB0aGlzIGJpdCBpbmRlZWQgY291bGQg
-ZGlzYWJsZSB0aGUNCj4gSU5UeCBpbnRlcnJ1cHQsIGJ1dCBpdCBkb2VzIG5vdCB3b3JrIGZvciBh
-bGwgUENJIGRldmljZXMgYXMgdGhpcyBiaXQNCj4gd2FzIGludHJvZHVjZWQgaW4gUENJIHNwZWMg
-djIuMy4NCg0KVGhhdCdzIHRoZSBvbmUgSSB3YXMgdGhpbmtpbmcgb2YuDQpJZiBpdCB3YXMgaW50
-cm9kdWNlZCBpbiB2Mi4zIGl0IGV4cGxhaW5zIHdoeSBpdCBpcyBhICdkaXNhYmxlJyBiaXQuDQoN
-ClRoZSB2Mi4yIHNwZWMgSSBqdXN0IGZvdW5kIGRvZXNuJ3Qgc2VlbSB0byBzYXkgYW55dGhpbmcg
-YWJvdXQgdGhlDQoncmVzZXJ2ZWQnIGJpdHMuIEkgZ3Vlc3MgdGhlIHZhbHVlcyBhcmUgaWdub3Jl
-ZCAoYW5kIHByb2JvYmx5IHJlYWQNCmJhY2sgYXMgemVyb3MpLg0KDQpJbiBhbnkgY2FzZSBpdCBz
-aG91bGQgYmUgaW1wbGVtZW50ZWQgYnkgdGhlIFZHQSBkZXZpY2VzIGluIHF1ZXN0aW9uLg0KSSBn
-dWVzcyB0aGUga2VybmVsIHNob3VsZCBhbHNvIGVuc3VyZSB0aGF0IE1TSSBhbmQgTVNJLVggaW50
-ZXJydXB0cw0KYXJlIGFsc28gYWxsIGRpc2FibGVkLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJl
-ZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXlu
-ZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Mon, 2018-10-08 at 15:12 +0200, Geert Uytterhoeven wrote:
+> Hi Philipp,
+> 
+> On Mon, Oct 8, 2018 at 2:56 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > On Mon, 2018-10-08 at 13:14 +0200, Geert Uytterhoeven wrote:
+> > > Calling of_node_put() decreases the reference count of a device tree
+> > > object, and may free some data.
+> > > 
+> > > However, the of_phandle_args structure embedding it is passed to
+> > > reset_controller_dev.of_xlate() after that, so it may still be accessed.
+> > > 
+> > > Move the call to of_node_put() down to fix this.
+> > > 
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > >  drivers/reset/core.c | 15 ++++++++-------
+> > >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> > > index 225e34c56b94a2e3..bc9df10d31b4bae1 100644
+> > > --- a/drivers/reset/core.c
+> > > +++ b/drivers/reset/core.c
+> > > @@ -496,27 +496,28 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+[...]
+> > >       /* reset_list_mutex also protects the rcdev's reset_control list */
+> > >       rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
+> > > 
+> > > +out:
+> > > +     of_node_put(args.np);
+> > >       mutex_unlock(&reset_list_mutex);
+> > 
+> > Thank you for the patch. I'd like to move of_node_put after mutex_unlock
+> > for symmetry. If you agree, I can switch the two when applying.
+> 
+> No objection, thanks!
 
+Applied to reset/next with that change.
+
+regards
+Philipp
