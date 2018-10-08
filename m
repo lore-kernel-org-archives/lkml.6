@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A80C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13CBC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA452087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9504214C5
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlDVG/gK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DA452087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3owd/kb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9504214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeJIBrg (ORCPT
+        id S1727875AbeJIBrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:47:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58914 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:47:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJIBrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:47:36 -0400
+        id S1726691AbeJIBrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:47:39 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19B7D2087D;
-        Mon,  8 Oct 2018 18:34:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCCFD20C0A;
+        Mon,  8 Oct 2018 18:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023673;
-        bh=kcndAOFQp1uzuylPVkh24vusVWzAQ4R8E24MLeOrH9Y=;
+        s=default; t=1539023676;
+        bh=QnPmBnlyQqkHDjdFmHJs8oUvNlHQ+D3GPqXXvoetNnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WlDVG/gKDabndkCTO5DfZ3qx0GBIGR2DeQmgTf3KFrMKuIjeBpl2A3Zr+jkEZQrSH
-         BZ5NhRgsgdhV9xszMEoQdSNeykWbzza+D8AayOxaVoK4sWWQVEhPxD3xtFL7IuSFxy
-         PCXXVARW7X7f3ns5RqKREqbkdLuj4GtQDvuMZKNQ=
+        b=c3owd/kb1dAsCJYEBnpOyXazQlFmrCovjnDrCal0CkIjuIKtHWmf5+mv4wmD/KsmN
+         nwG/On8BLcqvt6G6C3Fpgf4yx4IGdtUM29ZsUAcSrSDfsxhb3jz9SkBdWlx0cNEJjH
+         /u2XPcK/UffcgjjcHv42czc1RQgZizvYpnoDRJZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 4.4 044/113] serial: cpm_uart: return immediately from console poll
-Date:   Mon,  8 Oct 2018 20:30:45 +0200
-Message-Id: <20181008175533.058054239@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 045/113] spi: tegra20-slink: explicitly enable/disable clock
+Date:   Mon,  8 Oct 2018 20:30:46 +0200
+Message-Id: <20181008175533.097141304@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,48 +63,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-commit be28c1e3ca29887e207f0cbcd294cefe5074bab6 upstream.
+commit 7001cab1dabc0b72b2b672ef58a90ab64f5e2343 upstream.
 
-kgdb expects poll function to return immediately and
-returning NO_POLL_CHAR when no character is available.
+Depending on the SPI instance one may get an interrupt storm upon
+requesting resp. interrupt unless the clock is explicitly enabled
+beforehand. This has been observed trying to bring up instance 4 on
+T20.
 
-Fixes: f5316b4aea024 ("kgdb,8250,pl011: Return immediately from console poll")
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/spi/spi-tegra20-slink.c |   31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -1068,8 +1068,8 @@ static int poll_wait_key(char *obuf, str
- 	/* Get the address of the host memory buffer.
- 	 */
- 	bdp = pinfo->rx_cur;
--	while (bdp->cbd_sc & BD_SC_EMPTY)
--		;
-+	if (bdp->cbd_sc & BD_SC_EMPTY)
-+		return NO_POLL_CHAR;
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1063,6 +1063,24 @@ static int tegra_slink_probe(struct plat
+ 		goto exit_free_master;
+ 	}
  
- 	/* If the buffer address is in the CPM DPRAM, don't
- 	 * convert it.
-@@ -1104,7 +1104,11 @@ static int cpm_get_poll_char(struct uart
- 		poll_chars = 0;
- 	}
- 	if (poll_chars <= 0) {
--		poll_chars = poll_wait_key(poll_buf, pinfo);
-+		int ret = poll_wait_key(poll_buf, pinfo);
++	/* disabled clock may cause interrupt storm upon request */
++	tspi->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(tspi->clk)) {
++		ret = PTR_ERR(tspi->clk);
++		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
++		goto exit_free_master;
++	}
++	ret = clk_prepare(tspi->clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
++		goto exit_free_master;
++	}
++	ret = clk_enable(tspi->clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
++		goto exit_free_master;
++	}
 +
-+		if (ret == NO_POLL_CHAR)
-+			return ret;
-+		poll_chars = ret;
- 		pollp = poll_buf;
+ 	spi_irq = platform_get_irq(pdev, 0);
+ 	tspi->irq = spi_irq;
+ 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
+@@ -1071,14 +1089,7 @@ static int tegra_slink_probe(struct plat
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
+ 					tspi->irq);
+-		goto exit_free_master;
+-	}
+-
+-	tspi->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(tspi->clk)) {
+-		dev_err(&pdev->dev, "can not get clock\n");
+-		ret = PTR_ERR(tspi->clk);
+-		goto exit_free_irq;
++		goto exit_clk_disable;
  	}
- 	poll_chars--;
+ 
+ 	tspi->rst = devm_reset_control_get(&pdev->dev, "spi");
+@@ -1138,6 +1149,8 @@ exit_rx_dma_free:
+ 	tegra_slink_deinit_dma_param(tspi, true);
+ exit_free_irq:
+ 	free_irq(spi_irq, tspi);
++exit_clk_disable:
++	clk_disable(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1150,6 +1163,8 @@ static int tegra_slink_remove(struct pla
+ 
+ 	free_irq(tspi->irq, tspi);
+ 
++	clk_disable(tspi->clk);
++
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
+ 
 
 
