@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EACC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE791C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 931B42075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:36:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931B42075C
+	by mail.kernel.org (Postfix) with ESMTP id 7E2A220878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2A220878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeJHQrn (ORCPT
+        id S1727506AbeJHQsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 12:47:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58418 "EHLO mx1.suse.de"
+        Mon, 8 Oct 2018 12:48:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58594 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726330AbeJHQrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:47:42 -0400
+        id S1726330AbeJHQsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 12:48:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B30BAD85;
-        Mon,  8 Oct 2018 09:36:52 +0000 (UTC)
-Date:   Mon, 08 Oct 2018 11:36:52 +0200
-Message-ID: <s5hzhvo4w5n.wl-tiwai@suse.de>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C96E2AEFB;
+        Mon,  8 Oct 2018 09:37:45 +0000 (UTC)
+Date:   Mon, 08 Oct 2018 11:37:45 +0200
+Message-ID: <s5hy3b84w46.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
         linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH AUTOSEL 4.18 27/48] sound: enable interrupt after dma buffer initialization
-In-Reply-To: <20181008093412.GA5684@sirena.org.uk>
+        Sasha Levin <alexander.levin@microsoft.com>, tiwai@suse.de
+Subject: Re: [PATCH AUTOSEL 4.18 28/48] sound: don't call skl_init_chip() to reset intel skl soc
+In-Reply-To: <20181008093425.GB5684@sirena.org.uk>
 References: <20181005161424.20521-1-sashal@kernel.org>
-        <20181005161424.20521-27-sashal@kernel.org>
-        <20181008093412.GA5684@sirena.org.uk>
+        <20181005161424.20521-28-sashal@kernel.org>
+        <20181008093425.GB5684@sirena.org.uk>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -48,22 +48,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 08 Oct 2018 11:34:12 +0200,
+On Mon, 08 Oct 2018 11:34:25 +0200,
 Mark Brown wrote:
 > 
-> On Fri, Oct 05, 2018 at 12:14:03PM -0400, Sasha Levin wrote:
+> On Fri, Oct 05, 2018 at 12:14:04PM -0400, Sasha Levin wrote:
 > > From: Yu Zhao <yuzhao@google.com>
 > > 
-> > [ Upstream commit b61749a89f826eb61fc59794d9e4697bd246eb61 ]
+> > [ Upstream commit 75383f8d39d4c0fb96083dd460b7b139fbdac492 ]
 > > 
-> > In snd_hdac_bus_init_chip(), we enable interrupt before
-> > snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
-> > been acquired and irq handler uses the dma buffer, kernel may crash
-> > when interrupt comes in.
+> > Internally, skl_init_chip() calls snd_hdac_bus_init_chip() which
+> > 1) sets bus->chip_init to prevent multiple entrances before device
+> > is stopped; 2) enables interrupt.
 > 
-> CCing Takashi who's the maintainer here for review.
+> And here.
 
-This is OK to take as a stable.  This shouldn't break, at least.
+This one should be OK as a stable fix, too.
 
 
 thanks,
@@ -71,49 +70,89 @@ thanks,
 Takashi
 
 > > 
-> > Fix the problem by postponing enabling irq after dma buffer
-> > initialization. And warn once on null dma buffer pointer during the
-> > initialization.
+> > We shouldn't use it for the purpose of resetting device only because
+> > 1) when we really want to initialize device, we won't be able to do
+> > so; 2) we are ready to handle interrupt yet, and kernel crashes when
+> > interrupt comes in.
 > > 
+> > Rename azx_reset() to snd_hdac_bus_reset_link(), and use it to reset
+> > device properly.
+> > 
+> > Fixes: 60767abcea3d ("ASoC: Intel: Skylake: Reset the controller in probe")
 > > Reviewed-by: Takashi Iwai <tiwai@suse.de>
 > > Signed-off-by: Yu Zhao <yuzhao@google.com>
 > > Signed-off-by: Mark Brown <broonie@kernel.org>
 > > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 > > ---
-> >  sound/hda/hdac_controller.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >  include/sound/hdaudio.h       | 1 +
+> >  sound/hda/hdac_controller.c   | 7 ++++---
+> >  sound/soc/intel/skylake/skl.c | 2 +-
+> >  3 files changed, 6 insertions(+), 4 deletions(-)
 > > 
+> > diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
+> > index c052afc27547..138e976a2ba2 100644
+> > --- a/include/sound/hdaudio.h
+> > +++ b/include/sound/hdaudio.h
+> > @@ -355,6 +355,7 @@ void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus);
+> >  void snd_hdac_bus_stop_cmd_io(struct hdac_bus *bus);
+> >  void snd_hdac_bus_enter_link_reset(struct hdac_bus *bus);
+> >  void snd_hdac_bus_exit_link_reset(struct hdac_bus *bus);
+> > +int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset);
+> >  
+> >  void snd_hdac_bus_update_rirb(struct hdac_bus *bus);
+> >  int snd_hdac_bus_handle_stream_irq(struct hdac_bus *bus, unsigned int status,
 > > diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
-> > index 560ec0986e1a..11057d9f84ec 100644
+> > index 11057d9f84ec..74244d8e2909 100644
 > > --- a/sound/hda/hdac_controller.c
 > > +++ b/sound/hda/hdac_controller.c
-> > @@ -40,6 +40,8 @@ static void azx_clear_corbrp(struct hdac_bus *bus)
-> >   */
-> >  void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
+> > @@ -385,7 +385,7 @@ void snd_hdac_bus_exit_link_reset(struct hdac_bus *bus)
+> >  EXPORT_SYMBOL_GPL(snd_hdac_bus_exit_link_reset);
+> >  
+> >  /* reset codec link */
+> > -static int azx_reset(struct hdac_bus *bus, bool full_reset)
+> > +int snd_hdac_bus_reset_link(struct hdac_bus *bus, bool full_reset)
 > >  {
-> > +	WARN_ON_ONCE(!bus->rb.area);
-> > +
-> >  	spin_lock_irq(&bus->reg_lock);
-> >  	/* CORB set up */
-> >  	bus->corb.addr = bus->rb.addr;
-> > @@ -479,13 +481,15 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
+> >  	if (!full_reset)
+> >  		goto skip_reset;
+> > @@ -410,7 +410,7 @@ static int azx_reset(struct hdac_bus *bus, bool full_reset)
+> >   skip_reset:
+> >  	/* check to see if controller is ready */
+> >  	if (!snd_hdac_chip_readb(bus, GCTL)) {
+> > -		dev_dbg(bus->dev, "azx_reset: controller not ready!\n");
+> > +		dev_dbg(bus->dev, "controller not ready!\n");
+> >  		return -EBUSY;
+> >  	}
+> >  
+> > @@ -425,6 +425,7 @@ static int azx_reset(struct hdac_bus *bus, bool full_reset)
+> >  
+> >  	return 0;
+> >  }
+> > +EXPORT_SYMBOL_GPL(snd_hdac_bus_reset_link);
+> >  
+> >  /* enable interrupts */
+> >  static void azx_int_enable(struct hdac_bus *bus)
+> > @@ -479,7 +480,7 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
+> >  		return false;
+> >  
 > >  	/* reset controller */
-> >  	azx_reset(bus, full_reset);
+> > -	azx_reset(bus, full_reset);
+> > +	snd_hdac_bus_reset_link(bus, full_reset);
 > >  
-> > -	/* initialize interrupts */
-> > +	/* clear interrupts */
+> >  	/* clear interrupts */
 > >  	azx_int_clear(bus);
-> > -	azx_int_enable(bus);
+> > diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+> > index f0d9793f872a..c7cdfa4a7076 100644
+> > --- a/sound/soc/intel/skylake/skl.c
+> > +++ b/sound/soc/intel/skylake/skl.c
+> > @@ -844,7 +844,7 @@ static int skl_first_init(struct hdac_ext_bus *ebus)
+> >  		return -ENXIO;
+> >  	}
 > >  
-> >  	/* initialize the codec command I/O */
-> >  	snd_hdac_bus_init_cmd_io(bus);
+> > -	skl_init_chip(bus, true);
+> > +	snd_hdac_bus_reset_link(bus, true);
 > >  
-> > +	/* enable interrupts after CORB/RIRB buffers are initialized above */
-> > +	azx_int_enable(bus);
-> > +
-> >  	/* program the position buffer */
-> >  	if (bus->use_posbuf && bus->posbuf.addr) {
-> >  		snd_hdac_chip_writel(bus, DPLBASE, (u32)bus->posbuf.addr);
+> >  	snd_hdac_bus_parse_capabilities(bus);
+> >  
 > > -- 
 > > 2.17.1
 > > 
