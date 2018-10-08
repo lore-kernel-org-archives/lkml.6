@@ -2,112 +2,136 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620DEC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D46DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AF16214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:50:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUaNTzJb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF16214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F2592064E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:53:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2592064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbeJIBDK (ORCPT
+        id S1726458AbeJIBGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJIBDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:03:09 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7B6F2145D;
-        Mon,  8 Oct 2018 17:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539021018;
-        bh=3Wauq6xlfHvu3uPPzdIv/fgqWncjfqtiYgdvmoAFii8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oUaNTzJbLn+VgiSQC3uefCGNgFmdHzHGVz3nT+sozU44lPm8lUKBfHrJ1M22+CXub
-         ppRDYQ7QAkNsAhvJArHKe4LnAIaIWxKDJfsVGkuoqnmb5JRxJPbh0iVhuSu4qL52xQ
-         aAULvLSyqh3+CwXF9s/Ro77XhZV77NmiMEekRgQ0=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 67418141DDC; Mon,  8 Oct 2018 14:50:14 -0300 (-03)
-Date:   Mon, 8 Oct 2018 14:50:14 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v6 1/5] tools, perf, script: Add --insn-trace for
- instruction decoding
-Message-ID: <20181008175014.GS3541@kernel.org>
-References: <20180920180540.14039-1-andi@firstfloor.org>
- <20180920180540.14039-2-andi@firstfloor.org>
+        Mon, 8 Oct 2018 21:06:35 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:49259 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726291AbeJIBGf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:06:35 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id 9Zisgnxsk0ZZE9Zivg8EIq; Mon, 08 Oct 2018 19:53:42 +0200
+Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Keiichi Watanabe <keiichiw@chromium.org>,
+        linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org,
+        jcliang@chromium.org, shik@chromium.org
+References: <20181003070656.193854-1-keiichiw@chromium.org>
+ <b2dc51d7-fc92-2e7b-3a07-55a076b95d8b@ideasonboard.com>
+ <20181008140302.2239633f@coco.lan>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <00b0a8af-b7a5-cb49-0684-0fd0efefa196@xs4all.nl>
+Date:   Mon, 8 Oct 2018 19:53:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920180540.14039-2-andi@firstfloor.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181008140302.2239633f@coco.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAVRnZeufrN9NlqaKtWsHVobHqgseGij+kS7+NmKCuiCnp0l2xvYKk4+ccWSGOAFux0mNFxNu+6F+RCoNstbB9jd7jkd46DFhSl6k/pQgvhUa6QggwrV
+ vWlQi3QaY/tEn0XGpsyGyikPJC2+XQpJs3LdodAForFVmHKmWLnBxuTs1R/6ENTrZ3e8Lq14jPce00Blg4E9sEX9xBAjsp3+z72tGPhr4tGIxpVRCdg5Dzmx
+ 8O4wgT0p4r8Rf8C09txfUoB/C0lW7AWoUNLUg29HYZ0R7LNCpJqhIw0B9552rtJbixeZh5m/r+vqEgFPGA/3e57tfqGgLp09Lw3TZ6UrYm5wtHZRIzm4bRxR
+ ZuirzISclLZqNkkiRzk8VTff8Ic90y1QuAzPL/+Bj+WiFPhnHyTVXRK0iOS1KHej1FPAUIjAKinYEhovP1kHPAPC7Lm5gPY/sGJoK75LBhtlvHVivpw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Sep 20, 2018 at 11:05:36AM -0700, Andi Kleen escreveu:
-> From: Andi Kleen <ak@linux.intel.com>
+On 10/08/2018 07:03 PM, Mauro Carvalho Chehab wrote:
+> Em Wed, 3 Oct 2018 12:14:22 +0100
+> Kieran Bingham <kieran.bingham@ideasonboard.com> escreveu:
 > 
-> Add a --insn-trace short hand option for decoding and disassembling
-> instruction streams for intel_pt. This automatically pipes the
-> output into the xed disassembler to generate disassembled instructions.
-> This just makes this use model much nicer to use
+>>> @@ -75,6 +76,8 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+>>>  	{  1, 5 },
+>>>  	{  1, 10 },
+>>>  	{  1, 15 },
+>>> +	{  1, 15 },
+>>> +	{  1, 25 },  
 > 
-> Before
+> As the code requires that VIVID_WEBCAM_IVALS would be twice the number
+> of resolutions, I understand why you're doing that.
 > 
-> % perf record -e intel_pt// ...
-> % perf script --itrace=i0ns --ns -F +insn,-event,-period | xed -F insn: -A -64
->    swapper     0 [000] 117276.429606186:  ffffffff81010486 pt_config ([kernel.kallsyms])          nopl  %eax, (%rax,%rax,1)
->    swapper     0 [000] 117276.429606186:  ffffffff8101048b pt_config ([kernel.kallsyms])          add $0x10, %rsp
->    swapper     0 [000] 117276.429606186:  ffffffff8101048f pt_config ([kernel.kallsyms])          popq  %rbx
->    swapper     0 [000] 117276.429606186:  ffffffff81010490 pt_config ([kernel.kallsyms])          popq  %rbp
->    swapper     0 [000] 117276.429606186:  ffffffff81010491 pt_config ([kernel.kallsyms])          popq  %r12
->    swapper     0 [000] 117276.429606186:  ffffffff81010493 pt_config ([kernel.kallsyms])          popq  %r13
->    swapper     0 [000] 117276.429606186:  ffffffff81010495 pt_config ([kernel.kallsyms])          popq  %r14
->    swapper     0 [000] 117276.429606186:  ffffffff81010497 pt_config ([kernel.kallsyms])          popq  %r15
->    swapper     0 [000] 117276.429606186:  ffffffff81010499 pt_config ([kernel.kallsyms])          retq
->    swapper     0 [000] 117276.429606186:  ffffffff8101063e pt_event_add ([kernel.kallsyms])               cmpl  $0x1, 0x1b0(%rbx)
->    swapper     0 [000] 117276.429606186:  ffffffff81010645 pt_event_add ([kernel.kallsyms])               mov $0xffffffea, %eax
->    swapper     0 [000] 117276.429606186:  ffffffff8101064a pt_event_add ([kernel.kallsyms])               mov $0x0, %edx
->    swapper     0 [000] 117276.429606186:  ffffffff8101064f pt_event_add ([kernel.kallsyms])               popq  %rbx
->    swapper     0 [000] 117276.429606186:  ffffffff81010650 pt_event_add ([kernel.kallsyms])               cmovnz %edx, %eax
->    swapper     0 [000] 117276.429606186:  ffffffff81010653 pt_event_add ([kernel.kallsyms])               jmp 0xffffffff81010635
->    swapper     0 [000] 117276.429606186:  ffffffff81010635 pt_event_add ([kernel.kallsyms])               retq
->    swapper     0 [000] 117276.429606186:  ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])            test %eax, %eax
+>> But won't this add duplicates of 25 and 15 FPS to all the frame sizes
+>> smaller than 1280,720 ? Or are they filtered out?
 > 
-> Now
-> 
-> % perf record -e intel_pt// ...
-> % perf script --insn-trace --xed
-> ... same output ...
-> 
-> XED needs to be installed with:
-> 
-> > git clone https://github.com/intelxed/mbuild.git mbuild
-> > git clone https://github.com/intelxed/xed
-> > cd xed
-> > mkdir obj
-> > cd obj
-> > ../mfile.py
-> > sudo ../mfile.py --prefix=/usr/local install
-> 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> However, I agree with Kieran: looking at the code, it sounds to me that
+> it will indeed duplicate 1/15 and 1/25 intervals.
 
-Fixed up whitespace damage in the Documentation for building xed,
-applied.
+Oops, I missed this comment. Yes, you'll get duplicates which should be
+avoided.
 
-- Arnaldo
+> 
+> I suggest add two other intervals there, like:
+> 	12.5 fps and 29.995 fps, e. g.:
+
+29.995 is never used by webcams.
+
+> 
+> static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+>         {  1, 1 },
+>         {  1, 2 },
+>         {  1, 4 },
+>         {  1, 5 },
+>         {  1, 10 },
+>         {  1, 15 },
+> 	{  2, 50 },
+>         {  1, 25 },
+>         {  1, 30 },
+>         {  1, 40 },
+>         {  1, 50 },
+> 	{  1001, 30000 },
+>         {  1, 60 },
+> };
+> 
+> Provided, of course, that vivid would support producing images
+> at fractional rate. I didn't check. If not, then simply add
+> 1/20 and 1/40.
+
+vivid can do fractional rates (it does support this for the TV input),
+but 29.995 makes no sense for a webcam. So 1/20 and 1/40 seems the
+right approach.
+
+> 
+>> Now the difficulty is adding smaller frame rates (like 1,1, 1,2) would
+>> effect/reduce the output rates of the larger frame sizes, so how about
+>> adding some high rate support (any two from 1/{60,75,90,100,120}) instead?
+> 
+> Last week, I got a crash with vivid running at 30 fps, while running an 
+> event's race code, on a i7core (there, the code was switching all video
+> controls while subscribing/unsubscribing events). The same code worked
+> with lower fps.
+
+If you have a stack trace, then let me know.
+
+> While I didn't have time to debug it yet, I suspect that it has to do
+> with the time spent to produce a frame on vivid. So, while it would be
+> nice to have high rate support, I'm not sure if this is doable. It may,
+> but perhaps we need to disable some possible video output formats, as some
+> types may consume more time to build frames.
+
+In the end that depends on the CPU and what else is running. You'll know quickly
+enough if the CPU isn't fast enough to support a format. Although it shouldn't
+crash, of course.
+
+Regards,
+
+	Hans
