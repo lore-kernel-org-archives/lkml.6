@@ -7,69 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D93C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50281C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524362087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 186C9204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HablBo4s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524362087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zZm1ZfkH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186C9204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbeJIB6s (ORCPT
+        id S1731068AbeJIB6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:58:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJIB6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:47 -0400
+        id S1728570AbeJIB6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:50 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5F892064A;
-        Mon,  8 Oct 2018 18:45:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB48A204FD;
+        Mon,  8 Oct 2018 18:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024341;
-        bh=4OsRXEhzVZN1STz+wYgU8HzMCkdRqr6QQW7bmIonO24=;
+        s=default; t=1539024344;
+        bh=41p9KN9k4s3tPZUftJb1EMAJYi5aofoZtntKxNIhtGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HablBo4sh/vnprSIWEIRq36yf9gyu86XlCOuCmfhMaUZQXXfdgTOKSZg8JYeDQ0xi
-         L3RAy+JoHTknUfmDbFeo59CSTV98ec07aWpMU1i+9yTFez5/bsDe1Mcbq4VpMS7D+t
-         FXROU+fVIyMc+0t0uPEkse5tA2hMirp7nx1n6sAs=
+        b=zZm1ZfkHFZg36ega5JSkSoREiuR9dnYWfqXeEzzFW05aYdISRCXSzQFKijvtqE7TC
+         UXU5FimjcTtmzUg1277SyaZANYHty40cvlF/sMWQ3dDd8rN6vy+FM4OlMR97wpkE4h
+         LySxoerAvMjhpqOkpS/H29J5k/u20xUK9qeJAsss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Fernandes <joelaf@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        linux-kselftest@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Chris Lameter <cl@linux.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Turner <pjt@google.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Maurer <bmaurer@fb.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 001/168] rseq/selftests: fix parametrized test with -fpie
-Date:   Mon,  8 Oct 2018 20:29:41 +0200
-Message-Id: <20181008175620.096912313@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 002/168] mac80211: Run TXQ teardown code before de-registering interfaces
+Date:   Mon,  8 Oct 2018 20:29:42 +0200
+Message-Id: <20181008175620.132926836@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -82,101 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: "Toke Høiland-Jørgensen" <toke@toke.dk>
 
-commit ce01a1575f45bf319e374592656441021a7f5823 upstream.
+[ Upstream commit 77cfaf52eca5cac30ed029507e0cab065f888995 ]
 
-On x86-64, the parametrized selftest code for rseq crashes with a
-segmentation fault when compiled with -fpie. This happens when the
-param_test binary is loaded at an address beyond 32-bit on x86-64.
+The TXQ teardown code can reference the vif data structures that are
+stored in the netdev private memory area if there are still packets on
+the queue when it is being freed. Since the TXQ teardown code is run
+after the netdevs are freed, this can lead to a use-after-free. Fix this
+by moving the TXQ teardown code to earlier in ieee80211_unregister_hw().
 
-The issue is caused by use of a 32-bit register to hold the address
-of the loop counter variable.
-
-Fix this by using a 64-bit register to calculate the address of the
-loop counter variables as an offset from rip.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: <stable@vger.kernel.org> # v4.18
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Watson <davejwatson@fb.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: linux-kselftest@vger.kernel.org
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Chris Lameter <cl@linux.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Maurer <bmaurer@fb.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Reported-by: Ben Greear <greearb@candelatech.com>
+Tested-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- tools/testing/selftests/rseq/param_test.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ net/mac80211/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/rseq/param_test.c
-+++ b/tools/testing/selftests/rseq/param_test.c
-@@ -56,15 +56,13 @@ unsigned int yield_mod_cnt, nr_abort;
- 			printf(fmt, ## __VA_ARGS__);	\
- 	} while (0)
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -1182,6 +1182,7 @@ void ieee80211_unregister_hw(struct ieee
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	unregister_inet6addr_notifier(&local->ifa6_notifier);
+ #endif
++	ieee80211_txq_teardown_flows(local);
  
--#if defined(__x86_64__) || defined(__i386__)
-+#ifdef __i386__
+ 	rtnl_lock();
  
- #define INJECT_ASM_REG	"eax"
+@@ -1210,7 +1211,6 @@ void ieee80211_unregister_hw(struct ieee
+ 	skb_queue_purge(&local->skb_queue);
+ 	skb_queue_purge(&local->skb_queue_unreliable);
+ 	skb_queue_purge(&local->skb_queue_tdls_chsw);
+-	ieee80211_txq_teardown_flows(local);
  
- #define RSEQ_INJECT_CLOBBER \
- 	, INJECT_ASM_REG
- 
--#ifdef __i386__
--
- #define RSEQ_INJECT_ASM(n) \
- 	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
- 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
-@@ -76,9 +74,16 @@ unsigned int yield_mod_cnt, nr_abort;
- 
- #elif defined(__x86_64__)
- 
-+#define INJECT_ASM_REG_P	"rax"
-+#define INJECT_ASM_REG		"eax"
-+
-+#define RSEQ_INJECT_CLOBBER \
-+	, INJECT_ASM_REG_P \
-+	, INJECT_ASM_REG
-+
- #define RSEQ_INJECT_ASM(n) \
--	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG "\n\t" \
--	"mov (%%" INJECT_ASM_REG "), %%" INJECT_ASM_REG "\n\t" \
-+	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
-+	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
- 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
- 	"jz 333f\n\t" \
- 	"222:\n\t" \
-@@ -86,10 +91,6 @@ unsigned int yield_mod_cnt, nr_abort;
- 	"jnz 222b\n\t" \
- 	"333:\n\t"
- 
--#else
--#error "Unsupported architecture"
--#endif
--
- #elif defined(__ARMEL__)
- 
- #define RSEQ_INJECT_INPUT \
+ 	destroy_workqueue(local->workqueue);
+ 	wiphy_unregister(local->hw.wiphy);
 
 
