@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F7AC64EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FCEC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694082085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:58:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694082085B
+	by mail.kernel.org (Postfix) with ESMTP id E636B2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E636B2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbeJHNIG (ORCPT
+        id S1727040AbeJHNIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:08:06 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:48300 "EHLO
+        Mon, 8 Oct 2018 09:08:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:48308 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeJHNIG (ORCPT
+        with ESMTP id S1725950AbeJHNIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:08:06 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
+        Mon, 8 Oct 2018 09:08:10 -0400
+Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D9001142D4FB1;
-        Sun,  7 Oct 2018 22:58:05 -0700 (PDT)
-Date:   Sun, 07 Oct 2018 22:58:05 -0700 (PDT)
-Message-Id: <20181007.225805.1715245011770040083.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DFD21142E5E3F;
+        Sun,  7 Oct 2018 22:58:10 -0700 (PDT)
+Date:   Sun, 07 Oct 2018 22:58:10 -0700 (PDT)
+Message-Id: <20181007.225810.2302554943604046616.davem@davemloft.net>
 To:     gustavo@embeddedor.com
 Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sparc32: fix fall-through annotation
+Subject: Re: [PATCH] sparc64: fix fall-through annotation
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181002101517.GA32181@embeddedor.com>
-References: <20181002101517.GA32181@embeddedor.com>
+In-Reply-To: <20181002101954.GA645@embeddedor.com>
+References: <20181002101954.GA645@embeddedor.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 07 Oct 2018 22:58:06 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 07 Oct 2018 22:58:11 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Tue, 2 Oct 2018 12:15:17 +0200
+Date: Tue, 2 Oct 2018 12:19:54 +0200
 
 > Replace "fallthru" with a proper "fall through" annotation.
 > 
