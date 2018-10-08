@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78001C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE191C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F5E214C3
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9126C2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qd5Z5G8N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F5E214C3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4ChgHjw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9126C2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730309AbeJIBzr (ORCPT
+        id S1730316AbeJIBzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728663AbeJIBzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:46 -0400
+        id S1726672AbeJIBzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:49 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB0792064A;
-        Mon,  8 Oct 2018 18:42:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9C61214C2;
+        Mon,  8 Oct 2018 18:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024161;
-        bh=8yH9d9+le2MSwema90tVKAoysoa4gm5JuJi0C3jBHJY=;
+        s=default; t=1539024164;
+        bh=8EOzz7ZtB62mN19dyzzSQvrGXdbvKzJpdGx3WOmgkK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qd5Z5G8N/8pE+HPgmI09cxpqHGdqRyM7LfxKBbGQ3LHyXFjDXX+D3r+VhIb0uHZYz
-         BeAXtitTVBVcLhpkNU3EYZCJGqYfP0MOIQzvTWhVlLHO/DiEajfHD77vgoKuWAT0lF
-         qQlJsgjWIwmc+AIWZyAQz3jrgTD10T1zU0189DOw=
+        b=p4ChgHjwZrv49NYBBjFWzQ28xsxL9Wt00Am2P06AWYOhBYK/RBQK45gYyau5txszH
+         IHyCX3d6XGJZdG6r+ikamXThfxloT2CQWfdcWXmSu59pKfpISz8t5BwhgTAXLcwo8u
+         nNe/kKo4sZfl4HNUCLdz4XB8uDvKpR1E9RLh+yPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Sean OBrien <seobrien@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 42/94] netfilter: xt_cluster: add dependency on conntrack module
-Date:   Mon,  8 Oct 2018 20:31:23 +0200
-Message-Id: <20181008175607.003240725@linuxfoundation.org>
+Subject: [PATCH 4.14 43/94] HID: add support for Apple Magic Keyboards
+Date:   Mon,  8 Oct 2018 20:31:24 +0200
+Message-Id: <20181008175607.043863294@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,63 +64,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Willi <martin@strongswan.org>
+From: Sean O'Brien <seobrien@chromium.org>
 
-[ Upstream commit c1dc2912059901f97345d9e10c96b841215fdc0f ]
+[ Upstream commit ee345492437043a79db058a3d4f029ebcb52089a ]
 
-The cluster match requires conntrack for matching packets. If the
-netns does not have conntrack hooks registered, the match does not
-work at all.
+USB device
+	Vendor 05ac (Apple)
+	Device 026c (Magic Keyboard with Numeric Keypad)
 
-Implicitly load the conntrack hook for the family, exactly as many
-other extensions do. This ensures that the match works even if the
-hooks have not been registered by other means.
+Bluetooth devices
+	Vendor 004c (Apple)
+	Device 0267 (Magic Keyboard)
+	Device 026c (Magic Keyboard with Numeric Keypad)
 
-Signed-off-by: Martin Willi <martin@strongswan.org>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Support already exists for the Magic Keyboard over USB connection.
+Add support for the Magic Keyboard over Bluetooth connection, and for
+the Magic Keyboard with Numeric Keypad over Bluetooth and USB
+connection.
+
+Signed-off-by: Sean O'Brien <seobrien@chromium.org>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/xt_cluster.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/hid/hid-apple.c |    9 ++++++++-
+ drivers/hid/hid-ids.h   |    2 ++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/net/netfilter/xt_cluster.c
-+++ b/net/netfilter/xt_cluster.c
-@@ -133,6 +133,7 @@ xt_cluster_mt(const struct sk_buff *skb,
- static int xt_cluster_mt_checkentry(const struct xt_mtchk_param *par)
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -335,7 +335,8 @@ static int apple_input_mapping(struct hi
+ 		struct hid_field *field, struct hid_usage *usage,
+ 		unsigned long **bit, int *max)
  {
- 	struct xt_cluster_match_info *info = par->matchinfo;
-+	int ret;
+-	if (usage->hid == (HID_UP_CUSTOM | 0x0003)) {
++	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
++			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
+ 		/* The fn key on Apple USB keyboards */
+ 		set_bit(EV_REP, hi->input->evbit);
+ 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
+@@ -472,6 +473,12 @@ static const struct hid_device_id apple_
+ 		.driver_data = APPLE_NUMLOCK_EMULATION | APPLE_HAS_FN },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
+ 		.driver_data = APPLE_HAS_FN },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
++		.driver_data = APPLE_HAS_FN },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
++		.driver_data = APPLE_HAS_FN },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
++		.driver_data = APPLE_HAS_FN },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ANSI),
+ 		.driver_data = APPLE_HAS_FN },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ISO),
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -85,6 +85,7 @@
+ #define USB_DEVICE_ID_ANTON_TOUCH_PAD	0x3101
  
- 	if (info->total_nodes > XT_CLUSTER_NODES_MAX) {
- 		pr_info("you have exceeded the maximum "
-@@ -145,7 +146,17 @@ static int xt_cluster_mt_checkentry(cons
- 			"higher than the total number of nodes\n");
- 		return -EDOM;
- 	}
--	return 0;
-+
-+	ret = nf_ct_netns_get(par->net, par->family);
-+	if (ret < 0)
-+		pr_info_ratelimited("cannot load conntrack support for proto=%u\n",
-+				    par->family);
-+	return ret;
-+}
-+
-+static void xt_cluster_mt_destroy(const struct xt_mtdtor_param *par)
-+{
-+	nf_ct_netns_put(par->net, par->family);
- }
- 
- static struct xt_match xt_cluster_match __read_mostly = {
-@@ -154,6 +165,7 @@ static struct xt_match xt_cluster_match
- 	.match		= xt_cluster_mt,
- 	.checkentry	= xt_cluster_mt_checkentry,
- 	.matchsize	= sizeof(struct xt_cluster_match_info),
-+	.destroy	= xt_cluster_mt_destroy,
- 	.me		= THIS_MODULE,
- };
- 
+ #define USB_VENDOR_ID_APPLE		0x05ac
++#define BT_VENDOR_ID_APPLE		0x004c
+ #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE	0x0304
+ #define USB_DEVICE_ID_APPLE_MAGICMOUSE	0x030d
+ #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD	0x030e
+@@ -154,6 +155,7 @@
+ #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO   0x0256
+ #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS   0x0257
+ #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI   0x0267
++#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI   0x026c
+ #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI	0x0290
+ #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO	0x0291
+ #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS	0x0292
 
 
