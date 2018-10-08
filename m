@@ -6,86 +6,87 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC79C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB07FC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA412089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74DB12150F
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1/vYH4C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA412089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpNIFCnm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DB12150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeJHWis (ORCPT
+        id S1728264AbeJHWit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57476 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727747AbeJHWir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:47 -0400
+        id S1727794AbeJHWis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF11E2075E;
-        Mon,  8 Oct 2018 15:26:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBB8E214DA;
+        Mon,  8 Oct 2018 15:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012392;
-        bh=M1jApAVtan0XKlgYCvGn5G86G6AkNHO2606FWYNvuZM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=W1/vYH4CIQKEtQArW+hbpmJ/01LYdimGPBfqqQyT5DurdfVe5bcUNMf5LEdw7dnsV
-         AGxIid2XaLvKsZuGzDEdyQ2ZqAdsf2eas+Ps5BkY1kdL0gVsMrMNGk5gNnJMzTUqby
-         tDR4YgF4z4kY0Jv5PNtpdpV1zQs/n0vQ1qhI8bO4=
+        s=default; t=1539012393;
+        bh=KL/NInHDX6n+IH+YBbrwUCEjXvZ/HxQNe6+pX7DY/rU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VpNIFCnmi9+t2bK21xNzs5gHnniBXS2o93O+IxdeJ3FqbZ6eG/mu2n7SBHk0oKVhm
+         RtxCnao5IZ18Lr7lpvyvvgkRlBkDLmj2GnoQ8R380sOW38S+uL1fW4bGci86rLtL0V
+         QpSSTGaI5hhE6agO7IagSGMydSMBkJDwGc4WL2WQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jozef Balga <jozef.balga@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+Cc:     Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 01/32] media: af9035: prevent buffer overflow on write
-Date:   Mon,  8 Oct 2018 11:25:58 -0400
-Message-Id: <20181008152629.70812-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 02/32] batman-adv: Avoid probe ELP information leak
+Date:   Mon,  8 Oct 2018 11:25:59 -0400
+Message-Id: <20181008152629.70812-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
+References: <20181008152629.70812-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jozef Balga <jozef.balga@gmail.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 312f73b648626a0526a3aceebb0a3192aaba05ce ]
+[ Upstream commit 88d0895d0ea9d4431507d576c963f2ff9918144d ]
 
-When less than 3 bytes are written to the device, memcpy is called with
-negative array size which leads to buffer overflow and kernel panic. This
-patch adds a condition and returns -EOPNOTSUPP instead.
-Fixes bugzilla issue 64871
+The probe ELPs for WiFi interfaces are expanded to contain at least
+BATADV_ELP_MIN_PROBE_SIZE bytes. This is usually a lot more than the
+number of bytes which the template ELP packet requires.
 
-[mchehab+samsung@kernel.org: fix a merge conflict and changed the
- condition to match the patch's comment, e. g. len == 3 could
- also be valid]
-Signed-off-by: Jozef Balga <jozef.balga@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+These extra padding bytes were not initialized and thus could contain data
+which were previously stored at the same location. It is therefore required
+to set it to some predefined or random values to avoid leaking private
+information from the system transmitting these kind of packets.
+
+Fixes: e4623c913508 ("batman-adv: Avoid probe ELP information leak")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Antonio Quartulli <a@unstable.cc>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/usb/dvb-usb-v2/af9035.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/batman-adv/bat_v_elp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
-index 666d319d3d1a..1f6c1eefe389 100644
---- a/drivers/media/usb/dvb-usb-v2/af9035.c
-+++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-@@ -402,8 +402,10 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
- 			if (msg[0].addr == state->af9033_i2c_addr[1])
- 				reg |= 0x100000;
+diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
+index bd1064d98e16..bfc49d48eb57 100644
+--- a/net/batman-adv/bat_v_elp.c
++++ b/net/batman-adv/bat_v_elp.c
+@@ -227,7 +227,7 @@ batadv_v_elp_wifi_neigh_probe(struct batadv_hardif_neigh_node *neigh)
+ 		 * the packet to be exactly of that size to make the link
+ 		 * throughput estimation effective.
+ 		 */
+-		skb_put(skb, probe_len - hard_iface->bat_v.elp_skb->len);
++		skb_put_zero(skb, probe_len - hard_iface->bat_v.elp_skb->len);
  
--			ret = af9035_wr_regs(d, reg, &msg[0].buf[3],
--					msg[0].len - 3);
-+			ret = (msg[0].len >= 3) ? af9035_wr_regs(d, reg,
-+							         &msg[0].buf[3],
-+							         msg[0].len - 3)
-+					        : -EOPNOTSUPP;
- 		} else {
- 			/* I2C write */
- 			u8 buf[MAX_XFER_SIZE];
+ 		batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+ 			   "Sending unicast (probe) ELP packet on interface %s to %pM\n",
 -- 
 2.17.1
 
