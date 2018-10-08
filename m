@@ -2,138 +2,360 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE31CC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5E0C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 866962145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714042145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:16:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rblCMVQm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866962145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="fCEzcYfy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714042145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbeJIBuQ (ORCPT
+        id S1727620AbeJIC3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726503AbeJIBuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:16 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C065620C0A;
-        Mon,  8 Oct 2018 18:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023832;
-        bh=D6o2m2jdUFLqhlIO/Lu8jxYpOIzJDlgya5939emdcho=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rblCMVQmEtgxA+Rt7cDFH7br5EpMAKvyB7UOrm7/jT3x3vEYoYnikPJsxAoJRsqTa
-         TG4X/n638PDWL27QM+LDHIosuU0sNtfqtVs7w8npvkm+JRufV1iRHBpWu0uVH7+pjA
-         4mrgtF4U3RVYuUrgfX1Thwkf05aQsOt0MWGTCTc4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 077/113] gpio: adp5588: Fix sleep-in-atomic-context bug
-Date:   Mon,  8 Oct 2018 20:31:18 +0200
-Message-Id: <20181008175535.166435965@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
-References: <20181008175530.864641368@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 8 Oct 2018 22:29:48 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41223 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeJIC3r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:29:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id q4-v6so16712796iob.8
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 12:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VUua1+Cuv4gbJEMi3xTEqSpOkb/gv5I95CeVaOtWcJw=;
+        b=fCEzcYfyDqc+d34eIhgXJAEJ2aI6d3iq+5hKD1jJ860p+iUOcFs+wYwxcNEwKZ709+
+         BdkceLvM08z41qS6XdvnWWc9SPvdVMaL6JUyAURXGf0YoPJP4XSynxRY+IgFfTnri62a
+         QGSG875VnUrFjZlKKX8AdfNaHt8dOtXn3vzesvesJenX3o3kehVWhTihc4gm8CSzegXo
+         ClfIcSXGZ8VhHuq4H9RWNzKomzewmgM8s82MwV3WYW/xEt5LrTDkZlx8giGxvmHMDrUB
+         sH8yWxhhLrsmZ/7GDZxwx1vJSl1BaBBQMBzpLTijPbIOEQcMAjOliYBK/jGf3I5QFJij
+         YO0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VUua1+Cuv4gbJEMi3xTEqSpOkb/gv5I95CeVaOtWcJw=;
+        b=md+Zs0yYoNHTYJgpYPcE4tyEJMJ9Y5FncLvg0KPfUbYfBGZ3MDy+qlq37KmVDW8d8G
+         OeVo49zoO83RUk9stb7hAHWBfIjHlcdtuCmO/suQ19hnwD6LHfu8HUpSD0N5odq/j2C8
+         7aFM1HUa+57Slo5e7cmsrvbe9TyCAPdfw1Vd+XG1fg+8tcASbEOjsON0VMbjNX8o4fWA
+         3PlY+bp4IQzSmrn9XN8+zT1AAxa0AUjbLnCjh7YmBmfy0WNXf1r/yFd22JSnpf82F9D2
+         1XPIljMCgkltzO/E6ux3+j36O/dE/9mF1HZk8jEWY39Lxvwv8KiFD6E+ciVnvFjuQwIC
+         /q8w==
+X-Gm-Message-State: ABuFfogeMD5S+tkGB8xCx/t65RJqCLW/BEUtkIyeqmZytTh5tqFp2Ip2
+        JChljEiHJackXznyIq62yTeMyA==
+X-Google-Smtp-Source: ACcGV628jtRdxSLnJAo9GhYA+xISyLl8YEts3YQ8Q51owYEetweSGIrGFeUZv0CuMhu6AMKaetYTXQ==
+X-Received: by 2002:a6b:3a45:: with SMTP id h66-v6mr12934363ioa.220.1539026191428;
+        Mon, 08 Oct 2018 12:16:31 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id f16-v6sm5907070ioc.48.2018.10.08.12.16.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 12:16:30 -0700 (PDT)
+Subject: Re: [PATCH sparc-next] sunvdc: Remove VLA usage
+To:     David Miller <davem@davemloft.net>, keescook@chromium.org
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org
+References: <20181008154651.GA36881@beast>
+ <20181008.111046.1103300226053324861.davem@davemloft.net>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <92c2b11c-acc5-4c7a-387f-19e2ecebe782@kernel.dk>
+Date:   Mon, 8 Oct 2018 13:16:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181008.111046.1103300226053324861.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 10/8/18 12:10 PM, David Miller wrote:
+> From: Kees Cook <keescook@chromium.org>
+> Date: Mon, 8 Oct 2018 08:46:51 -0700
+> 
+>> In the quest to remove all stack VLA usage from the kernel[1], this moves
+>> the math for cookies calculation into macros and allocates a fixed size
+>> array for the maximum number of cookies and adds a runtime sanity check.
+>> (Note that the size was always fixed, but just hidden from the compiler.)
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Cc: Jens Axboe <axboe@kernel.dk>
+>> Cc: linux-block@vger.kernel.org
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
+> Applied.
 
-------------------
+FWIW, you can add my reviewed-by if you haven't already queued it up.
 
-From: Michael Hennerich <michael.hennerich@analog.com>
+On the topic of vdc, do you have a way to test it? I converted it to
+use blk-mq, to make some progress on killing the legacy IO path.
+See below, would be great if someone was able to test this...
 
-[ Upstream commit 6537886cdc9a637711fd6da980dbb87c2c87c9aa ]
 
-This fixes:
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_write()
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_direction_input()
-
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpio/gpio-adp5588.c |   24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
---- a/drivers/gpio/gpio-adp5588.c
-+++ b/drivers/gpio/gpio-adp5588.c
-@@ -41,6 +41,8 @@ struct adp5588_gpio {
- 	uint8_t int_en[3];
- 	uint8_t irq_mask[3];
- 	uint8_t irq_stat[3];
-+	uint8_t int_input_en[3];
-+	uint8_t int_lvl_cached[3];
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index f68e9baffad7..cb70d835475c 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/list.h>
+ #include <linux/scatterlist.h>
++#include <linux/blk-mq.h>
+ 
+ #include <asm/vio.h>
+ #include <asm/ldc.h>
+@@ -66,6 +67,7 @@ struct vdc_port {
+ 
+ 	u64			max_xfer_size;
+ 	u32			vdisk_block_size;
++	u32			drain;
+ 
+ 	u64			ldc_timeout;
+ 	struct timer_list	ldc_reset_timer;
+@@ -80,6 +82,8 @@ struct vdc_port {
+ 	u8			vdisk_mtype;
+ 	u32			vdisk_phys_blksz;
+ 
++	struct blk_mq_tag_set	tag_set;
++
+ 	char			disk_name[32];
  };
  
- static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
-@@ -177,12 +179,28 @@ static void adp5588_irq_bus_sync_unlock(
- 	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
- 	int i;
+@@ -175,11 +179,8 @@ static void vdc_blk_queue_start(struct vdc_port *port)
+ 	 * handshake completes, so check for initial handshake before we've
+ 	 * allocated a disk.
+ 	 */
+-	if (port->disk && blk_queue_stopped(port->disk->queue) &&
+-	    vdc_tx_dring_avail(dr) * 100 / VDC_TX_RING_SIZE >= 50) {
+-		blk_start_queue(port->disk->queue);
+-	}
+-
++	if (port->disk && vdc_tx_dring_avail(dr) * 100 / VDC_TX_RING_SIZE >= 50)
++		blk_mq_start_hw_queues(port->disk->queue);
+ }
  
--	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++)
-+	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++) {
-+		if (dev->int_input_en[i]) {
-+			mutex_lock(&dev->lock);
-+			dev->dir[i] &= ~dev->int_input_en[i];
-+			dev->int_input_en[i] = 0;
-+			adp5588_gpio_write(dev->client, GPIO_DIR1 + i,
-+					   dev->dir[i]);
-+			mutex_unlock(&dev->lock);
-+		}
+ static void vdc_finish(struct vio_driver_state *vio, int err, int waiting_for)
+@@ -320,7 +321,7 @@ static void vdc_end_one(struct vdc_port *port, struct vio_dring_state *dr,
+ 
+ 	rqe->req = NULL;
+ 
+-	__blk_end_request(req, (desc->status ? BLK_STS_IOERR : 0), desc->size);
++	blk_mq_end_request(req, desc->status ? BLK_STS_IOERR : 0);
+ 
+ 	vdc_blk_queue_start(port);
+ }
+@@ -525,29 +526,41 @@ static int __send_request(struct request *req)
+ 	return err;
+ }
+ 
+-static void do_vdc_request(struct request_queue *rq)
++static blk_status_t vdc_queue_rq(struct blk_mq_hw_ctx *hctx,
++				 const struct blk_mq_queue_data *bd)
+ {
+-	struct request *req;
++	struct vdc_port *port = hctx->queue->queuedata;
++	struct vio_dring_state *dr;
++	unsigned long flags;
+ 
+-	while ((req = blk_peek_request(rq)) != NULL) {
+-		struct vdc_port *port;
+-		struct vio_dring_state *dr;
++	dr = &port->vio.drings[VIO_DRIVER_TX_RING];
+ 
+-		port = req->rq_disk->private_data;
+-		dr = &port->vio.drings[VIO_DRIVER_TX_RING];
+-		if (unlikely(vdc_tx_dring_avail(dr) < 1))
+-			goto wait;
++	blk_mq_start_request(bd->rq);
+ 
+-		blk_start_request(req);
++	spin_lock_irqsave(&port->vio.lock, flags);
+ 
+-		if (__send_request(req) < 0) {
+-			blk_requeue_request(rq, req);
+-wait:
+-			/* Avoid pointless unplugs. */
+-			blk_stop_queue(rq);
+-			break;
+-		}
++	/*
++	 * Doing drain, just end the request in error
++	 */
++	if (unlikely(port->drain)) {
++		spin_unlock_irqrestore(&port->vio.lock, flags);
++		return BLK_STS_IOERR;
+ 	}
 +
-+		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
-+			dev->int_lvl_cached[i] = dev->int_lvl[i];
-+			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
-+					   dev->int_lvl[i]);
-+		}
++	if (unlikely(vdc_tx_dring_avail(dr) < 1))
++		goto wait;
 +
- 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
- 			dev->int_en[i] = dev->irq_mask[i];
- 			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
- 					   dev->int_en[i]);
- 		}
++	if (__send_request(bd->rq) < 0) {
++		blk_mq_requeue_request(bd->rq, false);
++		goto wait;
 +	}
- 
- 	mutex_unlock(&dev->irq_lock);
++
++	spin_unlock_irqrestore(&port->vio.lock, flags);
++	return BLK_STS_OK;
++wait:
++	spin_unlock_irqrestore(&port->vio.lock, flags);
++	blk_mq_stop_hw_queue(hctx);
++	return BLK_STS_RESOURCE;
  }
-@@ -225,9 +243,7 @@ static int adp5588_irq_set_type(struct i
- 	else
- 		return -EINVAL;
  
--	adp5588_gpio_direction_input(&dev->gpio_chip, gpio);
--	adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + bank,
--			   dev->int_lvl[bank]);
-+	dev->int_input_en[bank] |= bit;
- 
- 	return 0;
+ static int generic_request(struct vdc_port *port, u8 op, void *buf, int len)
+@@ -759,6 +772,43 @@ static void vdc_port_down(struct vdc_port *port)
+ 	vio_ldc_free(&port->vio);
  }
+ 
++static const struct blk_mq_ops vdc_mq_ops = {
++	.queue_rq	= vdc_queue_rq,
++};
++
++static void cleanup_queue(struct request_queue *q)
++{
++	blk_mq_free_tag_set(q->tag_set);
++	blk_cleanup_queue(q);
++}
++
++static struct request_queue *init_queue(struct vdc_port *port)
++{
++	struct blk_mq_tag_set *set = &port->tag_set;
++	struct request_queue *q;
++	int ret;
++
++	memset(set, 0, sizeof(*set));
++	set->ops = &vdc_mq_ops;
++	set->nr_hw_queues = 1;
++	set->queue_depth = VDC_TX_RING_SIZE;
++	set->numa_node = NUMA_NO_NODE;
++	set->flags = BLK_MQ_F_SHOULD_MERGE;
++
++	ret = blk_mq_alloc_tag_set(set);
++	if (ret)
++		return ERR_PTR(ret);
++
++	q = blk_mq_init_queue(set);
++	if (IS_ERR(q)) {
++		blk_mq_free_tag_set(set);
++		return q;
++	}
++
++	q->queuedata = port;
++	return q;
++}
++
+ static int probe_disk(struct vdc_port *port)
+ {
+ 	struct request_queue *q;
+@@ -796,17 +846,17 @@ static int probe_disk(struct vdc_port *port)
+ 				    (u64)geom.num_sec);
+ 	}
+ 
+-	q = blk_init_queue(do_vdc_request, &port->vio.lock);
+-	if (!q) {
++	q = init_queue(port);
++	if (IS_ERR(q)) {
+ 		printk(KERN_ERR PFX "%s: Could not allocate queue.\n",
+ 		       port->vio.name);
+-		return -ENOMEM;
++		return PTR_ERR(q);
+ 	}
+ 	g = alloc_disk(1 << PARTITION_SHIFT);
+ 	if (!g) {
+ 		printk(KERN_ERR PFX "%s: Could not allocate gendisk.\n",
+ 		       port->vio.name);
+-		blk_cleanup_queue(q);
++		cleanup_queue(q);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1034,18 +1084,14 @@ static int vdc_port_remove(struct vio_dev *vdev)
+ 	struct vdc_port *port = dev_get_drvdata(&vdev->dev);
+ 
+ 	if (port) {
+-		unsigned long flags;
+-
+-		spin_lock_irqsave(&port->vio.lock, flags);
+-		blk_stop_queue(port->disk->queue);
+-		spin_unlock_irqrestore(&port->vio.lock, flags);
++		blk_mq_stop_hw_queues(port->disk->queue);
+ 
+ 		flush_work(&port->ldc_reset_work);
+ 		del_timer_sync(&port->ldc_reset_timer);
+ 		del_timer_sync(&port->vio.timer);
+ 
+ 		del_gendisk(port->disk);
+-		blk_cleanup_queue(port->disk->queue);
++		cleanup_queue(port->disk->queue);
+ 		put_disk(port->disk);
+ 		port->disk = NULL;
+ 
+@@ -1080,16 +1126,28 @@ static void vdc_requeue_inflight(struct vdc_port *port)
+ 		}
+ 
+ 		rqe->req = NULL;
+-		blk_requeue_request(port->disk->queue, req);
++		blk_mq_requeue_request(req, false);
+ 	}
+ }
+ 
+-static void vdc_queue_drain(struct vdc_port *port)
++static void vdc_queue_drain(struct vdc_port *port, unsigned long *flags)
+ {
+-	struct request *req;
++	struct request_queue *q = port->disk->queue;
++
++	/*
++	 * Mark the queue as draining, then freeze/quiesce to ensure
++	 * that all existing requests are seen in ->queue_rq() and killed
++	 */
++	port->drain = 1;
++	spin_unlock_irqrestore(&port->vio.lock, *flags);
++
++	blk_mq_freeze_queue(q);
++	blk_mq_quiesce_queue(q);
+ 
+-	while ((req = blk_fetch_request(port->disk->queue)) != NULL)
+-		__blk_end_request_all(req, BLK_STS_IOERR);
++	spin_lock_irqsave(&port->vio.lock, *flags);
++	port->drain = 0;
++	blk_mq_unquiesce_queue(q);
++	blk_mq_unfreeze_queue(q);
+ }
+ 
+ static void vdc_ldc_reset_timer(struct timer_list *t)
+@@ -1102,7 +1160,7 @@ static void vdc_ldc_reset_timer(struct timer_list *t)
+ 	if (!(port->vio.hs_state & VIO_HS_COMPLETE)) {
+ 		pr_warn(PFX "%s ldc down %llu seconds, draining queue\n",
+ 			port->disk_name, port->ldc_timeout);
+-		vdc_queue_drain(port);
++		vdc_queue_drain(port, &flags);
+ 		vdc_blk_queue_start(port);
+ 	}
+ 	spin_unlock_irqrestore(&vio->lock, flags);
+@@ -1129,7 +1187,7 @@ static void vdc_ldc_reset(struct vdc_port *port)
+ 	assert_spin_locked(&port->vio.lock);
+ 
+ 	pr_warn(PFX "%s ldc link reset\n", port->disk_name);
+-	blk_stop_queue(port->disk->queue);
++	blk_mq_stop_hw_queues(port->disk->queue);
+ 	vdc_requeue_inflight(port);
+ 	vdc_port_down(port);
+ 
 
+-- 
+Jens Axboe
 
