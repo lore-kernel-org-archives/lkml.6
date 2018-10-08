@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FA8C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF52C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3812064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0816A214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k41j+uOz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3812064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8HawIea"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0816A214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeJIBtN (ORCPT
+        id S1728525AbeJIBtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33982 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbeJIBtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:12 -0400
+        id S1726781AbeJIBtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:15 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAEA120C0A;
-        Mon,  8 Oct 2018 18:36:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84D52214DD;
+        Mon,  8 Oct 2018 18:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023769;
-        bh=Ym6pHhThQGOhuSsLJmO7NyOcH4dprLc9Pycfh8ZfLLQ=;
+        s=default; t=1539023772;
+        bh=XNjEFNtaxpiRrWBmpj7S5/JgY1XTyn2+rGsjCwmPWkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k41j+uOz33KvCJwtKbKRTenQAi18eAJ5YWskR+ey/ZLLA/KQMYoq/59pAMn8PfPu5
-         6533UFT5Mq0aj0uOFp3a1TzRvCX9JJl0TNFpmjwzU/bdRkSex+VIbBmF3fP+/oTrtc
-         vHC3WOl8kfgVz3D/JdzGYaGNVykA3Qq4lMMLbr9E=
+        b=V8HawIeaLGGMBOjggb64z9sxGivWRxzzuXqEyU19zRODBC0dg82L7sVelaqNUebo7
+         20wd/UQnEPceTKHtGZkXGsVJr2ef9mNb9JmzcI+uoebm+ejcdge/cMmvle6TE3mneV
+         POPOoNNfv1BgKmPdvHvWlnocgn71dBTdG7QPXh58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ming_qian <ming_qian@realsil.com.cn>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Ana Guerrero Lopez <ana.guerrero@collabora.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 053/113] media: uvcvideo: Support realteks UVC 1.5 device
-Date:   Mon,  8 Oct 2018 20:30:54 +0200
-Message-Id: <20181008175533.815886989@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+843efa30c8821bd69f53@syzkaller.appspotmail.com
+Subject: [PATCH 4.4 054/113] USB: usbdevfs: sanitize flags more
+Date:   Mon,  8 Oct 2018 20:30:55 +0200
+Message-Id: <20181008175533.900033972@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -65,96 +62,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: ming_qian <ming_qian@realsil.com.cn>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit f620d1d7afc7db57ab59f35000752840c91f67e7 upstream.
+commit 7a68d9fb851012829c29e770621905529bd9490b upstream.
 
-media: uvcvideo: Support UVC 1.5 video probe & commit controls
+Requesting a ZERO_PACKET or not is sensible only for output.
+In the input direction the device decides.
+Likewise accepting short packets makes sense only for input.
 
-The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
-Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
-recognized.
+This allows operation with panic_on_warn without opening up
+a local DOS.
 
-More changes to the driver are needed for full UVC 1.5 compatibility.
-However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
-reported to work well.
-
-[laurent.pinchart@ideasonboard.com: Factor out code to helper function, update size checks]
-
-Cc: stable@vger.kernel.org
-Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Ana Guerrero Lopez <ana.guerrero@collabora.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+843efa30c8821bd69f53@syzkaller.appspotmail.com
+Fixes: 0cb54a3e47cb ("USB: debugging code shouldn't alter control flow")
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/uvc/uvc_video.c |   24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ drivers/usb/core/devio.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -163,14 +163,27 @@ static void uvc_fixup_video_ctrl(struct
- 	}
- }
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -1289,10 +1289,13 @@ static int proc_do_submiturb(struct usb_
+ 	struct async *as = NULL;
+ 	struct usb_ctrlrequest *dr = NULL;
+ 	unsigned int u, totlen, isofrmlen;
+-	int i, ret, is_in, num_sgs = 0, ifnum = -1;
++	int i, ret, num_sgs = 0, ifnum = -1;
+ 	int number_of_packets = 0;
+ 	unsigned int stream_id = 0;
+ 	void *buf;
++	bool is_in;
++	bool allow_short = false;
++	bool allow_zero = false;
+ 	unsigned long mask =	USBDEVFS_URB_SHORT_NOT_OK |
+ 				USBDEVFS_URB_BULK_CONTINUATION |
+ 				USBDEVFS_URB_NO_FSBR |
+@@ -1326,6 +1329,8 @@ static int proc_do_submiturb(struct usb_
+ 	u = 0;
+ 	switch (uurb->type) {
+ 	case USBDEVFS_URB_TYPE_CONTROL:
++		if (is_in)
++			allow_short = true;
+ 		if (!usb_endpoint_xfer_control(&ep->desc))
+ 			return -EINVAL;
+ 		/* min 8 byte setup packet */
+@@ -1366,6 +1371,10 @@ static int proc_do_submiturb(struct usb_
+ 		break;
  
-+static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-+{
-+	/*
-+	 * Return the size of the video probe and commit controls, which depends
-+	 * on the protocol version.
-+	 */
-+	if (stream->dev->uvc_version < 0x0110)
-+		return 26;
-+	else if (stream->dev->uvc_version < 0x0150)
-+		return 34;
-+	else
-+		return 48;
-+}
-+
- static int uvc_get_video_ctrl(struct uvc_streaming *stream,
- 	struct uvc_streaming_control *ctrl, int probe, __u8 query)
- {
-+	__u16 size = uvc_video_ctrl_size(stream);
- 	__u8 *data;
--	__u16 size;
- 	int ret;
+ 	case USBDEVFS_URB_TYPE_BULK:
++		if (!is_in)
++			allow_zero = true;
++		else
++			allow_short = true;
+ 		switch (usb_endpoint_type(&ep->desc)) {
+ 		case USB_ENDPOINT_XFER_CONTROL:
+ 		case USB_ENDPOINT_XFER_ISOC:
+@@ -1386,6 +1395,10 @@ static int proc_do_submiturb(struct usb_
+ 		if (!usb_endpoint_xfer_int(&ep->desc))
+ 			return -EINVAL;
+  interrupt_urb:
++		if (!is_in)
++			allow_zero = true;
++		else
++			allow_short = true;
+ 		break;
  
--	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
- 	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
- 			query == UVC_GET_DEF)
- 		return -EIO;
-@@ -225,7 +238,7 @@ static int uvc_get_video_ctrl(struct uvc
- 	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
- 	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
- 
--	if (size == 34) {
-+	if (size >= 34) {
- 		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
- 		ctrl->bmFramingInfo = data[30];
- 		ctrl->bPreferedVersion = data[31];
-@@ -254,11 +267,10 @@ out:
- static int uvc_set_video_ctrl(struct uvc_streaming *stream,
- 	struct uvc_streaming_control *ctrl, int probe)
- {
-+	__u16 size = uvc_video_ctrl_size(stream);
- 	__u8 *data;
--	__u16 size;
- 	int ret;
- 
--	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
- 	data = kzalloc(size, GFP_KERNEL);
- 	if (data == NULL)
- 		return -ENOMEM;
-@@ -275,7 +287,7 @@ static int uvc_set_video_ctrl(struct uvc
- 	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
- 	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
- 
--	if (size == 34) {
-+	if (size >= 34) {
- 		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
- 		data[30] = ctrl->bmFramingInfo;
- 		data[31] = ctrl->bPreferedVersion;
+ 	case USBDEVFS_URB_TYPE_ISO:
+@@ -1512,11 +1525,11 @@ static int proc_do_submiturb(struct usb_
+ 	u = (is_in ? URB_DIR_IN : URB_DIR_OUT);
+ 	if (uurb->flags & USBDEVFS_URB_ISO_ASAP)
+ 		u |= URB_ISO_ASAP;
+-	if (uurb->flags & USBDEVFS_URB_SHORT_NOT_OK && is_in)
++	if (allow_short && uurb->flags & USBDEVFS_URB_SHORT_NOT_OK)
+ 		u |= URB_SHORT_NOT_OK;
+ 	if (uurb->flags & USBDEVFS_URB_NO_FSBR)
+ 		u |= URB_NO_FSBR;
+-	if (uurb->flags & USBDEVFS_URB_ZERO_PACKET)
++	if (allow_zero && uurb->flags & USBDEVFS_URB_ZERO_PACKET)
+ 		u |= URB_ZERO_PACKET;
+ 	if (uurb->flags & USBDEVFS_URB_NO_INTERRUPT)
+ 		u |= URB_NO_INTERRUPT;
 
 
