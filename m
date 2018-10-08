@@ -2,141 +2,143 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC0BC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891CBC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51AA42089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:43:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51AA42089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 4E3822089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:45:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Om2w/GC0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3822089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeJIC4s (ORCPT
+        id S1726750AbeJIC6h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:56:48 -0400
-Received: from mout.gmx.net ([212.227.17.22]:58197 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726439AbeJIC4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:56:48 -0400
-Received: from [192.168.20.60] ([92.116.184.237]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0M3R1g-1frw3g2MIS-00r46l; Mon, 08
- Oct 2018 21:43:16 +0200
-Received: from [192.168.20.60] ([92.116.184.237]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0M3R1g-1frw3g2MIS-00r46l; Mon, 08
- Oct 2018 21:43:16 +0200
-Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file
- generation
-To:     Firoz Khan <firoz.khan@linaro.org>, linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-5-git-send-email-firoz.khan@linaro.org>
-From:   Helge Deller <deller@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
- xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
- y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
- +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
- KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
- OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
- AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
- UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
- +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
- iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
- 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
- vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
- zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
- +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
- UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
- T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
- gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
- BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
- 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
- kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
- lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
- ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
- KrhlU0uMP9QTB5WAUvxvGy8=
-Message-ID: <b1883a34-f256-0940-4e92-574ba48b5ca8@gmx.de>
-Date:   Mon, 8 Oct 2018 21:43:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Mon, 8 Oct 2018 22:58:37 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44817 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbeJIC6h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:58:37 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p25-v6so10518491pli.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 12:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SekXNzZJNKc0ROGOK7ZgH8k7aw+tWIkoUFjpC2nUNaU=;
+        b=Om2w/GC02mVh/bMN7anZ4AmpR0eHd9TG0C6Y0acnT5tQWGRDZvOxfp5YsJRdPXiml3
+         AMxY4BONeDnImCq/CH/zQxhK0ttIxnKWyA1NSyvPVfwzC6NiRIdm5BZ07oY4rWtFOHYj
+         CWy+ACY4nlHHYOqkEc6yajbQ2yruMPJVUsfKifyCoSwK45sJKxtyWmaRVuq+akspfcEg
+         CgPNe8l09w/AbnaimlfV+JC7y3lyjEOycgWJmIk/oqIdcHf5hPydejT7dhrdzJ0FC5D+
+         FatVZj/ldXRJFVtkrQss5uMVDmvPYvb6IGEngdj2H2Fi0bmMg97F6YjS8OnRs24wGFe1
+         Jd+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SekXNzZJNKc0ROGOK7ZgH8k7aw+tWIkoUFjpC2nUNaU=;
+        b=A6QmuXoG9Mc7edDuAIFWa1mPSAvoiuNUB9xp7bMzZMGBtpneetc5wG/+s5Dxb/ShJ8
+         ugeYmx8zgGvBr8/2TAMxssj2BL6gIgszeBcCMGbud8r7XhgjR31RmYHKlFJFbXZ4/UQH
+         ZVOVSsYAZH0T/rNlPZnXp69/LZI7zFqNaVMoWbd+E4giOAvpbyhU0+xf9Yl7VB52bGVD
+         SsRuDbiflT8v0zGXAmeR3edhWx87779uHmVnhMcipeTvHjiN8GA2lzgj5yW97raDZ7bw
+         MqUi9cKbTM8dtzP8qK9KtggEKHTNySyN9Zf9eDhhP1V0qODhUaIAc99zakjzXIau5+mw
+         Ehqw==
+X-Gm-Message-State: ABuFfogmRrE4y9CgT8CY/7H4Tjnm1tpIaLSoMGt02TuvfoIYQh/J+F/E
+        ONZ3OiUtXkc3sSDBM9wPRMQFrA==
+X-Google-Smtp-Source: ACcGV63nDWgu9+g7KdRi7yV94IpPDL7KItLmuClEiQ0gkPc8LCLT0NFAh1H+vqSQoLd7SbvkYDbkgw==
+X-Received: by 2002:a17:902:3a2:: with SMTP id d31-v6mr25430706pld.287.1539027914700;
+        Mon, 08 Oct 2018 12:45:14 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id c2-v6sm12841828pfn.95.2018.10.08.12.45.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 12:45:13 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g9bSr-0007tt-8s; Mon, 08 Oct 2018 13:45:13 -0600
+Date:   Mon, 8 Oct 2018 13:45:13 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+1ed9dfaa984c88cf0ef8@syzkaller.appspotmail.com>,
+        dledford@redhat.com, Leon Romanovsky <leon@kernel.org>,
+        swise@opengridcomputing.com, markb@mellanox.com,
+        linux-rdma@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, guro@fb.com,
+        Kees Cook <keescook@chromium.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        marcos.souza.org@gmail.com, Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Will Drewry <wad@chromium.org>
+Subject: Re: WARNING in __put_task_struct (2)
+Message-ID: <20181008194513.GC27639@ziepe.ca>
+References: <000000000000b3d5610577b9e12c@google.com>
+ <CACT4Y+bfqk8Fczw4dJHhVzM63YhYNSovEE-KygZ1XmgUQVGCWQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1538975801-13735-5-git-send-email-firoz.khan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:0ZkO1wisNQ8oXYcSH1TE1DAdXJ8h1CfD/RHlxa59/ZY70FCDGDv
- reSMa2zvRk5q0gylX19/cqy3qgO43td0bSmvEIlxAM3IbJNKTjvMoFQdEhr8mxULr2EBAeR
- tWT7cLvNyTS6IjbKmrGyjehfoTSCtUSdYtMiWIzeEm6i9poJV9C4AuKA6earYsD4qZ0wT5B
- wyCrsfYn/fR3zA6dlTgKA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:V+4fmwaAqU4=:Mb+rp4yb2YMgpF+advMcGm
- WEOcuDFNexBluveV6Dko9P4Qp9WKwYMpaTaBwd0i3TIP9Fs8jvHYwmIT9PHopetwIdNuAcKGM
- YXY1IgmC0b0k1f711hELa3Jl/CWy7GsYwapVTOxPoo9Snuqp3YwLdmduTU/3flJHyDl4+uSjf
- NxLLMH0pBpPnY58Kq+bWSJ9qwwdrNGNe//mfIRREW8ATOMCyVbY8R3AaCoZOM31IQchnALutR
- AeSnCTntLSyVYiYXlddgefM+4JJ8rqGo9QWUMWqS2eb5xKD24EsHzLUqsso6iSdJIpVvropEy
- dVb6kGimIAlaJB2qlAbjl9/8PNRyCDN6IPd/JYPPTL7pJFfiv7yfdRwsvrWozP31nGl+j5lfw
- QgMLKCUzGHuiZD1SLLpIb5NdXuOmTw+6i9UnVRC6QEtXBlbMgiNn3rqMbTDnWymuzDiukcxCP
- EfFwBV+5dp5D8hVa8kGDnNbuYEtAOfPHgPVJGjt/hhjofXqeqM4UxONK0/RI+yG5wS1wa7LpK
- K/1ZO2KCvJv1ALVg5xSW/+RwgzqPOUfhrCDk9By+P35R6vFopmHCIy1HIMxg//I6Kcyvjlyqj
- JWDMMlthV0UTkJX1VxxSGA+nPXt/4TbJ7Ne8JybSxqq4iKZA9TAt7yuwr+/1pAtqrgmtA+kZV
- YWORhX0e/eJejRnR1g8fGpNUS2IV+tvbFQtDVkohvlMsVFasbXkZHzr4xzvWUr3CHBwfgdXsE
- vG/gvGKNqGlGMCOL36O+HKqKpbUPpeiuOuhfZDxJ+MBtRi5B8FHT9l9EE0PazG/RIU1w9/qrB
- hnEo86zipnltxhu3vVUbeaBhfix5RxwTs2brT1aR5u/en9oOng=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+bfqk8Fczw4dJHhVzM63YhYNSovEE-KygZ1XmgUQVGCWQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.10.2018 07:16, Firoz Khan wrote:
-> System call table generation script must be run to generate
-> unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
-> will have changes which will invokes the script.
+On Mon, Oct 08, 2018 at 06:15:22PM +0200, Dmitry Vyukov wrote:
+> On Mon, Oct 8, 2018 at 6:12 PM, syzbot
+> <syzbot+1ed9dfaa984c88cf0ef8@syzkaller.appspotmail.com> wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    ae16eea39a86 Add linux-next specific files for 20181008
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12e7c6a1400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=42525ce985d1a955
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=1ed9dfaa984c88cf0ef8
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+1ed9dfaa984c88cf0ef8@syzkaller.appspotmail.com
 > 
-> This patch will generate unistd_32/64.h and syscall_table_
-> 32/64/c32.h files by the syscall table generation script
-> invoked by arch/parisc/Makefile and the generated files against
-> the removed files will be identical.
 > 
-> The generated uapi header file will be included in uapi/asm/
-> unistd_32/64.h and generated system call table support file will
-> be included by arch/sparc/kernel/syscall_table_32/64.S file.
+> This was triggered by the following program, all is rdma-related, so
+> +rdma maintainers.
 > 
-> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-...
-> diff --git a/arch/parisc/include/uapi/asm/unistd.h b/arch/parisc/include/uapi/asm/unistd.h
-> index f10d065..76e3a3b 100644
-> --- a/arch/parisc/include/uapi/asm/unistd.h
-> +++ b/arch/parisc/include/uapi/asm/unistd.h
-> @@ -2,374 +2,13 @@
->  #ifndef _UAPI_ASM_PARISC_UNISTD_H_
->  #define _UAPI_ASM_PARISC_UNISTD_H_
->  
-...
-> -
-> -#ifdef __KERNEL__
-> -#define __NR_syscalls           351
-> +#define __NR_Linux           0
-> +#ifdef CONFIG_64BIT
+> 10:27:26 executing program 5:
+> r0 = openat$rdma_cm(0xffffffffffffff9c,
+> &(0x7f0000000380)='/dev/infiniband/rdma_cm\x00', 0x2, 0x0)
+> write$RDMA_USER_CM_CMD_CREATE_ID(r0, &(0x7f0000000080)={0x0, 0x18,
+> 0xfa00, {0x0, &(0x7f0000000040)={<r1=>0xffffffffffffffff}, 0x13f}},
+> 0x12d)
+> write$RDMA_USER_CM_CMD_RESOLVE_IP(r0, &(0x7f0000000200)={0x3, 0x40,
+> 0xfa00, {{0xa, 0x4e21}, {0xa, 0x0, 0x0, @mcast1}, r1}}, 0x48)
+> write$RDMA_USER_CM_CMD_CREATE_ID(r0, &(0x7f0000000340)={0x0, 0x18,
+> 0xfa00, {0x0, &(0x7f0000000300)={<r2=>0xffffffffffffffff}, 0x13f}},
+> 0x20)
+> write$RDMA_USER_CM_CMD_SET_OPTION(r0, &(0x7f00000002c0)={0xe, 0x18,
+> 0xfa00, @id_afonly={&(0x7f0000000000)=0x1, r1, 0x0, 0x2, 0x4}}, 0x20)
+> write$RDMA_USER_CM_CMD_RESOLVE_IP(r0, &(0x7f0000000100)={0x3, 0x40,
+> 0xfa00, {{0x2, 0x4e21}, {0xa, 0x0, 0x0, @local}, r2}}, 0x1ff)
+> write$RDMA_USER_CM_CMD_DESTROY_ID(r0, &(0x7f0000000180)={0x1, 0x10,
+> 0xfa00, {&(0x7f00000000c0), r2}}, 0x18)
 
-You can't use CONFIG_64BIT in an uapi header file.
-It's only defined inside the kernel when building the kernel.
-Please use
-	#ifdef __LP64__
-instead here.
+This might be fixed in Linux-next now by this commit:
 
-> +#include <asm/unistd_64.h>
-> +#else
-> +#include <asm/unistd_32.h>
->  #endif
+Author: Leon Romanovsky <leonro@mellanox.com>
+Date:   Tue Oct 2 11:48:03 2018 +0300
+
+    RDMA/restrack: Release task struct which was hold by CM_ID object
+   
+
+Jason
