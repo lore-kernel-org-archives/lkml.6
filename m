@@ -2,113 +2,91 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368F0C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D698AC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8D0520878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:47:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8D0520878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 943192087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/87s7TY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943192087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbeJHP6Y (ORCPT
+        id S1727094AbeJHP6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:58:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48471 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726013AbeJHP6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:58:24 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 75F663001BDE;
-        Mon,  8 Oct 2018 08:47:47 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-85.pek2.redhat.com [10.72.12.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B032620165F4;
-        Mon,  8 Oct 2018 08:47:38 +0000 (UTC)
-Subject: Re: [tip:x86/mm] kdump, proc/vmcore: Enable kdumping encrypted memory
- with SME enabled
-To:     Borislav Petkov <bp@suse.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-tip-commits@vger.kernel.org
-References: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
- <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
- <21eab36e-d113-cf88-e497-7dd620981544@redhat.com>
- <20181007084742.GA30797@zn.tnic>
- <58270f3f-f17c-8996-09cd-6da3481beb40@redhat.com>
- <20181008053714.GA6490@zn.tnic>
- <710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com>
- <20181008080013.GB6490@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <8147597a-f8e0-7f1a-bd2b-e914b18c5c74@redhat.com>
-Date:   Mon, 8 Oct 2018 16:47:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 8 Oct 2018 11:58:35 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52868 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeJHP6f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 11:58:35 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 189-v6so7276512wmw.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 01:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7pQLYn5LWiSLPhvFylOjR1Z+Qf4mdwFAAQNTRUl7QNU=;
+        b=G/87s7TYLN17wRhRBZ+odXgY4wLDLb2MW7UoLEcHJR7jyV1FyMiQMW4AZUpL2ajUt4
+         wTq9d6V5kr4gvPGi6kMfZdVtP8VrCpDtKvVaNhlBRfR9Th38OGffmQWVZVArTnrvWEdp
+         DSp1/Ud8xy7dX0Nisy16e2tOPpXc1FAgdCD+kSd2/PdjgDo/wHyrzGJRap0up3MeskQM
+         A++K77A12H6JnB1lAz2nbYdTkLUwEpnhJBn92qFTuCfA/mywFuutMSOwTLwD9jmSwyre
+         1N3HCs93NFmArCNdam0K+m/xNSRtsT4Ik0rO2LHyo7XSdf9C8552YmzdIZXkTXHwp+Al
+         cDzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7pQLYn5LWiSLPhvFylOjR1Z+Qf4mdwFAAQNTRUl7QNU=;
+        b=ce8Pt/5gGcvUFVVo7il5HOOZ0VaODGVA+9zT5H56kndACy59JURTM4SnYGvZzR8lQX
+         Ii2KFcDDH1QW3rEEnmgTTlCFWCzYnNoH59dY6KDXB5mRXh7Zkje5Gyxkxl6g92ZuaQRc
+         RDnLFn6A0KQs1DBvcPucAykqmt9zN85fR15pr2EWdR2VNL2vqxBIp/624gsXpVv3Yu3v
+         wxh6KETSZz0VEFDW4P+9nPQrMy9//LnO50wCRjVqGFmsjah2pVx4TbBf8mmHfMl9EgsG
+         5V3ebS9urvpgQbpUDwPDiab8gs/PQ/VsT822CbZQL+WxFkyrhrR3FJ6MBN74stOxaT1J
+         +zbQ==
+X-Gm-Message-State: ABuFfogYMcEML0w0Vtw957CIKOJ/zHD6GvV6cEC1iZElCXdiBnkWnaq6
+        J/86VosP3IM4HPJqA+a+MYQ=
+X-Google-Smtp-Source: ACcGV63Fm2wF6/6MgpKEPOcVMSvzXUrE94e+UjyeIL3S+XAcDkYzp4ZpLpD+UMz31S69dN2POG97Kg==
+X-Received: by 2002:a1c:96c7:: with SMTP id y190-v6mr15105498wmd.36.1538988476785;
+        Mon, 08 Oct 2018 01:47:56 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD31613C1F2E846AEDA540D.dip0.t-ipconnect.de. [2003:ef:2bd3:1613:c1f2:e846:aeda:540d])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm9687004wrw.12.2018.10.08.01.47.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 01:47:55 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 10:47:53 +0200
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
+        andrea.parri@amarulasolutions.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH]  sched/dl : return accurate release rq lock info
+Message-ID: <20181008084753.GC9130@localhost.localdomain>
+References: <1538788117-45448-1-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <20181008080013.GB6490@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 08 Oct 2018 08:47:47 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538788117-45448-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月08日 16:00, Borislav Petkov 写道:
-> On Mon, Oct 08, 2018 at 03:11:56PM +0800, lijiang wrote:
->> I used this ".config" to compile kernel in the attachment, and got a compile error.
->> Would you like to have a try?
->>
->> [root@hp-dl385g10-03 linux]# make ARCH=i386 -j32
->>   ......
->>   LD      vmlinux.o
->>   MODPOST vmlinux.o
->> fs/proc/vmcore.o：In function ‘read_from_oldmem’：
->> /home/linux/fs/proc/vmcore.c:127：undefined reference to ‘copy_oldmem_page_encrypted’
->> make: *** [vmlinux] error 1
+On 06/10/18 09:08, Peng Hao wrote:
+> find_lock_later_rq may or not releease rq lock when return
+> later_rq=NULL, but it is fuzzy.
+> If not releasing rq lock, it is unnecessary to re-call
+> pick_next_pushable_dl_task.
 > 
-> Thanks, that triggered here. Ok, I guess something like this, to avoid
-> the ugly ifdeffery:
-> 
-> ---
-> diff --git a/arch/x86/kernel/crash_dump_32.c b/arch/x86/kernel/crash_dump_32.c
-> index 33ee47670b99..8696800f2eea 100644
-> --- a/arch/x86/kernel/crash_dump_32.c
-> +++ b/arch/x86/kernel/crash_dump_32.c
-> @@ -80,6 +80,16 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
->  	return csize;
->  }
->  
-> +/*
-> + * 32-bit parrot version to avoid build errors.
-> + */
-> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-> +				   unsigned long offset, int userbuf)
-> +{
-> +	WARN_ON_ONCE(1);
-> +	return copy_oldmem_page(pfn, buf, csize, offset, userbuf);
-> +}
-> +
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 
-It looks like a good way to avoid the 'ifdefined', and it's also good enough for i386.
+Subject has whitespaces problems and changelog might be improved.
 
-But for other architectures, such as POWERPC/ARM..., we will also have to add the same 
-function for every architecture. Otherwise, i guess that they also have a same compile
-error on other architectures.
+Other then that patch looks good, thanks!
 
-Sometimes, it's hard to make a choice.
-
-Regards,
-Lianbo
->  static int __init kdump_buf_page_init(void)
->  {
->  	int ret = 0;
-> 
-> 
-> 
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
