@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C9FC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35641C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B0C20644
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF24920644
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:39:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKuhfmGb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0C20644
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zMSrxTwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF24920644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJHWvM (ORCPT
+        id S1727686AbeJHWvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:51:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55880 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:51:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbeJHWhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:37:51 -0400
+        id S1726665AbeJHWht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:37:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A34D120644;
-        Mon,  8 Oct 2018 15:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEB0020890;
+        Mon,  8 Oct 2018 15:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012336;
-        bh=EgMxgeXjAQKIKMqz20hUAaretv0OcWcxHQlvaBoUumM=;
+        s=default; t=1539012334;
+        bh=Ab/H869GExC6LwFLXGHC8lhQJucdJaCNVjCuBqJ0pOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lKuhfmGb0vH9usq3n/MXEQrXfdgHQtj3zXgi3Uq0p18L3t8wLrCeI1KUaURU5UGKT
-         XLgjZ2lE2sOmLYdWzOFydAxf0Y/D6CA1edvopP/NECgFMOH2ELkc2q5VOqo3ndSkv7
-         VTuyvvSHr0lTlClWrpH+8q3LL9xQ2F3owSnEmqAo=
+        b=zMSrxTwUioTyhQfJnn1zPIRiU3ajhbql9YArZPDHwCZ/A7MMLZo4UCgURJOLd5udx
+         zIRd/mr4o00e3wPlxEE2hlQAt+ofjCRFXBVbLknfTO17wM9B3tfxhlBkrFu7VkfncY
+         KoODIteDqsJnI03/+jhIDJP3NkwypEDqShk5r9ac=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 09/58] batman-adv: Prevent duplicated gateway_node entry
-Date:   Mon,  8 Oct 2018 11:24:34 -0400
-Message-Id: <20181008152523.70705-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 07/58] batman-adv: Fix segfault when writing to throughput_override
+Date:   Mon,  8 Oct 2018 11:24:32 -0400
+Message-Id: <20181008152523.70705-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -55,85 +55,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit dff9bc42ab0b2d38c5e90ddd79b238fed5b4c7ad ]
+[ Upstream commit b9fd14c20871e6189f635e49b32d7789e430b3c8 ]
 
-The function batadv_gw_node_add is responsible for adding new gw_node to
-the gateway_list. It is expecting that the caller already checked that
-there is not already an entry with the same key or not.
+The per hardif sysfs file "batman_adv/throughput_override" prints the
+resulting change as info text when the users writes to this file. It uses
+the helper function batadv_info to add it at the same time to the kernel
+ring buffer and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG
+is enabled).
 
-But the lock for the list is only held when the list is really modified.
-This could lead to duplicated entries because another context could create
-an entry with the same key between the check and the list manipulation.
+The function batadv_info requires as first parameter the batman-adv softif
+net_device. This parameter is then used to find the private buffer which
+contains the debug log for this batman-adv interface. But
+batadv_store_throughput_override used as first argument the slave
+net_device. This slave device doesn't have the batadv_priv private data
+which is access by batadv_info.
 
-The check and the manipulation of the list must therefore be in the same
-locked code section.
+Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
+to a segfault or to memory corruption.
 
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Fixes: 0b5ecc6811bd ("batman-adv: add throughput override attribute to hard_ifaces")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/gateway_client.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ net/batman-adv/sysfs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/gateway_client.c b/net/batman-adv/gateway_client.c
-index 8b198ee798c9..140c61a3f1ec 100644
---- a/net/batman-adv/gateway_client.c
-+++ b/net/batman-adv/gateway_client.c
-@@ -32,6 +32,7 @@
- #include <linux/kernel.h>
- #include <linux/kref.h>
- #include <linux/list.h>
-+#include <linux/lockdep.h>
- #include <linux/netdevice.h>
- #include <linux/netlink.h>
- #include <linux/rculist.h>
-@@ -348,6 +349,9 @@ void batadv_gw_check_election(struct batadv_priv *bat_priv,
-  * @bat_priv: the bat priv with all the soft interface information
-  * @orig_node: originator announcing gateway capabilities
-  * @gateway: announced bandwidth information
-+ *
-+ * Has to be called with the appropriate locks being acquired
-+ * (gw.list_lock).
-  */
- static void batadv_gw_node_add(struct batadv_priv *bat_priv,
- 			       struct batadv_orig_node *orig_node,
-@@ -355,6 +359,8 @@ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
- {
- 	struct batadv_gw_node *gw_node;
- 
-+	lockdep_assert_held(&bat_priv->gw.list_lock);
-+
- 	if (gateway->bandwidth_down == 0)
- 		return;
- 
-@@ -369,10 +375,8 @@ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
- 	gw_node->bandwidth_down = ntohl(gateway->bandwidth_down);
- 	gw_node->bandwidth_up = ntohl(gateway->bandwidth_up);
- 
--	spin_lock_bh(&bat_priv->gw.list_lock);
- 	kref_get(&gw_node->refcount);
- 	hlist_add_head_rcu(&gw_node->list, &bat_priv->gw.gateway_list);
--	spin_unlock_bh(&bat_priv->gw.list_lock);
- 
- 	batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
- 		   "Found new gateway %pM -> gw bandwidth: %u.%u/%u.%u MBit\n",
-@@ -428,11 +432,14 @@ void batadv_gw_node_update(struct batadv_priv *bat_priv,
- {
- 	struct batadv_gw_node *gw_node, *curr_gw = NULL;
- 
-+	spin_lock_bh(&bat_priv->gw.list_lock);
- 	gw_node = batadv_gw_node_get(bat_priv, orig_node);
- 	if (!gw_node) {
- 		batadv_gw_node_add(bat_priv, orig_node, gateway);
-+		spin_unlock_bh(&bat_priv->gw.list_lock);
+diff --git a/net/batman-adv/sysfs.c b/net/batman-adv/sysfs.c
+index f2eef43bd2ec..3a76e8970c02 100644
+--- a/net/batman-adv/sysfs.c
++++ b/net/batman-adv/sysfs.c
+@@ -1090,8 +1090,9 @@ static ssize_t batadv_store_throughput_override(struct kobject *kobj,
+ 	if (old_tp_override == tp_override)
  		goto out;
- 	}
-+	spin_unlock_bh(&bat_priv->gw.list_lock);
  
- 	if (gw_node->bandwidth_down == ntohl(gateway->bandwidth_down) &&
- 	    gw_node->bandwidth_up == ntohl(gateway->bandwidth_up))
+-	batadv_info(net_dev, "%s: Changing from: %u.%u MBit to: %u.%u MBit\n",
+-		    "throughput_override",
++	batadv_info(hard_iface->soft_iface,
++		    "%s: %s: Changing from: %u.%u MBit to: %u.%u MBit\n",
++		    "throughput_override", net_dev->name,
+ 		    old_tp_override / 10, old_tp_override % 10,
+ 		    tp_override / 10, tp_override % 10);
+ 
 -- 
 2.17.1
 
