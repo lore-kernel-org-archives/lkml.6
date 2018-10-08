@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35641C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC38C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF24920644
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B4D20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:39:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zMSrxTwU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF24920644
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyV8hPjQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B4D20652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeJHWvW (ORCPT
+        id S1726750AbeJHWhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:51:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55846 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:37:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJHWht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:37:49 -0400
+        id S1726713AbeJHWhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:37:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEB0020890;
-        Mon,  8 Oct 2018 15:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 454DC2087C;
+        Mon,  8 Oct 2018 15:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012334;
-        bh=Ab/H869GExC6LwFLXGHC8lhQJucdJaCNVjCuBqJ0pOU=;
+        s=default; t=1539012332;
+        bh=6VgWlnGGEW3FaZTIn6CRcVUXyH23EcSORV6XsXNKxzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zMSrxTwUioTyhQfJnn1zPIRiU3ajhbql9YArZPDHwCZ/A7MMLZo4UCgURJOLd5udx
-         zIRd/mr4o00e3wPlxEE2hlQAt+ofjCRFXBVbLknfTO17wM9B3tfxhlBkrFu7VkfncY
-         KoODIteDqsJnI03/+jhIDJP3NkwypEDqShk5r9ac=
+        b=MyV8hPjQ0Djqpapj4q3iOfNcTZqyViNuf3guHVAabVOAAhSkxymk3ueApNbiSFg7A
+         mprQzAxns97G/sL3Ok0sp7+mJL4UjyDucqg5VzHGDpae1mg/uEq/SW2QKYg6Xx9L7V
+         Bhtkrrgbljl8GPiDEkuk9n69nYOKA2OdEMEMx3xs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 07/58] batman-adv: Fix segfault when writing to throughput_override
-Date:   Mon,  8 Oct 2018 11:24:32 -0400
-Message-Id: <20181008152523.70705-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 05/58] spi: gpio: Fix copy-and-paste error
+Date:   Mon,  8 Oct 2018 11:24:30 -0400
+Message-Id: <20181008152523.70705-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,51 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit b9fd14c20871e6189f635e49b32d7789e430b3c8 ]
+[ Upstream commit 1723c3155f117ee6e00f28fadf6e9eda4fc85806 ]
 
-The per hardif sysfs file "batman_adv/throughput_override" prints the
-resulting change as info text when the users writes to this file. It uses
-the helper function batadv_info to add it at the same time to the kernel
-ring buffer and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG
-is enabled).
+This fixes an embarrassing copy-and-paste error in the
+errorpath of spi_gpio_request(): we were checking the wrong
+struct member for error code right after retrieveing the
+sck GPIO.
 
-The function batadv_info requires as first parameter the batman-adv softif
-net_device. This parameter is then used to find the private buffer which
-contains the debug log for this batman-adv interface. But
-batadv_store_throughput_override used as first argument the slave
-net_device. This slave device doesn't have the batadv_priv private data
-which is access by batadv_info.
-
-Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
-to a segfault or to memory corruption.
-
-Fixes: 0b5ecc6811bd ("batman-adv: add throughput override attribute to hard_ifaces")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Fixes: 9b00bc7b901ff672 ("spi: spi-gpio: Rewrite to use GPIO descriptors")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/sysfs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/spi/spi-gpio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/sysfs.c b/net/batman-adv/sysfs.c
-index f2eef43bd2ec..3a76e8970c02 100644
---- a/net/batman-adv/sysfs.c
-+++ b/net/batman-adv/sysfs.c
-@@ -1090,8 +1090,9 @@ static ssize_t batadv_store_throughput_override(struct kobject *kobj,
- 	if (old_tp_override == tp_override)
- 		goto out;
+diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+index 6ae92d4dca19..3b518ead504e 100644
+--- a/drivers/spi/spi-gpio.c
++++ b/drivers/spi/spi-gpio.c
+@@ -287,8 +287,8 @@ static int spi_gpio_request(struct device *dev,
+ 		*mflags |= SPI_MASTER_NO_RX;
  
--	batadv_info(net_dev, "%s: Changing from: %u.%u MBit to: %u.%u MBit\n",
--		    "throughput_override",
-+	batadv_info(hard_iface->soft_iface,
-+		    "%s: %s: Changing from: %u.%u MBit to: %u.%u MBit\n",
-+		    "throughput_override", net_dev->name,
- 		    old_tp_override / 10, old_tp_override % 10,
- 		    tp_override / 10, tp_override % 10);
+ 	spi_gpio->sck = devm_gpiod_get(dev, "sck", GPIOD_OUT_LOW);
+-	if (IS_ERR(spi_gpio->mosi))
+-		return PTR_ERR(spi_gpio->mosi);
++	if (IS_ERR(spi_gpio->sck))
++		return PTR_ERR(spi_gpio->sck);
  
+ 	for (i = 0; i < num_chipselects; i++) {
+ 		spi_gpio->cs_gpios[i] = devm_gpiod_get_index(dev, "cs",
 -- 
 2.17.1
 
