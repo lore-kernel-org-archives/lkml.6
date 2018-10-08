@@ -2,94 +2,107 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55DDC677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD1FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903E12085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903E12085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AE502064E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:20:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="uVmsetXP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE502064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeJIBcb (ORCPT
+        id S1726693AbeJIBdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:32:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:36357 "EHLO mga06.intel.com"
+        Mon, 8 Oct 2018 21:33:02 -0400
+Received: from mail1.kuutio.org ([92.222.216.83]:59370 "EHLO mail1.kuutio.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJIBcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:32:31 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 11:19:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
-   d="scan'208";a="86717218"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Oct 2018 11:18:25 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1g9a6q-000BIm-GG; Tue, 09 Oct 2018 02:18:24 +0800
-Date:   Tue, 9 Oct 2018 02:17:59 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Hanjie Lin <hanjie.lin@amlogic.com>
-Cc:     kbuild-all@01.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>
-Subject: Re: [PATCH v4 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
- controller driver
-Message-ID: <201810090208.N3NrdpgK%fengguang.wu@intel.com>
-References: <1538999834-156423-3-git-send-email-hanjie.lin@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538999834-156423-3-git-send-email-hanjie.lin@amlogic.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1726476AbeJIBdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:33:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail1.kuutio.org (Postfix) with ESMTP id 011832092C;
+        Mon,  8 Oct 2018 20:20:01 +0200 (CEST)
+Authentication-Results: mail1.kuutio.org (amavisd-new);
+        dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
+        header.d=lemmela.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
+        references:in-reply-to:x-mailer:message-id:date:date:subject
+        :subject:from:from:received:received; s=dkim; t=1539022800; x=
+        1541614801; bh=7GDl1ndnwqGbv+2YOjStm1fcMbJsyDoNyj9lXt0BCQs=; b=u
+        VmsetXPlK4oeLH+1nV5R/cFsFnZThA9yFl4Z1kHnnip3BI91L/gbIZrEvR9nbxSD
+        2OmhQSYOylui8e3BhjE8AITcyODijxp6LXv5XXSsgTwS/SLBVlCq2+vHh8IqN+VB
+        T/tzNWTifhQkLOGRdVifrZWmAJR0f8iyD0vJM+k7eRpSOzX0rShrZD0bNhRVtwr8
+        qAgQU4mgpEUPXf3sZ1RRjLLrGNOtBiPl88P8/88qtN+czEwegb0tuG8PHg9rZurL
+        hlFBpfu3p9YUEbZs30DpScur17rdjHAh6IApatR2q2tJtzG7u8VYnyCzPqOaFwIB
+        ZSMaoV1tUj2OBIlZFu5BA2npt9RSYsDRJNOE/pjkaLS/a3EqzWz4OrFRqJznIPRD
+        xDNtRpj8+2YyZlX7tJk8lHs8bttlqXEYQ0ycwunaGzKa8XSek/ZDM0AWig2FzLrw
+        gCKgYkgY5hZBU1yUB8UBdwAetxaSNtG88LxHnN5lTOjycvjg3alHxbQj5/cIXgjw
+        SOrQcL/7c8qDk+I+DmlqvE73Af9yxZs/8QHWPvo4iA71g6voh8dO+qLkMtFnx9x+
+        /ITJ+ow8rPYJaG0hGhhn58XDIUnq1VFwv28oXbr2Wa77mODNTzUf4EIYhcAZsJz4
+        NFMSZopFYgFpg5LZAujPEBMnPf4U/l8vlkCcYIMK/Y=
+X-Virus-Scanned: amavisd-new at kuutio.org
+Received: from mail1.kuutio.org ([127.0.0.1])
+        by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 0pncrSTZGO9n; Mon,  8 Oct 2018 20:20:00 +0200 (CEST)
+Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
+        by mail1.kuutio.org (Postfix) with ESMTPSA id A9ECC1F984;
+        Mon,  8 Oct 2018 20:19:59 +0200 (CEST)
+From:   Oskari Lemmela <oskari@lemmela.net>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 1/7] dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
+Date:   Mon,  8 Oct 2018 21:19:02 +0300
+Message-Id: <20181008181908.9456-2-oskari@lemmela.net>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008181908.9456-1-oskari@lemmela.net>
+References: <20181008181908.9456-1-oskari@lemmela.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yue,
+The AXP803/AXP813 AC power supply can limit input current and voltage.
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on pci/next]
-[also build test WARNING on v4.19-rc7 next-20181008]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Hanjie-Lin/add-the-Amlogic-Meson-PCIe-controller-driver/20181009-001429
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
-
-
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/pci/controller/dwc/pci-meson.c:190:1-3: WARNING: PTR_ERR_OR_ZERO can be used
-   drivers/pci/controller/dwc/pci-meson.c:267:1-3: WARNING: PTR_ERR_OR_ZERO can be used
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ .../devicetree/bindings/power/supply/axp20x_ac_power.txt       | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
+index 826e8a879121..7a1fb532abe5 100644
+--- a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
++++ b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
+@@ -4,6 +4,7 @@ Required Properties:
+  - compatible: One of:
+ 			"x-powers,axp202-ac-power-supply"
+ 			"x-powers,axp221-ac-power-supply"
++			"x-powers,axp813-ac-power-supply"
+ 
+ This node is a subnode of the axp20x PMIC.
+ 
+@@ -13,6 +14,8 @@ reading ADC channels from the AXP20X ADC.
+ The AXP22X is only able to tell if an AC power supply is present and
+ usable.
+ 
++AXP813/AXP803 are able to limit current and supply voltage
++
+ Example:
+ 
+ &axp209 {
+-- 
+2.17.1
+
