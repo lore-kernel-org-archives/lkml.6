@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457E0C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D683CC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060B320645
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8173521479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="atMMzeMr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 060B320645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxSnyXkM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8173521479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbeJICGO (ORCPT
+        id S1732684AbeJICGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:06:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56472 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:06:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728203AbeJICGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:06:13 -0400
+        id S1729253AbeJICGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:06:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA4E6204FD;
-        Mon,  8 Oct 2018 18:53:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F3F4204FD;
+        Mon,  8 Oct 2018 18:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024785;
-        bh=xcOoiDSiWjaV57vzMPQTMGab1X+3cwHU6eHzDKhHkT0=;
+        s=default; t=1539024788;
+        bh=AoKzuReZS1M6+ZAEUZ1vrAsiFvG+DASXwF7uqwGvjFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atMMzeMrQ/M1utv3PSF52Qk0fthgV3/LHH6bVMEAsqAJ1q42uoEs7H2wZYUJDQhCR
-         zWSZAqu7dy4PisJGLAhHttQPCOuuEmyaMOnFT4G2hXS026vwPDx+hNsG0iRWJaf+b0
-         LV5bb6nvnNB73P034ZxOLdRl+Y0+MT3OigkMULvc=
+        b=WxSnyXkMk+J6Vaw15IkdIJd003eWw2C5EjoeyWjE0MrcjtMioTjDISjIVQn3qOVyU
+         b97S3/FBgpzIJRcN4U+LuszD4q22CleW+/t9wsMdieJtEtoN45rL8Lv8/RjbP1prYA
+         GCgZc0+8oXe+v2zkUnc6O1MGHSgS7V0zEtB6Epc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 153/168] firmware: Always initialize the fw_priv list object
-Date:   Mon,  8 Oct 2018 20:32:13 +0200
-Message-Id: <20181008175625.856811105@linuxfoundation.org>
+Subject: [PATCH 4.18 154/168] cpufreq: qcom-kryo: Fix section annotations
+Date:   Mon,  8 Oct 2018 20:32:14 +0200
+Message-Id: <20181008175625.898147349@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,41 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 7012040576c6ae25a47035659ee48673612c2c27 upstream.
+commit d51aea13dd6753186a2bea7619029c460bdf0c4c upstream.
 
-When freeing the fw_priv the item is taken off the list. This causes an
-oops in the FW_OPT_NOCACHE case as the list object is not initialized.
+There is currently a warning when building the Kryo cpufreq driver into
+the kernel image:
 
-Make sure to initialize the list object regardless of this flag.
+WARNING: vmlinux.o(.text+0x8aa424): Section mismatch in reference from
+the function qcom_cpufreq_kryo_probe() to the function
+.init.text:qcom_cpufreq_kryo_get_msm_id()
+The function qcom_cpufreq_kryo_probe() references
+the function __init qcom_cpufreq_kryo_get_msm_id().
+This is often because qcom_cpufreq_kryo_probe lacks a __init
+annotation or the annotation of qcom_cpufreq_kryo_get_msm_id is wrong.
 
-Fixes: 422b3db2a503 ("firmware: Fix security issue with request_firmware_into_buf()")
-Cc: stable@vger.kernel.org
-Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Remove the '__init' annotation from qcom_cpufreq_kryo_get_msm_id
+so that there is no more mismatch warning.
+
+Additionally, Nick noticed that the remove function was marked as
+'__init' when it should really be marked as '__exit'.
+
+Fixes: 46e2856b8e18 (cpufreq: Add Kryo CPU scaling driver)
+Fixes: 5ad7346b4ae2 (cpufreq: kryo: Add module remove and exit)
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: 4.18+ <stable@vger.kernel.org> # 4.18+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/firmware_loader/main.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/cpufreq/qcom-cpufreq-kryo.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -226,8 +226,11 @@ static int alloc_lookup_fw_priv(const ch
- 	}
+--- a/drivers/cpufreq/qcom-cpufreq-kryo.c
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -44,7 +44,7 @@ enum _msm8996_version {
  
- 	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size);
--	if (tmp && !(opt_flags & FW_OPT_NOCACHE))
--		list_add(&tmp->list, &fwc->head);
-+	if (tmp) {
-+		INIT_LIST_HEAD(&tmp->list);
-+		if (!(opt_flags & FW_OPT_NOCACHE))
-+			list_add(&tmp->list, &fwc->head);
-+	}
- 	spin_unlock(&fwc->lock);
+ struct platform_device *cpufreq_dt_pdev, *kryo_cpufreq_pdev;
  
- 	*fw_priv = tmp;
+-static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++static enum _msm8996_version qcom_cpufreq_kryo_get_msm_id(void)
+ {
+ 	size_t len;
+ 	u32 *msm_id;
+@@ -221,7 +221,7 @@ static int __init qcom_cpufreq_kryo_init
+ }
+ module_init(qcom_cpufreq_kryo_init);
+ 
+-static void __init qcom_cpufreq_kryo_exit(void)
++static void __exit qcom_cpufreq_kryo_exit(void)
+ {
+ 	platform_device_unregister(kryo_cpufreq_pdev);
+ 	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
 
 
