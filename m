@@ -2,169 +2,141 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30227C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6D5C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16C22089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:17:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="NHINjzjI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16C22089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B7F7213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:18:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B7F7213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeJHXaT (ORCPT
+        id S1726741AbeJHXac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:30:19 -0400
-Received: from mail-cys01nam02on0062.outbound.protection.outlook.com ([104.47.37.62]:35072
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726348AbeJHXaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:30:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vZAAU15oUl9RQuoASt6aZc/9q0I0v6KeWQK56f+sYN4=;
- b=NHINjzjI59lFk3BcjFayub7U6mhdrpDxW9/aZrzIt36isk+qtu0eMkN2br0XbYk4x9EYmq6/JkKqoHufwoT3jP8G2eyrEW2sMSzv+o6ffqFKZydPWJjkWEsj9RhGRD4aaXHVRHfJ2tBNzXPXbP+LBDIKSyas2cYUWn23CmljaL4=
-Received: from BN6PR12MB1809.namprd12.prod.outlook.com (10.175.101.146) by
- BN6PR12MB1747.namprd12.prod.outlook.com (10.175.101.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.27; Mon, 8 Oct 2018 16:17:47 +0000
-Received: from BN6PR12MB1809.namprd12.prod.outlook.com
- ([fe80::9df7:7ad5:5b10:aeee]) by BN6PR12MB1809.namprd12.prod.outlook.com
- ([fe80::9df7:7ad5:5b10:aeee%5]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
- 16:17:46 +0000
-From:   "Deucher, Alexander" <Alexander.Deucher@amd.com>
-To:     Sasha Levin <sashal@kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Zhu, Rex" <Rex.Zhu@amd.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: RE: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
- smu7/8
-Thread-Topic: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
- smu7/8
-Thread-Index: AQHUVARg2MOAZvRixUSipQEGskb4iKUVfsWAgAAFX4CAABRr8A==
-Date:   Mon, 8 Oct 2018 16:17:46 +0000
-Message-ID: <BN6PR12MB1809FA86B039B8EAE460BB49F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
-References: <20180924113103.999624566@linuxfoundation.org>
- <20180924113125.488862921@linuxfoundation.org>
- <BN6PR12MB18092FFEF5BB3861912C8535F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20181008144917.GE32006@sasha-vm>
-In-Reply-To: <20181008144917.GE32006@sasha-vm>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Deucher@amd.com; 
-x-originating-ip: [71.219.49.5]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR12MB1747;20:33ETEjNA1pcPY5FWV8f8+sqfIeSpcFd+/H1jZ7JZ0lS9vSj0yfsceqGWJ3lDOk/3Qh7UZ1MnmhffaMGdULVWwkjB2Q6xDiheZOwltl510luQFDxF9acl/KlFNCmTmCeUv5Z2FDXcsVONPPsunqYqe+SbIQ8Ft3EEX7oZNETYYvoC1LZYbOyuda3Pw9W4m92q/08IeSdgnORvsyhSrmYVlV0Ee/Z9JJA1mcyR3zVoTDz1jOdjDqd34v+zFREujVv7
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(136003)(376002)(366004)(13464003)(199004)(189003)(86362001)(316002)(2906002)(93886005)(256004)(97736004)(229853002)(7736002)(6436002)(6116002)(3846002)(2900100001)(6916009)(6306002)(305945005)(55016002)(9686003)(68736007)(106356001)(105586002)(5250100002)(53936002)(74316002)(486006)(53546011)(6506007)(81166006)(81156014)(102836004)(25786009)(76176011)(6246003)(7696005)(33656002)(446003)(4326008)(476003)(11346002)(99286004)(72206003)(54906003)(8676002)(5660300001)(66066001)(345774005)(8936002)(14454004)(26005)(186003)(478600001)(71200400001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1747;H:BN6PR12MB1809.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 0a4c294b-c08f-4b8f-154c-08d62d39957a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1747;
-x-ms-traffictypediagnostic: BN6PR12MB1747:
-x-microsoft-antispam-prvs: <BN6PR12MB17476D0AF7997BB8BF7779BEF7E60@BN6PR12MB1747.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:BN6PR12MB1747;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1747;
-x-forefront-prvs: 081904387B
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: bquvOzUjlWWP7AN4ua7ep8Jx5jb7FlfHE+jVCYNZIXeJVc+4GoczaiZduQ8CNs287jygD3ezlB+zs1gEKZdjcT7rrH7uS/5tcl2Rp22TGYCWgIWACNm6wPki5xuOlq4wwoKth/sddegv9my7TKMoRLeSzzDShjh0teqiuxE041QYr3eish/9du9T9O5Aeox6QtrrAZbzWWXc8CpsbDbyaMsf4IbBN5qAzeK3PvC/+o0AG6OqcAD7bGVpo6BzuwSMXG6azlzdqwzgDfbI9GNPvC0NDXq1/poTCfZT9QIcB5O7UD2wxh6I45+ASF1+pwVC65QOFUMhYJauHCaKStJpzz4Q/N+pQ04vbhEZ9yYrhDE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 8 Oct 2018 19:30:32 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:43740 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJHXac (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 19:30:32 -0400
+Received: by mail-io1-f71.google.com with SMTP id y6-v6so9220972ioc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:18:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=oDWU14pljHynB+bZj2gtkf6pI6oZdNRGExeBJu2E0T0=;
+        b=PR01Hnk7kEcBYyWojD1tqDskhIi8ubbUjVrHdYcGUAeR3DV1OwzspulsAWI8JDJzXp
+         f+KmClEgTpGYYrzsi3r+wKpDjuuYWnklHvQQxzAAV3S+wU5ZETds2MNa2nKTfRj1t5T/
+         LfG8QylfWwNp8r2jhI8WHQ/KPOWo5ON0d11I2YBqwFmmTPWqf+uEXFZtBP9rfLbdosU7
+         Gv3y4dxOMVFdlm5r7AZDOOjJdteCyte2j7zVXUJtx16vS0j8YFcwxrusx+cJi8bogsoA
+         mW9I1/a74ttoLUUjtQ31Q7cu9P496FAnpdiTJdOmvPJobbUc9iccU6JtzOluTKn5Wc9j
+         Ingw==
+X-Gm-Message-State: ABuFfohA6oJnpmb9awHSpmcVJBWxljMBp53qAP1lM6Q/yZYV+lZc2n3u
+        tPZ2Q9YIx2nYgi2nMR+GIT+So/xADQ3Xs8I49F5gt6757uNj
+X-Google-Smtp-Source: ACcGV63QWX4GTRZ6PX7oiSDMryn6aW2/RSm/VchfPyVgedkE2qSnFuzqPzJkHMKfrs7UqYl+wcOB58LmtvGrQWyqira8STzGvCyq
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a4c294b-c08f-4b8f-154c-08d62d39957a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 16:17:46.2133
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1747
+X-Received: by 2002:a24:7:: with SMTP id 7-v6mr17360779ita.33.1539015482755;
+ Mon, 08 Oct 2018 09:18:02 -0700 (PDT)
+Date:   Mon, 08 Oct 2018 09:18:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002753c60577b9f707@google.com>
+Subject: WARNING in ext4_invalidatepage
+From:   syzbot <syzbot+85da7ac734f7ba432ee4@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Sasha Levin <sashal@kernel.org>
-> Sent: Monday, October 8, 2018 10:49 AM
-> To: Deucher, Alexander <Alexander.Deucher@amd.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
-> kernel@vger.kernel.org; stable@vger.kernel.org; Wentland, Harry
-> <Harry.Wentland@amd.com>; Zhu, Rex <Rex.Zhu@amd.com>; Sasha Levin
-> <alexander.levin@microsoft.com>
-> Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC
-> for smu7/8
->=20
-> On Mon, Oct 08, 2018 at 02:33:56PM +0000, Deucher, Alexander wrote:
-> >> -----Original Message-----
-> >> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Sent: Monday, September 24, 2018 7:53 AM
-> >> To: linux-kernel@vger.kernel.org
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
-> >> stable@vger.kernel.org; Wentland, Harry <Harry.Wentland@amd.com>;
-> >> Deucher, Alexander <Alexander.Deucher@amd.com>; Zhu, Rex
-> >> <Rex.Zhu@amd.com>; Sasha Levin <alexander.levin@microsoft.com>
-> >> Subject: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC
-> >> for
-> >> smu7/8
-> >>
-> >> 4.18-stable review patch.  If anyone has any objections, please let me
-> know.
-> >>
-> >
-> >This regresses power usage on 4.18.  Please revert.
-> >https://bugzilla.kernel.org/show_bug.cgi?id=3D201275
->=20
-> Hi Alex,
->=20
-> Thank you for the report.
->=20
-> I'm working on improving this process, I'd be very grateful if you could
-> answer a few questions about this:
->=20
-> 1. Is the same breakage seen upstream? (if so, it should be reverted ther=
-e as
-> well and we can grab the revert into -stable).
+Hello,
 
-No regression in 4.19 or -next.
+syzbot found the following crash on:
 
-> 2. Does the issue reported by this patch ("pipes seem to hang with a 4k D=
-P
-> and 1080p HDMI display") exist in the 4.18 stable tree?
+HEAD commit:    c1d84a1b42ef Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=161588d6400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=85da7ac734f7ba432ee4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-I don't think so, but I'm not 100% sure.  Harry, Rex do you know if this is=
- a general issue or was it just fall out from the changes to the interface?
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> 3. If not, could you briefly explain why?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+85da7ac734f7ba432ee4@syzkaller.appspotmail.com
 
-We refactored the interface between the power and display components and th=
-is patch fixed up some of that fallout due to the differences in units used=
- in each component.
+WARNING: CPU: 1 PID: 17203 at fs/ext4/inode.c:3353  
+ext4_invalidatepage+0x1c7/0x5b0 fs/ext4/inode.c:3353
+Kernel panic - not syncing: panic_on_warn set ...
 
->=20
->=20
-> The algorithm I use was very confident about this patch being stable mate=
-rial,
-> and when I looked at it back then (and again now) I was very confident of=
- the
-> same. If I can understand where I was wrong I could improve my process.
+CPU: 1 PID: 17203 Comm: syz-executor5 Not tainted 4.19.0-rc6+ #48
+kobject: 'loop3' (000000002393f9b0): kobject_uevent_env
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+kobject: 'loop3' (000000002393f9b0): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+RIP: 0010:ext4_invalidatepage+0x1c7/0x5b0 fs/ext4/inode.c:3353
+Code: 80 3c 02 00 0f 85 a7 03 00 00 4d 8b 6d 00 31 ff 49 c1 ed 11 41 83 e5  
+01 4c 89 ee e8 43 ea 67 ff 4d 85 ed 74 07 e8 09 e9 67 ff <0f> 0b e8 02 e9  
+67 ff 8b b5 34 ff ff ff 44 89 fa 4c 89 e7 e8 91 3a
+RSP: 0018:ffff88018590ec78 EFLAGS: 00010212
+RAX: 0000000000040000 RBX: 1ffff10030b21d91 RCX: ffffc9000dae4000
+RDX: 0000000000000ece RSI: ffffffff8216ec87 RDI: 0000000000000007
+RBP: ffff88018590ed50 R08: ffff880183018300 R09: fffff94000ceffc6
+R10: fffff94000ceffc6 R11: ffffea000677fe33 R12: ffffea000677fe00
+R13: 0000000000000001 R14: ffffea000677fe08 R15: 0000000000001000
+  do_invalidatepage mm/truncate.c:165 [inline]
+  truncate_cleanup_page+0x5ac/0xa90 mm/truncate.c:187
+  truncate_inode_page+0x107/0x1a0 mm/truncate.c:229
+  truncate_inode_pages_range+0x1382/0x2d50 mm/truncate.c:451
+  truncate_inode_pages+0x24/0x30 mm/truncate.c:478
+  swap_inode_boot_loader fs/ext4/ioctl.c:123 [inline]
+  ext4_ioctl+0x1e3b/0x4210 fs/ext4/ioctl.c:865
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fa151655c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
+RDX: 0000000020000000 RSI: 0000000000006611 RDI: 0000000000000006
+RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa1516566d4
+R13: 00000000004bf60e R14: 00000000004cf4a8 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-There are some other dependent patches required that were not flagged in th=
-e patch itself.  IIRC, they were a bit big for stable.
 
-Alex
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
