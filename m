@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D74C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC14C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8418021479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15C7E2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOo7/fBs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8418021479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQQ3rBiU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C7E2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbeJIBvq (ORCPT
+        id S1729295AbeJIBvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38726 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbeJIBvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:45 -0400
+        id S1726967AbeJIBvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF1692064A;
-        Mon,  8 Oct 2018 18:38:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87FA02064A;
+        Mon,  8 Oct 2018 18:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023922;
-        bh=sSvQgZusFKblaE7e3JrcFdnVYTsdtAigCXBZDrGSd/o=;
+        s=default; t=1539023925;
+        bh=zZOKDPkTzNqU2lV5zI1llAClOFZem9yPZB5gxWTjkxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BOo7/fBsE2vNN/x63AOPtupkLZzckuJqe+Xa8H+O4tCQz+dOoGz8MQaY7y/E4/X1t
-         B2yhEAiXj0xfBHBBBQUEJ2i4KdJMqoQm95lqVDQu52xICFWpiSN2VWfYY+QEDbm2pW
-         nD1p8fjcMTiJhf6TYccRtUJBtV7ZFmq1EAzS2V3c=
+        b=qQQ3rBiUY0VSNAnsYZKtXnI96DxwE57eyo0ZxcwwhZPHAy5AnJ0hKbI4UXGZP2D2L
+         mZYXvRdTYqO/6yBjTx+6uqwgaz4u/dOXrCFAt3myjWm4qhnBZYgRbPxv/cDz2B6cPo
+         E2I/gQGMvxaIyFLvAsTGuJLX+XJVNz38kwWCRDVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Yuan-Chi Pang <fu3mo6goo@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 07/59] gpio: adp5588: Fix sleep-in-atomic-context bug
-Date:   Mon,  8 Oct 2018 20:31:14 +0200
-Message-Id: <20181008175547.524561400@linuxfoundation.org>
+Subject: [PATCH 4.9 08/59] mac80211: mesh: fix HWMP sequence numbering to follow standard
+Date:   Mon,  8 Oct 2018 20:31:15 +0200
+Message-Id: <20181008175547.576946939@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -64,76 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Hennerich <michael.hennerich@analog.com>
+From: Yuan-Chi Pang <fu3mo6goo@gmail.com>
 
-[ Upstream commit 6537886cdc9a637711fd6da980dbb87c2c87c9aa ]
+[ Upstream commit 1f631c3201fe5491808df143d8fcba81b3197ffd ]
 
-This fixes:
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_write()
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_direction_input()
+IEEE 802.11-2016 14.10.8.3 HWMP sequence numbering says:
+If it is a target mesh STA, it shall update its own HWMP SN to
+maximum (current HWMP SN, target HWMP SN in the PREQ element) + 1
+immediately before it generates a PREP element in response to a
+PREQ element.
 
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-adp5588.c |   24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ net/mac80211/mesh_hwmp.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpio/gpio-adp5588.c
-+++ b/drivers/gpio/gpio-adp5588.c
-@@ -41,6 +41,8 @@ struct adp5588_gpio {
- 	uint8_t int_en[3];
- 	uint8_t irq_mask[3];
- 	uint8_t irq_stat[3];
-+	uint8_t int_input_en[3];
-+	uint8_t int_lvl_cached[3];
- };
- 
- static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
-@@ -173,12 +175,28 @@ static void adp5588_irq_bus_sync_unlock(
- 	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
- 	int i;
- 
--	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++)
-+	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++) {
-+		if (dev->int_input_en[i]) {
-+			mutex_lock(&dev->lock);
-+			dev->dir[i] &= ~dev->int_input_en[i];
-+			dev->int_input_en[i] = 0;
-+			adp5588_gpio_write(dev->client, GPIO_DIR1 + i,
-+					   dev->dir[i]);
-+			mutex_unlock(&dev->lock);
-+		}
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -563,6 +563,10 @@ static void hwmp_preq_frame_process(stru
+ 		forward = false;
+ 		reply = true;
+ 		target_metric = 0;
 +
-+		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
-+			dev->int_lvl_cached[i] = dev->int_lvl[i];
-+			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
-+					   dev->int_lvl[i]);
-+		}
++		if (SN_GT(target_sn, ifmsh->sn))
++			ifmsh->sn = target_sn;
 +
- 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
- 			dev->int_en[i] = dev->irq_mask[i];
- 			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
- 					   dev->int_en[i]);
- 		}
-+	}
- 
- 	mutex_unlock(&dev->irq_lock);
- }
-@@ -221,9 +239,7 @@ static int adp5588_irq_set_type(struct i
- 	else
- 		return -EINVAL;
- 
--	adp5588_gpio_direction_input(&dev->gpio_chip, gpio);
--	adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + bank,
--			   dev->int_lvl[bank]);
-+	dev->int_input_en[bank] |= bit;
- 
- 	return 0;
- }
+ 		if (time_after(jiffies, ifmsh->last_sn_update +
+ 					net_traversal_jiffies(sdata)) ||
+ 		    time_before(jiffies, ifmsh->last_sn_update)) {
 
 
