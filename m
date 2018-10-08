@@ -2,95 +2,149 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA327C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BB0C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9668E20841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:28:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9668E20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F018820841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:29:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F018820841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeJHUkf (ORCPT
+        id S1726441AbeJHUll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:40:35 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45707 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeJHUkf (ORCPT
+        Mon, 8 Oct 2018 16:41:41 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.180]:32500 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeJHUll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:40:35 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g9Vab-0005V7-Ai; Mon, 08 Oct 2018 15:28:49 +0200
-Message-ID: <1539005329.11512.26.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: Fix potential use-after-free in
- __of_reset_control_get()
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Date:   Mon, 08 Oct 2018 15:28:49 +0200
-In-Reply-To: <CAMuHMdU_ECQxxD1HK5bq5QY7QnxzaBKSJsZFw+284oSnJfSFAA@mail.gmail.com>
-References: <20181008111435.25994-1-geert+renesas@glider.be>
-         <1539003375.11512.19.camel@pengutronix.de>
-         <CAMuHMdU_ECQxxD1HK5bq5QY7QnxzaBKSJsZFw+284oSnJfSFAA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 8 Oct 2018 16:41:41 -0400
+X-Greylist: delayed 13025 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Oct 2018 16:41:40 EDT
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BEbxz4P/994MeEDNp0afzt1sCL0HI5412k27pBvgKz+L/w=="
+X-RZG-CLASS-ID: mo05
+Received: from fs-work.as-domain.local
+        by smtp.strato.de (RZmta 44.2 AUTH)
+        with ESMTPSA id h039efu98DTsHlw
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 8 Oct 2018 15:29:54 +0200 (CEST)
+From:   Frieder Schrempf <frieder.schrempf@exceet.de>
+To:     Peter.Chen@nxp.com, gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Frieder Schrempf <frieder.schrempf@exceet.de>
+Subject: [RFC] usb: chipidea: Add minimal support for HSIC interface on i.MX6QDL
+Date:   Mon,  8 Oct 2018 15:29:12 +0200
+Message-Id: <1539005352-10909-1-git-send-email-frieder.schrempf@exceet.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-08 at 15:12 +0200, Geert Uytterhoeven wrote:
-> Hi Philipp,
-> 
-> On Mon, Oct 8, 2018 at 2:56 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > On Mon, 2018-10-08 at 13:14 +0200, Geert Uytterhoeven wrote:
-> > > Calling of_node_put() decreases the reference count of a device tree
-> > > object, and may free some data.
-> > > 
-> > > However, the of_phandle_args structure embedding it is passed to
-> > > reset_controller_dev.of_xlate() after that, so it may still be accessed.
-> > > 
-> > > Move the call to of_node_put() down to fix this.
-> > > 
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > >  drivers/reset/core.c | 15 ++++++++-------
-> > >  1 file changed, 8 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> > > index 225e34c56b94a2e3..bc9df10d31b4bae1 100644
-> > > --- a/drivers/reset/core.c
-> > > +++ b/drivers/reset/core.c
-> > > @@ -496,27 +496,28 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
-[...]
-> > >       /* reset_list_mutex also protects the rcdev's reset_control list */
-> > >       rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
-> > > 
-> > > +out:
-> > > +     of_node_put(args.np);
-> > >       mutex_unlock(&reset_list_mutex);
-> > 
-> > Thank you for the patch. I'd like to move of_node_put after mutex_unlock
-> > for symmetry. If you agree, I can switch the two when applying.
-> 
-> No objection, thanks!
+Current mainline doesn't support USB hosts 2 and 3 which only use
+HSIC mode and I was wondering how this would need to be implemented.
 
-Applied to reset/next with that change.
+The topic has been discussed before: [1]
+And there is some implementation in the vendor kernel: [2]
 
-regards
-Philipp
+It seems like two things need to be done:
+
+1. Switch the pinmux of the strobe signal to use a pullup after
+   the core has been initialized.
+2. Enable HSIC mode and HSIC clock
+
+This patch only implements these basics in a minimal approach.
+You need to have an additional pinmux setting "active" in the dt,
+that sets the pullup.
+
+It was tested with the SMSC LAN9730 USB Ethernet adapter on the
+iMXceet Solo S board.
+
+[1] https://patchwork.kernel.org/patch/3541771/
+[2] http://git.freescale.com/git/cgit.cgi/imx/linux-imx.git/commit/?id=cf2d3ff6b217ef41f0e594daa9615e2
+
+Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
+---
+ drivers/usb/chipidea/ci_hdrc_imx.c | 10 ++++++++++
+ drivers/usb/chipidea/usbmisc_imx.c | 22 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+
+diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
+index 19f5f5f..fef8bda 100644
+--- a/drivers/usb/chipidea/ci_hdrc_imx.c
++++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+@@ -256,6 +256,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+ 	const struct of_device_id *of_id;
+ 	const struct ci_hdrc_imx_platform_flag *imx_platform_flag;
+ 	struct device_node *np = pdev->dev.of_node;
++	struct pinctrl *pinctrl;
+ 
+ 	of_id = of_match_device(ci_hdrc_imx_dt_ids, &pdev->dev);
+ 	if (!of_id)
+@@ -331,6 +332,15 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+ 		pm_runtime_enable(&pdev->dev);
+ 	}
+ 
++	pinctrl = devm_pinctrl_get(&pdev->dev);
++	if (!IS_ERR(pinctrl)) {
++		struct pinctrl_state *state;
++
++		state = pinctrl_lookup_state(pinctrl, "active");
++		if (!IS_ERR(state))
++			pinctrl_select_state(pinctrl, state);
++	}
++
+ 	device_set_wakeup_capable(&pdev->dev, true);
+ 
+ 	return 0;
+diff --git a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
+index 34ad5bf..a6556c8 100644
+--- a/drivers/usb/chipidea/usbmisc_imx.c
++++ b/drivers/usb/chipidea/usbmisc_imx.c
+@@ -64,10 +64,16 @@
+ #define MX6_BM_OVER_CUR_DIS		BIT(7)
+ #define MX6_BM_OVER_CUR_POLARITY	BIT(8)
+ #define MX6_BM_WAKEUP_ENABLE		BIT(10)
++#define MX6_BM_UTMI_ON_CLOCK		BIT(13)
+ #define MX6_BM_ID_WAKEUP		BIT(16)
+ #define MX6_BM_VBUS_WAKEUP		BIT(17)
+ #define MX6SX_BM_DPDM_WAKEUP_EN		BIT(29)
+ #define MX6_BM_WAKEUP_INTR		BIT(31)
++
++#define MX6_USB_HSIC_CTRL_OFFSET	0x10
++#define MX6_BM_HSIC_CLK_ON		BIT(11)
++#define MX6_BM_HSIC_EN			BIT(12)
++
+ #define MX6_USB_OTG1_PHY_CTRL		0x18
+ /* For imx6dql, it is host-only controller, for later imx6, it is otg's */
+ #define MX6_USB_OTG2_PHY_CTRL		0x1c
+@@ -351,6 +357,22 @@ static int usbmisc_imx6q_init(struct imx_usbmisc_data *data)
+ 	writel(reg | MX6_BM_NON_BURST_SETTING,
+ 			usbmisc->base + data->index * 4);
+ 
++	/*
++	 * Core 2 and 3 are host only and HSIC only,
++	 * so we enable HSIC by default to make them usable
++	 */
++	if (data->index == 2 || data->index == 3) {
++		reg = readl(usbmisc->base + data->index * 4);
++		writel(reg | MX6_BM_UTMI_ON_CLOCK,
++		       usbmisc->base + data->index * 4);
++
++		reg = readl(usbmisc->base + MX6_USB_HSIC_CTRL_OFFSET +
++			    (data->index - 2) * 4);
++		reg |= MX6_BM_HSIC_EN | MX6_BM_HSIC_CLK_ON;
++		writel(reg, usbmisc->base + MX6_USB_HSIC_CTRL_OFFSET +
++		       (data->index - 2) * 4);
++	}
++
+ 	spin_unlock_irqrestore(&usbmisc->lock, flags);
+ 
+ 	usbmisc_imx6q_set_wakeup(data, false);
+-- 
+2.7.4
+
