@@ -7,160 +7,91 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D096C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C26C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB74F21565
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB45F21557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BixGjDj7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB74F21565
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ynQNFheH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB45F21557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbeJHWjY (ORCPT
+        id S1728676AbeJHWjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726367AbeJHWjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:24 -0400
+        id S1728622AbeJHWjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02D7821534;
-        Mon,  8 Oct 2018 15:27:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 861392151C;
+        Mon,  8 Oct 2018 15:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012428;
-        bh=MaYgZWRWZNw1xIyv0ojXkThmOWvCbrxqgKtcIzI3YDU=;
+        s=default; t=1539012417;
+        bh=yHB5ahIa4TX9QioB9aOdBoc+GN7Joxg/E5HNDfee7+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BixGjDj7CUCm5XWVUwH86HP9EGOJLRZEmFa7QdVsmvPpIlp0EKyRD53pxxTqhIq5T
-         /KFENWHsmlTKdqQKvnhTZAaNmBZeOY69OqSqFJncj/n9OiC8IpkU/46ufB4YRImRiQ
-         oVY11tLYQYz7gviXPLQ/BUkJuSMYXXJRQtDZW1tg=
+        b=ynQNFheH2OKQwpb3LWFngsewjswVPoPMtm2OQ3ps27+YOLqMPYpOTdcCn7ItfmfY0
+         ZQ1mlVHEPIs0oC3WGiOjGxVQq7huh2KHfOwqDHMZvK9wEVZkmtvmgRFFj8T0hoAK3+
+         By/HEP4749Q6DINAOyK9GPIf7tegiO3Y3Rfp1ME8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+Cc:     James Cowgill <jcowgill@debian.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 03/23] batman-adv: Fix segfault when writing to sysfs elp_interval
-Date:   Mon,  8 Oct 2018 11:26:43 -0400
-Message-Id: <20181008152703.70891-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 29/32] RISC-V: include linux/ftrace.h in asm-prototypes.h
+Date:   Mon,  8 Oct 2018 11:26:26 -0400
+Message-Id: <20181008152629.70812-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
-References: <20181008152703.70891-1-sashal@kernel.org>
+In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
+References: <20181008152629.70812-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: James Cowgill <jcowgill@debian.org>
 
-[ Upstream commit a25bab9d723a08bd0bdafb1529faf9094c690b70 ]
+[ Upstream commit 57a489786de9ec37d6e25ef1305dc337047f0236 ]
 
-The per hardif sysfs file "batman_adv/elp_interval" is using the generic
-functions to store/show uint values. The helper __batadv_store_uint_attr
-requires the softif net_device as parameter to print the resulting change
-as info text when the users writes to this file. It uses the helper
-function batadv_info to add it at the same time to the kernel ring buffer
-and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG is enabled).
+Building a riscv kernel with CONFIG_FUNCTION_TRACER and
+CONFIG_MODVERSIONS enabled results in these two warnings:
 
-The function batadv_info requires as first parameter the batman-adv softif
-net_device. This parameter is then used to find the private buffer which
-contains the debug log for this batman-adv interface. But
-batadv_store_throughput_override used as first argument the slave
-net_device. This slave device doesn't have the batadv_priv private data
-which is access by batadv_info.
+  MODPOST vmlinux.o
+WARNING: EXPORT symbol "return_to_handler" [vmlinux] version generation failed, symbol will not be versioned.
+WARNING: EXPORT symbol "_mcount" [vmlinux] version generation failed, symbol will not be versioned.
 
-Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
-to a segfault or to memory corruption.
+When exporting symbols from an assembly file, the MODVERSIONS code
+requires their prototypes to be defined in asm-prototypes.h (see
+scripts/Makefile.build). Since both of these symbols have prototypes
+defined in linux/ftrace.h, include this header from RISC-V's
+asm-prototypes.h.
 
-Fixes: 0744ff8fa8fa ("batman-adv: Add hard_iface specific sysfs wrapper macros for UINT")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Reported-by: Karsten Merker <merker@debian.org>
+Signed-off-by: James Cowgill <jcowgill@debian.org>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/sysfs.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ arch/riscv/include/asm/asm-prototypes.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 arch/riscv/include/asm/asm-prototypes.h
 
-diff --git a/net/batman-adv/sysfs.c b/net/batman-adv/sysfs.c
-index a3b5b76dc9de..31d7e239a1fd 100644
---- a/net/batman-adv/sysfs.c
-+++ b/net/batman-adv/sysfs.c
-@@ -187,7 +187,8 @@ ssize_t batadv_store_##_name(struct kobject *kobj,			\
- 									\
- 	return __batadv_store_uint_attr(buff, count, _min, _max,	\
- 					_post_func, attr,		\
--					&bat_priv->_var, net_dev);	\
-+					&bat_priv->_var, net_dev,	\
-+					NULL);	\
- }
- 
- #define BATADV_ATTR_SIF_SHOW_UINT(_name, _var)				\
-@@ -261,7 +262,9 @@ ssize_t batadv_store_##_name(struct kobject *kobj,			\
- 									\
- 	length = __batadv_store_uint_attr(buff, count, _min, _max,	\
- 					  _post_func, attr,		\
--					  &hard_iface->_var, net_dev);	\
-+					  &hard_iface->_var,		\
-+					  hard_iface->soft_iface,	\
-+					  net_dev);			\
- 									\
- 	batadv_hardif_put(hard_iface);				\
- 	return length;							\
-@@ -355,10 +358,12 @@ __batadv_store_bool_attr(char *buff, size_t count,
- 
- static int batadv_store_uint_attr(const char *buff, size_t count,
- 				  struct net_device *net_dev,
-+				  struct net_device *slave_dev,
- 				  const char *attr_name,
- 				  unsigned int min, unsigned int max,
- 				  atomic_t *attr)
- {
-+	char ifname[IFNAMSIZ + 3] = "";
- 	unsigned long uint_val;
- 	int ret;
- 
-@@ -384,8 +389,11 @@ static int batadv_store_uint_attr(const char *buff, size_t count,
- 	if (atomic_read(attr) == uint_val)
- 		return count;
- 
--	batadv_info(net_dev, "%s: Changing from: %i to: %lu\n",
--		    attr_name, atomic_read(attr), uint_val);
-+	if (slave_dev)
-+		snprintf(ifname, sizeof(ifname), "%s: ", slave_dev->name);
+diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
+new file mode 100644
+index 000000000000..c9fecd120d18
+--- /dev/null
++++ b/arch/riscv/include/asm/asm-prototypes.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RISCV_PROTOTYPES_H
 +
-+	batadv_info(net_dev, "%s: %sChanging from: %i to: %lu\n",
-+		    attr_name, ifname, atomic_read(attr), uint_val);
- 
- 	atomic_set(attr, uint_val);
- 	return count;
-@@ -396,12 +404,13 @@ static ssize_t __batadv_store_uint_attr(const char *buff, size_t count,
- 					void (*post_func)(struct net_device *),
- 					const struct attribute *attr,
- 					atomic_t *attr_store,
--					struct net_device *net_dev)
-+					struct net_device *net_dev,
-+					struct net_device *slave_dev)
- {
- 	int ret;
- 
--	ret = batadv_store_uint_attr(buff, count, net_dev, attr->name, min, max,
--				     attr_store);
-+	ret = batadv_store_uint_attr(buff, count, net_dev, slave_dev,
-+				     attr->name, min, max, attr_store);
- 	if (post_func && ret)
- 		post_func(net_dev);
- 
-@@ -570,7 +579,7 @@ static ssize_t batadv_store_gw_sel_class(struct kobject *kobj,
- 	return __batadv_store_uint_attr(buff, count, 1, BATADV_TQ_MAX_VALUE,
- 					batadv_post_gw_reselect, attr,
- 					&bat_priv->gw.sel_class,
--					bat_priv->soft_iface);
-+					bat_priv->soft_iface, NULL);
- }
- 
- static ssize_t batadv_show_gw_bwidth(struct kobject *kobj,
++#include <linux/ftrace.h>
++#include <asm-generic/asm-prototypes.h>
++
++#endif /* _ASM_RISCV_PROTOTYPES_H */
 -- 
 2.17.1
 
