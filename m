@@ -2,166 +2,107 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8014C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222E5C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F3C2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F3C2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id E02462086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:10:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02462086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeJHWV6 (ORCPT
+        id S1726540AbeJHWWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:21:58 -0400
-Received: from mailoutvs50.siol.net ([185.57.226.241]:42009 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726078AbeJHWV5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:21:57 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 69F3052101C;
-        Mon,  8 Oct 2018 17:09:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 9BEfd-RCm4tW; Mon,  8 Oct 2018 17:09:43 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id CA0385205FB;
-        Mon,  8 Oct 2018 17:09:43 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPA id BDDD6520CBD;
-        Mon,  8 Oct 2018 17:09:42 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 18/29] drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
-Date:   Mon, 08 Oct 2018 17:09:42 +0200
-Message-ID: <8016466.hta3A6eauk@jernej-laptop>
-In-Reply-To: <20181008091406.yjs2u22fmj72e4rj@flea>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net> <20181007093905.11253-19-jernej.skrabec@siol.net> <20181008091406.yjs2u22fmj72e4rj@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 8 Oct 2018 18:22:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37148 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726278AbeJHWWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:22:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 753E1ADFE;
+        Mon,  8 Oct 2018 15:10:28 +0000 (UTC)
+Date:   Mon, 08 Oct 2018 17:10:27 +0200
+Message-ID: <s5hmuro3258.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Connor McAdams <conmanx360@gmail.com>
+Cc:     alsa-devel@alsa-project.org,
+        Alastair Bridgewater <alastair.bridgewater@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Add ZxR support + bugfixes
+In-Reply-To: <CAM8Agx0on73x9p3S54UB-9fY+5rRXFeP1m7TFr2RmQmuQPR-yQ@mail.gmail.com>
+References: <1538276607-30234-1-git-send-email-conmanx360@gmail.com>
+        <s5h1s98s78q.wl-tiwai@suse.de>
+        <CAM8Agx0on73x9p3S54UB-9fY+5rRXFeP1m7TFr2RmQmuQPR-yQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 08. oktober 2018 ob 11:14:06 CEST je Maxime Ripard napisal(a):
-> Hi,
+On Sun, 07 Oct 2018 19:05:07 +0200,
+Connor McAdams wrote:
 > 
-> On Sun, Oct 07, 2018 at 11:38:54AM +0200, Jernej Skrabec wrote:
-> > It turns out that H6 HDMI BSP kernel driver doesn't change TMDS rate at
-> > all. At this point it is not clear whether it is just not necessary or
-> > it would cause some kind of issues.
-> > 
-> > Add a quirk for it.
-> > 
-> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 5 ++++-
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 +
-> >  2 files changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c index ec122136ee9d..e9e93f174b35
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > @@ -165,7 +165,9 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
-> > struct device *master,> 
-> >  		goto err_disable_clk_tmds;
-> >  	
-> >  	}
-> > 
-> > -	drm_encoder_helper_add(encoder, &sun8i_dw_hdmi_encoder_helper_funcs);
-> > +	if (hdmi->quirks->set_rate)
-> > +		drm_encoder_helper_add(encoder,
-> > +				       &sun8i_dw_hdmi_encoder_helper_funcs);
-> 
-> That seems a bit backward, it only works because we only have mode_set
-> at the moment, and the only thing it does is changing the clock
-> rate. As soon as we change one of these two assumptions, the code will
-> break.
-> 
-> Why not just return in mode_set if that boolean is true?
+> I have fixed the microphone issue, and will try to get the patches
+> written by the end of the week so they can be in the next kernel (at
+> least I think that's what Takashi Sakamoto said, two weeks from 7 days
+> ago). With the two suggestions by Takashi Sakamoto, do I need those in
+> order for it to be merged? I will work on them regardless, but with
+> those it may take me longer (they might be simple, I haven't dug into
+> what they require yet).
 
-My original intention was to optimize execution time a bit. If there is no 
-helpers registered, there is no need to call callback which does nothing. But 
-your way is probably more reasonable approach.
+It's basically up to you.  I can merge all of them in a shot if they
+are relevant, or merge each of them gradually if they are irrelevant
+with each other.
 
-However, I'm pretty sure that even older HDMI controller doesn't need this 
-rate changing code. All tests shown that changing HDMI controller divider 
-doesn't have an effect on video or audio output. It's only there because BSP 
-kernel driver set rate and AW engineer said it's necessary.
+
+thanks,
+
+Takashi
 
 > 
-> >  	drm_encoder_init(drm, encoder, &sun8i_dw_hdmi_encoder_funcs,
-> >  	
-> >  			 DRM_MODE_ENCODER_TMDS, NULL);
-> > 
-> > @@ -235,6 +237,7 @@ static int sun8i_dw_hdmi_remove(struct platform_device
-> > *pdev)> 
-> >  static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks = {
-> >  
-> >  	.mode_valid = sun8i_dw_hdmi_mode_valid_a83t,
-> > 
-> > +	.set_rate = true,
-> > 
-> >  };
-> >  
-> >  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index a645b8bc9f58..f9eb663865a4
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > @@ -173,6 +173,7 @@ struct sun8i_hdmi_phy {
-> > 
-> >  struct sun8i_dw_hdmi_quirks {
-> >  
-> >  	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
-> >  	
-> >  					   const struct drm_display_mode *mode);
-> > 
-> > +	bool set_rate;
+> Let me know.
 > 
-> This triggers a check in checkpatch. You should address them (and
-> there's several in your series).
-
-Till now we used bools in driver internal structures in spite of this 
-warnings. So should we start using unsigned int? Or maybe bitfield with 
-unsigned int as a base according to https://lkml.org/lkml/2017/11/21/384
-
-As far as other issues reported by strict checkpatch go, most of them are DT 
-lines over 80 charachters. This was tolerated till now. Last type of issues is 
-that macro parameters weren't enclosed with braces. These issues won't be 
-reported anymore in new series because sun8i_csc.h won't be touched if I drop 
-patch which renames DE2 register macros (but original issue will remain).
-
-Best regards,
-Jernej
-
+> Thanks,
+> Connor.
+> On Tue, Oct 2, 2018 at 11:23 AM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Sun, 30 Sep 2018 05:03:15 +0200,
+> > Connor McAdams wrote:
+> > >
+> > > This patch series adds support for the Sound Blaster ZxR, as well as a
+> > > few bug fixes. This should be the last ca0132 based Creative card that
+> > > needed support to be added.
+> > >
+> > > Also, I did check to make sure each patch compiles properly this time,
+> > > but you can check yourself just to be sure. :)
+> > >
+> > > Connor McAdams (11):
+> > >   ALSA: hda/ca0132 - Fix AE-5 control type
+> > >   ALSA: hda/ca0132 - Fix surround sound with output effects
+> > >   ALSA: hda/ca0132 - Add ZxR quirks + new quirk check function
+> > >   ALSA: hda/ca0132 - Add ZxR pincfg
+> > >   ALSA: hda/ca0132 - Add DBpro hda_codec_ops
+> > >   ALSA: hda/ca0132 - Add ZxR init commands
+> > >   ALSA: hda/ca0132 - Add ZxR DSP post-download commands
+> > >   ALSA: hda/ca0132 - Add ZxR input/output select commands
+> > >   ALSA: hda/ca0132 - Remove input select enum for ZxR
+> > >   ALSA: hda/ca0132 - Add ZxR 600 ohm gain control
+> > >   ALSA: hda/ca0132 - Add ZxR exit commands
+> >
+> > Now applied all 11 patches (with Sakamoto-san's Reviewed-by tags).
+> > Thanks!
+> >
+> >
+> > Takashi
 > 
-> With both addressed,
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> 
-> Thanks!
-
-
-
-
