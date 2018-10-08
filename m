@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FB6C677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A098EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004DA2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A72B204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:46:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rc90iIFJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004DA2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jknPlUwG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A72B204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbeJIB7O (ORCPT
+        id S1731169AbeJIB7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:59:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47440 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:59:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJIB7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:59:13 -0400
+        id S1728570AbeJIB7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:59:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE7722064A;
-        Mon,  8 Oct 2018 18:46:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E56CB2087D;
+        Mon,  8 Oct 2018 18:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024367;
-        bh=CNQqPVLaAzNc/y6r86HbUERgvUq8uQm94vmTnjZhs2Q=;
+        s=default; t=1539024370;
+        bh=igfHERKDCbOMFKj32NpmeuEvS8MiHh4djFTDEFe2q+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rc90iIFJbj+dtGwKnH+gbpjKeVvZGB7gKrJWuQowz+pFOiBcY0zYnNHcuemk9xGMP
-         +VbMU6Ee5WvIwZfhoZN0OaXU+9B38i+ZPBxl9baTfGCSUL0yoOLEe7iSQMnnquDSXV
-         RCiDSfeTA0i/hmiqYrkpiwLMcvmUrtzC5GiattCg=
+        b=jknPlUwGWPzllgvuMh1mWMKq6pEiR8oXMpGMZVklO338kKNZuLCmUOAPwNo2fSZVd
+         7/71AC49u2E8UMhxaCSi0qMMNO5qbi8yUCUKG60iggyzpTOrN7DcLKrsHJw8xLeYpM
+         5JMLcUQ70aJkG6HyxIRMFtvKQleCu74AS+ELWneY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jinbum Park <jinb.park7@gmail.com>,
+        stable@vger.kernel.org, Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 018/168] mac80211_hwsim: Fix possible Spectre-v1 for hwsim_world_regdom_custom
-Date:   Mon,  8 Oct 2018 20:29:58 +0200
-Message-Id: <20181008175620.744522583@linuxfoundation.org>
+Subject: [PATCH 4.18 019/168] nl80211: Fix nla_put_u8 to u16 for NL80211_WMMR_TXOP
+Date:   Mon,  8 Oct 2018 20:29:59 +0200
+Message-Id: <20181008175620.779756107@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -63,50 +64,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jinbum Park <jinb.park7@gmail.com>
+From: Haim Dreyfuss <haim.dreyfuss@intel.com>
 
-[ Upstream commit 3a2af7cccbbaf2362db9053a946a6084e12bfa73 ]
+[ Upstream commit d3c89bbc7491d5e288ca2993e999d24ba9ff52ad ]
 
-User controls @idx which to be used as index of hwsim_world_regdom_custom.
-So, It can be exploited via Spectre-like attack. (speculative execution)
+TXOP (also known as Channel Occupancy Time) is u16 and should be
+added using nla_put_u16 instead of u8, fix that.
 
-This kind of attack leaks address of hwsim_world_regdom_custom,
-It leads an attacker to bypass security mechanism such as KASLR.
-
-So sanitize @idx before using it to prevent attack.
-
-I leveraged strategy [1] to find and exploit this gadget.
-
-[1] https://github.com/jinb-park/linux-exploit/tree/master/exploit-remaining-spectre-gadget/
-
-Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
-[johannes: unwrap URL]
+Fixes: 50f32718e125 ("nl80211: Add wmm rule attribute to NL80211_CMD_GET_WIPHY dump command")
+Signed-off-by: Haim Dreyfuss <haim.dreyfuss@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/wireless/nl80211.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -33,6 +33,7 @@
- #include <net/net_namespace.h>
- #include <net/netns/generic.h>
- #include <linux/rhashtable.h>
-+#include <linux/nospec.h>
- #include "mac80211_hwsim.h"
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -672,8 +672,8 @@ static int nl80211_msg_put_wmm_rules(str
+ 				rule->wmm_rule.client[j].cw_max) ||
+ 		    nla_put_u8(msg, NL80211_WMMR_AIFSN,
+ 			       rule->wmm_rule.client[j].aifsn) ||
+-		    nla_put_u8(msg, NL80211_WMMR_TXOP,
+-			       rule->wmm_rule.client[j].cot))
++		    nla_put_u16(msg, NL80211_WMMR_TXOP,
++			        rule->wmm_rule.client[j].cot))
+ 			goto nla_put_failure;
  
- #define WARN_QUEUE 100
-@@ -3229,6 +3230,9 @@ static int hwsim_new_radio_nl(struct sk_
- 			kfree(hwname);
- 			return -EINVAL;
- 		}
-+
-+		idx = array_index_nospec(idx,
-+					 ARRAY_SIZE(hwsim_world_regdom_custom));
- 		param.regd = hwsim_world_regdom_custom[idx];
- 	}
- 
+ 		nla_nest_end(msg, nl_wmm_rule);
 
 
