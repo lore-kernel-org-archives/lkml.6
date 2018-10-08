@@ -2,110 +2,151 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2752AC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AA7C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB4D21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB4D21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0787420858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:08:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0787420858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbeJHURm (ORCPT
+        id S1726278AbeJHUUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:17:42 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:39016 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbeJHURm (ORCPT
+        Mon, 8 Oct 2018 16:20:21 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48890 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725914AbeJHUUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:17:42 -0400
-Received: by mail-io1-f69.google.com with SMTP id x5-v6so19550506ioa.6
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 06:06:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=inKmNwI/lD1VKBFHxUhd+8t17U5OaTsxXF5/K2+X5PQ=;
-        b=qBj2YwIc3ZAn0KA4jFeCY7OBHr21VWmJsZs02gfM+YtUTj1GWlJdndIOMSSxj1dpI7
-         LSI1CR7AgmfM0ilX+RgqJ4C/ffKgcgXhE1jYC7gXOlYUHLYLvVhDERdd7qkfkSXTQVp5
-         QByQhnLoV2syCE8zVd89jAN+sq3BKdbpRQxf4PFmDMPo7DmNj82jYyp6v+XLgigwLsaB
-         wEmF877k14Sez9fLsraYasqbOoaJBgFIo8PMMWSusoIIIJfZN13JSuiz6hkXzR89lhZ6
-         KX1TGRT6N14r90LO+2QdXV4p0z3SV6r7mB/yr/meHd/Z+xWi88HOl6kho90l+h/bEIWN
-         9M8A==
-X-Gm-Message-State: ABuFfoj+GiMRCTOBGpHjfjZjDLWBuUU/Hoz81AFmSiGcxaZrfLrYY7r+
-        o3lQt15tAxKDTZ7WdgmWvfODleNcr40rj8XxBkPkdFs/3Olv
-X-Google-Smtp-Source: ACcGV63ODG9hMrexP/9HXGKn9KPiPa0umrctO3KpWLwFGoySeKTqZDQ9M/ezel9CfvxtVParpZY1oguyeb/USSVuR/NbJaThZllN
+        Mon, 8 Oct 2018 16:20:21 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98D3lZm010106;
+        Mon, 8 Oct 2018 15:08:37 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mxj65bb48-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 08 Oct 2018 15:08:37 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7DEE534;
+        Mon,  8 Oct 2018 13:08:36 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0FCA3517F;
+        Mon,  8 Oct 2018 13:08:36 +0000 (GMT)
+Received: from [10.201.23.162] (10.75.127.44) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 8 Oct
+ 2018 15:08:35 +0200
+Subject: Re: [PATCH V4 0/4] Add TIOCM Signals support for RPMSG char devices
+To:     Arun Kumar Neelakantam <aneela@codeaurora.org>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>, <clew@codeaurora.org>,
+        <sricharan@codeaurora.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=arnaud.pouliquen@st.com; prefer-encrypt=mutual; keydata=
+ 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
+ 8mOik8I/F6EW8XyQAA2P
+Message-ID: <a64808ba-3c67-3ee9-9c13-3787e5ce7ab1@st.com>
+Date:   Mon, 8 Oct 2018 15:08:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:484a:: with SMTP id p71-v6mr12777088ita.23.1539003963279;
- Mon, 08 Oct 2018 06:06:03 -0700 (PDT)
-Date:   Mon, 08 Oct 2018 06:06:03 -0700
-In-Reply-To: <0000000000005e2e530576c6f9ce@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008a2f4a0577b7480f@google.com>
-Subject: Re: KMSAN: uninit-value in __dev_mc_add
-From:   syzbot <syzbot+001516d86dbe88862cec@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, edumazet@google.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        sunlw.fnst@cn.fujitsu.com, syzkaller-bugs@googlegroups.com,
-        vdronov@redhat.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hi Arun, Bjorn,
 
-HEAD commit:    43c85fe5a0ee kmsan: suppress false positives in KVM
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ffd5b9400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3ff9630e1f32e076
-dashboard link: https://syzkaller.appspot.com/bug?extid=001516d86dbe88862cec
-compiler:       clang version 8.0.0 (trunk 339414)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10adf491400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100c8159400000
+On 10/08/2018 08:38 AM, Arun Kumar Neelakantam wrote:
+> Glink transport support signals to exchange state notification between
+> local and remote side clients. Adding support to send/receive the signal
+> command and notify the clients through callback and POLL notification.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+001516d86dbe88862cec@syzkaller.appspotmail.com
+Please correct me if i'm wrong...My concern here is that this patchset
+implements a rpmsg service in the rpmsg core. I would separate this from
+the rpmsg core, as this is not part of the rpmsg protocol but seems
+linked to the serial protocol itself.
+Could it be implemented in rpmsg_char, using a dedicated channel...?
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-IPVS: ftp: loaded support on port[0] = 21
-==================================================================
-BUG: KMSAN: uninit-value in memcmp+0x117/0x180 lib/string.c:863
-CPU: 1 PID: 18 Comm: kworker/1:0 Not tainted 4.19.0-rc4+ #64
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: ipv6_addrconf addrconf_dad_work
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x306/0x460 lib/dump_stack.c:113
-  kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
-  __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
-  memcmp+0x117/0x180 lib/string.c:863
-  __hw_addr_add_ex net/core/dev_addr_lists.c:61 [inline]
-  __dev_mc_add+0x1f9/0x8b0 net/core/dev_addr_lists.c:670
-  dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
-  igmp6_group_added+0x2d7/0xab0 net/ipv6/mcast.c:676
-  __ipv6_dev_mc_inc+0xeff/0x10f0 net/ipv6/mcast.c:934
-  ipv6_dev_mc_inc+0x70/0x80 net/ipv6/mcast.c:941
-  addrconf_join_solict net/ipv6/addrconf.c:2098 [inline]
-  addrconf_dad_begin net/ipv6/addrconf.c:3879 [inline]
-  addrconf_dad_work+0x3e7/0x2690 net/ipv6/addrconf.c:4006
-  process_one_work+0x19c4/0x24f0 kernel/workqueue.c:2153
-  worker_thread+0x206d/0x2b30 kernel/workqueue.c:2296
-  kthread+0x59c/0x5d0 kernel/kthread.c:247
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+Regards
+Arnaud
 
-Local variable description: ----buf@igmp6_group_added
-Variable was created at:
-  igmp6_group_added+0x57/0xab0 net/ipv6/mcast.c:664
-  __ipv6_dev_mc_inc+0xeff/0x10f0 net/ipv6/mcast.c:934
-==================================================================
-
+> 
+> Changes since v1:
+> - Split the patches as per functional areas like core, char, glink
+> - Add set, clear mask for TIOCMSET
+> - Merge the char signal callback and POLLPRI patches
+> 
+> Changes since v2:
+> - Modify the rpmsg_get_signals function prototype
+> 
+> Changes since v3:
+> - Correct the TICOMGET case handling as per new rpmsg_get_signals prototype
+> - Update the rpmsg_get_signals function header
+> 
+> Arun Kumar Neelakantam (4):
+>   rpmsg: core: Add signal API support
+>   rpmsg: glink: Add support to handle signals command
+>   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+>   rpmsg: char: Add signal callback and POLLPRI support
+> 
+>  drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_char.c        |  74 +++++++++++++++++++++-
+>  drivers/rpmsg/rpmsg_core.c        |  41 +++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h    |   5 ++
+>  include/linux/rpmsg.h             |  26 ++++++++
+>  5 files changed, 269 insertions(+), 3 deletions(-)
+> 
