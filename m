@@ -2,114 +2,113 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F08BCC64EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B01C8C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD9482088F
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:55:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9482088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FF8D2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF8D2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeJHQGP (ORCPT
+        id S1727577AbeJHQGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 12:06:15 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6001 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbeJHQFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:05:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 01:55:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,356,1534834800"; 
-   d="scan'208";a="93194658"
-Received: from svm-s2600wft.bj.intel.com ([10.240.193.45])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Oct 2018 01:54:55 -0700
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, tglx@linutronix.de, jgross@suse.com,
-        chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
-        tianyu.lan@microsoft.com, Yi Sun <yi.y.sun@linux.intel.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Subject: [PATCH v4 0/2] Enable PV qspinlock for Hyper-V
-Date:   Mon,  8 Oct 2018 16:29:32 +0800
-Message-Id: <1538987374-51217-1-git-send-email-yi.y.sun@linux.intel.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 8 Oct 2018 12:06:42 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38133 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbeJHQGm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 12:06:42 -0400
+Received: by mail-vs1-f67.google.com with SMTP id a202so7761731vsd.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 01:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5uugBN4Fd6aW3rBr8aO+q5wA6v9dAtEr9PkHoeZ0bAM=;
+        b=b+8XymAPi4ZnFJza+Oqbl0r3VxRejuP6dgsfs1JZK+rbsFs/OCEvRTwLbuovx+3AjA
+         +jTKBv5AJ+Cuo9pxAEdrqM3G0h4hLeYlorD3ri5/JQuU29SODCRQiejmU0aNb9RJBeLm
+         ZXuqx6iDVUp9np4PHrAj5lBn80KDjmwZp5HW82NxzETd+tUCMqvFK/Flgxgg+wihyN31
+         +1uq0FzULW/m5rku+Aq5jmHx/WnyUqxI3NaKuT1rydT42ctI0FCiXaGcgJEJbIkGZJbO
+         l8TIS1XP7sWU4+VYmvT93xx50v1tbCuewLxV3G7HYlGwbEgTI8W169Q7iZn2E0iZ+NPK
+         rk0Q==
+X-Gm-Message-State: ABuFfojWFG96vx87v2AdR3covtj1nPgCBWr0PbEwgmwbG8cZLxPWnBJM
+        hWtsbLuJwx/43V4nqmC2LbTfzL5cBqWNWiksn7JBg/nj
+X-Google-Smtp-Source: ACcGV60/tAPjsUBeIQTOcC7jwCc3V6Kw5aB2+zcAWr1G+z/ahfzrDHJbOdf2jik0yI/kh90bMist54vdMw69hqhxO7o=
+X-Received: by 2002:a67:7b56:: with SMTP id w83mr7037321vsc.152.1538988962464;
+ Mon, 08 Oct 2018 01:56:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181007085102.17795-1-geert@linux-m68k.org> <20181007113514.GA21217@localhost>
+In-Reply-To: <20181007113514.GA21217@localhost>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Oct 2018 10:55:50 +0200
+Message-ID: <CAMuHMdVS6QVfg6=-a9+qgnhjT4f1aEMdEm54jKFy7MnSxCj_1g@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
+ of discrimination factors
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     ksummit-discuss@lists.linuxfoundation.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v3->v4:
-    - To avoid possible hang issue (if hv_qlock_wait can be
-      interrupted, kick may happen before reading HV_X64_MSR_GUEST_IDLE
-      so that hang happens), disable interrupt before READ_ONCE, then
-      restore it after reading HV_X64_MSR_GUEST_IDLE.
-v2->v3:
-    - use "Hyper-V: " as the message prefix
-    - remove unnecessary header files
-    - remove unnecessary check in 'hv_qlock_wait'
-    - fix compilation error on different platforms
+Hi Josh,
 
-v1->v2:
-    - compile hv_spinlock.c only when CONFIG_PARAVIRT_SPINLOCKS enabled
-    - merge v1 patch 2/3 to single patch
-    - remove part of the boilerplate in hv_spinlock.c
-    - declare hv_pvspin as __initdata
-    - remove spin_wait_info and hv_notify_long_spin_wait because
-      SpinWaitInfo is a standalone feature.
-    - add comments for reading HV_X64_MSR_GUEST_IDLE
-    - replace pr_warn to pr_info
-    - use pr_fmt instead of the 'hv:' prefix
-    - register callback function for smp_ops.smp_prepare_boot_cpu
-      to initialize hyper-v spinlock
+On Sun, Oct 7, 2018 at 1:35 PM Josh Triplett <josh@joshtriplett.org> wrote:
+> On Sun, Oct 07, 2018 at 10:51:02AM +0200, Geert Uytterhoeven wrote:
+> > Providing an explicit list of discrimination factors may give the false
+> > impression that discrimination based on other unlisted factors would be
+> > allowed.
+> >
+> > Avoid any ambiguity by removing the list, to ensure "a harassment-free
+> > experience for everyone", period.
+>
+> I would suggest reading the commit message that added this in the first
+> place. "Explicit guidelines have demonstrated success in other projects
+> and other areas of the kernel." See also various comparisons of codes of
 
-This patch adds the necessary Hyper-V specific code to allow
-PV qspinlock work on Hyper-V.
+The first paragraph of the commit message (the "why" part) is exactly the
+part we've been waiting for a clarification since the inception of the
+commit...
 
-In wait callback function, read HV_X64_MSR_GUEST_IDLE MSR
-to trigger the guest's transition to the idle power state
-which can be exited by an IPI even if IF flag is disabled.
+> conduct, which make the same point. The point of this list is precisely
+> to serve as one such explicit guideline; removing it would rather defeat
+> the purpose.
 
-In kick callback function, just send platform IPI to make
-waiting vcpu exit idle state.
+Then (at least) the list should be marked containing examples, cfr. the other
+examples in the document.
 
-In vcpu_is_preempted callback function, return false directly
-because Hyper-V does not provide such interface so far.
+> In any case, this is not the appropriate place for such patches, any
+> more than it's the place for patches to the GPL.
 
+There are precedents:
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>
-Cc: Juergen Gross <jgross@suse.com>
+Until recent, the file named "COPYING" (which you referred to in another
+email related to patching the CoC), was a verbatim copy of the GPL, with
+clarifications added at the top.
 
-Yi Sun (2):
-  X86/Hyper-V: Add Guest IDLE MSR support
-  locking/pvqspinlock, hv: Enable PV qspinlock for Hyper-V
+Documentation/process/code-of-conduct.rst is already a slightly modified
+version of the original.
 
- Documentation/admin-guide/kernel-parameters.txt |  5 ++
- arch/x86/hyperv/Makefile                        |  4 ++
- arch/x86/hyperv/hv_spinlock.c                   | 85 +++++++++++++++++++++++++
- arch/x86/include/asm/hyperv-tlfs.h              |  5 ++
- arch/x86/include/asm/mshyperv.h                 |  1 +
- arch/x86/kernel/cpu/mshyperv.c                  | 14 ++++
- 6 files changed, 114 insertions(+)
- create mode 100644 arch/x86/hyperv/hv_spinlock.c
+Now, if amending the CoC locally is not an option, I'm afraid a plain revert
+is the only option, like for any other commit that breaks the userspace ABI
+(Linux kernel developers are also users ;-), until the raised issues have
+been resolved upstream.
 
--- 
-1.9.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
