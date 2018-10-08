@@ -2,233 +2,199 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5086C6787E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD40C6787D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A02BE2086D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49F202086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArUwT62F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A02BE2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HRAOCRrS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F202086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeJHJxy (ORCPT
+        id S1726476AbeJHJyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 05:53:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60126 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 05:54:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:51129 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbeJHJxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 05:53:54 -0400
-Received: from localhost (unknown [104.132.0.74])
+        id S1725807AbeJHJyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 05:54:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD5B320841;
-        Mon,  8 Oct 2018 02:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538966669;
-        bh=KTWOy3eFZuMXf5Aw1rOIrtjIawa0MLdNqV8ZrOg5nrg=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ArUwT62FpTyKUlbguy9y+POPnt//Gohr2PKZwjIAYBHDarLR2G1xOtEBF6XHBK8Tg
-         QMP1CX0YdGyE648vEbTPTDGnVlQXHOFaIzDBiOCThtrnZZKTLLy5YTe1VnLz6QuHtW
-         C7xJmyS7VW0Zsx0gpjT41sO1wNy1d7JM8/UeFSaA=
-Content-Type: text/plain; charset="utf-8"
+        by ozlabs.org (Postfix) with ESMTPSA id 42T4TF3wr7z9shy;
+        Mon,  8 Oct 2018 13:44:49 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538966690;
+        bh=QCxTzGtyy32iq28ZHmM3v33A81PoX2fyiyt6g4bnsZY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HRAOCRrSgWmbIWvmXwblicW7GsU9tllRsaX9y1c13shbuICCHOG7uHu6FlQ2I3DEm
+         WsEvwoCsGR14+GCwrTlFO4jcAAVlumjMrfr/FR2jTwSIZpdXpjXjUnEcRbfNMJ7Ynp
+         UWNqdqTiDFK30mNNFnqMvaQekoMB3tT5NQ5Cty6Ru22EPWem7mvrR9m4dlJgp6ULGA
+         Ng2cOP6ih+lI++PSfNeKIN7iB1rj1/TYt8xE1bMgpMR4rJCULden6E2CsvXnl536a8
+         WaI/n8YeVBiyLLcDmVfpbrU5HS51M1M8/Xv+IPX7g3HImy3MP2QEoCeUwkuP01esOk
+         Tc56WoELUiZkg==
+Date:   Mon, 8 Oct 2018 13:44:49 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Message-ID: <20181008134449.64aad97e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
- <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Sun, 07 Oct 2018 19:44:28 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bNRy8ryxcqLmcoGqvlETGhp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-10-04 05:02:26)
-> Add support for the lpass clock controller found on SDM845 based devices.
-> This would allow lpass peripheral loader drivers to control the clocks to
-> bring the subsystem out of reset.
-> LPASS clocks present on the global clock controller would be registered
-> with the clock framework based on the device tree flag. Also do not gate
-> these clocks if they are left unused.
+--Sig_/bNRy8ryxcqLmcoGqvlETGhp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why not gate them? This statement states what the code is doing, not why
-it's doing it which is the more crucial information that should be
-described in the commit text. Also, please add a comment about it to the
-code next to the flag.
+Hi all,
 
-I am concerned that it doesn't make any sense though, so probably it
-shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
-other larger bug that needs to be fixed.
+Today's linux-next merge of the tip tree got a conflict in:
 
-> =
+  drivers/powercap/intel_rapl.c
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index 08d593e..6379b8b 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -3169,6 +3169,32 @@ enum {
->         },
->  };
-> =
+between commit:
 
-> +static struct clk_branch gcc_lpass_q6_axi_clk =3D {
-> +       .halt_reg =3D 0x47000,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x47000,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_lpass_q6_axi_clk",
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gcc_lpass_sway_clk =3D {
-> +       .halt_reg =3D 0x47008,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x47008,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_lpass_sway_clk",
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
->  static struct gdsc pcie_0_gdsc =3D {
->         .gdscr =3D 0x6b004,
->         .pd =3D {
-> @@ -3469,6 +3495,8 @@ enum {
->         [GCC_QSPI_CORE_CLK_SRC] =3D &gcc_qspi_core_clk_src.clkr,
->         [GCC_QSPI_CORE_CLK] =3D &gcc_qspi_core_clk.clkr,
->         [GCC_QSPI_CNOC_PERIPH_AHB_CLK] =3D &gcc_qspi_cnoc_periph_ahb_clk.=
-clkr,
-> +       [GCC_LPASS_Q6_AXI_CLK] =3D NULL,
-> +       [GCC_LPASS_SWAY_CLK] =3D NULL,
->  };
-> =
+  17ed15183c24 ("powercap: RAPL: Get rid of custom RAPL_CPU() macro")
 
->  static const struct qcom_reset_map gcc_sdm845_resets[] =3D {
-> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_device=
- *pdev)
->         if (ret)
->                 return ret;
-> =
+from the pm tree and commit:
 
-> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protect=
-ed")) {
-> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =3D
-> +                       &gcc_lpass_q6_axi_clk.clkr;
-> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =3D
-> +                       &gcc_lpass_sway_clk.clkr;
-> +       }
-> +
->         return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
->  }
-> =
+  f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
 
-> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc=
--sdm845.c
-> new file mode 100644
-> index 0000000..f7b9b0f
-> --- /dev/null
-> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
-> @@ -0,0 +1,201 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/bitops.h>
+from the tip tree.
 
-Is this needed?
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-> +/* CLK_OFF would not toggle until LPASS is not out of reset */
-> +static struct clk_branch lpass_qdsp6ss_xo_clk =3D {
-> +       .halt_reg =3D 0x38,
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x38,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "lpass_qdsp6ss_xo_clk",
-> +                       .flags =3D CLK_IGNORE_UNUSED,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +/* CLK_OFF would not toggle until LPASS is not out of reset */
+--=20
+Cheers,
+Stephen Rothwell
 
-Move this comment next to BRANCH_HALT_SKIP please so we know what it
-relates to.
+diff --cc drivers/powercap/intel_rapl.c
+index bb92874b1175,8cbfcce57a06..000000000000
+--- a/drivers/powercap/intel_rapl.c
++++ b/drivers/powercap/intel_rapl.c
+@@@ -1133,40 -1133,47 +1133,40 @@@ static const struct rapl_defaults rapl_
+  	.compute_time_window =3D rapl_compute_time_window_atom,
+  };
+ =20
+ -#define RAPL_CPU(_model, _ops) {			\
+ -		.vendor =3D X86_VENDOR_INTEL,		\
+ -		.family =3D 6,				\
+ -		.model =3D _model,			\
+ -		.driver_data =3D (kernel_ulong_t)&_ops,	\
+ -		}
+ -
+  static const struct x86_cpu_id rapl_ids[] __initconst =3D {
+ -	RAPL_CPU(INTEL_FAM6_SANDYBRIDGE,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_SANDYBRIDGE_X,	rapl_defaults_core),
+ -
+ -	RAPL_CPU(INTEL_FAM6_IVYBRIDGE,		rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_IVYBRIDGE_X,	rapl_defaults_core),
+ -
+ -	RAPL_CPU(INTEL_FAM6_HASWELL_CORE,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_HASWELL_ULT,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_HASWELL_GT3E,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_HASWELL_X,		rapl_defaults_hsw_server),
+ -
+ -	RAPL_CPU(INTEL_FAM6_BROADWELL_CORE,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_BROADWELL_GT3E,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_BROADWELL_XEON_D,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_BROADWELL_X,	rapl_defaults_hsw_server),
+ -
+ -	RAPL_CPU(INTEL_FAM6_SKYLAKE_DESKTOP,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_SKYLAKE_MOBILE,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_SKYLAKE_X,		rapl_defaults_hsw_server),
+ -	RAPL_CPU(INTEL_FAM6_KABYLAKE_MOBILE,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_KABYLAKE_DESKTOP,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_CANNONLAKE_MOBILE,	rapl_defaults_core),
+ -
+ -	RAPL_CPU(INTEL_FAM6_ATOM_SILVERMONT,	rapl_defaults_byt),
+ -	RAPL_CPU(INTEL_FAM6_ATOM_AIRMONT,	rapl_defaults_cht),
+ -	RAPL_CPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	rapl_defaults_tng),
+ -	RAPL_CPU(INTEL_FAM6_ATOM_AIRMONT_MID,	rapl_defaults_ann),
+ -	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	rapl_defaults_core),
+ -	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT_X,	rapl_defaults_core),
+ -
+ -	RAPL_CPU(INTEL_FAM6_XEON_PHI_KNL,	rapl_defaults_hsw_server),
+ -	RAPL_CPU(INTEL_FAM6_XEON_PHI_KNM,	rapl_defaults_hsw_server),
+ +	INTEL_CPU_FAM6(SANDYBRIDGE,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(SANDYBRIDGE_X,		rapl_defaults_core),
+ +
+ +	INTEL_CPU_FAM6(IVYBRIDGE,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(IVYBRIDGE_X,		rapl_defaults_core),
+ +
+ +	INTEL_CPU_FAM6(HASWELL_CORE,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(HASWELL_ULT,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(HASWELL_GT3E,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(HASWELL_X,		rapl_defaults_hsw_server),
+ +
+ +	INTEL_CPU_FAM6(BROADWELL_CORE,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(BROADWELL_GT3E,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(BROADWELL_XEON_D,	rapl_defaults_core),
+ +	INTEL_CPU_FAM6(BROADWELL_X,		rapl_defaults_hsw_server),
+ +
+ +	INTEL_CPU_FAM6(SKYLAKE_DESKTOP,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(SKYLAKE_MOBILE,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(SKYLAKE_X,		rapl_defaults_hsw_server),
+ +	INTEL_CPU_FAM6(KABYLAKE_MOBILE,		rapl_defaults_core),
+ +	INTEL_CPU_FAM6(KABYLAKE_DESKTOP,	rapl_defaults_core),
+ +	INTEL_CPU_FAM6(CANNONLAKE_MOBILE,	rapl_defaults_core),
+ +
+- 	INTEL_CPU_FAM6(ATOM_SILVERMONT1,	rapl_defaults_byt),
+++	INTEL_CPU_FAM6(ATOM_SILVERMONT,		rapl_defaults_byt),
+ +	INTEL_CPU_FAM6(ATOM_AIRMONT,		rapl_defaults_cht),
+- 	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		rapl_defaults_tng),
+- 	INTEL_CPU_FAM6(ATOM_MOOREFIELD,		rapl_defaults_ann),
+++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	rapl_defaults_tng),
+++	INTEL_CPU_FAM6(ATOM_AIRMONT_MID,	rapl_defaults_ann),
+ +	INTEL_CPU_FAM6(ATOM_GOLDMONT,		rapl_defaults_core),
+- 	INTEL_CPU_FAM6(ATOM_GEMINI_LAKE,	rapl_defaults_core),
+- 	INTEL_CPU_FAM6(ATOM_DENVERTON,		rapl_defaults_core),
+++	INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS,	rapl_defaults_core),
+++	INTEL_CPU_FAM6(ATOM_GOLDMONT_X,		rapl_defaults_core),
+ +
+ +	INTEL_CPU_FAM6(XEON_PHI_KNL,		rapl_defaults_hsw_server),
+ +	INTEL_CPU_FAM6(XEON_PHI_KNM,		rapl_defaults_hsw_server),
+  	{}
+  };
+  MODULE_DEVICE_TABLE(x86cpu, rapl_ids);
 
-> +static struct clk_branch lpass_qdsp6ss_sleep_clk =3D {
-> +       .halt_reg =3D 0x3c,
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x3c,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "lpass_qdsp6ss_sleep_clk",
-> +                       .flags =3D CLK_IGNORE_UNUSED,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int i=
-ndex,
-> +                                    const struct qcom_cc_desc *desc)
-> +{
-> +       struct regmap *regmap;
-> +       struct resource *res;
-> +       void __iomem *base;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, index);
-> +       base =3D devm_ioremap_resource(&pdev->dev, res);
-> +       if (IS_ERR(base))
-> +               return PTR_ERR(base);
-> +
-> +       regmap =3D devm_regmap_init_mmio(&pdev->dev, base, desc->config);
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
+--Sig_/bNRy8ryxcqLmcoGqvlETGhp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-If this happens again in the future we should move this into the
-common.c file and let qcom_cc_probe_index() exist.
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +       return qcom_cc_really_probe(pdev, desc, regmap);
-> +}
-> +
-> +/* LPASS CC clock controller */
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu6xKEACgkQAVBC80lX
+0GxYpQf/Q7QV4isldtRx1cthL1O1o2TGgk4NTxnOMEK0Js2/tyS1Tu9FifvKR3AE
+GUG5kVAK/Rs2u8OrkpqXY9Zd/K81sOphDwGbQla9Lt6ODkOC6b460Z3jTUhj4Iu5
+CFrEH/jRsxjW/b5UHODyXWvXtbt8C7MwUzjV/8zxkGaVcuKi+ZWtjs+HBSGfrqlu
+5VlKRuhpdsITdQzEMqHdPYa6i0ajVuMRiVwqO/bf9dtO2JlnyGVTTGq0jmGXsEgG
+2Ij0Q56HE4rc3nxPo5NBcasTv/PiraM31LLu1QYWcl8SPyuO9PNcU3v2kCfGuooH
+YJgFPEq/LnCN3DE1PJcmOdzJbi0IqQ==
+=+tvj
+-----END PGP SIGNATURE-----
 
-Please remove this comment. It's useless.
-
-> +static const struct of_device_id lpass_cc_sdm845_match_table[] =3D {
-> +       { .compatible =3D "qcom,sdm845-lpasscc" },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
-> +
+--Sig_/bNRy8ryxcqLmcoGqvlETGhp--
