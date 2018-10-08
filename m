@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E172EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214EEC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E2020C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFB602087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e28jKSwu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E2020C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0LlSaelm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB602087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731000AbeJIB6e (ORCPT
+        id S1731008AbeJIB6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:58:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46642 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJIB6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:32 -0400
+        id S1730020AbeJIB6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:35 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71337204FD;
-        Mon,  8 Oct 2018 18:45:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74693204FD;
+        Mon,  8 Oct 2018 18:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024327;
-        bh=xWUmGa+zftAkD+1EiKkRik5BBbYnlUISDxtymwUfhcc=;
+        s=default; t=1539024330;
+        bh=G1y8XdzjpNblifE5A0Z4d3ZIArYBob+LltP5RGcN38Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e28jKSwu5t5CyI4UcgGmqOQ0xBOBgv3ImXqoER2rBb/55zCBocm243JU2PtaTRz3b
-         1p4166YxRJ6aDVcJeMcTR0B024mEiPrMvFQY3JYvld9RdK5Oj+Cf1QGeq18rGA2cX+
-         0sSxo8IblZFphnpxRF5C55oSCLRYz3sM0SOlYEjk=
+        b=0LlSaelmZ3/REb8Mvkfec7S2rFf0gnYRGGr+S2k8T5NeKEqqH7tYArpEabsPnI7kh
+         CBVPDkrsp0uAdQT+g4FQBkHUFxtq4+cWlc0k+wn4p8ONDV8NOClm0QjkndzitVAZAn
+         hwdkg5Ookt+BYuCMYzOWy0FVqqLYjUYrAczy90fo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, Borislav Petkov <bp@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 84/94] iommu/amd: Clear memory encryption mask from physical address
-Date:   Mon,  8 Oct 2018 20:32:05 +0200
-Message-Id: <20181008175610.535775320@linuxfoundation.org>
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 85/94] ALSA: hda/realtek - Cannot adjust speakers volume on Dell XPS 27 7760
+Date:   Mon,  8 Oct 2018 20:32:06 +0200
+Message-Id: <20181008175610.594986373@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -69,52 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Singh, Brijesh <brijesh.singh@amd.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit b3e9b515b08e407ab3a026dc2e4d935c48d05f69 upstream.
+commit 709ae62e8e6d9ac4df7dadb3b8ae432675c45ef9 upstream.
 
-Boris Ostrovsky reported a memory leak with device passthrough when SME
-is active.
+The issue is the same as commit dd9aa335c880 ("ALSA: hda/realtek - Can't
+adjust speaker's volume on a Dell AIO"), the output requires to connect
+to a node with Amp-out capability.
 
-The VFIO driver uses iommu_iova_to_phys() to get the physical address for
-an iova. This physical address is later passed into vfio_unmap_unpin() to
-unpin the memory. The vfio_unmap_unpin() uses pfn_valid() before unpinning
-the memory. The pfn_valid() check was failing because encryption mask was
-part of the physical address returned. This resulted in the memory not
-being unpinned and therefore leaked after the guest terminates.
+Applying the same fixup ALC298_FIXUP_SPK_VOLUME can fix the issue.
 
-The memory encryption mask must be cleared from the physical address in
-iommu_iova_to_phys().
-
-Fixes: 2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
-Reported-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: <iommu@lists.linux-foundation.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: <stable@vger.kernel.org> # 4.14+
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+BugLink: https://bugs.launchpad.net/bugs/1775068
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/amd_iommu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -3071,7 +3071,7 @@ static phys_addr_t amd_iommu_iova_to_phy
- 		return 0;
- 
- 	offset_mask = pte_pgsize - 1;
--	__pte	    = *pte & PM_ADDR_MASK;
-+	__pte	    = __sme_clr(*pte & PM_ADDR_MASK);
- 
- 	return (__pte & ~offset_mask) | (iova & offset_mask);
- }
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6288,6 +6288,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x0706, "Dell Inspiron 7559", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
+ 	SND_PCI_QUIRK(0x1028, 0x0725, "Dell Inspiron 3162", ALC255_FIXUP_DELL_SPK_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x075b, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
++	SND_PCI_QUIRK(0x1028, 0x075c, "Dell XPS 27 7760", ALC298_FIXUP_SPK_VOLUME),
+ 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
+ 	SND_PCI_QUIRK(0x1028, 0x07b0, "Dell Precision 7520", ALC295_FIXUP_DISABLE_DAC3),
+ 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
 
 
