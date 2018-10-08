@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7279AC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FBEC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8702089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD682064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FInMr5Z3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8702089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNn2Lsjv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD682064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeJIBte (ORCPT
+        id S1728654AbeJIBti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34766 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727803AbeJIBtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:33 -0400
+        id S1727087AbeJIBth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:37 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D41942064A;
-        Mon,  8 Oct 2018 18:36:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CED602064A;
+        Mon,  8 Oct 2018 18:36:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023790;
-        bh=SQ6lZKKrF1eYPc3PPoQ964ACgNMG749cc1g4Rs4QDC0=;
+        s=default; t=1539023793;
+        bh=xsCYapGVmv1QdN8NfxprlzJie2hJJizX+iQQzRQf4eE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FInMr5Z3Je5S4JPjCiIG5HktpJyLzws4ZYgzgkCjbMno+wHx/QCjYp5ZIuATzoZkm
-         uUnyrUE8RMMMM/N42tK+nNE6t12fsnC7VyGq1u2rgWJh4KkulashU/sOU27T94A2xt
-         kHN6AUbRR6SripSsEvnaado22xUE2/EUMN9zRxrE=
+        b=kNn2LsjvVZVZ24+xifxw9+DVMYUrY33PDcEJS5ac7lE2+2nrRdJ5A+QIt50uO3cm6
+         w4g5MgR6rbBzElxk2pdqyqt05vrg2IMBZ10KcAOp+eqq36+I9rKYUk9CJTNH3KeuvQ
+         sk2l5RdFD6eGXQ8jopRt9jAAQlO0rh55xoDDPpds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 085/113] cfg80211: fix a type issue in ieee80211_chandef_to_operating_class()
-Date:   Mon,  8 Oct 2018 20:31:26 +0200
-Message-Id: <20181008175536.042712775@linuxfoundation.org>
+Subject: [PATCH 4.4 086/113] mac80211: fix a race between restart and CSA flows
+Date:   Mon,  8 Oct 2018 20:31:27 +0200
+Message-Id: <20181008175536.087432633@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,41 +65,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 8442938c3a2177ba16043b3a935f2c78266ad399 ]
+[ Upstream commit f3ffb6c3a28963657eb8b02a795d75f2ebbd5ef4 ]
 
-The "chandef->center_freq1" variable is a u32 but "freq" is a u16 so we
-are truncating away the high bits.  I noticed this bug because in commit
-9cf0a0b4b64a ("cfg80211: Add support for 60GHz band channels 5 and 6")
-we made "freq <= 56160 + 2160 * 6" a valid requency when before it was
-only "freq <= 56160 + 2160 * 4" that was valid.  It introduces a static
-checker warning:
+We hit a problem with iwlwifi that was caused by a bug in
+mac80211. A bug in iwlwifi caused the firwmare to crash in
+certain cases in channel switch. Because of that bug,
+drv_pre_channel_switch would fail and trigger the restart
+flow.
+Now we had the hw restart worker which runs on the system's
+workqueue and the csa_connection_drop_work worker that runs
+on mac80211's workqueue that can run together. This is
+obviously problematic since the restart work wants to
+reconfigure the connection, while the csa_connection_drop_work
+worker does the exact opposite: it tries to disconnect.
 
-    net/wireless/util.c:1571 ieee80211_chandef_to_operating_class()
-    warn: always true condition '(freq <= 56160 + 2160 * 6) => (0-u16max <= 69120)'
+Fix this by cancelling the csa_connection_drop_work worker
+in the restart worker.
 
-But really we probably shouldn't have been truncating the high bits
-away to begin with.
+Note that this can sound racy: we could have:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+driver   iface_work   CSA_work   restart_work
++++++++++++++++++++++++++++++++++++++++++++++
+              |
+ <--drv_cs ---|
+<FW CRASH!>
+-CS FAILED-->
+              |                       |
+              |                 cancel_work(CSA)
+           schedule                   |
+           CSA work                   |
+                         |            |
+                        Race between those 2
+
+But this is not possible because we flush the workqueue
+in the restart worker before we cancel the CSA worker.
+That would be bullet proof if we could guarantee that
+we schedule the CSA worker only from the iface_work
+which runs on the workqueue (and not on the system's
+workqueue), but unfortunately we do have an instance
+in which we schedule the CSA work outside the context
+of the workqueue (ieee80211_chswitch_done).
+
+Note also that we should probably cancel other workers
+like beacon_connection_loss_work and possibly others
+for different types of interfaces, at the very least,
+IBSS should suffer from the exact same problem, but for
+now, do the minimum to fix the actual bug that was actually
+experienced and reproduced.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/util.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/main.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -1360,7 +1360,7 @@ bool ieee80211_chandef_to_operating_clas
- 					  u8 *op_class)
- {
- 	u8 vht_opclass;
--	u16 freq = chandef->center_freq1;
-+	u32 freq = chandef->center_freq1;
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -253,8 +253,27 @@ static void ieee80211_restart_work(struc
+ 	     "%s called with hardware scan in progress\n", __func__);
  
- 	if (freq >= 2412 && freq <= 2472) {
- 		if (chandef->width > NL80211_CHAN_WIDTH_40)
+ 	rtnl_lock();
+-	list_for_each_entry(sdata, &local->interfaces, list)
++	list_for_each_entry(sdata, &local->interfaces, list) {
++		/*
++		 * XXX: there may be more work for other vif types and even
++		 * for station mode: a good thing would be to run most of
++		 * the iface type's dependent _stop (ieee80211_mg_stop,
++		 * ieee80211_ibss_stop) etc...
++		 * For now, fix only the specific bug that was seen: race
++		 * between csa_connection_drop_work and us.
++		 */
++		if (sdata->vif.type == NL80211_IFTYPE_STATION) {
++			/*
++			 * This worker is scheduled from the iface worker that
++			 * runs on mac80211's workqueue, so we can't be
++			 * scheduling this worker after the cancel right here.
++			 * The exception is ieee80211_chswitch_done.
++			 * Then we can have a race...
++			 */
++			cancel_work_sync(&sdata->u.mgd.csa_connection_drop_work);
++		}
+ 		flush_delayed_work(&sdata->dec_tailroom_needed_wk);
++	}
+ 	ieee80211_scan_cancel(local);
+ 	ieee80211_reconfig(local);
+ 	rtnl_unlock();
 
 
