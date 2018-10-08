@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE15FC6787E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0841DC6787D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F03520841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7BDF20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:16:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eKpJRJgb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F03520841
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ISHKDL/E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BDF20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeJHKZK (ORCPT
+        id S1726873AbeJHKZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 06:25:10 -0400
-Received: from mail-eopbgr40067.outbound.protection.outlook.com ([40.107.4.67]:60976
+        Mon, 8 Oct 2018 06:25:28 -0400
+Received: from mail-eopbgr40042.outbound.protection.outlook.com ([40.107.4.42]:52992
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726295AbeJHKZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 06:25:09 -0400
+        id S1726295AbeJHKZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 06:25:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hgCgMiuQ7N8dfAyhn5L9tJgAfryH9KMpcNbAebn23bs=;
- b=eKpJRJgbdLP4EUKzXZ1kZd5FPccqJ3TwMXiworLuribO8tPs8RhjWn/mwHAmEcgH2X9xRxGpW484n51sflc8cjK+903/Vt4vjazMP8x/ZPAkPHCCd4NTfGR4uQj/IED7xjXbbtmgcgYb5c0AdEXYBVg/ACmaPiGOzZVMzVvYXIk=
+ bh=j4FV8Q/5BHF7COg4vkegGZ1/lZXYxycle/KVwZiq4LE=;
+ b=ISHKDL/EHz68J3fFwA1CblnPw5wrw5NZfhHa3migWmk4wzte0t2B6RzbbXz5pd7gQITEZcF9zfWndzuBw+6T4Cx0HTEuYLoTUL9MYrrqUcvPM4cW2DWLp1MGRy8OUYpHCxruQFe4awVvvPPXHzfkDtIZL81O1hMRNhl8gNJAPz0=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=zhiqiang.hou@nxp.com; 
 Received: from mega.ap.freescale.net (119.31.174.73) by
  AM3PR04MB1220.eurprd04.prod.outlook.com (2a01:111:e400:586d::25) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1207.28; Mon, 8 Oct
- 2018 03:15:32 +0000
+ 2018 03:15:37 +0000
 From:   Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
@@ -44,9 +44,9 @@ To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         mark.rutland@arm.com, bhelgaas@google.com, Mingkai.Hu@nxp.com,
         Minghuan.Lian@nxp.com
 Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: [PATCH 3/4] dts/arm/ls1021a: Clean PCIe controller compatible strings
-Date:   Mon,  8 Oct 2018 11:14:27 +0800
-Message-Id: <20181008031428.25293-4-Zhiqiang.Hou@nxp.com>
+Subject: [PATCH 4/4] dts/arm64/layerscape: Clean PCIe controller compatible strings
+Date:   Mon,  8 Oct 2018 11:14:28 +0800
+Message-Id: <20181008031428.25293-5-Zhiqiang.Hou@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008031428.25293-1-Zhiqiang.Hou@nxp.com>
 References: <20181008031428.25293-1-Zhiqiang.Hou@nxp.com>
@@ -57,50 +57,50 @@ X-ClientProxiedBy: HK0PR03CA0085.apcprd03.prod.outlook.com
  (2603:1096:203:72::25) To AM3PR04MB1220.eurprd04.prod.outlook.com
  (2a01:111:e400:586d::25)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ec321a73-52d3-40f5-60c7-08d62ccc5108
+X-MS-Office365-Filtering-Correlation-Id: 115e1f5f-cee9-4e84-dee6-08d62ccc53bb
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1220;
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;3:3mmaTZdI7egc38SAdPAncsAvodsOYd6uQNmrfGJmOcR1qkfXjxZcWXH16/F+xgUrZf4r74eG+EF397GAD/AB/4ojb/cN+D500b9iAkK11WERMwRdF3UL7QP9ummt0xPYueYo2037fHDBNgPg87I5/9kL8XSCDsqoJ3mLk2QjdA5gNOYh49bpAfPeZLdND0U2NwNirHD43xyI8Un64RmeDV8DG4TcRoOU0Yko86J4SEk+llC5r4k+2EyVPymvqw8z;25:UxU2QA2W8BBfID/EJzCZesBbNzHIacH0woqfVVWH1Nh82XTQc126XzD/3TebLVFeapyNOZR+YTVapsSuvIX1j/gpJT17nIvRF11JEe2GDss7icOUh9xsBOQxI0RwAoRIT7lR5+gJUFmQr5PG0Zq9vEiaVMI5dMQyGg0+CGuNYtNcuv3gPTiEzarDBnVWppY7br9/yNcmEA9mDHwE5YxUasCIdj9M+mhP4xG9rlG8tKyM7OeFgczD6TRoGMURXDEdlJu5Ld+9b/EpLo+t3Jo2qKL6p/76chNtJR9PCtT5ABeTSgoEgIX4dOjDDCWlo08ceWG0V0vhtqEjLh7o6d7oAQ==;31:3HwNfEwPn4f39KyEkjJlMyk3L2cxxgoormiBGt0yQo/gArKCEK4HmjnEmLant5C2T/1sPnNjQr5o4cntFz+e9/k/Q61hyr2AP/mb9zyBownzpyJubAWrbfS20NSAdxZ1QEcbfPdz83vEyutOg0tLzrrQNErqrz70N93/V2jV8502MtyvqVld+Z60rYKWKsLkPFRHaaJklDfhep7WorSIt4tqS69DcO5mNVplnKJAAxU=
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;3:5wBBlVTSU36S4tEnGEFg7qLUcxDF6otrrP2qMihBboOTA1gVkskLhvSUEiZucUM9LV9zrb+e1PCkKsDhU9Ouz67vOEP/OyK5zr9LYFcFq8QrOzqNoBqmxb1W0aZGjVaUiopNvOx4HgC8I/522CvMaV+ha07nEYJKtWRxh9KBsy/atgnTBkQgUxucorE+bjMVaeDZ4Nf2TXH/JV3JZgioQyRvCh8xeG9uDldXSezmsTSa7kkHT0i2zHcfOrbywDG4;25:7JWPX95aNHn2gbd27Du5Jl77WoXQ9PQALjhFS/vv3Gl6+1JEYNmyn6pnMDtywL47rRFf84wKPdvLT4X/BY4uS8c6ySJWMyysF/7deJ2r284GlPxoddUcR+FCDYOblbUxDYifu5R0VKes5ae3pLdXISiFU1Ro/VYHmk+IDlJEO1BBw0vgoOQlse/u6BbX7gSeyzG+GO/E/6eNlxLVSLdI5PRLoNpAs3AC1rv+vS4ndSGCrGzsD9w06ipPGRPNeIlv771h8EIGLqAQeO+GDhJ/csobu1OTASG/gS6DgiR7yGbAa8asifFBPZ4/CtS2dwFeWjVZiO8VGdLMTniEilrNkg==;31:Y2lN4VF1Xv/85APeUthY141thd7DyHTZN5W6OwkfXZeJbjFh0TUgpiH2Wj06IHpvhqFKNej/rblcZrr75frc26fCi0IX53YrJaGbcatCUoy+/1JWIJIpdbCQ8Iid72zXtcdf+laR1qI+2so869xtKmHkMHFmlPOtUF7Llfl4E2CTX2x5PbLU3ixR2WLIMNGRdhAUQHhuCQOXRr0RzFa+CKXJaX8APSIPXXFSjTZlaxc=
 X-MS-TrafficTypeDiagnostic: AM3PR04MB1220:
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;20:9WQnk8e+W2gpCo52Adws7Vms21CtfV9aVK+nYMpokIoVELy3V20g+sni7zFmkgIG6ULLALSoo7GBpHHnl5ItHy2w3T2WK/Z3PWKVs8UilHEbyTSp/LKVWHjVRBCdBi0xOlkpR4topmE9sDjrzmK8b5kNLCrcEkTVxPmtaZQwi9+e/r3AtXYtEQz+oBUkXkJjCdSZ7nEFaZFM0aWUJzAqpuuphbkLlK+MjP8wTtAUzFm59QPLhODoHR4z0dFhYbeOT4tcxjcXKHWp40YDAnNyu/IfzMC+AIjGSC1XlQKf0wJcq/ZvcTBCgm8GDySsa46wC0bgWcuEYLYRqxZ6iCQIfeT7zDWcDGl92YA5m+1DvTyZpa8sUj3LvEQzyv6pj8NuFc0eYK75rMIp4tB15pFsFV3PqwXfjidsU7pGVvjv3cKrkQjGK4M38MRp8VDHeDsudlh6ro+rL+wrO7FpVFdHjyOJGSZ07nZA66t/ydL4xjILQWdxhl45f5o1J/zXKr+I;4:/wZ9remSCVidESiNSh3GpSInyw22z2xyPQzwPS1xLND/W48BZA3owzHBuTC1pFXl5Dr/oYKKp68A60i5zq4IqaygrHPVVYDC5QsnB21lsJ6DLfJvQFu8weJ8HcHtajUPEETVFOl2oK6Tq5Lha2dqMDeabmA1ICEAZKfaW7YprXVMG0vGoPd3jJ8H63lvzcczsf2gchywwsvRsnALEKkVUnj2+ohoB3v4c+XzFtlDN4K0liafJkjDds35uIpamZJa6nCBfx0lqvjnV5KqS/y7ttG2zV8X9+JEd035I3QyQfucfjllV5Je9j3DPCRDBEXB
-X-Microsoft-Antispam-PRVS: <AM3PR04MB1220518E1E8396C02CBF0D6A84E60@AM3PR04MB1220.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;20:m1Wq4/NzPmYRNayvnMdKHMiCvy25oBgOkH5IJzVubYilz/ZsScSyAyRvkFzgpwmzEJwg5nFb80hKE8K6RmfFPa1rAbVXB2VbUOor3oJVjJCSa0HfdLzOlb5tNlcl/rYsfkhjN1izq3hs1VM1fWrlJ6LdlZuRFcVHELm+XwiRTHoKHpn9SdLZPgKIjik8pi8ke05/IkeWbBQ9GEaual+X/2rqOEsDJbzfxqt6EN6SHanfpIEpK9IUAUtqnBRSRxu6dACVf+aNmYHYDbTJ46Tj4zohvh1qfXfUvt93jgF8LqPIuISOVjyloNJySO9Ked0H2CpRY59f+S9Wg4YFzon2qvhq3YFA7qQfN4SB54J8Kuw4XVAQRE2/UNkaL2v3EMgoMGBk+2E2f4iewruw7Ed+0sEe8+DKHVbqasWtlGxdlLuA2W+zLdn1z1VI5cSKkZbYkAI0YxOQDbRDOCaMoFHXvs9PNDB0nmUdcBT9El+/k6aFugEP8RoGwSv4DVkq30qd;4:9l9/Jg1JkeLHfiYQA/RnwDeQcR71v7aUvnx2jRvAJVFB8dIpEsImSNrF/KUjukq1GdeU/d2k+aUx+JopOS0AlQ8jRKlA3JpLWuI8FvFT5EUWlUJEFOB+gzhRbT2DEgtAnHMV0WWfg7qkozNg7xA7JJDdl98XOfrD6woCpkk0+mkGwYKDFasvvEuXz0qDJbCmnTSUamODNjjJ08OEXPyIzsYCMUXLQuEw1CbXNMCptbZou9Kwz6dFX/JBeC4M8OOKpjgyAQYyr5fjeJ9VtHfjKwVe8LxWnPU9eQ+GBzXZDRyslsMVHY3MwAqQ6nxO7x8g
+X-Microsoft-Antispam-PRVS: <AM3PR04MB12206433FD4E5C6589D843B284E60@AM3PR04MB1220.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991055);SRVR:AM3PR04MB1220;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1220;
 X-Forefront-PRVS: 081904387B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(366004)(136003)(199004)(189003)(25786009)(16586007)(4326008)(446003)(316002)(2616005)(956004)(52116002)(51416003)(476003)(86362001)(48376002)(575784001)(53936002)(6512007)(486006)(2906002)(68736007)(1076002)(305945005)(7736002)(50466002)(5660300001)(76176011)(11346002)(6506007)(36756003)(386003)(50226002)(3846002)(6116002)(97736004)(8936002)(478600001)(66066001)(186003)(6486002)(6666003)(16526019)(6636002)(81156014)(106356001)(81166006)(105586002)(8676002)(47776003)(26005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1220;H:mega.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(366004)(136003)(199004)(189003)(25786009)(16586007)(4326008)(446003)(316002)(2616005)(956004)(52116002)(51416003)(476003)(86362001)(48376002)(53936002)(6512007)(486006)(2906002)(68736007)(1076002)(305945005)(7736002)(50466002)(5660300001)(76176011)(11346002)(6506007)(36756003)(386003)(50226002)(3846002)(6116002)(97736004)(8936002)(478600001)(66066001)(186003)(6486002)(6666003)(16526019)(6636002)(81156014)(106356001)(81166006)(105586002)(8676002)(47776003)(26005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1220;H:mega.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1220;23:ur6icxJRNHonqQ5I1n8aiWBLKbE8xt08cVF/8yKYz?=
- =?us-ascii?Q?3mppCykRycQN449zcURHy8dLcIsvtMo13kN51fMHd+p+2PKQm+j7vL9HVRL8?=
- =?us-ascii?Q?VIEegab6YF8z2lMofjsfe3Gikeepz+6fPb2MTo3C5WgiR9Ebun/NsNkFKx6D?=
- =?us-ascii?Q?GPY3UrsJfTd0N4cWhHnB9Q60T4B4Pdf41mqVeq6lvYaGEGwxAc2xg05Mpb61?=
- =?us-ascii?Q?ccLfZgq4XSh9YsANBvNK6PUQmlr6OdKzaoL8AwstXZ/zK2wCaJogUsXf9qlS?=
- =?us-ascii?Q?xhOrAKUI1fxIPmS17Z7mPRrN7PkE2mKlSKJ1chSRkHgyl8q0JgbD4iTsgv9G?=
- =?us-ascii?Q?mRWu2rZLOY4Ui20WVB299ezW/HyjryD0mZkkwfJ7a8U1/wZ/V8mdlV5xBszp?=
- =?us-ascii?Q?bFa/Dxfsw/7x8zN7Uz+YB+m2tj3hCB2ostyWR/ePPl34CUTH8sRb2xkuJBqJ?=
- =?us-ascii?Q?6qMmnpJyFuzNfz7Qj83oUKH9nbSuPiG7g8d58zi9G8+ZqdPfelq8FC4x16Xo?=
- =?us-ascii?Q?MdzhAfFPcQxAI7A4IKmG+/oeSuPcGefArm7JauB7QNriv9TRNa/Qqp6KvCqR?=
- =?us-ascii?Q?RJm9x0G/570zrm5zBzVO//YeeIXinc4dFVnPWpPgn8hsYoN2jlDhVi4K7iu9?=
- =?us-ascii?Q?HDTBA95FPHiJW9VMhjrJ9YHtWByc576GM6uMY8DH0axelN1ZxySX3Co+AMps?=
- =?us-ascii?Q?evBEhCgFsmoQQ3LIGLMJBwbRJhcYnEjzKGEx9qU5V4rOpOeoMIARZPrdwr8h?=
- =?us-ascii?Q?tNkaOujOIJGZP/OLAXRxbIBX9XDlrnyxGBQG/wAqVupnb6HEUCf2WMMSzpDL?=
- =?us-ascii?Q?n8+b7FYpoe48bN7WspkfUzyDHLct0ecx6CT4j2j7xCn5ZT3NUC3UOCdf6r9o?=
- =?us-ascii?Q?Oq2e7P2SQBWWIj9ciE3RwgbpbaMlhjhcYsJJsV6Jt/DqvtHzm+t4UWUTi760?=
- =?us-ascii?Q?LXTZ25IOYXC/Mglv+WvU/Ivw34YCPQW21UTaLAPuoxwtBMZwceU6pzMxP8dn?=
- =?us-ascii?Q?G88vB+UbxS8KxFMuh8freqWVCAXeqIklHcsRNBKNjuVoCisHZxyRfSu4WLTM?=
- =?us-ascii?Q?LzXTimZYWkXh1nU4W75iw8RBF72H/TLR8Ull9GRH1ekeu8QQmnLMPfbkh+xE?=
- =?us-ascii?Q?KNa1VQfQh8f/QqW3avEvqw2dECGDi6vZ7RklgXaHZP9dZdl5tylZsaKTDpS6?=
- =?us-ascii?Q?3no20R6xpp7VNsWT29FUPVhP69ONeWPuR9HJbinQgICW2HUx6ZNSvlQ0rKtC?=
- =?us-ascii?Q?xdvXNxQKMZtA0cS95E=3D?=
-X-Microsoft-Antispam-Message-Info: 4QM8a/uMqt3d8C5qI9wvyNZcc5LCz0/wsyBPH787C8Bd33bIzAZP9HsPUsFmukGL+djKs8DEqaORlrgsw0R9Z5PZpghOSMQxEEWwu0V6521T9JjLCafmOZIKPGKurI0FhVE6p7swthfK1Op5k3S2sK8cRD0s9ZdhlqzwBN/IP6yyo7XbwF806R2cBghqpj9PVNtFnxSB56B4dy09gi1VHeRfFdVx7SQ25R/A6nVflMxDTzY1DudJVaUZaLsbHAAOWZaZJbxzmRzxaEzKS5JVgm2yOgd1fXGFW/gOY6hlfbByTzFSRw8oMeBocypI4gd7a5shaPn7L13iFx8bJ0dWMn7qjMp7q29EjSpCYnA9kfg=
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;6:BQwj/mNR3w7k7VpfmyVZh7C67r4H4+3MK9J6JPdH1aDcG77yu8HzpePYEgWP0XGkS18uUYX+VdhEeG+uGcRpaqB/0NYSzPr7jUiTbWo9jp+usxl+qcm62da4kn1afXbopbsR72sap6w+WpcPNn3DpD6ke7lnEH9IiVCxTECwqR38hrYK/eFIfpYFxVsBvFsbHVonld8wrQBxAoj+j3Ro5ClmwJhbjcWWtJSTrDE5/ewGZsslWB2FtDWvxcAs8cVFTnKVV1EIxTD2Fe4xvFlfGsCR3atgVv8vqRFtY9FNJ5EL20Jv59Gve8sth8juBy2muk9/AiqkQxKyUgde8t4iaiL0MH/Gvp1L6E2qp//refTaB6NNuiyNSFYG1NE0/Lt1Lzt/NGdefpp1/Ds2g2lA76L5dC8jqIEA3zYVlk4JZ9Pfln01RCEq+aK/8DSqq9OrzvSFx5qUTfICaiOv6Lg3bA==;5:SL66+CFXXGu65jZ5anvGw+PiTHYw5mJRKGBtdQZFJpm621CfROp6G8dEp9aegLarAkSyvKTrn18+0IEwzot6TACvjrIZvDbRPYsfCiFMR5GQ1Xmh/TWf3nQQFp1cQ9tATOLJypMCuFeWYZRfWgdOUEZZVppo1bd89pYM2O98BtQ=;7:TLedm3JSM1yaefa00dXZxfCc1s0c1oHvth7M5cbBY8zUubBp4Xz/UOYn8w1Eup8XPsO9L6sVcNduUSdMpLf5cbpNWOxxaKnEtSUu49fuAkO/qzGXYnnK4QMgKa9qfjFYR43VB9735FOVgGSmmhCavqXHSnfghmf+veWvpVmIAmgN0/FWLXPH0qKYcEF7lK4Oy4yt5InIwXPDYDqXZTLoayWBe6q0RpMZjVzs0Gm/trKoTCb00nT/WMHkpqTn0mVS
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1220;23:hL3dHJXyUwIoAw4sUhAkWqZG1r4A6tQAkwoz06FbH?=
+ =?us-ascii?Q?0n6/xYaxyx7Y0mmnMct7xwMP2Vax4AOTh/bL0SUbFQgC63IngHotvwLBGumi?=
+ =?us-ascii?Q?mukdky0hoqgKtrpsiUKIuhLIx1/DmUkGoZEcTPTvlh27oA4PVstHL5n5Tgy5?=
+ =?us-ascii?Q?9MG8B+Hm6zC2QGeMaYya6oFRQ0FdkVHFsJg9ksUD8s8TVlcbvxGQQFaQHgpW?=
+ =?us-ascii?Q?DQqqk5ZA7jPbPN9WcUV5pTwWEsWI3wa/6Cgj9aD5dVASuobfR0/6fSOw+M6r?=
+ =?us-ascii?Q?GQWfZzK9/03ZjxPwlwJ58QkvG1utRIriSysUNqDNxDKC/yD2D7VV5Odsy1gO?=
+ =?us-ascii?Q?Q/eknC/t58kGXB/8bJQfrvyX3ndxFQGaChn6kmgH6PhB2V+kBbEtfad2ct9q?=
+ =?us-ascii?Q?y3Xs2d19Em6/5H5Jh8iV29w4VPZuxvUCZQV5K09B7kbO+vow0HGHV401f+hP?=
+ =?us-ascii?Q?9O4N+wW1t3qzS+mnhL9h3qMcUR647UvmHvyQ7UY0Mbid+15NzGKbjWVG9lR+?=
+ =?us-ascii?Q?HLup4q1NZNQ0EEoy6l0d7ZP9bqlvyysMRgNOrh1+bxUc7e6clVHY/yp76kyB?=
+ =?us-ascii?Q?enQOpcj9DHGLwA94yUUxgP96WpL3K42HxTGGSuubH1siXE+tk+/YzNugrOKS?=
+ =?us-ascii?Q?HyEnKSPGYaV62y0YvvVlQMw31isXVggtHJ9bGZoFfR0RfVN/LsyF/mSJe1lP?=
+ =?us-ascii?Q?BLf44QsSjR/zmHqJW6xrkyigsxi/v8IcKUjqJi9VEjGuNMTXaMZrQ33B8T5n?=
+ =?us-ascii?Q?CPezk8BUPCM5PDxsQ5MuT4BlY0pQkuxtnPW5/djz8jm7UgPmBi9AxLvegEE6?=
+ =?us-ascii?Q?wONNLR8O3sNsHuhNeJj3ixjPighLrAZbHkXO3SiNrB7SZir2ChQ04igYIHiK?=
+ =?us-ascii?Q?jHNQ4hAgPOYmpbH0g8Eh5jRNiy9o/g+SrQ4gVymBv5Yx15XT6XjRgG0C9YeY?=
+ =?us-ascii?Q?dhpfSCJnOtzU2QJjL33vWLtm5hdbEASpAH/QJWl+0zaYjcGloyC6kMT4aeMG?=
+ =?us-ascii?Q?Z2CBTzAf/1HH5Zyx5fBus3stDjfc1bEFyHcqFSBno+0KIXfb+iA0D8Kibjl2?=
+ =?us-ascii?Q?ISvUZOs1fm40HqMr1gpR4Okha2KXKHpYDg4MFNovyY/Eb4FPG8AQYC88Bmw9?=
+ =?us-ascii?Q?zJbhWbJsiZLuTsyMDV2+6Dz/FT4r8jdNZj8RK31YF1REeO6XDVDEfHkSRdO6?=
+ =?us-ascii?Q?Bl/vEa09UhzE0+j2rCABIFqwZEo+wRLH9AglwL/+O6UcSZ36L0WJmwVWg=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: BTKZVpIHJTG0STYx82I2BR1/H+YRTK+2uYLPe19WQ74UakNmCjHn1WKkJN+PBKmQR06t6JhFNzWdmPbreRf9jgFBwvysSD2+KhJEdInAfteEaJmA/8VbACN1+sAtSRjEVr8N7J5x9TB01/sAnAgt038l0+aJ1Im2HMZCANXFoveZ0lFsmPHcwJw3phgMAzbecjchc5i2JWg0iyi/EPHg2TTJYg5B3fK8gn/rs4MCx6L2kKgF2wnegGRnPLCsiCecRgL5G7jd7XHgzXDGDmn/J+0IJ36d+9+AVI6wZEoAJbEr5sPt9AjuriEjU2DKcB8vrDgJJbBpE6aSnGudthj5W6emPWc74UIFBFgvsV6NVbI=
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1220;6:+5T5KauB0YStjFP0GVeRvTjRjgfgXSlipc4lhZnzm3jS6iuuf0ViuX43AyEeIzBoEx66MNy8DWpf//9PpXJIqfaTnuqcuzWCbpSBpmhPdjpWbk/hfjSB4gqXu/ylr9/3pLZtbflJUblTSJkdWbBz8BCfWZQ39NpFXMENtErmAwRfLQ9+UiBeLgcLDV8cothl8/d5IiSJuO7SwQMM4WswLT1Vg7na8hB1MX3A7GqaM+hbGdpnbQKDC+GmOscLfGBUaYya5wqXBNEb/eeD9k5uVYxHgnEQUjm9+wIaPFFTVcV3B83faZnYciB1s2kH9bob2J45FrBQU4YyzqIBMpfurKNaG2YhZvLTb3j2kVwRfYVgbagDDVF8EGC7ZK4OQ6BlEbCSKPfHiaw5ua58mOS9u4gbJRe6vlMPvbenKZDAhk0wuAK/h3foML2h4mqBOrGRE6A2d++krXuiE/GhGkjtAQ==;5:uDqlPZG2akdntvmhbzseCrLeYYhHCMSJAQ7iFKaXM6wJV7Zp6wRwcmGykY5crNOSr0JKFGKFr/8fXvZugtw9pTa0AAAAi3Ste9MUwmf/a6ts3vBdWVRVbL5bxYAX50yJdjNbDa3+/7qEFqchc3SEi7L64l2pjfi3tXb1lGHOQpY=;7:x/qMEJ4JNwuSwcJIsW6/junK7F7bor7TtVhIgr+lNB7V05MB8nsHSC08A3ip67hNQ3OYBOYlSk2kW1EsurVaL9gNFeOc6RkXh0LZHa63oDaFsUzUGxDw/UderB9Ey3mej9haAk3oNx0GSnSYmCntkFihw6UVihqX9hFa9Z7p3peplOmT7KGCGlu4vh7IpXLFr3aJdGMOexo1WtTQ+CiYeThnLr5Pkx+WHMMu2neEfkk3mAvQmeUKmw6sa65pw/BY
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2018 03:15:32.5556
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2018 03:15:37.0953
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec321a73-52d3-40f5-60c7-08d62ccc5108
+X-MS-Exchange-CrossTenant-Network-Message-Id: 115e1f5f-cee9-4e84-dee6-08d62ccc53bb
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1220
@@ -116,31 +116,204 @@ match incorrect driver.
 
 Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 ---
- arch/arm/boot/dts/ls1021a.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi |  2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi |  8 ++++----
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 12 ++++--------
+ 6 files changed, 18 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index f70025c2ab0f..13e91d577a26 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -716,7 +716,7 @@
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index 68ac78c4564d..d3fe0771d3a0 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -475,7 +475,7 @@
  		};
  
  		pcie@3400000 {
--			compatible = "fsl,ls1021a-pcie", "snps,dw-pcie";
-+			compatible = "fsl,ls1021a-pcie";
- 			reg = <0x00 0x03400000 0x0 0x00010000   /* controller registers */
+-			compatible = "fsl,ls1012a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1012a-pcie";
+ 			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
  			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
  			reg-names = "regs", "config";
-@@ -739,7 +739,7 @@
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 6cc4c87614b6..1b61782df73e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -661,7 +661,7 @@
+ 		};
+ 
+ 		pcie@3400000 {
+-			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1043a-pcie";
+ 			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
+ 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+@@ -686,7 +686,7 @@
  		};
  
  		pcie@3500000 {
--			compatible = "fsl,ls1021a-pcie", "snps,dw-pcie";
-+			compatible = "fsl,ls1021a-pcie";
- 			reg = <0x00 0x03500000 0x0 0x00010000   /* controller registers */
+-			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1043a-pcie";
+ 			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
  			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
  			reg-names = "regs", "config";
+@@ -711,7 +711,7 @@
+ 		};
+ 
+ 		pcie@3600000 {
+-			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1043a-pcie";
+ 			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
+ 			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 3a2a14a8e187..71585aefe1ef 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -630,7 +630,7 @@
+ 		};
+ 
+ 		pcie@3400000 {
+-			compatible = "fsl,ls1046a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1046a-pcie";
+ 			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
+ 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+@@ -655,7 +655,7 @@
+ 		};
+ 
+ 		pcie@3500000 {
+-			compatible = "fsl,ls1046a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1046a-pcie";
+ 			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
+ 			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+@@ -680,7 +680,7 @@
+ 		};
+ 
+ 		pcie@3600000 {
+-			compatible = "fsl,ls1046a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1046a-pcie";
+ 			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
+ 			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index a07f612ab56b..10b253c88a16 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -512,7 +512,7 @@
+ 		};
+ 
+ 		pcie@3400000 {
+-			compatible = "fsl,ls1088a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1088a-pcie";
+ 			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
+ 			       0x20 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+@@ -536,7 +536,7 @@
+ 		};
+ 
+ 		pcie@3500000 {
+-			compatible = "fsl,ls1088a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1088a-pcie";
+ 			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
+ 			       0x28 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+@@ -560,7 +560,7 @@
+ 		};
+ 
+ 		pcie@3600000 {
+-			compatible = "fsl,ls1088a-pcie", "snps,dw-pcie";
++			compatible = "fsl,ls1088a-pcie";
+ 			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
+ 			       0x30 0x00000000 0x0 0x00002000>; /* configuration space */
+ 			reg-names = "regs", "config";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
+index 7c882da3f6b0..a5f668d786b8 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
+@@ -119,7 +119,7 @@
+ };
+ 
+ &pcie1 {
+-	compatible = "fsl,ls2088a-pcie", "snps,dw-pcie";
++	compatible = "fsl,ls2088a-pcie";
+ 	reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
+ 	       0x20 0x00000000 0x0 0x00002000>; /* configuration space */
+ 
+@@ -128,7 +128,7 @@
+ };
+ 
+ &pcie2 {
+-	compatible = "fsl,ls2088a-pcie", "snps,dw-pcie";
++	compatible = "fsl,ls2088a-pcie";
+ 	reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
+ 	       0x28 0x00000000 0x0 0x00002000>; /* configuration space */
+ 
+@@ -137,7 +137,7 @@
+ };
+ 
+ &pcie3 {
+-	compatible = "fsl,ls2088a-pcie", "snps,dw-pcie";
++	compatible = "fsl,ls2088a-pcie";
+ 	reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
+ 	       0x30 0x00000000 0x0 0x00002000>; /* configuration space */
+ 
+@@ -146,7 +146,7 @@
+ };
+ 
+ &pcie4 {
+-	compatible = "fsl,ls2088a-pcie", "snps,dw-pcie";
++	compatible = "fsl,ls2088a-pcie";
+ 	reg = <0x00 0x03700000 0x0 0x00100000   /* controller registers */
+ 	       0x38 0x00000000 0x0 0x00002000>; /* configuration space */
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+index 547a86ec7cd2..d5dd4e7f1099 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -625,8 +625,7 @@
+ 		};
+ 
+ 		pcie1: pcie@3400000 {
+-			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
+-				     "snps,dw-pcie";
++			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
+ 			reg-names = "regs", "config";
+ 			interrupts = <0 108 0x4>; /* Level high type */
+ 			interrupt-names = "intr";
+@@ -646,8 +645,7 @@
+ 		};
+ 
+ 		pcie2: pcie@3500000 {
+-			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
+-				     "snps,dw-pcie";
++			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
+ 			reg-names = "regs", "config";
+ 			interrupts = <0 113 0x4>; /* Level high type */
+ 			interrupt-names = "intr";
+@@ -667,8 +665,7 @@
+ 		};
+ 
+ 		pcie3: pcie@3600000 {
+-			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
+-				     "snps,dw-pcie";
++			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
+ 			reg-names = "regs", "config";
+ 			interrupts = <0 118 0x4>; /* Level high type */
+ 			interrupt-names = "intr";
+@@ -688,8 +685,7 @@
+ 		};
+ 
+ 		pcie4: pcie@3700000 {
+-			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
+-				     "snps,dw-pcie";
++			compatible = "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
+ 			reg-names = "regs", "config";
+ 			interrupts = <0 123 0x4>; /* Level high type */
+ 			interrupt-names = "intr";
 -- 
 2.17.1
 
