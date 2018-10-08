@@ -2,96 +2,110 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965D1C676D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C19C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C49A20645
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:26:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pGHeHiZN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C49A20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 760B120841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760B120841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeJHUif (ORCPT
+        id S1726607AbeJHUjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:38:35 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38192 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbeJHUif (ORCPT
+        Mon, 8 Oct 2018 16:39:25 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:41595 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726128AbeJHUjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:38:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f8-v6so1431474pgq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 06:26:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=UqfpPT8vEf7OKKVHwoY84WHB3qW2UG1fF7qQptqCzjs=;
-        b=pGHeHiZNB7BbZirRVU0fq1MUDhHT6Qm/gle96nmPGr3bAyWNHtG3JCq+8kcYBaARGX
-         zu7qUBhy7z6lmB/knfLonnR0pCNjS9Qty4HebKlNUVgOA6rbFVrlYrXMC7Uijls8LZ6Q
-         b6kPY9fKFxzaZyD/5vZkv6EFwKYruUwGhKSX91xpUZcM6GDYA9/FLMsICQfkclMALAfR
-         V8uf0reciN99x99G/fK0F3O7ws691cHmD3H2tLUUhk6VEFtdL36fUQp4LDneMGGMicUX
-         3fDJvZISyhxp7zs/89rGoRhwYGpKPI6jYq6QVSiMnvLaGJDvose0I9uB6kj5I/SRVGZq
-         5pWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UqfpPT8vEf7OKKVHwoY84WHB3qW2UG1fF7qQptqCzjs=;
-        b=OyKhCcSRiFsQ6wYPbNKNAxazajXtVU/zxkOXSJLLw8gJQhs4EwbeHkCyVQ3YjlF6Hu
-         67q3JR9s2jIV1yWO9mgHSpWAKh5yIZsU67K1lio62P4xLzilW2fHcRdDSltdvxR6uE7k
-         nR1lWtIGL0KTxqPMwKamrxTFSfUo8jiwiuPlN+nmsrUM3gBg4nmRmvSnKBxOFxW8HzMq
-         qkyiT/oOFhmGWkM/drB8EnBb/1Kd7DZN2Iz84eU0jScql1Zl0P6YDXSC4jyhaPrrWGAM
-         rmm5PdJqG4waZxXg92hPBTsOoCUlGobBpylF188UBJuvU8pfdQV33e49BNmRn7Fl4qIX
-         F7jw==
-X-Gm-Message-State: ABuFfoj4R1oFOl7u2GRVS1NNOdcpgL94Rwxl+CJSlBlWm722DvtEIish
-        7E/kBOliFe6SC+NYSv2QI7LTcKBddeKm6g==
-X-Google-Smtp-Source: ACcGV62XBx+QfW8kr7WUlfh2GribhuTiaLMdvkE42dKIC01yQAzQjzydiPLOm3C1LO1gNuT4zjqklw==
-X-Received: by 2002:a63:455e:: with SMTP id u30-v6mr1030108pgk.30.1539005211715;
-        Mon, 08 Oct 2018 06:26:51 -0700 (PDT)
-Received: from localhost.localdomain ([104.238.150.158])
-        by smtp.gmail.com with ESMTPSA id j14-v6sm17236057pgh.52.2018.10.08.06.26.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 06:26:51 -0700 (PDT)
-From:   Song Muchun <smuchun@gmail.com>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, Song Muchun <smuchun@gmail.com>
-Subject: [PATCH] sched/fair: Fix update min_vruntime in dequeue_entity()
-Date:   Mon,  8 Oct 2018 21:26:32 +0800
-Message-Id: <20181008132632.83752-1-smuchun@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Oct 2018 16:39:25 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-24-jfUcPQ8pN6KrLuyHUcUvGg-1; Mon, 08 Oct 2018 14:27:37 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 8 Oct 2018 14:27:38 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 8 Oct 2018 14:27:38 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Bin Meng' <bmeng.cn@gmail.com>
+CC:     "helgaas@kernel.org" <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Thomas Jarosch <thomas.jarosch@intra2net.com>,
+        stable <stable@vger.kernel.org>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] pci: Add a few new IDs for Intel GPU "spurious interrupt"
+ quirk
+Thread-Topic: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
+ interrupt" quirk
+Thread-Index: AQHUXuuBTtSmrEla30a9wTOD32YprqUVGqcggAAdLQCAAB0d4A==
+Date:   Mon, 8 Oct 2018 13:27:38 +0000
+Message-ID: <8285ca0d4f6849df835de61dca991781@AcuMS.aculab.com>
+References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
+ <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
+ <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
+ <2d2878e5a44c496cb0937f02d64e0b38@AcuMS.aculab.com>
+ <CAEUhbmV3SoPLZeN2EOm8h0xfKqN1FBZmJjhv6ygQovHZVA9ZRg@mail.gmail.com>
+In-Reply-To: <CAEUhbmV3SoPLZeN2EOm8h0xfKqN1FBZmJjhv6ygQovHZVA9ZRg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: jfUcPQ8pN6KrLuyHUcUvGg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment and the code around 2nd update_min_vruntime() are
-not in agreement. From commit b60205c7c558 ("sched/fair: Fix
-min_vruntime tracking"), I think that we want to update min_vruntime
-when a task is sleeping/migrating. So, the check is inverted there.
-
-Signed-off-by: Song Muchun <smuchun@gmail.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a8f601edd958..c48ab0d1751e 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4003,7 +4003,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 * put back on, and if we advance min_vruntime, we'll be placed back
- 	 * further than we started -- ie. we'll be penalized.
- 	 */
--	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
-+	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
- 		update_min_vruntime(cfs_rq);
- }
- 
--- 
-2.17.1
+RnJvbTogQmluIE1lbmcNCj4gU2VudDogMDggT2N0b2JlciAyMDE4IDEzOjM0DQo+IEhpIERhdmlk
+LA0KPiANCj4gT24gTW9uLCBPY3QgOCwgMjAxOCBhdCA2OjA2IFBNIERhdmlkIExhaWdodCA8RGF2
+aWQuTGFpZ2h0QGFjdWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogQmluIE1lbmcNCj4g
+PiA+IFNlbnQ6IDA4IE9jdG9iZXIgMjAxOCAxMDo0NA0KPiA+IC4uLg0KPiA+ID4gQ29ycmVjdCwg
+ZGlzYWJsZSB0aGUgc2hhcmVkIGludGVycnVwdCBsaW5lIGtlZXBzIGFsbCBkZXZpY2VzIHVzaW5n
+DQo+ID4gPiB0aGF0IGxpbmUgZnJvbSB3b3JraW5nLCB3aGljaCBpcyBjdXJyZW50IGtlcm5lbCdz
+IGJlaGF2aW9yIHcvbyB0aGlzDQo+ID4gPiBxdWlyayBoYW5kbGluZzogaXQgZGlzYWJsZXMgdGhl
+IChzaGFyZWQpIGludGVycnVwdCBsaW5lIGFmdGVyIDEwMC4wMDArDQo+ID4gPiBnZW5lcmF0ZWQg
+aW50ZXJydXB0cy4gQnV0IHRoZSBzaWRlIGVmZmVjdCBpcyB0aGF0IG90aGVyIGRldmljZXMgYmVj
+b21lDQo+ID4gPiB1bnVzYWJsZSBhZnRlciB0aGF0IChlZzogVVNCIGRldmljZXMgd2hpY2ggc2hh
+cmUgdGhlIHNhbWUgaW50ZXJydXB0DQo+ID4gPiBsaW5lIHdpdGggdGhlIEludGVsIEdQVSkuIFRo
+YXQncyB3aHkgdGhlIG9yaWdpbmFsIGNvbW1pdCwgZjY3ZmQ1NWZhOTZmDQo+ID4gPiAoIlBDSTog
+QWRkIHF1aXJrIGZvciBzdGlsbCBlbmFibGVkIGludGVycnVwdHMgb24gSW50ZWwgU2FuZHkgQnJp
+ZGdlDQo+ID4gPiBHUFVzIikgZGlzYWJsZXMgdGhlIEdQVSdzIGludGVycnVwdCBkaXJlY3RseSwg
+d2hpY2ggc2hvdWxkIHJlYWxseSBiZQ0KPiA+ID4gZG9uZSBieSB0aGUgVkdBIEJJT1MgaXRzZWxm
+IChhIGJ1Z2d5IFZCSU9TISkuDQo+ID4NCj4gPiBTaG91bGRuJ3QgdGhlIGtlcm5lbCBqdXN0IGRp
+c2FibGUgYWxsIFBDSShlKSBpbnRlcnJ1cHRzIGJ5IHdyaXRpbmcNCj4gPiAxIHRvIHRoZSBjb25m
+aWcgc3BhY2UgY29udHJvbCByZWdpc3RlciBiaXQgZHVyaW5nIGdyb3BlPw0KPiA+IENhbiBpdCBl
+dmVyIGJ5IHJpZ2h0IGZvciB0aGlzIHRvIGJlIHNldD8NCj4gPg0KPiANCj4gRG8geW91IG1lYW4g
+UENJX0NPTU1BTkRfSU5UWF9ESVNBQkxFIGJpdCBvZiB0aGUgY29tbWFuZCByZWdpc3RlciBpbg0K
+PiB0aGUgY29uZmlndXJhdGlvbiBzcGFjZT8gU2V0dGluZyB0aGlzIGJpdCBpbmRlZWQgY291bGQg
+ZGlzYWJsZSB0aGUNCj4gSU5UeCBpbnRlcnJ1cHQsIGJ1dCBpdCBkb2VzIG5vdCB3b3JrIGZvciBh
+bGwgUENJIGRldmljZXMgYXMgdGhpcyBiaXQNCj4gd2FzIGludHJvZHVjZWQgaW4gUENJIHNwZWMg
+djIuMy4NCg0KVGhhdCdzIHRoZSBvbmUgSSB3YXMgdGhpbmtpbmcgb2YuDQpJZiBpdCB3YXMgaW50
+cm9kdWNlZCBpbiB2Mi4zIGl0IGV4cGxhaW5zIHdoeSBpdCBpcyBhICdkaXNhYmxlJyBiaXQuDQoN
+ClRoZSB2Mi4yIHNwZWMgSSBqdXN0IGZvdW5kIGRvZXNuJ3Qgc2VlbSB0byBzYXkgYW55dGhpbmcg
+YWJvdXQgdGhlDQoncmVzZXJ2ZWQnIGJpdHMuIEkgZ3Vlc3MgdGhlIHZhbHVlcyBhcmUgaWdub3Jl
+ZCAoYW5kIHByb2JvYmx5IHJlYWQNCmJhY2sgYXMgemVyb3MpLg0KDQpJbiBhbnkgY2FzZSBpdCBz
+aG91bGQgYmUgaW1wbGVtZW50ZWQgYnkgdGhlIFZHQSBkZXZpY2VzIGluIHF1ZXN0aW9uLg0KSSBn
+dWVzcyB0aGUga2VybmVsIHNob3VsZCBhbHNvIGVuc3VyZSB0aGF0IE1TSSBhbmQgTVNJLVggaW50
+ZXJydXB0cw0KYXJlIGFsc28gYWxsIGRpc2FibGVkLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJl
+ZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXlu
+ZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
