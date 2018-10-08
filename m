@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66760C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABF4C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23C922087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E6F2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXYGyYFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C922087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfT1i22y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E6F2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732612AbeJICF4 (ORCPT
+        id S1731926AbeJICCr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:05:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56172 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:02:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732339AbeJICF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:05:56 -0400
+        id S1731296AbeJICCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61AAF20645;
-        Mon,  8 Oct 2018 18:52:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 731C0204FD;
+        Mon,  8 Oct 2018 18:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024769;
-        bh=8U+91JKWhuK4SIea4dod6WAZIGANUmL9bQGRjauZIXE=;
+        s=default; t=1539024579;
+        bh=s6T2vCvbPsKFdW9PeMoweAEek3CpekWEpttO0TR0dF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KXYGyYFQBPDs1nQXwmH8p1T451LsK7JoOlvz56PhogrMldmbsUwJCjsPiZ9i/vcRo
-         OsT6HJJWua3GM3J87LXE6IFFdSXgHf/BImzqzawhFumzQw4FffpXH+WLLBenzeMXNu
-         P0FmzwMFnxnC5omYQCN7aDa48RvV+wT06sFjQJ2E=
+        b=rfT1i22yP86WLVvoZAMRAXnyfJc1EXC6rpFN8T+wB6i/l4DgA2ZnOoIi5Ehl4K46B
+         Wmq+lm5u0MtPguqS4XMmxr4dgs1yQ+P17m40dCckd93qBhKmPg1DyBkKzZZkMJ0USf
+         ukIsrVwdOFu/BCHJI7XEgo+pJAXLnTCGrC2RJy2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.18 148/168] ovl: fix memory leak on unlink of indexed file
-Date:   Mon,  8 Oct 2018 20:32:08 +0200
-Message-Id: <20181008175625.656311260@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 063/168] mac80211: shorten the IBSS debug messages
+Date:   Mon,  8 Oct 2018 20:30:43 +0200
+Message-Id: <20181008175622.444406539@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -62,41 +65,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 63e132528032ce937126aba591a7b37ec593a6bb upstream.
+[ Upstream commit c6e57b3896fc76299913b8cfd82d853bee8a2c84 ]
 
-The memory leak was detected by kmemleak when running xfstests
-overlay/051,053
+When tracing is enabled, all the debug messages are recorded and must
+not exceed MAX_MSG_LEN (100) columns. Longer debug messages grant the
+user with:
 
-Fixes: caf70cb2ba5d ("ovl: cleanup orphan index entries")
-Cc: <stable@vger.kernel.org> # v4.13
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+WARNING: CPU: 3 PID: 32642 at /tmp/wifi-core-20180806094828/src/iwlwifi-stack-dev/net/mac80211/./trace_msg.h:32 trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
+Workqueue: phy1 ieee80211_iface_work [mac80211]
+ RIP: 0010:trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
+ Call Trace:
+  __sdata_dbg+0xbd/0x120 [mac80211]
+  ieee80211_ibss_rx_queued_mgmt+0x15f/0x510 [mac80211]
+  ieee80211_iface_work+0x21d/0x320 [mac80211]
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/overlayfs/util.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/mac80211/ibss.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -531,7 +531,7 @@ static void ovl_cleanup_index(struct den
- 	struct dentry *upperdentry = ovl_dentry_upper(dentry);
- 	struct dentry *index = NULL;
- 	struct inode *inode;
--	struct qstr name;
-+	struct qstr name = { };
- 	int err;
+--- a/net/mac80211/ibss.c
++++ b/net/mac80211/ibss.c
+@@ -947,8 +947,8 @@ static void ieee80211_rx_mgmt_deauth_ibs
+ 	if (len < IEEE80211_DEAUTH_FRAME_LEN)
+ 		return;
  
- 	err = ovl_get_index_name(lowerdentry, &name);
-@@ -574,6 +574,7 @@ static void ovl_cleanup_index(struct den
- 		goto fail;
+-	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM BSSID=%pM (reason: %d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, reason);
++	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (reason: %d)\n", mgmt->bssid, reason);
+ 	sta_info_destroy_addr(sdata, mgmt->sa);
+ }
  
- out:
-+	kfree(name.name);
- 	dput(index);
- 	return;
+@@ -966,9 +966,9 @@ static void ieee80211_rx_mgmt_auth_ibss(
+ 	auth_alg = le16_to_cpu(mgmt->u.auth.auth_alg);
+ 	auth_transaction = le16_to_cpu(mgmt->u.auth.auth_transaction);
  
+-	ibss_dbg(sdata,
+-		 "RX Auth SA=%pM DA=%pM BSSID=%pM (auth_transaction=%d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, auth_transaction);
++	ibss_dbg(sdata, "RX Auth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (auth_transaction=%d)\n",
++		 mgmt->bssid, auth_transaction);
+ 
+ 	if (auth_alg != WLAN_AUTH_OPEN || auth_transaction != 1)
+ 		return;
+@@ -1175,10 +1175,10 @@ static void ieee80211_rx_bss_info(struct
+ 		rx_timestamp = drv_get_tsf(local, sdata);
+ 	}
+ 
+-	ibss_dbg(sdata,
+-		 "RX beacon SA=%pM BSSID=%pM TSF=0x%llx BCN=0x%llx diff=%lld @%lu\n",
++	ibss_dbg(sdata, "RX beacon SA=%pM BSSID=%pM TSF=0x%llx\n",
+ 		 mgmt->sa, mgmt->bssid,
+-		 (unsigned long long)rx_timestamp,
++		 (unsigned long long)rx_timestamp);
++	ibss_dbg(sdata, "\tBCN=0x%llx diff=%lld @%lu\n",
+ 		 (unsigned long long)beacon_timestamp,
+ 		 (unsigned long long)(rx_timestamp - beacon_timestamp),
+ 		 jiffies);
+@@ -1537,9 +1537,9 @@ static void ieee80211_rx_mgmt_probe_req(
+ 
+ 	tx_last_beacon = drv_tx_last_beacon(local);
+ 
+-	ibss_dbg(sdata,
+-		 "RX ProbeReq SA=%pM DA=%pM BSSID=%pM (tx_last_beacon=%d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, tx_last_beacon);
++	ibss_dbg(sdata, "RX ProbeReq SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (tx_last_beacon=%d)\n",
++		 mgmt->bssid, tx_last_beacon);
+ 
+ 	if (!tx_last_beacon && is_multicast_ether_addr(mgmt->da))
+ 		return;
 
 
