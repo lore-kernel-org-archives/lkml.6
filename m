@@ -2,176 +2,141 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF85C64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43597C64EB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 844322085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:00:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844322085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5812420882
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5812420882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeJHRLY (ORCPT
+        id S1727652AbeJHRKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:11:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33643 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeJHRLY (ORCPT
+        Mon, 8 Oct 2018 13:10:51 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:41704 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeJHRKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:11:24 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w989xrdB560593
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 8 Oct 2018 02:59:53 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w989xq6X560590;
-        Mon, 8 Oct 2018 02:59:52 -0700
-Date:   Mon, 8 Oct 2018 02:59:52 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-ec3a94188df7d28b374868d9a2a0face910e62ab@git.kernel.org>
-Cc:     dave.hansen@linux.intel.com, luto@kernel.org, tglx@linutronix.de,
-        riel@surriel.com, mingo@kernel.org, peterz@infradead.org,
-        brgerst@gmail.com, dvlasenk@redhat.com,
-        linux-kernel@vger.kernel.org, chang.seok.bae@intel.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, bp@alien8.de,
-        ravi.v.shankar@intel.com, markus.t.metzger@intel.com
-Reply-To: peterz@infradead.org, dvlasenk@redhat.com,
-          linux-kernel@vger.kernel.org, brgerst@gmail.com,
-          dave.hansen@linux.intel.com, riel@surriel.com, mingo@kernel.org,
-          tglx@linutronix.de, luto@kernel.org, ravi.v.shankar@intel.com,
-          bp@alien8.de, hpa@zytor.com, markus.t.metzger@intel.com,
-          chang.seok.bae@intel.com, torvalds@linux-foundation.org
-In-Reply-To: <1537312139-5580-2-git-send-email-chang.seok.bae@intel.com>
-References: <1537312139-5580-2-git-send-email-chang.seok.bae@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/fsgsbase/64: Clean up various details
-Git-Commit-ID: ec3a94188df7d28b374868d9a2a0face910e62ab
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 8 Oct 2018 13:10:50 -0400
+Received: by mail-ua1-f68.google.com with SMTP id m7so6934206uao.8;
+        Mon, 08 Oct 2018 02:59:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A6jr2tRKMs36+7Alx1KBuI6wS+Y6ADm1Usg6phWcPT8=;
+        b=cY7ZEwzlQaCQbnzKexEXlLX4yI7C7fmOnzVswhQhLEQUv5ej8nSPOyKvjfB8674Jfa
+         m8bM2rHzEkCeT/ZhjYGVLN1XiM64NEANy4sFB81QCl5UeFJPuXG9Df4KY/3HrG8jUunq
+         GsegkGxCCE8KGaTZY2MRdWtBN8Qb9Xkz2tmAkQlWuKtnan7wSIwAbw7LtNQvuCIKzFEk
+         HEeUQCDJrvoOuZt5YoYUKWvOnOHYIwkA3xGQgQw/U7ZhLjjNwWdcojqm8U4I9jk1JU2z
+         M+XcEGrwj9keffRnQ4Sgm0vfeik/6bx+17b055yfhJgZTS7sbjOBcUJ3P8C7AV6o+pTH
+         Z1sA==
+X-Gm-Message-State: ABuFfoioz2VeqPx0zYahSW5a8V20kkkpUgdm2hw2x42Z1GOHlQ9zb7g7
+        wyKBVeV4WrM1JhBDduvqNUpKbtuI1oc954cH3zo=
+X-Google-Smtp-Source: ACcGV63gNsVITpsKZ/LZdmgQ5Sb3hwd1jrDQ6QW/wLgb/NhST/gimpM0diJO8iYyqqXuxoscTWJGMKCzgdrMHqFTzsc=
+X-Received: by 2002:a9f:35f1:: with SMTP id u46-v6mr9017756uad.20.1538992795760;
+ Mon, 08 Oct 2018 02:59:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180927180038.24599-1-geert+renesas@glider.be>
+ <1538648094.14153.8.camel@pengutronix.de> <CAMuHMdV_qb8qDFJ1VT6FYYkHK73tjbp2hOUShaOEhezPWg+VDg@mail.gmail.com>
+ <CAMuHMdUC3dGRnMCsX3HjmGgb0-vLSNXKXRiiAS+TzW72_uM+LQ@mail.gmail.com> <1538752564.3545.37.camel@pengutronix.de>
+In-Reply-To: <1538752564.3545.37.camel@pengutronix.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Oct 2018 11:59:42 +0200
+Message-ID: <CAMuHMdXFbYkD_Lou0wW__0-8ZPj3cKuJ6it_0hpPwzNU0Zeq3g@mail.gmail.com>
+Subject: Re: [PATCH v2] reset: Exclusive resets must be dedicated to a single
+ hardware block
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ec3a94188df7d28b374868d9a2a0face910e62ab
-Gitweb:     https://git.kernel.org/tip/ec3a94188df7d28b374868d9a2a0face910e62ab
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Mon, 8 Oct 2018 10:41:59 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 8 Oct 2018 10:45:04 +0200
+Hi Philipp,
 
-x86/fsgsbase/64: Clean up various details
+On Fri, Oct 5, 2018 at 5:16 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> On Fri, 2018-10-05 at 14:31 +0200, Geert Uytterhoeven wrote:
+> [...]
+> > > > > +                     eq = (args2.np == args.np &&
+> > > > > +                           args2.args_count == args.args_count &&
+> > > > > +                           !memcmp(args2.args, args.args,
+> > > > > +                                   args.args_count * sizeof(args.args[0])));
+> > >
+> > > As there's at least one other function in -next that compares of_phandle_args,
+> > > I will add a helper of_phandle_args_eq().
+> > >
+> > > > > +                     of_node_put(args2.np);
+> > > > > +                     if (eq)
+> > > >
+> > > > Emitting a loud warning here could be very helpful if it contains
+> > > > both the reset controller node and the reset index, as well as the
+> >
+> > Actually on DT-based systems, the index is a driver-specific
+> > implementation detail, and may differ from the actual reset specifier in DT.
+> > E.g. on R-Car systems, DT uses a human-readable representation matching
+> > the datasheet, while internally, the driver uses a packed representation.
+> > Hence printing the index may confuse the user.
+> >
+> > For lookup-based systems, this is different.
+>
+> Correct. I'm so used to #reset-cells = <1>, it's hard to remember the
+> exceptions. So let's not try to print indices or args.
+>
+> > > > consumer nodes: node and node2.
+> > >
+> > > Indeed, will do, also for lookup resets.
+> > >
+> > > We already have of_print_phandle_args(), but that is a bit inflexible.
+> > > Adding support for "%pOFa" looks like the modern thing to do.
+> >
+> > Scrap that: of_phandle_args is not derived from a device_node, so %pOFa
+> > is not appropriate (and would crash instead of fall back to a pointer before
+> > %pOFa support is implemented). And without more users, it doesn't make much
+> > sense to go for a new type (e.g. "%pOA")...
+> >
+> > Actually, printing the full reset specifier is not needed. A message like
+> >
+> >     /soc/pwm@e6e31000 and /soc/pwm@e6e30000 share a reset on
+> > /soc/clock-controller@e6150000
+> >
+> > should give sufficient clue to the user.
+>
+> Yes. You could also pass con_id into __of_reset_is_exclusive and print
+> that. It would be nice to indicate which consumer requested exclusive
+> access.
 
-So:
+con_id is used for lookup-based resets only?
 
- - use 'extern' consistently for APIs
+But the value passed there is the "id" parameter of
+reset_control_get_exclusive().  However, that is not the consumer name,
+and usually NULL.
 
- - fix weird header guard
+I'm afraid the only way to know the consumer is to print a backtrace with
+WARN()?
 
- - clarify code comments
+Gr{oetje,eeting}s,
 
- - reorder APIs by type
+                        Geert
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Markus T Metzger <markus.t.metzger@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Link: http://lkml.kernel.org/r/1537312139-5580-2-git-send-email-chang.seok.bae@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/vdso/vgetcpu.c   |  1 +
- arch/x86/include/asm/fsgsbase.h | 22 ++++++++++++----------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
-index edd214f5264d..f86ab0ae1777 100644
---- a/arch/x86/entry/vdso/vgetcpu.c
-+++ b/arch/x86/entry/vdso/vgetcpu.c
-@@ -14,6 +14,7 @@ notrace long
- __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
- {
- 	vdso_read_cpunode(cpu, node);
-+
- 	return 0;
- }
- 
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index 5e9cbcce318a..eb377b6e9eed 100644
---- a/arch/x86/include/asm/fsgsbase.h
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef _ASM_FSGSBASE_H
--#define _ASM_FSGSBASE_H 1
-+#define _ASM_FSGSBASE_H
- 
- #ifndef __ASSEMBLY__
- 
-@@ -9,14 +9,15 @@
- #include <asm/msr-index.h>
- 
- /*
-- * Read/write a task's fsbase or gsbase. This returns the value that
-+ * Read/write a task's FSBASE or GSBASE. This returns the value that
-  * the FS/GS base would have (if the task were to be resumed). These
-- * work on current or on a different non-running task.
-+ * work on the current task or on a non-running (typically stopped
-+ * ptrace child) task.
-  */
--unsigned long x86_fsbase_read_task(struct task_struct *task);
--unsigned long x86_gsbase_read_task(struct task_struct *task);
--int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
--int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
-+extern unsigned long x86_fsbase_read_task(struct task_struct *task);
-+extern unsigned long x86_gsbase_read_task(struct task_struct *task);
-+extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
-+extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
- 
- /* Helper functions for reading/writing FS/GS base */
- 
-@@ -25,20 +26,21 @@ static inline unsigned long x86_fsbase_read_cpu(void)
- 	unsigned long fsbase;
- 
- 	rdmsrl(MSR_FS_BASE, fsbase);
-+
- 	return fsbase;
- }
- 
--void x86_fsbase_write_cpu(unsigned long fsbase);
--
- static inline unsigned long x86_gsbase_read_cpu_inactive(void)
- {
- 	unsigned long gsbase;
- 
- 	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+
- 	return gsbase;
- }
- 
--void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
-+extern void x86_fsbase_write_cpu(unsigned long fsbase);
-+extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
- 
- #endif /* CONFIG_X86_64 */
- 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
