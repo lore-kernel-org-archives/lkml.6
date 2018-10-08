@@ -2,225 +2,139 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 982F9C6787D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1E1C6787E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4222020882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:11:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4222020882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BFF7D206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:17:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="Vby67Sqf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF7D206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbeJHJUi (ORCPT
+        id S1726415AbeJHJ0b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 05:20:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725760AbeJHJUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 05:20:37 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 87C638666F;
-        Mon,  8 Oct 2018 02:11:19 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 75541105705C;
-        Mon,  8 Oct 2018 02:11:09 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 10:11:05 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        it+linux-scsi@molgen.mpg.de,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        linux-scsi@vger.kernel.org,
-        Raghava Aditya Renukunta 
-        <RaghavaAditya.Renukunta@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>
-Subject: Re: [PATCH] Revert "genirq/affinity: assign vectors to all possible
- CPUs"
-Message-ID: <20181008021104.GB8155@ming.t460p>
-References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de>
- <20180810133628.GA4131@kroah.com>
- <29b5f3ce-2c23-bf5e-fe50-29bedd4833e1@molgen.mpg.de>
- <20180810155511.GA17092@kroah.com>
- <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de>
- <20180811135021.GA2186@kroah.com>
- <20180813033157.GA18254@ming.t460p>
- <89f2b622-3d2a-04ce-a6d1-ffb5d9612763@molgen.mpg.de>
- <cbd7cb64-dbfe-e085-e80b-67dad4084d69@molgen.mpg.de>
- <7c51fe1d-d591-90f2-8fb5-81990f8db0fe@molgen.mpg.de>
+        Mon, 8 Oct 2018 05:26:31 -0400
+Received: from mail-dm3nam03on0054.outbound.protection.outlook.com ([104.47.41.54]:56544
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725760AbeJHJ0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 05:26:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LxJOQ/rjjsm41Romf+FA9wOhYA2y7UCqm2T4EwPye/Y=;
+ b=Vby67SqfHXcApw2O+InIp+f+sFhcjHjQ63dnyraF1C+IcWgQ9ijUZuLYZVuFj4rnz/joxvCpInqPDJv7B3aeYTqdcySkeCfu3gkzgB13LMli8ooevRLFNpT72MBjQMoesUoj9+MUGZ+MSZARcLjnOcstQXBOdZUIm5lyNzFChYo=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5095.namprd05.prod.outlook.com (20.177.231.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.13; Mon, 8 Oct 2018 02:17:09 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::49cd:7d04:35b7:b2a2]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::49cd:7d04:35b7:b2a2%3]) with mapi id 15.20.1207.018; Mon, 8 Oct 2018
+ 02:17:09 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@kernel.org>
+CC:     "hpa@zytor.com" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
+Thread-Topic: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
+Thread-Index: AQHUW2CZEG0GJCpfDkK4fEgcOSwgMqUOuSmAgAAJ9ICAAAHlAIAABIuAgAAEaQCAAAT8gIAABDiAgAAKqICAAYO3AIAEPbuA
+Date:   Mon, 8 Oct 2018 02:17:09 +0000
+Message-ID: <8762567F-AF91-4D51-AEAD-4F4A18E59F8E@vmware.com>
+References: <20181003213100.189959-1-namit@vmware.com>
+ <20181003213100.189959-5-namit@vmware.com> <20181004075755.GA3353@gmail.com>
+ <20181004083333.GA9802@gmail.com>
+ <10D29A50-C352-4407-A824-0C3C06CD8592@zytor.com>
+ <A5DED74C-A95A-48D8-AF68-39E23696385F@vmware.com>
+ <20181004091222.GB21864@gmail.com>
+ <D42AB116-BFA4-4CF0-BF45-41C579A9B4C7@vmware.com>
+ <20181004094519.GA97692@gmail.com>
+ <29591D3B-D49B-4D7A-B280-85A2C3F63F9C@vmware.com>
+ <20181005093108.GA24723@gmail.com>
+In-Reply-To: <20181005093108.GA24723@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [70.164.121.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5095;20:prsTeRnMpjQZxZunTIpDwvPyBE/Jivl4HaHoHefmuhmulKUlgFu4GUXqFpg+euAoTSICdsECKWoLmNxK477KF//VcNug1Q3sa2NjwOA82Hyu6YQX3Uo8xiSZi6WwRwnHB1toNQqvU0sxVa/GfJoyUPIAonOS0TkFuynRFO7fa7Y=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 46b75829-4d46-4874-3335-08d62cc426de
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5095;
+x-ms-traffictypediagnostic: BYAPR05MB5095:
+bcl:    0
+x-microsoft-antispam-prvs: <BYAPR05MB5095DA28776A9CC7E9867F69D0E60@BYAPR05MB5095.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:BYAPR05MB5095;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5095;
+x-forefront-prvs: 081904387B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(54534003)(2616005)(476003)(76176011)(6246003)(6436002)(7736002)(8936002)(81166006)(81156014)(256004)(6306002)(2906002)(6512007)(5250100002)(8676002)(68736007)(486006)(33656002)(102836004)(478600001)(53936002)(54906003)(305945005)(25786009)(99286004)(106356001)(966005)(82746002)(93886005)(14454004)(71200400001)(6506007)(83716004)(71190400001)(105586002)(66066001)(229853002)(7416002)(86362001)(446003)(4326008)(26005)(2900100001)(3846002)(11346002)(6116002)(6486002)(5660300001)(186003)(316002)(6916009)(36756003)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5095;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: UmS/uOGznYxtW2CZXSWYAIzKevGzQJYsoC1M9y2B+i6AT7r3rD3Z23STTgRVV2ZAuYxYH/dQarljp8t0P10gX8Ab4G/HmEH8JIUwXevzGn3VslhlJwvnTPajvwLhNRcBWJTiNekqKqGtcdTsqVhfvoz6yUtDOXlBn/hKbxR0uwenLZb9b1foySCDlTDv8xbEgby2IwLbSIFxV1K26e3ic6wVeFQaaJf507goRJQUApzx5YC7OqWCFG/AHDH41DO7jRsTKm2wzV0SWjTdAB9almIKV7R/YDfL+6ZqhWC2Yd8+CXwd2OSHe+PFD/k3f1dTWNI1of0eDwe0ASZfRqmRwIqw/lzua0bR65VWTTOo5JA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A5ACA91DE766A34DA15F9FABB0F8F37C@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c51fe1d-d591-90f2-8fb5-81990f8db0fe@molgen.mpg.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 08 Oct 2018 02:11:20 +0000 (UTC)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46b75829-4d46-4874-3335-08d62cc426de
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 02:17:09.4624
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 02:33:07PM +0200, Paul Menzel wrote:
-> Date: Wed, 29 Aug 2018 17:28:45 +0200
-> 
-> This reverts commit ef86f3a72adb8a7931f67335560740a7ad696d1d.
-> 
-> See the discussion in the thread *aacraid: Regression in 4.14.56
-> with *genirq/affinity: assign vectors to all possible CPUs** on
-> the linux-scsi list.
-> 
-> Reverting the commit, the aacraid driver loads correctly, and the
-> drives are visible. So revert the commit to adhere to Linux’ no
-> regression policy.
-> 
-> Strangely, the issue is not reproducible with Linux 4.18.x, but
-> Ming Lei wrote, that this might only be by chance.
-> 
-> Link: https://www.spinics.net/lists/linux-scsi/msg122732.html
-> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> 
-> ---
->  kernel/irq/affinity.c | 30 +++++++++++++++---------------
->  1 file changed, 15 insertions(+), 15 deletions(-)
-> 
-> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> index a37a3b4b6342..e12d35108225 100644
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -39,7 +39,7 @@ static void irq_spread_init_one(struct cpumask *irqmsk, struct cpumask *nmsk,
->  	}
->  }
->  
-> -static cpumask_var_t *alloc_node_to_possible_cpumask(void)
-> +static cpumask_var_t *alloc_node_to_present_cpumask(void)
->  {
->  	cpumask_var_t *masks;
->  	int node;
-> @@ -62,7 +62,7 @@ static cpumask_var_t *alloc_node_to_possible_cpumask(void)
->  	return NULL;
->  }
->  
-> -static void free_node_to_possible_cpumask(cpumask_var_t *masks)
-> +static void free_node_to_present_cpumask(cpumask_var_t *masks)
->  {
->  	int node;
->  
-> @@ -71,22 +71,22 @@ static void free_node_to_possible_cpumask(cpumask_var_t *masks)
->  	kfree(masks);
->  }
->  
-> -static void build_node_to_possible_cpumask(cpumask_var_t *masks)
-> +static void build_node_to_present_cpumask(cpumask_var_t *masks)
->  {
->  	int cpu;
->  
-> -	for_each_possible_cpu(cpu)
-> +	for_each_present_cpu(cpu)
->  		cpumask_set_cpu(cpu, masks[cpu_to_node(cpu)]);
->  }
->  
-> -static int get_nodes_in_cpumask(cpumask_var_t *node_to_possible_cpumask,
-> +static int get_nodes_in_cpumask(cpumask_var_t *node_to_present_cpumask,
->  				const struct cpumask *mask, nodemask_t *nodemsk)
->  {
->  	int n, nodes = 0;
->  
->  	/* Calculate the number of nodes in the supplied affinity mask */
->  	for_each_node(n) {
-> -		if (cpumask_intersects(mask, node_to_possible_cpumask[n])) {
-> +		if (cpumask_intersects(mask, node_to_present_cpumask[n])) {
->  			node_set(n, *nodemsk);
->  			nodes++;
->  		}
-> @@ -109,7 +109,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	int last_affv = affv + affd->pre_vectors;
->  	nodemask_t nodemsk = NODE_MASK_NONE;
->  	struct cpumask *masks;
-> -	cpumask_var_t nmsk, *node_to_possible_cpumask;
-> +	cpumask_var_t nmsk, *node_to_present_cpumask;
->  
->  	/*
->  	 * If there aren't any vectors left after applying the pre/post
-> @@ -125,8 +125,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	if (!masks)
->  		goto out;
->  
-> -	node_to_possible_cpumask = alloc_node_to_possible_cpumask();
-> -	if (!node_to_possible_cpumask)
-> +	node_to_present_cpumask = alloc_node_to_present_cpumask();
-> +	if (!node_to_present_cpumask)
->  		goto out;
->  
->  	/* Fill out vectors at the beginning that don't need affinity */
-> @@ -135,8 +135,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  
->  	/* Stabilize the cpumasks */
->  	get_online_cpus();
-> -	build_node_to_possible_cpumask(node_to_possible_cpumask);
-> -	nodes = get_nodes_in_cpumask(node_to_possible_cpumask, cpu_possible_mask,
-> +	build_node_to_present_cpumask(node_to_present_cpumask);
-> +	nodes = get_nodes_in_cpumask(node_to_present_cpumask, cpu_present_mask,
->  				     &nodemsk);
->  
->  	/*
-> @@ -146,7 +146,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	if (affv <= nodes) {
->  		for_each_node_mask(n, nodemsk) {
->  			cpumask_copy(masks + curvec,
-> -				     node_to_possible_cpumask[n]);
-> +				     node_to_present_cpumask[n]);
->  			if (++curvec == last_affv)
->  				break;
->  		}
-> @@ -160,7 +160,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  		vecs_per_node = (affv - (curvec - affd->pre_vectors)) / nodes;
->  
->  		/* Get the cpus on this node which are in the mask */
-> -		cpumask_and(nmsk, cpu_possible_mask, node_to_possible_cpumask[n]);
-> +		cpumask_and(nmsk, cpu_present_mask, node_to_present_cpumask[n]);
->  
->  		/* Calculate the number of cpus per vector */
->  		ncpus = cpumask_weight(nmsk);
-> @@ -192,7 +192,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	/* Fill out vectors at the end that don't need affinity */
->  	for (; curvec < nvecs; curvec++)
->  		cpumask_copy(masks + curvec, irq_default_affinity);
-> -	free_node_to_possible_cpumask(node_to_possible_cpumask);
-> +	free_node_to_present_cpumask(node_to_present_cpumask);
->  out:
->  	free_cpumask_var(nmsk);
->  	return masks;
-> @@ -214,7 +214,7 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
->  		return 0;
->  
->  	get_online_cpus();
-> -	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
-> +	ret = min_t(int, cpumask_weight(cpu_present_mask), vecs) + resv;
->  	put_online_cpus();
->  	return ret;
->  }
-> -- 
-> 2.17.1
-> 
+at 2:31 AM, Ingo Molnar <mingo@kernel.org> wrote:
 
-Hello Paul,
+>=20
+> * Nadav Amit <namit@vmware.com> wrote:
+>=20
+>>> Are you using defconfig or a reasonable distro-config for your tests?
+>>=20
+>> I think it is best to take the kernel and run localyesconfig for testing=
+.
+>=20
+> Ok, agreed - and this makes the numbers you provided pretty representativ=
+e.
+>=20
+> Good - now that all of my concerns were addressed I'd like to merge the r=
+emaining 3 patches as=20
+> well - but they are conflicting with ongoing x86 work in tip:x86/core. Th=
+e extable conflict is=20
+> trivial, the jump-label conflict a bit more involved.
+>=20
+> Could you please pick up the updated changelogs below and resolve the con=
+flicts against=20
+> tip:master or tip:x86/build and submit the remaining patches as well?
 
-I have explained that this is one aacraid issue in the following link:
+For the record, I summarized my analysis of the poor function inlining
+decisions in Linux in the following blog-post:
 
-https://marc.info/?l=linux-kernel&m=153413115909580&w=2
+https://nadav.amit.zone/blog/linux-inline
 
-So this issue should have been fixed in the driver instead of genirq
-core code, otherwise regression on other drivers can be caused too.
+Regards,
+Nadav
 
-So I suggest you to ask aacraid guys to take a look at this issue.
 
-Thanks,
-Ming
