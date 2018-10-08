@@ -2,142 +2,145 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA2DC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF5EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D82C2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:54:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dqmw3cem"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D82C2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F26DE20858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:55:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26DE20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeJIAHb (ORCPT
+        id S1726671AbeJIAHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:07:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 20:07:54 -0400
+Received: from mga02.intel.com ([134.134.136.20]:2780 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJIAHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:07:30 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98F7920858;
-        Mon,  8 Oct 2018 16:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539017692;
-        bh=T05h9mmNjIzCxCA8ih41bZoXJcOSt7z8Y0uiPOjn0T4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Dqmw3cemvPVW/3tj2PFDVegszgjHVScyO/LKZg8C9jBCJAVmr52QYBOzuGj72nEJl
-         NL6ILpRm4E7J/jNoab1TiP+KVAy4ybkWO6fUxnMpwNXDv44slUqn+TfY9KKv15kfMf
-         rCZc9BLhgTWOU2JLqyVDTkiJ6utSUDp0/a+ihO1g=
-Received: by mail-qk1-f178.google.com with SMTP id a13-v6so7834161qkc.7;
-        Mon, 08 Oct 2018 09:54:52 -0700 (PDT)
-X-Gm-Message-State: ABuFfogLrbqLnYuoe01jszL2SPgI9JPSx2d3kJfDZ2clVonyfIyctUH6
-        sESvzs4/azV67ZWum3ifTeJ40Ah0v9rKZIZhUQ==
-X-Google-Smtp-Source: ACcGV62vWiL9PqL0hCfNL+kOwEtmWWHMKd+uBSZVRuVOjwsyyQJOaIIGhX+3QCmw6pxp7Rt04CXhem113T0zqHUKAA0=
-X-Received: by 2002:a37:12d1:: with SMTP id 78-v6mr19519749qks.147.1539017691827;
- Mon, 08 Oct 2018 09:54:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
- <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
- <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com> <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
-In-Reply-To: <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 8 Oct 2018 11:54:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJOc_cTh7rkeQ9auhcFR2Ein+CUQWXBQS74tNBYVSQBig@mail.gmail.com>
-Message-ID: <CAL_JsqJOc_cTh7rkeQ9auhcFR2Ein+CUQWXBQS74tNBYVSQBig@mail.gmail.com>
-Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726291AbeJIAHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 20:07:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 09:55:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
+   d="scan'208";a="269512543"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Oct 2018 09:51:37 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     rjw@rjwysocki.net, lenb@kernel.org, robert.moore@intel.com,
+        erik.schmauss@intel.com
+Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@acpica.org, linux-pm@vger.kernel.org,
+        pprakash@codeaurora.org, george.cherian@cavium.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [RESEND][PATCH] ACPI / CPPC: Add support for guaranteed performance
+Date:   Mon,  8 Oct 2018 09:51:36 -0700
+Message-Id: <20181008165136.9288-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 10:13 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Rob,
->
-> On Mon, Oct 8, 2018 at 4:57 PM Rob Herring <robh@kernel.org> wrote:
-> > On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
-> > > > Convert Renesas SoC bindings to DT schema format using json-schema.
->
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
-> > > > @@ -0,0 +1,205 @@
->
-> > > > +      - description: Kingfisher (SBEV-RCAR-KF-M03)
-> > > > +        items:
-> > > > +          - const: shimafuji,kingfisher
-> > > > +          - enum:
-> > > > +              - renesas,h3ulcb
-> > > > +              - renesas,m3ulcb
-> > > > +          - enum:
-> > > > +              - renesas,r8a7795
-> > > > +              - renesas,r8a7796
-> > >
-> > > This looks a bit funny: all other entries have the "const" last, and
-> > > use it for the
-> > > SoC number. May be correct, though.
-> > > To clarify, this is an extension board that can fit both the [HM]3ULCB
-> > > boards (actually also the new M3NULCB, I think).
-> >
-> > This being Kingfisher?
->
-> Correct.
->
-> > I wrote this based on dts files in the tree. There's 2 combinations that I see:
-> >
-> > "shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795"
-> > "shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796"
-> >
-> > The schema allows 4 combinations (1 * 2 * 2). I have no idea if the
-> > other combinations are possible. If not, then we could rewrite this as
-> > 2 entries with 3 const values each.
->
-> I expect there will soon be a third one:
->
->     "shimafuji,kingfisher", "renesas,m3nulcb", "renesas,r8a77965"
->
-> Technically, {h3,m3,m3n}ulcb are the same board (although there may be
-> minor revision differences), with a different SiP mounted.
-> But they are called/marketed depending on which SiP is mounted.
->
-> And on top of that, you can plug in a Kingfisher daughterboard. Could be an
-> overlay ;-)
+The Continuous Performance Control Package can have guaranteed performance
+field. Add support to read guaranteed performance.
 
-We probably shouldn't have put kingfisher as a top-level compatible
-then. But we did, so not really much point to discuss that now.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+No changes. But adding CC to mailing lists.
 
-As to whether there's a better way to express it in the schema, I'm
-not sure. I don't think there's a way with json-schema to express a
-list, but the 1st item is optional.
+ Documentation/acpi/cppc_sysfs.txt |  2 ++
+ drivers/acpi/cppc_acpi.c          | 10 ++++++++--
+ include/acpi/cppc_acpi.h          |  1 +
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
-Rob
+diff --git a/Documentation/acpi/cppc_sysfs.txt b/Documentation/acpi/cppc_sysfs.txt
+index f20fb445135d..812574d30717 100644
+--- a/Documentation/acpi/cppc_sysfs.txt
++++ b/Documentation/acpi/cppc_sysfs.txt
+@@ -22,6 +22,7 @@ $ ls -lR  /sys/devices/system/cpu/cpu0/acpi_cppc/
+ /sys/devices/system/cpu/cpu0/acpi_cppc/:
+ total 0
+ -r--r--r-- 1 root root 65536 Mar  5 19:38 feedback_ctrs
++-r--r--r-- 1 root root 65536 Mar  5 19:38 guaranteed_perf
+ -r--r--r-- 1 root root 65536 Mar  5 19:38 highest_perf
+ -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_freq
+ -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_nonlinear_perf
+@@ -33,6 +34,7 @@ total 0
+ 
+ --------------------------------------------------------------------------------
+ 
++* guaranteed_perf : Guaranteed performance of this processor (abstract scale).
+ * highest_perf : Highest performance of this processor (abstract scale).
+ * nominal_perf : Highest sustained performance of this processor (abstract scale).
+ * lowest_nonlinear_perf : Lowest performance of this processor with nonlinear
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index d9ce4b162e2c..5babb9402f11 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -153,6 +153,7 @@ __ATTR(_name, 0444, show_##_name, NULL)
+ 	}								\
+ 	define_one_cppc_ro(member_name)
+ 
++show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
+ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
+@@ -189,6 +190,7 @@ static struct attribute *cppc_attrs[] = {
+ 	&nominal_perf.attr,
+ 	&nominal_freq.attr,
+ 	&lowest_freq.attr,
++	&guaranteed_perf.attr,
+ 	NULL
+ };
+ 
+@@ -1061,9 +1063,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+ {
+ 	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+ 	struct cpc_register_resource *highest_reg, *lowest_reg,
+-		*lowest_non_linear_reg, *nominal_reg,
++		*lowest_non_linear_reg, *nominal_reg, *guaranteed_reg,
+ 		*low_freq_reg = NULL, *nom_freq_reg = NULL;
+-	u64 high, low, nom, min_nonlinear, low_f = 0, nom_f = 0;
++	u64 high, low, guaranteed, nom, min_nonlinear, low_f = 0, nom_f = 0;
+ 	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
+ 	struct cppc_pcc_data *pcc_ss_data = NULL;
+ 	int ret = 0, regs_in_pcc = 0;
+@@ -1079,6 +1081,7 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+ 	nominal_reg = &cpc_desc->cpc_regs[NOMINAL_PERF];
+ 	low_freq_reg = &cpc_desc->cpc_regs[LOWEST_FREQ];
+ 	nom_freq_reg = &cpc_desc->cpc_regs[NOMINAL_FREQ];
++	guaranteed_reg = &cpc_desc->cpc_regs[GUARANTEED_PERF];
+ 
+ 	/* Are any of the regs PCC ?*/
+ 	if (CPC_IN_PCC(highest_reg) || CPC_IN_PCC(lowest_reg) ||
+@@ -1107,6 +1110,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+ 	cpc_read(cpunum, nominal_reg, &nom);
+ 	perf_caps->nominal_perf = nom;
+ 
++	cpc_read(cpunum, guaranteed_reg, &guaranteed);
++	perf_caps->guaranteed_perf = guaranteed;
++
+ 	cpc_read(cpunum, lowest_non_linear_reg, &min_nonlinear);
+ 	perf_caps->lowest_nonlinear_perf = min_nonlinear;
+ 
+diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+index 8e0b8250a139..cf59e6210d27 100644
+--- a/include/acpi/cppc_acpi.h
++++ b/include/acpi/cppc_acpi.h
+@@ -104,6 +104,7 @@ enum cppc_regs {
+  * today.
+  */
+ struct cppc_perf_caps {
++	u32 guaranteed_perf;
+ 	u32 highest_perf;
+ 	u32 nominal_perf;
+ 	u32 lowest_perf;
+-- 
+2.17.1
+
