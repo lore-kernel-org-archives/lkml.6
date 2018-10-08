@@ -2,98 +2,102 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238EEC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A66C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E88C82085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:27:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E88C82085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 97E112085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:32:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gwL+2hdV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E112085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeJHLhA (ORCPT
+        id S1726198AbeJHLmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 07:37:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13202 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726523AbeJHLhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 07:37:00 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 93DC263D172A0;
-        Mon,  8 Oct 2018 12:27:15 +0800 (CST)
-Received: from localhost.localdomain (10.143.28.90) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 8 Oct 2018 12:27:06 +0800
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-To:     <christoffer.dall@arm.com>, <marc.zyngier@arm.com>,
-        <peter.maydell@linaro.org>, <drjones@redhat.com>,
-        <james.morse@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-CC:     <gengdongjiu@huawei.com>
-Subject: [PATCH v2 2/2] arm/arm64: KVM: enable 32 bits kvm vcpu events support
-Date:   Mon, 8 Oct 2018 08:34:48 -0400
-Message-ID: <1539002088-21215-3-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539002088-21215-1-git-send-email-gengdongjiu@huawei.com>
-References: <1539002088-21215-1-git-send-email-gengdongjiu@huawei.com>
+        Mon, 8 Oct 2018 07:42:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45434 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725760AbeJHLmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 07:42:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u12-v6so4607688pfn.12
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 21:32:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=C9YKkDG+9wx0SGJSSRCxutx38MY2RxzBXc1u2dlLtvA=;
+        b=gwL+2hdVxsqQ2npU9IWJj91bw1/TyUjp2aSWx57BPr+GjUTfbDRo5IwII7MVHD8Vvb
+         qTl0uda8JusRAAQNchQpuDMJaKzGpcKTrjJEDG0MeuyyIrZPF+uvkrQaX4r33O/SjLpK
+         640MBbzlbGAS1U5/EXzyi/MM/5yXgjymg8Eag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=C9YKkDG+9wx0SGJSSRCxutx38MY2RxzBXc1u2dlLtvA=;
+        b=MjlHULAOyrpcZwd7f0eqUfW45+Sz7JH9vNeJHnMVT2iJ/AV4ueo8ZImJS+5JV1tPiT
+         oPhtjxU0mbn2tNM9GV2jHmQM08C4m5wcBZuAlxO4oV30EnM229q0z3eiqDsJgY1y3Jxr
+         hOvgqnhXtLCGuX/bvjkREyXUyS2ta5UqE36mMnjB/Ff1ReWMPJ/vkK2zmlJNGpBGbLJy
+         wUC0aDrCJunfUmv93ScVjBTmiE8y6ItabqPgGPZuJ20Pn+XM86O9bwA0gEZlvJajdIL9
+         oLrJTmxa21KrrSHwwhcx9cd2FmAASV6jMD2A6bEHee/MAbrSr9e24ISBsGYVp+/5EUAF
+         jpTQ==
+X-Gm-Message-State: ABuFfogFJhlZBSXgHgGThVQVE7P6t4Bv1VYyiS7e4VULgwZ51Q3FM49X
+        dt9m0ns6e6VSvplt7mfPmXD8Pw==
+X-Google-Smtp-Source: ACcGV610ZsXWLiqSETh6GiQI3TkaavsmT45CbNHfKsPidBDbpkWtwG/d7oMaFiaqhoxyXNr/u059NA==
+X-Received: by 2002:a62:5a83:: with SMTP id o125-v6mr23552071pfb.117.1538973152032;
+        Sun, 07 Oct 2018 21:32:32 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id o76-v6sm22290639pfi.162.2018.10.07.21.32.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 07 Oct 2018 21:32:31 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+To:     Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <62816605-0cc9-3743-e98c-682bf7996c6c@arm.com>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20181001215337.13358-1-swboyd@chromium.org>
+ <62816605-0cc9-3743-e98c-682bf7996c6c@arm.com>
+Message-ID: <153897315026.119890.9913725764215566223@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2] dma-debug: Check for drivers mapping invalid addresses in
+ dma_map_single()
+Date:   Sun, 07 Oct 2018 21:32:30 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 539aee0edb9f ("KVM: arm64: Share the parts of
-get/set events useful to 32bit") shares the get/set events
-helper for arm64 and arm32, it is better also share the check
-for vcpu events capability to enable 32 bit kvm vcpu events
-support.
+Quoting Robin Murphy (2018-10-02 07:01:42)
+> On 01/10/18 22:53, Stephen Boyd wrote:
+> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> > index d23fc45c8208..99ccba66c06a 100644
+> > --- a/include/linux/dma-mapping.h
+> > +++ b/include/linux/dma-mapping.h
+> > @@ -231,6 +231,7 @@ static inline dma_addr_t dma_map_single_attrs(struc=
+t device *dev, void *ptr,
+> >       dma_addr_t addr;
+> >   =
 
-User space will check whether KVM supports vcpu events through
-KVM_CAP_VCPU_EVENTS IOCTL.
+> >       BUG_ON(!valid_dma_direction(dir));
+> > +     debug_dma_check_single(dev, ptr, size);
+> =
 
-Cc: James Morse <james.morse@arm.com>
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
----
-For the 32 bits kvm migration, it needs to enable the vcpu events,
-this patch will enable it. The user space QEMU patch is here:
-https://patchwork.ozlabs.org/patch/975615/
----
- arch/arm64/kvm/reset.c | 1 -
- virt/kvm/arm/arm.c     | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+> Ahem...
+> =
 
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index fd37c53..e50245e 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -82,7 +82,6 @@ int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		break;
- 	case KVM_CAP_SET_GUEST_DEBUG:
- 	case KVM_CAP_VCPU_ATTRIBUTES:
--	case KVM_CAP_VCPU_EVENTS:
- 		r = 1;
- 		break;
- 	default:
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 40e79ea..64e5d97 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -212,6 +212,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_READONLY_MEM:
- 	case KVM_CAP_MP_STATE:
- 	case KVM_CAP_IMMEDIATE_EXIT:
-+	case KVM_CAP_VCPU_EVENTS:
- 		r = 1;
- 		break;
- 	case KVM_CAP_ARM_SET_DEVICE_ADDR:
--- 
-1.9.1
+> With that (and below) fixed so that it actually compiles,
+> =
+
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+Thanks for checking! ;)
 
