@@ -2,134 +2,127 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87D8C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384DAC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEC82087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:22:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="z+Z8PesT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BEC82087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id C578A20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C578A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeJHQdA (ORCPT
+        id S1727042AbeJHQib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 12:33:00 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:41983 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHQdA (ORCPT
+        Mon, 8 Oct 2018 12:38:31 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:31804 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeJHQib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:33:00 -0400
-Received: by mail-yw1-f66.google.com with SMTP id 135-v6so964005ywo.8
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 02:22:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c8ce6qwlR7ZgNdRvowCzs1yAJcRG7bHhm9H9XCXD5tg=;
-        b=z+Z8PesTOxMOdL6wGaeDSrlwXKMODDyOT4gN3Hks3NNyxdFYGadceBff3lYuoDV+kg
-         MITVodt1uWylixgIIDwgIiCHA+7BEfYfSr2UY3W+8Jdy1zM9nkKmOi9838A22cVrqp0b
-         WB6vNkvd4PqY+ijtJ/CCg52Gvp0r/tT1/wyNyMDIVr1uRgaTSgtBjO6I5piALetY6ow1
-         0ujXXQvh7vQTPfJ2d1fiq6Sn9Yp3c91S1FoUNABN5E6vnuveGf6Iy/7dEDhHc11GVMS/
-         RN8ytqnqgBKG9TBEuNNt7H123lCEEBW1MNk28/yYP4WXUHm7FY7Knts2sv0BOZ5RIo7v
-         4Zmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c8ce6qwlR7ZgNdRvowCzs1yAJcRG7bHhm9H9XCXD5tg=;
-        b=IK746CPq3UhmqDmZrarauPokm0DaETn8YXQFcd8h/O3PTG7HYae70PvgNW+Hd5EhHX
-         jm+EetoI35Yk0+mfQY2lZaY7vCUToi9pVe8rVDq6RzgNadsxdOM2mpeIDRwjuhqgfB8K
-         +zJIDEhEAiibUHOfDiVj7Km64ZRUAHqjJGC/FZYtBL7UqmDhbSbWd0mFqHyoEVZHOYi8
-         gVhktk+hZqA6RkvCMRNSRwI3vziYI8RdGPa11CUuxbELXt/A8/6rXvLfhpJtsiy7UAZG
-         ijnnONj2iByCdPPk/Yno5cDnaf52tWZLm1U6qRhTziIq+3FUPsm+BqfjymZpNEvKX0rL
-         aG0w==
-X-Gm-Message-State: ABuFfoiYKv8GWKBM5q5KXfbeBjaYc10S8R2S/+gyKnfD/nvWCSY+vbNP
-        NS//wl0dFPlR6/C8EFK+k03HPg==
-X-Google-Smtp-Source: ACcGV63hF9AL4+HL/Btk8VGWh2BCOrQPGt+aiOFYPa1xZ/vBUivoR9n25IDGlBWiUrJQNMBhZ/c5Kg==
-X-Received: by 2002:a0d:ed82:: with SMTP id w124-v6mr10081729ywe.447.1538990534371;
-        Mon, 08 Oct 2018 02:22:14 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:7d10])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm6269930ywv.34.2018.10.08.02.22.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 02:22:13 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 05:22:11 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
+        Mon, 8 Oct 2018 12:38:31 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w989RhjZ066688;
+        Mon, 8 Oct 2018 18:27:43 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Mon, 08 Oct 2018 18:27:43 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w989RdOd066609
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 8 Oct 2018 18:27:43 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+To:     ytk.lee@samsung.com, "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mhocko@suse.com" <mhocko@suse.com>
 Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH v2] mm: don't raise MEMCG_OOM event due to failed
- high-order allocation
-Message-ID: <20181008092211.GA7515@cmpxchg.org>
-References: <20181004214050.7417-1-guro@fb.com>
+        Oleg Nesterov <oleg@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
+ <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
+ <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
+ <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
+ <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
+ <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
+Date:   Mon, 8 Oct 2018 18:27:39 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004214050.7417-1-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 09:41:09PM +0000, Roman Gushchin wrote:
-> I was reported that on some of our machines containers were restarted
-> with OOM symptoms without an obvious reason. Despite there were almost
-> no memory pressure and plenty of page cache, MEMCG_OOM event was
-> raised occasionally, causing the container management software to
-> think, that OOM has happened. However, no tasks have been killed.
+On 2018/10/08 17:38, Yong-Taek Lee wrote:
+>>
+>> On 2018/10/08 15:14, Yong-Taek Lee wrote:
+>>>> On 2018/10/08 10:19, Yong-Taek Lee wrote:
+>>>>> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>>>>>         struct mm_struct *mm = NULL;
+>>>>>         struct task_struct *task;
+>>>>>         int err = 0;
+>>>>> +       int mm_users = 0;
+>>>>>
+>>>>>         task = get_proc_task(file_inode(file));
+>>>>>         if (!task)
+>>>>> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>>>>>                 struct task_struct *p = find_lock_task_mm(task);
+>>>>>
+>>>>>                 if (p) {
+>>>>> -                       if (atomic_read(&p->mm->mm_users) > 1) {
+>>>>> +                       mm_users = atomic_read(&p->mm->mm_users);
+>>>>> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p))) {
+>>>>
+>>>> How can this work (even before this patch)? When clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
+>>>> is requested, copy_process() calls copy_signal() in order to copy sig->oom_score_adj and
+>>>> sig->oom_score_adj_min before calling copy_mm() in order to increment mm->mm_users, doesn't it?
+>>>> Then, we will get two different "struct signal_struct" with different oom_score_adj/oom_score_adj_min
+>>>> but one "struct mm_struct" shared by two thread groups.
+>>>>
+>>>
+>>> Are you talking about race between __set_oom_adj and copy_process?
+>>> If so, i agree with your opinion. It can not set oom_score_adj properly for copied process if __set_oom_adj
+>>> check mm_users before copy_process calls copy_mm after copy_signal. Please correct me if i misunderstood anything.
+>>
+>> You understand it correctly.
+>>
+>> Reversing copy_signal() and copy_mm() is not sufficient either. We need to use a read/write lock
+>> (read lock for copy_process() and write lock for __set_oom_adj()) in order to make sure that
+>> the thread created by clone() becomes reachable from for_each_process() path in __set_oom_adj().
+>>
 > 
-> The following investigation showed that the problem is caused by
-> a failing attempt to charge a high-order page. In such case, the
-> OOM killer is never invoked. As shown below, it can happen under
-> conditions, which are very far from a real OOM: e.g. there is plenty
-> of clean page cache and no memory pressure.
-> 
-> There is no sense in raising an OOM event in this case, as it might
-> confuse a user and lead to wrong and excessive actions (e.g. restart
-> the workload, as in my case).
-> 
-> Let's look at the charging path in try_charge(). If the memory usage
-> is about memory.max, which is absolutely natural for most memory cgroups,
-> we try to reclaim some pages. Even if we were able to reclaim
-> enough memory for the allocation, the following check can fail due to
-> a race with another concurrent allocation:
-> 
->     if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
->         goto retry;
-> 
-> For regular pages the following condition will save us from triggering
-> the OOM:
-> 
->    if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
->        goto retry;
-> 
-> But for high-order allocation this condition will intentionally fail.
-> The reason behind is that we'll likely fall to regular pages anyway,
-> so it's ok and even preferred to return ENOMEM.
-> 
-> In this case the idea of raising MEMCG_OOM looks dubious.
-> 
-> Fix this by moving MEMCG_OOM raising to mem_cgroup_oom() after
-> allocation order check, so that the event won't be raised for high
-> order allocations. This change doesn't affect regular pages allocation
-> and charging.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Acked-by: David Rientjes <rientjes@google.com>
-> Acked-by: Michal Hocko <mhocko@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Thank you for your suggestion. But i think it would be better to seperate to 2 issues. How about think these
+> issues separately because there are no dependency between race issue and my patch. As i already explained,
+> for_each_process path is meaningless if there is only one thread group with many threads(mm_users > 1 but 
+> no other thread group sharing same mm). Do you have any other idea to avoid meaningless loop ? 
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Yes. I suggest reverting commit 44a70adec910d692 ("mm, oom_adj: make sure processes
+sharing mm have same view of oom_score_adj") and commit 97fd49c2355ffded ("mm, oom:
+kill all tasks sharing the mm").
+
+> 
+>>>
+>>>>>                                 mm = p->mm;
+>>>>>                                 atomic_inc(&mm->mm_count);
+>>>>>                         }
+>>>
+>>
+> 
+
+
+
