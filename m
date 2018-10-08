@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06D0C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D13C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F6721479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C01B9204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuC1vr1X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F6721479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRkCjfPc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01B9204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732789AbeJICGo (ORCPT
+        id S1732797AbeJICGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:06:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:06:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732457AbeJICGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:06:42 -0400
+        id S1732457AbeJICGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:06:45 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6AB92087D;
-        Mon,  8 Oct 2018 18:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1B7B20645;
+        Mon,  8 Oct 2018 18:53:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024814;
-        bh=upZJhyvuQR7i0+eTSgS+8Tj4GN+Vi4ZXvKQI3gk3h/w=;
+        s=default; t=1539024817;
+        bh=n0NPbI3ArivNS8jInFPihZlqoLKaLQdLIs7KfXNsYd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LuC1vr1XHB5huWxmu6Xd/JM2LICD7Tyxh+6zEuPuYyKf4BWe6/BgmiyQ/ZI82YHp7
-         NXjG0qc3QCR8HqKUygykaQ8LIdZF4IMTHeLwgGVcgQvRt7nD5j11Erx+38HBTJSttS
-         SnUJRk3j/flcBUbwfgOtboAMBt3CBn14eyXqMqB8=
+        b=ZRkCjfPcGUJe6FDIG6J4Yvh2qkVZChDpOpwoRqIXUzzQ1IUa4AAM6OyPxAlhENm5j
+         RNZazaZGz9w4AKANG2NLcmbenWcqajiC6pAOte+oBr1ZERBlvHJQFovDjV/QHLzHqo
+         xDhtkGgMIUR3uRs6bN04E8gxCD2pm+MGFhWT8RwI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        Jan Lorenzen <jl@newtec.dk>, Jim Paris <jim@jtan.com>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.18 162/168] gpiolib: Free the last requested descriptor
-Date:   Mon,  8 Oct 2018 20:32:22 +0200
-Message-Id: <20181008175626.216039559@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wei Liu <wei.liu2@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 140/168] xen/manage: dont complain about an empty value in control/sysrq node
+Date:   Mon,  8 Oct 2018 20:32:00 +0200
+Message-Id: <20181008175625.354467513@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,37 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 19a4fbffc94e41abaa2a623a25ce2641d69eccf0 upstream.
+[ Upstream commit 87dffe86d406bee8782cac2db035acb9a28620a7 ]
 
-The current code only frees N-1 gpios if an error occurs during
-gpiod_set_transitory, gpiod_direction_output or gpiod_direction_input.
-Leading to gpios that cannot be used by userspace nor other drivers.
+When guest receives a sysrq request from the host it acknowledges it by
+writing '\0' to control/sysrq xenstore node. This, however, make xenstore
+watch fire again but xenbus_scanf() fails to parse empty value with "%c"
+format string:
 
-Cc: Timur Tabi <timur@codeaurora.org>
-Cc: stable@vger.kernel.org
-Fixes: ab3dbcf78f60f46d ("gpioib: do not free unrequested descriptors)
-Reported-by: Jan Lorenzen <jl@newtec.dk>
-Reported-by: Jim Paris <jim@jtan.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+ sysrq: SysRq : Emergency Sync
+ Emergency Sync complete
+ xen:manage: Error -34 reading sysrq code in control/sysrq
+
+Ignore -ERANGE the same way we already ignore -ENOENT, empty value in
+control/sysrq is totally legal.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpiolib.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/manage.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -565,7 +565,7 @@ static int linehandle_create(struct gpio
- 		if (ret)
- 			goto out_free_descs;
- 		lh->descs[i] = desc;
--		count = i;
-+		count = i + 1;
- 
- 		if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
- 			set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -280,9 +280,11 @@ static void sysrq_handler(struct xenbus_
+ 		/*
+ 		 * The Xenstore watch fires directly after registering it and
+ 		 * after a suspend/resume cycle. So ENOENT is no error but
+-		 * might happen in those cases.
++		 * might happen in those cases. ERANGE is observed when we get
++		 * an empty value (''), this happens when we acknowledge the
++		 * request by writing '\0' below.
+ 		 */
+-		if (err != -ENOENT)
++		if (err != -ENOENT && err != -ERANGE)
+ 			pr_err("Error %d reading sysrq code in control/sysrq\n",
+ 			       err);
+ 		xenbus_transaction_end(xbt, 1);
 
 
