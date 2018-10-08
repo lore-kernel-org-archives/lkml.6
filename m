@@ -2,125 +2,99 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 902A3C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F5BC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4050821479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F4EC21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4PIyY9i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4050821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCBd34nN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4EC21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbeJIA7U (ORCPT
+        id S1726636AbeJIBAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:59:20 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39653 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIA7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:59:20 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c25-v6so8389694pfe.6
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 10:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZY8bZ2xBQFg51chSva81weSb+0yW1O0m/mdCnEL7dJo=;
-        b=l4PIyY9iJtb8ufEdPEpDpVxo0doPZaj4jEG4mIuYY78gjuje53dZJO3t7VpPaOiHiX
-         9ARKDwciWtOc/kCMsCFPOe+ritrjl66GZjOhlP8ZIjQGIMvr7i1pIb88D+voFpYW2sJg
-         PRmOVRBt0JgYPtM/sdWVAlLxwP7Kuc3T5eMhKWMvOGdfi3Kkwol2cgStNiJZnaiNXfan
-         qKByDKfd1SAJNYqNmpOnZpg/OM/vlMILP6LOkznRMBAA0pygI66e8Dto/LuRDfzmGmQa
-         +PCrbubvjzypwr/x4Wu7Dln6Plu53pImdysyVlQSKlwetVtjHGrPtM6Yp4rs4QKQhFRr
-         KeMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZY8bZ2xBQFg51chSva81weSb+0yW1O0m/mdCnEL7dJo=;
-        b=Ulvmw227KZjndDZRH7pE8JdZM728TKe9Fm1/eXICBFHPf7hsViwKi3dAVXO/vMp9ie
-         3bkw0pq7w8O9v1q6+fkx/3sYYzgbRMdQfwpZIUXPabup7NhrHJQhLLHVpRxVZhv638Ib
-         ui51JNfb5bYhOSIoc2QUp3M8/n9VPjUm07vbNvxJ7imKRokYLP7UmOKVgfldR5aDguWO
-         CMMzc063kpXX6azp2CoQ9BBS5Ke8cpOL1pI4gOhBByyYTXVRKCBwpMpyWCu5PRempGXj
-         n2YNdIuc7qBWaQcU2Gj0PPlbVFcZ/RQNJ+IjXTjadrhRAnkvKIJfhqI7d7gjUEwDylaV
-         1zgw==
-X-Gm-Message-State: ABuFfohjNZv/SDHtbyu1y4GgCOcZbBUvhoCC2U4eW277WztWYM1O0lQd
-        60VNhMWt+20LmS2/U73NDDc=
-X-Google-Smtp-Source: ACcGV62GFVGu+HSesRyk6PYWl7mxDQLIkexPqbGaDT/VvpSdEe+5XPFEDMJwWH/b9DAme4I/qDinVg==
-X-Received: by 2002:a62:7501:: with SMTP id q1-v6mr25982302pfc.225.1539020789909;
-        Mon, 08 Oct 2018 10:46:29 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id j15-v6sm21227884pfn.52.2018.10.08.10.46.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 10:46:29 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 10:46:28 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Peng Hao <peng.hao2@zte.com.cn>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-Subject: Re: [PATCH] amdgpu/gmc : fix compile warning
-Message-ID: <20181008174628.GB11442@roeck-us.net>
-References: <1536919552-116245-1-git-send-email-peng.hao2@zte.com.cn>
- <20181004185237.GA20667@roeck-us.net>
- <022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com>
- <4772f72c-6018-3556-6324-5f49faa00073@roeck-us.net>
- <4da23fcb-4a94-2695-ad80-929025e84bd2@gmail.com>
- <c72a23ea-efea-4c0e-d397-623d6ac16ebb@roeck-us.net>
- <c43669b7-1074-714c-fb22-81685826b3ad@amd.com>
- <74078dc6-ef08-586b-fd58-51eb2c0b5060@roeck-us.net>
- <BN6PR12MB1809E1A07CD1B5B0F41273EBF7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
- <c6880c5b-e259-4923-8d5a-80c620563398@amd.com>
+        Mon, 8 Oct 2018 21:00:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeJIBAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:00:14 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F40CB214FA
+        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 17:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539020844;
+        bh=8D+awCa3qqzmyCe4kPPrdC/Oz1P+gaNIc4Pgm4R8TQ0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WCBd34nN0x3YGlpO1ZgJ32kG4QMgmPDHbdWNHtjYMsRXQOPIjyuuhKJMk8TBcjAjV
+         pPQYVHZd7KUFQ4yLBHM1ApoXsNrSmqaKLh+Ns7gxfJ3k9F4z0s6xrfXGcsqMFJlFus
+         QXjdrAJkJ2etQzXJFV9vXMsNTcIeVO6CS2Zg3Gxs=
+Received: by mail-wr1-f41.google.com with SMTP id e4-v6so21796336wrs.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 10:47:23 -0700 (PDT)
+X-Gm-Message-State: ABuFfoipC9uynXpZRHJSCDN8s4Xkd6DGXzPnSJVR/5U2vfYaiC6Eff10
+        +5tJukHF1rKk2dYfIl9G4OUYialgFRy7yP7+PxeVgg==
+X-Google-Smtp-Source: ACcGV61PJYsT03GZuICP/A2bwvvB6W7CcgAsB4Iyb2LU+PXg4nOjcqMhdRAK3qb9pyy7Qxae1rnQkxuClLQv1WEch0A=
+X-Received: by 2002:adf:9792:: with SMTP id s18-v6mr18167234wrb.283.1539020842298;
+ Mon, 08 Oct 2018 10:47:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6880c5b-e259-4923-8d5a-80c620563398@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181006015110.653946300@goodmis.org> <20181006015720.634688468@goodmis.org>
+ <20181006121211.GA5663@hirez.programming.kicks-ass.net> <20181006093905.46276505@vmware.local.home>
+ <20181008072134.GB5663@hirez.programming.kicks-ass.net> <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
+ <20181008155757.GC5663@hirez.programming.kicks-ass.net> <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
+ <20181008163953.GD5663@hirez.programming.kicks-ass.net> <CALCETrWuGh=1n2bEE9B0eeyzvnaD4y_Sx6MB+r9B5aFXzg8qBw@mail.gmail.com>
+ <CAKv+Gu-08i6QEahyYhBtCBmpOYNuxirgdsgGvRw+Y0DX3+DVNQ@mail.gmail.com> <nycvar.YFH.7.76.1810081944030.14430@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1810081944030.14430@cbobk.fhfr.pm>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 8 Oct 2018 10:47:10 -0700
+X-Gmail-Original-Message-ID: <CALCETrVHRV6nVANL7i1qGBY3vp9kfY_S1tvnhiL+iowr5RDzxg@mail.gmail.com>
+Message-ID: <CALCETrVHRV6nVANL7i1qGBY3vp9kfY_S1tvnhiL+iowr5RDzxg@mail.gmail.com>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature "jump_function"
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        mhelsley@vmware.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 05:22:24PM +0000, Koenig, Christian wrote:
-> Am 08.10.2018 um 17:57 schrieb Deucher, Alexander:
-> >>>> One thing I found missing in the discussion was the reference to the
-> >>>> C standard.
-> >>>> The C99 standard states in section 6.7.8 (Initialization) clause 19:
-> >>>> "... all
-> >>>> subobjects that are not initialized explicitly shall be initialized
-> >>>> implicitly the same as objects that have static storage duration".
-> >>>> Clause 21 makes further reference to partial initialization,
-> >>>> suggesting the same. Various online resources, including the gcc
-> >>>> documentation, all state the same. I don't find any reference to a
-> >>>> partial initialization which would leave members of a structure
-> >>>> undefined. It would be interesting for me to understand how and why
-> >>>> this does not apply here.
-> >>>>
-> >>>> In this context, it is interesting that the other 48 instances of the
-> >>>> { { 0 } } initialization in the same driver don't raise similar
-> >>>> concerns, nor seemed to have caused any operational problems.
-> >>> Feel free to provide patches to replace those with memset().
-> >>>
-> >> Not me. As I see it, the problem, if it exists, would be a violation of the C
-> >> standard. I don't believe hacking around bad C compilers. I would rather
-> >> blacklist such compilers.
-> 
-> Well then you would need to blacklist basically all gcc variants of the 
-> last decade or so.
-> 
-> Initializing only known members of structures is a perfectly valid 
-> optimization and well known issue when you then compare the structure 
-> with memcpy() or use the bytes for hashing or something similar.
-> 
+On Mon, Oct 8, 2018 at 10:44 AM Jiri Kosina <jikos@kernel.org> wrote:
+>
+> On Mon, 8 Oct 2018, Ard Biesheuvel wrote:
+>
+> > Does that mean that architectures could opt out of doing the whole
+> > objtool + relocation processing thing, and instead take the hit of
+> > going through the trampoline for all calls?
+>
+> There are architectures that aren't [currently] supported by objtool at
+> all anyway.
+>
 
-Isn't that about padding ? That is a completely different issue.
-
-Guenter
+The the credit of most architectures, though, the only reason x86
+would want to use objtool instead of digging the results directly out
+of the relocation data is that x86 has an overcomplicated instruction
+encoding and there's no fully reliable way to find the address of the
+instruction that contains a given relocation without fully
+disassembling the binary.
