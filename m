@@ -6,47 +6,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C96C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63112C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D3362089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B1852064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zgLspZEI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3362089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQesy6l2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B1852064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbeJIBvV (ORCPT
+        id S1729166AbeJIBvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38124 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:20 -0400
+        id S1726427AbeJIBvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:23 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEDCC2064A;
-        Mon,  8 Oct 2018 18:38:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 844D52087D;
+        Mon,  8 Oct 2018 18:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023897;
-        bh=l7dKxMsTL7BEQ2QynHyLitd6crE9SseD8pBWf8aI054=;
+        s=default; t=1539023900;
+        bh=5GEJyTMHPPJHyKMt4476YcbOoLuTUJ0Vd7W3JcPd2n4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zgLspZEIVBmgdKSMkh8qtP6T4qydA48ZrWkSq7Uoin02Deu6qlScYGOin2MeJxo6r
-         A8ZLgNmbNO7RzZtX6cprNqbuQ89UD0ZXxFwsYy6aSNeI4zIlBsTpmzeEIs4BjKo+nx
-         OjCPIsskjJy2LSmIZTneqVi4F69/Nz/eag3SGyFk=
+        b=dQesy6l2P3KeuwNDc6ZLtiV3EoHn0DrYFcBR9Awm7bLbtxCtIEmArNbRFxE87gATn
+         +qLsODZBzxyCQtS02Sau0ntUymeZmTAs50mLXcNIlMhatIlpZVNjOpfIzxDz2M2hre
+         wWDulnpyJGn4YXdT5XTePW/Xj32qYHDxPyUF4SD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH 4.9 01/59] serial: mvebu-uart: Fix reporting of effective CSIZE to userspace
-Date:   Mon,  8 Oct 2018 20:31:08 +0200
-Message-Id: <20181008175546.783325443@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Arunk Khandavalli <akhandav@codeaurora.org>,
+        Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 10/59] cfg80211: nl80211_update_ft_ies() to validate NL80211_ATTR_IE
+Date:   Mon,  8 Oct 2018 20:31:17 +0200
+Message-Id: <20181008175547.692535166@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -59,40 +64,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Arunk Khandavalli <akhandav@codeaurora.org>
 
-commit e0bf2d4982fe7d9ddaf550dd023803ea286f47fc upstream.
+[ Upstream commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 ]
 
-Apparently, this driver (or the hardware) does not support character
-length settings. It's apparently running in 8-bit mode, but it makes
-userspace believe it's in 5-bit mode. That makes tcsetattr with CS8
-incorrectly fail, breaking e.g. getty from busybox, thus the login shell
-on ttyMVx.
+nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
+is_valid_ie_attr() before dereferencing it, but that helper function
+returns true in case of NULL pointer (i.e., attribute not included).
+This can result to dereferencing a NULL pointer. Fix that by explicitly
+checking that NL80211_ATTR_IE is included.
 
-Fix by hard-wiring CS8 into c_cflag.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Fixes: 30530791a7a0 ("serial: mvebu-uart: initial support for Armada-3700 serial port")
-Cc: stable <stable@vger.kernel.org> # 4.6+
+Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Transition")
+Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/mvebu-uart.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/wireless/nl80211.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/serial/mvebu-uart.c
-+++ b/drivers/tty/serial/mvebu-uart.c
-@@ -327,8 +327,10 @@ static void mvebu_uart_set_termios(struc
- 	if ((termios->c_cflag & CREAD) == 0)
- 		port->ignore_status_mask |= STAT_RX_RDY | STAT_BRK_ERR;
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -11148,6 +11148,7 @@ static int nl80211_update_ft_ies(struct
+ 		return -EOPNOTSUPP;
  
--	if (old)
-+	if (old) {
- 		tty_termios_copy_hw(termios, old);
-+		termios->c_cflag |= CS8;
-+	}
+ 	if (!info->attrs[NL80211_ATTR_MDID] ||
++	    !info->attrs[NL80211_ATTR_IE] ||
+ 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
+ 		return -EINVAL;
  
- 	baud = uart_get_baud_rate(port, termios, old, 0, 460800);
- 	uart_update_timeout(port, termios->c_cflag, baud);
 
 
