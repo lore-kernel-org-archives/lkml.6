@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DB0C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC919C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4DFF2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 768F021479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yfLBKwOu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DFF2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLKCIf8D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768F021479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729892AbeJIByL (ORCPT
+        id S1729901AbeJIByP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41600 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726868AbeJIByL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:11 -0400
+        id S1726868AbeJIByP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:15 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7A812064A;
-        Mon,  8 Oct 2018 18:41:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A71A2064A;
+        Mon,  8 Oct 2018 18:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024066;
-        bh=cHVGHx2zO5mh1+mBYik4kUwpWlC0bl3ha4VGEzNfUY0=;
+        s=default; t=1539024070;
+        bh=xp2XQ+lbgvvieYhCSyBxr1gKuJPvCYBjZY9+FEwUr0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfLBKwOujSkcrjdxaZyKyLeR6M6rmX7C9smE8tHK+zPdHsdqhuXTtsokM1Fowt6y1
-         OOtGwUxuZLp3JJnsdiH8gEQoK+mdr3nrLLnsK4raPDf8FzBaiLN60HVc37ZPLkov2J
-         nM7fTWe41dNMpKKYHvZrblL+E/4HUSg7UDEcs5Xg=
+        b=QLKCIf8DJJwB0ivWmAj92KxDq52lq8ZsXvCm906BiSTRAVo246WjVPKn6OkJLXKEw
+         CxMBLQqqb3SDJZX2gfNrJWW6AOR1U99H40d0+hZgDXeEXzWiHLvDmbeEAWbJiPMcR1
+         dAFZFjjkeL/p4zYUU0uroQI8yVE0+3nxhm6CKTb8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 01/94] drm/amd/pp: initialize result to before oring in data
-Date:   Mon,  8 Oct 2018 20:30:42 +0200
-Message-Id: <20181008175605.130768560@linuxfoundation.org>
+        stable@vger.kernel.org, Danek Duvall <duvall@comfychair.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 10/94] mac80211: correct use of IEEE80211_VHT_CAP_RXSTBC_X
+Date:   Mon,  8 Oct 2018 20:30:51 +0200
+Message-Id: <20181008175605.552459915@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -63,42 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Danek Duvall <duvall@comfychair.org>
 
-commit c4ff91dd40e2253ab6dd028011469c2c694e1e19 upstream.
+[ Upstream commit 67d1ba8a6dc83d90cd58b89fa6cbf9ae35a0cf7f ]
 
-The current use of result is or'ing in values and checking for
-a non-zero result, however, result is not initialized to zero
-so it potentially contains garbage to start with. Fix this by
-initializing it to the first return from the call to
-vega10_program_didt_config_registers.
+The mod mask for VHT capabilities intends to say that you can override
+the number of STBC receive streams, and it does, but only by accident.
+The IEEE80211_VHT_CAP_RXSTBC_X aren't bits to be set, but values (albeit
+left-shifted).  ORing the bits together gets the right answer, but we
+should use the _MASK macro here instead.
 
-Detected by cppcheck:
-"(error) Uninitialized variable: result"
-
-Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Huang Rui <ray.huang@amd.com>
-[Fix the subject as Colin's comment]
-Signed-off-by: Huang Rui <ray.huang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Danek Duvall <duvall@comfychair.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/main.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
-@@ -1142,7 +1142,7 @@ static int vega10_enable_psm_gc_edc_conf
- 	for (count = 0; count < num_se; count++) {
- 		data = GRBM_GFX_INDEX__INSTANCE_BROADCAST_WRITES_MASK | GRBM_GFX_INDEX__SH_BROADCAST_WRITES_MASK | ( count << GRBM_GFX_INDEX__SE_INDEX__SHIFT);
- 		cgs_write_register(hwmgr->device, reg, data);
--		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
-+		result = vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
- 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallDelayConfig_Vega10, VEGA10_CONFIGREG_DIDT);
- 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlResetConfig_Vega10, VEGA10_CONFIGREG_DIDT);
- 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -467,10 +467,7 @@ static const struct ieee80211_vht_cap ma
+ 		cpu_to_le32(IEEE80211_VHT_CAP_RXLDPC |
+ 			    IEEE80211_VHT_CAP_SHORT_GI_80 |
+ 			    IEEE80211_VHT_CAP_SHORT_GI_160 |
+-			    IEEE80211_VHT_CAP_RXSTBC_1 |
+-			    IEEE80211_VHT_CAP_RXSTBC_2 |
+-			    IEEE80211_VHT_CAP_RXSTBC_3 |
+-			    IEEE80211_VHT_CAP_RXSTBC_4 |
++			    IEEE80211_VHT_CAP_RXSTBC_MASK |
+ 			    IEEE80211_VHT_CAP_TXSTBC |
+ 			    IEEE80211_VHT_CAP_SU_BEAMFORMER_CAPABLE |
+ 			    IEEE80211_VHT_CAP_SU_BEAMFORMEE_CAPABLE |
 
 
