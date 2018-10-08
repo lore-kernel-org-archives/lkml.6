@@ -2,156 +2,146 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7710C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC871C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68C7720878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:38:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C7720878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9628A20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:39:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oVW006xm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9628A20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeJHPtH (ORCPT
+        id S1727346AbeJHPtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:49:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54954 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbeJHPtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:49:07 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D356FAC2C6;
-        Mon,  8 Oct 2018 08:38:31 +0000 (UTC)
-Received: from [10.36.117.229] (ovpn-117-229.ams2.redhat.com [10.36.117.229])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 442A8611C0;
-        Mon,  8 Oct 2018 08:38:30 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the akpm tree with the jc_docs tree
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181008183840.70ebfe94@canb.auug.org.au>
- <20181008081315.GB6772@rapoport-lnx>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <6ab76538-b836-3b22-cb29-102c613091cf@redhat.com>
-Date:   Mon, 8 Oct 2018 10:38:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181008081315.GB6772@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 8 Oct 2018 11:49:35 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:43940 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeJHPtf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 11:49:35 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181008083857epoutp02927ee119d1c04c0627bdc8aace4dd365~blWALiiyV0305503055epoutp02Z
+        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 08:38:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181008083857epoutp02927ee119d1c04c0627bdc8aace4dd365~blWALiiyV0305503055epoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538987937;
+        bh=pu9W9TkCvWMdCLA2G7OWKG6utgcM5rj1Y090akt8LA8=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=oVW006xmpsq53a9OWP1EmgyQSCGbOdmWb8FxDjvqo0rcArgXrJV5nOkH4EkIJT8bJ
+         r1mDW/aruUjZyqYvQDd2xzVMbwouDxyv6TLPVXzYl7iD12Rm7INfvPQh0gFF8nYjAI
+         51+/z5L3e0mFnfV6M2CF87g6yeiLdjlipRHms8fc=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20181008083856epcas1p4197d6452c3a41f3477ea2762e4e94a2c~blV-CEFFZ2912829128epcas1p4d;
+        Mon,  8 Oct 2018 08:38:56 +0000 (GMT)
+X-AuditID: b6c32a37-3edff70000000fe9-77-5bbb17a0fb98
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3A.12.04073.0A71BBB5; Mon,  8 Oct 2018 17:38:56 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find
+ processes sharing mm
+Reply-To: ytk.lee@samsung.com
+From:   Yong-Taek Lee <ytk.lee@samsung.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Yong-Taek Lee <ytk.lee@samsung.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mhocko@suse.com" <mhocko@suse.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+Date:   Mon, 08 Oct 2018 17:38:55 +0900
+X-CMS-MailID: 20181008083855epcms1p20e691e5a001f3b94b267997c24e91128
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 08 Oct 2018 08:38:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdlhTV3eB+O5og8XPOC0u75rDZnFvzX9W
+        i9ffljFb3O9zsJjd8o7V4vF6bgc2j51rVzF5bFrVyeax6dMkdo++LasYPdZvucri8XmTXABb
+        VI5NRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
+        iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCQ4MCveLE3OLSvHS95PxcK0MDAyNToMqE
+        nIzjCw6xFjSKVMz5FdHA2MHfxcjJISFgIvH18QemLkYuDiGBHYwS3160sHUxcnDwCghK/N0h
+        DFIjLBAt0XfjBDtIWEhAVqK1VwUirC2xffcMNhCbTUBT4vq2q2wgY0QE1jBKdHzsZAZJMAvk
+        SUzvesIIsYtXYkb7UxYIW1pi+/KtYHFOAXeJc//vs0LERSVurn7LDmO/PzYfqldEovXeWWYI
+        W1Diwc/dUHEpiV3dl8HulxBYxSix/+A6Zging1Hi/tRuJogqfYkr/TPBbF4BX4kpP06CTWIR
+        UJX4dPkm2MMSAi4SCycLQxwtL7H97RxmkDAz0Gfrd+lDhPkk3n3tYYX5Zce8J1DTFSWaT/RC
+        xcUl7s3rg7rfQ+L98jtg/woJXGaS+HBcdwKj/CxE6M5CsmwWwrIFjMyrGMVSC4pz01OLDQuM
+        keNzEyM4DWqZ72DccM7nEKMAB6MSD++KgF3RQqyJZcWVuYcYJTiYlUR4RbcDhXhTEiurUovy
+        44tKc1KLDzGaAr08kVlKNDkfmKLzSuINTY2MjY0tTMzMzUyNlcR5n0jNjRYSSE8sSc1OTS1I
+        LYLpY+LglGpgdIrhnPl8zYSN+ROu95do2z5f8fu0/0rXD3f/fix5HqfIYOTdMfuGwP3aXZ+e
+        zn7/3+vGz4YlRRH73tgdyLsdPK1t29rDu4+UFZd250kJ8vzs+iwR+HKmsp382oMBz366Hes0
+        fZDz/4P97g65+PLEy5vnNl7jeTjfTq1Rt+j7wrAniuFsz6yVRZVYijMSDbWYi4oTAYxcZ3iZ
+        AwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a
+References: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
+        <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
+        <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
+        <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
+        <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/2018 10:13, Mike Rapoport wrote:
-> On Mon, Oct 08, 2018 at 06:38:40PM +1100, Stephen Rothwell wrote:
->> Hi all,
+>
+>On 2018/10/08 15:14, Yong-Taek Lee wrote:
+>>> On 2018/10/08 10:19, Yong-Taek Lee wrote:
+>>>> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>>>>         struct mm_struct *mm = NULL;
+>>>>         struct task_struct *task;
+>>>>         int err = 0;
+>>>> +       int mm_users = 0;
+>>>>
+>>>>         task = get_proc_task(file_inode(file));
+>>>>         if (!task)
+>>>> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>>>>                 struct task_struct *p = find_lock_task_mm(task);
+>>>>
+>>>>                 if (p) {
+>>>> -                       if (atomic_read(&p->mm->mm_users) > 1) {
+>>>> +                       mm_users = atomic_read(&p->mm->mm_users);
+>>>> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p))) {
+>>>
+>>> How can this work (even before this patch)? When clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
+>>> is requested, copy_process() calls copy_signal() in order to copy sig->oom_score_adj and
+>>> sig->oom_score_adj_min before calling copy_mm() in order to increment mm->mm_users, doesn't it?
+>>> Then, we will get two different "struct signal_struct" with different oom_score_adj/oom_score_adj_min
+>>> but one "struct mm_struct" shared by two thread groups.
+>>>
 >>
->> Today's linux-next merge of the akpm tree got conflicts in:
->>
->>   Documentation/memory-hotplug.txt
->>   Documentation/admin-guide/mm/memory-hotplug.rst
->>
->> between commits:
->>
->>   6bf53999a3a2 ("docs: move memory hotplug description into admin-guide/mm")
->>   98cee6742c80 ("docs/vm: split memory hotplug notifier description to Documentation/core-api")
->>
->> from the jc_docs tree and patch:
->>
->>   "memory-hotplug.txt: add some details about locking internals"
->>
->> from the akpm tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
-> 
-> Somehow I've managed to miss the patches from David :(
-> 
-> I should have called the new
-> Documentation/core-api/memory-hotplug-notifier.rst memory-hotplug.rst and
-> then the details about locking would fit there just fine.
-> 
+>> Are you talking about race between __set_oom_adj and copy_process?
+>> If so, i agree with your opinion. It can not set oom_score_adj properly for copied process if __set_oom_adj
+>> check mm_users before copy_process calls copy_mm after copy_signal. Please correct me if i misunderstood anything.
+>
+> You understand it correctly.
+>
+> Reversing copy_signal() and copy_mm() is not sufficient either. We need to use a read/write lock
+> (read lock for copy_process() and write lock for __set_oom_adj()) in order to make sure that
+> the thread created by clone() becomes reachable from for_each_process() path in __set_oom_adj().
+>
 
-Yes, my changes certainly don't belong into the admin guide, so having
-internal memory-hotplug.rst sounds good to me.
+Thank you for your suggestion. But i think it would be better to seperate to 2 issues. How about think these
+issues separately because there are no dependency between race issue and my patch. As i already explained,
+for_each_process path is meaningless if there is only one thread group with many threads(mm_users > 1 but 
+no other thread group sharing same mm). Do you have any other idea to avoid meaningless loop ? 
 
-> I can do the renaming and add the patch
-> 
->   "memory-hotplug.txt: add some details about locking internals"
-> 
-> on top of the jc_docs tree.
-> 
-> Does it sound Ok?
-> 
-
-Fine with me.
-
-Thanks!
-
--- 
-
-Thanks,
-
-David / dhildenb
+>>
+>>>>                                 mm = p->mm;
+>>>>                                 atomic_inc(&mm->mm_count);
+>>>>                         }
+>>
+>
