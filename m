@@ -2,156 +2,100 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D31C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6CCC64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F121D2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EC1C2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASfF7Dva"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F121D2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHCfdHoh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC1C2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbeJHRKL (ORCPT
+        id S1727620AbeJHRKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:10:11 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44731 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHRKL (ORCPT
+        Mon, 8 Oct 2018 13:10:50 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40337 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeJHRKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:10:11 -0400
-Received: by mail-ot1-f68.google.com with SMTP id p23so7346658otf.11;
-        Mon, 08 Oct 2018 02:59:17 -0700 (PDT)
+        Mon, 8 Oct 2018 13:10:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id s5-v6so8124313pfj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 02:59:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6pPl+ooxeuaHheuMEW1uilUNg7fgvFgLTQ5AiW5OUWI=;
-        b=ASfF7DvaFE+sS7/Qr+mj2BWqdEmZUx6Vt75cTZCD5+aIVjW/g25ejQ7gNj7lNqcyfX
-         xtwyvO259ecUYT5J09nkD8Idm5zXIO7gTgMxR7DXr2bpiJh028CNoczbkGhI1HCjRApm
-         hj61u+GMhK4rV7tAb2Lw3QFg7PS40sJII52rNaLms+eiKuSk4oUKB+N99WtR497uNXT8
-         1/6RfvT4dLLivJuLu5x17ezOifh3VZoMsko3PEmKkesg+3beIxZy13NqGntee9A8+9Zb
-         NxPRMhjdUv9G4cGXtU6FglDjGZ+zCfjSNLQUF1AtRq3wlkLQuamWY7SerMhnOQlIfklW
-         Lkyw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TPKLJvi0bu0T0vgO/2whyuCmUDDDZkWtuXYkyhUy2Zg=;
+        b=XHCfdHohHLEgqq+l/ncblEg3sleWSnwJaLftTIlygyNo2a61jSFr5vgwfiLnIA9TXN
+         +6cuwjpbmc9L0Ucz9uLkRq+BaHBuPnQ/lMN3MPo1Lh9e4991uN7nrO3sOqPpzeM2F3m6
+         tS/x57JqkcS4Cv5TNVdBb8VYbKt9S/6FpVLmc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6pPl+ooxeuaHheuMEW1uilUNg7fgvFgLTQ5AiW5OUWI=;
-        b=tB5Qy7aWluPCh2xHUWo2CBoBaC/o+p8/u8b5YblYmNG36EJey0w8sszukaitWHG2B4
-         QKokRWS6T2IPfWMxQiswDg6yVZetgVBB0jJLLoN+YzEtKRjFmk6XZQb70MDvU+bTNpsD
-         q4PQpUX8fmILIvvnaL5QN0VBfOsqijt7G55PE1JNOW7u76z28QKw1uLCVEUP92sdBxIZ
-         6EHvz5U369GcXai+2CZfM/9uBxUKrtihKYQRxwxi7m+VZVfZpnSyF8Kefbn9YNdgALR5
-         66g/HzejGeAstlPkXME0DVPeyHDWHaVdpp4+c1anpkF6aV1XKOy95fLwz0elSsQ1tj5H
-         eJIQ==
-X-Gm-Message-State: ABuFfogKqVMrEr6roE6txfS0SVe8jE3Q17Jogh9H/IEEsTUPrm8qAmvk
-        Z+RXpKojzUUph4gOCnrucGJr/Yr4MazIraT3iIo=
-X-Google-Smtp-Source: ACcGV60FHkthoD1/xyJJDzGkX+kAf83QmfuwLMGujVi2OKG+jlgt8/Cm+gzzqe/ayNHWjE+KLauqJC90gyY7m7ZcYFg=
-X-Received: by 2002:a9d:614a:: with SMTP id c10mr7919361otk.278.1538992757379;
- Mon, 08 Oct 2018 02:59:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TPKLJvi0bu0T0vgO/2whyuCmUDDDZkWtuXYkyhUy2Zg=;
+        b=sBCPqGNZ/7llMXJN8r4NUJynlFTMDukBKOK5ZREIhYgmvEHFhLDlJWXeXvVECmbD8T
+         LlYRm8Yg1EaQXmEC/DPuhOYlOfY0R4MANCLJKZc0ND9i+hfomWPK9bgy1SZ3/F6tXPd8
+         /u+idpQIbWl6IdmRkNN3vaji1aDHJWdAjNxRGh3waXl2ecVPqr1SwasQIQ7TCT9TyaXd
+         M3yzGy3jteRfRv71N/eWgfUipQgMu8lqnxFpU6cLBO//9E85XOeeA8IXfEZDYUES9qHp
+         uHBqECj+Q8g8v3jYVSnNJj/4j+RLGGN6X1vnDgQRd98YXfJg+Lym5YOH1iETEOcxZfkl
+         cmyA==
+X-Gm-Message-State: ABuFfogoM/IUcVUaI7/zL4NyVhqVOxjISFNKXTih1yanrmgphWayvXtY
+        jO5143zkYpCLD2zSHkMcN2DVgA==
+X-Google-Smtp-Source: ACcGV62xbZvEAThPJXexgESqwrL0kTn1YUqQTnFejvzpRL48Us2Fd4xLshUsP33k5LCWcDkhfrUPbg==
+X-Received: by 2002:a62:6c48:: with SMTP id h69-v6mr24257997pfc.61.1538992795877;
+        Mon, 08 Oct 2018 02:59:55 -0700 (PDT)
+Received: from localhost ([122.172.112.137])
+        by smtp.gmail.com with ESMTPSA id a2-v6sm18047693pgc.68.2018.10.08.02.59.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 02:59:54 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 15:29:52 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Taniya Das <tdas@codeaurora.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        amit.kucheria@linaro.org, evgreen@google.com
+Subject: Re: [PATCH v8 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+Message-ID: <20181008095952.gl7di2tnuv3jwew6@vireshk-i7>
+References: <1537698793-15285-1-git-send-email-tdas@codeaurora.org>
+ <1537698793-15285-3-git-send-email-tdas@codeaurora.org>
+ <20181008084012.GA23693@centauri.lan>
 MIME-Version: 1.0
-References: <20180621063338.20093-1-ganapatrao.kulkarni@cavium.com>
- <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com> <CADYwmhHdTuK-z4GcGCYypYo2dvvPj7udihPcMmTkHTSU2fOWWw@mail.gmail.com>
-In-Reply-To: <CADYwmhHdTuK-z4GcGCYypYo2dvvPj7udihPcMmTkHTSU2fOWWw@mail.gmail.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Mon, 8 Oct 2018 15:29:05 +0530
-Message-ID: <CAKTKpr7nq7jfXzHmTd-EX6b3MDefa6B5i--Zn=yUZV7MqS2ywA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU driver
-To:     pranith.foss@gmail.com
-Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <Will.Deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008084012.GA23693@centauri.lan>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pranith,
+On 08-10-18, 10:40, Niklas Cassel wrote:
+> > +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+> > +				"#freq-domain-cells", 0, &args);
+> 
+> Hello Taniya,
+> 
+> in your DT binding, you use
+> 
+> #freq-domains-cells = <1>
+> 
+> Yet here you parse for "#freq-domain-cells".
 
-On Sat, Jul 7, 2018 at 11:22 AM Pranith Kumar <pranith.foss@gmail.com> wrote:
->
-> Hi Ganapatrao,
->
->
-> On Wed, Jun 20, 2018 at 11:33 PM, Ganapatrao Kulkarni
-> <ganapatrao.kulkarni@cavium.com> wrote:
->
-> > +
-> > +enum thunderx2_uncore_l3_events {
-> > +       L3_EVENT_NONE,
-> > +       L3_EVENT_NBU_CANCEL,
-> > +       L3_EVENT_DIB_RETRY,
-> > +       L3_EVENT_DOB_RETRY,
-> > +       L3_EVENT_DIB_CREDIT_RETRY,
-> > +       L3_EVENT_DOB_CREDIT_RETRY,
-> > +       L3_EVENT_FORCE_RETRY,
-> > +       L3_EVENT_IDX_CONFLICT_RETRY,
-> > +       L3_EVENT_EVICT_CONFLICT_RETRY,
-> > +       L3_EVENT_BANK_CONFLICT_RETRY,
-> > +       L3_EVENT_FILL_ENTRY_RETRY,
-> > +       L3_EVENT_EVICT_NOT_READY_RETRY,
-> > +       L3_EVENT_L3_RETRY,
-> > +       L3_EVENT_READ_REQ,
-> > +       L3_EVENT_WRITE_BACK_REQ,
-> > +       L3_EVENT_INVALIDATE_NWRITE_REQ,
-> > +       L3_EVENT_INV_REQ,
-> > +       L3_EVENT_SELF_REQ,
-> > +       L3_EVENT_REQ,
-> > +       L3_EVENT_EVICT_REQ,
-> > +       L3_EVENT_INVALIDATE_NWRITE_HIT,
-> > +       L3_EVENT_INVALIDATE_HIT,
-> > +       L3_EVENT_SELF_HIT,
-> > +       L3_EVENT_READ_HIT,
-> > +       L3_EVENT_MAX,
-> > +};
-> > +
-> > +enum thunderx2_uncore_dmc_events {
-> > +       DMC_EVENT_NONE,
-> > +       DMC_EVENT_COUNT_CYCLES,
-> > +       DMC_EVENT_RES2,
-> > +       DMC_EVENT_RES3,
-> > +       DMC_EVENT_RES4,
-> > +       DMC_EVENT_RES5,
-> > +       DMC_EVENT_RES6,
-> > +       DMC_EVENT_RES7,
-> > +       DMC_EVENT_RES8,
-> > +       DMC_EVENT_READ_64B_TXNS,
-> > +       DMC_EVENT_READ_BELOW_64B_TXNS,
-> > +       DMC_EVENT_WRITE_TXNS,
-> > +       DMC_EVENT_TXN_CYCLES,
-> > +       DMC_EVENT_DATA_TRANSFERS,
-> > +       DMC_EVENT_CANCELLED_READ_TXNS,
-> > +       DMC_EVENT_CONSUMED_READ_TXNS,
-> > +       DMC_EVENT_MAX,
-> > +};
->
-> Can you please provide a link to where these counters are documented?
-> It is not clear what each counter does especially for the L3C events.
+And what is the problem with that ? Or are you suggesting her to call
+of_parse_phandle_with_fixed_args() ?
 
-I will add brief description of each event in Documentation.
->
-> Also, what counter do you need to use to get L3 hit/miss ratio? I
-> think this is the most useful counter related to L3.
-
-L3C cache Hit Ratio = (L3_READ_HIT + L3_INV_N_WRITE_HIT +
-L3_INVALIDATE_HIT) / (L3_READ_REQ + L3_INV_N_WRITE_REQ +
-L3_INVALIDATE_REQ)
-
->
-> Thanks,
-> --
-> Pranith
-
-thanks
-Ganapat
+-- 
+viresh
