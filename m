@@ -7,44 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6492C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6621C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF90B21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6052087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQ8Ckrhn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF90B21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JC+ceING"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6052087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbeJIB5w (ORCPT
+        id S1730848AbeJIB54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730395AbeJIB5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:51 -0400
+        id S1730395AbeJIB5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:54 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 767282064A;
-        Mon,  8 Oct 2018 18:44:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 865A02064A;
+        Mon,  8 Oct 2018 18:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024286;
-        bh=lbQQbOiHUvh/tpSld4UH5hlfPu7zFP/ttwYc/DQrp44=;
+        s=default; t=1539024289;
+        bh=zJbIre4gJnlTJzh7VMQ8EfIWetIsf9EcULdTBh+l4iA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mQ8CkrhnzV30HOvLSuoMXXNQNyj41IXmYOZsA0pZ0MJP7i5/ex9NfG9l3/IR6kuOp
-         jCEEQqQ3GerYpbOTAdtaGoeLN5IUuy1qqsuhgQBrsoOtpQfKmmu6NTTolx7+LBQiNS
-         08luCz3VTuJoOg9WkmDj06zfGBF5p+cbCH/6U7qI=
+        b=JC+ceINGSHl5tfJCPLCA6KnDRdVowE1g92Im0XHoebrucxZHby+0YNoDZUnUrINwS
+         QmLBP1Yjgp1YxVgkYrkIjkd7taad5nbAq3TEWeKFUMA4G6b5e0JpBqnSbo7TUUxtwM
+         NDiOvtHldsgKIB3azqh3WWzBhpnUxxI0MCPaJ3Y8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Sandipan Das <sandipan@linux.ibm.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 60/94] drm/nouveau/disp: fix DP disable race
-Date:   Mon,  8 Oct 2018 20:31:41 +0200
-Message-Id: <20181008175609.153908217@linuxfoundation.org>
+Subject: [PATCH 4.14 51/94] perf probe powerpc: Ignore SyS symbols irrespective of endianness
+Date:   Mon,  8 Oct 2018 20:31:32 +0200
+Message-Id: <20181008175607.552470297@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -62,108 +68,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit e04cfdc9b7398c60dbc70212415ea63b6c6a93ae ]
+[ Upstream commit fa694160cca6dbba17c57dc7efec5f93feaf8795 ]
 
-If a HPD pulse signalling the need to retrain the link occurs between
-the KMS driver releasing the output and the supervisor interrupt that
-finishes the teardown, it was possible get a NULL-ptr deref.
+This makes sure that the SyS symbols are ignored for any powerpc system,
+not just the big endian ones.
 
-Avoid this by marking the link as inactive earlier.
-
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Reported-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Fixes: fb6d59423115 ("perf probe ppc: Use the right prefix when ignoring SyS symbols on ppc")
+Link: http://lkml.kernel.org/r/20180828090848.1914-1-sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c   |   17 ++++++++++++-----
- drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c |    6 +++---
- drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c |    2 ++
- drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h |    3 ++-
- 4 files changed, 19 insertions(+), 9 deletions(-)
+ tools/perf/arch/powerpc/util/sym-handling.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-@@ -412,14 +412,10 @@ nvkm_dp_train(struct nvkm_dp *dp, u32 da
- }
+--- a/tools/perf/arch/powerpc/util/sym-handling.c
++++ b/tools/perf/arch/powerpc/util/sym-handling.c
+@@ -22,15 +22,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr
  
- static void
--nvkm_dp_release(struct nvkm_outp *outp, struct nvkm_ior *ior)
-+nvkm_dp_disable(struct nvkm_outp *outp, struct nvkm_ior *ior)
+ #endif
+ 
+-#if !defined(_CALL_ELF) || _CALL_ELF != 2
+ int arch__choose_best_symbol(struct symbol *syma,
+ 			     struct symbol *symb __maybe_unused)
  {
- 	struct nvkm_dp *dp = nvkm_dp(outp);
+ 	char *sym = syma->name;
  
--	/* Prevent link from being retrained if sink sends an IRQ. */
--	atomic_set(&dp->lt.done, 0);
--	ior->dp.nr = 0;
--
- 	/* Execute DisableLT script from DP Info Table. */
- 	nvbios_init(&ior->disp->engine.subdev, dp->info.script[4],
- 		init.outp = &dp->outp.info;
-@@ -428,6 +424,16 @@ nvkm_dp_release(struct nvkm_outp *outp,
- 	);
++#if !defined(_CALL_ELF) || _CALL_ELF != 2
+ 	/* Skip over any initial dot */
+ 	if (*sym == '.')
+ 		sym++;
++#endif
+ 
+ 	/* Avoid "SyS" kernel syscall aliases */
+ 	if (strlen(sym) >= 3 && !strncmp(sym, "SyS", 3))
+@@ -41,6 +42,7 @@ int arch__choose_best_symbol(struct symb
+ 	return SYMBOL_A;
  }
  
-+static void
-+nvkm_dp_release(struct nvkm_outp *outp)
-+{
-+	struct nvkm_dp *dp = nvkm_dp(outp);
-+
-+	/* Prevent link from being retrained if sink sends an IRQ. */
-+	atomic_set(&dp->lt.done, 0);
-+	dp->outp.ior->dp.nr = 0;
-+}
-+
- static int
- nvkm_dp_acquire(struct nvkm_outp *outp)
++#if !defined(_CALL_ELF) || _CALL_ELF != 2
+ /* Allow matching against dot variants */
+ int arch__compare_symbol_names(const char *namea, const char *nameb)
  {
-@@ -576,6 +582,7 @@ nvkm_dp_func = {
- 	.fini = nvkm_dp_fini,
- 	.acquire = nvkm_dp_acquire,
- 	.release = nvkm_dp_release,
-+	.disable = nvkm_dp_disable,
- };
- 
- static int
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c
-@@ -436,11 +436,11 @@ nv50_disp_super_2_0(struct nv50_disp *di
- 	nv50_disp_super_ied_off(head, ior, 2);
- 
- 	/* If we're shutting down the OR's only active head, execute
--	 * the output path's release function.
-+	 * the output path's disable function.
- 	 */
- 	if (ior->arm.head == (1 << head->id)) {
--		if ((outp = ior->arm.outp) && outp->func->release)
--			outp->func->release(outp, ior);
-+		if ((outp = ior->arm.outp) && outp->func->disable)
-+			outp->func->disable(outp, ior);
- 	}
- }
- 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c
-@@ -93,6 +93,8 @@ nvkm_outp_release(struct nvkm_outp *outp
- 	if (ior) {
- 		outp->acquired &= ~user;
- 		if (!outp->acquired) {
-+			if (outp->func->release && outp->ior)
-+				outp->func->release(outp);
- 			outp->ior->asy.outp = NULL;
- 			outp->ior = NULL;
- 		}
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h
-@@ -41,7 +41,8 @@ struct nvkm_outp_func {
- 	void (*init)(struct nvkm_outp *);
- 	void (*fini)(struct nvkm_outp *);
- 	int (*acquire)(struct nvkm_outp *);
--	void (*release)(struct nvkm_outp *, struct nvkm_ior *);
-+	void (*release)(struct nvkm_outp *);
-+	void (*disable)(struct nvkm_outp *, struct nvkm_ior *);
- };
- 
- #define OUTP_MSG(o,l,f,a...) do {                                              \
 
 
