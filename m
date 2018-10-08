@@ -2,155 +2,138 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFD1C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBECC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 356B72087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:00:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356B72087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FEF620878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:02:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FEF620878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJHSLo (ORCPT
+        id S1727449AbeJHSNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:11:44 -0400
-Received: from gate.crashing.org ([63.228.1.57]:43460 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbeJHSLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:11:44 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w989xuJ1007570;
-        Mon, 8 Oct 2018 04:59:58 -0500
-Message-ID: <df8575fba80d19e6e58c16266350e9980c432ae1.camel@kernel.crashing.org>
-Subject: Re: [PATCH v6 0/9] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 08 Oct 2018 20:59:56 +1100
-In-Reply-To: <cover.1538954166.git.christophe.leroy@c-s.fr>
-References: <cover.1538954166.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Mon, 8 Oct 2018 14:13:14 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:54624 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726656AbeJHSNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 14:13:14 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 9TIUgLs6rSskC9TIYgg3A5; Mon, 08 Oct 2018 13:02:02 +0200
+Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
+ decoder interface
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20181004081119.102575-1-acourbot@chromium.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <676a5e92-86c2-cf5a-9409-ef490ad8e828@xs4all.nl>
+Date:   Mon, 8 Oct 2018 13:01:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181004081119.102575-1-acourbot@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfCtMBV/mRYme5OOozQQi3+mtEiTBjFu5IOszXa20nOLxsEFAWFv4RrN4AicW5/spIXholRaE0vIU+NaTR3377Vb2K2KlDY/+KxpqsfEouyb7X2O4vRUk
+ ZGIKzaEQb2IOno4z8avHGK3GhWjuQ42uTZzg4LDttvlQP+hionVQk00ejdSAnP/LVKbCOF3feW/0xFcMxmFV7CtcF9qr6mXbVOOfw8ZfkrxJo7NHl5Xu01Z2
+ KQD64DurMzuJ86gH67N8+fuqHHERXEWGA86s+Y4S9AYF1TI5ZLxAx0O3BjrWMRFjISg0Tv0ZkZSTGUtL8OuFgnRPWTlaQyyZxgYVA2zSNcPteDR8KCvlaKsT
+ W/ZUkgvB6eriveyflxzBx+xb2+RFiu42vBg63NrIz/dT/jovpLU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-08 at 09:16 +0000, Christophe Leroy wrote:
-> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
-> moves the thread_info into task_struct.
+On 10/04/2018 10:11 AM, Alexandre Courbot wrote:
+> This patch documents the protocol that user-space should follow when
+> communicating with stateless video decoders. It is based on the
+> following references:
+> 
+> * The current protocol used by Chromium (converted from config store to
+>   request API)
+> 
+> * The submitted Cedrus VPU driver
+> 
+> As such, some things may not be entirely consistent with the current
+> state of drivers, so it would be great if all stakeholders could point
+> out these inconsistencies. :)
+> 
+> This patch is supposed to be applied on top of the Request API V18 as
+> well as the memory-to-memory video decoder interface series by Tomasz
+> Figa.
+> 
+> Changes since V1:
+> 
+> * Applied fixes received as feedback,
+> * Moved controls descriptions to the extended controls file,
+> * Document reference frame management and referencing (need Hans' feedback on
+>   that).
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  .../media/uapi/v4l/dev-stateless-decoder.rst  | 348 ++++++++++++++++++
+>  Documentation/media/uapi/v4l/devices.rst      |   1 +
+>  .../media/uapi/v4l/extended-controls.rst      |  25 ++
+>  .../media/uapi/v4l/pixfmt-compressed.rst      |  54 ++-
+>  4 files changed, 424 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> 
+> diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
 
-We need to make sure we don't have code that assumes that we don't take
-faults on TI access.
+<snip>
 
-On ppc64, the stack SLB entries are bolted, which means the TI is too.
+> +Buffer management during decoding
+> +=================================
+> +Contrary to stateful decoder drivers, a stateless decoder driver does not
+> +perform any kind of buffer management. In particular, it guarantees that
+> +``CAPTURE`` buffers will be dequeued in the same order as they are queued. This
+> +allows user-space to know in advance which ``CAPTURE`` buffer will contain a
+> +given frame, and thus to use that buffer ID as the key to indicate a reference
+> +frame.
+> +
+> +This also means that user-space is fully responsible for not queuing a given
+> +``CAPTURE`` buffer for as long as it is used as a reference frame. Failure to do
+> +so will overwrite the reference frame's data while it is still in use, and
+> +result in visual corruption of future frames.
+> +
+> +Note that this applies to all types of buffers, and not only to
+> +``V4L2_MEMORY_MMAP`` ones, as drivers supporting ``V4L2_MEMORY_DMABUF`` will
+> +typically maintain a map of buffer IDs to DMABUF handles for reference frame
+> +management. Queueing a buffer will result in the map entry to be overwritten
+> +with the new DMABUF handle submitted in the :c:func:`VIDIOC_QBUF` ioctl.
 
-We might have code that assumes that we don't get SLB faults when
-accessing TI. If not, we're fine but that needs a close look.
+The more I think about this, the more I believe that relying on capture buffer
+indices is wrong. It's easy enough if there is a straightforward 1-1 relationship,
+but what if you have H264 slices as Nicolas mentioned and it becomes a N-1 relationship?
 
-Ben.
+Yes, you can still do this in userspace, but it becomes a lot more complicated.
 
-> Moving thread_info into task_struct has the following advantages:
-> - It protects thread_info from corruption in the case of stack
-> overflows.
-> - Its address is harder to determine if stack addresses are
-> leaked, making a number of attacks more difficult.
-> 
-> Changes since v5:
->  - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
->  - Fixed PPC_BPF_LOAD_CPU() macro
-> 
-> Changes since v4:
->  - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
->  already existing, was due to spaces instead of a tab in the Makefile
-> 
-> Changes since RFC v3: (based on Nick's review)
->  - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
->  - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
->  - Removed CURRENT_THREAD_INFO macro completely.
->  - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
->  - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
->  - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
->  - Fixed a few commit logs
->  - Fixed checkpatch report.
-> 
-> Changes since RFC v2:
->  - Removed the modification of names in asm-offsets
->  - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
->  - Modified asm/smp.h to use the offset set in CFLAGS
->  - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
->  - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
-> 
-> Changes since RFC v1:
->  - Removed the first patch which was modifying header inclusion order in timer
->  - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
->  - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
->  - Moved some changes from the activation patch to the preparation patch.
-> 
-> Christophe Leroy (9):
->   book3s/64: avoid circular header inclusion in mmu-hash.h
->   powerpc: Only use task_struct 'cpu' field on SMP
->   powerpc: Prepare for moving thread_info into task_struct
->   powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
->   powerpc: regain entire stack space
->   powerpc: 'current_set' is now a table of task_struct pointers
->   powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
->   powerpc/64: Remove CURRENT_THREAD_INFO
->   powerpc: clean stack pointers naming
-> 
->  arch/powerpc/Kconfig                           |  1 +
->  arch/powerpc/Makefile                          |  8 ++-
->  arch/powerpc/include/asm/asm-prototypes.h      |  4 +-
->  arch/powerpc/include/asm/book3s/64/mmu-hash.h  |  2 +-
->  arch/powerpc/include/asm/exception-64s.h       |  4 +-
->  arch/powerpc/include/asm/irq.h                 | 14 ++---
->  arch/powerpc/include/asm/livepatch.h           |  7 ++-
->  arch/powerpc/include/asm/processor.h           | 39 +------------
->  arch/powerpc/include/asm/ptrace.h              |  2 +-
->  arch/powerpc/include/asm/reg.h                 |  2 +-
->  arch/powerpc/include/asm/smp.h                 | 17 +++++-
->  arch/powerpc/include/asm/task_size_user64.h    | 42 ++++++++++++++
->  arch/powerpc/include/asm/thread_info.h         | 19 -------
->  arch/powerpc/kernel/asm-offsets.c              | 10 ++--
->  arch/powerpc/kernel/entry_32.S                 | 66 ++++++++--------------
->  arch/powerpc/kernel/entry_64.S                 | 12 ++--
->  arch/powerpc/kernel/epapr_hcalls.S             |  5 +-
->  arch/powerpc/kernel/exceptions-64e.S           | 13 +----
->  arch/powerpc/kernel/exceptions-64s.S           |  2 +-
->  arch/powerpc/kernel/head_32.S                  | 14 ++---
->  arch/powerpc/kernel/head_40x.S                 |  4 +-
->  arch/powerpc/kernel/head_44x.S                 |  8 +--
->  arch/powerpc/kernel/head_64.S                  |  1 +
->  arch/powerpc/kernel/head_8xx.S                 |  2 +-
->  arch/powerpc/kernel/head_booke.h               | 12 +---
->  arch/powerpc/kernel/head_fsl_booke.S           | 16 +++---
->  arch/powerpc/kernel/idle_6xx.S                 |  8 +--
->  arch/powerpc/kernel/idle_book3e.S              |  2 +-
->  arch/powerpc/kernel/idle_e500.S                |  8 +--
->  arch/powerpc/kernel/idle_power4.S              |  2 +-
->  arch/powerpc/kernel/irq.c                      | 77 +++++---------------------
->  arch/powerpc/kernel/kgdb.c                     | 28 ----------
->  arch/powerpc/kernel/machine_kexec_64.c         |  6 +-
->  arch/powerpc/kernel/misc_32.S                  | 17 +++---
->  arch/powerpc/kernel/process.c                  | 17 +++---
->  arch/powerpc/kernel/setup-common.c             |  2 +-
->  arch/powerpc/kernel/setup_32.c                 | 15 ++---
->  arch/powerpc/kernel/setup_64.c                 | 41 ++++----------
->  arch/powerpc/kernel/smp.c                      | 16 +++---
->  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  6 +-
->  arch/powerpc/kvm/book3s_hv_hmi.c               |  1 +
->  arch/powerpc/mm/hash_low_32.S                  | 14 ++---
->  arch/powerpc/net/bpf_jit32.h                   |  5 +-
->  arch/powerpc/sysdev/6xx-suspend.S              |  5 +-
->  arch/powerpc/xmon/xmon.c                       |  2 +-
->  45 files changed, 230 insertions(+), 368 deletions(-)
->  create mode 100644 arch/powerpc/include/asm/task_size_user64.h
-> 
+And what if in the future instead of having one capture buffer per decoded frame
+there will be multiple capture buffers per decoded frame, each with a single
+slice (for example)?
 
+I would feel much happier if we used a 'cookie' to refer to buffers.
+
+The next problem would be where to put it. I dislike abusing the timestamp field
+for this. Part of the reason is that there will be changes there to fix the
+year 2038 issue, and I am not entirely sure what that will do to how this field
+is handled since there may be conversions from a pre-2038 timeval to a 2038-ready
+timeval.
+
+So a union with the timestamp field and a cookie field (+ BUF_FLAG_COOKIE) would
+work best IMHO.
+
+Regards,
+
+	Hans
