@@ -2,88 +2,100 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318F7C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10F7C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012A8205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:48:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012A8205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 59E912085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:49:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rp75+3NQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E912085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeJHWAi (ORCPT
+        id S1726689AbeJHWBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:00:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60783 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726159AbeJHWAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:00:37 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3E24CC7AB1BB4;
-        Mon,  8 Oct 2018 22:48:29 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 8 Oct 2018
- 22:48:22 +0800
-Subject: Re: [PATCH v2] staging: erofs: add SPDX identifer
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20181008141409.2624-1-loic.tourlonias.lkml@gmail.com>
- <20181008142228.GB13359@kroah.com>
- <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
- <20181008144335.GA15968@kroah.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <a460f98f-d566-1d9d-b395-e8604519b442@huawei.com>
-Date:   Mon, 8 Oct 2018 22:48:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 8 Oct 2018 18:01:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726159AbeJHWBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:01:24 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC69C2085B;
+        Mon,  8 Oct 2018 14:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539010159;
+        bh=MELPN+DG+xKjsse7OW7DCZ1Qthkf1UtQts5dIjorlAI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rp75+3NQ0ufEZfXUoJELTBv1vBFedMnJ1fo412XvwIYR86zZQTGq/ec5LJy6JYvGU
+         uNRhZ7k/WCeoqbROAvhVgq1xkiM1smHen9HOMFn86koQ0yk3ZEwdgM5IeyrGLksw3U
+         QVLMAJC3r5K1v8bbcui7TqigaOCO/iLyd54boDVo=
+Date:   Mon, 8 Oct 2018 10:49:17 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Zhu, Rex" <Rex.Zhu@amd.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
+ smu7/8
+Message-ID: <20181008144917.GE32006@sasha-vm>
+References: <20180924113103.999624566@linuxfoundation.org>
+ <20180924113125.488862921@linuxfoundation.org>
+ <BN6PR12MB18092FFEF5BB3861912C8535F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20181008144335.GA15968@kroah.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <BN6PR12MB18092FFEF5BB3861912C8535F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
-
-On 2018/10/8 22:43, Greg Kroah-Hartman wrote:
-> On Mon, Oct 08, 2018 at 10:36:39PM +0800, Gao Xiang wrote:
->> Hi Greg,
+On Mon, Oct 08, 2018 at 02:33:56PM +0000, Deucher, Alexander wrote:
+>> -----Original Message-----
+>> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Sent: Monday, September 24, 2018 7:53 AM
+>> To: linux-kernel@vger.kernel.org
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
+>> stable@vger.kernel.org; Wentland, Harry <Harry.Wentland@amd.com>;
+>> Deucher, Alexander <Alexander.Deucher@amd.com>; Zhu, Rex
+>> <Rex.Zhu@amd.com>; Sasha Levin <alexander.levin@microsoft.com>
+>> Subject: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
+>> smu7/8
 >>
->> On 2018/10/8 22:22, Greg Kroah-Hartman wrote:
->>> Why delete that line?
->>>
->>> But wait, why do we even have this file at all?  What's wrong with the
->>> lib/lz4/ code that we have in the kernel today?  Shouldn't the code
->>> using these files be moved over to use the lib/ code instead and this
->>> file be deleted?
+>> 4.18-stable review patch.  If anyone has any objections, please let me know.
 >>
->> EROFS uses customized LZ4 decompression code for now (which has been offically
->> supported in lz4 1.8.3, I have updated it in
->> https://ozlabs.org/~akpm/mmots/broken-out/lib-lz4-update-lz4-decompressor-module.patch
->> if it is shown up in Linux 4.20, I will remove all the customized LZ4 decompression code),
->> but lib/ code lz4def.h isn't export to include/.
-> 
-> It should show up in 4.20, so you should be able to remove this all
-> then.
+>
+>This regresses power usage on 4.18.  Please revert.
+>https://bugzilla.kernel.org/show_bug.cgi?id=201275
 
-Yes, that is correct. I will fix it in 4.20 if the updated LZ4 is already there. :)
+Hi Alex,
 
-Thanks,
-Gao Xiang
+Thank you for the report.
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
+I'm working on improving this process, I'd be very grateful if you could
+answer a few questions about this:
+
+1. Is the same breakage seen upstream? (if so, it should be reverted
+there as well and we can grab the revert into -stable).
+2. Does the issue reported by this patch ("pipes seem to hang with a 4k
+DP and 1080p HDMI display") exist in the 4.18 stable tree?
+3. If not, could you briefly explain why?
+
+
+The algorithm I use was very confident about this patch being stable
+material, and when I looked at it back then (and again now) I was very
+confident of the same. If I can understand where I was wrong I could
+improve my process.
+
+Thank you!
