@@ -2,101 +2,124 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57BBC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113C4C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68EC21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C55F42145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:34:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHowESdv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68EC21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWU5MzAq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55F42145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeJIDnk (ORCPT
+        id S1726707AbeJIDrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:43:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726348AbeJIDnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:43:40 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0CA920C0A;
-        Mon,  8 Oct 2018 20:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539030608;
-        bh=vNNVEUAsU1mpYP0bbMHSzkzwO7ZjBsl7QcouGusttEY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FHowESdvogsINoumRvrav6PGzPgk3rF35mvkjGHtn0NGGVAeJrms6RmhV1tkKgvE3
-         Lqy3Wc4KIKVQa18BITzM6K0AGFy9k8cgatrVuNhIX2Gzuy2Yg4WuVUh1JAVDZM03bk
-         QrctrgP0cqtmQ1vlIIYXtfFGj3gbdJ+wlyTEVoxw=
-Date:   Mon, 8 Oct 2018 21:30:04 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Thierry Escande <thierry.escande@collabora.com>
-Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Mark expected switch
- fall-throughs
-Message-ID: <20181008213004.033e2b29@archlinux>
-In-Reply-To: <20181008172332.GA29816@embeddedor.com>
-References: <20181008172332.GA29816@embeddedor.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 8 Oct 2018 23:47:35 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44538 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJIDrf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:47:35 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z21-v6so14333498edb.11;
+        Mon, 08 Oct 2018 13:34:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RLYREqCwoOUDRNmHy6re3it3EJQGZ7DS9UEqRUzQpM4=;
+        b=CWU5MzAq6QbM6Z+uZzV1OHym0UUjgSKi3Up4w5TEZSwvlZVLnhLJ3tu//4bzYv2/62
+         n1RxE3FRmuorfqyj6tL+PdArmsOHTvkwfXkETp70pGkIt+1Ah7sz1+64DGNxFu/0I3rf
+         CWuCN8DGroLtAa2cC7lc8oX96ksvOPbiHLNely8ubNZbdOdTwyKe7dWFwpS0oHx9H16R
+         4u9fHeh11HVvr7QbH3Jhi9+SfhTtwiQqq+BFTwOHpI1r/96jn+a1NB1DPEw2J/5KHsTs
+         XQGlx1wW+BIzSAYekoK6Y9O5LTnORNDkU8VN26rwh+j/MOgBgLqmtIR1p0SXEVfZO6HH
+         ueqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RLYREqCwoOUDRNmHy6re3it3EJQGZ7DS9UEqRUzQpM4=;
+        b=IYXYrzrriFVaJ/yeMeOsvYyaWoAUrP72qRTxkCYwe+aEQ6RfocK3bJopJmQjDu5qIS
+         7q/c/Y1X6n7Vbpp12oTFKCJ36Api/3ApR9IAUxVZu1tBbN7/s6bQMKSVjIftAiyLpOTf
+         sUp9wcoJ3ftV7r192L2VJzodUtHqZOUBzdlWhBXQQpvOjCw8wLq6wNCXN4Ph1JMOa9QB
+         4X+EQmTlb9YojnGUD7F+3JCdk8ZrLmIxnoeREzZ/POCJLoDWWekLF+Tt4qQM24Y+03D+
+         mPCtdQcrGj6sPHexFn/HHhQ+xtDeLbZvW45uHM5SDL2Wobll6cKPVTJ4D16jIgjVTQCW
+         POKw==
+X-Gm-Message-State: ABuFfogeX0M54ccInaaF02+SP4hJWXi01A1PfQlZ+Bf530HDwFehjoGp
+        tC6kUxMTjlPXXbuG9rkHgB5mSHHBnGLueakbgvM=
+X-Google-Smtp-Source: ACcGV61LrH6L8CpBcxR1LCDbzTNtWMDuIQbAS5a+cb06ZUGvrlf3E7hlxP9s/LV/9+1F0e2xjCBcGyBSeZovQkXAq7g=
+X-Received: by 2002:a50:b704:: with SMTP id g4-v6mr31822787ede.139.1539030840996;
+ Mon, 08 Oct 2018 13:34:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <0000000000009d47b2057782bab4@google.com> <CAF=yD-+7NxN37Ez=3WXG0+2i6j30uSV8u9D7oJXEhp+SxzYCpA@mail.gmail.com>
+In-Reply-To: <CAF=yD-+7NxN37Ez=3WXG0+2i6j30uSV8u9D7oJXEhp+SxzYCpA@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 8 Oct 2018 16:33:24 -0400
+Message-ID: <CAF=yD-+Qh5f9kqmYLY5EyUwNPuyhMpBxz6dh_kfzFZsgE3UijQ@mail.gmail.com>
+Subject: Re: general protection fault in __handle_mm_fault
+To:     syzbot+1577fbe983d20fe2e88f@syzkaller.appspotmail.com
+Cc:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kirill.shutemov@linux.intel.com, aneesh.kumar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 8 Oct 2018 19:23:32 +0200
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+On Mon, Oct 8, 2018 at 12:10 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Fri, Oct 5, 2018 at 6:27 PM syzbot
+> <syzbot+1577fbe983d20fe2e88f@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    25bcda3e8b9f Add linux-next specific files for 20181004
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=130e3bf1400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=603d7f9140c3368a
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=1577fbe983d20fe2e88f
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e88d6400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cdb67e400000
+>
+> > RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20
+> > arch/x86/lib/copy_user_64.S:180
+> > Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f
+> > 80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f
+> > 1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
+> > RSP: 0018:ffff8801bbe675b8 EFLAGS: 00010202
+> > RAX: 0000000000000000 RBX: 0000000000007a50 RCX: 0000000000001b40
+> > RDX: 0000000000007a50 RSI: 0000000020077000 RDI: ffff8801ce615f10
+> > RBP: ffff8801bbe675f0 R08: ffffed0039cc2f4a R09: ffffed0039cc2f4a
+> > R10: ffffed0039cc2f49 R11: ffff8801ce617a4f R12: 0000000020078b40
+> > R13: 00000000200710f0 R14: ffff8801ce610000 R15: 00007ffffffff000
+> >   _copy_from_iter_full+0x263/0xc20 lib/iov_iter.c:724
+> >   copy_from_iter_full include/linux/uio.h:124 [inline]
+> >   skb_do_copy_data_nocache include/net/sock.h:1951 [inline]
+> >   skb_copy_to_page_nocache include/net/sock.h:1977 [inline]
+> >   tcp_sendmsg_locked+0x159e/0x3f90 net/ipv4/tcp.c:1338
+>
+> This started on next-20181004. It still happens as of next-20181008.
+>
+> It does not trigger on next 20181003. It does not occur if
+> CONFIG_DEBUG_KOBJECT is disabled.
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Addresses-Coverity-ID: 1397962 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Hi,
+Bisected to commit e4d0c281a4c9 ("mm/memory.c: recheck page table
+entry with page table lock held").
 
-I'll be honest I'm lost on what the intent of this code actually is...
-
-Gwendal - why do we have a loop with this odd switch statement
-in it.  Superficially I think we might as well drop the switch
-and pull those assignments out of the loop.   However, perhaps
-I'm missing something!
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/accel/cros_ec_accel_legacy.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-> index 063e89e..d609654 100644
-> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
-> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-> @@ -385,8 +385,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
->  		switch (i) {
->  		case X:
->  			ec_accel_channels[X].scan_index = Y;
-> +			/* fall through */
->  		case Y:
->  			ec_accel_channels[Y].scan_index = X;
-> +			/* fall through */
->  		case Z:
->  			ec_accel_channels[Z].scan_index = Z;
->  		}
-
+Verified to not trigger on next-20181008 after reverting that commit.
