@@ -2,77 +2,155 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D87C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFD1C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2158520878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2158520878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 356B72087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:00:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356B72087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeJHSLA (ORCPT
+        id S1727528AbeJHSLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:11:00 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:53122 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbeJHSLA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:11:00 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id kyzo1y00X3XaVaC06yzotU; Mon, 08 Oct 2018 12:59:49 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g9TGO-0004ye-Qo; Mon, 08 Oct 2018 12:59:48 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g9TGO-0006Zf-OY; Mon, 08 Oct 2018 12:59:48 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] lib/vsprintf: Remove %pCr remnant in comment
-Date:   Mon,  8 Oct 2018 12:59:46 +0200
-Message-Id: <20181008105946.25230-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Oct 2018 14:11:44 -0400
+Received: from gate.crashing.org ([63.228.1.57]:43460 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726511AbeJHSLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 14:11:44 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w989xuJ1007570;
+        Mon, 8 Oct 2018 04:59:58 -0500
+Message-ID: <df8575fba80d19e6e58c16266350e9980c432ae1.camel@kernel.crashing.org>
+Subject: Re: [PATCH v6 0/9] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 08 Oct 2018 20:59:56 +1100
+In-Reply-To: <cover.1538954166.git.christophe.leroy@c-s.fr>
+References: <cover.1538954166.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for "%pCr" was removed, but a reference in a comment was
-forgotten.
+On Mon, 2018-10-08 at 09:16 +0000, Christophe Leroy wrote:
+> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+> moves the thread_info into task_struct.
 
-Fixes: 666902e42fd8344b ("lib/vsprintf: Remove atomic-unsafe support for %pCr")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Probably this wasn't noticed due to commit 5e4ee7b13b522d07 ("printk:
-synchronize %p formatting documentation") removing another reference.
----
- lib/vsprintf.c | 1 -
- 1 file changed, 1 deletion(-)
+We need to make sure we don't have code that assumes that we don't take
+faults on TI access.
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index b1909ca755932539..095a677f89c02442 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1832,7 +1832,6 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
-  *       (legacy clock framework) of the clock
-  * - 'Cn' For a clock, it prints the name (Common Clock Framework) or address
-  *        (legacy clock framework) of the clock
-- * - 'Cr' For a clock, it prints the current rate of the clock
-  * - 'G' For flags to be printed as a collection of symbolic strings that would
-  *       construct the specific value. Supported flags given by option:
-  *       p page flags (see struct page) given as pointer to unsigned long
--- 
-2.17.1
+On ppc64, the stack SLB entries are bolted, which means the TI is too.
+
+We might have code that assumes that we don't get SLB faults when
+accessing TI. If not, we're fine but that needs a close look.
+
+Ben.
+
+> Moving thread_info into task_struct has the following advantages:
+> - It protects thread_info from corruption in the case of stack
+> overflows.
+> - Its address is harder to determine if stack addresses are
+> leaked, making a number of attacks more difficult.
+> 
+> Changes since v5:
+>  - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
+>  - Fixed PPC_BPF_LOAD_CPU() macro
+> 
+> Changes since v4:
+>  - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
+>  already existing, was due to spaces instead of a tab in the Makefile
+> 
+> Changes since RFC v3: (based on Nick's review)
+>  - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
+>  - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
+>  - Removed CURRENT_THREAD_INFO macro completely.
+>  - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
+>  - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
+>  - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
+>  - Fixed a few commit logs
+>  - Fixed checkpatch report.
+> 
+> Changes since RFC v2:
+>  - Removed the modification of names in asm-offsets
+>  - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
+>  - Modified asm/smp.h to use the offset set in CFLAGS
+>  - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
+>  - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
+> 
+> Changes since RFC v1:
+>  - Removed the first patch which was modifying header inclusion order in timer
+>  - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
+>  - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
+>  - Moved some changes from the activation patch to the preparation patch.
+> 
+> Christophe Leroy (9):
+>   book3s/64: avoid circular header inclusion in mmu-hash.h
+>   powerpc: Only use task_struct 'cpu' field on SMP
+>   powerpc: Prepare for moving thread_info into task_struct
+>   powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+>   powerpc: regain entire stack space
+>   powerpc: 'current_set' is now a table of task_struct pointers
+>   powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+>   powerpc/64: Remove CURRENT_THREAD_INFO
+>   powerpc: clean stack pointers naming
+> 
+>  arch/powerpc/Kconfig                           |  1 +
+>  arch/powerpc/Makefile                          |  8 ++-
+>  arch/powerpc/include/asm/asm-prototypes.h      |  4 +-
+>  arch/powerpc/include/asm/book3s/64/mmu-hash.h  |  2 +-
+>  arch/powerpc/include/asm/exception-64s.h       |  4 +-
+>  arch/powerpc/include/asm/irq.h                 | 14 ++---
+>  arch/powerpc/include/asm/livepatch.h           |  7 ++-
+>  arch/powerpc/include/asm/processor.h           | 39 +------------
+>  arch/powerpc/include/asm/ptrace.h              |  2 +-
+>  arch/powerpc/include/asm/reg.h                 |  2 +-
+>  arch/powerpc/include/asm/smp.h                 | 17 +++++-
+>  arch/powerpc/include/asm/task_size_user64.h    | 42 ++++++++++++++
+>  arch/powerpc/include/asm/thread_info.h         | 19 -------
+>  arch/powerpc/kernel/asm-offsets.c              | 10 ++--
+>  arch/powerpc/kernel/entry_32.S                 | 66 ++++++++--------------
+>  arch/powerpc/kernel/entry_64.S                 | 12 ++--
+>  arch/powerpc/kernel/epapr_hcalls.S             |  5 +-
+>  arch/powerpc/kernel/exceptions-64e.S           | 13 +----
+>  arch/powerpc/kernel/exceptions-64s.S           |  2 +-
+>  arch/powerpc/kernel/head_32.S                  | 14 ++---
+>  arch/powerpc/kernel/head_40x.S                 |  4 +-
+>  arch/powerpc/kernel/head_44x.S                 |  8 +--
+>  arch/powerpc/kernel/head_64.S                  |  1 +
+>  arch/powerpc/kernel/head_8xx.S                 |  2 +-
+>  arch/powerpc/kernel/head_booke.h               | 12 +---
+>  arch/powerpc/kernel/head_fsl_booke.S           | 16 +++---
+>  arch/powerpc/kernel/idle_6xx.S                 |  8 +--
+>  arch/powerpc/kernel/idle_book3e.S              |  2 +-
+>  arch/powerpc/kernel/idle_e500.S                |  8 +--
+>  arch/powerpc/kernel/idle_power4.S              |  2 +-
+>  arch/powerpc/kernel/irq.c                      | 77 +++++---------------------
+>  arch/powerpc/kernel/kgdb.c                     | 28 ----------
+>  arch/powerpc/kernel/machine_kexec_64.c         |  6 +-
+>  arch/powerpc/kernel/misc_32.S                  | 17 +++---
+>  arch/powerpc/kernel/process.c                  | 17 +++---
+>  arch/powerpc/kernel/setup-common.c             |  2 +-
+>  arch/powerpc/kernel/setup_32.c                 | 15 ++---
+>  arch/powerpc/kernel/setup_64.c                 | 41 ++++----------
+>  arch/powerpc/kernel/smp.c                      | 16 +++---
+>  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  6 +-
+>  arch/powerpc/kvm/book3s_hv_hmi.c               |  1 +
+>  arch/powerpc/mm/hash_low_32.S                  | 14 ++---
+>  arch/powerpc/net/bpf_jit32.h                   |  5 +-
+>  arch/powerpc/sysdev/6xx-suspend.S              |  5 +-
+>  arch/powerpc/xmon/xmon.c                       |  2 +-
+>  45 files changed, 230 insertions(+), 368 deletions(-)
+>  create mode 100644 arch/powerpc/include/asm/task_size_user64.h
+> 
 
