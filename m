@@ -2,82 +2,93 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F38C3C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DF0C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C459F2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:29:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C459F2089D
+	by mail.kernel.org (Postfix) with ESMTP id 8F7992089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:32:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ERd01XQk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7992089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeJICm3 (ORCPT
+        id S1726503AbeJICqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:42:29 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:52641 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeJICm2 (ORCPT
+        Mon, 8 Oct 2018 22:46:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59820 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJICqH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:42:28 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 8987921CC1;
-        Mon,  8 Oct 2018 19:29:09 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id BIoLMGFUQ3lF; Mon,  8 Oct 2018 19:29:09 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 718D720F77;
-        Mon,  8 Oct 2018 19:28:58 +0000 (UTC)
-Subject: Re: [PATCH] usbip: vhci_hcd: check port number before using
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com,
-        stable <stable@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
-References: <20181008191913.11527-1-sudip.mukherjee@codethink.co.uk>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <c7da9adc-3cb3-c5a6-519c-ba4440897c28@kernel.org>
-Date:   Mon, 8 Oct 2018 13:28:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 8 Oct 2018 22:46:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FZe1sLBWk+/pKLome/CJHSZ2aX/RsvVArxY2740hYt4=; b=ERd01XQkrbo/YFNb6EuyznDDQ
+        g6CgPNwQX5Uvxtu9dcvwXANgu70W7bSec5yUWIN/sO6G5Yja5zMvZiMYIFdKrNpdM0JQDQEG2Cpjv
+        qNsQZaJRveHSIrZL9duReqO3JYUbV+4jVriMb4UYCe/tEKS6k7sVzx4f1D9DItHOi6fR0CA15+52o
+        cWKUluRbtOOv/qL87YBEtZ+1v6RpmsFZBAqvBE2DIiKQ4rT+emLVB2WXvHbj7kA5Aq+BeAi7z0PL1
+        jIfZMIo8n+L96aEOkCOITPiSBj8vuaAaEHzJZjJV8mw1r5bg6RjuCdVPwNYbnL+/rwX6MYkE4l32h
+        uln/4aFOg==;
+Received: from [179.183.98.126] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g9bGo-0001es-OA; Mon, 08 Oct 2018 19:32:47 +0000
+Date:   Mon, 8 Oct 2018 16:32:43 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>
+Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the
+ ambiguity about collecting email addresses
+Message-ID: <20181008163243.72825e05@coco.lan>
+In-Reply-To: <CAPM=9tzU_wy77j=sx9u9gFsJp-M4ktH7hLQE5=_wKbow9p+iuQ@mail.gmail.com>
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+        <1538861799.4088.6.camel@HansenPartnership.com>
+        <CAPM=9tz3Z=vD6qWUL2boZGEAgMeC_o9euBXFu2V58RHOn6gR9g@mail.gmail.com>
+        <20181007225613.GZ32577@ZenIV.linux.org.uk>
+        <CAPM=9tzU_wy77j=sx9u9gFsJp-M4ktH7hLQE5=_wKbow9p+iuQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181008191913.11527-1-sudip.mukherjee@codethink.co.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudip,
+Em Mon, 8 Oct 2018 09:37:59 +1000
+Dave Airlie <airlied@gmail.com> escreveu:
 
-On 10/08/2018 01:19 PM, Sudip Mukherjee wrote:
-> From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> On Mon, 8 Oct 2018 at 08:56, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Mon, Oct 08, 2018 at 08:25:35AM +1000, Dave Airlie wrote:
+> >  
+> > > This isn't a legally binding license or anything, but departing from
+> > > the upstream wording makes it tricker to merge new upstream versions
+> > > if they are considered appropriate.  
+> >
+> > Nicely done, that - gotta love the passive voice use.  Considered appropriate
+> > *by* *whom*?  
 > 
-> The port number is checked and it just prints an error message but it
-> still continues to use the invalid port. And as a result it accesses
-> memory which is not its resulting in  BUG report from KASAN.
-
-Yes there is an issue with out of bounds access. But this isn't the
-right fix.
-
+> Good question, do we have a CoC maintainer? Is Linus it, Greg, TAB?
 > 
-> Reported-by: syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> Maybe step one is to find the person who can make changes to the
+> kernel CoC (has anyone checked if Linus or Greg will merge this).
 
-I sent in a fix for this last Friday.
+If we add it to the MAINTAINERS file (with makes perfect sense to me),
+I would like to have a R: entry there, in order to be notified when
+people propose changes to it. My personal understanding is that it may 
+have legal value under the legislation of the Country I live, and I'd
+like to understand changes there that might affect my workflow.
 
-https://patchwork.kernel.org/patch/10628833/
-
-thanks,
--- Shuah
-
+Thanks,
+Mauro
