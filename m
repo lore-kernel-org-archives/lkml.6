@@ -2,146 +2,95 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABF4C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7C6C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E6F2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA302085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:00:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfT1i22y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E6F2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ro0Ma40J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA302085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731926AbeJICCr (ORCPT
+        id S1728041AbeJICNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731296AbeJICCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:46 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 731C0204FD;
-        Mon,  8 Oct 2018 18:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024579;
-        bh=s6T2vCvbPsKFdW9PeMoweAEek3CpekWEpttO0TR0dF0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rfT1i22yP86WLVvoZAMRAXnyfJc1EXC6rpFN8T+wB6i/l4DgA2ZnOoIi5Ehl4K46B
-         Wmq+lm5u0MtPguqS4XMmxr4dgs1yQ+P17m40dCckd93qBhKmPg1DyBkKzZZkMJ0USf
-         ukIsrVwdOFu/BCHJI7XEgo+pJAXLnTCGrC2RJy2E=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 063/168] mac80211: shorten the IBSS debug messages
-Date:   Mon,  8 Oct 2018 20:30:43 +0200
-Message-Id: <20181008175622.444406539@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
-References: <20181008175620.043587728@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 8 Oct 2018 22:13:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43242 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727375AbeJICNw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:13:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dGMHdm1H7bwMq0qw5mBgi6DHe3UQS2TVRqkoOgq0AF8=; b=ro0Ma40JY6ZucjpTYc6WLMJN5
+        15OpcPm8kdVtsnrdGQ9fPiC26hI5pgdKvuco1UkPcLJve6S8RwhKd7EQahfyOZ+e+w1V5tnN3+cei
+        6u5z/b66GcVK2K/AlWeK+gP4jwq9Ol/ZMxDODIq8C/+6PCzP9yAJ3mBGt1o2SQrcaMAWHqFzcAINp
+        ITGb2VMF9E6qFPDBiBwBmS5I9sDiqO0/zeLPNubH6Rdb2OCL382jsQGafQzcZILoR/iCYqBx1IRMv
+        eDjF9JbtlHMcZPJD18PTSHzQGQMgXH172/K7nhZZpeRLJdb+HtBrzEp4bS2JVqE1HG/89QMqOw9xz
+        sqP2CwmDg==;
+Received: from [179.183.98.126] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g9ale-0006dF-F2; Mon, 08 Oct 2018 19:00:34 +0000
+Date:   Mon, 8 Oct 2018 16:00:29 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org,
+        jcliang@chromium.org, shik@chromium.org
+Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
+Message-ID: <20181008160029.1bd1f5a8@coco.lan>
+In-Reply-To: <931ca67d-3ac6-afc1-f933-c9733d561767@xs4all.nl>
+References: <20181003070656.193854-1-keiichiw@chromium.org>
+        <b2dc51d7-fc92-2e7b-3a07-55a076b95d8b@ideasonboard.com>
+        <20181008140302.2239633f@coco.lan>
+        <00b0a8af-b7a5-cb49-0684-0fd0efefa196@xs4all.nl>
+        <20181008152348.7ef6d77e@coco.lan>
+        <931ca67d-3ac6-afc1-f933-c9733d561767@xs4all.nl>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+Em Mon, 8 Oct 2018 20:31:10 +0200
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-------------------
+> > (gdb) list *vivid_fillbuff+0x1e9b
+> > 0x1936b is in vivid_fillbuff (drivers/media/platform/vivid/vivid-kthread-cap.c:495).
+> > 490					ms % 1000,
+> > 491					buf->vb.sequence,
+> > 492					(dev->field_cap == V4L2_FIELD_ALTERNATE) ?
+> > 493						(buf->vb.field == V4L2_FIELD_TOP ?
+> > 494						 " top" : " bottom") : "");
+> > 495			tpg_gen_text(tpg, basep, line++ * line_height, 16, str);
+> > 496		}
+> > 497		if (dev->osd_mode == 0) {
+> > 498			snprintf(str, sizeof(str), " %dx%d, input %d ",
+> > 499					dev->src_rect.width, dev->src_rect.height, dev->input);
+> >   
+> 
+> There is a bug with hflip handling in that function. Nothing to do with the
+> resolution. I could reproduce it by just checking the hflip control.
+> I'll investigate.
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Ah! Well, as I said, I got it only once last week while trying to use
+vivid for some event racing test. I didn't have time to actually
+seek. On that time, the bug only manifested when I changed the frame
+rate.
 
-[ Upstream commit c6e57b3896fc76299913b8cfd82d853bee8a2c84 ]
-
-When tracing is enabled, all the debug messages are recorded and must
-not exceed MAX_MSG_LEN (100) columns. Longer debug messages grant the
-user with:
-
-WARNING: CPU: 3 PID: 32642 at /tmp/wifi-core-20180806094828/src/iwlwifi-stack-dev/net/mac80211/./trace_msg.h:32 trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
-Workqueue: phy1 ieee80211_iface_work [mac80211]
- RIP: 0010:trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
- Call Trace:
-  __sdata_dbg+0xbd/0x120 [mac80211]
-  ieee80211_ibss_rx_queued_mgmt+0x15f/0x510 [mac80211]
-  ieee80211_iface_work+0x21d/0x320 [mac80211]
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/mac80211/ibss.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
---- a/net/mac80211/ibss.c
-+++ b/net/mac80211/ibss.c
-@@ -947,8 +947,8 @@ static void ieee80211_rx_mgmt_deauth_ibs
- 	if (len < IEEE80211_DEAUTH_FRAME_LEN)
- 		return;
- 
--	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM BSSID=%pM (reason: %d)\n",
--		 mgmt->sa, mgmt->da, mgmt->bssid, reason);
-+	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
-+	ibss_dbg(sdata, "\tBSSID=%pM (reason: %d)\n", mgmt->bssid, reason);
- 	sta_info_destroy_addr(sdata, mgmt->sa);
- }
- 
-@@ -966,9 +966,9 @@ static void ieee80211_rx_mgmt_auth_ibss(
- 	auth_alg = le16_to_cpu(mgmt->u.auth.auth_alg);
- 	auth_transaction = le16_to_cpu(mgmt->u.auth.auth_transaction);
- 
--	ibss_dbg(sdata,
--		 "RX Auth SA=%pM DA=%pM BSSID=%pM (auth_transaction=%d)\n",
--		 mgmt->sa, mgmt->da, mgmt->bssid, auth_transaction);
-+	ibss_dbg(sdata, "RX Auth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
-+	ibss_dbg(sdata, "\tBSSID=%pM (auth_transaction=%d)\n",
-+		 mgmt->bssid, auth_transaction);
- 
- 	if (auth_alg != WLAN_AUTH_OPEN || auth_transaction != 1)
- 		return;
-@@ -1175,10 +1175,10 @@ static void ieee80211_rx_bss_info(struct
- 		rx_timestamp = drv_get_tsf(local, sdata);
- 	}
- 
--	ibss_dbg(sdata,
--		 "RX beacon SA=%pM BSSID=%pM TSF=0x%llx BCN=0x%llx diff=%lld @%lu\n",
-+	ibss_dbg(sdata, "RX beacon SA=%pM BSSID=%pM TSF=0x%llx\n",
- 		 mgmt->sa, mgmt->bssid,
--		 (unsigned long long)rx_timestamp,
-+		 (unsigned long long)rx_timestamp);
-+	ibss_dbg(sdata, "\tBCN=0x%llx diff=%lld @%lu\n",
- 		 (unsigned long long)beacon_timestamp,
- 		 (unsigned long long)(rx_timestamp - beacon_timestamp),
- 		 jiffies);
-@@ -1537,9 +1537,9 @@ static void ieee80211_rx_mgmt_probe_req(
- 
- 	tx_last_beacon = drv_tx_last_beacon(local);
- 
--	ibss_dbg(sdata,
--		 "RX ProbeReq SA=%pM DA=%pM BSSID=%pM (tx_last_beacon=%d)\n",
--		 mgmt->sa, mgmt->da, mgmt->bssid, tx_last_beacon);
-+	ibss_dbg(sdata, "RX ProbeReq SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
-+	ibss_dbg(sdata, "\tBSSID=%pM (tx_last_beacon=%d)\n",
-+		 mgmt->bssid, tx_last_beacon);
- 
- 	if (!tx_last_beacon && is_multicast_ether_addr(mgmt->da))
- 		return;
-
-
+Thanks,
+Mauro
