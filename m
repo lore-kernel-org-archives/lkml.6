@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1D2C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95FCC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84EA421479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A301E214C5
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5/jdoFF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84EA421479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnrP44Zx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A301E214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbeJIB4M (ORCPT
+        id S1730400AbeJIB4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43984 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeJIB4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:11 -0400
+        id S1726672AbeJIB4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:08 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AA27214C3;
-        Mon,  8 Oct 2018 18:43:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 540E021479;
+        Mon,  8 Oct 2018 18:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024186;
-        bh=A9wSC2uZ1LSFVs3V8uJTayf2X71nf9lL603QchFsoBk=;
+        s=default; t=1539024183;
+        bh=lPtNIKn7v3nH7V6eod+D5QYivgXTpBfYgX2OFZ4GZz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C5/jdoFFfQbF4FsxiU87Te2rKWGXE7rXC0OGS4kpdrXb0S5FULCRZP5X5IHjVkPnE
-         IkzbmykVzGhv9kwd055PMwu8uVyOE0Ay9FIKLxBpau/bxhlJzvXcZpKzCECyRGt5m8
-         C79chdfo9yvyZ/1Tq0de2h8BJhIm4tAl93LJgl2g=
+        b=JnrP44ZxIbeLqt1239H6hwQtH6s3TQ73wtO4T8nCs08R0fk9jfvkaE/6ZkT9TZUmL
+         0QltaFWuec/THDX08q8NyGjYGsFQ+LQZTZsSZclk6bDz9TZC13bXhxFR7YIWOgqqmZ
+         rXv7biclm87j7zk3k3BjwBedv08z8C60YF4DdM1c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Phlipot <cphlipot0@gmail.com>,
+        stable@vger.kernel.org, Hisao Tanabe <xtanabe@gmail.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>, Wang Nan <wangnan0@huawei.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 50/94] perf util: Fix bad memory access in trace info.
-Date:   Mon,  8 Oct 2018 20:31:31 +0200
-Message-Id: <20181008175607.506159855@linuxfoundation.org>
+Subject: [PATCH 4.14 49/94] perf evsel: Fix potential null pointer dereference in perf_evsel__new_idx()
+Date:   Mon,  8 Oct 2018 20:31:30 +0200
+Message-Id: <20181008175607.460764455@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,37 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Phlipot <cphlipot0@gmail.com>
+From: Hisao Tanabe <xtanabe@gmail.com>
 
-[ Upstream commit a72f64261359b7451f8478f2a2bf357b4e6c757f ]
+[ Upstream commit fd8d2702791a970c751f8b526a17d8e725a05b46 ]
 
-In the write to the output_fd in the error condition of
-record_saved_cmdline(), we are writing 8 bytes from a memory location on
-the stack that contains a primitive that is only 4 bytes in size.
-Change the primitive to 8 bytes in size to match the size of the write
-in order to avoid reading unknown memory from the stack.
+If evsel is NULL, we should return NULL to avoid a NULL pointer
+dereference a bit later in the code.
 
-Signed-off-by: Chris Phlipot <cphlipot0@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180829061954.18871-1-cphlipot0@gmail.com
+Signed-off-by: Hisao Tanabe <xtanabe@gmail.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Fixes: 03e0a7df3efd ("perf tools: Introduce bpf-output event")
+LPU-Reference: 20180824154556.23428-1-xtanabe@gmail.com
+Link: https://lkml.kernel.org/n/tip-e5plzjhx6595a5yjaf22jss3@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/trace-event-info.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/evsel.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/tools/perf/util/trace-event-info.c
-+++ b/tools/perf/util/trace-event-info.c
-@@ -379,7 +379,7 @@ out:
- 
- static int record_saved_cmdline(void)
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -259,8 +259,9 @@ struct perf_evsel *perf_evsel__new_idx(s
  {
--	unsigned int size;
-+	unsigned long long size;
- 	char *path;
- 	struct stat st;
- 	int ret, err = 0;
+ 	struct perf_evsel *evsel = zalloc(perf_evsel__object.size);
+ 
+-	if (evsel != NULL)
+-		perf_evsel__init(evsel, attr, idx);
++	if (!evsel)
++		return NULL;
++	perf_evsel__init(evsel, attr, idx);
+ 
+ 	if (perf_evsel__is_bpf_output(evsel)) {
+ 		evsel->attr.sample_type |= (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME |
 
 
