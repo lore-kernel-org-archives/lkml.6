@@ -2,119 +2,138 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DEDC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C9FC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3DA20644
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06B0C20644
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzhGkfS7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3DA20644
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKuhfmGb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0C20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbeJHWvD (ORCPT
+        id S1727645AbeJHWvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:51:03 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41272 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeJHWvB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:51:01 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q39-v6so14243760lfi.8;
-        Mon, 08 Oct 2018 08:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3JUtAQSBvnjsHhi7rzPs7uiH357XflzdvnRYKkxs2FA=;
-        b=CzhGkfS7sr5utty3opPM2ISYy6qslUxUacgK4yonPZMisnVW/2p06EECzsZ6L6A6ge
-         j1LZwxJ87zLj4x4drX29pz0GFEoRH9lmWMtmhodJA3cpRljnpiRiIiw8+LWo1kkpsIM1
-         Es4cOtZKAhycJjYIyh/J33Wa6hYqz8Uz9J1i+u2TEqhTFOl+gDPJ1qIVWENXDVwpoQLD
-         i3FJWWMkKCf7bOHUQGxhTqMnhSud8GudfNKu1l68D0Z1V1gt3ggGHdACKdX+2SbB/kFM
-         2R+TeAd1bS9/cbLIMf2/vK/2eGMKv6siiRmZdajG4T9Vcxduq0ZpiJ0CktKWQkWDBHGQ
-         Jxvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3JUtAQSBvnjsHhi7rzPs7uiH357XflzdvnRYKkxs2FA=;
-        b=r0fKiVyDUnbooM1RkVukkRUf7MrhKKhRZPymalHoh1nmDb4IjcTujy74ZZ8KVaVYww
-         a3n9Ex+PIidCzpwdSbONt7LoxkErTPPHuJzdH1qxkqNM1k/y9dsWqoVmZx8WXUBTvh+n
-         2PObC9V5nRDhYFQdk1DGPGXHOadL2itYQRMIgkhoiZnIsDDtv9egG+t74/FC79rfGci0
-         hnxQa9A/JIDHGXM9p4VrR/yJl0EDuboIgmXvRCvBC2VGcPZrw32VphLgTU/jarM7fFNR
-         NoxtH0ljKaoegD+Q21YO6rY0QOpA9gAWan6wacMDrAL+3/YCEVHVm3vqctHWhQbNjvE8
-         n2Zg==
-X-Gm-Message-State: ABuFfoj1l36MmD/ApysTweniLjockRUVPC4yepnipyGk+thRCyMBlg6I
-        RrF4Q4BKxCzttp+DtkQkK1c=
-X-Google-Smtp-Source: ACcGV60s36LHnbeZOComXCGk4Y9W3++zag6nEsDzN0gA3B6Pf252TgoFMbCX+AU7132NC/T8u/EvsQ==
-X-Received: by 2002:a19:f817:: with SMTP id a23-v6mr7202228lff.67.1539013120560;
-        Mon, 08 Oct 2018 08:38:40 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id u70-v6sm3542882lff.60.2018.10.08.08.38.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 08:38:39 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g9XcG-00033u-2x; Mon, 08 Oct 2018 17:38:40 +0200
-Date:   Mon, 8 Oct 2018 17:38:40 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Tobias Klausmann <klausman@schwarzvogel.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
-Subject: Re: [PATCH stable v2 1/2] arch/alpha, termios: implement BOTHER,
- IBSHIFT and termios2
-Message-ID: <20181008153840.GD3332@localhost>
-References: <20181008040620.1248277-1-hpa@zytor.com>
- <20181008040620.1248277-2-hpa@zytor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008040620.1248277-2-hpa@zytor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 8 Oct 2018 18:51:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726452AbeJHWhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:37:51 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A34D120644;
+        Mon,  8 Oct 2018 15:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539012336;
+        bh=EgMxgeXjAQKIKMqz20hUAaretv0OcWcxHQlvaBoUumM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lKuhfmGb0vH9usq3n/MXEQrXfdgHQtj3zXgi3Uq0p18L3t8wLrCeI1KUaURU5UGKT
+         XLgjZ2lE2sOmLYdWzOFydAxf0Y/D6CA1edvopP/NECgFMOH2ELkc2q5VOqo3ndSkv7
+         VTuyvvSHr0lTlClWrpH+8q3LL9xQ2F3owSnEmqAo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 09/58] batman-adv: Prevent duplicated gateway_node entry
+Date:   Mon,  8 Oct 2018 11:24:34 -0400
+Message-Id: <20181008152523.70705-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
+References: <20181008152523.70705-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 07, 2018 at 09:06:19PM -0700, H. Peter Anvin wrote:
-> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
-> 
-> Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
-> using arbitrary flags. Because BOTHER is not defined, the general
-> Linux code doesn't allow setting arbitrary baud rates, and because
-> CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
-> drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
-> 
-> Resolve both problems by #defining BOTHER to 037 on Alpha.
-> 
-> However, userspace still needs to know if setting BOTHER is actually
-> safe given legacy kernels (does anyone actually care about that on
-> Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
-> though they use the same structure. Define struct termios2 just for
-> compatibility; it is the exact same structure as struct termios. In a
-> future patchset, this will be cleaned up so the uapi headers are
-> usable from libc.
+From: Sven Eckelmann <sven@narfation.org>
 
-Is this really needed? By defining BOTHER (and IBSHIFT which you forgot
-to mention here) you are enabling arbitrary rates also through TCSETS on
-alpha, right?
+[ Upstream commit dff9bc42ab0b2d38c5e90ddd79b238fed5b4c7ad ]
 
-Johan
+The function batadv_gw_node_add is responsible for adding new gw_node to
+the gateway_list. It is expecting that the caller already checked that
+there is not already an entry with the same key or not.
+
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
+
+The check and the manipulation of the list must therefore be in the same
+locked code section.
+
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ net/batman-adv/gateway_client.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/net/batman-adv/gateway_client.c b/net/batman-adv/gateway_client.c
+index 8b198ee798c9..140c61a3f1ec 100644
+--- a/net/batman-adv/gateway_client.c
++++ b/net/batman-adv/gateway_client.c
+@@ -32,6 +32,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kref.h>
+ #include <linux/list.h>
++#include <linux/lockdep.h>
+ #include <linux/netdevice.h>
+ #include <linux/netlink.h>
+ #include <linux/rculist.h>
+@@ -348,6 +349,9 @@ void batadv_gw_check_election(struct batadv_priv *bat_priv,
+  * @bat_priv: the bat priv with all the soft interface information
+  * @orig_node: originator announcing gateway capabilities
+  * @gateway: announced bandwidth information
++ *
++ * Has to be called with the appropriate locks being acquired
++ * (gw.list_lock).
+  */
+ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ 			       struct batadv_orig_node *orig_node,
+@@ -355,6 +359,8 @@ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ {
+ 	struct batadv_gw_node *gw_node;
+ 
++	lockdep_assert_held(&bat_priv->gw.list_lock);
++
+ 	if (gateway->bandwidth_down == 0)
+ 		return;
+ 
+@@ -369,10 +375,8 @@ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ 	gw_node->bandwidth_down = ntohl(gateway->bandwidth_down);
+ 	gw_node->bandwidth_up = ntohl(gateway->bandwidth_up);
+ 
+-	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	kref_get(&gw_node->refcount);
+ 	hlist_add_head_rcu(&gw_node->list, &bat_priv->gw.gateway_list);
+-	spin_unlock_bh(&bat_priv->gw.list_lock);
+ 
+ 	batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+ 		   "Found new gateway %pM -> gw bandwidth: %u.%u/%u.%u MBit\n",
+@@ -428,11 +432,14 @@ void batadv_gw_node_update(struct batadv_priv *bat_priv,
+ {
+ 	struct batadv_gw_node *gw_node, *curr_gw = NULL;
+ 
++	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	gw_node = batadv_gw_node_get(bat_priv, orig_node);
+ 	if (!gw_node) {
+ 		batadv_gw_node_add(bat_priv, orig_node, gateway);
++		spin_unlock_bh(&bat_priv->gw.list_lock);
+ 		goto out;
+ 	}
++	spin_unlock_bh(&bat_priv->gw.list_lock);
+ 
+ 	if (gw_node->bandwidth_down == ntohl(gateway->bandwidth_down) &&
+ 	    gw_node->bandwidth_up == ntohl(gateway->bandwidth_up))
+-- 
+2.17.1
+
