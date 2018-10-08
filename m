@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801A3C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CBAC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA4A2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 924A020C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEDgHjJl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA4A2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cW+0upcw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924A020C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeJIBsP (ORCPT
+        id S1728192AbeJIBsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60330 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbeJIBsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:15 -0400
+        id S1726723AbeJIBsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 296612087D;
-        Mon,  8 Oct 2018 18:35:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29E672089D;
+        Mon,  8 Oct 2018 18:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023712;
-        bh=gmVFu7cxNkqdv+Bc8ejmSWHcKVsMW7jRLycEoavwNR0=;
+        s=default; t=1539023715;
+        bh=pBfjZJOeR6Mn80SGlfCgdLj/FkHgkpz96k76SaBlpq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EEDgHjJl4jquxbkIM2Vivj3ZgjCD1d/OuRKowXjSuaGH7XAoqOwpwUHjXiWR6TgPp
-         aFVLYLO9BPn/HUtDlo4txrlhbXFPf4g2EPp4g/7l53IOFvH83cHivlI6u3WnwDmEI7
-         UDUMQEyFqQAReM9PqR14WXZD6TGQm39RGfCMPGao=
+        b=cW+0upcwesXAr1ezqTdcBwfkCWW0M4jCMXXAUariLfRvJTQWqd/ldTFnNRAZGEE6b
+         bUsEDQdHqgkvzhu6QqTdwsZwWX3WLMmV/dHhxNkK+DQdOlPYuhD02G2sqSpokztrX9
+         Kt8kyA+KVR0y0zQT1tHZoUfx90uQF6VILE7pnAu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 059/113] IB/srp: Avoid that sg_reset -d ${srp_device} triggers an infinite loop
-Date:   Mon,  8 Oct 2018 20:31:00 +0200
-Message-Id: <20181008175534.247231978@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
+        Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 060/113] scsi: target: iscsi: Use bin2hex instead of a re-implementation
+Date:   Mon,  8 Oct 2018 20:31:01 +0200
+Message-Id: <20181008175534.312535208@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,45 +63,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Vincent Pelletier <plr.vincent@gmail.com>
 
-commit ee92efe41cf358f4b99e73509f2bfd4733609f26 upstream.
+commit 8c39e2699f8acb2e29782a834e56306da24937fe upstream.
 
-Use different loop variables for the inner and outer loop. This avoids
-that an infinite loop occurs if there are more RDMA channels than
-target->req_ring_size.
-
-Fixes: d92c0da71a35 ("IB/srp: Add multichannel support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[plr.vincent@gmail.com: hunk context change for 4.4 and 4.9, no code change]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/target/iscsi/iscsi_target_auth.c |   15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2594,7 +2594,7 @@ static int srp_reset_device(struct scsi_
- {
- 	struct srp_target_port *target = host_to_target(scmnd->device->host);
- 	struct srp_rdma_ch *ch;
+--- a/drivers/target/iscsi/iscsi_target_auth.c
++++ b/drivers/target/iscsi/iscsi_target_auth.c
+@@ -26,15 +26,6 @@
+ #include "iscsi_target_nego.h"
+ #include "iscsi_target_auth.h"
+ 
+-static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
+-{
 -	int i;
-+	int i, j;
- 	u8 status;
+-
+-	for (i = 0; i < src_len; i++) {
+-		sprintf(&dst[i*2], "%02x", (int) src[i] & 0xff);
+-	}
+-}
+-
+ static void chap_gen_challenge(
+ 	struct iscsi_conn *conn,
+ 	int caller,
+@@ -47,7 +38,7 @@ static void chap_gen_challenge(
+ 	memset(challenge_asciihex, 0, CHAP_CHALLENGE_LENGTH * 2 + 1);
  
- 	shost_printk(KERN_ERR, target->scsi_host, "SRP reset_device called\n");
-@@ -2608,8 +2608,8 @@ static int srp_reset_device(struct scsi_
+ 	get_random_bytes(chap->challenge, CHAP_CHALLENGE_LENGTH);
+-	chap_binaryhex_to_asciihex(challenge_asciihex, chap->challenge,
++	bin2hex(challenge_asciihex, chap->challenge,
+ 				CHAP_CHALLENGE_LENGTH);
+ 	/*
+ 	 * Set CHAP_C, and copy the generated challenge into c_str.
+@@ -287,7 +278,7 @@ static int chap_server_compute_md5(
+ 	}
+ 	crypto_free_hash(tfm);
  
- 	for (i = 0; i < target->ch_count; i++) {
- 		ch = &target->ch[i];
--		for (i = 0; i < target->req_ring_size; ++i) {
--			struct srp_request *req = &ch->req_ring[i];
-+		for (j = 0; j < target->req_ring_size; ++j) {
-+			struct srp_request *req = &ch->req_ring[j];
+-	chap_binaryhex_to_asciihex(response, server_digest, MD5_SIGNATURE_SIZE);
++	bin2hex(response, server_digest, MD5_SIGNATURE_SIZE);
+ 	pr_debug("[server] MD5 Server Digest: %s\n", response);
  
- 			srp_finish_req(ch, req, scmnd->device, DID_RESET << 16);
- 		}
+ 	if (memcmp(server_digest, client_digest, MD5_SIGNATURE_SIZE) != 0) {
+@@ -431,7 +422,7 @@ static int chap_server_compute_md5(
+ 	/*
+ 	 * Convert response from binary hex to ascii hext.
+ 	 */
+-	chap_binaryhex_to_asciihex(response, digest, MD5_SIGNATURE_SIZE);
++	bin2hex(response, digest, MD5_SIGNATURE_SIZE);
+ 	*nr_out_len += sprintf(nr_out_ptr + *nr_out_len, "CHAP_R=0x%s",
+ 			response);
+ 	*nr_out_len += 1;
 
 
