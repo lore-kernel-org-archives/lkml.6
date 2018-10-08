@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B9DC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F5DC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A132087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0155921479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jH4mTC5u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A132087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdDOnkV5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0155921479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729528AbeJIBwk (ORCPT
+        id S1729541AbeJIBwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:52:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:52:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbeJIBwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:52:39 -0400
+        id S1728337AbeJIBwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:52:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 848A3214C3;
-        Mon,  8 Oct 2018 18:39:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 500EF2064A;
+        Mon,  8 Oct 2018 18:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023976;
-        bh=aw8KI6Ejt00Abf/pj6qkWF08Oe1I7pkAhYAKFCZ/zi0=;
+        s=default; t=1539023978;
+        bh=nP7C5zA11icTPItS/Tn0xFq+VXYVw24fRjTItpHbU/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jH4mTC5uIqybGesoQBJYGkZuNv7/t+uUNKIJNVxBJEZ0S0fNs5Q4TOezxK0gS9Dzp
-         hGmb+s06hxERRaJ3tUrb7fc3r6ZXJkCt9Hvu7kT1FhnE1ctE8JqwBTUba09DroqNZ4
-         GXZjS/3a7zjNKtTngvqvMPrZ+Rsm+NnowcCTAEzA=
+        b=BdDOnkV5tMkpSb+HHXRONety3YYGPGIkig9AYabJ821SHHUVoRmnSTjbwC6AkNgFh
+         N5JrxaMN5Rxyz3j86Oy8F32gSxXlqF13dkBJyIEtibjHmD4cJQeALSi4YNhg5Hr1nM
+         fKa4gHbLpVwjnDEkrPc5hagtHPe4lT3C9j+C8qkY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Heinz Mauelshagen <heinzm@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 36/59] drm/nouveau/TBDdevinit: dont fail when PMU/PRE_OS is missing from VBIOS
-Date:   Mon,  8 Oct 2018 20:31:43 +0200
-Message-Id: <20181008175550.360252380@linuxfoundation.org>
+Subject: [PATCH 4.9 37/59] dm raid: fix rebuild of specific devices by updating superblock
+Date:   Mon,  8 Oct 2018 20:31:44 +0200
+Message-Id: <20181008175550.460928193@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -62,33 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Heinz Mauelshagen <heinzm@redhat.com>
 
-[ Upstream commit 0a6986c6595e9afd20ff7280dab36431c1e467f8 ]
+[ Upstream commit c44a5ee803d2b7ed8c2e6ce24a5c4dd60778886e ]
 
-This Falcon application doesn't appear to be present on some newer
-systems, so let's not fail init if we can't find it.
+Update superblock when particular devices are requested via rebuild
+(e.g. lvconvert --replace ...) to avoid spurious failure with the "New
+device injected into existing raid set without 'delta_disks' or
+'rebuild' parameter specified" error message.
 
-TBD: is there a way to determine whether it *should* be there?
-
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/dm-raid.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
-@@ -161,7 +161,8 @@ gm200_devinit_post(struct nvkm_devinit *
- 	}
- 
- 	/* load and execute some other ucode image (bios therm?) */
--	return pmu_load(init, 0x01, post, NULL, NULL);
-+	pmu_load(init, 0x01, post, NULL, NULL);
-+	return 0;
- }
- 
- static const struct nvkm_devinit_func
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -2880,6 +2880,11 @@ static int raid_ctr(struct dm_target *ti
+ 		set_bit(RT_FLAG_UPDATE_SBS, &rs->runtime_flags);
+ 		rs_set_new(rs);
+ 	} else if (rs_is_recovering(rs)) {
++		/* Rebuild particular devices */
++		if (test_bit(__CTR_FLAG_REBUILD, &rs->ctr_flags)) {
++			set_bit(RT_FLAG_UPDATE_SBS, &rs->runtime_flags);
++			rs_setup_recovery(rs, MaxSector);
++		}
+ 		/* A recovering raid set may be resized */
+ 		; /* skip setup rs */
+ 	} else if (rs_is_reshaping(rs)) {
 
 
