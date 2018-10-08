@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5E7C65C28
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F23C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79E92087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79E92087C
+	by mail.kernel.org (Postfix) with ESMTP id 022C720878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022C720878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbeJHSQU (ORCPT
+        id S1727605AbeJHSQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:16:20 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:52848 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbeJHSQU (ORCPT
+        Mon, 8 Oct 2018 14:16:19 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:37260 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeJHSQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:16:20 -0400
+        Mon, 8 Oct 2018 14:16:18 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id kz561y0033XaVaC01z56XX; Mon, 08 Oct 2018 13:05:06 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id kz561y00F3XaVaC06z56PH; Mon, 08 Oct 2018 13:05:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1g9TLV-000513-UO; Mon, 08 Oct 2018 13:05:05 +0200
+        id 1g9TLV-000511-Th; Mon, 08 Oct 2018 13:05:05 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1g9TLV-0006dN-TP; Mon, 08 Oct 2018 13:05:05 +0200
+        id 1g9TLV-0006dL-Sh; Mon, 08 Oct 2018 13:05:05 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Petr Mladek <pmladek@suse.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -41,9 +41,9 @@ To:     Petr Mladek <pmladek@suse.com>,
         Jonathan Corbet <corbet@lwn.net>
 Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] lib/vsprintf: Hash legacy clock addresses
-Date:   Mon,  8 Oct 2018 13:05:03 +0200
-Message-Id: <20181008110504.25449-3-geert+renesas@glider.be>
+Subject: [PATCH 1/3] lib/vsprintf: Prepare for more general use of ptr_to_id()
+Date:   Mon,  8 Oct 2018 13:05:02 +0200
+Message-Id: <20181008110504.25449-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008110504.25449-1-geert+renesas@glider.be>
 References: <20181008110504.25449-1-geert+renesas@glider.be>
@@ -52,51 +52,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On platforms using the Common Clock Framework, "%pC" prints the clock's
-name. On legacy platforms, it prints the unhashed clock's address,
-potentially leaking sensitive information regarding the kernel layout in
-memory.
+  - Make the ptr argument const, to avoid adding casts in future
+    callers,
+  - Add a forward declaration, to avoid moving large blocks of code.
 
-Avoid this leak by printing the hashed address instead.  To distinguish
-between clocks, a 32-bit unique identifier is as good as an actual
-pointer value.
-
-Fixes: ad67b74d2469d9b8 ("printk: hash addresses printed with %p")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/core-api/printk-formats.rst | 5 ++---
- lib/vsprintf.c                            | 2 +-
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ lib/vsprintf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index 25dc591cb1108790..d39798c2558500d5 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -420,9 +420,8 @@ struct clk
- 	%pC	pll1
- 	%pCn	pll1
- 
--For printing struct clk structures. %pC and %pCn print the name
--(Common Clock Framework) or address (legacy clock framework) of the
--structure.
-+For printing struct clk structures. %pC and %pCn print the name of the clock
-+(Common Clock Framework) or a unique 32-bit ID (legacy clock framework).
- 
- Passed by reference.
- 
 diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index b5bf90731c5a5277..1fb36260a44289e8 100644
+index 095a677f89c02442..b5bf90731c5a5277 100644
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -1477,7 +1477,7 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
- #ifdef CONFIG_COMMON_CLK
- 		return string(buf, end, __clk_get_name(clk), spec);
- #else
--		return special_hex_number(buf, end, (unsigned long)clk, sizeof(unsigned long));
-+		return ptr_to_id(buf, end, clk, spec);
- #endif
- 	}
- }
+@@ -407,6 +407,9 @@ struct printf_spec {
+ #define FIELD_WIDTH_MAX ((1 << 23) - 1)
+ #define PRECISION_MAX ((1 << 15) - 1)
+ 
++static char *ptr_to_id(char *buf, char *end, const void *ptr,
++		       struct printf_spec spec);
++
+ static noinline_for_stack
+ char *number(char *buf, char *end, unsigned long long num,
+ 	     struct printf_spec spec)
+@@ -1714,7 +1717,8 @@ static int __init initialize_ptr_random(void)
+ early_initcall(initialize_ptr_random);
+ 
+ /* Maps a pointer to a 32 bit unique identifier. */
+-static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
++static char *ptr_to_id(char *buf, char *end, const void *ptr,
++		       struct printf_spec spec)
+ {
+ 	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
+ 	unsigned long hashval;
 -- 
 2.17.1
 
