@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED26CC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D79B1C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B0E214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A9152087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q06ijYGo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B0E214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUQJ477K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9152087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731646AbeJICBZ (ORCPT
+        id S1731656AbeJICB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:01:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:01:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727452AbeJICBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:01:24 -0400
+        id S1727452AbeJICB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:01:27 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD0422087D;
-        Mon,  8 Oct 2018 18:48:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C822087D;
+        Mon,  8 Oct 2018 18:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024498;
-        bh=uIDavJ/YnjZWxxgUNJvi470ez5NkSV4NNc7+THh+Yyk=;
+        s=default; t=1539024501;
+        bh=dEPVjobHczXf4DJOX0ZIyndwSCdhJb1jpffvPWaGYF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q06ijYGoB4reNYxiIJ+gR1P2OY7GEfcbNx1MR58jlKesbplUCKPwZ4YmyrVpvHJY1
-         +F5urJsWRuxadYzN0VpUjaqHq0bGDOaBoGARys9n4Aew4ZgYEQLMhn3WXjO+E8gXGa
-         CtkxDEuaniu/VTWPXrJ8FYwja9lrK18KUs4FFyuM=
+        b=CUQJ477Kxrc3lJp0EECGsUBL482PJxA7G70cF3ZGqQlDMnncn+W69j6P314IoecP3
+         6DdNja79C4UEbyTebj0ZMf/WkjMoXav5pAUWe5KSTTqC+2GK0W6eAA3ffgYLwwgWCP
+         /ZfEKBFOMXzWHvXrMXP5yVWIdL5HReiXEnoOx5D4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Arunk Khandavalli <akhandav@codeaurora.org>,
-        Jouni Malinen <jouni@codeaurora.org>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 037/168] cfg80211: nl80211_update_ft_ies() to validate NL80211_ATTR_IE
-Date:   Mon,  8 Oct 2018 20:30:17 +0200
-Message-Id: <20181008175621.456005756@linuxfoundation.org>
+Subject: [PATCH 4.18 038/168] mac80211: do not convert to A-MSDU if frag/subframe limited
+Date:   Mon,  8 Oct 2018 20:30:18 +0200
+Message-Id: <20181008175621.496071660@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -65,35 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arunk Khandavalli <akhandav@codeaurora.org>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 ]
+[ Upstream commit 1eb507903665442360a959136dfa3234c43db085 ]
 
-nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
-is_valid_ie_attr() before dereferencing it, but that helper function
-returns true in case of NULL pointer (i.e., attribute not included).
-This can result to dereferencing a NULL pointer. Fix that by explicitly
-checking that NL80211_ATTR_IE is included.
+Do not start to aggregate packets in a A-MSDU frame (converting the
+first subframe to A-MSDU, adding the header) if max_tx_fragments or
+max_amsdu_subframes limits are already exceeded by it. In particular,
+this happens when drivers set the limit to 1 to avoid A-MSDUs at all.
 
-Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Transition")
-Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+[reword commit message to be more precise]
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/tx.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -12099,6 +12099,7 @@ static int nl80211_update_ft_ies(struct
- 		return -EOPNOTSUPP;
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3208,9 +3208,6 @@ static bool ieee80211_amsdu_aggregate(st
+ 	if (skb->len + head->len > max_amsdu_len)
+ 		goto out;
  
- 	if (!info->attrs[NL80211_ATTR_MDID] ||
-+	    !info->attrs[NL80211_ATTR_IE] ||
- 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
- 		return -EINVAL;
+-	if (!ieee80211_amsdu_prepare_head(sdata, fast_tx, head))
+-		goto out;
+-
+ 	nfrags = 1 + skb_shinfo(skb)->nr_frags;
+ 	nfrags += 1 + skb_shinfo(head)->nr_frags;
+ 	frag_tail = &skb_shinfo(head)->frag_list;
+@@ -3226,6 +3223,9 @@ static bool ieee80211_amsdu_aggregate(st
+ 	if (max_frags && nfrags > max_frags)
+ 		goto out;
  
++	if (!ieee80211_amsdu_prepare_head(sdata, fast_tx, head))
++		goto out;
++
+ 	/*
+ 	 * Pad out the previous subframe to a multiple of 4 by adding the
+ 	 * padding to the next one, that's being added. Note that head->len
 
 
