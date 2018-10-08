@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC382C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDDAC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80CF421565
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A570121557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:32:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KouEl4Gm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80CF421565
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYWis8yG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A570121557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728710AbeJHWob (ORCPT
+        id S1728461AbeJHWjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:44:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57894 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728089AbeJHWjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:02 -0400
+        id S1728321AbeJHWi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B1E21479;
-        Mon,  8 Oct 2018 15:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F6E521531;
+        Mon,  8 Oct 2018 15:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012407;
-        bh=S34kyZAKiyhY+RnYNCLvJcaVMoEV3jmaQ6l+KeZQG2I=;
+        s=default; t=1539012403;
+        bh=7y62hsutKLMT+XCZBNRTdv9lF1uGf+aZsTMv6VDD69Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KouEl4GmSfCCAPkHIayuAOMi6F62ElDmbfSfr7a31T1mxu21sFg1+deJ+EBhTx2Dz
-         OobPEQpyZ1w3Nq4UTYmUjOPeR+KHNyN3mozelSqDtq0G/FdCv1uv7Te4HKQtrw0etR
-         8SJLV/tIxggPj0/MKb8Bj53xaBWxiXI/HZu70f/0=
+        b=GYWis8yGRZhh3wZZp4Q4c5q8xq41R5qQEioKSoGC4Uu6rl3+YlF3+v+UI+aQPKLa9
+         5Uiow5gwn6PJqdQMU5m2sdUV4+17DDsEbRe01pwDscoVyU+yNa4WzawtUv4iOc/XTX
+         6QkCyepDXCrstcbbD/yF/w+1ci6bi36Dg0LHaAhE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc:     Laura Abbott <labbott@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 18/32] Input: atakbd - fix Atari CapsLock behaviour
-Date:   Mon,  8 Oct 2018 11:26:15 -0400
-Message-Id: <20181008152629.70812-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 14/32] scsi: ibmvscsis: Fix a stringop-overflow warning
+Date:   Mon,  8 Oct 2018 11:26:11 -0400
+Message-Id: <20181008152629.70812-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
 References: <20181008152629.70812-1-sashal@kernel.org>
@@ -54,46 +53,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
+[ Upstream commit d792d4c4fc866ae224b0b0ca2aabd87d23b4d6cc ]
 
-The CapsLock key on Atari keyboards is not a toggle, it does send the
-normal make and break scancodes.
+There's currently a warning about string overflow with strncat:
 
-Drop the CapsLock toggle handling code, which did cause the CapsLock
-key to merely act as a Shift key.
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specified
+bound 64 equals destination size [-Werror=stringop-overflow=]
+  strncat(vscsi->eye, vdev->name, MAX_EYE);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Switch to a single snprintf instead of a strcpy + strcat to handle this
+cleanly.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/input/keyboard/atakbd.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
-index 524a72bee55a..fdeda0b0fbd6 100644
---- a/drivers/input/keyboard/atakbd.c
-+++ b/drivers/input/keyboard/atakbd.c
-@@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned char scancode, char down)
+diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+index 2799a6b08f73..c6878f596520 100644
+--- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
++++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+@@ -3465,8 +3465,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
+ 		 vscsi->dds.window[LOCAL].liobn,
+ 		 vscsi->dds.window[REMOTE].liobn);
  
- 		scancode = atakbd_keycode[scancode];
+-	strcpy(vscsi->eye, "VSCSI ");
+-	strncat(vscsi->eye, vdev->name, MAX_EYE);
++	snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI %s", vdev->name);
  
--		if (scancode == KEY_CAPSLOCK) {	/* CapsLock is a toggle switch key on Amiga */
--			input_report_key(atakbd_dev, scancode, 1);
--			input_report_key(atakbd_dev, scancode, 0);
--			input_sync(atakbd_dev);
--		} else {
--			input_report_key(atakbd_dev, scancode, down);
--			input_sync(atakbd_dev);
--		}
-+		input_report_key(atakbd_dev, scancode, down);
-+		input_sync(atakbd_dev);
- 	} else				/* scancodes >= 0xf3 are mouse data, most likely */
- 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
- 
+ 	vscsi->dds.unit_id = vdev->unit_address;
+ 	strncpy(vscsi->dds.partition_name, partition_name,
 -- 
 2.17.1
 
