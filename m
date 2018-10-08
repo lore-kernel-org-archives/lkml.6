@@ -2,209 +2,200 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A77C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCF5C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A28C2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A28C2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D62942075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:33:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="hgUs8HhH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D62942075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbeJHVoe (ORCPT
+        id S1726607AbeJHVpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:44:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:51206 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbeJHVoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:44:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13BC180D;
-        Mon,  8 Oct 2018 07:32:31 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D2C13F5BC;
-        Mon,  8 Oct 2018 07:32:28 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 15:32:16 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Murali Karicheri <m-karicheri2@ti.com>
-Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host
- controller support
-Message-ID: <20181008143215.GA9596@e107981-ln.cambridge.arm.com>
-References: <b869b273-e681-0b8c-52f5-6e02f9de5485@synopsys.com>
- <20180926213135.A4B4.4A936039@socionext.com>
- <20180927164426.ECD6.4A936039@socionext.com>
- <20180928110640.GA18840@e107981-ln.cambridge.arm.com>
- <bb081d21-7c03-0357-4294-7e92d95d838c@arm.com>
- <20180928154350.GC24460@e107981-ln.cambridge.arm.com>
- <dbb43a92-b5c0-0d26-3db0-3dbbccb12b98@ti.com>
+        Mon, 8 Oct 2018 17:45:06 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:17761 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeJHVpG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:45:06 -0400
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w98EWh6P022306;
+        Mon, 8 Oct 2018 23:32:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w98EWh6P022306
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539009164;
+        bh=FMPp4kZkkPloIlzRNQSVTTzcWD/V7btEG7iv2ODO3p4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hgUs8HhHEGRVSSfHC8YlAR/ZYfB2/uCDApmDvv4MUTrWRdToklnhQdAIAjay0jYD+
+         Zz07Wt0r52Hk3rGfAcF3WRpOnZCaotQb4R3zA6WLe76zm4QHpT3QzpYLNU9bLCHDFA
+         LvKndZ5nEccC0aUIvb/TEktBwXniYWx7AFsi8D/z9tlaULT18JzrZwqF1s4LKbWDac
+         7qYu7ECEeZWkVwwwLFRsN/lyg6wbEHEIRNRqv4LniBxyTtysCiY2xx8B70W+a03Gc6
+         HJiEKSGEly1CVS1moSG1U1e3N68qTwBW4cKgWQM4bRPL08zMhJK01tAtGvYBeEzSOE
+         l6HV8fDMQrNcg==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id r83so1517489vsc.4;
+        Mon, 08 Oct 2018 07:32:43 -0700 (PDT)
+X-Gm-Message-State: ABuFfohUbS8PmMa3+EXtT0lYmQ93lKEwePJqrAdNo+ox3Xm9E/5uAMhe
+        E6JuymUwUWlnF38ep+/WlGSWOyOjIg9NwsWCeBc=
+X-Google-Smtp-Source: ACcGV63PMuWr1OCBLe9gw38yCBJToykUsmDK/wfTw5hl39lb2N6E2/xMZOqcT60PQL1y56qdlN7R0HWMhSxBPK9GiiA=
+X-Received: by 2002:a67:3793:: with SMTP id j19mr8311749vsi.215.1539009162209;
+ Mon, 08 Oct 2018 07:32:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dbb43a92-b5c0-0d26-3db0-3dbbccb12b98@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
+ <20181005083313.2088252-1-arnd@arndb.de> <CANiq72mHDxe9-+pFf+dDuYXRz5YeyRYi6RW65tyo9-ENNngsCw@mail.gmail.com>
+ <CAK7LNAT5h+Rku7DbD+kHGv7Kgk8FfuX4wwL_pwNOLSJbqw99MA@mail.gmail.com>
+ <CAK7LNATycNLxzB=FtrBy9M4E6m9wx4Uhk=DQ7gcCMD2J_vfmfQ@mail.gmail.com> <5cbb504c-0506-cec8-d51b-00928cdb27fe@ideasonboard.com>
+In-Reply-To: <5cbb504c-0506-cec8-d51b-00928cdb27fe@ideasonboard.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 8 Oct 2018 23:32:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQNhMhoCXSRDQVrNkTLUyLO0_xYJm1o_dyao0-rSbpwzA@mail.gmail.com>
+Message-ID: <CAK7LNAQNhMhoCXSRDQVrNkTLUyLO0_xYJm1o_dyao0-rSbpwzA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix kernel/bounds.c 'W=1' warning
+To:     kieran.bingham+renesas@ideasonboard.com
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 11:15:59AM +0530, Kishon Vijay Abraham I wrote:
-> Hi Lorenzo,
-> 
-> On Friday 28 September 2018 09:13 PM, Lorenzo Pieralisi wrote:
-> > On Fri, Sep 28, 2018 at 02:17:16PM +0100, Marc Zyngier wrote:
-> >> On 28/09/18 12:06, Lorenzo Pieralisi wrote:
-> >>> [+Murali, Marc]
-> >>>
-> >>> On Thu, Sep 27, 2018 at 04:44:26PM +0900, Kunihiko Hayashi wrote:
-> >>>> Hi Lorenzo, Gustavo,
-> >>>>
-> >>>> On Wed, 26 Sep 2018 21:31:36 +0900 <hayashi.kunihiko@socionext.com> wrote:
-> >>>>
-> >>>>> Hi Lorenzo, Gustavo,
-> >>>>>
-> >>>>> Thank you for reviewing.
-> >>>>>
-> >>>>> On Tue, 25 Sep 2018 18:53:01 +0100
-> >>>>> Gustavo Pimentel <gustavo.pimentel@synopsys.com> wrote:
-> >>>>>
-> >>>>>> On 25/09/2018 17:14, Lorenzo Pieralisi wrote:
-> >>>>>>> [+Gustavo, please have a look at INTX/MSI management]
-> >>>>>>>
-> >>>>>>> On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
-> >>>>>>>> This introduces specific glue layer for UniPhier platform to support
-> >>>>>>>> PCIe host controller that is based on the DesignWare PCIe core, and
-> >>>>>>>> this driver supports Root Complex (host) mode.
-> >>>>>>>
-> >>>>>>> Please read this thread and apply it to next versions:
-> >>>>>>>
-> >>>>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D150905742808166-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=H8UNDDUGQnQnqfWr4CBios689dJcjxu4qeTTRGulLmU&s=CgcXc_2LThyOpW-4bCriJNo9H1lzROEdy_cG9p-Y5hU&e=
-> >>>>>
-> >>>>> I also found this thread in previous linux-pci, and I think it's helpful for me.
-> >>>>> I'll check it carefully.
-> >>>>
-> >>>> [snip]
-> >>>>
-> >>>>>>>> +	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-> >>>>>>>> +			       IRQF_SHARED, "pcie", priv);
-> >>>>>>>
-> >>>>>>> This is wrong, you should set-up a chained IRQ for INTX.
-> >>>>>>>
-> >>>>>>> I *think* that
-> >>>>>>>
-> >>>>>>> ks_pcie_setup_interrupts()
-> >>>>>>>
-> >>>>>>> is a good example to start with but I wonder whether it is worth
-> >>>>>>> generalizing the INTX approach to designware as a whole as it was
-> >>>>>>> done for MSIs.
-> >>>>>>>
-> >>>>>>> Thoughts ?
-> >>>>>>
-> >>>>>> From what I understood this is for legacy IRQ, right?
-> >>>>>
-> >>>>> Yes. For legacy IRQ.
-> >>>>>
-> >>>>>> Like you (Lorenzo) said there is 2 drivers (pci-keystone-dw.c and pci-dra7xx.c)
-> >>>>>> that uses it and can be use as a template for handling this type of interrupts.
-> >>>>>>
-> >>>>>> We can try to pass some kind of generic INTX function to the DesignWare host
-> >>>>>> library to handling this, but this will require some help from keystone and
-> >>>>>> dra7xx maintainers, since my setup doesn't have legacy IRQ HW support.
-> >>>>>
-> >>>>> Now I think it's difficult to make a template for INTX function,
-> >>>>> and at first, I'll try to re-write this part with reference to pci-keystone-dw.c.
-> >>>>
-> >>>> I understand that there are 2 types of interrupt and the drivers.
-> >>>>
-> >>>> One like pci-keystone-dw.c is:
-> >>>>
-> >>>>  - there are 4 interrupts for legacy,
-> >>>>  - invoke handlers for each interrupt, and handle the interrupt,
-> >>>>  - call irq_set_chained_handler_and_data() to make a chain of the interrupts
-> >>>>   when initializing
-> >>>>
-> >>>> The other like pci-dra7xx.c is:
-> >>>>
-> >>>>  - there is 1 IRQ for legacy as a parent,
-> >>>>  - check an interrupt factor register, and handle the interrupt correspond
-> >>>>    to the factor,
-> >>>>  - call request_irq() for the parent IRQ and irq_domain_add_linear() for
-> >>>>    the factor when initializing
-> >>>>
-> >>>> The pcie-uniphier.c is the same type as the latter (like pci-dra7xx.c).
-> >>>>
-> >>>> However, in pci-dra7xx.c, MSI and legacy IRQ share the same interrupt number,
-> >>>> so the same handler is called and the handler divides these IRQs.
-> >>>> (found in dra7xx_pcie_msi_irq_handler())
-> >>>>
-> >>>> In pcie-uniphier.c, MSI and legacy IRQ are independent.
-> >>>> Therefore it's necessary to prepare the handler for the legacy IRQ.
-> >>>>
-> >>>> I think that it's difficult to apply the way of pci-keystone-dw.c, and
-> >>>> uniphier_pcie_irq_handler() and calling devm_request_irq() are still
-> >>>> necessary to handle legacy IRQ.
-> >>>
-> >>> I do not think it is difficult, the difference is that keystone has
-> >>> 1 GIC irq line allocated per legacy IRQ, your set-up has one for
-> >>> all INTX.
-> >>>
-> >>> *However*, I would like some clarifications from Murali on this code
-> >>> in drivers/pci/controller/dwc/pci-keystone.c:
-> >>>
-> >>> static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
-> >>> {
-> >>> 	unsigned int irq = irq_desc_get_irq(desc);
-> >>> 	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
-> >>> 	struct dw_pcie *pci = ks_pcie->pci;
-> >>> 	struct device *dev = pci->dev;
-> >>> 	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
-> >>>
-> >>> Here the IRQ numbers are virtual IRQs, is it correct to consider
-> >>> the virq numbers as sequential values ? The "offset" is used to
-> >>> handle the PCI controller interrupt registers, so it must be a value
-> >>> between 0-3 IIUC.
+On Mon, Oct 8, 2018 at 7:01 PM Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+>
+> On 06/10/18 23:06, Masahiro Yamada wrote:
+> > On Sun, Oct 7, 2018 at 6:58 AM Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
 > >>
-> >> There is absolutely no reason why virtual interrupt numbers should be
-> >> contiguous. Shake the allocator hard enough, and you'll see gaps appearing.
+> >> Hi Miguel,
 > >>
-> >> In general, the only thing that makes sense is to compute this offset based
-> >> on the hwirq which is HW-specific.
-> > 
-> > That was my understanding and why I asked, which means that keystone
-> > code can break (unless I read it wrong) and Murali will send me a fix as
-> > soon as possible please to get it right (and Kunihiko will base his
-> > code on this discussion).
-> 
-> I had cleaned up legacy interrupt handling in keystone driver [1] which was
-> also required for TI's AM654 Platform.
-> 
-> But I guess the same issue will occur in MSI interrupt handling. I'll fix that
-> up in the next version. Btw can you review [2] so that I can fix any other
-> comments that you may have.
+> >>
+> >> On Sun, Oct 7, 2018 at 6:18 AM Miguel Ojeda
+> >> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >>>
+> >>> On Fri, Oct 5, 2018 at 10:35 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >>>>
+> >>>> Building any configuration with 'make W=3D1' produces a warning:
+> >>>>
+> >>>> kernel/bounds.c:16:6: warnign: no previous prototype for 'foo' [-Wmi=
+ssing-prototypes]
+> >>>>
+> >>>> When also passing -Werror, this prevents us from building any
+> >>>> other files. Nobody ever calls the function, but we can't make
+> >>>> it 'static' either since we want the compiler output.
+> >>>>
+> >>>> Calling it 'main' instead however avoids the warning, because gcc
+> >>>> does not insist on having a declaration for main.
+> >>>
+> >>> I think marking the function as static __used should do the trick and
+> >>> would be less confusing.
+> >>
+> >>
+> >>
+> >>
+> >> I tried __used, but I still see the warning.
+> >>
+> >>
+> >> masahiro@grover:~/ref/linux$ git diff
+> >> diff --git a/kernel/bounds.c b/kernel/bounds.c
+> >> index c373e88..aee0101 100644
+> >> --- a/kernel/bounds.c
+> >> +++ b/kernel/bounds.c
+> >> @@ -13,7 +13,7 @@
+> >>  #include <linux/log2.h>
+> >>  #include <linux/spinlock_types.h>
+> >>
+> >> -void foo(void)
+> >> +void __used foo(void)
+> >>  {
+> >>         /* The enum constants to put into include/generated/bounds.h *=
+/
+> >>         DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
+> >> masahiro@grover:~/ref/linux$ make W=3D1  prepare
+> >>   CC      kernel/bounds.s
+> >> kernel/bounds.c:16:13: warning: no previous prototype for =E2=80=98foo=
+=E2=80=99
+> >> [-Wmissing-prototypes]
+> >>  void __used foo(void)
+> >>              ^
+> >>   CC      arch/x86/kernel/asm-offsets.s
+> >
+> >
+> >
+> > Sorry, I forgot to add 'static'.
+> >
+> > Adding both static and __used worked for me,
+> > and I like the idea.
+> >
+>
+> Aha - I'd also tried converting to static in my earlier attempts, but
+> didn't realise we had __used!
+>
+> updating as "static __used" causes the following diff:
+>
+> diff -Nurp bounds.s.foo bounds.s.static-used
+> --- bounds.s.foo        2018-10-05 10:20:53.269941404 +0100
+> +++ bounds.s.static-used        2018-10-08 10:51:18.079309049 +0100
+> @@ -110,7 +110,6 @@
+>  #NO_APP
+>         .align  2
+>         .p2align 3,,7
+> -       .global foo
+>         .type   foo, %function
+>  foo:
+>         stp     x29, x30, [sp, -16]!    //,,,
+>
+>
+> I'd say this is a pretty good alternative fix - however I see Arnd's
+> version is already on it's way though akpm's tree...
+>
+> https://ozlabs.org/~akpm/mmots/broken-out/kbuild-fix-kernel-boundsc-w%3D1=
+-warning.patch
+>
+> Anyway, as long as one of the variants gets there I'll be happy :)
 
-Hi Kishon,
 
-yes I will, I am getting there (sorry for the delay), I don't think we
-can make it v4.20 material but let me first have a look, maybe we can
-split it up and simplify its merge.
+I will leave it to Arnd.
 
-Thanks,
-Lorenzo
+
+When we fix arch/{mips,sparc}/kernel/asm-offsets.c,
+'static __used' is just additions.
+
+The 'main(void)' solution would require a little bit restructuring.
+
+
+
+FWIW, with my quick analysis, the following should be fixed as well:
+
+arch/alpha/kernel/asm-offsets.c
+arch/c6x/kernel/asm-offsets.c
+arch/ia64/kernel/asm-offsets.c
+arch/ia64/kernel/nr-irqs.c
+arch/mips/kernel/asm-offsets.c
+arch/riscv/kernel/asm-offsets.c
+arch/sparc/kernel/asm-offsets.c
+arch/x86/kernel/asm-offsets.c
+arch/x86/um/shared/sysdep/kernel-offsets.h
+samples/bpf/syscall_nrs.c
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
