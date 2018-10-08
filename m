@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7121FC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8945C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382FF2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AFE21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEtBflwg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382FF2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iim5OZuc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84AFE21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbeJIBrs (ORCPT
+        id S1727992AbeJIBrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:47:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59334 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:47:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbeJIBrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:47:47 -0400
+        id S1726646AbeJIBru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:47:50 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44B242089D;
-        Mon,  8 Oct 2018 18:34:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02EB02089D;
+        Mon,  8 Oct 2018 18:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023684;
-        bh=g0nU46eegtn8v4rH1oaBBX7AVrZhtPxI/+poUDpnyEs=;
+        s=default; t=1539023687;
+        bh=98Pnqx+aq+IpOXvSOR8knHryS16ucjMF5UNo7Cfq7HM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VEtBflwgdnkMoRQNWsz7vwkjxavzkmNN4AvHb38d8QGz5B14fzYkeN4NQlhdBHYSM
-         2u2S89ykNntdJK053fZCHGAAwXp1tWVMMNedeF9vJxQSVvFlkwYB97heRwmsbkwmza
-         saEcfuk8m7orQMLiKvO4fqe3EBdLyNNJsERMi1eY=
+        b=Iim5OZucek6VTVztiYg25Dueu509VjraEmyN0Cmlpw5Rz2p7mMTRlHLUhniW5UMjP
+         4j//+LalrR2oy1bGyY1usO+hM2gWom37MY7lIBpVe+Tze3TvG2iIH/F2IgNNQ3MKOf
+         IyB7G7urVMhS6vl1crYtngIyOi3VKWDLYv1pX+x8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
         Akinobu Mita <akinobu.mita@gmail.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 025/113] media: s3c-camif: ignore -ENOIOCTLCMD from v4l2_subdev_call for s_power
-Date:   Mon,  8 Oct 2018 20:30:26 +0200
-Message-Id: <20181008175532.074090937@linuxfoundation.org>
+Subject: [PATCH 4.4 026/113] media: soc_camera: ov772x: correct setting of banding filter
+Date:   Mon,  8 Oct 2018 20:30:27 +0200
+Message-Id: <20181008175532.124123693@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -68,35 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 30ed2b83343bd1e07884ca7355dac70d25ffc158 ]
+[ Upstream commit 22216ec41e919682c15345e95928f266e8ba6f9e ]
 
-When the subdevice doesn't provide s_power core ops callback, the
-v4l2_subdev_call for s_power returns -ENOIOCTLCMD.  If the subdevice
-doesn't have the special handling for its power saving mode, the s_power
-isn't required.  So -ENOIOCTLCMD from the v4l2_subdev_call should be
-ignored.
+The banding filter ON/OFF is controlled via bit 5 of COM8 register.  It
+is attempted to be enabled in ov772x_set_params() by the following line.
 
+	ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
+
+But this unexpectedly results disabling the banding filter, because the
+mask and set bits are exclusive.
+
+On the other hand, ov772x_s_ctrl() correctly sets the bit by:
+
+	ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
+
+The same fix was already applied to non-soc_camera version of ov772x
+driver in the commit commit a024ee14cd36 ("media: ov772x: correct setting
+of banding filter")
+
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/s3c-camif/camif-capture.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/i2c/soc_camera/ov772x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -117,6 +117,8 @@ static int sensor_set_power(struct camif
- 
- 	if (camif->sensor.power_count == !on)
- 		err = v4l2_subdev_call(sensor->sd, core, s_power, on);
-+	if (err == -ENOIOCTLCMD)
-+		err = 0;
- 	if (!err)
- 		sensor->power_count += on ? 1 : -1;
- 
+--- a/drivers/media/i2c/soc_camera/ov772x.c
++++ b/drivers/media/i2c/soc_camera/ov772x.c
+@@ -834,7 +834,7 @@ static int ov772x_set_params(struct ov77
+ 	 * set COM8
+ 	 */
+ 	if (priv->band_filter) {
+-		ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
++		ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
+ 		if (!ret)
+ 			ret = ov772x_mask_set(client, BDBASE,
+ 					      0xff, 256 - priv->band_filter);
 
 
