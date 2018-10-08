@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A680C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6EAC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D9A2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8F4121479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+WpKMqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D9A2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rL5nzwWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F4121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbeJIBsa (ORCPT
+        id S1728279AbeJIBsd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60802 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeJIBs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:29 -0400
+        id S1726522AbeJIBsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 692B22064A;
-        Mon,  8 Oct 2018 18:35:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1579D2089D;
+        Mon,  8 Oct 2018 18:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023726;
-        bh=b9/wf3Vk+ViWJSvitdoAiuxxAYfmGuRuWb2xGef0pLw=;
+        s=default; t=1539023729;
+        bh=PE583mAPgUmFfdfUi6i94ryENIyZHNGafAfjOhYh+28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R+WpKMqmCauX5/1jMT5mBKuiaqAVUXtDHLqcpqEQURxtNclBDcGTjpeVT4UdvPF65
-         diA8gDhYsuzERko2Vw53Io+UuZuiCMMVsHDOBE9m+YWiGmKVxCCWb8/jiUbl5bVnhh
-         IXotk/s74dqTe2L+xK5L0wIPXPueMBQzXs4E/UqU=
+        b=rL5nzwWUM4KSo9jIEO8JJQTKqNLhdli4vHieVRh7Dy3n8IGGP+cLZsIHImgfAYoNf
+         kn0KwFWN3MdUJZ0+jsPlym+Ndadju4f/1NxQCVXFD7GzB0BTBIDJ1YXz+FCQtEEaQY
+         rMvvBuNxw0Vl+fmALBBsdpTB7uYKz86GraHqN01U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 064/113] thermal: of-thermal: disable passive polling when thermal zone is disabled
-Date:   Mon,  8 Oct 2018 20:31:05 +0200
-Message-Id: <20181008175534.483706786@linuxfoundation.org>
+Subject: [PATCH 4.4 065/113] net: hns: fix length and page_offset overflow when CONFIG_ARM64_64K_PAGES
+Date:   Mon,  8 Oct 2018 20:31:06 +0200
+Message-Id: <20181008175534.530438770@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,43 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit 152395fd03d4ce1e535a75cdbf58105e50587611 ]
+[ Upstream commit 3ed614dce3ca9912d22be215ff0f11104b69fe62 ]
 
-When thermal zone is in passive mode, disabling its mode from
-sysfs is NOT taking effect at all, it is still polling the
-temperature of the disabled thermal zone and handling all thermal
-trips, it makes user confused. The disabling operation should
-disable the thermal zone behavior completely, for both active and
-passive mode, this patch clears the passive_delay when thermal
-zone is disabled and restores it when it is enabled.
+When enable the config item "CONFIG_ARM64_64K_PAGES", the size of PAGE_SIZE
+is 65536(64K). But the  type of length and page_offset are u16, they will
+overflow. So change them to u32.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Fixes: 6fe6611ff275 ("net: add Hisilicon Network Subsystem hnae framework support")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/of-thermal.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hnae.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -284,10 +284,13 @@ static int of_thermal_set_mode(struct th
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.h
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
+@@ -171,10 +171,10 @@ struct hnae_desc_cb {
  
- 	mutex_lock(&tz->lock);
+ 	/* priv data for the desc, e.g. skb when use with ip stack*/
+ 	void *priv;
+-	u16 page_offset;
+-	u16 reuse_flag;
++	u32 page_offset;
++	u32 length;     /* length of the buffer */
  
--	if (mode == THERMAL_DEVICE_ENABLED)
-+	if (mode == THERMAL_DEVICE_ENABLED) {
- 		tz->polling_delay = data->polling_delay;
--	else
-+		tz->passive_delay = data->passive_delay;
-+	} else {
- 		tz->polling_delay = 0;
-+		tz->passive_delay = 0;
-+	}
+-	u16 length;     /* length of the buffer */
++	u16 reuse_flag;
  
- 	mutex_unlock(&tz->lock);
- 
+        /* desc type, used by the ring user to mark the type of the priv data */
+ 	u16 type;
 
 
