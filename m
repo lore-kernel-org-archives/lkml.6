@@ -2,301 +2,126 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C7DC677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FFCC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E68214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:16:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKyO3bvK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E68214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 51FA9213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FA9213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeJIEaS (ORCPT
+        id S1726944AbeJIEa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 00:30:18 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38165 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727197AbeJIEaR (ORCPT
+        Tue, 9 Oct 2018 00:30:59 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:59826 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726103AbeJIEa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 00:30:17 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b5-v6so10608170plr.5;
-        Mon, 08 Oct 2018 14:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PyXhXj1hpzAg5IeBAhwNtWIzKLKVwaVsmQqwsI++GEc=;
-        b=UKyO3bvKMIw9MmrYMLzIt1FXn+6np7taZXhk/g+npa4dy2JmAfeyWH2+4ZOGm9RNAC
-         ZJAYoB+GC5aysMb6rSUgDKRZo1B8hwOdTq0YRhJoeQ3MqIyv3aID4hFYBVFCQ3QLpQ1Y
-         bT9LFPZRI/aF5zjKkZ3Hszkk0zPb6bZtquPDizwifAJBozypG+XpRmWKyrf2kHzdadkS
-         p+VnjIZB3lyBaUy51dKnSGjl3f80D/10ujGfjhmS7DY+4d8sZm+MhKYLy9xmMP1DWTYG
-         AyPub0/LWsOuwjlDSyyW8EWbrURocu27NdRrmejBq++5qaHxq1UoTC8Hn7izmpE6jomQ
-         xlVg==
+        Tue, 9 Oct 2018 00:30:58 -0400
+Received: from mr1.cc.vt.edu (mail.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w98LHGj5004321
+        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 17:17:16 -0400
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w98LHBas017803
+        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 17:17:16 -0400
+Received: by mail-qk1-f199.google.com with SMTP id a130-v6so22240410qkb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 14:17:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PyXhXj1hpzAg5IeBAhwNtWIzKLKVwaVsmQqwsI++GEc=;
-        b=kSPukSKkKPWjl12OncXa5T4i4ojcF/uDERjRwfWBN34uskrWkpWyYrkzwMS+frbG6/
-         3ML0VBTXzmHOkDExT1j+V/9MjaZDop3kQ5AD9y5504OAcY8of2T9mler1k3RT4WCW8XX
-         pWJjrs0ZJP4X1bmp6+4OXAAHAQFWXIK3RzY6VMpIesbshAF9lf7aHmNV4qGHuXGt3xlW
-         AsTQT9X5KI9r9oI88KBQJY8/i1lNvIqW6M6TxN3QytcxZhhB7wNDINrOil11Lu74y2Wc
-         K2H1dBzr5ElLoBkT37w9qTws5eRB0QnfBR+Pl2dUE2+hSrGe24PpCgjiNLSdk0dTaKwo
-         FAGg==
-X-Gm-Message-State: ABuFfohVqD/Y1QnHqcZS0p6C+ApLZ616fJqQb6ry7TuQjzni+MqVH2p6
-        wnYD+HBwQIXcAm4hqeuyrjE=
-X-Google-Smtp-Source: ACcGV63feZQLZRmY50nllI0RQ2eXAUWMoAY0jPfZnCzfkF66RymjH9oZj853vto5gr4/6zQIyx2FYQ==
-X-Received: by 2002:a17:902:5ac9:: with SMTP id g9-v6mr26009487plm.311.1539033395401;
-        Mon, 08 Oct 2018 14:16:35 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id w127-v6sm23480045pfd.112.2018.10.08.14.16.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 14:16:34 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>
-Subject: [PATCH v4 3/3] infiniband/mm: convert put_page() to put_user_page*()
-Date:   Mon,  8 Oct 2018 14:16:23 -0700
-Message-Id: <20181008211623.30796-4-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181008211623.30796-1-jhubbard@nvidia.com>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
-MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=8QU2EILo8GuvQMIgvFTpu0YfleCpISuNvAYLcJ+MBYk=;
+        b=K5QCYyHAI7VUPf8yEcEtgQkdQrG0tT8UhhUB9cGbNB/84+vO9JCAx2U/M4RL4/rW9J
+         1lDA9rFehHGthaKfdvu9FjY0EcNOc8Jg1YEeKLPhuNasFOznrEb6/HqaQUhyGX7AbeW2
+         cniduhvnZp9n42xoNfzemLEPKeQueu8y3TzQeF1r7QGaJyVutd8PFMnaIti25zB/I8wI
+         +favGYG+rIL0azUBf+4hAhDu+MF1Xc8BeNBvDzGmL7UMq4mixXasL6bkwpcTyrp6aQiw
+         0EeSGdxvFhCE1Mb3dNo9XsYXeXY1fzeQa8JgQemDegVGbT4xxd8glpcQmJ9/0a3yk17I
+         lSsw==
+X-Gm-Message-State: ABuFfohJgHvdtUWZpCfFE5fH3HQ9vkTuN4hf1/t6cuy1keWBtXAMvE7h
+        et0PiycxnqvXwpU26r+icLawUoryn9i/lklKWxNf7EwlkrOBb2EGaJVxvIv+z0TdNMwJZR+Pph/
+        Raov8ilZIzDrLSlydWCzeCe/Dk+R0R92nbqA=
+X-Received: by 2002:a37:a141:: with SMTP id k62-v6mr19799006qke.276.1539033431576;
+        Mon, 08 Oct 2018 14:17:11 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV6088EUDc8acLsZY5B+k9q3JOkSzF/qy9a4P3pJZMu/vm0dcsi32TVWeDQOoSVRXCh49Pw43dw==
+X-Received: by 2002:a37:a141:: with SMTP id k62-v6mr19798981qke.276.1539033431146;
+        Mon, 08 Oct 2018 14:17:11 -0700 (PDT)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id t12-v6sm9101328qtc.67.2018.10.08.14.17.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 14:17:09 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     wang6495@umn.edu, kjlu@umn.edu,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: btf: Fix a missing check bug
+In-Reply-To: <CAPhsuW5vnVjRS7DWFYPSmq5G-dAFxOrHCAOMkK-iaOoirzMazQ@mail.gmail.com>
+References: <1538943795-30895-1-git-send-email-wang6495@umn.edu>
+ <CAPhsuW5vnVjRS7DWFYPSmq5G-dAFxOrHCAOMkK-iaOoirzMazQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1539033428_2640P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 08 Oct 2018 17:17:08 -0400
+Message-ID: <43898.1539033428@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+--==_Exmh_1539033428_2640P
+Content-Type: text/plain; charset=us-ascii
 
-For code that retains pages via get_user_pages*(),
-release those pages via the new put_user_page(), or
-put_user_pages*(), instead of put_page()
+On Mon, 08 Oct 2018 13:51:09 -0700, Song Liu said:
+> On Sun, Oct 7, 2018 at 1:26 PM Wenwen Wang <wang6495@umn.edu> wrote:
 
-This prepares for eventually fixing the problem described
-in [1], and is following a plan listed in [2], [3], [4].
+> > same value. Given that the btf data is in the user space, a malicious user
+> > can race to change the data between the two copies. By doing so, the user
+> > can provide malicious data to the kernel and cause undefined behavior.
 
-[1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+> These two numbers are copied from same memory location, right? So I
+> think this check is not necessary?
 
-[2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
-    Proposed steps for fixing get_user_pages() + DMA problems.
+Security researchers call this a TOCTOU bug - Time of Check - Time of Use.
 
-[3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
-    Bounce buffers (otherwise [2] is not really viable).
+What can happen:
 
-[4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
-    Follow-up discussions.
+1) We fetch the value  (say we get 90) from userspace and stash it in hdr_len.
 
-CC: Doug Ledford <dledford@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Mike Marciniszyn <mike.marciniszyn@intel.com>
-CC: Dennis Dalessandro <dennis.dalessandro@intel.com>
-CC: Christian Benvenuti <benve@cisco.com>
+2) We do some other stuff like check the hdr_len isn't too big, etc..
 
-CC: linux-rdma@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-mm@kvack.org
+        meanwhile, on another CPU running another thread of the process...
+                3) malicious code stuffs a 117 into that field
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- drivers/infiniband/core/umem.c              |  7 ++++---
- drivers/infiniband/core/umem_odp.c          |  2 +-
- drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
- drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
- drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
- drivers/infiniband/hw/qib/qib_user_sdma.c   |  8 ++++----
- drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 ++++---
- 7 files changed, 24 insertions(+), 28 deletions(-)
+4) We fetch the entire header, incliding a now-changed hdr_len  (now 117) and
+stick it in btf->hdr->hdr_len.
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index a41792dbae1f..7ab7a3a35eb4 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -58,9 +58,10 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
- 	for_each_sg(umem->sg_head.sgl, sg, umem->npages, i) {
- 
- 		page = sg_page(sg);
--		if (!PageDirty(page) && umem->writable && dirty)
--			set_page_dirty_lock(page);
--		put_page(page);
-+		if (umem->writable && dirty)
-+			put_user_pages_dirty_lock(&page, 1);
-+		else
-+			put_user_page(page);
- 	}
- 
- 	sg_free_table(&umem->sg_head);
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 6ec748eccff7..6227b89cf05c 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -717,7 +717,7 @@ int ib_umem_odp_map_dma_pages(struct ib_umem *umem, u64 user_virt, u64 bcnt,
- 					ret = -EFAULT;
- 					break;
- 				}
--				put_page(local_page_list[j]);
-+				put_user_page(local_page_list[j]);
- 				continue;
- 			}
- 
-diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
-index e341e6dcc388..99ccc0483711 100644
---- a/drivers/infiniband/hw/hfi1/user_pages.c
-+++ b/drivers/infiniband/hw/hfi1/user_pages.c
-@@ -121,13 +121,10 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
- void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
- 			     size_t npages, bool dirty)
- {
--	size_t i;
--
--	for (i = 0; i < npages; i++) {
--		if (dirty)
--			set_page_dirty_lock(p[i]);
--		put_page(p[i]);
--	}
-+	if (dirty)
-+		put_user_pages_dirty_lock(p, npages);
-+	else
-+		put_user_pages(p, npages);
- 
- 	if (mm) { /* during close after signal, mm can be NULL */
- 		down_write(&mm->mmap_sem);
-diff --git a/drivers/infiniband/hw/mthca/mthca_memfree.c b/drivers/infiniband/hw/mthca/mthca_memfree.c
-index cc9c0c8ccba3..b8b12effd009 100644
---- a/drivers/infiniband/hw/mthca/mthca_memfree.c
-+++ b/drivers/infiniband/hw/mthca/mthca_memfree.c
-@@ -481,7 +481,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
- 
- 	ret = pci_map_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
- 	if (ret < 0) {
--		put_page(pages[0]);
-+		put_user_page(pages[0]);
- 		goto out;
- 	}
- 
-@@ -489,7 +489,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
- 				 mthca_uarc_virt(dev, uar, i));
- 	if (ret) {
- 		pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--		put_page(sg_page(&db_tab->page[i].mem));
-+		put_user_page(sg_page(&db_tab->page[i].mem));
- 		goto out;
- 	}
- 
-@@ -555,7 +555,7 @@ void mthca_cleanup_user_db_tab(struct mthca_dev *dev, struct mthca_uar *uar,
- 		if (db_tab->page[i].uvirt) {
- 			mthca_UNMAP_ICM(dev, mthca_uarc_virt(dev, uar, i), 1);
- 			pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--			put_page(sg_page(&db_tab->page[i].mem));
-+			put_user_page(sg_page(&db_tab->page[i].mem));
- 		}
- 	}
- 
-diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
-index 16543d5e80c3..1a5c64c8695f 100644
---- a/drivers/infiniband/hw/qib/qib_user_pages.c
-+++ b/drivers/infiniband/hw/qib/qib_user_pages.c
-@@ -40,13 +40,10 @@
- static void __qib_release_user_pages(struct page **p, size_t num_pages,
- 				     int dirty)
- {
--	size_t i;
--
--	for (i = 0; i < num_pages; i++) {
--		if (dirty)
--			set_page_dirty_lock(p[i]);
--		put_page(p[i]);
--	}
-+	if (dirty)
-+		put_user_pages_dirty_lock(p, num_pages);
-+	else
-+		put_user_pages(p, num_pages);
- }
- 
- /*
-diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c b/drivers/infiniband/hw/qib/qib_user_sdma.c
-index 926f3c8eba69..14f94d823907 100644
---- a/drivers/infiniband/hw/qib/qib_user_sdma.c
-+++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
-@@ -266,7 +266,7 @@ static void qib_user_sdma_init_frag(struct qib_user_sdma_pkt *pkt,
- 	pkt->addr[i].length = len;
- 	pkt->addr[i].first_desc = first_desc;
- 	pkt->addr[i].last_desc = last_desc;
--	pkt->addr[i].put_page = put_page;
-+	pkt->addr[i].put_page = put_user_page;
- 	pkt->addr[i].dma_mapped = dma_mapped;
- 	pkt->addr[i].page = page;
- 	pkt->addr[i].kvaddr = kvaddr;
-@@ -321,7 +321,7 @@ static int qib_user_sdma_page_to_frags(const struct qib_devdata *dd,
- 		 * the caller can ignore this page.
- 		 */
- 		if (put) {
--			put_page(page);
-+			put_user_page(page);
- 		} else {
- 			/* coalesce case */
- 			kunmap(page);
-@@ -635,7 +635,7 @@ static void qib_user_sdma_free_pkt_frag(struct device *dev,
- 			kunmap(pkt->addr[i].page);
- 
- 		if (pkt->addr[i].put_page)
--			put_page(pkt->addr[i].page);
-+			put_user_page(pkt->addr[i].page);
- 		else
- 			__free_page(pkt->addr[i].page);
- 	} else if (pkt->addr[i].kvaddr) {
-@@ -710,7 +710,7 @@ static int qib_user_sdma_pin_pages(const struct qib_devdata *dd,
- 	/* if error, return all pages not managed by pkt */
- free_pages:
- 	while (i < j)
--		put_page(pages[i++]);
-+		put_user_page(pages[i++]);
- 
- done:
- 	return ret;
-diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
-index 9dd39daa602b..9e3615fd05f7 100644
---- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-+++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-@@ -89,9 +89,10 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
- 		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
- 			page = sg_page(sg);
- 			pa = sg_phys(sg);
--			if (!PageDirty(page) && dirty)
--				set_page_dirty_lock(page);
--			put_page(page);
-+			if (dirty)
-+				put_user_pages_dirty_lock(&page, 1);
-+			else
-+				put_user_page(page);
- 			usnic_dbg("pa: %pa\n", &pa);
- 		}
- 		kfree(chunk);
--- 
-2.19.0
+5) Any code that assumes that hdr_len and btf->hdr->hdr_len are the same value
+explodes in interesting ways.
 
+
+
+--==_Exmh_1539033428_2640P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBW7vJVI0DS38y7CIcAQL5pwf8Co9z9WwdEhwn1zFByzTwSeNE/fwictdL
+EwWkOJb6Q5B8O2QDZrcx2ZSXWEyqDQ8h5gLcyf1q8fenNIfAPM7SkBOUBQEjQMdU
+zTwALpsm6IkcoasNe7LpVkVUc2dM4xclyayJOlcahNfDzYiWt1vXsPFN0aGy/Rx0
+UQNc09M+6ClxQOcKuQ2leAsvKPghrkfuLOqCBVCaCbCPqrZxI1FDkBg4y3DqOziB
+GPBNk0stfa6R5EeWPDsaWXmaCr36e0IWj9mcObUtWtzS+BwR2komgSPJAnoczBaX
+0uWV5G/5GfI+tOlk4AcYD7rirsWCFGmDMM/qVLB2NdKbulpabX3XSw==
+=m8eg
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1539033428_2640P--
