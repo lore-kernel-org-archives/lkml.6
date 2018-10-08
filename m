@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B3BC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17592C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D8CD2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2DC62087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2YlGjIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8CD2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWqXFMFB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2DC62087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731506AbeJICAs (ORCPT
+        id S1731514AbeJICAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:00:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49594 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:00:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730798AbeJICAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:00:47 -0400
+        id S1728239AbeJICAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:00:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0119B204FD;
-        Mon,  8 Oct 2018 18:47:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9C2121479;
+        Mon,  8 Oct 2018 18:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024460;
-        bh=xyBeoWttcRQQV6Etp3eCO+mYN6HTkDgL/hoc0KZCffg=;
+        s=default; t=1539024464;
+        bh=uvOq+f2qzFX1323DWiIvuvx9MkFv1TvdEkkWOe/vAx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K2YlGjIyDaZJzh0wAnWkv9pa/Hj8R/OPM0ttgmFN77Qllogg8ZaggVDr8g4XA6m/g
-         3o3D9cE+UrGdcZZ2mQLoyZvCDbYMseABefsg1cZNN1YXOWHA2BdsHy9q+6eagOSS3w
-         cVGR6dofjHywbnhrHIEbcWpg6YgYSiDEdlnWs7NY=
+        b=XWqXFMFB/OO2+eFyHxkVOre/YxhcXg8r0o7JsaZQoGN1Eo0e2+/vMQ/wwTH6Ku7i8
+         KNV+bgvdGM3sFJKeFJZ1lGf7noY21LZJC3BhU1EmgCINwBuflh1Ww+Oin9raFdt3VX
+         CZ0+S3nKxNxMkrM32QaillffMw6J9XZ4DIISM6Xo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        Neil Brown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 047/168] RAID10 BUG_ON in raise_barrier when force is true and conf->barrier is 0
-Date:   Mon,  8 Oct 2018 20:30:27 +0200
-Message-Id: <20181008175621.848482192@linuxfoundation.org>
+Subject: [PATCH 4.18 048/168] selftests: pmtu: maximum MTU for vti4 is 2^16-1-20
+Date:   Mon,  8 Oct 2018 20:30:28 +0200
+Message-Id: <20181008175621.882912284@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -63,56 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Ni <xni@redhat.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
+[ Upstream commit 902b5417f28d955cdb4898df6ffaab15f56c5cff ]
 
-In raid10 reshape_request it gets max_sectors in read_balance. If the underlayer disks
-have bad blocks, the max_sectors is less than last. It will call goto read_more many
-times. It calls raise_barrier(conf, sectors_done != 0) every time. In this condition
-sectors_done is not 0. So the value passed to the argument force of raise_barrier is
-true.
+Since commit 82612de1c98e ("ip_tunnel: restore binding to ifaces with a
+large mtu"), the maximum MTU for vti4 is based on IP_MAX_MTU instead of
+the mysterious constant 0xFFF8.  This makes this selftest fail.
 
-In raise_barrier it checks conf->barrier when force is true. If force is true and
-conf->barrier is 0, it panic. In this case reshape_request submits bio to under layer
-disks. And in the callback function of the bio it calls lower_barrier. If the bio
-finishes before calling raise_barrier again, it can trigger the BUG_ON.
-
-Add one pair of raise_barrier/lower_barrier to fix this bug.
-
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Suggested-by: Neil Brown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: 82612de1c98e ("ip_tunnel: restore binding to ifaces with a large mtu")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Acked-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/testing/selftests/net/pmtu.sh |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4531,11 +4531,12 @@ static sector_t reshape_request(struct m
- 		allow_barrier(conf);
- 	}
+--- a/tools/testing/selftests/net/pmtu.sh
++++ b/tools/testing/selftests/net/pmtu.sh
+@@ -334,7 +334,7 @@ test_pmtu_vti4_link_add_mtu() {
+ 	fail=0
  
-+	raise_barrier(conf, 0);
- read_more:
- 	/* Now schedule reads for blocks from sector_nr to last */
- 	r10_bio = raid10_alloc_init_r10buf(conf);
- 	r10_bio->state = 0;
--	raise_barrier(conf, sectors_done != 0);
-+	raise_barrier(conf, 1);
- 	atomic_set(&r10_bio->remaining, 0);
- 	r10_bio->mddev = mddev;
- 	r10_bio->sector = sector_nr;
-@@ -4631,6 +4632,8 @@ read_more:
- 	if (sector_nr <= last)
- 		goto read_more;
- 
-+	lower_barrier(conf);
-+
- 	/* Now that we have done the whole section we can
- 	 * update reshape_progress
- 	 */
+ 	min=68
+-	max=$((65528 - 20))
++	max=$((65535 - 20))
+ 	# Check invalid values first
+ 	for v in $((min - 1)) $((max + 1)); do
+ 		${ns_a} ip link add vti4_a mtu ${v} type vti local ${veth4_a_addr} remote ${veth4_b_addr} key 10 2>/dev/null
 
 
