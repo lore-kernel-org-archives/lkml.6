@@ -7,44 +7,55 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E9BC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4711DC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FD112064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 128912089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s44tAe89"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD112064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUa6qWo1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 128912089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbeJIBus (ORCPT
+        id S1729016AbeJIBuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:47 -0400
+        id S1726427AbeJIBuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:50 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 038F92064A;
-        Mon,  8 Oct 2018 18:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A34D72087D;
+        Mon,  8 Oct 2018 18:37:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023863;
-        bh=N03EBBAq38JyR/XNbgmBkuxO3bYrMp3g4km9OSfBgmo=;
+        s=default; t=1539023866;
+        bh=EYPsZDQidTAeGooT9u7QHDA8ycAa0tiGTVrevzniN3Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s44tAe893TQAngSbyOoS3LzLbe4RvM7VepXh/3jhXYoxGJP7+1n6aNCPu72i4p05r
-         CLF+y0ZKreA28792UgdD3NE95LO+8c3j7CpoBTnBWSriOGUMTCF5xh84u5E9vBnH5+
-         1IZBXL2J8w33e4jRgQ3oSHQSS4YFucZm8Bxyt0NU=
+        b=HUa6qWo1+TZzcU1aTin9pg6m1OcT4GFRrljURh2mWLUYaSFSUIFB/fgVidMQBOFCU
+         piCB2c19GPO2xT78NHJsBtTpnK7yvwdkkGXAn0PWg1Enk3SRu/jZWxQeMN4bq5BHZx
+         13DRZaZ0yFaEC1PS7dDa9mf6wMA00K4gzRLwTx3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 111/113] crypto: mxs-dcp - Fix wait logic on chan threads
-Date:   Mon,  8 Oct 2018 20:31:52 +0200
-Message-Id: <20181008175537.393421924@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ken Chen <kenchen@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.4 112/113] proc: restrict kernel stack dumps to root
+Date:   Mon,  8 Oct 2018 20:31:53 +0200
+Message-Id: <20181008175537.432558139@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,154 +73,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Jann Horn <jannh@google.com>
 
-commit d80771c08363ad7fbf0f56f5301e7ca65065c582 upstream.
+commit f8a00cef17206ecd1b30d3d9f99e10d9fa707aa7 upstream.
 
-When compiling with CONFIG_DEBUG_ATOMIC_SLEEP=y the mxs-dcp driver
-prints warnings such as:
+Currently, you can use /proc/self/task/*/stack to cause a stack walk on
+a task you control while it is running on another CPU.  That means that
+the stack can change under the stack walker.  The stack walker does
+have guards against going completely off the rails and into random
+kernel memory, but it can interpret random data from your kernel stack
+as instruction pointers and stack pointers.  This can cause exposure of
+kernel stack contents to userspace.
 
-WARNING: CPU: 0 PID: 120 at kernel/sched/core.c:7736 __might_sleep+0x98/0x9c
-do not call blocking ops when !TASK_RUNNING; state=1 set at [<8081978c>] dcp_chan_thread_sha+0x3c/0x2ec
+Restrict the ability to inspect kernel stacks of arbitrary tasks to root
+in order to prevent a local attacker from exploiting racy stack unwinding
+to leak kernel task stack contents.  See the added comment for a longer
+rationale.
 
-The problem is that blocking ops will manipulate current->state
-themselves so it is not allowed to call them between
-set_current_state(TASK_INTERRUPTIBLE) and schedule().
+There don't seem to be any users of this userspace API that can't
+gracefully bail out if reading from the file fails.  Therefore, I believe
+that this change is unlikely to break things.  In the case that this patch
+does end up needing a revert, the next-best solution might be to fake a
+single-entry stack based on wchan.
 
-Fix this by converting the per-chan mutex to a spinlock (it only
-protects tiny list ops anyway) and rearranging the wait logic so that
-callbacks are called current->state as TASK_RUNNING. Those callbacks
-will indeed call blocking ops themselves so this is required.
-
+Link: http://lkml.kernel.org/r/20180927153316.200286-1-jannh@google.com
+Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Ken Chen <kenchen@google.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/mxs-dcp.c |   53 ++++++++++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 23 deletions(-)
+ fs/proc/base.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/drivers/crypto/mxs-dcp.c
-+++ b/drivers/crypto/mxs-dcp.c
-@@ -63,7 +63,7 @@ struct dcp {
- 	struct dcp_coherent_block	*coh;
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -471,6 +471,20 @@ static int proc_pid_stack(struct seq_fil
+ 	int err;
+ 	int i;
  
- 	struct completion		completion[DCP_MAX_CHANS];
--	struct mutex			mutex[DCP_MAX_CHANS];
-+	spinlock_t			lock[DCP_MAX_CHANS];
- 	struct task_struct		*thread[DCP_MAX_CHANS];
- 	struct crypto_queue		queue[DCP_MAX_CHANS];
- };
-@@ -349,13 +349,20 @@ static int dcp_chan_thread_aes(void *dat
- 
- 	int ret;
- 
--	do {
--		__set_current_state(TASK_INTERRUPTIBLE);
-+	while (!kthread_should_stop()) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 
--		mutex_lock(&sdcp->mutex[chan]);
-+		spin_lock(&sdcp->lock[chan]);
- 		backlog = crypto_get_backlog(&sdcp->queue[chan]);
- 		arq = crypto_dequeue_request(&sdcp->queue[chan]);
--		mutex_unlock(&sdcp->mutex[chan]);
-+		spin_unlock(&sdcp->lock[chan]);
++	/*
++	 * The ability to racily run the kernel stack unwinder on a running task
++	 * and then observe the unwinder output is scary; while it is useful for
++	 * debugging kernel issues, it can also allow an attacker to leak kernel
++	 * stack contents.
++	 * Doing this in a manner that is at least safe from races would require
++	 * some work to ensure that the remote task can not be scheduled; and
++	 * even then, this would still expose the unwinder as local attack
++	 * surface.
++	 * Therefore, this interface is restricted to root.
++	 */
++	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
++		return -EACCES;
 +
-+		if (!backlog && !arq) {
-+			schedule();
-+			continue;
-+		}
-+
-+		set_current_state(TASK_RUNNING);
- 
- 		if (backlog)
- 			backlog->complete(backlog, -EINPROGRESS);
-@@ -363,11 +370,8 @@ static int dcp_chan_thread_aes(void *dat
- 		if (arq) {
- 			ret = mxs_dcp_aes_block_crypt(arq);
- 			arq->complete(arq, ret);
--			continue;
- 		}
--
--		schedule();
--	} while (!kthread_should_stop());
-+	}
- 
- 	return 0;
- }
-@@ -407,9 +411,9 @@ static int mxs_dcp_aes_enqueue(struct ab
- 	rctx->ecb = ecb;
- 	actx->chan = DCP_CHAN_CRYPTO;
- 
--	mutex_lock(&sdcp->mutex[actx->chan]);
-+	spin_lock(&sdcp->lock[actx->chan]);
- 	ret = crypto_enqueue_request(&sdcp->queue[actx->chan], &req->base);
--	mutex_unlock(&sdcp->mutex[actx->chan]);
-+	spin_unlock(&sdcp->lock[actx->chan]);
- 
- 	wake_up_process(sdcp->thread[actx->chan]);
- 
-@@ -645,13 +649,20 @@ static int dcp_chan_thread_sha(void *dat
- 	struct ahash_request *req;
- 	int ret, fini;
- 
--	do {
--		__set_current_state(TASK_INTERRUPTIBLE);
-+	while (!kthread_should_stop()) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 
--		mutex_lock(&sdcp->mutex[chan]);
-+		spin_lock(&sdcp->lock[chan]);
- 		backlog = crypto_get_backlog(&sdcp->queue[chan]);
- 		arq = crypto_dequeue_request(&sdcp->queue[chan]);
--		mutex_unlock(&sdcp->mutex[chan]);
-+		spin_unlock(&sdcp->lock[chan]);
-+
-+		if (!backlog && !arq) {
-+			schedule();
-+			continue;
-+		}
-+
-+		set_current_state(TASK_RUNNING);
- 
- 		if (backlog)
- 			backlog->complete(backlog, -EINPROGRESS);
-@@ -663,12 +674,8 @@ static int dcp_chan_thread_sha(void *dat
- 			ret = dcp_sha_req_to_buf(arq);
- 			fini = rctx->fini;
- 			arq->complete(arq, ret);
--			if (!fini)
--				continue;
- 		}
--
--		schedule();
--	} while (!kthread_should_stop());
-+	}
- 
- 	return 0;
- }
-@@ -726,9 +733,9 @@ static int dcp_sha_update_fx(struct ahas
- 		rctx->init = 1;
- 	}
- 
--	mutex_lock(&sdcp->mutex[actx->chan]);
-+	spin_lock(&sdcp->lock[actx->chan]);
- 	ret = crypto_enqueue_request(&sdcp->queue[actx->chan], &req->base);
--	mutex_unlock(&sdcp->mutex[actx->chan]);
-+	spin_unlock(&sdcp->lock[actx->chan]);
- 
- 	wake_up_process(sdcp->thread[actx->chan]);
- 	mutex_unlock(&actx->mutex);
-@@ -984,7 +991,7 @@ static int mxs_dcp_probe(struct platform
- 	platform_set_drvdata(pdev, sdcp);
- 
- 	for (i = 0; i < DCP_MAX_CHANS; i++) {
--		mutex_init(&sdcp->mutex[i]);
-+		spin_lock_init(&sdcp->lock[i]);
- 		init_completion(&sdcp->completion[i]);
- 		crypto_init_queue(&sdcp->queue[i], 50);
- 	}
+ 	entries = kmalloc(MAX_STACK_TRACE_DEPTH * sizeof(*entries), GFP_KERNEL);
+ 	if (!entries)
+ 		return -ENOMEM;
 
 
