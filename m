@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B31B7C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483F0C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7047F21557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6CFF21557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:31:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2NbVCA4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7047F21557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrETrTpK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6CFF21557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeJHWn5 (ORCPT
+        id S1728576AbeJHWjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58080 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbeJHWjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:09 -0400
+        id S1726713AbeJHWjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE82F21523;
-        Mon,  8 Oct 2018 15:26:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4432021526;
+        Mon,  8 Oct 2018 15:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012413;
-        bh=UNs1r0Bp+JU3gCV9/vOge17lxNyTRBBII3g+4IsBETI=;
+        s=default; t=1539012411;
+        bh=DiXarsVzerL7xtTlf5708Mu/Ib2vg9d/3A+Sw17UCYc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s2NbVCA4hVIrs6rwQbgwGFMSxWNDj7V5vB5nmI54+SqonDqM4wdNbyst+8+vIt9X7
-         nhWD95a748xkcCCpJCFaKsrn/5u+zDJuiy8g2ggqYeYy9Rk7panMvowQgKFjqwanui
-         dNuOMY/WwhT8uCQqq13VmfvoxT8kTpI39jkz5XRI=
+        b=nrETrTpKXQ9vgyZOxMcjxLuZ0jhAI/gAMJ+KFjJCNvmTocbLjvyKS9JNTLIW7jyx1
+         n4OQ83vwFsC3+9EUH94TvESwrmcEzZB6jVQJV7EMmkzGv/cF/MIG24drWRysM7Ll0N
+         2wfjwQR+3waM65vlkAhJZKNHtFyvq97en/m3UY/U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 25/32] scsi: sd: don't crash the host on invalid commands
-Date:   Mon,  8 Oct 2018 11:26:22 -0400
-Message-Id: <20181008152629.70812-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 23/32] drm: mali-dp: Call drm_crtc_vblank_reset on device init
+Date:   Mon,  8 Oct 2018 11:26:20 -0400
+Message-Id: <20181008152629.70812-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
 References: <20181008152629.70812-1-sashal@kernel.org>
@@ -56,46 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
 
-[ Upstream commit f1f1fadacaf08b7cf11714c0c29f8fa4d4ef68a9 ]
+[ Upstream commit 69be1984ded00a11b1ed0888c6d8e4f35370372f ]
 
-When sd_init_command() get's a command with a unknown req_op() it crashes the
-system via BUG().
+Currently, if userspace calls drm_wait_vblank before the crtc is
+activated the crtc vblank_enable hook is called, which in case of
+malidp driver triggers some warninngs. This happens because on
+device init we don't inform the drm core about the vblank state
+by calling drm_crtc_vblank_on/off/reset which together with
+drm_vblank_get have some magic that prevents calling drm_vblank_enable
+when crtc is off.
 
-This makes debugging the actual reason for the broken request cmd_flags pretty
-hard as the system is down before it's able to write out debugging data on the
-serial console or the trace buffer.
-
-Change the BUG() to a WARN_ON() and return BLKPREP_KILL to fail gracefully and
-return an I/O error to the producer of the request.
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/sd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/arm/malidp_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 4a532318b211..6d3091ff9b92 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1285,7 +1285,8 @@ static int sd_init_command(struct scsi_cmnd *cmd)
- 	case REQ_OP_ZONE_RESET:
- 		return sd_zbc_setup_reset_cmnd(cmd);
- 	default:
--		BUG();
-+		WARN_ON_ONCE(1);
-+		return BLKPREP_KILL;
- 	}
- }
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index 1a57cc28955e..ff3348ee9595 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -617,6 +617,7 @@ static int malidp_bind(struct device *dev)
+ 	drm->irq_enabled = true;
  
+ 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
++	drm_crtc_vblank_reset(&malidp->crtc);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to initialise vblank\n");
+ 		goto vblank_fail;
 -- 
 2.17.1
 
