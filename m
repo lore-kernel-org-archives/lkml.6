@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F08C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98933C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 032872064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55C83204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ux7peitx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 032872064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yt0NFdFH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C83204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731322AbeJICAJ (ORCPT
+        id S1731334AbeJICAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:00:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48534 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:00:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727510AbeJICAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:00:08 -0400
+        id S1727510AbeJICAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:00:10 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EFC32064A;
-        Mon,  8 Oct 2018 18:47:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CB1B204FD;
+        Mon,  8 Oct 2018 18:47:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024422;
-        bh=D81P50hhM4xRL2htHpotgICtZIu+XEDMxZFZPAT81K4=;
+        s=default; t=1539024424;
+        bh=mw8gUPG3Tq16rjI7H1L1KqzUOvNo9/bhrQ3xNn8gIDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ux7peitxPl9QC5mFh6tQ0f84MYljYMp9x6/ZhUQs9FnKrXOzBXgV2preA5RQBBAVO
-         IHHfR7qGKEF1UVFPv7hJPJP/Fy1ETtCMlXn5oMLcSnSTpxdK9YXVn0Cn6qjwyiZulR
-         2DCIBWvkW6Wrvs9axw6pQBthGIOrWIAZfw3ZeM7s=
+        b=yt0NFdFHuoCwzqzsirAMjELQ1hJPqZGML1yeWeJCUjZsSmip/0D7W00ZhYYGlkQIh
+         hWWbqee08KlfvpLsxKwmpNdYfGFxfTX9VJQQoJs8VbbOq1s2Bf9BgwM7ZX341KEJGT
+         Aptcig/+8qKlDy06/XYz0vJd2z3X6em/bDqmEUqw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 033/168] net: hns: add netif_carrier_off before change speed and duplex
-Date:   Mon,  8 Oct 2018 20:30:13 +0200
-Message-Id: <20181008175621.304668362@linuxfoundation.org>
+Subject: [PATCH 4.18 010/168] scsi: libata: Add missing newline at end of file
+Date:   Mon,  8 Oct 2018 20:29:50 +0200
+Message-Id: <20181008175620.428497611@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -62,36 +63,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peng Li <lipeng321@huawei.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-[ Upstream commit 455c4401fe7a538facaffb35b906ce19f1ece474 ]
+[ Upstream commit 4e8065aa6c6f50765290be27ab8a64a4e44cb009 ]
 
-If there are packets in hardware when changing the speed
-or duplex, it may cause hardware hang up.
+With gcc 4.1.2:
 
-This patch adds netif_carrier_off before change speed and
-duplex in ethtool_ops.set_link_ksettings, and adds
-netif_carrier_on after complete the change.
+    drivers/ata/libata-core.c:7396:33: warning: no newline at end of file
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2fa4a32613c9182b ("scsi: libsas: dynamically allocate and free ata host")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/ata/libata-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -243,7 +243,9 @@ static int hns_nic_set_link_ksettings(st
- 	}
- 
- 	if (h->dev->ops->adjust_link) {
-+		netif_carrier_off(net_dev);
- 		h->dev->ops->adjust_link(h, (int)speed, cmd->base.duplex);
-+		netif_carrier_on(net_dev);
- 		return 0;
- 	}
- 
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -7403,4 +7403,4 @@ EXPORT_SYMBOL_GPL(ata_cable_unknown);
+ EXPORT_SYMBOL_GPL(ata_cable_ignore);
+ EXPORT_SYMBOL_GPL(ata_cable_sata);
+ EXPORT_SYMBOL_GPL(ata_host_get);
+-EXPORT_SYMBOL_GPL(ata_host_put);
+\ No newline at end of file
++EXPORT_SYMBOL_GPL(ata_host_put);
 
 
