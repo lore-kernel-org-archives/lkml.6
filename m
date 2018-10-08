@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85C2C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F32C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E092087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAAC121479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YT51bdIW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E092087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAqNfDPy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAC121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbeJIB4b (ORCPT
+        id S1730524AbeJIB4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44370 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeJIB4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:31 -0400
+        id S1726672AbeJIB4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:34 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1319A21479;
-        Mon,  8 Oct 2018 18:43:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C555E2064A;
+        Mon,  8 Oct 2018 18:43:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024205;
-        bh=hlR6VqPFEIRO4eKMVDkwxhhOGt60Qg+yRWgNnqA7oXQ=;
+        s=default; t=1539024209;
+        bh=voHzoXPbmGA9CeZO9NTxHKsHINxDxF9YdjKd3NvEYXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YT51bdIW9FgHjaR7nzKdXRUAH3pHNipn3Rm39F14g161SQ4fmbv5mbmqOeFcd4qyU
-         wqWfyXzrbKyFul50a0nzhB04W3CgORVJc+SmJWYTvwvUfE7L89oQweSP6LSWt+3U6B
-         PoNIg7Mn7MscJTaFC9LrTCrmEHldSpYkRUAJUaJA=
+        b=RAqNfDPy3zXURZQzApdtMgR2S42KmQruVzmWIAfbk9/VzKeQOeUj7fJmRh2VX3Rp4
+         MafkxE725xrr/m7L1mUtp1LL6ugNKFxKK1090E8YnUj87FLLajgI1pK64SDHDfhrxp
+         gXjMMoj2A6gtpJIFUkJG+qpGv6fCp0MHz2ZswpoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Eugeniy Paltsev <paltsev@synopsys.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 34/94] mac80211: fix a race between restart and CSA flows
-Date:   Mon,  8 Oct 2018 20:31:15 +0200
-Message-Id: <20181008175606.635153489@linuxfoundation.org>
+Subject: [PATCH 4.14 25/94] ARC: atomics: unbork atomic_fetch_##op()
+Date:   Mon,  8 Oct 2018 20:31:06 +0200
+Message-Id: <20181008175606.232440390@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -65,95 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit f3ffb6c3a28963657eb8b02a795d75f2ebbd5ef4 ]
+[ Upstream commit 3fcbb8260a87efb691d837e8cd24e81f65b3eb70 ]
 
-We hit a problem with iwlwifi that was caused by a bug in
-mac80211. A bug in iwlwifi caused the firwmare to crash in
-certain cases in channel switch. Because of that bug,
-drv_pre_channel_switch would fail and trigger the restart
-flow.
-Now we had the hw restart worker which runs on the system's
-workqueue and the csa_connection_drop_work worker that runs
-on mac80211's workqueue that can run together. This is
-obviously problematic since the restart work wants to
-reconfigure the connection, while the csa_connection_drop_work
-worker does the exact opposite: it tries to disconnect.
+In 4.19-rc1, Eugeniy reported weird boot and IO errors on ARC HSDK
 
-Fix this by cancelling the csa_connection_drop_work worker
-in the restart worker.
+| INFO: task syslogd:77 blocked for more than 10 seconds.
+|       Not tainted 4.19.0-rc1-00007-gf213acea4e88 #40
+| "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+| message.
+| syslogd         D    0    77     76 0x00000000
+|
+| Stack Trace:
+|  __switch_to+0x0/0xac
+|  __schedule+0x1b2/0x730
+|  io_schedule+0x5c/0xc0
+|  __lock_page+0x98/0xdc
+|  find_lock_entry+0x38/0x100
+|  shmem_getpage_gfp.isra.3+0x82/0xbfc
+|  shmem_fault+0x46/0x138
+|  handle_mm_fault+0x5bc/0x924
+|  do_page_fault+0x100/0x2b8
+|  ret_from_exception+0x0/0x8
 
-Note that this can sound racy: we could have:
+He bisected to 84c6591103db ("locking/atomics,
+asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*()")
 
-driver   iface_work   CSA_work   restart_work
-+++++++++++++++++++++++++++++++++++++++++++++
-              |
- <--drv_cs ---|
-<FW CRASH!>
--CS FAILED-->
-              |                       |
-              |                 cancel_work(CSA)
-           schedule                   |
-           CSA work                   |
-                         |            |
-                        Race between those 2
+This commit however only unmasked the real issue introduced by commit
+4aef66c8ae9 ("locking/atomic, arch/arc: Fix build") which missed the
+retry-if-scond-failed branch in atomic_fetch_##op() macros.
 
-But this is not possible because we flush the workqueue
-in the restart worker before we cancel the CSA worker.
-That would be bullet proof if we could guarantee that
-we schedule the CSA worker only from the iface_work
-which runs on the workqueue (and not on the system's
-workqueue), but unfortunately we do have an instance
-in which we schedule the CSA work outside the context
-of the workqueue (ieee80211_chswitch_done).
+The bisected commit started using atomic_fetch_##op() macros for building
+the rest of atomics.
 
-Note also that we should probably cancel other workers
-like beacon_connection_loss_work and possibly others
-for different types of interfaces, at the very least,
-IBSS should suffer from the exact same problem, but for
-now, do the minimum to fix the actual bug that was actually
-experienced and reproduced.
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 4aef66c8ae9 ("locking/atomic, arch/arc: Fix build")
+Reported-by: Eugeniy Paltsev <paltsev@synopsys.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: wrote changelog]
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/main.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ arch/arc/include/asm/atomic.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -255,8 +255,27 @@ static void ieee80211_restart_work(struc
- 
- 	flush_work(&local->radar_detected_work);
- 	rtnl_lock();
--	list_for_each_entry(sdata, &local->interfaces, list)
-+	list_for_each_entry(sdata, &local->interfaces, list) {
-+		/*
-+		 * XXX: there may be more work for other vif types and even
-+		 * for station mode: a good thing would be to run most of
-+		 * the iface type's dependent _stop (ieee80211_mg_stop,
-+		 * ieee80211_ibss_stop) etc...
-+		 * For now, fix only the specific bug that was seen: race
-+		 * between csa_connection_drop_work and us.
-+		 */
-+		if (sdata->vif.type == NL80211_IFTYPE_STATION) {
-+			/*
-+			 * This worker is scheduled from the iface worker that
-+			 * runs on mac80211's workqueue, so we can't be
-+			 * scheduling this worker after the cancel right here.
-+			 * The exception is ieee80211_chswitch_done.
-+			 * Then we can have a race...
-+			 */
-+			cancel_work_sync(&sdata->u.mgd.csa_connection_drop_work);
-+		}
- 		flush_delayed_work(&sdata->dec_tailroom_needed_wk);
-+	}
- 	ieee80211_scan_cancel(local);
- 
- 	/* make sure any new ROC will consider local->in_reconfig */
+--- a/arch/arc/include/asm/atomic.h
++++ b/arch/arc/include/asm/atomic.h
+@@ -84,7 +84,7 @@ static inline int atomic_fetch_##op(int
+ 	"1:	llock   %[orig], [%[ctr]]		\n"		\
+ 	"	" #asm_op " %[val], %[orig], %[i]	\n"		\
+ 	"	scond   %[val], [%[ctr]]		\n"		\
+-	"						\n"		\
++	"	bnz     1b				\n"		\
+ 	: [val]	"=&r"	(val),						\
+ 	  [orig] "=&r" (orig)						\
+ 	: [ctr]	"r"	(&v->counter),					\
 
 
