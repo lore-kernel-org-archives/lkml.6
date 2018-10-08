@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B2BC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E19C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ABA921479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6FFF21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kciSMVIK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABA921479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ5Nb4Kx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FFF21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbeJIB7A (ORCPT
+        id S1731113AbeJIB7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:59:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47156 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:59:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJIB66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:58 -0400
+        id S1728570AbeJIB7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:59:01 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 239C8214C2;
-        Mon,  8 Oct 2018 18:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5818214C4;
+        Mon,  8 Oct 2018 18:45:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024352;
-        bh=XP1v+DALJ9fcKzbROxuM9Md63HLUKkiBrccm31IQ7o0=;
+        s=default; t=1539024355;
+        bh=jl9580sxSzt3B4tTaPRE2FfSDPpL5UqPeYLUJ0ty6tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kciSMVIK5fV9BSMMEv50U4aJXKZkfMhxnkjuxW1Xfgc/CKwoYZykrU79ALFLEy+oX
-         xwXu514+wHwLbpZ+XhS6iRBM7gRRe4fHTD9aPVAyKG8klh9eF+hVay/3nqHKOtjAo1
-         kftnBSJ/iFoMiBrFaBLjNL4+yIc9foKZTPBKv4t8=
+        b=KZ5Nb4KxjNiQGc3sSpt1V3EPpwBVnhZWAWXXPjLLXfiaTQYcGqYEXxFMH2SWk/Jb5
+         v2/azyWkCKe29mcLc7W7cyAQNeUzCoc+evbs0Ttd+pOBmDSKXEbd9wuxN1JuSYUd84
+         Dd5K+AothTJ8sSebd9AdVuWIkb/kjZJx7Kxb8Dfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 005/168] KVM: PPC: Book3S HV: Dont truncate HPTE index in xlate function
-Date:   Mon,  8 Oct 2018 20:29:45 +0200
-Message-Id: <20181008175620.245811456@linuxfoundation.org>
+Subject: [PATCH 4.18 006/168] cfg80211: remove division by size of sizeof(struct ieee80211_wmm_rule)
+Date:   Mon,  8 Oct 2018 20:29:46 +0200
+Message-Id: <20181008175620.285806689@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -62,42 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
+[ Upstream commit 8a54d8fc160e67ad485d95a0322ce1221f80770a ]
 
-This fixes a bug which causes guest virtual addresses to get translated
-to guest real addresses incorrectly when the guest is using the HPT MMU
-and has more than 256GB of RAM, or more specifically has a HPT larger
-than 2GB.  This has showed up in testing as a failure of the host to
-emulate doorbell instructions correctly on POWER9 for HPT guests with
-more than 256GB of RAM.
+Pointer arithmetic already adjusts by the size of the struct,
+so the sizeof() calculation is wrong. This is basically the
+same as Colin King's patch for similar code in the iwlwifi
+driver.
 
-The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
-is stored as an int, and in forming the HPTE address, the index gets
-shifted left 4 bits as an int before being signed-extended to 64 bits.
-The simple fix is to make the variable a long int, matching the
-return type of kvmppc_hv_find_lock_hpte(), which is what calculates
-the index.
-
-Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S HV guests")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Fixes: 230ebaa189af ("cfg80211: read wmm rules from regulatory database")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kvm/book3s_64_mmu_hv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/reg.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -359,7 +359,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate
- 	unsigned long pp, key;
- 	unsigned long v, orig_v, gr;
- 	__be64 *hptep;
--	int index;
-+	long int index;
- 	int virtmode = vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -452,8 +452,7 @@ reg_copy_regd(const struct ieee80211_reg
+ 			continue;
  
- 	if (kvm_is_radix(vcpu->kvm))
+ 		regd->reg_rules[i].wmm_rule = d_wmm +
+-			(src_regd->reg_rules[i].wmm_rule - s_wmm) /
+-			sizeof(struct ieee80211_wmm_rule);
++			(src_regd->reg_rules[i].wmm_rule - s_wmm);
+ 	}
+ 	return regd;
+ }
 
 
