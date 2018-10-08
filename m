@@ -2,88 +2,83 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73ED5C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94453C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463C420882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463C420882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C75620C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C75620C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeJHWzk (ORCPT
+        id S1726979AbeJHW4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:55:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44602 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726159AbeJHWzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:55:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A31FDAF58;
-        Mon,  8 Oct 2018 15:43:18 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 17:43:17 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20181008154317.2owdxq7y6kie5sxh@pathway.suse.cz>
-References: <20180914122217.GA518@tigerII.localdomain>
- <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
- <7dadfa8c-1f69-ae0f-d747-dbbc9f97c2b6@i-love.sakura.ne.jp>
- <20180928090939.GE1160@jagdpanzerIV>
- <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
- <20180929105151.GA1392@tigerII.localdomain>
- <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
- <20181001023721.GA6409@jagdpanzerIV>
- <880ef52f-dff7-af91-5353-f63513265ffe@i-love.sakura.ne.jp>
- <20181002063851.GF598@jagdpanzerIV>
+        Mon, 8 Oct 2018 18:56:13 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:38591 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbeJHW4N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:56:13 -0400
+Received: by mail-vs1-f68.google.com with SMTP id a202so8479694vsd.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 08:43:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kGNJIyThTLNCK6nIqJYwzOR6aOw50l02eskV1BNpvu4=;
+        b=mkXNW6H+9E0joaxT3LybB/JBwf1zQLVUIy7pmzaIsrr/gp/3WVvlDcxSWRgOv+tQn6
+         q7mGkQDJKSXkyqRhDV+dhdWt81uCJeDXzEguLXEWGG8xhZPKI67x3plIAKt+bKXLNY/r
+         b/YmMspV8Atq7smj0EPXXB/QdfOgDsZKuSoW50HA3HIewDyo/5MCRrVeEpJlplmzvZTK
+         g7ynmv/OpQB/dtuxt5FWk0522rYgQ2GHS/BRoKEG/B/MUZwIAA5lHoabwNNlucJgQxGa
+         +KwgCiMoxUGLXeCr4oTgJJlvziaDuZM2UwBJN10uAvCVRTy0d5SKW789tRYIHPHA6aub
+         X6Gw==
+X-Gm-Message-State: ABuFfogrFqB3jceuPi1kL8+hW06tdW4IpU6PCSZ/DOIg1cIaglQ9XtDa
+        ZLPZis1R1Vxid2xM+ru8RtI/91l8h+HZpOlN3QiCY0CY
+X-Google-Smtp-Source: ACcGV60R5Qb14YfXWhq8cfVxahH+m+lu4xzEkxNl/RiT/1MxSNIF4MTgHsn5akSHotGvRpVm6dZRSGlwkZEvwUguo0I=
+X-Received: by 2002:a67:e015:: with SMTP id c21mr8162338vsl.63.1539013431899;
+ Mon, 08 Oct 2018 08:43:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002063851.GF598@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20181007085102.17795-1-geert@linux-m68k.org> <20181007113514.GA21217@localhost>
+ <1814283.64diKEr4zR@avalon> <20181008022931.GB30346@localhost>
+ <ECADFF3FD767C149AD96A924E7EA6EAF80517449@USCULXMSG01.am.sony.com> <CAMuHMdVmz-ZF+ypp4WEkW6txxjw66DTb5PRsSGPsUfBqT+NbMQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVmz-ZF+ypp4WEkW6txxjw66DTb5PRsSGPsUfBqT+NbMQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Oct 2018 17:43:39 +0200
+Message-ID: <CAMuHMdUckOoFTMN9jH1NPWNcNm0o62w7PtJGF7sa37_1_kceKg@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
+ of discrimination factors
+To:     "Bird, Timothy" <Tim.Bird@sony.com>
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-10-02 15:38:51, Sergey Senozhatsky wrote:
-> On (10/01/18 20:21), Tetsuo Handa wrote:
-> > Maybe "struct printk_buffer" after all becomes identical to "struct cont". But
-> > I guess that even 16 printk_buffer-s is practically sufficient for 1024 CPUs
-> > system, and allocating NR_CPUS printk_buffer-s will be too wasteful.
-> 
-> NR_CPUS buffers is quite a lot, indeed. Maybe we can do something like
-> NR_CPUS/4 + 1, etc. Kconfig option will be super hard to get right for
-> distributions. If people who wrote the code didn't agree on the correct
-> number of buffers and passed it to the distributions, then it's a good
-> sign than distributions will have problems picking up the good number as
-> well.
+On Mon, Oct 8, 2018 at 4:30 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> FTR, I've submitted my patch earlier today, too:
+> https://github.com/ContributorCovenant/contributor_covenant/issues/610
 
-I am afraid that only some testing or real life experience might tell
-us what number is good enough.
+Will be clarified in the (external-to-Linux) FAQ.
 
-The good thing is that it could only be better than the current
-state when we have only one cont buffer.
+Quoting Coraline: "However, any adopting project is free to modify the document
+according to the license."
 
-Also I would not be so much afraid of the per-cpu buffer. We already
-use 16kB per-CPU for printk_safe and printk_nmi. One more kB should
-no be that big deal.
+Gr{oetje,eeting}s,
 
-Best Regards,
-Petr
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
