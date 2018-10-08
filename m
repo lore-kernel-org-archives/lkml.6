@@ -2,188 +2,204 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15D3C6787E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F853C6787D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 626BF20841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:39:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626BF20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B947420841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:40:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EB8bcx2+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B947420841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbeJHJsz (ORCPT
+        id S1726415AbeJHJtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 05:48:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61267 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725760AbeJHJsz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 05:48:55 -0400
-X-UUID: d93fccd3bcf04ab88e09eb6bbb2c0dc8-20181008
-X-UUID: d93fccd3bcf04ab88e09eb6bbb2c0dc8-20181008
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1696350349; Mon, 08 Oct 2018 10:39:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 8 Oct 2018 10:39:19 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 8 Oct 2018 10:39:19 +0800
-From:   <miles.chen@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        Mark Salyzyn <salyzyn@google.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH] tty: check name length in tty_find_polling_driver()
-Date:   Mon, 8 Oct 2018 10:39:17 +0800
-Message-ID: <1538966357-3175-1-git-send-email-miles.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 8 Oct 2018 05:49:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:48763 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725760AbeJHJtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 05:49:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42T4N45RwPz9sCV;
+        Mon,  8 Oct 2018 13:40:20 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538966421;
+        bh=Am3Pi3fPhr4NgkCkz44eH7sJXsFlouBh1sagvqEzfjo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=EB8bcx2+6ZwqYG8OxnoanbOPje6PNP9YUWkCQ9A3fnIdOVwpA106hAbfHzbZVGwLv
+         0JhyDdAc9lMtaYFk6MoP7E/A53FNr0AkX77Y/QlYUpAgS/4tB9JSdI2kT/KFMD3Zc9
+         H0lclt9FBEwPCcvNExtIj172KcCX6FcTU0hMlDeXWDnIWRsdi+W4HM+u7Dba+MF4oS
+         IE5qTn5CmPprgNyHOlNOKON/kqBvH4Z3jX9MtgSh4AfArGXt6u30YqLARHiPhEwZrG
+         WqmQxfx4UWAk5Kg//8WH8Cc28WJOY6TAr0KWD1nz6w4n4NALOhxOC1gIjPlVvhcxWb
+         nfR2pgMJYZGkA==
+Date:   Mon, 8 Oct 2018 13:40:20 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Message-ID: <20181008134020.790092fe@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8A/3tsSoWQOAryCmuI_nxw6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miles Chen <miles.chen@mediatek.com>
+--Sig_/8A/3tsSoWQOAryCmuI_nxw6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The issue is found by a fuzzing test.
-If tty_find_polling_driver() recevies an incorrect input such as
-',,' or '0b', the len becomes 0 and strncmp() always return 0.
-In this case, a null p->ops->poll_init() is called and it causes a kernel
-panic.
+Hi all,
 
-Fix this by checking name length against zero in tty_find_polling_driver().
+Today's linux-next merge of the tip tree got a conflict in:
 
-$echo ,, > /sys/module/kgdboc/parameters/kgdboc
-[   20.804451] WARNING: CPU: 1 PID: 104 at drivers/tty/serial/serial_core.c:457
-uart_get_baud_rate+0xe8/0x190
-[   20.804917] Modules linked in:
-[   20.805317] CPU: 1 PID: 104 Comm: sh Not tainted 4.19.0-rc7ajb #8
-[   20.805469] Hardware name: linux,dummy-virt (DT)
-[   20.805732] pstate: 20000005 (nzCv daif -PAN -UAO)
-[   20.805895] pc : uart_get_baud_rate+0xe8/0x190
-[   20.806042] lr : uart_get_baud_rate+0xc0/0x190
-[   20.806476] sp : ffffffc06acff940
-[   20.806676] x29: ffffffc06acff940 x28: 0000000000002580
-[   20.806977] x27: 0000000000009600 x26: 0000000000009600
-[   20.807231] x25: ffffffc06acffad0 x24: 00000000ffffeff0
-[   20.807576] x23: 0000000000000001 x22: 0000000000000000
-[   20.807807] x21: 0000000000000001 x20: 0000000000000000
-[   20.808049] x19: ffffffc06acffac8 x18: 0000000000000000
-[   20.808277] x17: 0000000000000000 x16: 0000000000000000
-[   20.808520] x15: ffffffffffffffff x14: ffffffff00000000
-[   20.808757] x13: ffffffffffffffff x12: 0000000000000001
-[   20.809011] x11: 0101010101010101 x10: ffffff880d59ff5f
-[   20.809292] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
-[   20.809549] x7 : 0000000000000000 x6 : ffffff880d59ff5f
-[   20.809803] x5 : 0000000080008001 x4 : 0000000000000003
-[   20.810056] x3 : ffffff900853e6b4 x2 : dfffff9000000000
-[   20.810693] x1 : ffffffc06acffad0 x0 : 0000000000000cb0
-[   20.811005] Call trace:
-[   20.811214]  uart_get_baud_rate+0xe8/0x190
-[   20.811479]  serial8250_do_set_termios+0xe0/0x6f4
-[   20.811719]  serial8250_set_termios+0x48/0x54
-[   20.811928]  uart_set_options+0x138/0x1bc
-[   20.812129]  uart_poll_init+0x114/0x16c
-[   20.812330]  tty_find_polling_driver+0x158/0x200
-[   20.812545]  configure_kgdboc+0xbc/0x1bc
-[   20.812745]  param_set_kgdboc_var+0xb8/0x150
-[   20.812960]  param_attr_store+0xbc/0x150
-[   20.813160]  module_attr_store+0x40/0x58
-[   20.813364]  sysfs_kf_write+0x8c/0xa8
-[   20.813563]  kernfs_fop_write+0x154/0x290
-[   20.813764]  vfs_write+0xf0/0x278
-[   20.813951]  __arm64_sys_write+0x84/0xf4
-[   20.814400]  el0_svc_common+0xf4/0x1dc
-[   20.814616]  el0_svc_handler+0x98/0xbc
-[   20.814804]  el0_svc+0x8/0xc
-[   20.822005] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-[   20.826913] Mem abort info:
-[   20.827103]   ESR = 0x84000006
-[   20.827352]   Exception class = IABT (current EL), IL = 16 bits
-[   20.827655]   SET = 0, FnV = 0
-[   20.827855]   EA = 0, S1PTW = 0
-[   20.828135] user pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
-[   20.828484] [0000000000000000] pgd=00000000aadee003, pud=00000000aadee003, pmd=0000000000000000
-[   20.829195] Internal error: Oops: 84000006 [#1] SMP
-[   20.829564] Modules linked in:
-[   20.829890] CPU: 1 PID: 104 Comm: sh Tainted: G        W         4.19.0-rc7ajb #8
-[   20.830545] Hardware name: linux,dummy-virt (DT)
-[   20.830829] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[   20.831174] pc :           (null)
-[   20.831457] lr : serial8250_do_set_termios+0x358/0x6f4
-[   20.831727] sp : ffffffc06acff9b0
-[   20.831936] x29: ffffffc06acff9b0 x28: ffffff9008d7c000
-[   20.832267] x27: ffffff900969e16f x26: 0000000000000000
-[   20.832589] x25: ffffff900969dfb0 x24: 0000000000000000
-[   20.832906] x23: ffffffc06acffad0 x22: ffffff900969e160
-[   20.833232] x21: 0000000000000000 x20: ffffffc06acffac8
-[   20.833559] x19: ffffff900969df90 x18: 0000000000000000
-[   20.833878] x17: 0000000000000000 x16: 0000000000000000
-[   20.834491] x15: ffffffffffffffff x14: ffffffff00000000
-[   20.834821] x13: ffffffffffffffff x12: 0000000000000001
-[   20.835143] x11: 0101010101010101 x10: ffffff880d59ff5f
-[   20.835467] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
-[   20.835790] x7 : 0000000000000000 x6 : ffffff880d59ff5f
-[   20.836111] x5 : c06419717c314100 x4 : 0000000000000007
-[   20.836419] x3 : 0000000000000000 x2 : 0000000000000000
-[   20.836732] x1 : 0000000000000001 x0 : ffffff900969df90
-[   20.837100] Process sh (pid: 104, stack limit = 0x(____ptrval____))
-[   20.837396] Call trace:
-[   20.837566]            (null)
-[   20.837816]  serial8250_set_termios+0x48/0x54
-[   20.838089]  uart_set_options+0x138/0x1bc
-[   20.838570]  uart_poll_init+0x114/0x16c
-[   20.838834]  tty_find_polling_driver+0x158/0x200
-[   20.839119]  configure_kgdboc+0xbc/0x1bc
-[   20.839380]  param_set_kgdboc_var+0xb8/0x150
-[   20.839658]  param_attr_store+0xbc/0x150
-[   20.839920]  module_attr_store+0x40/0x58
-[   20.840183]  sysfs_kf_write+0x8c/0xa8
-[   20.840183]  sysfs_kf_write+0x8c/0xa8
-[   20.840440]  kernfs_fop_write+0x154/0x290
-[   20.840702]  vfs_write+0xf0/0x278
-[   20.840942]  __arm64_sys_write+0x84/0xf4
-[   20.841209]  el0_svc_common+0xf4/0x1dc
-[   20.841471]  el0_svc_handler+0x98/0xbc
-[   20.841713]  el0_svc+0x8/0xc
-[   20.842057] Code: bad PC value
-[   20.842764] ---[ end trace a8835d7de79aaadf ]---
-[   20.843134] Kernel panic - not syncing: Fatal exception
-[   20.843515] SMP: stopping secondary CPUs
-[   20.844289] Kernel Offset: disabled
-[   20.844634] CPU features: 0x0,21806002
-[   20.844857] Memory Limit: none
-[   20.845172] ---[ end Kernel panic - not syncing: Fatal exception ]---
+  drivers/idle/intel_idle.c
 
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- drivers/tty/tty_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+between commit:
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 5e5da9a..252eef2 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -408,7 +408,7 @@ struct tty_driver *tty_find_polling_driver(char *name, int *line)
- 	mutex_lock(&tty_mutex);
- 	/* Search through the tty devices to look for a match */
- 	list_for_each_entry(p, &tty_drivers, tty_drivers) {
--		if (strncmp(name, p->name, len) != 0)
-+		if (!len || strncmp(name, p->name, len) != 0)
- 			continue;
- 		stp = str;
- 		if (*stp == ',')
--- 
-1.9.1
+  a4a008e53c9e ("intel_idle: Get rid of custom ICPU() macro")
 
+from the pm tree and commit:
+
+  f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/idle/intel_idle.c
+index 791b8a366e6e,c4bb67ed8da3..000000000000
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@@ -1066,43 -1066,46 +1066,43 @@@ static const struct idle_cpu idle_cpu_d
+  	.disable_promotion_to_c1e =3D true,
+  };
+ =20
+ -#define ICPU(model, cpu) \
+ -	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&cpu }
+ -
+  static const struct x86_cpu_id intel_idle_ids[] __initconst =3D {
+ -	ICPU(INTEL_FAM6_NEHALEM_EP,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_NEHALEM,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_NEHALEM_G,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_WESTMERE,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_WESTMERE_EP,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_NEHALEM_EX,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_ATOM_BONNELL,		idle_cpu_atom),
+ -	ICPU(INTEL_FAM6_ATOM_BONNELL_MID,		idle_cpu_lincroft),
+ -	ICPU(INTEL_FAM6_WESTMERE_EX,		idle_cpu_nehalem),
+ -	ICPU(INTEL_FAM6_SANDYBRIDGE,		idle_cpu_snb),
+ -	ICPU(INTEL_FAM6_SANDYBRIDGE_X,		idle_cpu_snb),
+ -	ICPU(INTEL_FAM6_ATOM_SALTWELL,		idle_cpu_atom),
+ -	ICPU(INTEL_FAM6_ATOM_SILVERMONT,	idle_cpu_byt),
+ -	ICPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	idle_cpu_tangier),
+ -	ICPU(INTEL_FAM6_ATOM_AIRMONT,		idle_cpu_cht),
+ -	ICPU(INTEL_FAM6_IVYBRIDGE,		idle_cpu_ivb),
+ -	ICPU(INTEL_FAM6_IVYBRIDGE_X,		idle_cpu_ivt),
+ -	ICPU(INTEL_FAM6_HASWELL_CORE,		idle_cpu_hsw),
+ -	ICPU(INTEL_FAM6_HASWELL_X,		idle_cpu_hsw),
+ -	ICPU(INTEL_FAM6_HASWELL_ULT,		idle_cpu_hsw),
+ -	ICPU(INTEL_FAM6_HASWELL_GT3E,		idle_cpu_hsw),
+ -	ICPU(INTEL_FAM6_ATOM_SILVERMONT_X,	idle_cpu_avn),
+ -	ICPU(INTEL_FAM6_BROADWELL_CORE,		idle_cpu_bdw),
+ -	ICPU(INTEL_FAM6_BROADWELL_GT3E,		idle_cpu_bdw),
+ -	ICPU(INTEL_FAM6_BROADWELL_X,		idle_cpu_bdw),
+ -	ICPU(INTEL_FAM6_BROADWELL_XEON_D,	idle_cpu_bdw),
+ -	ICPU(INTEL_FAM6_SKYLAKE_MOBILE,		idle_cpu_skl),
+ -	ICPU(INTEL_FAM6_SKYLAKE_DESKTOP,	idle_cpu_skl),
+ -	ICPU(INTEL_FAM6_KABYLAKE_MOBILE,	idle_cpu_skl),
+ -	ICPU(INTEL_FAM6_KABYLAKE_DESKTOP,	idle_cpu_skl),
+ -	ICPU(INTEL_FAM6_SKYLAKE_X,		idle_cpu_skx),
+ -	ICPU(INTEL_FAM6_XEON_PHI_KNL,		idle_cpu_knl),
+ -	ICPU(INTEL_FAM6_XEON_PHI_KNM,		idle_cpu_knl),
+ -	ICPU(INTEL_FAM6_ATOM_GOLDMONT,		idle_cpu_bxt),
+ -	ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	idle_cpu_bxt),
+ -	ICPU(INTEL_FAM6_ATOM_GOLDMONT_X,	idle_cpu_dnv),
+ +	INTEL_CPU_FAM6(NEHALEM_EP,		idle_cpu_nehalem),
+ +	INTEL_CPU_FAM6(NEHALEM,			idle_cpu_nehalem),
+ +	INTEL_CPU_FAM6(NEHALEM_G,		idle_cpu_nehalem),
+ +	INTEL_CPU_FAM6(WESTMERE,		idle_cpu_nehalem),
+ +	INTEL_CPU_FAM6(WESTMERE_EP,		idle_cpu_nehalem),
+ +	INTEL_CPU_FAM6(NEHALEM_EX,		idle_cpu_nehalem),
+- 	INTEL_CPU_FAM6(ATOM_PINEVIEW,		idle_cpu_atom),
+- 	INTEL_CPU_FAM6(ATOM_LINCROFT,		idle_cpu_lincroft),
+++	INTEL_CPU_FAM6(ATOM_BONNELL,		idle_cpu_atom),
+++	INTEL_CPU_FAM6(ATOM_BONNELL_MID,	idle_cpu_lincroft),
+ +	INTEL_CPU_FAM6(WESTMERE_EX,		idle_cpu_nehalem),
+ +	INTEL_CPU_FAM6(SANDYBRIDGE,		idle_cpu_snb),
+ +	INTEL_CPU_FAM6(SANDYBRIDGE_X,		idle_cpu_snb),
+- 	INTEL_CPU_FAM6(ATOM_CEDARVIEW,		idle_cpu_atom),
+- 	INTEL_CPU_FAM6(ATOM_SILVERMONT1,	idle_cpu_byt),
+- 	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		idle_cpu_tangier),
+++	INTEL_CPU_FAM6(ATOM_SALTWELL,		idle_cpu_atom),
+++	INTEL_CPU_FAM6(ATOM_SILVERMONT,		idle_cpu_byt),
+++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	idle_cpu_tangier),
+ +	INTEL_CPU_FAM6(ATOM_AIRMONT,		idle_cpu_cht),
+ +	INTEL_CPU_FAM6(IVYBRIDGE,		idle_cpu_ivb),
+ +	INTEL_CPU_FAM6(IVYBRIDGE_X,		idle_cpu_ivt),
+ +	INTEL_CPU_FAM6(HASWELL_CORE,		idle_cpu_hsw),
+ +	INTEL_CPU_FAM6(HASWELL_X,		idle_cpu_hsw),
+ +	INTEL_CPU_FAM6(HASWELL_ULT,		idle_cpu_hsw),
+ +	INTEL_CPU_FAM6(HASWELL_GT3E,		idle_cpu_hsw),
+- 	INTEL_CPU_FAM6(ATOM_SILVERMONT2,	idle_cpu_avn),
+++	INTEL_CPU_FAM6(ATOM_SILVERMONT_X,	idle_cpu_avn),
+ +	INTEL_CPU_FAM6(BROADWELL_CORE,		idle_cpu_bdw),
+ +	INTEL_CPU_FAM6(BROADWELL_GT3E,		idle_cpu_bdw),
+ +	INTEL_CPU_FAM6(BROADWELL_X,		idle_cpu_bdw),
+ +	INTEL_CPU_FAM6(BROADWELL_XEON_D,	idle_cpu_bdw),
+ +	INTEL_CPU_FAM6(SKYLAKE_MOBILE,		idle_cpu_skl),
+ +	INTEL_CPU_FAM6(SKYLAKE_DESKTOP,		idle_cpu_skl),
+ +	INTEL_CPU_FAM6(KABYLAKE_MOBILE,		idle_cpu_skl),
+ +	INTEL_CPU_FAM6(KABYLAKE_DESKTOP,	idle_cpu_skl),
+ +	INTEL_CPU_FAM6(SKYLAKE_X,		idle_cpu_skx),
+ +	INTEL_CPU_FAM6(XEON_PHI_KNL,		idle_cpu_knl),
+ +	INTEL_CPU_FAM6(XEON_PHI_KNM,		idle_cpu_knl),
+ +	INTEL_CPU_FAM6(ATOM_GOLDMONT,		idle_cpu_bxt),
+- 	INTEL_CPU_FAM6(ATOM_GEMINI_LAKE,	idle_cpu_bxt),
+- 	INTEL_CPU_FAM6(ATOM_DENVERTON,		idle_cpu_dnv),
+++	INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS,	idle_cpu_bxt),
+++	INTEL_CPU_FAM6(ATOM_GOLDMONT_X,		idle_cpu_dnv),
+  	{}
+  };
+ =20
+
+--Sig_/8A/3tsSoWQOAryCmuI_nxw6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu6w5QACgkQAVBC80lX
+0GznBwgAkYeIY6JQ/BzLD4zoO3yuMvbrOnipnGOL/cSpDeutvnplSwbB/p2s1VG8
+1DmxpdneKlOnwemxrLJaKvncSgEYi5CFk6lLss+rlotbwbhbecqkoIr1MaFCLGdn
+YL72Zo3W3AMBqMH0FvhQ2JO/uuwugt3VsCYfXCz7Z2pcQb+nP/cD8JfoClB0ss6X
+pTnngFtxWpTb4a1kDSIbw/cC1M6LPfcjhvPh1y0cyJpl2CdxBE0KjXrWx2+xRiKx
+qCx1HTdtmcextKdnCDW+TIElF3NWnuLq4IUpof+CS5IUQxDbi8gt0CpIMlKZf1n3
+sBwGil4YCQWIkdM4IAZ1aMjWcgAgFQ==
+=N36b
+-----END PGP SIGNATURE-----
+
+--Sig_/8A/3tsSoWQOAryCmuI_nxw6--
