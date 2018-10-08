@@ -2,107 +2,134 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7846C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A52C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB1D92087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB1D92087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 04B7520878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:01:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eV7kGw9P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04B7520878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbeJHXOB (ORCPT
+        id S1726828AbeJHXOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:14:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37171 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJHXOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:14:00 -0400
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w98G1A7q671449
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 8 Oct 2018 09:01:10 -0700
-Subject: Re: [PATCH stable v2 1/2] arch/alpha, termios: implement BOTHER,
- IBSHIFT and termios2
-To:     Johan Hovold <johan@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Tobias Klausmann <klausman@schwarzvogel.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
-References: <20181008040620.1248277-1-hpa@zytor.com>
- <20181008040620.1248277-2-hpa@zytor.com> <20181008153840.GD3332@localhost>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <96b760ca-1faa-8bf7-5616-c16bfcf75ec4@zytor.com>
-Date:   Mon, 8 Oct 2018 09:01:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 8 Oct 2018 19:14:04 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:40269 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbeJHXOD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 19:14:03 -0400
+Received: by mail-lj1-f170.google.com with SMTP id r83-v6so18362557ljr.7
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FXOQa01RRg7nAf2wbPNTbzF1A/p1zVjlGhfKb0EAu1c=;
+        b=eV7kGw9Pso3DeAofyKGXIrvKFDEKTlGaq5LmCQU2uW4/bBA1Pxeop2ctbPsmK5lRJ9
+         r6UNV+9aB07OqmkzTRDNR7R0ZwvogWbG41fJ5wxyaJVFWlIDhR35uIwztNKbFpVXfrJb
+         Eb8G8w4Djj3SgimvHXHo2xIHP68zqZlu+nvWa481GUqUMPiRUTCRO7OL+BK2iZvOT34B
+         VgehmFKdI+LyenHbm02j0LC+HebJUCwrNuur9InIhSc4s0UVHGsoxk/2u4P73S4zpDTc
+         Z+T+5BV8TKzoZ6Xy8ujZgC2Ad6BZxVRpPeDu4KL6c1AO5plfwprDj9EUtJgWWLEpWYsv
+         WSFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FXOQa01RRg7nAf2wbPNTbzF1A/p1zVjlGhfKb0EAu1c=;
+        b=V68WagkeC6V2E1tcTX/MDHLax5PAKZ7SCjh6+YVJK3dvSBdxYQphv0E4yIGDBdzAO9
+         EslDoTmrp7pHDkXAzWfT9i76TxobgoSEaYMFdq38lx35OR8Jh96hX8sDEdman6DdTucc
+         LbJziKgGnEnWBBGqtXN43ICM5RaFlKvgTw0gp+/yUdvQvu/pSyFg44hOP2vabBJ8hPJf
+         CG0a2ThE1c0pEiGP7Qj3WBw7zdAPPIcMsgFMlvvHtp+1uoIpmV9ipsZsYtAQ40GYv1ed
+         RJsZOc2X8/ogHTw6KFw9qCim2Z2msnDKyJL8ov8ucJ7uL/z/7KJ+aKEFV8xlW7X7b7Fe
+         Lz6Q==
+X-Gm-Message-State: ABuFfoimSr+Bae6NOqfAUxxIx6rkFJVCbVfoUA73ELWRNMwytLRSWxZs
+        4vsPIrW+UIKAfh2KLgy2Cvo8cJQJUce8N20v32E=
+X-Google-Smtp-Source: ACcGV634bsL8c3gNzWM1vq10GVY1rxug13lWB1aOhJWC3kMEPF0D4exEYjuLkhJ9B+iOsvpidUacFjiwTezKVbnVpso=
+X-Received: by 2002:a2e:9549:: with SMTP id t9-v6mr15163071ljh.94.1539014496387;
+ Mon, 08 Oct 2018 09:01:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181008153840.GD3332@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAHmME9ofzanQTBD_WYBRW49d+gM77rCdh8Utdk4+PM9n_bmKwA@mail.gmail.com>
+ <CANiq72=hXXvzfYz-1EdgDNBVfYMiRp2RbjjNF=wwiiPVU+jmuQ@mail.gmail.com> <3cbaf145ee577f017cf7aea953c9dd1eb88ed4b4.camel@perches.com>
+In-Reply-To: <3cbaf145ee577f017cf7aea953c9dd1eb88ed4b4.camel@perches.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Mon, 8 Oct 2018 18:01:25 +0200
+Message-ID: <CANiq72=bfYHM6XjQZ9dG_auahA_w59naEXM+VZHGm0m=_7nOqA@mail.gmail.com>
+Subject: Re: list iterator spacing: clang-format vs checkpatch
+To:     Joe Perches <joe@perches.com>
+Cc:     Jason@zx2c4.com, Andrew Lunn <andrew@lunn.ch>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/8/18 8:38 AM, Johan Hovold wrote:
-> On Sun, Oct 07, 2018 at 09:06:19PM -0700, H. Peter Anvin wrote:
->> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
->>
->> Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
->> using arbitrary flags. Because BOTHER is not defined, the general
->> Linux code doesn't allow setting arbitrary baud rates, and because
->> CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
->> drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
->>
->> Resolve both problems by #defining BOTHER to 037 on Alpha.
->>
->> However, userspace still needs to know if setting BOTHER is actually
->> safe given legacy kernels (does anyone actually care about that on
->> Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
->> though they use the same structure. Define struct termios2 just for
->> compatibility; it is the exact same structure as struct termios. In a
->> future patchset, this will be cleaned up so the uapi headers are
->> usable from libc.
-> 
-> Is this really needed? By defining BOTHER (and IBSHIFT which you forgot
-> to mention here) you are enabling arbitrary rates also through TCSETS on
-> alpha, right?
-> 
+On Mon, Oct 8, 2018 at 5:40 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Mon, 2018-10-08 at 09:31 +0200, Miguel Ojeda wrote:
+> > On Mon, Oct 8, 2018 at 4:01 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > > The shiny new .clang-format file lists a number of nice iterators in
+> > > the ForEachMacros category, the consequence being that there is a
+> > > space between the iterator name and the opening parenthesis. This
+> > > strikes me as the right thing to do.
+>
+> It does not strike me as the right thing to do.
+>
+> Keeping an exhaustive list current is a continuing
+> burden and the list generally goes stale over time.
 
-Yes, it's needed, not because the old ioctls won't work on NEW kernels, but
-because Alpha is so far behind the times, *and* the OLD kernels are severely
-broken if we pass BOTHER to them, we need a new ioctl number so we can
-guarantee that we won't do anything that user space doesn't intend; this is
-actually made far worse because if I read the code correctly, the kernel will
-still report back BOTHER and the speed field set on a legacy kernel in
-response to TCGETS, but the values will be completely bogus.
+Indeed, it is not nice. It would be best if clang-format had a special
+case for macros before a block (i.e. assuming those are meant to be
+"for loop macros"). Alas...
 
-This means that glibc will need a workaround for Alpha only, and the new ioctl
-numbers handles support for it.  gcc should be able to fold the code together,
-since it should be able to detect that multiple branches of execution are
-otherwise identical.
+>
+> > > However, checkpatch.pl complains about it:
+> > >
+> > > WARNING: space prohibited between function name and open parenthesis '('
+> > > #65: FILE: ratelimiter.c:65:
+> > > +               hlist_for_each_entry_safe (entry, temp, &table_v4[i], hash) {
+> > >
+> > > It would seem that .clang-format is right and checkpatch.pl is wrong?
+> >
+> > Checking quickly, it would seem most of the kernel does not put a
+> > space there (a minority does), e.g.:
+> >
+> >   git grep 'list_for_each[a-zA-Z0-9_]* (' | wc -l # 67
+> >   git grep 'list_for_each[a-zA-Z0-9_]*(' | wc -l # 13892
+> >
+> > So in that sense, checkpatch.pl is right (even if it is not a function call).
+>
+> As a general rule, I believe any dominant coding style
+> is correct. These things are just a convention.
+>
+> .clang-format is a work in progress and should be updated
+> where possible to reflect the kernel dominant styles.
 
-To micro-optimize, we could define TERMIOS_OLD as (CBAUDEX ? 8 : 0) in a
-future (non-stable) patch.
+Ideally, in a handful of years we would have an almost perfect mapping
+(and/or agree to dismiss the old style that cannot be easily emulated)
+and simply force to pass all code through clang-format in a
+(server-side) git hook. One can dream... :-)
 
-We don't need to worry about it on PowerPC because PowerPC implemented this so
-long ago, before the current glibc support threshold.
+>
+> > We would probably need to implement SpaceBeforeForEachMacros (or a new
+> > option for SpaceBeforeParens). I haven't had the time to look into
+> > adding the missing support for the few things that the kernel style
+> > requires, sadly, but it is in my TODO list.
+>
+> Good luck and as you are the .clang_format maintainer,
+> I hope you find the time.
+>
 
-	-hpa
+Thanks a lot! I will try for sure at some point, since coding style
+stuff takes a looooot of time from everyone.
 
+Cheers,
+Miguel
