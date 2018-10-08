@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B35FC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C33C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1EC2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D628421479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uc+HPRV5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1EC2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXX2jTly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D628421479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbeJIB4O (ORCPT
+        id S1730438AbeJIB4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44044 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeJIB4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:14 -0400
+        id S1726672AbeJIB4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B07FA214C4;
-        Mon,  8 Oct 2018 18:43:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5471721479;
+        Mon,  8 Oct 2018 18:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024189;
-        bh=puRYmUOW2dxkAyO7VRTLdo1uy20QEzoGI2AIy8Z7mnE=;
+        s=default; t=1539024191;
+        bh=9H+0pmDv6flzttG/tRwggO15JvJxoDWDJkvv4BMusC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uc+HPRV5liVmhiPxyt7qRLwHhLXSVhlNL4H7/2JfG5l9YDM0+mkL8H7PKBnvjmlpB
-         xQMqt1Qlm6oG3gbGxsF79hWN/DkLg+/8Vb7ig6dFf0IN9QzujazSAVwdyMzS++cRcz
-         BixgJfmXnCFtQ4TH+dNP5FQWyjQaW6Z5n+lak41U=
+        b=jXX2jTlyJpJiKhY2yfdj4Vr8pW7OI6XQ8bhEMX8Q2dhtvbiAlhnlEz+iWR0RyD75w
+         EI/sHbnquJ1oq0mC4PtH9cxP4C5lbImaUUvNV1ugfbo2L5/938nQ2GrDZtNBhenqcs
+         +hZcxhrXrw7bKz2mqqXOBMLkiIenr0xGc4jU5RsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -43,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 28/94] i2c: uniphier: issue STOP only for last message or I2C_M_STOP
-Date:   Mon,  8 Oct 2018 20:31:09 +0200
-Message-Id: <20181008175606.355964527@linuxfoundation.org>
+Subject: [PATCH 4.14 29/94] i2c: uniphier-f: issue STOP only for last message or I2C_M_STOP
+Date:   Mon,  8 Oct 2018 20:31:10 +0200
+Message-Id: <20181008175606.405441002@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -65,7 +66,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 38f5d8d8cbb2ffa2b54315118185332329ec891c ]
+[ Upstream commit 4c85609b08c4761eca0a40fd7beb06bc650f252d ]
 
 This driver currently emits a STOP if the next message is not
 I2C_MD_RD.  It should not do it because it disturbs the I2C_RDWR
@@ -75,18 +76,18 @@ between.
 Issue STOP only when the message is the last one _or_ flagged with
 I2C_M_STOP.
 
-Fixes: dd6fd4a32793 ("i2c: uniphier: add UniPhier FIFO-less I2C driver")
+Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver")
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-uniphier.c |    7 ++-----
+ drivers/i2c/busses/i2c-uniphier-f.c |    7 ++-----
  1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/i2c/busses/i2c-uniphier.c
-+++ b/drivers/i2c/busses/i2c-uniphier.c
-@@ -248,11 +248,8 @@ static int uniphier_i2c_master_xfer(stru
+--- a/drivers/i2c/busses/i2c-uniphier-f.c
++++ b/drivers/i2c/busses/i2c-uniphier-f.c
+@@ -401,11 +401,8 @@ static int uniphier_fi2c_master_xfer(str
  		return ret;
  
  	for (msg = msgs; msg < emsg; msg++) {
@@ -98,7 +99,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +		/* Emit STOP if it is the last message or I2C_M_STOP is set. */
 +		bool stop = (msg + 1 == emsg) || (msg->flags & I2C_M_STOP);
  
- 		ret = uniphier_i2c_master_xfer_one(adap, msg, stop);
+ 		ret = uniphier_fi2c_master_xfer_one(adap, msg, stop);
  		if (ret)
 
 
