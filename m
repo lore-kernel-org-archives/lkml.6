@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B9EC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E04C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88BEC2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566372085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:48:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tt/a4IDB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88BEC2085B
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zd0uf7np"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 566372085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeJHKyT (ORCPT
+        id S1726020AbeJHK6S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 06:54:19 -0400
-Received: from ozlabs.org ([203.11.71.1]:58035 "EHLO ozlabs.org"
+        Mon, 8 Oct 2018 06:58:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:59509 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbeJHKyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 06:54:18 -0400
+        id S1725760AbeJHK6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 06:58:18 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42T5pJ4jg9z9sB7;
-        Mon,  8 Oct 2018 14:44:40 +1100 (AEDT)
+        by ozlabs.org (Postfix) with ESMTPSA id 42T5tv2nNwz9s9J;
+        Mon,  8 Oct 2018 14:48:39 +1100 (AEDT)
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538970280;
-        bh=8hF1lZL+iZNIDkfHrqIH2fs7pshjTTygrrFcRy7WQ0E=;
+        s=201702; t=1538970519;
+        bh=MCmZSI+x8G3eZ625CvfAJRSjZ7mtqrv/80NWr+hppcs=;
         h=Date:From:To:Cc:Subject:From;
-        b=tt/a4IDBlSvIlUi+ENH7T7PMdVs6VvtiiEOG4/EXvQuLH7jlUGebo2m6NOLctYRyJ
-         QwlVsYJQSjm8CDH6+2XlCyvuG2t5s5hH5Wk20N3yGa76Q1Fp5tbVSjBUB+ZikHGcqs
-         eUdfd4f83uIQhInShnT2wkwC3aj+gjrwV3j4tTt/7xh0Sa/tqY8ygA4em/6jmPpAWi
-         Tl/cq2i8QOnE5mpD3tXYTppHTBGAbkEol3trDSSnyO1oZj8PLM5/8xdkQsPgFaa/fM
-         sFOpkJXXve8mTHYlSGGaqWPf7LbH+OtUmTQkoIpUmIC1PRnNx9axsB7qVTFGfdTfvw
-         wnoH9+0dLUcPw==
-Date:   Mon, 8 Oct 2018 14:44:38 +1100
+        b=Zd0uf7np3oFWDqc9P9QoBzO1PFsWyTEHVbcQEdzAemekFEOKG305feuiuhUb2ucX8
+         6l0ZeRznqLX/jd/y2vqMI+iw2MqQEFMInTSfEdPdnoi2shd8OqocGA+6KmU7QBfCcC
+         LCMbXwmeB0E/onHas1jDmer8uDVq1uT3n5HyF+0obQUH8mhZ0IwHKmpoZsvwLKbUAR
+         zvLwwhXIIcvSatZK7QKozJatrvPYW/58OO3q/mBst6tHDFQQczB426eyeu1xR6y6ft
+         MfbG/bCJvf9yru73zwYMVB3oGRy9tjSkBaYtM8EW4ZBkrY5GuvHNeEwbWfj8joTIpp
+         lBAG80fpXY4OQ==
+Date:   Mon, 8 Oct 2018 14:48:38 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
@@ -48,19 +48,18 @@ To:     Darren Hart <dvhart@infradead.org>,
         Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: linux-next: manual merge of the drivers-x86 tree with the tip tree
-Message-ID: <20181008144438.53e6fdbc@canb.auug.org.au>
+Message-ID: <20181008144838.60d8ad83@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xWjeFjFzezcq6RJ_i3hsvmy"; protocol="application/pgp-signature"
+ boundary="Sig_/M7VLhcGUxPcnz2GqlmFUqhf"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xWjeFjFzezcq6RJ_i3hsvmy
+--Sig_/M7VLhcGUxPcnz2GqlmFUqhf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -68,7 +67,7 @@ Hi all,
 
 Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-  drivers/platform/x86/intel_int0002_vgpio.c
+  drivers/platform/x86/intel_mid_powerbtn.c
 
 between commit:
 
@@ -76,8 +75,8 @@ between commit:
 
 from the tip tree and commit:
 
-  96402de65afc ("platform/x86: intel_int0002_vgpio: Enable the driver on Ba=
-y Trail platforms")
+  a8b60e484f3d ("platform/x86: intel_mid_powerbtn: Get rid of custom ICPU()=
+ macro")
 
 from the drivers-x86 tree.
 
@@ -92,39 +91,42 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/platform/x86/intel_int0002_vgpio.c
-index e89ad4964dc1,c958a628c375..000000000000
---- a/drivers/platform/x86/intel_int0002_vgpio.c
-+++ b/drivers/platform/x86/intel_int0002_vgpio.c
-@@@ -57,11 -54,7 +54,7 @@@
-  #define ICPU(model)	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
+diff --cc drivers/platform/x86/intel_mid_powerbtn.c
+index 5ad44204a9c3,a8c0fbb7f799..000000000000
+--- a/drivers/platform/x86/intel_mid_powerbtn.c
++++ b/drivers/platform/x86/intel_mid_powerbtn.c
+@@@ -121,12 -112,9 +112,9 @@@ static const struct mid_pb_ddata mrfld_
+  	.setup	=3D mrfld_setup,
+  };
  =20
-  static const struct x86_cpu_id int0002_cpu_ids[] =3D {
-- /*
--  * Limit ourselves to Cherry Trail for now, until testing shows we
--  * need to handle the INT0002 device on Baytrail too.
--  *	ICPU(INTEL_FAM6_ATOM_SILVERMONT),	 * Valleyview, Bay Trail *
--  */
- -	ICPU(INTEL_FAM6_ATOM_SILVERMONT1),	/* Valleyview, Bay Trail  */
-++	ICPU(INTEL_FAM6_ATOM_SILVERMONT),	/* Valleyview, Bay Trail  */
-  	ICPU(INTEL_FAM6_ATOM_AIRMONT),		/* Braswell, Cherry Trail */
+- #define ICPU(model, ddata)	\
+- 	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (kernel_ulong_t)&ddata }
+-=20
+  static const struct x86_cpu_id mid_pb_cpu_ids[] =3D {
+- 	ICPU(INTEL_FAM6_ATOM_SALTWELL_MID,		mfld_ddata),
+- 	ICPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	mrfld_ddata),
+ -	INTEL_CPU_FAM6(ATOM_PENWELL,		mfld_ddata),
+ -	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		mrfld_ddata),
+++	INTEL_CPU_FAM6(ATOM_SALTWELL_MID,	mfld_ddata),
+++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	mrfld_ddata),
   	{}
   };
+ =20
 
---Sig_/xWjeFjFzezcq6RJ_i3hsvmy
+--Sig_/M7VLhcGUxPcnz2GqlmFUqhf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu60qYACgkQAVBC80lX
-0GwXTQf+KsBeoNmofEXdKDBsLT5FmLAcbGD1DDEHcCNpMhRLL9QeaTnqGgXr4Om/
-s1/pZTcbuV7u6+YcDqWJAfw2WGdyhl7Dkm4/7cSkEN9vQUv6CCv5QDfnuMIRrA04
-6x/q+1uhHES5cr5y9rWGfjFs/ettMJY301f3w2HP+2IzvF1lF0uTblpXB4iprcWF
-HiIkxZ5TAxmCqXoSNSuMqViUfyu8wQ4S2AHOcCF8fbvMdbmdgMnuA9w6p9+kjWzC
-do6jBqzYQ4UBn2qddMDuuAnh2mb8YsKbH/FbnlTcRz3GMxQHJdtD0ww1vydfHG8k
-qmiPfpaXViQCqwVZqL3czT4XeVzbpA==
-=TPBv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu605YACgkQAVBC80lX
+0Gy/ywf+JPsYvBPso7IaaUdSTrQmYtjcFcCJVpPZJKuqG9JLGQzOUhbGzDb9eoNi
+RaXTmLFVfKZk/P6WoXMEpHTl3hegI7Yd2JXTrbjLR49nOly/fDuF5lsb9hQS0FYX
+ZLTYd6Gjo4r6NvTsvui+dBib1cYrXzIyEIBSeqrbig0IMsBN/0BU6igPQtmJGwFc
+9r17zCiU6qfUPhmckRQMp9NWretboihD4qIKVgU4sIaTOi3M10K4ueJbrcv2UZw6
+Jc+yNGWHu5PhomlTeSox7n01DczYM5N6jZTAP4Ual8bTlv6SSp8zsZ5yuV1Pdmik
+EnqUpWPvAGm8lJCqM9GaGB5du1c1nw==
+=lCkY
 -----END PGP SIGNATURE-----
 
---Sig_/xWjeFjFzezcq6RJ_i3hsvmy--
+--Sig_/M7VLhcGUxPcnz2GqlmFUqhf--
