@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21753C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8E0C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF942152C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A281621531
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyEqRyTq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF942152C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tN/ChYKc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A281621531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbeJHWix (ORCPT
+        id S1728393AbeJHWiz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:53 -0400
+        Mon, 8 Oct 2018 18:38:55 -0400
 Received: from mail.kernel.org ([198.145.29.99]:57588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728321AbeJHWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:52 -0400
+        id S1728321AbeJHWix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BEBC214FF;
-        Mon,  8 Oct 2018 15:26:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB3792150F;
+        Mon,  8 Oct 2018 15:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012396;
-        bh=7wr5E5C/Ls5l9ZH+bf5LjcvGZ0NXpMrOUbpTwd2kfZE=;
+        s=default; t=1539012398;
+        bh=eJ8QVzarXk3b5bU4iAhxps2rpXQvD1b7hjDhk2pL26M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pyEqRyTqksibG+toiyDNCvlgV/6o0IGeA/xi/I9M26rNLfAQW5knUKOYYSMGBTm9N
-         7AUupNinRRRykDi96SqYp3rKEaTEokDhLGVLws22oGi8nC915RbdBfXGWTqEi8teAb
-         TYXia3fIPZYtJpyeyMT3tFnXiI39DcUNWcDhpSKY=
+        b=tN/ChYKcjSxtTK1AXctWaxfvm5zPqGxMHrC3/jcwGSMBoPQfCMy2M0k9iIRM735uP
+         rfpLNqNrASgfZ30CRTScixTZJf+ezkAFI92ky0QfRLQM8eqOH3mtU08+95kaBkpuXr
+         RrlwplGtM46kQ+1mrBecElcd9RHKf7bwa2GYgqrw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 06/32] batman-adv: Prevent duplicated nc_node entry
-Date:   Mon,  8 Oct 2018 11:26:03 -0400
-Message-Id: <20181008152629.70812-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 08/32] batman-adv: Prevent duplicated global TT entry
+Date:   Mon,  8 Oct 2018 11:26:05 -0400
+Message-Id: <20181008152629.70812-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
 References: <20181008152629.70812-1-sashal@kernel.org>
@@ -54,12 +54,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit fa122fec8640eb7186ce5a41b83a4c1744ceef8f ]
+[ Upstream commit e7136e48ffdfb9f37b0820f619380485eb407361 ]
 
-The function batadv_nc_get_nc_node is responsible for adding new nc_nodes
-to the in_coding_list and out_coding_list. It first checks whether the
-entry already is in the list or not. If it is, then the creation of a new
-entry is aborted.
+The function batadv_tt_global_orig_entry_add is responsible for adding new
+tt_orig_list_entry to the orig_list. It first checks whether the entry
+already is in the list or not. If it is, then the creation of a new entry
+is aborted.
 
 But the lock for the list is only held when the list is really modified.
 This could lead to duplicated entries because another context could create
@@ -68,74 +68,48 @@ an entry with the same key between the check and the list manipulation.
 The check and the manipulation of the list must therefore be in the same
 locked code section.
 
-Fixes: d56b1705e28c ("batman-adv: network coding - detect coding nodes and remove these after timeout")
+Fixes: d657e621a0f5 ("batman-adv: add reference counting for type batadv_tt_orig_list_entry")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/network-coding.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ net/batman-adv/translation-table.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-coding.c
-index 3604d7899e2c..7a7dcac20566 100644
---- a/net/batman-adv/network-coding.c
-+++ b/net/batman-adv/network-coding.c
-@@ -850,16 +850,27 @@ batadv_nc_get_nc_node(struct batadv_priv *bat_priv,
- 	spinlock_t *lock; /* Used to lock list selected by "int in_coding" */
- 	struct list_head *list;
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 0f4d4eece3e4..9da3455847ff 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -1587,6 +1587,8 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+ {
+ 	struct batadv_tt_orig_list_entry *orig_entry;
  
-+	/* Select ingoing or outgoing coding node */
-+	if (in_coding) {
-+		lock = &orig_neigh_node->in_coding_list_lock;
-+		list = &orig_neigh_node->in_coding_list;
-+	} else {
-+		lock = &orig_neigh_node->out_coding_list_lock;
-+		list = &orig_neigh_node->out_coding_list;
-+	}
++	spin_lock_bh(&tt_global->list_lock);
 +
-+	spin_lock_bh(lock);
+ 	orig_entry = batadv_tt_global_orig_entry_find(tt_global, orig_node);
+ 	if (orig_entry) {
+ 		/* refresh the ttvn: the current value could be a bogus one that
+@@ -1609,11 +1611,9 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+ 	orig_entry->flags = flags;
+ 	kref_init(&orig_entry->refcount);
+ 
+-	spin_lock_bh(&tt_global->list_lock);
+ 	kref_get(&orig_entry->refcount);
+ 	hlist_add_head_rcu(&orig_entry->list,
+ 			   &tt_global->orig_list);
+-	spin_unlock_bh(&tt_global->list_lock);
+ 	atomic_inc(&tt_global->orig_list_count);
+ 
+ sync_flags:
+@@ -1621,6 +1621,8 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+ out:
+ 	if (orig_entry)
+ 		batadv_tt_orig_list_entry_put(orig_entry);
 +
- 	/* Check if nc_node is already added */
- 	nc_node = batadv_nc_find_nc_node(orig_node, orig_neigh_node, in_coding);
++	spin_unlock_bh(&tt_global->list_lock);
+ }
  
- 	/* Node found */
- 	if (nc_node)
--		return nc_node;
-+		goto unlock;
- 
- 	nc_node = kzalloc(sizeof(*nc_node), GFP_ATOMIC);
- 	if (!nc_node)
--		return NULL;
-+		goto unlock;
- 
- 	/* Initialize nc_node */
- 	INIT_LIST_HEAD(&nc_node->list);
-@@ -868,22 +879,14 @@ batadv_nc_get_nc_node(struct batadv_priv *bat_priv,
- 	kref_get(&orig_neigh_node->refcount);
- 	nc_node->orig_node = orig_neigh_node;
- 
--	/* Select ingoing or outgoing coding node */
--	if (in_coding) {
--		lock = &orig_neigh_node->in_coding_list_lock;
--		list = &orig_neigh_node->in_coding_list;
--	} else {
--		lock = &orig_neigh_node->out_coding_list_lock;
--		list = &orig_neigh_node->out_coding_list;
--	}
--
- 	batadv_dbg(BATADV_DBG_NC, bat_priv, "Adding nc_node %pM -> %pM\n",
- 		   nc_node->addr, nc_node->orig_node->orig);
- 
- 	/* Add nc_node to orig_node */
--	spin_lock_bh(lock);
- 	kref_get(&nc_node->refcount);
- 	list_add_tail_rcu(&nc_node->list, list);
-+
-+unlock:
- 	spin_unlock_bh(lock);
- 
- 	return nc_node;
+ /**
 -- 
 2.17.1
 
