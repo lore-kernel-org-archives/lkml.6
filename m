@@ -2,243 +2,188 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E101C6787D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15D3C6787E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4A120841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:38:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPz+sQjN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4A120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 626BF20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626BF20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbeJHJrx (ORCPT
+        id S1726613AbeJHJsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 05:47:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725760AbeJHJrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 05:47:53 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED7DF20841;
-        Mon,  8 Oct 2018 02:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538966310;
-        bh=8OAN2T6svcB95JnLNRKBOtgkwN7lKejDKS3d4Sl3Wjo=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=JPz+sQjNMTc4B+Vvy6Uojgyv5hzoZImGidw9xA8gxE5cqWCwRowjwQRXH7oWngsgK
-         G2/m+JYcjhcW0blGVTyZScOG8BSFJPxMMoroWHVhPle6NqTlPG2pqOP6RvS/PteLuz
-         Gdu3Jdmqgg5F7tdAQufL+1XRne9mGJh9/5gz1HsE=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 8 Oct 2018 05:48:55 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:61267 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725760AbeJHJsz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 05:48:55 -0400
+X-UUID: d93fccd3bcf04ab88e09eb6bbb2c0dc8-20181008
+X-UUID: d93fccd3bcf04ab88e09eb6bbb2c0dc8-20181008
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1696350349; Mon, 08 Oct 2018 10:39:21 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 8 Oct 2018 10:39:19 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 8 Oct 2018 10:39:19 +0800
+From:   <miles.chen@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
+        Mark Salyzyn <salyzyn@google.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [PATCH] tty: check name length in tty_find_polling_driver()
+Date:   Mon, 8 Oct 2018 10:39:17 +0800
+Message-ID: <1538966357-3175-1-git-send-email-miles.chen@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Vinod <vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181003062103.GN19792@vkoul-mobl>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Shefali Jain <shefjain@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
-References: <20180921185936.9590-1-vkoul@kernel.org>
- <20180921185936.9590-2-vkoul@kernel.org>
- <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
- <20181003062103.GN19792@vkoul-mobl>
-Message-ID: <153896630923.119890.17169150168947487135@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver for QCS404
-Date:   Sun, 07 Oct 2018 19:38:29 -0700
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod (2018-10-02 23:21:03)
-> Hi Stephen,
-> =
+From: Miles Chen <miles.chen@mediatek.com>
 
-> Thanks for the comments,
-> =
+The issue is found by a fuzzing test.
+If tty_find_polling_driver() recevies an incorrect input such as
+',,' or '0b', the len becomes 0 and strncmp() always return 0.
+In this case, a null p->ops->poll_init() is called and it causes a kernel
+panic.
 
-> On 01-10-18, 10:19, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2018-09-21 11:59:36)
-> > > From: Shefali Jain <shefjain@codeaurora.org>
-> > > =
+Fix this by checking name length against zero in tty_find_polling_driver().
 
-> > > Add the clocks supported in global clock controller which clock the
-> > > peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clocks
-> > > to the clock framework for the clients to be able to request for them.
-> > > =
+$echo ,, > /sys/module/kgdboc/parameters/kgdboc
+[   20.804451] WARNING: CPU: 1 PID: 104 at drivers/tty/serial/serial_core.c:457
+uart_get_baud_rate+0xe8/0x190
+[   20.804917] Modules linked in:
+[   20.805317] CPU: 1 PID: 104 Comm: sh Not tainted 4.19.0-rc7ajb #8
+[   20.805469] Hardware name: linux,dummy-virt (DT)
+[   20.805732] pstate: 20000005 (nzCv daif -PAN -UAO)
+[   20.805895] pc : uart_get_baud_rate+0xe8/0x190
+[   20.806042] lr : uart_get_baud_rate+0xc0/0x190
+[   20.806476] sp : ffffffc06acff940
+[   20.806676] x29: ffffffc06acff940 x28: 0000000000002580
+[   20.806977] x27: 0000000000009600 x26: 0000000000009600
+[   20.807231] x25: ffffffc06acffad0 x24: 00000000ffffeff0
+[   20.807576] x23: 0000000000000001 x22: 0000000000000000
+[   20.807807] x21: 0000000000000001 x20: 0000000000000000
+[   20.808049] x19: ffffffc06acffac8 x18: 0000000000000000
+[   20.808277] x17: 0000000000000000 x16: 0000000000000000
+[   20.808520] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.808757] x13: ffffffffffffffff x12: 0000000000000001
+[   20.809011] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.809292] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.809549] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.809803] x5 : 0000000080008001 x4 : 0000000000000003
+[   20.810056] x3 : ffffff900853e6b4 x2 : dfffff9000000000
+[   20.810693] x1 : ffffffc06acffad0 x0 : 0000000000000cb0
+[   20.811005] Call trace:
+[   20.811214]  uart_get_baud_rate+0xe8/0x190
+[   20.811479]  serial8250_do_set_termios+0xe0/0x6f4
+[   20.811719]  serial8250_set_termios+0x48/0x54
+[   20.811928]  uart_set_options+0x138/0x1bc
+[   20.812129]  uart_poll_init+0x114/0x16c
+[   20.812330]  tty_find_polling_driver+0x158/0x200
+[   20.812545]  configure_kgdboc+0xbc/0x1bc
+[   20.812745]  param_set_kgdboc_var+0xb8/0x150
+[   20.812960]  param_attr_store+0xbc/0x150
+[   20.813160]  module_attr_store+0x40/0x58
+[   20.813364]  sysfs_kf_write+0x8c/0xa8
+[   20.813563]  kernfs_fop_write+0x154/0x290
+[   20.813764]  vfs_write+0xf0/0x278
+[   20.813951]  __arm64_sys_write+0x84/0xf4
+[   20.814400]  el0_svc_common+0xf4/0x1dc
+[   20.814616]  el0_svc_handler+0x98/0xbc
+[   20.814804]  el0_svc+0x8/0xc
+[   20.822005] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   20.826913] Mem abort info:
+[   20.827103]   ESR = 0x84000006
+[   20.827352]   Exception class = IABT (current EL), IL = 16 bits
+[   20.827655]   SET = 0, FnV = 0
+[   20.827855]   EA = 0, S1PTW = 0
+[   20.828135] user pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[   20.828484] [0000000000000000] pgd=00000000aadee003, pud=00000000aadee003, pmd=0000000000000000
+[   20.829195] Internal error: Oops: 84000006 [#1] SMP
+[   20.829564] Modules linked in:
+[   20.829890] CPU: 1 PID: 104 Comm: sh Tainted: G        W         4.19.0-rc7ajb #8
+[   20.830545] Hardware name: linux,dummy-virt (DT)
+[   20.830829] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[   20.831174] pc :           (null)
+[   20.831457] lr : serial8250_do_set_termios+0x358/0x6f4
+[   20.831727] sp : ffffffc06acff9b0
+[   20.831936] x29: ffffffc06acff9b0 x28: ffffff9008d7c000
+[   20.832267] x27: ffffff900969e16f x26: 0000000000000000
+[   20.832589] x25: ffffff900969dfb0 x24: 0000000000000000
+[   20.832906] x23: ffffffc06acffad0 x22: ffffff900969e160
+[   20.833232] x21: 0000000000000000 x20: ffffffc06acffac8
+[   20.833559] x19: ffffff900969df90 x18: 0000000000000000
+[   20.833878] x17: 0000000000000000 x16: 0000000000000000
+[   20.834491] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.834821] x13: ffffffffffffffff x12: 0000000000000001
+[   20.835143] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.835467] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.835790] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.836111] x5 : c06419717c314100 x4 : 0000000000000007
+[   20.836419] x3 : 0000000000000000 x2 : 0000000000000000
+[   20.836732] x1 : 0000000000000001 x0 : ffffff900969df90
+[   20.837100] Process sh (pid: 104, stack limit = 0x(____ptrval____))
+[   20.837396] Call trace:
+[   20.837566]            (null)
+[   20.837816]  serial8250_set_termios+0x48/0x54
+[   20.838089]  uart_set_options+0x138/0x1bc
+[   20.838570]  uart_poll_init+0x114/0x16c
+[   20.838834]  tty_find_polling_driver+0x158/0x200
+[   20.839119]  configure_kgdboc+0xbc/0x1bc
+[   20.839380]  param_set_kgdboc_var+0xb8/0x150
+[   20.839658]  param_attr_store+0xbc/0x150
+[   20.839920]  module_attr_store+0x40/0x58
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840440]  kernfs_fop_write+0x154/0x290
+[   20.840702]  vfs_write+0xf0/0x278
+[   20.840942]  __arm64_sys_write+0x84/0xf4
+[   20.841209]  el0_svc_common+0xf4/0x1dc
+[   20.841471]  el0_svc_handler+0x98/0xbc
+[   20.841713]  el0_svc+0x8/0xc
+[   20.842057] Code: bad PC value
+[   20.842764] ---[ end trace a8835d7de79aaadf ]---
+[   20.843134] Kernel panic - not syncing: Fatal exception
+[   20.843515] SMP: stopping secondary CPUs
+[   20.844289] Kernel Offset: disabled
+[   20.844634] CPU features: 0x0,21806002
+[   20.844857] Memory Limit: none
+[   20.845172] ---[ end Kernel panic - not syncing: Fatal exception ]---
 
-> > > Signed-off-by: Shefali Jain <shefjain@codeaurora.org>
-> > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > > Co-developed-by: Taniya Das <tdas@codeaurora.org>
-> > > Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-> > > [rebase and tidyup for upstream]
-> > =
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+---
+ drivers/tty/tty_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Who did the tidying?
-> =
-
-> both of us :)
-
-OK, please add the username of both people per the kernel sign off
-standards.
-
-> =
-
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> > >  - reg : shall contain base register location and length
-> > > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> > > index 064768699fe7..529d84cc7503 100644
-> > > --- a/drivers/clk/qcom/Kconfig
-> > > +++ b/drivers/clk/qcom/Kconfig
-> > > @@ -235,6 +235,14 @@ config MSM_GCC_8998
-> > >           Say Y if you want to use peripheral devices such as UART, S=
-PI,
-> > >           i2c, USB, UFS, SD/eMMC, PCIe, etc.
-> > >  =
-
-> > > +config QCS_GCC_404
-> > > +       tristate "QCS404 Global Clock Controller"
-> > > +       depends on COMMON_CLK_QCOM
-> > > +       help
-> > > +        Support for the global clock controller on QCS404 devices.
-> > > +        Say Y if you want to use peripheral devices such as UART, SP=
-I, I2C,
-> > > +        USB, SD/eMMC, PCIe, etc.
-> > =
-
-> > It seems to include multimedia display clks and ethernet? Maybe include
-> > those too.
-> =
-
-> Sure will add
-> =
-
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/clk.h>
-> > =
-
-> > Please don't include this.
-> =
-
-> OK will check if this is required, any reason for not including this?
-
-So we can easily split clk consumers and clk providers.
-
-> =
-
-> > > +static struct clk_branch gcc_pwm1_xo512_clk =3D {
-> > > +       .halt_reg =3D 0x49004,
-> > > +       .halt_check =3D BRANCH_HALT,
-> > > +       .clkr =3D {
-> > > +               .enable_reg =3D 0x49004,
-> > > +               .enable_mask =3D BIT(0),
-> > > +               .hw.init =3D &(struct clk_init_data){
-> > > +                       .name =3D "gcc_pwm1_xo512_clk",
-> > > +                       .ops =3D &clk_branch2_ops,
-> > =
-
-> > Do these pwm clks have a parent clk of the XO?
-> =
-
-> Yes they do
-
-Cool, we should add them or add a comment explaining why they don't have
-parents listed here.
-
-> =
-
-> > > +       [GCC_USB_HS_PHY_CFG_AHB_CLK] =3D &gcc_usb_hs_phy_cfg_ahb_clk.=
-clkr,
-> > > +       [GCC_USB_HS_SYSTEM_CLK] =3D &gcc_usb_hs_system_clk.clkr,
-> > > +       [GFX3D_CLK_SRC] =3D &gfx3d_clk_src.clkr,
-> > > +       [GP1_CLK_SRC] =3D &gp1_clk_src.clkr,
-> > =
-
-> > Why are some of these missing GCC_ prefix?
-> =
-
-> will add..
-
-Thanks!
-
-> =
-
-> > > +static int gcc_qcs404_probe(struct platform_device *pdev)
-> > > +{
-> > > +       struct regmap *regmap;
-> > > +       int ret;
-> > > +
-> > > +       ret =3D qcom_cc_register_board_clk(&pdev->dev,
-> > > +                                        "xo_board", "cxo", 19200000);
-> > =
-
-> > You shouldn't need to do this. This function is for transitioning DT
-> > that doesn't have the board clk in DT to something the driver wants to
-> > use, in this case "cxo". So you can either register a fixed factor 1/1
-> > clk to do the translation between board and cxo names, or use xo_board
-> > as the parent of things that can take crystal.
-> =
-
-> Okay will modify this. If I go about using xo_board as parent, I would
-> need to register that right? FWIW I see the same thing done in gcc-msm8916
-
-Yes it would be similar to 8916 or 8996/845.
-
-> =
-
-> > =
-
-> > > +       if (ret)
-> > > +               return ret;
-> > > +
-> > > +       regmap =3D qcom_cc_map(pdev, &gcc_qcs404_desc);
-> > > +       if (IS_ERR(regmap))
-> > > +               return PTR_ERR(regmap);
-> > > +
-> > > +       clk_alpha_pll_configure(&gpll3_out_main, regmap, &gpll3_confi=
-g);
-> > > +       clk_set_rate(apss_ahb_clk_src.clkr.hw.clk, 19200000);
-> > =
-
-> > use assigned clock rates from DT please.
-> =
-
-> ok
-> =
-
-> > > +       clk_prepare_enable(apss_ahb_clk_src.clkr.hw.clk);
-> > > +       clk_prepare_enable(gpll0_ao_out_main.clkr.hw.clk);
-> > =
-
-> > And these should be marked as critical clocks.
-> =
-
-> Okay and how do we go about doing that?
-
-You mark the clk flags with CLK_IS_CRITICAL.
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 5e5da9a..252eef2 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -408,7 +408,7 @@ struct tty_driver *tty_find_polling_driver(char *name, int *line)
+ 	mutex_lock(&tty_mutex);
+ 	/* Search through the tty devices to look for a match */
+ 	list_for_each_entry(p, &tty_drivers, tty_drivers) {
+-		if (strncmp(name, p->name, len) != 0)
++		if (!len || strncmp(name, p->name, len) != 0)
+ 			continue;
+ 		stp = str;
+ 		if (*stp == ',')
+-- 
+1.9.1
 
