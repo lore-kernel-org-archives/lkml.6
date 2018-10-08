@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7339C676C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6EAC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B956B2084D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B956B2084D
+	by mail.kernel.org (Postfix) with ESMTP id 230C82084D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230C82084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbeJHTWf (ORCPT
+        id S1728072AbeJHTWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 15:22:35 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48680 "EHLO
+        Mon, 8 Oct 2018 15:22:37 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:6522 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726921AbeJHTWe (ORCPT
+        by vger.kernel.org with ESMTP id S1726840AbeJHTWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 15:22:34 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98C46iA018791;
-        Mon, 8 Oct 2018 14:09:47 +0200
+        Mon, 8 Oct 2018 15:22:36 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98C4RHb024179;
+        Mon, 8 Oct 2018 14:09:49 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2n01heht5j-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mxjgxjvc2-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 08 Oct 2018 14:09:47 +0200
+        Mon, 08 Oct 2018 14:09:49 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EE6BC38;
-        Mon,  8 Oct 2018 12:09:46 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9A96F34;
+        Mon,  8 Oct 2018 12:09:48 +0000 (GMT)
 Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CD7862D02;
-        Mon,  8 Oct 2018 12:09:46 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7C9962D01;
+        Mon,  8 Oct 2018 12:09:48 +0000 (GMT)
 Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
  (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 8 Oct 2018
- 14:09:46 +0200
+ 14:09:48 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 8 Oct 2018
- 14:09:46 +0200
+ 14:09:48 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -53,9 +53,9 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V6 16/23] mmc: mmci: add variant property to write datactrl before command
-Date:   Mon, 8 Oct 2018 14:08:48 +0200
-Message-ID: <1539000535-13261-17-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V6 18/23] dt-bindings: mmci: add optional reset property
+Date:   Mon, 8 Oct 2018 14:08:50 +0200
+Message-ID: <1539000535-13261-19-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
 References: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
@@ -71,60 +71,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds a boolean property to allow to write datactrl
-before to send command, whatever the command type (read or write).
-Needed to support the STM32 sdmmc variant.
+This patch adds a optional reset management.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/mmc/host/mmci.c | 6 ++++--
- drivers/mmc/host/mmci.h | 2 ++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mmc/mmci.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index ca442fb..66aa59f 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1267,7 +1267,8 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
- 		mmci_request_end(host, host->mrq);
- 	} else if (sbc) {
- 		mmci_start_command(host, host->mrq->cmd, 0);
--	} else if (!(cmd->data->flags & MMC_DATA_READ)) {
-+	} else if (!host->variant->datactrl_first &&
-+		   !(cmd->data->flags & MMC_DATA_READ)) {
- 		mmci_start_data(host, cmd->data);
- 	}
- }
-@@ -1531,7 +1532,8 @@ static void mmci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	if (mrq->data)
- 		mmci_get_next_data(host, mrq->data);
- 
--	if (mrq->data && mrq->data->flags & MMC_DATA_READ)
-+	if (mrq->data &&
-+	    (host->variant->datactrl_first || mrq->data->flags & MMC_DATA_READ))
- 		mmci_start_data(host, mrq->data);
- 
- 	if (mrq->sbc)
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 783a7ad..eef7dd5 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -223,6 +223,7 @@ struct mmci_host;
-  * @datactrl_mask_sdio: SDIO enable mask in datactrl register
-  * @datactrl_blksz: block size in power of two
-  * @datactrl_dpsm_enable: enable value for DPSM
-+ * @datactrl_first: true if data must be setup before send command
-  * @pwrreg_powerup: power up value for MMCIPOWER register
-  * @f_max: maximum clk frequency supported by the controller.
-  * @signal_direction: input/out direction of bus signals can be indicated
-@@ -262,6 +263,7 @@ struct variant_data {
- 	unsigned int		datactrl_mask_sdio;
- 	unsigned int		datactrl_blocksz;
- 	unsigned int		datactrl_dpsm_enable;
-+	u8			datactrl_first:1;
- 	u8			st_sdio:1;
- 	u8			st_clkdiv:1;
- 	u8			blksz_datactrl16:1;
+diff --git a/Documentation/devicetree/bindings/mmc/mmci.txt b/Documentation/devicetree/bindings/mmc/mmci.txt
+index 03796cf..4e69b25 100644
+--- a/Documentation/devicetree/bindings/mmc/mmci.txt
++++ b/Documentation/devicetree/bindings/mmc/mmci.txt
+@@ -15,6 +15,7 @@ Required properties:
+ Optional properties:
+ - arm,primecell-periphid : contains the PrimeCell Peripheral ID, it overrides
+                            the ID provided by the HW
++- resets                 : phandle to internal reset line.
+ - vqmmc-supply           : phandle to the regulator device tree node, mentioned
+                            as the VCCQ/VDD_IO supply in the eMMC/SD specs.
+ - st,sig-dir-dat0        : bus signal direction pin used for DAT[0].
 -- 
 2.7.4
 
