@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18181C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DB0C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D569621479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4DFF2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS8Jxb2h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D569621479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yfLBKwOu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DFF2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbeJIByI (ORCPT
+        id S1729892AbeJIByL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41570 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726868AbeJIByI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:08 -0400
+        id S1726868AbeJIByL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:11 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1156C2064A;
-        Mon,  8 Oct 2018 18:41:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7A812064A;
+        Mon,  8 Oct 2018 18:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024063;
-        bh=lHivi/LLq1gd4+KEmvKIxzIDIqVIAbLE9PoBDfIp/Rw=;
+        s=default; t=1539024066;
+        bh=cHVGHx2zO5mh1+mBYik4kUwpWlC0bl3ha4VGEzNfUY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MS8Jxb2hl5EaM0EW9pqs0pw44PnxihEG72aH/JtFbuNibEt5faHr0gsxDn2Vrw6pj
-         ns0gAqfZBmqhRIAYDxjTX8xhfi9djqawTgH4+3TLaP4X0PRdpZ21joFoO4mtRICJTk
-         44o4ys6jZdPjkSTg9CBoGCHAqvi81X7vAodsUp3A=
+        b=yfLBKwOujSkcrjdxaZyKyLeR6M6rmX7C9smE8tHK+zPdHsdqhuXTtsokM1Fowt6y1
+         OOtGwUxuZLp3JJnsdiH8gEQoK+mdr3nrLLnsK4raPDf8FzBaiLN60HVc37ZPLkov2J
+         nM7fTWe41dNMpKKYHvZrblL+E/4HUSg7UDEcs5Xg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Netanel Belgazal <netanel@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 39/59] net: ena: fix driver when PAGE_SIZE == 64kB
-Date:   Mon,  8 Oct 2018 20:31:46 +0200
-Message-Id: <20181008175550.581559297@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 01/94] drm/amd/pp: initialize result to before oring in data
+Date:   Mon,  8 Oct 2018 20:30:42 +0200
+Message-Id: <20181008175605.130768560@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
-References: <20181008175546.620836256@linuxfoundation.org>
+In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
+References: <20181008175605.067676667@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -59,90 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Netanel Belgazal <netanel@amazon.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit ef5b0771d247379c90c8bf1332ff32f7f74bff7f ]
+commit c4ff91dd40e2253ab6dd028011469c2c694e1e19 upstream.
 
-The buffer length field in the ena rx descriptor is 16 bit, and the
-current driver passes a full page in each ena rx descriptor.
-When PAGE_SIZE equals 64kB or more, the buffer length field becomes
-zero.
-To solve this issue, limit the ena Rx descriptor to use 16kB even
-when allocating 64kB kernel pages. This change would not impact ena
-device functionality, as 16kB is still larger than maximum MTU.
+The current use of result is or'ing in values and checking for
+a non-zero result, however, result is not initialized to zero
+so it potentially contains garbage to start with. Fix this by
+initializing it to the first return from the call to
+vega10_program_didt_config_registers.
 
-Signed-off-by: Netanel Belgazal <netanel@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Detected by cppcheck:
+"(error) Uninitialized variable: result"
+
+Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Huang Rui <ray.huang@amd.com>
+[Fix the subject as Colin's comment]
+Signed-off-by: Huang Rui <ray.huang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c |   10 +++++-----
- drivers/net/ethernet/amazon/ena/ena_netdev.h |   11 +++++++++++
- 2 files changed, 16 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -422,7 +422,7 @@ static inline int ena_alloc_rx_page(stru
- 		return -ENOMEM;
- 	}
- 
--	dma = dma_map_page(rx_ring->dev, page, 0, PAGE_SIZE,
-+	dma = dma_map_page(rx_ring->dev, page, 0, ENA_PAGE_SIZE,
- 			   DMA_FROM_DEVICE);
- 	if (unlikely(dma_mapping_error(rx_ring->dev, dma))) {
- 		u64_stats_update_begin(&rx_ring->syncp);
-@@ -439,7 +439,7 @@ static inline int ena_alloc_rx_page(stru
- 	rx_info->page_offset = 0;
- 	ena_buf = &rx_info->ena_buf;
- 	ena_buf->paddr = dma;
--	ena_buf->len = PAGE_SIZE;
-+	ena_buf->len = ENA_PAGE_SIZE;
- 
- 	return 0;
- }
-@@ -456,7 +456,7 @@ static void ena_free_rx_page(struct ena_
- 		return;
- 	}
- 
--	dma_unmap_page(rx_ring->dev, ena_buf->paddr, PAGE_SIZE,
-+	dma_unmap_page(rx_ring->dev, ena_buf->paddr, ENA_PAGE_SIZE,
- 		       DMA_FROM_DEVICE);
- 
- 	__free_page(page);
-@@ -849,10 +849,10 @@ static struct sk_buff *ena_rx_skb(struct
- 	do {
- 		dma_unmap_page(rx_ring->dev,
- 			       dma_unmap_addr(&rx_info->ena_buf, paddr),
--			       PAGE_SIZE, DMA_FROM_DEVICE);
-+			       ENA_PAGE_SIZE, DMA_FROM_DEVICE);
- 
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, rx_info->page,
--				rx_info->page_offset, len, PAGE_SIZE);
-+				rx_info->page_offset, len, ENA_PAGE_SIZE);
- 
- 		netif_dbg(rx_ring->adapter, rx_status, rx_ring->netdev,
- 			  "rx skb updated. len %d. data_len %d\n",
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.h
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.h
-@@ -321,4 +321,15 @@ void ena_dump_stats_to_buf(struct ena_ad
- 
- int ena_get_sset_count(struct net_device *netdev, int sset);
- 
-+/* The ENA buffer length fields is 16 bit long. So when PAGE_SIZE == 64kB the
-+ * driver passas 0.
-+ * Since the max packet size the ENA handles is ~9kB limit the buffer length to
-+ * 16kB.
-+ */
-+#if PAGE_SIZE > SZ_16K
-+#define ENA_PAGE_SIZE SZ_16K
-+#else
-+#define ENA_PAGE_SIZE PAGE_SIZE
-+#endif
-+
- #endif /* !(ENA_H) */
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+@@ -1142,7 +1142,7 @@ static int vega10_enable_psm_gc_edc_conf
+ 	for (count = 0; count < num_se; count++) {
+ 		data = GRBM_GFX_INDEX__INSTANCE_BROADCAST_WRITES_MASK | GRBM_GFX_INDEX__SH_BROADCAST_WRITES_MASK | ( count << GRBM_GFX_INDEX__SE_INDEX__SHIFT);
+ 		cgs_write_register(hwmgr->device, reg, data);
+-		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
++		result = vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallDelayConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlResetConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlConfig_Vega10, VEGA10_CONFIGREG_DIDT);
 
 
