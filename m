@@ -2,123 +2,83 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D9BC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E39C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162C020858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162C020858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id D6DD820652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:01:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5yKtW/T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DD820652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJHWMT convert rfc822-to-8bit (ORCPT
+        id S1726460AbeJHWNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:12:19 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:64832 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726078AbeJHWMT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:12:19 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14032428-1500050 
-        for multiple; Mon, 08 Oct 2018 16:00:03 +0100
-Content-Type: text/plain; charset="utf-8"
+        Mon, 8 Oct 2018 18:13:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbeJHWNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:13:18 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F82120878;
+        Mon,  8 Oct 2018 15:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539010869;
+        bh=4QCRMRp0Hx+rOxWRmocnfvcaD62jpdnt12g1qjYb5p0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=P5yKtW/Tstgj6osd4/ZamXyXGb+SMsHJVIbzU3Ig9RJRnkRb9NTL8kF8EABlJC6Lw
+         46EJ0H3xmcKHCDOIuHZZCK6+jFTVOZ/XsMWemrTPbxhLY6umqJmKMyFkJtKgtDA+04
+         GXZwpf0VhoN6XMbAlr2RDJ5OeHlKnsXKEVJz95MM=
+Received: by mail-qk1-f174.google.com with SMTP id m8-v6so12222184qka.12;
+        Mon, 08 Oct 2018 08:01:09 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiOXsScQRZEilRrWxXEe9+KY+kwaRSbvGnCuAIhNe7fZgjbNCQ0
+        QyeXt0thic61CCiXQp50/685ZCjC0hSIfDC14g==
+X-Google-Smtp-Source: ACcGV63PeBf+j6t0Duwmd906INGCpERipbUPctdTF48TReH6Qkmjokxk5dF55K/zsBrxm6LZcOHJEg1JZPTKX59LZis=
+X-Received: by 2002:a37:9201:: with SMTP id u1-v6mr13346177qkd.29.1539010868778;
+ Mon, 08 Oct 2018 08:01:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Sean Paul <sean@poorly.run>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20181008145220.p34dllgsiw6rlpod@smtp.gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20181008145220.p34dllgsiw6rlpod@smtp.gmail.com>
-Message-ID: <153901080237.31254.10116385737520796385@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH] drm/drm_vblank: Change EINVAL by the correct errno
-Date:   Mon, 08 Oct 2018 16:00:02 +0100
+References: <1e4e9047636e94dc2bff62b915bd0261f334dd8a.1538999925.git.michal.simek@xilinx.com>
+In-Reply-To: <1e4e9047636e94dc2bff62b915bd0261f334dd8a.1538999925.git.michal.simek@xilinx.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 8 Oct 2018 10:00:57 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL445pSkwmjet7BrSa5gLeAtf9R9fgdi-GApqfLK672tg@mail.gmail.com>
+Message-ID: <CAL_JsqL445pSkwmjet7BrSa5gLeAtf9R9fgdi-GApqfLK672tg@mail.gmail.com>
+Subject: Re: [PATCH v2] of: base: Fix english spelling in of_alias_get_alias_list()
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rodrigo Siqueira (2018-10-08 15:52:20)
-> For historical reason, the function drm_wait_vblank_ioctl always return
-> -EINVAL if something gets wrong. This scenario limits the flexibility
-> for the userspace make detailed verification of the problem and take
-> some action. In particular, the validation of “if (!dev->irq_enabled)”
-> in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> support vblank or not. If the driver does not support VBlank, the
-> function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> the real issue; this patch changes this behavior by return ENOTTY
-> (Inappropriate ioctl for device). Additionally, some operations are
-> unsupported by this function, and returns EINVAL; this patch changes the
-> return value to EOPNOTSUPP (Operation not supported). Lastly, the
-> function drm_wait_vblank_ioctl is invoked by libdrm, which is used by
-> many compositors; because of this, it is important to check if this
-> change breaks any compositor. In this sense, the following projects were
-> examined:
-> 
-> * Drm-hwcomposer
-> * Kwin
-> * Sway
-> * Wlroots
-> * Wayland-core
-> * Weston
-> * Xorg (67 different drivers)
-> 
-> For each repository the verification happened in three steps:
-> 
-> * Update the main branch
-> * Look for any occurrence "drmWaitVBlank" with the command:
->   git grep -n "drmWaitVBlank"
-> * Look in the git history of the project with the command:
->   git log -SdrmWaitVBlank
-> 
-> Finally, none of the above projects validate the use of EINVAL which
-> make safe, at least for these projects, to change the return values.
-> 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+On Mon, Oct 8, 2018 at 6:58 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>
+> Fix english spelling in of_alias_get_alias_list().
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Fixes: b1078c355d76 ("of: base: Introduce of_alias_get_alias_list() to check alias IDs")
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->  drivers/gpu/drm/drm_vblank.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> index 98e091175921..88ec6fb49afb 100644
-> --- a/drivers/gpu/drm/drm_vblank.c
-> +++ b/drivers/gpu/drm/drm_vblank.c
-> @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
->         unsigned int flags, pipe, high_pipe;
->  
->         if (!dev->irq_enabled)
-> -               return -EINVAL;
-> +               return -ENOTTY;
+>
+> Changes in v2:
+> - Fix 2 more issues reported by Randy Dunlap
+> - Add fixed log sha1
+>
+> Greg: Please apply it on the top of tty-next because patch is going via
+> your tree.
 
-Arguable.
-
->  
->         if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> -               return -EINVAL;
-
-User error -> einval.
-
-> +               return -EOPNOTSUPP;
->  
->         if (vblwait->request.type &
->             ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
-> @@ -1545,7 +1545,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
->                           vblwait->request.type,
->                           (_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
->                            _DRM_VBLANK_HIGH_CRTC_MASK));
-> -               return -EINVAL;
-> +               return -EOPNOTSUPP;
-
-User error -> einval.
--Chris
+Acked-by: Rob Herring <robh@kernel.org>
