@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4B5C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38607C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FC9204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C3B2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpMKngTr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FC9204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZDVPQsD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C3B2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731716AbeJICBr (ORCPT
+        id S1731727AbeJICBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:01:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50914 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:01:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeJICBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:01:46 -0400
+        id S1726991AbeJICBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:01:49 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEA55204FD;
-        Mon,  8 Oct 2018 18:48:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86D172087D;
+        Mon,  8 Oct 2018 18:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024519;
-        bh=pxRMTiwMX0EUcUP5JZdm4Ald90D5VxkWr14+HASXsTA=;
+        s=default; t=1539024522;
+        bh=5IAz/7CUgB4Zru5dRhdCVAp1LvsZZho0qhhaXihSkvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WpMKngTrU4HSYdD1rFV8KoRGePayRZfTRDjjwWBh7HTV+pjJIH07rHHrxDMlEZ3c9
-         F/Vmmt54xR92c+Hd64KvR0jw7xtYUHGRrcawFsCNwbfGawy+xgVjs1XqeYQ2qtwH0n
-         jrnIoWDz5k9XBE7RJK/KZi7aKoTz3majgiXXAUJo=
+        b=mZDVPQsDiygYnE0obmyQ/E3TNmuxaj2fQ2tcXhARHLmf6Rpl0EoMXQPq15xW/2/iM
+         HrUMdy9Vn0VIWYhznnbYpaQu0wxZQvSqpXMgJa67B8duQsPDQusx4U7MkdVo0pOSfa
+         vA3GZ2fEtFBRpV8gMkqIjr+2C3GFxu9noMLSdPic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 034/168] sh_eth: Add R7S9210 support
-Date:   Mon,  8 Oct 2018 20:30:14 +0200
-Message-Id: <20181008175621.343021806@linuxfoundation.org>
+Subject: [PATCH 4.18 060/168] mac80211: fix a race between restart and CSA flows
+Date:   Mon,  8 Oct 2018 20:30:40 +0200
+Message-Id: <20181008175622.332649152@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,83 +65,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 6e0bb04d0e4f597d8d8f4f21401a9636f2809fd1 ]
+[ Upstream commit f3ffb6c3a28963657eb8b02a795d75f2ebbd5ef4 ]
 
-Add support for the R7S9210 which is part of the RZ/A2 series.
+We hit a problem with iwlwifi that was caused by a bug in
+mac80211. A bug in iwlwifi caused the firwmare to crash in
+certain cases in channel switch. Because of that bug,
+drv_pre_channel_switch would fail and trigger the restart
+flow.
+Now we had the hw restart worker which runs on the system's
+workqueue and the csa_connection_drop_work worker that runs
+on mac80211's workqueue that can run together. This is
+obviously problematic since the restart work wants to
+reconfigure the connection, while the csa_connection_drop_work
+worker does the exact opposite: it tries to disconnect.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix this by cancelling the csa_connection_drop_work worker
+in the restart worker.
+
+Note that this can sound racy: we could have:
+
+driver   iface_work   CSA_work   restart_work
++++++++++++++++++++++++++++++++++++++++++++++
+              |
+ <--drv_cs ---|
+<FW CRASH!>
+-CS FAILED-->
+              |                       |
+              |                 cancel_work(CSA)
+           schedule                   |
+           CSA work                   |
+                         |            |
+                        Race between those 2
+
+But this is not possible because we flush the workqueue
+in the restart worker before we cancel the CSA worker.
+That would be bullet proof if we could guarantee that
+we schedule the CSA worker only from the iface_work
+which runs on the workqueue (and not on the system's
+workqueue), but unfortunately we do have an instance
+in which we schedule the CSA work outside the context
+of the workqueue (ieee80211_chswitch_done).
+
+Note also that we should probably cancel other workers
+like beacon_connection_loss_work and possibly others
+for different types of interfaces, at the very least,
+IBSS should suffer from the exact same problem, but for
+now, do the minimum to fix the actual bug that was actually
+experienced and reproduced.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/net/sh_eth.txt |    1 
- drivers/net/ethernet/renesas/sh_eth.c            |   36 +++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+ net/mac80211/main.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
---- a/Documentation/devicetree/bindings/net/sh_eth.txt
-+++ b/Documentation/devicetree/bindings/net/sh_eth.txt
-@@ -16,6 +16,7 @@ Required properties:
- 	      "renesas,ether-r8a7794"  if the device is a part of R8A7794 SoC.
- 	      "renesas,gether-r8a77980" if the device is a part of R8A77980 SoC.
- 	      "renesas,ether-r7s72100" if the device is a part of R7S72100 SoC.
-+	      "renesas,ether-r7s9210" if the device is a part of R7S9210 SoC.
- 	      "renesas,rcar-gen1-ether" for a generic R-Car Gen1 device.
- 	      "renesas,rcar-gen2-ether" for a generic R-Car Gen2 or RZ/G1
- 	                                device.
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -807,6 +807,41 @@ static struct sh_eth_cpu_data r8a77980_d
- 	.magic		= 1,
- 	.cexcr		= 1,
- };
-+
-+/* R7S9210 */
-+static struct sh_eth_cpu_data r7s9210_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
-+	.set_duplex	= sh_eth_set_duplex,
-+	.set_rate	= sh_eth_set_rate_rcar,
-+
-+	.register_type	= SH_ETH_REG_FAST_SH4,
-+
-+	.edtrr_trns	= EDTRR_TRNS_ETHER,
-+	.ecsr_value	= ECSR_ICD,
-+	.ecsipr_value	= ECSIPR_ICDIP,
-+	.eesipr_value	= EESIPR_TWBIP | EESIPR_TABTIP | EESIPR_RABTIP |
-+			  EESIPR_RFCOFIP | EESIPR_ECIIP | EESIPR_FTCIP |
-+			  EESIPR_TDEIP | EESIPR_TFUFIP | EESIPR_FRIP |
-+			  EESIPR_RDEIP | EESIPR_RFOFIP | EESIPR_CNDIP |
-+			  EESIPR_DLCIP | EESIPR_CDIP | EESIPR_TROIP |
-+			  EESIPR_RMAFIP | EESIPR_RRFIP | EESIPR_RTLFIP |
-+			  EESIPR_RTSFIP | EESIPR_PREIP | EESIPR_CERFIP,
-+
-+	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
-+	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-+			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
-+
-+	.fdr_value	= 0x0000070f,
-+
-+	.apr		= 1,
-+	.mpr		= 1,
-+	.tpauser	= 1,
-+	.hw_swap	= 1,
-+	.rpadir		= 1,
-+	.no_ade		= 1,
-+	.xdfar_rw	= 1,
-+};
- #endif /* CONFIG_OF */
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -255,8 +255,27 @@ static void ieee80211_restart_work(struc
  
- static void sh_eth_set_rate_sh7724(struct net_device *ndev)
-@@ -3131,6 +3166,7 @@ static const struct of_device_id sh_eth_
- 	{ .compatible = "renesas,ether-r8a7794", .data = &rcar_gen2_data },
- 	{ .compatible = "renesas,gether-r8a77980", .data = &r8a77980_data },
- 	{ .compatible = "renesas,ether-r7s72100", .data = &r7s72100_data },
-+	{ .compatible = "renesas,ether-r7s9210", .data = &r7s9210_data },
- 	{ .compatible = "renesas,rcar-gen1-ether", .data = &rcar_gen1_data },
- 	{ .compatible = "renesas,rcar-gen2-ether", .data = &rcar_gen2_data },
- 	{ }
+ 	flush_work(&local->radar_detected_work);
+ 	rtnl_lock();
+-	list_for_each_entry(sdata, &local->interfaces, list)
++	list_for_each_entry(sdata, &local->interfaces, list) {
++		/*
++		 * XXX: there may be more work for other vif types and even
++		 * for station mode: a good thing would be to run most of
++		 * the iface type's dependent _stop (ieee80211_mg_stop,
++		 * ieee80211_ibss_stop) etc...
++		 * For now, fix only the specific bug that was seen: race
++		 * between csa_connection_drop_work and us.
++		 */
++		if (sdata->vif.type == NL80211_IFTYPE_STATION) {
++			/*
++			 * This worker is scheduled from the iface worker that
++			 * runs on mac80211's workqueue, so we can't be
++			 * scheduling this worker after the cancel right here.
++			 * The exception is ieee80211_chswitch_done.
++			 * Then we can have a race...
++			 */
++			cancel_work_sync(&sdata->u.mgd.csa_connection_drop_work);
++		}
+ 		flush_delayed_work(&sdata->dec_tailroom_needed_wk);
++	}
+ 	ieee80211_scan_cancel(local);
+ 
+ 	/* make sure any new ROC will consider local->in_reconfig */
 
 
