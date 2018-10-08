@@ -2,136 +2,113 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E27C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368F0C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396A72087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396A72087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id E8D0520878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:47:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8D0520878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbeJHPzf (ORCPT
+        id S1726960AbeJHP6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:55:35 -0400
-Received: from gate.crashing.org ([63.228.1.57]:36642 "EHLO gate.crashing.org"
+        Mon, 8 Oct 2018 11:58:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48471 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726013AbeJHPzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:55:35 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w988J2nD017464;
-        Mon, 8 Oct 2018 03:19:02 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id w988IvN3017410;
-        Mon, 8 Oct 2018 03:18:57 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Mon, 8 Oct 2018 03:18:57 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
-        gcc@gcc.gnu.org, Richard Biener <rguenther@suse.de>,
-        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-Message-ID: <20181008081856.GO29268@gate.crashing.org>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008061323.GB66819@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008061323.GB66819@gmail.com>
-User-Agent: Mutt/1.4.2.3i
+        id S1726013AbeJHP6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 11:58:24 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 75F663001BDE;
+        Mon,  8 Oct 2018 08:47:47 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-85.pek2.redhat.com [10.72.12.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B032620165F4;
+        Mon,  8 Oct 2018 08:47:38 +0000 (UTC)
+Subject: Re: [tip:x86/mm] kdump, proc/vmcore: Enable kdumping encrypted memory
+ with SME enabled
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-tip-commits@vger.kernel.org
+References: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
+ <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
+ <21eab36e-d113-cf88-e497-7dd620981544@redhat.com>
+ <20181007084742.GA30797@zn.tnic>
+ <58270f3f-f17c-8996-09cd-6da3481beb40@redhat.com>
+ <20181008053714.GA6490@zn.tnic>
+ <710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com>
+ <20181008080013.GB6490@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <8147597a-f8e0-7f1a-bd2b-e914b18c5c74@redhat.com>
+Date:   Mon, 8 Oct 2018 16:47:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181008080013.GB6490@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 08 Oct 2018 08:47:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 08:13:23AM +0200, Ingo Molnar wrote:
-> * Michael Matz <matz@suse.de> wrote:
-> > (without an built-in assembler which hopefully noone proposes).
-> There are disadvantages (the main one is having to implement it), but a built-in assembler has 
-> numerous advantages as well:
+在 2018年10月08日 16:00, Borislav Petkov 写道:
+> On Mon, Oct 08, 2018 at 03:11:56PM +0800, lijiang wrote:
+>> I used this ".config" to compile kernel in the attachment, and got a compile error.
+>> Would you like to have a try?
+>>
+>> [root@hp-dl385g10-03 linux]# make ARCH=i386 -j32
+>>   ......
+>>   LD      vmlinux.o
+>>   MODPOST vmlinux.o
+>> fs/proc/vmcore.o：In function ‘read_from_oldmem’：
+>> /home/linux/fs/proc/vmcore.c:127：undefined reference to ‘copy_oldmem_page_encrypted’
+>> make: *** [vmlinux] error 1
 > 
->  - Better optimizations: for example -Os could more accurately estimate true instruction size.
+> Thanks, that triggered here. Ok, I guess something like this, to avoid
+> the ugly ifdeffery:
+> 
+> ---
+> diff --git a/arch/x86/kernel/crash_dump_32.c b/arch/x86/kernel/crash_dump_32.c
+> index 33ee47670b99..8696800f2eea 100644
+> --- a/arch/x86/kernel/crash_dump_32.c
+> +++ b/arch/x86/kernel/crash_dump_32.c
+> @@ -80,6 +80,16 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
+>  	return csize;
+>  }
+>  
+> +/*
+> + * 32-bit parrot version to avoid build errors.
+> + */
+> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
+> +				   unsigned long offset, int userbuf)
+> +{
+> +	WARN_ON_ONCE(1);
+> +	return copy_oldmem_page(pfn, buf, csize, offset, userbuf);
+> +}
+> +
 
-GCC already knows the exact instruction size in almost all cases, for most
-backends.  It is an advantage to not *have to* keep track of exact insn
-size in all cases.
+It looks like a good way to avoid the 'ifdefined', and it's also good enough for i386.
 
->  - Better inlining: as the examples in this thread are showing.
+But for other architectures, such as POWERPC/ARM..., we will also have to add the same 
+function for every architecture. Otherwise, i guess that they also have a same compile
+error on other architectures.
 
-That's a red herring, the actual issue is inlining makes some spectacularly
-wrong decisions for code involving asm currently.  That would not be solved
-by outputting binary code instead of assembler code.  All those decisions
-are done long before code is output.
+Sometimes, it's hard to make a choice.
 
->  - Better padding/alignment: right now GCC has no notion about the precise cache layout of the 
->    assembly code it generates and the code alignment options it has are crude.
-
-This isn't true.  Maybe some targets do not care.
-
-And of course GCC only knows this as far as it knows the alignments of the
-sections it outputs into; for example, ASLR is a nice performance killer
-at times.  And if your linker scripts align sections to less than a cache
-line things do not look rosy either, etc.
-
-> It got away with 
->    this so far because the x86 rule of thumb is that dense code is usually the right choice.
-
->  - Better compiler performance: it would be faster as well to immediately emit assembly
->    instructions, just like GCC's preprocessor library use speeds up compilation *significantly*
->    instead of creating a separate preprocessor task.
-
-So how much faster do you think it would be?  Do you have actual numbers?
-And no, -O0 does not count.
-
->  - Better future integration of assembly blocks: GCC could begin to actually understand the 
->    assembly statements in inline asm and allow more user-friendly extensions to its 
->    historically complex and difficult to master inline asm syntax.
-
-If you want to add a different kind of inline assembler, you can already.
-There is no need for outputting binary code for that.
-
-> I mean, it's a fact that the GNU project has *already* defined their own assembly syntax which 
-> departs from decades old platform assembly syntax
-
-GCC's asm syntax is over three decades old itself.  When it was defined
-all other C inline assembler syntaxes were much younger than that.  I don't
-see what your argument is here.
-
-> - and how the assembler is called by the 
-> compiler is basically an implementation detail, not a conceptual choice.
-
-But the *format* of the interface representation, in this case textual
-assembler code, is quite fundamental.
-
-> The random 
-> multi-process unidirectional assembler choice of the past should not be treated as orthodoxy.
-
-Then I have good news for you: no assembler works that way these days, and
-that has been true for decades.
-
-
-Segher
+Regards,
+Lianbo
+>  static int __init kdump_buf_page_init(void)
+>  {
+>  	int ret = 0;
+> 
+> 
+> 
