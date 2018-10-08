@@ -2,407 +2,837 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B274C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF94FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92CA32077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 646222087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 05:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hJIfCbrY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CA32077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wJbQj23e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 646222087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbeJHMyW (ORCPT
+        id S1726556AbeJHMzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 08:54:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:45315 "EHLO ozlabs.org"
+        Mon, 8 Oct 2018 08:55:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbeJHMyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 08:54:22 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725842AbeJHMzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 08:55:53 -0400
+Received: from dragon (unknown [45.56.155.247])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42T8SM2Xn7z9s55;
-        Mon,  8 Oct 2018 16:44:19 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538977461;
-        bh=ENTtqcjNUAzWc6H3uYBHYKOz5l9F0sxYkAwqwUuzF3A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hJIfCbrYqfXSvn+hMB6vT18vjAJLbi0p/lRVM0QNWBnPXAK14lCITDlxCEiyGlf1Q
-         THhSOGO4/4vAI1R/UDSGulIKOrjhZT4VkLpsIGMMjAIivAWvKTNvdy9GQwREtHj4Mq
-         hF3aXmpqEL6ls/VdK4DFw3wViiZeqtZ0l+kbycM5X7PSy8l3lPLTlZOf0wf16e0Q7M
-         bEe5YobgU9Khnt4pF186tEf9X8VcUxHKQwWJtQk/jCj9YbYSF9GYNRv7Tv1C8S9UKZ
-         ArA2GVERWguVqLwfCrjZAGlHoGk2PrcIWhJBpgtrOfIYo5gpWmTtgOlpyUYz29palI
-         FgJ3edo2mqOEg==
-Date:   Mon, 8 Oct 2018 16:44:18 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kees Cook <keescook@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baoquan He <bhe@redhat.com>,
-        Alexander Popov <alex.popov@linux.com>
-Subject: linux-next: manual merge of the kspp tree with the tip tree
-Message-ID: <20181008164418.162fc0c8@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 055442077C;
+        Mon,  8 Oct 2018 05:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538977554;
+        bh=RZZO/5Wb+LmA4Gl7y+S1X5IM6fXZedbTBwaJ4vAJjkg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wJbQj23e1Ojoj+ya/mk/JRmebpBXWDOi8aTJ9NO2/Cy1cVpUN6svTTQpMx6d2lqEy
+         kNKNvZ3IkYF2/coKZQRq2r7bHG8zV6pItQNxIC3P/c14/DmXNzrA0+RicLI27eL3EW
+         +8VO4iTyLvM0T/lSmZbtEQZ45u08ZXiDT4oo7H7s=
+Date:   Mon, 8 Oct 2018 13:45:16 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Vabhav Sharma <vabhav.sharma@nxp.com>
+Cc:     sudeep.holla@arm.com, oss@buserror.net,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
+        leoyang.li@nxp.com, linux@armlinux.org.uk, V.Sethi@nxp.com,
+        udit.kumar@nxp.com, pankaj.bansal@nxp.com,
+        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
+        Zhang Ying-22455 <ying.zhang22455@nxp.com>,
+        Nipun Gupta <nipun.gupta@nxp.com>,
+        Priyanka Jain <priyanka.jain@nxp.com>,
+        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        Sriram Dash <sriram.dash@nxp.com>
+Subject: Re: [PATCH v4 5/6] arm64: dts: add QorIQ LX2160A SoC support
+Message-ID: <20181008054510.GG3587@dragon>
+References: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
+ <1538615031-7507-6-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xWXR/elkoUK5QCDXCRLmyyd"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1538615031-7507-6-git-send-email-vabhav.sharma@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xWXR/elkoUK5QCDXCRLmyyd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 04, 2018 at 06:33:50AM +0530, Vabhav Sharma wrote:
+> LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
+> 
+> LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
+> in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
+> controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
+> UARTs etc.
+> 
+> Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
+> Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 702 +++++++++++++++++++++++++
+>  1 file changed, 702 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> new file mode 100644
+> index 0000000..c758268
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> @@ -0,0 +1,702 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +//
+> +// Device Tree Include file for Layerscape-LX2160A family SoC.
+> +//
+> +// Copyright 2018 NXP
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/memreserve/ 0x80000000 0x00010000;
+> +
+> +/ {
+> +	compatible = "fsl,lx2160a";
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		// 8 clusters having 2 Cortex-A72 cores each
+> +		cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x0>;
+> +			clocks = <&clockgen 1 0>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster0_l2>;
+> +		};
+> +
+> +		cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x1>;
+> +			clocks = <&clockgen 1 0>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster0_l2>;
+> +		};
+> +
+> +		cpu@100 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x100>;
+> +			clocks = <&clockgen 1 1>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster1_l2>;
+> +		};
+> +
+> +		cpu@101 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x101>;
+> +			clocks = <&clockgen 1 1>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster1_l2>;
+> +		};
+> +
+> +		cpu@200 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x200>;
+> +			clocks = <&clockgen 1 2>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster2_l2>;
+> +		};
+> +
+> +		cpu@201 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x201>;
+> +			clocks = <&clockgen 1 2>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster2_l2>;
+> +		};
+> +
+> +		cpu@300 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x300>;
+> +			clocks = <&clockgen 1 3>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster3_l2>;
+> +		};
+> +
+> +		cpu@301 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x301>;
+> +			clocks = <&clockgen 1 3>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster3_l2>;
+> +		};
+> +
+> +		cpu@400 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x400>;
+> +			clocks = <&clockgen 1 4>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster4_l2>;
+> +		};
+> +
+> +		cpu@401 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x401>;
+> +			clocks = <&clockgen 1 4>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster4_l2>;
+> +		};
+> +
+> +		cpu@500 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x500>;
+> +			clocks = <&clockgen 1 5>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster5_l2>;
+> +		};
+> +
+> +		cpu@501 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x501>;
+> +			clocks = <&clockgen 1 5>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster5_l2>;
+> +		};
+> +
+> +		cpu@600 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x600>;
+> +			clocks = <&clockgen 1 6>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster6_l2>;
+> +		};
+> +
+> +		cpu@601 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x601>;
+> +			clocks = <&clockgen 1 6>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster6_l2>;
+> +		};
+> +
+> +		cpu@700 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x700>;
+> +			clocks = <&clockgen 1 7>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster7_l2>;
+> +		};
+> +
+> +		cpu@701 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a72";
+> +			enable-method = "psci";
+> +			reg = <0x701>;
+> +			clocks = <&clockgen 1 7>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			i-cache-size = <0xC000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <192>;
+> +			next-level-cache = <&cluster7_l2>;
+> +		};
+> +
+> +		cluster0_l2: l2-cache0 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster1_l2: l2-cache1 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster2_l2: l2-cache2 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster3_l2: l2-cache3 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster4_l2: l2-cache4 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster5_l2: l2-cache5 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster6_l2: l2-cache6 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +
+> +		cluster7_l2: l2-cache7 {
+> +			compatible = "cache";
+> +			cache-size = <0x100000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <1024>;
+> +			cache-level = <2>;
+> +		};
+> +	};
+> +
+> +	gic: interrupt-controller@6000000 {
+> +		compatible = "arm,gic-v3";
+> +		reg = <0x0 0x06000000 0 0x10000>, // GIC Dist
+> +			<0x0 0x06200000 0 0x200000>, // GICR (RD_base +
+> +						     // SGI_base)
+> +			<0x0 0x0c0c0000 0 0x2000>, // GICC
+> +			<0x0 0x0c0d0000 0 0x1000>, // GICH
+> +			<0x0 0x0c0e0000 0 0x20000>; // GICV
+> +		#interrupt-cells = <3>;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		interrupt-controller;
+> +		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		its: gic-its@6020000 {
+> +			compatible = "arm,gic-v3-its";
+> +			msi-controller;
+> +			reg = <0x0 0x6020000 0 0x20000>;
+> +		};
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	pmu {
+> +		compatible = "arm,cortex-a72-pmu";
+> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	memory@80000000 {
+> +		// DRAM space - 1, size : 2 GB DRAM
+> +		device_type = "memory";
+> +		reg = <0x00000000 0x80000000 0 0x80000000>;
+> +	};
+> +
+> +	ddr1: memory-controller@1080000 {
+> +		compatible = "fsl,qoriq-memory-controller";
+> +		reg = <0x0 0x1080000 0x0 0x1000>;
+> +		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> +		little-endian;
+> +	};
+> +
+> +	ddr2: memory-controller@1090000 {
+> +		compatible = "fsl,qoriq-memory-controller";
+> +		reg = <0x0 0x1090000 0x0 0x1000>;
+> +		interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+> +		little-endian;
+> +	};
+> +
+> +	sysclk: sysclk {
 
-Hi all,
+Name the node a bit generic like clock-xxx.
 
-Today's linux-next merge of the kspp tree got a conflict in:
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <100000000>;
+> +		clock-output-names = "sysclk";
+> +	};
+> +
+> +	soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		clockgen: clocking@1300000 {
 
-  Documentation/x86/x86_64/mm.txt
+clock-controller for node name.
 
-between commits:
+> +			compatible = "fsl,lx2160a-clockgen";
+> +			reg = <0 0x1300000 0 0xa0000>;
+> +			#clock-cells = <2>;
+> +			clocks = <&sysclk>;
+> +		};
+> +
+> +		crypto: crypto@8000000 {
+> +			compatible = "fsl,sec-v5.0", "fsl,sec-v4.0";
+> +			fsl,sec-era = <10>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges = <0x0 0x00 0x8000000 0x100000>;
+> +			reg = <0x00 0x8000000 0x0 0x100000>;
+> +			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
+> +			dma-coherent;
+> +			status = "disabled";
+> +
+> +			sec_jr0: jr@10000 {
+> +				compatible = "fsl,sec-v5.0-job-ring",
+> +					     "fsl,sec-v4.0-job-ring";
+> +				reg        = <0x10000 0x10000>;
+> +				interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +
+> +			sec_jr1: jr@20000 {
+> +				compatible = "fsl,sec-v5.0-job-ring",
+> +					     "fsl,sec-v4.0-job-ring";
+> +				reg        = <0x20000 0x10000>;
+> +				interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +
+> +			sec_jr2: jr@30000 {
+> +				compatible = "fsl,sec-v5.0-job-ring",
+> +					     "fsl,sec-v4.0-job-ring";
+> +				reg        = <0x30000 0x10000>;
+> +				interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +
+> +			sec_jr3: jr@40000 {
+> +				compatible = "fsl,sec-v5.0-job-ring",
+> +					     "fsl,sec-v4.0-job-ring";
+> +				reg        = <0x40000 0x10000>;
+> +				interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +		};
+> +
+> +		dcfg: dcfg@1e00000 {
 
-  5b1290406579 ("x86/mm/doc: Clean up the x86-64 virtual memory layout desc=
-riptions")
-  32b89760ddf4 ("x86/mm/doc: Enhance the x86-64 virtual memory layout descr=
-iptions")
+As per suggestion from devicetree specification, we can "syscon" as
+a more generic node name?
 
-from the tip tree and commit:
+> +			compatible = "fsl,lx2160a-dcfg", "syscon";
+> +			reg = <0x0 0x1e00000 0x0 0x10000>;
+> +			little-endian;
+> +		};
+> +
+> +		gpio0: gpio@2300000 {
+> +			compatible = "fsl,qoriq-gpio";
+> +			reg = <0x0 0x2300000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			little-endian;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		gpio1: gpio@2310000 {
+> +			compatible = "fsl,qoriq-gpio";
+> +			reg = <0x0 0x2310000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			little-endian;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		gpio2: gpio@2320000 {
+> +			compatible = "fsl,qoriq-gpio";
+> +			reg = <0x0 0x2320000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			little-endian;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		gpio3: gpio@2330000 {
+> +			compatible = "fsl,qoriq-gpio";
+> +			reg = <0x0 0x2330000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			little-endian;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		i2c0: i2c@2000000 {
 
-  afaef01c0015 ("x86/entry: Add STACKLEAK erasing the kernel stack at the e=
-nd of syscalls")
+Sort the nodes under bus in order of unit-address.
 
-from the kspp tree.
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2000000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			fsl-scl-gpio = <&gpio2 15 0>;
 
-I fixed it up (see below - could probably be done better) and can carry
-the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
+I cannot find this property in fsl,vf610-i2c bindings.
 
---=20
-Cheers,
-Stephen Rothwell
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c1: i2c@2010000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2010000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c2: i2c@2020000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2020000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c3: i2c@2030000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2030000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c4: i2c@2040000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2040000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			fsl-scl-gpio = <&gpio2 16 0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c5: i2c@2050000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2050000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c6: i2c@2060000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2060000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c7: i2c@2070000 {
+> +			compatible = "fsl,vf610-i2c";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x2070000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "i2c";
+> +			clocks = <&clockgen 4 7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart0: serial@21c0000 {
+> +			device_type = "serial";
 
-diff --cc Documentation/x86/x86_64/mm.txt
-index 702898633b00,600bc2afa27d..000000000000
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@@ -1,124 -1,57 +1,126 @@@
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
- +Complete virtual memory map with 4-level page tables
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
- =20
- -Virtual memory map with 4 level page tables:
- -
- -0000000000000000 - 00007fffffffffff (=3D47 bits) user space, different pe=
-r mm
- -hole caused by [47:63] sign extension
- -ffff800000000000 - ffff87ffffffffff (=3D43 bits) guard hole, reserved for=
- hypervisor
- -ffff880000000000 - ffffc7ffffffffff (=3D64 TB) direct mapping of all phys=
-. memory
- -ffffc80000000000 - ffffc8ffffffffff (=3D40 bits) hole
- -ffffc90000000000 - ffffe8ffffffffff (=3D45 bits) vmalloc/ioremap space
- -ffffe90000000000 - ffffe9ffffffffff (=3D40 bits) hole
- -ffffea0000000000 - ffffeaffffffffff (=3D40 bits) virtual memory map (1TB)
- -... unused hole ...
- -ffffec0000000000 - fffffbffffffffff (=3D44 bits) kasan shadow memory (16T=
-B)
- -... unused hole ...
- -				    vaddr_end for KASLR
- -fffffe0000000000 - fffffe7fffffffff (=3D39 bits) cpu_entry_area mapping
- -fffffe8000000000 - fffffeffffffffff (=3D39 bits) LDT remap for PTI
- -ffffff0000000000 - ffffff7fffffffff (=3D39 bits) %esp fixup stacks
- -... unused hole ...
- -ffffffef00000000 - fffffffeffffffff (=3D64 GB) EFI region mapping space
- -... unused hole ...
- -ffffffff80000000 - ffffffff9fffffff (=3D512 MB)  kernel text mapping, fro=
-m phys 0
- -ffffffffa0000000 - fffffffffeffffff (1520 MB) module mapping space
- -[fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
- -ffffffffff600000 - ffffffffff600fff (=3D4 kB) legacy vsyscall ABI
- -ffffffffffe00000 - ffffffffffffffff (=3D2 MB) unused hole
- +Notes:
- +
- + - Negative addresses such as "-23 TB" are absolute addresses in bytes, c=
-ounted down
- +   from the top of the 64-bit address space. It's easier to understand th=
-e layout
- +   when seen both in absolute addresses and in distance-from-top notation.
- +
- +   For example 0xffffe90000000000 =3D=3D -23 TB, it's 23 TB lower than th=
-e top of the
- +   64-bit address space (ffffffffffffffff).
- +
- +   Note that as we get closer to the top of the address space, the notati=
-on changes
- +   from TB to GB and then MB/KB.
- +
- + - "16M TB" might look weird at first sight, but it's an easier to visual=
-ize size
- +   notation than "16 EB", which few will recognize at first sight as 16 e=
-xabytes.
- +   It also shows it nicely how incredibly large 64-bit address space is.
- +
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- +    Start addr    |   Offset   |     End addr     |  Size   | VM area des=
-cription
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- +                  |            |                  |         |
- + 0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space =
-virtual memory, different per mm
- +__________________|____________|__________________|_________|____________=
-_______________________________________________
- +                  |            |                  |         |
- + 0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, a=
-lmost 64 bits wide hole of non-canonical
- +                  |            |                  |         |     virtual=
- memory addresses up to the -128 TB
- +                  |            |                  |         |     startin=
-g offset of kernel mappings.
- +__________________|____________|__________________|_________|____________=
-_______________________________________________
- +                                                            |
- +                                                            | Kernel-spac=
-e virtual memory, shared between all processes:
- +____________________________________________________________|____________=
-_______________________________________________
- +                  |            |                  |         |
- + ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard h=
-ole, also reserved for hypervisor
- + ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapp=
-ing of all physical memory (page_offset_base)
- + ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused =
-hole
- + ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ior=
-emap space (vmalloc_base)
- + ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused =
-hole
- + ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual mem=
-ory map (vmemmap_base)
- + ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused =
-hole
- + ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shado=
-w memory
- + fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused =
-hole
- +                  |            |                  |         | vaddr_end f=
-or KASLR
- + fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_a=
-rea mapping
- + fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | LDT remap f=
-or PTI
- + ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup =
-stacks
- +__________________|____________|__________________|_________|____________=
-________________________________________________
- +                                                            |
- +                                                            | Identical l=
-ayout to the 47-bit one from here on:
- +____________________________________________________________|____________=
-________________________________________________
- +                  |            |                  |         |
- + ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused =
-hole
- + ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region =
-mapping space
- + ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused =
-hole
- + ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text=
- mapping, mapped to physical address 0
- + ffffffff80000000 |-2048    MB |                  |         |
- + ffffffffa0000000 |-1536    MB | fffffffffeffffff | 1520 MB | module mapp=
-ing space
- + ffffffffff000000 |  -16    MB |                  |         |
- +    FIXADDR_START | ~-11    MB | ffffffffff5fffff | ~0.5 MB | kernel-inte=
-rnal fixmap range, variable size and offset
- + ffffffffff600000 |  -10    MB | ffffffffff600fff |    4 kB | legacy vsys=
-call ABI
- + ffffffffffe00000 |   -2    MB | ffffffffffffffff |    2 MB | ... unused =
-hole
- +__________________|____________|__________________|_________|____________=
-_______________________________________________
-+ STACKLEAK_POISON value in this last hole: ffffffffffff4111
- =20
- -Virtual memory map with 5 level page tables:
- -
- -0000000000000000 - 00ffffffffffffff (=3D56 bits) user space, different pe=
-r mm
- -hole caused by [56:63] sign extension
- -ff00000000000000 - ff0fffffffffffff (=3D52 bits) guard hole, reserved for=
- hypervisor
- -ff10000000000000 - ff8fffffffffffff (=3D55 bits) direct mapping of all ph=
-ys. memory
- -ff90000000000000 - ff9fffffffffffff (=3D52 bits) LDT remap for PTI
- -ffa0000000000000 - ffd1ffffffffffff (=3D54 bits) vmalloc/ioremap space (1=
-2800 TB)
- -ffd2000000000000 - ffd3ffffffffffff (=3D49 bits) hole
- -ffd4000000000000 - ffd5ffffffffffff (=3D49 bits) virtual memory map (512T=
-B)
- -... unused hole ...
- -ffdf000000000000 - fffffc0000000000 (=3D53 bits) kasan shadow memory (8PB)
- -... unused hole ...
- -				    vaddr_end for KASLR
- -fffffe0000000000 - fffffe7fffffffff (=3D39 bits) cpu_entry_area mapping
- -... unused hole ...
- -ffffff0000000000 - ffffff7fffffffff (=3D39 bits) %esp fixup stacks
- -... unused hole ...
- -ffffffef00000000 - fffffffeffffffff (=3D64 GB) EFI region mapping space
- -... unused hole ...
- -ffffffff80000000 - ffffffff9fffffff (=3D512 MB)  kernel text mapping, fro=
-m phys 0
- -ffffffffa0000000 - fffffffffeffffff (1520 MB) module mapping space
- -[fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
- -ffffffffff600000 - ffffffffff600fff (=3D4 kB) legacy vsyscall ABI
- -ffffffffffe00000 - ffffffffffffffff (=3D2 MB) unused hole
- +
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
- +Complete virtual memory map with 5-level page tables
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
- +
- +Notes:
- +
- + - With 56-bit addresses, user-space memory gets expanded by a factor of =
-512x,
- +   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PT s=
-tarting
- +   offset and many of the regions expand to support the much larger physi=
-cal
- +   memory supported.
- +
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- +    Start addr    |   Offset   |     End addr     |  Size   | VM area des=
-cription
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- +                  |            |                  |         |
- + 0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space =
-virtual memory, different per mm
- +__________________|____________|__________________|_________|____________=
-_______________________________________________
- +                  |            |                  |         |
- + 0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, s=
-till almost 64 bits wide hole of non-canonical
- +                  |            |                  |         |     virtual=
- memory addresses up to the -128 TB
- +                  |            |                  |         |     startin=
-g offset of kernel mappings.
- +__________________|____________|__________________|_________|____________=
-_______________________________________________
- +                                                            |
- +                                                            | Kernel-spac=
-e virtual memory, shared between all processes:
- +____________________________________________________________|____________=
-_______________________________________________
- +                  |            |                  |         |
- + ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard h=
-ole, also reserved for hypervisor
- + ff10000000000000 |  -60    PB | ff8fffffffffffff |   32 PB | direct mapp=
-ing of all physical memory (page_offset_base)
- + ff90000000000000 |  -28    PB | ff9fffffffffffff |    4 PB | LDT remap f=
-or PTI
- + ffa0000000000000 |  -24    PB | ffd1ffffffffffff | 12.5 PB | vmalloc/ior=
-emap space (vmalloc_base)
- + ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused =
-hole
- + ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual mem=
-ory map (vmemmap_base)
- + ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused =
-hole
- + ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shado=
-w memory
- + fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused =
-hole
- +                  |            |                  |         | vaddr_end f=
-or KASLR
- + fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_a=
-rea mapping
- + fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused =
-hole
- + ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup =
-stacks
- +__________________|____________|__________________|_________|____________=
-________________________________________________
- +                                                            |
- +                                                            | Identical l=
-ayout to the 47-bit one from here on:
- +____________________________________________________________|____________=
-________________________________________________
- +                  |            |                  |         |
- + ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused =
-hole
- + ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region =
-mapping space
- + ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused =
-hole
- + ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text=
- mapping, mapped to physical address 0
- + ffffffff80000000 |-2048    MB |                  |         |
- + ffffffffa0000000 |-1536    MB | fffffffffeffffff | 1520 MB | module mapp=
-ing space
- + ffffffffff000000 |  -16    MB |                  |         |
- +    FIXADDR_START | ~-11    MB | ffffffffff5fffff | ~0.5 MB | kernel-inte=
-rnal fixmap range, variable size and offset
- + ffffffffff600000 |  -10    MB | ffffffffff600fff |    4 kB | legacy vsys=
-call ABI
- + ffffffffffe00000 |   -2    MB | ffffffffffffffff |    2 MB | ... unused =
-hole
- +__________________|____________|__________________|_________|____________=
-_______________________________________________
-+ STACKLEAK_POISON value in this last hole: ffffffffffff4111
- =20
-  Architecture defines a 64-bit virtual address. Implementations can support
-  less. Currently supported are 48- and 57-bit virtual addresses. Bits 63
+Quote from devicetree specification:
 
---Sig_/xWXR/elkoUK5QCDXCRLmyyd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The device_type property was used in IEEE 1275 to describe the device’s
+FCode programming model. Because DTSpec does not have FCode, new use of
+the property is deprecated, and it should be included only on cpu and
+memory nodes for compatibility with IEEE 1275–derived devicetrees.
 
------BEGIN PGP SIGNATURE-----
+> +			compatible = "arm,sbsa-uart","arm,pl011";
+> +			reg = <0x0 0x21c0000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +			current-speed = <115200>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@21d0000 {
+> +			device_type = "serial";
+> +			compatible = "arm,sbsa-uart","arm,pl011";
+> +			reg = <0x0 0x21d0000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+> +			current-speed = <115200>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@21e0000 {
+> +			device_type = "serial";
+> +			compatible = "arm,sbsa-uart","arm,pl011";
+> +			reg = <0x0 0x21e0000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+> +			current-speed = <115200>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart3: serial@21f0000 {
+> +			device_type = "serial";
+> +			compatible = "arm,sbsa-uart","arm,pl011";
+> +			reg = <0x0 0x21f0000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> +			current-speed = <115200>;
+> +			status = "disabled";
+> +		};
+> +
+> +		smmu: iommu@5000000 {
+> +			compatible = "arm,mmu-500";
+> +			reg = <0 0x5000000 0 0x800000>;
+> +			#iommu-cells = <1>;
+> +			#global-interrupts = <14>;
+> +			interrupts = <0 13 4>, // global secure fault
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu67rIACgkQAVBC80lX
-0GyENgf/Qtkyoy63bWwmt05oi8oq8k3/IwqFrkGEVg67wXTsKIFnqYdcKfAEQcLz
-A/TEqnVQzhmJ7yzh5OCQJAtSqLGOYsX7fDdc2uk2335XGxkqBgbcwWXYgAKNBtrE
-nUjL1u0qm7jqQVYxAiAwLZ1OXjl9Dpo4RD2mEslGKhBCoXPVkzL9dl+BvLReHIVy
-iUTo+Lz+SxdbXUIGYkSwxhp/UIDfPdvRVfUzsIphR0+l1Ngs77Ob6mXGKEWE/bQo
-y0dqYMEcErjY13RD8uODYWCk+MQXmz/6kTv9/jQhXYQyHUGYnvF2xe/FhdzbW2Gz
-QV8KYNEl+dXEM8Tr6Cf6f7eMLU1cCQ==
-=DuD7
------END PGP SIGNATURE-----
+Can we use defines for interrupt cells just like other device nodes?
 
---Sig_/xWXR/elkoUK5QCDXCRLmyyd--
+> +				     <0 14 4>, // combined secure interrupt
+> +				     <0 15 4>, // global non-secure fault
+> +				     <0 16 4>, // combined non-secure interrupt
+> +				// performance counter interrupts 0-9
+> +				     <0 211 4>, <0 212 4>,
+> +				     <0 213 4>, <0 214 4>,
+> +				     <0 215 4>, <0 216 4>,
+> +				     <0 217 4>, <0 218 4>,
+> +				     <0 219 4>, <0 220 4>,
+> +				// per context interrupt, 64 interrupts
+> +				     <0 146 4>, <0 147 4>,
+> +				     <0 148 4>, <0 149 4>,
+> +				     <0 150 4>, <0 151 4>,
+> +				     <0 152 4>, <0 153 4>,
+> +				     <0 154 4>, <0 155 4>,
+> +				     <0 156 4>, <0 157 4>,
+> +				     <0 158 4>, <0 159 4>,
+> +				     <0 160 4>, <0 161 4>,
+> +				     <0 162 4>, <0 163 4>,
+> +				     <0 164 4>, <0 165 4>,
+> +				     <0 166 4>, <0 167 4>,
+> +				     <0 168 4>, <0 169 4>,
+> +				     <0 170 4>, <0 171 4>,
+> +				     <0 172 4>, <0 173 4>,
+> +				     <0 174 4>, <0 175 4>,
+> +				     <0 176 4>, <0 177 4>,
+> +				     <0 178 4>, <0 179 4>,
+> +				     <0 180 4>, <0 181 4>,
+> +				     <0 182 4>, <0 183 4>,
+> +				     <0 184 4>, <0 185 4>,
+> +				     <0 186 4>, <0 187 4>,
+> +				     <0 188 4>, <0 189 4>,
+> +				     <0 190 4>, <0 191 4>,
+> +				     <0 192 4>, <0 193 4>,
+> +				     <0 194 4>, <0 195 4>,
+> +				     <0 196 4>, <0 197 4>,
+> +				     <0 198 4>, <0 199 4>,
+> +				     <0 200 4>, <0 201 4>,
+> +				     <0 202 4>, <0 203 4>,
+> +				     <0 204 4>, <0 205 4>,
+> +				     <0 206 4>, <0 207 4>,
+> +				     <0 208 4>, <0 209 4>;
+> +			dma-coherent;
+> +		};
+> +
+> +		usb0: usb3@3100000 {
+
+usb for node name.
+
+Shawn
+
+> +			compatible = "snps,dwc3";
+> +			reg = <0x0 0x3100000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> +			dr_mode = "host";
+> +			snps,quirk-frame-length-adjustment = <0x20>;
+> +			snps,dis_rxdet_inp3_quirk;
+> +			status = "disabled";
+> +		};
+> +
+> +		usb1: usb3@3110000 {
+> +			compatible = "snps,dwc3";
+> +			reg = <0x0 0x3110000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+> +			dr_mode = "host";
+> +			snps,quirk-frame-length-adjustment = <0x20>;
+> +			snps,dis_rxdet_inp3_quirk;
+> +			status = "disabled";
+> +		};
+> +
+> +		watchdog@23a0000 {
+> +			compatible = "arm,sbsa-gwdt";
+> +			reg = <0x0 0x23a0000 0 0x1000>,
+> +			      <0x0 0x2390000 0 0x1000>;
+> +			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			timeout-sec = <30>;
+> +		};
+> +	};
+> +};
+> -- 
+> 2.7.4
+> 
