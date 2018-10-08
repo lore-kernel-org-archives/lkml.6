@@ -2,152 +2,188 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F80C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A002AC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D7A20858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFB120841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:10:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="AiL9lVlZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D7A20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfouDHZI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DFB120841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbeJHVVg (ORCPT
+        id S1726481AbeJHVWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:21:36 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42794 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726198AbeJHVVg (ORCPT
+        Mon, 8 Oct 2018 17:22:36 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44867 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbeJHVWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:21:36 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0F10A8EE2EC;
-        Mon,  8 Oct 2018 07:09:42 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LbVJgeciOwxf; Mon,  8 Oct 2018 07:09:41 -0700 (PDT)
-Received: from [153.66.254.242] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A8B528EE0FD;
-        Mon,  8 Oct 2018 07:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1539007781;
-        bh=GMZAXrqnVXsIYCht1/Widbnw1WYYA976hmddRjwM2mc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=AiL9lVlZK/uiO6yF5ai6iqC00J0fGNlVvJzJkUeV8+CpnUfL4JR8tWKJ9YDH5vjH2
-         6j+Ct7WJyC7or2W/XuraXoKt6Gdin/jRs3k8hTXA1BzPIzC1od1yZ7YMaaNQ2+sWOz
-         Qr5t8tR/2CRMCZN7bQvB79575OJQCDFFDKIns/wY=
-Message-ID: <1539007780.4344.3.camel@HansenPartnership.com>
-Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tim.Bird@sony.com, ksummit-discuss@lists.linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Mon, 08 Oct 2018 07:09:40 -0700
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF80517411@USCULXMSG01.am.sony.com>
-References: <1538861738.4088.5.camel@HansenPartnership.com>
-         <1538861851.4088.7.camel@HansenPartnership.com>
-         <ECADFF3FD767C149AD96A924E7EA6EAF80516F31@USCULXMSG01.am.sony.com>
-         <1538883209.4088.14.camel@HansenPartnership.com>
-         <ECADFF3FD767C149AD96A924E7EA6EAF80517411@USCULXMSG01.am.sony.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        Mon, 8 Oct 2018 17:22:35 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r9-v6so8280857pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 07:10:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ulzkMJCJsILoTluYkIWiWRjJ6mhH68q5GY+RdXtVPNo=;
+        b=bfouDHZIvcNEA0SPq+Qa0r5k5szyo9QmGMoEHk+qiaRBm7OQ8gt4thFh0i7rPSNkoI
+         N1ABYV6/EMvzT6ThTyYhc9uuT7YAX2T5Xv0rkJOJ0otByrrS8f6n04pg96OKQ21XkoIJ
+         fECmwq5FVMsvvHRcN819m4KnSjNIdumkNow7Mj4XA3Z75jqDtB/XJD4r15Fh9JiTt2kJ
+         eVDQoBmtjok0yBhslyQrVGl32BaSqTqXO5L8z0oS5hcWm4tm5hSuEJwWLcRpcCzMHPI6
+         BJNWG9tn5tFCb2G5WAmpQ3tU50P/+CY643nsHpxJ7SzbEtR6zX5yQ/5P/ZRjJO04M/nx
+         PAGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ulzkMJCJsILoTluYkIWiWRjJ6mhH68q5GY+RdXtVPNo=;
+        b=Yb3+yQVHVEP2HrVBT5mrgqRIZYfJBV+JMEQK2OepohXV8Jh84S6M3FVm4znqfqjOxx
+         CqmO4WsQo5OacHxYH9EWISUAg7Ag9EVoXbWkKksmhJu76eHtj/uK6xhiUj+zvF38+qZL
+         T/xmRz8pOgukh2Mq6YtYt6GSBop3aGuP1UWvnaSHz2i8i2lRg411RgJfWBBcKi0ZjJr+
+         Yj9F9HwzvzyQ8kqEc5xJwFyWVwUFnplc/stZbIIb2m0ln4fJMCDV44nVpdUCQRX48sVi
+         GJ+eHViHacbfcPqpWgqIe87QcWnTxx9BFi0uzH7baJbEk9RwNdhXEl1yjIeejUKj76iS
+         +/1g==
+X-Gm-Message-State: ABuFfoi26+XD4Sp/hP0KKa0vaQDgeIV5kPQRl5FipmHLK4Pn0tziHCXR
+        7/ZGNRX5yHb4fKa6peD5Pbc=
+X-Google-Smtp-Source: ACcGV61M+nCuPJ0/6ma8tlxmK0u8/gldRdgnOYvjbOuGDgMWnopRCtd2+ONzvRzPt1SMVPx2UFXjzw==
+X-Received: by 2002:a63:84c1:: with SMTP id k184-v6mr11748437pgd.196.1539007840385;
+        Mon, 08 Oct 2018 07:10:40 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u124-v6sm36020227pgc.0.2018.10.08.07.10.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 07:10:39 -0700 (PDT)
+Subject: Re: [PATCH] amdgpu/gmc : fix compile warning
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Peng Hao <peng.hao2@zte.com.cn>
+Cc:     "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>
+References: <1536919552-116245-1-git-send-email-peng.hao2@zte.com.cn>
+ <20181004185237.GA20667@roeck-us.net>
+ <022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com>
+ <4772f72c-6018-3556-6324-5f49faa00073@roeck-us.net>
+ <4da23fcb-4a94-2695-ad80-929025e84bd2@gmail.com>
+ <c72a23ea-efea-4c0e-d397-623d6ac16ebb@roeck-us.net>
+ <c43669b7-1074-714c-fb22-81685826b3ad@amd.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <74078dc6-ef08-586b-fd58-51eb2c0b5060@roeck-us.net>
+Date:   Mon, 8 Oct 2018 07:10:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <c43669b7-1074-714c-fb22-81685826b3ad@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-08 at 13:51 +0000, Tim.Bird@sony.com wrote:
-> > -----Original Message-----
-> > From: James Bottomley 
-> > On Sat, 2018-10-06 at 21:43 +0000, Tim.Bird@sony.com wrote:
-> > > > -----Original Message-----
-> > > > From: James Bottomley
-> > > > 
-> > > > Significant concern has been expressed about the
-> > > > responsibilities outlined in the enforcement clause of the new
-> > > > code of conduct.  Since there is concern that this becomes
-> > > > binding on the release of the 4.19 kernel, strip the
-> > > > enforcement clauses to give the community time to consider and
-> > > > debate how this should be handled.
-> > > > 
-> > > > Signed-off-by: James Bottomley
-> > > > <James.Bottomley@HansenPartnership.com>
-> > > > ---
-> > > >  Documentation/process/code-of-conduct.rst | 15 ---------------
-> > > >  1 file changed, 15 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/process/code-of-conduct.rst
-> > > > b/Documentation/process/code-of-conduct.rst
-> > > > index aa40e34e7785..4dd90987305b 100644
-> > > > --- a/Documentation/process/code-of-conduct.rst
-> > > > +++ b/Documentation/process/code-of-conduct.rst
-> > > > @@ -59,21 +59,6 @@ address, posting via an official social
-> > > > media account, or acting as an appointed representative at an
-> > > > online or offline event. Representation of a project may be
-> > > >  further defined and clarified by project maintainers.
-> > > > 
-> > > > -Enforcement
-> > > > -===========
-> > > > -
-> > > > -Instances of abusive, harassing, or otherwise unacceptable
-> > > > behavior may be
-> > > > -reported by contacting the Technical Advisory Board (TAB) at
-> > > > -<tab@lists.linux-foundation.org>. All complaints will be
-> > > > reviewed and
-> > > > -investigated and will result in a response that is deemed
-> > > > necessary and
-> > > > -appropriate to the circumstances. The TAB is obligated to
-> > > > maintain
-> > > > -confidentiality with regard to the reporter of an
-> > > > incident.  Further details of
-> > > > -specific enforcement policies may be posted separately.
-> > > 
-> > > I think it's OK to leave the above section, as it doesn't speak
-> > > to enforcement, but rather is just a set of reporting
-> > > instructions, with an assurance of confidentiality.  This seems
-> > > to me not to be the objectionable part of this section.
-> > > (IOW, I would omit this removal from the patch).
-> > 
-> > So I did think about that, but it struck me that with both
-> > paragraphs removed, the current CoC is very similar to the status
-> > quo: namely every subsystem handles their own issues and that's
-> > formalised by the "Our Responsibilities" section.  That also makes
-> > me think that whether we want a centralised channel of reporting or
-> > enforcement and what it should be also ought to be part of the
-> > debate.  The TAB was created to channel community technical input
-> > into the Linux Foundation.  That's not to say it can't provide the
-> > reporting and arbitration structure, but if we're going to do it
-> > right we should debate the expansion of its duties (and powers).
+On 10/08/2018 06:47 AM, Koenig, Christian wrote:
+> Am 08.10.2018 um 15:33 schrieb Guenter Roeck:
+>> On 10/08/2018 01:00 AM, Christian König wrote:
+>>> Am 05.10.2018 um 10:38 schrieb Guenter Roeck:
+>>>> On 10/05/2018 01:14 AM, Koenig, Christian wrote:
+>>>>> Am 04.10.2018 um 20:52 schrieb Guenter Roeck:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On Fri, Sep 14, 2018 at 06:05:52PM +0800, Peng Hao wrote:
+>>>>>>> drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:
+>>>>>>>        In function ‘gmc_v8_0_process_interrupt’:
+>>>>>>> drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:10:
+>>>>>>>        warning: missing braces around initializer [-Wmissing-braces]
+>>>>>>>
+>>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>>>>> Was there any feedback on this patch ? The problem does affect us,
+>>>>>> and we'll need a fix.
+>>>>>
+>>>>> Well as discussed using "{ { 0 } }" is as wrong as using "{ 0 }".
+>>>>>
+>>>>
+>>>> Ah, sorry, I must have missed the discussion.
+>>>>
+>>>> It is for sure not the best solution, but at least it compiles, and
+>>>> it seems
+>>>> to be proliferating.
+>>>
+>>> Yeah, and exactly that's the problem. As the discussion showed "{ { 0
+>>> } }" is buggy because it tells the compiler to only initialize the
+>>> first member of the structure, but not all of it.
+>>>
+>>> That is incorrect and rather dangerous cause it can lead to
+>>> unforeseen results and should probably trigger a warning.
+>>>
+>>>>
+>>>> $ git grep "{ *{ *0 *} *}" | wc
+>>>>      144    1180   11802
+>>>> $ git grep "{ *{ *0 *} *}" drivers/gpu/drm/amd/ | wc
+>>>>       50     459    5239
+>>>>
+>>>>> We should either use only "{ }" or even better make nails with
+>>>>> heads and
+>>>>> use memset().
+>>>>
+>>>> I'd rather leave it up to the compiler to decide what is most
+>>>> efficient.
+>>>
+>>> And I would rather prefer to have a working driver :)
+>>>
+>>
+>> So { } isn't correct either ?
 > 
-> When the Code of Conflict was adopted 3 years ago, we already created
-> the central reporting mechanism, so I actually think leaving (ie
-> including) the above paragraph is closer to the status quo.  I think
-> it's the expanded powers and duties (or perception thereof) that are
-> causing concern and I think debating those to clarify intent, and
-> adopting changes as needed  to ameliorate concerns is worthwhile.
+> Yes, initializing structures with { } is known to be problematic as well.
+> 
+> It doesn't necessary initialize all bytes when you have padding causing
+> random failures when structures are memcmp().
+> 
+>>
+>> One thing I found missing in the discussion was the reference to the C
+>> standard.
+>> The C99 standard states in section 6.7.8 (Initialization) clause 19:
+>> "... all
+>> subobjects that are not initialized explicitly shall be initialized
+>> implicitly
+>> the same as objects that have static storage duration". Clause 21
+>> makes further
+>> reference to partial initialization, suggesting the same. Various online
+>> resources, including the gcc documentation, all state the same. I
+>> don't find
+>> any reference to a partial initialization which would leave members of
+>> a structure
+>> undefined. It would be interesting for me to understand how and why
+>> this does
+>> not apply here.
+>>
+>> In this context, it is interesting that the other 48 instances of the
+>> { { 0 } } initialization in the same driver don't raise similar concerns,
+>> nor seemed to have caused any operational problems.
+> 
+> Feel free to provide patches to replace those with memset().
+> 
 
-If we want to go back to the status quo, then a plain revert is the
-patch series I should submit.
+Not me. As I see it, the problem, if it exists, would be a violation of the
+C standard. I don't believe hacking around bad C compilers. I would rather
+blacklist such compilers.
 
-> I believe that in the vast majority of cases, the TAB will end up
-> performing a mediator role to smooth hurt feelings and remind and
-> encourage improved communication - very similar to what we've done in
-> the past.  I really believe that bans will continue to be very few
-> and far between, as they have been historically (I can only think of
-> 3 in the past decade.)
+>>
+>> Anyway, I fixed up the code in our tree (with { }), so I'll leave it
+>> up to you folks to decide what if anything to do about it.
+> 
+> Well considering the known problems with {} initialization I'm certainly
+> rejecting all patches which turns memset() into {}.
+> 
 
-That might very well be the position the discussion arrives at;
-however, I really think making the process fully transparent this time
-requires not prejudging the outcome.
+Please point me to specific instances of this problem.
 
-James
-
+Thanks,
+Guenter
