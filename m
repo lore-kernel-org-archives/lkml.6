@@ -2,87 +2,91 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34216C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34205C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E704F2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:15:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E704F2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 029612087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:15:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029612087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJHPZf (ORCPT
+        id S1727007AbeJHP0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:25:35 -0400
-Received: from mga09.intel.com ([134.134.136.24]:9979 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbeJHPZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:25:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 01:15:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,356,1534834800"; 
-   d="scan'208";a="270412773"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Oct 2018 01:15:03 -0700
-Date:   Mon, 8 Oct 2018 16:12:23 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        sthemmin@microsoft.com, mikelley@microsoft.com, kys@microsoft.com,
-        haiyangz@microsoft.com, hpa@zytor.com
-Subject: Re: [tip:x86/hyperv] x86/hyperv: Enable PV qspinlock for Hyper-V
-Message-ID: <20181008081223.GG11769@yi.y.sun>
-References: <1538028104-114050-3-git-send-email-yi.y.sun@linux.intel.com>
- <tip-aaa7fc34c003bd8133a49f7634480cef6288ad55@git.kernel.org>
- <0005fc50-4415-87a0-1954-fb15a1f8bd0b@suse.com>
+        Mon, 8 Oct 2018 11:26:04 -0400
+Received: from www62.your-server.de ([213.133.104.62]:58786 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeJHP0D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 11:26:03 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g9Qh5-0006E9-FJ; Mon, 08 Oct 2018 10:15:11 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g9Qh5-000Tkx-8e; Mon, 08 Oct 2018 10:15:11 +0200
+Subject: Re: [PATCH bpf-next] libbpf: relicense libbpf as LGPL-2.1 OR
+ BSD-2-Clause
+To:     Alexei Starovoitov <ast@kernel.org>, davem@davemloft.net
+Cc:     acme@kernel.org, bjorn.topel@intel.com,
+        jakub.kicinski@netronome.com, tgraf@suug.ch, wangnan0@huawei.com,
+        colin.king@canonical.com, kraig@google.com, daniel.diaz@linaro.org,
+        eric@regit.org, hekuang@huawei.com, jeremy@jcline.org,
+        brouer@redhat.com, jolsa@kernel.org, joe@ovn.org,
+        yamada.masahiro@socionext.com, mic@digikod.net,
+        namhyung@kernel.org, ppenkov@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+References: <20181005212416.2525992-1-ast@kernel.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <7a8a3ccd-d78f-8e3d-4759-34297e8e5357@iogearbox.net>
+Date:   Mon, 8 Oct 2018 10:15:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181005212416.2525992-1-ast@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0005fc50-4415-87a0-1954-fb15a1f8bd0b@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.1/25017/Mon Oct  8 06:49:45 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-02 13:38:55, Juergen Gross wrote:
-> > +static void hv_qlock_wait(u8 *byte, u8 val)
-> > +{
-> > +	unsigned long msr_val;
-> > +
-> > +	if (READ_ONCE(*byte) != val)
-> > +		return;
-> > +
-> > +	/*
-> > +	 * Read HV_X64_MSR_GUEST_IDLE MSR can trigger the guest's
-> > +	 * transition to the idle power state which can be exited
-> > +	 * by an IPI even if IF flag is disabled.
-> > +	 */
+On 10/05/2018 11:24 PM, Alexei Starovoitov wrote:
+> libbpf is maturing as a library and gaining features that no other bpf libraries support
+> (BPF Type Format, bpf to bpf calls, etc)
+> Many Apache2 licensed projects (like bcc, bpftrace, gobpf, cilium, etc)
+> would like to use libbpf, but cannot do this yet, since Apache Foundation explicitly
+> states that LGPL is incompatible with Apache2.
+> Hence let's relicense libbpf as dual license LGPL-2.1 or BSD-2-Clause,
+> since BSD-2 is compatible with Apache2.
+> Dual LGPL or Apache2 is invalid combination.
+> Fix license mistake in Makefile as well.
 > 
-> What if interrupts are enabled? Won't a kick happening here just
-> interrupt and then the following rdmsr result in a hang?
-> 
-> I believe the correct way would be to:
-> 
-> - disable interrupts before above READ_ONCE() and restore them
->   after the rdmsrl()
-> 
-> - return early if in_nmi()
-> 
-> similar as the kvm specific variant is doing it.
-> 
-> 
-> Juergen
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> Acked-by: Andrey Ignatov <rdna@fb.com>
+> Acked-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Acked-by: Björn Töpel <bjorn.topel@intel.com>
+> Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+> Acked-by: David Beckett <david.beckett@netronome.com>
+> Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Acked-by: Joe Stringer <joe@ovn.org>
+> Acked-by: John Fastabend <john.fastabend@gmail.com>
+> Acked-by: Martin KaFai Lau <kafai@fb.com>
+> Acked-by: Quentin Monnet <quentin.monnet@netronome.com>
+> Acked-by: Thomas Graf <tgraf@suug.ch>
+> Acked-by: Roman Gushchin <guro@fb.com>
+> Acked-by: Wang Nan <wangnan0@huawei.com>
+> Acked-by: Yonghong Song <yhs@fb.com>
 
-Thank you for the suggestion! That is a possible case. I will submit
-a new version in soon.
-
-BRs,
-Yi Sun
+Applied to bpf-next, thanks!
