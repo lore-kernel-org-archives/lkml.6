@@ -2,166 +2,179 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DABADC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1680FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B95C320C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:17:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE7012145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:19:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bZmns2wz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95C320C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7DkD5B/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7012145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeJIDbB (ORCPT
+        id S1727065AbeJIDdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:31:01 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35195 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbeJIDbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:31:00 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v133-v6so8333208pgb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 13:17:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ONgysF60ZUNcVrGkyXF+8eIAF7brYjaHt32SnVKA+nE=;
-        b=bZmns2wzJFqSKXb4aB2Ygp3fycg/tvvaPaumHtOXQpkWpoNDu31hxfZLPOg18NTkMV
-         Zuv+wT4PufE2mChGMlkAYp3vWew4rnc4g8EtRlnyl4hrAfxMcWpQUeMbOoHq9cECDLU9
-         wIgbE1VUgkH3/LxCiz7gkQo9tZB71YdNKFcpU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ONgysF60ZUNcVrGkyXF+8eIAF7brYjaHt32SnVKA+nE=;
-        b=FlFA4VuMsPbMFAWADsfusnv8wEakDzHiWLhvbG6DMBDXJ5SRKY/uyhVYY1Koj4fib6
-         d0ObMAiI38SWXBrtiWB+O+oGHaPtfzGaR6MU++BdX2vLXG6NB76YHjSDOrxrrv7F9YsW
-         gqvK9haW0Rfu0XtrD4TpdoVWQhDKNeunBXIIFjN49pJO+zl0Igxw+E/h4+lm60pERFtS
-         QmTRZb91jFSv3ShsDee0glmcQZEigbvh4HVY8B1mGNfqDbwK9OX4s1MZr2aZ0Hi7622I
-         ANI/rRs2SDDc4P2r+DqgMsc5AaYR+Ch+mAU9Dj+ig/iBtc1/+HvoUFY1v5M9TfaxyUUs
-         PPmQ==
-X-Gm-Message-State: ABuFfohgiUkXDow0lK19YMQxVEBfuNbGvCyEi9XWG/Os4ZEDSus8HyVr
-        X9rWwESaHpWFyj+zfsT2190I2A==
-X-Google-Smtp-Source: ACcGV63NbPpEuWIt0mj6I8XWkaaXYEX1dPRZvL1k4pXhE+v/VJ27lHCMYu7x4doh6sLqJdo/w1ji8w==
-X-Received: by 2002:a63:88c1:: with SMTP id l184-v6mr12843370pgd.431.1539029851096;
-        Mon, 08 Oct 2018 13:17:31 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id n13-v6sm20266001pgr.73.2018.10.08.13.17.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 13:17:30 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     Ryan Case <ryandcase@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mon, 8 Oct 2018 23:33:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726714AbeJIDdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:33:09 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6917620C0A;
+        Mon,  8 Oct 2018 20:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539029978;
+        bh=jdaFC+XMm8RRUIw4lcVuSJboAWKZ2pawuSgM9hePSFc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=o7DkD5B/TWHYQufLGDreorxDV+5bqteRNEhhU45lVHn6HIOABaTrtFdLgt4n6KiNG
+         zen/9+7bQv5GytBxnrwB9WTcdeDGKmFjRI8Ex5D6A/H8Z1UOlBGBctkkhzzdiH9Y+e
+         MXq8ZShj6af8Vgk8Ez8dKv1bPfgcy3bgT+DaciqU=
+Date:   Mon, 8 Oct 2018 21:19:32 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Oskari Lemmela <oskari@lemmela.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: qcom: sdm845: Add qspi (quad SPI) node
-Date:   Mon,  8 Oct 2018 13:17:11 -0700
-Message-Id: <20181008201711.152038-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/4] dt-bindings: add compatibles for AXP803 AC and
+ battery power supplies
+Message-ID: <20181008211932.16a51643@archlinux>
+In-Reply-To: <20181004193410.7265-2-oskari@lemmela.net>
+References: <20181004193410.7265-1-oskari@lemmela.net>
+        <20181004193410.7265-2-oskari@lemmela.net>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the Quad SPI controller to the main sdm845 device tree file.
-Boards will be expected to assign the proper pinctrl depending on how
-many chip selects they have hooked up and how many data lines.
+On Thu,  4 Oct 2018 22:34:07 +0300
+Oskari Lemmela <oskari@lemmela.net> wrote:
 
-This depends on commit 48735597f7bd ("clk: qcom: Add qspi (Quad SPI)
-clock defines for sdm845 to header") to add the needed defines.  It
-also shouldn't land until the patch ("dt-bindings: spi: Qualcomm Quad
-SPI(QSPI) documentation") [1] lands.
+> AXP803 PMIC is register compatible with AXP813.
+> 
+> AXP803/AXP813 are capable to limit input current and supply voltage.
+> 
+> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+Hi Oskari,
 
-[1] https://lkml.kernel.org/r/20181002214709.162330-1-ryandcase@chromium.org
+It would be better to split this up as different aspects are going
+to ideally be applied through different kernel trees.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+I know that already got commented on for the later patch but just wanted
+to point out it applies here as well.
 
-Changes in v2:
-- Node is named "spi" not "qspi"
+One comment inline about avoiding wildcards given the propensity of
+hardware manufacturers to confuse us on their naming schemes.
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 47 ++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+Jonathan
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b72bdb0a31a5..97946f46f7f3 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -822,6 +822,41 @@
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 
-+			qspi_clk: qspi-clk {
-+				pinmux {
-+					pins = "gpio95";
-+					function = "qspi_clk";
-+				};
-+			};
-+
-+			qspi_cs0: qspi-cs0 {
-+				pinmux {
-+					pins = "gpio90";
-+					function = "qspi_cs";
-+				};
-+			};
-+
-+			qspi_cs1: qspi-cs1 {
-+				pinmux {
-+					pins = "gpio89";
-+					function = "qspi_cs";
-+				};
-+			};
-+
-+			qspi_data01: qspi-data01 {
-+				pinmux-data {
-+					pins = "gpio91", "gpio92";
-+					function = "qspi_data";
-+				};
-+			};
-+
-+			qspi_data12: qspi-data12 {
-+				pinmux-data {
-+					pins = "gpio93", "gpio94";
-+					function = "qspi_data";
-+				};
-+			};
-+
- 			qup_i2c0_default: qup-i2c0-default {
- 				pinmux {
- 					pins = "gpio0", "gpio1";
-@@ -1070,6 +1105,18 @@
- 			};
- 		};
- 
-+		qspi: spi@88df000 {
-+			compatible = "qcom,sdm845-qspi", "qcom,qspi-v1";
-+			reg = <0x88df000 0x600>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
-+				 <&gcc GCC_QSPI_CORE_CLK>;
-+			clock-names = "iface", "core";
-+			status = "disabled";
-+		};
-+
- 		usb_1_hsphy: phy@88e2000 {
- 			compatible = "qcom,sdm845-qusb2-phy";
- 			reg = <0x88e2000 0x400>;
--- 
-2.19.0.605.g01d371f741-goog
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-axp209.txt        | 3 ++-
+>  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt      | 3 ++-
+>  .../devicetree/bindings/power/supply/axp20x_ac_power.txt      | 4 ++++
+>  .../devicetree/bindings/power/supply/axp20x_battery.txt       | 1 +
+>  4 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> index fc42b2caa06d..da3c0efb5e76 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> @@ -11,6 +11,7 @@ This driver employs the per-pin muxing pattern.
+>  Required properties:
+>  - compatible: Should be one of:
+>  	- "x-powers,axp209-gpio"
+> +	- "x-powers,axp803-gpio"
+>  	- "x-powers,axp813-gpio"
+>  - #gpio-cells: Should be two. The first cell is the pin number and the
+>    second is the GPIO flags.
+> @@ -67,7 +68,7 @@ GPIO0	|	gpio_in, gpio_out, ldo, adc
+>  GPIO1	|	gpio_in, gpio_out, ldo, adc
+>  GPIO2	|	gpio_in, gpio_out
+>  
+> -axp813
+> +axp8x3
+Avoid wild cards like this.   It if far too common to have a hardware
+manufacturer not keep to what seems like an established naming convention
+and introduce something entirely different in the middle of an existing
+series of names.
+
+>  ------
+>  GPIO	|	Functions
+>  ------------------------
+> diff --git a/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt b/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
+> index 7a6313913923..247616099171 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
+> @@ -4,6 +4,7 @@ Required properties:
+>    - compatible: should be one of:
+>      - "x-powers,axp209-adc",
+>      - "x-powers,axp221-adc",
+> +    - "x-powers,axp803-adc",
+>      - "x-powers,axp813-adc",
+>    - #io-channel-cells: should be 1,
+>  
+> @@ -39,7 +40,7 @@ AXP22x
+>   2 | batt_chrg_i
+>   3 | batt_dischrg_i
+>  
+> -AXP813
+> +AXP8x3
+>  ------
+>   0 | pmic_temp
+>   1 | gpio0_v
+> diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
+> index 826e8a879121..97276a71e961 100644
+> --- a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
+> @@ -4,6 +4,8 @@ Required Properties:
+>   - compatible: One of:
+>  			"x-powers,axp202-ac-power-supply"
+>  			"x-powers,axp221-ac-power-supply"
+> +			"x-powers,axp803-ac-power-supply"
+> +			"x-powers,axp813-ac-power-supply"
+>  
+>  This node is a subnode of the axp20x PMIC.
+>  
+> @@ -13,6 +15,8 @@ reading ADC channels from the AXP20X ADC.
+>  The AXP22X is only able to tell if an AC power supply is present and
+>  usable.
+>  
+> +The AXP8X3 is able to limit current and supply voltage
+> +
+>  Example:
+>  
+>  &axp209 {
+> diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
+> index 41916f69902c..780ebd7e3b84 100644
+> --- a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
+> @@ -4,6 +4,7 @@ Required Properties:
+>   - compatible, one of:
+>  			"x-powers,axp209-battery-power-supply"
+>  			"x-powers,axp221-battery-power-supply"
+> +			"x-powers,axp803-battery-power-supply"
+>  			"x-powers,axp813-battery-power-supply"
+>  
+>  This node is a subnode of its respective PMIC DT node.
 
