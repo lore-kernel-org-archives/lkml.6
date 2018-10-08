@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4C5C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FA8C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8350B214C5
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C3812064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3F2upLp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8350B214C5
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k41j+uOz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3812064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728498AbeJIBtK (ORCPT
+        id S1728514AbeJIBtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbeJIBtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:09 -0400
+        id S1726781AbeJIBtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDF222064A;
-        Mon,  8 Oct 2018 18:36:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAEA120C0A;
+        Mon,  8 Oct 2018 18:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023766;
-        bh=1hSI/JqnozqXo1nz23ftTVW7C9ZDpq8RyZJS40aQQ0c=;
+        s=default; t=1539023769;
+        bh=Ym6pHhThQGOhuSsLJmO7NyOcH4dprLc9Pycfh8ZfLLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p3F2upLpH6UdeLrNnjZvyPKheJvwE/X14d8wdH8Ld3IphccQmFvu+KKj+QnoL4bzp
-         Lc+jch9fAKLsQbQQ+otcwyc1ap1PogIc6nCp4ssIgDCGwdaDmGsjay5cgjjQiPBDsK
-         Jd9WnB0hds71DI/CO94ZfcL0bZ0YZpTG0/jbWZi8=
+        b=k41j+uOz33KvCJwtKbKRTenQAi18eAJ5YWskR+ey/ZLLA/KQMYoq/59pAMn8PfPu5
+         6533UFT5Mq0aj0uOFp3a1TzRvCX9JJl0TNFpmjwzU/bdRkSex+VIbBmF3fP+/oTrtc
+         vHC3WOl8kfgVz3D/JdzGYaGNVykA3Qq4lMMLbr9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        zhong jiang <zhongjiang@huawei.com>
-Subject: [PATCH 4.4 052/113] slub: make ->cpu_partial unsigned int
-Date:   Mon,  8 Oct 2018 20:30:53 +0200
-Message-Id: <20181008175533.669145656@linuxfoundation.org>
+        stable@vger.kernel.org, ming_qian <ming_qian@realsil.com.cn>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Ana Guerrero Lopez <ana.guerrero@collabora.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 053/113] media: uvcvideo: Support realteks UVC 1.5 device
+Date:   Mon,  8 Oct 2018 20:30:54 +0200
+Message-Id: <20181008175533.815886989@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -68,68 +65,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: ming_qian <ming_qian@realsil.com.cn>
 
-commit e5d9998f3e09359b372a037a6ac55ba235d95d57 upstream.
+commit f620d1d7afc7db57ab59f35000752840c91f67e7 upstream.
 
-	/*
-	 * cpu_partial determined the maximum number of objects
-	 * kept in the per cpu partial lists of a processor.
-	 */
+media: uvcvideo: Support UVC 1.5 video probe & commit controls
 
-Can't be negative.
+The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
+Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
+recognized.
 
-Link: http://lkml.kernel.org/r/20180305200730.15812-15-adobriyan@gmail.com
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Acked-by: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+More changes to the driver are needed for full UVC 1.5 compatibility.
+However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
+reported to work well.
+
+[laurent.pinchart@ideasonboard.com: Factor out code to helper function, update size checks]
+
+Cc: stable@vger.kernel.org
+Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Ana Guerrero Lopez <ana.guerrero@collabora.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/slub_def.h |    3 ++-
- mm/slub.c                |    6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/media/usb/uvc/uvc_video.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
---- a/include/linux/slub_def.h
-+++ b/include/linux/slub_def.h
-@@ -67,7 +67,8 @@ struct kmem_cache {
- 	int size;		/* The size of an object including meta data */
- 	int object_size;	/* The size of an object without meta data */
- 	int offset;		/* Free pointer offset. */
--	int cpu_partial;	/* Number of per cpu partial objects to keep around */
-+	/* Number of per cpu partial objects to keep around */
-+	unsigned int cpu_partial;
- 	struct kmem_cache_order_objects oo;
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -163,14 +163,27 @@ static void uvc_fixup_video_ctrl(struct
+ 	}
+ }
  
- 	/* Allocation and freeing of slabs */
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1661,7 +1661,7 @@ static void *get_partial_node(struct kme
++static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
++{
++	/*
++	 * Return the size of the video probe and commit controls, which depends
++	 * on the protocol version.
++	 */
++	if (stream->dev->uvc_version < 0x0110)
++		return 26;
++	else if (stream->dev->uvc_version < 0x0150)
++		return 34;
++	else
++		return 48;
++}
++
+ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ 	struct uvc_streaming_control *ctrl, int probe, __u8 query)
  {
- 	struct page *page, *page2;
- 	void *object = NULL;
--	int available = 0;
-+	unsigned int available = 0;
- 	int objects;
++	__u16 size = uvc_video_ctrl_size(stream);
+ 	__u8 *data;
+-	__u16 size;
+ 	int ret;
  
- 	/*
-@@ -4674,10 +4674,10 @@ static ssize_t cpu_partial_show(struct k
- static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
- 				 size_t length)
+-	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+ 	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+ 			query == UVC_GET_DEF)
+ 		return -EIO;
+@@ -225,7 +238,7 @@ static int uvc_get_video_ctrl(struct uvc
+ 	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
+ 	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
+ 
+-	if (size == 34) {
++	if (size >= 34) {
+ 		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
+ 		ctrl->bmFramingInfo = data[30];
+ 		ctrl->bPreferedVersion = data[31];
+@@ -254,11 +267,10 @@ out:
+ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+ 	struct uvc_streaming_control *ctrl, int probe)
  {
--	unsigned long objects;
-+	unsigned int objects;
- 	int err;
++	__u16 size = uvc_video_ctrl_size(stream);
+ 	__u8 *data;
+-	__u16 size;
+ 	int ret;
  
--	err = kstrtoul(buf, 10, &objects);
-+	err = kstrtouint(buf, 10, &objects);
- 	if (err)
- 		return err;
- 	if (objects && !kmem_cache_has_cpu_partial(s))
+-	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+ 	data = kzalloc(size, GFP_KERNEL);
+ 	if (data == NULL)
+ 		return -ENOMEM;
+@@ -275,7 +287,7 @@ static int uvc_set_video_ctrl(struct uvc
+ 	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
+ 	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
+ 
+-	if (size == 34) {
++	if (size >= 34) {
+ 		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
+ 		data[30] = ctrl->bmFramingInfo;
+ 		data[31] = ctrl->bPreferedVersion;
 
 
