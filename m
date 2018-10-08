@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406CDC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281B7C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADE221479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E587420C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zLeNUqbB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADE221479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dB/rvm4B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E587420C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeJIBsw (ORCPT
+        id S1728409AbeJIBsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33252 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeJIBsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:51 -0400
+        id S1726522AbeJIBsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:54 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F146A2087D;
-        Mon,  8 Oct 2018 18:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A3D620C0A;
+        Mon,  8 Oct 2018 18:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023748;
-        bh=QG/2pPU/ouww6Zj2nioihZuNKuYXUAZKJrG1as4sByI=;
+        s=default; t=1539023752;
+        bh=dhdFRbR7bYS1h7uBw/6hGCfMnBJqogwbjVwo17E7dZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zLeNUqbBLPZmiLjRnH3yz3HUIY2phgj8RWeaeJ9uzcZQNMAqceEKcbO8D9FIU1sPt
-         EBzB8kooBEJ35qeHv5VCfo6NmhHnYjsL0W141ziP0yd9/i/BV7K7t0ZlPSfXMfUyvs
-         RSCrt5YgiuPFPefKdYKe1GmXdYlWiQsLfZWhDBKU=
+        b=dB/rvm4BE6ncHWcXqxcp73+HJOR8dks+tIM0PhTjyIb9yeV0U3fubVK7Mrec9EPZY
+         dBGXDLyCox/bQXuGT//XB5R/ncjP1LcyNzCz7BquRiB4R7TAwtUxOk2ZNmiTje45eD
+         PhoMed0WHC0lDH197LbK93u4eTxWThTt9dhqhFyo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yussuf Khalil <dev@pp3345.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 070/113] i2c: i801: Allow ACPI AML access I/O ports not reserved for SMBus
-Date:   Mon,  8 Oct 2018 20:31:11 +0200
-Message-Id: <20181008175534.815678904@linuxfoundation.org>
+        stable@vger.kernel.org, Yury Norov <ynorov@caviumnetworks.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.4 071/113] arm64: cpufeature: Track 32bit EL0 support
+Date:   Mon,  8 Oct 2018 20:31:12 +0200
+Message-Id: <20181008175534.869402013@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -65,94 +64,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 7fd6d98b89f382d414e1db528e29a67bbd749457 ]
+commit 042446a31e3803d81c7e618dd80928dc3dce70c5 upstream.
 
-Commit 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict
-with PCI BAR") made it possible for AML code to access SMBus I/O ports
-by installing custom SystemIO OpRegion handler and blocking i80i driver
-access upon first AML read/write to this OpRegion.
+Add cpu_hwcap bit for keeping track of the support for 32bit EL0.
 
-However, while ThinkPad T560 does have SystemIO OpRegion declared under
-the SMBus device, it does not access any of the SMBus registers:
-
-    Device (SMBU)
-    {
-        ...
-
-        OperationRegion (SMBP, PCI_Config, 0x50, 0x04)
-        Field (SMBP, DWordAcc, NoLock, Preserve)
-        {
-            ,   5,
-            TCOB,   11,
-            Offset (0x04)
-        }
-
-        Name (TCBV, 0x00)
-        Method (TCBS, 0, NotSerialized)
-        {
-            If ((TCBV == 0x00))
-            {
-            TCBV = (\_SB.PCI0.SMBU.TCOB << 0x05)
-            }
-
-            Return (TCBV) /* \_SB_.PCI0.SMBU.TCBV */
-        }
-
-        OperationRegion (TCBA, SystemIO, TCBS (), 0x10)
-        Field (TCBA, ByteAcc, NoLock, Preserve)
-        {
-            Offset (0x04),
-            ,   9,
-            CPSC,   1
-        }
-    }
-
-Problem with the current approach is that it blocks all I/O port access
-and because this system has touchpad connected to the SMBus controller
-after first AML access (happens during suspend/resume cycle) the
-touchpad fails to work anymore.
-
-Fix this so that we allow ACPI AML I/O port access if it does not touch
-the region reserved for the SMBus.
-
-Fixes: 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict with PCI BAR")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200737
-Reported-by: Yussuf Khalil <dev@pp3345.net>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Tested-by: Yury Norov <ynorov@caviumnetworks.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-i801.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/cpufeature.h |    8 +++++++-
+ arch/arm64/include/asm/sysreg.h     |    1 +
+ arch/arm64/kernel/cpufeature.c      |    8 ++++++++
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1272,6 +1272,13 @@ static void i801_add_tco(struct i801_pri
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -31,8 +31,9 @@
+ #define ARM64_WORKAROUND_CAVIUM_23154		6
+ #define ARM64_WORKAROUND_834220			7
+ #define ARM64_WORKAROUND_CAVIUM_27456		8
++#define ARM64_HAS_32BIT_EL0			9
+ 
+-#define ARM64_NCAPS				9
++#define ARM64_NCAPS				10
+ 
+ #ifndef __ASSEMBLY__
+ 
+@@ -180,6 +181,11 @@ static inline bool cpu_supports_mixed_en
+ 	return id_aa64mmfr0_mixed_endian_el0(read_cpuid(ID_AA64MMFR0_EL1));
  }
  
- #ifdef CONFIG_ACPI
-+static bool i801_acpi_is_smbus_ioport(const struct i801_priv *priv,
-+				      acpi_physical_address address)
++static inline bool system_supports_32bit_el0(void)
 +{
-+	return address >= priv->smba &&
-+	       address <= pci_resource_end(priv->pci_dev, SMBBAR);
++	return cpus_have_cap(ARM64_HAS_32BIT_EL0);
 +}
 +
- static acpi_status
- i801_acpi_io_handler(u32 function, acpi_physical_address address, u32 bits,
- 		     u64 *value, void *handler_context, void *region_context)
-@@ -1287,7 +1294,7 @@ i801_acpi_io_handler(u32 function, acpi_
- 	 */
- 	mutex_lock(&priv->acpi_lock);
+ static inline bool system_supports_mixed_endian_el0(void)
+ {
+ 	return id_aa64mmfr0_mixed_endian_el0(read_system_reg(SYS_ID_AA64MMFR0_EL1));
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -109,6 +109,7 @@
+ #define ID_AA64PFR0_ASIMD_SUPPORTED	0x0
+ #define ID_AA64PFR0_EL1_64BIT_ONLY	0x1
+ #define ID_AA64PFR0_EL0_64BIT_ONLY	0x1
++#define ID_AA64PFR0_EL0_32BIT_64BIT	0x2
  
--	if (!priv->acpi_reserved) {
-+	if (!priv->acpi_reserved && i801_acpi_is_smbus_ioport(priv, address)) {
- 		priv->acpi_reserved = true;
+ /* id_aa64mmfr0 */
+ #define ID_AA64MMFR0_TGRAN4_SHIFT	28
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -653,6 +653,14 @@ static const struct arm64_cpu_capabiliti
+ 		.min_field_value = 2,
+ 	},
+ #endif /* CONFIG_AS_LSE && CONFIG_ARM64_LSE_ATOMICS */
++	{
++		.desc = "32-bit EL0 Support",
++		.capability = ARM64_HAS_32BIT_EL0,
++		.matches = has_cpuid_feature,
++		.sys_reg = SYS_ID_AA64PFR0_EL1,
++		.field_pos = ID_AA64PFR0_EL0_SHIFT,
++		.min_field_value = ID_AA64PFR0_EL0_32BIT_64BIT,
++	},
+ 	{},
+ };
  
- 		dev_warn(&pdev->dev, "BIOS is accessing SMBus registers\n");
 
 
