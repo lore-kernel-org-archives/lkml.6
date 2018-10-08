@@ -2,149 +2,232 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BB0C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2950DC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F018820841
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:29:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F018820841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
+	by mail.kernel.org (Postfix) with ESMTP id E084C20858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:30:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E084C20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbeJHUll (ORCPT
+        id S1726672AbeJHUlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:41:41 -0400
-Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.180]:32500 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeJHUll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:41:41 -0400
-X-Greylist: delayed 13025 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Oct 2018 16:41:40 EDT
-X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BEbxz4P/994MeEDNp0afzt1sCL0HI5412k27pBvgKz+L/w=="
-X-RZG-CLASS-ID: mo05
-Received: from fs-work.as-domain.local
-        by smtp.strato.de (RZmta 44.2 AUTH)
-        with ESMTPSA id h039efu98DTsHlw
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 8 Oct 2018 15:29:54 +0200 (CEST)
-From:   Frieder Schrempf <frieder.schrempf@exceet.de>
-To:     Peter.Chen@nxp.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Frieder Schrempf <frieder.schrempf@exceet.de>
-Subject: [RFC] usb: chipidea: Add minimal support for HSIC interface on i.MX6QDL
-Date:   Mon,  8 Oct 2018 15:29:12 +0200
-Message-Id: <1539005352-10909-1-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: git-send-email 2.7.4
+        Mon, 8 Oct 2018 16:41:50 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:58411 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726427AbeJHUlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 16:41:50 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42TLnZ5L8Gz9ttC5;
+        Mon,  8 Oct 2018 15:29:54 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id iZ47MVDwQMIN; Mon,  8 Oct 2018 15:29:54 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42TLnZ4qClz9ttBY;
+        Mon,  8 Oct 2018 15:29:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8AFDC8B7B0;
+        Mon,  8 Oct 2018 15:30:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id b8zbsA4bxLbQ; Mon,  8 Oct 2018 15:30:04 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BA5A88B7B7;
+        Mon,  8 Oct 2018 15:30:03 +0200 (CEST)
+Subject: Re: [PATCH v5 0/9] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        "aneesh.kumar@linux.ibm.com" <aneesh.kumar@linux.ibm.com>
+References: <cover.1538687073.git.christophe.leroy@c-s.fr>
+ <87pnwk1yw4.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <23afad6f-7feb-b36f-e27e-d1b48350517d@c-s.fr>
+Date:   Mon, 8 Oct 2018 13:30:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <87pnwk1yw4.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current mainline doesn't support USB hosts 2 and 3 which only use
-HSIC mode and I was wondering how this would need to be implemented.
 
-The topic has been discussed before: [1]
-And there is some implementation in the vendor kernel: [2]
 
-It seems like two things need to be done:
+On 10/08/2018 11:06 AM, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+>> moves the thread_info into task_struct.
+>>
+>> Moving thread_info into task_struct has the following advantages:
+>> - It protects thread_info from corruption in the case of stack
+>> overflows.
+>> - Its address is harder to determine if stack addresses are
+>> leaked, making a number of attacks more difficult.
+> 
+> This is blowing up pretty nicely with CONFIG_KMEMLEAK enabled, haven't
+> had time to dig further:
 
-1. Switch the pinmux of the strobe signal to use a pullup after
-   the core has been initialized.
-2. Enable HSIC mode and HSIC clock
+Nice :)
 
-This patch only implements these basics in a minimal approach.
-You need to have an additional pinmux setting "active" in the dt,
-that sets the pullup.
+I have the same issue on PPC32.
+Seems like when descending the stack, save_context_stack() calls 
+validate_sp(), which in turn calls valid_irq_stack() when the first test 
+fails.
+But than early, hardirq_ctx[cpu] is NULL.
+With sp = 0, valid_irq_stack() used to return false because it expected 
+sp to be above the thread_info. But now that thread_info is gone, sp = 0 
+is valid when stack = NULL.
 
-It was tested with the SMSC LAN9730 USB Ethernet adapter on the
-iMXceet Solo S board.
+The following fixes it:
 
-[1] https://patchwork.kernel.org/patch/3541771/
-[2] http://git.freescale.com/git/cgit.cgi/imx/linux-imx.git/commit/?id=cf2d3ff6b217ef41f0e594daa9615e2
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index afe76f7f316c..3e534147fd8f 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -2006,6 +2006,9 @@ int validate_sp(unsigned long sp, struct 
+task_struct *p,
+  {
+  	unsigned long stack_page = (unsigned long)task_stack_page(p);
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
----
- drivers/usb/chipidea/ci_hdrc_imx.c | 10 ++++++++++
- drivers/usb/chipidea/usbmisc_imx.c | 22 ++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-index 19f5f5f..fef8bda 100644
---- a/drivers/usb/chipidea/ci_hdrc_imx.c
-+++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-@@ -256,6 +256,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
- 	const struct of_device_id *of_id;
- 	const struct ci_hdrc_imx_platform_flag *imx_platform_flag;
- 	struct device_node *np = pdev->dev.of_node;
-+	struct pinctrl *pinctrl;
- 
- 	of_id = of_match_device(ci_hdrc_imx_dt_ids, &pdev->dev);
- 	if (!of_id)
-@@ -331,6 +332,15 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
- 		pm_runtime_enable(&pdev->dev);
- 	}
- 
-+	pinctrl = devm_pinctrl_get(&pdev->dev);
-+	if (!IS_ERR(pinctrl)) {
-+		struct pinctrl_state *state;
++	if (sp < THREAD_SIZE)
++		return 0;
 +
-+		state = pinctrl_lookup_state(pinctrl, "active");
-+		if (!IS_ERR(state))
-+			pinctrl_select_state(pinctrl, state);
-+	}
-+
- 	device_set_wakeup_capable(&pdev->dev, true);
- 
- 	return 0;
-diff --git a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
-index 34ad5bf..a6556c8 100644
---- a/drivers/usb/chipidea/usbmisc_imx.c
-+++ b/drivers/usb/chipidea/usbmisc_imx.c
-@@ -64,10 +64,16 @@
- #define MX6_BM_OVER_CUR_DIS		BIT(7)
- #define MX6_BM_OVER_CUR_POLARITY	BIT(8)
- #define MX6_BM_WAKEUP_ENABLE		BIT(10)
-+#define MX6_BM_UTMI_ON_CLOCK		BIT(13)
- #define MX6_BM_ID_WAKEUP		BIT(16)
- #define MX6_BM_VBUS_WAKEUP		BIT(17)
- #define MX6SX_BM_DPDM_WAKEUP_EN		BIT(29)
- #define MX6_BM_WAKEUP_INTR		BIT(31)
-+
-+#define MX6_USB_HSIC_CTRL_OFFSET	0x10
-+#define MX6_BM_HSIC_CLK_ON		BIT(11)
-+#define MX6_BM_HSIC_EN			BIT(12)
-+
- #define MX6_USB_OTG1_PHY_CTRL		0x18
- /* For imx6dql, it is host-only controller, for later imx6, it is otg's */
- #define MX6_USB_OTG2_PHY_CTRL		0x1c
-@@ -351,6 +357,22 @@ static int usbmisc_imx6q_init(struct imx_usbmisc_data *data)
- 	writel(reg | MX6_BM_NON_BURST_SETTING,
- 			usbmisc->base + data->index * 4);
- 
-+	/*
-+	 * Core 2 and 3 are host only and HSIC only,
-+	 * so we enable HSIC by default to make them usable
-+	 */
-+	if (data->index == 2 || data->index == 3) {
-+		reg = readl(usbmisc->base + data->index * 4);
-+		writel(reg | MX6_BM_UTMI_ON_CLOCK,
-+		       usbmisc->base + data->index * 4);
-+
-+		reg = readl(usbmisc->base + MX6_USB_HSIC_CTRL_OFFSET +
-+			    (data->index - 2) * 4);
-+		reg |= MX6_BM_HSIC_EN | MX6_BM_HSIC_CLK_ON;
-+		writel(reg, usbmisc->base + MX6_USB_HSIC_CTRL_OFFSET +
-+		       (data->index - 2) * 4);
-+	}
-+
- 	spin_unlock_irqrestore(&usbmisc->lock, flags);
- 
- 	usbmisc_imx6q_set_wakeup(data, false);
--- 
-2.7.4
+  	if (sp >= stack_page + sizeof(struct thread_struct)
+  	    && sp <= stack_page + THREAD_SIZE - nbytes)
+  		return 1;
 
+
+Looking at this I also realise I forgot to remove the sizeof(struct 
+thread_struct) from here. And this sizeof() was buggy, it should have 
+been thread_info instead of thread_struct, but nevermind as it is going 
+away.
+
+Christophe
+> 
+> Unable to handle kernel paging request for data at address 0x00000000
+> Faulting instruction address: 0xc000000000022064
+> Oops: Kernel access of bad area, sig: 11 [#9]
+> LE SMP NR_CPUS=32 NUMA
+> Modules linked in:
+> CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-gcc-7.3.1-00103-gc795acc08338 #268
+> NIP:  c000000000022064 LR: c0000000000220c0 CTR: c00000000001f5c0
+> REGS: c000000001244a50 TRAP: 0380   Not tainted  (4.19.0-rc3-gcc-7.3.1-00103-gc795acc08338)
+> MSR:  8000000000001033 <SF,ME,IR,DR,RI,LE>  CR: 48022244  XER: 20000000
+> CFAR: c0000000000220c4 IRQMASK: 1
+> GPR00: c0000000000220c0 c000000001244cd0 c00000000124b200 0000000000000001
+> GPR04: c000000001201180 0000000000000070 c000000001275ef8 0000000000000000
+> GPR08: 0000000000000000 0000000000000001 0000000000003f90 2b6e6f6d6d6f635f
+> GPR12: c00000000001f5c0 c000000001450000 0000000000000000 0000000002e2be38
+> GPR16: 000000007dc54c70 0000000002d854b8 0000000000000000 c000000000d87f00
+> GPR20: c000000000d87ef0 c000000000d87ee0 c000000000d87f08 c00000000006c1a8
+> GPR24: c000000000d87ec8 0000000000000000 7265677368657265 c000000000062a04
+> GPR28: 0000000000000006 c000000001201180 0000000000000000 0000000000000000
+> NIP [c000000000022064] show_stack+0xe4/0x2b0
+> LR [c0000000000220c0] show_stack+0x140/0x2b0
+> Call Trace:
+> [c000000001244cd0] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c000000001244da0] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001244e50] [c00000000002ae8c] __die+0xfc/0x140
+> [c000000001244ed0] [c00000000002b954] die+0x74/0xf0
+> [c000000001244f10] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c000000001244f80] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c000000001244fc0] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c0000000012452b0] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c000000001245380] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001245430] [c00000000002ae8c] __die+0xfc/0x140
+> [c0000000012454b0] [c00000000002b954] die+0x74/0xf0
+> [c0000000012454f0] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c000000001245560] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c0000000012455a0] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c000000001245890] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c000000001245960] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001245a10] [c00000000002ae8c] __die+0xfc/0x140
+> [c000000001245a90] [c00000000002b954] die+0x74/0xf0
+> [c000000001245ad0] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c000000001245b40] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c000000001245b80] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c000000001245e70] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c000000001245f40] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001245ff0] [c00000000002ae8c] __die+0xfc/0x140
+> [c000000001246070] [c00000000002b954] die+0x74/0xf0
+> [c0000000012460b0] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c000000001246120] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c000000001246160] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c000000001246450] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c000000001246520] [c00000000002245c] show_regs+0x22c/0x430
+> [c0000000012465d0] [c00000000002ae8c] __die+0xfc/0x140
+> [c000000001246650] [c00000000002b954] die+0x74/0xf0
+> [c000000001246690] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c000000001246700] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c000000001246740] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c000000001246a30] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c000000001246b00] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001246bb0] [c00000000002ae8c] __die+0xfc/0x140
+> [c000000001246c30] [c00000000002b954] die+0x74/0xf0
+> [c000000001246c70] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c000000001246ce0] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c000000001246d20] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c000000001247010] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c0000000012470e0] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001247190] [c00000000002ae8c] __die+0xfc/0x140
+> [c000000001247210] [c00000000002b954] die+0x74/0xf0
+> [c000000001247250] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c0000000012472c0] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c000000001247300] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at show_stack+0xe4/0x2b0
+>      LR = show_stack+0x140/0x2b0
+> [c0000000012475f0] [c00000000002217c] show_stack+0x1fc/0x2b0 (unreliable)
+> [c0000000012476c0] [c00000000002245c] show_regs+0x22c/0x430
+> [c000000001247770] [c00000000002ae8c] __die+0xfc/0x140
+> [c0000000012477f0] [c00000000002b954] die+0x74/0xf0
+> [c000000001247830] [c00000000006e0f8] bad_page_fault+0xe8/0x180
+> [c0000000012478a0] [c000000000074f48] slb_miss_large_addr+0x68/0x2e0
+> [c0000000012478e0] [c000000000008ce8] large_addr_slb+0x158/0x160
+> --- interrupt: 380 at save_context_stack+0x70/0x110
+>      LR = save_context_stack+0x64/0x110
+> [c000000001247bd0] [c000000001247c10] init_stack+0x3c10/0x4000 (unreliable)
+> [c000000001247c10] [c000000000ee2268] log_early+0xc0/0x100
+> [c000000001247c70] [c000000000ede7f8] memblock_virt_alloc_internal+0x1cc/0x210
+> [c000000001247d20] [c000000000edec00] memblock_virt_alloc_try_nid+0x94/0xfc
+> [c000000001247db0] [c000000000f08efc] early_init_dt_alloc_memory_arch+0x2c/0x40
+> [c000000001247dd0] [c000000000991200] __unflatten_device_tree+0xa0/0x1e0
+> [c000000001247e60] [c000000000f0a1d8] unflatten_device_tree+0x48/0x68
+> [c000000001247e90] [c000000000eab6fc] setup_arch+0x4c/0x3fc
+> [c000000001247f00] [c000000000ea3df8] start_kernel+0x88/0x604
+> Instruction dump:
+> 3ec2ffb4 3b800041 3bc00001 3b600000 3b18ccc8 3a73cd00 3a94ccf0 3ab5cce0
+> 635a7265 3ad6cd08 48000054 2e3e0000 <ea5f0000> ebdf0010 419200e8 7fbbf040
+> random: get_random_bytes called from print_oops_end_marker+0x6c/0xa0 with crng_init=0
+> ---[ end trace 0000000000000000 ]---
+> 
+> 
+> 
+> cheers
+> 
