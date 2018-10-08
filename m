@@ -2,155 +2,119 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E99C2C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C618BC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00842077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00842077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 794BA2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="QEAgOUWk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794BA2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbeJHVJC (ORCPT
+        id S1726699AbeJHVJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:09:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38611 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbeJHVJC (ORCPT
+        Mon, 8 Oct 2018 17:09:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38262 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbeJHVJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:09:02 -0400
-Received: by mail-qt1-f194.google.com with SMTP id l9-v6so20986427qtf.5;
-        Mon, 08 Oct 2018 06:57:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KJyIwc7avFINxy/22mDyE1l/egASi+mUwDD0qypYxLs=;
-        b=RTOGnkm/qbH73H3D9Qji1HNRjOWldq+ZFt+3e0ZuvgrvosUcED3eaQxPlEae49z5zc
-         GOSVwGegeX2VpWAPHNOBE+MLXWrXG2+jLhPnWdNuA53mQ0JN9xzF8GuVtxQvEF1uyikL
-         rjYE2Shk5WkDQ7owns3zoQaZ55FkSfM34N6iTBjyla7ihyLDFArDGwStm+rE0Vx4q487
-         AZjUrau/uaFWit+MuMvypw0UNbpt8vkFtwEpCKHT6ihkINKoGEWjYmZp5W9IvVavyLsN
-         7NyGOkMr9f2YjixsCAw9sknPT4jP/fbbPIEPlw2+M2l9ES2uveKRIvcwWBeHOirJ73kc
-         VM4Q==
-X-Gm-Message-State: ABuFfoiYUaoSGwZY4YZvxjdPau2prW0RUkOh4XhtTCPo+trV5nKEb6bD
-        Jf2sTpQIJyMgUIJjbJGcBPKhgeTTJFLRZPuaJus=
-X-Google-Smtp-Source: ACcGV636uVFB+FB8O14sdOw5YJUBG1m/LNSfAccaS5Oc5dANgOFn5OoGBw++EmuvDKCql6p60L33suC0QCPWTyOIoAQ=
-X-Received: by 2002:a0c:8834:: with SMTP id 49-v6mr19168743qvl.40.1539007029815;
- Mon, 08 Oct 2018 06:57:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-4-git-send-email-firoz.khan@linaro.org> <CALxhOnj4r_MUuAa2zvkvxvhQttEvCZ98n2dA9d6CYyvVf2rB3g@mail.gmail.com>
- <20181008130301.GM32759@asgard.redhat.com>
-In-Reply-To: <20181008130301.GM32759@asgard.redhat.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 8 Oct 2018 15:56:53 +0200
-Message-ID: <CAK8P3a0eoCVBVOZs0VwybAnUw0OUoW4Z=NJYi8686EHKj076_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] parisc: add system call table generation support
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     Firoz Khan <firoz.khan@linaro.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 8 Oct 2018 17:09:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=kuJAs+QY/TEoI3dRflqFoM/K8AZvjWo1KmEjmue3kss=; b=QEAgOUWkdGUd
+        I29X+jWZDkp5iS/fhzDWVuCB8RkQwx4cSMXGvaNooifjgoB1iQQzjRfHHL4L29EQ1duonJRqKEta6
+        O3wYCxJvQrdmePQIYO/1yNysz0DNE5/8rwoqi6zjCIl31nLDlqMLrbI695WT4gBVRQiFwQ8Qnbtpm
+        ZCpiM=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g9W2D-0002hG-Cw; Mon, 08 Oct 2018 13:57:21 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 21E431122339; Mon,  8 Oct 2018 14:57:21 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spidev: Enable the Liebherr's BK4 board to work with spidev driver" to the spi tree
+In-Reply-To:  <20180927223152.24990-1-lukma@denx.de>
+Message-Id: <20181008135721.21E431122339@debutante.sirena.org.uk>
+Date:   Mon,  8 Oct 2018 14:57:21 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 3:02 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> > On Mon, 8 Oct 2018 at 10:47, Firoz Khan <firoz.khan@linaro.org> wrote:
-> > > diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
->
-> > > +84      common  lstat                           sys_newlstat                    compat_sys_newlstat
-> > > +85      common  readlink                        sys_readlink
-> > > +86      common  uselib                          sys_ni_syscall
->
-> Why uselib is declared, contrary to all the skipped syscalls below,
-> that were sys_ni_syscall previously? Only __NR_socketcall was explicitly
-> undefined in arch/parisc/include/uapi/asm/unistd.h.
+The patch
 
-Good catch, I didn't see that in my earlier review. I agree we want the
-files to be identical to the version they replace, so the macros need to
-be there for now.
+   spidev: Enable the Liebherr's BK4 board to work with spidev driver
 
-We may later decide to clean this up and remove all __NR_* that have
-no entry point, but the conversion to the new table format needs to
-otherwise be a nop.
+has been applied to the spi tree at
 
-> > > +87      common  swapon                          sys_swapon
-> > > +88      common  reboot                          sys_reboot
-> > > +89      common  mmap2                           sys_mmap2
-> > > +90      common  mmap                            sys_mmap
-> > > +91      common  munmap                          sys_munmap
-> > > +92      common  truncate                        sys_truncate                    compat_sys_truncate
-> > > +93      common  ftruncate                       sys_ftruncate                   compat_sys_ftruncate
-> > > +94      common  fchmod                          sys_fchmod
-> > > +95      common  fchown                          sys_fchown
-> > > +96      common  getpriority                     sys_getpriority
-> > > +97      common  setpriority                     sys_setpriority
-> > > +98      common  recv                            sys_recv
-> > > +99      common  statfs                          sys_statfs                      compat_sys_statfs
-> > > +100     common  fstatfs                         sys_fstatfs                     compat_sys_fstatfs
-> > > +101     common  stat64                          sys_stat64
->
-> It is probably worth adding a comment here that syscall 102 was
-> socketcall, in order to make reason for this jump in syscall numeration
-> self-evident.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-+1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-In general, I'd argue we want to keep all the nontrivial comments that
-were present in either unistd.h or syscall_table.S.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> > > +103     common  syslog                          sys_syslog
-> > > +104     common  setitimer                       sys_setitimer                   compat_sys_setitimer
-> > > +105     common  getitimer                       sys_getitimer                   compat_sys_getitimer
-> > > +106     common  capget                          sys_capget
-> > > +107     common  capset                          sys_capset
->
-> > > +108     32      pread64                         parisc_pread64
-> > > +108     64      pread64                         sys_pread64                     parisc_pread64
->
-> It would be probably nice to have some syntax that would allow avoid
-> this duplication (as compat handler on 64 bit and native on 32 bit are
-> the same).
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-I think I would prefer to have the compat table be generated with the '32'
-abi rather than the '64' abi, so we end up with
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-108     32      pread64                         parisc_pread64
-   parisc_pread64
-108     64      pread64                         sys_pread64
+Thanks,
+Mark
 
-I think this makes more sense, in particular on the other architectures
-that have different macro names in some cases. When we do this,
-the entries could get compressed to
+From 5e9feb3544a72321553d17fcfa0c7e88435ea7ad Mon Sep 17 00:00:00 2001
+From: Lukasz Majewski <lukma@denx.de>
+Date: Fri, 28 Sep 2018 00:31:52 +0200
+Subject: [PATCH] spidev: Enable the Liebherr's BK4 board to work with spidev
+ driver
 
-108     32      pread64                         parisc_pread64
-108     64      pread64                         sys_pread64
+With this commit the DSPI driver on the BK4 board can be used for SPI
+transmission managed from user space (via /dev/spidev0.0).
 
-> > > +348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
-> > > +349     common  statx                           sys_statx
-> > > +350    common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
-> > > \ No newline at end of file
+Example usage/testing:
+insmod ./spi-fsl-dspi.ko
+./spidev_test -D /dev/spidev0.0 -s 3000000 -v -H -b 8 -p "\xCC\x11\x22\x74"
 
-As others have commented several times, Firoz still needs to fix
-the missing newline.
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spidev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Firoz, please fix all the newlines before you repost any further
-patches.
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index cda10719d1d1..07f4d05563ea 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -669,6 +669,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "lineartechnology,ltc2488" },
+ 	{ .compatible = "ge,achc" },
+ 	{ .compatible = "semtech,sx1301" },
++	{ .compatible = "lwn,bk4" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, spidev_dt_ids);
+-- 
+2.19.0.rc2
 
-      Arnd
