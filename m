@@ -2,119 +2,165 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C618BC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3030FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794BA2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="QEAgOUWk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794BA2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E372B2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E372B2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbeJHVJQ (ORCPT
+        id S1726460AbeJHVLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:09:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38262 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbeJHVJQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:09:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=kuJAs+QY/TEoI3dRflqFoM/K8AZvjWo1KmEjmue3kss=; b=QEAgOUWkdGUd
-        I29X+jWZDkp5iS/fhzDWVuCB8RkQwx4cSMXGvaNooifjgoB1iQQzjRfHHL4L29EQ1duonJRqKEta6
-        O3wYCxJvQrdmePQIYO/1yNysz0DNE5/8rwoqi6zjCIl31nLDlqMLrbI695WT4gBVRQiFwQ8Qnbtpm
-        ZCpiM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g9W2D-0002hG-Cw; Mon, 08 Oct 2018 13:57:21 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 21E431122339; Mon,  8 Oct 2018 14:57:21 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spidev: Enable the Liebherr's BK4 board to work with spidev driver" to the spi tree
-In-Reply-To:  <20180927223152.24990-1-lukma@denx.de>
-Message-Id: <20181008135721.21E431122339@debutante.sirena.org.uk>
-Date:   Mon,  8 Oct 2018 14:57:21 +0100 (BST)
+        Mon, 8 Oct 2018 17:11:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51672 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726056AbeJHVLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:11:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DB827B000;
+        Mon,  8 Oct 2018 13:59:16 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 15:59:16 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     zhe.he@windriver.com
+Cc:     sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] printk: Give error on attempt to set log buffer
+ length to over 4G
+Message-ID: <20181008135916.gg4kkmoki5bgtco5@pathway.suse.cz>
+References: <1538239553-81805-1-git-send-email-zhe.he@windriver.com>
+ <1538239553-81805-4-git-send-email-zhe.he@windriver.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538239553-81805-4-git-send-email-zhe.he@windriver.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Sun 2018-09-30 00:45:53, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+> 
+> Give explicit error for users who want to use larger log buffer.
+> 
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> Cc: pmladek@suse.com
+> Cc: sergey.senozhatsky@gmail.com
+> Cc: rostedt@goodmis.org
+> ---
+>  kernel/printk/printk.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index b84aac0..5ccfd5d 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1039,18 +1039,23 @@ void log_buf_vmcoreinfo_setup(void)
+>  static unsigned long __initdata new_log_buf_len;
+>  
+>  /* we practice scaling the ring buffer by powers of 2 */
+> -static void __init log_buf_len_update(unsigned size)
+> +static void __init log_buf_len_update(u64 size)
+>  {
+> +	if (size > UINT_MAX) {
+> +		size = UINT_MAX;
+> +		pr_err("log_buf over 4G is not supported.\n");
 
-   spidev: Enable the Liebherr's BK4 board to work with spidev driver
+I tried this patch with log_buf_len=5G. The kernel did not crash
+but dmesg shown some mess. There are several 32-bit variables
+to store the size, for example:
 
-has been applied to the spi tree at
+static u32 log_buf_len = __LOG_BUF_LEN;
+u32 log_buf_len_get(void)
+static u32 log_first_idx;
+static u32 log_next_idx;
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+I guess that the code somewhere does not detect an overflows
+correctly.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+I am not motivated enought to add support for such huge message
+buffer. Therefore I suggest to limit it to 32G for now.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+This patch worked for me:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+From d63b781b596ccb3d205801b2ba944797fa7ab0ce Mon Sep 17 00:00:00 2001
+From: He Zhe <zhe.he@windriver.com>
+Date: Sun, 30 Sep 2018 00:45:53 +0800
+Subject: [PATCH] printk: Give error on attempt to set log buffer length to
+ over 2G
 
-Thanks,
-Mark
+The current printk() is ready to handle log buffer size up to 2G.
+Give an explicit error for users who want to use larger log buffer.
 
-From 5e9feb3544a72321553d17fcfa0c7e88435ea7ad Mon Sep 17 00:00:00 2001
-From: Lukasz Majewski <lukma@denx.de>
-Date: Fri, 28 Sep 2018 00:31:52 +0200
-Subject: [PATCH] spidev: Enable the Liebherr's BK4 board to work with spidev
- driver
+Also fix printk formatting to show the 2G as a positive number.
 
-With this commit the DSPI driver on the BK4 board can be used for SPI
-transmission managed from user space (via /dev/spidev0.0).
-
-Example usage/testing:
-insmod ./spi-fsl-dspi.ko
-./spidev_test -D /dev/spidev0.0 -s 3000000 -v -H -b 8 -p "\xCC\x11\x22\x74"
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Suggested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- drivers/spi/spidev.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/printk/printk.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index cda10719d1d1..07f4d05563ea 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -669,6 +669,7 @@ static const struct of_device_id spidev_dt_ids[] = {
- 	{ .compatible = "lineartechnology,ltc2488" },
- 	{ .compatible = "ge,achc" },
- 	{ .compatible = "semtech,sx1301" },
-+	{ .compatible = "lwn,bk4" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, spidev_dt_ids);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 15f3e70be448..f595107ddf42 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1040,18 +1040,23 @@ void log_buf_vmcoreinfo_setup(void)
+ static unsigned long __initdata new_log_buf_len;
+ 
+ /* we practice scaling the ring buffer by powers of 2 */
+-static void __init log_buf_len_update(unsigned size)
++static void __init log_buf_len_update(u64 size)
+ {
++	if (size > UINT_MAX) {
++		size = UINT_MAX;
++		pr_err("log_buf over 2G is not supported.\n");
++	}
++
+ 	if (size)
+ 		size = roundup_pow_of_two(size);
+ 	if (size > log_buf_len)
+-		new_log_buf_len = size;
++		new_log_buf_len = (unsigned long)size;
+ }
+ 
+ /* save requested log_buf_len since it's too early to process it */
+ static int __init log_buf_len_setup(char *str)
+ {
+-	unsigned int size;
++	u64 size;
+ 
+ 	if (!str)
+ 		return -EINVAL;
+@@ -1121,7 +1126,7 @@ void __init setup_log_buf(int early)
+ 	}
+ 
+ 	if (unlikely(!new_log_buf)) {
+-		pr_err("log_buf_len: %ld bytes not available\n",
++		pr_err("log_buf_len: %lu bytes not available\n",
+ 			new_log_buf_len);
+ 		return;
+ 	}
+@@ -1134,8 +1139,8 @@ void __init setup_log_buf(int early)
+ 	memcpy(log_buf, __log_buf, __LOG_BUF_LEN);
+ 	logbuf_unlock_irqrestore(flags);
+ 
+-	pr_info("log_buf_len: %d bytes\n", log_buf_len);
+-	pr_info("early log buf free: %d(%d%%)\n",
++	pr_info("log_buf_len: %u bytes\n", log_buf_len);
++	pr_info("early log buf free: %u(%u%%)\n",
+ 		free, (free * 100) / __LOG_BUF_LEN);
+ }
+ 
 -- 
-2.19.0.rc2
+2.13.7
 
