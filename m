@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5756BC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C02C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21854214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FEA214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJkUZZbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21854214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVbpFB5G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FEA214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732019AbeJICDN (ORCPT
+        id S1732028AbeJICDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:03:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52644 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:03:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731711AbeJICDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:03:12 -0400
+        id S1726391AbeJICDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:03:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06C0C204FD;
-        Mon,  8 Oct 2018 18:50:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E65A21479;
+        Mon,  8 Oct 2018 18:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024605;
-        bh=fw+0HZinCheJNotCIExv8crgn5Gz1CDW6F9F2Al9YhE=;
+        s=default; t=1539024608;
+        bh=BGcGgymoOxRCFnvvFmj34I4jSpv+j2laMYU7mhdLnD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mJkUZZbowmMCkxqtq+YE+2biKsy0lfhSkt0c4jhpISmNtByq2F3e+O9DoEvQqdPkc
-         O1RdBBTX5SfqO0vTAQ83eB2lhxnftiov6FFBQFkXa3oqAkMCBiTOyOl9BmvpJDwrBT
-         +ovxvyQcseKxj7zj68GKcliu7ayfIvy6v+FfBvwc=
+        b=mVbpFB5GwOyI7NTvvpQPgrpT24uSKByo6JGlQ9UARjgSaduAZVR7ZCF0+ZaW6pz8j
+         elYDsMEJzKNjxkw0nJHYKYAPw22VtbACVjQrsBMjSvyOmLqUUqYVNhT6T5F4Td9ryA
+         V+giDw8wPzvXTZelc1dy6Unl8IscNNbtAv9TuRIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 086/168] scsi: iscsi: target: Set conn->sess to NULL when iscsi_login_set_conn_values fails
-Date:   Mon,  8 Oct 2018 20:31:06 +0200
-Message-Id: <20181008175623.328903028@linuxfoundation.org>
+Subject: [PATCH 4.18 095/168] netfilter: nf_tables: release chain in flushing set
+Date:   Mon,  8 Oct 2018 20:31:15 +0200
+Message-Id: <20181008175623.673426930@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -65,105 +63,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Pelletier <plr.vincent@gmail.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 7915919bb94e12460c58e27c708472e6f85f6699 ]
+[ Upstream commit 7acfda539c0b9636a58bfee56abfb3aeee806d96 ]
 
-Fixes a use-after-free reported by KASAN when later
-iscsi_target_login_sess_out gets called and it tries to access
-conn->sess->se_sess:
+When element of verdict map is deleted, the delete routine should
+release chain. however, flush element of verdict map routine doesn't
+release chain.
 
-Disabling lock debugging due to kernel taint
-iSCSI Login timeout on Network Portal [::]:3260
-iSCSI Login negotiation failed.
-==================================================================
-BUG: KASAN: use-after-free in
-iscsi_target_login_sess_out.cold.12+0x58/0xff [iscsi_target_mod]
-Read of size 8 at addr ffff880109d070c8 by task iscsi_np/980
+test commands:
+   %nft add table ip filter
+   %nft add chain ip filter c1
+   %nft add map ip filter map1 { type ipv4_addr : verdict \; }
+   %nft add element ip filter map1 { 1 : jump c1 }
+   %nft flush map ip filter map1
+   %nft flush ruleset
 
-CPU: 1 PID: 980 Comm: iscsi_np Tainted: G           O
-4.17.8kasan.sess.connops+ #4
-Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB,
-BIOS 5.6.5 05/19/2014
-Call Trace:
- dump_stack+0x71/0xac
- print_address_description+0x65/0x22e
- ? iscsi_target_login_sess_out.cold.12+0x58/0xff [iscsi_target_mod]
- kasan_report.cold.6+0x241/0x2fd
- iscsi_target_login_sess_out.cold.12+0x58/0xff [iscsi_target_mod]
- iscsi_target_login_thread+0x1086/0x1710 [iscsi_target_mod]
- ? __sched_text_start+0x8/0x8
- ? iscsi_target_login_sess_out+0x250/0x250 [iscsi_target_mod]
- ? __kthread_parkme+0xcc/0x100
- ? parse_args.cold.14+0xd3/0xd3
- ? iscsi_target_login_sess_out+0x250/0x250 [iscsi_target_mod]
- kthread+0x1a0/0x1c0
- ? kthread_bind+0x30/0x30
- ret_from_fork+0x35/0x40
+splat looks like:
+[ 4895.170899] kernel BUG at net/netfilter/nf_tables_api.c:1415!
+[ 4895.178114] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+[ 4895.178880] CPU: 0 PID: 1670 Comm: nft Not tainted 4.18.0+ #55
+[ 4895.178880] RIP: 0010:nf_tables_chain_destroy.isra.28+0x39/0x220 [nf_tables]
+[ 4895.178880] Code: fc ff df 53 48 89 fb 48 83 c7 50 48 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 09 3c 03 7f 05 e8 3e 4c 25 e1 8b 43 50 85 c0 74 02 <0f> 0b 48 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02
+[ 4895.228342] RSP: 0018:ffff88010b98f4c0 EFLAGS: 00010202
+[ 4895.234841] RAX: 0000000000000001 RBX: ffff8801131c6968 RCX: ffff8801146585b0
+[ 4895.234841] RDX: 1ffff10022638d37 RSI: ffff8801191a9348 RDI: ffff8801131c69b8
+[ 4895.234841] RBP: ffff8801146585a8 R08: 1ffff1002323526a R09: 0000000000000000
+[ 4895.234841] R10: 0000000000000000 R11: 0000000000000000 R12: dead000000000200
+[ 4895.234841] R13: dead000000000100 R14: ffffffffa3638af8 R15: dffffc0000000000
+[ 4895.234841] FS:  00007f6d188e6700(0000) GS:ffff88011b600000(0000) knlGS:0000000000000000
+[ 4895.234841] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 4895.234841] CR2: 00007ffe72b8df88 CR3: 000000010e2d4000 CR4: 00000000001006f0
+[ 4895.234841] Call Trace:
+[ 4895.234841]  nf_tables_commit+0x2704/0x2c70 [nf_tables]
+[ 4895.234841]  ? nfnetlink_rcv_batch+0xa4f/0x11b0 [nfnetlink]
+[ 4895.234841]  ? nf_tables_setelem_notify.constprop.48+0x1a0/0x1a0 [nf_tables]
+[ 4895.323824]  ? __lock_is_held+0x9d/0x130
+[ 4895.323824]  ? kasan_unpoison_shadow+0x30/0x40
+[ 4895.333299]  ? kasan_kmalloc+0xa9/0xc0
+[ 4895.333299]  ? kmem_cache_alloc_trace+0x2c0/0x310
+[ 4895.333299]  ? nfnetlink_rcv_batch+0xa4f/0x11b0 [nfnetlink]
+[ 4895.333299]  nfnetlink_rcv_batch+0xdb9/0x11b0 [nfnetlink]
+[ 4895.333299]  ? debug_show_all_locks+0x290/0x290
+[ 4895.333299]  ? nfnetlink_net_init+0x150/0x150 [nfnetlink]
+[ 4895.333299]  ? sched_clock_cpu+0xe5/0x170
+[ 4895.333299]  ? sched_clock_local+0xff/0x130
+[ 4895.333299]  ? sched_clock_cpu+0xe5/0x170
+[ 4895.333299]  ? find_held_lock+0x39/0x1b0
+[ 4895.333299]  ? sched_clock_local+0xff/0x130
+[ 4895.333299]  ? memset+0x1f/0x40
+[ 4895.333299]  ? nla_parse+0x33/0x260
+[ 4895.333299]  ? ns_capable_common+0x6e/0x110
+[ 4895.333299]  nfnetlink_rcv+0x2c0/0x310 [nfnetlink]
+[ ... ]
 
-Allocated by task 980:
- kasan_kmalloc+0xbf/0xe0
- kmem_cache_alloc_trace+0x112/0x210
- iscsi_target_login_thread+0x816/0x1710 [iscsi_target_mod]
- kthread+0x1a0/0x1c0
- ret_from_fork+0x35/0x40
-
-Freed by task 980:
- __kasan_slab_free+0x125/0x170
- kfree+0x90/0x1d0
- iscsi_target_login_thread+0x1577/0x1710 [iscsi_target_mod]
- kthread+0x1a0/0x1c0
- ret_from_fork+0x35/0x40
-
-The buggy address belongs to the object at ffff880109d06f00
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 456 bytes inside of
- 512-byte region [ffff880109d06f00, ffff880109d07100)
-The buggy address belongs to the page:
-page:ffffea0004274180 count:1 mapcount:0 mapping:0000000000000000
-index:0x0 compound_mapcount: 0
-flags: 0x17fffc000008100(slab|head)
-raw: 017fffc000008100 0000000000000000 0000000000000000 00000001000c000c
-raw: dead000000000100 dead000000000200 ffff88011b002e00 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff880109d06f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff880109d07000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff880109d07080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                              ^
- ffff880109d07100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff880109d07180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
-[rebased against idr/ida changes and to handle ret review comments from Matthew]
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 591054469b3e ("netfilter: nf_tables: revisit chain/object refcounting from elements")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/target/iscsi/iscsi_target_login.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ net/netfilter/nf_tables_api.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/target/iscsi/iscsi_target_login.c
-+++ b/drivers/target/iscsi/iscsi_target_login.c
-@@ -310,11 +310,9 @@ static int iscsi_login_zero_tsih_s1(
- 		return -ENOMEM;
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4582,6 +4582,7 @@ static int nft_flush_set(const struct nf
  	}
+ 	set->ndeact++;
  
--	ret = iscsi_login_set_conn_values(sess, conn, pdu->cid);
--	if (unlikely(ret)) {
--		kfree(sess);
--		return ret;
--	}
-+	if (iscsi_login_set_conn_values(sess, conn, pdu->cid))
-+		goto free_sess;
-+
- 	sess->init_task_tag	= pdu->itt;
- 	memcpy(&sess->isid, pdu->isid, 6);
- 	sess->exp_cmd_sn	= be32_to_cpu(pdu->cmdsn);
++	nft_set_elem_deactivate(ctx->net, set, elem);
+ 	nft_trans_elem_set(trans) = set;
+ 	nft_trans_elem(trans) = *elem;
+ 	list_add_tail(&trans->list, &ctx->net->nft.commit_list);
 
 
