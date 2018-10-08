@@ -2,63 +2,64 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A413C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA96C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24CEB21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1DE9214C3
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mu7f+CGY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CEB21479
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtRdHhB0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DE9214C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbeJIEaL (ORCPT
+        id S1727215AbeJIEaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 00:30:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33896 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbeJIEaL (ORCPT
+        Tue, 9 Oct 2018 00:30:14 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44340 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbeJIEaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 00:30:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k19-v6so8947461pfi.1;
-        Mon, 08 Oct 2018 14:16:29 -0700 (PDT)
+        Tue, 9 Oct 2018 00:30:13 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r9-v6so8780786pff.11;
+        Mon, 08 Oct 2018 14:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3SwmFY4jXs0sJ3RkahlBQalMCCI13w3vJK/FnRSX15g=;
-        b=Mu7f+CGYuavAm6LT3wKt2q3gupspRXJ9W9dzlGI8FXame7/UARagjYP+NiNdgstmGN
-         R78sSogaAPABWfNqZpIb4gX4JZQ/fZBLD1hUhL93SDL4wB6kRPzOSXuR7x/5wudfbkcz
-         KEit7dbY1CUdnzaSAQCAYW5gYIg1HrCrERGIzCF72G26wazkL8GyZRQiHaU0xKn7whq+
-         weben2m+iQ8Oy36RAOdLrzB1zQZEdaKQa53Hsf7UBrygnF2/FSh1msVLdaeyBd/TkvsY
-         JiO+ldDgbTyIgFtGVx74zsS2Zmro22M2yOwJHbmja/jTuaQSZbIeEZcEnVfCq74WxHtc
-         pFpw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FVIsmZsD2UYUIajD9wCWvufUKrPcgTlr9PeHswP0yEs=;
+        b=KtRdHhB0TCig2y75Kke1hlMVtbsRYuIxehy0tyoHB5CxNfdOJNFD432pphe0UuMqt0
+         iIy5Z83K+zy46HGxlbqqDsXsVdTjIXRXl0FHbMDk8CGz/wdWxekIFD2tP7G3OmX3tjjT
+         TB+eR/mDXBavM5skuUEQjfrhm6ZbN7qTgEGd5Ie9zhzUcZ1jQLQysuhT1yCjNtqJF5AC
+         0R/ngkbwnLfoVkTfM46z7wDcBd908tUL+gd04Y3jqEHColQOuCf+4ZFSmBz7B5icsXwB
+         nCsOndufh/mFykG7tBO5gpkH3Tu4QqT1BKx5okpt33/lKnXShpV1aKyFbuRV8z7Eco7D
+         8iGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3SwmFY4jXs0sJ3RkahlBQalMCCI13w3vJK/FnRSX15g=;
-        b=TNsnrtAuSmUJU2LnJetmO+UV4Oqagff3mZ5wJkb0GdXawZFc64TA8pkKz6TmqKLDHK
-         lZ2mWAtCkF6AwtKguyljR4m5olOwCfOeMA/M1ldo/XDBbJVZORpyjEsV/Pc84qyRTSen
-         3lzHuvdqX5bkrX3Ltb838jpblcNsyr4OCAajPVbtdKyyeJCpyRed/WOahb8bok0gCwhT
-         2nPxPNjVhmvGBMYs9d4MUkiOgcswdi8hCoXx9fa5At4HB/xAQjCnnm7P9Z6j2QR3otMX
-         mvXmXDD57SKj1QRyBApts+Z+pfFefsYD+y8gZaY4dEMG1j3Q17WHwun7WC1pw94ROzaM
-         E+xw==
-X-Gm-Message-State: ABuFfojBHjhGV9kafyE9PqZN7xIG8LQiFiasnCJyRPFE6yyb2BDLZiI1
-        J/A7My2oASgw7c2Cg3t8j8E=
-X-Google-Smtp-Source: ACcGV62nxj2SeoUr3i/lvPLCL4XiL6oJYEDBIBIRp6r4C8vQ+mqDba/yODkRcqzVMN+L9V3KsmYtaw==
-X-Received: by 2002:a62:2c16:: with SMTP id s22-v6mr22057024pfs.6.1539033388744;
-        Mon, 08 Oct 2018 14:16:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FVIsmZsD2UYUIajD9wCWvufUKrPcgTlr9PeHswP0yEs=;
+        b=neqD6+P+Ol34WjMpaA5C+3QWYZjDuvRobAT9sqPYREFWid75wFNfkv0gw7IM2sQtBt
+         RVnqb3bjNXvUCmAa+9w3vPLdGi2behzwFzK+pZDOTX9KA3Gwg0mZrdAxkVfP/DeLlJHW
+         FzjAaBvknR6dpzJ47RjWbHc32WZMpgx2w0EIScn8IsQ0IHD+dZsKC7lkkZdkQDLalBXj
+         g7nyHAO3pCWhHfCWoO6n4OYFkI1cG0zIEOaaGTODBrB6JQf+PyyzdiSJHAFLMCyu22E5
+         BU7M38m8lgWfJC37jIKYglLNFXd+zKk1pRAKLBO7sP2vw3rXzemIDo1uGPSfya1qDPby
+         jD2Q==
+X-Gm-Message-State: ABuFfojwKTK6ZO2GyUJAwtPWvEOK20UCnNR5T+ESrXTLBePcZ4SIBQYo
+        JVjZGDcDAmilLRMNUz/OWuw=
+X-Google-Smtp-Source: ACcGV62z1JG6uLWKoscZWokp7sITSTbr35JddE1XhG5ebAVUJIKrHM52PfMrmwGo/yuduL9YGbh6Sw==
+X-Received: by 2002:a63:b305:: with SMTP id i5-v6mr22403816pgf.46.1539033391198;
+        Mon, 08 Oct 2018 14:16:31 -0700 (PDT)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id w127-v6sm23480045pfd.112.2018.10.08.14.16.26
+        by smtp.gmail.com with ESMTPSA id w127-v6sm23480045pfd.112.2018.10.08.14.16.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 14:16:27 -0700 (PDT)
+        Mon, 08 Oct 2018 14:16:30 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Matthew Wilcox <willy@infradead.org>,
@@ -69,16 +70,13 @@ To:     Matthew Wilcox <willy@infradead.org>,
         Jan Kara <jack@suse.cz>
 Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
         linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v4 0/3] get_user_pages*() and RDMA: first steps
-Date:   Mon,  8 Oct 2018 14:16:20 -0700
-Message-Id: <20181008211623.30796-1-jhubbard@nvidia.com>
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v4 1/3] mm: get_user_pages: consolidate error handling
+Date:   Mon,  8 Oct 2018 14:16:21 -0700
+Message-Id: <20181008211623.30796-2-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181008211623.30796-1-jhubbard@nvidia.com>
+References: <20181008211623.30796-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
@@ -89,104 +87,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-Andrew, do you have a preference for which tree (MM or RDMA) this should
-go in? If not, then could you please ACK this so that Jason can pick it
-up for the RDMA tree?
+An upcoming patch requires a way to operate on each page that
+any of the get_user_pages_*() variants returns.
 
-Changes since v3:
+In preparation for that, consolidate the error handling for
+__get_user_pages(). This provides a single location (the "out:" label)
+for operating on the collected set of pages that are about to be returned.
 
--- Picks up Reviewed-by tags from Jan Kara and Dennis Dalessandro.
+As long every use of the "ret" variable is being edited, rename
+"ret" --> "err", so that its name matches its true role.
+This also gets rid of two shadowed variable declarations, as a
+tiny beneficial a side effect.
 
--- Picks up Acked-by tag from Jason Gunthorpe, in case this ends up *not*
-   going in via the RDMA tree.
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ mm/gup.c | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
--- Fixes formatting of a comment.
-
-Changes since v2:
-
--- Absorbed more dirty page handling logic into the put_user_page*(), and
-   handled some page releasing loops in infiniband more thoroughly, as per
-   Jason Gunthorpe's feedback.
-
--- Fixed a bug in the put_user_pages*() routines' loops (thanks to
-   Ralph Campbell for spotting it).
-
-Changes since v1:
-
--- Renamed release_user_pages*() to put_user_pages*(), from Jan's feedback.
-
--- Removed the goldfish.c changes, and instead, only included a single
-   user (infiniband) of the new functions. That is because goldfish.c no
-   longer has a name collision (it has a release_user_pages() routine), and
-   also because infiniband exercises both the put_user_page() and
-   put_user_pages*() paths.
-
--- Updated links to discussions and plans, so as to be sure to include
-   bounce buffers, thanks to Jerome's feedback.
-
-Also:
-
--- Dennis, thanks for your earlier review, and I have not yet added your
-   Reviewed-by tag, because this revision changes the things that you had
-   previously reviewed, thus potentially requiring another look.
-
-This short series prepares for eventually fixing the problem described
-in [1], and is following a plan listed in [2], [3], [4].
-
-Patch 1, although not technically critical to do now, is still nice to
-have, because it's already been reviewed by Jan, and it's just one more
-thing on the long TODO list here, that is ready to be checked off.
-
-Patch 2 is required in order to allow me (and others, if I'm lucky) to
-start submitting changes to convert all of the callsites of
-get_user_pages*() and put_page().  I think this will work a lot better
-than trying to maintain a massive patchset and submitting all at once.
-
-Patch 3 converts infiniband drivers: put_page() --> put_user_page(), and
-also exercises put_user_pages_dirty_locked().
-
-Once these are all in, then the floodgates can open up to convert the large
-number of get_user_pages*() callsites.
-
-[1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
-
-[2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
-    Proposed steps for fixing get_user_pages() + DMA problems.
-
-[3]https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
-    Bounce buffers (otherwise [2] is not really viable).
-
-[4] https://lkml.kernel.org/r/20181003162115.GG24030@quack2.suse.cz
-    Follow-up discussions.
-
-CC: Matthew Wilcox <willy@infradead.org>
-CC: Michal Hocko <mhocko@kernel.org>
-CC: Christopher Lameter <cl@linux.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: Jan Kara <jack@suse.cz>
-CC: Al Viro <viro@zeniv.linux.org.uk>
-CC: Jerome Glisse <jglisse@redhat.com>
-CC: Christoph Hellwig <hch@infradead.org>
-CC: Ralph Campbell <rcampbell@nvidia.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-
-John Hubbard (3):
-  mm: get_user_pages: consolidate error handling
-  mm: introduce put_user_page*(), placeholder versions
-  infiniband/mm: convert put_page() to put_user_page*()
-
- drivers/infiniband/core/umem.c              |  7 +--
- drivers/infiniband/core/umem_odp.c          |  2 +-
- drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++---
- drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +--
- drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++---
- drivers/infiniband/hw/qib/qib_user_sdma.c   |  8 ++--
- drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 +--
- include/linux/mm.h                          | 49 ++++++++++++++++++++-
- mm/gup.c                                    | 37 +++++++++-------
- 9 files changed, 93 insertions(+), 45 deletions(-)
-
+diff --git a/mm/gup.c b/mm/gup.c
+index 1abc8b4afff6..05ee7c18e59a 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -660,6 +660,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		struct vm_area_struct **vmas, int *nonblocking)
+ {
+ 	long i = 0;
++	int err = 0;
+ 	unsigned int page_mask;
+ 	struct vm_area_struct *vma = NULL;
+ 
+@@ -685,18 +686,19 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		if (!vma || start >= vma->vm_end) {
+ 			vma = find_extend_vma(mm, start);
+ 			if (!vma && in_gate_area(mm, start)) {
+-				int ret;
+-				ret = get_gate_page(mm, start & PAGE_MASK,
++				err = get_gate_page(mm, start & PAGE_MASK,
+ 						gup_flags, &vma,
+ 						pages ? &pages[i] : NULL);
+-				if (ret)
+-					return i ? : ret;
++				if (err)
++					goto out;
+ 				page_mask = 0;
+ 				goto next_page;
+ 			}
+ 
+-			if (!vma || check_vma_flags(vma, gup_flags))
+-				return i ? : -EFAULT;
++			if (!vma || check_vma_flags(vma, gup_flags)) {
++				err = -EFAULT;
++				goto out;
++			}
+ 			if (is_vm_hugetlb_page(vma)) {
+ 				i = follow_hugetlb_page(mm, vma, pages, vmas,
+ 						&start, &nr_pages, i,
+@@ -709,23 +711,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		 * If we have a pending SIGKILL, don't keep faulting pages and
+ 		 * potentially allocating memory.
+ 		 */
+-		if (unlikely(fatal_signal_pending(current)))
+-			return i ? i : -ERESTARTSYS;
++		if (unlikely(fatal_signal_pending(current))) {
++			err = -ERESTARTSYS;
++			goto out;
++		}
+ 		cond_resched();
+ 		page = follow_page_mask(vma, start, foll_flags, &page_mask);
+ 		if (!page) {
+-			int ret;
+-			ret = faultin_page(tsk, vma, start, &foll_flags,
++			err = faultin_page(tsk, vma, start, &foll_flags,
+ 					nonblocking);
+-			switch (ret) {
++			switch (err) {
+ 			case 0:
+ 				goto retry;
+ 			case -EFAULT:
+ 			case -ENOMEM:
+ 			case -EHWPOISON:
+-				return i ? i : ret;
++				goto out;
+ 			case -EBUSY:
+-				return i;
++				err = 0;
++				goto out;
+ 			case -ENOENT:
+ 				goto next_page;
+ 			}
+@@ -737,7 +741,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 			 */
+ 			goto next_page;
+ 		} else if (IS_ERR(page)) {
+-			return i ? i : PTR_ERR(page);
++			err = PTR_ERR(page);
++			goto out;
+ 		}
+ 		if (pages) {
+ 			pages[i] = page;
+@@ -757,7 +762,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		start += page_increm * PAGE_SIZE;
+ 		nr_pages -= page_increm;
+ 	} while (nr_pages);
+-	return i;
++
++out:
++	return i ? i : err;
+ }
+ 
+ static bool vma_permits_fault(struct vm_area_struct *vma,
 -- 
 2.19.0
 
