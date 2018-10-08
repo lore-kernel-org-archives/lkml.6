@@ -2,152 +2,186 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AC2C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A647C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6AF320878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:58:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AF320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C17920878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:00:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3Pw6I0B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C17920878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJHPI2 (ORCPT
+        id S1726722AbeJHPKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:08:28 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.140]:25492 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725973AbeJHPI1 (ORCPT
+        Mon, 8 Oct 2018 11:10:46 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34916 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbeJHPKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:08:27 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id A98A6400E1053
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 02:58:00 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 9QQSgYVqpaSey9QQSguwZc; Mon, 08 Oct 2018 02:58:00 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:45196 helo=[192.168.43.69])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g9QQS-002uHF-6D; Mon, 08 Oct 2018 02:58:00 -0500
-To:     Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20181008073336.17362-1-loic.tourlonias.lkml@gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] staging: emxx_udc: remove unused code
-Message-ID: <ef326b3d-1d65-3fdb-b18e-428236874335@embeddedor.com>
-Date:   Mon, 8 Oct 2018 09:57:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 8 Oct 2018 11:10:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id e187-v6so7295638wmf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 01:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=7Pa2qVSj7FpkwWoRFDaQJr589BVVh/B2eseJDSrRMl4=;
+        b=m3Pw6I0B3Kvv1Ghj5ixs8EIbyTWgGhdauVobkoN5tEP/QPgQ99slEq5+RKiDffAPn6
+         WkulEB57OPYcDWf/GlisgSuU1v8e+EMl/Ed8mCW/o3mFtyEDIzKal0CwfmFcP2zMnwWL
+         w6tj5ENLpvITBtCUjRUTwgoYplWmz8G0Rn4A7MX9RRlI0iAQeSQ2uUwE7cz/g+N7IR4W
+         8nWpUFAfPxaO3w+d3V27urg6elRvC4KOzVmRZi3SC3xOShNvP2BEZ3cIQlfvaAzCoH/N
+         HmXT4x5EowPlk5eRoY4QStumS+K2zrT87TwFfHr5s4oXV3x5B5EaB6DNozqJjsu6Q6bV
+         5TGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=7Pa2qVSj7FpkwWoRFDaQJr589BVVh/B2eseJDSrRMl4=;
+        b=YYtoQLTluVY991XWJcSU6FpJAOc/zPbg4GFxG+QO2RKBJ1/WJvaqYKrb4PZeW2DiHV
+         Di6LA2yU0YghSQ5TCqse4/l7VCLeqBN8PVBylNCRxYeLd6sHM0Z60tqDxk288hPEDvKr
+         VJGNoHoKbeWAyjbvn0vuyZi3FllKB2ZfI/aXKdIssg9wRz6q4+WkNQc00x8nsg6JPuUL
+         p6p8UQrLsQosbBV6lTxOXAKeZ2Bu8wAeVRx6XVSyyCGIecWRvQUTHKDCXkrJiJr76HH4
+         OFUs2KlyssrvQ/B1Mn/h5owjRYvEJu0PWBH85+UN1SYuKOgLZ3/U/zwph7398K8IPdPt
+         MbBg==
+X-Gm-Message-State: ABuFfojfmjdChBKyarJdTaEs2XGNh/ZZrzqoNLSflXQTjSFSdFXbiuUu
+        6l67PdmUy9nbMkHhkRY9CSc=
+X-Google-Smtp-Source: ACcGV62HAYnDG3B1cFeO4fti2TO+u7KhGf0gXTDCR8XeX9dsdGp/UZL31ZD40doe7WWtHXWd47MBEQ==
+X-Received: by 2002:a1c:8fc5:: with SMTP id r188-v6mr1084960wmd.136.1538985617431;
+        Mon, 08 Oct 2018 01:00:17 -0700 (PDT)
+Received: from ?IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740? ([2a02:908:1257:4460:1ab8:55c1:a639:6740])
+        by smtp.gmail.com with ESMTPSA id k93-v6sm21572327wrc.89.2018.10.08.01.00.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 01:00:16 -0700 (PDT)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH] amdgpu/gmc : fix compile warning
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Peng Hao <peng.hao2@zte.com.cn>
+Cc:     "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>
+References: <1536919552-116245-1-git-send-email-peng.hao2@zte.com.cn>
+ <20181004185237.GA20667@roeck-us.net>
+ <022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com>
+ <4772f72c-6018-3556-6324-5f49faa00073@roeck-us.net>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <4da23fcb-4a94-2695-ad80-929025e84bd2@gmail.com>
+Date:   Mon, 8 Oct 2018 10:00:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181008073336.17362-1-loic.tourlonias.lkml@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <4772f72c-6018-3556-6324-5f49faa00073@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g9QQS-002uHF-6D
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:45196
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Am 05.10.2018 um 10:38 schrieb Guenter Roeck:
+> On 10/05/2018 01:14 AM, Koenig, Christian wrote:
+>> Am 04.10.2018 um 20:52 schrieb Guenter Roeck:
+>>> Hi,
+>>>
+>>> On Fri, Sep 14, 2018 at 06:05:52PM +0800, Peng Hao wrote:
+>>>> drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:
+>>>>       In function ‘gmc_v8_0_process_interrupt’:
+>>>> drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:10:
+>>>>       warning: missing braces around initializer [-Wmissing-braces]
+>>>>
+>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>> Was there any feedback on this patch ? The problem does affect us,
+>>> and we'll need a fix.
+>>
+>> Well as discussed using "{ { 0 } }" is as wrong as using "{ 0 }".
+>>
+>
+> Ah, sorry, I must have missed the discussion.
+>
+> It is for sure not the best solution, but at least it compiles, and it 
+> seems
+> to be proliferating.
 
-On 10/8/18 9:33 AM, Loic Tourlonias wrote:
-> Remove useless code inside if_0 endif
-> 
-> Signed-off-by: Loic Tourlonias <loic.tourlonias.lkml@gmail.com>
-> ---
->  drivers/staging/emxx_udc/emxx_udc.h | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/staging/emxx_udc/emxx_udc.h b/drivers/staging/emxx_udc/emxx_udc.h
-> index 8337e38c238a..78fa60192a14 100644
-> --- a/drivers/staging/emxx_udc/emxx_udc.h
-> +++ b/drivers/staging/emxx_udc/emxx_udc.h
-> @@ -10,10 +10,6 @@
->  
->  /*---------------------------------------------------------------------------*/
->  /*----------------- Default undef */
-> -#if 0
-> -#define DEBUG
-> -#define UDC_DEBUG_DUMP
-> -#endif
->  
+Yeah, and exactly that's the problem. As the discussion showed "{ { 0 } 
+}" is buggy because it tells the compiler to only initialize the first 
+member of the structure, but not all of it.
 
-Don't remove that code. This is a common practice for debugging.
+That is incorrect and rather dangerous cause it can lead to unforeseen 
+results and should probably trigger a warning.
 
-Whenever the developer needs to debug something in the whole driver, he/she
-just has to change that #if 0 to #if 1 and then all the code under DEBUG
-and UDC_DEBUG_DUMP will be enabled.
+>
+> $ git grep "{ *{ *0 *} *}" | wc
+>     144    1180   11802
+> $ git grep "{ *{ *0 *} *}" drivers/gpu/drm/amd/ | wc
+>      50     459    5239
+>
+>> We should either use only "{ }" or even better make nails with heads and
+>> use memset().
+>
+> I'd rather leave it up to the compiler to decide what is most efficient.
 
-Notice that UDC_DEBUG_DUMP is being used in drivers/staging/emxx_udc/emxx_udc.c
+And I would rather prefer to have a working driver :)
 
-Thanks
---
-Gustavo
+Christian.
+
+>
+> Guenter
+>
+>>
+>> Christian.
+>>
+>>>
+>>>> ---
+>>>>    drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 2 +-
+>>>>    drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 2 +-
+>>>>    2 files changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c 
+>>>> b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>>>> index 9333109..55f4755 100644
+>>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>>>> @@ -1444,7 +1444,7 @@ static int gmc_v8_0_process_interrupt(struct 
+>>>> amdgpu_device *adev,
+>>>>            gmc_v8_0_set_fault_enable_default(adev, false);
+>>>>           if (printk_ratelimit()) {
+>>>> -        struct amdgpu_task_info task_info = { 0 };
+>>>> +        struct amdgpu_task_info task_info = { {0} };
+>>> I wondered if
+>>>         struct amdgpu_task_info task_info = { };
+>>> would be better.
+>>>
+>>> Thanks,
+>>> Guenter
+>>>
+>>>> amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+>>>>    diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c 
+>>>> b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+>>>> index 72f8018..e8b78c5 100644
+>>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+>>>> @@ -259,7 +259,7 @@ static int gmc_v9_0_process_interrupt(struct 
+>>>> amdgpu_device *adev,
+>>>>        }
+>>>>           if (printk_ratelimit()) {
+>>>> -        struct amdgpu_task_info task_info = { 0 };
+>>>> +        struct amdgpu_task_info task_info = { {0} };
+>>>>               amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
