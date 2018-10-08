@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD4DC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C505AC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 383592150B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC9921479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUyZ/0Or"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383592150B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnrnbylW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC9921479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeJHWjN (ORCPT
+        id S1728709AbeJHWjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58236 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbeJHWjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:13 -0400
+        id S1728686AbeJHWjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5831121531;
-        Mon,  8 Oct 2018 15:26:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A45D21557;
+        Mon,  8 Oct 2018 15:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012417;
-        bh=0fxxZfuYdHxbi7QhDMC7ITO2eAixZjaxSH4Yt7qsQEc=;
+        s=default; t=1539012418;
+        bh=DTpy5fMX0p4pS/yHYNdiZItIYhdeW6xVKRK3n6XA3Qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AUyZ/0OrOb0Kw+7S2ZgBo/p1h9YVOwclX/euuFccS/oo7pGxUqhgscyAbSkOuxYmY
-         JiRunaW9tQMW+SADGO/ZnqAPXv4JMNLqMPGCC76UjBqaRXFh/2r/1AKI6Tgwms2cer
-         7ciqmMlbHB7AvsOOBSvtd0rS1j0D8EH1M882Xj3E=
+        b=rnrnbylW+JWfiMGjjLZV8GPUzgH4E9YuVMNswIKlWmZdNHED8DvSoOtjYgePHLbP/
+         zM1KQA8QAMhET9gkKPvqKFiEm3uJfPuuL8FwFEcWLaelgRJNHSsxWFY2b53E5tDO/F
+         04U1sB1McHoqD/GXnMA80IXyzb+Er8KpBh2JOYjY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Michael Neuling <mikey@neuling.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 30/32] powerpc/tm: Fix userspace r13 corruption
-Date:   Mon,  8 Oct 2018 11:26:27 -0400
-Message-Id: <20181008152629.70812-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 31/32] powerpc/tm: Avoid possible userspace r1 corruption on reclaim
+Date:   Mon,  8 Oct 2018 11:26:28 -0400
+Message-Id: <20181008152629.70812-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
 References: <20181008152629.70812-1-sashal@kernel.org>
@@ -55,64 +55,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Neuling <mikey@neuling.org>
 
-[ Upstream commit cf13435b730a502e814c63c84d93db131e563f5f ]
+[ Upstream commit 96dc89d526ef77604376f06220e3d2931a0bfd58 ]
 
-When we treclaim we store the userspace checkpointed r13 to a scratch
-SPR and then later save the scratch SPR to the user thread struct.
+Current we store the userspace r1 to PACATMSCRATCH before finally
+saving it to the thread struct.
 
-Unfortunately, this doesn't work as accessing the user thread struct
-can take an SLB fault and the SLB fault handler will write the same
-scratch SPRG that now contains the userspace r13.
+In theory an exception could be taken here (like a machine check or
+SLB miss) that could write PACATMSCRATCH and hence corrupt the
+userspace r1. The SLB fault currently doesn't touch PACATMSCRATCH, but
+others do.
 
-To fix this, we store r13 to the kernel stack (which can't fault)
-before we access the user thread struct.
+We've never actually seen this happen but it's theoretically
+possible. Either way, the code is fragile as it is.
 
-Found by running P8 guest + powervm + disable_1tb_segments + TM. Seen
-as a random userspace segfault with r13 looking like a kernel address.
+This patch saves r1 to the kernel stack (which can't fault) before we
+turn MSR[RI] back on. PACATMSCRATCH is still used but only with
+MSR[RI] off. We then copy r1 from the kernel stack to the thread
+struct once we have MSR[RI] back on.
 
+Suggested-by: Breno Leitao <leitao@debian.org>
 Signed-off-by: Michael Neuling <mikey@neuling.org>
-Reviewed-by: Breno Leitao <leitao@debian.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/kernel/tm.S | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/tm.S | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/arch/powerpc/kernel/tm.S b/arch/powerpc/kernel/tm.S
-index 1da12f521cb7..69eacb85ebca 100644
+index 69eacb85ebca..b735b727ed2b 100644
 --- a/arch/powerpc/kernel/tm.S
 +++ b/arch/powerpc/kernel/tm.S
-@@ -167,13 +167,20 @@ _GLOBAL(tm_reclaim)
- 	std	r1, PACATMSCRATCH(r13)
- 	ld	r1, PACAR1(r13)
+@@ -169,6 +169,13 @@ _GLOBAL(tm_reclaim)
  
--	/* Store the PPR in r11 and reset to decent value */
  	std	r11, GPR11(r1)			/* Temporary stash */
  
 +	/*
-+	 * Store r13 away so we can free up the scratch SPR for the SLB fault
-+	 * handler (needed once we start accessing the thread_struct).
++	 * Move the saved user r1 to the kernel stack in case PACATMSCRATCH is
++	 * clobbered by an exception once we turn on MSR_RI below.
 +	 */
-+	GET_SCRATCH0(r11)
-+	std	r11, GPR13(r1)
++	ld	r11, PACATMSCRATCH(r13)
++	std	r11, GPR1(r1)
 +
- 	/* Reset MSR RI so we can take SLB faults again */
- 	li	r11, MSR_RI
- 	mtmsrd	r11, 1
- 
-+	/* Store the PPR in r11 and reset to decent value */
- 	mfspr	r11, SPRN_PPR
- 	HMT_MEDIUM
- 
-@@ -202,7 +209,7 @@ _GLOBAL(tm_reclaim)
+ 	/*
+ 	 * Store r13 away so we can free up the scratch SPR for the SLB fault
+ 	 * handler (needed once we start accessing the thread_struct).
+@@ -205,7 +212,7 @@ _GLOBAL(tm_reclaim)
+ 	SAVE_GPR(8, r7)				/* user r8 */
+ 	SAVE_GPR(9, r7)				/* user r9 */
+ 	SAVE_GPR(10, r7)			/* user r10 */
+-	ld	r3, PACATMSCRATCH(r13)		/* user r1 */
++	ld	r3, GPR1(r1)			/* user r1 */
  	ld	r4, GPR7(r1)			/* user r7 */
  	ld	r5, GPR11(r1)			/* user r11 */
  	ld	r6, GPR12(r1)			/* user r12 */
--	GET_SCRATCH0(8)				/* user r13 */
-+	ld	r8, GPR13(r1)			/* user r13 */
- 	std	r3, GPR1(r7)
- 	std	r4, GPR7(r7)
- 	std	r5, GPR11(r7)
 -- 
 2.17.1
 
