@@ -2,148 +2,215 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E437DC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1E2C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7AD20652
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:58:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7AD20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F3C0120652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:58:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hqc5VWKn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C0120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJHSJK (ORCPT
+        id S1727713AbeJHSJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:09:10 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33335 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbeJHSJK (ORCPT
+        Mon, 8 Oct 2018 14:09:49 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46867 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeJHSJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:09:10 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g9TEY-00051s-7J; Mon, 08 Oct 2018 12:57:54 +0200
-Message-ID: <1538996273.11512.13.camel@pengutronix.de>
-Subject: Re: [PATCH v2] reset: Exclusive resets must be dedicated to a
- single hardware block
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Date:   Mon, 08 Oct 2018 12:57:53 +0200
-In-Reply-To: <CAMuHMdXFbYkD_Lou0wW__0-8ZPj3cKuJ6it_0hpPwzNU0Zeq3g@mail.gmail.com>
-References: <20180927180038.24599-1-geert+renesas@glider.be>
-         <1538648094.14153.8.camel@pengutronix.de>
-         <CAMuHMdV_qb8qDFJ1VT6FYYkHK73tjbp2hOUShaOEhezPWg+VDg@mail.gmail.com>
-         <CAMuHMdUC3dGRnMCsX3HjmGgb0-vLSNXKXRiiAS+TzW72_uM+LQ@mail.gmail.com>
-         <1538752564.3545.37.camel@pengutronix.de>
-         <CAMuHMdXFbYkD_Lou0wW__0-8ZPj3cKuJ6it_0hpPwzNU0Zeq3g@mail.gmail.com>
+        Mon, 8 Oct 2018 14:09:48 -0400
+Received: by mail-ot1-f67.google.com with SMTP id o21so18871901otb.13;
+        Mon, 08 Oct 2018 03:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HYauraNz349rvrX33twpDLpNOIEeG2x7NtAWEK5ACoE=;
+        b=Hqc5VWKn6DcGDQjrP4DfN1qEmn3WvCPH8APi3MImhY/LN3U3q1FD+vWlqlbpIidmEn
+         CQExPoCFLtZ5btnBcCYDRwHGDe9J8Nik6OAfW05eRaOYfnZ+M4JYHM0bZOlejUxnT498
+         dfUSZ2NdQEHbuquyI3gWsiIj+uJwgZoW/69IHBWVa7B5CwslwSeIqSFQkF1oiD3WNouz
+         VBTC2urb4duMPXGZOQs3ev2MuLDYd5+o0vOFGwJs19ZqVs7KnDcrFHNuQI/V1J/h+alV
+         6TPZDU2VpXKWx79FFo/yozhQIeJsL20i7Ow7ILUzNlfl5jxhDzkFkIfDNRl7Rp8nj1gQ
+         OiaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HYauraNz349rvrX33twpDLpNOIEeG2x7NtAWEK5ACoE=;
+        b=lvvRh4nlDMfWJCvQb/TxTXqtBLr9xRo+5iKOr3MPdVaeCdIJ9HJOsREgRPq+r+Dd1H
+         ih03Mxs8JxtMPJe8qMOJ76CPAX80N7q9ueivDzTY8yJvvV+pAjVHCcMd7a6mnN44FZoF
+         WaI+P98GF0OoSnedNOZbx1sebPLwWAYrZg3NCUuDIV2/CGhsvqcRENcAEQC6sdRzRGqK
+         AHKk15g5CqiqmfN0kUAPJKYd+bbisOaRvdE2O44xeLhxdbQVR1DIPwqnmFm8PfuUoZr7
+         i3dtD7uqDSOIwPmIJoi7/kWWzdxvWshRb9SqJh52aFWlvvgkoSRdmhpTnKoihpTBanar
+         /J5w==
+X-Gm-Message-State: ABuFfoj04RpcKVaDoqLPXTN5mLuZqodl2jkXqLB0OmlY0LjAaok98Omd
+        lU0C7bbsj+M9o59hfLXjxBFU5nrEPenpIcfADhc=
+X-Google-Smtp-Source: ACcGV62DPC8ig/v+4/mqAMeqUjIhpu6Die1LQV2xLHSAjFlJYE2IztFODsw2PfKfTB/j4KS4ra4VrBqAnSo/Cr9QPPw=
+X-Received: by 2002:a9d:4492:: with SMTP id v18mr14527415ote.282.1538996319050;
+ Mon, 08 Oct 2018 03:58:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <1538115136-20092-1-git-send-email-wanpengli@tencent.com> <8847332B-9759-4FF2-B6D8-02334AE11015@oracle.com>
+In-Reply-To: <8847332B-9759-4FF2-B6D8-02334AE11015@oracle.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Mon, 8 Oct 2018 18:59:22 +0800
+Message-ID: <CANRm+CzML6RwAOCtPFCBwccECwO+Y=DQhWD_s5mK+uCtHUCFQg@mail.gmail.com>
+Subject: Re: [PATCH] KVM: LAPIC: Tune lapic_timer_advance_ns automatically
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-08 at 11:59 +0200, Geert Uytterhoeven wrote:
-> Hi Philipp,
-> 
-> On Fri, Oct 5, 2018 at 5:16 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > On Fri, 2018-10-05 at 14:31 +0200, Geert Uytterhoeven wrote:
-> > [...]
-> > > > > > +                     eq = (args2.np == args.np &&
-> > > > > > +                           args2.args_count == args.args_count &&
-> > > > > > +                           !memcmp(args2.args, args.args,
-> > > > > > +                                   args.args_count * sizeof(args.args[0])));
-> > > > 
-> > > > As there's at least one other function in -next that compares of_phandle_args,
-> > > > I will add a helper of_phandle_args_eq().
-> > > > 
-> > > > > > +                     of_node_put(args2.np);
-> > > > > > +                     if (eq)
-> > > > > 
-> > > > > Emitting a loud warning here could be very helpful if it contains
-> > > > > both the reset controller node and the reset index, as well as the
-> > > 
-> > > Actually on DT-based systems, the index is a driver-specific
-> > > implementation detail, and may differ from the actual reset specifier in DT.
-> > > E.g. on R-Car systems, DT uses a human-readable representation matching
-> > > the datasheet, while internally, the driver uses a packed representation.
-> > > Hence printing the index may confuse the user.
-> > > 
-> > > For lookup-based systems, this is different.
-> > 
-> > Correct. I'm so used to #reset-cells = <1>, it's hard to remember the
-> > exceptions. So let's not try to print indices or args.
-> > 
-> > > > > consumer nodes: node and node2.
-> > > > 
-> > > > Indeed, will do, also for lookup resets.
-> > > > 
-> > > > We already have of_print_phandle_args(), but that is a bit inflexible.
-> > > > Adding support for "%pOFa" looks like the modern thing to do.
-> > > 
-> > > Scrap that: of_phandle_args is not derived from a device_node, so %pOFa
-> > > is not appropriate (and would crash instead of fall back to a pointer before
-> > > %pOFa support is implemented). And without more users, it doesn't make much
-> > > sense to go for a new type (e.g. "%pOA")...
-> > > 
-> > > Actually, printing the full reset specifier is not needed. A message like
-> > > 
-> > >     /soc/pwm@e6e31000 and /soc/pwm@e6e30000 share a reset on
-> > > /soc/clock-controller@e6150000
-> > > 
-> > > should give sufficient clue to the user.
-> > 
-> > Yes. You could also pass con_id into __of_reset_is_exclusive and print
-> > that. It would be nice to indicate which consumer requested exclusive
-> > access.
-> 
-> con_id is used for lookup-based resets only?
+On Mon, 8 Oct 2018 at 05:02, Liran Alon <liran.alon@oracle.com> wrote:
 >
-> But the value passed there is the "id" parameter of
-> reset_control_get_exclusive().
+>
+>
+> > On 28 Sep 2018, at 9:12, Wanpeng Li <kernellwp@gmail.com> wrote:
+> >
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > In cloud environment, lapic_timer_advance_ns is needed to be tuned for =
+every CPU
+> > generations, and every host kernel versions(the kvm-unit-tests/tscdeadl=
+ine_latency.flat
+> > is 5700 cycles for upstream kernel and 9600 cycles for our 3.10 product=
+ kernel,
+> > both preemption_timer=3DN, Skylake server).
+> >
+> > This patch adds the capability to automatically tune lapic_timer_advanc=
+e_ns
+> > step by step, the initial value is 1000ns as d0659d946be05 (KVM: x86: a=
+dd
+> > option to advance tscdeadline hrtimer expiration) recommended, it will =
+be
+> > reduced when it is too early, and increased when it is too late. The gu=
+est_tsc
+> > and tsc_deadline are hard to equal, so we assume we are done when the d=
+elta
+> > is within a small scope e.g. 100 cycles. This patch reduces latency
+> > (kvm-unit-tests/tscdeadline_latency, busy waits, preemption_timer enabl=
+ed)
+> > from ~2600 cyles to ~1200 cyles on our Skylake server.
+> >
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> > arch/x86/kvm/lapic.c | 7 +++++++
+> > arch/x86/kvm/x86.c   | 2 +-
+> > 2 files changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > index fbb0e6d..b756f12 100644
+> > --- a/arch/x86/kvm/lapic.c
+> > +++ b/arch/x86/kvm/lapic.c
+> > @@ -70,6 +70,8 @@
+> > #define APIC_BROADCAST                        0xFF
+> > #define X2APIC_BROADCAST              0xFFFFFFFFul
+> >
+> > +static bool __read_mostly lapic_timer_advance_adjust_done =3D false;
+> > +
+> > static inline int apic_test_vector(int vec, void *bitmap)
+> > {
+> >       return test_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
+> > @@ -1492,6 +1494,11 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+> >       if (guest_tsc < tsc_deadline)
+> >               __delay(min(tsc_deadline - guest_tsc,
+> >                       nsec_to_cycles(vcpu, lapic_timer_advance_ns)));
+> > +     if (!lapic_timer_advance_adjust_done) {
+> > +             lapic_timer_advance_ns +=3D (s64)(guest_tsc - tsc_deadlin=
+e) / 8;
+>
+> I don=E2=80=99t understand how this =E2=80=9C/ 8=E2=80=9D converts betwee=
+n guest TSC units to host nanoseconds.
 
-Sorry, I did mean the id parameter in the __of_reset_control_get case.
+Oh, I miss it. In addition, /8 here I mean adjust
+lapic_timer_advance_ns step by step. I can observe big fluctuated
+value between early and late when running real guest os like linux
+instead of kvm-unit-tests. After more testing, I saw
+lapic_timer_advance_ns can be overflow since the delta between
+guest_tsc and tsc_deadline is too huge.
 
-> However, that is not the consumer name,
+>
+> I think that instead you should do something like:
+> s64 ns =3D (s64)(guest_tsc - tsc_deadline) * 1000000ULL;
+> do_div(ns, vcpu->arch.virtual_tsc_khz);
+> lapic_timer_advance_ns +=3D ns;
+>
+> > +             if (abs(guest_tsc - tsc_deadline) < 100)
+>
+> I would put this =E2=80=9C100=E2=80=9D hard-coded value as some =E2=80=9C=
+#define=E2=80=9D to make code more clear.
 
-It is the name of the reset signal from point of view of the consumer.
-It specifies, via its position in the reset-names property, which of
-potentially multiple reset phandles in the resets property is the one
-causing the conflict.
+How about something like below:
 
-> and usually NULL.
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index fbb0e6d..354eb13c 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -70,6 +70,9 @@
+ #define APIC_BROADCAST            0xFF
+ #define X2APIC_BROADCAST        0xFFFFFFFFul
 
-In which case the resets property usually only contains one phandle, so
-it is not needed to determine the conflicting reset control.
++static bool __read_mostly lapic_timer_advance_adjust_done =3D false;
++#define LAPIC_TIMER_ADVANCE_ADJUST_DONE 100
++
+ static inline int apic_test_vector(int vec, void *bitmap)
+ {
+     return test_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
+@@ -1472,7 +1475,7 @@ static bool lapic_timer_int_injected(struct
+kvm_vcpu *vcpu)
+ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+ {
+     struct kvm_lapic *apic =3D vcpu->arch.apic;
+-    u64 guest_tsc, tsc_deadline;
++    u64 guest_tsc, tsc_deadline, ns;
 
-> I'm afraid the only way to know the consumer is to print a backtrace with
-> WARN()?
+     if (!lapic_in_kernel(vcpu))
+         return;
+@@ -1492,6 +1495,19 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+     if (guest_tsc < tsc_deadline)
+         __delay(min(tsc_deadline - guest_tsc,
+             nsec_to_cycles(vcpu, lapic_timer_advance_ns)));
++    if (!lapic_timer_advance_adjust_done) {
++        if (guest_tsc < tsc_deadline) {
++            ns =3D (tsc_deadline - guest_tsc) * 1000000ULL;
++            do_div(ns, vcpu->arch.virtual_tsc_khz);
++            lapic_timer_advance_ns -=3D min((unsigned int)ns,
+lapic_timer_advance_ns / 8);
++        } else {
++            ns =3D (guest_tsc - tsc_deadline) * 1000000ULL;
++            do_div(ns, vcpu->arch.virtual_tsc_khz);
++            lapic_timer_advance_ns +=3D min((unsigned int)ns,
+lapic_timer_advance_ns / 8);
++        }
++        if (ns < LAPIC_TIMER_ADVANCE_ADJUST_DONE)
++            lapic_timer_advance_adjust_done =3D true;
++    }
+ }
 
-I'm just suggesting to augment the warning message with the reset id, if
-available. For example:
+ static void start_sw_tscdeadline(struct kvm_lapic *apic)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ca71773..1f3f955 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -136,7 +136,7 @@ static u32 __read_mostly tsc_tolerance_ppm =3D 250;
+ module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
 
-    /soc/pwm@e6e31000 requests exclusive control over reset "pwm"
-    shared with /soc/pwm@e6e30000 on /soc/clock-controller@e6150000
-
-regards
-Philipp
+ /* lapic timer advance (tscdeadline mode only) in nanoseconds */
+-unsigned int __read_mostly lapic_timer_advance_ns =3D 0;
++unsigned int __read_mostly lapic_timer_advance_ns =3D 1000;
+ module_param(lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
+ EXPORT_SYMBOL_GPL(lapic_timer_advance_ns);
