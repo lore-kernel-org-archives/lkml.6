@@ -2,164 +2,213 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB74C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438CCC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7DD2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:47:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7DD2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D72F42075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:48:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72F42075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJHO6G (ORCPT
+        id S1726932AbeJHO6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 10:58:06 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:39539 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbeJHO6G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 10:58:06 -0400
-Received: by mail-vk1-f193.google.com with SMTP id x140-v6so4343102vkd.6;
-        Mon, 08 Oct 2018 00:47:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AIElAWjEC4+qiV3Uf4xf+PuGd22N3jcTDz6lLt7BuWM=;
-        b=r9msCXA0PS/QHUyfyq0PXohyulRW4GtFwqdjh8MW9seRKzmwvaJpL2USatO/0y8Ocf
-         yDfiC5oBPgihbR0S/mNQEZWlFrVoIE5veddImDhwU9pCK59pVFnJZQRcc6twcQq+k3PU
-         8A7cTRJLbQgm0baPFpLOu9P/nWklTOmstOLqiwwZkTjkwE3cLiR8qXsqcO7pL2O9bAba
-         xAKGZygajC5w0yFgWy2XEyOqdSMFSeOk4OqHA2XHcvaHidol7vKLmGKJZQOcXPgXnc/c
-         ctsk2UIksjyrYxxuh0jSO496YkifxklExqOXyzQtvZQRYJwq1YpwDFZD1Sn6bEIbJlyN
-         LvxQ==
-X-Gm-Message-State: ABuFfoiI7H7GOx50+O8Ai8FXM8UC8QVKOjnB+mZnBUE18FFXGWMvt7uG
-        +wm2QxgVPihY6VFnqkYlLnlTFYYBS3HvZE1kBkw=
-X-Google-Smtp-Source: ACcGV61roA6wLlkVv7sk2NfIm6I4d3sLLnkmtKvKU8cMqiPVN27rjs7bnm1Jeo2z1DhH+O5Fbv/H492gE7znuBqzBIk=
-X-Received: by 2002:a1f:d507:: with SMTP id m7-v6mr8394416vkg.40.1538984861844;
- Mon, 08 Oct 2018 00:47:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
-In-Reply-To: <20181005165848.3474-30-robh@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 8 Oct 2018 09:47:29 +0200
-Message-ID: <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
-Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 8 Oct 2018 10:58:43 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:46666 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbeJHO6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 10:58:42 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BF61220011C;
+        Mon,  8 Oct 2018 09:48:17 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6D8732000FD;
+        Mon,  8 Oct 2018 09:48:13 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 53ABD402D8;
+        Mon,  8 Oct 2018 15:48:07 +0800 (SGT)
+From:   Yangbo Lu <yangbo.lu@nxp.com>
+To:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v3, 1/6] net: dpaa2: move DPAA2 PTP driver out of staging/
+Date:   Mon,  8 Oct 2018 15:44:25 +0800
+Message-Id: <20181008074430.34379-1-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+This patch is to move DPAA2 PTP driver out of staging/
+since the dpaa2-eth had been moved out.
 
-On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
-> Convert Renesas SoC bindings to DT schema format using json-schema.
->
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v2:
+	- Renamed files rtc.* as dpaa2-ptp.*.
+Changes for v3:
+	- Added more help info for config FSL_DPAA2_ETH.
+---
+ drivers/net/ethernet/freescale/Kconfig             |    9 +--------
+ drivers/net/ethernet/freescale/dpaa2/Kconfig       |   17 +++++++++++++++++
+ drivers/net/ethernet/freescale/dpaa2/Makefile      |    6 ++++--
+ .../ethernet/freescale/dpaa2/dpaa2-ptp.c}          |    2 +-
+ .../ethernet/freescale/dpaa2/dpaa2-ptp.h}          |    0
+ .../ethernet/freescale/dpaa2}/dprtc-cmd.h          |    0
+ .../rtc => net/ethernet/freescale/dpaa2}/dprtc.c   |    0
+ .../rtc => net/ethernet/freescale/dpaa2}/dprtc.h   |    0
+ drivers/staging/fsl-dpaa2/Kconfig                  |    8 --------
+ drivers/staging/fsl-dpaa2/Makefile                 |    1 -
+ drivers/staging/fsl-dpaa2/rtc/Makefile             |    7 -------
+ 11 files changed, 23 insertions(+), 27 deletions(-)
+ create mode 100644 drivers/net/ethernet/freescale/dpaa2/Kconfig
+ rename drivers/{staging/fsl-dpaa2/rtc/rtc.c => net/ethernet/freescale/dpaa2/dpaa2-ptp.c} (99%)
+ rename drivers/{staging/fsl-dpaa2/rtc/rtc.h => net/ethernet/freescale/dpaa2/dpaa2-ptp.h} (100%)
+ rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/dprtc-cmd.h (100%)
+ rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/dprtc.c (100%)
+ rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/dprtc.h (100%)
+ delete mode 100644 drivers/staging/fsl-dpaa2/rtc/Makefile
 
-Thanks for your patch!
-
-Note that this will need a rebase, as more SoCs/boards have been added
-in -next.
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
-> @@ -0,0 +1,205 @@
-> +# SPDX-License-Identifier: None
-
-The old file didn't have an SPDX header, so it was GPL-2.0, implicitly?
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/arm/shmobile.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
-> +
-> +maintainers:
-> +  - Geert Uytterhoeven <geert+renesas@glider.be>
-
-Simon Horman <horms@verge.net.au> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
-Magnus Damm <magnus.damm@gmail.com> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
-
-You had it right in the CC list, though...
-
-> +      - description: RZ/G1M (R8A77430)
-> +        items:
-> +          - enum:
-> +              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
-> +              - iwave,g20d
-> +          - const: iwave,g20m
-> +          - const: renesas,r8a7743
-> +
-> +      - items:
-> +          - enum:
-> +              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-> +              - iwave,g20m
-> +          - const: renesas,r8a7743
-> +
-> +      - description: RZ/G1N (R8A77440)
-> +        items:
-> +          - enum:
-> +              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
-
-This board belongs under the RZ/G1M section above
-(see also the 7743 in the part number).
-
-> +          - const: renesas,r8a7744
-
-> +      - description: Kingfisher (SBEV-RCAR-KF-M03)
-> +        items:
-> +          - const: shimafuji,kingfisher
-> +          - enum:
-> +              - renesas,h3ulcb
-> +              - renesas,m3ulcb
-> +          - enum:
-> +              - renesas,r8a7795
-> +              - renesas,r8a7796
-
-This looks a bit funny: all other entries have the "const" last, and
-use it for the
-SoC number. May be correct, though.
-To clarify, this is an extension board that can fit both the [HM]3ULCB
-boards (actually also the new M3NULCB, I think).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/net/ethernet/freescale/Kconfig b/drivers/net/ethernet/freescale/Kconfig
+index 7a30276..d3a62bc 100644
+--- a/drivers/net/ethernet/freescale/Kconfig
++++ b/drivers/net/ethernet/freescale/Kconfig
+@@ -96,13 +96,6 @@ config GIANFAR
+ 	  on the 8540.
+ 
+ source "drivers/net/ethernet/freescale/dpaa/Kconfig"
+-
+-config FSL_DPAA2_ETH
+-	tristate "Freescale DPAA2 Ethernet"
+-	depends on FSL_MC_BUS && FSL_MC_DPIO
+-	depends on NETDEVICES && ETHERNET
+-	---help---
+-	  Ethernet driver for Freescale DPAA2 SoCs, using the
+-	  Freescale MC bus driver
++source "drivers/net/ethernet/freescale/dpaa2/Kconfig"
+ 
+ endif # NET_VENDOR_FREESCALE
+diff --git a/drivers/net/ethernet/freescale/dpaa2/Kconfig b/drivers/net/ethernet/freescale/dpaa2/Kconfig
+new file mode 100644
+index 0000000..67e6461
+--- /dev/null
++++ b/drivers/net/ethernet/freescale/dpaa2/Kconfig
+@@ -0,0 +1,17 @@
++config FSL_DPAA2_ETH
++	tristate "Freescale DPAA2 Ethernet"
++	depends on FSL_MC_BUS && FSL_MC_DPIO
++	depends on NETDEVICES && ETHERNET
++	help
++	  This is the DPAA2 Ethernet driver supporting Freescale SoCs
++	  with DPAA2 (DataPath Acceleration Architecture v2).
++	  The driver manages network objects discovered on the Freescale
++	  MC bus.
++
++config FSL_DPAA2_PTP_CLOCK
++	tristate "Freescale DPAA2 PTP Clock"
++	depends on FSL_DPAA2_ETH && POSIX_TIMERS
++	select PTP_1588_CLOCK
++	help
++	  This driver adds support for using the DPAA2 1588 timer module
++	  as a PTP clock.
+diff --git a/drivers/net/ethernet/freescale/dpaa2/Makefile b/drivers/net/ethernet/freescale/dpaa2/Makefile
+index 9315ecd..2f424e0 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/Makefile
++++ b/drivers/net/ethernet/freescale/dpaa2/Makefile
+@@ -3,9 +3,11 @@
+ # Makefile for the Freescale DPAA2 Ethernet controller
+ #
+ 
+-obj-$(CONFIG_FSL_DPAA2_ETH) += fsl-dpaa2-eth.o
++obj-$(CONFIG_FSL_DPAA2_ETH)		+= fsl-dpaa2-eth.o
++obj-$(CONFIG_FSL_DPAA2_PTP_CLOCK)	+= fsl-dpaa2-ptp.o
+ 
+-fsl-dpaa2-eth-objs    := dpaa2-eth.o dpaa2-ethtool.o dpni.o
++fsl-dpaa2-eth-objs	:= dpaa2-eth.o dpaa2-ethtool.o dpni.o
++fsl-dpaa2-ptp-objs	:= dpaa2-ptp.o dprtc.o
+ 
+ # Needed by the tracing framework
+ CFLAGS_dpaa2-eth.o := -I$(src)
+diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
+similarity index 99%
+rename from drivers/staging/fsl-dpaa2/rtc/rtc.c
+rename to drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
+index 0d52cb8..2e90d5a 100644
+--- a/drivers/staging/fsl-dpaa2/rtc/rtc.c
++++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
+@@ -9,7 +9,7 @@
+ #include <linux/ptp_clock_kernel.h>
+ #include <linux/fsl/mc.h>
+ 
+-#include "rtc.h"
++#include "dpaa2-ptp.h"
+ 
+ struct ptp_dpaa2_priv {
+ 	struct fsl_mc_device *rtc_mc_dev;
+diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.h b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h
+similarity index 100%
+rename from drivers/staging/fsl-dpaa2/rtc/rtc.h
+rename to drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.h
+diff --git a/drivers/staging/fsl-dpaa2/rtc/dprtc-cmd.h b/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
+similarity index 100%
+rename from drivers/staging/fsl-dpaa2/rtc/dprtc-cmd.h
+rename to drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
+diff --git a/drivers/staging/fsl-dpaa2/rtc/dprtc.c b/drivers/net/ethernet/freescale/dpaa2/dprtc.c
+similarity index 100%
+rename from drivers/staging/fsl-dpaa2/rtc/dprtc.c
+rename to drivers/net/ethernet/freescale/dpaa2/dprtc.c
+diff --git a/drivers/staging/fsl-dpaa2/rtc/dprtc.h b/drivers/net/ethernet/freescale/dpaa2/dprtc.h
+similarity index 100%
+rename from drivers/staging/fsl-dpaa2/rtc/dprtc.h
+rename to drivers/net/ethernet/freescale/dpaa2/dprtc.h
+diff --git a/drivers/staging/fsl-dpaa2/Kconfig b/drivers/staging/fsl-dpaa2/Kconfig
+index 59aaae7..991e154 100644
+--- a/drivers/staging/fsl-dpaa2/Kconfig
++++ b/drivers/staging/fsl-dpaa2/Kconfig
+@@ -16,11 +16,3 @@ config FSL_DPAA2_ETHSW
+ 	---help---
+ 	Driver for Freescale DPAA2 Ethernet Switch. Select
+ 	BRIDGE to have support for bridge tools.
+-
+-config FSL_DPAA2_PTP_CLOCK
+-	tristate "Freescale DPAA2 PTP Clock"
+-	depends on FSL_DPAA2_ETH && POSIX_TIMERS
+-	select PTP_1588_CLOCK
+-	help
+-	  This driver adds support for using the DPAA2 1588 timer module
+-	  as a PTP clock.
+diff --git a/drivers/staging/fsl-dpaa2/Makefile b/drivers/staging/fsl-dpaa2/Makefile
+index 464f242..c92ab98 100644
+--- a/drivers/staging/fsl-dpaa2/Makefile
++++ b/drivers/staging/fsl-dpaa2/Makefile
+@@ -3,4 +3,3 @@
+ #
+ 
+ obj-$(CONFIG_FSL_DPAA2_ETHSW)		+= ethsw/
+-obj-$(CONFIG_FSL_DPAA2_PTP_CLOCK)	+= rtc/
+diff --git a/drivers/staging/fsl-dpaa2/rtc/Makefile b/drivers/staging/fsl-dpaa2/rtc/Makefile
+deleted file mode 100644
+index 5468da0..0000000
+--- a/drivers/staging/fsl-dpaa2/rtc/Makefile
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#
+-# Makefile for the Freescale DPAA2 PTP clock
+-#
+-
+-obj-$(CONFIG_FSL_DPAA2_PTP_CLOCK) += dpaa2-rtc.o
+-
+-dpaa2-rtc-objs := rtc.o dprtc.o
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1.7.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
