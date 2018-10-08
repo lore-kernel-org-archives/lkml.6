@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94290C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4D6C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544E521479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54FF52087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNDAa92t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544E521479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbWp3Soe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54FF52087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732427AbeJICFB (ORCPT
+        id S1732441AbeJICFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55020 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732400AbeJICFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:05:00 -0400
+        id S1732099AbeJICFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:05:04 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F0A620645;
-        Mon,  8 Oct 2018 18:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED87A2087D;
+        Mon,  8 Oct 2018 18:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024713;
-        bh=Xo2DQYeQi1G1wV7GKPesZ+qmopyTF4QkyqZoHlr7SVc=;
+        s=default; t=1539024716;
+        bh=g4EHOwaHPfqBFHJI5i9AB1PZvDWmnbg/QZwdfy/YhAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XNDAa92tbhHOEBBuvMWXY83kOdSi7VXYWhAHPmHsymNwUWu9i9uCZ3ZyJ+6slF6ZT
-         A67ooldi3q2g7rk1iWz6VjVUJdDh4WnoHbvEEe3LrMDcNcC6XXvcrX/YRudK5fu/9w
-         iVbqZJ8Yzw9QWKhVzt8ewfVGZ5JLLtT3rzA/hPzs=
+        b=cbWp3SoeCmlZjR9S6c8qKlF3SxJ4OBZIS8ZGDGLK5mcrXIDPZqviclHbs5HWGVxm2
+         bVn20IMCc7BrglbdmRhk1DRQHdLWxzkn2DySElKUv3Af1zzaEIN6Hzt5/rdHIIEeZX
+         lO1/1ICmLGGtC7aqra2N/fsIihc+u6ZQz4ODXB5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Richard Kuo <rkuo@codeaurora.org>,
+        stable@vger.kernel.org, Heinz Mauelshagen <heinzm@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 130/168] arch/hexagon: fix kernel/dma.c build warning
-Date:   Mon,  8 Oct 2018 20:31:50 +0200
-Message-Id: <20181008175624.987354723@linuxfoundation.org>
+Subject: [PATCH 4.18 113/168] dm raid: fix stripe adding reshape deadlock
+Date:   Mon,  8 Oct 2018 20:31:33 +0200
+Message-Id: <20181008175624.344860454@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -65,40 +62,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Heinz Mauelshagen <heinzm@redhat.com>
 
-[ Upstream commit 200f351e27f014fcbf69b544b0b4b72aeaf45fd3 ]
+[ Upstream commit 644e2537fdc77baeeefc829524937bca64329f82 ]
 
-Fix build warning in arch/hexagon/kernel/dma.c by casting a void *
-to unsigned long to match the function parameter type.
+When initiating a stripe adding reshape, a deadlock between
+md_stop_writes() waiting for the sync thread to stop and the running
+sync thread waiting for inactive stripes occurs (this frequently happens
+on single-core but rarely on multi-core systems).
 
-../arch/hexagon/kernel/dma.c: In function 'arch_dma_alloc':
-../arch/hexagon/kernel/dma.c:51:5: warning: passing argument 2 of 'gen_pool_add' makes integer from pointer without a cast [enabled by default]
-../include/linux/genalloc.h:112:19: note: expected 'long unsigned int' but argument is of type 'void *'
+Fix this deadlock by setting MD_RECOVERY_WAIT to have the main MD
+resynchronization thread worker (md_do_sync()) bail out when initiating
+the reshape via constructor arguments.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
-Patch-mainline: linux-kernel @ 07/20/2018, 20:17
-[rkuo@codeaurora.org: fixed architecture name]
-Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
+Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/hexagon/kernel/dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-raid.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
---- a/arch/hexagon/kernel/dma.c
-+++ b/arch/hexagon/kernel/dma.c
-@@ -60,7 +60,7 @@ static void *hexagon_dma_alloc_coherent(
- 			panic("Can't create %s() memory pool!", __func__);
- 		else
- 			gen_pool_add(coherent_pool,
--				pfn_to_virt(max_low_pfn),
-+				(unsigned long)pfn_to_virt(max_low_pfn),
- 				hexagon_coherent_pool_size, -1);
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -3869,14 +3869,13 @@ static int rs_start_reshape(struct raid_
+ 	struct mddev *mddev = &rs->md;
+ 	struct md_personality *pers = mddev->pers;
+ 
++	/* Don't allow the sync thread to work until the table gets reloaded. */
++	set_bit(MD_RECOVERY_WAIT, &mddev->recovery);
++
+ 	r = rs_setup_reshape(rs);
+ 	if (r)
+ 		return r;
+ 
+-	/* Need to be resumed to be able to start reshape, recovery is frozen until raid_resume() though */
+-	if (test_and_clear_bit(RT_FLAG_RS_SUSPENDED, &rs->runtime_flags))
+-		mddev_resume(mddev);
+-
+ 	/*
+ 	 * Check any reshape constraints enforced by the personalility
+ 	 *
+@@ -3900,10 +3899,6 @@ static int rs_start_reshape(struct raid_
+ 		}
  	}
  
+-	/* Suspend because a resume will happen in raid_resume() */
+-	set_bit(RT_FLAG_RS_SUSPENDED, &rs->runtime_flags);
+-	mddev_suspend(mddev);
+-
+ 	/*
+ 	 * Now reshape got set up, update superblocks to
+ 	 * reflect the fact so that a table reload will
 
 
