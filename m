@@ -2,186 +2,164 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=FUZZY_PRICES,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C55C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB74C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D6520645
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:46:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D6520645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 9D7DD2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:47:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7DD2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeJHO5R (ORCPT
+        id S1726867AbeJHO6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 10:57:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41768 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725973AbeJHO5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 10:57:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2BFF8AEBC;
-        Mon,  8 Oct 2018 07:46:51 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 09:46:49 +0200 (CEST)
-From:   Richard Biener <rguenther@suse.de>
-To:     Nadav Amit <namit@vmware.com>
-cc:     Borislav Petkov <bp@alien8.de>,
-        "gcc@gcc.gnu.org" <gcc@gcc.gnu.org>, Michael Matz <matz@suse.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-In-Reply-To: <56EB8A07-8D24-40F1-8CCE-614D7B712519@vmware.com>
-Message-ID: <alpine.LSU.2.20.1810080941400.16707@zhemvz.fhfr.qr>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <4F2F1BCE-7875-4160-9E1E-9F8EF962D989@vmware.com> <FC56B15B-0D4A-4A4A-81DA-A5093B56A210@suse.de> <56EB8A07-8D24-40F1-8CCE-614D7B712519@vmware.com>
-User-Agent: Alpine 2.20 (LSU 67 2015-01-07)
+        Mon, 8 Oct 2018 10:58:06 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39539 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbeJHO6G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 10:58:06 -0400
+Received: by mail-vk1-f193.google.com with SMTP id x140-v6so4343102vkd.6;
+        Mon, 08 Oct 2018 00:47:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AIElAWjEC4+qiV3Uf4xf+PuGd22N3jcTDz6lLt7BuWM=;
+        b=r9msCXA0PS/QHUyfyq0PXohyulRW4GtFwqdjh8MW9seRKzmwvaJpL2USatO/0y8Ocf
+         yDfiC5oBPgihbR0S/mNQEZWlFrVoIE5veddImDhwU9pCK59pVFnJZQRcc6twcQq+k3PU
+         8A7cTRJLbQgm0baPFpLOu9P/nWklTOmstOLqiwwZkTjkwE3cLiR8qXsqcO7pL2O9bAba
+         xAKGZygajC5w0yFgWy2XEyOqdSMFSeOk4OqHA2XHcvaHidol7vKLmGKJZQOcXPgXnc/c
+         ctsk2UIksjyrYxxuh0jSO496YkifxklExqOXyzQtvZQRYJwq1YpwDFZD1Sn6bEIbJlyN
+         LvxQ==
+X-Gm-Message-State: ABuFfoiI7H7GOx50+O8Ai8FXM8UC8QVKOjnB+mZnBUE18FFXGWMvt7uG
+        +wm2QxgVPihY6VFnqkYlLnlTFYYBS3HvZE1kBkw=
+X-Google-Smtp-Source: ACcGV61roA6wLlkVv7sk2NfIm6I4d3sLLnkmtKvKU8cMqiPVN27rjs7bnm1Jeo2z1DhH+O5Fbv/H492gE7znuBqzBIk=
+X-Received: by 2002:a1f:d507:: with SMTP id m7-v6mr8394416vkg.40.1538984861844;
+ Mon, 08 Oct 2018 00:47:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="-1609908220-1676946831-1538984810=:16707"
+References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
+In-Reply-To: <20181005165848.3474-30-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Oct 2018 09:47:29 +0200
+Message-ID: <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
+Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
+ bindings to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Rob,
 
----1609908220-1676946831-1538984810=:16707
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
+> Convert Renesas SoC bindings to DT schema format using json-schema.
+>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-On Sun, 7 Oct 2018, Nadav Amit wrote:
+Thanks for your patch!
 
-> at 9:46 AM, Richard Biener <rguenther@suse.de> wrote:
-> 
-> > On October 7, 2018 6:09:30 PM GMT+02:00, Nadav Amit <namit@vmware.com> wrote:
-> >> at 2:18 AM, Borislav Petkov <bp@alien8.de> wrote:
-> >> 
-> >>> Hi people,
-> >>> 
-> >>> this is an attempt to see whether gcc's inline asm heuristic when
-> >>> estimating inline asm statements' cost for better inlining can be
-> >>> improved.
-> >>> 
-> >>> AFAIU, the problematic arises when one ends up using a lot of inline
-> >>> asm statements in the kernel but due to the inline asm cost
-> >> estimation
-> >>> heuristic which counts lines, I think, for example like in this here
-> >>> macro:
-> >> https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Ftree%2Farch%2Fx86%2Finclude%2Fasm%2Fcpufeature.h%23n162&amp;data=02%7C01%7Cnamit%40vmware.com%7C860403cecb874db64b7e08d62c746f46%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C1%7C0%7C636745275975505381&amp;sdata=Nd0636K9Z1IsUs1RWSRAhVuVboLxlBCB4peiAMfmQzQ%3D&amp;reserved=0
-> >>> the resulting code ends up not inlining the functions themselves
-> >> which
-> >>> use this macro. I.e., you see a CALL <function> instead of its body
-> >>> getting inlined directly.
-> >>> 
-> >>> Even though it should be because the actual instructions are only a
-> >>> couple in most cases and all those other directives end up in another
-> >>> section anyway.
-> >>> 
-> >>> The issue is explained below in the forwarded mail in a larger detail
-> >>> too.
-> >>> 
-> >>> Now, Richard suggested doing something like:
-> >>> 
-> >>> 1) inline asm ("...")
-> >>> 2) asm ("..." : : : : <size-expr>)
-> >>> 3) asm ("...") __attribute__((asm_size(<size-expr>)));
-> >>> 
-> >>> with which user can tell gcc what the size of that inline asm
-> >> statement
-> >>> is and thus allow for more precise cost estimation and in the end
-> >> better
-> >>> inlining.
-> >>> 
-> >>> And FWIW 3) looks pretty straight-forward to me because attributes
-> >> are
-> >>> pretty common anyways.
-> >>> 
-> >>> But I'm sure there are other options and I'm sure people will have
-> >>> better/different ideas so feel free to chime in.
-> >> 
-> >> Thanks for taking care of it. I would like to mention a second issue,
-> >> since
-> >> you may want to resolve both with a single solution: not inlining
-> >> conditional __builtin_constant_p(), in which there are two code-paths -
-> >> one
-> >> for constants and one for variables.
-> >> 
-> >> Consider for example the Linux kernel ilog2 macro, which has a
-> >> condition
-> >> based on __builtin_constant_p() (
-> >> https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Felixir.bootlin.com%2Flinux%2Fv4.19-rc7%2Fsource%2Finclude%2Flinux%2Flog2.h%23L160&amp;data=02%7C01%7Cnamit%40vmware.com%7C860403cecb874db64b7e08d62c746f46%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C1%7C0%7C636745275975515386&amp;sdata=Hk39Za9%2FxcFyK0sGENB24d6QySjsDGzF%2FwqjnUEMiGk%3D&amp;reserved=0
-> >> ). The compiler mistakenly considers the “heavy” code-path that is
-> >> supposed
-> >> to be evaluated only in compilation time to evaluate the code size.
-> > 
-> > But this is a misconception about __builtin_constant_p. It doesn't guard sth like 'constexpr' regions. If you try to use it with those semantics you'll fail (appearantly you do). 
-> > 
-> > Of course IPA CP code size estimates when seeing a constant fed to bcp might be not optimal, that's another issue of course. 
-> 
-> I understand that this is might not be the right way to implement macros
-> such as ilog2() and test_bit(), but this code is around for some time.
-> 
-> I thought of using __builtin_choose_expr() instead of ternary operator, but
-> this introduces a different problem, as the variable version is used instead
-> of the constant one in many cases. From my brief experiments with llvm, it
-> appears that llvm does not have both of these issues (wrong cost attributed
-> to inline asm and conditions based on __builtin_constant_p()).
-> 
-> So what alternative do you propose to implement ilog2() like behavior? I was
-> digging through the gcc code to find a workaround with no success.
+Note that this will need a rebase, as more SoCs/boards have been added
+in -next.
 
-1) Don't try to cheat the compilers constant propagation abilities
-2) Use a language that allows this (C++)
-3) Define (and implement) the corresponding GNU C extension
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
+> @@ -0,0 +1,205 @@
+> +# SPDX-License-Identifier: None
 
-__builtin_constant_p() isn't the right fit (I wonder what it was
-implemented for in the first place though...).
+The old file didn't have an SPDX header, so it was GPL-2.0, implicitly?
 
-I suppose you want sth like
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/arm/shmobile.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
+> +
+> +maintainers:
+> +  - Geert Uytterhoeven <geert+renesas@glider.be>
 
- if (__builtin_constant_p (x))
-   return __constexpr ...;
+Simon Horman <horms@verge.net.au> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
+Magnus Damm <magnus.damm@gmail.com> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
 
-or use a call and have constexpr functions.  Note it wouldn't be
-C++-constexpr like since you want the constexpr evaluation to
-happen very late in the compilation to benefit from optimizations
-and you are fine with the non-constexpr path.
+You had it right in the CC list, though...
 
-Properly defining a language extension is hard.
+> +      - description: RZ/G1M (R8A77430)
+> +        items:
+> +          - enum:
+> +              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
+> +              - iwave,g20d
+> +          - const: iwave,g20m
+> +          - const: renesas,r8a7743
+> +
+> +      - items:
+> +          - enum:
+> +              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
+> +              - iwave,g20m
+> +          - const: renesas,r8a7743
+> +
+> +      - description: RZ/G1N (R8A77440)
+> +        items:
+> +          - enum:
+> +              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
 
-Richard.
+This board belongs under the RZ/G1M section above
+(see also the 7743 in the part number).
 
-> 
-> Thanks,
-> Nadav
-> 
-> 
+> +          - const: renesas,r8a7744
+
+> +      - description: Kingfisher (SBEV-RCAR-KF-M03)
+> +        items:
+> +          - const: shimafuji,kingfisher
+> +          - enum:
+> +              - renesas,h3ulcb
+> +              - renesas,m3ulcb
+> +          - enum:
+> +              - renesas,r8a7795
+> +              - renesas,r8a7796
+
+This looks a bit funny: all other entries have the "const" last, and
+use it for the
+SoC number. May be correct, though.
+To clarify, this is an extension board that can fit both the [HM]3ULCB
+boards (actually also the new M3NULCB, I think).
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Richard Biener <rguenther@suse.de>
-SUSE LINUX GmbH, GF: Felix Imendoerffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nuernberg)
----1609908220-1676946831-1538984810=:16707--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
