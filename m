@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74221C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58010C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F39B214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2189D20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8jUYex6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F39B214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKwX0qHw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2189D20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbeJIBrm (ORCPT
+        id S1727956AbeJIBrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:47:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59116 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:47:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbeJIBrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:47:41 -0400
+        id S1726691AbeJIBro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:47:44 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6C6A2087D;
-        Mon,  8 Oct 2018 18:34:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89D5B21479;
+        Mon,  8 Oct 2018 18:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023679;
-        bh=HQGjTRgYfVSAFmEitE3EMv/Od/ibi8EVlabRmb0IWgI=;
+        s=default; t=1539023682;
+        bh=4b52dB2BGuPdcfsyX174q47AYI+mIbEMUtxi9KsA8Sw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H8jUYex6eMrn6ZuCCYmlRt4zC6LhrBq8nj8BpRiGCEpw0d5TdgiIazCJZN1UNTdsg
-         t6e7my8pnkmP3rEcCdI7E7A0+Kx5RlC39G3rJzrtQxdw1dVNU0yfu0F03eesdBHHXj
-         uHGRzspp5SxdZ5vTS2t7RokvxnHkkVm6kJAZwm5w=
+        b=UKwX0qHwl34+3Pdc2UFruH0Nxg8U+xMeMjq97i6U/FSx69ezbQEsIiuJCR4G8qD/h
+         dWYJcGEvSkZ699cw+yHQvg/IVefVesVkIUbZu+J6XIcYD0XKYJASKU8ndOq5Tpfx1Q
+         XyCPk6yGNZ96HsUjowz3HSgvhKhaId8sVoi78LdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 046/113] spi: sh-msiof: Fix invalid SPI use during system suspend
-Date:   Mon,  8 Oct 2018 20:30:47 +0200
-Message-Id: <20181008175533.144302505@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 024/113] ALSA: snd-aoa: add of_node_put() in error path
+Date:   Mon,  8 Oct 2018 20:30:25 +0200
+Message-Id: <20181008175532.028836424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -64,69 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit ffa69d6a16f686efe45269342474e421f2aa58b2 upstream.
+[ Upstream commit 222bce5eb88d1af656419db04bcd84b2419fb900 ]
 
-If the SPI queue is running during system suspend, the system may lock
-up.
+ Both calls to of_find_node_by_name() and of_get_next_child() return a
+node pointer with refcount incremented thus it must be explicidly
+decremented here after the last usage. As we are assured to have a
+refcounted  np  either from the initial
+of_find_node_by_name(NULL, name); or from the of_get_next_child(gpio, np)
+in the while loop if we reached the error code path below, an
+x of_node_put(np) is needed.
 
-Fix this by stopping/restarting the queue during system suspend/resume
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
-
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[geert: Cleanup, reword]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-sh-msiof.c |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ sound/aoa/core/gpio-feature.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1275,12 +1275,37 @@ static const struct platform_device_id s
- };
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+--- a/sound/aoa/core/gpio-feature.c
++++ b/sound/aoa/core/gpio-feature.c
+@@ -88,8 +88,10 @@ static struct device_node *get_gpio(char
+ 	}
  
-+#ifdef CONFIG_PM_SLEEP
-+static int sh_msiof_spi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(p->master);
-+}
-+
-+static int sh_msiof_spi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(p->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
-+			 sh_msiof_spi_resume);
-+#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver sh_msiof_spi_drv = {
- 	.probe		= sh_msiof_spi_probe,
- 	.remove		= sh_msiof_spi_remove,
- 	.id_table	= spi_driver_ids,
- 	.driver		= {
- 		.name		= "spi_sh_msiof",
-+		.pm		= DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(sh_msiof_match),
- 	},
- };
+ 	reg = of_get_property(np, "reg", NULL);
+-	if (!reg)
++	if (!reg) {
++		of_node_put(np);
+ 		return NULL;
++	}
+ 
+ 	*gpioptr = *reg;
+ 
 
 
