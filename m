@@ -2,82 +2,88 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5BEC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C87CC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7EF52087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:02:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7EF52087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 14FF52087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:02:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FF52087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeJHRNJ (ORCPT
+        id S1727298AbeJHRNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:13:09 -0400
-Received: from mga02.intel.com ([134.134.136.20]:11425 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbeJHRNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:13:09 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 03:02:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,356,1534834800"; 
-   d="scan'208";a="97058705"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 08 Oct 2018 03:02:12 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 08 Oct 2018 13:02:11 +0300
-Date:   Mon, 8 Oct 2018 13:02:11 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: Fix copy/paste on typec_set_vconn_role()
- kerneldoc
-Message-ID: <20181008100211.GA23604@kuha.fi.intel.com>
-References: <20181007234612.94364-1-swboyd@chromium.org>
+        Mon, 8 Oct 2018 13:13:43 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:59536 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726193AbeJHRNn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:13:43 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98A0BOt006317;
+        Mon, 8 Oct 2018 05:02:47 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2mxwhe9xvu-1;
+        Mon, 08 Oct 2018 05:02:46 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 5CAD2611C8BA;
+        Mon,  8 Oct 2018 05:02:46 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 8 Oct 2018
+ 11:02:45 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w98A2j02004216; Mon,
+ 8 Oct 2018 11:02:45 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>
+CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] mfd: wm5110: Add missing ASRC rate register
+Date:   Mon, 8 Oct 2018 11:02:45 +0100
+Message-ID: <20181008100245.27180-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181007234612.94364-1-swboyd@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=722 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810080101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 07, 2018 at 04:46:12PM -0700, Stephen Boyd wrote:
-> This must have been copy pasted from the function above. Fix it.
-> 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/mfd/wm5110-tables.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  drivers/usb/typec/class.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 00141e05bc72..5db0593ca0bd 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -1322,7 +1322,7 @@ void typec_set_pwr_role(struct typec_port *port, enum typec_role role)
->  EXPORT_SYMBOL_GPL(typec_set_pwr_role);
->  
->  /**
-> - * typec_set_pwr_role - Report VCONN source change
-> + * typec_set_vconn_role - Report VCONN source change
->   * @port: The USB Type-C Port which VCONN role changed
->   * @role: Source when @port is sourcing VCONN, or Sink when it's not
->   *
-> -- 
-> Sent by a computer through tubes
-
-Thanks,
-
+diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
+index 1ee68bd440fbc..16c6e2accfaa5 100644
+--- a/drivers/mfd/wm5110-tables.c
++++ b/drivers/mfd/wm5110-tables.c
+@@ -1618,6 +1618,7 @@ static const struct reg_default wm5110_reg_default[] = {
+ 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
+ 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
+ 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
++	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
+ 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
+ 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
+ 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
+@@ -2869,6 +2870,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
+ 	case ARIZONA_ASRC_ENABLE:
+ 	case ARIZONA_ASRC_STATUS:
+ 	case ARIZONA_ASRC_RATE1:
++	case ARIZONA_ASRC_RATE2:
+ 	case ARIZONA_ISRC_1_CTRL_1:
+ 	case ARIZONA_ISRC_1_CTRL_2:
+ 	case ARIZONA_ISRC_1_CTRL_3:
 -- 
-heikki
+2.11.0
+
