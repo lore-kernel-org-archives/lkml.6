@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ABFC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42ECCC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2734C20645
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BC182087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:52:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKDFwpce"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2734C20645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1ddPJO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC182087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732587AbeJICFt (ORCPT
+        id S1732598AbeJICFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:05:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55986 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:05:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727260AbeJICFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:05:48 -0400
+        id S1727260AbeJICFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:05:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA6DB204FD;
-        Mon,  8 Oct 2018 18:52:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D596C204FD;
+        Mon,  8 Oct 2018 18:52:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024760;
-        bh=t9MJBqq3xErjUVwe3uxmIy3MJr5tKgzOZG3ZmN/yG50=;
+        s=default; t=1539024763;
+        bh=0HNTmVqhTPjqQ/VTPHL1+mzxEZXQchjwPK5MCXfkHys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kKDFwpceMmVtRuYsjgz0lsgtnaPdnCFsnqqlAVTGLVdMFs2nwXFFkcxsbTYphBw1X
-         PAKmYUpxLZN6qEyo5wWbo72MQeDfLvh9SQzxfbH3TgTIYRm/Rlhx8uPEJwL0uDGtKj
-         FdFIqK45U4ZnxLg/8vOPHHW4Fzbx9nKBjEuuZePc=
+        b=o1ddPJO6uepoL9ExRzGss7RJjtGBU9LXO8o+doPPlegtj6rHho7naT6RGfxXTQ0wn
+         bl1w+UOAD0MMDbhqenfGNvatgoC7gI2HJWJ7+CnY4PBFT/O4hUM+OB6C0/xwAf24tW
+         P4oZDzuTF0vgkFr23P0T+B125GAbkDBvfBL4PY4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org,
+        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 111/168] drm/nouveau/disp: fix DP disable race
-Date:   Mon,  8 Oct 2018 20:31:31 +0200
-Message-Id: <20181008175624.267549622@linuxfoundation.org>
+Subject: [PATCH 4.18 138/168] cifs: read overflow in is_valid_oplock_break()
+Date:   Mon,  8 Oct 2018 20:31:58 +0200
+Message-Id: <20181008175625.283934273@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -62,108 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e04cfdc9b7398c60dbc70212415ea63b6c6a93ae ]
+[ Upstream commit 097f5863b1a0c9901f180bbd56ae7d630655faaa ]
 
-If a HPD pulse signalling the need to retrain the link occurs between
-the KMS driver releasing the output and the supervisor interrupt that
-finishes the teardown, it was possible get a NULL-ptr deref.
+We need to verify that the "data_offset" is within bounds.
 
-Avoid this by marking the link as inactive earlier.
-
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c   |   17 ++++++++++++-----
- drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c |    6 +++---
- drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c |    2 ++
- drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h |    3 ++-
- 4 files changed, 19 insertions(+), 9 deletions(-)
+ fs/cifs/misc.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-@@ -412,14 +412,10 @@ nvkm_dp_train(struct nvkm_dp *dp, u32 da
- }
- 
- static void
--nvkm_dp_release(struct nvkm_outp *outp, struct nvkm_ior *ior)
-+nvkm_dp_disable(struct nvkm_outp *outp, struct nvkm_ior *ior)
- {
- 	struct nvkm_dp *dp = nvkm_dp(outp);
- 
--	/* Prevent link from being retrained if sink sends an IRQ. */
--	atomic_set(&dp->lt.done, 0);
--	ior->dp.nr = 0;
--
- 	/* Execute DisableLT script from DP Info Table. */
- 	nvbios_init(&ior->disp->engine.subdev, dp->info.script[4],
- 		init.outp = &dp->outp.info;
-@@ -428,6 +424,16 @@ nvkm_dp_release(struct nvkm_outp *outp,
- 	);
- }
- 
-+static void
-+nvkm_dp_release(struct nvkm_outp *outp)
-+{
-+	struct nvkm_dp *dp = nvkm_dp(outp);
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -404,9 +404,17 @@ is_valid_oplock_break(char *buffer, stru
+ 			(struct smb_com_transaction_change_notify_rsp *)buf;
+ 		struct file_notify_information *pnotify;
+ 		__u32 data_offset = 0;
++		size_t len = srv->total_read - sizeof(pSMBr->hdr.smb_buf_length);
 +
-+	/* Prevent link from being retrained if sink sends an IRQ. */
-+	atomic_set(&dp->lt.done, 0);
-+	dp->outp.ior->dp.nr = 0;
-+}
-+
- static int
- nvkm_dp_acquire(struct nvkm_outp *outp)
- {
-@@ -576,6 +582,7 @@ nvkm_dp_func = {
- 	.fini = nvkm_dp_fini,
- 	.acquire = nvkm_dp_acquire,
- 	.release = nvkm_dp_release,
-+	.disable = nvkm_dp_disable,
- };
+ 		if (get_bcc(buf) > sizeof(struct file_notify_information)) {
+ 			data_offset = le32_to_cpu(pSMBr->DataOffset);
  
- static int
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c
-@@ -501,11 +501,11 @@ nv50_disp_super_2_0(struct nv50_disp *di
- 	nv50_disp_super_ied_off(head, ior, 2);
- 
- 	/* If we're shutting down the OR's only active head, execute
--	 * the output path's release function.
-+	 * the output path's disable function.
- 	 */
- 	if (ior->arm.head == (1 << head->id)) {
--		if ((outp = ior->arm.outp) && outp->func->release)
--			outp->func->release(outp, ior);
-+		if ((outp = ior->arm.outp) && outp->func->disable)
-+			outp->func->disable(outp, ior);
- 	}
- }
- 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c
-@@ -93,6 +93,8 @@ nvkm_outp_release(struct nvkm_outp *outp
- 	if (ior) {
- 		outp->acquired &= ~user;
- 		if (!outp->acquired) {
-+			if (outp->func->release && outp->ior)
-+				outp->func->release(outp);
- 			outp->ior->asy.outp = NULL;
- 			outp->ior = NULL;
- 		}
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h
-@@ -41,7 +41,8 @@ struct nvkm_outp_func {
- 	void (*init)(struct nvkm_outp *);
- 	void (*fini)(struct nvkm_outp *);
- 	int (*acquire)(struct nvkm_outp *);
--	void (*release)(struct nvkm_outp *, struct nvkm_ior *);
-+	void (*release)(struct nvkm_outp *);
-+	void (*disable)(struct nvkm_outp *, struct nvkm_ior *);
- };
- 
- #define OUTP_MSG(o,l,f,a...) do {                                              \
++			if (data_offset >
++			    len - sizeof(struct file_notify_information)) {
++				cifs_dbg(FYI, "invalid data_offset %u\n",
++					 data_offset);
++				return true;
++			}
+ 			pnotify = (struct file_notify_information *)
+ 				((char *)&pSMBr->hdr.Protocol + data_offset);
+ 			cifs_dbg(FYI, "dnotify on %s Action: 0x%x\n",
 
 
