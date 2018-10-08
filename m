@@ -2,646 +2,290 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9CAC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947BAC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 583DE2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 374912085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8RsJemJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 583DE2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=Sony.onmicrosoft.com header.i=@Sony.onmicrosoft.com header.b="SHVCh+7m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374912085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbeJHVqv (ORCPT
+        id S1726441AbeJHVsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:46:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbeJHVqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:46:51 -0400
-Received: from dragon (unknown [45.56.155.247])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 762E02075C;
-        Mon,  8 Oct 2018 14:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539009289;
-        bh=WQOtIP6LmXsnnHVRNS1ii5CC225pT3vc6yPCEu3IF1A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l8RsJemJpCgLOpPo6gKj5kxSvTtuPs/lXbdsmqW5fKC1QXlfG/97Iq4LqdbWdTxIa
-         UflwyP++1E3tgcw8r5DBJKypRNQT8srh+jOGahn2xqXQa0JoKJJn+0SAi6bqUJtfdO
-         zsHUEx448NzvIUfiue5A7tjAr+2B2Fy9eKXp8WyA=
-Date:   Mon, 8 Oct 2018 22:34:20 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH v2] ARM: dts: Add support for Liebherr's BK4 device
- (vf610 based)
-Message-ID: <20181008143416.GR3587@dragon>
-References: <20180921152726.31742-1-lukma@denx.de>
- <20180927221831.23659-1-lukma@denx.de>
+        Mon, 8 Oct 2018 17:48:10 -0400
+Received: from mail-cys01nam02on0126.outbound.protection.outlook.com ([104.47.37.126]:22156
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726078AbeJHVsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:48:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
+ s=selector1-Sony-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XooCG2+nw+k8LNeTdSE/lAY8WvXjlN/quNVnY0MXAAs=;
+ b=SHVCh+7mtytxxaqOwvSlVd8R5SUBxYHpiyk4ivT+EWarx38bfzILze+WcajCfLoePGbVMX3y394qECW8rYf2lvCyLEsEIjORsXyoJeKS0Qe2DXM4OO2IQ++WcmQq9nZZkzbuqVGOsGxGFIF6+3Q0+Hz3GPrySV4H03JCr6fpbIQ=
+Received: from DM5PR13CA0068.namprd13.prod.outlook.com (2603:10b6:3:117::30)
+ by MWHPR1301MB2029.namprd13.prod.outlook.com (2603:10b6:301:32::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1228.9; Mon, 8 Oct
+ 2018 14:36:04 +0000
+Received: from SN1NAM02FT027.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::205) by DM5PR13CA0068.outlook.office365.com
+ (2603:10b6:3:117::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1228.11 via Frontend
+ Transport; Mon, 8 Oct 2018 14:36:03 +0000
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of sony.com: DNS Timeout)
+Received: from usculsndmail03v.am.sony.com (160.33.194.230) by
+ SN1NAM02FT027.mail.protection.outlook.com (10.152.72.99) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1228.17 via Frontend Transport; Mon, 8 Oct 2018 14:36:02 +0000
+Received: from usculsndmail14v.am.sony.com (usculsndmail14v.am.sony.com [146.215.230.105])
+        by usculsndmail03v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id w98Ea11X026375;
+        Mon, 8 Oct 2018 14:36:01 GMT
+Received: from USCULXHUB07V.am.sony.com (hub.bc.in.sel.sony.com [146.215.231.168])
+        by usculsndmail14v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id w98Ea1uR016664;
+        Mon, 8 Oct 2018 14:36:01 GMT
+Received: from USCULXMSG01.am.sony.com ([fe80::b09d:6cb6:665e:d1b5]) by
+ USCULXHUB07V.am.sony.com ([146.215.231.168]) with mapi id 14.03.0408.000;
+ Mon, 8 Oct 2018 10:36:01 -0400
+From:   <Tim.Bird@sony.com>
+To:     <laurent.pinchart@ideasonboard.com>
+CC:     <James.Bottomley@hansenpartnership.com>,
+        <ksummit-discuss@lists.linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
+        of discrimination factors
+Thread-Topic: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit
+ list   of discrimination factors
+Thread-Index: AQHUXxMe7pCI5sa9sEalwfJKNlaJiaUVaIrA
+Date:   Mon, 8 Oct 2018 14:36:00 +0000
+Message-ID: <ECADFF3FD767C149AD96A924E7EA6EAF8051747E@USCULXMSG01.am.sony.com>
+References: <20181007085102.17795-1-geert@linux-m68k.org>
+        <20181008022931.GB30346@localhost>
+        <ECADFF3FD767C149AD96A924E7EA6EAF80517449@USCULXMSG01.am.sony.com>
+ <2170645.tuLgNU61gi@avalon>
+In-Reply-To: <2170645.tuLgNU61gi@avalon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [146.215.231.6]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927221831.23659-1-lukma@denx.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:160.33.194.230;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(376002)(39860400002)(396003)(346002)(136003)(2980300002)(199004)(51444003)(189003)(13464003)(33656002)(8746002)(6346003)(47776003)(5660300001)(26005)(66066001)(356003)(2876002)(85326001)(8936002)(186003)(19627235002)(229853002)(316002)(106466001)(246002)(46406003)(966005)(102836004)(54906003)(6916009)(6116002)(446003)(55016002)(478600001)(72206003)(76176011)(2351001)(3846002)(7696005)(50466002)(55846006)(305945005)(2900100001)(2920100001)(11346002)(575784001)(336012)(426003)(86362001)(486006)(2906002)(126002)(476003)(4326008)(7736002)(93886005)(86152003)(6246003)(23726003)(6306002)(97756001)(5001870100001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1301MB2029;H:usculsndmail03v.am.sony.com;FPR:;SPF:TempError;LANG:en;PTR:mail03.sonyusa.com,mail.sonyusa.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT027;1:wUz7nE0Jsu6bwwjP+TJs8JF/xE9yBrpynjY2w0Lu71sa6g9KcujJqy76T72jGOZkx9TX0RqTwvgm4b+0dsSl0UeAZjjBpRCQiLPksZ0Fa3WIa8kLqXg2cZpJ8Gxw3Bjc
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e2d42c54-69bc-4b79-77e8-08d62d2b5f6f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7193020);SRVR:MWHPR1301MB2029;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2029;3:P09a1iHuA5oklH6HfVocqCA+B1bwXdn/UYpKr6XQ70DeMynDLxjI2DIa6sMhtGQRwtPRmsE7HwSM3D2PKKElez1a4sUNSTqK1XjdjA5Nhsn0/VniWKc3ZHYFrSIBr+dSZkjmc+owAVoRSviKrCknnarwJQBVWuIHmf+yC8Dcf84/DedoNRMN68GKZTLp0EtqzmiiIiZSIX21vkrDpQ7DyzWjg6IIPXhXkefOnqyaZG59b0rg/+OfDkUI0Zjp5mkH5QCPJ05Lr9KQcsVXOytb/4nVnBZWlVJvvlPnM+AOgXEmo9FUk3I+UjTUN38uLBBI6I2KjPgF1obu7p+B4mOTBag21Yj53qGoukRiU/tiYIQ=;25:s9/aP7c24gKzy3CYFCXzKnCp1b2LVfjnJJAu1AEmyl8QDSmAmjGw808bAC0rY5cjQ2Z1q97XKebiIh7CESxV4GnkhBrIOlgkR6oYJ8bWQ8OOfoRrnge7gEWIofTAozJFn802tMXkBDasbdPMzaiqlMy9U/UTu79peJ3HWBYYN2wqQzjbo6mI0hgJMfV2vMmtndcsblTLCBeZmHdJhltNBLIHQRokOZ/zCKS4wf/rm+yMpIVXXVUNBSq7xxSAo3dQcQ5kqQMkGVz0XVnf9Z5CgPu4/lJUk8qz3KYjHK6aHN2sB5UEHjRb49ZacPDyaQEkt4+s5UGP18CiYfZRCHI1sA==
+X-MS-TrafficTypeDiagnostic: MWHPR1301MB2029:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2029;31:L2AeteaQKyCjZU+sqCqCABFBQMo3i2XWtWkPzeZtgfnXVHRFJi0AerZcJXqzTGg3IpMyn50FyJQC+pd/DXXXg6/hNb+lnPnpD1rOQ/bDUS2U9oVho/a65r1ZcKf3BN/S3yNzByrfO3AWCiHRsx/uLWOjwNUSgTJ8xHN0080ePrj4xmFqYkAy+dKIio7/rYcztkm4+sWAx2qkCCFy4NNuycwvJ6ho42jk8iSQrMa9Dck=;20:d4Lc+uBzltzJ1YNc2RClLEi0f/lLAVFAgk2CbSjsvyiNMghGoqB/PSL9OJgT219pmA/uNAU4m6gc9rb1Z1bMm08RvwLtBsTYc4s9XhHHeQdOcTInXlOukzr0JmkbsCsXU/nRkqWN52ChtdUKZ8/G1IvvYFCbB5aMNUj4L/C7Y2bEuSiV9sdkbrvel6Wt3DbMSm5LWMpUK6lawb6Nsn4o64qpmPilIDqizV1gGigu8eYWckXHtJWnOqq1c/sKGBPCcOBKTFZaD1ypy6UqWGzKT9Mh6p0UGQcBNTK4JHei0XJGl8jbNQdgzEjSI2LLncK1220GvQfjV+eBIDw6K5/e75cL3kxkJW2VpafBzuPtX07DUp/PC2Zba1oe5zwddDqnedveiLMlk8wTW7SKI20QVRAvSy4cpC+pDDT6AQPIRlO3+dz0hqBF7AxWH3AtJo/eP/gxoAyONtqn2WwCh1VXnQaBavti86lDbH+3hXkFfu9ixHOpgDSydaZPDF6OfGqO
+X-Microsoft-Antispam-PRVS: <MWHPR1301MB202902FD0A44D114A357A920FDE60@MWHPR1301MB2029.namprd13.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(182409339516656)(5213294742642)(209352067349851)(10436049006162);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3231355)(11241501184)(944501410)(52105095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991055);SRVR:MWHPR1301MB2029;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1301MB2029;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2029;4:kaEbN5xsGb4/RhggfP51N6QWiuEN4iJBTidNByq0H52kQHeOScFS2xzfXF+EmuOxk2d5U9p0A2Ojm0qgYoDU0Ici4+WSJ0ZZ028r6We7pJUChR2TDrrQ6Fkf65jy3uvOYujkY6yeOy8HVRucX4YDeEGLSyJhGCsp+FYKoyamdtxt8B/rpKVrt+jPvW4RgT6gi7C6lkdL9SsUwzBDXoB1etqyZvUuoYetERUzs8r66+6gcI3H9sfbDIUztgXuVSaVeLyqPsHQieUyr04veDFBkbL36ColtrSdaiwuHvHhg0p286Q7ipV6vSVA7ZGAM3KLg93DUhSmO5JoWF7RR3++oPUrLrxRrLkU0QFC7H5ucUT389vj2Rr0dnceSFsRf/s0yMcvOMX3C+/tGJJe7n+SEtE6mnpbGpDnTVxbspjDSmA=
+X-Forefront-PRVS: 081904387B
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR1301MB2029;23:H/nSlF2tuyMHFWfJinr+LeKK6HtYBcT3H4+nd/Z?=
+ =?us-ascii?Q?AsytoMNZm9oJXUJT3bc1SvvAcr24oxDwmsdGkKCiIoOsrRgKohOLVosdHVta?=
+ =?us-ascii?Q?63Othb2ourCCjhWy8HKRxMQuBTZN7FTv489cAufJsb+pteWyp4ykXLvMRLGX?=
+ =?us-ascii?Q?Vf5moFOjsOVql+HJzxnHRl/jxy/5XneZbimMmT2L9GaX/dT0LBp+REycgHda?=
+ =?us-ascii?Q?tJKFPmlheCmr5AQrkWaeB2bWaqRZ6tX3nXXs0mzWvt8g4Pt92bOVyv+L01CK?=
+ =?us-ascii?Q?HwfXS7yMy0M2sRmlBTmI87XzeCE55eRzsCI5XmB9ZI6VIHZ31uNEUcJXr2F0?=
+ =?us-ascii?Q?DRgi8RzzDkLXcAIum2vhTeveh0pph0Rmml9B0P1Ur+mfBhvoICM74ERf/5Wz?=
+ =?us-ascii?Q?nk90dHibU/MgEo3UmC0nyygTP+s87qevDUEUvzNSnqJ5zDKOZmTBputhD8ko?=
+ =?us-ascii?Q?lERu79ysVl9CFq+bqqPyWaDffivwk2RAui38SIgQKvBRN+7C6cOrUf31/USQ?=
+ =?us-ascii?Q?Wmw3OSZp52MUdmhz7Mup9TqrkpxLrTXEDIvCP8L7PgIdIg7p2QLqVZnRTyOQ?=
+ =?us-ascii?Q?BQCWCC3Ll4mY0TRw1jsQip6QY0ANmU9XiA7xAcTyTPNqBbI16mOLEhzx0LNX?=
+ =?us-ascii?Q?ZIJ08I3032Xsr0JooDrq8ARynvKuX5k4N3du01Qa3w+s61iMaidomQ9Zb2Gp?=
+ =?us-ascii?Q?T+sqqV7OSATSPpY3AgQgastHUgn9ScHNtHGOvicPCxLAKm6jrm9ewHZT7vmv?=
+ =?us-ascii?Q?RukezkkDh9OTYb07iKJotqTPee6HW1YfxSSI3TMetKDpKd7ysu2V1KK/z6CE?=
+ =?us-ascii?Q?bQt5IEAMFdZnMaKFrWRp3VNdebiM++3+3s4R7su634KTl89QrCzoBg3WTw1F?=
+ =?us-ascii?Q?zdxZz45gcAGUohyMNRBd9r1h5tJf/XGwBgKv+pD2fFXqvhDyMGz70EOr5gI+?=
+ =?us-ascii?Q?4GIehA39yMPlqQfQ+MdAgOLEpkxos1oARNmXLqzKiYgCEms+D4ljpLAlgLV3?=
+ =?us-ascii?Q?FNM7x8KyWMMOcLOTdpkJLQ3fsoIGIHdzTAOEiqzz7LVFMlyOtGKnla+ic/vf?=
+ =?us-ascii?Q?dejarpusSPHrOQNxzvzS3tlE6LwaqDuv8ZbDC3fLIyFpfwMgagOkcihJY6TR?=
+ =?us-ascii?Q?7jBk8uL/KNjEl73eSwECltYOQenKtyv6CkIEQjmUpa1yOWKo4Ok2eLuJdeSb?=
+ =?us-ascii?Q?I197XsPB7mfaDysDL6zmnK9fKHDWZ5fVEnlgAChR2+fPJVQkMhVUKS2Vc0aV?=
+ =?us-ascii?Q?LbyKriuwS/JJSHgZ3L1oGi/m/LuBbJnZUvL5Vu7MHjtcbRSqPPSbZSejwM5d?=
+ =?us-ascii?Q?A52dXUTO4ztwdoZDtOTG2Jovb2cKvJ+KmGd/o9CP/iYSsIrX96sr8Y5I1rEu?=
+ =?us-ascii?Q?wqeXYvtCIbp33ZDP80j1w2F8gOFmJpFyoPfiFcowtHRnmeUV7/QKLlFLmAWK?=
+ =?us-ascii?Q?BR10AcF093w=3D=3D?=
+X-Microsoft-Antispam-Message-Info: +9bDZIf+//joeAk+1qdGHcqVqY+a9BKU0PnpiwjY2qzd3TXsCDaj879QMAIlTU5lAuUZJH2i3p7kNLDbwLXl/dnJneW/T/OrOxPyc1SWXTnncls4futi0gkIBuLJbGsXWn7FHNVZAXVJijgCo3Fd4v0uNkPEyej1P8Z6i7fNvdX17ZbzaE/2lobyj/a5nKvrGGRNF/gvSiRinkn0lKY9LeHtY2nushUffTwvmRenb13Y7GiRBrmB+QkK2zHU17llIz3S1+JoJZwywTvEAdCx/pwDu5zX1/scvgLAIlopMmuRv+pl8Jf00MixTb7tmcxPLvE+sTvE6XIGyH8GPMolN5fIEBEZ6tF4mqNb+VToW4U=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2029;6:lcKeC65hXA4ZNmTMzRd3VqeBViQ2IRB+q80jBqv1xj+3rr1BZvuR6hEKlyKf0yAW+3c3p7eKjvTt5sx9Atm5L/Cs7RgEAPha2FvkLjg1vh9V2jA6h0ns6q2TAM28CCbzi75811bgkcYujDgfADH+O9g8WBu04CLTJWsEId/JopO/lWp59DjBdWv5FwsI8ruHuShheM/S+vVgDvr84dXkM+203/JmWRLwbRlL2Hc5XSqj3HJnaFD8sHJEyIN+G5M+ExdQegzWUa1YYvgI4JEr09ibw511wKfnS0+Y7I6k8KWzP6qtJ1DDb5j9magksqdvIqyov5HjB7pn0bVPt+ia/tVPnKM3rsH0rABdi82aY24tSRCtmuUn/ma9T7/bgd2kFIMf6xL/h0/Q33NffETEMQNtcLo2MSUrBIFnl+cLEtw5K7R1P9mL8/oRK4CqFbdmZefsj1r2Yu8CP2TuIirzVg==;5:KiXlUk9J3YCwJHC+n5NEmc6mD7SX9JKheX6nycYS6Nomz5c/dW51qakUcgbkNnRDdeet0+fTDAtaINfub3ZK59Ql7KZ03hjNkklZsoI0TPhpYftuLOjlzhZqd7HEMxZY+o6rywYA+xTdki1HkO7zjxFIy4yBp0+M9468YbkeRfk=;7:z8Y8TeC+BmFlAFgYtqu67++yag0kGsJE97UoVdP973vCr/S1UJZdu4UGPGn17aMC0pBoZOVbhKuuUrrLVhkw7K+F99XTOtdEfngIJKkPRE+HKMn2RkOhL2eP9FNTODTAdXXPOxpNA+n+3hc8mO1WfmMtWF2ZNt+/L1JZwdnUt/9kfEhnc6+DSCr4JllTPUGXdnY51zc61i3qYugRdJHttHqvanwmiPAHQgDUDRVgqsAQidontAZADNUOAhAk36u8
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2018 14:36:02.4675
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2d42c54-69bc-4b79-77e8-08d62d2b5f6f
+X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[160.33.194.230];Helo=[usculsndmail03v.am.sony.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1301MB2029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 12:18:31AM +0200, Lukasz Majewski wrote:
-> This commit adds DTS support for BK4 device from Liebherr. It
-> uses vf610 SoC from NXP.
-> 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
-> Changes for v2:
-> 
-> - Rename enet_ext and audio_ext oscillator names
-> - Move regulators from simple-bus (and rename to reg_3p3v: regulator-3p3v)
-> - Add stdout-path property to chosen node
-> - Move iomuxc node to the end (as it is so large)
-> - Sort with alphabetical order
-> - Rename the default pinctrl to "hog"
-> - Move LED pins definition from "hog" to "led" group
-> - Add more descriptive names to default pins pinmux definition
-> - Use spi-slave property to describe node working in this mode
-> - Rename the spidev3 node to slave
-> - Introduce new compatible name (lwn,bk4) for spidev driver (to avoid
->   confusion)
-> - Update some compatibles to match current kernel
-> ---
->  arch/arm/boot/dts/Makefile      |   1 +
->  arch/arm/boot/dts/vf610-bk4.dts | 499 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 500 insertions(+)
->  create mode 100644 arch/arm/boot/dts/vf610-bk4.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index b5bd3de87c33..e6f159895fa9 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -577,6 +577,7 @@ dtb-$(CONFIG_SOC_LS1021A) += \
->  	ls1021a-twr.dtb
->  dtb-$(CONFIG_SOC_VF610) += \
->  	vf500-colibri-eval-v3.dtb \
-> +	vf610-bk4.dtb \
->  	vf610-colibri-eval-v3.dtb \
->  	vf610m4-colibri.dtb \
->  	vf610-cosmic.dtb \
-> diff --git a/arch/arm/boot/dts/vf610-bk4.dts b/arch/arm/boot/dts/vf610-bk4.dts
-> new file mode 100644
-> index 000000000000..78c5723d6f64
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/vf610-bk4.dts
-> @@ -0,0 +1,499 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "vf610.dtsi"
-> +
-> +/ {
-> +	model = "Liebherr BK4 controller";
-> +	compatible = "lwn,bk4", "fsl,vf610";
-> +
-> +	chosen {
-> +		stdout-path = &uart1;
-> +	};
-> +
-> +	memory@80000000 {
-> +		reg = <0x80000000 0x8000000>;
-> +	};
-> +
-> +	audio_ext: oscillator-audio {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <24576000>;
-> +	};
-> +
-> +	enet_ext: oscillator-ethernet {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <50000000>;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_gpio_leds>;
-> +
-> +		/* LED D5 */
-> +		led0: heartbeat {
-> +			label = "heartbeat";
-> +			gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
-> +			default-state = "on";
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +
-> +	reg_3p3v: regulator-3p3v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "3P3V";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	reg_vcc_3v3_mcu: regulator-vcc_3v3_mcu {
+> -----Original Message-----
+> From: Laurent Pinchart
+>=20
+> Hi Tim,
+>=20
+> On Monday, 8 October 2018 17:12:05 EEST Tim.Bird@sony.com wrote:
+> > > -----Original Message-----
+> > > From: Josh Triplett
+> > > On Sun, Oct 07, 2018 at 08:18:26PM +0300, Laurent Pinchart wrote:
+> > >> On Sunday, 7 October 2018 14:35:14 EEST Josh Triplett wrote:
+> > >>> On Sun, Oct 07, 2018 at 10:51:02AM +0200, Geert Uytterhoeven wrote:
+> > >>>> Providing an explicit list of discrimination factors may give the
+> > >>>> false impression that discrimination based on other unlisted facto=
+rs
+> > >>>> would be allowed.
+> > >>>>
+> > >>>> Avoid any ambiguity by removing the list, to ensure "a harassment-
+> > >>>> free experience for everyone", period.
+> > >>>
+> > >>> I would suggest reading the commit message that added this in the
+> > >>> first place. "Explicit guidelines have demonstrated success in othe=
+r
+> > >>> projects and other areas of the kernel." See also various compariso=
+ns
+> > >>> of codes of conduct, which make the same point. The point of this l=
+ist
+> > >>> is precisely to serve as one such explicit guideline; removing it
+> > >>> would rather defeat the purpose.
+> > >>>
+> > >>> In any case, this is not the appropriate place for such patches, an=
+y
+> > >>> more than it's the place for patches to the GPL.
+> > >>
+> > >> So what's an appropriate place to discuss the changes that we would
+> > >> like, *together*, to make to the current document and propose
+> upstream ?
+> > >
+> > > I didn't say "not the appropriate place to discuss" (ksummit-discuss =
+is
+> > > not ideal but we don't currently have somewhere better), I said "not =
+the
+> > > appropriate place for such patches".
+> > >
+> > > The Linux kernel is by no means the only project using the Contributo=
+r
+> > > Covenant. In general, we don't encourage people working on significan=
+t
+> > > changes to the Linux kernel to work in private for an extended period
+> > > and only pop up when "done"; rather, we encourage people to start
+> > > conversations early and include others in the design. Along the same
+> > > lines, I'd suggest that patches or ideas for patches belong upstream.
+> > > For instance, the idea of clarifying that email addresses already use=
+d
+> > > on a public mailing list don't count as "private information" seems l=
+ike
+> > > a perfectly reasonable suggestion, and one that other projects would
+> > > benefit from as well.
+> >
+> > So I raised this issue with upstream about 2 weeks ago, and here is my
+> > experience:
+> > 1) I suggested that the email clarification could be put into the coven=
+ant
+> > itself, or in a supporting FAQ.
+> > 2) The project maintainer (Coraline Ada Ehmke) was pleasant and
+> supportive
+> > of changes to enhance the document, and said either approach would be
+> fine.
+> > 3) I noticed that there was a FAQ in progress of being created.
+> > 4) After thinking about it, I decided that I didn't want to alter the
+> > language of the covenant, because I didn't want to dilute the expressio=
+n of
+> > a need to get permission when revealing private information.
+> >
+> > My own opinion is that putting clarifying language in a FAQ is sufficie=
+nt.
+> > So I made the following recommendation for the (not yet included
+> upstream)
+> > FAQ:
+> >
+> > Q: Does the prohibition on publishing private information include email
+> > addresses sent to a public list? A: No. Information that has voluntaril=
+y
+> > been published to a public location does not fall under the category of
+> > private information. Such public information may be used within the
+> context
+> > of the project according to project norms (such as in commit meta-data =
+in
+> > code repositories), without that constituting a breach of the CoC.
+> >
+> > You can see the history of discussion in these two issues, online:
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
+> 3A__github.com_ContributorCovenant_contributor-
+> 5Fcovenant_issues_590&d=3DDwICAg&c=3DfP4tf--1dS0biCFlB0saz0I0kjO5v7-
+> GLPtvShAo4cc&r=3DrUvFawR4KzgZu1gSN5tuozUn7iTTP0Y-
+> INWqfY8MsF0&m=3Db6Q42NB0w9BZPta7p9Iyr2Lw91cD5dszFL52DzV3FL0&s=3D17
+> HaUjlX7xwXIvGmJLYhuclrQ1ze-ySl5xLrWIKUDbU&e=3D
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
+> 3A__github.com_ContributorCovenant_contributor-
+> 5Fcovenant_issues_575&d=3DDwICAg&c=3DfP4tf--1dS0biCFlB0saz0I0kjO5v7-
+> GLPtvShAo4cc&r=3DrUvFawR4KzgZu1gSN5tuozUn7iTTP0Y-
+> INWqfY8MsF0&m=3Db6Q42NB0w9BZPta7p9Iyr2Lw91cD5dszFL52DzV3FL0&s=3Dp
+> MGMapO3n9KVVxipezDC8cn2BvpY2xmJKq0T7p-Gt1E&e=3D
+> >
+> > I hesitated to post these, because a formatting error in one of the pos=
+ts
+> > makes me look a bit dumb. :-)
+> >
+> > I don't know what progress is being made adopting the FAQ, but Coraline
+> > seems very supportive, and I've told here that I will come back and hel=
+p
+> > with it if it stalls.
+> >
+> > Honestly, I believe Linux will adopt its own FAQ or some similar docume=
+nt,
+> > so with the Contributor Covenant adopting the clarification as a separa=
+te
+> > document, I don't know if Linux would inherit it (ie include the Covena=
+nt
+> > FAQ in our source tree).  However, I think that the existence of this e=
+mail
+> > clarification in the upstream FAQ would still have a beneficial effect =
+for
+> > all downstream users of the covenant, so I view this as a useful exerci=
+se.
+>=20
+> The main argument I have heard against amending the code of conduct
+> document
+> itself is that a fork would make it more complicated for project members =
+to
+> understand the expectations, in a similar fashion than the fragmentation
+> created by license forks. If we end up having our own FAQ, which would
+> need to
+> be considered in combination with the main document to understand its
+> impact,
+> doesn't that create the same problem ?
 
-We usually use hyphen rather than underscore in node name for all cases.
-In this case, naming it regulator-vcc3v3mcu looks good to me.
+I'm not currently persuaded by the argument about modifying the CoC.
+I see pros and cons, but 1) we have already changed the wording, and
+2) I suspect that wording changes we adopt will not be that confusing
+to rationalize with the upstream document, and 3) I don't think that
+upstream will change so radically that it will be difficult for us to adopt=
+.
 
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_3v3_mcu";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +	};
-> +};
-> +
-> +&adc0 {
-> +	vref-supply = <&reg_vcc_3v3_mcu>;
-> +	status = "okay";
-> +};
-> +
-> +&adc1 {
-> +	vref-supply = <&reg_vcc_3v3_mcu>;
-> +	status = "okay";
-> +};
-> +
-> +&can0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_can0>;
-> +	status = "okay";
-> +};
-> +
-> +&can1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_can1>;
-> +	status = "okay";
-> +};
-> +
-> +&clks {
-> +	clocks = <&sxosc>, <&fxosc>, <&enet_ext>, <&audio_ext>;
-> +	clock-names = "sxosc", "fxosc", "enet_ext", "audio_ext";
-> +};
-> +
-> +&dspi0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_dspi0>;
-> +	bus-num = <0>;
-> +	status = "okay";
-> +
-> +	spidev0@0 {
-> +		compatible = "lwn,bk4";
-> +		spi-max-frequency = <30000000>;
-> +		reg = <0>;
-> +		fsl,spi-cs-sck-delay = <200>;
-> +		fsl,spi-sck-cs-delay = <400>;
-> +	};
-> +};
-> +
-> +&dspi3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_dspi3>;
-> +	bus-num = <3>;
-> +	status = "okay";
-> +	spi-slave;
-> +
-> +	slave@0 {
-> +		compatible = "lwn,bk4";
-> +		spi-max-frequency = <30000000>;
-> +		reg = <0>;
-> +	};
-> +};
-> +
-> +&edma0 {
-> +	status = "okay";
-> +};
-> +
-> +&edma1 {
-> +	status = "okay";
-> +};
-> +
-> +&esdhc1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_esdhc1>;
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
-> +	status = "okay";
-> +};
-> +
-> +&fec0 {
-> +	phy-mode = "rmii";
-> +	phy-handle = <&ethphy0>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_fec0>;
-> +	status = "okay";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
+So I guess a shorter way of putting this is that I'm not worried about a
+fork.  The document is not long, and there should probably be debate
+in the kernel community before adopting any significant upstream change
+to the CoC. (similar to the debate and eventual rejection of GPL v3)
 
-Please have a newline between properties and child node.
+I have a similar opinion about a supporting FAQ.
+ -- Tim
 
-> +		ethphy0: ethernet-phy@1 {
-> +			reg = <1>;
-> +			clocks = <&clks VF610_CLK_ENET_50M>;
-> +			clock-names = "rmii-ref";
-> +		};
-> +	};
-> +};
-> +
-> +&fec1 {
-> +	phy-mode = "rmii";
-> +	phy-handle = <&ethphy1>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_fec1>;
-> +	status = "okay";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-
-Ditto
-
-> +		ethphy1: ethernet-phy@1 {
-> +			reg = <1>;
-> +			clocks = <&clks VF610_CLK_ENET_50M>;
-> +			clock-names = "rmii-ref";
-> +		};
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c2>;
-> +	status = "okay";
-> +
-> +	eeprom: eeprom@50 {
-
-It might be better to label the node with model name as below.
-
-	24c256: eeprom
-
-> +		compatible = "atmel,24c256";
-> +		reg = <0x50>;
-> +	};
-> +
-> +	rtc: rtc@68 {
-
-	m41t62: rtc
-
-> +		compatible = "st,m41t62";
-> +		reg = <0x68>;
-> +	};
-> +};
-> +
-> +&nfc {
-> +	assigned-clocks = <&clks VF610_CLK_NFC>;
-> +	assigned-clock-rates = <33000000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_nfc>;
-> +	status = "okay";
-> +
-> +	nand@0 {
-> +		compatible = "fsl,vf610-nfc-nandcs";
-> +		reg = <0>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		nand-bus-width = <16>;
-> +		nand-ecc-mode = "hw";
-> +		nand-ecc-strength = <24>;
-> +		nand-ecc-step-size = <2048>;
-> +		nand-on-flash-bbt;
-> +	};
-> +};
-> +
-> +&qspi0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_qspi0>;
-> +	status = "okay";
-> +
-> +	flash0: n25q128a13@0 {
-
-Node name should be generic and label name should be specific.
-
-	n25q128a13_0: flash@0
-
-> +		compatible = "n25q128a13", "jedec,spi-nor";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		spi-max-frequency = <66000000>;
-> +		spi-rx-bus-width = <4>;
-> +		reg = <0>;
-> +	};
-> +
-> +	flash1: n25q128a13@1 {
-
-	n25q128a13_1: flash@1
-
-> +		compatible = "n25q128a13", "jedec,spi-nor";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		spi-max-frequency = <66000000>;
-> +		spi-rx-bus-width = <2>;
-> +		reg = <1>;
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart0>;
-> +	status = "okay";
-> +};
-> +
-> +&uart1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart1>;
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart2>;
-> +	status = "okay";
-> +};
-> +
-> +&uart3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart3>;
-> +	status = "okay";
-> +};
-> +
-> +&usbdev0 {
-> +	disable-over-current;
-> +	status = "okay";
-> +};
-> +
-> +&usbh1 {
-> +	disable-over-current;
-> +	status = "okay";
-> +};
-> +
-> +&usbmisc0 {
-> +	status = "okay";
-> +};
-> +
-> +&usbmisc1 {
-> +	status = "okay";
-> +};
-> +
-> +&usbphy0 {
-> +	status = "okay";
-> +};
-> +
-> +&usbphy1 {
-> +	status = "okay";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_hog>;
-> +
-> +	pinctrl_hog: hoggrp {
-> +		fsl,pins = <
-> +			/* One_Wire_PSU_EN */
-> +			VF610_PAD_PTC29__GPIO_102		0x1183
-> +			/* SPI ENABLE */
-> +			VF610_PAD_PTB26__GPIO_96		0x1183
-> +			/* EB control */
-> +			VF610_PAD_PTE14__GPIO_119		0x1183
-> +			VF610_PAD_PTE4__GPIO_109		0x1181
-> +			/* Feedback_Lines */
-> +			VF610_PAD_PTC31__GPIO_104		0x1181
-> +			VF610_PAD_PTA7__GPIO_134		0x1181
-> +			VF610_PAD_PTD9__GPIO_88		0x1181
-> +			VF610_PAD_PTE1__GPIO_106		0x1183
-> +			VF610_PAD_PTB2__GPIO_24		0x1181
-> +			VF610_PAD_PTB3__GPIO_25		0x1181
-> +			VF610_PAD_PTB1__GPIO_23		0x1181
-> +			/* SDHC Enable */
-> +			VF610_PAD_PTE19__GPIO_124		0x1183
-> +			/* SDHC Overcurrent */
-> +			VF610_PAD_PTB23__GPIO_93		0x1181
-> +			/* GPI */
-> +			VF610_PAD_PTE2__GPIO_107		0x1181
-> +			VF610_PAD_PTE3__GPIO_108		0x1181
-> +			VF610_PAD_PTE5__GPIO_110		0x1181
-> +			VF610_PAD_PTE6__GPIO_111		0x1181
-> +			/* GPO */
-> +			VF610_PAD_PTE0__GPIO_105		0x1183
-> +			VF610_PAD_PTE7__GPIO_112		0x1183
-> +			/* RS485 Control */
-> +			VF610_PAD_PTB8__GPIO_30		0x1183
-> +			VF610_PAD_PTB9__GPIO_31		0x1183
-> +			VF610_PAD_PTE8__GPIO_113		0x1183
-> +			/* MPBUS MPB_EN */
-> +			VF610_PAD_PTE28__GPIO_133		0x1183
-> +			/* MISC */
-> +			VF610_PAD_PTE10__GPIO_115		0x1183
-> +			VF610_PAD_PTE11__GPIO_116		0x1183
-> +			VF610_PAD_PTE17__GPIO_122		0x1183
-> +			VF610_PAD_PTC30__GPIO_103		0x1183
-> +			VF610_PAD_PTB0__GPIO_22		0x1181
-> +			/* RESETINFO */
-> +			VF610_PAD_PTE26__GPIO_131		0x1183
-> +			VF610_PAD_PTD6__GPIO_85		0x1181
-> +			VF610_PAD_PTE27__GPIO_132		0x1181
-> +			VF610_PAD_PTE13__GPIO_118		0x1181
-> +			VF610_PAD_PTE21__GPIO_126		0x1181
-> +			VF610_PAD_PTE22__GPIO_127		0x1181
-> +			/* EE_5V_EN */
-> +			VF610_PAD_PTE18__GPIO_123		0x1183
-> +			/* EE_5V_OC_N */
-> +			VF610_PAD_PTE25__GPIO_130		0x1181
-> +		>;
-> +	};
-> +
-> +	pinctrl_can0: can0grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTB14__CAN0_RX		0x1181
-> +			VF610_PAD_PTB15__CAN0_TX		0x1182
-> +		>;
-> +	};
-> +
-> +	pinctrl_can1: can1grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTB16__CAN1_RX		0x1181
-> +			VF610_PAD_PTB17__CAN1_TX		0x1182
-> +		>;
-> +	};
-> +
-> +	pinctrl_dspi0: dspi0grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTB18__DSPI0_CS1		0x1182
-> +			VF610_PAD_PTB19__DSPI0_CS0		0x1182
-> +			VF610_PAD_PTB20__DSPI0_SIN		0x1181
-> +			VF610_PAD_PTB21__DSPI0_SOUT		0x1182
-> +			VF610_PAD_PTB22__DSPI0_SCK		0x1182
-> +		>;
-> +	};
-> +
-> +	pinctrl_dspi3: dspi3grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTD10__DSPI3_CS0		0x1181
-> +			VF610_PAD_PTD11__DSPI3_SIN		0x1181
-> +			VF610_PAD_PTD12__DSPI3_SOUT		0x1182
-> +			VF610_PAD_PTD13__DSPI3_SCK		0x1181
-> +		>;
-> +	};
-> +
-> +	pinctrl_esdhc1: esdhc1grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTA24__ESDHC1_CLK		0x31ef
-> +			VF610_PAD_PTA25__ESDHC1_CMD		0x31ef
-> +			VF610_PAD_PTA26__ESDHC1_DAT0		0x31ef
-> +			VF610_PAD_PTA27__ESDHC1_DAT1		0x31ef
-> +			VF610_PAD_PTA28__ESDHC1_DATA2		0x31ef
-> +			VF610_PAD_PTA29__ESDHC1_DAT3		0x31ef
-> +			VF610_PAD_PTB28__GPIO_98		0x219d
-> +		>;
-> +	};
-> +
-> +	pinctrl_fec0: fec0grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTA6__RMII_CLKIN		0x30dd
-> +			VF610_PAD_PTC0__ENET_RMII0_MDC		0x30de
-> +			VF610_PAD_PTC1__ENET_RMII0_MDIO	0x30df
-> +			VF610_PAD_PTC2__ENET_RMII0_CRS		0x30dd
-> +			VF610_PAD_PTC3__ENET_RMII0_RXD1	0x30dd
-> +			VF610_PAD_PTC4__ENET_RMII0_RXD0	0x30dd
-> +			VF610_PAD_PTC5__ENET_RMII0_RXER	0x30dd
-> +			VF610_PAD_PTC6__ENET_RMII0_TXD1	0x30de
-> +			VF610_PAD_PTC7__ENET_RMII0_TXD0	0x30de
-> +			VF610_PAD_PTC8__ENET_RMII0_TXEN	0x30de
-> +		>;
-> +	};
-> +
-> +	pinctrl_fec1: fec1grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTC9__ENET_RMII1_MDC		0x30de
-> +			VF610_PAD_PTC10__ENET_RMII1_MDIO	0x30df
-> +			VF610_PAD_PTC11__ENET_RMII1_CRS	0x30dd
-> +			VF610_PAD_PTC12__ENET_RMII1_RXD1	0x30dd
-> +			VF610_PAD_PTC13__ENET_RMII1_RXD0	0x30dd
-> +			VF610_PAD_PTC14__ENET_RMII1_RXER	0x30dd
-> +			VF610_PAD_PTC15__ENET_RMII1_TXD1	0x30de
-> +			VF610_PAD_PTC16__ENET_RMII1_TXD0	0x30de
-> +			VF610_PAD_PTC17__ENET_RMII1_TXEN	0x30de
-> +		>;
-> +	};
-> +
-> +	pinctrl_gpio_leds: gpio_leds {
-
-gpioledsgrp would be more consistent to others.
-
-> +		fsl,pins = <
-> +			/* Heart bit LED */
-> +			VF610_PAD_PTE12__GPIO_117	0x1183
-> +			/* LEDS */
-> +			VF610_PAD_PTE15__GPIO_120	0x1183
-> +			VF610_PAD_PTA12__GPIO_5	0x1183
-> +			VF610_PAD_PTA16__GPIO_6	0x1183
-> +			VF610_PAD_PTE9__GPIO_114	0x1183
-> +			VF610_PAD_PTE20__GPIO_125	0x1183
-> +			VF610_PAD_PTE23__GPIO_128	0x1183
-> +			VF610_PAD_PTE16__GPIO_121	0x1183
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c2: i2c2grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTA22__I2C2_SCL               0x34df
-> +			VF610_PAD_PTA23__I2C2_SDA               0x34df
-> +		>;
-> +	};
-> +
-> +	pinctrl_nfc: nfcgrp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTD23__NF_IO7		0x28df
-> +			VF610_PAD_PTD22__NF_IO6		0x28df
-> +			VF610_PAD_PTD21__NF_IO5		0x28df
-> +			VF610_PAD_PTD20__NF_IO4		0x28df
-> +			VF610_PAD_PTD19__NF_IO3		0x28df
-> +			VF610_PAD_PTD18__NF_IO2		0x28df
-> +			VF610_PAD_PTD17__NF_IO1		0x28df
-> +			VF610_PAD_PTD16__NF_IO0		0x28df
-> +			VF610_PAD_PTB24__NF_WE_B		0x28c2
-> +			VF610_PAD_PTB25__NF_CE0_B		0x28c2
-> +			VF610_PAD_PTB27__NF_RE_B		0x28c2
-> +			VF610_PAD_PTC26__NF_RB_B		0x283d
-> +			VF610_PAD_PTC27__NF_ALE		0x28c2
-> +			VF610_PAD_PTC28__NF_CLE		0x28c2
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart0: uart0grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTB10__UART0_TX		0x21a2
-> +			VF610_PAD_PTB11__UART0_RX		0x21a1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart1: uart1grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTB4__UART1_TX		0x21a2
-> +			VF610_PAD_PTB5__UART1_RX		0x21a1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart2: uart2grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTB6__UART2_TX		0x21a2
-> +			VF610_PAD_PTB7__UART2_RX		0x21a1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart3: uart3grp {
-> +		fsl,pins = <
-> +			VF610_PAD_PTA20__UART3_TX		0x21a2
-> +			VF610_PAD_PTA21__UART3_RX		0x21a1
-> +		>;
-> +	};
-> +
-> +	pinctrl_qspi0: qspi0grp {
-
-This one is out of alphabetic order.
-
-Shawn
-
-> +		fsl,pins = <
-> +			VF610_PAD_PTD0__QSPI0_A_QSCK	0x397f
-> +			VF610_PAD_PTD1__QSPI0_A_CS0	0x397f
-> +			VF610_PAD_PTD2__QSPI0_A_DATA3	0x397f
-> +			VF610_PAD_PTD3__QSPI0_A_DATA2	0x397f
-> +			VF610_PAD_PTD4__QSPI0_A_DATA1	0x397f
-> +			VF610_PAD_PTD5__QSPI0_A_DATA0	0x397f
-> +			VF610_PAD_PTD7__QSPI0_B_QSCK	0x397f
-> +			VF610_PAD_PTD8__QSPI0_B_CS0	0x397f
-> +			VF610_PAD_PTD11__QSPI0_B_DATA1	0x397f
-> +			VF610_PAD_PTD12__QSPI0_B_DATA0	0x397f
-> +		>;
-> +	};
-> +};
-> -- 
-> 2.11.0
-> 
