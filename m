@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941C7C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7553C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6276B2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 596402087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvbFToik"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6276B2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkGWt/fP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596402087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730755AbeJIB5d (ORCPT
+        id S1730768AbeJIB5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45466 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbeJIB5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:32 -0400
+        id S1728026AbeJIB5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:34 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49A8A2064A;
-        Mon,  8 Oct 2018 18:44:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03E3721479;
+        Mon,  8 Oct 2018 18:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024266;
-        bh=WEvr1WTZ4LEYJpfVPbJvGgz7B+Hs2YbWyaAiYgAAaj8=;
+        s=default; t=1539024269;
+        bh=nvwXT6o1JR3W6I81uUIknCsloq36snMUz0maC5ZEmOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IvbFToikPDBEO7cUZBmJqEnOMrPMTf43DcQIchJpXqxvEzsQKaqVq4Ww9ZZysnAwg
-         scnsov69PIuKK/OQ2JuRTwnOQuXMe3fvFJzof7WyvUfB1jYMMHVmjKHUt+TNazW/OM
-         vSzsuibWAUd85iRn/rV0UJ10E6sXiBnQxKo+L+HI=
+        b=VkGWt/fPIQCjT1J+4L52K4PaeV/sbJiqb8KEDiefS8Px15eI42K3hMXzfemSZPI0h
+         QvN3gvqjbh/rflGzKHDgJpu1myhRp+xA93mq3j1ZW4cjNOSvHsJ4PSukKCHIKYd6kf
+         4QvndmnBghpVV2kzCZqrmagcKRXOQRoYgVSb8d7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olaf Hering <olaf@aepfle.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 77/94] xen: avoid crash in disable_hotplug_cpu
-Date:   Mon,  8 Oct 2018 20:31:58 +0200
-Message-Id: <20181008175610.196887565@linuxfoundation.org>
+Subject: [PATCH 4.14 54/94] RDMA/ucma: check fd type in ucma_migrate_id()
+Date:   Mon,  8 Oct 2018 20:31:35 +0200
+Message-Id: <20181008175608.056632534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,83 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olaf Hering <olaf@aepfle.de>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 3366cdb6d350d95466ee430ac50f3c8415ca8f46 ]
+[ Upstream commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 ]
 
-The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
+The current code grabs the private_data of whatever file descriptor
+userspace has supplied and implicitly casts it to a `struct ucma_file *`,
+potentially causing a type confusion.
 
-BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
-Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
-RIP: e030:device_offline+0x9/0xb0
-Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
-RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
-R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
-R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
-FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
-CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
-Call Trace:
- handle_vcpu_hotplug_event+0xb5/0xc0
- xenwatch_thread+0x80/0x140
- ? wait_woken+0x80/0x80
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x40/0x40
- ret_from_fork+0x3a/0x50
+This is probably fine in practice because the pointer is only used for
+comparisons, it is never actually dereferenced; and even in the
+comparisons, it is unlikely that a file from another filesystem would have
+a ->private_data pointer that happens to also be valid in this context.
+But ->private_data is not always guaranteed to be a valid pointer to an
+object owned by the file's filesystem; for example, some filesystems just
+cram numbers in there.
 
-This happens because handle_vcpu_hotplug_event is called twice. In the
-first iteration cpu_present is still true, in the second iteration
-cpu_present is false which causes get_cpu_device to return NULL.
-In case of cpu#0, cpu_online is apparently always true.
+Check the type of the supplied file descriptor to be safe, analogous to how
+other places in the kernel do it.
 
-Fix this crash by checking if the cpu can be hotplugged, which is false
-for a cpu that was just removed.
-
-Also check if the cpu was actually offlined by device_remove, otherwise
-leave the cpu_present state as it is.
-
-Rearrange to code to do all work with device_hotplug_lock held.
-
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/cpu_hotplug.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/infiniband/core/ucma.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/xen/cpu_hotplug.c
-+++ b/drivers/xen/cpu_hotplug.c
-@@ -19,15 +19,16 @@ static void enable_hotplug_cpu(int cpu)
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -124,6 +124,8 @@ static DEFINE_MUTEX(mut);
+ static DEFINE_IDR(ctx_idr);
+ static DEFINE_IDR(multicast_idr);
  
- static void disable_hotplug_cpu(int cpu)
++static const struct file_operations ucma_fops;
++
+ static inline struct ucma_context *_ucma_find_context(int id,
+ 						      struct ucma_file *file)
  {
--	if (cpu_online(cpu)) {
--		lock_device_hotplug();
-+	if (!cpu_is_hotpluggable(cpu))
-+		return;
-+	lock_device_hotplug();
-+	if (cpu_online(cpu))
- 		device_offline(get_cpu_device(cpu));
--		unlock_device_hotplug();
--	}
--	if (cpu_present(cpu))
-+	if (!cpu_online(cpu) && cpu_present(cpu)) {
- 		xen_arch_unregister_cpu(cpu);
--
--	set_cpu_present(cpu, false);
-+		set_cpu_present(cpu, false);
+@@ -1564,6 +1566,10 @@ static ssize_t ucma_migrate_id(struct uc
+ 	f = fdget(cmd.fd);
+ 	if (!f.file)
+ 		return -ENOENT;
++	if (f.file->f_op != &ucma_fops) {
++		ret = -EINVAL;
++		goto file_put;
 +	}
-+	unlock_device_hotplug();
- }
  
- static int vcpu_online(unsigned int cpu)
+ 	/* Validate current fd and prevent destruction of id. */
+ 	ctx = ucma_get_ctx(f.file->private_data, cmd.id);
 
 
