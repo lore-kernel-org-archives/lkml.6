@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65177C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E757FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2555B214DC
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B126821479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeJXm8U0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2555B214DC
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fR3E3GMq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B126821479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732895AbeJICHS (ORCPT
+        id S1732904AbeJICHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:07:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57830 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:07:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727670AbeJICHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:07:17 -0400
+        id S1727670AbeJICHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:07:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D600021479;
-        Mon,  8 Oct 2018 18:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31AB520645;
+        Mon,  8 Oct 2018 18:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024848;
-        bh=Qh8rXzrzSbcolP48fujx/nLatDMSPWgPjBmXTf+h0NM=;
+        s=default; t=1539024851;
+        bh=bBrBJCIE8cROmmmruAs4S82mrt0HLjpYDoGoUOseqYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eeJXm8U0QA4CXsDzOEiFXh1ipQANediD5Ue+IojuJE/yOm3RujdXLuvd0oGNYGasG
-         Jv4zdTChXlDLSInMmVUz8YuB5N9GKniN+Qo+2XyZhbDQf7Nochnarjz0rixtMBqkY+
-         4A3QWmozcazJwmh1qDytxd177fWFx8o6NnWCYnfY=
+        b=fR3E3GMqa4f9/+jOSdjOgqi23XDF5sAqXvg235eGOxIR3iRbydnr+L+gZitzasSxO
+         slhkO6Ha7/Ula+R1tYUArNxtl7F4oEXdKqy1GzQ4rtudYynBfe9OqN4OTlBqki13D5
+         qTWisU3CSn4nYeOWxqlNSkG+OQADb6w42R4LHlaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashish Samant <ashish.samant@oracle.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.18 166/168] ocfs2: fix locking for res->tracking and dlm->tracking_list
-Date:   Mon,  8 Oct 2018 20:32:26 +0200
-Message-Id: <20181008175626.366582279@linuxfoundation.org>
+        stable@vger.kernel.org, Anisse Astier <anisse@astier.eu>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?q?Philip=20M=C3=BCller?= <philm@manjaro.org>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.18 167/168] HID: i2c-hid: disable runtime PM operations on hantick touchpad
+Date:   Mon,  8 Oct 2018 20:32:27 +0200
+Message-Id: <20181008175626.405792150@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -67,47 +65,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ashish Samant <ashish.samant@oracle.com>
+From: Anisse Astier <anisse@astier.eu>
 
-commit cbe355f57c8074bc4f452e5b6e35509044c6fa23 upstream.
+commit 807588ac92018bde88a1958f546438e840eb0158 upstream.
 
-In dlm_init_lockres() we access and modify res->tracking and
-dlm->tracking_list without holding dlm->track_lock.  This can cause list
-corruptions and can end up in kernel panic.
+This hantick HTIX5288 touchpad can quickly fall in a wrong state if
+there are too many open/close operations. This will either make it stop
+reporting any input, or will shift all the input reads by a few bytes,
+making it impossible to decode.
 
-Fix this by locking res->tracking and dlm->tracking_list with
-dlm->track_lock instead of dlm->spinlock.
+Here, we never release the probed touchpad runtime pm while the driver
+is loaded, which should disable all runtime pm suspend/resumes.
 
-Link: http://lkml.kernel.org/r/1529951192-4686-1-git-send-email-ashish.samant@oracle.com
-Signed-off-by: Ashish Samant <ashish.samant@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-Acked-by: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+This fast repetition of sleep/wakeup is also more likely to happen when
+using runtime PM, which is why the quirk is done there, and not for all
+power downs, which would include suspend or module removal.
+
+Signed-off-by: Anisse Astier <anisse@astier.eu>
+Cc: stable@vger.kernel.org
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Tested-by: Philip Müller <philm@manjaro.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/dlm/dlmmaster.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -584,9 +584,9 @@ static void dlm_init_lockres(struct dlm_
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -48,6 +48,7 @@
+ #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
+ #define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
++#define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(3)
  
- 	res->last_used = 0;
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -169,7 +170,8 @@ static const struct i2c_hid_quirks {
+ 	{ USB_VENDOR_ID_WEIDA, USB_DEVICE_ID_WEIDA_8755,
+ 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
+ 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
+-		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
++		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
++		I2C_HID_QUIRK_NO_RUNTIME_PM },
+ 	{ USB_VENDOR_ID_SIS_TOUCH, USB_DEVICE_ID_SIS10FB_TOUCH,
+ 		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
+ 	{ 0, 0 }
+@@ -1106,7 +1108,9 @@ static int i2c_hid_probe(struct i2c_clie
+ 		goto err_mem_free;
+ 	}
  
--	spin_lock(&dlm->spinlock);
-+	spin_lock(&dlm->track_lock);
- 	list_add_tail(&res->tracking, &dlm->tracking_list);
--	spin_unlock(&dlm->spinlock);
-+	spin_unlock(&dlm->track_lock);
+-	pm_runtime_put(&client->dev);
++	if (!(ihid->quirks & I2C_HID_QUIRK_NO_RUNTIME_PM))
++		pm_runtime_put(&client->dev);
++
+ 	return 0;
  
- 	memset(res->lvb, 0, DLM_LVB_LEN);
- 	memset(res->refmap, 0, sizeof(res->refmap));
+ err_mem_free:
+@@ -1132,7 +1136,8 @@ static int i2c_hid_remove(struct i2c_cli
+ 	struct i2c_hid *ihid = i2c_get_clientdata(client);
+ 	struct hid_device *hid;
+ 
+-	pm_runtime_get_sync(&client->dev);
++	if (!(ihid->quirks & I2C_HID_QUIRK_NO_RUNTIME_PM))
++		pm_runtime_get_sync(&client->dev);
+ 	pm_runtime_disable(&client->dev);
+ 	pm_runtime_set_suspended(&client->dev);
+ 	pm_runtime_put_noidle(&client->dev);
 
 
