@@ -2,147 +2,111 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0947C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD87C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB4E20858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=quantenna.com header.i=@quantenna.com header.b="HeGUpLB4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB4E20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=quantenna.com
+	by mail.kernel.org (Postfix) with ESMTP id E0C6F2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:56:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C6F2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeJHVIO (ORCPT
+        id S1726649AbeJHVIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:08:14 -0400
-Received: from mail-eopbgr710067.outbound.protection.outlook.com ([40.107.71.67]:47089
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726056AbeJHVIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:08:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quantenna.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SYLm28gIGsewtcWrn53nf9eTSc+Rv/zuAex8CRgsPYA=;
- b=HeGUpLB4zbe+9D6n672A66HcLDXdg+x/0OIhrAEOEnwciOwaNBu4WU8EsmiptONZa5c7u/Rxpnl0hPrA/DZY7eh111XJ2rGH9oga7Y41SOerttCu7HtixgNbiDVMv0eDjdEFBqk/jRzo6jck/F20mu3TGEmoC6+cu/JWAHR6yzY=
-Received: from BYAPR05MB4597.namprd05.prod.outlook.com (52.135.233.18) by
- BYAPR05MB4038.namprd05.prod.outlook.com (52.135.199.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.20; Mon, 8 Oct 2018 13:56:21 +0000
-Received: from BYAPR05MB4597.namprd05.prod.outlook.com
- ([fe80::fc58:438:5b30:9373]) by BYAPR05MB4597.namprd05.prod.outlook.com
- ([fe80::fc58:438:5b30:9373%4]) with mapi id 15.20.1228.020; Mon, 8 Oct 2018
- 13:56:21 +0000
-From:   Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-To:     Joel Fernandes <joelaf@google.com>
-CC:     Cody Schuffelen <schuffelen@google.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>
-Subject: Re: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation
- device
-Thread-Topic: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation
- device
-Thread-Index: AQHUXBznuCllGId5gkCyxGUX3pr0aaUQ6s2AgAA7YoCABD7vAA==
-Date:   Mon, 8 Oct 2018 13:56:21 +0000
-Message-ID: <20181008135611.otj53psegxtd3hcq@bars>
-References: <20181004195906.201895-1-schuffelen@google.com>
- <20181005143323.ezyd2x6x5ymlb7rg@bars>
- <CAJWu+ooTRUxj2PAiUkgjTLb+VC9OoBpkj9-_ZoC-oCS3owc5Hg@mail.gmail.com>
-In-Reply-To: <CAJWu+ooTRUxj2PAiUkgjTLb+VC9OoBpkj9-_ZoC-oCS3owc5Hg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P191CA0044.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:209:7f::21) To BYAPR05MB4597.namprd05.prod.outlook.com
- (2603:10b6:a03:4c::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sergey.matyukevich.os@quantenna.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.182.157.78]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4038;6:pVfu9Qo9lvaT66jtjDxgHfxGPccTVo8SsnxtEOqmZLHnzJ2bLE0/CEsYLmYnvfgP+krfop/7zbuh3bM6N8fZdNVRJ7cW5DyirDyoWZCZGZeKHEnZTFr1fm93fKpJ5Tr4Oh/DihMvwI0Mx1pPENLum1Bm4njZCTPhYtSspTidKjiSz/LgtwZ8HppTnbGvook0gsXg/JvAdnSA/pd4951rYaoMaGcg6Hq5EXnyar2H1CCHeSCoVAyP2mjc18jkQIzEsu/Uq+I1TzjxfPhKv9xWUG2ASbeV+hWp4J90q6KO9YRf92Rnwobt52e1cMEpiHpKtCS0ebWqV9TBKPw6okopr0fN8hw1uljlbHKPPIQYqHFlzg5Go603tbH0r4BFc2DlCsIcA04xdAp9iTdr2tbFYgJtGyiJrHWy1ViasklxgZ/7QjCBcdPSuInkIrFH8RFDqfOJoJvL4CDQyueZKCYkqg==;5:UVnh6zrjk8O5vA+5h3R7CX/JeKi0CNprl0x+yT0hvs/ohGRYMFMsFx1frCOVWOWi3HoSj1t8x5uOpz9qboxjfNwcd/bSps8mygG4thN5aQ0pdPP6pP7zXCV9uvIc2IzPBHB1As0/8bKh3gz0sindcxeW3L0bTTXAZffdHBTLwGU=;7:FuaKXEB46owJYIh8eJneRu/9Gu89wNGoYcQRGbuY6NLDpvIRY7xdiLsIM7fDD2kj0At05ovZNwyHFddvoWYla4jerrATIbB3quJWDagdLpi+2aT7S3SQQS+wivqgq3NS3Rzi/om6b7SKpO3QuefEqrz1PH0bGo/BtyBoUckFbJkzH4WchbTQKFLJKvTtroIHCVL4rjT8gB/mebNyYceRHVirVaGrH0+K+XIGDuc/7fJHLxFJulS0K6vTfb6cXXak
-x-ms-office365-filtering-correlation-id: a836ac63-3ce4-40d4-ac9f-08d62d25d3fc
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4038;
-x-ms-traffictypediagnostic: BYAPR05MB4038:
-x-microsoft-antispam-prvs: <BYAPR05MB40387FF7E9571D525FD20970A3E60@BYAPR05MB4038.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(211936372134217);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:BYAPR05MB4038;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4038;
-x-forefront-prvs: 081904387B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(376002)(39840400004)(366004)(396003)(346002)(199004)(189003)(26005)(105586002)(102836004)(476003)(11346002)(106356001)(86362001)(14454004)(68736007)(2900100001)(97736004)(6116002)(6916009)(9686003)(6512007)(66066001)(5250100002)(486006)(446003)(3846002)(1076002)(186003)(71200400001)(71190400001)(316002)(33896004)(478600001)(52116002)(25786009)(386003)(6506007)(966005)(76176011)(54906003)(6306002)(256004)(229853002)(305945005)(7736002)(14444005)(81166006)(8676002)(81156014)(33716001)(8936002)(6246003)(53936002)(2906002)(6436002)(5660300001)(99286004)(6486002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4038;H:BYAPR05MB4597.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: quantenna.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 76JG9BrAjikipYm7Niplav4uQ032S5zOQT7eAxX9nsF+3JyYleSFryJ0XSGTNFUE0QvDOKTqrOsw4ozKcm1p8qPROopRbP5RLivMJUmYkPkiUISSQNKHI6bs1GfgmgdXDcZvUwnzgrAoj/ESRlDTTVgIUktxB8eZty2Mh4ZtzAUZvoew3traN8ROkhQj0Dnu/yUfm73AnjeGHuEV4lb8zrpnmKN95Pr7BwFIX0q+jA0K0dbrfKdgBahysJiEX3D2KE+b1w7aJ1c960Q86JEtWo2Ii0BktOYw6jrzGju8CZ2qpt7amK2NezfOxLem2AJCK8FGfPKdayAGmGz1+yvZ3GfLL4DocMBzmrWsTKKz35s=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C1D1C68552113748A0CD96754870DD5F@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 8 Oct 2018 17:08:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36463 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbeJHVIX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:08:23 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y16so20957438wrw.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 06:56:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pyG2nYglB1R6f1kCXFes4f1lgq7wvtusAVuOwgShGjk=;
+        b=n/GQnny+j4rMUmlSP4mXGy1VugOfrn7Mn8d3m0KTxdD7+YE0+IU0dG+CQQXA9fe+lT
+         raut9FvvxDQSyrBC4wM5/wT1hRVLVi+PrQ5FqFbYJ/sMbUaaoJk8dF+xEZMk1lQ4GVaf
+         wXFqz5ZBooDTRqni6Q6KX4a/uLCWCrGQXMAcZnM1gKC5vsF5BbBC7MYJtt3D3j9lrW3F
+         9gIeFDF9nXYwRB6NHUTfQ62K1mz7bf5ddgYBbheAbCZwDRj29nZWbMr9maeyA/VZaekb
+         01Fv/4fZJBvh+keUydNzwOCGa3dq/MjNyQ2VnyrvqJjXvz4e/3eMZbfLubOq1izV6YUk
+         T6Hw==
+X-Gm-Message-State: ABuFfohDjMim2jzsPyFsCy84zCRsvr74hCbOz3gBRPTkkxAJRorl8MnZ
+        +KGjIfXbQ4jyrnrndBOxMEE=
+X-Google-Smtp-Source: ACcGV60kgeEa4kL2CzCkljYp1hTwjdFQRVzksOF0MgdCWxArROgLRBBEHrq9NAldJcRe4MERYaQIBg==
+X-Received: by 2002:adf:a781:: with SMTP id j1-v6mr13998501wrc.277.1539006990944;
+        Mon, 08 Oct 2018 06:56:30 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id j6-v6sm11294802wru.20.2018.10.08.06.56.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 06:56:30 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 6EBD1124BAA; Mon,  8 Oct 2018 15:56:29 +0200 (CEST)
+Date:   Mon, 8 Oct 2018 15:56:29 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     linux-mm@kvack.org
+Cc:     mhocko@suse.com, dan.j.williams@intel.com, yasu.isimatu@gmail.com,
+        rppt@linux.vnet.ibm.com, malat@debian.org,
+        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
+        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
+        david@redhat.com, dave.jiang@intel.com
+Subject: Re: [RFC PATCH v3 0/5] Do not touch pages/zones during hot-remove
+ path
+Message-ID: <20181008135629.GA10959@techadventures.net>
+References: <20181002150029.23461-1-osalvador@techadventures.net>
 MIME-Version: 1.0
-X-OriginatorOrg: quantenna.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a836ac63-3ce4-40d4-ac9f-08d62d25d3fc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 13:56:21.4496
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a355dbce-62b4-4789-9446-c1d5582180ff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4038
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002150029.23461-1-osalvador@techadventures.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Hi Cody,
-> >
-> >>  drivers/net/wireless/Kconfig     |   7 +
-> >>  drivers/net/wireless/Makefile    |   2 +
-> >>  drivers/net/wireless/virt_wifi.c | 618 ++++++++++++++++++++++++++++++=
-+
-> >>  3 files changed, 627 insertions(+)
-> >>  create mode 100644 drivers/net/wireless/virt_wifi.c
-> >
-> > I did a quick check of your patch using checkpatch kernel tool,
-> > here is a summary of its output:
-> >
-> > $ ./scripts/checkpatch.pl --strict test.patch
-> > ...
-> > total: 165 errors, 428 warnings, 9 checks, 634 lines checked
-> >
-> > Most part of those complaints is about either whitespaces or code
-> > idents. I am not sure whether this is a patch itself or email client.
-> > So could you please take a look and run checkpatch on your side.
-> >
->=20
-> Yeah, it could be his email client, weird though because if I pull the
-> patch from the kernel.org archive's mbox though, I don't get any
-> errors except the MAINTAINERS file thing:
->=20
-> wget https://lore.kernel.org/lkml/20181004195906.201895-1-schuffelen@goog=
-le.com/raw
-> -O /tmp/tmp.patch
-> ./scripts/checkpatch.pl --strict /tmp/tmp.patch
->=20
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #167:
-> new file mode 100644
->=20
-> total: 0 errors, 1 warnings, 0 checks, 634 lines checked
+On Tue, Oct 02, 2018 at 05:00:24PM +0200, Oscar Salvador wrote:
+> Oscar Salvador (5):
+>   mm/memory_hotplug: Add nid parameter to arch_remove_memory
+>   mm/memory_hotplug: Create add/del_device_memory functions
+>   mm/memory_hotplug: Check for IORESOURCE_SYSRAM in
+>     release_mem_region_adjustable
+>   mm/memory_hotplug: Move zone/pages handling to offline stage
+>   mm/memory-hotplug: Rework unregister_mem_sect_under_nodes
+> 
+>  arch/ia64/mm/init.c            |   6 +-
+>  arch/powerpc/mm/mem.c          |  13 +---
+>  arch/s390/mm/init.c            |   2 +-
+>  arch/sh/mm/init.c              |   6 +-
+>  arch/x86/mm/init_32.c          |   6 +-
+>  arch/x86/mm/init_64.c          |  10 +--
+>  drivers/base/memory.c          |   9 ++-
+>  drivers/base/node.c            |  38 ++--------
+>  include/linux/memory.h         |   2 +-
+>  include/linux/memory_hotplug.h |  17 +++--
+>  include/linux/node.h           |   7 +-
+>  kernel/memremap.c              |  50 +++++---------
+>  kernel/resource.c              |  15 ++++
+>  mm/memory_hotplug.c            | 153 ++++++++++++++++++++++++++---------------
+>  mm/sparse.c                    |   4 +-
+>  15 files changed, 169 insertions(+), 169 deletions(-)
+> 
+> -- 
+> 2.13.6
 
-Hi Cody and Joel,
+If there are no further comments, I will send this as a patchset without RFC
+later this week.
+Since [1] already landed in mmotm, I will pull out the dependency for [2], and
+change both devm/HMM code.
 
-Please ignore my comment regarding the whitespace issues in the patch.
-I don't see those issues when downloading the patch via gmail server.
-So the issue was on my side.
+[1] https://patchwork.kernel.org/cover/10617699/
+[2] https://patchwork.kernel.org/cover/10613425/
 
-Regards,
-Sergey
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
