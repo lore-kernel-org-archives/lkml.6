@@ -2,138 +2,122 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A51CC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0C6C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F03502077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F2962087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:47:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QYh2fW2w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03502077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn8TqaAy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2962087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbeJHW7Q (ORCPT
+        id S1726647AbeJHW7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:59:16 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45662 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeJHW7Q (ORCPT
+        Mon, 8 Oct 2018 18:59:21 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35581 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbeJHW7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:59:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u12-v6so5428876pfn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 08:46:55 -0700 (PDT)
+        Mon, 8 Oct 2018 18:59:21 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r191-v6so14291976lff.2;
+        Mon, 08 Oct 2018 08:46:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=WRZ8SH/7z5C8CRFIKCnyZ1/qs++nuKhiuRUjQlZnizY=;
-        b=QYh2fW2wt8GMVWiZvBLz2mrdmS3vXYJAvzvu6xzxLR+PtARvTDUAUU1IKDSp0fi8S0
-         Kq7qOt9l2wzafL0okYkptMAhFL3q6MQUVAl7LfGWmAyjK+cFG3F094hxfK/d3IafVMIW
-         PEX/2my/kX4uQ7iUqivYztRfP5GowRGQmBRrc=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Vi2/uku5IYxNJTJmia6m4ECLtTso7nN62ecI51I0Nyw=;
+        b=Bn8TqaAyVPIU8ZwVyHby1iPr3zyePtz8X9zn+LKTWsCSgm3zEpGOoMtTW6RjBTC2e7
+         k7iK4UWG9H/tgOYNMokCCCSZcCQXQi9y1MCaMQJidnIiTsFWe01bKv5i+iD3UKvq4BkG
+         WJv0vDX55rRnBEubufOZFt0YbwfXmH+YoLqKo7lGy5xhTScyyO6E8extIjlUpAJsh1+L
+         QJa2pV762is809d6srBcHZn0K0Xy61WVHy+nScOOT05+6turQjRf/tqDB46PF3fN28G7
+         QXZ0vXO/3WS+Gc3hz8Ekei8CJaoPOOgbrDRkMJAHaPzZEkr5BKONE/2Mlfp1dlcFivja
+         m0sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=WRZ8SH/7z5C8CRFIKCnyZ1/qs++nuKhiuRUjQlZnizY=;
-        b=XN9wkoRR+65VA9W/DDjp70fhp+uat0Y1xmeOLJ9wDWWCKvTQsEIxIJN5C2IsasEPKa
-         pY152W8GkxAj/VIHjRa61DQgfMYIcKfE7G0lEJi4IT1pFWTBCm2cuJIsTnGw6PeaJap0
-         M0vvMCt8RaQc0u3YD3GMFo6zlBrO1vOzTTJb8VqTvCM+7kYwMdUckdS72X0/XMk53ftr
-         KBhFPsNgefY1Ro4zchFRFvZUQu5oE3kdYAN5fDd8JWcapGzheU4TAiz7NZkt+IkUtk+d
-         WItBo9ZWMOzHknBwA0Fx0wOWWGgEHO4LKTKIxeFtHZojp35dIBEOBLoHEltyBOacb1Fh
-         QJdA==
-X-Gm-Message-State: ABuFfohQ0nMsVkVOmb+tohhEivnr7vuNnLdUM6SMsZX7bQJ1wErki7+O
-        UnR+6djI3/XNE9jYZ5CXRuqIsw==
-X-Google-Smtp-Source: ACcGV63WVuzlqLnPatw7ZsQaDWN1KzXUgQ4Dn5Yr4v+BpioG7ZsIzQ7/Z5Q0MVWo6pIcFk5WScXZ+A==
-X-Received: by 2002:a63:ea43:: with SMTP id l3-v6mr21864410pgk.427.1539013614706;
-        Mon, 08 Oct 2018 08:46:54 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm31551807pfk.133.2018.10.08.08.46.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 08:46:53 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 08:46:51 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH sparc-next] sunvdc: Remove VLA usage
-Message-ID: <20181008154651.GA36881@beast>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Vi2/uku5IYxNJTJmia6m4ECLtTso7nN62ecI51I0Nyw=;
+        b=qJ5nOWuG5D7PgatngjOCdISlye7nOJI79SoUvz2+4cWndo9YVWubDWQe1C9P6rx4Mq
+         Newh47lQB4mQrFVkGde/RXMo+uC4t81Bb/GbQE1qdymq8cjXAYHMii+VGIZBiHeESXLe
+         DMN1hoPzn+uYtwAUzrMuhPjnxHr0hXGwNGrUTcHrhvTosZyqHFN4j7ev2LgfYlsdMOc+
+         ajKdqyCVmLw9ypM9smnZ2EWQl+QaAW50PXd4TC67zOLI3i0fO0Z8AeWsWzQVBbvrrntx
+         RPU3aezcA9CpY4c+CEkUM5AMOXv3Fr/57qwiM6hqxwkTA+gjWIqv9Jy1hibeiGtevUI8
+         M5Wg==
+X-Gm-Message-State: ABuFfogfUlg8qoSQXv62oOMJE+q5F1qXU8KzPUHxc/5Jb4FoDyC+53RV
+        yiw5uSXEKOkFGeanECPeV5A=
+X-Google-Smtp-Source: ACcGV62WvMAt4MbuORc0ByGhPQgRKVoU02VOrRdVAYrI8+2zGwg396lAiybNvJvVXPkSzNMz9bi2kg==
+X-Received: by 2002:a19:a501:: with SMTP id o1-v6mr12728776lfe.41.1539013616835;
+        Mon, 08 Oct 2018 08:46:56 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id v85-v6sm3592107lfa.18.2018.10.08.08.46.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 08:46:55 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g9XkF-00035j-7q; Mon, 08 Oct 2018 17:46:56 +0200
+Date:   Mon, 8 Oct 2018 17:46:55 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Tobias Klausmann <klausman@schwarzvogel.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
+Subject: Re: [PATCH stable v2 2/2] termios, tty/tty_baudrate.c: simplify,
+ auto-generate baud table
+Message-ID: <20181008154655.GE3332@localhost>
+References: <20181008040620.1248277-1-hpa@zytor.com>
+ <20181008040620.1248277-3-hpa@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181008040620.1248277-3-hpa@zytor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this moves
-the math for cookies calculation into macros and allocates a fixed size
-array for the maximum number of cookies and adds a runtime sanity check.
-(Note that the size was always fixed, but just hidden from the compiler.)
+On Sun, Oct 07, 2018 at 09:06:20PM -0700, H. Peter Anvin wrote:
+> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
+> 
+> Now when all architectures define BOTHER and IBSHIFT, we can
+> unconditionally rely on these constants. Furthermore, the code can be
+> significantly simplified in a number of places.
+> 
+> Rather than having two tables and needing to be able to keep them in
+> sync at all times, have one auto-generated table. This also lets us
+> avoid the fact that architectures that have CBAUDEX == 0 have BOTHER
+> in a different location that those that don't.
+> 
+> The code for masking CBAUDEX as a fallback is never exercised on any
+> architecture, because for all architectures, either the baud rate
+> table is completely defined for all CBAUD values, or CBAUDEX == 0, so
+> we can just remove it.
+> 
+> Finally, this patch avoids overrunning the baud_table[] for
+> architectures with CBAUDEX == 0.
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+So we need a minimal fix for this only as this patch in particular
+should not be backported to stable.
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/block/sunvdc.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+I'm not sure when I'll have time to review this one thoroughly, so
+perhaps others can chime in meanwhile.
 
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index 5ca56bfae63c..f68e9baffad7 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -36,6 +36,10 @@ MODULE_VERSION(DRV_MODULE_VERSION);
- #define VDC_TX_RING_SIZE	512
- #define VDC_DEFAULT_BLK_SIZE	512
- 
-+#define MAX_XFER_BLKS		(128 * 1024)
-+#define MAX_XFER_SIZE		(MAX_XFER_BLKS / VDC_DEFAULT_BLK_SIZE)
-+#define MAX_RING_COOKIES	((MAX_XFER_BLKS / PAGE_SIZE) + 2)
-+
- #define WAITING_FOR_LINK_UP	0x01
- #define WAITING_FOR_TX_SPACE	0x02
- #define WAITING_FOR_GEN_CMD	0x04
-@@ -450,7 +454,7 @@ static int __send_request(struct request *req)
- {
- 	struct vdc_port *port = req->rq_disk->private_data;
- 	struct vio_dring_state *dr = &port->vio.drings[VIO_DRIVER_TX_RING];
--	struct scatterlist sg[port->ring_cookies];
-+	struct scatterlist sg[MAX_RING_COOKIES];
- 	struct vdc_req_entry *rqe;
- 	struct vio_disk_desc *desc;
- 	unsigned int map_perm;
-@@ -458,6 +462,9 @@ static int __send_request(struct request *req)
- 	u64 len;
- 	u8 op;
- 
-+	if (WARN_ON(port->ring_cookies > MAX_RING_COOKIES))
-+		return -EINVAL;
-+
- 	map_perm = LDC_MAP_SHADOW | LDC_MAP_DIRECT | LDC_MAP_IO;
- 
- 	if (rq_data_dir(req) == READ) {
-@@ -984,9 +991,8 @@ static int vdc_port_probe(struct vio_dev *vdev, const struct vio_device_id *id)
- 		goto err_out_free_port;
- 
- 	port->vdisk_block_size = VDC_DEFAULT_BLK_SIZE;
--	port->max_xfer_size = ((128 * 1024) / port->vdisk_block_size);
--	port->ring_cookies = ((port->max_xfer_size *
--			       port->vdisk_block_size) / PAGE_SIZE) + 2;
-+	port->max_xfer_size = MAX_XFER_SIZE;
-+	port->ring_cookies = MAX_RING_COOKIES;
- 
- 	err = vio_ldc_alloc(&port->vio, &vdc_ldc_cfg, port);
- 	if (err)
--- 
-2.17.1
-
-
--- 
-Kees Cook
-Pixel Security
+Johan
