@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC25CC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C262C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9293820C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66FA72145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:32:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oh0CSZ9o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9293820C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRw4ZF3J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66FA72145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbeJIBpx (ORCPT
+        id S1726723AbeJIBp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:45:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55478 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:45:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbeJIBpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:45:52 -0400
+        id S1726434AbeJIBpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:45:55 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F2602087D;
-        Mon,  8 Oct 2018 18:32:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 737502087D;
+        Mon,  8 Oct 2018 18:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023570;
-        bh=sfDcnVu8XfsGX/eMrsiLVl46oLmxdsg8FIx2B7NgxqQ=;
+        s=default; t=1539023573;
+        bh=8mGZehM15BNl1Au521wrOx+8SghNECH4F3OGzkPqWRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Oh0CSZ9ot9co26T1LVRsom+i3HKLl0Taay27S792wBoDrTHX07xTXPATeWmD8iKX7
-         6XdfTkyWoZSZc2AlBwOB1z33wtdjs4kSqIxKAjDCP02Aw/1zRD9+htKPkEfmhHbkjl
-         JqHjcBMZQdOGk7c9HabgNoCRFRh2XVP3tx+4Ev2U=
+        b=tRw4ZF3JqATmPjIYF9w9UMPdyJivvrpthImoK3dprBIBYupWSaZiaqjBaGdbVn3wK
+         KcfHVRO+bNuOyOUHl8rzgfkARKoOR+Tu7r5xGVTKmdo6Y9CySgDMfPXpFU8///xbSC
+         pvB/gxGhQIBY9lkdTVcdl0wOozfzw56g2thea6BI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 011/113] md-cluster: clear another nodes suspend_area after the copy is finished
-Date:   Mon,  8 Oct 2018 20:30:12 +0200
-Message-Id: <20181008175531.394633401@linuxfoundation.org>
+Subject: [PATCH 4.4 012/113] media: exynos4-is: Prevent NULL pointer dereference in __isp_video_try_fmt()
+Date:   Mon,  8 Oct 2018 20:30:13 +0200
+Message-Id: <20181008175531.449874734@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,72 +64,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit 010228e4a932ca1e8365e3b58c8e1e44c16ff793 ]
+[ Upstream commit 7c1b9a5aeed91bef98988ac0fcf38c8c1f4f9a3a ]
 
-When one node leaves cluster or stops the resyncing
-(resync or recovery) array, then other nodes need to
-call recover_bitmaps to continue the unfinished task.
+This patch fixes potential NULL pointer dereference as indicated
+by the following static checker warning:
 
-But we need to clear suspend_area later after other
-nodes copy the resync information to their bitmap
-(by call bitmap_copy_from_slot). Otherwise, all nodes
-could write to the suspend_area even the suspend_area
-is not handled by any node, because area_resyncing
-returns 0 at the beginning of raid1_write_request.
-Which means one node could write suspend_area while
-another node is resyncing the same area, then data
-could be inconsistent.
+drivers/media/platform/exynos4-is/fimc-isp-video.c:408 isp_video_try_fmt_mplane()
+error: NULL dereference inside function '__isp_video_try_fmt(isp, &f->fmt.pix_mp, (0))()'.
 
-So let's clear suspend_area later to avoid above issue
-with the protection of bm lock. Also it is straightforward
-to clear suspend_area after nodes have copied the resync
-info to bitmap.
+Fixes: 34947b8aebe3: ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
 
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md-cluster.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -239,15 +239,6 @@ static void recover_bitmaps(struct md_th
- 	while (cinfo->recovery_map) {
- 		slot = fls64((u64)cinfo->recovery_map) - 1;
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -391,12 +391,17 @@ static void __isp_video_try_fmt(struct f
+ 				struct v4l2_pix_format_mplane *pixm,
+ 				const struct fimc_fmt **fmt)
+ {
+-	*fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++	const struct fimc_fmt *__fmt;
++
++	__fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++
++	if (fmt)
++		*fmt = __fmt;
  
--		/* Clear suspend_area associated with the bitmap */
--		spin_lock_irq(&cinfo->suspend_lock);
--		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
--			if (slot == s->slot) {
--				list_del(&s->list);
--				kfree(s);
--			}
--		spin_unlock_irq(&cinfo->suspend_lock);
--
- 		snprintf(str, 64, "bitmap%04d", slot);
- 		bm_lockres = lockres_init(mddev, str, NULL, 1);
- 		if (!bm_lockres) {
-@@ -266,6 +257,16 @@ static void recover_bitmaps(struct md_th
- 			pr_err("md-cluster: Could not copy data from bitmap %d\n", slot);
- 			goto dlm_unlock;
- 		}
-+
-+		/* Clear suspend_area associated with the bitmap */
-+		spin_lock_irq(&cinfo->suspend_lock);
-+		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
-+			if (slot == s->slot) {
-+				list_del(&s->list);
-+				kfree(s);
-+			}
-+		spin_unlock_irq(&cinfo->suspend_lock);
-+
- 		if (hi > 0) {
- 			/* TODO:Wait for current resync to get over */
- 			set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+ 	pixm->colorspace = V4L2_COLORSPACE_SRGB;
+ 	pixm->field = V4L2_FIELD_NONE;
+-	pixm->num_planes = (*fmt)->memplanes;
+-	pixm->pixelformat = (*fmt)->fourcc;
++	pixm->num_planes = __fmt->memplanes;
++	pixm->pixelformat = __fmt->fourcc;
+ 	/*
+ 	 * TODO: double check with the docmentation these width/height
+ 	 * constraints are correct.
 
 
