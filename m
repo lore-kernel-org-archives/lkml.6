@@ -2,30 +2,30 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FA1C64EB0
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2A9C64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FEB2075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FEB2075E
+	by mail.kernel.org (Postfix) with ESMTP id 3DEAC2064E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DEAC2064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeJHR0D (ORCPT
+        id S1727634AbeJHR0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:26:03 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39131 "EHLO mail.bootlin.com"
+        Mon, 8 Oct 2018 13:26:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39182 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbeJHR0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:26:03 -0400
+        id S1726193AbeJHR0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:26:12 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B6EEC20DD2; Mon,  8 Oct 2018 12:15:01 +0200 (CEST)
+        id D77A32090A; Mon,  8 Oct 2018 12:15:11 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 57000207F3;
+        by mail.bootlin.com (Postfix) with ESMTPSA id A55B720898;
         Mon,  8 Oct 2018 12:14:51 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
@@ -37,87 +37,44 @@ Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
         netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
         antoine.tenart@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [RESEND PATCH v2 0/5] net: phy: mscc: add support for VSC8584 and VSC8574 Microsemi quad-port PHYs
-Date:   Mon,  8 Oct 2018 12:14:40 +0200
-Message-Id: <20181008101445.25946-1-quentin.schulz@bootlin.com>
+Subject: [RESEND PATCH net-next v2 1/5] dt-bindings: net: vsc8531: add two additional LED modes for VSC8584
+Date:   Mon,  8 Oct 2018 12:14:41 +0200
+Message-Id: <20181008101445.25946-2-quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008101445.25946-1-quentin.schulz@bootlin.com>
+References: <20181008101445.25946-1-quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RESEND: rebased on top of latest net-next and on top of latest version of
-"net: phy: mscc: various improvements to Microsemi PHY driver" patch
-series.
+The VSC8584 (and most likely other PHYs in the same generation) has two
+additional LED modes that can be picked, so let's add them.
 
-Both PHYs are 4-port PHY that are 10/100/1000BASE-T, 100BASE-FX, 1000BASE-X
-and triple-speed copper SFP capable, can communicate with the MAC via
-SGMII, QSGMII or 1000BASE-X, supports downshifting and can set the blinking
-pattern of each of its 4 LEDs, supports SyncE as well as HP Auto-MDIX
-detection.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+---
+ include/dt-bindings/net/mscc-phy-vsc8531.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-VSC8574 supports WOL and VSC8584 supports hardware offloading of MACsec.
-
-This patch series add support for 10/100/1000BASE-T, SGMII/QSGMII link with
-the MAC, downshifting, HP Auto-MDIX detection and blinking pattern for
-their 4 LEDs.
-
-They have also an internal Intel 8051 microcontroller whose firmware needs
-to be patched when the PHY is reset. If the 8051's firmware has the
-expected CRC, its patching can be skipped. The microcontroller can be
-accessed from any port of the PHY, though the CRC function can only be done
-through the PHY that is the base PHY of the package (internal address 0)
-due to a limitation of the firmware.
-
-The GPIO register bank is a set of registers that are common to all PHYs in
-the package. So any modification in any register of this bank affects all
-PHYs of the package.
-
-If the PHYs haven't been reset before booting the Linux kernel and were
-configured to use interrupts for e.g. link status updates, it is required
-to clear the interrupts mask register of all PHYs before being able to use
-interrupts with any PHY. The first PHY of the package that will be init
-will take care of clearing all PHYs interrupts mask registers. Thus, we
-need to keep track of the init sequence in the package, if it's already
-been done or if it's to be done.
-
-Most of the init sequence of a PHY of the package is common to all PHYs in
-the package, thus we use the SMI broadcast feature which enables us to
-propagate a write in one register of one PHY to all PHYs in the same
-package.
-
-We also introduce a new development board called PCB120 which exists in
-variants for VSC8584 and VSC8574 (and that's the only difference to the
-best of my knowledge).
-
-I suggest patches 1 to 3 go through net tree and patches 4 and 5 go
-through MIPS tree. Patches going through net tree and those going through
-MIPS tree do not depend on one another.
-
-This patch series depends on this patch series:
-(https://lore.kernel.org/lkml/20181008100728.24959-1-quentin.schulz@bootlin.com/)
-
-Thanks,
-Quentin
-
-Quentin Schulz (5):
-  dt-bindings: net: vsc8531: add two additional LED modes for VSC8584
-  net: phy: mscc: add support for VSC8584 PHY
-  net: phy: mscc: add support for VSC8574 PHY
-  MIPS: mscc: add DT for Ocelot PCB120
-  MIPS: mscc: add PCB120 to the ocelot fitImage
-
- arch/mips/boot/dts/mscc/Makefile              |    2 +-
- arch/mips/boot/dts/mscc/ocelot_pcb120.dts     |  107 ++
- arch/mips/generic/Kconfig                     |    6 +-
- arch/mips/generic/Platform                    |    2 +-
- ...ocelot_pcb123.its.S => board-ocelot.its.S} |   17 +
- drivers/net/phy/mscc.c                        | 1065 +++++++++++++++++
- include/dt-bindings/net/mscc-phy-vsc8531.h    |    2 +
- 7 files changed, 1196 insertions(+), 5 deletions(-)
- create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb120.dts
- rename arch/mips/generic/{board-ocelot_pcb123.its.S => board-ocelot.its.S} (55%)
-
+diff --git a/include/dt-bindings/net/mscc-phy-vsc8531.h b/include/dt-bindings/net/mscc-phy-vsc8531.h
+index 697161f80eb5..9eb2ec2b2ea9 100644
+--- a/include/dt-bindings/net/mscc-phy-vsc8531.h
++++ b/include/dt-bindings/net/mscc-phy-vsc8531.h
+@@ -18,9 +18,11 @@
+ #define VSC8531_LINK_100_1000_ACTIVITY  4
+ #define VSC8531_LINK_10_1000_ACTIVITY   5
+ #define VSC8531_LINK_10_100_ACTIVITY    6
++#define VSC8584_LINK_100FX_1000X_ACTIVITY	7
+ #define VSC8531_DUPLEX_COLLISION        8
+ #define VSC8531_COLLISION               9
+ #define VSC8531_ACTIVITY                10
++#define VSC8584_100FX_1000X_ACTIVITY	11
+ #define VSC8531_AUTONEG_FAULT           12
+ #define VSC8531_SERIAL_MODE             13
+ #define VSC8531_FORCE_LED_OFF           14
 -- 
 2.17.1
 
