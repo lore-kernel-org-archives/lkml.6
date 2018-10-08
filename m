@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E909C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0A8C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB9D0214C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 831C6214C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnG+qPi0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9D0214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSt9DAWw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831C6214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbeJICBL (ORCPT
+        id S1731601AbeJICBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:01:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50108 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:01:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728239AbeJICBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:01:10 -0400
+        id S1728239AbeJICBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:01:13 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 933092087D;
-        Mon,  8 Oct 2018 18:48:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98FA62087D;
+        Mon,  8 Oct 2018 18:48:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024484;
-        bh=7ReIZp4kU6YQDiQkSeUisJNLx6hvU3B5AlscsMvFGpA=;
+        s=default; t=1539024487;
+        bh=F52kD4BKSnAA7YNISwpwmaGqUfyWqYW1qjKocjojYiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HnG+qPi0p3knLiriyuKQc6e7+B9IzOXOSwT7McgGEcd9D7g1CFuXMS9xODVS3mcm9
-         Nns/TPhCaOEUOAuYf9EEVUWDAB+YZiG7HMmzCcs+5ZNCq6LeIxL48ToaZCRzMhsmzX
-         jYHQo3OgXaMh07JwbP7Aw9/zEl8ORC9uz6A58tOw=
+        b=gSt9DAWwQtGtENOTGkyNV4CbOyEY7URs9akyr2ZP5e9rCNtghFhhOcXBijdLtS4/P
+         89EF5HnUyxyHNrQ8SiObCGjAO6SHKs8aEAAH3TFrJ/Km7I88Mfl2Kk6oDmBPAF5bVj
+         U+WvpEERcY/Ma9vCoG7z6rYMoEZnxW08NZrCQYN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 054/168] i2c: uniphier-f: issue STOP only for last message or I2C_M_STOP
-Date:   Mon,  8 Oct 2018 20:30:34 +0200
-Message-Id: <20181008175622.103881874@linuxfoundation.org>
+Subject: [PATCH 4.18 055/168] net: cadence: Fix a sleep-in-atomic-context bug in macb_halt_tx()
+Date:   Mon,  8 Oct 2018 20:30:35 +0200
+Message-Id: <20181008175622.143089820@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,42 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 4c85609b08c4761eca0a40fd7beb06bc650f252d ]
+[ Upstream commit 16fe10cf92783ed9ceb182d6ea2b8adf5e8ec1b8 ]
 
-This driver currently emits a STOP if the next message is not
-I2C_MD_RD.  It should not do it because it disturbs the I2C_RDWR
-ioctl, where read/write transactions are combined without STOP
-between.
+The kernel module may sleep with holding a spinlock.
 
-Issue STOP only when the message is the last one _or_ flagged with
-I2C_M_STOP.
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+[FUNC] usleep_range
+drivers/net/ethernet/cadence/macb_main.c, 648:
+	usleep_range in macb_halt_tx
+drivers/net/ethernet/cadence/macb_main.c, 730:
+	macb_halt_tx in macb_tx_error_task
+drivers/net/ethernet/cadence/macb_main.c, 721:
+	_raw_spin_lock_irqsave in macb_tx_error_task
+
+To fix this bug, usleep_range() is replaced with udelay().
+
+This bug is found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -401,11 +401,8 @@ static int uniphier_fi2c_master_xfer(str
- 		return ret;
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -648,7 +648,7 @@ static int macb_halt_tx(struct macb *bp)
+ 		if (!(status & MACB_BIT(TGO)))
+ 			return 0;
  
- 	for (msg = msgs; msg < emsg; msg++) {
--		/* If next message is read, skip the stop condition */
--		bool stop = !(msg + 1 < emsg && msg[1].flags & I2C_M_RD);
--		/* but, force it if I2C_M_STOP is set */
--		if (msg->flags & I2C_M_STOP)
--			stop = true;
-+		/* Emit STOP if it is the last message or I2C_M_STOP is set. */
-+		bool stop = (msg + 1 == emsg) || (msg->flags & I2C_M_STOP);
+-		usleep_range(10, 250);
++		udelay(250);
+ 	} while (time_before(halt_time, timeout));
  
- 		ret = uniphier_fi2c_master_xfer_one(adap, msg, stop);
- 		if (ret)
+ 	return -ETIMEDOUT;
 
 
