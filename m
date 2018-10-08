@@ -2,127 +2,258 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F298C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A24DC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159012086D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:14:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JdsCmz4H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159012086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C1482087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1482087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbeJHNYP (ORCPT
+        id S1726867AbeJHNYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:24:15 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:52201 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbeJHNYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:24:15 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181008061409epoutp03f097341bbb2390ff7cde6df5db6167a4~bjXk7-sq01809018090epoutp03w
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 06:14:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181008061409epoutp03f097341bbb2390ff7cde6df5db6167a4~bjXk7-sq01809018090epoutp03w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538979249;
-        bh=0S4nDHkx8JPC0zeDzWFw0Npiiaaf8qHi2tRaPcOJtek=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=JdsCmz4HxgA77MufmYYR0i96lvuP5ZQAiLXKkzvRzXdLz0E6kg7cLuIu9zFhrCsv4
-         BDn2V90QlRWAtVlK7vCyM0gcgxq8xMG+pn0OcfgUdC1qkwPyBq1wlXrDSjfiMKLYFS
-         JzHDH2Rplj22ZglWYd4HJ28qnc2Z4BgSajw8d28c=
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20181008061408epcas1p3b75c995e21fd4815b8ee1db77d2a50c1~bjXju8lnP1240112401epcas1p3l;
-        Mon,  8 Oct 2018 06:14:08 +0000 (GMT)
-X-AuditID: b6c32a37-3edff70000000fe9-6d-5bbaf5af923c
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        41.A3.04073.FA5FABB5; Mon,  8 Oct 2018 15:14:07 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find
- processes sharing mm
-Reply-To: ytk.lee@samsung.com
-From:   Yong-Taek Lee <ytk.lee@samsung.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Yong-Taek Lee <ytk.lee@samsung.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "mhocko@suse.com" <mhocko@suse.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
-Date:   Mon, 08 Oct 2018 15:14:07 +0900
-X-CMS-MailID: 20181008061407epcms1p519703ae6373a770160c8f912c7aa9521
+        Mon, 8 Oct 2018 09:24:35 -0400
+Received: from mga01.intel.com ([192.55.52.88]:52092 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726013AbeJHNYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 09:24:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2018 23:14:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,355,1534834800"; 
+   d="scan'208";a="76212362"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Oct 2018 23:14:32 -0700
+Received: from [10.125.251.251] (abudanko-mobl.ccr.corp.intel.com [10.125.251.251])
+        by linux.intel.com (Postfix) with ESMTP id 25BF55801E6;
+        Sun,  7 Oct 2018 23:14:29 -0700 (PDT)
+Subject: [PATCH v11 1/3]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <0ff162a6-67ab-9e73-8d7e-fa57c932ee45@linux.intel.com>
+Date:   Mon, 8 Oct 2018 09:14:29 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdljTQHf9113RBm03zSwu75rDZnFvzX9W
-        i9ffljFb3O9zsJjd8o7V4vF6bgc2j51rVzF5bFrVyeax6dMkdo++LasYPdZvucri8XmTXABb
-        VI5NRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
-        iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCQ4MCveLE3OLSvHS95PxcK0MDAyNToMqE
-        nIxtk16xFvTyVrSe+c7SwLiFs4uRk0NCwERi1u4DTF2MXBxCAjsYJWbs3szSxcjBwSsgKPF3
-        hzBIjbBAtETfjRPsIGEhAVmJ1l4ViLC2xPbdM9hAbDYBTYnr266ygYwREVjDKPFm9xcWkASz
-        QJ7E9K4njBC7eCVmtD9lgbClJbYv3woW5xRwl9i6ZB07RFxU4ubqt3D2+2PzoXpFJFrvnWWG
-        sAUlHvzcDRWXktjVfRnsfgmBVYwS+w+uY4ZwOhgl7k/tZoKo0pe40j8TzOYV8JW4/2MNWDeL
-        gKrE35mXoSa5SGz/9oAR4mp5ie1v5zCDfMwM9Nr6XfoQYT6Jd197WGGe2THvCdR4RYnmE71Q
-        cXGJe/P6oB7wkHi//A4LJHAvMUqsPTWbZQKj/CxE+M5Csm0WwrYFjMyrGMVSC4pz01OLDQuM
-        kaN0EyM4GWqZ72DccM7nEKMAB6MSD++KgF3RQqyJZcWVuYcYJTiYlUR4RbcDhXhTEiurUovy
-        44tKc1KLDzGaAj09kVlKNDkfmKjzSuINTY2MjY0tTMzMzUyNlcR5n0jNjRYSSE8sSc1OTS1I
-        LYLpY+LglGpgnKoheqFRwWLavh+N6d55Jxb1XbQ68HbaNRYBBa8dwYdXH9wu/032xJ4yVmXB
-        41s+SStXf3gmny/McMv0i+nXLdaxJheltlR5cmcfEWozdP1o2RBke0vg/4+KNF3px6HGH+e/
-        /9VTXrLcf5alZPGxiiUfzV98UV7wLUtVQjoqLFtAukHPlSVSiaU4I9FQi7moOBEAIOZZWpwD
-        AAA=
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a
-References: <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
-        <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
-        <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p5>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->On 2018/10/08 10:19, Yong-Taek Lee wrote:
->> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->>         struct mm_struct *mm = NULL;
->>         struct task_struct *task;
->>         int err = 0;
->> +       int mm_users = 0;
->>
->>         task = get_proc_task(file_inode(file));
->>         if (!task)
->> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->>                 struct task_struct *p = find_lock_task_mm(task);
->>
->>                 if (p) {
->> -                       if (atomic_read(&p->mm->mm_users) > 1) {
->> +                       mm_users = atomic_read(&p->mm->mm_users);
->> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p))) {
->
-> How can this work (even before this patch)? When clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
-> is requested, copy_process() calls copy_signal() in order to copy sig->oom_score_adj and
-> sig->oom_score_adj_min before calling copy_mm() in order to increment mm->mm_users, doesn't it?
-> Then, we will get two different "struct signal_struct" with different oom_score_adj/oom_score_adj_min
-> but one "struct mm_struct" shared by two thread groups.
->
 
-Are you talking about race between __set_oom_adj and copy_process?
-If so, i agree with your opinion. It can not set oom_score_adj properly for copied process if __set_oom_adj
-check mm_users before copy_process calls copy_mm after copy_signal. Please correct me if i misunderstood anything.
+The map->data buffer is used to preserve map->base profiling data 
+for writing to disk. AIO map->cblock is used to queue corresponding 
+map->data buffer for asynchronous writing.
 
->>                                 mm = p->mm;
->>                                 atomic_inc(&mm->mm_count);
->>                         }
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v10:
+ - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap()
+ - adjusted error reporting by using %m
+Changes in v9:
+  - implemented NO_AIO and HAVE_AIO_SUPPORT defines to cover cases of 
+    libc implementations without Posix AIO API support
+Changes in v7:
+  - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+  - adjusted setting of priorities for cblocks;
+ Changes in v5:
+  - reshaped layout of data structures;
+  - implemented --aio option;
+ Changes in v4:
+  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
+ Changes in v2:
+  - converted zalloc() to calloc() for allocation of mmap_aio array,
+  - cleared typo and adjusted fallback branch code;
+---
+ tools/perf/Makefile.config |  5 +++++
+ tools/perf/Makefile.perf   |  7 ++++++-
+ tools/perf/util/evlist.c   |  4 +++-
+ tools/perf/util/mmap.c     | 48 +++++++++++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/mmap.h     | 11 +++++++++++
+ 5 files changed, 72 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f6d1a03c7523..2e90f4ce9214 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -355,6 +355,11 @@ endif # NO_LIBELF
+ 
+ ifeq ($(feature-glibc), 1)
+   CFLAGS += -DHAVE_GLIBC_SUPPORT
++  ifndef NO_AIO
++    ifndef BIONIC
++        CFLAGS += -DHAVE_AIO_SUPPORT
++    endif
++  endif
+ endif
+ 
+ ifdef NO_DWARF
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 92514fb3689f..7becc6a72cf2 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -97,8 +97,13 @@ include ../scripts/utilities.mak
+ # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
+ # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
+ # llvm-config is not in $PATH.
+-
++#
+ # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
++#
++# Define NO_AIO if you do not want support of Posix AIO based trace
++# streaming for record mode. Currently Posix AIO trace streaming is
++# supported only when linking with glibc.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index be440df29615..af2f8c965d7a 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1029,7 +1029,9 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+ 	struct mmap_params mp;
+-
++#ifdef HAVE_AIO_SUPPORT
++	mp.nr_cblocks = 0;
++#endif
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+ 	if (!evlist->mmap)
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index cdb95b3a1213..db8f16f8a363 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -153,8 +153,19 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ {
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
++static void perf_mmap__aio_munmap(struct perf_mmap *map)
++{
++	if (map->data)
++		zfree(&map->data);
++}
++#endif
++
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++#ifdef HAVE_AIO_SUPPORT
++	perf_mmap__aio_munmap(map);
++#endif
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -164,8 +175,40 @@ void perf_mmap__munmap(struct perf_mmap *map)
+ 	auxtrace_mmap__munmap(&map->auxtrace_mmap);
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
++static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
++{
++	int delta_max;
++
++	map->nr_cblocks = mp->nr_cblocks;
++	if (map->nr_cblocks) {
++		map->data = malloc(perf_mmap__mmap_len(map));
++		if (!map->data) {
++			pr_debug2("failed to allocate data buffer, error %m\n");
++			return -1;
++		}
++		/*
++		 * Use cblock.aio_fildes value different from -1
++		 * to denote started aio write operation on the
++		 * cblock so it requires explicit record__aio_sync()
++		 * call prior the cblock may be reused again.
++		 */
++		map->cblock.aio_fildes = -1;
++		/*
++		 * Allocate cblock with max priority delta to
++		 * have faster aio write system calls.
++		 */
++		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++		map->cblock.aio_reqprio = delta_max;
++	}
++
++	return 0;
++}
++#endif
++
+ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu)
+ {
++	int rc = 0;
+ 	/*
+ 	 * The last one will be done at perf_mmap__consume(), so that we
+ 	 * make sure we don't prevent tools from consuming every last event in
+@@ -197,7 +240,10 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
+ 
+-	return 0;
++#ifdef HAVE_AIO_SUPPORT
++	rc = perf_mmap__aio_mmap(map, mp);
++#endif
++	return rc;
+ }
+ 
+ static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index e603314dc792..1b63b6cc7cf9 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,9 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#ifdef HAVE_AIO_SUPPORT
++#include <aio.h>
++#endif
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -26,6 +29,11 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++#ifdef HAVE_AIO_SUPPORT
++	void 		 *data;
++	struct aiocb	 cblock;
++	int		 nr_cblocks;
++#endif
+ };
+ 
+ /*
+@@ -59,6 +67,9 @@ enum bkw_mmap_state {
+ struct mmap_params {
+ 	int			    prot, mask;
+ 	struct auxtrace_mmap_params auxtrace_mp;
++#ifdef HAVE_AIO_SUPPORT
++	int			    nr_cblocks;
++#endif
+ };
+ 
+ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu);
