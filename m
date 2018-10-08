@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F0AC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9D2C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 206D52087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41FFE2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Rw5V7Lx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 206D52087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xjYSoysH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41FFE2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbeJIBz3 (ORCPT
+        id S1730252AbeJIBzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43080 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbeJIBz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:28 -0400
+        id S1729556AbeJIBzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E465B21479;
-        Mon,  8 Oct 2018 18:42:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A45BB21479;
+        Mon,  8 Oct 2018 18:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024143;
-        bh=MftI0iGgRXpj2EoQXS9STCUb7G3LQc/v/lwsRdK51tA=;
+        s=default; t=1539024146;
+        bh=9/gifgbEkAhxSyuUFnn5Oog1c/o8vfqVT5Gank0Zg+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Rw5V7LxvCYXKL5enebCAOPEZ/itfYueuDXgxs/LFvDWmR37QPBKPQC3r56q5nbVP
-         05fJ1swju21OUyN0BhoCuF6lse0o04tHgYOoI+KOzgLQCGrOoIe07eDjJWlg+/gAep
-         yqkTbQRF7BW49far7RAIblSsf+Erc6er24F7Dgoc=
+        b=xjYSoysHdlXAs5I6L+6sscM4H3Zz8x+6HL2MT49Xt5VMQIt7qqObXPx62QI3D8f6U
+         lY8LQ/0d+KQuCcSMG9piPYyirvXau6sIiQTnj1SGLFdG6cEZpp3TSG78LEyFBZI2/i
+         u57C2sJgF1h88xPXqftWjljzg6TMxJUoZG2SFkA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 36/94] mac80211: dont Tx a deauth frame if the AP forbade Tx
-Date:   Mon,  8 Oct 2018 20:31:17 +0200
-Message-Id: <20181008175606.730571594@linuxfoundation.org>
+Subject: [PATCH 4.14 37/94] mac80211: shorten the IBSS debug messages
+Date:   Mon,  8 Oct 2018 20:31:18 +0200
+Message-Id: <20181008175606.772361518@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -67,22 +67,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 6c18b27d6e5c6a7206364eae2b47bc8d8b2fa68f ]
+[ Upstream commit c6e57b3896fc76299913b8cfd82d853bee8a2c84 ]
 
-If the driver fails to properly prepare for the channel
-switch, mac80211 will disconnect. If the CSA IE had mode
-set to 1, it means that the clients are not allowed to send
-any Tx on the current channel, and that includes the
-deauthentication frame.
+When tracing is enabled, all the debug messages are recorded and must
+not exceed MAX_MSG_LEN (100) columns. Longer debug messages grant the
+user with:
 
-Make sure that we don't send the deauthentication frame in
-this case.
-
-In iwlwifi, this caused a failure to flush queues since the
-firmware already closed the queues after having parsed the
-CSA IE. Then mac80211 would wait until the deauthentication
-frame would go out (drv_flush(drop=false)) and that would
-never happen.
+WARNING: CPU: 3 PID: 32642 at /tmp/wifi-core-20180806094828/src/iwlwifi-stack-dev/net/mac80211/./trace_msg.h:32 trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
+Workqueue: phy1 ieee80211_iface_work [mac80211]
+ RIP: 0010:trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
+ Call Trace:
+  __sdata_dbg+0xbd/0x120 [mac80211]
+  ieee80211_ibss_rx_queued_mgmt+0x15f/0x510 [mac80211]
+  ieee80211_iface_work+0x21d/0x320 [mac80211]
 
 Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
@@ -90,62 +87,61 @@ Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mlme.c |   17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ net/mac80211/ibss.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -1280,6 +1280,16 @@ ieee80211_sta_process_chanswitch(struct
- 					 cbss->beacon_interval));
- 	return;
-  drop_connection:
-+	/*
-+	 * This is just so that the disconnect flow will know that
-+	 * we were trying to switch channel and failed. In case the
-+	 * mode is 1 (we are not allowed to Tx), we will know not to
-+	 * send a deauthentication frame. Those two fields will be
-+	 * reset when the disconnection worker runs.
-+	 */
-+	sdata->vif.csa_active = true;
-+	sdata->csa_block_tx = csa_ie.mode;
-+
- 	ieee80211_queue_work(&local->hw, &ifmgd->csa_connection_drop_work);
- 	mutex_unlock(&local->chanctx_mtx);
- 	mutex_unlock(&local->mtx);
-@@ -2450,6 +2460,7 @@ static void __ieee80211_disconnect(struc
- 	struct ieee80211_local *local = sdata->local;
- 	struct ieee80211_if_managed *ifmgd = &sdata->u.mgd;
- 	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
-+	bool tx;
- 
- 	sdata_lock(sdata);
- 	if (!ifmgd->associated) {
-@@ -2457,6 +2468,8 @@ static void __ieee80211_disconnect(struc
+--- a/net/mac80211/ibss.c
++++ b/net/mac80211/ibss.c
+@@ -947,8 +947,8 @@ static void ieee80211_rx_mgmt_deauth_ibs
+ 	if (len < IEEE80211_DEAUTH_FRAME_LEN)
  		return;
+ 
+-	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM BSSID=%pM (reason: %d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, reason);
++	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (reason: %d)\n", mgmt->bssid, reason);
+ 	sta_info_destroy_addr(sdata, mgmt->sa);
+ }
+ 
+@@ -966,9 +966,9 @@ static void ieee80211_rx_mgmt_auth_ibss(
+ 	auth_alg = le16_to_cpu(mgmt->u.auth.auth_alg);
+ 	auth_transaction = le16_to_cpu(mgmt->u.auth.auth_transaction);
+ 
+-	ibss_dbg(sdata,
+-		 "RX Auth SA=%pM DA=%pM BSSID=%pM (auth_transaction=%d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, auth_transaction);
++	ibss_dbg(sdata, "RX Auth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (auth_transaction=%d)\n",
++		 mgmt->bssid, auth_transaction);
+ 
+ 	if (auth_alg != WLAN_AUTH_OPEN || auth_transaction != 1)
+ 		return;
+@@ -1175,10 +1175,10 @@ static void ieee80211_rx_bss_info(struct
+ 		rx_timestamp = drv_get_tsf(local, sdata);
  	}
  
-+	tx = !sdata->csa_block_tx;
-+
- 	/* AP is probably out of range (or not reachable for another reason) so
- 	 * remove the bss struct for that AP.
- 	 */
-@@ -2464,7 +2477,7 @@ static void __ieee80211_disconnect(struc
+-	ibss_dbg(sdata,
+-		 "RX beacon SA=%pM BSSID=%pM TSF=0x%llx BCN=0x%llx diff=%lld @%lu\n",
++	ibss_dbg(sdata, "RX beacon SA=%pM BSSID=%pM TSF=0x%llx\n",
+ 		 mgmt->sa, mgmt->bssid,
+-		 (unsigned long long)rx_timestamp,
++		 (unsigned long long)rx_timestamp);
++	ibss_dbg(sdata, "\tBCN=0x%llx diff=%lld @%lu\n",
+ 		 (unsigned long long)beacon_timestamp,
+ 		 (unsigned long long)(rx_timestamp - beacon_timestamp),
+ 		 jiffies);
+@@ -1537,9 +1537,9 @@ static void ieee80211_rx_mgmt_probe_req(
  
- 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH,
- 			       WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY,
--			       true, frame_buf);
-+			       tx, frame_buf);
- 	mutex_lock(&local->mtx);
- 	sdata->vif.csa_active = false;
- 	ifmgd->csa_waiting_bcn = false;
-@@ -2475,7 +2488,7 @@ static void __ieee80211_disconnect(struc
- 	}
- 	mutex_unlock(&local->mtx);
+ 	tx_last_beacon = drv_tx_last_beacon(local);
  
--	ieee80211_report_disconnect(sdata, frame_buf, sizeof(frame_buf), true,
-+	ieee80211_report_disconnect(sdata, frame_buf, sizeof(frame_buf), tx,
- 				    WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY);
+-	ibss_dbg(sdata,
+-		 "RX ProbeReq SA=%pM DA=%pM BSSID=%pM (tx_last_beacon=%d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, tx_last_beacon);
++	ibss_dbg(sdata, "RX ProbeReq SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (tx_last_beacon=%d)\n",
++		 mgmt->bssid, tx_last_beacon);
  
- 	sdata_unlock(sdata);
+ 	if (!tx_last_beacon && is_multicast_ether_addr(mgmt->da))
+ 		return;
 
 
