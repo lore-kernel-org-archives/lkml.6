@@ -2,51 +2,52 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93690C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 406CDC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F15420C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADE221479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJiXtCAa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F15420C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zLeNUqbB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADE221479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbeJIBst (ORCPT
+        id S1728395AbeJIBsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33170 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeJIBss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:48 -0400
+        id S1726522AbeJIBsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F0DA2089D;
-        Mon,  8 Oct 2018 18:35:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F146A2087D;
+        Mon,  8 Oct 2018 18:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023745;
-        bh=UktD41+qXLV/DK+UM45RfNDeUvq3WER+SJBsy7kloaM=;
+        s=default; t=1539023748;
+        bh=QG/2pPU/ouww6Zj2nioihZuNKuYXUAZKJrG1as4sByI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KJiXtCAaJ4AG4q94avjZzxm8MvOARptb3hRWM3EJacZDm4bRBzyUlH7HyAAOb0M38
-         cOO08GgwiyLiUF0iY8Jm+lHbjdYgp1UhG1+Pco5nv46d3GUbfQ0vSD9wFoeltZm+bs
-         ohXpk+J6vL6jry2mI9wCc/VIOg4PoeC6lJU8H3QI=
+        b=zLeNUqbBLPZmiLjRnH3yz3HUIY2phgj8RWeaeJ9uzcZQNMAqceEKcbO8D9FIU1sPt
+         EBzB8kooBEJ35qeHv5VCfo6NmhHnYjsL0W141ziP0yd9/i/BV7K7t0ZlPSfXMfUyvs
+         RSCrt5YgiuPFPefKdYKe1GmXdYlWiQsLfZWhDBKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Yussuf Khalil <dev@pp3345.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 069/113] hwmon: (adt7475) Make adt7475_read_word() return errors
-Date:   Mon,  8 Oct 2018 20:31:10 +0200
-Message-Id: <20181008175534.738440568@linuxfoundation.org>
+Subject: [PATCH 4.4 070/113] i2c: i801: Allow ACPI AML access I/O ports not reserved for SMBus
+Date:   Mon,  8 Oct 2018 20:31:11 +0200
+Message-Id: <20181008175534.815678904@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -64,47 +65,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit f196dec6d50abb2e65fb54a0621b2f1b4d922995 ]
+[ Upstream commit 7fd6d98b89f382d414e1db528e29a67bbd749457 ]
 
-The adt7475_read_word() function was meant to return negative error
-codes on failure.
+Commit 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict
+with PCI BAR") made it possible for AML code to access SMBus I/O ports
+by installing custom SystemIO OpRegion handler and blocking i80i driver
+access upon first AML read/write to this OpRegion.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+However, while ThinkPad T560 does have SystemIO OpRegion declared under
+the SMBus device, it does not access any of the SMBus registers:
+
+    Device (SMBU)
+    {
+        ...
+
+        OperationRegion (SMBP, PCI_Config, 0x50, 0x04)
+        Field (SMBP, DWordAcc, NoLock, Preserve)
+        {
+            ,   5,
+            TCOB,   11,
+            Offset (0x04)
+        }
+
+        Name (TCBV, 0x00)
+        Method (TCBS, 0, NotSerialized)
+        {
+            If ((TCBV == 0x00))
+            {
+            TCBV = (\_SB.PCI0.SMBU.TCOB << 0x05)
+            }
+
+            Return (TCBV) /* \_SB_.PCI0.SMBU.TCBV */
+        }
+
+        OperationRegion (TCBA, SystemIO, TCBS (), 0x10)
+        Field (TCBA, ByteAcc, NoLock, Preserve)
+        {
+            Offset (0x04),
+            ,   9,
+            CPSC,   1
+        }
+    }
+
+Problem with the current approach is that it blocks all I/O port access
+and because this system has touchpad connected to the SMBus controller
+after first AML access (happens during suspend/resume cycle) the
+touchpad fails to work anymore.
+
+Fix this so that we allow ACPI AML I/O port access if it does not touch
+the region reserved for the SMBus.
+
+Fixes: 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict with PCI BAR")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200737
+Reported-by: Yussuf Khalil <dev@pp3345.net>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/adt7475.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-i801.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/adt7475.c
-+++ b/drivers/hwmon/adt7475.c
-@@ -274,14 +274,18 @@ static inline u16 volt2reg(int channel,
- 	return clamp_val(reg, 0, 1023) & (0xff << 2);
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1272,6 +1272,13 @@ static void i801_add_tco(struct i801_pri
  }
  
--static u16 adt7475_read_word(struct i2c_client *client, int reg)
-+static int adt7475_read_word(struct i2c_client *client, int reg)
- {
--	u16 val;
-+	int val1, val2;
+ #ifdef CONFIG_ACPI
++static bool i801_acpi_is_smbus_ioport(const struct i801_priv *priv,
++				      acpi_physical_address address)
++{
++	return address >= priv->smba &&
++	       address <= pci_resource_end(priv->pci_dev, SMBBAR);
++}
++
+ static acpi_status
+ i801_acpi_io_handler(u32 function, acpi_physical_address address, u32 bits,
+ 		     u64 *value, void *handler_context, void *region_context)
+@@ -1287,7 +1294,7 @@ i801_acpi_io_handler(u32 function, acpi_
+ 	 */
+ 	mutex_lock(&priv->acpi_lock);
  
--	val = i2c_smbus_read_byte_data(client, reg);
--	val |= (i2c_smbus_read_byte_data(client, reg + 1) << 8);
-+	val1 = i2c_smbus_read_byte_data(client, reg);
-+	if (val1 < 0)
-+		return val1;
-+	val2 = i2c_smbus_read_byte_data(client, reg + 1);
-+	if (val2 < 0)
-+		return val2;
+-	if (!priv->acpi_reserved) {
++	if (!priv->acpi_reserved && i801_acpi_is_smbus_ioport(priv, address)) {
+ 		priv->acpi_reserved = true;
  
--	return val;
-+	return val1 | (val2 << 8);
- }
- 
- static void adt7475_write_word(struct i2c_client *client, int reg, u16 val)
+ 		dev_warn(&pdev->dev, "BIOS is accessing SMBus registers\n");
 
 
