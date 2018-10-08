@@ -2,353 +2,142 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFC9C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD72C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3182E214C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 663AD20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:42:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HCiURJ/b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3182E214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="kphLejBs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663AD20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeJIDyq (ORCPT
+        id S1726666AbeJID4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:54:46 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37750 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIDyq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:54:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c10-v6so8344001pgq.4
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 13:41:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Fo2DBdobdLQSX1PAP9eWZKIlf1CoApwbGdCUI8SUwOg=;
-        b=HCiURJ/b1ccuiSWuurt0Cuk8Fwye9Ms8/uqAGrxyITheyHJjZCP7UeptVeTScg3ek1
-         PeLpNJ29eGbdcW0iWeKKpRsQOGIC+fAN0EX9/HEGn/RUvqOr7WYEM38W6t60XDlH9oez
-         yWHod8Vd1CYtkCNgH4T6E++mlnCNx++XkEXUdrGBIYNH6Glj6xbaUBNmdMUY81WZgxmp
-         NYvrVdo6LuINTti428uk27v0ofK5YmVxnXSe0fMPW1NXBoJuz/mvpWfg37GavQCqFpai
-         lSBlTscmRDZi1WvPcSYZYWfb163xTtR1RFYgicSw+Y8nMc/4fNY/6Z2n78cYMK346qR+
-         1cPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Fo2DBdobdLQSX1PAP9eWZKIlf1CoApwbGdCUI8SUwOg=;
-        b=JW7Rol8zmEn8PRqm4eV8SCywxmz0hq8uxpvlOmcs5n0lzsUdUD2ZoofqAqqB3e0i9/
-         hEJFR6zh2iBCl/gxv4ceg2cQ77l1fZU5c4G6h+e+s3wpqff5iC/3lXWUBLRIZHl1p6md
-         IorbiofsjxX8Ms81eYsLQXdI81rB+vnWuxYIVSjTkDXPmfkQUH5yStZZwMtiXVnX9t2Y
-         zkwWzqpyMctzkr4j6P8IohzxUhJn2UqfO62hd5WsE/gMMPiMVbEG7Rlhv0+fas/VsqrT
-         rR3+jYIzIQTiNWfAvxjrks/Q2lhv9I2xOrEKOIsoF0k7i+1XAj8YgZ9qDJoR8IlDGeAJ
-         507Q==
-X-Gm-Message-State: ABuFfoj4tZrjSvauIIGFyzH44Pxmau3eUsbL/s9iUTPzoY+OA105R7OI
-        y6EKAsOnQrSmllXPodNWqEYtig==
-X-Google-Smtp-Source: ACcGV61xbty9uPXaIZKD1am3aN1g65xCcO1BlyKGbIWQKbTmf58IjgP56ma0IoAOlYG7Gk82gqT94g==
-X-Received: by 2002:a62:210:: with SMTP id 16-v6mr27676612pfc.100.1539031271310;
-        Mon, 08 Oct 2018 13:41:11 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id n79-v6sm39959883pfk.19.2018.10.08.13.41.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 13:41:10 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 13:41:09 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrea Arcangeli <aarcange@redhat.com>
-cc:     Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-In-Reply-To: <20181005232155.GA2298@redhat.com>
-Message-ID: <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com>
-References: <20180925120326.24392-1-mhocko@kernel.org> <20180925120326.24392-2-mhocko@kernel.org> <alpine.DEB.2.21.1810041302330.16935@chino.kir.corp.google.com> <20181005073854.GB6931@suse.de> <alpine.DEB.2.21.1810051320270.202739@chino.kir.corp.google.com>
- <20181005232155.GA2298@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 8 Oct 2018 23:56:20 -0400
+Received: from mail-he1eur01on0135.outbound.protection.outlook.com ([104.47.0.135]:43473
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726393AbeJID4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:56:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dn2s+4u/oJxR94eCT/5CvGdaNX2DcxdUkmVI/mHFpwY=;
+ b=kphLejBsKafgfcgLCRJelCr+N0QSO3h88aQL/6LfbFHkmlAfsw7KxCDuwLpg+eeaz2PYXTUnLaf3autLWxej6TkFSKdSG+mxjO8DtNW3PpmCnvH0/qI255kHEandDUGEsFhELTRndhTy47gA6u5Q7W6f3Pgu+bPYLs6dqir/8hY=
+Received: from VI1PR0201MB2464.eurprd02.prod.outlook.com (10.168.64.135) by
+ VI1PR0201MB1519.eurprd02.prod.outlook.com (10.166.139.153) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.28; Mon, 8 Oct 2018 20:42:41 +0000
+Received: from VI1PR0201MB2464.eurprd02.prod.outlook.com
+ ([fe80::9d75:5038:5eed:c905]) by VI1PR0201MB2464.eurprd02.prod.outlook.com
+ ([fe80::9d75:5038:5eed:c905%7]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
+ 20:42:41 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+CC:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: dpot-dac: mark expected switch fall-through
+Thread-Topic: [PATCH] iio: dpot-dac: mark expected switch fall-through
+Thread-Index: AQHUXy1dR3DPrllFh0W6+gqsRwwRKqUV0IsA
+Date:   Mon, 8 Oct 2018 20:42:41 +0000
+Message-ID: <ded46d23-0ec9-3fc8-3fc2-fa8003639272@axentia.se>
+References: <20181008173528.GA31787@embeddedor.com>
+In-Reply-To: <20181008173528.GA31787@embeddedor.com>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR0701CA0076.eurprd07.prod.outlook.com
+ (2603:10a6:3:64::20) To VI1PR0201MB2464.eurprd02.prod.outlook.com
+ (2603:10a6:800:55::7)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0201MB1519;6:+gmUnvf+qyTWbid6MJ6IFdpR9ouVxNONNf+tQrp8EvVlYfwjptbFHFlgGoTI8T0DA7aQWbGA+i6L9aZF+6Ele7M4IJ/UF+DAGGgDPiJFKO14Q5q+kFgOZHJZC8S0HBhs9X0AlRG+PEP8H9bt160gGMDCjDEIasiUivIxSnyMi3L5GTrXJcMrptRkgxRa/C7xUSMDUGlSFiqP2ih4UghH+dv/NmqgiXD/YcrhQehE3N/Klg3QHe36EK+yZBkBhwfaS+6sLBdpfEOxfBBUcLj9CW6lp30h6GtNu93VcGy0vEvQ+JzNotnPMJMeB/efTm88xBFXKtmjpKHVC7lHWQSJT5JssDQxeDYGDwFam9ttQDprqRHcFr69SFVYKV1UD1BZmScAJidCCO4drAt+kgIcQ8n4/qH8z+Xy0nspJ2BWDBquFUEuOhquAU56/urTysYhFXaOWq3MxGK3v6HT8YdVdA==;5:ek/7K/EkmGwFkCUEnnn7g2pN4IR6KJojmrFCRujanlG+ZMvW126ozV9n0dAAn+Lue2887ETf3OUjo/PRmZ8NLly6A++TJKNFPp9DTIC9aET77BfXoSrGcYX2g7E6I4/2QBex54/xqv8EqfpefEaSWom2h0d7xZRx2Tz+M8JKum8=;7:G082n8Jp+SggJ4lMR0IaaBqOAnTEts6ofE0HxB6iUWyWF95rNxKZ/+hNLXyLW6mZbudqMtJFiaP01xAZeYpoJW7BR1GmdJ2T7Z8UTudJ9xjRQpPVnz1PBzHHAZ4Hqy1jb+Mi2iJcMH52yR0OUjWTpnPhd3E7fHgbLB17EbsY+pS/7WtkRdHqJfBnFzbpgeVeu9WxKcmJ+UukDmvepRd/p04SPqupIzI304ZTSnUr9/nBmCHRsuP7M9E6MNLQZdsu
+x-ms-office365-filtering-correlation-id: 6dd43285-c1ea-41f9-b282-08d62d5e974f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB1519;
+x-ms-traffictypediagnostic: VI1PR0201MB1519:
+x-microsoft-antispam-prvs: <VI1PR0201MB1519525401BF8F0F72738F88BCE60@VI1PR0201MB1519.eurprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(20161123562045)(20161123558120)(2016111802025)(20161123564045)(20161123560045)(6043046)(201708071742011)(7699051);SRVR:VI1PR0201MB1519;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB1519;
+x-forefront-prvs: 081904387B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(346002)(39830400003)(376002)(396003)(189003)(199004)(76176011)(86362001)(575784001)(52116002)(2906002)(71190400001)(71200400001)(99286004)(4326008)(316002)(26005)(25786009)(105586002)(3260700006)(64126003)(31696002)(2900100001)(14454004)(256004)(106356001)(186003)(386003)(5250100002)(6506007)(102836004)(14444005)(3846002)(6116002)(53546011)(7736002)(6486002)(53936002)(5660300001)(65826007)(74482002)(81156014)(81166006)(8676002)(229853002)(8936002)(6512007)(68736007)(305945005)(6436002)(65806001)(65956001)(66066001)(486006)(97736004)(476003)(31686004)(36756003)(2616005)(6246003)(446003)(11346002)(54906003)(508600001)(58126008)(110136005)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB1519;H:VI1PR0201MB2464.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: MA3wOuM/2YqcaDPG8e9dMBWtASlezZvb2muvf0mA+8x77KuETtzipRQiTzIbioiLmC/kL6r3s5WY9v8B7rlCAXjZXQMvAvoDdmoM0oLEwM2v6w6D81yU2pJvaEVnCooiyoET7H+deAzmNoESntyNiXSvC6uxcvIJHwK9l40TFfHR2HQIOV1hhq7/k4Nh9VQX83inSvf3EiOg4h3VxXl4Z/ty1CjQfSwewqTd10FGChNsXCq6KczcV8Q4t1HunrYb9OtjWcqvVHAh2nwqosKFuB2QeNe3Sb4UWY33dXMtkI3xsdw2cKLl2UxnQheSIvsAJqlJuS/gAXsEXVzhdua+YxBu7OxpiJJDMvORyTEo7Xw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <360DBCD96697D34AAF812C046DEFA0D7@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dd43285-c1ea-41f9-b282-08d62d5e974f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 20:42:41.2886
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB1519
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 5 Oct 2018, Andrea Arcangeli wrote:
-
-> I tried to add just __GFP_NORETRY but it changes nothing. Try it
-> yourself if you think that can resolve the swap storm and excessive
-> reclaim CPU overhead... and see if it works. I didn't intend to
-> reinvent the wheel with __GFP_COMPACT_ONLY, if __GFP_NORETRY would
-> have worked. I tried adding __GFP_NORETRY first of course.
-> 
-> Reason why it doesn't help is: compaction fails because not enough
-> free RAM, reclaim is invoked, compaction succeeds, THP is allocated to
-> your lib user, compaction fails because not enough free RAM, reclaim
-> is invoked etc.. compact_result is not COMPACT_DEFERRED, but
-> COMPACT_SKIPPED.
-> 
-> See the part "reclaim is invoked" (with __GFP_THISNODE), is enough to
-> still create the same heavy swap storm and unfairly penalize all apps
-> with memory allocated in the local node like if your library had
-> actually the kernel privilege to run mbind or mlock, which is not ok.
-> 
-> Only __GFP_COMPACT_ONLY truly can avoid reclaim, the moment reclaim
-> can run with __GFP_THISNODE set, all bets are off and we're back to
-> square one, no difference (at best marginal difference) with
-> __GFP_NORETRY being set.
-> 
-
-The page allocator is expecting __GFP_NORETRY for thp allocations per its 
-comment:
-
-		/*
-		 * Checks for costly allocations with __GFP_NORETRY, which
-		 * includes THP page fault allocations
-		 */
-		if (costly_order && (gfp_mask & __GFP_NORETRY)) {
-
-And that enables us to check compact_result to determine whether thp 
-allocation should fail or continue to reclaim.  I don't think it helps 
-that some thp fault allocations use __GFP_NORETRY and others do not.  I 
-think that deserves a fix to alloc_hugepage_direct_gfpmask() or 
-GFP_TRANSHUGE_LIGHT.
-
-Our library that uses MADV_HUGEPAGE only invokes direct compaction because 
-we're on an older kernel: it does not attempt to do reclaim to make 
-compaction happy so that it finds memory that it can migrate memory to.  
-For reference, we use defrag setting of "defer+madvise".  Everybody who 
-does not use MADV_HUGEPAGE kicks off kswapd/kcompactd and fails, 
-MADV_HUGEPAGE users do the same but also try direct compaction.  That 
-direct compaction uses a mode of MIGRATE_ASYNC so it normally fails 
-because of need_resched() or spinlock contention.
-
-These allocations always fail, MADV_HUGEPAGE or otherwise, without 
-invoking direct reclaim.
-
-I am agreeing with both you and Mel that it makes no sense to thrash the 
-local node to make compaction happy and then hugepage-order memory 
-available.  I'm only differing with you on the mechanism to fail early: we 
-never want to do attempt reclaim on thp allocations specifically because 
-it leads to the behavior you are addressing.
-
-My contention is that removing __GFP_THISNODE papers over the problem, 
-especially in cases where remote memory is also fragmnented. It incurs a 
-much higher (40%) fault latency and then incurs 13.9% greater access 
-latency.  It is not a good result, at least for Haswell, Naples, and Rome.
-
-To make a case that we should fault hugepages remotely as fallback, either 
-for non-MADV_HUGEPAGE users who do not use direct compaction, or 
-MADV_HUGEPAGE users who use direct compaction, we need numbers that 
-suggest there is a performance benefit in terms of access latency to 
-suggest that it is better; this is especially the case when the fault 
-latency is 40% higher.  On Haswell, Naples, and Rome, it is quite obvious 
-that this patch works much harder to fault memory remotely that incurs a 
-substantial performance penalty when it fails and in the cases where it 
-succeeds we have much worse access latency.
-
-For users who bind their applications to a subset of cores on a NUMA node, 
-fallback is egregious: we are guaranteed to never have local access 
-latency and in the case when the local node is fragmented and remote 
-memory is not our fault latency goes through the roof when local native 
-pages would have been much better.
-
-I've brought numbers on how poor this patch performs, so I'm asking for a 
-rebuttal that suggests it is better on some platforms.  (1) On what 
-platforms is it better to fault remote hugepages over local native pages?  
-(2) What is the fault latency increase when remote nodes are fragmented as 
-well?
-
-> Like Mel said, your app just happens to fit in a local node, if the
-> user of the lib is slightly different and allocates 16G on a system
-> where each node is 4G, the post-fix MADV_HUGEPAGE will perform
-> extremely better also for the lib user.
-> 
-
-It won't if the remote memory is fragmented; the patch is premised on the 
-argument that remote memory is never fragmented or under memory pressure 
-otherwise it is multiplying the fault latency by the number of nodes.  
-Sure, creating test cases where the local node is under heavy memory 
-pressure yet remote nodes are mostly free will minimize the impact this 
-has on fault latency.  It still is a substantial increase, as I've 
-measured on Haswell, but the access latency forever is the penalty.  This 
-patch cannot make access to remote memory faster.
-
-> And you know, if the lib user fits in one node, it can use mbind and
-> it won't hit OOM... and you'd need some capability giving the app
-> privilege anyway to keep MADV_HUGEPAGE as deep and unfair to the rest
-> of the processes running the local node (like mbind and mlock require
-> too).
-> 
-
-No, the lib user does not fit into a single node, we have cases where 
-these nodes are under constant memory pressure.  We are on an older 
-kernel, however, that fails because of need_resched() and spinlock 
-contention rather than falling back to local reclaim.
-
-> Did you try the __GFP_COMPACT_ONLY patch? That won't have the 40%
-> fault latency already.
-> 
-
-I remember Kirill saying that he preferred node local memory allocation 
-over thp allocation in the review, which I agree with, but it was much 
-better than this patch.  I see no reason why we should work so hard to 
-reclaim memory, thrash local memory, and swap so that the compaction 
-freeing scanner can find memory when there is *no* guarantee that the 
-migration scanner can free an entire pageblock.  That is completely 
-pointless work, even for an MADV_HUGEPAGE user, and we certainly don't 
-have such pathological behavior on older kernels.
-
-> Also you're underestimating the benefit of THP given from remote nodes
-> for virt a bit, the 40% fault latency is not an issue when the
-> allocation is long lived, which is what MADV_HUGEPAGE is telling the
-> kernel, and the benefit of THP for guest is multiplied. It's more a
-> feature than a bug that 40% fault latency with MADV_HUGEPAGE set at
-> least for all long lived allocations (but if the allocations aren't
-> long lived, why should MADV_HUGEPAGE have been set in the first place?).
-> 
-
-For the long-term benefit of thp to outweigh the 40% fault latency 
-increase, it would require that the access latency is better on remote 
-memory.  It's worse, it's 13.9% worse access latency on Haswell.  It's a 
-negative result for both allocation and access latency.
-
-> With the fix applied, if you want to add __GFP_THISNODE to compaction
-> only by default you still can, that solves the 40% fault latency just
-> like __GFP_COMPACT_ONLY patch would also have avoided that 40%
-> increased fault latency.
-> 
-> The issue here is very simple: you can't use __GFP_THISNODE for an
-> allocation that can invoke reclaim, unless you have mlock or mbind
-> higher privilege capabilities.
-> 
-
-Completely agreed, and I'm very strongly suggesting that we do not invoke 
-reclaim.  Memory compaction provides no guarantee that it can free an 
-entire pageblock, even for MIGRATE_ASYNC compaction under MADV_HUGEPAGE it 
-will attempt to migrate SWAP_CLUSTER_MAX pages from a pageblock without 
-considering if the entire pageblock could eventually become freed for 
-order-9 memory.  The vast majority of the time this reclaim could be 
-completely pointless.  We cannot use it.
-
-> I'm still unconvinced about the __GFP_NORETRY arguments because I
-> tried it already. However if you send a patch that fixes everything by
-> only adding __GFP_NORETRY in every place you wish, I'd be glad to test
-> it and verify if it actually solves the problem. Also note:
-> 
-> +#define __GFP_ONLY_COMPACT     ((__force gfp_t)(___GFP_NORETRY | \
-> +                                                ___GFP_ONLY_COMPACT))
-> 
-> If ___GFP_NORETRY would have been enough __GFP_ONLY_COMPACT would have
-> defined to ___GFP_NORETRY alone. When I figured it wasn't enough I
-> added ___GFP_ONLY_COMPACT to retain the __GFP_THISNODE in the only
-> place it's safe to retain it (i.e. compaction).
-> 
-
-We don't need __GFP_NORETRY anymore with this, it wouldn't be useful to 
-continually compact memory in isolation if it already has failed.  It 
-seems strange to be using __GFP_DIRECT_RECLAIM | __GFP_ONLY_COMPACT, 
-though, as I assume this would evolve into.
-
-Are there any other proposed users for __GFP_ONLY_COMPACT beyond thp 
-allocations?  If not, we should just save the gfp bit and encode the logic 
-directly into the page allocator.
-
-Would you support this?
----
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc.c b/drivers/gpu/drm/ttm/ttm_page_alloc.c
---- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-@@ -860,7 +860,7 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
- 			while (npages >= HPAGE_PMD_NR) {
- 				gfp_t huge_flags = gfp_flags;
- 
--				huge_flags |= GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+				huge_flags |= GFP_TRANSHUGE_LIGHT |
- 					__GFP_KSWAPD_RECLAIM;
- 				huge_flags &= ~__GFP_MOVABLE;
- 				huge_flags &= ~__GFP_COMP;
-@@ -978,13 +978,13 @@ int ttm_page_alloc_init(struct ttm_mem_global *glob, unsigned max_pages)
- 				  GFP_USER | GFP_DMA32, "uc dma", 0);
- 
- 	ttm_page_pool_init_locked(&_manager->wc_pool_huge,
--				  (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+				  (GFP_TRANSHUGE_LIGHT |
- 				   __GFP_KSWAPD_RECLAIM) &
- 				  ~(__GFP_MOVABLE | __GFP_COMP),
- 				  "wc huge", order);
- 
- 	ttm_page_pool_init_locked(&_manager->uc_pool_huge,
--				  (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+				  (GFP_TRANSHUGE_LIGHT |
- 				   __GFP_KSWAPD_RECLAIM) &
- 				  ~(__GFP_MOVABLE | __GFP_COMP)
- 				  , "uc huge", order);
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -298,7 +298,8 @@ struct vm_area_struct;
- #define GFP_HIGHUSER	(GFP_USER | __GFP_HIGHMEM)
- #define GFP_HIGHUSER_MOVABLE	(GFP_HIGHUSER | __GFP_MOVABLE)
- #define GFP_TRANSHUGE_LIGHT	((GFP_HIGHUSER_MOVABLE | __GFP_COMP | \
--			 __GFP_NOMEMALLOC | __GFP_NOWARN) & ~__GFP_RECLAIM)
-+			 __GFP_NOMEMALLOC | __GFP_NORETRY | __GFP_NOWARN) & \
-+			~__GFP_RECLAIM)
- #define GFP_TRANSHUGE	(GFP_TRANSHUGE_LIGHT | __GFP_DIRECT_RECLAIM)
- 
- /* Convert GFP flags to their corresponding migrate type */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -628,13 +628,15 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
-  * madvise: directly stall for MADV_HUGEPAGE, otherwise fail if not immediately
-  *	    available
-  * never: never stall for any thp allocation
-+ *
-+ * "Stalling" here implies direct memory compaction but not direct reclaim.
-  */
- static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
- {
- 	const bool vma_madvised = !!(vma->vm_flags & VM_HUGEPAGE);
- 
- 	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags))
--		return GFP_TRANSHUGE | (vma_madvised ? 0 : __GFP_NORETRY);
-+		return GFP_TRANSHUGE;
- 	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags))
- 		return GFP_TRANSHUGE_LIGHT | __GFP_KSWAPD_RECLAIM;
- 	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags))
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4145,6 +4145,18 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 			if (compact_result == COMPACT_DEFERRED)
- 				goto nopage;
- 
-+			/*
-+			 * If faulting a hugepage, it is very unlikely that
-+			 * thrashing the zonelist is going to assist compaction
-+			 * in freeing an entire pageblock.  There are no
-+			 * guarantees memory compaction can free an entire
-+			 * pageblock under such memory pressure that it is
-+			 * better to simply fail and fallback to native pages.
-+			 */
-+			if (order == pageblock_order &&
-+					!(current->flags & PF_KTHREAD))
-+				goto nopage;
-+
- 			/*
- 			 * Looks like reclaim/compaction is worth trying, but
- 			 * sync compaction could be very expensive, so keep
+T24gMjAxOC0xMC0wOCAxOTozNSwgR3VzdGF2byBBLiBSLiBTaWx2YSB3cm90ZToNCj4gSW4gcHJl
+cGFyYXRpb24gdG8gZW5hYmxpbmcgLVdpbXBsaWNpdC1mYWxsdGhyb3VnaCwgbWFyayBzd2l0Y2gg
+Y2FzZXMNCj4gd2hlcmUgd2UgYXJlIGV4cGVjdGluZyB0byBmYWxsIHRocm91Z2guDQoNClRoZSB3
+YXkgSSBzZWUgaXQsIGl0IGlzIHByZXR0eSB3ZWxsIG1hcmtlZCB1cCBhcyBpcy4gU28sIHRoaXMg
+cGFyYWdyYXBoDQppcyBub3QgZGVzY3JpYmluZyB0aGUgY2hhbmdlLg0KDQo+IA0KPiBOb3RpY2Ug
+dGhhdCBpbiB0aGlzIHBhcnRpY3VsYXIgY2FzZSwgSSByZXBsYWNlZCAiLi4uYW5kIGZhbGwgdGhy
+b3VnaC4iDQo+IHdpdGggYSBwcm9wZXIgImZhbGwgdGhyb3VnaCIsIHdoaWNoIGlzIHdoYXQgR0ND
+IGlzIGV4cGVjdGluZyB0byBmaW5kLg0KDQpXaGF0IGlzIG5vdCAicHJvcGVyIiBhYm91dCB0aGUg
+ZXhpc3RpbmcgY29tbWVudD8gWWVzIHllcywgSSAqa25vdyogdGhhdA0KR0NDIGlzIG5vdCB2ZXJ5
+IGludGVsbGlnZW50IGFib3V0IGl0IGFuZCByZXF1aXJlcyBoYW5kLWhvbGRpbmcsIGJ1dA0KYmxh
+bWluZyB0aGUgZXhpc3RpbmcgY29tbWVudCBmb3Igbm90ICpwcm9wZXJseSogbWFya2luZyBhbiBp
+bnRlbnRpb25hbA0KZmFsbCB0aHJvdWdoIGlzIC4uLiByaWNoLg0KDQo+IA0KPiBBZGRyZXNzZXMt
+Q292ZXJpdHktSUQ6IDE0NjI0MDggKCJNaXNzaW5nIGJyZWFrIGluIHN3aXRjaCIpDQo+IFNpZ25l
+ZC1vZmYtYnk6IEd1c3Rhdm8gQS4gUi4gU2lsdmEgPGd1c3Rhdm9AZW1iZWRkZWRvci5jb20+DQo+
+IC0tLQ0KPiAgZHJpdmVycy9paW8vZGFjL2Rwb3QtZGFjLmMgfCAyICstDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2lpby9kYWMvZHBvdC1kYWMuYyBiL2RyaXZlcnMvaWlvL2RhYy9kcG90LWRhYy5jDQo+
+IGluZGV4IGE3OTFkMGEuLmUzNTM5NDYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaWlvL2RhYy9k
+cG90LWRhYy5jDQo+ICsrKyBiL2RyaXZlcnMvaWlvL2RhYy9kcG90LWRhYy5jDQo+IEBAIC03OCw3
+ICs3OCw3IEBAIHN0YXRpYyBpbnQgZHBvdF9kYWNfcmVhZF9yYXcoc3RydWN0IGlpb19kZXYgKmlu
+ZGlvX2RldiwNCg0KQWRkaW5nIHNvbWUgbW9yZSBjb250ZXh0IGhlcmUuDQoNCgkJY2FzZSBJSU9f
+VkFMX0lOVDoNCgkJCS8qDQoJCQkgKiBDb252ZXJ0IGludGVnZXIgc2NhbGUgdG8gZnJhY3Rpb25h
+bCBzY2FsZSBieQ0KCQkJICogc2V0dGluZyB0aGUgZGVub21pbmF0b3IgKHZhbDIpIHRvIG9uZS4u
+Lg0KPiAgCQkJICovDQo+ICAJCQkqdmFsMiA9IDE7DQo+ICAJCQlyZXQgPSBJSU9fVkFMX0ZSQUNU
+SU9OQUw7DQo+IC0JCQkvKiAuLi5hbmQgZmFsbCB0aHJvdWdoLiAqLw0KPiArCQkJLyogZmFsbCB0
+aHJvdWdoICovDQo+ICAJCWNhc2UgSUlPX1ZBTF9GUkFDVElPTkFMOg0KPiAgCQkJKnZhbCAqPSBy
+ZWd1bGF0b3JfZ2V0X3ZvbHRhZ2UoZGFjLT52cmVmKSAvIDEwMDA7DQo+ICAJCQkqdmFsMiAqPSBk
+YWMtPm1heF9vaG1zOw0KPiANCg0KQ29uc2lkZXJpbmcgdGhlIGFib3ZlIGFkZGVkIGNvbnRleHQs
+IEkgaGF2ZSB0byBzYXkgdGhhdCB0aGlzIG1pbmRsZXNzDQpjaGFuZ2UgaXMgbm90IGFuIGltcHJv
+dmVtZW50LCBhcyB5b3UgaGF2ZSBqdXN0IGRlc3Ryb3llZCB0aGUgY29udGludWVkDQpzZW50ZW5j
+ZSBmcm9tIHRoZSBwcmV2aW91cyBjb21tZW50LiBZb3UgbXVzdCBoYXZlIG5vdGljZWQgdGhhdCB0
+aGlzDQp3YXMgdGhlIGVuZCBvZiBhIGNvbnRpbnVlZCBzZW50ZW5jZSwgYXMgeW91IGV2ZW4gcXVv
+dGVkIGl0IGluIHRoZSBjb21taXQNCm1lc3NhZ2UuIFRoZSBiaWcgcXVlc3Rpb24gaXMgd2h5IHlv
+dSBkaWQgbm90IHN0b3AgdG8gdGhpbmsgYW5kIGNvbnNpZGVyDQp0aGUgY29udGV4dD8NCg0KWWVz
+LCBJJ20gYW5ub3llZCBieSBtaW5kbGVzcyBjaGFuZ2VzLiBFc3BlY2lhbGx5IG1pbmRsZXNzIGNo
+YW5nZXMgYWltZWQNCmF0IGltcHJvdmluZyByZWFkYWJpbGl0eSB3aGlsZSBpbiBmYWN0IG1ha2lu
+ZyB0aGluZ3MgbGVzcyByZWFkYWJsZS4NCg0KVEw7RFIsIGlmIHlvdSBhcmUgZGVzcGVyYXRlIHRv
+IGZpeCAidGhlIHByb2JsZW0iIHdpdGggdGhpcyBmYWxsIHRocm91Z2gNCmNvbW1lbnQsIHBsZWFz
+ZSBkbyBzbyBpbiBhIHdheSB0aGF0IHByZXNlcnZlcyBvdmVyYWxsIHJlYWRhYmlsaXR5LiBBbmQN
+Cml0IHdvdWxkIGJlIG5pY2UgdG8gbm90IGJsYW1lIHRoZSBleGlzdGluZyBjb2RlIGZvciBicmFp
+biBkYW1hZ2UgaW4gR0NDDQphbmQgdmFyaW91cyBvdGhlciBzdGF0aWMgYW5hbHl6ZXJzLg0KDQpD
+aGVlcnMsDQpQZXRlcg0K
