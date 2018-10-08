@@ -7,55 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0614C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65177C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 699D020645
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2555B214DC
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wq9isYWu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 699D020645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeJXm8U0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2555B214DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732881AbeJICHO (ORCPT
+        id S1732895AbeJICHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:07:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57746 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:07:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727670AbeJICHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:07:14 -0400
+        id S1727670AbeJICHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:07:17 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2554B204FD;
-        Mon,  8 Oct 2018 18:54:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D600021479;
+        Mon,  8 Oct 2018 18:54:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024845;
-        bh=tA2ilpF3uDbSfNszcqgY0mNvLGKBP214/XPBAP/9iMY=;
+        s=default; t=1539024848;
+        bh=Qh8rXzrzSbcolP48fujx/nLatDMSPWgPjBmXTf+h0NM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wq9isYWuhPJoPvvl6Uyx9gf2b+6q8QFguP63pgjpkTxj1FKHZyVWV0goP7nvd5cZQ
-         D/lYJJnglilcENBSWV3pnet+psiZW/Rq6L6ccfYEc09KvziruajOoyUNg7P9pTDoUW
-         3BL3axA2/EiL1i+YBC5y98dBgnXD29cMn2g6W3mU=
+        b=eeJXm8U0QA4CXsDzOEiFXh1ipQANediD5Ue+IojuJE/yOm3RujdXLuvd0oGNYGasG
+         Jv4zdTChXlDLSInMmVUz8YuB5N9GKniN+Qo+2XyZhbDQf7Nochnarjz0rixtMBqkY+
+         4A3QWmozcazJwmh1qDytxd177fWFx8o6NnWCYnfY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ken Chen <kenchen@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
+        stable@vger.kernel.org, Ashish Samant <ashish.samant@oracle.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.18 165/168] proc: restrict kernel stack dumps to root
-Date:   Mon,  8 Oct 2018 20:32:25 +0200
-Message-Id: <20181008175626.327328666@linuxfoundation.org>
+Subject: [PATCH 4.18 166/168] ocfs2: fix locking for res->tracking and dlm->tracking_list
+Date:   Mon,  8 Oct 2018 20:32:26 +0200
+Message-Id: <20181008175626.366582279@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -73,73 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Ashish Samant <ashish.samant@oracle.com>
 
-commit f8a00cef17206ecd1b30d3d9f99e10d9fa707aa7 upstream.
+commit cbe355f57c8074bc4f452e5b6e35509044c6fa23 upstream.
 
-Currently, you can use /proc/self/task/*/stack to cause a stack walk on
-a task you control while it is running on another CPU.  That means that
-the stack can change under the stack walker.  The stack walker does
-have guards against going completely off the rails and into random
-kernel memory, but it can interpret random data from your kernel stack
-as instruction pointers and stack pointers.  This can cause exposure of
-kernel stack contents to userspace.
+In dlm_init_lockres() we access and modify res->tracking and
+dlm->tracking_list without holding dlm->track_lock.  This can cause list
+corruptions and can end up in kernel panic.
 
-Restrict the ability to inspect kernel stacks of arbitrary tasks to root
-in order to prevent a local attacker from exploiting racy stack unwinding
-to leak kernel task stack contents.  See the added comment for a longer
-rationale.
+Fix this by locking res->tracking and dlm->tracking_list with
+dlm->track_lock instead of dlm->spinlock.
 
-There don't seem to be any users of this userspace API that can't
-gracefully bail out if reading from the file fails.  Therefore, I believe
-that this change is unlikely to break things.  In the case that this patch
-does end up needing a revert, the next-best solution might be to fake a
-single-entry stack based on wchan.
-
-Link: http://lkml.kernel.org/r/20180927153316.200286-1-jannh@google.com
-Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Ken Chen <kenchen@google.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
+Link: http://lkml.kernel.org/r/1529951192-4686-1-git-send-email-ashish.samant@oracle.com
+Signed-off-by: Ashish Samant <ashish.samant@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Acked-by: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/base.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/ocfs2/dlm/dlmmaster.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_fil
- 	unsigned long *entries;
- 	int err;
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -584,9 +584,9 @@ static void dlm_init_lockres(struct dlm_
  
-+	/*
-+	 * The ability to racily run the kernel stack unwinder on a running task
-+	 * and then observe the unwinder output is scary; while it is useful for
-+	 * debugging kernel issues, it can also allow an attacker to leak kernel
-+	 * stack contents.
-+	 * Doing this in a manner that is at least safe from races would require
-+	 * some work to ensure that the remote task can not be scheduled; and
-+	 * even then, this would still expose the unwinder as local attack
-+	 * surface.
-+	 * Therefore, this interface is restricted to root.
-+	 */
-+	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
-+		return -EACCES;
-+
- 	entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
- 				GFP_KERNEL);
- 	if (!entries)
+ 	res->last_used = 0;
+ 
+-	spin_lock(&dlm->spinlock);
++	spin_lock(&dlm->track_lock);
+ 	list_add_tail(&res->tracking, &dlm->tracking_list);
+-	spin_unlock(&dlm->spinlock);
++	spin_unlock(&dlm->track_lock);
+ 
+ 	memset(res->lvb, 0, DLM_LVB_LEN);
+ 	memset(res->refmap, 0, sizeof(res->refmap));
 
 
