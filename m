@@ -5,136 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08715C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2012AC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C94D6213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94D6213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id E459A2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E459A2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeJHXm5 convert rfc822-to-8bit (ORCPT
+        id S1727226AbeJHXm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:42:57 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:45211 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726562AbeJHXmu (ORCPT
+        Mon, 8 Oct 2018 19:42:58 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:41964 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbeJHXm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:42:50 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98GJGNP029195;
-        Mon, 8 Oct 2018 18:29:40 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2n01hek02u-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 08 Oct 2018 18:29:40 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E0F5D31;
-        Mon,  8 Oct 2018 16:29:39 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8626557D1;
-        Mon,  8 Oct 2018 16:29:39 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 8 Oct
- 2018 18:29:39 +0200
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Mon, 8 Oct 2018 18:29:39 +0200
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>
-CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH v3 0/8] Introduce STPMIC1 PMIC Driver
-Thread-Topic: [PATCH v3 0/8] Introduce STPMIC1 PMIC Driver
-Thread-Index: AQHUXyQbFs2psrQsfEaxxKrOsVatjg==
-Date:   Mon, 8 Oct 2018 16:29:39 +0000
-Message-ID: <1539016176-4072-1-git-send-email-p.paillet@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 8 Oct 2018 19:42:57 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w98GUFoV019858
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 8 Oct 2018 09:30:15 -0700 (PDT)
+Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 8 Oct
+ 2018 09:30:15 -0700
+Subject: Re: [PATCH v5 4/4] printk: Give error on attempt to set log buffer
+ length to over 4G
+To:     Petr Mladek <pmladek@suse.com>
+CC:     <sergey.senozhatsky@gmail.com>, <rostedt@goodmis.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1538239553-81805-1-git-send-email-zhe.he@windriver.com>
+ <1538239553-81805-4-git-send-email-zhe.he@windriver.com>
+ <20181008135916.gg4kkmoki5bgtco5@pathway.suse.cz>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <2a9ea0e6-f1df-7dcd-e2e8-383e297ccc5f@windriver.com>
+Date:   Tue, 9 Oct 2018 00:30:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_07:,,
- signatures=0
+In-Reply-To: <20181008135916.gg4kkmoki5bgtco5@pathway.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.216]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from 
-STMicroelectronics. 
-The STPMIC1 regulators supply power to an application processor as well as 
-to external system peripherals such as DDR, Flash memories and system
-devices. It also features onkey button input and an hardware watchdog.
-The STPMIC1 is controlled via I2C. 
 
-Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
-irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
-as parent.
 
-stpmic1 mfd and regulator drivers maybe mandatory at boot time.
+On 2018年10月08日 21:59, Petr Mladek wrote:
+> I tried this patch with log_buf_len=5G. The kernel did not crash
+> but dmesg shown some mess. There are several 32-bit variables
+> to store the size, for example:
+>
+> static u32 log_buf_len = __LOG_BUF_LEN;
+> u32 log_buf_len_get(void)
+> static u32 log_first_idx;
+> static u32 log_next_idx;
+>
+> I guess that the code somewhere does not detect an overflows
+> correctly.
+>
+> I am not motivated enought to add support for such huge message
+> buffer. Therefore I suggest to limit it to 32G for now.
 
-changes in v3:
-* Rebase oo regul/for-next
-* Rename struct stpmic1_dev by struct stpmic1.
+I'm also fine with this suggestion. Thanks.
 
-pascal paillet (8):
-  dt-bindings: mfd: document stpmic1
-  mfd: stpmic1: add stpmic1 driver
-  dt-bindings: regulator: document stpmic1 pmic regulators
-  regulator: stpmic1: add stpmic1 regulator driver
-  dt-bindings: input: document stpmic1 pmic onkey
-  input: stpmic1: add stpmic1 onkey driver
-  dt-bindings: watchdog: document stpmic1 pmic watchdog
-  watchdog: stpmic1: add stpmic1 watchdog driver
+Zhe
 
- .../devicetree/bindings/input/st,stpmic1-onkey.txt |  30 +
- .../devicetree/bindings/mfd/st,stpmic1.txt         | 133 ++++
- .../bindings/regulator/st,stpmic1-regulator.txt    |  68 +++
- .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 +
- drivers/input/misc/Kconfig                         |  11 +
- drivers/input/misc/Makefile                        |   2 +
- drivers/input/misc/stpmic1_onkey.c                 | 248 ++++++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/stpmic1.c                              | 401 ++++++++++++
- drivers/regulator/Kconfig                          |  12 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/stpmic1_regulator.c              | 674 +++++++++++++++++++++
- drivers/watchdog/Kconfig                           |  12 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/stpmic1_wdt.c                     | 138 +++++
- include/dt-bindings/mfd/st,stpmic1.h               |  46 ++
- include/linux/mfd/stpmic1.h                        | 212 +++++++
- 18 files changed, 2014 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
- create mode 100644 drivers/input/misc/stpmic1_onkey.c
- create mode 100644 drivers/mfd/stpmic1.c
- create mode 100644 drivers/regulator/stpmic1_regulator.c
- create mode 100644 drivers/watchdog/stpmic1_wdt.c
- create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
- create mode 100644 include/linux/mfd/stpmic1.h
-
--- 
-1.9.1
