@@ -3,78 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C2FC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10304C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 117BD20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 117BD20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id C023B2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:41:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C023B2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbeJHPvg (ORCPT
+        id S1727363AbeJHPw2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:51:36 -0400
-Received: from www62.your-server.de ([213.133.104.62]:35350 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbeJHPvg (ORCPT
+        Mon, 8 Oct 2018 11:52:28 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:26323 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726113AbeJHPw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:51:36 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g9R5v-0008UB-2p; Mon, 08 Oct 2018 10:40:51 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g9R5u-0004sg-Pm; Mon, 08 Oct 2018 10:40:50 +0200
-Subject: Re: [PATCH] bpf: fix building without CONFIG_INET
-From:   Daniel Borkmann <daniel@iogearbox.net>
-To:     Song Liu <liu.song.a23@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        makita.toshiaki@lab.ntt.co.jp, Lawrence Brakmo <brakmo@fb.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Mathieu Xhonneux <m.xhonneux@gmail.com>, dsahern@gmail.com,
-        Networking <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181005161526.843924-1-arnd@arndb.de>
- <CAPhsuW7pg9Wp5am3Kc1t3UoAG1=EYzUeq8E2k7Pmv8yGu9JaEQ@mail.gmail.com>
- <c4b5f1af-075a-4166-4108-81acda663970@iogearbox.net>
-Message-ID: <9330215e-27bf-9913-f7f9-6b5b83542a27@iogearbox.net>
-Date:   Mon, 8 Oct 2018 10:40:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <c4b5f1af-075a-4166-4108-81acda663970@iogearbox.net>
-Content-Type: text/plain; charset=utf-8
+        Mon, 8 Oct 2018 11:52:27 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-7-k_-Fo9wQMBuo98nnmOM7IA-1; Mon, 08 Oct 2018 09:41:48 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 8 Oct 2018 09:41:49 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 8 Oct 2018 09:41:49 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'David Miller' <davem@davemloft.net>,
+        "ben.dooks@codethink.co.uk" <ben.dooks@codethink.co.uk>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kernel@lists.codethink.co.uk" 
+        <linux-kernel@lists.codethink.co.uk>
+Subject: RE: [PATCH] usbnet: smsc95xx: simplify tx_fixup code
+Thread-Topic: [PATCH] usbnet: smsc95xx: simplify tx_fixup code
+Thread-Index: AQHUXuLBTZ5BME15OECsJXYLxzUl/g==
+Date:   Mon, 8 Oct 2018 08:41:49 +0000
+Message-ID: <170d3d23a5c2463fab275d2e871775f3@AcuMS.aculab.com>
+References: <59988ed22559410881addfecf58335eb@AcuMS.aculab.com>
+        <20181002165602.21033-1-ben.dooks@codethink.co.uk>
+ <20181005.142412.601607260441380535.davem@davemloft.net>
+In-Reply-To: <20181005.142412.601607260441380535.davem@davemloft.net>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/25017/Mon Oct  8 06:49:45 2018)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: k_-Fo9wQMBuo98nnmOM7IA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/05/2018 09:07 PM, Daniel Borkmann wrote:
-> On 10/05/2018 09:02 PM, Song Liu wrote:
-> [...]
->> BPF_CALL_x() has static already (before this patch). We should not
->> need change that
->> for all the BPF_CALL_?(). Joe's version looks better to me.
+From: David Miller
+> Sent: 05 October 2018 22:24
 > 
-> My preference as well, thanks!
+> From: Ben Dooks <ben.dooks@codethink.co.uk>
+> Date: Tue,  2 Oct 2018 17:56:02 +0100
+> 
+> > -	memcpy(skb->data, &tx_cmd_a, 4);
+> > +	ptr = skb_push(skb, 8);
+> > +	tx_cmd_a = cpu_to_le32(tx_cmd_a);
+> > +	tx_cmd_b = cpu_to_le32(tx_cmd_b);
+> > +	memcpy(ptr, &tx_cmd_a, 4);
+> > +	memcpy(ptr+4, &tx_cmd_b, 4);
+> 
+> Even a memcpy() through a void pointer does not guarantee that gcc will
+> not emit word sized loads and stores.
 
-ping, can someone send an updated patch?
+True, but only if gcc can 'see' something that would require the
+pointer be aligned.
+In this case the void pointer comes from an external function
+so is fine.
 
-Thanks,
-Daniel
+> You must use the get_unaligned()/put_unaligned() facilities to do this
+> properly.
+> 
+> I also agree that making a proper type and structure instead of using
+> a void pointer would be better.
+
+The structure would need to be marked 'packed' - since its alignment
+isn't guaranteed.
+Then you don't need to use put_unaligned().
+
+If it wasn't 'packed' then gcc would implement
+memcpy(&hdr->tx_cmd_a, &tx_cmd_a, 4) using an aligned write.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
