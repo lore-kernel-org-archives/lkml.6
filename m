@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEE8C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178AFC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FAB21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BD6214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xDLtN+jn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FAB21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vObnM0OP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BD6214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730778AbeJIB5i (ORCPT
+        id S1730789AbeJIB5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730769AbeJIB5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:38 -0400
+        id S1730397AbeJIB5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B94552064A;
-        Mon,  8 Oct 2018 18:44:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 785DC2064A;
+        Mon,  8 Oct 2018 18:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024272;
-        bh=cxf36OCKtH0EVKTzFuROTyB9zVFYBwX9avMhJ/PBp/4=;
+        s=default; t=1539024275;
+        bh=gtTtCTv4uFyX1wMEohy9GtYwHZmAMaqWhkgqiqpIOnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xDLtN+jnxVrCBPf63u9PT4DSmnysOLDhJPFyFWkxyxqZ1LstLPL1zZ7oJo4IuFgd4
-         sMNiU6vJeWvt/GfsCsEi8PTkHdMyaxq2JWMHrVcI2ja08StebVLvT42CWkLF5A7Ypf
-         ztQHaJvDEffZvGCulTxaxQBGtcI18mlKifph/SOA=
+        b=vObnM0OPzppaqA+LkyLYCBm1Rn4NR9guRHJcYASSwBYnPEAMCq1G7f360qkAOYv8y
+         wZgKaaAot0vsRGENvgKR0tlU9LF0RkoLOInDG5y9YeaQLkHf7q/wZBhLmYeCrfVUlm
+         cYJa7iK5tkFRnbhNqjg5TMshZyqK6vN527dSoMxU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Fernando D S Lima <fernandodsl@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 55/94] HID: sensor-hub: Restore fixup for Lenovo ThinkPad Helix 2 sensor hub report
-Date:   Mon,  8 Oct 2018 20:31:36 +0200
-Message-Id: <20181008175608.192149724@linuxfoundation.org>
+Subject: [PATCH 4.14 56/94] USB: yurex: Check for truncation in yurex_read()
+Date:   Mon,  8 Oct 2018 20:31:37 +0200
+Message-Id: <20181008175608.435025039@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -66,69 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-[ Upstream commit ade573eb1e03d1ee5abcb3359b1259469ab6e8ed ]
+[ Upstream commit 14427b86837a4baf1c121934c6599bdb67dfa9fc ]
 
-Commit b0f847e16c1e ("HID: hid-sensor-hub: Force logical minimum to 1 for
-power and report state") not only replaced the descriptor fixup done for
-devices with the HID_SENSOR_HUB_ENUM_QUIRK with a generic fix, but also
-accidentally removed the unrelated descriptor fixup for the Lenovo ThinkPad
-Helix 2 sensor hub. This commit restores this fixup.
+snprintf() always returns the full length of the string it could have
+printed, even if it was truncated because the buffer was too small.
+So in case the counter value is truncated, we will over-read from
+in_buffer and over-write to the caller's buffer.
 
-Restoring this fixup not only fixes the Lenovo ThinkPad Helix 2's sensors,
-but also the Lenovo ThinkPad 8's sensors.
+I don't think it's actually possible for this to happen, but in case
+truncation occurs, WARN and return -EIO.
 
-Fixes: b0f847e16c1e ("HID: hid-sensor-hub: Force logical minimum ...")
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Fernando D S Lima <fernandodsl@gmail.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-sensor-hub.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/usb/misc/yurex.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/hid/hid-sensor-hub.c
-+++ b/drivers/hid/hid-sensor-hub.c
-@@ -579,6 +579,28 @@ void sensor_hub_device_close(struct hid_
- }
- EXPORT_SYMBOL_GPL(sensor_hub_device_close);
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -417,6 +417,9 @@ static ssize_t yurex_read(struct file *f
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 	mutex_unlock(&dev->io_mutex);
  
-+static __u8 *sensor_hub_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-+		unsigned int *rsize)
-+{
-+	/*
-+	 * Checks if the report descriptor of Thinkpad Helix 2 has a logical
-+	 * minimum for magnetic flux axis greater than the maximum.
-+	 */
-+	if (hdev->product == USB_DEVICE_ID_TEXAS_INSTRUMENTS_LENOVO_YOGA &&
-+		*rsize == 2558 && rdesc[913] == 0x17 && rdesc[914] == 0x40 &&
-+		rdesc[915] == 0x81 && rdesc[916] == 0x08 &&
-+		rdesc[917] == 0x00 && rdesc[918] == 0x27 &&
-+		rdesc[921] == 0x07 && rdesc[922] == 0x00) {
-+		/* Sets negative logical minimum for mag x, y and z */
-+		rdesc[914] = rdesc[935] = rdesc[956] = 0xc0;
-+		rdesc[915] = rdesc[936] = rdesc[957] = 0x7e;
-+		rdesc[916] = rdesc[937] = rdesc[958] = 0xf7;
-+		rdesc[917] = rdesc[938] = rdesc[959] = 0xff;
-+	}
++	if (WARN_ON_ONCE(len >= sizeof(in_buffer)))
++		return -EIO;
 +
-+	return rdesc;
-+}
-+
- static int sensor_hub_probe(struct hid_device *hdev,
- 				const struct hid_device_id *id)
- {
-@@ -742,6 +764,7 @@ static struct hid_driver sensor_hub_driv
- 	.probe = sensor_hub_probe,
- 	.remove = sensor_hub_remove,
- 	.raw_event = sensor_hub_raw_event,
-+	.report_fixup = sensor_hub_report_fixup,
- #ifdef CONFIG_PM
- 	.suspend = sensor_hub_suspend,
- 	.resume = sensor_hub_resume,
+ 	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
+ }
+ 
 
 
