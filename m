@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E73FAC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1046C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05AF21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48090204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:51:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoNz1X1q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05AF21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUyYvmWh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48090204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732381AbeJICEu (ORCPT
+        id S1732392AbeJICEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:04:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54786 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:04:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731723AbeJICEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:04:49 -0400
+        id S1731723AbeJICEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:04:52 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8156D214C4;
-        Mon,  8 Oct 2018 18:51:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9E1920645;
+        Mon,  8 Oct 2018 18:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024701;
-        bh=i3MigrwyYAVdKKd58YtJkYF2BhbRda7n/zbKltyIG1k=;
+        s=default; t=1539024704;
+        bh=T6+pf1a99I2mSuIc+6ZR19QFdX0Q4SsTdgjeWMlFX6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZoNz1X1qz/D8fhcQXwpw3FSmJgySRzJdZhmIXcFZf4Om1yIwCsy8cIgdWu7UH6Gun
-         hVXHfgpStZqHK+InN6z7wqO4fKaolMYlnFOxnRduQF6dq3ZQe+7Lqpa2i5CJJfNvAA
-         AcIUTiat8M0ik2PqaMPeKEj6ghep7hmTINYGiNdU=
+        b=rUyYvmWhDWrhCbXMN7XB6q56VE4i7deaWN+POAB+b07o4eCGY21Cnk/TVJJQIMI+N
+         N9j/BZQ+xOVetQsSKlsOBztMQAH1y5K17pqe/lpwweLdxWG8xq+B0lipnmqkXzpXIp
+         +8oZzwdEcD5BUX9oTrF2V4UPhLwU8j3kkaxqV9ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 126/168] dm thin metadata: try to avoid ever aborting transactions
-Date:   Mon,  8 Oct 2018 20:31:46 +0200
-Message-Id: <20181008175624.845178509@linuxfoundation.org>
+Subject: [PATCH 4.18 127/168] netfilter: conntrack: timeout interface depend on CONFIG_NF_CONNTRACK_TIMEOUT
+Date:   Mon,  8 Oct 2018 20:31:47 +0200
+Message-Id: <20181008175624.876992387@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -63,260 +62,448 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Thornber <ejt@redhat.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit 3ab91828166895600efd9cdc3a0eb32001f7204a ]
+[ Upstream commit a874752a10da113f513980e28f562d946d3f829d ]
 
-Committing a transaction can consume some metadata of it's own, we now
-reserve a small amount of metadata to cover this.  Free metadata
-reported by the kernel will not include this reserve.
+Now that cttimeout support for nft_ct is in place, these should depend
+on CONFIG_NF_CONNTRACK_TIMEOUT otherwise we can crash when dumping the
+policy if this option is not enabled.
 
-If any of the reserve has been used after a commit we enter a new
-internal state PM_OUT_OF_METADATA_SPACE.  This is reported as
-PM_READ_ONLY, so no userland changes are needed.  If the metadata
-device is resized the pool will move back to PM_WRITE.
+[   71.600121] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[...]
+[   71.600141] CPU: 3 PID: 7612 Comm: nft Not tainted 4.18.0+ #246
+[...]
+[   71.600188] Call Trace:
+[   71.600201]  ? nft_ct_timeout_obj_dump+0xc6/0xf0 [nft_ct]
 
-These changes mean we never need to abort and rollback a transaction due
-to running out of metadata space.  This is particularly important
-because there have been a handful of reports of data corruption against
-DM thin-provisioning that can all be attributed to the thin-pool having
-ran out of metadata space.
-
-Signed-off-by: Joe Thornber <ejt@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/dm-thin-metadata.c |   36 ++++++++++++++++++++
- drivers/md/dm-thin.c          |   73 +++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 100 insertions(+), 9 deletions(-)
+ net/ipv4/netfilter/nf_conntrack_proto_icmp.c   |    8 ++++----
+ net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c |    8 ++++----
+ net/netfilter/nf_conntrack_proto_dccp.c        |   12 ++++++------
+ net/netfilter/nf_conntrack_proto_generic.c     |    8 ++++----
+ net/netfilter/nf_conntrack_proto_gre.c         |    8 ++++----
+ net/netfilter/nf_conntrack_proto_sctp.c        |   14 +++++++-------
+ net/netfilter/nf_conntrack_proto_tcp.c         |   12 ++++++------
+ net/netfilter/nf_conntrack_proto_udp.c         |   20 ++++++++++----------
+ 8 files changed, 45 insertions(+), 45 deletions(-)
 
---- a/drivers/md/dm-thin-metadata.c
-+++ b/drivers/md/dm-thin-metadata.c
-@@ -189,6 +189,12 @@ struct dm_pool_metadata {
- 	sector_t data_block_size;
- 
- 	/*
-+	 * We reserve a section of the metadata for commit overhead.
-+	 * All reported space does *not* include this.
-+	 */
-+	dm_block_t metadata_reserve;
-+
-+	/*
- 	 * Set if a transaction has to be aborted but the attempt to roll back
- 	 * to the previous (good) transaction failed.  The only pool metadata
- 	 * operation possible in this state is the closing of the device.
-@@ -816,6 +822,22 @@ static int __commit_transaction(struct d
- 	return dm_tm_commit(pmd->tm, sblock);
+--- a/net/ipv4/netfilter/nf_conntrack_proto_icmp.c
++++ b/net/ipv4/netfilter/nf_conntrack_proto_icmp.c
+@@ -269,7 +269,7 @@ static unsigned int icmp_nlattr_tuple_si
  }
+ #endif
  
-+static void __set_metadata_reserve(struct dm_pool_metadata *pmd)
-+{
-+	int r;
-+	dm_block_t total;
-+	dm_block_t max_blocks = 4096; /* 16M */
-+
-+	r = dm_sm_get_nr_blocks(pmd->metadata_sm, &total);
-+	if (r) {
-+		DMERR("could not get size of metadata device");
-+		pmd->metadata_reserve = max_blocks;
-+	} else {
-+		sector_div(total, 10);
-+		pmd->metadata_reserve = min(max_blocks, total);
-+	}
-+}
-+
- struct dm_pool_metadata *dm_pool_metadata_open(struct block_device *bdev,
- 					       sector_t data_block_size,
- 					       bool format_device)
-@@ -849,6 +871,8 @@ struct dm_pool_metadata *dm_pool_metadat
- 		return ERR_PTR(r);
- 	}
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
  
-+	__set_metadata_reserve(pmd);
-+
- 	return pmd;
- }
- 
-@@ -1820,6 +1844,13 @@ int dm_pool_get_free_metadata_block_coun
- 	down_read(&pmd->root_lock);
- 	if (!pmd->fail_io)
- 		r = dm_sm_get_nr_free(pmd->metadata_sm, result);
-+
-+	if (!r) {
-+		if (*result < pmd->metadata_reserve)
-+			*result = 0;
-+		else
-+			*result -= pmd->metadata_reserve;
-+	}
- 	up_read(&pmd->root_lock);
- 
- 	return r;
-@@ -1932,8 +1963,11 @@ int dm_pool_resize_metadata_dev(struct d
- 	int r = -EINVAL;
- 
- 	down_write(&pmd->root_lock);
--	if (!pmd->fail_io)
-+	if (!pmd->fail_io) {
- 		r = __resize_space_map(pmd->metadata_sm, new_count);
-+		if (!r)
-+			__set_metadata_reserve(pmd);
-+	}
- 	up_write(&pmd->root_lock);
- 
- 	return r;
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -200,7 +200,13 @@ struct dm_thin_new_mapping;
- enum pool_mode {
- 	PM_WRITE,		/* metadata may be changed */
- 	PM_OUT_OF_DATA_SPACE,	/* metadata may be changed, though data may not be allocated */
-+
-+	/*
-+	 * Like READ_ONLY, except may switch back to WRITE on metadata resize. Reported as READ_ONLY.
-+	 */
-+	PM_OUT_OF_METADATA_SPACE,
- 	PM_READ_ONLY,		/* metadata may not be changed */
-+
- 	PM_FAIL,		/* all I/O fails */
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -307,7 +307,7 @@ static const struct nla_policy
+ icmp_timeout_nla_policy[CTA_TIMEOUT_ICMP_MAX+1] = {
+ 	[CTA_TIMEOUT_ICMP_TIMEOUT]	= { .type = NLA_U32 },
  };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
  
-@@ -1388,7 +1394,35 @@ static void set_pool_mode(struct pool *p
- 
- static void requeue_bios(struct pool *pool);
- 
--static void check_for_space(struct pool *pool)
-+static bool is_read_only_pool_mode(enum pool_mode mode)
-+{
-+	return (mode == PM_OUT_OF_METADATA_SPACE || mode == PM_READ_ONLY);
-+}
-+
-+static bool is_read_only(struct pool *pool)
-+{
-+	return is_read_only_pool_mode(get_pool_mode(pool));
-+}
-+
-+static void check_for_metadata_space(struct pool *pool)
-+{
-+	int r;
-+	const char *ooms_reason = NULL;
-+	dm_block_t nr_free;
-+
-+	r = dm_pool_get_free_metadata_block_count(pool->pmd, &nr_free);
-+	if (r)
-+		ooms_reason = "Could not get free metadata blocks";
-+	else if (!nr_free)
-+		ooms_reason = "No free metadata blocks";
-+
-+	if (ooms_reason && !is_read_only(pool)) {
-+		DMERR("%s", ooms_reason);
-+		set_pool_mode(pool, PM_OUT_OF_METADATA_SPACE);
-+	}
-+}
-+
-+static void check_for_data_space(struct pool *pool)
- {
- 	int r;
- 	dm_block_t nr_free;
-@@ -1414,14 +1448,16 @@ static int commit(struct pool *pool)
- {
- 	int r;
- 
--	if (get_pool_mode(pool) >= PM_READ_ONLY)
-+	if (get_pool_mode(pool) >= PM_OUT_OF_METADATA_SPACE)
- 		return -EINVAL;
- 
- 	r = dm_pool_commit_metadata(pool->pmd);
- 	if (r)
- 		metadata_operation_failed(pool, "dm_pool_commit_metadata", r);
--	else
--		check_for_space(pool);
-+	else {
-+		check_for_metadata_space(pool);
-+		check_for_data_space(pool);
-+	}
- 
- 	return r;
+ #ifdef CONFIG_SYSCTL
+ static struct ctl_table icmp_sysctl_table[] = {
+@@ -369,7 +369,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_to_tuple	= icmp_nlattr_to_tuple,
+ 	.nla_policy		= icmp_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= icmp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= icmp_timeout_obj_to_nlattr,
+@@ -377,7 +377,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int),
+ 		.nla_policy	= icmp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= icmp_init_net,
+ 	.get_net_proto		= icmp_get_net_proto,
+ };
+--- a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
++++ b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
+@@ -270,7 +270,7 @@ static unsigned int icmpv6_nlattr_tuple_
  }
-@@ -1487,6 +1523,19 @@ static int alloc_data_block(struct thin_
- 		return r;
- 	}
+ #endif
  
-+	r = dm_pool_get_free_metadata_block_count(pool->pmd, &free_blocks);
-+	if (r) {
-+		metadata_operation_failed(pool, "dm_pool_get_free_metadata_block_count", r);
-+		return r;
-+	}
-+
-+	if (!free_blocks) {
-+		/* Let's commit before we use up the metadata reserve. */
-+		r = commit(pool);
-+		if (r)
-+			return r;
-+	}
-+
- 	return 0;
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -308,7 +308,7 @@ static const struct nla_policy
+ icmpv6_timeout_nla_policy[CTA_TIMEOUT_ICMPV6_MAX+1] = {
+ 	[CTA_TIMEOUT_ICMPV6_TIMEOUT]	= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 
+ #ifdef CONFIG_SYSCTL
+ static struct ctl_table icmpv6_sysctl_table[] = {
+@@ -368,7 +368,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_to_tuple	= icmpv6_nlattr_to_tuple,
+ 	.nla_policy		= icmpv6_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= icmpv6_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= icmpv6_timeout_obj_to_nlattr,
+@@ -376,7 +376,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int),
+ 		.nla_policy	= icmpv6_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= icmpv6_init_net,
+ 	.get_net_proto		= icmpv6_get_net_proto,
+ };
+--- a/net/netfilter/nf_conntrack_proto_dccp.c
++++ b/net/netfilter/nf_conntrack_proto_dccp.c
+@@ -699,7 +699,7 @@ static int nlattr_to_dccp(struct nlattr
+ }
+ #endif
+ 
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -750,7 +750,7 @@ dccp_timeout_nla_policy[CTA_TIMEOUT_DCCP
+ 	[CTA_TIMEOUT_DCCP_CLOSING]	= { .type = NLA_U32 },
+ 	[CTA_TIMEOUT_DCCP_TIMEWAIT]	= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 
+ #ifdef CONFIG_SYSCTL
+ /* template, data assigned later */
+@@ -883,7 +883,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_to_tuple	= nf_ct_port_nlattr_to_tuple,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= dccp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= dccp_timeout_obj_to_nlattr,
+@@ -891,7 +891,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * CT_DCCP_MAX,
+ 		.nla_policy	= dccp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= dccp_init_net,
+ 	.get_net_proto		= dccp_get_net_proto,
+ };
+@@ -919,7 +919,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_to_tuple	= nf_ct_port_nlattr_to_tuple,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= dccp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= dccp_timeout_obj_to_nlattr,
+@@ -927,7 +927,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * CT_DCCP_MAX,
+ 		.nla_policy	= dccp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= dccp_init_net,
+ 	.get_net_proto		= dccp_get_net_proto,
+ };
+--- a/net/netfilter/nf_conntrack_proto_generic.c
++++ b/net/netfilter/nf_conntrack_proto_generic.c
+@@ -79,7 +79,7 @@ static bool generic_new(struct nf_conn *
+ 	return ret;
  }
  
-@@ -1518,6 +1567,7 @@ static blk_status_t should_error_unservi
- 	case PM_OUT_OF_DATA_SPACE:
- 		return pool->pf.error_if_no_space ? BLK_STS_NOSPC : 0;
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
  
-+	case PM_OUT_OF_METADATA_SPACE:
- 	case PM_READ_ONLY:
- 	case PM_FAIL:
- 		return BLK_STS_IOERR;
-@@ -2481,8 +2531,9 @@ static void set_pool_mode(struct pool *p
- 		error_retry_list(pool);
- 		break;
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -119,7 +119,7 @@ static const struct nla_policy
+ generic_timeout_nla_policy[CTA_TIMEOUT_GENERIC_MAX+1] = {
+ 	[CTA_TIMEOUT_GENERIC_TIMEOUT]	= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
  
-+	case PM_OUT_OF_METADATA_SPACE:
- 	case PM_READ_ONLY:
--		if (old_mode != new_mode)
-+		if (!is_read_only_pool_mode(old_mode))
- 			notify_of_pool_mode_change(pool, "read-only");
- 		dm_pool_metadata_read_only(pool->pmd);
- 		pool->process_bio = process_bio_read_only;
-@@ -3420,6 +3471,10 @@ static int maybe_resize_metadata_dev(str
- 		DMINFO("%s: growing the metadata device from %llu to %llu blocks",
- 		       dm_device_name(pool->pool_md),
- 		       sb_metadata_dev_size, metadata_dev_size);
-+
-+		if (get_pool_mode(pool) == PM_OUT_OF_METADATA_SPACE)
-+			set_pool_mode(pool, PM_WRITE);
-+
- 		r = dm_pool_resize_metadata_dev(pool->pmd, metadata_dev_size);
- 		if (r) {
- 			metadata_operation_failed(pool, "dm_pool_resize_metadata_dev", r);
-@@ -3724,7 +3779,7 @@ static int pool_message(struct dm_target
- 	struct pool_c *pt = ti->private;
- 	struct pool *pool = pt->pool;
+ #ifdef CONFIG_SYSCTL
+ static struct ctl_table generic_sysctl_table[] = {
+@@ -172,7 +172,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.packet			= generic_packet,
+ 	.get_timeouts		= generic_get_timeouts,
+ 	.new			= generic_new,
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= generic_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= generic_timeout_obj_to_nlattr,
+@@ -180,7 +180,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int),
+ 		.nla_policy	= generic_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= generic_init_net,
+ 	.get_net_proto		= generic_get_net_proto,
+ };
+--- a/net/netfilter/nf_conntrack_proto_gre.c
++++ b/net/netfilter/nf_conntrack_proto_gre.c
+@@ -289,7 +289,7 @@ static void gre_destroy(struct nf_conn *
+ 		nf_ct_gre_keymap_destroy(master);
+ }
  
--	if (get_pool_mode(pool) >= PM_READ_ONLY) {
-+	if (get_pool_mode(pool) >= PM_OUT_OF_METADATA_SPACE) {
- 		DMERR("%s: unable to service pool target messages in READ_ONLY or FAIL mode",
- 		      dm_device_name(pool->pool_md));
- 		return -EOPNOTSUPP;
-@@ -3798,6 +3853,7 @@ static void pool_status(struct dm_target
- 	dm_block_t nr_blocks_data;
- 	dm_block_t nr_blocks_metadata;
- 	dm_block_t held_root;
-+	enum pool_mode mode;
- 	char buf[BDEVNAME_SIZE];
- 	char buf2[BDEVNAME_SIZE];
- 	struct pool_c *pt = ti->private;
-@@ -3868,9 +3924,10 @@ static void pool_status(struct dm_target
- 		else
- 			DMEMIT("- ");
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
  
--		if (pool->pf.mode == PM_OUT_OF_DATA_SPACE)
-+		mode = get_pool_mode(pool);
-+		if (mode == PM_OUT_OF_DATA_SPACE)
- 			DMEMIT("out_of_data_space ");
--		else if (pool->pf.mode == PM_READ_ONLY)
-+		else if (is_read_only_pool_mode(mode))
- 			DMEMIT("ro ");
- 		else
- 			DMEMIT("rw ");
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -336,7 +336,7 @@ gre_timeout_nla_policy[CTA_TIMEOUT_GRE_M
+ 	[CTA_TIMEOUT_GRE_UNREPLIED]	= { .type = NLA_U32 },
+ 	[CTA_TIMEOUT_GRE_REPLIED]	= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 
+ static int gre_init_net(struct net *net, u_int16_t proto)
+ {
+@@ -371,7 +371,7 @@ static const struct nf_conntrack_l4proto
+ 	.nlattr_to_tuple = nf_ct_port_nlattr_to_tuple,
+ 	.nla_policy	 = nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout    = {
+ 		.nlattr_to_obj	= gre_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= gre_timeout_obj_to_nlattr,
+@@ -379,7 +379,7 @@ static const struct nf_conntrack_l4proto
+ 		.obj_size	= sizeof(unsigned int) * GRE_CT_MAX,
+ 		.nla_policy	= gre_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.net_id		= &proto_gre_net_id,
+ 	.init_net	= gre_init_net,
+ };
+--- a/net/netfilter/nf_conntrack_proto_sctp.c
++++ b/net/netfilter/nf_conntrack_proto_sctp.c
+@@ -615,7 +615,7 @@ static int nlattr_to_sctp(struct nlattr
+ }
+ #endif
+ 
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -668,7 +668,7 @@ sctp_timeout_nla_policy[CTA_TIMEOUT_SCTP
+ 	[CTA_TIMEOUT_SCTP_HEARTBEAT_SENT]	= { .type = NLA_U32 },
+ 	[CTA_TIMEOUT_SCTP_HEARTBEAT_ACKED]	= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 
+ 
+ #ifdef CONFIG_SYSCTL
+@@ -800,7 +800,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_to_tuple	= nf_ct_port_nlattr_to_tuple,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= sctp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= sctp_timeout_obj_to_nlattr,
+@@ -808,7 +808,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * SCTP_CONNTRACK_MAX,
+ 		.nla_policy	= sctp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= sctp_init_net,
+ 	.get_net_proto		= sctp_get_net_proto,
+ };
+@@ -836,7 +836,8 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
+ 	.nlattr_to_tuple	= nf_ct_port_nlattr_to_tuple,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#endif
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= sctp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= sctp_timeout_obj_to_nlattr,
+@@ -844,8 +845,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * SCTP_CONNTRACK_MAX,
+ 		.nla_policy	= sctp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+-#endif
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= sctp_init_net,
+ 	.get_net_proto		= sctp_get_net_proto,
+ };
+--- a/net/netfilter/nf_conntrack_proto_tcp.c
++++ b/net/netfilter/nf_conntrack_proto_tcp.c
+@@ -1305,7 +1305,7 @@ static unsigned int tcp_nlattr_tuple_siz
+ }
+ #endif
+ 
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -1415,7 +1415,7 @@ static const struct nla_policy tcp_timeo
+ 	[CTA_TIMEOUT_TCP_RETRANS]	= { .type = NLA_U32 },
+ 	[CTA_TIMEOUT_TCP_UNACK]		= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 
+ #ifdef CONFIG_SYSCTL
+ static struct ctl_table tcp_sysctl_table[] = {
+@@ -1578,7 +1578,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_size		= TCP_NLATTR_SIZE,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= tcp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= tcp_timeout_obj_to_nlattr,
+@@ -1587,7 +1587,7 @@ const struct nf_conntrack_l4proto nf_con
+ 					TCP_CONNTRACK_TIMEOUT_MAX,
+ 		.nla_policy	= tcp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= tcp_init_net,
+ 	.get_net_proto		= tcp_get_net_proto,
+ };
+@@ -1616,7 +1616,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_tuple_size	= tcp_nlattr_tuple_size,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= tcp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= tcp_timeout_obj_to_nlattr,
+@@ -1625,7 +1625,7 @@ const struct nf_conntrack_l4proto nf_con
+ 					TCP_CONNTRACK_TIMEOUT_MAX,
+ 		.nla_policy	= tcp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= tcp_init_net,
+ 	.get_net_proto		= tcp_get_net_proto,
+ };
+--- a/net/netfilter/nf_conntrack_proto_udp.c
++++ b/net/netfilter/nf_conntrack_proto_udp.c
+@@ -192,7 +192,7 @@ static int udp_error(struct net *net, st
+ 	return NF_ACCEPT;
+ }
+ 
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 
+ #include <linux/netfilter/nfnetlink.h>
+ #include <linux/netfilter/nfnetlink_cttimeout.h>
+@@ -239,7 +239,7 @@ udp_timeout_nla_policy[CTA_TIMEOUT_UDP_M
+        [CTA_TIMEOUT_UDP_UNREPLIED]	= { .type = NLA_U32 },
+        [CTA_TIMEOUT_UDP_REPLIED]	= { .type = NLA_U32 },
+ };
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 
+ #ifdef CONFIG_SYSCTL
+ static struct ctl_table udp_sysctl_table[] = {
+@@ -313,7 +313,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= udp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= udp_timeout_obj_to_nlattr,
+@@ -321,7 +321,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * CTA_TIMEOUT_UDP_MAX,
+ 		.nla_policy	= udp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= udp_init_net,
+ 	.get_net_proto		= udp_get_net_proto,
+ };
+@@ -345,7 +345,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= udp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= udp_timeout_obj_to_nlattr,
+@@ -353,7 +353,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * CTA_TIMEOUT_UDP_MAX,
+ 		.nla_policy	= udp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= udp_init_net,
+ 	.get_net_proto		= udp_get_net_proto,
+ };
+@@ -377,7 +377,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= udp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= udp_timeout_obj_to_nlattr,
+@@ -385,7 +385,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * CTA_TIMEOUT_UDP_MAX,
+ 		.nla_policy	= udp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= udp_init_net,
+ 	.get_net_proto		= udp_get_net_proto,
+ };
+@@ -409,7 +409,7 @@ const struct nf_conntrack_l4proto nf_con
+ 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
+ 	.nla_policy		= nf_ct_port_nla_policy,
+ #endif
+-#if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
++#ifdef CONFIG_NF_CONNTRACK_TIMEOUT
+ 	.ctnl_timeout		= {
+ 		.nlattr_to_obj	= udp_timeout_nlattr_to_obj,
+ 		.obj_to_nlattr	= udp_timeout_obj_to_nlattr,
+@@ -417,7 +417,7 @@ const struct nf_conntrack_l4proto nf_con
+ 		.obj_size	= sizeof(unsigned int) * CTA_TIMEOUT_UDP_MAX,
+ 		.nla_policy	= udp_timeout_nla_policy,
+ 	},
+-#endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
++#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
+ 	.init_net		= udp_init_net,
+ 	.get_net_proto		= udp_get_net_proto,
+ };
 
 
