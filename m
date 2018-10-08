@@ -2,89 +2,100 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F23C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784D7C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022C720878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022C720878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 2FF0320645
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:06:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q6MrS7k5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF0320645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbeJHSQT (ORCPT
+        id S1727427AbeJHSRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:16:19 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:37260 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeJHSQS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:16:18 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id kz561y00F3XaVaC06z56PH; Mon, 08 Oct 2018 13:05:06 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g9TLV-000511-Th; Mon, 08 Oct 2018 13:05:05 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g9TLV-0006dL-Sh; Mon, 08 Oct 2018 13:05:05 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] lib/vsprintf: Prepare for more general use of ptr_to_id()
-Date:   Mon,  8 Oct 2018 13:05:02 +0200
-Message-Id: <20181008110504.25449-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181008110504.25449-1-geert+renesas@glider.be>
-References: <20181008110504.25449-1-geert+renesas@glider.be>
+        Mon, 8 Oct 2018 14:17:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:44451 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbeJHSRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 14:17:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42THc94kNhz9sD2;
+        Mon,  8 Oct 2018 22:06:33 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538996793;
+        bh=euR5yh++p7/C8U1i60gc8VRTaIXG09KhmopoyYvfuRQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=q6MrS7k5dsIqMQkYFACaB0KruD6uNILqrWFfTeT0MbNAR5rS2T3UoqZJegkoA7Jnl
+         FFQ5vJ7cc1Kfdt0S+85Z4Hpji+hCzIFUACTfMxNi3lLKOb37n2Nc8TGczWr2l+OLP+
+         2vHrNC3PerK7f41w4pz8qVMXKZdlCl/7MRnwJjCqmhYbCe87ZI8RNgbalKa7d+tXZg
+         AdiU7EVzXjDlyqrh+RdJF8lxo6kTWgx9MJhH1+xpEhMJzOS9FOx53sDpEdRpicxXyK
+         Jn6ge1YscK+sidZlqesyizrKxQ1p1pBob9WEsPmrfn0xvcXxiFEaSHEcGG1lRB3i2y
+         ibMYYkx4X5inQ==
+Date:   Mon, 8 Oct 2018 22:06:32 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the nand tree
+Message-ID: <20181008220632.6b361e3d@canb.auug.org.au>
+In-Reply-To: <20181008095334.6850f033@xps13>
+References: <20181008113842.4bfc8cf9@canb.auug.org.au>
+        <20181008095334.6850f033@xps13>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CbdThYiL=mqJa5l+YT9eZdt"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  - Make the ptr argument const, to avoid adding casts in future
-    callers,
-  - Add a forward declaration, to avoid moving large blocks of code.
+--Sig_/CbdThYiL=mqJa5l+YT9eZdt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- lib/vsprintf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Hi Miquel,
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 095a677f89c02442..b5bf90731c5a5277 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -407,6 +407,9 @@ struct printf_spec {
- #define FIELD_WIDTH_MAX ((1 << 23) - 1)
- #define PRECISION_MAX ((1 << 15) - 1)
- 
-+static char *ptr_to_id(char *buf, char *end, const void *ptr,
-+		       struct printf_spec spec);
-+
- static noinline_for_stack
- char *number(char *buf, char *end, unsigned long long num,
- 	     struct printf_spec spec)
-@@ -1714,7 +1717,8 @@ static int __init initialize_ptr_random(void)
- early_initcall(initialize_ptr_random);
- 
- /* Maps a pointer to a 32 bit unique identifier. */
--static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
-+static char *ptr_to_id(char *buf, char *end, const void *ptr,
-+		       struct printf_spec spec)
- {
- 	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
- 	unsigned long hashval;
--- 
-2.17.1
+On Mon, 8 Oct 2018 09:53:34 +0200 Miquel Raynal <miquel.raynal@bootlin.com>=
+ wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote on Mon, 8 Oct 2018
+> 11:38:42 +1100:
+>=20
+> > Hi Boris, =20
+>=20
+> Boris is still there but I'm in charge of the NAND tree these days (and
+> the one to blame too for this one :) ).
 
+I'll add you as a contact for this tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CbdThYiL=mqJa5l+YT9eZdt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu7OjgACgkQAVBC80lX
+0GyNSwf/QLV3RAZ9feCWTXv+Q81A8o9wbFAzI7JjzuxzbA3Dc1TzdTtCWl/lvZyA
+rEDHrJBxjYHrTNK8mBDTdsiIsPiTSBng5kptOnyP2VZZoCcFsiaeEebeUwitGMBr
+GpmUHFxxDxwMPrF4Lr7i5Toy0UAIzaynj2tLh5bQmzb3Ic8P00bHcGWz39QZtmO4
+rqoW9ihZoNTeKpzgMqdIA+R3d0mP8vr31wb0GYfR1vjoMZfTCKPL09h+XRwNPPsT
+0+0yhwl0/4fPFYZx79yW2VQskMdQue0Zd9fBRPfu5y15LIgdS2bKcPW3FAUhUzjA
+O2XHLU1Mqz1FiHufhIoYd1M4SlCMGA==
+=6Oa9
+-----END PGP SIGNATURE-----
+
+--Sig_/CbdThYiL=mqJa5l+YT9eZdt--
