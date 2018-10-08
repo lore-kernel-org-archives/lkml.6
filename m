@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699BCC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B638C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF08214FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45298214FA
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjiFsfdj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF08214FA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdbGZGpg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45298214FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeJHWie (ORCPT
+        id S1728193AbeJHWig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57232 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728114AbeJHWie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:34 -0400
+        id S1728164AbeJHWif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93C252150F;
-        Mon,  8 Oct 2018 15:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A98F2152D;
+        Mon,  8 Oct 2018 15:26:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012379;
-        bh=dErdjsP5SAPENzAiG8aXAmFnGAM3UHEYzdW6dYxW1xU=;
+        s=default; t=1539012380;
+        bh=tBtdXwvmrdDCKShARp1tLL1qz8S/LJTZ91JwziBltL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rjiFsfdjLcYT7+FKLZsv2iFNTqDdY5++rFZxoTOntGk3EhyXua0PY6DOQIJdxs8Ri
-         8+Uw/fq6DzgMK4WxfXQILzGZY2rXfsR64YNAX82+BCnleF9+STfRBlIwm/Jb2Tv7bX
-         Emow3kjJ/QPpMgH8y8FaI44s16R6FQk9xu2WHO3M=
+        b=IdbGZGpgTLOkkQ0TKQmAyzgA+P+NBqqJmRcidMrFXGyd/2pz7lBbx1bZCRPP2reFL
+         euyXbe2jLhE+b1NPeSF+R3b6vGnt8dJ99V/2Hvu3nc0d+4ErBBwph1gssC50zjUVMu
+         eu9r2DtDoVjHrF3gtdwtjn1kDU3Uiy97AGQ4NvjU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Arindam Nath <arindam.nath@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 56/58] powerpc/numa: Use associativity if VPHN hcall is successful
-Date:   Mon,  8 Oct 2018 11:25:21 -0400
-Message-Id: <20181008152523.70705-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 57/58] iommu/amd: Return devid as alias for ACPI HID devices
+Date:   Mon,  8 Oct 2018 11:25:22 -0400
+Message-Id: <20181008152523.70705-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -52,90 +52,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+From: Arindam Nath <arindam.nath@amd.com>
 
-[ Upstream commit 2483ef056f6e42f61cd266452e2841165dfe1b5c ]
+[ Upstream commit 5ebb1bc2d63d90dd204169e21fd7a0b4bb8c776e ]
 
-Currently associativity is used to lookup node-id even if the
-preceding VPHN hcall failed. However this can cause CPU to be made
-part of the wrong node, (most likely to be node 0). This is because
-VPHN is not enabled on KVM guests.
+ACPI HID devices do not actually have an alias for
+them in the IVRS. But dev_data->alias is still used
+for indexing into the IOMMU device table for devices
+being handled by the IOMMU. So for ACPI HID devices,
+we simply return the corresponding devid as an alias,
+as parsed from IVRS table.
 
-With 2ea6263 ("powerpc/topology: Get topology for shared processors at
-boot"), associativity is used to set to the wrong node. Hence KVM
-guest topology is broken.
-
-For example : A 4 node KVM guest before would have reported.
-
-  [root@localhost ~]#  numactl -H
-  available: 4 nodes (0-3)
-  node 0 cpus: 0 1 2 3
-  node 0 size: 1746 MB
-  node 0 free: 1604 MB
-  node 1 cpus: 4 5 6 7
-  node 1 size: 2044 MB
-  node 1 free: 1765 MB
-  node 2 cpus: 8 9 10 11
-  node 2 size: 2044 MB
-  node 2 free: 1837 MB
-  node 3 cpus: 12 13 14 15
-  node 3 size: 2044 MB
-  node 3 free: 1903 MB
-  node distances:
-  node   0   1   2   3
-    0:  10  40  40  40
-    1:  40  10  40  40
-    2:  40  40  10  40
-    3:  40  40  40  10
-
-Would now report:
-
-  [root@localhost ~]# numactl -H
-  available: 4 nodes (0-3)
-  node 0 cpus: 0 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-  node 0 size: 1746 MB
-  node 0 free: 1244 MB
-  node 1 cpus:
-  node 1 size: 2044 MB
-  node 1 free: 2032 MB
-  node 2 cpus: 1
-  node 2 size: 2044 MB
-  node 2 free: 2028 MB
-  node 3 cpus:
-  node 3 size: 2044 MB
-  node 3 free: 2032 MB
-  node distances:
-  node   0   1   2   3
-    0:  10  40  40  40
-    1:  40  10  40  40
-    2:  40  40  10  40
-    3:  40  40  40  10
-
-Fix this by skipping associativity lookup if the VPHN hcall failed.
-
-Fixes: 2ea626306810 ("powerpc/topology: Get topology for shared processors at boot")
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Arindam Nath <arindam.nath@amd.com>
+Fixes: 2bf9a0a12749 ('iommu/amd: Add iommu support for ACPI HID devices')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/mm/numa.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index b5a71baedbc2..59d07bd5374a 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -1204,7 +1204,9 @@ int find_and_online_cpu_nid(int cpu)
- 	int new_nid;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index d77c97fe4a23..e6995cf3d6dd 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -246,7 +246,13 @@ static u16 get_alias(struct device *dev)
  
- 	/* Use associativity from first thread for all siblings */
--	vphn_get_associativity(cpu, associativity);
-+	if (vphn_get_associativity(cpu, associativity))
-+		return cpu_to_node(cpu);
+ 	/* The callers make sure that get_device_id() does not fail here */
+ 	devid = get_device_id(dev);
 +
- 	new_nid = associativity_to_nid(associativity);
- 	if (new_nid < 0 || !node_possible(new_nid))
- 		new_nid = first_online_node;
++	/* For ACPI HID devices, we simply return the devid as such */
++	if (!dev_is_pci(dev))
++		return devid;
++
+ 	ivrs_alias = amd_iommu_alias_table[devid];
++
+ 	pci_for_each_dma_alias(pdev, __last_alias, &pci_alias);
+ 
+ 	if (ivrs_alias == pci_alias)
 -- 
 2.17.1
 
