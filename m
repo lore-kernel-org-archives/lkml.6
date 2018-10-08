@@ -2,122 +2,109 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0C6C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6430EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2962087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:47:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn8TqaAy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2962087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 28E2B2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:48:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E2B2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJHW7V (ORCPT
+        id S1726492AbeJHXAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:59:21 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35581 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbeJHW7V (ORCPT
+        Mon, 8 Oct 2018 19:00:52 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:46999 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbeJHXAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:59:21 -0400
-Received: by mail-lf1-f67.google.com with SMTP id r191-v6so14291976lff.2;
-        Mon, 08 Oct 2018 08:46:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Vi2/uku5IYxNJTJmia6m4ECLtTso7nN62ecI51I0Nyw=;
-        b=Bn8TqaAyVPIU8ZwVyHby1iPr3zyePtz8X9zn+LKTWsCSgm3zEpGOoMtTW6RjBTC2e7
-         k7iK4UWG9H/tgOYNMokCCCSZcCQXQi9y1MCaMQJidnIiTsFWe01bKv5i+iD3UKvq4BkG
-         WJv0vDX55rRnBEubufOZFt0YbwfXmH+YoLqKo7lGy5xhTScyyO6E8extIjlUpAJsh1+L
-         QJa2pV762is809d6srBcHZn0K0Xy61WVHy+nScOOT05+6turQjRf/tqDB46PF3fN28G7
-         QXZ0vXO/3WS+Gc3hz8Ekei8CJaoPOOgbrDRkMJAHaPzZEkr5BKONE/2Mlfp1dlcFivja
-         m0sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vi2/uku5IYxNJTJmia6m4ECLtTso7nN62ecI51I0Nyw=;
-        b=qJ5nOWuG5D7PgatngjOCdISlye7nOJI79SoUvz2+4cWndo9YVWubDWQe1C9P6rx4Mq
-         Newh47lQB4mQrFVkGde/RXMo+uC4t81Bb/GbQE1qdymq8cjXAYHMii+VGIZBiHeESXLe
-         DMN1hoPzn+uYtwAUzrMuhPjnxHr0hXGwNGrUTcHrhvTosZyqHFN4j7ev2LgfYlsdMOc+
-         ajKdqyCVmLw9ypM9smnZ2EWQl+QaAW50PXd4TC67zOLI3i0fO0Z8AeWsWzQVBbvrrntx
-         RPU3aezcA9CpY4c+CEkUM5AMOXv3Fr/57qwiM6hqxwkTA+gjWIqv9Jy1hibeiGtevUI8
-         M5Wg==
-X-Gm-Message-State: ABuFfogfUlg8qoSQXv62oOMJE+q5F1qXU8KzPUHxc/5Jb4FoDyC+53RV
-        yiw5uSXEKOkFGeanECPeV5A=
-X-Google-Smtp-Source: ACcGV62WvMAt4MbuORc0ByGhPQgRKVoU02VOrRdVAYrI8+2zGwg396lAiybNvJvVXPkSzNMz9bi2kg==
-X-Received: by 2002:a19:a501:: with SMTP id o1-v6mr12728776lfe.41.1539013616835;
-        Mon, 08 Oct 2018 08:46:56 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id v85-v6sm3592107lfa.18.2018.10.08.08.46.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 08:46:55 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g9XkF-00035j-7q; Mon, 08 Oct 2018 17:46:56 +0200
-Date:   Mon, 8 Oct 2018 17:46:55 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Tobias Klausmann <klausman@schwarzvogel.de>,
+        Mon, 8 Oct 2018 19:00:52 -0400
+Received: from [192.168.178.69] ([109.104.43.45]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MFbFW-1fudFT1018-00H8Qd; Mon, 08 Oct 2018 17:48:05 +0200
+Received: from [192.168.178.69] ([109.104.43.45]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MFbFW-1fudFT1018-00H8Qd; Mon, 08 Oct 2018 17:48:05 +0200
+Subject: Re: [PATCH] staging: bcm2835-camera: remove extraneous setting of
+ dev->colourfx.enable
+To:     Colin King <colin.king@canonical.com>,
+        Eric Anholt <eric@anholt.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>, stable@vger.kernel.org
-Subject: Re: [PATCH stable v2 2/2] termios, tty/tty_baudrate.c: simplify,
- auto-generate baud table
-Message-ID: <20181008154655.GE3332@localhost>
-References: <20181008040620.1248277-1-hpa@zytor.com>
- <20181008040620.1248277-3-hpa@zytor.com>
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181008145012.31312-1-colin.king@canonical.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <d753df4f-e812-c366-0b1d-9ff804da0ab5@i2se.com>
+Date:   Mon, 8 Oct 2018 17:48:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008040620.1248277-3-hpa@zytor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181008145012.31312-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:/KPLSaJ0XuU0E4jjgisYTC5q9VIHWN+hNrpVGCmNw3kk7w/t7lx
+ iqfc38VH9dFWzVyfeQ7YF4+r2dCfFHJlqzHiY/fz0KHeDSMvHJ5f50xENb4aYu3eDrR6CTy
+ dM5/qLLxrWULBAPCBPouT79uHwpeQaT9xKeRSP3tgt0To9IaXjnARBGaGB23QvuBl9jKCnI
+ 8ZcRcynoZuCnI2PeXSHtQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gIzu1McW1vw=:6sJZFzIqLoyM/0PpypX6TX
+ 2p3Dg2BQl2SBFF1NIJdsicPyNXTlj28y8nNHHuS7yRepHzfAUePkapm3/TGz5ddDUb8wuPGjK
+ 7xXaGrHZ5d05lx/6UZgPHfqcRBUbboNBN6odmo/Ta81pN/LjA4YpVJZOBAuRuOLpjP+AG8Mxu
+ J/Vto9y18/0SbavlbuhfEPcyUvoNhuZ1jdt4U4dG8EyzjQidUPs9wLNe8Y04wy6mjiJJFdk3i
+ qmZUZfRdfKR0/G+ogpAjEff1nne7a0clFLyGqTRWNS0JeKvXrM+/Y+S4dTVcAM18sPhSuV/Uy
+ ZWyl3efL5M37rhEtxwkcNYqRiZBQtsYPAv+ly1HVfluiTNvQyASzbTzW6EjA6CX/RF6JEpqEm
+ prlmDET4vOJi9f1rjTBcTKqA+IMwVrh/S3DGiWnRIksBib6cNP6JYxmCAdwZf6d2Qb0ICezDl
+ scLiyNhTQwNUFfVD8top6rqMHJNZr8qOdqci7DEaZLEFW+dlo6qK7nxWF+0uPOKthS6cHv+dy
+ qfLwMANZMszK5yEeXp74LfWtLbjT3trFBHFZ2BX7WqlUg/ZGE3DOzArYWroE6Pu7YIC6GT6a9
+ pApoGgoLzbstY4ayI2B765j3lhkdo+j084OPkhbyjLi1p6tiLHqJMTfrhMVpKYl3LuYwbPeIm
+ yCMnIblBuIM9eM/JsHNWYNUrwyxUb0pmpso8RT5pKMplV9LrGZYOthSPiZWGYkoMboKCEm3Z+
+ 0a2okkb6Liqjij6k
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 07, 2018 at 09:06:20PM -0700, H. Peter Anvin wrote:
-> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
-> 
-> Now when all architectures define BOTHER and IBSHIFT, we can
-> unconditionally rely on these constants. Furthermore, the code can be
-> significantly simplified in a number of places.
-> 
-> Rather than having two tables and needing to be able to keep them in
-> sync at all times, have one auto-generated table. This also lets us
-> avoid the fact that architectures that have CBAUDEX == 0 have BOTHER
-> in a different location that those that don't.
-> 
-> The code for masking CBAUDEX as a fallback is never exercised on any
-> architecture, because for all architectures, either the baud rate
-> table is completely defined for all CBAUD values, or CBAUDEX == 0, so
-> we can just remove it.
-> 
-> Finally, this patch avoids overrunning the baud_table[] for
-> architectures with CBAUDEX == 0.
+Hi Colin,
 
-So we need a minimal fix for this only as this patch in particular
-should not be backported to stable.
+Am 08.10.2018 um 16:50 schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently dev->colourfx.enable is being set twice, hence the first
+> occurrance is redundant and can be removed, so remove it. This minor
+> issue was introduced by commit 7b3ad5abf027 ("staging: Import the
+> BCM2835 MMAL-based V4L2 camera driver.").
+>
+> Detected by CoverityScan CID#1419711 ("Unused value")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/vc04_services/bcm2835-camera/controls.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+> index a2c55cb2192a..99831dd4365d 100644
+> --- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
+> +++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+> @@ -588,7 +588,6 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
+>  
+>  	control = &dev->component[MMAL_COMPONENT_CAMERA]->control;
+>  
+> -	dev->colourfx.enable = (ctrl->val & 0xff00) >> 8;
+>  	dev->colourfx.enable = ctrl->val & 0xff;
+>  
+>  	ret = vchiq_mmal_port_parameter_set(dev->instance, control,
 
-I'm not sure when I'll have time to review this one thoroughly, so
-perhaps others can chime in meanwhile.
+as long as the current behavior is correct, i'm okay with this patch.
+But the byte masking looks suspicious, so i hope Dave can clarify that.
 
-Johan
+Thanks Stefan
