@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C04C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5E6C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F8C82087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39FA721479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eO1A4N2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8C82087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PC+n8YyH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39FA721479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbeJIBuZ (ORCPT
+        id S1728895AbeJIBu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36424 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbeJIBuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:24 -0400
+        id S1726529AbeJIBu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:27 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF6D82064A;
-        Mon,  8 Oct 2018 18:37:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C97892064A;
+        Mon,  8 Oct 2018 18:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023841;
-        bh=ZFwHfR468NKxU8sEQugh6ByPANo0UIDm95yzzJOSfJE=;
+        s=default; t=1539023844;
+        bh=LuFs0W5VCZfh4oJu9gJN2hUZ9WyaZfpre3bLrOGj0cg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eO1A4N2trTowGynVEeqZey8rkuyqORPYs3yMH4+DoxhIIVGBn+9COB+QhtmFGb6Lb
-         j+5FKGCrBlLXIxRQoENGp6De81a2ohRVx5Y+9dp0ytJd3vFnKJG6MP3lwxbm620EB0
-         75Io6zm9+b7k3NAr9NEgSeiJkNwbaGP5t2bJLT1w=
+        b=PC+n8YyHLsaFrR1Ox8wBYnwWVksnlDk/kb24vxejSH2qu/O8GlTrmoe+omdGg4MC2
+         r/jMqBcQAhM6ISloWsckCaIsqOqM+fNW0xFngoNE55wrH9gGgf3q/0sfblE88VqJUX
+         6RGfpKeaId3k5B8Ug9DczN6Wbuv78cr5VtNE8GtY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        Neil Brown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 080/113] RAID10 BUG_ON in raise_barrier when force is true and conf->barrier is 0
-Date:   Mon,  8 Oct 2018 20:31:21 +0200
-Message-Id: <20181008175535.322529296@linuxfoundation.org>
+Subject: [PATCH 4.4 081/113] i2c: uniphier: issue STOP only for last message or I2C_M_STOP
+Date:   Mon,  8 Oct 2018 20:31:22 +0200
+Message-Id: <20181008175535.598855228@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,56 +64,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Ni <xni@redhat.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
+[ Upstream commit 38f5d8d8cbb2ffa2b54315118185332329ec891c ]
 
-In raid10 reshape_request it gets max_sectors in read_balance. If the underlayer disks
-have bad blocks, the max_sectors is less than last. It will call goto read_more many
-times. It calls raise_barrier(conf, sectors_done != 0) every time. In this condition
-sectors_done is not 0. So the value passed to the argument force of raise_barrier is
-true.
+This driver currently emits a STOP if the next message is not
+I2C_MD_RD.  It should not do it because it disturbs the I2C_RDWR
+ioctl, where read/write transactions are combined without STOP
+between.
 
-In raise_barrier it checks conf->barrier when force is true. If force is true and
-conf->barrier is 0, it panic. In this case reshape_request submits bio to under layer
-disks. And in the callback function of the bio it calls lower_barrier. If the bio
-finishes before calling raise_barrier again, it can trigger the BUG_ON.
+Issue STOP only when the message is the last one _or_ flagged with
+I2C_M_STOP.
 
-Add one pair of raise_barrier/lower_barrier to fix this bug.
-
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Suggested-by: Neil Brown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: dd6fd4a32793 ("i2c: uniphier: add UniPhier FIFO-less I2C driver")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-uniphier.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4336,11 +4336,12 @@ static sector_t reshape_request(struct m
- 		allow_barrier(conf);
- 	}
+--- a/drivers/i2c/busses/i2c-uniphier.c
++++ b/drivers/i2c/busses/i2c-uniphier.c
+@@ -247,11 +247,8 @@ static int uniphier_i2c_master_xfer(stru
+ 		return ret;
  
-+	raise_barrier(conf, 0);
- read_more:
- 	/* Now schedule reads for blocks from sector_nr to last */
- 	r10_bio = mempool_alloc(conf->r10buf_pool, GFP_NOIO);
- 	r10_bio->state = 0;
--	raise_barrier(conf, sectors_done != 0);
-+	raise_barrier(conf, 1);
- 	atomic_set(&r10_bio->remaining, 0);
- 	r10_bio->mddev = mddev;
- 	r10_bio->sector = sector_nr;
-@@ -4445,6 +4446,8 @@ bio_full:
- 	if (sector_nr <= last)
- 		goto read_more;
+ 	for (msg = msgs; msg < emsg; msg++) {
+-		/* If next message is read, skip the stop condition */
+-		bool stop = !(msg + 1 < emsg && msg[1].flags & I2C_M_RD);
+-		/* but, force it if I2C_M_STOP is set */
+-		if (msg->flags & I2C_M_STOP)
+-			stop = true;
++		/* Emit STOP if it is the last message or I2C_M_STOP is set. */
++		bool stop = (msg + 1 == emsg) || (msg->flags & I2C_M_STOP);
  
-+	lower_barrier(conf);
-+
- 	/* Now that we have done the whole section we can
- 	 * update reshape_progress
- 	 */
+ 		ret = uniphier_i2c_master_xfer_one(adap, msg, stop);
+ 		if (ret)
 
 
