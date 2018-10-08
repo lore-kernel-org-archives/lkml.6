@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 486F6C677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A158EC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 128592145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CF8D214C3
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVxINuue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 128592145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu2V92FI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF8D214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbeJIBrO (ORCPT
+        id S1727672AbeJIBrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:47:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58100 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:47:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbeJIBrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:47:13 -0400
+        id S1726568AbeJIBrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:47:17 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 617892087D;
-        Mon,  8 Oct 2018 18:34:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32A9F214C2;
+        Mon,  8 Oct 2018 18:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023651;
-        bh=LQIEHvda/E3TvQAso4zR2/9YwPEX2gIa/BIAn4oe0GM=;
+        s=default; t=1539023653;
+        bh=HKgwk6xy6Y9j6uRdskRMskwAmIschZfJ4Bd6IiVnOQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SVxINuuePwcNGo22jk5QoDEyhtY0SZu82aIIXjG85et8oSXN04/f0e1OXzF6a0A5J
-         bKYMCe5ck+mFggqlXYle/zkwdaZQyKbsBVwzijt0ctlugSvMEcBD/dDBOQKgd+89tO
-         txm6LGeMvL7+GELauAUjxUv6Y63bXFRG4LtB3tIs=
+        b=Vu2V92FIGLEDYp0kF2rvXQsKhQ7TC/mmau6vLluvvucw7I50REP7eounTj17nyVEK
+         TTIaM9Ag14xfmGKK/Ctb1MuDTjKNE3RCIWEjdjiNGL+YhvmLMEWP0fkKJUzCjkgyz4
+         MYQ3nCWbmDk5Ajuwcm1YzZeu6FQW8eD0icyQ57Zo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Manish Rangankar <Manish.Rangankar@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 037/113] scsi: bnx2i: add error handling for ioremap_nocache
-Date:   Mon,  8 Oct 2018 20:30:38 +0200
-Message-Id: <20181008175532.637054788@linuxfoundation.org>
+Subject: [PATCH 4.4 038/113] EDAC, i7core: Fix memleaks and use-after-free on probe and remove
+Date:   Mon,  8 Oct 2018 20:30:39 +0200
+Message-Id: <20181008175532.692227570@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -65,35 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit aa154ea885eb0c2407457ce9c1538d78c95456fa ]
+[ Upstream commit 6c974d4dfafe5e9ee754f2a6fba0eb1864f1649e ]
 
-When ioremap_nocache fails, the lack of error-handling code may cause
-unexpected results.
+Make sure to free and deregister the addrmatch and chancounts devices
+allocated during probe in all error paths. Also fix use-after-free in a
+probe error path and in the remove success path where the devices were
+being put before before deregistration.
 
-This patch adds error-handling code after calling ioremap_nocache.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Acked-by: Manish Rangankar <Manish.Rangankar@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: 356f0a30860d ("i7core_edac: change the mem allocation scheme to make Documentation/kobject.txt happy")
+Link: http://lkml.kernel.org/r/20180612124335.6420-2-johan@kernel.org
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/bnx2i/bnx2i_hwi.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/edac/i7core_edac.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/scsi/bnx2i/bnx2i_hwi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_hwi.c
-@@ -2742,6 +2742,8 @@ int bnx2i_map_ep_dbell_regs(struct bnx2i
- 					      BNX2X_DOORBELL_PCI_BAR);
- 		reg_off = (1 << BNX2X_DB_SHIFT) * (cid_num & 0x1FFFF);
- 		ep->qp.ctx_base = ioremap_nocache(reg_base + reg_off, 4);
-+		if (!ep->qp.ctx_base)
-+			return -ENOMEM;
- 		goto arm_cq;
- 	}
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1187,15 +1187,14 @@ static int i7core_create_sysfs_devices(s
  
+ 	rc = device_add(pvt->addrmatch_dev);
+ 	if (rc < 0)
+-		return rc;
++		goto err_put_addrmatch;
+ 
+ 	if (!pvt->is_registered) {
+ 		pvt->chancounts_dev = kzalloc(sizeof(*pvt->chancounts_dev),
+ 					      GFP_KERNEL);
+ 		if (!pvt->chancounts_dev) {
+-			put_device(pvt->addrmatch_dev);
+-			device_del(pvt->addrmatch_dev);
+-			return -ENOMEM;
++			rc = -ENOMEM;
++			goto err_del_addrmatch;
+ 		}
+ 
+ 		pvt->chancounts_dev->type = &all_channel_counts_type;
+@@ -1209,9 +1208,18 @@ static int i7core_create_sysfs_devices(s
+ 
+ 		rc = device_add(pvt->chancounts_dev);
+ 		if (rc < 0)
+-			return rc;
++			goto err_put_chancounts;
+ 	}
+ 	return 0;
++
++err_put_chancounts:
++	put_device(pvt->chancounts_dev);
++err_del_addrmatch:
++	device_del(pvt->addrmatch_dev);
++err_put_addrmatch:
++	put_device(pvt->addrmatch_dev);
++
++	return rc;
+ }
+ 
+ static void i7core_delete_sysfs_devices(struct mem_ctl_info *mci)
+@@ -1221,11 +1229,11 @@ static void i7core_delete_sysfs_devices(
+ 	edac_dbg(1, "\n");
+ 
+ 	if (!pvt->is_registered) {
+-		put_device(pvt->chancounts_dev);
+ 		device_del(pvt->chancounts_dev);
++		put_device(pvt->chancounts_dev);
+ 	}
+-	put_device(pvt->addrmatch_dev);
+ 	device_del(pvt->addrmatch_dev);
++	put_device(pvt->addrmatch_dev);
+ }
+ 
+ /****************************************************************************
 
 
