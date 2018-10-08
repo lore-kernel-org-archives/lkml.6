@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF73C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C0FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072332087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2FC121479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQdLTvd6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072332087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sn3wZ1Ti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2FC121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbeJIBy1 (ORCPT
+        id S1729984AbeJIBya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41916 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeJIBy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:26 -0400
+        id S1729594AbeJIBy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA9E22064A;
-        Mon,  8 Oct 2018 18:41:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 766602064A;
+        Mon,  8 Oct 2018 18:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024082;
-        bh=aq/Lut9Fa/HZwjm7fYc4lBWMX6P1UBVH0HJc3YJS3RM=;
+        s=default; t=1539024085;
+        bh=V1FSaMm+tIdrowsO/U1/NQ3WQ3NMmXDv6s5xajWARsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EQdLTvd6s+t8R7eVPVShHI8BbMLn3XZ4HT3/MkLVhCvOaKBFzawPOzoEdKZHbdonF
-         DC7w9ob0UKdCBaLi2QetoAnNdhK5PvLdscBfQedPFUKVAlG457UnzaD+6nAY9nsXoL
-         6sKluu4d/cuEC4gjP/WEWWEUw0RnKIk+UOA8ATdw=
+        b=Sn3wZ1TiqQCmaEJE7F4Wegv3JsJtnB7QAZNfkz3O6MnDsOanEootajf9z6pSX6VUo
+         ca9Dj9P3QnjEQMN5QHNr8FfqE10L5YPHN3jy+p/iHfeQMRiDnyIVq47A3knaZGnOT1
+         2fJA+bnxw/Pg6grtRkDCRlGlU46V1P6M0HpBsrI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 14/94] mac80211: avoid kernel panic when building AMSDU from non-linear SKB
-Date:   Mon,  8 Oct 2018 20:30:55 +0200
-Message-Id: <20181008175605.730869734@linuxfoundation.org>
+Subject: [PATCH 4.14 15/94] gpiolib: acpi: Switch to cansleep version of GPIO library call
+Date:   Mon,  8 Oct 2018 20:30:56 +0200
+Message-Id: <20181008175605.777453595@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,110 +67,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 166ac9d55b0ab70b644e429be1f217fe8393cbd7 ]
+[ Upstream commit 993b9bc5c47fda86f8ab4e53d68c6fea5ff2764a ]
 
-When building building AMSDU from non-linear SKB, we hit a
-kernel panic when trying to push the padding to the tail.
-Instead, put the padding at the head of the next subframe.
-This also fixes the A-MSDU subframes to not have the padding
-accounted in the length field and not have pad at all for
-the last subframe, both required by the spec.
+The commit ca876c7483b6
 
-Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Reviewed-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+  ("gpiolib-acpi: make sure we trigger edge events at least once on boot")
+
+added a initial value check for pin which is about to be locked as IRQ.
+Unfortunately, not all GPIO drivers can do that atomically. Thus,
+switch to cansleep version of the call. Otherwise we have a warning:
+
+...
+  WARNING: CPU: 2 PID: 1408 at drivers/gpio/gpiolib.c:2883 gpiod_get_value+0x46/0x50
+...
+  RIP: 0010:gpiod_get_value+0x46/0x50
+...
+
+The change tested on Intel Broxton with Whiskey Cove PMIC GPIO controller.
+
+Fixes: ca876c7483b6 ("gpiolib-acpi: make sure we trigger edge events at least once on boot")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/tx.c |   38 +++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ drivers/gpio/gpiolib-acpi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -3022,27 +3022,18 @@ void ieee80211_clear_fast_xmit(struct st
- }
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -247,7 +247,7 @@ static acpi_status acpi_gpiochip_request
  
- static bool ieee80211_amsdu_realloc_pad(struct ieee80211_local *local,
--					struct sk_buff *skb, int headroom,
--					int *subframe_len)
-+					struct sk_buff *skb, int headroom)
- {
--	int amsdu_len = *subframe_len + sizeof(struct ethhdr);
--	int padding = (4 - amsdu_len) & 3;
--
--	if (skb_headroom(skb) < headroom || skb_tailroom(skb) < padding) {
-+	if (skb_headroom(skb) < headroom) {
- 		I802_DEBUG_INC(local->tx_expand_skb_head);
+ 	gpiod_direction_input(desc);
  
--		if (pskb_expand_head(skb, headroom, padding, GFP_ATOMIC)) {
-+		if (pskb_expand_head(skb, headroom, 0, GFP_ATOMIC)) {
- 			wiphy_debug(local->hw.wiphy,
- 				    "failed to reallocate TX buffer\n");
- 			return false;
- 		}
- 	}
+-	value = gpiod_get_value(desc);
++	value = gpiod_get_value_cansleep(desc);
  
--	if (padding) {
--		*subframe_len += padding;
--		skb_put_zero(skb, padding);
--	}
--
- 	return true;
- }
- 
-@@ -3066,8 +3057,7 @@ static bool ieee80211_amsdu_prepare_head
- 	if (info->control.flags & IEEE80211_TX_CTRL_AMSDU)
- 		return true;
- 
--	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr),
--					 &subframe_len))
-+	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr)))
- 		return false;
- 
- 	data = skb_push(skb, sizeof(*amsdu_hdr));
-@@ -3133,7 +3123,8 @@ static bool ieee80211_amsdu_aggregate(st
- 	void *data;
- 	bool ret = false;
- 	unsigned int orig_len;
--	int n = 1, nfrags;
-+	int n = 1, nfrags, pad = 0;
-+	u16 hdrlen;
- 
- 	if (!ieee80211_hw_check(&local->hw, TX_AMSDU))
- 		return false;
-@@ -3184,8 +3175,19 @@ static bool ieee80211_amsdu_aggregate(st
- 	if (max_frags && nfrags > max_frags)
- 		goto out;
- 
--	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) + 2,
--					 &subframe_len))
-+	/*
-+	 * Pad out the previous subframe to a multiple of 4 by adding the
-+	 * padding to the next one, that's being added. Note that head->len
-+	 * is the length of the full A-MSDU, but that works since each time
-+	 * we add a new subframe we pad out the previous one to a multiple
-+	 * of 4 and thus it no longer matters in the next round.
-+	 */
-+	hdrlen = fast_tx->hdr_len - sizeof(rfc1042_header);
-+	if ((head->len - hdrlen) & 3)
-+		pad = 4 - ((head->len - hdrlen) & 3);
-+
-+	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
-+						     2 + pad))
- 		goto out;
- 
- 	ret = true;
-@@ -3197,6 +3199,8 @@ static bool ieee80211_amsdu_aggregate(st
- 	memcpy(data, &len, 2);
- 	memcpy(data + 2, rfc1042_header, sizeof(rfc1042_header));
- 
-+	memset(skb_push(skb, pad), 0, pad);
-+
- 	head->len += skb->len;
- 	head->data_len += skb->len;
- 	*frag_tail = skb;
+ 	ret = gpiochip_lock_as_irq(chip, pin);
+ 	if (ret) {
 
 
