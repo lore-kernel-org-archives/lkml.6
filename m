@@ -2,49 +2,59 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF65BC65C19
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02414C64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE0942064E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0942064E
+	by mail.kernel.org (Postfix) with ESMTP id BBE2720858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:20:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE2720858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeJHR3j (ORCPT
+        id S1727132AbeJHRbd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:29:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39405 "EHLO mail.bootlin.com"
+        Mon, 8 Oct 2018 13:31:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39518 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbeJHR3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:29:39 -0400
+        id S1726193AbeJHRbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:31:33 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E2414207F3; Mon,  8 Oct 2018 12:18:37 +0200 (CEST)
+        id E84E9207CC; Mon,  8 Oct 2018 12:20:30 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B3F2E2072D;
-        Mon,  8 Oct 2018 12:18:27 +0200 (CEST)
-Date:   Mon, 8 Oct 2018 12:18:28 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id B2A5D2072D;
+        Mon,  8 Oct 2018 12:20:20 +0200 (CEST)
+Date:   Mon, 8 Oct 2018 12:20:21 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 10/29] drm/sun4i: Rename DE2 registers related macros
-Message-ID: <20181008101828.hb4xtppbexwalbkk@flea>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v2 25/29] drm: sun4i: add quirks for TCON TOP
+Message-ID: <20181008102021.ox34mqbw65euvsb4@flea>
 References: <20181007093905.11253-1-jernej.skrabec@siol.net>
- <20181007093905.11253-11-jernej.skrabec@siol.net>
+ <20181007093905.11253-26-jernej.skrabec@siol.net>
+ <20181008085112.mejpwvl3dpu7sopy@flea>
+ <CAGb2v64avzzrGJeg2HU_Ze686C1nmVsNwXJGzsUbQvQTZKuSMw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u2h5j7rewatczeh5"
+        protocol="application/pgp-signature"; boundary="r5u3grpihdexgzvi"
 Content-Disposition: inline
-In-Reply-To: <20181007093905.11253-11-jernej.skrabec@siol.net>
+In-Reply-To: <CAGb2v64avzzrGJeg2HU_Ze686C1nmVsNwXJGzsUbQvQTZKuSMw@mail.gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,34 +62,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---u2h5j7rewatczeh5
+--r5u3grpihdexgzvi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Sun, Oct 07, 2018 at 11:38:46AM +0200, Jernej Skrabec wrote:
-> In preparation to introduce DE3 support, change prefix from "SUN8I_" to
-> "DE2_". Current prefix suggest that it's valid only for one family,
-> whereas in reality, DE2 unit is used also on sun50i family.
-> Additionally, it will be easier to distinguish DE3 specific macros by
-> using "DE3_" prefix.
+On Mon, Oct 08, 2018 at 05:06:45PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Oct 8, 2018 at 4:51 PM Maxime Ripard <maxime.ripard@bootlin.com> =
+wrote:
+> >
+> > On Sun, Oct 07, 2018 at 11:39:01AM +0200, Jernej Skrabec wrote:
+> > > From: Icenowy Zheng <icenowy@aosc.io>
+> > >
+> > > Some SoCs, such as H6, doesn't have a full-featured TCON TOP.
+> > >
+> > > Add quirks support for TCON TOP.
+> > >
+> > > Currently the presence of TCON_TV1 and DSI is controlled via the quir=
+ks
+> > > structure.
+> > >
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > ---
+> > >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 43 ++++++++++++++++++++----=
+--
+> > >  1 file changed, 34 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm=
+/sun4i/sun8i_tcon_top.c
+> > > index 37158548b447..ed13233cad88 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > @@ -9,11 +9,17 @@
+> > >  #include <linux/component.h>
+> > >  #include <linux/device.h>
+> > >  #include <linux/module.h>
+> > > +#include <linux/of_device.h>
+> > >  #include <linux/of_graph.h>
+> > >  #include <linux/platform_device.h>
+> > >
+> > >  #include "sun8i_tcon_top.h"
+> > >
+> > > +struct sun8i_tcon_top_quirks {
+> > > +     bool has_tcon_tv1;
+> > > +     bool has_dsi;
+> > > +};
+> > > +
+> > >  static bool sun8i_tcon_top_node_is_tcon_top(struct device_node *node)
+> > >  {
+> > >       return !!of_match_node(sun8i_tcon_top_of_table, node);
+> > > @@ -121,10 +127,13 @@ static int sun8i_tcon_top_bind(struct device *d=
+ev, struct device *master,
+> > >       struct platform_device *pdev =3D to_platform_device(dev);
+> > >       struct clk_hw_onecell_data *clk_data;
+> > >       struct sun8i_tcon_top *tcon_top;
+> > > +     const struct sun8i_tcon_top_quirks *quirks;
+> > >       struct resource *res;
+> > >       void __iomem *regs;
+> > >       int ret, i;
+> > >
+> > > +     quirks =3D of_device_get_match_data(&pdev->dev);
+> > > +
+> > >       tcon_top =3D devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+> > >       if (!tcon_top)
+> > >               return -ENOMEM;
+> > > @@ -187,15 +196,23 @@ static int sun8i_tcon_top_bind(struct device *d=
+ev, struct device *master,
+> > >                                            &tcon_top->reg_lock,
+> > >                                            TCON_TOP_TCON_TV0_GATE, 0);
+> > >
+> > > -     clk_data->hws[CLK_TCON_TOP_TV1] =3D
+> > > -             sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
+> > > -                                          &tcon_top->reg_lock,
+> > > -                                          TCON_TOP_TCON_TV1_GATE, 1);
+> > > +     if (quirks->has_tcon_tv1) {
+> > > +             clk_data->hws[CLK_TCON_TOP_TV1] =3D
+> > > +                     sun8i_tcon_top_register_gate(dev, "tcon-tv1", r=
+egs,
+> > > +                                                  &tcon_top->reg_loc=
+k,
+> > > +                                                  TCON_TOP_TCON_TV1_=
+GATE, 1);
+> > > +     } else {
+> > > +             clk_data->hws[CLK_TCON_TOP_TV1] =3D NULL;
+> > > +     }
+> > >
+> > > -     clk_data->hws[CLK_TCON_TOP_DSI] =3D
+> > > -             sun8i_tcon_top_register_gate(dev, "dsi", regs,
+> > > -                                          &tcon_top->reg_lock,
+> > > -                                          TCON_TOP_TCON_DSI_GATE, 2);
+> > > +     if (quirks->has_dsi) {
+> > > +             clk_data->hws[CLK_TCON_TOP_DSI] =3D
+> > > +                     sun8i_tcon_top_register_gate(dev, "dsi", regs,
+> > > +                                                  &tcon_top->reg_loc=
+k,
+> > > +                                                  TCON_TOP_TCON_DSI_=
+GATE, 2);
+> > > +     } else {
+> > > +             clk_data->hws[CLK_TCON_TOP_DSI] =3D NULL;
+> >
+> > clk_data has been kzalloc'd so its content is already NULL.
+> >
+> > And you shouldn't have brackets for single line blocks.
+> >
+> > with that fixed,
 >=20
-> No functional change in this commit.
+> FYI checkpatch.pl complains if you use brackets for the if block
+> but not for the else block. They should be matching.
 
-I'm not too sure about this one. There's basically two ways to look at
-this: you described the first one, and the second one would be to
-treat it as we do for the compatibles: the IP was introduced on one
-SoC family, and then got used on some other ones.
-
-Trying to always match the one you have however have a quite big
-maintainance cost, as can be shown by your patch: you always have to
-adapt comments, function names, defines, etc. This creates a lot of
-useless churns (ie, non-functional changes) in the drivers, that need
-to be written in the first place, and then reviewed.
-
-It's just not worth it.
+Checkpatch might not warn on this, but
+https://www.kernel.org/doc/Documentation/process/coding-style.rst,
+section 3 is pretty clear on whether we should use them or not.
 
 Maxime
 
@@ -88,24 +181,24 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---u2h5j7rewatczeh5
+--r5u3grpihdexgzvi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu7LvMACgkQ0rTAlCFN
-r3RJlg/8CrYQK3P9WPVn2PZZWm6SjDK98/0Th/16/S3fgrZjIQomWjGTz9sIeK1C
-qrEhqPgg9KO+vrKbTlFAID3P09Mz0FUjD5Bq5tuNyrMdCWi5QlopS20LgFYDyxMI
-n+TSyDqIgtYKe852XrhZ9Lh8QUTiNX/ixFn5Jume0kYshdwKqB7YzMc8GXXlRxe/
-ekFikGy1F4P2/vU9cvZW/5nNIN2qDExx+hM/sHuRNXc/hHaU3cFPVzhssVcWT6c2
-/Fx7cI8jimEivcDQYkIj3ozbrK0dLeJKRZ8J8d0/HeU8mHJ7DKn6SSIFq5RFMkcB
-pVKFoaJpk1JFygWkTeaNsomuNMTPzS0FHBviGKifHnQ4dXPakefjPrItf33G7dDn
-a6m4Yy+TsdRaR4mKaLSQTVIqXurdWTjlY6Tcqqqrd7bN5TbSZxRM6qjjPK/OULzV
-SACtzLNSBIlfXfEMg+tR0K6mkpWsmdAZNCIYxuf5Dr7wPzP4N7ra4JANzpzlwKqK
-etlbG+i3n6pcsFYzIU7eSbRmv7u9wBiuJSV7AiCyS4GMmn9BHyW4MORlRGMz7jls
-cBfZSD25XtzW958ZQ4x5ATsZG6QsrZ+jRL/uy/GodyzDGYB8djIK2lQefaPpYOS6
-7sZzF4ZtOYOrLVGKI0mgLhnNBmyCSq4KleQ+Bi1zXB2Xh1PeL4Q=
-=5UDP
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu7L2QACgkQ0rTAlCFN
+r3SCvQ/+I1VZqOyeEpjeR4ZTp/UXi85Oblv9cj9w4Gh/d8EUAdJp6BbGjq47cS70
+sSQfEER2VVjE3OGGLuE5ntTb4wX+LCJOwOrUEKU4Sg05CvrkK65EM+wMD3/SUKb6
+R5QOPmNREs8DGTHFLopF+Jhl1h50szwkUzXIBAZQBWBRwWBMP6GxDf0X6FcSXc+G
+YilzIfDwnHxmIXRDpHffxVUt6TzpEjn7QE3JndaDCgQzajCITXczY9JsiSt6lOKh
+DfqB1CpXbJyemYvkY6gxJk13HnNiPU88LHBngl4FcCi3a5hAeOtekWJ7ndk2J6aX
+zcA4FDlOE2s70oiM1u67exlIoS15n5Qe2rc788BER+Yuv6dlLp1bAHUG5E5itjIF
+JShFBx/fJldilHr90B76NbwJyL13RTl2XIO4EZSpa4xLDXe+SmTgySO2oiEDGJ12
+pDfjq4M0GX7s/JRMJr6jbals0vXPSP0ejaA7L7x4OtjvBZ8jf1/jZUejRcFZR6bi
+SGRVuY5OkovisOW4AD4b+MURzUUzWNqzhWQGu1xnklZ7JMNrpPB5APIA8dq40w5S
+e3g0pb1SKvLZ7Pm3gcGeAk2dHop61qrT6SmsWj1+UCPVohP1xBlsKMtwq2dM867b
+aeUoZ7kSc86Vd3JI+KpFWTuiCfrdYixHlPw6odstJqfPd4EU0EA=
+=t/60
 -----END PGP SIGNATURE-----
 
---u2h5j7rewatczeh5--
+--r5u3grpihdexgzvi--
