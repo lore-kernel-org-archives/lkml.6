@@ -2,58 +2,58 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76034C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F073EC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A99C2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:32:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A785D2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:32:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KkmbcIN4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A99C2089D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cxFsYV6x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A785D2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeJHXou (ORCPT
+        id S1727034AbeJHXov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:44:50 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43560 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJHXot (ORCPT
+        Mon, 8 Oct 2018 19:44:51 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44828 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeJHXov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:44:49 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p24-v6so8605078pff.10
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:32:18 -0700 (PDT)
+        Mon, 8 Oct 2018 19:44:51 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r9-v6so8464116pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uzbIQGVke+G0uyE3ie/RdMq0ogkmeNz0swT4Wn03utU=;
-        b=KkmbcIN445KUD7q79TVRBvsrOiHukuMegeIPWpV/IlUondtCTBNrVgNjI2JnvHgxQJ
-         ZBdkw5XeuD9LFoFinqCA5IVNRKBh8R5vlArhlIt59fU7nxbucT88vnH8n0AVp0OjhXPl
-         ZoEjCrCch1h/+gLsUV+Vr6eITIVe8FTOz5iPI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GTz03gJ4IksrgBFA4JhWjw4cmCeDwayh/ZV0XygJyaU=;
+        b=cxFsYV6xbuwE+ROejy34kzEr54TlDXRTGzSwG63rUIlEQkG1YYWX9hPWswrcl72rFu
+         McokXcuI7EsCEzXDIWqywl6U75wDdyhaQ+ZU+hsvhP2FnHGbMzLdeeLvpWLPXS575bCd
+         04YliSHDwlTKFSHVhCph3tb0g/JgHtkj6MKEY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uzbIQGVke+G0uyE3ie/RdMq0ogkmeNz0swT4Wn03utU=;
-        b=PZA41UuU9p1N04RoY2udGbVR6WgPXbC52Rc7xZ/NbhFIv3KTXL9nrN4HH+QqAmHHo8
-         G06VaI7MEaQR8ld3fTIr+ZaCPMqhCbQPXDW4SnzoNxyFdncfVi2ThS4DFQhhCe8b4h7u
-         WNzBGYG25+CfmGooYJNzoiD06q+5D24y8fdAc0b1SPRopoIyulOh3HQr0SShElXYqrwi
-         /K4QHs8UAj7VahMjMMsaSNGC2fx37znCOzUKy/h+3O9w0OdqB7+XUt/Ky833aL+dTVrC
-         akrfH6BRdiIV+k2o/mRK4PJ19Shuw3GTlOJiURjl4laEe6w+MDk/MlB3qWC7OBEr/Hkt
-         yFiA==
-X-Gm-Message-State: ABuFfognaYxnL++xwtFDhZ0584pTaFFYYQFBpBATs0fATdgkbFDufrBe
-        vXXJo7Xhp+NhmIJ29wi0Z002ow==
-X-Google-Smtp-Source: ACcGV60HQTKs3hS8h5367cHTXM4EL165I3NgTijyyN+1xr++3PRoPwpCFBIa3KRVm6VbN1lf/V1t4w==
-X-Received: by 2002:a63:c044:: with SMTP id z4-v6mr21649691pgi.274.1539016337655;
-        Mon, 08 Oct 2018 09:32:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GTz03gJ4IksrgBFA4JhWjw4cmCeDwayh/ZV0XygJyaU=;
+        b=Tdm/BPePHKn713FA4FKBFn6K9HXNDOjDpAbceOmRWJhWIsmdgdlt4iq+0LNnA37DGl
+         HHtYx+WMV+Utw8DivQYf1ahqvUvIycFRNxorc0elwNujQxybNOMoaI6cl/LOGxPbdM+m
+         +JMpOLata11YOgSfvheX77+kNm9Nx7AjiOIW1j9X7K9A+eqzVGYOCSRSpwxh0Zdf7z8S
+         uygANCJfpgG5RT11hSqaBbPgNP591h9jxR9u6dIF+nwE1FvQX16+rHUo2NHG/oQUDfDx
+         nmj42/GXXjLKFbXCUOVZ2/CMophKkJun3OWw9DvsSNWm7Cxweg/8iyP+9DYef1nLGhzL
+         cc0g==
+X-Gm-Message-State: ABuFfohQ/NQlqgaSeG++6c1fftnpSGdU+KRliT2tgAub/NARAk8fkqDP
+        IHydKGB1ECaTJj/pH6qMI4tErA==
+X-Google-Smtp-Source: ACcGV6161Px6A+JN/dYTorPm9bzokF8WzIU/bD5yk6c3xqHcNy4sI6yM+BJ2d04ecUwN+/Xuk6XNyw==
+X-Received: by 2002:a62:4b09:: with SMTP id y9-v6mr25861149pfa.93.1539016338755;
+        Mon, 08 Oct 2018 09:32:18 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id 3-v6sm29832077pga.12.2018.10.08.09.32.16
+        by smtp.gmail.com with ESMTPSA id 3-v6sm29832077pga.12.2018.10.08.09.32.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Mon, 08 Oct 2018 09:32:17 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
@@ -62,10 +62,12 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Evan Green <evgreen@chromium.org>,
         Thierry Reding <treding@nvidia.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH 0/4] gpio chip cascade fixes
-Date:   Mon,  8 Oct 2018 09:32:12 -0700
-Message-Id: <20181008163216.97436-1-swboyd@chromium.org>
+Subject: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+Date:   Mon,  8 Oct 2018 09:32:13 -0700
+Message-Id: <20181008163216.97436-2-swboyd@chromium.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+In-Reply-To: <20181008163216.97436-1-swboyd@chromium.org>
+References: <20181008163216.97436-1-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,28 +75,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Originally this was a single patch but then I noticed some
-other things that didn't seem quite right so I added on a few
-more patches after that. The first patch is the important one
-because it fixes a bug where a stack pointer is assigned to
-the gpio_irq_chip structure and used later on when that stack
-is gone.
+gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
+and then the address of that argument is assigned to the gpio chips
+gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
+work, because we've just assigned some stack address to a pointer that
+we plan to dereference later in gpiochip_irq_map(). I ran into this
+issue with the KASAN report below when gpiochip_irq_map() tried to setup
+the parent irq with a total junk pointer for the 'parents' array.
+
+BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
+Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
+
+CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
+Call trace:
+[<ffffff9008093638>] dump_backtrace+0x0/0x718
+[<ffffff9008093da4>] show_stack+0x20/0x2c
+[<ffffff90096b9224>] __dump_stack+0x20/0x28
+[<ffffff90096b91c8>] dump_stack+0x80/0xbc
+[<ffffff900845a350>] print_address_description+0x70/0x238
+[<ffffff900845a8e4>] kasan_report+0x1cc/0x260
+[<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
+[<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
+[<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
+[<ffffff900820d13c>] irq_create_mapping+0x120/0x234
+[<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
+[<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
+[<ffffff900917114c>] of_irq_get+0x138/0x198
+[<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
+[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+[<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
+[<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
+[<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
+[<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
+[<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
+[<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
+[<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
+[<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
+[<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
+[<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
+[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+[<ffffff9008ca59cc>] __driver_attach+0x100/0x194
+[<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
+[<ffffff9008ca58c0>] driver_attach+0x48/0x54
+[<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
+[<ffffff9008ca8448>] driver_register+0x1ac/0x230
+[<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
+[<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
+[<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
+[<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
+[<ffffff90096e8240>] kernel_init+0x14/0x110
+[<ffffff9008086fcc>] ret_from_fork+0x10/0x18
+
+The buggy address belongs to the page:
+page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
+flags: 0x4000000000000000()
+raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
+>ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
+                                                       ^
+ ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Let's leave around one unsigned int in the gpio_irq_chip struct for the
+single parent irq case and repoint the 'parents' array at it. This way
+code is left mostly intact to setup parents and we waste an extra few
+bytes per structure of which there should be only a handful in a system.
 
 Cc: Evan Green <evgreen@chromium.org>
 Cc: Thierry Reding <treding@nvidia.com>
 Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/gpio/gpiolib.c      | 3 ++-
+ include/linux/gpio/driver.h | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Stephen Boyd (4):
-  gpio: Assign gpio_irq_chip::parents to non-stack pointer
-  gpio: Drop parent irq assignment during cascade setup
-  gpio: Remove unused 'irqchip' argument to
-    gpiochip_set_cascaded_irqchip()
-  gpio: Clarify kerneldoc on gpiochip_set_chained_irqchip()
-
- drivers/gpio/gpiolib.c      | 24 +++++-------------------
- include/linux/gpio/driver.h |  5 +++++
- 2 files changed, 10 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 86c147b3f4af..d9d823e3761b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1684,7 +1684,8 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
+ 		irq_set_chained_handler_and_data(parent_irq, parent_handler,
+ 						 gpiochip);
+ 
+-		gpiochip->irq.parents = &parent_irq;
++		gpiochip->irq.parent_irq = parent_irq;
++		gpiochip->irq.parents = &gpiochip->irq.parent_irq;
+ 		gpiochip->irq.num_parents = 1;
+ 	}
+ 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index f6b95734073f..31e47b1d264e 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -100,6 +100,11 @@ struct gpio_irq_chip {
+ 	 */
+ 	unsigned int num_parents;
+ 
++	/**
++	 * private: For use by gpiochip_set_cascaded_irqchip()
++	 */
++	unsigned int parent_irq;
++
+ 	/**
+ 	 * @parents:
+ 	 *
 -- 
 Sent by a computer through tubes
 
