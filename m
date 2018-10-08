@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C032C677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E78C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBA3214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCBA3214C2
+	by mail.kernel.org (Postfix) with ESMTP id 2E7E1213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7E1213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbeJIEZx (ORCPT
+        id S1726890AbeJIEZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 00:25:53 -0400
-Received: from mleia.com ([178.79.152.223]:35472 "EHLO mail.mleia.com"
+        Tue, 9 Oct 2018 00:25:52 -0400
+Received: from mleia.com ([178.79.152.223]:35432 "EHLO mail.mleia.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeJIEZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 00:25:53 -0400
+        id S1725835AbeJIEZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 00:25:51 -0400
 Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 4411341E2C2;
-        Mon,  8 Oct 2018 22:12:11 +0100 (BST)
+        by mail.mleia.com (Postfix) with ESMTP id 97D7B3CB479;
+        Mon,  8 Oct 2018 22:12:09 +0100 (BST)
 From:   Vladimir Zapolskiy <vz@mleia.com>
 To:     Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -34,125 +34,108 @@ Cc:     Marek Vasut <marek.vasut@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org,
+        Sandeep Jain <Sandeep_Jain@mentor.com>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of TI DS90Ux9xx pinmux
-Date:   Tue,  9 Oct 2018 00:12:01 +0300
-Message-Id: <20181008211205.2900-4-vz@mleia.com>
+Subject: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI DS90Ux9xx ICs
+Date:   Tue,  9 Oct 2018 00:11:59 +0300
+Message-Id: <20181008211205.2900-2-vz@mleia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008211205.2900-1-vz@mleia.com>
 References: <20181008211205.2900-1-vz@mleia.com>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20181008_221211_311768_E333BD88 
-X-CRM114-Status: GOOD (  15.25  )
+X-CRM114-CacheID: sfid-20181008_221209_646909_16AEEB1B 
+X-CRM114-Status: GOOD (  15.18  )
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+From: Sandeep Jain <Sandeep_Jain@mentor.com>
 
-TI DS90Ux9xx de-/serializers have a capability to multiplex pin functions,
-in particular a pin may have selectable functions of GPIO, GPIO line
-transmitter, one of I2S lines, one of RGB24 video signal lines and so on.
+The change adds device tree binding description of TI DS90Ux9xx
+series of serializer and deserializer controllers which support video,
+audio and control data transmission over FPD-III Link connection.
 
-The change adds a description of DS90Ux9xx pin multiplexers and GPIO
-controllers.
-
+Signed-off-by: Sandeep Jain <Sandeep_Jain@mentor.com>
+[vzapolskiy: various updates and corrections of secondary importance]
 Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 ---
- .../bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt | 83 +++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+ .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
 new file mode 100644
-index 000000000000..fbfa1a3cdf9f
+index 000000000000..0733da88f7ef
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
-@@ -0,0 +1,83 @@
-+TI DS90Ux9xx de-/serializer pinmux and GPIO subcontroller
++++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
+@@ -0,0 +1,66 @@
++Texas Instruments DS90Ux9xx de-/serializer controllers
 +
 +Required properties:
-+- compatible: Must contain a generic "ti,ds90ux9xx-pinctrl" value and
++- compatible: Must contain a generic "ti,ds90ux9xx" value and
 +	may contain one more specific value from the list:
-+	"ti,ds90ux925-pinctrl",
-+	"ti,ds90ux926-pinctrl",
-+	"ti,ds90ux927-pinctrl",
-+	"ti,ds90ux928-pinctrl",
-+	"ti,ds90ux940-pinctrl".
-+
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+- #gpio-cells: Must be set to 2,
-+	- the first cell is the GPIO offset number within the controller,
-+	- the second cell is used to specify the GPIO line polarity.
-+
-+- gpio-ranges: Mapping to pin controller pins (as described in
-+	Documentation/devicetree/bindings/gpio/gpio.txt)
++	"ti,ds90ub925q",
++	"ti,ds90uh925q",
++	"ti,ds90ub927q",
++	"ti,ds90uh927q",
++	"ti,ds90ub926q",
++	"ti,ds90uh926q",
++	"ti,ds90ub928q",
++	"ti,ds90uh928q",
++	"ti,ds90ub940q",
++	"ti,ds90uh940q".
 +
 +Optional properties:
-+- ti,video-depth-18bit: Sets video bridge pins to RGB 18-bit mode.
++- reg : Specifies the I2C slave address of a local de-/serializer.
++- power-gpios : GPIO line to control supplied power to the device.
++- ti,backward-compatible-mode : Overrides backward compatibility mode.
++	Possible values are "<1>" or "<0>".
++	If "ti,backward-compatible-mode" is not mentioned, the backward
++	compatibility mode is not touched and given by hardware pin strapping.
++- ti,low-frequency-mode : Overrides low frequency mode.
++	Possible values are "<1>" or "<0>".
++	If "ti,low-frequency-mode" is not mentioned, the low frequency mode
++	is not touched and given by hardware pin strapping.
++- ti,video-map-select-msb: Sets video bridge pins to MSB mode, if it is set
++	MAPSEL pin value is ignored.
++- ti,video-map-select-lsb: Sets video bridge pins to LSB mode, if it is set
++	MAPSEL pin value is ignored.
++- ti,pixel-clock-edge : Selects Pixel Clock Edge.
++	Possible values are "<1>" or "<0>".
++	If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
++	Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
++	strobed on the Falling edge of the PCLK.
++	If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
++	value is not touched and given by hardware pin strapping.
++- ti,spread-spectrum-clock-generation : Spread Sprectrum Clock Generation.
++	Possible values are from "<0>" to "<7>". The same value will be
++	written to SSC register. If "ti,spread-spectrum-clock-gen" is not
++	found, then SSCG will be disabled.
 +
-+Available pins, groups and functions (reference to device datasheets):
++TI DS90Ux9xx serializers and deserializer device nodes may contain a number
++of children device nodes to describe and enable particular subcomponents
++found on ICs.
 +
-+function: "gpio" ("gpio4" is on DS90Ux925 and DS90Ux926 only,
-+		  "gpio9" is on DS90Ux940 only)
-+ - pins: "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
-+	 "gpio7", "gpio8", "gpio9"
++Example:
 +
-+function: "gpio-remote"
-+ - pins: "gpio0", "gpio1", "gpio2", "gpio3"
++serializer: serializer@c {
++	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
++	reg = <0xc>;
++	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
++	ti,backward-compatible-mode = <0>;
++	ti,low-frequency-mode = <0>;
++	ti,pixel-clock-edge = <0>;
++	...
++}
 +
-+function: "pass" (DS90Ux940 specific only)
-+ - pins: "gpio0", "gpio3"
++deserializer: deserializer@3c {
++	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
++	reg = <0x3c>;
++	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
++	...
++}
 +
-+function: "i2s-1"
-+ - group: "i2s-1"
-+
-+function: "i2s-2"
-+ - group: "i2s-2"
-+
-+function: "i2s-3" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
-+ - group: "i2s-3"
-+
-+function: "i2s-4" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
-+ - group: "i2s-4"
-+
-+function: "i2s-m" (DS90Ux928 and DS90Ux940 specific only)
-+ - group: "i2s-m"
-+
-+function: "parallel" (DS90Ux925 and DS90Ux926 specific only)
-+ - group: "parallel"
-+
-+Example (deserializer with pins GPIO[3:0] set to bridged output
-+	 function and pin GPIO4 in standard hogged GPIO function):
-+
-+deserializer {
-+	compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
-+
-+	ds90ux928_pctrl: pin-controller {
-+		compatible = "ti,ds90ux928-pinctrl", "ti,ds90ux9xx-pinctrl";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&ds90ux928_pctrl 0 0 8>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ds90ux928_pins>;
-+
-+		ds90ux928_pins: pinmux {
-+			gpio-remote {
-+				pins = "gpio0", "gpio1", "gpio2", "gpio3";
-+				function = "gpio-remote";
-+			};
-+		};
-+
-+		rst {
-+			gpio-hog;
-+			gpios = <4 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+		};
-+	};
-+};
 -- 
 2.17.1
 
