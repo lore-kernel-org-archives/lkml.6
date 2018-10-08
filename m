@@ -2,175 +2,145 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460F4C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93236C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 147272075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147272075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 6359C2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6359C2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeJHVm4 (ORCPT
+        id S1726562AbeJHVnL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:42:56 -0400
-Received: from mailoutvs15.siol.net ([185.57.226.206]:33872 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726198AbeJHVm4 (ORCPT
+        Mon, 8 Oct 2018 17:43:11 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:37735 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbeJHVnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:42:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 0E34D520AD0;
-        Mon,  8 Oct 2018 16:30:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id w5BBwiVej-tr; Mon,  8 Oct 2018 16:30:52 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 89899520A87;
-        Mon,  8 Oct 2018 16:30:52 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id F084052082F;
-        Mon,  8 Oct 2018 16:30:51 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH v2 25/29] drm: sun4i: add quirks for TCON TOP
-Date:   Mon, 08 Oct 2018 16:30:51 +0200
-Message-ID: <15704955.mQ5FZSihaB@jernej-laptop>
-In-Reply-To: <20181008085112.mejpwvl3dpu7sopy@flea>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net> <20181007093905.11253-26-jernej.skrabec@siol.net> <20181008085112.mejpwvl3dpu7sopy@flea>
+        Mon, 8 Oct 2018 17:43:11 -0400
+Received: by mail-vk1-f194.google.com with SMTP id y128-v6so4623898vky.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 07:31:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5UKqo2E1ytB2MKygayLLZEu1Qmvfo3tXDFcNH+w/h3k=;
+        b=aVgznEeWzdaBKheWLiisxh32o27XHUSzYMz6vQ4+96XNaWkyRUt8dlZ9AyJtIhltr7
+         R4ZzNuBWkhXMKkLLSk12ADfYqnrI14k8f005oEBA6GDqWmgPAvysMDoe3wtGhHoOdVNH
+         HGqxQDxVesbpPChvk71aNPckGLERkevGx+Lg2hCZkhV0ckHrnd69os3v9Vn5fX5u73Sp
+         fUzRH6bjswjeMnl0n4hpyIOiVBLGqmfzPikCtmTwCBh+6S8isx/5PPEEhmxa/MR8BJhj
+         ZHpqI8Bn5mL/5szCCHzQp4yQEG8sCthFUOrWsQDU1/b7qVqfv3Ggwqu6XB0CEL4tBTmE
+         eVNQ==
+X-Gm-Message-State: ABuFfog3xj5N9xAq3Uj4b+hGv+AJgbTOa7EzrP1B2Z8b9wCYPzh9wG0p
+        MkYmJvsjW0XmDT04BNarS/L6tJKt0XyCgE/II5I=
+X-Google-Smtp-Source: ACcGV60YM0Yn+hbUa5fQ2r1HXG9VvSV8VjvzzPZVapUPT5Lmq+nYHVJcxyLWNLf90kpAdSFskjzBZGAkJETFj7Pj0kU=
+X-Received: by 2002:a1f:d507:: with SMTP id m7-v6mr8924882vkg.40.1539009070033;
+ Mon, 08 Oct 2018 07:31:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20181007085102.17795-1-geert@linux-m68k.org> <20181007113514.GA21217@localhost>
+ <1814283.64diKEr4zR@avalon> <20181008022931.GB30346@localhost> <ECADFF3FD767C149AD96A924E7EA6EAF80517449@USCULXMSG01.am.sony.com>
+In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF80517449@USCULXMSG01.am.sony.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Oct 2018 16:30:57 +0200
+Message-ID: <CAMuHMdVmz-ZF+ypp4WEkW6txxjw66DTb5PRsSGPsUfBqT+NbMQ@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
+ of discrimination factors
+To:     "Bird, Timothy" <Tim.Bird@sony.com>
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 08. oktober 2018 ob 10:51:12 CEST je Maxime Ripard napisal(a):
-> On Sun, Oct 07, 2018 at 11:39:01AM +0200, Jernej Skrabec wrote:
-> > From: Icenowy Zheng <icenowy@aosc.io>
-> > 
-> > Some SoCs, such as H6, doesn't have a full-featured TCON TOP.
-> > 
-> > Add quirks support for TCON TOP.
-> > 
-> > Currently the presence of TCON_TV1 and DSI is controlled via the quirks
-> > structure.
-> > 
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 43 ++++++++++++++++++++------
-> >  1 file changed, 34 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c index 37158548b447..ed13233cad88
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > @@ -9,11 +9,17 @@
-> > 
-> >  #include <linux/component.h>
-> >  #include <linux/device.h>
-> >  #include <linux/module.h>
-> > 
-> > +#include <linux/of_device.h>
-> > 
-> >  #include <linux/of_graph.h>
-> >  #include <linux/platform_device.h>
-> >  
-> >  #include "sun8i_tcon_top.h"
-> > 
-> > +struct sun8i_tcon_top_quirks {
-> > +	bool has_tcon_tv1;
-> > +	bool has_dsi;
-> > +};
-> > +
-> > 
-> >  static bool sun8i_tcon_top_node_is_tcon_top(struct device_node *node)
-> >  {
-> >  
-> >  	return !!of_match_node(sun8i_tcon_top_of_table, node);
-> > 
-> > @@ -121,10 +127,13 @@ static int sun8i_tcon_top_bind(struct device *dev,
-> > struct device *master,> 
-> >  	struct platform_device *pdev = to_platform_device(dev);
-> >  	struct clk_hw_onecell_data *clk_data;
-> >  	struct sun8i_tcon_top *tcon_top;
-> > 
-> > +	const struct sun8i_tcon_top_quirks *quirks;
-> > 
-> >  	struct resource *res;
-> >  	void __iomem *regs;
-> >  	int ret, i;
-> > 
-> > +	quirks = of_device_get_match_data(&pdev->dev);
-> > +
-> > 
-> >  	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
-> >  	if (!tcon_top)
-> >  	
-> >  		return -ENOMEM;
-> > 
-> > @@ -187,15 +196,23 @@ static int sun8i_tcon_top_bind(struct device *dev,
-> > struct device *master,> 
-> >  					     &tcon_top->reg_lock,
-> >  					     TCON_TOP_TCON_TV0_GATE, 0);
-> > 
-> > -	clk_data->hws[CLK_TCON_TOP_TV1] =
-> > -		sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
-> > -					     &tcon_top->reg_lock,
-> > -					     TCON_TOP_TCON_TV1_GATE, 1);
-> > +	if (quirks->has_tcon_tv1) {
-> > +		clk_data->hws[CLK_TCON_TOP_TV1] =
-> > +			sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
-> > +						     &tcon_top->reg_lock,
-> > +						     TCON_TOP_TCON_TV1_GATE, 1);
-> > +	} else {
-> > +		clk_data->hws[CLK_TCON_TOP_TV1] = NULL;
-> > +	}
-> > 
-> > -	clk_data->hws[CLK_TCON_TOP_DSI] =
-> > -		sun8i_tcon_top_register_gate(dev, "dsi", regs,
-> > -					     &tcon_top->reg_lock,
-> > -					     TCON_TOP_TCON_DSI_GATE, 2);
-> > +	if (quirks->has_dsi) {
-> > +		clk_data->hws[CLK_TCON_TOP_DSI] =
-> > +			sun8i_tcon_top_register_gate(dev, "dsi", regs,
-> > +						     &tcon_top->reg_lock,
-> > +						     TCON_TOP_TCON_DSI_GATE, 2);
-> > +	} else {
-> > +		clk_data->hws[CLK_TCON_TOP_DSI] = NULL;
-> 
-> clk_data has been kzalloc'd so its content is already NULL.
-> 
-> And you shouldn't have brackets for single line blocks.
+Hi Tim,
 
-Ah, yes. I'm not original author so I missed that during a review. I'll fix it 
-in new revision.
+On Mon, Oct 8, 2018 at 4:12 PM <Tim.Bird@sony.com> wrote:
+> > From: Josh Triplett
+> > On Sun, Oct 07, 2018 at 08:18:26PM +0300, Laurent Pinchart wrote:
+> > > On Sunday, 7 October 2018 14:35:14 EEST Josh Triplett wrote:
+> > > > On Sun, Oct 07, 2018 at 10:51:02AM +0200, Geert Uytterhoeven wrote:
+> > > > > Providing an explicit list of discrimination factors may give the false
+> > > > > impression that discrimination based on other unlisted factors would be
+> > > > > allowed.
+> > > > >
+> > > > > Avoid any ambiguity by removing the list, to ensure "a harassment-free
+> > > > > experience for everyone", period.
+> > > >
+> > > > I would suggest reading the commit message that added this in the first
+> > > > place. "Explicit guidelines have demonstrated success in other projects
+> > > > and other areas of the kernel." See also various comparisons of codes of
+> > > > conduct, which make the same point. The point of this list is precisely
+> > > > to serve as one such explicit guideline; removing it would rather defeat
+> > > > the purpose.
+> > > >
+> > > > In any case, this is not the appropriate place for such patches, any
+> > > > more than it's the place for patches to the GPL.
+> > >
+> > > So what's an appropriate place to discuss the changes that we would like,
+> > > *together*, to make to the current document and propose upstream ?
+> >
+> > I didn't say "not the appropriate place to discuss" (ksummit-discuss is
+> > not ideal but we don't currently have somewhere better), I said "not the
+> > appropriate place for such patches".
+> >
+> > The Linux kernel is by no means the only project using the Contributor
+> > Covenant. In general, we don't encourage people working on significant
+> > changes to the Linux kernel to work in private for an extended period
+> > and only pop up when "done"; rather, we encourage people to start
+> > conversations early and include others in the design. Along the same
+> > lines, I'd suggest that patches or ideas for patches belong upstream.
+> > For instance, the idea of clarifying that email addresses already used
+> > on a public mailing list don't count as "private information" seems like
+> > a perfectly reasonable suggestion, and one that other projects would
+> > benefit from as well.
+>
+> So I raised this issue with upstream about 2 weeks ago, and here is my
+> experience:
+> 1) I suggested that the email clarification could be put into the covenant
+> itself, or in a supporting FAQ.
+> 2) The project maintainer (Coraline Ada Ehmke) was pleasant and supportive
+> of changes to enhance the document, and said either approach would be fine.
+> 3) I noticed that there was a FAQ in progress of being created.
+> 4) After thinking about it, I decided that I didn't want to alter the language
+> of the covenant, because I didn't want to dilute the expression of a need to
+> get permission when revealing private information.
+>
+> My own opinion is that putting clarifying language in a FAQ is sufficient.
+> So I made the following recommendation for the (not yet included upstream)
+> FAQ:
+>
+> Q: Does the prohibition on publishing private information include email addresses sent to a public list?
+> A: No. Information that has voluntarily been published to a public location does not fall under the category of private information. Such public information may be used within the context of the project according to project norms (such as in commit meta-data in code repositories), without that constituting a breach of the CoC.
 
-Best regards,
-Jernej
+I noticed this morning this is actually already included in the FAQ
+(I didn't know this is recent thing):
+https://www.contributor-covenant.org/faq
 
-> 
-> with that fixed,
-> 
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> 
-> Maxime
+> I don't know what progress is being made adopting the FAQ, but Coraline seems very
+> supportive, and I've told here that I will come back and help with it if it stalls.
 
+I'm glad to heart that!
 
+FTR, I've submitted my patch earlier today, too:
+https://github.com/ContributorCovenant/contributor_covenant/issues/610
 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
