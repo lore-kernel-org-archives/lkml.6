@@ -2,111 +2,155 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD87C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99C2C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C6F2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:56:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C6F2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id B00842077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00842077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeJHVIX (ORCPT
+        id S1726678AbeJHVJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:08:23 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36463 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbeJHVIX (ORCPT
+        Mon, 8 Oct 2018 17:09:02 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38611 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbeJHVJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:08:23 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y16so20957438wrw.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 06:56:31 -0700 (PDT)
+        Mon, 8 Oct 2018 17:09:02 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l9-v6so20986427qtf.5;
+        Mon, 08 Oct 2018 06:57:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pyG2nYglB1R6f1kCXFes4f1lgq7wvtusAVuOwgShGjk=;
-        b=n/GQnny+j4rMUmlSP4mXGy1VugOfrn7Mn8d3m0KTxdD7+YE0+IU0dG+CQQXA9fe+lT
-         raut9FvvxDQSyrBC4wM5/wT1hRVLVi+PrQ5FqFbYJ/sMbUaaoJk8dF+xEZMk1lQ4GVaf
-         wXFqz5ZBooDTRqni6Q6KX4a/uLCWCrGQXMAcZnM1gKC5vsF5BbBC7MYJtt3D3j9lrW3F
-         9gIeFDF9nXYwRB6NHUTfQ62K1mz7bf5ddgYBbheAbCZwDRj29nZWbMr9maeyA/VZaekb
-         01Fv/4fZJBvh+keUydNzwOCGa3dq/MjNyQ2VnyrvqJjXvz4e/3eMZbfLubOq1izV6YUk
-         T6Hw==
-X-Gm-Message-State: ABuFfohDjMim2jzsPyFsCy84zCRsvr74hCbOz3gBRPTkkxAJRorl8MnZ
-        +KGjIfXbQ4jyrnrndBOxMEE=
-X-Google-Smtp-Source: ACcGV60kgeEa4kL2CzCkljYp1hTwjdFQRVzksOF0MgdCWxArROgLRBBEHrq9NAldJcRe4MERYaQIBg==
-X-Received: by 2002:adf:a781:: with SMTP id j1-v6mr13998501wrc.277.1539006990944;
-        Mon, 08 Oct 2018 06:56:30 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id j6-v6sm11294802wru.20.2018.10.08.06.56.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 06:56:30 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 6EBD1124BAA; Mon,  8 Oct 2018 15:56:29 +0200 (CEST)
-Date:   Mon, 8 Oct 2018 15:56:29 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     linux-mm@kvack.org
-Cc:     mhocko@suse.com, dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        rppt@linux.vnet.ibm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
-        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
-        david@redhat.com, dave.jiang@intel.com
-Subject: Re: [RFC PATCH v3 0/5] Do not touch pages/zones during hot-remove
- path
-Message-ID: <20181008135629.GA10959@techadventures.net>
-References: <20181002150029.23461-1-osalvador@techadventures.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KJyIwc7avFINxy/22mDyE1l/egASi+mUwDD0qypYxLs=;
+        b=RTOGnkm/qbH73H3D9Qji1HNRjOWldq+ZFt+3e0ZuvgrvosUcED3eaQxPlEae49z5zc
+         GOSVwGegeX2VpWAPHNOBE+MLXWrXG2+jLhPnWdNuA53mQ0JN9xzF8GuVtxQvEF1uyikL
+         rjYE2Shk5WkDQ7owns3zoQaZ55FkSfM34N6iTBjyla7ihyLDFArDGwStm+rE0Vx4q487
+         AZjUrau/uaFWit+MuMvypw0UNbpt8vkFtwEpCKHT6ihkINKoGEWjYmZp5W9IvVavyLsN
+         7NyGOkMr9f2YjixsCAw9sknPT4jP/fbbPIEPlw2+M2l9ES2uveKRIvcwWBeHOirJ73kc
+         VM4Q==
+X-Gm-Message-State: ABuFfoiYUaoSGwZY4YZvxjdPau2prW0RUkOh4XhtTCPo+trV5nKEb6bD
+        Jf2sTpQIJyMgUIJjbJGcBPKhgeTTJFLRZPuaJus=
+X-Google-Smtp-Source: ACcGV636uVFB+FB8O14sdOw5YJUBG1m/LNSfAccaS5Oc5dANgOFn5OoGBw++EmuvDKCql6p60L33suC0QCPWTyOIoAQ=
+X-Received: by 2002:a0c:8834:: with SMTP id 49-v6mr19168743qvl.40.1539007029815;
+ Mon, 08 Oct 2018 06:57:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002150029.23461-1-osalvador@techadventures.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
+ <1538975801-13735-4-git-send-email-firoz.khan@linaro.org> <CALxhOnj4r_MUuAa2zvkvxvhQttEvCZ98n2dA9d6CYyvVf2rB3g@mail.gmail.com>
+ <20181008130301.GM32759@asgard.redhat.com>
+In-Reply-To: <20181008130301.GM32759@asgard.redhat.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 8 Oct 2018 15:56:53 +0200
+Message-ID: <CAK8P3a0eoCVBVOZs0VwybAnUw0OUoW4Z=NJYi8686EHKj076_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] parisc: add system call table generation support
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     Firoz Khan <firoz.khan@linaro.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 05:00:24PM +0200, Oscar Salvador wrote:
-> Oscar Salvador (5):
->   mm/memory_hotplug: Add nid parameter to arch_remove_memory
->   mm/memory_hotplug: Create add/del_device_memory functions
->   mm/memory_hotplug: Check for IORESOURCE_SYSRAM in
->     release_mem_region_adjustable
->   mm/memory_hotplug: Move zone/pages handling to offline stage
->   mm/memory-hotplug: Rework unregister_mem_sect_under_nodes
-> 
->  arch/ia64/mm/init.c            |   6 +-
->  arch/powerpc/mm/mem.c          |  13 +---
->  arch/s390/mm/init.c            |   2 +-
->  arch/sh/mm/init.c              |   6 +-
->  arch/x86/mm/init_32.c          |   6 +-
->  arch/x86/mm/init_64.c          |  10 +--
->  drivers/base/memory.c          |   9 ++-
->  drivers/base/node.c            |  38 ++--------
->  include/linux/memory.h         |   2 +-
->  include/linux/memory_hotplug.h |  17 +++--
->  include/linux/node.h           |   7 +-
->  kernel/memremap.c              |  50 +++++---------
->  kernel/resource.c              |  15 ++++
->  mm/memory_hotplug.c            | 153 ++++++++++++++++++++++++++---------------
->  mm/sparse.c                    |   4 +-
->  15 files changed, 169 insertions(+), 169 deletions(-)
-> 
-> -- 
-> 2.13.6
+On Mon, Oct 8, 2018 at 3:02 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> > On Mon, 8 Oct 2018 at 10:47, Firoz Khan <firoz.khan@linaro.org> wrote:
+> > > diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+>
+> > > +84      common  lstat                           sys_newlstat                    compat_sys_newlstat
+> > > +85      common  readlink                        sys_readlink
+> > > +86      common  uselib                          sys_ni_syscall
+>
+> Why uselib is declared, contrary to all the skipped syscalls below,
+> that were sys_ni_syscall previously? Only __NR_socketcall was explicitly
+> undefined in arch/parisc/include/uapi/asm/unistd.h.
 
-If there are no further comments, I will send this as a patchset without RFC
-later this week.
-Since [1] already landed in mmotm, I will pull out the dependency for [2], and
-change both devm/HMM code.
+Good catch, I didn't see that in my earlier review. I agree we want the
+files to be identical to the version they replace, so the macros need to
+be there for now.
 
-[1] https://patchwork.kernel.org/cover/10617699/
-[2] https://patchwork.kernel.org/cover/10613425/
+We may later decide to clean this up and remove all __NR_* that have
+no entry point, but the conversion to the new table format needs to
+otherwise be a nop.
 
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+> > > +87      common  swapon                          sys_swapon
+> > > +88      common  reboot                          sys_reboot
+> > > +89      common  mmap2                           sys_mmap2
+> > > +90      common  mmap                            sys_mmap
+> > > +91      common  munmap                          sys_munmap
+> > > +92      common  truncate                        sys_truncate                    compat_sys_truncate
+> > > +93      common  ftruncate                       sys_ftruncate                   compat_sys_ftruncate
+> > > +94      common  fchmod                          sys_fchmod
+> > > +95      common  fchown                          sys_fchown
+> > > +96      common  getpriority                     sys_getpriority
+> > > +97      common  setpriority                     sys_setpriority
+> > > +98      common  recv                            sys_recv
+> > > +99      common  statfs                          sys_statfs                      compat_sys_statfs
+> > > +100     common  fstatfs                         sys_fstatfs                     compat_sys_fstatfs
+> > > +101     common  stat64                          sys_stat64
+>
+> It is probably worth adding a comment here that syscall 102 was
+> socketcall, in order to make reason for this jump in syscall numeration
+> self-evident.
+
++1
+
+In general, I'd argue we want to keep all the nontrivial comments that
+were present in either unistd.h or syscall_table.S.
+
+> > > +103     common  syslog                          sys_syslog
+> > > +104     common  setitimer                       sys_setitimer                   compat_sys_setitimer
+> > > +105     common  getitimer                       sys_getitimer                   compat_sys_getitimer
+> > > +106     common  capget                          sys_capget
+> > > +107     common  capset                          sys_capset
+>
+> > > +108     32      pread64                         parisc_pread64
+> > > +108     64      pread64                         sys_pread64                     parisc_pread64
+>
+> It would be probably nice to have some syntax that would allow avoid
+> this duplication (as compat handler on 64 bit and native on 32 bit are
+> the same).
+
+I think I would prefer to have the compat table be generated with the '32'
+abi rather than the '64' abi, so we end up with
+
+108     32      pread64                         parisc_pread64
+   parisc_pread64
+108     64      pread64                         sys_pread64
+
+I think this makes more sense, in particular on the other architectures
+that have different macro names in some cases. When we do this,
+the entries could get compressed to
+
+108     32      pread64                         parisc_pread64
+108     64      pread64                         sys_pread64
+
+> > > +348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
+> > > +349     common  statx                           sys_statx
+> > > +350    common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
+> > > \ No newline at end of file
+
+As others have commented several times, Firoz still needs to fix
+the missing newline.
+
+Firoz, please fix all the newlines before you repost any further
+patches.
+
+      Arnd
