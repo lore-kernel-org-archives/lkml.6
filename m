@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BF0C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFCCC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DAFC21557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B427E2156B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbDN55g8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DAFC21557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6gZ0i0j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B427E2156B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbeJHWj4 (ORCPT
+        id S1729112AbeJHWj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59396 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727836AbeJHWjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:55 -0400
+        id S1727836AbeJHWj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDD3C21533;
-        Mon,  8 Oct 2018 15:27:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D454721531;
+        Mon,  8 Oct 2018 15:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012459;
-        bh=xYc4EOW3LM6MFRpPmkAQN5P2cERrGr3Vyq4VZTu1adk=;
+        s=default; t=1539012461;
+        bh=S34kyZAKiyhY+RnYNCLvJcaVMoEV3jmaQ6l+KeZQG2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbDN55g8XpX0RdDwps5P/DmZJuQj3rOSjLYQuqFtA1dmXo4Bde3mtriP/lbL3lzVB
-         NnAIf8Jd066w+ugvuo4jbZ85DrNLtf+cHIhAhvvCvXQQKR92saeUAX5RaGUmj9TaOR
-         mC0etuN26CHr0wMOodZkuHDgQ2aEcqFO6hodixYQ=
+        b=E6gZ0i0j/tZJF7VA7WWq8uvy6XaTI7wv9vd+v/AJMwlbONJCc6256S3cbb3gnxhM1
+         GPghzG9sFfTcFC5MnLUSBFtz89Vfa69XUz7E+rqdfqUdpqE1nZTARqT0LgZS/QwYDY
+         reJNZZd6oqYp+25odllR4v9pwa2x/2MIazROqzYg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 3/9] ucma: fix a use-after-free in ucma_resolve_ip()
-Date:   Mon,  8 Oct 2018 11:27:28 -0400
-Message-Id: <20181008152734.70962-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 5/9] Input: atakbd - fix Atari CapsLock behaviour
+Date:   Mon,  8 Oct 2018 11:27:30 -0400
+Message-Id: <20181008152734.70962-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152734.70962-1-sashal@kernel.org>
 References: <20181008152734.70962-1-sashal@kernel.org>
@@ -55,67 +54,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Michael Schmitz <schmitzmic@gmail.com>
 
-[ Upstream commit 5fe23f262e0548ca7f19fb79f89059a60d087d22 ]
+[ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
 
-There is a race condition between ucma_close() and ucma_resolve_ip():
+The CapsLock key on Atari keyboards is not a toggle, it does send the
+normal make and break scancodes.
 
-CPU0				CPU1
-ucma_resolve_ip():		ucma_close():
+Drop the CapsLock toggle handling code, which did cause the CapsLock
+key to merely act as a Shift key.
 
-ctx = ucma_get_ctx(file, cmd.id);
-
-        list_for_each_entry_safe(ctx, tmp, &file->ctx_list, list) {
-                mutex_lock(&mut);
-                idr_remove(&ctx_idr, ctx->id);
-                mutex_unlock(&mut);
-		...
-                mutex_lock(&mut);
-                if (!ctx->closing) {
-                        mutex_unlock(&mut);
-                        rdma_destroy_id(ctx->cm_id);
-		...
-                ucma_free_ctx(ctx);
-
-ret = rdma_resolve_addr();
-ucma_put_ctx(ctx);
-
-Before idr_remove(), ucma_get_ctx() could still find the ctx
-and after rdma_destroy_id(), rdma_resolve_addr() may still
-access id_priv pointer. Also, ucma_put_ctx() may use ctx after
-ucma_free_ctx() too.
-
-ucma_close() should call ucma_put_ctx() too which tests the
-refcnt and waits for the last one releasing it. The similar
-pattern is already used by ucma_destroy_id().
-
-Reported-and-tested-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
-Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/core/ucma.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/input/keyboard/atakbd.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
-index 55aa8d3d752f..cc78fb6e371d 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1703,6 +1703,8 @@ static int ucma_close(struct inode *inode, struct file *filp)
- 		mutex_lock(&mut);
- 		if (!ctx->closing) {
- 			mutex_unlock(&mut);
-+			ucma_put_ctx(ctx);
-+			wait_for_completion(&ctx->comp);
- 			/* rdma_destroy_id ensures that no event handlers are
- 			 * inflight for that id before releasing it.
- 			 */
+diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
+index 524a72bee55a..fdeda0b0fbd6 100644
+--- a/drivers/input/keyboard/atakbd.c
++++ b/drivers/input/keyboard/atakbd.c
+@@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned char scancode, char down)
+ 
+ 		scancode = atakbd_keycode[scancode];
+ 
+-		if (scancode == KEY_CAPSLOCK) {	/* CapsLock is a toggle switch key on Amiga */
+-			input_report_key(atakbd_dev, scancode, 1);
+-			input_report_key(atakbd_dev, scancode, 0);
+-			input_sync(atakbd_dev);
+-		} else {
+-			input_report_key(atakbd_dev, scancode, down);
+-			input_sync(atakbd_dev);
+-		}
++		input_report_key(atakbd_dev, scancode, down);
++		input_sync(atakbd_dev);
+ 	} else				/* scancodes >= 0xf3 are mouse data, most likely */
+ 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
+ 
 -- 
 2.17.1
 
