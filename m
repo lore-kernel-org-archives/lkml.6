@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662CEC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D73C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 306112087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 223E8214C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBNpaU++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306112087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELSMF8ko"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223E8214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbeJIBwG (ORCPT
+        id S1729405AbeJIBwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:52:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39262 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:52:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728053AbeJIBwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:52:05 -0400
+        id S1728053AbeJIBwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:52:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A9CE2087D;
-        Mon,  8 Oct 2018 18:39:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3961E214C3;
+        Mon,  8 Oct 2018 18:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023941;
-        bh=0Ax6oWHgdN821bpv0Ll/6uCW+nCpFJspVDs/0lRb8yk=;
+        s=default; t=1539023944;
+        bh=Kkba4i5yiT0dti7qd/uhAGpij5iQHacXG0htwYuHBqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bBNpaU++WvykRKA5Ixi1j63nk+exoN3GjvKLWy6Wz3vChxg9Vhi0QeJ8SN8H9ySoY
-         9AT3TdIPbHvA1oaiYdLJkQNO6xkY9iOZ+bZ/B5OiASlX2TFxmwHIG/zyReQIUjHFVk
-         BjOngd+XSxiVxIcmIzM4b4iBJ2O2ezMOnRbuCN4Q=
+        b=ELSMF8kok1CTmSfhsHZqrFtbCyFc7oof1U0SNlgUhHnQShKQymihx9K2/yA332z5z
+         GiU84wcJeOS9a6jnmz0UZTVZmpS/7X+/DtXhwdjWZu2+ftFvUh0zpqRAVYR8xZUYgE
+         BdvNBbqp9obRQyjf4xkVVqZG4GYkmw5/hHhVn+VA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kenneth Penza <kpenza@gmail.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Konstantin Khlebnikov <khlebnikov@openvz.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.9 25/59] mm: madvise(MADV_DODUMP): allow hugetlbfs pages
-Date:   Mon,  8 Oct 2018 20:31:32 +0200
-Message-Id: <20181008175549.513885490@linuxfoundation.org>
+        stable@vger.kernel.org, Sean OBrien <seobrien@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 26/59] HID: add support for Apple Magic Keyboards
+Date:   Mon,  8 Oct 2018 20:31:33 +0200
+Message-Id: <20181008175549.625324786@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -65,89 +64,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Black <daniel@linux.ibm.com>
+From: Sean O'Brien <seobrien@chromium.org>
 
-commit d41aa5252394c065d1f04d1ceea885b70d00c9c6 upstream.
+[ Upstream commit ee345492437043a79db058a3d4f029ebcb52089a ]
 
-Reproducer, assuming 2M of hugetlbfs available:
+USB device
+	Vendor 05ac (Apple)
+	Device 026c (Magic Keyboard with Numeric Keypad)
 
-Hugetlbfs mounted, size=2M and option user=testuser
+Bluetooth devices
+	Vendor 004c (Apple)
+	Device 0267 (Magic Keyboard)
+	Device 026c (Magic Keyboard with Numeric Keypad)
 
-  # mount | grep ^hugetlbfs
-  hugetlbfs on /dev/hugepages type hugetlbfs (rw,pagesize=2M,user=dan)
-  # sysctl vm.nr_hugepages=1
-  vm.nr_hugepages = 1
-  # grep Huge /proc/meminfo
-  AnonHugePages:         0 kB
-  ShmemHugePages:        0 kB
-  HugePages_Total:       1
-  HugePages_Free:        1
-  HugePages_Rsvd:        0
-  HugePages_Surp:        0
-  Hugepagesize:       2048 kB
-  Hugetlb:            2048 kB
+Support already exists for the Magic Keyboard over USB connection.
+Add support for the Magic Keyboard over Bluetooth connection, and for
+the Magic Keyboard with Numeric Keypad over Bluetooth and USB
+connection.
 
-Code:
-
-  #include <sys/mman.h>
-  #include <stddef.h>
-  #define SIZE 2*1024*1024
-  int main()
-  {
-    void *ptr;
-    ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_HUGETLB | MAP_ANONYMOUS, -1, 0);
-    madvise(ptr, SIZE, MADV_DONTDUMP);
-    madvise(ptr, SIZE, MADV_DODUMP);
-  }
-
-Compile and strace:
-
-  mmap(NULL, 2097152, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB, -1, 0) = 0x7ff7c9200000
-  madvise(0x7ff7c9200000, 2097152, MADV_DONTDUMP) = 0
-  madvise(0x7ff7c9200000, 2097152, MADV_DODUMP) = -1 EINVAL (Invalid argument)
-
-hugetlbfs pages have VM_DONTEXPAND in the VmFlags driver pages based on
-author testing with analysis from Florian Weimer[1].
-
-The inclusion of VM_DONTEXPAND into the VM_SPECIAL defination was a
-consequence of the large useage of VM_DONTEXPAND in device drivers.
-
-A consequence of [2] is that VM_DONTEXPAND marked pages are unable to be
-marked DODUMP.
-
-A user could quite legitimately madvise(MADV_DONTDUMP) their hugetlbfs
-memory for a while and later request that madvise(MADV_DODUMP) on the same
-memory.  We correct this omission by allowing madvice(MADV_DODUMP) on
-hugetlbfs pages.
-
-[1] https://stackoverflow.com/questions/52548260/madvisedodump-on-the-same-ptr-size-as-a-successful-madvisedontdump-fails-wit
-[2] commit 0103bd16fb90 ("mm: prepare VM_DONTDUMP for using in drivers")
-
-Link: http://lkml.kernel.org/r/20180930054629.29150-1-daniel@linux.ibm.com
-Link: https://lists.launchpad.net/maria-discuss/msg05245.html
-Fixes: 0103bd16fb90 ("mm: prepare VM_DONTDUMP for using in drivers")
-Reported-by: Kenneth Penza <kpenza@gmail.com>
-Signed-off-by: Daniel Black <daniel@linux.ibm.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Konstantin Khlebnikov <khlebnikov@openvz.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Sean O'Brien <seobrien@chromium.org>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/madvise.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-apple.c |    9 ++++++++-
+ drivers/hid/hid-ids.h   |    2 ++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -81,7 +81,7 @@ static long madvise_behavior(struct vm_a
- 		new_flags |= VM_DONTDUMP;
- 		break;
- 	case MADV_DODUMP:
--		if (new_flags & VM_SPECIAL) {
-+		if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL) {
- 			error = -EINVAL;
- 			goto out;
- 		}
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -333,7 +333,8 @@ static int apple_input_mapping(struct hi
+ 		struct hid_field *field, struct hid_usage *usage,
+ 		unsigned long **bit, int *max)
+ {
+-	if (usage->hid == (HID_UP_CUSTOM | 0x0003)) {
++	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
++			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
+ 		/* The fn key on Apple USB keyboards */
+ 		set_bit(EV_REP, hi->input->evbit);
+ 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
+@@ -476,6 +477,12 @@ static const struct hid_device_id apple_
+ 		.driver_data = APPLE_NUMLOCK_EMULATION | APPLE_HAS_FN },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
+ 		.driver_data = APPLE_HAS_FN },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
++		.driver_data = APPLE_HAS_FN },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
++		.driver_data = APPLE_HAS_FN },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
++		.driver_data = APPLE_HAS_FN },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ANSI),
+ 		.driver_data = APPLE_HAS_FN },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ISO),
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -83,6 +83,7 @@
+ #define USB_DEVICE_ID_ANTON_TOUCH_PAD	0x3101
+ 
+ #define USB_VENDOR_ID_APPLE		0x05ac
++#define BT_VENDOR_ID_APPLE		0x004c
+ #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE	0x0304
+ #define USB_DEVICE_ID_APPLE_MAGICMOUSE	0x030d
+ #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD	0x030e
+@@ -152,6 +153,7 @@
+ #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO   0x0256
+ #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS   0x0257
+ #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI   0x0267
++#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI   0x026c
+ #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI	0x0290
+ #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO	0x0291
+ #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS	0x0292
 
 
