@@ -2,98 +2,62 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AC3C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619E0C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248562145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248562145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 314B8213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 17:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314B8213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbeJIAgn (ORCPT
+        id S1726921AbeJIAgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 20:36:43 -0400
-Received: from gateway30.websitewelcome.com ([50.116.125.1]:35016 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726391AbeJIAgm (ORCPT
+        Mon, 8 Oct 2018 20:36:47 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56946 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbeJIAgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:36:42 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 381577CE74
-        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 12:23:58 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 9ZFmg3ynIBcCX9ZG0gN93W; Mon, 08 Oct 2018 12:23:57 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:47394 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g9ZFl-003ct5-CI; Mon, 08 Oct 2018 12:23:33 -0500
-Date:   Mon, 8 Oct 2018 19:23:32 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] iio: cros_ec_accel_legacy: Mark expected switch fall-throughs
-Message-ID: <20181008172332.GA29816@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g9ZFl-003ct5-CI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:47394
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 8 Oct 2018 20:36:47 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7DB1713E9999C;
+        Mon,  8 Oct 2018 10:24:03 -0700 (PDT)
+Date:   Mon, 08 Oct 2018 10:24:02 -0700 (PDT)
+Message-Id: <20181008.102402.528020466760179995.davem@davemloft.net>
+To:     yangbo.lu@nxp.com
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        netdev@vger.kernel.org, richardcochran@gmail.com,
+        ruxandra.radulescu@nxp.com, gregkh@linuxfoundation.org,
+        andrew@lunn.ch
+Subject: Re: [v3, 5/6] net: dpaa2: remove unused code for dprtc
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181008074430.34379-5-yangbo.lu@nxp.com>
+References: <20181008074430.34379-1-yangbo.lu@nxp.com>
+        <20181008074430.34379-5-yangbo.lu@nxp.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 08 Oct 2018 10:24:03 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+From: Yangbo Lu <yangbo.lu@nxp.com>
+Date: Mon,  8 Oct 2018 15:44:29 +0800
 
-Addresses-Coverity-ID: 1397962 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/iio/accel/cros_ec_accel_legacy.c | 2 ++
- 1 file changed, 2 insertions(+)
+> This patch is to removed unused code for dprtc.
+> This code will be re-added along with more features
+> of dpaa2-ptp added.
+> 
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 
-diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-index 063e89e..d609654 100644
---- a/drivers/iio/accel/cros_ec_accel_legacy.c
-+++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-@@ -385,8 +385,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
- 		switch (i) {
- 		case X:
- 			ec_accel_channels[X].scan_index = Y;
-+			/* fall through */
- 		case Y:
- 			ec_accel_channels[Y].scan_index = X;
-+			/* fall through */
- 		case Z:
- 			ec_accel_channels[Z].scan_index = Z;
- 		}
--- 
-2.7.4
-
+Applied.
