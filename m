@@ -2,127 +2,94 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4013AC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A04CC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F26521526
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F26521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CBB7421526
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+/TXBmB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB7421526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbeJHWjl (ORCPT
+        id S1729047AbeJHWjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60912 "EHLO mx1.redhat.com"
+        Mon, 8 Oct 2018 18:39:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728983AbeJHWjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:39 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728918AbeJHWjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:41 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE08311530;
-        Mon,  8 Oct 2018 15:27:23 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-5.gru2.redhat.com [10.97.112.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 76E0D6AEB8;
-        Mon,  8 Oct 2018 15:27:23 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 9900F105135;
-        Mon,  8 Oct 2018 12:27:08 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id w98FQrAl010190;
-        Mon, 8 Oct 2018 12:26:53 -0300
-Date:   Mon, 8 Oct 2018 12:26:53 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI
- support
-Message-ID: <20181008152650.GB27822@amt.cnet>
-References: <87sh1ne64t.fsf@vitty.brq.redhat.com>
- <20181003190617.GC21381@amt.cnet>
- <87k1mycfju.fsf@vitty.brq.redhat.com>
- <20181004081100.GI19272@hirez.programming.kicks-ass.net>
- <B8C05946-43BB-40A4-A564-53904FAF8CC0@amacapital.net>
- <20181004193150.GQ19272@hirez.programming.kicks-ass.net>
- <499807AB-E779-40C3-AA3F-E8C77A7770EC@amacapital.net>
- <CALCETrXNKCNZzUXj=2sp1vBd_o7HHzfW6RwyY5v3-wMfbVaZnQ@mail.gmail.com>
- <20181006202731.GC7129@amt.cnet>
- <CALCETrWqze2mifOdFc0GJYHtHGKiKX2Zdi5Kz87OyUogbqD15w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWqze2mifOdFc0GJYHtHGKiKX2Zdi5Kz87OyUogbqD15w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 08 Oct 2018 15:27:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6401121565;
+        Mon,  8 Oct 2018 15:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539012446;
+        bh=07guzT1ibb7f5HVn+t5rHam03LP5Buyr6XTbNU23hc0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=t+/TXBmBHyCdX/FQKbl65Vt2uS31FSTyC+5rHqVxRMKtBNetuNr0wTUr1kdKE9SLF
+         Z1jnA68EncrCdOMDDq8G69opCFyYM0ZjL1AnnmhITeU+tlgekZjz63zAIzcVmrW3V4
+         JqxUhsqFf0US54UqqmjwBmsZ0/9ACKr/dvT8nZR8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Arindam Nath <arindam.nath@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 23/23] iommu/amd: Return devid as alias for ACPI HID devices
+Date:   Mon,  8 Oct 2018 11:27:03 -0400
+Message-Id: <20181008152703.70891-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
+References: <20181008152703.70891-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 06, 2018 at 03:28:05PM -0700, Andy Lutomirski wrote:
-> On Sat, Oct 6, 2018 at 1:29 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> >
-> > On Thu, Oct 04, 2018 at 03:15:32PM -0700, Andy Lutomirski wrote:
-> > > For better or for worse, I'm trying to understand this code.  So far,
-> > > I've come up with this patch:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/vdso-tglx&id=14fd71e12b1c4492a06f368f75041f263e6862bf
-> > >
-> > > Is it correct, or am I missing some subtlety?
-> >
-> > The master clock, when initialized, has a pair
-> >
-> > masterclockvalues=(TSC value, time-of-day data).
-> >
-> > When updating the guest clock, we only update relative to (TSC value)
-> > that was read on masterclock initialization.
-> 
-> I don't see the problem.  The masterclock data is updated here:
-> 
->     host_tsc_clocksource = kvm_get_time_and_clockread(
->                     &ka->master_kernel_ns,
->                     &ka->master_cycle_now);
-> 
-> kvm_get_time_and_clockread() gets those values from
-> do_monotonic_boot(), which, barring bugs, should cause
-> get_kvmclock_ns() to return exactly the same thing as
-> ktime_get_boot_ns() + ka->kvmclock_offset, albeit in a rather
-> roundabout manner.
-> 
-> So what am I missing?  Is there actually something wrong with my patch?
+From: Arindam Nath <arindam.nath@amd.com>
 
-For the bug mentioned in the comment not to happen, you must only read
-TSC and add it as offset to (TSC value, time-of-day data).
+[ Upstream commit 5ebb1bc2d63d90dd204169e21fd7a0b4bb8c776e ]
 
-Its more than "a roundabout manner".
+ACPI HID devices do not actually have an alias for
+them in the IVRS. But dev_data->alias is still used
+for indexing into the IOMMU device table for devices
+being handled by the IOMMU. So for ACPI HID devices,
+we simply return the corresponding devid as an alias,
+as parsed from IVRS table.
 
-Read the comment again.
+Signed-off-by: Arindam Nath <arindam.nath@amd.com>
+Fixes: 2bf9a0a12749 ('iommu/amd: Add iommu support for ACPI HID devices')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/iommu/amd_iommu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> 
-> 
-> >
-> > See the following comment on x86.c:
-> 
-> I read that comment, and it's not obvious to me how it's related.
-
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 16199b36a11e..bba1b9f2f782 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -288,7 +288,13 @@ static u16 get_alias(struct device *dev)
+ 
+ 	/* The callers make sure that get_device_id() does not fail here */
+ 	devid = get_device_id(dev);
++
++	/* For ACPI HID devices, we simply return the devid as such */
++	if (!dev_is_pci(dev))
++		return devid;
++
+ 	ivrs_alias = amd_iommu_alias_table[devid];
++
+ 	pci_for_each_dma_alias(pdev, __last_alias, &pci_alias);
+ 
+ 	if (ivrs_alias == pci_alias)
+-- 
+2.17.1
 
