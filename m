@@ -7,64 +7,74 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F74C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFADEC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93CB21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79B1A2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:52:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o3QnLhh5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93CB21479
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GESETvm6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B1A2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeJIEE5 (ORCPT
+        id S1726693AbeJIEGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 00:04:57 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37677 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeJIEE5 (ORCPT
+        Tue, 9 Oct 2018 00:06:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41630 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeJIEGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 00:04:57 -0400
-Received: by mail-qk1-f196.google.com with SMTP id x8-v6so12929358qka.4;
-        Mon, 08 Oct 2018 13:51:21 -0700 (PDT)
+        Tue, 9 Oct 2018 00:06:32 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l41-v6so9904346qtl.8;
+        Mon, 08 Oct 2018 13:52:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mvk/VeOEPDJeU1dLxiW4QkOmS/rPiXU2ENPpO20DZm0=;
-        b=o3QnLhh5DPrctUYRB9hbzpNXLdq942kO+9C+5TscRdeWdKmvH45+vTj3hh6o6Sphzb
-         lT2myEP3YYjtntqBjwa+oRUkzojI/d8MRnzjcNSYLVh7av9smpFOS3z2cKkEsedneZwB
-         ziX0J1BGuGJ2kyfov0xNXRGFMU/bMhc3yauoCf9Bfjr6FGn2MJ/YVpep5uHeA79vd6En
-         ZNr2VUdgOnzqVqGTSz+062pIM7AWJhNCg6qBUP5V4aY2YT104bMeTBfTDlp5IY0Cjbqi
-         JiTGK21P7thbDNyyQaAEMBobVfF+mXMlT1Eo+tUUwS/JzHvHbqgJ4qVcmaf80i3/zYFU
-         4yJA==
+        bh=KVHdIBoW+VtQMtUCngKtiMHvuTRci3iWVQDgrtSWFKo=;
+        b=GESETvm6XV/hHVXQr72ZRD3wHm70D0IDtlEWpL3iFzNG8sAyyuVePk9bD96wBVtk/F
+         lLHKkI8o15AShzB0EMht84fPTbN46aa5bWDjLiG8Enk3Azlv1Y/lbmcsfXFYvFZUGdan
+         VXBpCo548msJmtsBsN1k/Ughhhzcxz2zixjBufg58EXnBoNEOaE632Ne1MEFjKBt4IB4
+         v6cEtdhuPOCLFczDm4rw9NdAKfcvl6F0wbXIcW9IcCak4Ywg0J/jAmstMLM61qFFY4QZ
+         +k4shLBFZV56Hvp5hr4YYjrreU/iA0JoDlGv6LtTGSJp7AlhTh+JMJCGcerw+ZJaQX0i
+         /3RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mvk/VeOEPDJeU1dLxiW4QkOmS/rPiXU2ENPpO20DZm0=;
-        b=tvac7kSbxNNnbhy/NHr1kJ32N3DKICxFtsr9pPuUdz+N8z72fLHnShSl8Lmi8VZCIS
-         HX5Ml3E8DNwQbzysQSwk4hhRmGnzQACX9zWTZ7/x9A4nf77fWqNMlx7ixZcCB9o/LFbp
-         PiXLGSnfkAhSaaqOTZE3dt0S2t2Xla3N4yijNj5hRDKDwGhCevoKCCcYIcF4EX7JCisR
-         PNAxRt8BEJ6p2p9bwlMGKgwRDuYRTOI0IsO8UmlhOVtQevbl6Xd5qfH1OUuSClBX8QaU
-         c/uLj7yhhHmg1150I4KBJq1oCM99xAvZ7jlZ8doY3/5YHUaEMNnbRZrGc7q+hBVz6s5O
-         kqjA==
-X-Gm-Message-State: ABuFfoiNv00+lipRvWKgAhRHlN3PTNte6Hq0T4Iny0z1O/pOd98Du5VC
-        ihQW1IWUJZqVQ/u3GzkSdFUGIUfwU9vtFUqMJqQ=
-X-Google-Smtp-Source: ACcGV62stIjkvWuyKHx/7wN31UNxZev7dXASOKTgpL3e8VQEepil7R8n/XY2m2BWl6OmQ5tsuCppKxm23j5ie+4S2Zc=
-X-Received: by 2002:a37:cf88:: with SMTP id v8-v6mr18652351qkl.355.1539031880771;
- Mon, 08 Oct 2018 13:51:20 -0700 (PDT)
+        bh=KVHdIBoW+VtQMtUCngKtiMHvuTRci3iWVQDgrtSWFKo=;
+        b=WVPgMfWFHl/R0T+aHEd2vzGuAivKi1wI5bA+Iuxof5MxVZwu3o/jt+ak14AyBZtecC
+         yS1klJYbpr4ERyLl4jcM0E+R63QdbYhI/ahNwZ0LTq8S6SE8wXqcCdKn7LL5LJFAk6fl
+         pHJmHN0QYXpG9M2zyB2Bf9h2ymnmSNkHFTB3m4w2zDcuawEjteCIDNcTiamgiaNLyH4k
+         M9qITly1E1M7Mtf+fksTFqSl+LrScAELjIJPJIuVzJWK7XzWsXkB0vsWqFrX7j67h7GP
+         i1rj2ZIaHedGSwqZjyno+f+erbM4gLLOOdEFEUGyJsT4MmRaLCg/zlhwKqEPMAil735z
+         LrWg==
+X-Gm-Message-State: ABuFfojA4qQUT2fTUq1FYtdC8rX2XYrGC1w0f9Z362FkMURjengInchY
+        AF8t3PFEPNvroEzQ084j6daqm6Ax+/Gg2xs+5/8=
+X-Google-Smtp-Source: ACcGV61x+PFgQ27DGxsuhaD0bvqZ3GgLaIjW768lhuwnbXTUoPzKgWFpzPYm+iS2IxodbfsjekyYQp9mCZmBrPSIIAQ=
+X-Received: by 2002:ac8:85c:: with SMTP id x28-v6mr21082496qth.90.1539031975339;
+ Mon, 08 Oct 2018 13:52:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538943795-30895-1-git-send-email-wang6495@umn.edu>
-In-Reply-To: <1538943795-30895-1-git-send-email-wang6495@umn.edu>
+References: <20181008183001.10406-1-joe@wand.net.nz>
+In-Reply-To: <20181008183001.10406-1-joe@wand.net.nz>
 From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Mon, 8 Oct 2018 13:51:09 -0700
-Message-ID: <CAPhsuW5vnVjRS7DWFYPSmq5G-dAFxOrHCAOMkK-iaOoirzMazQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf: btf: Fix a missing check bug
-To:     wang6495@umn.edu
-Cc:     kjlu@umn.edu, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Date:   Mon, 8 Oct 2018 13:52:42 -0700
+Message-ID: <CAPhsuW5wNDEEQbHY_zCTcCQ_FKN4poBGq26H2Gksd=QB1SGZow@mail.gmail.com>
+Subject: Re: [PATCHv2 bpf-next] bpf: fix building without CONFIG_INET
+To:     joe@wand.net.nz
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        makita.toshiaki@lab.ntt.co.jp, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Mathieu Xhonneux <m.xhonneux@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
         Networking <netdev@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -73,48 +83,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 7, 2018 at 1:26 PM Wenwen Wang <wang6495@umn.edu> wrote:
+On Mon, Oct 8, 2018 at 11:30 AM Joe Stringer <joe@wand.net.nz> wrote:
 >
-> In btf_parse_hdr(), the length of the btf data header is firstly copied
-> from the user space to 'hdr_len' and checked to see whether it is larger
-> than 'btf_data_size'. If yes, an error code EINVAL is returned. Otherwise,
-> the whole header is copied again from the user space to 'btf->hdr'.
-> However, after the second copy, there is no check between
-> 'btf->hdr->hdr_len' and 'hdr_len' to confirm that the two copies get the
-> same value. Given that the btf data is in the user space, a malicious user
-> can race to change the data between the two copies. By doing so, the user
-> can provide malicious data to the kernel and cause undefined behavior.
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> This patch adds a necessary check after the second copy, to make sure
-> 'btf->hdr->hdr_len' has the same value as 'hdr_len'. Otherwise, an error
-> code EINVAL will be returned.
-
-These two numbers are copied from same memory location, right? So I
-think this check is not necessary?
-
-Thank,
-Song
-
+> The newly added TCP and UDP handling fails to link when CONFIG_INET
+> is disabled:
 >
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> net/core/filter.o: In function `sk_lookup':
+> filter.c:(.text+0x7ff8): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x7ffc): undefined reference to `tcp_hashinfo'
+> filter.c:(.text+0x8020): undefined reference to `__inet_lookup_established'
+> filter.c:(.text+0x8058): undefined reference to `__inet_lookup_listener'
+> filter.c:(.text+0x8068): undefined reference to `udp_table'
+> filter.c:(.text+0x8070): undefined reference to `udp_table'
+> filter.c:(.text+0x808c): undefined reference to `__udp4_lib_lookup'
+> net/core/filter.o: In function `bpf_sk_release':
+> filter.c:(.text+0x82e8): undefined reference to `sock_gen_put'
+>
+> Wrap the related sections of code in #ifdefs for the config option.
+>
+> Furthermore, sk_lookup() should always have been marked 'static', this
+> also avoids a warning about a missing prototype when building with
+> 'make W=1'.
+>
+> Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Joe Stringer <joe@wand.net.nz>
+
+Acked-by: Song Liu <songliubraving@fb.com>
+
+
 > ---
->  kernel/bpf/btf.c | 3 +++
->  1 file changed, 3 insertions(+)
+> v2: Modify the patch to remove the related code in preprocessor rather
+>     than relying on compiler optimizations to remove the code.
+> ---
+>  net/core/filter.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 >
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 2590700..7cce7db 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -2114,6 +2114,9 @@ static int btf_parse_hdr(struct btf_verifier_env *env, void __user *btf_data,
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index 30c6b2d3ef16..4bbc6567fcb8 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -4817,8 +4817,9 @@ static const struct bpf_func_proto bpf_lwt_seg6_adjust_srh_proto = {
+>  };
+>  #endif /* CONFIG_IPV6_SEG6_BPF */
 >
->         hdr = &btf->hdr;
+> -struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
+> -                      struct sk_buff *skb, u8 family, u8 proto)
+> +#ifdef CONFIG_INET
+> +static struct sock *sk_lookup(struct net *net, struct bpf_sock_tuple *tuple,
+> +                             struct sk_buff *skb, u8 family, u8 proto)
+>  {
+>         int dif = skb->dev->ifindex;
+>         bool refcounted = false;
+> @@ -4951,6 +4952,7 @@ static const struct bpf_func_proto bpf_sk_release_proto = {
+>         .ret_type       = RET_INTEGER,
+>         .arg1_type      = ARG_PTR_TO_SOCKET,
+>  };
+> +#endif /* CONFIG_INET */
 >
-> +       if (hdr->hdr_len != hdr_len)
-> +               return -EINVAL;
-> +
->         btf_verifier_log_hdr(env, btf_data_size);
->
->         if (hdr->magic != BTF_MAGIC) {
+>  bool bpf_helper_changes_pkt_data(void *func)
+>  {
+> @@ -5158,12 +5160,14 @@ tc_cls_act_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>         case BPF_FUNC_skb_ancestor_cgroup_id:
+>                 return &bpf_skb_ancestor_cgroup_id_proto;
+>  #endif
+> +#ifdef CONFIG_INET
+>         case BPF_FUNC_sk_lookup_tcp:
+>                 return &bpf_sk_lookup_tcp_proto;
+>         case BPF_FUNC_sk_lookup_udp:
+>                 return &bpf_sk_lookup_udp_proto;
+>         case BPF_FUNC_sk_release:
+>                 return &bpf_sk_release_proto;
+> +#endif
+>         default:
+>                 return bpf_base_func_proto(func_id);
+>         }
+> @@ -5264,12 +5268,14 @@ sk_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>                 return &bpf_sk_redirect_hash_proto;
+>         case BPF_FUNC_get_local_storage:
+>                 return &bpf_get_local_storage_proto;
+> +#ifdef CONFIG_INET
+>         case BPF_FUNC_sk_lookup_tcp:
+>                 return &bpf_sk_lookup_tcp_proto;
+>         case BPF_FUNC_sk_lookup_udp:
+>                 return &bpf_sk_lookup_udp_proto;
+>         case BPF_FUNC_sk_release:
+>                 return &bpf_sk_release_proto;
+> +#endif
+>         default:
+>                 return bpf_base_func_proto(func_id);
+>         }
 > --
-> 2.7.4
+> 2.17.1
 >
