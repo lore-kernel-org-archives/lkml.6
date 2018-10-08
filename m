@@ -2,138 +2,124 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBECC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 265B0C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FEF620878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:02:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FEF620878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id D166920878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:03:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EwN+SCdf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D166920878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeJHSNO (ORCPT
+        id S1727384AbeJHSOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:13:14 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:54624 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726656AbeJHSNO (ORCPT
+        Mon, 8 Oct 2018 14:14:53 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37712 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeJHSOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:13:14 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id 9TIUgLs6rSskC9TIYgg3A5; Mon, 08 Oct 2018 13:02:02 +0200
-Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
- decoder interface
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20181004081119.102575-1-acourbot@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <676a5e92-86c2-cf5a-9409-ef490ad8e828@xs4all.nl>
-Date:   Mon, 8 Oct 2018 13:01:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 8 Oct 2018 14:14:53 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a82-v6so13622892lfa.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 04:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NFfpJUJVpqGihzjfeoGJXZ5dNoZ4J7ntdboh0RwB/Kg=;
+        b=EwN+SCdfP8rwhThi/rJNkOmmq9x0Bc5umkZrauQ7SDqQyfF6UTxvX2HVhZ/5TkjqmR
+         5t6uZPT3XxvI6yKFQRRoFJ03kgUg+nmh/kPoxdNQy/ecc2I4+BEUdQpnuXAeesUMDwRK
+         yBUAg0EhsCutXCqS3Z4CYiyJkcEKD3+Wadv38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NFfpJUJVpqGihzjfeoGJXZ5dNoZ4J7ntdboh0RwB/Kg=;
+        b=Gn7Pb+xZuq3+iO+PJfSz3l2BDJWf8wuiStgppfKF17dIrwO0ww4+ZMnsye85hq+HQg
+         9Mw29kd17gAEDuKxYGf9EY9jXyOTYmUs1zARj6vc7ROP26T0UktMiR8CtyqYHDj2uRlh
+         dwYcktswlGypGSY2byNDL+ss0vOeHRg3P8EZKEhHoq8bqR1Hsc+GHZQNHGu7pk6smGq/
+         HY29XUAs3Zbx1JTkFSBvMp7QthC1ohRRVuB0YlNfMs0NVmi4EqcZ+x+SaqK5V3qjffQS
+         HkftakK7Mx+waWz7FjkPT4/bBlf7DpGhF3hOvG2dOQog8ciDiTsBqVLZi7p5P/AQ7r5O
+         ATyw==
+X-Gm-Message-State: ABuFfoiZpilj2ZaZPixH1ToQjeDbj57FXtJaAfqdGxESi3k0L6ah7YBg
+        9+5ddFA/s0D6nGxjp6LxosIKRXpkIUocb/r0J+gnBw==
+X-Google-Smtp-Source: ACcGV62KyBr0egO3QbORUFQInOtDQbAnnI2biSr04zj+bhx0oi/E2IltPloSBkRsGga9DLQ5it7oqVRiJqpeWbvt430=
+X-Received: by 2002:a19:1709:: with SMTP id n9-v6mr12078525lfi.74.1538996620623;
+ Mon, 08 Oct 2018 04:03:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181004081119.102575-1-acourbot@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCtMBV/mRYme5OOozQQi3+mtEiTBjFu5IOszXa20nOLxsEFAWFv4RrN4AicW5/spIXholRaE0vIU+NaTR3377Vb2K2KlDY/+KxpqsfEouyb7X2O4vRUk
- ZGIKzaEQb2IOno4z8avHGK3GhWjuQ42uTZzg4LDttvlQP+hionVQk00ejdSAnP/LVKbCOF3feW/0xFcMxmFV7CtcF9qr6mXbVOOfw8ZfkrxJo7NHl5Xu01Z2
- KQD64DurMzuJ86gH67N8+fuqHHERXEWGA86s+Y4S9AYF1TI5ZLxAx0O3BjrWMRFjISg0Tv0ZkZSTGUtL8OuFgnRPWTlaQyyZxgYVA2zSNcPteDR8KCvlaKsT
- W/ZUkgvB6eriveyflxzBx+xb2+RFiu42vBg63NrIz/dT/jovpLU=
+References: <20181003123402.GA15494@hirez.programming.kicks-ass.net> <tip-3a387c6d96e69f1710a3804eb68e1253263298f2@git.kernel.org>
+In-Reply-To: <tip-3a387c6d96e69f1710a3804eb68e1253263298f2@git.kernel.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 8 Oct 2018 16:33:29 +0530
+Message-ID: <CA+G9fYuLJH6XVsS14xjhSqJsUGZ9NXdyytseT2Pr0hoxOeWfAg@mail.gmail.com>
+Subject: Re: [tip:x86/boot] x86/kaslr, ACPI/NUMA: Fix KASLR build error
+To:     Ingo Molnar <mingo@kernel.org>, hpa@zytor.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>, m.mizuma@jp.fujitsu.com,
+        open list <linux-kernel@vger.kernel.org>, bhe@redhat.com,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-tip-commits@vger.kernel.org, lkft-triage@lists.linaro.org,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 10:11 AM, Alexandre Courbot wrote:
-> This patch documents the protocol that user-space should follow when
-> communicating with stateless video decoders. It is based on the
-> following references:
-> 
-> * The current protocol used by Chromium (converted from config store to
->   request API)
-> 
-> * The submitted Cedrus VPU driver
-> 
-> As such, some things may not be entirely consistent with the current
-> state of drivers, so it would be great if all stakeholders could point
-> out these inconsistencies. :)
-> 
-> This patch is supposed to be applied on top of the Request API V18 as
-> well as the memory-to-memory video decoder interface series by Tomasz
-> Figa.
-> 
-> Changes since V1:
-> 
-> * Applied fixes received as feedback,
-> * Moved controls descriptions to the extended controls file,
-> * Document reference frame management and referencing (need Hans' feedback on
->   that).
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  .../media/uapi/v4l/dev-stateless-decoder.rst  | 348 ++++++++++++++++++
->  Documentation/media/uapi/v4l/devices.rst      |   1 +
->  .../media/uapi/v4l/extended-controls.rst      |  25 ++
->  .../media/uapi/v4l/pixfmt-compressed.rst      |  54 ++-
->  4 files changed, 424 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
-> 
-> diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+Linux next build for arm64 failed due to
+numa.c:34:10: fatal error: asm/kaslr.h: No such file or directory
 
-<snip>
+On Wed, 3 Oct 2018 at 19:52, tip-bot for Peter Zijlstra (Intel)
+<tipbot@zytor.com> wrote:
+>
+> Commit-ID:  3a387c6d96e69f1710a3804eb68e1253263298f2
+> Gitweb:     https://git.kernel.org/tip/3a387c6d96e69f1710a3804eb68e1253263298f2
+> Author:     Peter Zijlstra (Intel) <peterz@infradead.org>
+> AuthorDate: Wed, 3 Oct 2018 14:41:27 +0200
+> Committer:  Borislav Petkov <bp@suse.de>
+> CommitDate: Wed, 3 Oct 2018 16:15:49 +0200
+>
+> x86/kaslr, ACPI/NUMA: Fix KASLR build error
+>
+> There is no point in trying to compile KASLR-specific code when there is
+> no KASLR.
+>
+>  [ bp: Move the whole crap into kaslr.c and make
+>    rand_mem_physical_padding static. ]
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-> +Buffer management during decoding
-> +=================================
-> +Contrary to stateful decoder drivers, a stateless decoder driver does not
-> +perform any kind of buffer management. In particular, it guarantees that
-> +``CAPTURE`` buffers will be dequeued in the same order as they are queued. This
-> +allows user-space to know in advance which ``CAPTURE`` buffer will contain a
-> +given frame, and thus to use that buffer ID as the key to indicate a reference
-> +frame.
-> +
-> +This also means that user-space is fully responsible for not queuing a given
-> +``CAPTURE`` buffer for as long as it is used as a reference frame. Failure to do
-> +so will overwrite the reference frame's data while it is still in use, and
-> +result in visual corruption of future frames.
-> +
-> +Note that this applies to all types of buffers, and not only to
-> +``V4L2_MEMORY_MMAP`` ones, as drivers supporting ``V4L2_MEMORY_DMABUF`` will
-> +typically maintain a map of buffer IDs to DMABUF handles for reference frame
-> +management. Queueing a buffer will result in the map entry to be overwritten
-> +with the new DMABUF handle submitted in the :c:func:`VIDIOC_QBUF` ioctl.
+<trim>
 
-The more I think about this, the more I believe that relying on capture buffer
-indices is wrong. It's easy enough if there is a straightforward 1-1 relationship,
-but what if you have H264 slices as Nicolas mentioned and it becomes a N-1 relationship?
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 3d69834c692f..4408e37600ef 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -32,7 +32,7 @@
+>  #include <linux/numa.h>
+>  #include <linux/nodemask.h>
+>  #include <linux/topology.h>
+> -#include <asm/setup.h>
+> +#include <asm/kaslr.h>
 
-Yes, you can still do this in userspace, but it becomes a lot more complicated.
-
-And what if in the future instead of having one capture buffer per decoded frame
-there will be multiple capture buffers per decoded frame, each with a single
-slice (for example)?
-
-I would feel much happier if we used a 'cookie' to refer to buffers.
-
-The next problem would be where to put it. I dislike abusing the timestamp field
-for this. Part of the reason is that there will be changes there to fix the
-year 2038 issue, and I am not entirely sure what that will do to how this field
-is handled since there may be conversions from a pre-2038 timeval to a 2038-ready
-timeval.
-
-So a union with the timestamp field and a cookie field (+ BUF_FLAG_COOKIE) would
-work best IMHO.
-
-Regards,
-
-	Hans
+kernel-source/drivers/acpi/numa.c:34:10: fatal error: asm/kaslr.h: No
+such file or directory
+ #include <asm/kaslr.h>
+          ^~~~~~~~~~~~~
+compilation terminated.
+kernel-source/scripts/Makefile.build:295: recipe for target
+'drivers/acpi/numa.o' failed
+make[4]: *** [drivers/acpi/numa.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+  CC      lib/win_minmax.o
+  CC      drivers/base/soc.o
+kernel-source/scripts/Makefile.build:520: recipe for target
+'drivers/acpi' failed
+make[3]: *** [drivers/acpi] Error 2
