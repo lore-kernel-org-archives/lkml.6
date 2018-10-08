@@ -2,100 +2,109 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24924C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C981EC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C943820858
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:06:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C943820858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 84E5920858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:06:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzZ00aAz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E5920858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbeJHVRz (ORCPT
+        id S1726548AbeJHVSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:17:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13604 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726056AbeJHVRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:17:55 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2668B977E0368;
-        Mon,  8 Oct 2018 22:05:45 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 8 Oct 2018 22:05:37 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH] rtl8xxxu: Remove set but not used variables 'usedesc40' and 'seq_number'
-Date:   Mon, 8 Oct 2018 14:16:59 +0000
-Message-ID: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Mon, 8 Oct 2018 17:18:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726056AbeJHVSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:18:04 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A75322087C;
+        Mon,  8 Oct 2018 14:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539007570;
+        bh=qGvtHr+CMDmWHX/83L83F2IdY3owtawwH/qDYioZ4r0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RzZ00aAzIvkDelqTH9UDyDdngojHbeCEZUwp+PJJ5ulS2sWJ7+nhu9RuNvsoq3AU+
+         TK+dQjy/WxjK4dmjjKrn2fK0SnKMnj9HIuZ0b5u4sBYk1P2fZWiQRFjoPSyFdAGDfG
+         8pWq/TJc13hnZdnmnBci6SWPk0hDTuHt0LULZbQQ=
+Received: by mail-qt1-f177.google.com with SMTP id q41-v6so20994480qtq.10;
+        Mon, 08 Oct 2018 07:06:10 -0700 (PDT)
+X-Gm-Message-State: ABuFfohd9nZ5NZb6hN0cVJ7JTsBH12cIEbtrQBWjS8L/B902/nJOP7le
+        rpm5LnI8zuJKR6aMFy6LJyH7f49lcjLww4KSCg==
+X-Google-Smtp-Source: ACcGV62KsUUpKLXT6piTWeTHL1QHKqJZ3HIWz14HO1selX1eMzsXiqgETACADOTZicacT/pVeWAgcOMP379shaQTGjI=
+X-Received: by 2002:a0c:b5d3:: with SMTP id o19-v6mr19705377qvf.218.1539007569885;
+ Mon, 08 Oct 2018 07:06:09 -0700 (PDT)
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
+ <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
+In-Reply-To: <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 8 Oct 2018 09:05:58 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
+Message-ID: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
+Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
+ bindings to json-schema
+To:     Simon Horman <horms@verge.net.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Mon, Oct 8, 2018 at 3:02 AM Simon Horman <horms@verge.net.au> wrote:
+>
+> On Fri, Oct 05, 2018 at 11:58:41AM -0500, Rob Herring wrote:
+> > Convert Renesas SoC bindings to DT schema format using json-schema.
+> >
+> > Cc: Simon Horman <horms@verge.net.au>
+> > Cc: Magnus Damm <magnus.damm@gmail.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+>
+> This seems fine to me other than that it does not seem
+> to apply cleanly to next.
+>
+> shmobile.txt sees a couple of updates per release cycle so from my point of
+> view it would ideal if this change could hit -rc1 to allow patches for
+> v4.21 to be accepted smoothly (already one from Sergei will need rebasing).
 
-drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_tx':
-drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4925:7: warning:
- variable 'usedesc40' set but not used [-Wunused-but-set-variable]
+When we get to the point of merging (which isn't going to be 4.20),
+you and other maintainers can probably take all these patches. Other
+than the few restructuring patches, the only dependency is the build
+support which isn't a dependency to apply it, but build it. I plan to
+build any patches as part of reviewing at least early on. OTOH, the
+build support is small enough and self contained that maybe it can
+just be applied for 4.20.
 
-drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4921:6: warning:
- variable 'seq_number' set but not used [-Wunused-but-set-variable]
-
-'usedesc40' and 'seq_number' are not used any more after
-commit b59415c2dd08 ("rtl8xxxu: Split filling of TX descriptors into separate functions")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 73f6fc0..56040b1 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -4918,11 +4918,10 @@ static void rtl8xxxu_tx(struct ieee80211_hw *hw,
- 	struct device *dev = &priv->udev->dev;
- 	u32 queue, rts_rate;
- 	u16 pktlen = skb->len;
--	u16 seq_number;
- 	u16 rate_flag = tx_info->control.rates[0].flags;
- 	int tx_desc_size = priv->fops->tx_desc_size;
- 	int ret;
--	bool usedesc40, ampdu_enable, sgi = false, short_preamble = false;
-+	bool ampdu_enable, sgi = false, short_preamble = false;
- 
- 	if (skb_headroom(skb) < tx_desc_size) {
- 		dev_warn(dev,
-@@ -4946,7 +4945,6 @@ static void rtl8xxxu_tx(struct ieee80211_hw *hw,
- 	if (ieee80211_is_action(hdr->frame_control))
- 		rtl8xxxu_dump_action(dev, hdr);
- 
--	usedesc40 = (tx_desc_size == 40);
- 	tx_info->rate_driver_data[0] = hw;
- 
- 	if (control && control->sta)
-@@ -5013,7 +5011,6 @@ static void rtl8xxxu_tx(struct ieee80211_hw *hw,
- 	else
- 		rts_rate = 0;
- 
--	seq_number = IEEE80211_SEQ_TO_SN(le16_to_cpu(hdr->seq_ctrl));
- 
- 	priv->fops->fill_txdesc(hw, hdr, tx_info, tx_desc, sgi, short_preamble,
- 				ampdu_enable, rts_rate);
-
+Rob
