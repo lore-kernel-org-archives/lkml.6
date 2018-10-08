@@ -2,127 +2,146 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB79FC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB7EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1692145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:47:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sy2juLN8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1692145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BEEBB2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:47:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEEBB2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJHR6m (ORCPT
+        id S1727547AbeJHR6r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:58:42 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35668 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeJHR6m (ORCPT
+        Mon, 8 Oct 2018 13:58:47 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44248 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeJHR6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:58:42 -0400
-Received: by mail-it1-f193.google.com with SMTP id p64-v6so11226010itp.0;
-        Mon, 08 Oct 2018 03:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZmZ99y/DfzRA1qs+Wb/NKLl8zjP0Bp7IulNups37Sjo=;
-        b=sy2juLN8aEx72Woy4nJCp8GiIxeqga0QeYMIOHAvpq2iBcJ/PPBxY+YezxJbRJM2Rd
-         aHwFQbSYY4gsb1Aplnjm+oN6c/OEslr/jE3XPwYSgGITBrHsOlTx+OnSErBGznxvwYOX
-         BLLhqT1OkZtpF/llUBK++xNZyeNPH6cclIMwyPAPluN9fuJNUt/fm6WbXcMzD2GNQwjP
-         n5/0mbQ9hS9Uj/Czi+FsOzZ7WDzIjS5dyduy3gPXN8pn7I0mQjKjITXdXFrly6PW1AM6
-         ZkUjKVa0Jlrc2Y54nB/HwEe28avSKHE2mGfvVopEtS8k8o3etNSylRke0XAIX/BSuFZl
-         TVLw==
+        Mon, 8 Oct 2018 13:58:46 -0400
+Received: by mail-lf1-f67.google.com with SMTP id m18-v6so13567105lfl.11;
+        Mon, 08 Oct 2018 03:47:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZmZ99y/DfzRA1qs+Wb/NKLl8zjP0Bp7IulNups37Sjo=;
-        b=KZrGqaCqzxTixEYj/1tnn+7tzC6Tswzmh6vRiqkVixV+QtvqWoPdwNJczlJKPgMG7N
-         gfUUpB+Tj9aR0LOC65CbEJsHiZ0HVacsfP6qTlDZd9vib6DiDfNnWN2M8lvM0S8ZECwM
-         3TaNzn72ghjadGeG+JA2dDuBgEbUMu+qTEFil7V7ZIss1ZIDvugXKK4JYMcz+74ZqeBM
-         0JOxseNUFnjaFw75GEpmt6wx/cbw19s31kdfEuGwxU5rP45z1yrO6z9K7LVgVgzqnv0A
-         sKIdS8lD0Cc8mGzhX5KbFj7lpzsBcoRc1zXN9vmgAno6qSpr8IaqMJKI3lw5bFbPxL45
-         CfYA==
-X-Gm-Message-State: ABuFfoi3y0coakfbOu2z05iixtV3uvfb/HoO7zpzU6db+BxnOtKPSgmQ
-        OoxlcMTebCOap/jRSk05b3CmK5sMt7nxB0PyBMILdCz0WvI=
-X-Google-Smtp-Source: ACcGV62re3ZQdM641QmWYjuef1Sy1aG3LqPBpGISO1rxkJqMaXEgLXubHd46XpgqiRSc9gJ1e40MmG/FIIQ23Br1C9o=
-X-Received: by 2002:a24:3dd2:: with SMTP id n201-v6mr9526910itn.75.1538995655480;
- Mon, 08 Oct 2018 03:47:35 -0700 (PDT)
+        bh=cnJqKGfKCJn6THfdu0w+U8mp3PA/UTX51c6e69INi9o=;
+        b=FajzgdHibbsC7lU/qaufFiVDeaaCBagTQScXmJS6znJyuBl2/7aiKUt2jjxljheniW
+         sHPl5Bw8VMfoDPE0SAPuw10/AXHHhMgBNG8D10YzJL84mVpQEiDxtHq8zcrWtZ9PW71M
+         WiD3754smSLFE2OKFa2W+P+9RVrE8O1Zs0a0sWZsPZPAgEWWZY5QGTadjCW7USq2O4Lc
+         mkixQdNa8NMtrZ0AqivYREjJ/WMKvwYWA3M8CjQKH5jwR9eAyLWAFWQZMIeT1SLevoi7
+         jlEhgXJyiUtbffWr4xNjRfHrM2s0sIcKNnvPi44Zx6lGj2WwatDbr49ytBx6uBjZqWl9
+         GLgw==
+X-Gm-Message-State: ABuFfohL3Acgo3wJhF7/IGEF6omjVinCm54t/9EFgSnljKthc9yHVQ4J
+        vRNLBNWRgtuZZgMgzxOgbNDD8nQ1cbR+xmpbjdc=
+X-Google-Smtp-Source: ACcGV61pB2vwPNyHB6fkOMZ97n+/c4OwSck8WviBAk965P28UkIHwr7nE7HJStr/AhCt/m3GehT0iQEbZ0IYRvmKCWA=
+X-Received: by 2002:a19:6d0e:: with SMTP id i14-v6mr12760275lfc.57.1538995657922;
+ Mon, 08 Oct 2018 03:47:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538919405-3093-1-git-send-email-laoar.shao@gmail.com> <0652963b-90ac-06a7-3a35-50a307465cf9@gmail.com>
-In-Reply-To: <0652963b-90ac-06a7-3a35-50a307465cf9@gmail.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Mon, 8 Oct 2018 18:46:58 +0800
-Message-ID: <CALOAHbAAwr1rsPhHT4R7wn3SYJ220C-i92qObSA3Cvp99M8i8w@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next] inet: do not set backlog if listen fails
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
+In-Reply-To: <20181003132212.12619-1-boris.brezillon@bootlin.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 8 Oct 2018 12:47:21 +0200
+Message-ID: <CAK8P3a2C+FHiPnHKEAanhD=RpqDG1VywTEGhpdBvvKQ8zmwdUA@mail.gmail.com>
+Subject: Re: [PATCH v8 00/10] Add the I3C subsystem
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>, mshettel@codeaurora.org,
+        swboyd@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 1:39 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
 >
+> Sorry for the huge delay between v7 and v8 despite the small amount of
+> things I was asked to fix/rework.
 >
+> This patch series is adding a new subsystem to support I3C devices.
 >
-> On 10/07/2018 06:36 AM, Yafang Shao wrote:
-> > We don't need to set the backlog if listen fails.
-> > The sk_max_ack_backlog will be set in the caller inet_listen() and
-> > dccp_listen_start() if inet_csk_listen_start() return without error.
-> > So just remove this line to avoid this unnecessary operation.
-> >
-> > Regarding sk_ack_backlog, we have to set it before a TCP/DCCP socket is
-> > ready to accept new flows to avoid race, because dccp and tcp have lockless
-> > listeners
-> >
+> This is just adding support for basic features. Extra features will
+> be added afterwards.
 >
-> Really could you not add irrelevant stuff in the changelog ?
+> There are a few design choices that are worth mentioning because they
+> impact the way I3C device drivers can interact with their devices:
 >
+> - all functions used to send I3C/I2C frames must be called in
+>   non-atomic context. Mainly done this way to ease implementation, but
+>   this is still open to discussion. Please let me know if you think it's
+>   worth considering an asynchronous model here
+> - the I3C bus and I3C master controller are now tightly coupled even
+>   though they're still allocated separately. There's now a 1:1
+>   relationship between these objects, and the I3C master is no longer
+>   represented under the I3C bus object.
+>   Arnd, let me know if you had something different in mind, and I'll
+>   rework the implementation accordingly.
 
-Sure, I will remove it.
+I looked at the entire series again and I'm rather happy with how
+it turned out. I've commented on a tiny issue about the readsl()
+that should be easy to resolve one way or another, with that
+you can add my
 
-> This patch simply removes one redundant setting, you do not have to explain
-> about dccp/tcp being lockless and that sk_ack_backlog is not touched by this patch.
->
-> Also the title is misleading, since we will still set the backlog even if the listen
-> fails.
->
-> If you really want sk_max_ack_backlog being not changed if listen() fails,
-> then I am afraid you will need to submit a different patch.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-After this patch, sk_max_ack_backlog will only be set after the sk is
-successfully added to listening hash table,
-and then 0 is returned, that means listen()  is successful.
+There is one additional issue that we've talked about previously
+and that I'd like to hear about from GregKH or maybe other
+subsystem maintainers: In the current version, you have a single
+'bus_type' object, and this is used to represent both a 'host' and
+a 'device'. I think we concluded that this is done in other
+subsystems as well, and that this is fitting here because a
+host (master device) can hand over being a master to another
+device (slave), which then becomes the host and sees this
+one as a slave. Also a lot of the sysfs attributes are the same
+because of this relationship.
 
-Take inet_listen() for example,
+It also means that you get a mix of things in sysfs:
 
-if (old_state != TCP_LISTEN) {
-    err = inet_csk_listen_start(sk, backlog);
-    if (err)
-        goto out;
-}
+/sys/devices/i3c/<bus>
+/sys/devices/i3c/<device>
+/sys/devices/i3c/<bus>/<device>
 
-// it can only be set if err is 0.
-sk->sk_max_ack_backlog = backlog;
-err = 0;
+which is a bit like what we have on USB where we can have hub
+devices that are again parents of other USB devices, but I don't
+think we can have i3c hubs or multiplexers in the same way, so
+it's only a single level.
 
-out:
-    return err;
+I'm ok with this model after our previous discussion and couldn't
+come up with a better one. If anyone else still sees it as
+problematic and has a better idea, please let us know now.
 
-
-Pls. correct me if I missed something.
-
-Thanks
-Yafang
+         Arnd
