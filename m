@@ -2,37 +2,37 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC392C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5E7C65C28
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A986920878
+	by mail.kernel.org (Postfix) with ESMTP id D79E92087C
 	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A986920878
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79E92087C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeJHSQT (ORCPT
+        id S1727783AbeJHSQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:16:19 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:52830 "EHLO
+        Mon, 8 Oct 2018 14:16:20 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:52848 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbeJHSQT (ORCPT
+        with ESMTP id S1727284AbeJHSQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:16:19 -0400
+        Mon, 8 Oct 2018 14:16:20 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
         by xavier.telenet-ops.be with bizsmtp
-        id kz561y0043XaVaC01z56XY; Mon, 08 Oct 2018 13:05:06 +0200
+        id kz561y0033XaVaC01z56XX; Mon, 08 Oct 2018 13:05:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1g9TLV-000510-TU; Mon, 08 Oct 2018 13:05:05 +0200
+        id 1g9TLV-000513-UO; Mon, 08 Oct 2018 13:05:05 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1g9TLV-0006dJ-RR; Mon, 08 Oct 2018 13:05:05 +0200
+        id 1g9TLV-0006dN-TP; Mon, 08 Oct 2018 13:05:05 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Petr Mladek <pmladek@suse.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -41,44 +41,62 @@ To:     Petr Mladek <pmladek@suse.com>,
         Jonathan Corbet <corbet@lwn.net>
 Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] lib/vsprintf: Hash remaining raw addresses
-Date:   Mon,  8 Oct 2018 13:05:01 +0200
-Message-Id: <20181008110504.25449-1-geert+renesas@glider.be>
+Subject: [PATCH 2/3] lib/vsprintf: Hash legacy clock addresses
+Date:   Mon,  8 Oct 2018 13:05:03 +0200
+Message-Id: <20181008110504.25449-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008110504.25449-1-geert+renesas@glider.be>
+References: <20181008110504.25449-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi all,
+On platforms using the Common Clock Framework, "%pC" prints the clock's
+name. On legacy platforms, it prints the unhashed clock's address,
+potentially leaking sensitive information regarding the kernel layout in
+memory.
 
-There are still two format specifiers that print unhanced kernel
-addresses, potentially leaking sensitive information regarding the
-kernel layout in memory.
+Avoid this leak by printing the hashed address instead.  To distinguish
+between clocks, a 32-bit unique identifier is as good as an actual
+pointer value.
 
-This patch series fixes this by printing hashed addresses instead.
-    
-Thanks!
+Fixes: ad67b74d2469d9b8 ("printk: hash addresses printed with %p")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/core-api/printk-formats.rst | 5 ++---
+ lib/vsprintf.c                            | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Geert Uytterhoeven (3):
-  lib/vsprintf: Prepare for more general use of ptr_to_id()
-  lib/vsprintf: Hash legacy clock addresses
-  lib/vsprintf: Hash printed address for netdev bits fallback
-
- Documentation/core-api/printk-formats.rst |  5 ++---
- lib/vsprintf.c                            | 17 ++++++++++-------
- 2 files changed, 12 insertions(+), 10 deletions(-)
-
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index 25dc591cb1108790..d39798c2558500d5 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -420,9 +420,8 @@ struct clk
+ 	%pC	pll1
+ 	%pCn	pll1
+ 
+-For printing struct clk structures. %pC and %pCn print the name
+-(Common Clock Framework) or address (legacy clock framework) of the
+-structure.
++For printing struct clk structures. %pC and %pCn print the name of the clock
++(Common Clock Framework) or a unique 32-bit ID (legacy clock framework).
+ 
+ Passed by reference.
+ 
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index b5bf90731c5a5277..1fb36260a44289e8 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1477,7 +1477,7 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
+ #ifdef CONFIG_COMMON_CLK
+ 		return string(buf, end, __clk_get_name(clk), spec);
+ #else
+-		return special_hex_number(buf, end, (unsigned long)clk, sizeof(unsigned long));
++		return ptr_to_id(buf, end, clk, spec);
+ #endif
+ 	}
+ }
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
