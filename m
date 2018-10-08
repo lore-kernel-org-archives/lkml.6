@@ -4,46 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813A4C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93939C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDB92064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E461214C3
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWOEAEo2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDB92064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cx+pOpyT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E461214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbeJIBug (ORCPT
+        id S1728954AbeJIBuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36826 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:35 -0400
+        id S1726427AbeJIBui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:38 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5B402064A;
-        Mon,  8 Oct 2018 18:37:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9CD521479;
+        Mon,  8 Oct 2018 18:37:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023852;
-        bh=1x619ilvkg9+iY5g4rl0htTG54YBTa8jqvQaSPVF5oA=;
+        s=default; t=1539023855;
+        bh=kOIdCr1K9QoImF4XKsMvoShxfdh6yp3BBswsWt+fgYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gWOEAEo217eB5Yu8WkkudxXgfBb6Ln3Bvp+gyZDVBcnxIhGWNXML9vIdIcrOcFgW0
-         m+hcNe0u3ZBUik9s02JFbBYwV6uaZBFVf7DSua84NpIenjvXU6brFQu4IforG7H3mH
-         UKkk+086eehJOeotBiBDysTlVXjw+eKFNZBS6lAo=
+        b=Cx+pOpyTbIAo5CmmOZ49jpaXG6mBbdcbLJo92fPwx/DsotdHWOLygi2ZHjqQtxOHZ
+         jGzQaXDZ6FQ9VY2uYlt2K8mvFnBbl5Mk85HWii6zSJYF2csYkVjuAG+pIZ08JXMFaI
+         snfZW9zeyCODEqdQS9aQziQOVK3u1ZHsW6L7qOUk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Richard Kuo <rkuo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 074/113] KVM: PPC: Book3S HV: Dont truncate HPTE index in xlate function
-Date:   Mon,  8 Oct 2018 20:31:15 +0200
-Message-Id: <20181008175535.018898572@linuxfoundation.org>
+Subject: [PATCH 4.4 100/113] arch/hexagon: fix kernel/dma.c build warning
+Date:   Mon,  8 Oct 2018 20:31:41 +0200
+Message-Id: <20181008175536.804387083@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -61,42 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
+[ Upstream commit 200f351e27f014fcbf69b544b0b4b72aeaf45fd3 ]
 
-This fixes a bug which causes guest virtual addresses to get translated
-to guest real addresses incorrectly when the guest is using the HPT MMU
-and has more than 256GB of RAM, or more specifically has a HPT larger
-than 2GB.  This has showed up in testing as a failure of the host to
-emulate doorbell instructions correctly on POWER9 for HPT guests with
-more than 256GB of RAM.
+Fix build warning in arch/hexagon/kernel/dma.c by casting a void *
+to unsigned long to match the function parameter type.
 
-The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
-is stored as an int, and in forming the HPTE address, the index gets
-shifted left 4 bits as an int before being signed-extended to 64 bits.
-The simple fix is to make the variable a long int, matching the
-return type of kvmppc_hv_find_lock_hpte(), which is what calculates
-the index.
+../arch/hexagon/kernel/dma.c: In function 'arch_dma_alloc':
+../arch/hexagon/kernel/dma.c:51:5: warning: passing argument 2 of 'gen_pool_add' makes integer from pointer without a cast [enabled by default]
+../include/linux/genalloc.h:112:19: note: expected 'long unsigned int' but argument is of type 'void *'
 
-Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S HV guests")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org
+Patch-mainline: linux-kernel @ 07/20/2018, 20:17
+[rkuo@codeaurora.org: fixed architecture name]
+Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kvm/book3s_64_mmu_hv.c |    2 +-
+ arch/hexagon/kernel/dma.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -314,7 +314,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate
- 	unsigned long pp, key;
- 	unsigned long v, gr;
- 	__be64 *hptep;
--	int index;
-+	long int index;
- 	int virtmode = vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
+--- a/arch/hexagon/kernel/dma.c
++++ b/arch/hexagon/kernel/dma.c
+@@ -68,7 +68,7 @@ static void *hexagon_dma_alloc_coherent(
+ 			panic("Can't create %s() memory pool!", __func__);
+ 		else
+ 			gen_pool_add(coherent_pool,
+-				pfn_to_virt(max_low_pfn),
++				(unsigned long)pfn_to_virt(max_low_pfn),
+ 				hexagon_coherent_pool_size, -1);
+ 	}
  
- 	/* Get SLB entry */
 
 
