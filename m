@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630CEC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41561C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D1C321479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B603214C3
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrUK/DHJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1C321479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iscVHRP6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B603214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730581AbeJIB4x (ORCPT
+        id S1730594AbeJIB44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44678 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729885AbeJIB4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:52 -0400
+        id S1729885AbeJIB4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:55 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC88E2087D;
-        Mon,  8 Oct 2018 18:43:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEC1F2087D;
+        Mon,  8 Oct 2018 18:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024227;
-        bh=yYgvJycr57r4M0yj8CDLjpobGVJ2yZP4baxlFQJA3/g=;
+        s=default; t=1539024230;
+        bh=ANmwA/ALpYI559KNF/EOOSfSdtFokBzGpl3cfiRyeHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QrUK/DHJ7PusR+m3ARKACp6x3z8dddaOZS/Qpiz125oDnpT96AGdv23GE0mRdSkPD
-         bCX3QAakSl3Vn+dmEH9tH73EsD/9Gbqe8mxBMYaXZkkB+AoE2qUVNy6idjSXiOR/Ov
-         rpcEEzh2mHezvVVt7yr0uAC//E5ramQOxH18oqa0=
+        b=iscVHRP6Mg7FzuStLoRAFoVl0kq6/JTKpjbbbXPnGIfIawC473Eb0Cnj5cpp21n9b
+         Ac7nlLH56/v9Un8OM+CP7snQ5hWTTDOVwIsj6qzK51Iupdg3ie0zk8MlvlFcTPkkEH
+         NhLyu2ZADWh7fQsbcXPoAN2RGqQsvpK7WHOp3/AQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Netanel Belgazal <netanel@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jacek Tomaka <jacek.tomaka@poczta.fm>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 64/94] net: ena: fix missing calls to READ_ONCE
-Date:   Mon,  8 Oct 2018 20:31:45 +0200
-Message-Id: <20181008175609.497041117@linuxfoundation.org>
+Subject: [PATCH 4.14 65/94] perf/x86/intel: Add support/quirk for the MISPREDICT bit on Knights Landing CPUs
+Date:   Mon,  8 Oct 2018 20:31:46 +0200
+Message-Id: <20181008175609.555414593@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,51 +66,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Netanel Belgazal <netanel@amazon.com>
+From: Jacek Tomaka <jacek.tomaka@poczta.fm>
 
-[ Upstream commit 28abf4e9c9201eda5c4d29ea609d07e877b464b8 ]
+[ Upstream commit 16160c1946b702dcfa95ef63389a56deb2f1c7cb ]
 
-Add READ_ONCE calls where necessary (for example when iterating
-over a memory field that gets updated by the hardware).
+Problem: perf did not show branch predicted/mispredicted bit in brstack.
 
-Signed-off-by: Netanel Belgazal <netanel@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Output of perf -F brstack for profile collected
+
+Before:
+
+ 0x4fdbcd/0x4fdc03/-/-/-/0
+ 0x45f4c1/0x4fdba0/-/-/-/0
+ 0x45f544/0x45f4bb/-/-/-/0
+ 0x45f555/0x45f53c/-/-/-/0
+ 0x7f66901cc24b/0x45f555/-/-/-/0
+ 0x7f66901cc22e/0x7f66901cc23d/-/-/-/0
+ 0x7f66901cc1ff/0x7f66901cc20f/-/-/-/0
+ 0x7f66901cc1e8/0x7f66901cc1fc/-/-/-/0
+
+After:
+
+ 0x4fdbcd/0x4fdc03/P/-/-/0
+ 0x45f4c1/0x4fdba0/P/-/-/0
+ 0x45f544/0x45f4bb/P/-/-/0
+ 0x45f555/0x45f53c/P/-/-/0
+ 0x7f66901cc24b/0x45f555/P/-/-/0
+ 0x7f66901cc22e/0x7f66901cc23d/P/-/-/0
+ 0x7f66901cc1ff/0x7f66901cc20f/P/-/-/0
+ 0x7f66901cc1e8/0x7f66901cc1fc/P/-/-/0
+
+Cause:
+
+As mentioned in Software Development Manual vol 3, 17.4.8.1,
+IA32_PERF_CAPABILITIES[5:0] indicates the format of the address that is
+stored in the LBR stack. Knights Landing reports 1 (LBR_FORMAT_LIP) as
+its format. Despite that, registers containing FROM address of the branch,
+do have MISPREDICT bit but because of the format indicated in
+IA32_PERF_CAPABILITIES[5:0], LBR did not read MISPREDICT bit.
+
+Solution:
+
+Teach LBR about above Knights Landing quirk and make it read MISPREDICT bit.
+
+Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180802013830.10600-1-jacekt@dugeo.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/events/intel/lbr.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -457,7 +457,7 @@ static void ena_com_handle_admin_complet
- 	cqe = &admin_queue->cq.entries[head_masked];
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -1250,4 +1250,8 @@ void intel_pmu_lbr_init_knl(void)
  
- 	/* Go over all the completions */
--	while ((cqe->acq_common_descriptor.flags &
-+	while ((READ_ONCE(cqe->acq_common_descriptor.flags) &
- 			ENA_ADMIN_ACQ_COMMON_DESC_PHASE_MASK) == phase) {
- 		/* Do not read the rest of the completion entry before the
- 		 * phase bit was validated
-@@ -633,7 +633,7 @@ static u32 ena_com_reg_bar_read32(struct
- 	writel(mmio_read_reg, ena_dev->reg_bar + ENA_REGS_MMIO_REG_READ_OFF);
- 
- 	for (i = 0; i < timeout; i++) {
--		if (read_resp->req_id == mmio_read->seq_num)
-+		if (READ_ONCE(read_resp->req_id) == mmio_read->seq_num)
- 			break;
- 
- 		udelay(1);
-@@ -1790,8 +1790,8 @@ void ena_com_aenq_intr_handler(struct en
- 	aenq_common = &aenq_e->aenq_common_desc;
- 
- 	/* Go over all the events */
--	while ((aenq_common->flags & ENA_ADMIN_AENQ_COMMON_DESC_PHASE_MASK) ==
--	       phase) {
-+	while ((READ_ONCE(aenq_common->flags) &
-+		ENA_ADMIN_AENQ_COMMON_DESC_PHASE_MASK) == phase) {
- 		pr_debug("AENQ! Group[%x] Syndrom[%x] timestamp: [%llus]\n",
- 			 aenq_common->group, aenq_common->syndrom,
- 			 (u64)aenq_common->timestamp_low +
+ 	x86_pmu.lbr_sel_mask = LBR_SEL_MASK;
+ 	x86_pmu.lbr_sel_map  = snb_lbr_sel_map;
++
++	/* Knights Landing does have MISPREDICT bit */
++	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_LIP)
++		x86_pmu.intel_cap.lbr_format = LBR_FORMAT_EIP_FLAGS;
+ }
 
 
