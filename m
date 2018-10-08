@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AA6C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F26C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8C521479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F447214C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+YDJ7ef"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8C521479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJRoZxyc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F447214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbeJIB4n (ORCPT
+        id S1730558AbeJIB4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44496 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730165AbeJIB4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:42 -0400
+        id S1730165AbeJIB4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:47 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26AC621479;
-        Mon,  8 Oct 2018 18:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86031214C2;
+        Mon,  8 Oct 2018 18:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024216;
-        bh=722hRECxJsd1Z5X4H9bUyazelq03IUpml87++cIkTgw=;
+        s=default; t=1539024222;
+        bh=N2w4ABvkO++hvMN2G68Dkt6hAWw5Ksr+hgROQtbwjBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+YDJ7efWwk3do16eadj0j7T8nz1ltI0gCxB6uspL2/vPy9yvCDK2XveWkKP0KxLH
-         A03AKCHSO8pV6r2h5221a11AxLQ/TW+VRoiDrh5qPgDIen/sT2trS1qVSmO2WzBrAN
-         W2qePLDRMN6iCdAVGKR96RbeY5iWGu59wE5RF7Gk=
+        b=SJRoZxycshGsot+ERkuNbBhA3A8QI/2HzVtqnmdeceIczFGjVBS0a9j45LkSSTlSb
+         b+eIDsKPakBobpuhnuX79nUiezZ2JSvqOAZk3AzEQR0eTmBFPJG+LHZge06nkatlbZ
+         1u6hSJ+hFivqSMgYO1xXND4T5GlcwgJvELv+2mo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 52/94] netfilter: nf_tables: release chain in flushing set
-Date:   Mon,  8 Oct 2018 20:31:33 +0200
-Message-Id: <20181008175607.699475628@linuxfoundation.org>
+Subject: [PATCH 4.14 62/94] fs/cifs: suppress a string overflow warning
+Date:   Mon,  8 Oct 2018 20:31:43 +0200
+Message-Id: <20181008175609.361522977@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,78 +63,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-[ Upstream commit 7acfda539c0b9636a58bfee56abfb3aeee806d96 ]
+[ Upstream commit bcfb84a996f6fa90b5e6e2954b2accb7a4711097 ]
 
-When element of verdict map is deleted, the delete routine should
-release chain. however, flush element of verdict map routine doesn't
-release chain.
+A powerpc build of cifs with gcc v8.2.0 produces this warning:
 
-test commands:
-   %nft add table ip filter
-   %nft add chain ip filter c1
-   %nft add map ip filter map1 { type ipv4_addr : verdict \; }
-   %nft add element ip filter map1 { 1 : jump c1 }
-   %nft flush map ip filter map1
-   %nft flush ruleset
+fs/cifs/cifssmb.c: In function ‘CIFSSMBNegotiate’:
+fs/cifs/cifssmb.c:605:3: warning: ‘strncpy’ writing 16 bytes into a region of size 1 overflows the destination [-Wstringop-overflow=]
+   strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-splat looks like:
-[ 4895.170899] kernel BUG at net/netfilter/nf_tables_api.c:1415!
-[ 4895.178114] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[ 4895.178880] CPU: 0 PID: 1670 Comm: nft Not tainted 4.18.0+ #55
-[ 4895.178880] RIP: 0010:nf_tables_chain_destroy.isra.28+0x39/0x220 [nf_tables]
-[ 4895.178880] Code: fc ff df 53 48 89 fb 48 83 c7 50 48 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 09 3c 03 7f 05 e8 3e 4c 25 e1 8b 43 50 85 c0 74 02 <0f> 0b 48 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02
-[ 4895.228342] RSP: 0018:ffff88010b98f4c0 EFLAGS: 00010202
-[ 4895.234841] RAX: 0000000000000001 RBX: ffff8801131c6968 RCX: ffff8801146585b0
-[ 4895.234841] RDX: 1ffff10022638d37 RSI: ffff8801191a9348 RDI: ffff8801131c69b8
-[ 4895.234841] RBP: ffff8801146585a8 R08: 1ffff1002323526a R09: 0000000000000000
-[ 4895.234841] R10: 0000000000000000 R11: 0000000000000000 R12: dead000000000200
-[ 4895.234841] R13: dead000000000100 R14: ffffffffa3638af8 R15: dffffc0000000000
-[ 4895.234841] FS:  00007f6d188e6700(0000) GS:ffff88011b600000(0000) knlGS:0000000000000000
-[ 4895.234841] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 4895.234841] CR2: 00007ffe72b8df88 CR3: 000000010e2d4000 CR4: 00000000001006f0
-[ 4895.234841] Call Trace:
-[ 4895.234841]  nf_tables_commit+0x2704/0x2c70 [nf_tables]
-[ 4895.234841]  ? nfnetlink_rcv_batch+0xa4f/0x11b0 [nfnetlink]
-[ 4895.234841]  ? nf_tables_setelem_notify.constprop.48+0x1a0/0x1a0 [nf_tables]
-[ 4895.323824]  ? __lock_is_held+0x9d/0x130
-[ 4895.323824]  ? kasan_unpoison_shadow+0x30/0x40
-[ 4895.333299]  ? kasan_kmalloc+0xa9/0xc0
-[ 4895.333299]  ? kmem_cache_alloc_trace+0x2c0/0x310
-[ 4895.333299]  ? nfnetlink_rcv_batch+0xa4f/0x11b0 [nfnetlink]
-[ 4895.333299]  nfnetlink_rcv_batch+0xdb9/0x11b0 [nfnetlink]
-[ 4895.333299]  ? debug_show_all_locks+0x290/0x290
-[ 4895.333299]  ? nfnetlink_net_init+0x150/0x150 [nfnetlink]
-[ 4895.333299]  ? sched_clock_cpu+0xe5/0x170
-[ 4895.333299]  ? sched_clock_local+0xff/0x130
-[ 4895.333299]  ? sched_clock_cpu+0xe5/0x170
-[ 4895.333299]  ? find_held_lock+0x39/0x1b0
-[ 4895.333299]  ? sched_clock_local+0xff/0x130
-[ 4895.333299]  ? memset+0x1f/0x40
-[ 4895.333299]  ? nla_parse+0x33/0x260
-[ 4895.333299]  ? ns_capable_common+0x6e/0x110
-[ 4895.333299]  nfnetlink_rcv+0x2c0/0x310 [nfnetlink]
-[ ... ]
+Since we are already doing a strlen() on the source, change the strncpy
+to a memcpy().
 
-Fixes: 591054469b3e ("netfilter: nf_tables: revisit chain/object refcounting from elements")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_tables_api.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/cifssmb.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4250,6 +4250,7 @@ static int nft_flush_set(const struct nf
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -589,10 +589,15 @@ CIFSSMBNegotiate(const unsigned int xid,
  	}
- 	set->ndeact++;
  
-+	nft_set_elem_deactivate(ctx->net, set, elem);
- 	nft_trans_elem_set(trans) = set;
- 	nft_trans_elem(trans) = *elem;
- 	list_add_tail(&trans->list, &ctx->net->nft.commit_list);
+ 	count = 0;
++	/*
++	 * We know that all the name entries in the protocols array
++	 * are short (< 16 bytes anyway) and are NUL terminated.
++	 */
+ 	for (i = 0; i < CIFS_NUM_PROT; i++) {
+-		strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+-		count += strlen(protocols[i].name) + 1;
+-		/* null at end of source and target buffers anyway */
++		size_t len = strlen(protocols[i].name) + 1;
++
++		memcpy(pSMB->DialectsArray+count, protocols[i].name, len);
++		count += len;
+ 	}
+ 	inc_rfc1001_len(pSMB, count);
+ 	pSMB->ByteCount = cpu_to_le16(count);
 
 
