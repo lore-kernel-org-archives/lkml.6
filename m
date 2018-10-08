@@ -2,59 +2,60 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31D6C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5738EC676D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5682087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1419020841
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:50:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JMHNBcDv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5682087C
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="syefbeFE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1419020841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbeJHUCX (ORCPT
+        id S1726525AbeJHUCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:02:23 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51640 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbeJHUCW (ORCPT
+        Mon, 8 Oct 2018 16:02:25 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45205 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeJHUCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:02:22 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181008125047euoutp02f1b280e98ec8020d646c9f7986021419~box4n1I4H2603426034euoutp02T;
-        Mon,  8 Oct 2018 12:50:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181008125047euoutp02f1b280e98ec8020d646c9f7986021419~box4n1I4H2603426034euoutp02T
+        Mon, 8 Oct 2018 16:02:23 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181008125048euoutp01805b39279356fb59c71f2ce4922185f6~box5vXuK71950819508euoutp01g;
+        Mon,  8 Oct 2018 12:50:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181008125048euoutp01805b39279356fb59c71f2ce4922185f6~box5vXuK71950819508euoutp01g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539003047;
-        bh=HCUBsc9AwGo3dSywBL3RuHpM6uxwP1dY2XsQRHygwAQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=JMHNBcDv6A0x8BMRD/scZJzALKCwl8ZgSDz2DZzxSn33mSw6dQ8Y8XlNdGGOFcANo
-         PQVoN0rvSCMRB5t/PvNe4Jbjo6p/s4SRyBcua8xiwNzA60IKjKYYbPBvq9Hx5dEclY
-         3jr/tCSkn38ydTCtRgaRJjL9B+uTChmswu1pYazA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181008125046eucas1p135f0e2338464a70023df36939e5612d2~box358IeH1753817538eucas1p1d;
-        Mon,  8 Oct 2018 12:50:46 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 14.21.04806.6A25BBB5; Mon,  8
-        Oct 2018 13:50:46 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181008125045eucas1p12e1d77f5f605556d4cf6c3b87832fae3~box3E0PRa0610606106eucas1p1M;
-        Mon,  8 Oct 2018 12:50:45 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-76-5bbb52a630a9
+        s=mail20170921; t=1539003048;
+        bh=+hlh6tcQhN7aktr3PJyjEvqOPWD+APolECBd/LiiVuk=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=syefbeFE6shxjMvHMs4yRtVe3XwrpOGmll2KMMybPzwoBpNzTOcW8QvVFcC6kBUGb
+         KvE/BULhkIaF5iBPlwpzWWT6GQA58dMmenvz6RVSAfqMqv64V8yZw7WjZd5JC0Wpa+
+         Jq/7WiaFYqzthopZD6rqbmOKi0ISvrOzQloZ0ktA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181008125048eucas1p2ba6913438382cbc9dca1e7e368bcd0bc~box5RIL3T1695716957eucas1p2q;
+        Mon,  8 Oct 2018 12:50:48 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 1E.D2.04441.7A25BBB5; Mon,  8
+        Oct 2018 13:50:47 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181008125047eucas1p23e520d778ad5f18aba57b21641d4cb4c~box4c4pET1877418774eucas1p2n;
+        Mon,  8 Oct 2018 12:50:47 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-b8-5bbb52a7ea54
 Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2A.99.04284.5A25BBB5; Mon,  8
-        Oct 2018 13:50:45 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 43.39.04128.7A25BBB5; Mon,  8
+        Oct 2018 13:50:47 +0100 (BST)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PGA006EA6BYW230@eusync1.samsung.com>;
-        Mon, 08 Oct 2018 13:50:45 +0100 (BST)
+        Mon, 08 Oct 2018 13:50:47 +0100 (BST)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -68,80 +69,144 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 0/7] Proper arch timer support for Exynos5433-based TM2(e)
- boards
-Date:   Mon, 08 Oct 2018 14:50:02 +0200
-Message-id: <20181008125009.3721-1-m.szyprowski@samsung.com>
+Subject: [PATCH 2/7] clocksource: exynos_mct: Add arch_timer cooperation
+ mode for ARM64
+Date:   Mon, 08 Oct 2018 14:50:04 +0200
+Message-id: <20181008125009.3721-3-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7djPc7rLgnZHGxyeKG+xccZ6Vov3y3oY
+In-reply-to: <20181008125009.3721-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsWy7djP87rLg3ZHG/zttLTYOGM9q8X7ZT2M
+        Fte/PGe1mPdZ1mLS/QksFufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i793/rFZbN40ldni
+        5ccTLA68HmvmrWH02LSqk83jzrU9bB7vzp1j99i8pN6jb8sqRo/Pm+QC2KO4bFJSczLLUov0
+        7RK4MjZt+MBYsEiqYt3Xo0wNjOtFuxg5OSQETCS+TPrO1MXIxSEksIJRYsqFhcwQzmdGiVnb
+        j7PDVM0/uIUJxBYSWMYoMeNZCkRRA5NE148FYEVsAoYSXW+72EBsEYFsic7HDxhBbGaBRcwS
+        B44Jg9jCApESD6evYwGxWQRUJe7vuAdm8wrYSEz9eJ8JYpm8xOoNB5hBbE4BW4knXatYQJZJ
+        COxhk3g2czErRJGLxJeXZ6CuE5Z4dXwLlC0jcXlyN1RDM6NE+4xZ7BBOD6PE1jk72CCqrCUO
+        H7/ICnEen8SkbdOB1nEAxXklOtqEIEwPiU27zSG+nMAocXzLTfYJjJILGBlWMYqnlhbnpqcW
+        G+allusVJ+YWl+al6yXn525iBEbz6X/HP+1g/Hop6RCjAAejEg/vyoBd0UKsiWXFlbmHGCU4
+        mJVEeEW3A4V4UxIrq1KL8uOLSnNSiw8xSnOwKInzLpu3MVpIID2xJDU7NbUgtQgmy8TBKdXA
+        WObywblocuTT+OKXlz1vGSwsmnKMc15fp8YE/QupVpsvdbjwJK6RvC/AZ+dYPPdMyYwF21/9
+        7BKWyp24K5Ftqsj8HRvTnyTb5fJ+OL1s4RFft4BJ8ys/OS9d8eHTH2+lA34zn0zZ8tpaSlF7
+        Y7D78YQOxzm7W1YEBAaqHs5Y4tzX/cDeRfDNciWW4oxEQy3mouJEAKshHbPiAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsVy+t/xy7rLg3ZHG2yZJm6xccZ6Vov3y3oY
         La5/ec5qMe+zrMWk+xNYLM6f38BusenxNVaLy7vmsFnMOL+PyWLtkbvsFn/v/GOz2LxpKrPF
         y48nWBx4PdbMW8PosWlVJ5vHnWt72DzenTvH7rF5Sb1H35ZVjB6fN8kFsEdx2aSk5mSWpRbp
-        2yVwZZx4+IitYAp3xYw3zYwNjOc5uhg5OCQETCTWv/HqYuTiEBJYwSix8OIJFgjnM6PEievb
-        mLoYOcGKTq+czAqRWMYosf5IG5TTwCRxfMFjsCo2AUOJrrddbCC2iEC2ROfjB4wgNrPAImaJ
-        A8eEQWxhgWCJ3ev+sIGsZhFQlVjRYwwS5hWwkXjS9o4RYpm8xOoNB5hB5ksILGGTmNg6nRki
-        4SIxq2kDC4QtLPHq+BZ2CFtGorPjIBNEQzOjRPuMWewQTg+jxNY5O9ggqqwlDh+/yApxEZ/E
-        pG0gU0EBwCvR0SYEUeIhsf7rCrArhARiJW5t6meawCixgJFhFaN4amlxbnpqsXFearlecWJu
-        cWleul5yfu4mRmDMnv53/OsOxn1/kg4xCnAwKvHwBvjtihZiTSwrrsw9xCjBwawkwiu6HSjE
-        m5JYWZValB9fVJqTWnyIUZqDRUmcd9m8jdFCAumJJanZqakFqUUwWSYOTqkGxvqgM6uPH/t2
-        jodfb9uHKBe/qNLIFcddHhVw6pbc6XftOfb7WGn53uRLy5QfLXKc7rNV8eaLWenHj3qoHi1d
-        0TNT4pn/xM3vI1tTT2dOCf+iUS/Q/+55Rrj3lX+5n0KmhXZt9XsrvPbP4TfTg9mf3dtixZd1
-        b/d2z4K3wXapTvfVo0NV11f0LFNiKc5INNRiLipOBACK4Exq1QIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCLMWRmVeSWpSXmKPExsVy+t/xy7pLg3ZHG8zfrGaxccZ6Vov3y3oY
-        La5/ec5qMe+zrMWk+xNYLM6f38BusenxNVaLy7vmsFnMOL+PyWLtkbvsFn/v/GOz2LxpKrPF
-        y48nWBx4PdbMW8PosWlVJ5vHnWt72DzenTvH7rF5Sb1H35ZVjB6fN8kFsEdx2aSk5mSWpRbp
-        2yVwZZx4+IitYAp3xYw3zYwNjOc5uhg5OSQETCROr5zM2sXIxSEksIRRom/2fRYIp4lJ4s/B
-        NkaQKjYBQ4mut11sILaIQLbE/L3d7CA2s8ASZomb9x1AbGGBYInd6/4A1XBwsAioSqzoMQYJ
-        8wrYSDxpe8cIsUxeYvWGA8wTGLkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECAyrbcd+
-        bt7BeGlj8CFGAQ5GJR7eAL9d0UKsiWXFlbmHGCU4mJVEeEW3A4V4UxIrq1KL8uOLSnNSiw8x
-        SnOwKInznjeojBISSE8sSc1OTS1ILYLJMnFwSjUwOom734p2/r9W+uYKjcfpJgnv369e5iqR
-        yrPEzCVLu/Ywl9l5hlbBeu0vD+WmLeLbv/i/qdYtTbkHWl/upqsaXTIRPrb8ZuqLvoQTGhJP
-        Kt9FZk6f5znrmNOD025/DvUlbrdt+hRRtGzt2ciPk9LU7rca3dGMzeF6e6iKh09s4tylUYqv
-        Fh0TVWIpzkg01GIuKk4EAO7h3sAnAgAA
-X-CMS-MailID: 20181008125045eucas1p12e1d77f5f605556d4cf6c3b87832fae3
+        2yVwZWza8IGxYJFUxbqvR5kaGNeLdjFyckgImEjMP7iFCcQWEljCKHHxEWcXIxeQ3cQkcXXd
+        bkaQBJuAoUTX2y42EFtEIFti/t5udhCbWWAJs8TN+w4gtrBApMTHHetYQGwWAVWJ+zvugdm8
+        AjYSUz/eZ4JYJi+xesMBZhCbU8BW4knXKhaIxTYSvdMvsk5g5FnAyLCKUSS1tDg3PbfYSK84
+        Mbe4NC9dLzk/dxMjMAy3Hfu5ZQdj17vgQ4wCHIxKPLwrAnZFC7EmlhVX5h5ilOBgVhLhFd0O
+        FOJNSaysSi3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cCYvorbfXP8
+        cW/Ljd3fO9lm3vFPMPqhLHnVbFpybUjRbx2ZyZ47r25kPfE8j/9qFcf+iwbBytN2O+3wZeU/
+        lrpg78oHJlOXP5wok3bwrduJlY8j9x6MjJ35cY9ygvTnVu/YChcLd/F+4w+Suw/bzex88ldi
+        apDwLknfzTsE4sLKVrsKrv36c8N0JZbijERDLeai4kQAaEuZzj8CAAA=
+X-CMS-MailID: 20181008125047eucas1p23e520d778ad5f18aba57b21641d4cb4c
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181008125045eucas1p12e1d77f5f605556d4cf6c3b87832fae3
-References: <CGME20181008125045eucas1p12e1d77f5f605556d4cf6c3b87832fae3@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20181008125047eucas1p23e520d778ad5f18aba57b21641d4cb4c
+References: <20181008125009.3721-1-m.szyprowski@samsung.com>
+        <CGME20181008125047eucas1p23e520d778ad5f18aba57b21641d4cb4c@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear All,
+To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
+first configure and enable Exynos Multi-Core Timer, because they both
+share some common hardware blocks. This patch adds a mode of cooperation
+with arch_timer driver, so kernel can use CP15 based timer interface via
+arch_timer driver, which is mandatory on ARM64. In such mode driver only
+configures MCT registers and starts the timer but don't register any
+clocksource or events in the system. Those are left to be handled by
+arch_timer driver.
 
-This patchset is an attempt to submit the last piece of missing code
-to have proper support for Exynos5433 SoCs based TM2(e) boards. It
-performs a cleanup of timer configuration, which so far needed various
-out-of-tree workarounds. The fixes provided by this patchset are also
-needed for add proper support for system suspend/resume.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (7):
-  clocksource: exynos_mct: Remove dead code
-  clocksource: exynos_mct: Add arch_timer cooperation mode for ARM64
-  clocksource: Change CPU hotplug priority of exynos_mct driver
-  clocksource: arch_timer: Add support for not-fw-configured timer on
-    ARM64
-  arm64: dts: exynos: Move arch-timer node to right place
-  arm64: dts: exynos: Mark arch_timer device as not-fw-configured on
-    TM2(e)
-  arm64: platform: Add enable Exynos Multi-Core Timer driver
-
- arch/arm64/Kconfig.platforms                  |  1 +
- .../dts/exynos/exynos5433-tm2-common.dtsi     |  1 +
- arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 23 ++++++-------
- drivers/clocksource/Kconfig                   | 11 +++++++
- drivers/clocksource/arm_arch_timer.c          | 15 +++++++--
- drivers/clocksource/exynos_mct.c              | 32 +++++++++++++------
- include/linux/cpuhotplug.h                    |  2 +-
- 7 files changed, 60 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 43b335ff4a96..05b201ed8ef5 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -57,6 +57,7 @@
+ #define TICK_BASE_CNT	1
+ 
+ enum {
++	MCT_INT_NONE = 0,
+ 	MCT_INT_SPI,
+ 	MCT_INT_PPI
+ };
+@@ -238,6 +239,9 @@ static int __init exynos4_clocksource_init(void)
+ {
+ 	exynos4_mct_frc_start();
+ 
++	if (!mct_int_type)
++		return 0;
++
+ #if defined(CONFIG_ARM)
+ 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+ 	exynos4_delay_timer.freq = clk_rate;
+@@ -343,6 +347,9 @@ static struct irqaction mct_comp_event_irq = {
+ 
+ static int exynos4_clockevent_init(void)
+ {
++	if (!mct_int_type)
++		return 0;
++
+ 	mct_comp_device.cpumask = cpumask_of(0);
+ 	clockevents_config_and_register(&mct_comp_device, clk_rate,
+ 					0xf, 0xffffffff);
+@@ -476,12 +483,12 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+ 
+ 		irq_force_affinity(evt->irq, cpumask_of(cpu));
+ 		enable_irq(evt->irq);
+-	} else {
++	} else if (mct_int_type == MCT_INT_PPI) {
+ 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+ 	}
+-	clockevents_config_and_register(evt, clk_rate / (TICK_BASE_CNT + 1),
+-					0xf, 0x7fffffff);
+-
++	if (mct_int_type)
++		clockevents_config_and_register(evt,
++			       clk_rate / (TICK_BASE_CNT + 1), 0xf, 0x7fffffff);
+ 	return 0;
+ }
+ 
+@@ -496,7 +503,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+ 		if (evt->irq != -1)
+ 			disable_irq_nosync(evt->irq);
+ 		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+-	} else {
++	} else if (mct_int_type == MCT_INT_PPI) {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+ 	}
+ 	return 0;
+@@ -529,7 +536,7 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 					 &percpu_mct_tick);
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+ 		     mct_irqs[MCT_L0_IRQ], err);
+-	} else {
++	} else if (mct_int_type == MCT_INT_SPI) {
+ 		for_each_possible_cpu(cpu) {
+ 			int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
+ 			struct mct_clock_event_device *pcpu_mevt =
+@@ -573,6 +580,15 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 
+ 	mct_int_type = int_type;
+ 
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ARM_ARCH_TIMER)) {
++		struct device_node *np = of_find_compatible_node(NULL, NULL,
++							     "arm,armv8-timer");
++		if (np) {
++			mct_int_type = MCT_INT_NONE;
++			of_node_put(np);
++		}
++	}
++
+ 	/* This driver uses only one global timer interrupt */
+ 	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
+ 
 -- 
 2.17.1
 
