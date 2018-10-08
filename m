@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BFBC71150
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 23:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C15C6787A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 23:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE5B2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 23:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0AFA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 23:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Zp7j6VQt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE5B2145D
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r2c6fYl7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AFA2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeJIHEI (ORCPT
+        id S1726867AbeJIHEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 03:04:08 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59158 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbeJIHEI (ORCPT
+        Tue, 9 Oct 2018 03:04:09 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:53464 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725803AbeJIHEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 9 Oct 2018 03:04:08 -0400
 Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w98NnrUT074795;
-        Mon, 8 Oct 2018 18:49:53 -0500
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w98Nns1O030760;
+        Mon, 8 Oct 2018 18:49:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539042593;
-        bh=qAdOAVFcrQW2ns+nKEeBvF6x4Nb/j951S7LnOMCiuZo=;
+        s=ti-com-17Q1; t=1539042594;
+        bh=85hfGuh+Ks3roiNMaMUxBKOuiJrYoqG3YSSqK90z+B4=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Zp7j6VQtxVjdktFAyagSMthb8IzojJEL6a/45lvS1VnwScbIPB7h9mKw1wPqaFiUA
-         Dy63/KhCcBEbaBUMfudIm2Ajr7HsK9QgHNq/Fx/bXKI8ci4NiUW+cr5YSQo11fVn5Q
-         yPeaFFNCHxiAwvhGyinRzBKAWGt+PEBSxO1sfkCs=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w98NnrPX023961;
-        Mon, 8 Oct 2018 18:49:53 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        b=r2c6fYl7FIF2X0wiTSi6FbhsX+7epjDRSA3VwO6MchS1FytTZ4Vicdrqw7ET4bX7F
+         5HKIQtqSBU2coY1262+9iTPIPlkozf4i3Wz7oXES/O4Z7gIJ/XqB13UiXnGkDN/55G
+         tXTB+cp+wEjPoBM6KEDATRh/FFObMnz1j9m0jqM0=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w98NnsKV023979;
+        Mon, 8 Oct 2018 18:49:54 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 8 Oct
- 2018 18:49:52 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ 2018 18:49:54 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 8 Oct 2018 18:49:52 -0500
+ Mon, 8 Oct 2018 18:49:54 -0500
 Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w98Nnqm2031121;
-        Mon, 8 Oct 2018 18:49:52 -0500
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w98NnrAw027756;
+        Mon, 8 Oct 2018 18:49:53 -0500
 Received: from localhost (uda0226610.dhcp.ti.com [128.247.59.147])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w98Nnqx25228;
-        Mon, 8 Oct 2018 18:49:52 -0500 (CDT)
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w98Nnrx25252;
+        Mon, 8 Oct 2018 18:49:53 -0500 (CDT)
 From:   Grygorii Strashko <grygorii.strashko@ti.com>
 To:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
         Tony Lindgren <tony@atomide.com>,
@@ -61,9 +61,9 @@ To:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
 CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [RFC PATCH 05/11] net: ethernet: ti: cpsw: add support for port interface mode selection phy
-Date:   Mon, 8 Oct 2018 18:49:43 -0500
-Message-ID: <20181008234949.15416-6-grygorii.strashko@ti.com>
+Subject: [RFC PATCH 11/11] net: ethernet: ti: cpsw: deprecate cpsw-phy-sel driver
+Date:   Mon, 8 Oct 2018 18:49:49 -0500
+Message-ID: <20181008234949.15416-12-grygorii.strashko@ti.com>
 X-Mailer: git-send-email 2.10.5
 In-Reply-To: <20181008234949.15416-1-grygorii.strashko@ti.com>
 References: <20181008234949.15416-1-grygorii.strashko@ti.com>
@@ -75,68 +75,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for port interface mode selection phy (phy-gmii-sel):
-- try to request interface mode selection phy from Port DT node and fail
-silently if not defined and old CONFIG_TI_CPSW_PHY_SEL driver enabled.
-- use new phy if requested successfully.
+Deprecate cpsw-phy-sel driver as it's been replaced with new
+TI phy-gmii-sel PHY driver.
 
 Cc: Kishon Vijay Abraham I <kishon@ti.com>
 Cc: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 ---
- drivers/net/ethernet/ti/cpsw.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ti/Kconfig | 6 +++---
+ drivers/net/ethernet/ti/cpsw.h  | 6 ++++++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 832bce0..4607de2 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -26,6 +26,7 @@
- #include <linux/netdevice.h>
- #include <linux/net_tstamp.h>
- #include <linux/phy.h>
-+#include <linux/phy/phy.h>
- #include <linux/workqueue.h>
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
-@@ -387,6 +388,7 @@ struct cpsw_slave_data {
- 	int		phy_if;
- 	u8		mac_addr[ETH_ALEN];
- 	u16		dual_emac_res_vlan;	/* Reserved VLAN for DualEMAC */
-+	struct phy	*ifphy;
- };
+diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+index f932923..96415da 100644
+--- a/drivers/net/ethernet/ti/Kconfig
++++ b/drivers/net/ethernet/ti/Kconfig
+@@ -49,10 +49,11 @@ config TI_DAVINCI_CPDMA
+ 	  will be called davinci_cpdma.  This is recommended.
  
- struct cpsw_platform_data {
-@@ -1502,7 +1504,11 @@ static void cpsw_slave_open(struct cpsw_slave *slave, struct cpsw_priv *priv)
- 	phy_start(slave->phy);
+ config TI_CPSW_PHY_SEL
+-	bool
++	bool "TI CPSW Phy mode Selection (DEPRECATED)"
++	default n
+ 	---help---
+ 	  This driver supports configuring of the phy mode connected to
+-	  the CPSW.
++	  the CPSW. DEPRECATED: use PHY_TI_GMII_SEL.
  
- 	/* Configure GMII_SEL register */
--	cpsw_phy_sel(cpsw->dev, slave->phy->interface, slave->slave_num);
-+	if (!IS_ERR(slave->data->ifphy))
-+		phy_set_netif_mode(slave->data->ifphy, slave->data->phy_if);
-+	else
-+		cpsw_phy_sel(cpsw->dev, slave->phy->interface,
-+			     slave->slave_num);
- }
+ config TI_CPSW_ALE
+ 	tristate "TI CPSW ALE Support"
+@@ -64,7 +65,6 @@ config TI_CPSW
+ 	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || COMPILE_TEST
+ 	select TI_DAVINCI_CPDMA
+ 	select TI_DAVINCI_MDIO
+-	select TI_CPSW_PHY_SEL
+ 	select TI_CPSW_ALE
+ 	select MFD_SYSCON
+ 	select REGMAP
+diff --git a/drivers/net/ethernet/ti/cpsw.h b/drivers/net/ethernet/ti/cpsw.h
+index cf111db..907e05fc 100644
+--- a/drivers/net/ethernet/ti/cpsw.h
++++ b/drivers/net/ethernet/ti/cpsw.h
+@@ -21,7 +21,13 @@
+ 			 ((mac)[2] << 16) | ((mac)[3] << 24))
+ #define mac_lo(mac)	(((mac)[4] << 0) | ((mac)[5] << 8))
  
- static inline void cpsw_add_default_vlan(struct cpsw_priv *priv)
-@@ -3135,6 +3141,16 @@ static int cpsw_probe_dt(struct cpsw_platform_data *data,
- 		if (strcmp(slave_node->name, "slave"))
- 			continue;
++#if IS_ENABLED(CONFIG_TI_CPSW_PHY_SEL)
+ void cpsw_phy_sel(struct device *dev, phy_interface_t phy_mode, int slave);
++#else
++static inline
++void cpsw_phy_sel(struct device *dev, phy_interface_t phy_mode, int slave)
++{}
++#endif
+ int ti_cm_get_macid(struct device *dev, int slave, u8 *mac_addr);
  
-+		slave_data->ifphy = devm_of_phy_get(&pdev->dev, slave_node,
-+						    NULL);
-+		if (!IS_ENABLED(CONFIG_TI_CPSW_PHY_SEL) &&
-+		    IS_ERR(slave_data->ifphy)) {
-+			ret = PTR_ERR(slave_data->ifphy);
-+			dev_err(&pdev->dev,
-+				"%d: Error retrieving port phy: %d\n", i, ret);
-+			return ret;
-+		}
-+
- 		slave_data->phy_node = of_parse_phandle(slave_node,
- 							"phy-handle", 0);
- 		parp = of_get_property(slave_node, "phy_id", &lenp);
+ #endif /* __CPSW_H__ */
 -- 
 2.10.5
 
