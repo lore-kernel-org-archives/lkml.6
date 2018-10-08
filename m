@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B673C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2AEC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA3021557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB6C21557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5U9vXaf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA3021557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9O4ZLwS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB6C21557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeJHWqz (ORCPT
+        id S1727969AbeJHWi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:46:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57032 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbeJHWi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:27 -0400
+        id S1727866AbeJHWiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0915214FA;
-        Mon,  8 Oct 2018 15:26:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AFD9214DA;
+        Mon,  8 Oct 2018 15:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012372;
-        bh=Ysl24WM3RTldRV2S2CS31mftc8XfWm+vLBdmwIVI5i8=;
+        s=default; t=1539012369;
+        bh=Fw9aVCDrHqdojjWMg45pUPn5YhDjYy1ym5aN4lUf9vg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N5U9vXafRhikAi+GZMdB0Drng3Y9o3kQaiIPpzfmMPiTquJ4THBVy7m2Om2kWZUtK
-         zBSnhuXelNs3iLAdHiT5U8aCheVLYHPvYMvFcJz5fXoXdMMWTmGAIn0V5WPkKSa03p
-         2BU0uVoM3c3qGFCl8C1nkf/ekoqjH2sgRjvK57iU=
+        b=B9O4ZLwSBf8FZv2xI+5EkMqsr5hh/H6qHVbyNdTMANHJhorIQAhwKW/GhgOUmDaLO
+         XW+2xpQf17IcFFzNTZQW23MzeUINt9lnPrkqsxy60sTX/7jwS5MHpSxp/1uaoAAAtF
+         cs3xzyE6aB69AnSsPhCquG26RufNVuOOoB6AB4yY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tao Ren <taoren@fb.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+Cc:     John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 48/58] clocksource/drivers/fttmr010: Fix set_next_event handler
-Date:   Mon,  8 Oct 2018 11:25:13 -0400
-Message-Id: <20181008152523.70705-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 45/58] bpf: sockmap, fix transition through disconnect without close
+Date:   Mon,  8 Oct 2018 11:25:10 -0400
+Message-Id: <20181008152523.70705-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,67 +53,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tao Ren <taoren@fb.com>
+From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 4451d3f59f2a6f95e5d205c2d04ea072955d080d ]
+[ Upstream commit b05545e15e1ff1d6a6a8593971275f9cc3e6b92b ]
 
-Currently, the aspeed MATCH1 register is updated to <current_count -
-cycles> in set_next_event handler, with the assumption that COUNT
-register value is preserved when the timer is disabled and it continues
-decrementing after the timer is enabled. But the assumption is wrong:
-RELOAD register is loaded into COUNT register when the aspeed timer is
-enabled, which means the next event may be delayed because timer
-interrupt won't be generated until <0xFFFFFFFF - current_count +
-cycles>.
+It is possible (via shutdown()) for TCP socks to go trough TCP_CLOSE
+state via tcp_disconnect() without actually calling tcp_close which
+would then call our bpf_tcp_close() callback. Because of this a user
+could disconnect a socket then put it in a LISTEN state which would
+break our assumptions about sockets always being ESTABLISHED state.
 
-The problem can be fixed by updating RELOAD register to <cycles>, and
-COUNT register will be re-loaded when the timer is enabled and interrupt
-is generated when COUNT register overflows.
+To resolve this rely on the unhash hook, which is called in the
+disconnect case, to remove the sock from the sockmap.
 
-The test result on Facebook Backpack-CMM BMC hardware (AST2500) shows
-the issue is fixed: without the patch, usleep(100) suspends the process
-for several milliseconds (and sometimes even over 40 milliseconds);
-after applying the fix, usleep(100) takes averagely 240 microseconds to
-return under the same workload level.
-
-Signed-off-by: Tao Ren <taoren@fb.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Lei YU <mine260309@gmail.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reported-by: Eric Dumazet <edumazet@google.com>
+Fixes: 1aa12bdf1bfb ("bpf: sockmap, add sock close() hook to remove socks")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Acked-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/clocksource/timer-fttmr010.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ kernel/bpf/sockmap.c | 60 ++++++++++++++++++++++++++++++--------------
+ 1 file changed, 41 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
-index c020038ebfab..cf93f6419b51 100644
---- a/drivers/clocksource/timer-fttmr010.c
-+++ b/drivers/clocksource/timer-fttmr010.c
-@@ -130,13 +130,17 @@ static int fttmr010_timer_set_next_event(unsigned long cycles,
- 	cr &= ~fttmr010->t1_enable_val;
- 	writel(cr, fttmr010->base + TIMER_CR);
+diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
+index 0d829e71024b..6cdef7f3bd69 100644
+--- a/kernel/bpf/sockmap.c
++++ b/kernel/bpf/sockmap.c
+@@ -132,6 +132,7 @@ struct smap_psock {
+ 	struct work_struct gc_work;
  
--	/* Setup the match register forward/backward in time */
--	cr = readl(fttmr010->base + TIMER1_COUNT);
--	if (fttmr010->count_down)
--		cr -= cycles;
--	else
--		cr += cycles;
--	writel(cr, fttmr010->base + TIMER1_MATCH1);
-+	if (fttmr010->count_down) {
-+		/*
-+		 * ASPEED Timer Controller will load TIMER1_LOAD register
-+		 * into TIMER1_COUNT register when the timer is re-enabled.
-+		 */
-+		writel(cycles, fttmr010->base + TIMER1_LOAD);
-+	} else {
-+		/* Setup the match register forward in time */
-+		cr = readl(fttmr010->base + TIMER1_COUNT);
-+		writel(cr + cycles, fttmr010->base + TIMER1_MATCH1);
+ 	struct proto *sk_proto;
++	void (*save_unhash)(struct sock *sk);
+ 	void (*save_close)(struct sock *sk, long timeout);
+ 	void (*save_data_ready)(struct sock *sk);
+ 	void (*save_write_space)(struct sock *sk);
+@@ -143,6 +144,7 @@ static int bpf_tcp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+ static int bpf_tcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size);
+ static int bpf_tcp_sendpage(struct sock *sk, struct page *page,
+ 			    int offset, size_t size, int flags);
++static void bpf_tcp_unhash(struct sock *sk);
+ static void bpf_tcp_close(struct sock *sk, long timeout);
+ 
+ static inline struct smap_psock *smap_psock_sk(const struct sock *sk)
+@@ -184,6 +186,7 @@ static void build_protos(struct proto prot[SOCKMAP_NUM_CONFIGS],
+ 			 struct proto *base)
+ {
+ 	prot[SOCKMAP_BASE]			= *base;
++	prot[SOCKMAP_BASE].unhash		= bpf_tcp_unhash;
+ 	prot[SOCKMAP_BASE].close		= bpf_tcp_close;
+ 	prot[SOCKMAP_BASE].recvmsg		= bpf_tcp_recvmsg;
+ 	prot[SOCKMAP_BASE].stream_memory_read	= bpf_tcp_stream_read;
+@@ -217,6 +220,7 @@ static int bpf_tcp_init(struct sock *sk)
+ 		return -EBUSY;
+ 	}
+ 
++	psock->save_unhash = sk->sk_prot->unhash;
+ 	psock->save_close = sk->sk_prot->close;
+ 	psock->sk_proto = sk->sk_prot;
+ 
+@@ -305,30 +309,12 @@ static struct smap_psock_map_entry *psock_map_pop(struct sock *sk,
+ 	return e;
+ }
+ 
+-static void bpf_tcp_close(struct sock *sk, long timeout)
++static void bpf_tcp_remove(struct sock *sk, struct smap_psock *psock)
+ {
+-	void (*close_fun)(struct sock *sk, long timeout);
+ 	struct smap_psock_map_entry *e;
+ 	struct sk_msg_buff *md, *mtmp;
+-	struct smap_psock *psock;
+ 	struct sock *osk;
+ 
+-	lock_sock(sk);
+-	rcu_read_lock();
+-	psock = smap_psock_sk(sk);
+-	if (unlikely(!psock)) {
+-		rcu_read_unlock();
+-		release_sock(sk);
+-		return sk->sk_prot->close(sk, timeout);
+-	}
+-
+-	/* The psock may be destroyed anytime after exiting the RCU critial
+-	 * section so by the time we use close_fun the psock may no longer
+-	 * be valid. However, bpf_tcp_close is called with the sock lock
+-	 * held so the close hook and sk are still valid.
+-	 */
+-	close_fun = psock->save_close;
+-
+ 	if (psock->cork) {
+ 		free_start_sg(psock->sock, psock->cork);
+ 		kfree(psock->cork);
+@@ -379,6 +365,42 @@ static void bpf_tcp_close(struct sock *sk, long timeout)
+ 		kfree(e);
+ 		e = psock_map_pop(sk, psock);
+ 	}
++}
++
++static void bpf_tcp_unhash(struct sock *sk)
++{
++	void (*unhash_fun)(struct sock *sk);
++	struct smap_psock *psock;
++
++	rcu_read_lock();
++	psock = smap_psock_sk(sk);
++	if (unlikely(!psock)) {
++		rcu_read_unlock();
++		if (sk->sk_prot->unhash)
++			sk->sk_prot->unhash(sk);
++		return;
 +	}
- 
- 	/* Start */
- 	cr = readl(fttmr010->base + TIMER_CR);
++	unhash_fun = psock->save_unhash;
++	bpf_tcp_remove(sk, psock);
++	rcu_read_unlock();
++	unhash_fun(sk);
++}
++
++static void bpf_tcp_close(struct sock *sk, long timeout)
++{
++	void (*close_fun)(struct sock *sk, long timeout);
++	struct smap_psock *psock;
++
++	lock_sock(sk);
++	rcu_read_lock();
++	psock = smap_psock_sk(sk);
++	if (unlikely(!psock)) {
++		rcu_read_unlock();
++		release_sock(sk);
++		return sk->sk_prot->close(sk, timeout);
++	}
++	close_fun = psock->save_close;
++	bpf_tcp_remove(sk, psock);
+ 	rcu_read_unlock();
+ 	release_sock(sk);
+ 	close_fun(sk, timeout);
 -- 
 2.17.1
 
