@@ -2,46 +2,46 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C2C676D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87C0C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A712085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:10:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A712085B
+	by mail.kernel.org (Postfix) with ESMTP id B80A320878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:10:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80A320878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeJHTV2 (ORCPT
+        id S1727986AbeJHTV2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 8 Oct 2018 15:21:28 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9553 "EHLO
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41393 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727846AbeJHTV1 (ORCPT
+        by vger.kernel.org with ESMTP id S1726656AbeJHTV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 8 Oct 2018 15:21:27 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98C44u4018783;
-        Mon, 8 Oct 2018 14:09:44 +0200
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98C4RPT024185;
+        Mon, 8 Oct 2018 14:09:33 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2n01heht54-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mxjgxjva7-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 08 Oct 2018 14:09:44 +0200
+        Mon, 08 Oct 2018 14:09:33 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E257938;
-        Mon,  8 Oct 2018 12:09:42 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 80A502D04;
-        Mon,  8 Oct 2018 12:09:42 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 8 Oct 2018
- 14:09:42 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F17A838;
+        Mon,  8 Oct 2018 12:09:31 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C4D452D03;
+        Mon,  8 Oct 2018 12:09:31 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 8 Oct 2018
+ 14:09:31 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 8 Oct 2018
- 14:09:42 +0200
+ 14:09:31 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -53,12 +53,10 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V6 11/23] mmc: mmci: add datactrl block size variant property
-Date:   Mon, 8 Oct 2018 14:08:43 +0200
-Message-ID: <1539000535-13261-12-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V6 00/23] mmc: mmci: add sdmmc variant for stm32
+Date:   Mon, 8 Oct 2018 14:08:32 +0200
+Message-ID: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
-References: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.48.0.237]
@@ -71,127 +69,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch allows to define a datactrl block size
-by variant, requested by STM32 sdmmc variant.
+The goal of this serie is to add support of sdmmc for stm32.
+Be to able to add this new variant it is needed to do some changes in
+mmci core:
+-Internalize specific needs of legacy dmaengine.
+-Create and setup dma_priv pointer.
+-Create generic callbacks which share some features (like cookie...)
+ and call specific needs.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c | 13 +++++++++++--
- drivers/mmc/host/mmci.h |  2 ++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+change v6:
+-move mmci_variant_init in mmci.c
+-dma_setup/release: let the variants clean up themselves.
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 1b99ae3..0e8b65d 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -57,6 +57,7 @@ static struct variant_data variant_arm = {
- 	.fifosize		= 16 * 4,
- 	.fifohalfsize		= 8 * 4,
- 	.datalength_bits	= 16,
-+	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.reversed_irq_handling	= true,
-@@ -70,6 +71,7 @@ static struct variant_data variant_arm_extended_fifo = {
- 	.fifosize		= 128 * 4,
- 	.fifohalfsize		= 64 * 4,
- 	.datalength_bits	= 16,
-+	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-@@ -83,6 +85,7 @@ static struct variant_data variant_arm_extended_fifo_hwfc = {
- 	.fifohalfsize		= 64 * 4,
- 	.clkreg_enable		= MCI_ARM_HWFCEN,
- 	.datalength_bits	= 16,
-+	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-@@ -97,6 +100,7 @@ static struct variant_data variant_u300 = {
- 	.clkreg_enable		= MCI_ST_U300_HWFCEN,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.datalength_bits	= 16,
-+	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
- 	.st_sdio			= true,
- 	.pwrreg_powerup		= MCI_PWR_ON,
-@@ -116,6 +120,7 @@ static struct variant_data variant_nomadik = {
- 	.clkreg			= MCI_CLK_ENABLE,
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.datalength_bits	= 24,
-+	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
- 	.st_sdio		= true,
- 	.st_clkdiv		= true,
-@@ -138,6 +143,7 @@ static struct variant_data variant_ux500 = {
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
- 	.datalength_bits	= 24,
-+	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
- 	.st_sdio		= true,
- 	.st_clkdiv		= true,
-@@ -165,6 +171,7 @@ static struct variant_data variant_ux500v2 = {
- 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
- 	.datactrl_mask_ddrmode	= MCI_DPSM_ST_DDRMODE,
- 	.datalength_bits	= 24,
-+	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
- 	.st_sdio		= true,
- 	.st_clkdiv		= true,
-@@ -192,6 +199,7 @@ static struct variant_data variant_stm32 = {
- 	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
- 	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
- 	.datalength_bits	= 24,
-+	.datactrl_blocksz	= 11,
- 	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
- 	.st_sdio		= true,
- 	.st_clkdiv		= true,
-@@ -213,6 +221,7 @@ static struct variant_data variant_qcom = {
- 	.data_cmd_enable	= MCI_CPSM_QCOM_DATCMD,
- 	.blksz_datactrl4	= true,
- 	.datalength_bits	= 24,
-+	.datactrl_blocksz	= 11,
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 208000000,
- 	.explicit_mclk_control	= true,
-@@ -1861,13 +1870,13 @@ static int mmci_probe(struct amba_device *dev,
- 	/*
- 	 * Block size can be up to 2048 bytes, but must be a power of two.
- 	 */
--	mmc->max_blk_size = 1 << 11;
-+	mmc->max_blk_size = 1 << variant->datactrl_blocksz;
- 
- 	/*
- 	 * Limit the number of blocks transferred so that we don't overflow
- 	 * the maximum request size.
- 	 */
--	mmc->max_blk_count = mmc->max_req_size >> 11;
-+	mmc->max_blk_count = mmc->max_req_size >> variant->datactrl_blocksz;
- 
- 	spin_lock_init(&host->lock);
- 
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index dbb5ad4..d5979e8 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -217,6 +217,7 @@ struct mmci_host;
-  * @blksz_datactrl4: true if Block size is at b4..b16 position in datactrl
-  *		     register
-  * @datactrl_mask_sdio: SDIO enable mask in datactrl register
-+ * @datactrl_blksz: block size in power of two
-  * @pwrreg_powerup: power up value for MMCIPOWER register
-  * @f_max: maximum clk frequency supported by the controller.
-  * @signal_direction: input/out direction of bus signals can be indicated
-@@ -248,6 +249,7 @@ struct variant_data {
- 	unsigned int		data_cmd_enable;
- 	unsigned int		datactrl_mask_ddrmode;
- 	unsigned int		datactrl_mask_sdio;
-+	unsigned int		datactrl_blocksz;
- 	u8			st_sdio:1;
- 	u8			st_clkdiv:1;
- 	u8			blksz_datactrl16:1;
+change v5:
+-error management in mmci_dmae_setup and qcom_dma_setup
+ mmci_dmae_setup: fail when tx & rx are not defined.
+ qcom_dma_setup: faill if one of channels is not defined.
+-define mmci_variant_init following CONFIG_DMA_ENGINE state.
+-squash dma_setup/dma_release callback.
+
+change v4:
+-checkpatch fix bool to u8
+-add use_dma variable to fallback to pio mode
+-move to optional reset with dt binding note for sdmmc
+-separate patch for DT doc
+
+change v3:
+-remove __dma_inprogress rename
+-remove bad space at end of "st,use-ckin"
+
+change v2:
+-rename to mmci_prep/unprep_data
+-rename specific dma engine structure to mmci_dmae_next/priv
+-follow "_" recommandation
+-remove dma prefixe of mmci_dmae_priv fields
+
+Ludovic Barre (23):
+  mmc: mmci: create common mmci_dma_setup/release
+  mmc: mmci: introduce dma_priv pointer to mmci_host
+  mmc: mmci: merge prepare data functions
+  mmc: mmci: add prepare/unprepare_data callbacks
+  mmc: mmci: add get_next_data callback
+  mmc: mmci: add dma_start callback
+  mmc: mmci: add dma_finalize callback
+  mmc: mmci: add dma_error callback
+  mmc: mmci: add validate_data callback
+  mmc: mmci: add set_clk/pwrreg callbacks
+  mmc: mmci: add datactrl block size variant property
+  mmc: mmci: expand startbiterr to irqmask and error check
+  mmc: mmci: add variant properties to define cpsm & cmdresp bits
+  mmc: mmci: add variant property to define dpsm bit
+  mmc: mmci: add variant property to define irq pio mask
+  mmc: mmci: add variant property to write datactrl before command
+  mmc: mmci: add variant property to not read datacnt
+  dt-bindings: mmci: add optional reset property
+  mmc: mmci: add optional reset property
+  mmc: mmci: add clock divider for stm32 sdmmc
+  mmc: mmci: add stm32 sdmmc registers
+  dt-bindings: mmci: add stm32 sdmmc variant
+  mmc: mmci: add stm32 sdmmc variant
+
+ Documentation/devicetree/bindings/mmc/mmci.txt |  11 +
+ drivers/mmc/host/Kconfig                       |  10 +
+ drivers/mmc/host/Makefile                      |   1 +
+ drivers/mmc/host/mmci.c                        | 628 ++++++++++++++++++-------
+ drivers/mmc/host/mmci.h                        | 140 +++++-
+ drivers/mmc/host/mmci_qcom_dml.c               |  17 +-
+ drivers/mmc/host/mmci_stm32_sdmmc.c            | 282 +++++++++++
+ 7 files changed, 886 insertions(+), 203 deletions(-)
+ create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
+
 -- 
 2.7.4
 
