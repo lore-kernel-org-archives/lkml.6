@@ -6,79 +6,113 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCCAC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C60C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FA720652
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:56:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FA720652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 739812085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:57:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739812085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJHSH6 (ORCPT
+        id S1727635AbeJHSIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:07:58 -0400
-Received: from gate.crashing.org ([63.228.1.57]:43013 "EHLO gate.crashing.org"
+        Mon, 8 Oct 2018 14:08:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35322 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbeJHSH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:07:58 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w98A2pvY009011;
-        Mon, 8 Oct 2018 05:02:51 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id w98A2k5p008969;
-        Mon, 8 Oct 2018 05:02:46 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Mon, 8 Oct 2018 05:02:46 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Richard Biener <rguenther@suse.de>
-Cc:     Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
-        gcc@gcc.gnu.org, Nadav Amit <namit@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-Message-ID: <20181008100245.GP29268@gate.crashing.org>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
-Mime-Version: 1.0
+        id S1726612AbeJHSIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 14:08:31 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 99928C07C588;
+        Mon,  8 Oct 2018 10:57:22 +0000 (UTC)
+Received: from krava (unknown [10.43.17.152])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E763A170FD;
+        Mon,  8 Oct 2018 10:57:20 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 12:57:20 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 2/3]: perf record: enable asynchronous trace writing
+Message-ID: <20181008105720.GI17270@krava>
+References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
+ <31b0ae5f-e1b5-4255-11af-46c8ebe8e2be@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
-User-Agent: Mutt/1.4.2.3i
+In-Reply-To: <31b0ae5f-e1b5-4255-11af-46c8ebe8e2be@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 08 Oct 2018 10:57:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 11:07:46AM +0200, Richard Biener wrote:
-> > All of a targets register names and alternative register names are
-> > allowed in the clobber list.  Will that never conflict with an attribute
-> > name?  We already *have* syntax for specifying attributes on an asm (on
-> > *any* statement even), so mixing these two things has no advantage.
-> 
-> Heh, but I failed to make an example with attribute synatx working.
-> IIRC attributes do not work on stmts.  What could work is to use
-> a #pragma though.
+On Mon, Oct 08, 2018 at 09:17:11AM +0300, Alexey Budankov wrote:
 
-Apparently statement attributes currently(?) only work for null statements.
-Oh well.
+SNIP
 
+>  static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
+>  				    bool overwrite)
+>  {
+> @@ -520,7 +644,10 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>  	int i;
+>  	int rc = 0;
+>  	struct perf_mmap *maps;
+> -
+> +#ifdef HAVE_AIO_SUPPORT
+> +	int trace_fd = rec->data.file.fd;
+> +	off_t off;
+> +#endif
+>  	if (!evlist)
+>  		return 0;
+>  
+> @@ -531,14 +658,34 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+>  		return 0;
+>  
+> +#ifdef HAVE_AIO_SUPPORT
+> +	off = lseek(trace_fd, 0, SEEK_CUR);
+> +#endif
+>  	for (i = 0; i < evlist->nr_mmaps; i++) {
+>  		struct perf_mmap *map = &maps[i];
+>  
+>  		if (map->base) {
+> -			if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+> -				rc = -1;
+> -				goto out;
+> +#ifdef HAVE_AIO_SUPPORT
+> +			if (!rec->opts.nr_cblocks) {
+> +#endif
+> +				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+> +					rc = -1;
+> +					goto out;
+> +				}
+> +#ifdef HAVE_AIO_SUPPORT
+> +			} else {
+> +				/*
+> +				 * Call record__aio_sync() to wait till map->data buffer
+> +				 * becomes available after previous aio write request.
+> +				 */
+> +				record__aio_sync(map);
+> +				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
+> +					lseek(trace_fd, off, SEEK_SET);
+> +					rc = -1;
+> +					goto out;
+> +				}
+>  			}
+> +#endif
 
-Segher
+I really don't like this.. let's have some aio_... function with its
+dummy counterpart to be called in here.. and again.. if we realyl must
+have this compiled optionaly, which I'm not convinced of
+
+jirka
