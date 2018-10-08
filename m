@@ -2,115 +2,99 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD54C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051C1C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FC352086D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFO6ClhK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC352086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C8AEB20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AEB20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeJHWur (ORCPT
+        id S1727486AbeJHWu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:50:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:50:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:50057 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbeJHWhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:37:53 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 299FF2145D;
-        Mon,  8 Oct 2018 15:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012338;
-        bh=OqVDLI38IOd+1PyRD0hsblu11L8+F83XLszN8QUdkIQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFO6ClhK5dt77VkW1K+POWoB94IjDpby3kowXxfT3goPRSzMo+s84EQSy1icuidu/
-         0DXFi/BqzJEBhYblSNjicvaf60jFrxHiRZAPeVMScsstlUn34VE5eXiQMwdeuvGxY0
-         EoR2+KCdqEbwelKE3ZeqXE8e8U3y3ic2Sydn99b4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 12/58] batman-adv: Prevent duplicated global TT entry
-Date:   Mon,  8 Oct 2018 11:24:37 -0400
-Message-Id: <20181008152523.70705-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
-References: <20181008152523.70705-1-sashal@kernel.org>
+        id S1727279AbeJHWu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:50:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 08:38:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
+   d="scan'208";a="93298957"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Oct 2018 08:38:39 -0700
+Received: from [10.252.30.144] (abudanko-mobl.ccr.corp.intel.com [10.252.30.144])
+        by linux.intel.com (Postfix) with ESMTP id BE3EA5801E6;
+        Mon,  8 Oct 2018 08:38:36 -0700 (PDT)
+Subject: Re: [PATCH v11 1/3]: perf util: map data buffer for preserving
+ collected data
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
+ <0ff162a6-67ab-9e73-8d7e-fa57c932ee45@linux.intel.com>
+ <20181008105057.GD17270@krava>
+ <f8ac7176-26a4-7114-3807-abdaffaa897c@linux.intel.com>
+ <20181008123859.GD18757@krava>
+ <cc781e40-c162-9581-9573-d994785c4cc1@linux.intel.com>
+ <20181008151258.GI18757@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <21c82730-d54b-46ee-6392-be633014930d@linux.intel.com>
+Date:   Mon, 8 Oct 2018 18:38:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181008151258.GI18757@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+Hi,
 
-[ Upstream commit e7136e48ffdfb9f37b0820f619380485eb407361 ]
+On 08.10.2018 18:12, Jiri Olsa wrote:
+> On Mon, Oct 08, 2018 at 05:43:38PM +0300, Alexey Budankov wrote:
+>> Hi,
+>>
+>> On 08.10.2018 15:38, Jiri Olsa wrote:
+>>> On Mon, Oct 08, 2018 at 03:03:18PM +0300, Alexey Budankov wrote:
+>> <SNIP>
+>>>>
+>>>> Well, let's go with stub functions design as opposite to pure 
+>>>> conditional compilation. However this may, probably, result in 
+>>>> unintended Perf tool binary size growth, even if NO_AIO is 
+>>>> defined during compilation.
+>>>
+>>> hum, empty functions are be optimized out
+>>
+>> Yes, but there will be references to stubs in else branch of 
+>> record__mmap_read_evlist() so I am not sure that *all* compilers 
+>> are smart enough to recognize and still optimize it out.
+> 
+> well, kernel is doing that and it seem to be fine,
+> so I wouldn't worry about it
 
-The function batadv_tt_global_orig_entry_add is responsible for adding new
-tt_orig_list_entry to the orig_list. It first checks whether the entry
-already is in the list or not. If it is, then the creation of a new entry
-is aborted.
+Then, Ok. Good to know.
 
-But the lock for the list is only held when the list is really modified.
-This could lead to duplicated entries because another context could create
-an entry with the same key between the check and the list manipulation.
+Thanks,
+Alexey
 
-The check and the manipulation of the list must therefore be in the same
-locked code section.
-
-Fixes: d657e621a0f5 ("batman-adv: add reference counting for type batadv_tt_orig_list_entry")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- net/batman-adv/translation-table.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 12a2b7d21376..d21624c44665 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -1613,6 +1613,8 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
- {
- 	struct batadv_tt_orig_list_entry *orig_entry;
- 
-+	spin_lock_bh(&tt_global->list_lock);
-+
- 	orig_entry = batadv_tt_global_orig_entry_find(tt_global, orig_node);
- 	if (orig_entry) {
- 		/* refresh the ttvn: the current value could be a bogus one that
-@@ -1635,11 +1637,9 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
- 	orig_entry->flags = flags;
- 	kref_init(&orig_entry->refcount);
- 
--	spin_lock_bh(&tt_global->list_lock);
- 	kref_get(&orig_entry->refcount);
- 	hlist_add_head_rcu(&orig_entry->list,
- 			   &tt_global->orig_list);
--	spin_unlock_bh(&tt_global->list_lock);
- 	atomic_inc(&tt_global->orig_list_count);
- 
- sync_flags:
-@@ -1647,6 +1647,8 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
- out:
- 	if (orig_entry)
- 		batadv_tt_orig_list_entry_put(orig_entry);
-+
-+	spin_unlock_bh(&tt_global->list_lock);
- }
- 
- /**
--- 
-2.17.1
-
+> 
+> jirka
+> 
