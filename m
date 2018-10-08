@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F952C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD33C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A3962064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C54D02064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v6Fr/ZJI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3962064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKv5Yxja"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54D02064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbeJIBws (ORCPT
+        id S1729575AbeJIBww (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:52:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:52:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbeJIBws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:52:48 -0400
+        id S1727315AbeJIBwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:52:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 156752087D;
-        Mon,  8 Oct 2018 18:39:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F81821479;
+        Mon,  8 Oct 2018 18:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023984;
-        bh=8F3zoiM5bGN85Q0P7BOsp21yLg8h0lgweAote7jFDMY=;
+        s=default; t=1539023987;
+        bh=cqA1KVqtluEpUUYRUwTNnVC0NnD7lP4z2da44wlVw8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v6Fr/ZJIa0BNA3bA0uB03SRgJ+cuReN42D3+Ml4hKMffX+gUiqd1uTvG4fHtgMG8R
-         J3492S5AlSPxIgiHncObbDV/uQcG2fLvG+vTtVfSwvIMOjMuTdKfdrhFrPzuPV7Fak
-         /4Xj0mL8YnB07aGR1WcbS+E47TP/P8t4GanYo+eo=
+        b=YKv5YxjaXdT3OIb1RuNVJoStahReFw/VwgiN2OPDjQwGNccPWqfecIdg/AN9bmhr0
+         NTSenjRRGnjJ8k+xniljZIjxqItGtQqgdxyJSc7ox53sWCyhPaQKyyatZXV08FZlEP
+         C5kLOx8RSLgjIHgESS0S9BN3YPBNxV6JmROe2LeQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jon Kuhn <jkuhn@barracuda.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 16/59] net: cadence: Fix a sleep-in-atomic-context bug in macb_halt_tx()
-Date:   Mon,  8 Oct 2018 20:31:23 +0200
-Message-Id: <20181008175548.145311418@linuxfoundation.org>
+Subject: [PATCH 4.9 17/59] fs/cifs: dont translate SFM_SLASH (U+F026) to backslash
+Date:   Mon,  8 Oct 2018 20:31:24 +0200
+Message-Id: <20181008175548.299910393@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -63,44 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Jon Kuhn <jkuhn@barracuda.com>
 
-[ Upstream commit 16fe10cf92783ed9ceb182d6ea2b8adf5e8ec1b8 ]
+[ Upstream commit c15e3f19a6d5c89b1209dc94b40e568177cb0921 ]
 
-The kernel module may sleep with holding a spinlock.
+When a Mac client saves an item containing a backslash to a file server
+the backslash is represented in the CIFS/SMB protocol as as U+F026.
+Before this change, listing a directory containing an item with a
+backslash in its name will return that item with the backslash
+represented with a true backslash character (U+005C) because
+convert_sfm_character mapped U+F026 to U+005C when interpretting the
+CIFS/SMB protocol response.  However, attempting to open or stat the
+path using a true backslash will result in an error because
+convert_to_sfm_char does not map U+005C back to U+F026 causing the
+CIFS/SMB request to be made with the backslash represented as U+005C.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+This change simply prevents the U+F026 to U+005C conversion from
+happenning.  This is analogous to how the code does not do any
+translation of UNI_SLASH (U+F000).
 
-[FUNC] usleep_range
-drivers/net/ethernet/cadence/macb_main.c, 648:
-	usleep_range in macb_halt_tx
-drivers/net/ethernet/cadence/macb_main.c, 730:
-	macb_halt_tx in macb_tx_error_task
-drivers/net/ethernet/cadence/macb_main.c, 721:
-	_raw_spin_lock_irqsave in macb_tx_error_task
-
-To fix this bug, usleep_range() is replaced with udelay().
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jon Kuhn <jkuhn@barracuda.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cadence/macb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/cifs_unicode.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb.c
-+++ b/drivers/net/ethernet/cadence/macb.c
-@@ -517,7 +517,7 @@ static int macb_halt_tx(struct macb *bp)
- 		if (!(status & MACB_BIT(TGO)))
- 			return 0;
- 
--		usleep_range(10, 250);
-+		udelay(250);
- 	} while (time_before(halt_time, timeout));
- 
- 	return -ETIMEDOUT;
+--- a/fs/cifs/cifs_unicode.c
++++ b/fs/cifs/cifs_unicode.c
+@@ -101,9 +101,6 @@ convert_sfm_char(const __u16 src_char, c
+ 	case SFM_LESSTHAN:
+ 		*target = '<';
+ 		break;
+-	case SFM_SLASH:
+-		*target = '\\';
+-		break;
+ 	case SFM_SPACE:
+ 		*target = ' ';
+ 		break;
 
 
