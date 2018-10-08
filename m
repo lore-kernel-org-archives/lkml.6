@@ -2,121 +2,129 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0852C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DBBC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1B62077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:07:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1B62077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 92AD52085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 04:27:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AD52085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJHLRD (ORCPT
+        id S1726348AbeJHLg4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 07:17:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56901 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725760AbeJHLRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 07:17:02 -0400
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9846Y3R459574
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 7 Oct 2018 21:06:34 -0700
-Received: from carbon-x1.hos.anvin.org (localhost [127.0.0.1])
-        by carbon-x1.hos.anvin.org (8.15.2/8.15.2) with ESMTP id w9846S641248324;
-        Sun, 7 Oct 2018 21:06:28 -0700
-Received: (from hpa@localhost)
-        by carbon-x1.hos.anvin.org (8.15.2/8.15.2/Submit) id w9846Meo1248323;
-        Sun, 7 Oct 2018 21:06:22 -0700
-X-Authentication-Warning: carbon-x1.hos.anvin.org: hpa set sender to hpa@zytor.com using -f
-From:   "H. Peter Anvin" <hpa@zytor.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Tobias Klausmann <klausman@schwarzvogel.de>,
-        "H. Peter Anvin (Intel)" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, stable@vger.kernel.org
-Subject: [PATCH stable v2 0/2] termios: Alpha BOTHER/IBSHIFT, tty_baudrate fix
-Date:   Sun,  7 Oct 2018 21:06:18 -0700
-Message-Id: <20181008040620.1248277-1-hpa@zytor.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Oct 2018 07:36:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13601 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726013AbeJHLgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 07:36:55 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 046C230097CF9;
+        Mon,  8 Oct 2018 12:27:10 +0800 (CST)
+Received: from localhost.localdomain (10.143.28.90) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 8 Oct 2018 12:27:05 +0800
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+To:     <christoffer.dall@arm.com>, <marc.zyngier@arm.com>,
+        <peter.maydell@linaro.org>, <drjones@redhat.com>,
+        <james.morse@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        <kvm@vger.kernel.org>
+CC:     <gengdongjiu@huawei.com>
+Subject: [PATCH v2 1/2] arm/arm64: KVM: rename function kvm_arch_dev_ioctl_check_extension()
+Date:   Mon, 8 Oct 2018 08:34:47 -0400
+Message-ID: <1539002088-21215-2-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1539002088-21215-1-git-send-email-gengdongjiu@huawei.com>
+References: <1539002088-21215-1-git-send-email-gengdongjiu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.90]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
+Rename kvm_arch_dev_ioctl_check_extension() to
+kvm_arch_vm_ioctl_check_extension(), because it does
+not have any relationship with device.
 
-It turns out that Alpha is the only architecture that never
-implemented BOTHER and IBSHIFT, which is otherwise ages old. This is
-one thing that has held up glibc support for this feature (all other
-architectures have supported these for about a decade, at least before
-the current 3.2 glibc cutoff.)
+Renaming this function can make code readable.
 
-Furthermore, in the process of dealing with this, I discovered that
-the current code in tty_baudrate.c can read past the end of the
-baud_table[] on Alpha and PowerPC. The second patch in this series
-fixes that, but it also cleans up the code substantially by
-auto-generating the table and, since all architectures now have them,
-removing all conditionals for BOTHER and IBSHIFT existing.
-
-Tagging for stable because these are concrete and immediate
-problems. I have a much bigger update in process, nearly done, which
-will clean up a lot of duplicated code and make the uapi headers
-usable for libc, but that is not critical on the same level.
-
-Tested on x86, compile-tested on Alpha. SPARC, and PowerPC.
-
-v2: the CBAUDEX masking-as-fallback code was wrong, but it could never
-    be exercised on any architecture anyway (gcc would not even emit it)
-    so just remove it. There are thus no object code changes from v1.
-
+Cc: James Morse <james.morse@arm.com>
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
 ---
- arch/alpha/include/asm/termios.h       |   8 +-
- arch/alpha/include/uapi/asm/ioctls.h   |   5 +
- arch/alpha/include/uapi/asm/termbits.h |  17 +++
- drivers/tty/.gitignore                 |   1 +
- drivers/tty/Makefile                   |  16 +++
- drivers/tty/bmacros.c                  |   2 +
- drivers/tty/tty_baudrate.c             | 182 ++++++++++++---------------------
- 7 files changed, 114 insertions(+), 117 deletions(-)
+I remeber James also mentioned that rename this function.
+---
+ arch/arm/include/asm/kvm_host.h   | 2 +-
+ arch/arm64/include/asm/kvm_host.h | 2 +-
+ arch/arm64/kvm/reset.c            | 4 ++--
+ virt/kvm/arm/arm.c                | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: <linux-alpha@vger.kernel.org>
-Cc: <linux-serial@vger.kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: <stable@vger.kernel.org>
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index 3ad482d..3ee29db 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -273,7 +273,7 @@ static inline void __cpu_init_stage2(void)
+ 	kvm_call_hyp(__init_stage2_translation);
+ }
+ 
+-static inline int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
++static inline int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ {
+ 	return 0;
+ }
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 3d6d733..c20537f 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -53,7 +53,7 @@
+ 
+ int __attribute_const__ kvm_target_cpu(void);
+ int kvm_reset_vcpu(struct kvm_vcpu *vcpu);
+-int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext);
++int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext);
+ void __extended_idmap_trampoline(phys_addr_t boot_pgd, phys_addr_t idmap_start);
+ 
+ struct kvm_arch {
+diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+index e37c78b..fd37c53 100644
+--- a/arch/arm64/kvm/reset.c
++++ b/arch/arm64/kvm/reset.c
+@@ -55,12 +55,12 @@ static bool cpu_has_32bit_el1(void)
+ }
+ 
+ /**
+- * kvm_arch_dev_ioctl_check_extension
++ * kvm_arch_vm_ioctl_check_extension
+  *
+  * We currently assume that the number of HW registers is uniform
+  * across all CPUs (see cpuinfo_sanity_check).
+  */
+-int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
++int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ {
+ 	int r;
+ 
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index c92053b..40e79ea 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -240,7 +240,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		r = 1;
+ 		break;
+ 	default:
+-		r = kvm_arch_dev_ioctl_check_extension(kvm, ext);
++		r = kvm_arch_vm_ioctl_check_extension(kvm, ext);
+ 		break;
+ 	}
+ 	return r;
+-- 
+1.9.1
 
