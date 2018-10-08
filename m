@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27629C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379E5C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D134221557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC01621557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8ItLAiM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D134221557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TudJvdi+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC01621557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeJHWkI (ORCPT
+        id S1729220AbeJHWkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 8 Oct 2018 18:40:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59724 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbeJHWkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:40:07 -0400
+        id S1729201AbeJHWkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:40:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88B1321526;
-        Mon,  8 Oct 2018 15:27:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D47921570;
+        Mon,  8 Oct 2018 15:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1539012472;
-        bh=yHB5ahIa4TX9QioB9aOdBoc+GN7Joxg/E5HNDfee7+E=;
+        bh=b/9kgraQFnN7PuRTZCrskLNzBqKlX5trsRWCHV3kk5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F8ItLAiM8nrLwRmN2G+bDDv4iQ7+55rKk1OPDuqLfv6Z+G6RHZ9cDwwV0UbCSwBv5
-         GDfbRppnMTzUC+9llXdYiSTC7PetWZmJC31n59fvC8ePIOWxQsSECcc/oOr3TnSpLX
-         Ah8lU/deJycP/XQ1H0TX9nMaAMzE3CD7DJTAGrfo=
+        b=TudJvdi+ky3+F8xiKS+Iqjpivg5rOkRcHqstrDiPFva0TfL3kN8bugS8QxcnN9G1P
+         pO6IwSxRKgTHDS4+66NJz/aGhCz1i3MjtBROWfMcS4w+4IdXWddNA6h/oTQ/A19RvE
+         UqtgyjsWE4cvqK6UK4l0RTdSWj2BTGtfbPuoxlTg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Cowgill <jcowgill@debian.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
+Cc:     Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 2/4] RISC-V: include linux/ftrace.h in asm-prototypes.h
-Date:   Mon,  8 Oct 2018 11:27:47 -0400
-Message-Id: <20181008152749.71018-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 3/4] powerpc/tm: Fix userspace r13 corruption
+Date:   Mon,  8 Oct 2018 11:27:48 -0400
+Message-Id: <20181008152749.71018-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152749.71018-1-sashal@kernel.org>
 References: <20181008152749.71018-1-sashal@kernel.org>
@@ -53,45 +53,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Cowgill <jcowgill@debian.org>
+From: Michael Neuling <mikey@neuling.org>
 
-[ Upstream commit 57a489786de9ec37d6e25ef1305dc337047f0236 ]
+[ Upstream commit cf13435b730a502e814c63c84d93db131e563f5f ]
 
-Building a riscv kernel with CONFIG_FUNCTION_TRACER and
-CONFIG_MODVERSIONS enabled results in these two warnings:
+When we treclaim we store the userspace checkpointed r13 to a scratch
+SPR and then later save the scratch SPR to the user thread struct.
 
-  MODPOST vmlinux.o
-WARNING: EXPORT symbol "return_to_handler" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "_mcount" [vmlinux] version generation failed, symbol will not be versioned.
+Unfortunately, this doesn't work as accessing the user thread struct
+can take an SLB fault and the SLB fault handler will write the same
+scratch SPRG that now contains the userspace r13.
 
-When exporting symbols from an assembly file, the MODVERSIONS code
-requires their prototypes to be defined in asm-prototypes.h (see
-scripts/Makefile.build). Since both of these symbols have prototypes
-defined in linux/ftrace.h, include this header from RISC-V's
-asm-prototypes.h.
+To fix this, we store r13 to the kernel stack (which can't fault)
+before we access the user thread struct.
 
-Reported-by: Karsten Merker <merker@debian.org>
-Signed-off-by: James Cowgill <jcowgill@debian.org>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Found by running P8 guest + powervm + disable_1tb_segments + TM. Seen
+as a random userspace segfault with r13 looking like a kernel address.
+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Reviewed-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/riscv/include/asm/asm-prototypes.h | 7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 arch/riscv/include/asm/asm-prototypes.h
+ arch/powerpc/kernel/tm.S | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
-new file mode 100644
-index 000000000000..c9fecd120d18
---- /dev/null
-+++ b/arch/riscv/include/asm/asm-prototypes.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RISCV_PROTOTYPES_H
+diff --git a/arch/powerpc/kernel/tm.S b/arch/powerpc/kernel/tm.S
+index 08225a352477..8a627cc963ff 100644
+--- a/arch/powerpc/kernel/tm.S
++++ b/arch/powerpc/kernel/tm.S
+@@ -199,13 +199,20 @@ dont_backup_fp:
+ 	std	r1, PACATMSCRATCH(r13)
+ 	ld	r1, PACAR1(r13)
+ 
+-	/* Store the PPR in r11 and reset to decent value */
+ 	std	r11, GPR11(r1)			/* Temporary stash */
+ 
++	/*
++	 * Store r13 away so we can free up the scratch SPR for the SLB fault
++	 * handler (needed once we start accessing the thread_struct).
++	 */
++	GET_SCRATCH0(r11)
++	std	r11, GPR13(r1)
 +
-+#include <linux/ftrace.h>
-+#include <asm-generic/asm-prototypes.h>
-+
-+#endif /* _ASM_RISCV_PROTOTYPES_H */
+ 	/* Reset MSR RI so we can take SLB faults again */
+ 	li	r11, MSR_RI
+ 	mtmsrd	r11, 1
+ 
++	/* Store the PPR in r11 and reset to decent value */
+ 	mfspr	r11, SPRN_PPR
+ 	HMT_MEDIUM
+ 
+@@ -234,7 +241,7 @@ dont_backup_fp:
+ 	ld	r4, GPR7(r1)			/* user r7 */
+ 	ld	r5, GPR11(r1)			/* user r11 */
+ 	ld	r6, GPR12(r1)			/* user r12 */
+-	GET_SCRATCH0(8)				/* user r13 */
++	ld	r8, GPR13(r1)			/* user r13 */
+ 	std	r3, GPR1(r7)
+ 	std	r4, GPR7(r7)
+ 	std	r5, GPR11(r7)
 -- 
 2.17.1
 
