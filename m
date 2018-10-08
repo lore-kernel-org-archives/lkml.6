@@ -2,295 +2,92 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B8AC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12C4C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B622089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:31:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B622089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 97BE52145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:31:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97BE52145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJHXnf convert rfc822-to-8bit (ORCPT
+        id S1726613AbeJHXoR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:43:35 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7259 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726730AbeJHXmn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:42:43 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98GJavm002935;
-        Mon, 8 Oct 2018 18:29:40 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mxjgxm25g-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 08 Oct 2018 18:29:40 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4198B34;
-        Mon,  8 Oct 2018 16:29:40 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F0BB157D5;
-        Mon,  8 Oct 2018 16:29:39 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 8 Oct
- 2018 18:29:39 +0200
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Mon, 8 Oct 2018 18:29:39 +0200
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>
-CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH v3 1/8] dt-bindings: mfd: document stpmic1
-Thread-Topic: [PATCH v3 1/8] dt-bindings: mfd: document stpmic1
-Thread-Index: AQHUXyQcGdHF5J29/0KFm+BRv0PlHg==
-Date:   Mon, 8 Oct 2018 16:29:39 +0000
-Message-ID: <1539016176-4072-2-git-send-email-p.paillet@st.com>
-References: <1539016176-4072-1-git-send-email-p.paillet@st.com>
-In-Reply-To: <1539016176-4072-1-git-send-email-p.paillet@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 8 Oct 2018 19:44:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbeJHXoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 19:44:17 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38C912089D;
+        Mon,  8 Oct 2018 16:31:43 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 12:31:40 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        ard.biesheuvel@linaro.org, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
+ "jump_function"
+Message-ID: <20181008123140.666fa405@gandalf.local.home>
+In-Reply-To: <20181008155757.GC5663@hirez.programming.kicks-ass.net>
+References: <20181006015110.653946300@goodmis.org>
+        <20181006015720.634688468@goodmis.org>
+        <20181006121211.GA5663@hirez.programming.kicks-ass.net>
+        <20181006093905.46276505@vmware.local.home>
+        <20181008072134.GB5663@hirez.programming.kicks-ass.net>
+        <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
+        <20181008155757.GC5663@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_07:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: pascal paillet <p.paillet@st.com>
+On Mon, 8 Oct 2018 17:57:57 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-stpmic1 is a pmic from STMicroelectronics. The STPMIC1 integrates 10
-regulators ,3 switches, a watchdog and an input for a power on key.
+> On Mon, Oct 08, 2018 at 01:33:14AM -0700, Andy Lutomirski wrote:
+> > > Can't we hijack the relocation records for these functions before they
+> > > get thrown out in the (final) link pass or something?  
+> > 
+> > I could be talking out my arse here, but I thought we could do this,
+> > too, then changed my mind.  The relocation records give us the
+> > location of the call or jump operand, but they don’t give the address
+> > of the beginning of the instruction.  
+> 
+> But that's like 1 byte before the operand, right? We could even double check
+> this by reading back that byte and ensuring it is in fact 0xE8 (CALL).
+> 
+> AFAICT there is only the _1_ CALL encoding, and that is the 5 byte: E8 <PLT32>,
+> so if we have the PLT32 location, we also have the instruction location. Or am
+> I missing something?
 
-Signed-off-by: pascal paillet <p.paillet@st.com>
----
-changes in v3:
-* Replace st,onkey-long-press-seconds by power-off-time-sec.
-* Replace interrupts-extended by  interrupts.
-* Remove wakeup interrupt.
-* Cosmetics.
+Yes, this is exactly what I was thinking of doing. All we need to do is
+have objtool (or a modification of whatever we come up with), to find
+the call sites of a specific function (we can have a table to look up
+for), that creates a section listing all these call sites, and on boot
+up, we can confirm that they are indeed calls (e8 operations).
 
- .../devicetree/bindings/mfd/st,stpmic1.txt         | 133 +++++++++++++++++++++
- include/dt-bindings/mfd/st,stpmic1.h               |  46 +++++++
- 2 files changed, 179 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
- create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
-
-diff --git a/Documentation/devicetree/bindings/mfd/st,stpmic1.txt b/Documentation/devicetree/bindings/mfd/st,stpmic1.txt
-new file mode 100644
-index 0000000..989bd58
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/st,stpmic1.txt
-@@ -0,0 +1,133 @@
-+* STMicroelectronics STPMIC1 Power Management IC
-+
-+Required parent device properties:
-+- compatible: 		"st,stpmic1"
-+- reg: 			The I2C slave address for the STPMIC1 chip.
-+- interrupt-parent	Phandle to the parent interrupt controller.
-+- interrupts: 		The interrupt line the device is connected to.
-+- #interrupt-cells: 	Should be 1.
-+- interrupt-controller: Describes the STPMIC1 as an interrupt
-+  controller (has its own domain). Interrupt number are the following:
-+	/* Interrupt Register 1 (0x50 for latch) */
-+	IT_SWOUT_R=0
-+	IT_SWOUT_F=1
-+	IT_VBUS_OTG_R=2
-+	IT_VBUS_OTG_F=3
-+	IT_WAKEUP_R=4
-+	IT_WAKEUP_F=5
-+	IT_PONKEY_R=6
-+	IT_PONKEY_F=7
-+	/* Interrupt Register 2 (0x51 for latch) */
-+	IT_OVP_BOOST=8
-+	IT_OCP_BOOST=9
-+	IT_OCP_SWOUT=10
-+	IT_OCP_OTG=11
-+	IT_CURLIM_BUCK4=12
-+	IT_CURLIM_BUCK3=13
-+	IT_CURLIM_BUCK2=14
-+	IT_CURLIM_BUCK1=15
-+	/* Interrupt Register 3 (0x52 for latch) */
-+	IT_SHORT_SWOUT=16
-+	IT_SHORT_SWOTG=17
-+	IT_CURLIM_LDO6=18
-+	IT_CURLIM_LDO5=19
-+	IT_CURLIM_LDO4=20
-+	IT_CURLIM_LDO3=21
-+	IT_CURLIM_LDO2=22
-+	IT_CURLIM_LDO1=23
-+	/* Interrupt Register 3 (0x52 for latch) */
-+	IT_SWIN_R=24
-+	IT_SWIN_F=25
-+	IT_RESERVED_1=26
-+	IT_RESERVED_2=27
-+	IT_VINLOW_R=28
-+	IT_VINLOW_F=29
-+	IT_TWARN_R=30
-+	IT_TWARN_F=31
-+
-+Optional parent device properties:
-+- st,main-control-register:
-+	-bit 1: Power cycling will be performed on turn OFF condition
-+	-bit 2: PWRCTRL is functional
-+	-bit 3: PWRCTRL active high
-+- st,pads-pull-register:
-+	-bit 1: WAKEUP pull down is not active
-+	-bit 2: PWRCTRL pull up is active
-+	-bit 3: PWRCTRL pull down is active
-+	-bit 4: WAKEUP detector is disabled
-+- st,vin-control-register:
-+	-bit 0: VINLOW monitoring is enabled
-+	-bit [1...3]: VINLOW rising threshold
-+		000 VINOK_f + 50mV
-+		001 VINOK_f + 100mV
-+		010 VINOK_f + 150mV
-+		011 VINOK_f + 200mV
-+		100 VINOK_f + 250mV
-+		101 VINOK_f + 300mV
-+		110 VINOK_f + 350mV
-+		111 VINOK_f + 400mV
-+	-bit [4...5]: VINLOW hyst
-+		00 100mV
-+		01 200mV
-+		10 300mV
-+		11 400mV
-+	-bit 6: SW_OUT detector is disabled
-+	-bit 7: SW_IN detector is enabled.
-+- st,usb-control-register:
-+	-bit 3: SW_OUT current limit
-+		0: 600mA
-+		1: 1.1A
-+	-bit 4: VBUS_OTG discharge is enabled
-+	-bit 5: SW_OUT discharge is enabled
-+	-bit 6: VBUS_OTG detection is enabled
-+	-bit 7: BOOST_OVP is disabled
-+
-+STPMIC1 consists in a varied group of sub-devices.
-+Each sub-device binding is be described in own documentation file.
-+
-+Device			 Description
-+------			------------
-+st,stpmic1-onkey	: Power on key, see ../input/st,stpmic1-onkey.txt
-+st,stpmic1-regulators	: Regulators, see ../regulator/st,stpmic1-regulator.txt
-+st,stpmic1-wdt		: Watchdog, see ../watchdog/st,stpmic1-wdt.txt
-+
-+Example:
-+
-+pmic: pmic1@33 {
-+	compatible = "st,stpmic1";
-+	reg = <0x33>;
-+	interrupt-parent = <&gpioa>;
-+	interrupts = <0 2>;
-+	st,main-control-register=<0x0c>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+
-+	onkey {
-+		compatible = "st,stpmic1-onkey";
-+		interrupt-parent = <&pmic>;
-+		interrupts = <IT_PONKEY_F 0>,<IT_PONKEY_R 1>;
-+		interrupt-names = "onkey-falling", "onkey-rising";
-+		power-off-time-sec = <10>;
-+	};
-+
-+	watchdog {
-+		compatible = "st,stpmic1-wdt";
-+	};
-+
-+	regulators {
-+		compatible = "st,stpmic1-regulators";
-+
-+		vdd_core: buck1 {
-+			regulator-name = "vdd_core";
-+			regulator-boot-on;
-+			regulator-min-microvolt = <700000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+		vdd: buck3 {
-+			regulator-name = "vdd";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+			regulator-pull-down;
-+		};
-+	};
-diff --git a/include/dt-bindings/mfd/st,stpmic1.h b/include/dt-bindings/mfd/st,stpmic1.h
-new file mode 100644
-index 0000000..b2d6c83
---- /dev/null
-+++ b/include/dt-bindings/mfd/st,stpmic1.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-+ * Author: Philippe Peurichard <philippe.peurichard@st.com>,
-+ * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
-+ */
-+
-+#ifndef __DT_BINDINGS_STPMIC1_H__
-+#define __DT_BINDINGS_STPMIC1_H__
-+
-+/* IRQ definitions */
-+#define IT_PONKEY_F	0
-+#define IT_PONKEY_R	1
-+#define IT_WAKEUP_F	2
-+#define IT_WAKEUP_R	3
-+#define IT_VBUS_OTG_F	4
-+#define IT_VBUS_OTG_R	5
-+#define IT_SWOUT_F	6
-+#define IT_SWOUT_R	7
-+
-+#define IT_CURLIM_BUCK1	8
-+#define IT_CURLIM_BUCK2	9
-+#define IT_CURLIM_BUCK3	10
-+#define IT_CURLIM_BUCK4	11
-+#define IT_OCP_OTG	12
-+#define IT_OCP_SWOUT	13
-+#define IT_OCP_BOOST	14
-+#define IT_OVP_BOOST	15
-+
-+#define IT_CURLIM_LDO1	16
-+#define IT_CURLIM_LDO2	17
-+#define IT_CURLIM_LDO3	18
-+#define IT_CURLIM_LDO4	19
-+#define IT_CURLIM_LDO5	20
-+#define IT_CURLIM_LDO6	21
-+#define IT_SHORT_SWOTG	22
-+#define IT_SHORT_SWOUT	23
-+
-+#define IT_TWARN_F	24
-+#define IT_TWARN_R	25
-+#define IT_VINLOW_F	26
-+#define IT_VINLOW_R	27
-+#define IT_SWIN_F	30
-+#define IT_SWIN_R	31
-+
-+#endif /* __DT_BINDINGS_STPMIC1_H__ */
--- 
-1.9.1
+-- Steve
