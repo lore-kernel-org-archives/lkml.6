@@ -2,232 +2,106 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3ECC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26476C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 528C82145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:23:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a465I0gv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528C82145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DB17620C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:23:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB17620C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbeJIDgh (ORCPT
+        id S1727315AbeJIDhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:36:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57594 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeJIDgh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:36:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9Wg1ba4/QUK1MYSpn+rcAuBLeY47DC0iGmOq5FH/lWk=; b=a465I0gvm2rhTkfelT44PRllV
-        SRSwfL6ffPvrJZM2OvpVeDTgTDykj8wnV05oi9B/E+TyG2aIoyn65mT/FJwQb1wlAs1UQ0vodCUTu
-        vCI9GWUqi2/pJyhYlZohSXBXreSHt/H6bElemFb1B7AaG6DdMv9ZFE53cZLX4xquLvDS+Dzk97/sz
-        AHx5QdqXt5rKQwBIh8t3RvZ7he1FOsizgK5nf+qpTvy/UpjNphF1nZtKe8ent6c0KuPLiQjIiBRjo
-        xAupVFSseTEoi93VMpJd6EmNEgdeAPpWMarjCtBD5O1fMN8oE6tZg2OJB22XFoVwV8bUm2u9b3WWX
-        LQ1GJ/G/Q==;
-Received: from [179.183.98.126] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9c3V-0004FS-UG; Mon, 08 Oct 2018 20:23:06 +0000
-Date:   Mon, 8 Oct 2018 17:23:03 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     ksummit-discuss@lists.linuxfoundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-Message-ID: <20181008172303.4f06cd94@coco.lan>
-In-Reply-To: <1538861851.4088.7.camel@HansenPartnership.com>
-References: <1538861738.4088.5.camel@HansenPartnership.com>
-        <1538861851.4088.7.camel@HansenPartnership.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 8 Oct 2018 23:37:01 -0400
+Received: from shell.v3.sk ([90.176.6.54]:45540 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeJIDhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:37:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 6309ABCC94;
+        Mon,  8 Oct 2018 22:23:27 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id LoyavDNyDawf; Mon,  8 Oct 2018 22:23:24 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 7FC3CBCC9A;
+        Mon,  8 Oct 2018 22:23:24 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id IL0YLprmfF_u; Mon,  8 Oct 2018 22:23:23 +0200 (CEST)
+Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 95953BCC94;
+        Mon,  8 Oct 2018 22:23:23 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 1/2] dt-bindings: himax,hx8837: add HiMax HX8837 bindings
+Date:   Mon,  8 Oct 2018 22:23:20 +0200
+Message-Id: <20181008202321.128937-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sat, 06 Oct 2018 14:37:31 -0700
-James Bottomley <James.Bottomley@HansenPartnership.com> escreveu:
+HiMax HX8837 is a display controller used on OLPC platforms.
+It controlls backlight and is able to capture and freeze a frame when
+the LCD controller (and the rest of the plaform) is powered off.
 
-> Significant concern has been expressed about the responsibilities outline=
-d in
-> the enforcement clause of the new code of conduct.  Since there is concern
-> that this becomes binding on the release of the 4.19 kernel, strip the
-> enforcement clauses to give the community time to consider and debate how=
- this
-> should be handled.
->=20
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+What is missing here is the description of connections to the LCD
+controller and the panel. Maybe it would be a good idea to plug in it
+betweend the two in a manner described in
+<Documentation/devicetree/bindings/graph.txt>.
 
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+Changes since v1:
+- s/load-gpio/load-gpios/
+- Use interrupt bindings instead of gpio for the IRQ
 
-With my maintainer's hat, my main concern would be solved with this hunk:
+ .../devicetree/bindings/misc/himax,hx8837.txt  | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/himax,hx8837.t=
+xt
 
-diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/proc=
-ess/code-of-conduct.rst
-index ab7c24b5478c..f07d51129d4b 100644
---- a/Documentation/process/code-of-conduct.rst
-+++ b/Documentation/process/code-of-conduct.rst
-@@ -43,7 +43,7 @@ Maintainers are responsible for clarifying the standards =
-of acceptable behavior
- and are expected to take appropriate and fair corrective action in respons=
-e to
- any instances of unacceptable behavior.
-=20
--Maintainers have the right and responsibility to remove, edit, or reject
-+Maintainers may remove, edit, or reject
- comments, commits, code, wiki edits, issues, and other contributions that =
-are
- not aligned to this Code of Conduct, or to ban temporarily or permanently =
-any
- contributor for other behaviors that they deem inappropriate, threatening,
-
-The previous text seems too much legal for my taste.
-
-> ---
->  Documentation/process/code-of-conduct.rst | 15 ---------------
->  1 file changed, 15 deletions(-)
->=20
-> diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/pr=
-ocess/code-of-conduct.rst
-> index aa40e34e7785..4dd90987305b 100644
-> --- a/Documentation/process/code-of-conduct.rst
-> +++ b/Documentation/process/code-of-conduct.rst
-> @@ -59,21 +59,6 @@ address, posting via an official social media account,=
- or acting as an appointed
->  representative at an online or offline event. Representation of a projec=
-t may be
->  further defined and clarified by project maintainers.
-> =20
-> -Enforcement
-> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> -
-> -Instances of abusive, harassing, or otherwise unacceptable behavior may =
-be
-> -reported by contacting the Technical Advisory Board (TAB) at
-> -<tab@lists.linux-foundation.org>. All complaints will be reviewed and
-> -investigated and will result in a response that is deemed necessary and
-> -appropriate to the circumstances. The TAB is obligated to maintain
-> -confidentiality with regard to the reporter of an incident.  Further det=
-ails of
-> -specific enforcement policies may be posted separately.
-> -
-> -Maintainers who do not follow or enforce the Code of Conduct in good fai=
-th may
-> -face temporary or permanent repercussions as determined by other members=
- of the
-> -project=E2=80=99s leadership.
-> -
->  Attribution
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-After looking at the comments, I would just keep TAB as a point of contact
-for CoC violations:
-
-diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/proc=
-ess/code-of-conduct.rst
-index ab7c24b5478c..fa908dbff51c 100644
---- a/Documentation/process/code-of-conduct.rst
-+++ b/Documentation/process/code-of-conduct.rst
-@@ -59,20 +59,12 @@ address, posting via an official social media account, =
-or acting as an appointed
- representative at an online or offline event. Representation of a project =
-may be
- further defined and clarified by project maintainers.
-=20
--Enforcement
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+Reports
-+=3D=3D=3D=3D=3D=3D=3D
-=20
- Instances of abusive, harassing, or otherwise unacceptable behavior may be
- reported by contacting the Technical Advisory Board (TAB) at
--<tab@lists.linux-foundation.org>. All complaints will be reviewed and
--investigated and will result in a response that is deemed necessary and
--appropriate to the circumstances. The TAB is obligated to maintain
--confidentiality with regard to the reporter of an incident.  Further detai=
-ls of
--specific enforcement policies may be posted separately.
--
--Maintainers who do not follow or enforce the Code of Conduct in good faith=
- may
--face temporary or permanent repercussions as determined by other members o=
-f the
--project=E2=80=99s leadership.
-+<tab@lists.linux-foundation.org>.
-=20
- Attribution
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Keeping the rest implicit. This can be revisited after having more
-discussions.
-
-Thanks,
-Mauro
-
--
-
-Both hunks are shown below.
-
-
-diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/proc=
-ess/code-of-conduct.rst
-index ab7c24b5478c..df44867a2db5 100644
---- a/Documentation/process/code-of-conduct.rst
-+++ b/Documentation/process/code-of-conduct.rst
-@@ -43,7 +43,7 @@ Maintainers are responsible for clarifying the standards =
-of acceptable behavior
- and are expected to take appropriate and fair corrective action in respons=
-e to
- any instances of unacceptable behavior.
-=20
--Maintainers have the right and responsibility to remove, edit, or reject
-+Maintainers may remove, edit, or reject
- comments, commits, code, wiki edits, issues, and other contributions that =
-are
- not aligned to this Code of Conduct, or to ban temporarily or permanently =
-any
- contributor for other behaviors that they deem inappropriate, threatening,
-@@ -59,20 +59,12 @@ address, posting via an official social media account, =
-or acting as an appointed
- representative at an online or offline event. Representation of a project =
-may be
- further defined and clarified by project maintainers.
-=20
--Enforcement
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+Reports
-+=3D=3D=3D=3D=3D=3D=3D
-=20
- Instances of abusive, harassing, or otherwise unacceptable behavior may be
- reported by contacting the Technical Advisory Board (TAB) at
--<tab@lists.linux-foundation.org>. All complaints will be reviewed and
--investigated and will result in a response that is deemed necessary and
--appropriate to the circumstances. The TAB is obligated to maintain
--confidentiality with regard to the reporter of an incident.  Further detai=
-ls of
--specific enforcement policies may be posted separately.
--
--Maintainers who do not follow or enforce the Code of Conduct in good faith=
- may
--face temporary or permanent repercussions as determined by other members o=
-f the
--project=E2=80=99s leadership.
-+<tab@lists.linux-foundation.org>.
-=20
- Attribution
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+diff --git a/Documentation/devicetree/bindings/misc/himax,hx8837.txt b/Do=
+cumentation/devicetree/bindings/misc/himax,hx8837.txt
+new file mode 100644
+index 000000000000..d0822c679ae8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/himax,hx8837.txt
+@@ -0,0 +1,18 @@
++HX8837 Display Controller
++
++Required properties:
++- compatible: Should be "himax,hx8837".
++- reg: I2C address, must be 0x0d
++- stat-gpios: gpio specifier of DCON_STAT0 and DCON_STAT1 pins (active h=
+igh)
++- load-gpios: gpio specifier of DCON_LOAD pin (active high)
++- interrupt: interrupt specifier of DCON_IRQ pin (edge falling)
++
++Example:
++	dcon@d {
++		compatible =3D "himax,hx8837";
++		reg =3D <0x0d>;
++		stat-gpios =3D <&gpio 100 GPIO_ACTIVE_HIGH
++			      &gpio 101 GPIO_ACTIVE_HIGH>;
++		load-gpios =3D <&gpio 142 GPIO_ACTIVE_HIGH>;
++		interrupts =3D <&gpio 124 IRQ_TYPE_EDGE_FALLING>;
++	};
+--=20
+2.19.0
 
