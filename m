@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B79C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39ACFC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C6D21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F34562087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCVxRaux"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C6D21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iih1kZL7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34562087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbeJIByu (ORCPT
+        id S1730085AbeJIByx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42344 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbeJIBys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:48 -0400
+        id S1729388AbeJIByv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 200212087D;
-        Mon,  8 Oct 2018 18:41:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D61F52087D;
+        Mon,  8 Oct 2018 18:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024104;
-        bh=qSYKPlZBeT2lObKkdblsCk2276OU2FRRnrqJE/535C8=;
+        s=default; t=1539024107;
+        bh=5cATYzWfwnmeB8PLYEaYHAh68um9cGqUD2Y2XDWmoyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FCVxRauxqDSx8z63YpHxMF+0MrkkKEqfviiPIhH1G3QvKi+v640pWR9bUnr2l2zZ9
-         KVC3HAXAeONlObm3bgdSh+R7bLBmnt0i5AtT5MS3fUe5IMYfxocWLF9S2bBIzxXlxb
-         tbFRNqC1DW7t7ExuS/rJMNUcP04A4a5vmYPs8VUw=
+        b=Iih1kZL7BGHJSVKspqcS3clWuKpxbcNiqllT+GbDFsSDPVNMlpYHtguSCiL4qX1wF
+         slspU+ZPTgWYcvY49LYR2aJ/Yj5M/tXpagUpKdMNOU29nnZ3ygE9S/Pm/XU8PQQk99
+         MwnDypLkwwe5Cs2wwWYxmqPBIBTCMVBCgsVRkhoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        stable@vger.kernel.org, Stefan Raspl <raspl@linux.ibm.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 21/94] mac80211: always account for A-MSDU header changes
-Date:   Mon,  8 Oct 2018 20:31:02 +0200
-Message-Id: <20181008175606.048800057@linuxfoundation.org>
+Subject: [PATCH 4.14 22/94] tools/kvm_stat: fix python3 issues
+Date:   Mon,  8 Oct 2018 20:31:03 +0200
+Message-Id: <20181008175606.087511806@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,60 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Stefan Raspl <stefan.raspl@de.ibm.com>
 
-[ Upstream commit aa58acf325b4aadeecae2bfc90658273b47dbace ]
+[ Upstream commit 58f33cfe73076b6497bada4f7b5bda961ed68083 ]
 
-In the error path of changing the SKB headroom of the second
-A-MSDU subframe, we would not account for the already-changed
-length of the first frame that just got converted to be in
-A-MSDU format and thus is a bit longer now.
+Python3 returns a float for a regular division - switch to a division
+operator that returns an integer.
+Furthermore, filters return a generator object instead of the actual
+list - wrap result in yet another list, which makes it still work in
+both, Python2 and 3.
 
-Fix this by doing the necessary accounting.
-
-It would be possible to reorder the operations, but that would
-make the code more complex (to calculate the necessary pad),
-and the headroom expansion should not fail frequently enough
-to make that worthwhile.
-
-Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Stefan Raspl <raspl@linux.ibm.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/tx.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ tools/kvm/kvm_stat/kvm_stat |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -3188,7 +3188,7 @@ static bool ieee80211_amsdu_aggregate(st
+--- a/tools/kvm/kvm_stat/kvm_stat
++++ b/tools/kvm/kvm_stat/kvm_stat
+@@ -724,7 +724,7 @@ class DebugfsProvider(Provider):
+             if len(vms) == 0:
+                 self.do_read = False
  
- 	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
- 						     2 + pad))
--		goto out;
-+		goto out_recalc;
+-            self.paths = filter(lambda x: "{}-".format(pid) in x, vms)
++            self.paths = list(filter(lambda x: "{}-".format(pid) in x, vms))
  
- 	ret = true;
- 	data = skb_push(skb, ETH_ALEN + 2);
-@@ -3205,11 +3205,13 @@ static bool ieee80211_amsdu_aggregate(st
- 	head->data_len += skb->len;
- 	*frag_tail = skb;
- 
--	flow->backlog += head->len - orig_len;
--	tin->backlog_bytes += head->len - orig_len;
--
--	fq_recalc_backlog(fq, tin, flow);
-+out_recalc:
-+	if (head->len != orig_len) {
-+		flow->backlog += head->len - orig_len;
-+		tin->backlog_bytes += head->len - orig_len;
- 
-+		fq_recalc_backlog(fq, tin, flow);
-+	}
- out:
- 	spin_unlock_bh(&fq->lock);
+         else:
+             self.paths = []
+@@ -1119,10 +1119,10 @@ class Tui(object):
+         (x, term_width) = self.screen.getmaxyx()
+         row = 2
+         for line in text:
+-            start = (term_width - len(line)) / 2
++            start = (term_width - len(line)) // 2
+             self.screen.addstr(row, start, line)
+             row += 1
+-        self.screen.addstr(row + 1, (term_width - len(hint)) / 2, hint,
++        self.screen.addstr(row + 1, (term_width - len(hint)) // 2, hint,
+                            curses.A_STANDOUT)
+         self.screen.getkey()
  
 
 
