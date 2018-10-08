@@ -2,180 +2,189 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CCAC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC53C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07592086D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:03:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="te2JQvcE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07592086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CCE92075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CCE92075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbeJHWP5 (ORCPT
+        id S1726481AbeJHWRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:15:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45327 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeJHWP4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:15:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u12-v6so5371259pfn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 08:03:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PY/9zZj3jrYjYbi3nlZY69bsIEXHzLEOEBoYD2q+JSQ=;
-        b=te2JQvcEBnI641CwkaJVC1vRPGnS7BJpjukaJTaF2OLR8DlYHWOlgCkmhERyZeRs/V
-         iAgGgo1y+cv25tBWEfAgltGeYKrFTgRDhy7sfvxNxfJ+qSVLmn3wiQZXltzNAQcqoF38
-         A/JIGcWqBLN+XWYwjUH4AL3gs5FuMMhQkD1fxN4i+dfk5pzBXoQz4EGkdp2uzp6TJY6q
-         tvbEg52hQV6VXFrbmc6Xep7LedzUsyaSE2g+HCB851G/8msoFTC82KcqMsRcoaM9jBy7
-         F28eAPx8ZskJ52kUnu4U7uK9BgIs0VNMooQGu0l10wp1tOY1c+jEdcNh6ZOl7PWYcKkI
-         rlgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PY/9zZj3jrYjYbi3nlZY69bsIEXHzLEOEBoYD2q+JSQ=;
-        b=LYJwF/kKx2L/xlV2hyetKHoEdk7k+uy70hGO0yzMoiR0UJcQ0K8XXddMmJWsqtfOrx
-         TTkZxHkbWsP/T5N5wpsYReMrxjRkvfNoWMcaObprZVnVUFIV5vxD3EuoaatfyeYOX/kW
-         8tpIvIe0M6YAmogpLoYs6jnhg2UmeLbmVg9dknqnFrPxFEtTDBgXrFk560FjiDJCEVEv
-         egNcOMJQ0wJLWfFHfnyDl26tZiwLpjhCqMY3B0mg/3+QaD5osrUme02Bx5WOHUOTglLH
-         mjrNftezjFkg3/23Dh+9xvtymuvtIa8N5l22wMHDwlCzB+zR8GZLsHY0sNOpYPtgveK2
-         61pw==
-X-Gm-Message-State: ABuFfoh2V7vasw15Q2bEJsHQz0IGCKytJUjFkeOEIJoLfoA2VcM3uDSM
-        pS1z+hkyLWEF/vSmvJjGkADZjBp9TckVKBqd/rY=
-X-Google-Smtp-Source: ACcGV62nTpHm2xN1BSnz4pYzRpKsX0SO0BKEhfjBzeKo0CLAK7eledMTH/1OFWuV6XH2yin05lnktIQl7KmzBkvLz+E=
-X-Received: by 2002:a63:e54d:: with SMTP id z13-v6mr21370978pgj.169.1539011026772;
- Mon, 08 Oct 2018 08:03:46 -0700 (PDT)
+        Mon, 8 Oct 2018 18:17:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49309 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbeJHWRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:17:43 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1C8C2206A2; Mon,  8 Oct 2018 17:05:31 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2D0F3207F3;
+        Mon,  8 Oct 2018 17:05:20 +0200 (CEST)
+Date:   Mon, 8 Oct 2018 17:05:21 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@openedev.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix
+ VBP size calculation
+Message-ID: <20181008150521.mespl2oqkc4j6tjb@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-7-jagan@amarulasolutions.com>
+ <20180927152126.vovnvwmqdfpuxgdm@flea>
+ <CAMty3ZABx9Fod5W_T7JciZEsn7jGvuM-LsBFATdA=hQ2CVwELw@mail.gmail.com>
+ <20180929135302.ymdzapz5npvapti2@flea>
+ <63b40c20-670b-1c53-bf5e-62f64e6e02f0@openedev.com>
 MIME-Version: 1.0
-References: <1538861738.4088.5.camel@HansenPartnership.com>
- <1538861851.4088.7.camel@HansenPartnership.com> <ECADFF3FD767C149AD96A924E7EA6EAF80516F31@USCULXMSG01.am.sony.com>
- <1538883209.4088.14.camel@HansenPartnership.com> <ECADFF3FD767C149AD96A924E7EA6EAF80517411@USCULXMSG01.am.sony.com>
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF80517411@USCULXMSG01.am.sony.com>
-From:   "jonsmirl@gmail.com" <jonsmirl@gmail.com>
-Date:   Mon, 8 Oct 2018 11:03:34 -0400
-Message-ID: <CAKON4Ox9M_wCrzvKCBdqP4U+wtJkSW+y4ogOJZEhjhy4vRmUPw@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-To:     Tim.Bird@sony.com
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rkrm4oitetupjisc"
+Content-Disposition: inline
+In-Reply-To: <63b40c20-670b-1c53-bf5e-62f64e6e02f0@openedev.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 9:51 AM <Tim.Bird@sony.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: James Bottomley
-> > On Sat, 2018-10-06 at 21:43 +0000, Tim.Bird@sony.com wrote:
-> > > > -----Original Message-----
-> > > > From: James Bottomley
-> > > >
-> > > > Significant concern has been expressed about the responsibilities
-> > > > outlined in the enforcement clause of the new code of
-> > > > conduct.  Since there is concern that this becomes binding on the
-> > > > release of the 4.19 kernel, strip the enforcement clauses to give
-> > > > the community time to consider and debate how this should be
-> > > > handled.
-> > > >
-> > > > Signed-off-by: James Bottomley
-> > > > <James.Bottomley@HansenPartnership.com>
-> > > > ---
-> > > >  Documentation/process/code-of-conduct.rst | 15 ---------------
-> > > >  1 file changed, 15 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/process/code-of-conduct.rst
-> > > > b/Documentation/process/code-of-conduct.rst
-> > > > index aa40e34e7785..4dd90987305b 100644
-> > > > --- a/Documentation/process/code-of-conduct.rst
-> > > > +++ b/Documentation/process/code-of-conduct.rst
-> > > > @@ -59,21 +59,6 @@ address, posting via an official social media
-> > > > account, or
-> > > > acting as an appointed
-> > > >  representative at an online or offline event. Representation of a
-> > > > project may
-> > > > be
-> > > >  further defined and clarified by project maintainers.
-> > > >
-> > > > -Enforcement
-> > > > -===========
-> > > > -
-> > > > -Instances of abusive, harassing, or otherwise unacceptable
-> > > > behavior may be
-> > > > -reported by contacting the Technical Advisory Board (TAB) at
-> > > > -<tab@lists.linux-foundation.org>. All complaints will be reviewed
-> > > > and
-> > > > -investigated and will result in a response that is deemed
-> > > > necessary and
-> > > > -appropriate to the circumstances. The TAB is obligated to maintain
-> > > > -confidentiality with regard to the reporter of an
-> > > > incident.  Further details of
-> > > > -specific enforcement policies may be posted separately.
-> > >
-> > > I think it's OK to leave the above section, as it doesn't speak to
-> > > enforcement, but rather is just a set of reporting instructions,
-> > > with an assurance of confidentiality.  This seems to me not to be
-> > > the objectionable part of this section.
-> > > (IOW, I would omit this removal from the patch).
-> >
-> > So I did think about that, but it struck me that with both paragraphs
-> > removed, the current CoC is very similar to the status quo: namely
-> > every subsystem handles their own issues and that's formalised by the
-> > "Our Responsibilities" section.  That also makes me think that whether
-> > we want a centralised channel of reporting or enforcement and what it
-> > should be also ought to be part of the debate.  The TAB was created to
-> > channel community technical input into the Linux Foundation.  That's
-> > not to say it can't provide the reporting and arbitration structure,
-> > but if we're going to do it right we should debate the expansion of its
-> > duties (and powers).
->
-> When the Code of Conflict was adopted 3 years ago, we already created
-> the central reporting mechanism, so I actually think leaving (ie including) the above
-> paragraph is closer to the status quo.  I think it's the expanded powers and
-> duties (or perception thereof) that are causing concern and I think debating
-> those to clarify intent, and adopting changes as needed  to ameliorate concerns
-> is worthwhile.
 
-In most cases any CoC is not going to be much of a problem. The
-problem is going to occur when one of the top five or so people is
-accused of a violation. That is going to end up in the mainstream
-press. Big money and corporate power will be at play.  The CoC needs
-needs to be designed to handle something like the Bredan Eich
-situation.  In that situation he was initially attacked by external
-parties. I will keep recommending that the legal community weigh in
-before making this official policy. We are focusing on the case of the
-random individual, but I suspect the problem lies in an attack on the
-leadership.
+--rkrm4oitetupjisc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> I believe that in the vast majority of cases, the TAB will end up
-> performing a mediator role to smooth hurt feelings and remind and encourage
-> improved communication - very similar to what we've done in the past.  I really
-> believe that bans will continue to be very few and far between, as they have
-> been historically (I can only think of 3 in the past decade.)
->  -- Tim
->
-> _______________________________________________
-> Ksummit-discuss mailing list
-> Ksummit-discuss@lists.linuxfoundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
+On Mon, Oct 01, 2018 at 01:39:17PM +0530, Jagan Teki wrote:
+> On Saturday 29 September 2018 07:23 PM, Maxime Ripard wrote:
+> > On Thu, Sep 27, 2018 at 09:50:34PM +0530, Jagan Teki wrote:
+> > > On Thu, Sep 27, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.=
+com> wrote:
+> > > >=20
+> > > > On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
+> > > > > According to horizontal and vertical timings are defined
+> > > > > per the diagram from include/drm/drm_modes.h
+> > > > >=20
+> > > > > Back porch =3D [hv]total - [hv]sync_end
+> > > > >=20
+> > > > > So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
+> > > > > mode->vtotal - mode->vsync_end
+> > > > >=20
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > >   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+> > > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu=
+/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > index 1c7e42015645..599284971ab6 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct su=
+n6i_dsi *dsi,
+> > > > >        regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
+> > > > >                     SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
+> > > > >                                               mode->vsync_start) |
+> > > > > -                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
+> > > > > -                                            mode->vdisplay));
+> > > > > +                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
+> > > > > +                                            mode->vsync_end));
+> > > >=20
+> > > > Is it purely theoretical, or did you find some source that back tha=
+t?
+> > >=20
+> > > VSA is done as per that, sync_end - sync start would give sync time.
+> >=20
+> > That's a different register though.
+> >=20
+> > > VBP also done in BPI-M64-bsp[1] which results back porch existing code
+> > > results fron porch.
+> > >=20
+> > > [1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sun=
+xi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L955
+> >=20
+> > That code does back porch - sync length. Such a calculation doesn't
+> > make much sense as is, but you're saying that it results in the front
+> > porch. Again, what makes you say that?
+>=20
+> No what code shows is not a real back porch value used for drm it's panel
+> back porch value which is a DTS property in BSP.
+> (I made wrong comment on previous mail as front porch, sorry)
+>=20
+> here is the real code
+>=20
+> from drivers/video/sunxi/disp2/disp/de/disp_lcd.c
+> timmings->ver_sync_time=3D panel_info->lcd_vspw;
+> timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_vspw;
+>=20
+>=20
+> u32 vbp =3D panel->lcd_vbp;
+> u32 vspw =3D panel->lcd_vspw;
+> dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
+>=20
+> So,
+>=20
+> dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - panel->lcd_vs=
+pw;
+>=20
+> =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_v=
+spw
+> =3D>  timmings->ver_back_porch
+> =3D>  mode->vtotal - mode->end
+>=20
+> VSA, which a proper value.
+>=20
+> dsi_dev[sel]->dsi_basic_size0.bits.vsa =3D vspw;
+> =3D> panel_info->lcd_vspw;
+> =3D> timmings->ver_sync_time
+> =3D> mode->vsync_end - mode->vsync_start
 
+Then please write that in your commit log.
 
+Maxime
 
--- 
-Jon Smirl
-jonsmirl@gmail.com
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rkrm4oitetupjisc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu7cjAACgkQ0rTAlCFN
+r3RZzg//anglhD3n/3cfoeaqVGfJmTzOeVNGi5yFBctOeJU6WMiv3uehiqkW1Itt
+wd8mhA/so2Z5gfEs4kP5OfnKlb/3dkLRDbl0R85TMqb1VfEVGto7wCDpoX3mByJf
+/WAGbjD0oEJdamrr0oxILL7F4H0JCc96PdGgXFgJasCKEkvTUpnHv/63awomLTuC
+qVOOtlHm14PZVxqFMWhbh+uhoBiKIGZ6CGnp6dbxqZ6mdYlqRsWg1hTXsjkDOkPa
+qnMn9EfLCjlqX5PwHoteunlwDzVBEU73p4l5ZCWIs/QK158eN9J3KlarC0c/enY4
+evxQb4dOT1EjE5Aj+BcC3ecx+uTii816A7twl2KlsntpfU9OUAvXou5fnR913uGK
+pyTQgMdCSZmycTs8vduJeBPLSjbbsYUkr0ZvVWm1sxRAFHb9JzAtqBq8aSkfHVQ3
+XNbCOB4YEBZNhDR0nn3A70FQ/M5jSB79sq5mhVSMUbxqznSJNIA+Gzqvdp0qYbc4
+RUYt/O/snznAhBpQBSSWArGQ/zUpKREXswVvnl3d9w7Olam0+iHs2blC7yuJ43u2
+iSVd4slONW7Pi+9YQ6BmKThQerYTs/v+GRq+LxbF7YG9dXljiS69KB4weDhQyAU9
+0URN6S/wZgXZrnGlGggoQbGnTRjgFT5idgAfo5zBbD1yb4x6Yds=
+=M3gJ
+-----END PGP SIGNATURE-----
+
+--rkrm4oitetupjisc--
