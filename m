@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC94C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F429C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3006214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 545762087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDZ1bdy3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3006214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q14z4BM8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545762087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbeJIBxq (ORCPT
+        id S1729802AbeJIBxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:53:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41114 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:53:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbeJIBxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:53:45 -0400
+        id S1727315AbeJIBxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:53:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 826ED2087D;
-        Mon,  8 Oct 2018 18:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 786B021479;
+        Mon,  8 Oct 2018 18:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024041;
-        bh=10UEYBAFkvr5BlGXhle9MidSF5aDEnXV/D61cxKe1Sk=;
+        s=default; t=1539024044;
+        bh=Vb1MIHgOiNOIy1TUCz9lTbrGJaFTvIoPG6NvlpuzIgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lDZ1bdy3wBFwWevcjHsKJBrkVXjhyvuOK5o5qD62uyWCV5Vy8Wkd0RgNtJpSTKpoA
-         ZCJ8Igc1BZGH41fECWpHGLiqwR5+4uW0ZkCeiVJD4gUHgNyF3GR8fcpQ6M1+GQNj/G
-         YjyDBq0R6fVdhZhRDA51VPj01swxZvGEN1P/jC+U=
+        b=Q14z4BM8eSRWpM4+0hYgGYSb1S4G1FaZ85QuaMS+1MqTvxzuwUa0rDYTvrLo01KHa
+         m2q7MlBaSEF5/ap+WY8PfPrIHuc+8LAJitZiAWYDysIhJ7DAii0FXDmTEVcBX+1QDV
+         uZ5ImWCbU0bngGpnr/JBbAV8I4ye84HdxyNOAu5U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashish Samant <ashish.samant@oracle.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.9 59/59] ocfs2: fix locking for res->tracking and dlm->tracking_list
-Date:   Mon,  8 Oct 2018 20:32:06 +0200
-Message-Id: <20181008175553.162787766@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 42/59] arch/hexagon: fix kernel/dma.c build warning
+Date:   Mon,  8 Oct 2018 20:31:49 +0200
+Message-Id: <20181008175550.812431935@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -67,47 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ashish Samant <ashish.samant@oracle.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit cbe355f57c8074bc4f452e5b6e35509044c6fa23 upstream.
+[ Upstream commit 200f351e27f014fcbf69b544b0b4b72aeaf45fd3 ]
 
-In dlm_init_lockres() we access and modify res->tracking and
-dlm->tracking_list without holding dlm->track_lock.  This can cause list
-corruptions and can end up in kernel panic.
+Fix build warning in arch/hexagon/kernel/dma.c by casting a void *
+to unsigned long to match the function parameter type.
 
-Fix this by locking res->tracking and dlm->tracking_list with
-dlm->track_lock instead of dlm->spinlock.
+../arch/hexagon/kernel/dma.c: In function 'arch_dma_alloc':
+../arch/hexagon/kernel/dma.c:51:5: warning: passing argument 2 of 'gen_pool_add' makes integer from pointer without a cast [enabled by default]
+../include/linux/genalloc.h:112:19: note: expected 'long unsigned int' but argument is of type 'void *'
 
-Link: http://lkml.kernel.org/r/1529951192-4686-1-git-send-email-ashish.samant@oracle.com
-Signed-off-by: Ashish Samant <ashish.samant@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-Acked-by: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org
+Patch-mainline: linux-kernel @ 07/20/2018, 20:17
+[rkuo@codeaurora.org: fixed architecture name]
+Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ocfs2/dlm/dlmmaster.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/hexagon/kernel/dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -589,9 +589,9 @@ static void dlm_init_lockres(struct dlm_
+--- a/arch/hexagon/kernel/dma.c
++++ b/arch/hexagon/kernel/dma.c
+@@ -68,7 +68,7 @@ static void *hexagon_dma_alloc_coherent(
+ 			panic("Can't create %s() memory pool!", __func__);
+ 		else
+ 			gen_pool_add(coherent_pool,
+-				pfn_to_virt(max_low_pfn),
++				(unsigned long)pfn_to_virt(max_low_pfn),
+ 				hexagon_coherent_pool_size, -1);
+ 	}
  
- 	res->last_used = 0;
- 
--	spin_lock(&dlm->spinlock);
-+	spin_lock(&dlm->track_lock);
- 	list_add_tail(&res->tracking, &dlm->tracking_list);
--	spin_unlock(&dlm->spinlock);
-+	spin_unlock(&dlm->track_lock);
- 
- 	memset(res->lvb, 0, DLM_LVB_LEN);
- 	memset(res->refmap, 0, sizeof(res->refmap));
 
 
