@@ -2,168 +2,191 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0FCC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B20DC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587CC2086D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:06:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587CC2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 241AE2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RpIW150B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241AE2087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbeJHNQj (ORCPT
+        id S1726564AbeJHNX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:16:39 -0400
-Received: from mout.gmx.net ([212.227.15.15]:34551 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbeJHNQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:16:38 -0400
-Received: from [192.168.20.60] ([92.116.184.237]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MDQUP-1fvKiv0FOn-00GreV; Mon, 08
- Oct 2018 08:06:28 +0200
-Received: from [192.168.20.60] ([92.116.184.237]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MDQUP-1fvKiv0FOn-00GreV; Mon, 08
- Oct 2018 08:06:28 +0200
-Subject: Re: [PATCH v3 5/6] parisc: wire up rseq system call
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-6-git-send-email-firoz.khan@linaro.org>
- <feb53cb6-e20b-42c3-5b53-8b310c772545@gmx.de>
- <CALxhOnjjWQRi6G4N-o+GZzkqc_zAYNT3RaN+P6bdEXeE=uY6-g@mail.gmail.com>
-From:   Helge Deller <deller@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
- xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
- y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
- +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
- KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
- OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
- AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
- UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
- +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
- iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
- 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
- vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
- zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
- +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
- UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
- T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
- gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
- BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
- 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
- kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
- lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
- ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
- KrhlU0uMP9QTB5WAUvxvGy8=
-Message-ID: <22745bed-baf6-4f08-6801-3529021cf33e@gmx.de>
-Date:   Mon, 8 Oct 2018 08:06:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <CALxhOnjjWQRi6G4N-o+GZzkqc_zAYNT3RaN+P6bdEXeE=uY6-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 8 Oct 2018 09:23:27 -0400
+Received: from mail-he1eur01on0052.outbound.protection.outlook.com ([104.47.0.52]:39168
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725950AbeJHNX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 09:23:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=377+9s94No5ywoKbP4P5G0yYQdgTHhWDy2L/qS3bJi0=;
+ b=RpIW150BkJEud/bzgoUT+yMvvjdRJS7t6TfJD4D5tmJUW1oxc5vgM/lyT76rHFXjWvoxzaInl8cpZEwyvcAuB7Iu7/KxibOKNeF0ZTkxvRX66wwF6Jcz/JowXvNiVuYcFH1hVq5oTAwok637J8A+Wq5FmQEd055iPJlX6yzkDBk=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3866.eurprd04.prod.outlook.com (52.134.71.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.26; Mon, 8 Oct 2018 06:13:06 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::5c30:b387:c71a:7071]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::5c30:b387:c71a:7071%2]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
+ 06:13:06 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V3] cpufreq: imx6q: read OCOTP through nvmem for
+ imx6ul/imx6ull
+Thread-Topic: [PATCH V3] cpufreq: imx6q: read OCOTP through nvmem for
+ imx6ul/imx6ull
+Thread-Index: AQHUXqRZUOa7zfBgskeI0Pg4D0kQtaUU3DyAgAACR/A=
+Date:   Mon, 8 Oct 2018 06:13:06 +0000
+Message-ID: <DB3PR0402MB391676A53645F0E1C68BAA85F5E60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1538961000-2109-1-git-send-email-Anson.Huang@nxp.com>
+ <20181008060423.cz5qrxfoz2seo2e3@vireshk-i7>
+In-Reply-To: <20181008060423.cz5qrxfoz2seo2e3@vireshk-i7>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9uYmU3LmjfAJ+HDG+JWGG2r+pavFs+h+Kg2F7UDTTvXNPHi+zlG
- wSZS5xSdmA0r8KAwFOP6Hgx80G0fV0VX0ynGjUkkj7RztoyPVllxunfWW3843e7T8e5vB77
- rhL2AF4jGXinVff1UNBkCoyR7DyFvgq5TUThNW8ZcMOFKeny6cg1krDjLc0qVkYEvxZc6EB
- L+LW8836i3HNB8iolpcGw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6HLwKVputgs=:69R5WazUSGYugSKN2OQyhY
- UTNJE0nSxVv9JT7rpQPjMAWM2rr8Dwn/yOq0LVhNW/78KSIjXiTIs5oByqi9i9jeiZS/YItpn
- 6/2hGdHXc8lmnguD/R4nYP3Iu6Haeg+LuXor7Hh/g/WuAptCriiOoX+NHoSymUXNsjzlweOqv
- Xt0PZTp5rlA2+ma/QT5vwSbbZh5sgKyJ+tTldvTJRe05PPpceqDAemjcWUc1gRJ6iGay09H+x
- Y9nMLYYaad2Hq6lwjzyHZGC9brUq5ahy7l2omXAyP/HNqBpqDamhu0lBWXBI+9yUb8ejOP2tT
- cvTE9JQKchONgEzJBUwLnJEpnDTKOEeuSDeuexgbRVOQCIxfs96N0T2Gv3P0z07OJFCfrXwx2
- y+hyoldwS1CmFRStPeR7ozs+mE9tDOIHrEWj4HHSGCxhzZ7MtIzqBeeGvxPQ9B3g4T4fVfBO9
- sDOwt+1/QLdNBPU8Zka7klu63Q/8JDh0vamYkvxcn7gIRcyvpIhBApbFA0SG1dKQdBK0y40Ig
- kG7JAp7npjQE0HGL03/JvWby5LL+FBtXn/tcgRUflV8pVwpnik/BZs8mP1EvuT7S7kCtyUtc8
- xHoABTQDK+g6XaLqnpTyBU9SiGyw0FezfJtBo13JJyzSx1loiTfYq4tKLj3xENovgeNSGC/u7
- R6ZNXzdRPhpZOHdZFjBSyb+UYy4mwI7X14ysDZoZj8oSO+FMGVFDUUd/5EetzJ3rrM08XRuky
- dGdkJW1XOqyriCEqajZvEwzqhaUT9a/70I56+3y5hRuusk0a4dq+UurkpGquHYJiMQHDPnaGh
- 152rtaWmrpjekYx5DuYZm0UynSC5D8hemWCczsqbHVADBZt9bo=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3866;6:3jjip4Ldkq2z47n6xQASj1dAMYrTTcqFMd1OWlQ4LWnfClcejJfyOf5j7BXYJYAFrUoGhA16YfsctBMJZ3o/u0oHqnzG3NZP+DM/nU9r/yI3HbR7G449cEYlPMobmYPvDCKgdpir2cpO5cquHUduYHtea8XGb/4LUXvVDk5PN1cVQpZoCWgiPlp5w8HTo+EYLJBomU1AY1qmP7ZrC3MYKM1ZWV+Y83+zocaJulSX3AvozSrhG11AVOTQecvjltBwvFRkTiKj7MWlcRf31YyvQxjwmYY+xLn7EIH3U5mrGk+ndrnCygDIsztTznCbRaVRz0jGHPfZu9nHNOxgHkSu0hJ3zelJKle+CX3NbccWCoUSSU7PA+KPAEgB2wsyP3VE3AQAtL8XvK2zZ0O+inyVHRbpCUWTi8xeUvfeebPbcNsio/CAC1jZqcnw+dEbS2hthrUq4rlcK5DxRuIWS07L+Q==;5:3uqWSKwwepc0Em5RoCS6jz7Eq7jmwcR5tVQosFNidvhxLUTRcBefDuium+H1W13Uywt0PJAgRIeb74mTcfG78sbCzsgaCjHimbN2m41tj9X4yn3viiwQAW+Pl2dt/TCnRB6s6LleH7AIEwv4kPtJnSTCtJDPD6EQIvBvfV4DxH4=;7:0qRwQcjdE1eNjlnVGABT0ppvdTkpTEqtm1Kz3gkDmadhEzH74/z3wJdxKeebGdB4Azg8TQ6XV/J8svFnPfDW3iOowdRZvrXpamqeB+BDmHQoFUX+d+cWOYP4xGTUrtVQQGtziPes9nCNeN34/u0S9Kn+InZdFabw7N4upySW+S7IFivwwVW+ZM2pmgCi6aFBhm54ucDsCbD2o6xRIWobwb7n0avIoJRiwHV7iZ4uuhO4itQkacIEuG08UrvNbpbc
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bb4a9c8a-9c63-498f-3ebd-08d62ce51d05
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3866;
+x-ms-traffictypediagnostic: DB3PR0402MB3866:
+x-microsoft-antispam-prvs: <DB3PR0402MB38668637FD9B6A937DDBCD89F5E60@DB3PR0402MB3866.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:DB3PR0402MB3866;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3866;
+x-forefront-prvs: 081904387B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(39860400002)(366004)(13464003)(51914003)(199004)(189003)(68736007)(53936002)(229853002)(478600001)(44832011)(33656002)(14454004)(6116002)(3846002)(66066001)(74316002)(25786009)(6436002)(2900100001)(4326008)(305945005)(5250100002)(9686003)(7736002)(55016002)(6246003)(316002)(8676002)(476003)(71200400001)(71190400001)(86362001)(81166006)(81156014)(106356001)(102836004)(8936002)(26005)(6916009)(97736004)(575784001)(7696005)(105586002)(53546011)(76176011)(11346002)(5660300001)(486006)(6506007)(186003)(446003)(256004)(99286004)(54906003)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3866;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: xORrVHkc5A68Q0mx2QmQkmS9BX+zSAU/hujwkeb2usUCLLb3Z8oY3MMmwvCudqFR00HnUx+M+he6IN8MjFDZ+RJpAv5Jyng4f/YdainJ2dto494LPtDaFO1UCUeENFKUqrIx83rZbxYmm9RKQy4MbdmNmHO30MiZBrNauoJAWSk8qrc+xnOlL0p5jozeKMZkrmQwI4b1B8PbPtnsq0oyEljbpDKWwhty94sFImY6tI0Wo/ery76bwg3g/C7qFdChJOkKGt9OQU/oUp4ldRLKIEBvOGzDZI4IF8WmJpDkVDEyKmtuAJKkGW0m7xEjhz5XfdTWcRGoK+mL7ZrkAsh2NOZPXEru6hp3LGTlto+lkoY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb4a9c8a-9c63-498f-3ebd-08d62ce51d05
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 06:13:06.4599
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3866
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.10.2018 07:52, Firoz Khan wrote:
-> Hi Helge,
-> 
-> On Mon, 8 Oct 2018 at 11:11, Helge Deller <deller@gmx.de> wrote:
->>
->> On 08.10.2018 07:16, Firoz Khan wrote:
->>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
->>> ---
->>>  arch/parisc/kernel/syscalls/syscall.tbl | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
->>> index 4e85293..4334bb7 100644
->>> --- a/arch/parisc/kernel/syscalls/syscall.tbl
->>> +++ b/arch/parisc/kernel/syscalls/syscall.tbl
->>> @@ -349,4 +349,5 @@
->>>  347     common  preadv2                         sys_preadv2                     compat_sys_preadv2
->>>  348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
->>>  349     common  statx                           sys_statx
->>> -350  common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
->>> \ No newline at end of file
->>> +350  common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
->>> +351  common  rseq                            sys_rseq                        compat_sys_rseq
->>
->> You can't add the rseq syscall for parisc yet.
->> It needs additional code in the kernel for parisc which hasn't been tested yet.
->> See my initial untested patch at https://patchwork.kernel.org/patch/10495209/
-> 
-> Thanks for your update!
-> 
-> When I compiled the kernel I got below warnings.
-> 
-> <stdin>:696:2: warning: #warning syscall nfsservctl not implemented [-Wcpp]
-> <stdin>:1335:2: warning: #warning syscall rseq not implemented [-Wcpp]
-> 
-> I added an IGNORE entry nfsservctl in script/checksyscalls.sh because this
-> syscall is gone. But we definitely have to keep rseq entry on parisc
-> architecture.
+Hi, Viresh
 
-I prefer to keep the warning for rseq for now.
-It reminds me that we still may want the rseq syscall.
-If the warning is a problem, you may simply add the __IGNORE_rseq define. 
+Anson Huang
+Best Regards!
 
-> I can ignore this patch currently as your patch not yet tested.
-> 
-> FYI, I have merged the system call table files based on our previous
-> discussions.
-> Please comment on that.
 
-I'll do after testing.
+> -----Original Message-----
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Sent: Monday, October 8, 2018 2:04 PM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: rjw@rjwysocki.net; linux-pm@vger.kernel.org;
+> linux-kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
+> Subject: Re: [PATCH V3] cpufreq: imx6q: read OCOTP through nvmem for
+> imx6ul/imx6ull
+>=20
+> On 08-10-18, 09:10, Anson Huang wrote:
+> > On i.MX6UL/i.MX6ULL, accessing OCOTP directly is wrong because the
+> > ocotp clock needs to be enabled first. Add support for reading OCOTP
+> > through the nvmem API, and keep the old method there to support old
+> > dtb.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > ---
+> > changes since V2:
+> > 	Add put node when reading ocotp register done.
+> >  drivers/cpufreq/imx6q-cpufreq.c | 53
+> > ++++++++++++++++++++++++++++-------------
+> >  1 file changed, 36 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/cpufreq/imx6q-cpufreq.c
+> > b/drivers/cpufreq/imx6q-cpufreq.c index b2ff423..38b67f8 100644
+> > --- a/drivers/cpufreq/imx6q-cpufreq.c
+> > +++ b/drivers/cpufreq/imx6q-cpufreq.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/cpu_cooling.h>
+> >  #include <linux/err.h>
+> >  #include <linux/module.h>
+> > +#include <linux/nvmem-consumer.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_address.h>
+> >  #include <linux/pm_opp.h>
+> > @@ -290,20 +291,33 @@ static void
+> imx6q_opp_check_speed_grading(struct device *dev)
+> >  #define OCOTP_CFG3_6ULL_SPEED_792MHZ	0x2
+> >  #define OCOTP_CFG3_6ULL_SPEED_900MHZ	0x3
+> >
+> > -static void imx6ul_opp_check_speed_grading(struct device *dev)
+> > +static int imx6ul_opp_check_speed_grading(struct device *dev)
+> >  {
+> > -	struct device_node *np;
+> > -	void __iomem *base;
+> >  	u32 val;
+> > +	int ret =3D 0;
+> >
+> > -	np =3D of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
+> > -	if (!np)
+> > -		return;
+> > +	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
+> > +		ret =3D nvmem_cell_read_u32(dev, "speed_grade", &val);
+> > +		if (ret)
+> > +			return ret;
+> > +	} else {
+> > +		struct device_node *np;
+> > +		void __iomem *base;
+> > +
+> > +		np =3D of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
+> > +		if (!np)
+> > +			return -ENOENT;
+> > +
+> > +		base =3D of_iomap(np, 0);
+>=20
+> You could have done of_node_put(np); right here and remove the below two
+> calls to the same.
+=20
+Thanks for the suggestion, please help review V4.
 
-Thanks!
-Helge
- 
-> I would appreciate if you can perform a boot test without this patch
-> on the actual
-> platform.
-> 
-> Firoz
-> 
->>
->> Helge
+Anson.
 
+>=20
+> > +		if (!base) {
+> > +			dev_err(dev, "failed to map ocotp\n");
+> > +			of_node_put(np);
+> > +			return -EFAULT;
+> > +		}
+> >
+> > -	base =3D of_iomap(np, 0);
+> > -	if (!base) {
+> > -		dev_err(dev, "failed to map ocotp\n");
+> > -		goto put_node;
+> > +		val =3D readl_relaxed(base + OCOTP_CFG3);
+> > +		iounmap(base);
+> > +		of_node_put(np);
+> >  	}
+>=20
+> --
+> viresh
