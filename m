@@ -2,75 +2,115 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B321C64EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AC2C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E16F20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:56:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuAN3Mwp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E16F20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C6AF320878
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:58:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AF320878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbeJHPGk (ORCPT
+        id S1726689AbeJHPI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:06:40 -0400
-Received: from mail-lj1-f169.google.com ([209.85.208.169]:45825 "EHLO
-        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbeJHPGj (ORCPT
+        Mon, 8 Oct 2018 11:08:28 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.140]:25492 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725973AbeJHPI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:06:39 -0400
-Received: by mail-lj1-f169.google.com with SMTP id j4-v6so13159597ljc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 00:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=zA01YImvXjUTOzIym6Ew0H7c11/qtNZ9sVNn6i+n30k=;
-        b=XuAN3Mwps8AZqpy272QQ1JuKDenCvI1gSwtLZ/0uz06qsqN7yiKSeCw2bxRe4pqJlz
-         eu/Cqj5r9RHOq4OnkGqPaIZstwLPzo1C1LziIxMwIXHqHXgtRmxRG+XkjqajRZGnrpuv
-         7OSU/dHUTHcnAgt/vwVXTTxiql00gzZR+WaHxDdMf975O3r1TzROfuDkYLnBvWfKVVcE
-         DqAKBxxHpZkdjUs92OuIOW4vi516JLE+4LZaWKv8gMQ3+ymtIESKxZUm4szrImk/tQu7
-         rxkDti4c2aa5JI56tC8B6VUtRxoZU3BBCysK9taOIhrhSX44KPdp+MQoHqqCN90iY/Gd
-         u5lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=zA01YImvXjUTOzIym6Ew0H7c11/qtNZ9sVNn6i+n30k=;
-        b=oEW9RtSumQelVXQX75N6FQtVSm+HyCrGMGmGh7X289LRRa8ZnogBPTcO4dbBjjGjuo
-         zyQ+/k1np4RnyW+/5j88QAa5Ags0GpDW3lvknoICxcf0XLtscs82hlbV05+denC10K96
-         H+Tij+2nFuO6eBy2fAPiLmDLAw6J5yDGNUhsUJEHx04toDE1ggfE3ccVS+h4G6wYOKrx
-         lVfj8+ivOh2W6XMvMmVPurJKkIc+sZU25TEZ/l6luTiA2NZZWWlVPR2alGP8/+y3SsYx
-         cdwHo7lJBhBiOTnQcbguXUQEpVEaXAwo8F4HY3GV9CQKELl4lpfv/0IaU9BKfn7/Ertv
-         rNCw==
-X-Gm-Message-State: ABuFfoh/5rt9oQRVvyAf4/jqYirug6/H0tXlwXWSF3Nk+npZEs5shhX/
-        NFvZq9xzc0lipJuinDiTnWe02fJe
-X-Google-Smtp-Source: ACcGV62rw7D31J845K1FlR/cd8mQpYe4b/zcflQ0mDK4k9ocNWE2OrIGJASfscyb6hUrXMW+ca+ybA==
-X-Received: by 2002:a2e:20da:: with SMTP id g87-v6mr12178414lji.88.1538985372145;
-        Mon, 08 Oct 2018 00:56:12 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-140.elisa-laajakaista.fi. [91.159.62.140])
-        by smtp.gmail.com with ESMTPSA id f73-v6sm3449600lfl.80.2018.10.08.00.56.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 00:56:11 -0700 (PDT)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Subject: CHECKPATCH: strange warning on alignment modifier
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <15d77776-0551-5b7d-935e-16496c3800e2@gmail.com>
-Date:   Mon, 8 Oct 2018 10:56:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 8 Oct 2018 11:08:27 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id A98A6400E1053
+        for <linux-kernel@vger.kernel.org>; Mon,  8 Oct 2018 02:58:00 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9QQSgYVqpaSey9QQSguwZc; Mon, 08 Oct 2018 02:58:00 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:45196 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g9QQS-002uHF-6D; Mon, 08 Oct 2018 02:58:00 -0500
+To:     Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20181008073336.17362-1-loic.tourlonias.lkml@gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] staging: emxx_udc: remove unused code
+Message-ID: <ef326b3d-1d65-3fdb-b18e-428236874335@embeddedor.com>
+Date:   Mon, 8 Oct 2018 09:57:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181008073336.17362-1-loic.tourlonias.lkml@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g9QQS-002uHF-6D
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:45196
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,30 +118,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-I have the following fragment of code:
+On 10/8/18 9:33 AM, Loic Tourlonias wrote:
+> Remove useless code inside if_0 endif
+> 
+> Signed-off-by: Loic Tourlonias <loic.tourlonias.lkml@gmail.com>
+> ---
+>  drivers/staging/emxx_udc/emxx_udc.h | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/staging/emxx_udc/emxx_udc.h b/drivers/staging/emxx_udc/emxx_udc.h
+> index 8337e38c238a..78fa60192a14 100644
+> --- a/drivers/staging/emxx_udc/emxx_udc.h
+> +++ b/drivers/staging/emxx_udc/emxx_udc.h
+> @@ -10,10 +10,6 @@
+>  
+>  /*---------------------------------------------------------------------------*/
+>  /*----------------- Default undef */
+> -#if 0
+> -#define DEBUG
+> -#define UDC_DEBUG_DUMP
+> -#endif
+>  
 
-+struct my_struct {
-+       atomic_long_t l __aligned(sizeof(atomic_long_t));
-+} __aligned(sizeof(atomic_long_t));
+Don't remove that code. This is a common practice for debugging.
 
+Whenever the developer needs to debug something in the whole driver, he/she
+just has to change that #if 0 to #if 1 and then all the code under DEBUG
+and UDC_DEBUG_DUMP will be enabled.
 
-triggering this warning, when fed to checkpatch.pl:
+Notice that UDC_DEBUG_DUMP is being used in drivers/staging/emxx_udc/emxx_udc.c
 
-WARNING: function definition argument 'atomic_long_t' should also have 
-an identifier name
-#19: FILE: path/to/file.h
-+	atomic_long_t l __aligned(sizeof(atomic_long_t));
-
-
-gcc [(Ubuntu 7.3.0-16ubuntu3) 7.3.0] seems to be happy about it
-
-I am using the HEAD from mainline.
-
-My intent is to specify the alignment of both the field and the 
-structure (yes, probably redundant in this single-field case).
-
-If I am doing something wrong, I can't figure out what it is, but I 
-don't understand why the WARNING is mentioning a function definition.
-
+Thanks
 --
-igor
+Gustavo
