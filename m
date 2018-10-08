@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C6AC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79545C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C092089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DF6F214DC
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqIIEVrL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C092089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2y/GpgE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF6F214DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJHWiH (ORCPT
+        id S1727444AbeJHWiI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727034AbeJHWiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:07 -0400
+        id S1727370AbeJHWiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 775522089D;
-        Mon,  8 Oct 2018 15:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEC88214FF;
+        Mon,  8 Oct 2018 15:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012352;
-        bh=F+ECAOT6aYPdsOB/wj0MyeryCyaGuDke5UA2ORJDJVw=;
+        s=default; t=1539012353;
+        bh=BKW7hA2GzJvXMjtfwNO/aBqgB34CU8Cvx7gas2jcDAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bqIIEVrLifdSkGD3yo1CWneWR9+kgQistfsNXzG+70YihCJgo/vNXc9iQVOBeMJ5x
-         YXLPoP8zPbHsxRhHdkOHpb/0svWdB6kMZEdtc3+nB4eE+9hLsBmtvFsSDzNfU/5z6l
-         ILVnHKdBNNgGPGF2fVCs3dAxZ1s1mSWKEnhAuCek=
+        b=p2y/GpgElw9RezX+/FznuDCbkzhzM5LJys8kTi3vHQBPPhMn8QPNgOTb7RgRaAgsT
+         wuyb2hxkPs9RulHBO/zYBxMVrDChlD+LFh0F2G7Lm9eDP0QDMhgcvKLv8bT9/HJDny
+         tQ7reW1hz/zqIro7/8gNTn0CYyq78Rw7hBtdEjOw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Jose Abreu <joabreu@synopsys.com>,
+Cc:     Sabrina Dubroca <sd@queasysnail.net>,
         "David S . Miller" <davem@davemloft.net>,
-        Joao Pinto <jpinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 26/58] net: stmmac: Fixup the tail addr setting in xmit path
-Date:   Mon,  8 Oct 2018 11:24:51 -0400
-Message-Id: <20181008152523.70705-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 27/58] selftests: pmtu: properly redirect stderr to /dev/null
+Date:   Mon,  8 Oct 2018 11:24:52 -0400
+Message-Id: <20181008152523.70705-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -57,64 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 0431100b3d82c509729ece1ab22ada2484e209c1 ]
+[ Upstream commit 0a286afee5a1e8dca86d824209dbd3200294f86f ]
 
-Currently we are always setting the tail address of descriptor list to
-the end of the pre-allocated list.
+The cleanup function uses "$CMD 2 > /dev/null", which doesn't actually
+send stderr to /dev/null, so when the netns doesn't exist, the error
+message is shown. Use "2> /dev/null" instead, so that those messages
+disappear, as was intended.
 
-According to databook this is not correct. Tail address should point to
-the last available descriptor + 1, which means we have to update the
-tail address everytime we call the xmit function.
-
-This should make no impact in older versions of MAC but in newer
-versions there are some DMA features which allows the IP to fetch
-descriptors in advance and in a non sequential order so its critical
-that we set the tail address correctly.
-
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Fixes: f748be531d70 ("stmmac: support new GMAC4")
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Fixes: d1f1b9cbf34c ("selftests: net: Introduce first PMTU test")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Acked-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/testing/selftests/net/pmtu.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 04de46601c87..1c6ba74e294b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2186,8 +2186,7 @@ static int stmmac_init_dma_engine(struct stmmac_priv *priv)
- 		stmmac_init_tx_chan(priv, priv->ioaddr, priv->plat->dma_cfg,
- 				    tx_q->dma_tx_phy, chan);
+diff --git a/tools/testing/selftests/net/pmtu.sh b/tools/testing/selftests/net/pmtu.sh
+index f8cc38afffa2..03e0566740de 100755
+--- a/tools/testing/selftests/net/pmtu.sh
++++ b/tools/testing/selftests/net/pmtu.sh
+@@ -175,8 +175,8 @@ setup() {
  
--		tx_q->tx_tail_addr = tx_q->dma_tx_phy +
--			    (DMA_TX_SIZE * sizeof(struct dma_desc));
-+		tx_q->tx_tail_addr = tx_q->dma_tx_phy;
- 		stmmac_set_tx_tail_ptr(priv, priv->ioaddr,
- 				       tx_q->tx_tail_addr, chan);
- 	}
-@@ -2982,6 +2981,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ cleanup() {
+ 	[ ${cleanup_done} -eq 1 ] && return
+-	ip netns del ${NS_A} 2 > /dev/null
+-	ip netns del ${NS_B} 2 > /dev/null
++	ip netns del ${NS_A} 2> /dev/null
++	ip netns del ${NS_B} 2> /dev/null
+ 	cleanup_done=1
+ }
  
- 	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
- 
-+	tx_q->tx_tail_addr = tx_q->dma_tx_phy + (tx_q->cur_tx * sizeof(*desc));
- 	stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr, queue);
- 
- 	return NETDEV_TX_OK;
-@@ -3189,6 +3189,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
- 
- 	stmmac_enable_dma_transmission(priv, priv->ioaddr);
- 
-+	tx_q->tx_tail_addr = tx_q->dma_tx_phy + (tx_q->cur_tx * sizeof(*desc));
- 	stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr, queue);
- 
- 	return NETDEV_TX_OK;
 -- 
 2.17.1
 
