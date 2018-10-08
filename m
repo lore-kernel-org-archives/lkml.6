@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D254AC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A5FC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98E782156F
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E342156F
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sujt5O+o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98E782156F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zXoPwHry"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E342156F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbeJHWje (ORCPT
+        id S1728961AbeJHWjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728918AbeJHWjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:33 -0400
+        id S1728918AbeJHWjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AEFD21570;
-        Mon,  8 Oct 2018 15:27:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F01E21565;
+        Mon,  8 Oct 2018 15:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012438;
-        bh=PtC5GPjln3PJHAY06Uf2tyEiTgpacxpkWuxo7aNABdQ=;
+        s=default; t=1539012440;
+        bh=j9b68dN/K7hRPh5ACE2kSoDAIJwTzIy2l3qVMRhodoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sujt5O+o+Kl4WSKFSSIhC9U0HBv9sUBPFrYvF5oeRcLhPsAFjwGQpzQFtnsvzjC+a
-         UQewlWkcV/VtcrSUo76exYRGGKCiYEQ6HVScL62xyFtLfW0vAF9PZ+ioVzLv8iWzzJ
-         Z6AO3FJepUGkVYipAML5SXbt8FpvMjtSY2HFLLHE=
+        b=zXoPwHryi3eS1ND6fXunnLL5JmInut/72ZWpVFH3Wb2maPYRpKDNxjABedjGWtRGt
+         RqnLyTRMYcx/cZhmTnES2jzqChNKsUa1c5KUEQtELTVe5JwEL7WrLijr0TsUQfzzvC
+         ObSmmjDPndiZXwgIzS7U24Adx81s846k1nddGa4Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc:     Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 14/23] Input: atakbd - fix Atari keymap
-Date:   Mon,  8 Oct 2018 11:26:54 -0400
-Message-Id: <20181008152703.70891-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 16/23] ravb: do not write 1 to reserved bits
+Date:   Mon,  8 Oct 2018 11:26:56 -0400
+Message-Id: <20181008152703.70891-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
 References: <20181008152703.70891-1-sashal@kernel.org>
@@ -54,135 +54,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Schwab <schwab@linux-m68k.org>
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-[ Upstream commit 9e62df51be993035c577371ffee5477697a56aad ]
+[ Upstream commit 2fe397a3959de8a472f165e6d152f64cb77fa2cc ]
 
-Fix errors in Atari keymap (mostly in keypad, help and undo keys).
+EtherAVB hardware requires 0 to be written to status register bits in
+order to clear them, however, care must be taken not to:
 
-Patch provided on debian-68k ML by Andreas Schwab <schwab@linux-m68k.org>,
-keymap array size and unhandled scancode limit adjusted to 0x73 by me.
+1. Clear other bits, by writing zero to them
+2. Write one to reserved bits
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This patch corrects the ravb driver with respect to the second point above.
+This is done by defining reserved bit masks for the affected registers and,
+after auditing the code, ensure all sites that may write a one to a
+reserved bit use are suitably masked.
+
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/input/keyboard/atakbd.c | 64 ++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 38 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      |  5 +++++
+ drivers/net/ethernet/renesas/ravb_main.c | 11 ++++++-----
+ drivers/net/ethernet/renesas/ravb_ptp.c  |  2 +-
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
-index f1235831283d..524a72bee55a 100644
---- a/drivers/input/keyboard/atakbd.c
-+++ b/drivers/input/keyboard/atakbd.c
-@@ -79,8 +79,7 @@ MODULE_LICENSE("GPL");
-  */
- 
- 
--static unsigned char atakbd_keycode[0x72] = {	/* American layout */
--	[0]	 = KEY_GRAVE,
-+static unsigned char atakbd_keycode[0x73] = {	/* American layout */
- 	[1]	 = KEY_ESC,
- 	[2]	 = KEY_1,
- 	[3]	 = KEY_2,
-@@ -121,9 +120,9 @@ static unsigned char atakbd_keycode[0x72] = {	/* American layout */
- 	[38]	 = KEY_L,
- 	[39]	 = KEY_SEMICOLON,
- 	[40]	 = KEY_APOSTROPHE,
--	[41]	 = KEY_BACKSLASH,	/* FIXME, '#' */
-+	[41]	 = KEY_GRAVE,
- 	[42]	 = KEY_LEFTSHIFT,
--	[43]	 = KEY_GRAVE,		/* FIXME: '~' */
-+	[43]	 = KEY_BACKSLASH,
- 	[44]	 = KEY_Z,
- 	[45]	 = KEY_X,
- 	[46]	 = KEY_C,
-@@ -149,45 +148,34 @@ static unsigned char atakbd_keycode[0x72] = {	/* American layout */
- 	[66]	 = KEY_F8,
- 	[67]	 = KEY_F9,
- 	[68]	 = KEY_F10,
--	[69]	 = KEY_ESC,
--	[70]	 = KEY_DELETE,
--	[71]	 = KEY_KP7,
--	[72]	 = KEY_KP8,
--	[73]	 = KEY_KP9,
-+	[71]	 = KEY_HOME,
-+	[72]	 = KEY_UP,
- 	[74]	 = KEY_KPMINUS,
--	[75]	 = KEY_KP4,
--	[76]	 = KEY_KP5,
--	[77]	 = KEY_KP6,
-+	[75]	 = KEY_LEFT,
-+	[77]	 = KEY_RIGHT,
- 	[78]	 = KEY_KPPLUS,
--	[79]	 = KEY_KP1,
--	[80]	 = KEY_KP2,
--	[81]	 = KEY_KP3,
--	[82]	 = KEY_KP0,
--	[83]	 = KEY_KPDOT,
--	[90]	 = KEY_KPLEFTPAREN,
--	[91]	 = KEY_KPRIGHTPAREN,
--	[92]	 = KEY_KPASTERISK,	/* FIXME */
--	[93]	 = KEY_KPASTERISK,
--	[94]	 = KEY_KPPLUS,
--	[95]	 = KEY_HELP,
-+	[80]	 = KEY_DOWN,
-+	[82]	 = KEY_INSERT,
-+	[83]	 = KEY_DELETE,
- 	[96]	 = KEY_102ND,
--	[97]	 = KEY_KPASTERISK,	/* FIXME */
--	[98]	 = KEY_KPSLASH,
-+	[97]	 = KEY_UNDO,
-+	[98]	 = KEY_HELP,
- 	[99]	 = KEY_KPLEFTPAREN,
- 	[100]	 = KEY_KPRIGHTPAREN,
- 	[101]	 = KEY_KPSLASH,
- 	[102]	 = KEY_KPASTERISK,
--	[103]	 = KEY_UP,
--	[104]	 = KEY_KPASTERISK,	/* FIXME */
--	[105]	 = KEY_LEFT,
--	[106]	 = KEY_RIGHT,
--	[107]	 = KEY_KPASTERISK,	/* FIXME */
--	[108]	 = KEY_DOWN,
--	[109]	 = KEY_KPASTERISK,	/* FIXME */
--	[110]	 = KEY_KPASTERISK,	/* FIXME */
--	[111]	 = KEY_KPASTERISK,	/* FIXME */
--	[112]	 = KEY_KPASTERISK,	/* FIXME */
--	[113]	 = KEY_KPASTERISK	/* FIXME */
-+	[103]	 = KEY_KP7,
-+	[104]	 = KEY_KP8,
-+	[105]	 = KEY_KP9,
-+	[106]	 = KEY_KP4,
-+	[107]	 = KEY_KP5,
-+	[108]	 = KEY_KP6,
-+	[109]	 = KEY_KP1,
-+	[110]	 = KEY_KP2,
-+	[111]	 = KEY_KP3,
-+	[112]	 = KEY_KP0,
-+	[113]	 = KEY_KPDOT,
-+	[114]	 = KEY_KPENTER,
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index f1109661a533..410399070639 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -421,6 +421,7 @@ enum EIS_BIT {
+ 	EIS_CULF1	= 0x00000080,
+ 	EIS_TFFF	= 0x00000100,
+ 	EIS_QFS		= 0x00010000,
++	EIS_RESERVED	= (GENMASK(31, 17) | GENMASK(15, 11)),
  };
  
- static struct input_dev *atakbd_dev;
-@@ -195,7 +183,7 @@ static struct input_dev *atakbd_dev;
- static void atakbd_interrupt(unsigned char scancode, char down)
- {
+ /* RIC0 */
+@@ -465,6 +466,7 @@ enum RIS0_BIT {
+ 	RIS0_FRF15	= 0x00008000,
+ 	RIS0_FRF16	= 0x00010000,
+ 	RIS0_FRF17	= 0x00020000,
++	RIS0_RESERVED	= GENMASK(31, 18),
+ };
  
--	if (scancode < 0x72) {		/* scancodes < 0xf2 are keys */
-+	if (scancode < 0x73) {		/* scancodes < 0xf3 are keys */
+ /* RIC1 */
+@@ -521,6 +523,7 @@ enum RIS2_BIT {
+ 	RIS2_QFF16	= 0x00010000,
+ 	RIS2_QFF17	= 0x00020000,
+ 	RIS2_RFFF	= 0x80000000,
++	RIS2_RESERVED	= GENMASK(30, 18),
+ };
  
- 		// report raw events here?
+ /* TIC */
+@@ -537,6 +540,7 @@ enum TIS_BIT {
+ 	TIS_FTF1	= 0x00000002,	/* Undocumented? */
+ 	TIS_TFUF	= 0x00000100,
+ 	TIS_TFWF	= 0x00000200,
++	TIS_RESERVED	= (GENMASK(31, 20) | GENMASK(15, 12) | GENMASK(7, 4))
+ };
  
-@@ -209,7 +197,7 @@ static void atakbd_interrupt(unsigned char scancode, char down)
- 			input_report_key(atakbd_dev, scancode, down);
- 			input_sync(atakbd_dev);
+ /* ISS */
+@@ -610,6 +614,7 @@ enum GIC_BIT {
+ enum GIS_BIT {
+ 	GIS_PTCF	= 0x00000001,	/* Undocumented? */
+ 	GIS_PTMF	= 0x00000004,
++	GIS_RESERVED	= GENMASK(15, 10),
+ };
+ 
+ /* GIE (R-Car Gen3 only) */
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 307ecd500dac..71836a7f56b0 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -717,10 +717,11 @@ static void ravb_error_interrupt(struct net_device *ndev)
+ 	u32 eis, ris2;
+ 
+ 	eis = ravb_read(ndev, EIS);
+-	ravb_write(ndev, ~EIS_QFS, EIS);
++	ravb_write(ndev, ~(EIS_QFS | EIS_RESERVED), EIS);
+ 	if (eis & EIS_QFS) {
+ 		ris2 = ravb_read(ndev, RIS2);
+-		ravb_write(ndev, ~(RIS2_QFF0 | RIS2_RFFF), RIS2);
++		ravb_write(ndev, ~(RIS2_QFF0 | RIS2_RFFF | RIS2_RESERVED),
++			   RIS2);
+ 
+ 		/* Receive Descriptor Empty int */
+ 		if (ris2 & RIS2_QFF0)
+@@ -773,7 +774,7 @@ static bool ravb_timestamp_interrupt(struct net_device *ndev)
+ 	u32 tis = ravb_read(ndev, TIS);
+ 
+ 	if (tis & TIS_TFUF) {
+-		ravb_write(ndev, ~TIS_TFUF, TIS);
++		ravb_write(ndev, ~(TIS_TFUF | TIS_RESERVED), TIS);
+ 		ravb_get_tx_tstamp(ndev);
+ 		return true;
+ 	}
+@@ -908,7 +909,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
+ 		/* Processing RX Descriptor Ring */
+ 		if (ris0 & mask) {
+ 			/* Clear RX interrupt */
+-			ravb_write(ndev, ~mask, RIS0);
++			ravb_write(ndev, ~(mask | RIS0_RESERVED), RIS0);
+ 			if (ravb_rx(ndev, &quota, q))
+ 				goto out;
  		}
--	} else				/* scancodes >= 0xf2 are mouse data, most likely */
-+	} else				/* scancodes >= 0xf3 are mouse data, most likely */
- 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
+@@ -916,7 +917,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
+ 		if (tis & mask) {
+ 			spin_lock_irqsave(&priv->lock, flags);
+ 			/* Clear TX interrupt */
+-			ravb_write(ndev, ~mask, TIS);
++			ravb_write(ndev, ~(mask | TIS_RESERVED), TIS);
+ 			ravb_tx_free(ndev, q, true);
+ 			netif_wake_subqueue(ndev, q);
+ 			mmiowb();
+diff --git a/drivers/net/ethernet/renesas/ravb_ptp.c b/drivers/net/ethernet/renesas/ravb_ptp.c
+index eede70ec37f8..9e3222fd69f9 100644
+--- a/drivers/net/ethernet/renesas/ravb_ptp.c
++++ b/drivers/net/ethernet/renesas/ravb_ptp.c
+@@ -319,7 +319,7 @@ void ravb_ptp_interrupt(struct net_device *ndev)
+ 		}
+ 	}
  
- 	return;
+-	ravb_write(ndev, ~gis, GIS);
++	ravb_write(ndev, ~(gis | GIS_RESERVED), GIS);
+ }
+ 
+ void ravb_ptp_init(struct net_device *ndev, struct platform_device *pdev)
 -- 
 2.17.1
 
