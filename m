@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC77C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA7DC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA8C2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D8E22087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmQ0gf11"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA8C2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hp0/otqJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8E22087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbeJIBtx (ORCPT
+        id S1728741AbeJIBt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbeJIBtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:53 -0400
+        id S1726958AbeJIBt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:56 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A5662064A;
-        Mon,  8 Oct 2018 18:36:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BD712064A;
+        Mon,  8 Oct 2018 18:36:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023809;
-        bh=cBTQKK1QkfL25pVPZrLUMxR2Dz65t/m2rQwJc6g1ZvM=;
+        s=default; t=1539023812;
+        bh=OqqoSVfa8gdx3SKyGl79WrQNR8YrG8WBk0rrx98J6FM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KmQ0gf11AchWLpiihm+4pVbyvW16ELd/IbNu469teMYr/kfFAcPJ57lvevKBDx5W8
-         DW3DSlLko+jiHXotf0XYz5b3HgxB3hpXLkKfBixaaS5sNkGp8HFdg6BO1oPc/vJZin
-         4KDEPSu4Y8bXw08aGIPX8x0/lcC9ilBooYtJUL3I=
+        b=Hp0/otqJIgactjRfdziTE0+eaJryYZ8rHFoZreA/JkFZ8vqqkFRhpDwV3O0TJF+ys
+         hYunWsxhgy+VXN1UTkKKorpNNivZYnfDeBIv6FNGS/fmqNnXzCVQpJKk0qviD3k8VQ
+         WNQJzzqEYBt/wD4Xgv2mnDWUd/XcyUqkwwzZZSeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 092/113] usb: gadget: fotg210-udc: Fix memory leak of fotg210->ep[i]
-Date:   Mon,  8 Oct 2018 20:31:33 +0200
-Message-Id: <20181008175536.362057438@linuxfoundation.org>
+Subject: [PATCH 4.4 093/113] pinctrl: msm: Really mask level interrupts to prevent latching
+Date:   Mon,  8 Oct 2018 20:31:34 +0200
+Message-Id: <20181008175536.405502473@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,87 +65,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit c37bd52836296ecc9a0fc8060b819089aebdbcde ]
+[ Upstream commit b55326dc969ea2d704a008d9a97583b128f54f4f ]
 
-There is no deallocation of fotg210->ep[i] elements, allocated at
-fotg210_udc_probe.
+The interrupt controller hardware in this pin controller has two status
+enable bits. The first "normal" status enable bit enables or disables
+the summary interrupt line being raised when a gpio interrupt triggers
+and the "raw" status enable bit allows or prevents the hardware from
+latching an interrupt into the status register for a gpio interrupt.
+Currently we just toggle the "normal" status enable bit in the mask and
+unmask ops so that the summary irq interrupt going to the CPU's
+interrupt controller doesn't trigger for the masked gpio interrupt.
 
-The patch adds deallocation of fotg210->ep array elements and simplifies
-error path of fotg210_udc_probe().
+For a level triggered interrupt, the flow would be as follows: the pin
+controller sees the interrupt, latches the status into the status
+register, raises the summary irq to the CPU, summary irq handler runs
+and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+interrupt, the interrupt handler runs, and finally unmask the interrupt.
+When the interrupt handler completes, we expect that the interrupt line
+level will go back to the deasserted state so the genirq code can unmask
+the interrupt without it triggering again.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+If we only mask the interrupt by clearing the "normal" status enable bit
+then we'll ack the interrupt but it will continue to show up as pending
+in the status register because the raw status bit is enabled, the
+hardware hasn't deasserted the line, and thus the asserted state latches
+into the status register again. When the hardware deasserts the
+interrupt the pin controller still thinks there is a pending unserviced
+level interrupt because it latched it earlier. This behavior causes
+software to see an extra interrupt for level type interrupts each time
+the interrupt is handled.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Let's fix this by clearing the raw status enable bit for level type
+interrupts so that the hardware stops latching the status of the
+interrupt after we ack it. We don't do this for edge type interrupts
+because it seems that toggling the raw status enable bit for edge type
+interrupts causes spurious edge interrupts.
+
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/fotg210-udc.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/usb/gadget/udc/fotg210-udc.c
-+++ b/drivers/usb/gadget/udc/fotg210-udc.c
-@@ -1066,12 +1066,15 @@ static struct usb_gadget_ops fotg210_gad
- static int fotg210_udc_remove(struct platform_device *pdev)
- {
- 	struct fotg210_udc *fotg210 = platform_get_drvdata(pdev);
-+	int i;
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -577,6 +577,29 @@ static void msm_gpio_irq_mask(struct irq
+ 	spin_lock_irqsave(&pctrl->lock, flags);
  
- 	usb_del_gadget_udc(&fotg210->gadget);
- 	iounmap(fotg210->reg);
- 	free_irq(platform_get_irq(pdev, 0), fotg210);
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	/*
++	 * There are two bits that control interrupt forwarding to the CPU. The
++	 * RAW_STATUS_EN bit causes the level or edge sensed on the line to be
++	 * latched into the interrupt status register when the hardware detects
++	 * an irq that it's configured for (either edge for edge type or level
++	 * for level type irq). The 'non-raw' status enable bit causes the
++	 * hardware to assert the summary interrupt to the CPU if the latched
++	 * status bit is set. There's a bug though, the edge detection logic
++	 * seems to have a problem where toggling the RAW_STATUS_EN bit may
++	 * cause the status bit to latch spuriously when there isn't any edge
++	 * so we can't touch that bit for edge type irqs and we have to keep
++	 * the bit set anyway so that edges are latched while the line is masked.
++	 *
++	 * To make matters more complicated, leaving the RAW_STATUS_EN bit
++	 * enabled all the time causes level interrupts to re-latch into the
++	 * status register because the level is still present on the line after
++	 * we ack it. We clear the raw status enable bit during mask here and
++	 * set the bit on unmask so the interrupt can't latch into the hardware
++	 * while it's masked.
++	 */
++	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK)
++		val &= ~BIT(g->intr_raw_status_bit);
++
+ 	val &= ~BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
  
- 	fotg210_ep_free_request(&fotg210->ep[0]->ep, fotg210->ep0_req);
-+	for (i = 0; i < FOTG210_MAX_NUM_EP; i++)
-+		kfree(fotg210->ep[i]);
- 	kfree(fotg210);
+@@ -598,6 +621,7 @@ static void msm_gpio_irq_unmask(struct i
+ 	spin_lock_irqsave(&pctrl->lock, flags);
  
- 	return 0;
-@@ -1102,7 +1105,7 @@ static int fotg210_udc_probe(struct plat
- 	/* initialize udc */
- 	fotg210 = kzalloc(sizeof(struct fotg210_udc), GFP_KERNEL);
- 	if (fotg210 == NULL)
--		goto err_alloc;
-+		goto err;
- 
- 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
- 		_ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
-@@ -1114,7 +1117,7 @@ static int fotg210_udc_probe(struct plat
- 	fotg210->reg = ioremap(res->start, resource_size(res));
- 	if (fotg210->reg == NULL) {
- 		pr_err("ioremap error.\n");
--		goto err_map;
-+		goto err_alloc;
- 	}
- 
- 	spin_lock_init(&fotg210->lock);
-@@ -1162,7 +1165,7 @@ static int fotg210_udc_probe(struct plat
- 	fotg210->ep0_req = fotg210_ep_alloc_request(&fotg210->ep[0]->ep,
- 				GFP_KERNEL);
- 	if (fotg210->ep0_req == NULL)
--		goto err_req;
-+		goto err_map;
- 
- 	fotg210_init(fotg210);
- 
-@@ -1190,12 +1193,14 @@ err_req:
- 	fotg210_ep_free_request(&fotg210->ep[0]->ep, fotg210->ep0_req);
- 
- err_map:
--	if (fotg210->reg)
--		iounmap(fotg210->reg);
-+	iounmap(fotg210->reg);
- 
- err_alloc:
-+	for (i = 0; i < FOTG210_MAX_NUM_EP; i++)
-+		kfree(fotg210->ep[i]);
- 	kfree(fotg210);
- 
-+err:
- 	return ret;
- }
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	val |= BIT(g->intr_raw_status_bit);
+ 	val |= BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
  
 
 
