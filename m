@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF02C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D096C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D300921565
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB74F21565
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/0K9i4v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D300921565
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BixGjDj7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB74F21565
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbeJHWj0 (ORCPT
+        id S1728770AbeJHWjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58594 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726367AbeJHWjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:25 -0400
+        id S1726367AbeJHWjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE3942152C;
-        Mon,  8 Oct 2018 15:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02D7821534;
+        Mon,  8 Oct 2018 15:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012430;
-        bh=gDOp7mPyEDchUtQ7pGNLgUb/uj7ORoZf9CRBcNPJeAs=;
+        s=default; t=1539012428;
+        bh=MaYgZWRWZNw1xIyv0ojXkThmOWvCbrxqgKtcIzI3YDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b/0K9i4vy1yZ//nm9olOFeXadQFuRJDyxvC5Mr8PyOw39DP2Y2Q8oRv8Vd4aJT1df
-         0PuYrS7ktgwJPVbOCKhigpZ9+YLL8OLcisn6xupCMKVkLwYdAHA4DIKsNs+OysK+iv
-         Cav0k2XgW/ECa6meKf2QpYgHbS58tR2sXHY3Phyk=
+        b=BixGjDj7CUCm5XWVUwH86HP9EGOJLRZEmFa7QdVsmvPpIlp0EKyRD53pxxTqhIq5T
+         /KFENWHsmlTKdqQKvnhTZAaNmBZeOY69OqSqFJncj/n9OiC8IpkU/46ufB4YRImRiQ
+         oVY11tLYQYz7gviXPLQ/BUkJuSMYXXJRQtDZW1tg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 05/23] batman-adv: Prevent duplicated softif_vlan entry
-Date:   Mon,  8 Oct 2018 11:26:45 -0400
-Message-Id: <20181008152703.70891-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 03/23] batman-adv: Fix segfault when writing to sysfs elp_interval
+Date:   Mon,  8 Oct 2018 11:26:43 -0400
+Message-Id: <20181008152703.70891-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
 References: <20181008152703.70891-1-sashal@kernel.org>
@@ -55,84 +55,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 94cb82f594ed86be303398d6dfc7640a6f1d45d4 ]
+[ Upstream commit a25bab9d723a08bd0bdafb1529faf9094c690b70 ]
 
-The function batadv_softif_vlan_get is responsible for adding new
-softif_vlan to the softif_vlan_list. It first checks whether the entry
-already is in the list or not. If it is, then the creation of a new entry
-is aborted.
+The per hardif sysfs file "batman_adv/elp_interval" is using the generic
+functions to store/show uint values. The helper __batadv_store_uint_attr
+requires the softif net_device as parameter to print the resulting change
+as info text when the users writes to this file. It uses the helper
+function batadv_info to add it at the same time to the kernel ring buffer
+and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG is enabled).
 
-But the lock for the list is only held when the list is really modified.
-This could lead to duplicated entries because another context could create
-an entry with the same key between the check and the list manipulation.
+The function batadv_info requires as first parameter the batman-adv softif
+net_device. This parameter is then used to find the private buffer which
+contains the debug log for this batman-adv interface. But
+batadv_store_throughput_override used as first argument the slave
+net_device. This slave device doesn't have the batadv_priv private data
+which is access by batadv_info.
 
-The check and the manipulation of the list must therefore be in the same
-locked code section.
+Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
+to a segfault or to memory corruption.
 
-Fixes: 5d2c05b21337 ("batman-adv: add per VLAN interface attribute framework")
+Fixes: 0744ff8fa8fa ("batman-adv: Add hard_iface specific sysfs wrapper macros for UINT")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/soft-interface.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ net/batman-adv/sysfs.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
-index 84c1b388d9ed..05bc176decf0 100644
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -565,15 +565,20 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
- 	struct batadv_softif_vlan *vlan;
- 	int err;
+diff --git a/net/batman-adv/sysfs.c b/net/batman-adv/sysfs.c
+index a3b5b76dc9de..31d7e239a1fd 100644
+--- a/net/batman-adv/sysfs.c
++++ b/net/batman-adv/sysfs.c
+@@ -187,7 +187,8 @@ ssize_t batadv_store_##_name(struct kobject *kobj,			\
+ 									\
+ 	return __batadv_store_uint_attr(buff, count, _min, _max,	\
+ 					_post_func, attr,		\
+-					&bat_priv->_var, net_dev);	\
++					&bat_priv->_var, net_dev,	\
++					NULL);	\
+ }
  
-+	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
+ #define BATADV_ATTR_SIF_SHOW_UINT(_name, _var)				\
+@@ -261,7 +262,9 @@ ssize_t batadv_store_##_name(struct kobject *kobj,			\
+ 									\
+ 	length = __batadv_store_uint_attr(buff, count, _min, _max,	\
+ 					  _post_func, attr,		\
+-					  &hard_iface->_var, net_dev);	\
++					  &hard_iface->_var,		\
++					  hard_iface->soft_iface,	\
++					  net_dev);			\
+ 									\
+ 	batadv_hardif_put(hard_iface);				\
+ 	return length;							\
+@@ -355,10 +358,12 @@ __batadv_store_bool_attr(char *buff, size_t count,
+ 
+ static int batadv_store_uint_attr(const char *buff, size_t count,
+ 				  struct net_device *net_dev,
++				  struct net_device *slave_dev,
+ 				  const char *attr_name,
+ 				  unsigned int min, unsigned int max,
+ 				  atomic_t *attr)
+ {
++	char ifname[IFNAMSIZ + 3] = "";
+ 	unsigned long uint_val;
+ 	int ret;
+ 
+@@ -384,8 +389,11 @@ static int batadv_store_uint_attr(const char *buff, size_t count,
+ 	if (atomic_read(attr) == uint_val)
+ 		return count;
+ 
+-	batadv_info(net_dev, "%s: Changing from: %i to: %lu\n",
+-		    attr_name, atomic_read(attr), uint_val);
++	if (slave_dev)
++		snprintf(ifname, sizeof(ifname), "%s: ", slave_dev->name);
 +
- 	vlan = batadv_softif_vlan_get(bat_priv, vid);
- 	if (vlan) {
- 		batadv_softif_vlan_put(vlan);
-+		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 		return -EEXIST;
- 	}
++	batadv_info(net_dev, "%s: %sChanging from: %i to: %lu\n",
++		    attr_name, ifname, atomic_read(attr), uint_val);
  
- 	vlan = kzalloc(sizeof(*vlan), GFP_ATOMIC);
--	if (!vlan)
-+	if (!vlan) {
-+		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 		return -ENOMEM;
-+	}
+ 	atomic_set(attr, uint_val);
+ 	return count;
+@@ -396,12 +404,13 @@ static ssize_t __batadv_store_uint_attr(const char *buff, size_t count,
+ 					void (*post_func)(struct net_device *),
+ 					const struct attribute *attr,
+ 					atomic_t *attr_store,
+-					struct net_device *net_dev)
++					struct net_device *net_dev,
++					struct net_device *slave_dev)
+ {
+ 	int ret;
  
- 	vlan->bat_priv = bat_priv;
- 	vlan->vid = vid;
-@@ -581,17 +586,23 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
+-	ret = batadv_store_uint_attr(buff, count, net_dev, attr->name, min, max,
+-				     attr_store);
++	ret = batadv_store_uint_attr(buff, count, net_dev, slave_dev,
++				     attr->name, min, max, attr_store);
+ 	if (post_func && ret)
+ 		post_func(net_dev);
  
- 	atomic_set(&vlan->ap_isolation, 0);
+@@ -570,7 +579,7 @@ static ssize_t batadv_store_gw_sel_class(struct kobject *kobj,
+ 	return __batadv_store_uint_attr(buff, count, 1, BATADV_TQ_MAX_VALUE,
+ 					batadv_post_gw_reselect, attr,
+ 					&bat_priv->gw.sel_class,
+-					bat_priv->soft_iface);
++					bat_priv->soft_iface, NULL);
+ }
  
-+	kref_get(&vlan->refcount);
-+	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
-+	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
-+
-+	/* batadv_sysfs_add_vlan cannot be in the spinlock section due to the
-+	 * sleeping behavior of the sysfs functions and the fs_reclaim lock
-+	 */
- 	err = batadv_sysfs_add_vlan(bat_priv->soft_iface, vlan);
- 	if (err) {
--		kfree(vlan);
-+		/* ref for the function */
-+		batadv_softif_vlan_put(vlan);
-+
-+		/* ref for the list */
-+		batadv_softif_vlan_put(vlan);
- 		return err;
- 	}
- 
--	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
--	kref_get(&vlan->refcount);
--	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
--	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
--
- 	/* add a new TT local entry. This one will be marked with the NOPURGE
- 	 * flag
- 	 */
+ static ssize_t batadv_show_gw_bwidth(struct kobject *kobj,
 -- 
 2.17.1
 
