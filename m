@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F2EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F02C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501872089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C1B72145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="efo5dVrj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501872089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj88gPeU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C1B72145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeJIBqe (ORCPT
+        id S1727245AbeJIBqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56838 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:46:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbeJIBqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:46:34 -0400
+        id S1726510AbeJIBqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:46:37 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6DCA2145D;
-        Mon,  8 Oct 2018 18:33:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 790A52145D;
+        Mon,  8 Oct 2018 18:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023612;
-        bh=Sbne7PpAvvZgCORwUp4rNuejZxfYFFnn0AeqIY2uPMw=;
+        s=default; t=1539023615;
+        bh=DP1O8OgbXQJEl0mQY3umTj/IX1qylcPDe1nYacozShw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=efo5dVrj6A707x3HYMrBoIb8FcthIsP/loOESAWdDwfT+91zXNla3pxeWHN10iEqB
-         eVDqitdKwMi8U5ixSBoXn9f9QlRnG6m0uLwr10FB3HXe6pM54H28O5obky1+dlhSn/
-         G38S0aax0lGKwKx4RD8fxfnvNLhfQMIyNEBLvPjQ=
+        b=mj88gPeUzPCsQlNtZhxxqAVbdg2y/eIhO+8ar8YL+iwYVHDWh5osKiwaD0fiMc10R
+         /gooKmJ6wfjsYxhGs5P+UhbQzwANvCtE/23a6Pksk2q1yHM+GJCFsXCIfucpzc+ZJj
+         FUXpmj5ywzs2VwJpfDcMw3587PHVUbB/RnPHji50=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 005/113] staging: rts5208: fix missing error check on call to rtsx_write_register
-Date:   Mon,  8 Oct 2018 20:30:06 +0200
-Message-Id: <20181008175531.125162724@linuxfoundation.org>
+Subject: [PATCH 4.4 006/113] uwb: hwa-rc: fix memory leak at probe
+Date:   Mon,  8 Oct 2018 20:30:07 +0200
+Message-Id: <20181008175531.171527299@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -61,35 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit c5fae4f4fd28189b1062fb8ef7b21fec37cb8b17 ]
+[ Upstream commit 11b71782c1d10d9bccc31825cf84291cd7588a1e ]
 
-Currently the check on error return from the call to rtsx_write_register
-is checking the error status from the previous call. Fix this by adding
-in the missing assignment of retval.
+hwarc_probe() allocates memory for hwarc, but does not free it
+if uwb_rc_add() or hwarc_get_version() fail.
 
-Detected by CoverityScan, CID#709877
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/rts5208/sd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/uwb/hwa-rc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -5031,7 +5031,7 @@ int sd_execute_write_data(struct scsi_cm
- 			goto SD_Execute_Write_Cmd_Failed;
- 		}
- 
--		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
-+		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
- 		if (retval != STATUS_SUCCESS) {
- 			rtsx_trace(chip);
- 			goto SD_Execute_Write_Cmd_Failed;
+--- a/drivers/uwb/hwa-rc.c
++++ b/drivers/uwb/hwa-rc.c
+@@ -875,6 +875,7 @@ error_get_version:
+ error_rc_add:
+ 	usb_put_intf(iface);
+ 	usb_put_dev(hwarc->usb_dev);
++	kfree(hwarc);
+ error_alloc:
+ 	uwb_rc_put(uwb_rc);
+ error_rc_alloc:
 
 
