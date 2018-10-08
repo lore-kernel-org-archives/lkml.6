@@ -2,297 +2,175 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007E0C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1952EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7CA920645
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6B9720645
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:55:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Sony.onmicrosoft.com header.i=@Sony.onmicrosoft.com header.b="RaoE7zTY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CA920645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hE8ipfH9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B9720645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732936AbeJICHb (ORCPT
+        id S1732462AbeJICIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:07:31 -0400
-Received: from mail-eopbgr710119.outbound.protection.outlook.com ([40.107.71.119]:6065
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727670AbeJICHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:07:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
- s=selector1-Sony-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SxIzDxvYCi4ECW2x08RHgJgGXwdkI671SXGwVhyw/hs=;
- b=RaoE7zTYfgSY/gyJKA3cddfYxQ5uRq6q9sHrchQK5rCVr6uznZ1e8ZFRt6shWtwRNWDof0wCHbspUBGi3Qe+7lXYK/lnrdtlloNJNT+WfdX3mBvOhV/ynIQTvGNLNmEvKRVGjMGyKkoueCM3kgnSp22jkQuAJQS+2G4JlLI11aY=
-Received: from DM5PR13CA0023.namprd13.prod.outlook.com (2603:10b6:3:23::33) by
- MWHPR1301MB2030.namprd13.prod.outlook.com (2603:10b6:301:32::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1207.11; Mon, 8 Oct
- 2018 18:54:19 +0000
-Received: from BL2NAM02FT039.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::202) by DM5PR13CA0023.outlook.office365.com
- (2603:10b6:3:23::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1228.13 via Frontend
- Transport; Mon, 8 Oct 2018 18:54:18 +0000
-Authentication-Results: spf=permerror (sender IP is 160.33.194.231)
- smtp.mailfrom=sony.com; HansenPartnership.com; dkim=none (message not signed)
- header.d=none;HansenPartnership.com; dmarc=none action=none
- header.from=sony.com;
-Received-SPF: PermError (protection.outlook.com: domain of sony.com used an
- invalid SPF mechanism)
-Received: from usculsndmail04v.am.sony.com (160.33.194.231) by
- BL2NAM02FT039.mail.protection.outlook.com (10.152.77.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.1228.17 via Frontend Transport; Mon, 8 Oct 2018 18:54:18 +0000
-Received: from usculsndmail11v.am.sony.com (usculsndmail11v.am.sony.com [146.215.230.102])
-        by usculsndmail04v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id w98IsHJf001692;
-        Mon, 8 Oct 2018 18:54:17 GMT
-Received: from USCULXHUB05V.am.sony.com (hub.bc.in.sel.sony.com [146.215.231.43])
-        by usculsndmail11v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id w98IsHku026015;
-        Mon, 8 Oct 2018 18:54:17 GMT
-Received: from USCULXMSG01.am.sony.com ([fe80::b09d:6cb6:665e:d1b5]) by
- USCULXHUB05V.am.sony.com ([146.215.231.43]) with mapi id 14.03.0408.000; Mon,
- 8 Oct 2018 14:54:17 -0400
-From:   <Tim.Bird@sony.com>
-To:     <James.Bottomley@HansenPartnership.com>,
-        <ksummit-discuss@lists.linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: RE: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-Thread-Topic: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-Thread-Index: AQHUXbzsST+hQw7zT0eB3iy5jbswn6USvpZwgACmBYCAAfY7MIAATdkA//+/s3CAAIP+gP//wRBQ
-Date:   Mon, 8 Oct 2018 18:54:16 +0000
-Message-ID: <ECADFF3FD767C149AD96A924E7EA6EAF8051888C@USCULXMSG01.am.sony.com>
-References: <1538861738.4088.5.camel@HansenPartnership.com>
-        <1538861851.4088.7.camel@HansenPartnership.com>
-        <ECADFF3FD767C149AD96A924E7EA6EAF80516F31@USCULXMSG01.am.sony.com>
-        <1538883209.4088.14.camel@HansenPartnership.com>
-        <ECADFF3FD767C149AD96A924E7EA6EAF80517411@USCULXMSG01.am.sony.com>
-        <1539007780.4344.3.camel@HansenPartnership.com>
-        <ECADFF3FD767C149AD96A924E7EA6EAF80518843@USCULXMSG01.am.sony.com>
- <1539022317.4344.17.camel@HansenPartnership.com>
-In-Reply-To: <1539022317.4344.17.camel@HansenPartnership.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [146.215.231.6]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:160.33.194.231;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(39860400002)(396003)(2980300002)(448002)(51914003)(13464003)(189003)(199004)(4326008)(336012)(426003)(436003)(126002)(93886005)(476003)(8676002)(2906002)(486006)(2876002)(76176011)(7696005)(3846002)(6116002)(86362001)(11346002)(85326001)(5660300001)(316002)(305945005)(110136005)(186003)(7736002)(6246003)(8936002)(561944003)(2920100001)(2486003)(55016002)(50466002)(2900100001)(86152003)(26005)(356003)(106466001)(229853002)(66066001)(478600001)(72206003)(23676004)(446003)(14444005)(246002)(102836004)(33656002)(55846006)(47776003)(5001870100001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1301MB2030;H:usculsndmail04v.am.sony.com;FPR:;SPF:PermError;LANG:en;PTR:mail.sonyusa.com,mail04.sonyusa.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT039;1:BLEaW9msaxFVp05681BaPLY2kFFItthtA8tpKQOO32016GUHPvLFJrMNFxGelBSHT6b4JHMvm00wokLArp8od2Kmf9rJPSIyGH1MEKClrB/OAieGGO+i/kFZ1XjqxIbu
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: df1827a4-7c20-4233-6180-08d62d4f737b
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7193020);SRVR:MWHPR1301MB2030;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2030;3:7MDe8mq6nrIQNXHp1K+5/RRMFCBAI5e0uxD48HxKywPiW7sLDElpc8urvBSuGYzRtAnbA8V3avKaDDdX1ko9Op8ENIw+GyRGAJ01DQvIZ6GR4x8Q0O6IDslLZR5fDpzWJXYKsjCjYK0Dj6d7S7CnFybKhqtIzujTezFePDRKMk3nGxT8ODmCMmxJ7jXACHyc2CRGjAgXwAOs6/1u50L5db4V+8nXNT3OC3F5i6qO+h9pqaK1vlJu3AOU4AcabiAI7GX+qnn/wzDsZrb4Rcul0MP0tgAXQAnED1hq0tWwHyORNX+QWRXZ+01t0lR6cll+7HmdAHeA3n4XOZt8mhEY0eAceJnAvgWbUwo0iuNWK+A=;25:1rStTLvDZCmsnw5Jodq63ZMYK08ixZYJ0chAp84ebx336xeehNqXFOKDaGOcGhUfw+EZ7260l+KTjN3Uvj5vdoeV52o824NGBSHF+ilFM2uMVscjExbiWc0Fnc+vc6uNSM8PT84hXIPqybTk/j+JYx4mE7j9xNNptqRVQjTd/HfUgmx2hDk85FuKy1ms/wibz64jcRi/kwyeyPLo8sUt4k2nxgqjmmD3EMy5PrQDry+USCK+ZhgDJ2MAA8r/CaCoq+jkMEKAMlMf7GzEjUD2IX3KHnRwK5HCN3vBWK+aAbXSJiiJJM2lkTnOVqV7gG5mDJCVJvM3GWPmEoi0sXmTiQ==
-X-MS-TrafficTypeDiagnostic: MWHPR1301MB2030:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2030;31:omlWa5kJE97DydT/6yewzxSHG6JnrHZ4B+KnSQOrsS/bF7+76gDGWwQvAj8WfRgFk1qkBl7Zy4BM1zovRgGxB5yjAL4xywWjUQV8Kqg16mSCYYgMzBnaW8K1JTXFXEHocznKxV5vVXi0oZl841YZCfwD2AHiecfCfopmwlTLz+QVH4RkbbTgSbyy6BaTgpElFxUaJjOJvjitkvpF+lHtEk3mXUQHX/4DjKoQ9MQSYX8=;20:2TssZsr5veAconwDUotfJfDaKE+qWOFFOISaVYHB4sxkAj1bBAh/QrcjFJhOuKXBGkmnvNF4MP7weP2JGXNNs/lj14F2FCCGBi3aO10x5g2ZdSrdlKzti8tDH5NuCg7iS6ucafD30Q0B7c3Y7gskgFUczjRShC2Xsv0AGgGg4iBJmUrMQAncpk0pDxPr1qngQkhpX5f1mXoyai7Y9TuksIV9N1x6ahZlsU0qb3kOrvfYKlXmS4eM1exTRoz5ERHRlOsgSKQvFkH/tm7318+ga/9avHUvbbA2EVRnVLSh7bCy+YivLpSbBqT5ZT/q+aXoJd0FajsgU7uqdfPmcX1JY7AAvEaLH8h8R2e9p6MtcMyLKsG18HBXSPdva0pWL0J3fWNe7xebo6usnoo4hwYQli9ycst6+DjB3F7TJWXhucANAnVse2yiQscCzlnqZIXwvRJe2m4sTHd3RmIRLpiyf89hcBrZDxLecHEZsBfCkN3TaIeKnA/ojVT6w80aLJR8
-X-Microsoft-Antispam-PRVS: <MWHPR1301MB2030872CC98A644B422A00E8FDE60@MWHPR1301MB2030.namprd13.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(182409339516656)(209352067349851)(211171220733660);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(10201501046)(3002001)(3231355)(11241501184)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051);SRVR:MWHPR1301MB2030;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1301MB2030;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2030;4:mGrZKzQcEwR6njVLva6aXC+tvBZXt558A8r4I8nTV8p2+9W4T2qSZ5tsbfcy9gqBHZvEQUN8NH9pb//mEkeIXVCIi88A/fkoCU+Gs7UqNO7Ju2Fi/MbGpMf2CT7w753xHpA7II9nPjJ7gvMUsPQL5Frmytyx94IOlw88pnIrCKGQdJ/D/vGoaS2CI1MsjHzLAqSsQKzXuV9p/DkI2N7TJbXE0AoHLEVdq4wK/H0TwchDwNdnbgga1c5k4JxD9FD2Nf9+hWkB3bWyWIVq9LCPpxPprTWdQkKldR/iGqLw0lN19Q/zdfLLzVxHU0KJVeqtnypC0HpSGTwmpf5jWY7ulyKfrnYqLe5UOlvdo1O6Y7hyohl26nGvSJpOPkz0wCQK
-X-Forefront-PRVS: 081904387B
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEzMDFNQjIwMzA7MjM6enhjZ3FJQlNBcG1xS1owWjhqUlV0TnFw?=
- =?utf-8?B?b1Z1dFRScmxmaXptQUhBMFMxYlIrM0xrYnVCQ085WTN3cWZQWHl3dXJTbTJ4?=
- =?utf-8?B?aE9HRGxEanBCVGgwVFNTdDdpczhHZ3JMcno2Njd3Z2E1QjFwc3cwa3dlZ203?=
- =?utf-8?B?WWFEZ1oyN1JLd2p2aldjVzdRRE50WmRWYXJPV2FCYjNqN3lBZFVDSUU3SlNF?=
- =?utf-8?B?OVE4bEZaQlZ3NXFzMjBieHZOUUVnQ0tTUjQ5UUV3RnJxcnhtakcyVFBVWWtS?=
- =?utf-8?B?KzdzczNDSmkvL0pzWWI4SHlpaG1pSzVNQ3NObERNQmNIaGlBR0ZxRHJYWXlt?=
- =?utf-8?B?MjNLbVZNRzZORjdWWllvSmJvcFEybE53U1VscmxFWFpxUFR5b2hPY2JhSUpD?=
- =?utf-8?B?cWxXMVROdG16aVU1K1AybkFBUFNJOG5hNlFLQTkvTmY1WGtPelQzbVlCdHNK?=
- =?utf-8?B?L2tQbEJ3em9wNWswdkkvakwwUG8vbS9GcndwT1hXSlZ6aHYvTnZXWGNuZE5I?=
- =?utf-8?B?dko2aUZ4VFVEakpkQkFZU2o5OW5sNHFoc0FJaDRLNDFtdE1CRkZnTklrVzN4?=
- =?utf-8?B?ajZhRjVla2VLZXpsYlJwRUdMNE9DMXdGWERyekV6eFFnSDRaZVVONHpVNmY4?=
- =?utf-8?B?RjdwQ2pYS3cxcklKeEFuNUJEWHVUMHVPMmF6bEtLZXV5WWhXanBFNDl1UHVm?=
- =?utf-8?B?VFRkU3J6cFFEaE9ZWHRQTXo5T3pIUnNYOFUzeTNDK0V1RmtMU1M4ZUt5SmdU?=
- =?utf-8?B?eUVxMzRxRklSOThkM21ONGdPazZ4bCsrbi9HUWVvbm5UTTNyT1QrMVROUFB3?=
- =?utf-8?B?Tmp3VmdZRS9lMy81SDBlSWV4KzFNNFVUc2syci9rNm1tWG9saHBQck41VHN1?=
- =?utf-8?B?M2Z1L2Q1eGNhb1orQ2cyYS9BQXRoQndKbVZZbk0rNUVJd0RhaDJhSmdwKzNl?=
- =?utf-8?B?RkMzTUNRQjI3V1dueGVFMW9Mc1JqZHFvcTJFTlRSV2xYMUNXTGx1dUQzaEJr?=
- =?utf-8?B?endUWkQrd1h0Y1orVjZLTnlJdFJ6czZXOGZFMmp0ckRjVE5xUkJwS0J0ZUd6?=
- =?utf-8?B?MTNLTHFOeU8wd3BaWFdZOE5aMGdzdDNybHlaczcvQ0F5Y25TSS84RG5OT1Iv?=
- =?utf-8?B?MWI4Q2RlRUF1c2hxaDVyRkVRMkNvMW81WlV3NGQyS0FmbTltM2JCUm5weVNo?=
- =?utf-8?B?UURuWTZ3WThWOVVpQ0JKSlpCSGljVTZlZEpYc3VvTGdtQ2pLZ3VQeDRYZWEx?=
- =?utf-8?B?Y1BXWllWdTEyRk9lY0JOQm51REliVDlRV0dFNnB2bGhBdUdiWmZlQzNHcDVv?=
- =?utf-8?B?WEtaWU1hM2J0N2YzVmdlTi9hUTkyM0kyODlsMUoxNUdocklRelRCNWNPYXEy?=
- =?utf-8?B?ODBRWkh6WXhCelRjZ25wRGNYa3RlVi8zTzIzUXFTM0owTmQ2TWVCblk5dDZl?=
- =?utf-8?B?L3g4ZHpEeDVEbVlKSWlDM1djcDQ5NkNhNTAxR1IwWU5ETUthWnBDaG4vV29v?=
- =?utf-8?B?V0NFSFd3c1lSeTc0WTViUlRGTnY1ZzkrYnpKQWU1US85U1lHS1F0ZWJjYXIy?=
- =?utf-8?B?bGc2cjRFeUx5WWZITGFFcGNRUFArTVlPS2xYTWUvNzZGNjlHUk9VcXlUOG9I?=
- =?utf-8?B?MHdKTTl6MHQ3MUdmelRMQnhNdnZyVk9DNHJjSzFKQ2dZaU43clFsVTlCTnZm?=
- =?utf-8?B?eDlxT0JteXdDZzZXY0ZxdHJILzNvRUZtaWJZV1VQMzdSNUswQ1NlZUpjdXZH?=
- =?utf-8?B?VlgzMy9TT0Q4Sm5LYk8wbWNTS3U3dThMZ1FkMWRzK2t2V3RhZGZTQkg1aTdW?=
- =?utf-8?Q?vO6WTBT2HR/blEX?=
-X-Microsoft-Antispam-Message-Info: TjOPr3UXGMA0jDrZhMw9tPvb3XyERDAX3Trxau9vLljwbwjkgp/7uCDZ7778YQ59t7ql+pVjnR5aeC7/RROPlC8WYr6mZquAD3Cev6oKHWPXKxAw/HzDavoHa8tCDh3/SH3nznbhvLppA27mtRR+cViruRP29wlnl7FY1YPYJCljH91n9lkYO1CnENr26iUk0P/h8ldfqpRCO9FeMDADPblQ7ULgv9KWGJj5Mc7Xo/DHanZbNkaNy1YnhGMzu0hDNvmBPaxMR4XhZqqb06VIuqnuVBWoBr+TQl6s8uuIDGCtZ+UkSvZRPmJ0OZSB0j/DQwQznId+obf12RKo/5c9g4JBycOqY9gHLuIzeyqp5Wk=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2030;6:q8ZvusboMLsnkL3gtU6dufcqxlmwZR6kw2Pxl8vALTPSAsiyX2NkLb9JH6dx5APq0COoIZpQl3M5kN7UBpQox9QnIuO9v4ixLXysoQ6xFAkJUNXtSmBfS+UcTvU9L4RQ0xhJ2cuVI6vzc4Vp4JOJPxCxrv5cO4ZVVFiSMjYGVM/tKgqXW2GAFPi7Yjs6sMn6QSp+dLU8+F8G5zzZGpyoO6YcAOauo1ghpxvTIFdGnnG2Mo+sjMO3wUtmurlVnNuTVOVsgDqASmipL9PVL9Qi6L1x659FwA75T+s1ucQ9HHQTBfKyimMLYnn0GSN6nMbZCbhILn8Dw9w/EeO4Mv7vCHhnOZ2lDQBM7e7bd+Bk2fFK2y38irB5X4l/BkZIVL+BniaVWrEmxmQe5CxTsNsE0IntJqXb8wKbmR7R2bE2YX2AxOXmUhucA84ix6nNMvT6y78ojCAulYNvjcV44dxgtg==;5:Ehr8V6bMy5yoNwhkOcymHtDxJNGyzLBxO4LUVOn1oF4kcJbNbJWbKzyAWB5/4YnUPHMsiL0n3yQEIr3zYbRd+BSnVOxHpMn8/ciaJFlZ5hvcGbPr5EeCrYAFJWAdSkzhit/LWlODEPsnffjk6hVfZ6x4vgbWi6/rA8QwGLtcVlc=;7:ZD12jwY78y1cFsKuaE2jir70efRuriMzZr8NrSJ31IpEgYrfUbT5tbujkPayF+DkZ+e5bt2hGK3TkfCp1sET3j4P02I54YdWB8Mm3umJA0fRfrAWfeQxslnP2RBe+bE4rUqdIpTBqjYwWUvd4ce20odomq+MZgZ8m4hNuPiehEmAOQUzuA9craZayL4EQtIWjd/a7RLVo4NbtlfUFoLpCfKpERieOK4FgCXA+8ZY/FzUtFqGvrr/AX5vY5J3E5aN
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2018 18:54:18.2010
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: df1827a4-7c20-4233-6180-08d62d4f737b
-X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[160.33.194.231];Helo=[usculsndmail04v.am.sony.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1301MB2030
+        Mon, 8 Oct 2018 22:08:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57566 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728460AbeJICIP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:08:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=0+uY4A+bkERXCxGRROCz2txr/tRKOvtYOBV+aXfjgMU=; b=hE8ipfH9xWSm
+        2RbFiSmuABE70xAGkL/3ZLUqmtqueoRdltWKBaZmxxWpjYY6Hzbn1B5eydSYuN/6QrDbBdSLUqjco
+        que7idh9B7o5JfaQOwUe9jYVE2lVn/JjFZ0ZqVFfUBpAkWFTx8cYAVbo2C4x07sUWivpQLDN31OkH
+        EcO8k=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g9agI-000347-Sm; Mon, 08 Oct 2018 18:55:02 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 6BDAC440078; Mon,  8 Oct 2018 19:55:02 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     pascal paillet <p.paillet@st.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "dt-bindings: regulator: document stpmic1 pmic regulators" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181008185502.6BDAC440078@finisterre.ee.mobilebroadband>
+Date:   Mon,  8 Oct 2018 19:55:02 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmFtZXMgQm90dG9tbGV5
-DQo+IA0KPiBPbiBNb24sIDIwMTgtMTAtMDggYXQgMTc6NTggKzAwMDAsIFRpbS5CaXJkQHNvbnku
-Y29tIHdyb3RlOg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206
-IEphbWVzIEJvdHRvbWxleQ0KPiA+ID4NCj4gPiA+IE9uIE1vbiwgMjAxOC0xMC0wOCBhdCAxMzo1
-MSArMDAwMCwgVGltLkJpcmRAc29ueS5jb20gd3JvdGU6DQo+ID4gPiA+ID4gLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4gPiA+ID4gPiBGcm9tOiBKYW1lcyBCb3R0b21sZXkNCj4gPiA+ID4g
-PiBPbiBTYXQsIDIwMTgtMTAtMDYgYXQgMjE6NDMgKzAwMDAsIFRpbS5CaXJkQHNvbnkuY29tIHdy
-b3RlOg0KPiA+ID4gPiA+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gPiA+
-ID4gPiBGcm9tOiBKYW1lcyBCb3R0b21sZXkNCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4g
-U2lnbmlmaWNhbnQgY29uY2VybiBoYXMgYmVlbiBleHByZXNzZWQgYWJvdXQgdGhlDQo+ID4gPiA+
-ID4gPiA+IHJlc3BvbnNpYmlsaXRpZXMgb3V0bGluZWQgaW4gdGhlIGVuZm9yY2VtZW50IGNsYXVz
-ZSBvZiB0aGUNCj4gPiA+ID4gPiA+ID4gbmV3DQo+ID4gPiA+ID4gPiA+IGNvZGUgb2YgY29uZHVj
-dC7CoMKgU2luY2UgdGhlcmUgaXMgY29uY2VybiB0aGF0IHRoaXMgYmVjb21lcw0KPiA+ID4gPiA+
-ID4gPiBiaW5kaW5nIG9uIHRoZSByZWxlYXNlIG9mIHRoZSA0LjE5IGtlcm5lbCwgc3RyaXAgdGhl
-DQo+ID4gPiA+ID4gPiA+IGVuZm9yY2VtZW50IGNsYXVzZXMgdG8gZ2l2ZSB0aGUgY29tbXVuaXR5
-IHRpbWUgdG8gY29uc2lkZXINCj4gPiA+ID4gPiA+ID4gYW5kDQo+ID4gPiA+ID4gPiA+IGRlYmF0
-ZSBob3cgdGhpcyBzaG91bGQgYmUgaGFuZGxlZC4NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+
-ID4gU2lnbmVkLW9mZi1ieTogSmFtZXMgQm90dG9tbGV5DQo+ID4gPiA+ID4gPiA+IDxKYW1lcy5C
-b3R0b21sZXlASGFuc2VuUGFydG5lcnNoaXAuY29tPg0KPiA+ID4gPiA+ID4gPiAtLS0NCj4gPiA+
-ID4gPiA+ID4gwqBEb2N1bWVudGF0aW9uL3Byb2Nlc3MvY29kZS1vZi1jb25kdWN0LnJzdCB8IDE1
-IC0tLS0tLS0tLQ0KPiA+ID4gPiA+ID4gPiAtLS0tLS0NCj4gPiA+ID4gPiA+ID4gwqAxIGZpbGUg
-Y2hhbmdlZCwgMTUgZGVsZXRpb25zKC0pDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IGRp
-ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3MvY29kZS1vZi1jb25kdWN0LnJzdA0KPiA+
-ID4gPiA+ID4gPiBiL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9jb2RlLW9mLWNvbmR1Y3QucnN0DQo+
-ID4gPiA+ID4gPiA+IGluZGV4IGFhNDBlMzRlNzc4NS4uNGRkOTA5ODczMDViIDEwMDY0NA0KPiA+
-ID4gPiA+ID4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3MvY29kZS1vZi1jb25kdWN0LnJz
-dA0KPiA+ID4gPiA+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL3Byb2Nlc3MvY29kZS1vZi1jb25k
-dWN0LnJzdA0KPiA+ID4gPiA+ID4gPiBAQCAtNTksMjEgKzU5LDYgQEAgYWRkcmVzcywgcG9zdGlu
-ZyB2aWEgYW4gb2ZmaWNpYWwgc29jaWFsDQo+ID4gPiA+ID4gPiA+IG1lZGlhIGFjY291bnQsIG9y
-IGFjdGluZyBhcyBhbiBhcHBvaW50ZWTCoHJlcHJlc2VudGF0aXZlIGF0DQo+ID4gPiA+ID4gPiA+
-IGFuDQo+ID4gPiA+ID4gPiA+IG9ubGluZSBvciBvZmZsaW5lIGV2ZW50LiBSZXByZXNlbnRhdGlv
-biBvZiBhIHByb2plY3QgbWF5IGJlDQo+ID4gPiA+ID4gPiA+IMKgZnVydGhlciBkZWZpbmVkIGFu
-ZCBjbGFyaWZpZWQgYnkgcHJvamVjdCBtYWludGFpbmVycy4NCj4gPiA+ID4gPiA+ID4NCj4gPiA+
-ID4gPiA+ID4gLUVuZm9yY2VtZW50DQo+ID4gPiA+ID4gPiA+IC09PT09PT09PT09PQ0KPiA+ID4g
-PiA+ID4gPiAtDQo+ID4gPiA+ID4gPiA+IC1JbnN0YW5jZXMgb2YgYWJ1c2l2ZSwgaGFyYXNzaW5n
-LCBvciBvdGhlcndpc2UgdW5hY2NlcHRhYmxlDQo+ID4gPiA+ID4gPiA+IGJlaGF2aW9yIG1heSBi
-ZQ0KPiA+ID4gPiA+ID4gPiAtcmVwb3J0ZWQgYnkgY29udGFjdGluZyB0aGUgVGVjaG5pY2FsIEFk
-dmlzb3J5IEJvYXJkIChUQUIpDQo+ID4gPiA+ID4gPiA+IGF0DQo+ID4gPiA+ID4gPiA+IC08dGFi
-QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnPi4gQWxsIGNvbXBsYWludHMgd2lsbCBiZQ0KPiA+
-ID4gPiA+ID4gPiByZXZpZXdlZCBhbmQNCj4gPiA+ID4gPiA+ID4gLWludmVzdGlnYXRlZCBhbmQg
-d2lsbCByZXN1bHQgaW4gYSByZXNwb25zZSB0aGF0IGlzIGRlZW1lZA0KPiA+ID4gPiA+ID4gPiBu
-ZWNlc3NhcnkgYW5kDQo+ID4gPiA+ID4gPiA+IC1hcHByb3ByaWF0ZSB0byB0aGUgY2lyY3Vtc3Rh
-bmNlcy4gVGhlIFRBQiBpcyBvYmxpZ2F0ZWQgdG8NCj4gPiA+ID4gPiA+ID4gbWFpbnRhaW4NCj4g
-PiA+ID4gPiA+ID4gLWNvbmZpZGVudGlhbGl0eSB3aXRoIHJlZ2FyZCB0byB0aGUgcmVwb3J0ZXIg
-b2YgYW4NCj4gPiA+ID4gPiA+ID4gaW5jaWRlbnQuwqDCoEZ1cnRoZXIgZGV0YWlscyBvZg0KPiA+
-ID4gPiA+ID4gPiAtc3BlY2lmaWMgZW5mb3JjZW1lbnQgcG9saWNpZXMgbWF5IGJlIHBvc3RlZCBz
-ZXBhcmF0ZWx5Lg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEkgdGhpbmsgaXQncyBPSyB0byBs
-ZWF2ZSB0aGUgYWJvdmUgc2VjdGlvbiwgYXMgaXQgZG9lc24ndA0KPiA+ID4gPiA+ID4gc3BlYWsN
-Cj4gPiA+ID4gPiA+IHRvIGVuZm9yY2VtZW50LCBidXQgcmF0aGVyIGlzIGp1c3QgYSBzZXQgb2Yg
-cmVwb3J0aW5nDQo+ID4gPiA+ID4gPiBpbnN0cnVjdGlvbnMsIHdpdGggYW4gYXNzdXJhbmNlIG9m
-IGNvbmZpZGVudGlhbGl0eS7CoMKgVGhpcw0KPiA+ID4gPiA+ID4gc2VlbXMNCj4gPiA+ID4gPiA+
-IHRvIG1lIG5vdCB0byBiZSB0aGUgb2JqZWN0aW9uYWJsZSBwYXJ0IG9mIHRoaXMgc2VjdGlvbi4N
-Cj4gPiA+ID4gPiA+IChJT1csIEkgd291bGQgb21pdCB0aGlzIHJlbW92YWwgZnJvbSB0aGUgcGF0
-Y2gpLg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gU28gSSBkaWQgdGhpbmsgYWJvdXQgdGhhdCwgYnV0
-IGl0IHN0cnVjayBtZSB0aGF0IHdpdGggYm90aA0KPiA+ID4gPiA+IHBhcmFncmFwaHMgcmVtb3Zl
-ZCwgdGhlIGN1cnJlbnQgQ29DIGlzIHZlcnkgc2ltaWxhciB0byB0aGUNCj4gPiA+ID4gPiBzdGF0
-dXMgcXVvOiBuYW1lbHkgZXZlcnkgc3Vic3lzdGVtIGhhbmRsZXMgdGhlaXIgb3duIGlzc3VlcyBh
-bmQNCj4gPiA+ID4gPiB0aGF0J3MgZm9ybWFsaXNlZCBieSB0aGUgIk91ciBSZXNwb25zaWJpbGl0
-aWVzIiBzZWN0aW9uLsKgwqBUaGF0DQo+ID4gPiA+ID4gYWxzbyBtYWtlcyBtZSB0aGluayB0aGF0
-IHdoZXRoZXIgd2Ugd2FudCBhIGNlbnRyYWxpc2VkIGNoYW5uZWwNCj4gPiA+ID4gPiBvZiByZXBv
-cnRpbmcgb3IgZW5mb3JjZW1lbnQgYW5kIHdoYXQgaXQgc2hvdWxkIGJlIGFsc28gb3VnaHQgdG8N
-Cj4gPiA+ID4gPiBiZSBwYXJ0IG9mIHRoZSBkZWJhdGUuwqDCoFRoZSBUQUIgd2FzIGNyZWF0ZWQg
-dG8gY2hhbm5lbA0KPiA+ID4gPiA+IGNvbW11bml0eSB0ZWNobmljYWwgaW5wdXQgaW50byB0aGUg
-TGludXggRm91bmRhdGlvbi7CoMKgVGhhdCdzDQo+ID4gPiA+ID4gbm90IHRvIHNheSBpdCBjYW4n
-dCBwcm92aWRlIHRoZSByZXBvcnRpbmcgYW5kIGFyYml0cmF0aW9uDQo+ID4gPiA+ID4gc3RydWN0
-dXJlLCBidXQgaWYgd2UncmUgZ29pbmcgdG8gZG8gaXQgcmlnaHQgd2Ugc2hvdWxkIGRlYmF0ZQ0K
-PiA+ID4gPiA+IHRoZSBleHBhbnNpb24gb2YgaXRzIGR1dGllcyAoYW5kIHBvd2VycykuDQo+ID4g
-PiA+DQo+ID4gPiA+IFdoZW4gdGhlIENvZGUgb2YgQ29uZmxpY3Qgd2FzIGFkb3B0ZWQgMyB5ZWFy
-cyBhZ28sIHdlIGFscmVhZHkNCj4gPiA+ID4gY3JlYXRlZCB0aGUgY2VudHJhbCByZXBvcnRpbmcg
-bWVjaGFuaXNtLCBzbyBJIGFjdHVhbGx5IHRoaW5rDQo+ID4gPiA+IGxlYXZpbmcgKGllIGluY2x1
-ZGluZykgdGhlIGFib3ZlIHBhcmFncmFwaCBpcyBjbG9zZXIgdG8gdGhlDQo+ID4gPiA+IHN0YXR1
-cyBxdW8uwqDCoEkgdGhpbmsgaXQncyB0aGUgZXhwYW5kZWQgcG93ZXJzIGFuZCBkdXRpZXMgKG9y
-DQo+ID4gPiA+IHBlcmNlcHRpb24gdGhlcmVvZikgdGhhdCBhcmUgY2F1c2luZyBjb25jZXJuIGFu
-ZCBJIHRoaW5rIGRlYmF0aW5nDQo+ID4gPiA+IHRob3NlIHRvIGNsYXJpZnkgaW50ZW50LCBhbmQg
-YWRvcHRpbmcgY2hhbmdlcyBhcyBuZWVkZWTCoMKgdG8NCj4gPiA+ID4gYW1lbGlvcmF0ZSBjb25j
-ZXJucyBpcyB3b3J0aHdoaWxlLg0KPiA+ID4gSWYgd2Ugd2FudCB0byBnbyBiYWNrIHRvIHRoZSBz
-dGF0dXMgcXVvLCB0aGVuIGEgcGxhaW4gcmV2ZXJ0IGlzIHRoZQ0KPiA+ID4gcGF0Y2ggc2VyaWVz
-IEkgc2hvdWxkIHN1Ym1pdC4NCj4gPg0KPiA+IExldCBtZSB0cnkgdG8gYmUgbW9yZSBjbGVhci7C
-oMKgSSBkb24ndCB3YW50IHRvIGdvIGJhY2sgdG8gdGhlIHN0YXR1cw0KPiA+IHF1by4gSSB3YXMg
-c2F5aW5nIHRoYXQgaWYgd2Uga2VlcCB0aGlzIGRvY3VtZW50LCBidXQgb21pdCB0aGUgY2VudHJh
-bA0KPiA+IHJlcG9ydGluZyBtZWNoYW5pc20sIHRoYXQgaXMgYSBsYXJnZSBkZXBhcnR1cmUgZnJv
-bSB0aGUgc3RhdHVzIHF1bywNCj4gPiBiZWNhdXNlIHRoZSBDb2RlIG9mIENvbmZsaWN0IGFscmVh
-ZHkgZXN0YWJsaXNoZWQgdGhhdC7CoMKgQW5kIEkgdGhpbmsNCj4gPiB0aGF0IGhhdmluZyBhbiBv
-bWJ1ZHNtYW4tdHlwZSByb2xlIHNvbWV3aGVyZSBpbiB0aGUgY29tbXVuaXR5DQo+ID4gaXMgYmVu
-ZWZpY2lhbC4NCj4gDQo+IFRoZSBwdXJwb3NlIG9mIHRoaXMgcGF0Y2ggaXMgbm90IHRvIGJlIHRo
-ZSBmaW5hbCBwb2ludCBidXQgdG8gdGFrZSB1cw0KPiB1cCB0byBhIHVzZWZ1bCBzdGFydGluZyBw
-b2ludCBmb3IgU2h1YWgncyBDb0MgZGViYXRlIHByb3Bvc2FsIGF0IHRoZQ0KPiBrZXJuZWwgc3Vt
-bWl0IChhbmQgYmV5b25kKS4gIFNodWFoIGFza2VkIHRoYXQgSSBjbGFyaWZ5IHRoaXMgaW4gdGhl
-DQo+IGNvbW1pdCBtZXNzYWdlLCBzbyBJIHdpbGwgaW4gdjIuDQo+IA0KPiA+IEkgYmVsaWV2ZSBw
-YXJ0cyBvZiB0aGUgQ29kZSBvZiBDb25kdWN0IGFyZSBhbiBpbXByb3ZlbWVudCBvdmVyIHRoZQ0K
-PiA+IENvZGUgb2YgQ29uZmxpY3QsIHNvIG15IHBlcnNvbmFsIHByZWZlcmVuY2Ugd291bGQgYmUg
-dG8ga2VlcCBpdA0KPiA+IGFuZCB0cnkgdG8gYWRqdXN0IGl0IG1vdmluZyBmb3J3YXJkLsKgwqBJ
-IHRoaW5rIHlvdXIgcGF0Y2hlcywgd2l0aA0KPiA+IGNsZWFyIHN1Z2dlc3Rpb25zIGZvciBpbXBy
-b3ZlbWVudHMgKG9yIGZvciBkZWxldGlvbnMgaW4gdGhlIGNhc2UNCj4gPiB3aGVyZSB3ZSB3YW50
-IG1vcmUgZGViYXRlIG9uIHBhcnRpY3VsYXIgc2VjdGlvbnMgYmVmb3JlIGFkb3B0aW5nDQo+ID4g
-dGhlbSkgaXMgYSBnb29kIGFwcHJvYWNoLCBhbmQgSSBsaWtlIHRoYXQgcHJvY2VzcyBhcyBvcHBv
-c2VkIHRvDQo+ID4gc3RhcnRpbmcgb3ZlciBmcm9tIHNjcmF0Y2guDQo+IA0KPiBPSywgc28geW91
-J3JlIGhhcHB5IHdpdGggdGhlIGN1cnJlbnQgcGF0Y2ggYXMgdGhlIHN0YXJ0aW5nIG5vdCB0aGUN
-Cj4gZW5kaW5nIHBvaW50Pw0KDQpJJ20gaGFwcHkgd2l0aCB0aGUgc2Vjb25kIGh1bmsgYXMgYSBz
-dGFydGluZyBwb2ludCwgYnV0IG5vdCB0aGUgZmlyc3QuDQpJIHRoaW5rIHRoZSBmaXJzdCBodW5r
-IGlzIGEgcmVncmVzc2lvbiB0aGF0IGlzIG5vdCBuZWVkZWQgdG8gYWRkcmVzcyB0aGUNCmNvbmNl
-cm5zIHRoYXQgSSBoYXZlIHNlZW4gcmFpc2VkIHNvIGZhci4gIFRoZSBmaXJzdCBodW5rIHNlZW1z
-IHRvIG1lIHRvIGJlDQpjbG9zZSB0byB3aGF0IHRoZSBDb2RlIG9mIENvbmZsaWN0IGFscmVhZHkg
-aGFkLCBhbmQgd2hhdCB0aGUNCmNvbW11bml0eSB3YXMgYWxyZWFkeSB3b3JraW5nIHVuZGVyLg0K
-DQo+ID4gPiA+IEkgYmVsaWV2ZSB0aGF0IGluIHRoZSB2YXN0IG1ham9yaXR5IG9mIGNhc2VzLCB0
-aGUgVEFCIHdpbGwgZW5kIHVwDQo+ID4gPiA+IHBlcmZvcm1pbmcgYSBtZWRpYXRvciByb2xlIHRv
-IHNtb290aCBodXJ0IGZlZWxpbmdzIGFuZCByZW1pbmQgYW5kDQo+ID4gPiA+IGVuY291cmFnZSBp
-bXByb3ZlZCBjb21tdW5pY2F0aW9uIC0gdmVyeSBzaW1pbGFyIHRvIHdoYXQgd2UndmUNCj4gPiA+
-ID4gZG9uZSBpbiB0aGUgcGFzdC7CoMKgSSByZWFsbHkgYmVsaWV2ZSB0aGF0IGJhbnMgd2lsbCBj
-b250aW51ZSB0byBiZQ0KPiA+ID4gPiB2ZXJ5IGZldyBhbmQgZmFyIGJldHdlZW4sIGFzIHRoZXkg
-aGF2ZSBiZWVuIGhpc3RvcmljYWxseSAoSSBjYW4NCj4gPiA+ID4gb25seSB0aGluayBvZiAzIGlu
-IHRoZSBwYXN0IGRlY2FkZS4pDQo+ID4gPg0KPiA+ID4gVGhhdCBtaWdodCB2ZXJ5IHdlbGwgYmUg
-dGhlIHBvc2l0aW9uIHRoZSBkaXNjdXNzaW9uIGFycml2ZXMgYXQ7DQo+ID4gPiBob3dldmVyLCBJ
-IHJlYWxseSB0aGluayBtYWtpbmcgdGhlIHByb2Nlc3MgZnVsbHkgdHJhbnNwYXJlbnQgdGhpcw0K
-PiA+ID4gdGltZSByZXF1aXJlcyBub3QgcHJlanVkZ2luZyB0aGUgb3V0Y29tZS4NCj4gPg0KPiA+
-IEkgZG9uJ3QgdW5kZXJzdGFuZCB5b3VyIHBvaW50IGhlcmUuwqDCoENhbiB5b3UgZWxhYm9yYXRl
-Pw0KPiANCj4gWWVzOiBJIGNvdWxkIGZvcmVzZWUgYW4gb3V0Y29tZSB3aGVyZSB0aGUga2VybmVs
-IGNvbW11bml0eSBkZWNpZGVzIHRvDQo+IHZlc3QgQ29DIGVuZm9yY2VtZW50IGluIGEgZGlmZmVy
-ZW50IGJvZHkgZnJvbSB0aGUgVEFCLCBvciBldmVuIGluIG5vDQo+IGJvZHkgYnV0IGFuIGluZm9y
-bWFsIG1haW50YWluZXJzIGxpc3QuICBJJ20gbm90IHNheWluZyB0aGF0ICp3aWxsKg0KPiBoYXBw
-ZW4sIG1lcmVseSB0aGF0IGl0J3MgYW4gb3V0Y29tZSB0aGF0IHNob3VsZCBub3QgYmUgZm9yZWNs
-b3NlZCBhdA0KPiB0aGlzIHBvaW50Lg0KDQpPSywgdGhhbmtzIGZvciB0aGUgZXhwbGFuYXRpb24u
-ICBJIGRvbid0IGhhdmUgYSBzdHJvbmcgb3BpbmlvbiBhYm91dA0KdGhlIHJlc3VsdGluZyBvdXRj
-b21lIG9mIGNvbW11bml0eSBjb25zZW5zdXMuICBJIHRoaW5rIHdlJ2xsIGNvbWUgdXANCndpdGgg
-c29tZXRoaW5nIHRoYXQgc2F0aXNmaWVzIG1vc3QgcGVvcGxlLCBhbmQgaXQncyBwb3NzaWJsZSBp
-dCB3b24ndCBsb29rIGxpa2UNCndoYXQgd2UgaGF2ZSBub3cuICBTbyBJJ2QgYWdyZWUgd2Ugc2hv
-dWxkbid0IGZvcmVjbG9zZSBvdXRjb21lcy4gIEkgaG9wZSBpdA0KZG9lc24ndCBsb29rIGxpa2Ug
-SSdtICpqdXN0KiBhcmd1aW5nIGZvciBrZWVwaW5nIHRoZSBUQUIgaW4gc29tZSBlbmZvcmNlbWVu
-dA0Kcm9sZS4gIEknbSBub3QuICBJJ20gYXJndWluZyB0aGF0IHRoZSBjdXJyZW50IENvQyBsYW5n
-dWFnZSAoaW4gdGhlIGZpcnN0DQpwYXJhZ3JhcGggb2YgdGhlIGVuZm9yY2VtZW50IHNlY3Rpb24p
-IGtlZXBzIHRoZSBUQUIgYXMgdGhlIGNlbnRyYWwgcmVwb3J0aW5nDQptZWNoYW5pc20sIGFuZCB0
-aGF0IHRoaXMgaXMgbGVzcyBvZiBhIGNoYW5nZSB0byBjdXJyZW50IHBvbGljeSB0aGFuIHJlbW92
-aW5nIGl0Lg0KSWYgcGVvcGxlIHdhbnQgdG8gYXJndWUgZm9yIGEgZGlmZmVyZW5jZSBpbiBjZW50
-cmFsIHJlcG9ydGluZywgb3Igbm8gY2VudHJhbA0KcmVwb3J0aW5nIGF0IGFsbCwgSSdtIGFsbCBl
-YXJzLg0KKEFsdGhvdWdoLCBJJ20gbm90IHN1cmUgbXkgZWFycyBjb3VudCBmb3IgYW55dGhpbmcu
-ICBUaGF0J3MgdXAgdG8gd2hvZXZlcg0KYWNjZXB0cyBzdWNoIHBhdGNoZXMsIGFuZCB0aGF0J3Mg
-bm90IG1lLikNCg0KUHV0IGEgY29tcGxldGVseSBkaWZmZXJlbnQgd2F5OiAgSSBiZWxpZXZlIHRo
-ZSBnb2FsIG9mIHRoZSBwYXRjaCBpcyB0byByZW1vdmUNCnBhcnRzIG9mIHRoZSBuZXcgQ29DIHRo
-YXQgcGVvcGxlIGhhdmUgY29uY2VybnMgYWJvdXQsIHBlbmRpbmcgYSBjb21tdW5pdHkNCmRpc2N1
-c3Npb24gYWJvdXQgdGhlIGlzc3Vlcy4gIE15IHBlcnNvbmFsIG9waW5pb24gaXMgdGhhdCB0aGUg
-Zmlyc3QgcGFydCBvZg0KdGhlIGVuZm9yY2VtZW50IGNsYXVzZSwgbGlzdGluZyB0aGUgVEFCIGFz
-IHRoZSBjb250YWN0IHBvaW50LCBhbmQgdHJ5aW5nIHRvIG1ha2UNCmFuIGFzc3VyYW5jZSBvZiBj
-b25maWRlbnRpYWxpdHksIGRvZXNuJ3QgaGF2ZSB0byBiZSBwYXJ0IG9mIHRoYXQgcmVtb3ZhbCAo
-bm93KSwNCmJlY2F1c2UgaXQncyBub3QgdmVyeSBjb250cm92ZXJzaWFsLg0KIC0tIFRpbQ0KDQo=
+The patch
+
+   dt-bindings: regulator: document stpmic1 pmic regulators
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From dbd1709f7697932c8e24883dbf6025adc9fe6ff9 Mon Sep 17 00:00:00 2001
+From: pascal paillet <p.paillet@st.com>
+Date: Mon, 8 Oct 2018 16:29:40 +0000
+Subject: [PATCH] dt-bindings: regulator: document stpmic1 pmic regulators
+
+The STPMIC1 regulators supply power to the application processor as well as
+to the external system peripherals such as DDR, Flash memories and system
+devices.
+
+Signed-off-by: pascal paillet <p.paillet@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../regulator/st,stpmic1-regulator.txt        | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+
+diff --git a/Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt b/Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+new file mode 100644
+index 000000000000..a3f476240565
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+@@ -0,0 +1,68 @@
++STMicroelectronics STPMIC1 Voltage regulators
++
++Regulator Nodes are optional depending on needs.
++
++Available Regulators in STPMIC1 device are:
++  - buck1 for Buck BUCK1
++  - buck2 for Buck BUCK2
++  - buck3 for Buck BUCK3
++  - buck4 for Buck BUCK4
++  - ldo1 for LDO LDO1
++  - ldo2 for LDO LDO2
++  - ldo3 for LDO LDO3
++  - ldo4 for LDO LDO4
++  - ldo5 for LDO LDO5
++  - ldo6 for LDO LDO6
++  - vref_ddr for LDO Vref DDR
++  - boost for Buck BOOST
++  - pwr_sw1 for VBUS_OTG switch
++  - pwr_sw2 for SW_OUT switch
++
++Switches are fixed voltage regulators with only enable/disable capability.
++
++Optional properties:
++- st,mask-reset: mask reset for this regulator: the regulator configuration
++  is maintained during pmic reset.
++- regulator-pull-down: enable high pull down
++  if not specified light pull down is used
++- regulator-over-current-protection:
++    if set, all regulators are switched off in case of over-current detection
++    on this regulator,
++    if not set, the driver only sends an over-current event.
++- interrupt-parent: phandle to the parent interrupt controller
++- interrupts: index of current limit detection interrupt
++- <regulator>-supply: phandle to the parent supply/regulator node
++	each regulator supply can be described except vref_ddr.
++
++Example:
++regulators {
++	compatible = "st,stpmic1-regulators";
++
++	ldo6-supply = <&v3v3>;
++
++	vdd_core: buck1 {
++		regulator-name = "vdd_core";
++		interrupts = <IT_CURLIM_BUCK1 0>;
++		interrupt-parent = <&pmic>;
++		st,mask-reset;
++		regulator-pull-down;
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1200000>;
++	};
++
++	v3v3: buck4 {
++		regulator-name = "v3v3";
++		interrupts = <IT_CURLIM_BUCK4 0>;
++		interrupt-parent = <&mypmic>;
++
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	v1v8: ldo6 {
++		regulator-name = "v1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-over-current-protection;
++	};
++};
+-- 
+2.19.0
+
