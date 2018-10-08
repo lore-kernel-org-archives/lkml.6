@@ -2,546 +2,88 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2F5C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68219C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3B320878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:49:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e2qBFrU6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3B320878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 24C7E2086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C7E2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeJHQ7y (ORCPT
+        id S1727127AbeJHRDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 12:59:54 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40412 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbeJHQ7y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:59:54 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w989mZTq065402;
-        Mon, 8 Oct 2018 04:48:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538992115;
-        bh=slRGUOC7wC9wM7jxygiQVInxC8Vf/ZDJ46F812ke0yI=;
-        h=From:Subject:To:CC:References:Date:In-Reply-To;
-        b=e2qBFrU6OpgCSXl+Fsv0mx2e4BsiU8ylgmhDD1pdjoNWQj1ms7jBoN4VRdCc8taWe
-         oLqtQGyuQJlX52gLd6XemgMke3M3kqPnM13NKBAv11Mj41D0cnUDZY8Y7j/cnaeG31
-         K05Ef7VlyIFD28AWVzVpUcgfkhu+BnFm3xCbLAt0=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w989mZ42030340;
-        Mon, 8 Oct 2018 04:48:35 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 8 Oct
- 2018 04:48:35 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 8 Oct 2018 04:48:35 -0500
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w989mVPe030480;
-        Mon, 8 Oct 2018 04:48:32 -0500
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Subject: Re: [PATCH 2/2] irqchip: ti-sci-intr: Add support for Interrupt
- Router driver
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
-References: <20181006072812.15814-1-lokeshvutla@ti.com>
- <20181006072812.15814-3-lokeshvutla@ti.com>
- <86va6ftn5q.wl-marc.zyngier@arm.com>
-Message-ID: <5d43154a-81c0-2ff3-660d-fa46b33ac090@ti.com>
-Date:   Mon, 8 Oct 2018 15:18:29 +0530
+        Mon, 8 Oct 2018 13:03:42 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:37815 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726330AbeJHRDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:03:42 -0400
+Received: from [192.168.1.7] (x4db45a10.dyn.telefonica.de [77.180.90.16])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7C7692012D0DC0;
+        Mon,  8 Oct 2018 11:52:48 +0200 (CEST)
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: unwind_init() takes 100 ms
+Message-ID: <81a1ff79-b303-c384-f926-c9618afac8f0@molgen.mpg.de>
+Date:   Mon, 8 Oct 2018 11:52:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <86va6ftn5q.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Dear Josh, dear Linux folks,
 
-On 10/6/2018 3:25 PM, Marc Zyngier wrote:
-> Hi Lokesh,
-> 
-> On Sat, 06 Oct 2018 08:28:12 +0100,
-> Lokesh Vutla <lokeshvutla@ti.com> wrote:
->>
->> Texas Instruments' K3 generation SoCs has an IP Interrupt Router
->> that does allows for multiplexing of input interrupts to host
->> interrupt controller. Interrupt Router inputs are either from a
->> peripheral or from an Interrupt Aggregator which is another
->> interrupt controller.
->>
->> Configuration of the interrupt router registers can only be done by
->> a system co-processor and the driver needs to send a message to this
->> co processor over TISCI protocol.
-> 
-> I assume that this co-processor only deals with the routing itself,
-> and doesn't need to be talked to during interrupt processing, right?
 
-Yes, that's right.
+Trying to decrease the boot time of the 64-bit Linux kernel (Linux 
+4.19-rc7 (0238df64)) on a Asus F2A85-M PRO with an AMD processor, I 
+noticed `unwind_init()` called from `setup_arch()` 
+`arch/x86/kernel/setup.c` takes over 100 ms to initialize according to 
+Linux time stamps (which are present for early boot now).
 
-> 
->>
->> Add support for Interrupt Router driver over TISCI protocol.
->>
->> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->> ---
->>  MAINTAINERS                       |   1 +
->>  drivers/irqchip/Kconfig           |  11 +
->>  drivers/irqchip/Makefile          |   1 +
->>  drivers/irqchip/irq-ti-sci-intr.c | 325 ++++++++++++++++++++++++++++++
->>  4 files changed, 338 insertions(+)
->>  create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index a23778b68d74..cf3c834f8cee 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -14626,6 +14626,7 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>  F:	drivers/clk/keystone/sci-clk.c
->>  F:	drivers/reset/reset-ti-sci.c
->>  F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->> +F:	drivers/irqchip/irq-ti-sci-intr.c
->>  
->>  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
->>  M:	Hans Verkuil <hverkuil@xs4all.nl>
->> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->> index 96451b581452..9a965fe22043 100644
->> --- a/drivers/irqchip/Kconfig
->> +++ b/drivers/irqchip/Kconfig
->> @@ -374,6 +374,17 @@ config QCOM_PDC
->>  	  Power Domain Controller driver to manage and configure wakeup
->>  	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
->>  
->> +config TI_SCI_INTR_IRQCHIP
->> +	tristate "TISCI based Interrupt Router irqchip driver"
->> +	depends on TI_SCI_PROTOCOL && ARCH_K3
->> +	select IRQ_DOMAIN
->> +	select IRQ_DOMAIN_HIERARCHY
->> +	help
->> +	  This enables the irqchip driver support for K3 Interrupt router
->> +	  over TI System Control Interface available on some new TI's SoCs.
->> +	  If you wish to use interrupt router irq resources managed by the
->> +	  TI System Controller, say Y here. Otherwise, say N.
-> 
-> I don't really see the point of making this user-selectable. If you're
-> compiling support for a given platform, this platform configuration
-> fragment should itself select the necessary dependencies for the
-> system to work as expected. Here, you are leaving the choice to the
-> user, with a 50% chance of getting a system that doesn't boot...
+```
+[…]
+[    0.047650] ACPI: HPET id: 0x10228210 base: 0xfed00000
+[    0.047653] smpboot: Allowing 4 CPUs, 2 hotplug CPUs
+[    0.047670] [mem 0x8f000000-0xfebfffff] available for PCI devices
+[    0.047672] clocksource: refined-jiffies: mask: 0xffffffff 
+max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.151426] setup_percpu: NR_CPUS:64 nr_cpumask_bits:64 nr_cpu_ids:4 
+nr_node_ids:1
+[    0.151892] percpu: Embedded 44 pages/cpu @(____ptrval____) s142552 
+r8192 d29480 u524288
+[…]
+```
 
-There are 2 reasons why I made it tristate:
-- Not all interrupts go through this irqchip(At least in the AM6 SoC
-using this). Most of the legacy peripherals still are directly connected
-to GIC
-- TI_SCI_PROTOCOL is defined as tristate.
+That’s a third of the time to get to unpacking the initramfs.
 
-If you still feel I should not make it user-selectable, I can drop it.
+Therefore, I have several questions.
 
-> 
->> +
->>  endmenu
->>  
->>  config SIFIVE_PLIC
->> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->> index b822199445ff..44bf65606d60 100644
->> --- a/drivers/irqchip/Makefile
->> +++ b/drivers/irqchip/Makefile
->> @@ -89,3 +89,4 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
->>  obj-$(CONFIG_NDS32)			+= irq-ativic32.o
->>  obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
->>  obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
->> +obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
->> diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
->> new file mode 100644
->> index 000000000000..f04fe6da1b09
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-ti-sci-intr.c
->> @@ -0,0 +1,325 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Texas Instruments' K3 Interrupt Router irqchip driver
->> + *
->> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
->> + *	Lokesh Vutla <lokeshvutla@ti.com>
->> + */
->> +
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/module.h>
->> +#include <linux/moduleparam.h>
->> +#include <linux/irqdomain.h>
->> +#include <linux/soc/ti/ti_sci_protocol.h>
->> +
->> +#define TI_SCI_DEV_ID_MASK	0xffff
->> +#define TI_SCI_DEV_ID_SHIFT	16
->> +#define TI_SCI_IRQ_ID_MASK	0xffff
->> +#define TI_SCI_IRQ_ID_SHIFT	0
->> +#define TI_SCI_IS_EVENT_IRQ	BIT(31)
->> +
->> +#define HWIRQ_TO_DEVID(HWIRQ)	(((HWIRQ) >> (TI_SCI_DEV_ID_SHIFT)) & \
->> +				 (TI_SCI_DEV_ID_MASK))
->> +#define HWIRQ_TO_IRQID(HWIRQ)	((HWIRQ) & (TI_SCI_IRQ_ID_MASK))
-> 
-> nit: s/(HWIRQ)/(hwirq)/g
+1.  Can you reproduce that on your systems?
+2.  Can this be decreased or moved out of the “hot path”?
+3.  If not, how can this be disabled? I was unable to do so in the 
+configuration menu. I could always select an unwinder under *Kernel 
+hacking*, and was not able to disable it. I
+4.  Would a command line parameter be reasonable `disable_unwind`, so 
+people could decrease their boot time with distribution kernels, and 
+easily turn it back on, when they need a stacktrace without having to 
+rebuild the Linux kernel?
 
-okay.
 
-> 
->> +
->> +/**
->> + * struct ti_sci_intr_irq_domain - Structure representing a TISCI based
->> + *				   Interrupt Router IRQ domain.
->> + * @sci:	Pointer to TISCI handle
->> + * @dst_irq:	TISCI resource pointer representing destination irq controller.
->> + * @dst_id:	TISCI device ID of the destination irq controller.
->> + */
->> +struct ti_sci_intr_irq_domain {
->> +	const struct ti_sci_handle *sci;
->> +	struct ti_sci_resource *dst_irq;
->> +	u16 dst_id;
->> +};
->> +
->> +/**
->> + * struct ti_sci_intr_irq_desc - Description of an Interrupt Router IRQ
->> + * @src_id:		TISCI device ID of the IRQ source
->> + * @src_index:		IRQ source index within the device.
->> + * @dst_irq:		Destination host IRQ.
->> + */
->> +struct ti_sci_intr_irq_desc {
->> +	u16 src_id;
->> +	u16 src_index;
->> +	u16 dst_irq;
->> +};
-> 
-> Oh great. So this is reinventing the GICv3 ITS, only for SPIs. :-(
-> 
-> Now, this structure seems completely useless, see below.
-> 
->> +
->> +static struct irq_chip ti_sci_intr_irq_chip = {
->> +	.name			= "INTR",
->> +	.irq_eoi		= irq_chip_eoi_parent,
->> +	.irq_mask		= irq_chip_mask_parent,
->> +	.irq_unmask		= irq_chip_unmask_parent,
->> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
->> +	.irq_set_type		= irq_chip_set_type_parent,
->> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
->> +};
->> +
->> +/**
->> + * ti_sci_intr_irq_domain_translate() - Retrieve hwirq and type from
->> + *					IRQ firmware specific handler.
->> + * @domain:	Pointer to IRQ domain
->> + * @fwspec:	Pointer to IRQ specific firmware structure
->> + * @hwirq:	IRQ number identified by hardware
->> + * @type:	IRQ type
->> + *
->> + * Return 0 if all went ok else appropriate error.
->> + */
->> +static int ti_sci_intr_irq_domain_translate(struct irq_domain *domain,
->> +					    struct irq_fwspec *fwspec,
->> +					    unsigned long *hwirq,
->> +					    unsigned int *type)
->> +{
->> +	if (is_of_node(fwspec->fwnode)) {
->> +		if (fwspec->param_count != 3)
->> +			return -EINVAL;
->> +
->> +		*hwirq = ((fwspec->param[0] & TI_SCI_DEV_ID_MASK) <<
->> +			  TI_SCI_DEV_ID_SHIFT) |
->> +			 (fwspec->param[1] & TI_SCI_IRQ_ID_MASK);
-> 
-> Maybe it would make sense to have a macro that hides this:
+Kind regards,
 
-okay.
-
-> 
->       	       *hwirq = FWSPEC_TO_HWIRQ(fwspec);
-> 
->> +		*type = fwspec->param[2];
->> +
->> +		return 0;
->> +	}
->> +
->> +	return -EINVAL;
->> +}
->> +
->> +static inline void ti_sci_intr_delete_desc(struct ti_sci_intr_irq_domain *intr,
->> +					   struct ti_sci_intr_irq_desc *desc)
->> +{
->> +	intr->sci->ops.rm_irq_ops.free_direct_irq(intr->sci, desc->src_id,
->> +						  desc->src_index,
->> +						  intr->dst_id, desc->dst_irq);
-> 
-> This looks horrible. Why doesn't your firmware interface have a helper
-> functions that hides this? Something like:
-> 
-> 	ti_sci_free_direct_irq(intr, src_id, src_index, dst_irq);
-> 
-> and you could even add some error checking.
-
-All existing TISCI users follow the same convention, so I did not bother adding 
-any such wrapper. Will update TISCI with these wrappers and see what firmware 
-maintainer says.
-
-> 
->> +	pr_debug("%s: IRQ deleted from src = %d, src_index = %d, to dst = %d, dst_irq = %d\n",
->> +		 __func__, desc->src_id, desc->src_index, intr->dst_id,
->> +		desc->dst_irq);
-> 
-> And put this where it belongs (in the helper function).
-> 
->> +}
->> +
->> +/**
->> + * ti_sci_intr_irq_domain_free() - Free the specified IRQs from the domain.
->> + * @domain:	Domain to which the irqs belong
->> + * @virq:	Linux virtual IRQ to be freed.
->> + * @nr_irqs:	Number of continuous irqs to be freed
->> + */
->> +static void ti_sci_intr_irq_domain_free(struct irq_domain *domain,
->> +					unsigned int virq, unsigned int nr_irqs)
->> +{
->> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
->> +	struct ti_sci_intr_irq_desc *desc;
->> +	struct irq_data *data;
->> +	int i;
->> +
->> +	intr = domain->host_data;
->> +
->> +	for (i = 0; i < nr_irqs; i++) {
->> +		data = irq_domain_get_irq_data(domain, virq + i);
->> +
->> +		desc = irq_data_get_irq_chip_data(data);
->> +
->> +		ti_sci_intr_delete_desc(intr, desc);
->> +		irq_domain_free_irqs_parent(domain, virq, 1);
->> +		irq_domain_reset_irq_data(data);
->> +		ti_sci_release_resource(intr->dst_irq, desc->dst_irq);
->> +		kfree(desc);
->> +	}
->> +}
->> +
->> +/**
->> + * allocate_gic_irq() - Allocate GIC specific IRQ
->> + * @domain:	Point to the interrupt router IRQ domain
->> + * @dev:	TISCI device IRQ generating the IRQ
->> + * @irq:	IRQ offset within the device
->> + * @flags:	Corresponding flags to the IRQ
->> + *
->> + * Returns pointer to irq descriptor if all went well else appropriate
->> + * error pointer.
->> + */
->> +static struct ti_sci_intr_irq_desc *allocate_gic_irq(struct irq_domain *domain,
->> +						     unsigned int virq,
->> +						     u16 dev, u16 irq,
->> +						     u32 flags)
->> +{
->> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
->> +	struct ti_sci_intr_irq_desc *desc;
->> +	struct irq_fwspec fwspec;
->> +	int err;
->> +
->> +	if (!irq_domain_get_of_node(domain->parent))
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
->> +	if (!desc)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	desc->src_id = dev;
->> +	desc->src_index = irq;
->> +	desc->dst_irq = ti_sci_get_free_resource(intr->dst_irq);
-> 
-> I don't think this structure serves any purpose. src_id and src_index
-> are just a decomposition of hwirq. dst_irq is the GIC interrupt, which
-> is stored... by the GIC driver. Also, it is worth realising that
-> you're allocating per-interrupt data, but none of the per-interrupt
-> callbacks are using it. In my book, that's a sure sign that this
-> structure is pointless.
-
-hmm..you are right, these 3 fields can be dropped completely.
-
-> 
-> Am I missing anything here? >
->> +
->> +	fwspec.fwnode = domain->parent->fwnode;
->> +	fwspec.param_count = 3;
->> +	fwspec.param[0] = 0;	/* SPI */
->> +	fwspec.param[1] = desc->dst_irq - 32; /* SPI offset */
->> +	fwspec.param[2] = flags & IRQ_TYPE_SENSE_MASK;
->> +
->> +	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
->> +	if (err)
->> +		goto err_irqs;
->> +
->> +	pr_debug("%s: IRQ requested from src = %d, src_index = %d, to dst = %d, dst_irq = %d\n",
->> +		 __func__, desc->src_id, desc->src_index, intr->dst_id,
->> +		 desc->dst_irq);
->> +
->> +	err = intr->sci->ops.rm_irq_ops.set_direct_irq(intr->sci, desc->src_id,
->> +						       desc->src_index,
->> +						       intr->dst_id,
->> +						       desc->dst_irq);
-> 
-> Same remarks about the horrible interface.
-> 
->> +	if (err) {
->> +		pr_err("%s: IRQ allocation failed from src = %d, src_index = %d to dst_id = %d, dst_irq = %d",
->> +		       __func__, desc->src_id, desc->src_index, intr->dst_id,
->> +		       desc->dst_irq);
->> +		goto err_msg;
->> +	}
->> +
->> +	return desc;
->> +
->> +err_msg:
->> +	irq_domain_free_irqs_parent(domain, virq, 1);
->> +err_irqs:
->> +	ti_sci_release_resource(intr->dst_irq, desc->dst_irq);
->> +	kfree(desc);
->> +	return ERR_PTR(err);
->> +}
->> +
->> +/**
->> + * ti_sci_intr_irq_domain_alloc() - Allocate Interrupt router IRQs
->> + * @domain:	Point to the interrupt router IRQ domain
->> + * @virq:	Corresponding Linux virtual IRQ number
->> + * @nr_irqs:	Continuous irqs to be allocated
->> + * @data:	Pointer to firmware specifier
->> + *
->> + * Return 0 if all went well else appropriate error value.
->> + */
->> +static int ti_sci_intr_irq_domain_alloc(struct irq_domain *domain,
->> +					unsigned int virq, unsigned int nr_irqs,
->> +					void *data)
->> +{
->> +	struct irq_fwspec *fwspec = data;
->> +	struct ti_sci_intr_irq_desc *desc;
->> +	unsigned long hwirq;
->> +	u16 src_id, src_index;
->> +	int i, err;
->> +	u32 type;
->> +
->> +	err = ti_sci_intr_irq_domain_translate(domain, fwspec, &hwirq, &type);
->> +	if (err)
->> +		return err;
->> +
->> +	src_id = HWIRQ_TO_DEVID(hwirq);
->> +	src_index = HWIRQ_TO_IRQID(hwirq);
->> +
->> +	for (i = 0; i < nr_irqs; i++) {
->> +		desc = allocate_gic_irq(domain, virq + i, src_id, src_index + i,
->> +					type);
->> +		if (IS_ERR(desc))
->> +			/* ToDO: Clean already allocated IRQs */
->> +			return PTR_ERR(desc);
-> 
-> Please address this. But it also worth realising that this code will
-> never be called with nr_irqs!=1 (that's only for things like PCI
-> Multi-MSI).
-
-will fix it in v2.
-
-> 
->> +
->> +		err = irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
->> +						    &ti_sci_intr_irq_chip,
->> +						    desc);
->> +		if (err)
->> +			return err;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct irq_domain_ops ti_sci_intr_irq_domain_ops = {
->> +	.alloc		= ti_sci_intr_irq_domain_alloc,
->> +	.free		= ti_sci_intr_irq_domain_free,
->> +	.translate	= ti_sci_intr_irq_domain_translate,
->> +};
->> +
->> +static int ti_sci_intr_irq_domain_probe(struct platform_device *pdev)
->> +{
->> +	struct irq_domain *parent_domain, *domain;
->> +	struct ti_sci_intr_irq_domain *intr;
->> +	struct device_node *parent_node;
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	parent_node = of_irq_find_parent(dev_of_node(dev));
->> +	if (!parent_node) {
->> +		dev_err(dev, "Failed to get IRQ parent node\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	parent_domain = irq_find_host(parent_node);
->> +	if (!parent_domain) {
->> +		dev_err(dev, "Failed to find IRQ parent domain\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	intr = devm_kzalloc(dev, sizeof(*intr), GFP_KERNEL);
->> +	if (!intr)
->> +		return -ENOMEM;
->> +
->> +	intr->sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
->> +	if (IS_ERR(intr->sci)) {
->> +		ret = PTR_ERR(intr->sci);
->> +		if (ret != -EPROBE_DEFER)
->> +			dev_err(dev, "ti,sci read fail %d\n", ret);
->> +		intr->sci = NULL;
->> +		return ret;
->> +	}
->> +
->> +	intr->dst_irq = devm_ti_sci_get_of_resource(intr->sci, dev,
->> +						    "ti,sci-rm-range-girq");
->> +	if (IS_ERR(intr->dst_irq)) {
->> +		dev_err(dev, "Destination irq resource allocation failed\n");
->> +		return PTR_ERR(intr->dst_irq);
->> +	}
->> +
->> +	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dst-id",
->> +				   (u32 *)&intr->dst_id);
->> +	if (ret) {
->> +		dev_err(dev, "missing 'ti,sci-dst-id' property\n");
->> +		return -EINVAL;
->> +	}
-> 
-> Do you expect other drivers to require similar resource request? If
-> so, It might be worth getting the firmware interface to do that
-> work. Specially the "give me my SCI" part.
-
-I tried to consolidate sci resource part under devm_ti_sci_get_of_resource() api 
-but dst-id is something that is used by irqchip driver. So couldn't consolidate 
-it and had to get it from dt in the driver probe.
-
-Thanks and regards,
-Lokesh
+Paul
