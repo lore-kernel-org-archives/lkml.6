@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7553C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEE8C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 596402087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45FAB21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkGWt/fP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596402087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xDLtN+jn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FAB21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbeJIB5f (ORCPT
+        id S1730778AbeJIB5i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45512 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbeJIB5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:34 -0400
+        id S1730769AbeJIB5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:38 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03E3721479;
-        Mon,  8 Oct 2018 18:44:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B94552064A;
+        Mon,  8 Oct 2018 18:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024269;
-        bh=nvwXT6o1JR3W6I81uUIknCsloq36snMUz0maC5ZEmOw=;
+        s=default; t=1539024272;
+        bh=cxf36OCKtH0EVKTzFuROTyB9zVFYBwX9avMhJ/PBp/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VkGWt/fPIQCjT1J+4L52K4PaeV/sbJiqb8KEDiefS8Px15eI42K3hMXzfemSZPI0h
-         QvN3gvqjbh/rflGzKHDgJpu1myhRp+xA93mq3j1ZW4cjNOSvHsJ4PSukKCHIKYd6kf
-         4QvndmnBghpVV2kzCZqrmagcKRXOQRoYgVSb8d7Q=
+        b=xDLtN+jnxVrCBPf63u9PT4DSmnysOLDhJPFyFWkxyxqZ1LstLPL1zZ7oJo4IuFgd4
+         sMNiU6vJeWvt/GfsCsEi8PTkHdMyaxq2JWMHrVcI2ja08StebVLvT42CWkLF5A7Ypf
+         ztQHaJvDEffZvGCulTxaxQBGtcI18mlKifph/SOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Fernando D S Lima <fernandodsl@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 54/94] RDMA/ucma: check fd type in ucma_migrate_id()
-Date:   Mon,  8 Oct 2018 20:31:35 +0200
-Message-Id: <20181008175608.056632534@linuxfoundation.org>
+Subject: [PATCH 4.14 55/94] HID: sensor-hub: Restore fixup for Lenovo ThinkPad Helix 2 sensor hub report
+Date:   Mon,  8 Oct 2018 20:31:36 +0200
+Message-Id: <20181008175608.192149724@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,55 +66,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 ]
+[ Upstream commit ade573eb1e03d1ee5abcb3359b1259469ab6e8ed ]
 
-The current code grabs the private_data of whatever file descriptor
-userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-potentially causing a type confusion.
+Commit b0f847e16c1e ("HID: hid-sensor-hub: Force logical minimum to 1 for
+power and report state") not only replaced the descriptor fixup done for
+devices with the HID_SENSOR_HUB_ENUM_QUIRK with a generic fix, but also
+accidentally removed the unrelated descriptor fixup for the Lenovo ThinkPad
+Helix 2 sensor hub. This commit restores this fixup.
 
-This is probably fine in practice because the pointer is only used for
-comparisons, it is never actually dereferenced; and even in the
-comparisons, it is unlikely that a file from another filesystem would have
-a ->private_data pointer that happens to also be valid in this context.
-But ->private_data is not always guaranteed to be a valid pointer to an
-object owned by the file's filesystem; for example, some filesystems just
-cram numbers in there.
+Restoring this fixup not only fixes the Lenovo ThinkPad Helix 2's sensors,
+but also the Lenovo ThinkPad 8's sensors.
 
-Check the type of the supplied file descriptor to be safe, analogous to how
-other places in the kernel do it.
-
-Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: b0f847e16c1e ("HID: hid-sensor-hub: Force logical minimum ...")
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Fernando D S Lima <fernandodsl@gmail.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/ucma.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/hid/hid-sensor-hub.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -124,6 +124,8 @@ static DEFINE_MUTEX(mut);
- static DEFINE_IDR(ctx_idr);
- static DEFINE_IDR(multicast_idr);
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -579,6 +579,28 @@ void sensor_hub_device_close(struct hid_
+ }
+ EXPORT_SYMBOL_GPL(sensor_hub_device_close);
  
-+static const struct file_operations ucma_fops;
-+
- static inline struct ucma_context *_ucma_find_context(int id,
- 						      struct ucma_file *file)
- {
-@@ -1564,6 +1566,10 @@ static ssize_t ucma_migrate_id(struct uc
- 	f = fdget(cmd.fd);
- 	if (!f.file)
- 		return -ENOENT;
-+	if (f.file->f_op != &ucma_fops) {
-+		ret = -EINVAL;
-+		goto file_put;
++static __u8 *sensor_hub_report_fixup(struct hid_device *hdev, __u8 *rdesc,
++		unsigned int *rsize)
++{
++	/*
++	 * Checks if the report descriptor of Thinkpad Helix 2 has a logical
++	 * minimum for magnetic flux axis greater than the maximum.
++	 */
++	if (hdev->product == USB_DEVICE_ID_TEXAS_INSTRUMENTS_LENOVO_YOGA &&
++		*rsize == 2558 && rdesc[913] == 0x17 && rdesc[914] == 0x40 &&
++		rdesc[915] == 0x81 && rdesc[916] == 0x08 &&
++		rdesc[917] == 0x00 && rdesc[918] == 0x27 &&
++		rdesc[921] == 0x07 && rdesc[922] == 0x00) {
++		/* Sets negative logical minimum for mag x, y and z */
++		rdesc[914] = rdesc[935] = rdesc[956] = 0xc0;
++		rdesc[915] = rdesc[936] = rdesc[957] = 0x7e;
++		rdesc[916] = rdesc[937] = rdesc[958] = 0xf7;
++		rdesc[917] = rdesc[938] = rdesc[959] = 0xff;
 +	}
- 
- 	/* Validate current fd and prevent destruction of id. */
- 	ctx = ucma_get_ctx(f.file->private_data, cmd.id);
++
++	return rdesc;
++}
++
+ static int sensor_hub_probe(struct hid_device *hdev,
+ 				const struct hid_device_id *id)
+ {
+@@ -742,6 +764,7 @@ static struct hid_driver sensor_hub_driv
+ 	.probe = sensor_hub_probe,
+ 	.remove = sensor_hub_remove,
+ 	.raw_event = sensor_hub_raw_event,
++	.report_fixup = sensor_hub_report_fixup,
+ #ifdef CONFIG_PM
+ 	.suspend = sensor_hub_suspend,
+ 	.resume = sensor_hub_resume,
 
 
