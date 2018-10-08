@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226F8C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06864C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE66214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42CF2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6BW912M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE66214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xN1v6cAQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42CF2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729812AbeJIBxw (ORCPT
+        id S1729824AbeJIBxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:53:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41226 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:53:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbeJIBxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:53:50 -0400
+        id S1727315AbeJIBxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:53:53 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37F1821508;
-        Mon,  8 Oct 2018 18:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C3C52087D;
+        Mon,  8 Oct 2018 18:40:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024046;
-        bh=tusczBuwlarcGkMJpn4lSeKnx+ZVbGbilHE6+fvVFMk=;
+        s=default; t=1539024049;
+        bh=az7F3kRNHshaOiG8Su2Oes/K+6GR3Gfvb8HjF11r2eo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q6BW912My7wMgqrzM6pQif/2Ux9aQ7ulq3uxXc8GbCyouQXhcYq4jXBs8/cDvZ2H6
-         jGV/MKfFkIC6xRnDTSJZC70MFRG/KHIiJXRhG2wanuLb8KkXrmY2jyaRBsQ6xe0ZTb
-         GyoBMDfhMv2i76DU3tAzt30hsRYRKpDPfxAspTcM=
+        b=xN1v6cAQBN1mEJqnN2+0laed6+TmIXCAqOOydjqdkYGQEf1WvHxl2zSzbqvLCoiiu
+         hmhrjZHUL2rR+YkFU3S3TvuF1xC95AgDXVSbobDzKUbXJNdus0BE2F8FZTAviWzxxY
+         fdprRmxKrNAdXurC1E/N9+aona23R6uN9cMON3Bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linux-hexagon@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 43/59] hexagon: modify ffs() and fls() to return int
-Date:   Mon,  8 Oct 2018 20:31:50 +0200
-Message-Id: <20181008175550.966186210@linuxfoundation.org>
+Subject: [PATCH 4.9 44/59] arm64: jump_label.h: use asm_volatile_goto macro instead of "asm goto"
+Date:   Mon,  8 Oct 2018 20:31:51 +0200
+Message-Id: <20181008175551.297454456@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -65,56 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-[ Upstream commit 5c41aaad409c097cf1ef74f2c649fed994744ef5 ]
+[ Upstream commit 13aceef06adfaf93d52e01e28a8bc8a0ad471d83 ]
 
-Building drivers/mtd/nand/raw/nandsim.c on arch/hexagon/ produces a
-printk format build warning.  This is due to hexagon's ffs() being
-coded as returning long instead of int.
+All other uses of "asm goto" go through asm_volatile_goto, which avoids
+a miscompile when using GCC < 4.8.2. Replace our open-coded "asm goto"
+statements with the asm_volatile_goto macro to avoid issues with older
+toolchains.
 
-Fix the printk format warning by changing all of hexagon's ffs() and
-fls() functions to return int instead of long.  The variables that
-they return are already int instead of long.  This return type
-matches the return type in <asm-generic/bitops/>.
-
-../drivers/mtd/nand/raw/nandsim.c: In function 'init_nandsim':
-../drivers/mtd/nand/raw/nandsim.c:760:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long int' [-Wformat]
-
-There are no ffs() or fls() allmodconfig build errors after making this
-change.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Richard Kuo <rkuo@codeaurora.org>
-Cc: linux-hexagon@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Patch-mainline: linux-kernel @ 07/22/2018, 16:03
-Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/hexagon/include/asm/bitops.h |    4 ++--
+ arch/arm64/include/asm/jump_label.h |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/hexagon/include/asm/bitops.h
-+++ b/arch/hexagon/include/asm/bitops.h
-@@ -211,7 +211,7 @@ static inline long ffz(int x)
-  * This is defined the same way as ffs.
-  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
-  */
--static inline long fls(int x)
-+static inline int fls(int x)
- {
- 	int r;
+--- a/arch/arm64/include/asm/jump_label.h
++++ b/arch/arm64/include/asm/jump_label.h
+@@ -28,7 +28,7 @@
  
-@@ -232,7 +232,7 @@ static inline long fls(int x)
-  * the libc and compiler builtin ffs routines, therefore
-  * differs in spirit from the above ffz (man ffs).
-  */
--static inline long ffs(int x)
-+static inline int ffs(int x)
+ static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
  {
- 	int r;
+-	asm goto("1: nop\n\t"
++	asm_volatile_goto("1: nop\n\t"
+ 		 ".pushsection __jump_table,  \"aw\"\n\t"
+ 		 ".align 3\n\t"
+ 		 ".quad 1b, %l[l_yes], %c0\n\t"
+@@ -42,7 +42,7 @@ l_yes:
  
+ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+ {
+-	asm goto("1: b %l[l_yes]\n\t"
++	asm_volatile_goto("1: b %l[l_yes]\n\t"
+ 		 ".pushsection __jump_table,  \"aw\"\n\t"
+ 		 ".align 3\n\t"
+ 		 ".quad 1b, %l[l_yes], %c0\n\t"
 
 
