@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B341AC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B673C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A67821557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA3021557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiS8ob5G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A67821557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5U9vXaf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA3021557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeJHWi1 (ORCPT
+        id S1728488AbeJHWqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56896 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:46:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727827AbeJHWiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:24 -0400
+        id S1727962AbeJHWi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51523214DC;
-        Mon,  8 Oct 2018 15:26:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0915214FA;
+        Mon,  8 Oct 2018 15:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012368;
-        bh=QFK5ue3WEVMe74bdKKp4H+L5pyBnVmwh0zov7I4ceng=;
+        s=default; t=1539012372;
+        bh=Ysl24WM3RTldRV2S2CS31mftc8XfWm+vLBdmwIVI5i8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JiS8ob5Gk3hm5jgUWHjFjwgNEx544f14meGEeaQFdSFIe7VbVrZ4BwUi/J6l2GKSd
-         8YwFo6sDYrrHTaJmTRVkKgwU1ED2Fk58IwSkJK3KUXgDMLNZMtsiDCDAhKoMG8iuHS
-         n2fzwbPgE88RN5GPHE/5J23h/Gatqx2gi3pyZu/k=
+        b=N5U9vXafRhikAi+GZMdB0Drng3Y9o3kQaiIPpzfmMPiTquJ4THBVy7m2Om2kWZUtK
+         zBSnhuXelNs3iLAdHiT5U8aCheVLYHPvYMvFcJz5fXoXdMMWTmGAIn0V5WPkKSa03p
+         2BU0uVoM3c3qGFCl8C1nkf/ekoqjH2sgRjvK57iU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Cc:     Tao Ren <taoren@fb.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 44/58] bpf: sockmap only allow ESTABLISHED sock state
-Date:   Mon,  8 Oct 2018 11:25:09 -0400
-Message-Id: <20181008152523.70705-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 48/58] clocksource/drivers/fttmr010: Fix set_next_event handler
+Date:   Mon,  8 Oct 2018 11:25:13 -0400
+Message-Id: <20181008152523.70705-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,97 +53,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Tao Ren <taoren@fb.com>
 
-[ Upstream commit 5607fff303636d48b88414c6be353d9fed700af2 ]
+[ Upstream commit 4451d3f59f2a6f95e5d205c2d04ea072955d080d ]
 
-After this patch we only allow socks that are in ESTABLISHED state or
-are being added via a sock_ops event that is transitioning into an
-ESTABLISHED state. By allowing sock_ops events we allow users to
-manage sockmaps directly from sock ops programs. The two supported
-sock_ops ops are BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB and
-BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB.
+Currently, the aspeed MATCH1 register is updated to <current_count -
+cycles> in set_next_event handler, with the assumption that COUNT
+register value is preserved when the timer is disabled and it continues
+decrementing after the timer is enabled. But the assumption is wrong:
+RELOAD register is loaded into COUNT register when the aspeed timer is
+enabled, which means the next event may be delayed because timer
+interrupt won't be generated until <0xFFFFFFFF - current_count +
+cycles>.
 
-Similar to TLS ULP this ensures sk_user_data is correct.
+The problem can be fixed by updating RELOAD register to <cycles>, and
+COUNT register will be re-loaded when the timer is enabled and interrupt
+is generated when COUNT register overflows.
 
-Reported-by: Eric Dumazet <edumazet@google.com>
-Fixes: 1aa12bdf1bfb ("bpf: sockmap, add sock close() hook to remove socks")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+The test result on Facebook Backpack-CMM BMC hardware (AST2500) shows
+the issue is fixed: without the patch, usleep(100) suspends the process
+for several milliseconds (and sometimes even over 40 milliseconds);
+after applying the fix, usleep(100) takes averagely 240 microseconds to
+return under the same workload level.
+
+Signed-off-by: Tao Ren <taoren@fb.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Lei YU <mine260309@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- kernel/bpf/sockmap.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-fttmr010.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index ed707b21d152..0d829e71024b 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -2092,8 +2092,12 @@ static int sock_map_update_elem(struct bpf_map *map,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
+index c020038ebfab..cf93f6419b51 100644
+--- a/drivers/clocksource/timer-fttmr010.c
++++ b/drivers/clocksource/timer-fttmr010.c
+@@ -130,13 +130,17 @@ static int fttmr010_timer_set_next_event(unsigned long cycles,
+ 	cr &= ~fttmr010->t1_enable_val;
+ 	writel(cr, fttmr010->base + TIMER_CR);
  
-+	/* ULPs are currently supported only for TCP sockets in ESTABLISHED
-+	 * state.
-+	 */
- 	if (skops.sk->sk_type != SOCK_STREAM ||
--	    skops.sk->sk_protocol != IPPROTO_TCP) {
-+	    skops.sk->sk_protocol != IPPROTO_TCP ||
-+	    skops.sk->sk_state != TCP_ESTABLISHED) {
- 		fput(socket->file);
- 		return -EOPNOTSUPP;
- 	}
-@@ -2448,6 +2452,16 @@ static int sock_hash_update_elem(struct bpf_map *map,
- 		return -EINVAL;
- 	}
- 
-+	/* ULPs are currently supported only for TCP sockets in ESTABLISHED
-+	 * state.
-+	 */
-+	if (skops.sk->sk_type != SOCK_STREAM ||
-+	    skops.sk->sk_protocol != IPPROTO_TCP ||
-+	    skops.sk->sk_state != TCP_ESTABLISHED) {
-+		fput(socket->file);
-+		return -EOPNOTSUPP;
+-	/* Setup the match register forward/backward in time */
+-	cr = readl(fttmr010->base + TIMER1_COUNT);
+-	if (fttmr010->count_down)
+-		cr -= cycles;
+-	else
+-		cr += cycles;
+-	writel(cr, fttmr010->base + TIMER1_MATCH1);
++	if (fttmr010->count_down) {
++		/*
++		 * ASPEED Timer Controller will load TIMER1_LOAD register
++		 * into TIMER1_COUNT register when the timer is re-enabled.
++		 */
++		writel(cycles, fttmr010->base + TIMER1_LOAD);
++	} else {
++		/* Setup the match register forward in time */
++		cr = readl(fttmr010->base + TIMER1_COUNT);
++		writel(cr + cycles, fttmr010->base + TIMER1_MATCH1);
 +	}
-+
- 	lock_sock(skops.sk);
- 	preempt_disable();
- 	rcu_read_lock();
-@@ -2536,10 +2550,22 @@ const struct bpf_map_ops sock_hash_ops = {
- 	.map_release_uref = sock_map_release,
- };
  
-+static bool bpf_is_valid_sock_op(struct bpf_sock_ops_kern *ops)
-+{
-+	return ops->op == BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB ||
-+	       ops->op == BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB;
-+}
- BPF_CALL_4(bpf_sock_map_update, struct bpf_sock_ops_kern *, bpf_sock,
- 	   struct bpf_map *, map, void *, key, u64, flags)
- {
- 	WARN_ON_ONCE(!rcu_read_lock_held());
-+
-+	/* ULPs are currently supported only for TCP sockets in ESTABLISHED
-+	 * state. This checks that the sock ops triggering the update is
-+	 * one indicating we are (or will be soon) in an ESTABLISHED state.
-+	 */
-+	if (!bpf_is_valid_sock_op(bpf_sock))
-+		return -EOPNOTSUPP;
- 	return sock_map_ctx_update_elem(bpf_sock, map, key, flags);
- }
- 
-@@ -2558,6 +2584,9 @@ BPF_CALL_4(bpf_sock_hash_update, struct bpf_sock_ops_kern *, bpf_sock,
- 	   struct bpf_map *, map, void *, key, u64, flags)
- {
- 	WARN_ON_ONCE(!rcu_read_lock_held());
-+
-+	if (!bpf_is_valid_sock_op(bpf_sock))
-+		return -EOPNOTSUPP;
- 	return sock_hash_ctx_update_elem(bpf_sock, map, key, flags);
- }
- 
+ 	/* Start */
+ 	cr = readl(fttmr010->base + TIMER_CR);
 -- 
 2.17.1
 
