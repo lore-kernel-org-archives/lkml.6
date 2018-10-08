@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444C1C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B9DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 083C521479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2A132087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5oKZ3yd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083C521479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jH4mTC5u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A132087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbeJIBwi (ORCPT
+        id S1729528AbeJIBwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:52:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39852 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:52:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbeJIBwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:52:37 -0400
+        id S1728337AbeJIBwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:52:39 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB16D21479;
-        Mon,  8 Oct 2018 18:39:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 848A3214C3;
+        Mon,  8 Oct 2018 18:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023973;
-        bh=1yLLFlR47CjVk9WmO9uO/BTyFg2MU36MK0HDx9cngcY=;
+        s=default; t=1539023976;
+        bh=aw8KI6Ejt00Abf/pj6qkWF08Oe1I7pkAhYAKFCZ/zi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q5oKZ3ydZyhWYB+jEgpws73ws1Brx02ctypzVRpoWe2E+exl490FEHpfu9jn8yAlL
-         Fa+/7m6ytgY7mH8yvB+TLOT5YW8FuZWpTc9NDSGrBOwcu2rbHHGWN5WPitizjok4PE
-         qFaOzaNwOM6NVhhniwPsK6Spc8XPKWMjubKaQF5w=
+        b=jH4mTC5uIqybGesoQBJYGkZuNv7/t+uUNKIJNVxBJEZ0S0fNs5Q4TOezxK0gS9Dzp
+         hGmb+s06hxERRaJ3tUrb7fc3r6ZXJkCt9Hvu7kT1FhnE1ctE8JqwBTUba09DroqNZ4
+         GXZjS/3a7zjNKtTngvqvMPrZ+Rsm+NnowcCTAEzA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
-        Aviv Heller <avivh@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 35/59] net/mlx5: Consider PCI domain in search for next dev
-Date:   Mon,  8 Oct 2018 20:31:42 +0200
-Message-Id: <20181008175550.303144562@linuxfoundation.org>
+Subject: [PATCH 4.9 36/59] drm/nouveau/TBDdevinit: dont fail when PMU/PRE_OS is missing from VBIOS
+Date:   Mon,  8 Oct 2018 20:31:43 +0200
+Message-Id: <20181008175550.360252380@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -64,49 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Jurgens <danielj@mellanox.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit df7ddb2396cd162e64aaff9401be05e31e438961 ]
+[ Upstream commit 0a6986c6595e9afd20ff7280dab36431c1e467f8 ]
 
-The PCI BDF is not unique. PCI domain must also be considered when
-searching for the next physical device during lag setup. Example below:
+This Falcon application doesn't appear to be present on some newer
+systems, so let's not fail init if we can't find it.
 
-mlx5_core 0000:01:00.0: MLX5E: StrdRq(1) RqSz(8) StrdSz(128) RxCqeCmprss(0)
-mlx5_core 0000:01:00.1: MLX5E: StrdRq(1) RqSz(8) StrdSz(128) RxCqeCmprss(0)
-mlx5_core 0001:01:00.0: MLX5E: StrdRq(1) RqSz(8) StrdSz(128) RxCqeCmprss(0)
-mlx5_core 0001:01:00.1: MLX5E: StrdRq(1) RqSz(8) StrdSz(128) RxCqeCmprss(0)
+TBD: is there a way to determine whether it *should* be there?
 
-Signed-off-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Aviv Heller <avivh@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/dev.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-@@ -288,16 +288,17 @@ void mlx5_remove_dev_by_protocol(struct
- 		}
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
+@@ -161,7 +161,8 @@ gm200_devinit_post(struct nvkm_devinit *
+ 	}
+ 
+ 	/* load and execute some other ucode image (bios therm?) */
+-	return pmu_load(init, 0x01, post, NULL, NULL);
++	pmu_load(init, 0x01, post, NULL, NULL);
++	return 0;
  }
  
--static u16 mlx5_gen_pci_id(struct mlx5_core_dev *dev)
-+static u32 mlx5_gen_pci_id(struct mlx5_core_dev *dev)
- {
--	return (u16)((dev->pdev->bus->number << 8) |
-+	return (u32)((pci_domain_nr(dev->pdev->bus) << 16) |
-+		     (dev->pdev->bus->number << 8) |
- 		     PCI_SLOT(dev->pdev->devfn));
- }
- 
- /* Must be called with intf_mutex held */
- struct mlx5_core_dev *mlx5_get_next_phys_dev(struct mlx5_core_dev *dev)
- {
--	u16 pci_id = mlx5_gen_pci_id(dev);
-+	u32 pci_id = mlx5_gen_pci_id(dev);
- 	struct mlx5_core_dev *res = NULL;
- 	struct mlx5_core_dev *tmp_dev;
- 	struct mlx5_priv *priv;
+ static const struct nvkm_devinit_func
 
 
