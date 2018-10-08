@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC14C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C93C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C7E2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D717214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQQ3rBiU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C7E2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5V9JktP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D717214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbeJIBvt (ORCPT
+        id S1729314AbeJIBvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38810 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbeJIBvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:48 -0400
+        id S1728690AbeJIBvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87FA02064A;
-        Mon,  8 Oct 2018 18:38:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 549312064A;
+        Mon,  8 Oct 2018 18:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023925;
-        bh=zZOKDPkTzNqU2lV5zI1llAClOFZem9yPZB5gxWTjkxA=;
+        s=default; t=1539023927;
+        bh=aSh43IUPM4VPoZ3E2oWGmUK4wEclnNno0YGOItChOMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qQQ3rBiUY0VSNAnsYZKtXnI96DxwE57eyo0ZxcwwhZPHAy5AnJ0hKbI4UXGZP2D2L
-         mZYXvRdTYqO/6yBjTx+6uqwgaz4u/dOXrCFAt3myjWm4qhnBZYgRbPxv/cDz2B6cPo
-         E2I/gQGMvxaIyFLvAsTGuJLX+XJVNz38kwWCRDVQ=
+        b=K5V9JktP/9ExGjP1AW7PlLglkaL6bTAT1x75Mn81/bmeWUsIcguNLE5qvGJJTxtee
+         p6FBE6rcZBXg/g7y0jQF2Ew9YjuYAHh8QfkerdFb3T9ICaI4Zaubs6CMh82kErJmgC
+         i+4Li/4g32FYYcd0eoqInsyzk3k3ZrzhQ4PvzhGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuan-Chi Pang <fu3mo6goo@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 08/59] mac80211: mesh: fix HWMP sequence numbering to follow standard
-Date:   Mon,  8 Oct 2018 20:31:15 +0200
-Message-Id: <20181008175547.576946939@linuxfoundation.org>
+Subject: [PATCH 4.9 09/59] net: hns: add netif_carrier_off before change speed and duplex
+Date:   Mon,  8 Oct 2018 20:31:16 +0200
+Message-Id: <20181008175547.636207799@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -63,36 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+From: Peng Li <lipeng321@huawei.com>
 
-[ Upstream commit 1f631c3201fe5491808df143d8fcba81b3197ffd ]
+[ Upstream commit 455c4401fe7a538facaffb35b906ce19f1ece474 ]
 
-IEEE 802.11-2016 14.10.8.3 HWMP sequence numbering says:
-If it is a target mesh STA, it shall update its own HWMP SN to
-maximum (current HWMP SN, target HWMP SN in the PREQ element) + 1
-immediately before it generates a PREP element in response to a
-PREQ element.
+If there are packets in hardware when changing the speed
+or duplex, it may cause hardware hang up.
 
-Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This patch adds netif_carrier_off before change speed and
+duplex in ethtool_ops.set_link_ksettings, and adds
+netif_carrier_on after complete the change.
+
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mesh_hwmp.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -563,6 +563,10 @@ static void hwmp_preq_frame_process(stru
- 		forward = false;
- 		reply = true;
- 		target_metric = 0;
-+
-+		if (SN_GT(target_sn, ifmsh->sn))
-+			ifmsh->sn = target_sn;
-+
- 		if (time_after(jiffies, ifmsh->last_sn_update +
- 					net_traversal_jiffies(sdata)) ||
- 		    time_before(jiffies, ifmsh->last_sn_update)) {
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -243,7 +243,9 @@ static int hns_nic_set_link_ksettings(st
+ 	}
+ 
+ 	if (h->dev->ops->adjust_link) {
++		netif_carrier_off(net_dev);
+ 		h->dev->ops->adjust_link(h, (int)speed, cmd->base.duplex);
++		netif_carrier_on(net_dev);
+ 		return 0;
+ 	}
+ 
 
 
