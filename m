@@ -2,93 +2,101 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CB2C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0B3C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52EEC20644
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EEC20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id DC61E20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr88Ai9y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC61E20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeJHWt5 (ORCPT
+        id S1727610AbeJHWuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:49:57 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43480 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbeJHWt4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:49:56 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p34-v6so14247691lfg.10;
-        Mon, 08 Oct 2018 08:37:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=toSEbHkjbqE84TJ4IKHTjjCp5FiiMMY43inH3kwYcgk=;
-        b=kZeLxsrZxdBtiF/7yRcBnPL5APVfGziI6KcZf0GHCY5usbbxLpNJKUqkenTmtlZt7J
-         rQyTICYBf2B71RCBWhET5tgNRhh+B5u08QLUYMgQLS406Ufg2yOlg2kiNOABY8Kl0biK
-         VLZ9NjKPRjyhw8d2jIx9nf/X2fNrr/ymI2nCNDTuxwbqCQfoj+rcDMxM57lYBpmMn46P
-         IjCh3U/bi/5vTjbJIbhOuhYM3LSIOeZVJtTKspMUjnKHsYLbx11oeZJaLcDJlTC6/4to
-         zjHPB+GTVKskA+zu5SvXZAe7wLjLHX4p1/rVg4FPLtnxwud1N+wXaeXJkpX/NXibFcwb
-         7qeA==
-X-Gm-Message-State: ABuFfoit2PGlXrrELJ8udQXiaPPt/727KpyL273l13FJx40TlxhLhyqV
-        b3xtjPrOToYXgsYLTKqgJPtHlfQq/ZjbHSyh1VY5lJPR
-X-Google-Smtp-Source: ACcGV62lAnLa4KheKEOXOcAI5/5z0Ef7vClbwAwhnkW4eyWRlMncmQG3NK+hihJuau1AZgFbM92fEYwIXd2i1DN7fIM=
-X-Received: by 2002:a19:6f0a:: with SMTP id k10-v6mr13682985lfc.8.1539013056560;
- Mon, 08 Oct 2018 08:37:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181005161845.959919-1-arnd@arndb.de> <CAOi1vP8Wy0DjEWBWh05iSx-RJS41hTc1rs2TXdz_1mcNpf68Dg@mail.gmail.com>
-In-Reply-To: <CAOi1vP8Wy0DjEWBWh05iSx-RJS41hTc1rs2TXdz_1mcNpf68Dg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 8 Oct 2018 17:37:19 +0200
-Message-ID: <CAK8P3a0xpFdKC0AtBDC9UvMfwpx3HTbAdio4ApmYhrb2FakK9g@mail.gmail.com>
-Subject: Re: [PATCH] ceph: use an enum instead of 'static const' to define constants
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        lhenriques@suse.com, ceph-devel <ceph-devel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 8 Oct 2018 18:50:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726679AbeJHWh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:37:56 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F8D214C5;
+        Mon,  8 Oct 2018 15:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539012341;
+        bh=vJWPjeWltJg0fFi6bskHxlsFM7buiGZcZqiw49b+wB0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nr88Ai9yKXgQ9VTqbzDZTG0Hsum6FsBRyTSJxqFqTZ4PIGTnFF61xitbZPTP1QraB
+         FZ/UmyJe+PCGMJuQNGJ6DIc5XqYh8wkOsBHzhxmQBy/zpNvf+MOuyweI1qJiwjadnS
+         q0852cfX3WZWVe1YaHIRM638UF0R8SqOusvem6gE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Lindner <mareklindner@neomailbox.ch>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 15/58] batman-adv: fix hardif_neigh refcount on queue_work() failure
+Date:   Mon,  8 Oct 2018 11:24:40 -0400
+Message-Id: <20181008152523.70705-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
+References: <20181008152523.70705-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 4:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> On Fri, Oct 5, 2018 at 6:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > @@ -71,7 +71,7 @@
-> >   * This ensures that no two versions who have different meanings for
-> >   * the bit ever speak to each other.
-> >   */
-> > -
-> > +enum ceph_features {
-> >  DEFINE_CEPH_FEATURE( 0, 1, UID)
-> >  DEFINE_CEPH_FEATURE( 1, 1, NOSRCADDR)
-> >  DEFINE_CEPH_FEATURE_RETIRED( 2, 1, MONCLOCKCHECK, JEWEL, LUMINOUS)
-> > @@ -170,13 +170,13 @@ DEFINE_CEPH_FEATURE(61, 1, CEPHX_V2)             // *do not share this bit*
-> >
-> >  DEFINE_CEPH_FEATURE(62, 1, RESERVED)           // do not use; used as a sentinal
-> >  DEFINE_CEPH_FEATURE_DEPRECATED(63, 1, RESERVED_BROKEN, LUMINOUS) // client-facing
-> > -
-> > +};
->
-> I don't particularly like this because it looks like lower constants
-> are actually ints and the rest are unsigned longs, even though they all
-> have ULL suffixes.  The standard seems to require that enum constants
-> be representable as ints, is the non-pedantic behaviour documented
-> somewhere?
+From: Marek Lindner <mareklindner@neomailbox.ch>
 
-I had not realized that this is a gcc extension, or that it behaves slightly
-differently from the standard C++ behavior that apparently adopted a
-saner variant (all values in an enum have the same type).
+[ Upstream commit 4c4af6900844ab04c9434c972021d7b48610e06a ]
 
-How about we just add a __maybe_unused to DEFINE_CEPH_FEATURE
-then to shut up the warning?
+The hardif_neigh refcounter is to be decreased by the queued work and
+currently is never decreased if the queue_work() call fails.
+Fix by checking the queue_work() return value and decrease refcount
+if necessary.
 
-     Arnd
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ net/batman-adv/bat_v_elp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
+index e103c759b7ab..9f481cfdf77d 100644
+--- a/net/batman-adv/bat_v_elp.c
++++ b/net/batman-adv/bat_v_elp.c
+@@ -268,6 +268,7 @@ static void batadv_v_elp_periodic_work(struct work_struct *work)
+ 	struct batadv_priv *bat_priv;
+ 	struct sk_buff *skb;
+ 	u32 elp_interval;
++	bool ret;
+ 
+ 	bat_v = container_of(work, struct batadv_hard_iface_bat_v, elp_wq.work);
+ 	hard_iface = container_of(bat_v, struct batadv_hard_iface, bat_v);
+@@ -329,8 +330,11 @@ static void batadv_v_elp_periodic_work(struct work_struct *work)
+ 		 * may sleep and that is not allowed in an rcu protected
+ 		 * context. Therefore schedule a task for that.
+ 		 */
+-		queue_work(batadv_event_workqueue,
+-			   &hardif_neigh->bat_v.metric_work);
++		ret = queue_work(batadv_event_workqueue,
++				 &hardif_neigh->bat_v.metric_work);
++
++		if (!ret)
++			batadv_hardif_neigh_put(hardif_neigh);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+2.17.1
+
