@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9980C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE53C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E112087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A607B2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWX0FWt6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E112087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCdl1lko"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A607B2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbeJIBzK (ORCPT
+        id S1730169AbeJIBzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42698 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbeJIBzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:08 -0400
+        id S1730155AbeJIBzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:11 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 436B921479;
-        Mon,  8 Oct 2018 18:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04D192064A;
+        Mon,  8 Oct 2018 18:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024123;
-        bh=w+Q7bB/oIOUeTyquYHpWWfJUQVQehc1+fMxXLLBaA7U=;
+        s=default; t=1539024126;
+        bh=1e7qCcxUy6NAYwK4jSXKP5ilUcJhYIgNAFyrvYXixMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hWX0FWt6TkTxobU8yv08Y4WWjb++Lo2agYPjk0zJJBiCbxSgUYbU9j3Xds12rpvab
-         AUuiy7leReXQAjr5eZMH3mvdxhep3NtmjJ1DHRWxYYQCaBmpDqc9BCt4AaD/aRzb6l
-         Cp/RHR8VLn5Opz4R00mddcj3K5rdBLz+9/it78pw=
+        b=lCdl1lkoKbIR7MuYiOEmCe4oqpPoiNqE9Yac6Rl7tVLMxgpDbNsjrxbEGly49/3O0
+         KBBAU+ml4ZvR2UnuEYwGut7MKIoRRVTkvRkyyflzIfXFwbX5fhTJgjEqBEUlFHSdaG
+         5BifVNIAK6HFqCPaiOsDjIL7Uu2ajVLVlRYcCDgw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+2a12f11c306afe871c1f@syzkaller.appspotmail.com,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 06/94] mac80211_hwsim: require at least one channel
-Date:   Mon,  8 Oct 2018 20:30:47 +0200
-Message-Id: <20181008175605.363214675@linuxfoundation.org>
+Subject: [PATCH 4.14 07/94] KVM: PPC: Book3S HV: Dont truncate HPTE index in xlate function
+Date:   Mon,  8 Oct 2018 20:30:48 +0200
+Message-Id: <20181008175605.407729136@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,35 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 484004339d4514fde425f6e8a9f6a6cc979bb0c3 ]
+[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
 
-Syzbot continues to try to create mac80211_hwsim radios, and
-manages to pass parameters that are later checked with WARN_ON
-in cfg80211 - catch another one in hwsim directly.
+This fixes a bug which causes guest virtual addresses to get translated
+to guest real addresses incorrectly when the guest is using the HPT MMU
+and has more than 256GB of RAM, or more specifically has a HPT larger
+than 2GB.  This has showed up in testing as a failure of the host to
+emulate doorbell instructions correctly on POWER9 for HPT guests with
+more than 256GB of RAM.
 
-Reported-by: syzbot+2a12f11c306afe871c1f@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
+is stored as an int, and in forming the HPTE address, the index gets
+shifted left 4 bits as an int before being signed-extended to 64 bits.
+The simple fix is to make the variable a long int, matching the
+return type of kvmppc_hv_find_lock_hpte(), which is what calculates
+the index.
+
+Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S HV guests")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/kvm/book3s_64_mmu_hv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3124,6 +3124,11 @@ static int hwsim_new_radio_nl(struct sk_
- 	if (info->attrs[HWSIM_ATTR_CHANNELS])
- 		param.channels = nla_get_u32(info->attrs[HWSIM_ATTR_CHANNELS]);
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -355,7 +355,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate
+ 	unsigned long pp, key;
+ 	unsigned long v, orig_v, gr;
+ 	__be64 *hptep;
+-	int index;
++	long int index;
+ 	int virtmode = vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
  
-+	if (param.channels < 1) {
-+		GENL_SET_ERR_MSG(info, "must have at least one channel");
-+		return -EINVAL;
-+	}
-+
- 	if (param.channels > CFG80211_MAX_NUM_DIFFERENT_CHANNELS) {
- 		GENL_SET_ERR_MSG(info, "too many channels specified");
- 		return -EINVAL;
+ 	/* Get SLB entry */
 
 
