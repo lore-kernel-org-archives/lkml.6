@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44039C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E46AC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE802089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED9D12089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:07:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVSTgjgx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE802089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASZNnWw+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9D12089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbeJIB4X (ORCPT
+        id S1730374AbeJIB4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44194 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730081AbeJIB4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:22 -0400
+        id S1729718AbeJIB4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:06 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D340621479;
-        Mon,  8 Oct 2018 18:43:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9711B214C4;
+        Mon,  8 Oct 2018 18:43:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024197;
-        bh=Im5jaBWYv7/WKmXyR88N+dtWKIFcN2/y0SpaVq0OTgo=;
+        s=default; t=1539024181;
+        bh=do+29wI/Qxxe0b0FWS3kWdSlNRC2En/QZALAiH8VaQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVSTgjgxfr3GcRuWtovpOdj69KVOxqTIyAICtCZkHJHoWzEy3+GjeVk2rLdGX2nzP
-         GGH+J6ZMh1a4aTmWWqJVd2SCu7p/4PiBUOV2qf5yv+DtstzM+3TcNd8sbl88LsxzQc
-         M3Ey1xqXRJ6A6zJ9phGonkDl283Zlbyma7J/KviQ=
+        b=ASZNnWw+gX9iSmAU2Bu5+vDDdj4SCCaxhFg+CMcgXVS2b60tnGU33SB7qKpp/SSpT
+         AaBNcDNjlv1sq8zi9UWYV4hRrhrMkiodHaqWC7c7MFTtSvZRZ5QhG4YAYgRQHTOKed
+         qGSoxmmuCFA9KcnRPXAD+Sc7+KTjeUpeI0MG4eyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Kuhn <jkuhn@barracuda.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Nilesh Javali <nilesh.javali@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 31/94] fs/cifs: dont translate SFM_SLASH (U+F026) to backslash
-Date:   Mon,  8 Oct 2018 20:31:12 +0200
-Message-Id: <20181008175606.494798575@linuxfoundation.org>
+Subject: [PATCH 4.14 48/94] scsi: qedi: Add the CRC size within iSCSI NVM image
+Date:   Mon,  8 Oct 2018 20:31:29 +0200
+Message-Id: <20181008175607.340029584@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,44 +63,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jon Kuhn <jkuhn@barracuda.com>
+From: Nilesh Javali <nilesh.javali@cavium.com>
 
-[ Upstream commit c15e3f19a6d5c89b1209dc94b40e568177cb0921 ]
+[ Upstream commit c77a2fa3ff8f73d1a485e67e6f81c64823739d59 ]
 
-When a Mac client saves an item containing a backslash to a file server
-the backslash is represented in the CIFS/SMB protocol as as U+F026.
-Before this change, listing a directory containing an item with a
-backslash in its name will return that item with the backslash
-represented with a true backslash character (U+005C) because
-convert_sfm_character mapped U+F026 to U+005C when interpretting the
-CIFS/SMB protocol response.  However, attempting to open or stat the
-path using a true backslash will result in an error because
-convert_to_sfm_char does not map U+005C back to U+F026 causing the
-CIFS/SMB request to be made with the backslash represented as U+005C.
+The QED driver commit, 1ac4329a1cff ("qed: Add configuration information
+to register dump and debug data"), removes the CRC length validation
+causing nvm_get_image failure while loading qedi driver:
 
-This change simply prevents the U+F026 to U+005C conversion from
-happenning.  This is analogous to how the code does not do any
-translation of UNI_SLASH (U+F000).
+[qed_mcp_get_nvm_image:2700(host_10-0)]Image [0] is too big - 00006008 bytes
+where only 00006004 are available
+[qedi_get_boot_info:2253]:10: Could not get NVM image. ret = -12
 
-Signed-off-by: Jon Kuhn <jkuhn@barracuda.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Hence add and adjust the CRC size to iSCSI NVM image to read boot info at
+qedi load time.
+
+Signed-off-by: Nilesh Javali <nilesh.javali@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/cifs_unicode.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/scsi/qedi/qedi.h      |    7 ++++++-
+ drivers/scsi/qedi/qedi_main.c |   28 +++++++++++++++-------------
+ 2 files changed, 21 insertions(+), 14 deletions(-)
 
---- a/fs/cifs/cifs_unicode.c
-+++ b/fs/cifs/cifs_unicode.c
-@@ -105,9 +105,6 @@ convert_sfm_char(const __u16 src_char, c
- 	case SFM_LESSTHAN:
- 		*target = '<';
- 		break;
--	case SFM_SLASH:
--		*target = '\\';
--		break;
- 	case SFM_SPACE:
- 		*target = ' ';
- 		break;
+--- a/drivers/scsi/qedi/qedi.h
++++ b/drivers/scsi/qedi/qedi.h
+@@ -77,6 +77,11 @@ enum qedi_nvm_tgts {
+ 	QEDI_NVM_TGT_SEC,
+ };
+ 
++struct qedi_nvm_iscsi_image {
++	struct nvm_iscsi_cfg iscsi_cfg;
++	u32 crc;
++};
++
+ struct qedi_uio_ctrl {
+ 	/* meta data */
+ 	u32 uio_hsi_version;
+@@ -294,7 +299,7 @@ struct qedi_ctx {
+ 	void *bdq_pbl_list;
+ 	dma_addr_t bdq_pbl_list_dma;
+ 	u8 bdq_pbl_list_num_entries;
+-	struct nvm_iscsi_cfg *iscsi_cfg;
++	struct qedi_nvm_iscsi_image *iscsi_image;
+ 	dma_addr_t nvm_buf_dma;
+ 	void __iomem *bdq_primary_prod;
+ 	void __iomem *bdq_secondary_prod;
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -1147,23 +1147,26 @@ exit_setup_int:
+ 
+ static void qedi_free_nvm_iscsi_cfg(struct qedi_ctx *qedi)
+ {
+-	if (qedi->iscsi_cfg)
++	if (qedi->iscsi_image)
+ 		dma_free_coherent(&qedi->pdev->dev,
+-				  sizeof(struct nvm_iscsi_cfg),
+-				  qedi->iscsi_cfg, qedi->nvm_buf_dma);
++				  sizeof(struct qedi_nvm_iscsi_image),
++				  qedi->iscsi_image, qedi->nvm_buf_dma);
+ }
+ 
+ static int qedi_alloc_nvm_iscsi_cfg(struct qedi_ctx *qedi)
+ {
+-	qedi->iscsi_cfg = dma_zalloc_coherent(&qedi->pdev->dev,
+-					     sizeof(struct nvm_iscsi_cfg),
+-					     &qedi->nvm_buf_dma, GFP_KERNEL);
+-	if (!qedi->iscsi_cfg) {
++	struct qedi_nvm_iscsi_image nvm_image;
++
++	qedi->iscsi_image = dma_zalloc_coherent(&qedi->pdev->dev,
++						sizeof(nvm_image),
++						&qedi->nvm_buf_dma,
++						GFP_KERNEL);
++	if (!qedi->iscsi_image) {
+ 		QEDI_ERR(&qedi->dbg_ctx, "Could not allocate NVM BUF.\n");
+ 		return -ENOMEM;
+ 	}
+ 	QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
+-		  "NVM BUF addr=0x%p dma=0x%llx.\n", qedi->iscsi_cfg,
++		  "NVM BUF addr=0x%p dma=0x%llx.\n", qedi->iscsi_image,
+ 		  qedi->nvm_buf_dma);
+ 
+ 	return 0;
+@@ -1716,7 +1719,7 @@ qedi_get_nvram_block(struct qedi_ctx *qe
+ 	struct nvm_iscsi_block *block;
+ 
+ 	pf = qedi->dev_info.common.abs_pf_id;
+-	block = &qedi->iscsi_cfg->block[0];
++	block = &qedi->iscsi_image->iscsi_cfg.block[0];
+ 	for (i = 0; i < NUM_OF_ISCSI_PF_SUPPORTED; i++, block++) {
+ 		flags = ((block->id) & NVM_ISCSI_CFG_BLK_CTRL_FLAG_MASK) >>
+ 			NVM_ISCSI_CFG_BLK_CTRL_FLAG_OFFSET;
+@@ -2008,15 +2011,14 @@ static void qedi_boot_release(void *data
+ static int qedi_get_boot_info(struct qedi_ctx *qedi)
+ {
+ 	int ret = 1;
+-	u16 len;
+-
+-	len = sizeof(struct nvm_iscsi_cfg);
++	struct qedi_nvm_iscsi_image nvm_image;
+ 
+ 	QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
+ 		  "Get NVM iSCSI CFG image\n");
+ 	ret = qedi_ops->common->nvm_get_image(qedi->cdev,
+ 					      QED_NVM_IMAGE_ISCSI_CFG,
+-					      (char *)qedi->iscsi_cfg, len);
++					      (char *)qedi->iscsi_image,
++					      sizeof(nvm_image));
+ 	if (ret)
+ 		QEDI_ERR(&qedi->dbg_ctx,
+ 			 "Could not get NVM image. ret = %d\n", ret);
 
 
