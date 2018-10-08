@@ -2,116 +2,117 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B23B1C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B3BC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76DCB21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DCB21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D8CD2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:47:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2YlGjIy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8CD2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731493AbeJICAq (ORCPT
+        id S1731506AbeJICAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:00:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39030 "EHLO mx1.redhat.com"
+        Mon, 8 Oct 2018 22:00:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730798AbeJICAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:00:46 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730798AbeJICAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:00:47 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5932C034DF4;
-        Mon,  8 Oct 2018 18:47:39 +0000 (UTC)
-Received: from w520.home (ovpn-116-90.phx2.redhat.com [10.3.116.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 353575D784;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0119B204FD;
         Mon,  8 Oct 2018 18:47:38 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 12:47:38 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        kvm@vger.kernel.org (open list:VFIO DRIVER),
-        linux-kernel@vger.kernel.org (open list), <aik@ozlabs.ru>
-Subject: Re: [PATCH v2] drivers/vfio: Fix a redundant copy bug
-Message-ID: <20181008124738.23a547d0@w520.home>
-In-Reply-To: <1539021980-2412-1-git-send-email-wang6495@umn.edu>
-References: <1539021980-2412-1-git-send-email-wang6495@umn.edu>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539024460;
+        bh=xyBeoWttcRQQV6Etp3eCO+mYN6HTkDgL/hoc0KZCffg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K2YlGjIyDaZJzh0wAnWkv9pa/Hj8R/OPM0ttgmFN77Qllogg8ZaggVDr8g4XA6m/g
+         3o3D9cE+UrGdcZZ2mQLoyZvCDbYMseABefsg1cZNN1YXOWHA2BdsHy9q+6eagOSS3w
+         cVGR6dofjHywbnhrHIEbcWpg6YgYSiDEdlnWs7NY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
+        Neil Brown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 047/168] RAID10 BUG_ON in raise_barrier when force is true and conf->barrier is 0
+Date:   Mon,  8 Oct 2018 20:30:27 +0200
+Message-Id: <20181008175621.848482192@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
+References: <20181008175620.043587728@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 08 Oct 2018 18:47:40 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  8 Oct 2018 13:06:20 -0500
-Wenwen Wang <wang6495@umn.edu> wrote:
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-> In vfio_spapr_iommu_eeh_ioctl(), if the ioctl command is VFIO_EEH_PE_OP,
-> the user-space buffer 'arg' is copied to the kernel object 'op' and the
-> 'argsz' and 'flags' fields of 'op' are checked. If the check fails, an
-> error code EINVAL is returned. Otherwise, 'op.op' is further checked
-> through a switch statement to invoke related handlers. If 'op.op' is
-> VFIO_EEH_PE_INJECT_ERR, the whole user-space buffer 'arg' is copied again
-> to 'op' to obtain the err information. However, in the following execution
-> of this case, the fields of 'op', except the field 'err', are actually not
-> used. That is, the second copy has a redundant part. Therefore, for both
-> performance consideration, the redundant part of the second copy should be
-> removed.
-> 
-> This patch removes such a part in the second copy. It only copies from
-> 'err.type' to 'err.mask', which is exactly required by the
-> VFIO_EEH_PE_INJECT_ERR op.
-> 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  drivers/vfio/vfio_spapr_eeh.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/vfio/vfio_spapr_eeh.c b/drivers/vfio/vfio_spapr_eeh.c
-> index 38edeb4..66634c6 100644
-> --- a/drivers/vfio/vfio_spapr_eeh.c
-> +++ b/drivers/vfio/vfio_spapr_eeh.c
-> @@ -37,6 +37,7 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
->  	struct eeh_pe *pe;
->  	struct vfio_eeh_pe_op op;
->  	unsigned long minsz;
-> +	unsigned long start, end;
->  	long ret = -EINVAL;
->  
->  	switch (cmd) {
-> @@ -86,10 +87,12 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
->  			ret = eeh_pe_configure(pe);
->  			break;
->  		case VFIO_EEH_PE_INJECT_ERR:
-> -			minsz = offsetofend(struct vfio_eeh_pe_op, err.mask);
-> -			if (op.argsz < minsz)
-> +			start = offsetof(struct vfio_eeh_pe_op, err.type);
+------------------
 
-We already have this in minsz, offsetofend(,op) == offsetof(,err.type).
-That can't change without breaking userspace.
+From: Xiao Ni <xni@redhat.com>
 
-> +			end = offsetofend(struct vfio_eeh_pe_op, err.mask);
-> +			if (op.argsz < end)
->  				return -EINVAL;
-> -			if (copy_from_user(&op, (void __user *)arg, minsz))
-> +			if (copy_from_user(&op.err, (char __user *)arg +
-> +						start, end - start))
+[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
 
-So we trade 12 bytes of redundant copy for an extra stack variable and
-an arithmetic operation, not necessarily an obvious win, but more
-correct I guess.
+In raid10 reshape_request it gets max_sectors in read_balance. If the underlayer disks
+have bad blocks, the max_sectors is less than last. It will call goto read_more many
+times. It calls raise_barrier(conf, sectors_done != 0) every time. In this condition
+sectors_done is not 0. So the value passed to the argument force of raise_barrier is
+true.
 
-Alexey, I also notice that these 12 bytes means that the u64 fields in
-struct vfio_eeh_pe_err are not 8-byte aligned which could lead to
-compiler dependent packing interpretation issues with userspace.
-Should there be a 4-byte reserved field in there to make it explicit
-(so long as it matches the current interpretation)?  Thanks,
+In raise_barrier it checks conf->barrier when force is true. If force is true and
+conf->barrier is 0, it panic. In this case reshape_request submits bio to under layer
+disks. And in the callback function of the bio it calls lower_barrier. If the bio
+finishes before calling raise_barrier again, it can trigger the BUG_ON.
 
-Alex
+Add one pair of raise_barrier/lower_barrier to fix this bug.
+
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Suggested-by: Neil Brown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/md/raid10.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4531,11 +4531,12 @@ static sector_t reshape_request(struct m
+ 		allow_barrier(conf);
+ 	}
+ 
++	raise_barrier(conf, 0);
+ read_more:
+ 	/* Now schedule reads for blocks from sector_nr to last */
+ 	r10_bio = raid10_alloc_init_r10buf(conf);
+ 	r10_bio->state = 0;
+-	raise_barrier(conf, sectors_done != 0);
++	raise_barrier(conf, 1);
+ 	atomic_set(&r10_bio->remaining, 0);
+ 	r10_bio->mddev = mddev;
+ 	r10_bio->sector = sector_nr;
+@@ -4631,6 +4632,8 @@ read_more:
+ 	if (sector_nr <= last)
+ 		goto read_more;
+ 
++	lower_barrier(conf);
++
+ 	/* Now that we have done the whole section we can
+ 	 * update reshape_progress
+ 	 */
+
+
