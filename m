@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0C0C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E417C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D5A2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6236120645
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:50:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRSxI9aZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D5A2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJvAsbzr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6236120645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732197AbeJICEA (ORCPT
+        id S1732209AbeJICEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:04:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53570 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:04:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbeJICD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:03:57 -0400
+        id S1729987AbeJICEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:04:01 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91816204FD;
-        Mon,  8 Oct 2018 18:50:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A075204FD;
+        Mon,  8 Oct 2018 18:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024650;
-        bh=WUyLizhGMYnGgJeu3NhnCvFcDhh9M6efxpNKY1bUqGE=;
+        s=default; t=1539024653;
+        bh=EQLoizD/HN2YUSEr4TVAqA+iOv6CiQucWjwa9AuVda4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XRSxI9aZ6EAYQ+wA5qyOwy/XM4Nkwjy40kAPAbp3o4pv5/BXgOPa19NBdxYdzvct9
-         HENqCIOHl4GEFYVQ6yM+RJaESXaQq0gBOU2cWaYojs/b8dB4Bahd7ts9zHb3JoytAD
-         GuEndFpHxpNO9Gu4bEAAcDjebNRRn0e70o+b8+4k=
+        b=BJvAsbzrEExdhbzbLL4S2RKlVkBpl3ocJwJKhzEOY5jZJisg9EF8y+yVwcyIwz2/P
+         BBNvQtFc5Gg5gM7kYQ354kgaK6+hdh0nc2s6fkW2tU1PSdeeOdp2XblFqX7ZQMaBCc
+         wnpF6ApSHNWBVcvQxxfTAYXeHuDrTW46D/ff/yds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 108/168] drm/nouveau: fix oops in client init failure path
-Date:   Mon,  8 Oct 2018 20:31:28 +0200
-Message-Id: <20181008175624.154890608@linuxfoundation.org>
+Subject: [PATCH 4.18 109/168] drm/nouveau/mmu: dont attempt to dereference vmm without valid instance pointer
+Date:   Mon,  8 Oct 2018 20:31:29 +0200
+Message-Id: <20181008175624.188615137@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,72 +64,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit a43b16dda2d7485f5c5aed075c1dc9785e339515 ]
+[ Upstream commit 51ed833c881b9d96557c773f6a37018d79e29a46 ]
 
-The NV_ERROR macro requires drm->client to be initialised, which it may not
-be at this stage of the init process.
+Fixes oopses in certain failure paths.
 
 Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -230,7 +230,7 @@ nouveau_cli_init(struct nouveau_drm *drm
- 		mutex_unlock(&drm->master.lock);
- 	}
- 	if (ret) {
--		NV_ERROR(drm, "Client allocation failed: %d\n", ret);
-+		NV_PRINTK(err, cli, "Client allocation failed: %d\n", ret);
- 		goto done;
- 	}
- 
-@@ -240,37 +240,37 @@ nouveau_cli_init(struct nouveau_drm *drm
- 			       }, sizeof(struct nv_device_v0),
- 			       &cli->device);
- 	if (ret) {
--		NV_ERROR(drm, "Device allocation failed: %d\n", ret);
-+		NV_PRINTK(err, cli, "Device allocation failed: %d\n", ret);
- 		goto done;
- 	}
- 
- 	ret = nvif_mclass(&cli->device.object, mmus);
- 	if (ret < 0) {
--		NV_ERROR(drm, "No supported MMU class\n");
-+		NV_PRINTK(err, cli, "No supported MMU class\n");
- 		goto done;
- 	}
- 
- 	ret = nvif_mmu_init(&cli->device.object, mmus[ret].oclass, &cli->mmu);
- 	if (ret) {
--		NV_ERROR(drm, "MMU allocation failed: %d\n", ret);
-+		NV_PRINTK(err, cli, "MMU allocation failed: %d\n", ret);
- 		goto done;
- 	}
- 
- 	ret = nvif_mclass(&cli->mmu.object, vmms);
- 	if (ret < 0) {
--		NV_ERROR(drm, "No supported VMM class\n");
-+		NV_PRINTK(err, cli, "No supported VMM class\n");
- 		goto done;
- 	}
- 
- 	ret = nouveau_vmm_init(cli, vmms[ret].oclass, &cli->vmm);
- 	if (ret) {
--		NV_ERROR(drm, "VMM allocation failed: %d\n", ret);
-+		NV_PRINTK(err, cli, "VMM allocation failed: %d\n", ret);
- 		goto done;
- 	}
- 
- 	ret = nvif_mclass(&cli->mmu.object, mems);
- 	if (ret < 0) {
--		NV_ERROR(drm, "No supported MEM class\n");
-+		NV_PRINTK(err, cli, "No supported MEM class\n");
- 		goto done;
- 	}
- 
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmm.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmm.c
+@@ -1423,7 +1423,7 @@ nvkm_vmm_get(struct nvkm_vmm *vmm, u8 pa
+ void
+ nvkm_vmm_part(struct nvkm_vmm *vmm, struct nvkm_memory *inst)
+ {
+-	if (vmm->func->part && inst) {
++	if (inst && vmm->func->part) {
+ 		mutex_lock(&vmm->mutex);
+ 		vmm->func->part(vmm, inst);
+ 		mutex_unlock(&vmm->mutex);
 
 
