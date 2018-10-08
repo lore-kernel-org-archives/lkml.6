@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CBAC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A214BC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924A020C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6594E20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cW+0upcw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924A020C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrczveUX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6594E20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbeJIBsT (ORCPT
+        id S1728206AbeJIBsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbeJIBsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:18 -0400
+        id S1726723AbeJIBsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:21 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29E672089D;
-        Mon,  8 Oct 2018 18:35:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C96112089D;
+        Mon,  8 Oct 2018 18:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023715;
-        bh=pBfjZJOeR6Mn80SGlfCgdLj/FkHgkpz96k76SaBlpq8=;
+        s=default; t=1539023718;
+        bh=IFSAI+Dxi8KGnYTH6ZXld1ZPPM+NZOrpJQTXCu/M1iA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cW+0upcwesXAr1ezqTdcBwfkCWW0M4jCMXXAUariLfRvJTQWqd/ldTFnNRAZGEE6b
-         bUsEDQdHqgkvzhu6QqTdwsZwWX3WLMmV/dHhxNkK+DQdOlPYuhD02G2sqSpokztrX9
-         Kt8kyA+KVR0y0zQT1tHZoUfx90uQF6VILE7pnAu0=
+        b=NrczveUX9i2Xzwek+2bR1UsTbt55Wi08NOHNugTXlVsFsFiCSbcl67+LNjz6kmFD/
+         4niAO3MpHuJqgM9qXRpFfgeW7JvJb5JYeFadD0MFtHwDS69COf4Kbz8H6TeY9tOMfE
+         X3iU2/RBBWVC94u/Oi+vJUjDzAW9Nhg/NJPU2/p8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
-        Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 060/113] scsi: target: iscsi: Use bin2hex instead of a re-implementation
-Date:   Mon,  8 Oct 2018 20:31:01 +0200
-Message-Id: <20181008175534.312535208@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: [PATCH 4.4 061/113] serial: imx: restore handshaking irq for imx1
+Date:   Mon,  8 Oct 2018 20:31:02 +0200
+Message-Id: <20181008175534.349053256@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,64 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Pelletier <plr.vincent@gmail.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit 8c39e2699f8acb2e29782a834e56306da24937fe upstream.
+commit 7e620984b62532783912312e334f3c48cdacbd5d upstream.
 
-Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[plr.vincent@gmail.com: hunk context change for 4.4 and 4.9, no code change]
+Back in 2015 when irda was dropped from the driver imx1 was broken. This
+change reintroduces the support for the third interrupt of the UART.
+
+Fixes: afe9cbb1a6ad ("serial: imx: drop support for IRDA")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target_auth.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/tty/serial/imx.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -26,15 +26,6 @@
- #include "iscsi_target_nego.h"
- #include "iscsi_target_auth.h"
- 
--static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
--{
--	int i;
--
--	for (i = 0; i < src_len; i++) {
--		sprintf(&dst[i*2], "%02x", (int) src[i] & 0xff);
--	}
--}
--
- static void chap_gen_challenge(
- 	struct iscsi_conn *conn,
- 	int caller,
-@@ -47,7 +38,7 @@ static void chap_gen_challenge(
- 	memset(challenge_asciihex, 0, CHAP_CHALLENGE_LENGTH * 2 + 1);
- 
- 	get_random_bytes(chap->challenge, CHAP_CHALLENGE_LENGTH);
--	chap_binaryhex_to_asciihex(challenge_asciihex, chap->challenge,
-+	bin2hex(challenge_asciihex, chap->challenge,
- 				CHAP_CHALLENGE_LENGTH);
- 	/*
- 	 * Set CHAP_C, and copy the generated challenge into c_str.
-@@ -287,7 +278,7 @@ static int chap_server_compute_md5(
- 	}
- 	crypto_free_hash(tfm);
- 
--	chap_binaryhex_to_asciihex(response, server_digest, MD5_SIGNATURE_SIZE);
-+	bin2hex(response, server_digest, MD5_SIGNATURE_SIZE);
- 	pr_debug("[server] MD5 Server Digest: %s\n", response);
- 
- 	if (memcmp(server_digest, client_digest, MD5_SIGNATURE_SIZE) != 0) {
-@@ -431,7 +422,7 @@ static int chap_server_compute_md5(
- 	/*
- 	 * Convert response from binary hex to ascii hext.
- 	 */
--	chap_binaryhex_to_asciihex(response, digest, MD5_SIGNATURE_SIZE);
-+	bin2hex(response, digest, MD5_SIGNATURE_SIZE);
- 	*nr_out_len += sprintf(nr_out_ptr + *nr_out_len, "CHAP_R=0x%s",
- 			response);
- 	*nr_out_len += 1;
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -1997,6 +1997,14 @@ static int serial_imx_probe(struct platf
+ 				       dev_name(&pdev->dev), sport);
+ 		if (ret)
+ 			return ret;
++
++		ret = devm_request_irq(&pdev->dev, rtsirq, imx_rtsint, 0,
++				       dev_name(&pdev->dev), sport);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to request rts irq: %d\n",
++				ret);
++			return ret;
++		}
+ 	} else {
+ 		ret = devm_request_irq(&pdev->dev, rxirq, imx_int, 0,
+ 				       dev_name(&pdev->dev), sport);
 
 
