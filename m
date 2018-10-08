@@ -2,150 +2,159 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825F4C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD080C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB4E214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6380A2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="egW1st/k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BB4E214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="gNzsLmzk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6380A2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731919AbeJICCo (ORCPT
+        id S1731939AbeJICCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52076 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 22:02:48 -0400
+Received: from mail.kdab.com ([176.9.126.58]:10305 "EHLO mail.kdab.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730559AbeJICCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:43 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7B6E204FD;
-        Mon,  8 Oct 2018 18:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024576;
-        bh=5vNiUffUODmrcfALlOdbjsG7mMsFu0VHy3Q1kIgx0Sk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=egW1st/kEc9ahk+qX32DLAO/Sjqw/f48OQUndsmUyWhCV75XZPn19AkLBWsUVG3s3
-         fgwA/ncARI2HXqi6uV+vrgD4YyEAwc9eVpKQR76CMbbnRfCAAio6SqWr+FNIXX7cSV
-         CvAexqUWwWhXFWbNd1uuKcTuHmj4FdalR9feKdys=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 062/168] mac80211: dont Tx a deauth frame if the AP forbade Tx
-Date:   Mon,  8 Oct 2018 20:30:42 +0200
-Message-Id: <20181008175622.410258690@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
-References: <20181008175620.043587728@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1730559AbeJICCr (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-type:content-type:mime-version:references:in-reply-to
+ :organization:message-id:date:date:subject:subject:from:from; s=
+ dkim; t=1539024576; x=1539888577; bh=0Wd1A5qhNVP0NxLR5Xi16bjltwU
+ 70Oj54TY354n4OzI=; b=gNzsLmzkf9rmJac5U3k54WnJy5RddjS9Ms3oggPRLeo
+ dWa94gyGR1LMyItqikRw6RxpAbbbly04pDquxsQ5lGm4DluFVRY5/2WnRLFKYnH6
+ LuceSolepc2VGx0xQyk5JiNoz2Do1SdJQU8yUdNxSEjFw/3oRXdOXHIfiaKYRCpw
+ =
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf record: use unmapped IP for inline callchain cursors
+Date:   Mon, 08 Oct 2018 20:49:32 +0200
+Message-ID: <5853017.W5yrxTLJX6@agathebauer>
+Organization: KDAB
+In-Reply-To: <20181005134831.GA20250@kernel.org>
+References: <20181002073949.3297-1-milian.wolff@kdab.com>
+ <f71ed02b-1234-db9c-6a48-1a399359b5e8@linux.ibm.com>
+ <20181005134831.GA20250@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart5148452.kjaPzXp2qi";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+--nextPart5148452.kjaPzXp2qi
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-------------------
+On Freitag, 5. Oktober 2018 15:48:31 CEST Arnaldo Carvalho de Melo wrote:
+> Em Wed, Oct 03, 2018 at 09:05:37AM +0530, Ravi Bangoria escreveu:
+> > LGTM.
+> > 
+> > Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> 
+> So, I've added this as a 'git rebase -i' 'fixup', i.e. kept the commit
+> log message for the patch this patch fixes, and combined the two into
+> just one patch so that we don't pollute the bisect history, since this
+> hasn't made it yet to tip, and I also added Ravi's Tested-by, since this
+> tests both.
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Thanks a lot for the cleanup work Arnaldo.
 
-[ Upstream commit 6c18b27d6e5c6a7206364eae2b47bc8d8b2fa68f ]
+Cheers
 
-If the driver fails to properly prepare for the channel
-switch, mac80211 will disconnect. If the CSA IE had mode
-set to 1, it means that the clients are not allowed to send
-any Tx on the current channel, and that includes the
-deauthentication frame.
+-- 
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart5148452.kjaPzXp2qi
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Make sure that we don't send the deauthentication frame in
-this case.
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDA4MTg0OTMyWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQg3hOP66ghCOj/u3D/JgCADWZA4e+A
+rvsJQypWCly5z+MwDQYJKoZIhvcNAQEBBQAEggEAXY9vFd+UDT4P5HAfGWpkCn4ozxEXEX6GlBnJ
+E0ScDXh8fSsATbM2DkSsMwYYJlhCKKlXzck5hVgL6Vm4DUInsWeexDmwI3pKv8Xa2xzBQNU1OAKU
+VOdoFjQM/gFR85Q4M9N0Y2Msg+vMz+JRFBINjwefcLdDBVtWNA6SINg5QgU738Whr0dBpODyB1Nr
+CgYlyw+Sfo+M+RBnWu2Va59sjsXSjeOU5LZLwr06bLoRwvoFPSd6qhEarbb4G5CHrP+h+EXfJ6MM
+jZPUY8O9EDd4XVJTsXgWC8Xb1ECU2QfMdFLvRJW6LNsbqYghOBWstjW8MwQmNB1bW5JUUOEpkN8L
+JgAAAAAAAA==
 
-In iwlwifi, this caused a failure to flush queues since the
-firmware already closed the queues after having parsed the
-CSA IE. Then mac80211 would wait until the deauthentication
-frame would go out (drv_flush(drop=false)) and that would
-never happen.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/mac80211/mlme.c |   17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -1270,6 +1270,16 @@ ieee80211_sta_process_chanswitch(struct
- 					 cbss->beacon_interval));
- 	return;
-  drop_connection:
-+	/*
-+	 * This is just so that the disconnect flow will know that
-+	 * we were trying to switch channel and failed. In case the
-+	 * mode is 1 (we are not allowed to Tx), we will know not to
-+	 * send a deauthentication frame. Those two fields will be
-+	 * reset when the disconnection worker runs.
-+	 */
-+	sdata->vif.csa_active = true;
-+	sdata->csa_block_tx = csa_ie.mode;
-+
- 	ieee80211_queue_work(&local->hw, &ifmgd->csa_connection_drop_work);
- 	mutex_unlock(&local->chanctx_mtx);
- 	mutex_unlock(&local->mtx);
-@@ -2453,6 +2463,7 @@ static void __ieee80211_disconnect(struc
- 	struct ieee80211_local *local = sdata->local;
- 	struct ieee80211_if_managed *ifmgd = &sdata->u.mgd;
- 	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
-+	bool tx;
- 
- 	sdata_lock(sdata);
- 	if (!ifmgd->associated) {
-@@ -2460,6 +2471,8 @@ static void __ieee80211_disconnect(struc
- 		return;
- 	}
- 
-+	tx = !sdata->csa_block_tx;
-+
- 	/* AP is probably out of range (or not reachable for another reason) so
- 	 * remove the bss struct for that AP.
- 	 */
-@@ -2467,7 +2480,7 @@ static void __ieee80211_disconnect(struc
- 
- 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH,
- 			       WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY,
--			       true, frame_buf);
-+			       tx, frame_buf);
- 	mutex_lock(&local->mtx);
- 	sdata->vif.csa_active = false;
- 	ifmgd->csa_waiting_bcn = false;
-@@ -2478,7 +2491,7 @@ static void __ieee80211_disconnect(struc
- 	}
- 	mutex_unlock(&local->mtx);
- 
--	ieee80211_report_disconnect(sdata, frame_buf, sizeof(frame_buf), true,
-+	ieee80211_report_disconnect(sdata, frame_buf, sizeof(frame_buf), tx,
- 				    WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY);
- 
- 	sdata_unlock(sdata);
+--nextPart5148452.kjaPzXp2qi--
 
 
