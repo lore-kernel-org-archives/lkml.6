@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35335C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7687DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0B821557
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F423F21557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:34:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x3+9mCXu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC0B821557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVifv6yk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F423F21557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbeJHWqU (ORCPT
+        id S1728029AbeJHWi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:46:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57162 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728092AbeJHWic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:32 -0400
+        id S1726418AbeJHWi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5D8C2151C;
-        Mon,  8 Oct 2018 15:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E47121479;
+        Mon,  8 Oct 2018 15:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012377;
-        bh=jcfC3N+Jx2LHVmfI21r5AZSD22cmwZkFjW98gVuZ8ks=;
+        s=default; t=1539012374;
+        bh=6hs1CmQ+JH8/dt8x3XkRynszeVm6TfbuOSALcVDyuko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x3+9mCXu0EX7wXhc733xHRSTRXfc+/HW/u/qmvwyNeAownshVDnxsxLc/IH3Y/lbv
-         lAEDR4Tmh60klNTasB8ws1TZG/GdZHidi1HcrMFhMt9BIIyL6jXBhRHEQBA41v1fDa
-         3rwFjmqvfskdJ0gcDpg/jWjiQn4fFF44OHasRZ70=
+        b=PVifv6ykrw6OCmJ92J6nWHw7B4zto+whHYcSMog3JgLYlsQziN1+lJ+LIrObMzhXq
+         z9lTQHBLC3ZQP+ZijEoNpWaTc8Wn6VuSWMwYfYmAY06WNmNC9LvEQUSmGOF4iq1WCl
+         QWiUS0QOuyuJJT1T0+iQE72IL8k9z3Jgzx6KAoSM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 54/58] powerpc/tm: Fix userspace r13 corruption
-Date:   Mon,  8 Oct 2018 11:25:19 -0400
-Message-Id: <20181008152523.70705-54-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 50/58] RDMA/bnxt_re: Fix system crash during RDMA resource initialization
+Date:   Mon,  8 Oct 2018 11:25:15 -0400
+Message-Id: <20181008152523.70705-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,66 +53,417 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Neuling <mikey@neuling.org>
+From: Selvin Xavier <selvin.xavier@broadcom.com>
 
-[ Upstream commit cf13435b730a502e814c63c84d93db131e563f5f ]
+[ Upstream commit de5c95d0f518537f59ee5aef762abc46f868c377 ]
 
-When we treclaim we store the userspace checkpointed r13 to a scratch
-SPR and then later save the scratch SPR to the user thread struct.
+bnxt_re_ib_reg acquires and releases the rtnl lock whenever it accesses
+the L2 driver.
 
-Unfortunately, this doesn't work as accessing the user thread struct
-can take an SLB fault and the SLB fault handler will write the same
-scratch SPRG that now contains the userspace r13.
+The following sequence can trigger a crash
 
-To fix this, we store r13 to the kernel stack (which can't fault)
-before we access the user thread struct.
+Acquires the rtnl_lock ->
+	Registers roce driver callback with L2 driver ->
+		release the rtnl lock
+bnxt_re acquires the rtnl_lock ->
+	Request for MSIx vectors ->
+		release the rtnl_lock
 
-Found by running P8 guest + powervm + disable_1tb_segments + TM. Seen
-as a random userspace segfault with r13 looking like a kernel address.
+Issue happens when bnxt_re proceeds with remaining part of initialization
+and L2 driver invokes bnxt_ulp_irq_stop as a part of bnxt_open_nic.
 
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Reviewed-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+The crash is in bnxt_qplib_nq_stop_irq as the NQ structures are
+not initialized yet,
+
+<snip>
+[ 3551.726647] BUG: unable to handle kernel NULL pointer dereference at (null)
+[ 3551.726656] IP: [<ffffffffc0840ee9>] bnxt_qplib_nq_stop_irq+0x59/0xb0 [bnxt_re]
+[ 3551.726674] PGD 0
+[ 3551.726679] Oops: 0002 1 SMP
+...
+[ 3551.726822] Hardware name: Dell Inc. PowerEdge R720/08RW36, BIOS 2.4.3 07/09/2014
+[ 3551.726826] task: ffff97e30eec5ee0 ti: ffff97e3173bc000 task.ti: ffff97e3173bc000
+[ 3551.726829] RIP: 0010:[<ffffffffc0840ee9>] [<ffffffffc0840ee9>]
+bnxt_qplib_nq_stop_irq+0x59/0xb0 [bnxt_re]
+...
+[ 3551.726872] Call Trace:
+[ 3551.726886] [<ffffffffc082cb9e>] bnxt_re_stop_irq+0x4e/0x70 [bnxt_re]
+[ 3551.726899] [<ffffffffc07d6a53>] bnxt_ulp_irq_stop+0x43/0x70 [bnxt_en]
+[ 3551.726908] [<ffffffffc07c82f4>] bnxt_reserve_rings+0x174/0x1e0 [bnxt_en]
+[ 3551.726917] [<ffffffffc07cafd8>] __bnxt_open_nic+0x368/0x9a0 [bnxt_en]
+[ 3551.726925] [<ffffffffc07cb62b>] bnxt_open_nic+0x1b/0x50 [bnxt_en]
+[ 3551.726934] [<ffffffffc07cc62f>] bnxt_setup_mq_tc+0x11f/0x260 [bnxt_en]
+[ 3551.726943] [<ffffffffc07d5f58>] bnxt_dcbnl_ieee_setets+0xb8/0x1f0 [bnxt_en]
+[ 3551.726954] [<ffffffff890f983a>] dcbnl_ieee_set+0x9a/0x250
+[ 3551.726966] [<ffffffff88fd6d21>] ? __alloc_skb+0xa1/0x2d0
+[ 3551.726972] [<ffffffff890f72fa>] dcb_doit+0x13a/0x210
+[ 3551.726981] [<ffffffff89003ff7>] rtnetlink_rcv_msg+0xa7/0x260
+[ 3551.726989] [<ffffffff88ffdb00>] ? rtnl_unicast+0x20/0x30
+[ 3551.726996] [<ffffffff88bf9dc8>] ? __kmalloc_node_track_caller+0x58/0x290
+[ 3551.727002] [<ffffffff890f7326>] ? dcb_doit+0x166/0x210
+[ 3551.727007] [<ffffffff88fd6d0d>] ? __alloc_skb+0x8d/0x2d0
+[ 3551.727012] [<ffffffff89003f50>] ? rtnl_newlink+0x880/0x880
+...
+[ 3551.727104] [<ffffffff8911f7d5>] system_call_fastpath+0x1c/0x21
+...
+[ 3551.727164] RIP [<ffffffffc0840ee9>] bnxt_qplib_nq_stop_irq+0x59/0xb0 [bnxt_re]
+[ 3551.727175] RSP <ffff97e3173bf788>
+[ 3551.727177] CR2: 0000000000000000
+
+Avoid this inconsistent state and  system crash by acquiring
+the rtnl lock for the entire duration of device initialization.
+Re-factor the code to remove the rtnl lock from the individual function
+and acquire and release it from the caller.
+
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Fixes: 6e04b1035689 ("RDMA/bnxt_re: Fix broken RoCE driver due to recent L2 driver changes")
+Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/kernel/tm.S | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/bnxt_re/main.c | 93 ++++++++++++----------------
+ 1 file changed, 38 insertions(+), 55 deletions(-)
 
-diff --git a/arch/powerpc/kernel/tm.S b/arch/powerpc/kernel/tm.S
-index ff12f47a96b6..11a8f0b71422 100644
---- a/arch/powerpc/kernel/tm.S
-+++ b/arch/powerpc/kernel/tm.S
-@@ -175,13 +175,20 @@ _GLOBAL(tm_reclaim)
- 	std	r1, PACATMSCRATCH(r13)
- 	ld	r1, PACAR1(r13)
+diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
+index 20b9f31052bf..85cd1a3593d6 100644
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -78,7 +78,7 @@ static struct list_head bnxt_re_dev_list = LIST_HEAD_INIT(bnxt_re_dev_list);
+ /* Mutex to protect the list of bnxt_re devices added */
+ static DEFINE_MUTEX(bnxt_re_dev_lock);
+ static struct workqueue_struct *bnxt_re_wq;
+-static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev, bool lock_wait);
++static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev);
  
--	/* Store the PPR in r11 and reset to decent value */
- 	std	r11, GPR11(r1)			/* Temporary stash */
+ /* SR-IOV helper functions */
  
-+	/*
-+	 * Store r13 away so we can free up the scratch SPR for the SLB fault
-+	 * handler (needed once we start accessing the thread_struct).
-+	 */
-+	GET_SCRATCH0(r11)
-+	std	r11, GPR13(r1)
+@@ -182,7 +182,7 @@ static void bnxt_re_shutdown(void *p)
+ 	if (!rdev)
+ 		return;
+ 
+-	bnxt_re_ib_unreg(rdev, false);
++	bnxt_re_ib_unreg(rdev);
+ }
+ 
+ static void bnxt_re_stop_irq(void *handle)
+@@ -251,7 +251,7 @@ static struct bnxt_ulp_ops bnxt_re_ulp_ops = {
+ /* Driver registration routines used to let the networking driver (bnxt_en)
+  * to know that the RoCE driver is now installed
+  */
+-static int bnxt_re_unregister_netdev(struct bnxt_re_dev *rdev, bool lock_wait)
++static int bnxt_re_unregister_netdev(struct bnxt_re_dev *rdev)
+ {
+ 	struct bnxt_en_dev *en_dev;
+ 	int rc;
+@@ -260,14 +260,9 @@ static int bnxt_re_unregister_netdev(struct bnxt_re_dev *rdev, bool lock_wait)
+ 		return -EINVAL;
+ 
+ 	en_dev = rdev->en_dev;
+-	/* Acquire rtnl lock if it is not invokded from netdev event */
+-	if (lock_wait)
+-		rtnl_lock();
+ 
+ 	rc = en_dev->en_ops->bnxt_unregister_device(rdev->en_dev,
+ 						    BNXT_ROCE_ULP);
+-	if (lock_wait)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -281,14 +276,12 @@ static int bnxt_re_register_netdev(struct bnxt_re_dev *rdev)
+ 
+ 	en_dev = rdev->en_dev;
+ 
+-	rtnl_lock();
+ 	rc = en_dev->en_ops->bnxt_register_device(en_dev, BNXT_ROCE_ULP,
+ 						  &bnxt_re_ulp_ops, rdev);
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+-static int bnxt_re_free_msix(struct bnxt_re_dev *rdev, bool lock_wait)
++static int bnxt_re_free_msix(struct bnxt_re_dev *rdev)
+ {
+ 	struct bnxt_en_dev *en_dev;
+ 	int rc;
+@@ -298,13 +291,9 @@ static int bnxt_re_free_msix(struct bnxt_re_dev *rdev, bool lock_wait)
+ 
+ 	en_dev = rdev->en_dev;
+ 
+-	if (lock_wait)
+-		rtnl_lock();
+ 
+ 	rc = en_dev->en_ops->bnxt_free_msix(rdev->en_dev, BNXT_ROCE_ULP);
+ 
+-	if (lock_wait)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -320,7 +309,6 @@ static int bnxt_re_request_msix(struct bnxt_re_dev *rdev)
+ 
+ 	num_msix_want = min_t(u32, BNXT_RE_MAX_MSIX, num_online_cpus());
+ 
+-	rtnl_lock();
+ 	num_msix_got = en_dev->en_ops->bnxt_request_msix(en_dev, BNXT_ROCE_ULP,
+ 							 rdev->msix_entries,
+ 							 num_msix_want);
+@@ -335,7 +323,6 @@ static int bnxt_re_request_msix(struct bnxt_re_dev *rdev)
+ 	}
+ 	rdev->num_msix = num_msix_got;
+ done:
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -358,24 +345,18 @@ static void bnxt_re_fill_fw_msg(struct bnxt_fw_msg *fw_msg, void *msg,
+ 	fw_msg->timeout = timeout;
+ }
+ 
+-static int bnxt_re_net_ring_free(struct bnxt_re_dev *rdev, u16 fw_ring_id,
+-				 bool lock_wait)
++static int bnxt_re_net_ring_free(struct bnxt_re_dev *rdev, u16 fw_ring_id)
+ {
+ 	struct bnxt_en_dev *en_dev = rdev->en_dev;
+ 	struct hwrm_ring_free_input req = {0};
+ 	struct hwrm_ring_free_output resp;
+ 	struct bnxt_fw_msg fw_msg;
+-	bool do_unlock = false;
+ 	int rc = -EINVAL;
+ 
+ 	if (!en_dev)
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	if (lock_wait) {
+-		rtnl_lock();
+-		do_unlock = true;
+-	}
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_RING_FREE, -1, -1);
+ 	req.ring_type = RING_ALLOC_REQ_RING_TYPE_L2_CMPL;
+@@ -386,8 +367,6 @@ static int bnxt_re_net_ring_free(struct bnxt_re_dev *rdev, u16 fw_ring_id,
+ 	if (rc)
+ 		dev_err(rdev_to_dev(rdev),
+ 			"Failed to free HW ring:%d :%#x", req.ring_id, rc);
+-	if (do_unlock)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -405,7 +384,6 @@ static int bnxt_re_net_ring_alloc(struct bnxt_re_dev *rdev, dma_addr_t *dma_arr,
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	rtnl_lock();
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_RING_ALLOC, -1, -1);
+ 	req.enables = 0;
+ 	req.page_tbl_addr =  cpu_to_le64(dma_arr[0]);
+@@ -426,27 +404,21 @@ static int bnxt_re_net_ring_alloc(struct bnxt_re_dev *rdev, dma_addr_t *dma_arr,
+ 	if (!rc)
+ 		*fw_ring_id = le16_to_cpu(resp.ring_id);
+ 
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+ static int bnxt_re_net_stats_ctx_free(struct bnxt_re_dev *rdev,
+-				      u32 fw_stats_ctx_id, bool lock_wait)
++				      u32 fw_stats_ctx_id)
+ {
+ 	struct bnxt_en_dev *en_dev = rdev->en_dev;
+ 	struct hwrm_stat_ctx_free_input req = {0};
+ 	struct bnxt_fw_msg fw_msg;
+-	bool do_unlock = false;
+ 	int rc = -EINVAL;
+ 
+ 	if (!en_dev)
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	if (lock_wait) {
+-		rtnl_lock();
+-		do_unlock = true;
+-	}
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_STAT_CTX_FREE, -1, -1);
+ 	req.stat_ctx_id = cpu_to_le32(fw_stats_ctx_id);
+@@ -457,8 +429,6 @@ static int bnxt_re_net_stats_ctx_free(struct bnxt_re_dev *rdev,
+ 		dev_err(rdev_to_dev(rdev),
+ 			"Failed to free HW stats context %#x", rc);
+ 
+-	if (do_unlock)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -478,7 +448,6 @@ static int bnxt_re_net_stats_ctx_alloc(struct bnxt_re_dev *rdev,
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	rtnl_lock();
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_STAT_CTX_ALLOC, -1, -1);
+ 	req.update_period_ms = cpu_to_le32(1000);
+@@ -490,7 +459,6 @@ static int bnxt_re_net_stats_ctx_alloc(struct bnxt_re_dev *rdev,
+ 	if (!rc)
+ 		*fw_stats_ctx_id = le32_to_cpu(resp.stat_ctx_id);
+ 
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -929,19 +897,19 @@ static int bnxt_re_init_res(struct bnxt_re_dev *rdev)
+ 	return rc;
+ }
+ 
+-static void bnxt_re_free_nq_res(struct bnxt_re_dev *rdev, bool lock_wait)
++static void bnxt_re_free_nq_res(struct bnxt_re_dev *rdev)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < rdev->num_msix - 1; i++) {
+-		bnxt_re_net_ring_free(rdev, rdev->nq[i].ring_id, lock_wait);
++		bnxt_re_net_ring_free(rdev, rdev->nq[i].ring_id);
+ 		bnxt_qplib_free_nq(&rdev->nq[i]);
+ 	}
+ }
+ 
+-static void bnxt_re_free_res(struct bnxt_re_dev *rdev, bool lock_wait)
++static void bnxt_re_free_res(struct bnxt_re_dev *rdev)
+ {
+-	bnxt_re_free_nq_res(rdev, lock_wait);
++	bnxt_re_free_nq_res(rdev);
+ 
+ 	if (rdev->qplib_res.dpi_tbl.max) {
+ 		bnxt_qplib_dealloc_dpi(&rdev->qplib_res,
+@@ -1219,7 +1187,7 @@ static int bnxt_re_setup_qos(struct bnxt_re_dev *rdev)
+ 	return 0;
+ }
+ 
+-static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev, bool lock_wait)
++static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev)
+ {
+ 	int i, rc;
+ 
+@@ -1234,28 +1202,27 @@ static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev, bool lock_wait)
+ 		cancel_delayed_work(&rdev->worker);
+ 
+ 	bnxt_re_cleanup_res(rdev);
+-	bnxt_re_free_res(rdev, lock_wait);
++	bnxt_re_free_res(rdev);
+ 
+ 	if (test_and_clear_bit(BNXT_RE_FLAG_RCFW_CHANNEL_EN, &rdev->flags)) {
+ 		rc = bnxt_qplib_deinit_rcfw(&rdev->rcfw);
+ 		if (rc)
+ 			dev_warn(rdev_to_dev(rdev),
+ 				 "Failed to deinitialize RCFW: %#x", rc);
+-		bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id,
+-					   lock_wait);
++		bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id);
+ 		bnxt_qplib_free_ctx(rdev->en_dev->pdev, &rdev->qplib_ctx);
+ 		bnxt_qplib_disable_rcfw_channel(&rdev->rcfw);
+-		bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id, lock_wait);
++		bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id);
+ 		bnxt_qplib_free_rcfw_channel(&rdev->rcfw);
+ 	}
+ 	if (test_and_clear_bit(BNXT_RE_FLAG_GOT_MSIX, &rdev->flags)) {
+-		rc = bnxt_re_free_msix(rdev, lock_wait);
++		rc = bnxt_re_free_msix(rdev);
+ 		if (rc)
+ 			dev_warn(rdev_to_dev(rdev),
+ 				 "Failed to free MSI-X vectors: %#x", rc);
+ 	}
+ 	if (test_and_clear_bit(BNXT_RE_FLAG_NETDEV_REGISTERED, &rdev->flags)) {
+-		rc = bnxt_re_unregister_netdev(rdev, lock_wait);
++		rc = bnxt_re_unregister_netdev(rdev);
+ 		if (rc)
+ 			dev_warn(rdev_to_dev(rdev),
+ 				 "Failed to unregister with netdev: %#x", rc);
+@@ -1276,6 +1243,12 @@ static int bnxt_re_ib_reg(struct bnxt_re_dev *rdev)
+ {
+ 	int i, j, rc;
+ 
++	bool locked;
 +
- 	/* Reset MSR RI so we can take SLB faults again */
- 	li	r11, MSR_RI
- 	mtmsrd	r11, 1
++	/* Acquire rtnl lock through out this function */
++	rtnl_lock();
++	locked = true;
++
+ 	/* Registered a new RoCE device instance to netdev */
+ 	rc = bnxt_re_register_netdev(rdev);
+ 	if (rc) {
+@@ -1374,12 +1347,16 @@ static int bnxt_re_ib_reg(struct bnxt_re_dev *rdev)
+ 		schedule_delayed_work(&rdev->worker, msecs_to_jiffies(30000));
+ 	}
  
-+	/* Store the PPR in r11 and reset to decent value */
- 	mfspr	r11, SPRN_PPR
- 	HMT_MEDIUM
++	rtnl_unlock();
++	locked = false;
++
+ 	/* Register ib dev */
+ 	rc = bnxt_re_register_ib(rdev);
+ 	if (rc) {
+ 		pr_err("Failed to register with IB: %#x\n", rc);
+ 		goto fail;
+ 	}
++	set_bit(BNXT_RE_FLAG_IBDEV_REGISTERED, &rdev->flags);
+ 	dev_info(rdev_to_dev(rdev), "Device registered successfully");
+ 	for (i = 0; i < ARRAY_SIZE(bnxt_re_attributes); i++) {
+ 		rc = device_create_file(&rdev->ibdev.dev,
+@@ -1395,7 +1372,6 @@ static int bnxt_re_ib_reg(struct bnxt_re_dev *rdev)
+ 			goto fail;
+ 		}
+ 	}
+-	set_bit(BNXT_RE_FLAG_IBDEV_REGISTERED, &rdev->flags);
+ 	ib_get_eth_speed(&rdev->ibdev, 1, &rdev->active_speed,
+ 			 &rdev->active_width);
+ 	set_bit(BNXT_RE_FLAG_ISSUE_ROCE_STATS, &rdev->flags);
+@@ -1404,17 +1380,21 @@ static int bnxt_re_ib_reg(struct bnxt_re_dev *rdev)
  
-@@ -210,7 +217,7 @@ _GLOBAL(tm_reclaim)
- 	ld	r4, GPR7(r1)			/* user r7 */
- 	ld	r5, GPR11(r1)			/* user r11 */
- 	ld	r6, GPR12(r1)			/* user r12 */
--	GET_SCRATCH0(8)				/* user r13 */
-+	ld	r8, GPR13(r1)			/* user r13 */
- 	std	r3, GPR1(r7)
- 	std	r4, GPR7(r7)
- 	std	r5, GPR11(r7)
+ 	return 0;
+ free_sctx:
+-	bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id, true);
++	bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id);
+ free_ctx:
+ 	bnxt_qplib_free_ctx(rdev->en_dev->pdev, &rdev->qplib_ctx);
+ disable_rcfw:
+ 	bnxt_qplib_disable_rcfw_channel(&rdev->rcfw);
+ free_ring:
+-	bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id, true);
++	bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id);
+ free_rcfw:
+ 	bnxt_qplib_free_rcfw_channel(&rdev->rcfw);
+ fail:
+-	bnxt_re_ib_unreg(rdev, true);
++	if (!locked)
++		rtnl_lock();
++	bnxt_re_ib_unreg(rdev);
++	rtnl_unlock();
++
+ 	return rc;
+ }
+ 
+@@ -1567,7 +1547,7 @@ static int bnxt_re_netdev_event(struct notifier_block *notifier,
+ 		 */
+ 		if (atomic_read(&rdev->sched_count) > 0)
+ 			goto exit;
+-		bnxt_re_ib_unreg(rdev, false);
++		bnxt_re_ib_unreg(rdev);
+ 		bnxt_re_remove_one(rdev);
+ 		bnxt_re_dev_unreg(rdev);
+ 		break;
+@@ -1646,7 +1626,10 @@ static void __exit bnxt_re_mod_exit(void)
+ 		 */
+ 		flush_workqueue(bnxt_re_wq);
+ 		bnxt_re_dev_stop(rdev);
+-		bnxt_re_ib_unreg(rdev, true);
++		/* Acquire the rtnl_lock as the L2 resources are freed here */
++		rtnl_lock();
++		bnxt_re_ib_unreg(rdev);
++		rtnl_unlock();
+ 		bnxt_re_remove_one(rdev);
+ 		bnxt_re_dev_unreg(rdev);
+ 	}
 -- 
 2.17.1
 
