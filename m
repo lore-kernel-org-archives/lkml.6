@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3652C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088CAC676D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54832084D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:53:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54832084D
+	by mail.kernel.org (Postfix) with ESMTP id B64202084D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:53:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64202084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeJHUF1 (ORCPT
+        id S1726789AbeJHUFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:05:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39208 "EHLO mx1.redhat.com"
+        Mon, 8 Oct 2018 16:05:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53092 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbeJHUF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:05:26 -0400
+        id S1725893AbeJHUFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 16:05:30 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D3E9F309174E;
-        Mon,  8 Oct 2018 12:53:51 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id AAB2B81108;
+        Mon,  8 Oct 2018 12:53:55 +0000 (UTC)
 Received: from f28server.default (ovpn-116-135.phx2.redhat.com [10.3.116.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C59C61D3F;
-        Mon,  8 Oct 2018 12:53:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 25ADD61D3F;
+        Mon,  8 Oct 2018 12:53:51 +0000 (UTC)
 From:   Daniel Bristot de Oliveira <bristot@redhat.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -47,24 +47,87 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
         Marcelo Tosatti <mtosatti@redhat.com>,
         Clark Williams <williams@redhat.com>
-Subject: [RFC PATCH 5/6] x86/alternative: Split text_poke_bp() into tree steps
-Date:   Mon,  8 Oct 2018 14:53:04 +0200
-Message-Id: <b589f216935e5a10c5fc87fb89b0749a8a55dc4a.1539001620.git.bristot@redhat.com>
+Subject: [RFC PATCH 6/6] x86/jump_label,x86/alternatives: Batch jump label transformations
+Date:   Mon,  8 Oct 2018 14:53:05 +0200
+Message-Id: <e99eb239b0546e180e49c1e5a9e607fb6af0ec60.1539001620.git.bristot@redhat.com>
 In-Reply-To: <cover.1539001620.git.bristot@redhat.com>
 References: <cover.1539001620.git.bristot@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 08 Oct 2018 12:53:52 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 08 Oct 2018 12:53:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-text_poke_bp() updates instructions on live kernel on SMP in three steps:
- 1) add a int3 trap to the address that will be patched
- 2) update all but the first byte of the patched range
- 3) replace the first byte (int3) by the first byte of
+A static key, changing from enabled->disabled/disabled->enabled causes
+the code to be changed, and this is done in three steps:
 
-This patch creates one function for each of these steps.
+-- Pseudo-code #1 - Current implementation ---
+For each key to be updated:
+	1)  add an int3 trap to the address that will be patched
+        	sync cores (send IPI to all other CPUs)
+	2)  update all but the first byte of the patched range
+	        sync cores (send IPI to all other CPUs)
+	3)  replace the first byte (int3) by the first byte of replacing opcode
+	        sync cores (send IPI to all other CPUs)
+-- Pseudo-code #1 ---
+
+The number of IPIs sent is then linear with regard to the number 'n' of
+entries of a key: O(n*3), which is O(n). For instance, as the static key
+netstamp_needed_key has four entries (used in for places in the code)
+in our kernel, 3 IPIs were generated for each entry, resulting in 12 IPIs.
+
+This algorithm works fine for the update of a single key. But we think
+it is possible to optimize the case in which a static key has more than
+one entry. For instance, the sched_schedstats jump label has 56 entries
+in my (updated) fedora kernel, resulting in 168 IPIs for each CPU in
+which the thread that is enabling is _not_ running.
+
+In this patch, rather than doing each updated at once, it queue all
+updates first, and the, apply all updates at once, rewriting the
+pseudo-code #1 in this way:
+
+-- Pseudo-code #2 - This patch  ---
+1)  for each key in the queue:
+        add an int3 trap to the address that will be patched
+    sync cores (send IPI to all other CPUs)
+
+2)  for each key in the queue:
+        update all but the first byte of the patched range
+    sync cores (send IPI to all other CPUs)
+
+3)  for each key in the queue:
+        replace the first byte (int3) by the first byte of replacing opcode
+
+    sync cores (send IPI to all other CPUs)
+-- Pseudo-code #2 - This patch  ---
+
+Doing the update in this way, the number of IPI becomes O(3) with regard
+to the number of keys, which is O(1).
+
+Currently, the jump label of a static key is transformed via the arch
+specific function:
+
+    void arch_jump_label_transform(struct jump_entry *entry,
+                                   enum jump_label_type type)
+
+The new approach (batch mode) uses two arch functions, the first has the
+same arguments of the arch_jump_label_transform(), and is the function:
+
+    void arch_jump_label_transform_queue(struct jump_entry *entry,
+                         enum jump_label_type type)
+
+Rather than transforming the code, it adds the jump_entry in a queue of
+entries to be updated.
+
+After queuing all jump_entries, the function:
+
+    void arch_jump_label_transform_apply(void)
+
+Applies the changes in the queue.
+
+The batch of operations was:
+Suggested-by: Scott Wood <swood@redhat.com>
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -87,84 +150,302 @@ Cc: Clark Williams <williams@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/kernel/alternative.c | 38 +++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/jump_label.h    |  2 +
+ arch/x86/include/asm/text-patching.h |  9 +++
+ arch/x86/kernel/alternative.c        | 83 +++++++++++++++++++++++++---
+ arch/x86/kernel/jump_label.c         | 54 ++++++++++++++++++
+ include/linux/jump_label.h           |  5 ++
+ kernel/jump_label.c                  | 15 +++++
+ 6 files changed, 161 insertions(+), 7 deletions(-)
 
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 8c0de4282659..d61c476046fe 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -15,6 +15,8 @@
+ #error asm/jump_label.h included on a non-jump-label kernel
+ #endif
+ 
++#define HAVE_JUMP_LABEL_BATCH
++
+ #define JUMP_LABEL_NOP_SIZE 5
+ 
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..a28230f09d72 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -18,6 +18,14 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
+ #define __parainstructions_end	NULL
+ #endif
+ 
++struct text_to_poke {
++	struct list_head list;
++	void *opcode;
++	void *addr;
++	void *handler;
++	size_t len;
++};
++
+ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+@@ -37,6 +45,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp_list(struct list_head *entry_list);
+ extern int after_bootmem;
+ 
+ #endif /* _ASM_X86_TEXT_PATCHING_H */
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index b9d5e7c9ef43..a4c83cb49cd0 100644
+index a4c83cb49cd0..3bd502ea4c53 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -763,6 +763,29 @@ int poke_int3_handler(struct pt_regs *regs)
+@@ -735,9 +735,12 @@ static void do_sync_core(void *info)
  
+ static bool bp_patching_in_progress;
+ static void *bp_int3_handler, *bp_int3_addr;
++struct list_head *bp_list;
+ 
+ int poke_int3_handler(struct pt_regs *regs)
+ {
++	void *ip;
++	struct text_to_poke *tp;
+ 	/*
+ 	 * Having observed our INT3 instruction, we now must observe
+ 	 * bp_patching_in_progress.
+@@ -753,21 +756,38 @@ int poke_int3_handler(struct pt_regs *regs)
+ 	if (likely(!bp_patching_in_progress))
+ 		return 0;
+ 
+-	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
++	if (user_mode(regs))
+ 		return 0;
+ 
+-	/* set up the specified breakpoint handler */
+-	regs->ip = (unsigned long) bp_int3_handler;
++	/*
++	 * Single poke.
++	 */
++	if (bp_int3_addr) {
++		if (regs->ip == (unsigned long) bp_int3_addr) {
++			regs->ip = (unsigned long) bp_int3_handler;
++			return 1;
++		}
++		return 0;
++	}
+ 
+-	return 1;
++	/*
++	 * Batch mode.
++	 */
++	ip = (void *) regs->ip - sizeof(unsigned char);
++	list_for_each_entry(tp, bp_list, list) {
++		if (ip == tp->addr) {
++			/* set up the specified breakpoint handler */
++			regs->ip = (unsigned long) tp->handler;
++			return 1;
++		}
++	}
+ 
++	return 0;
  }
  
-+static void text_poke_bp_set_handler(void *addr, void *handler,
-+				     unsigned char int3)
-+{
-+	bp_int3_handler = handler;
-+	bp_int3_addr = (u8 *)addr + sizeof(int3);
-+	text_poke(addr, &int3, sizeof(int3));
-+}
-+
-+static void patch_all_but_first_byte(void *addr, const void *opcode,
-+				     size_t len, unsigned char int3)
-+{
-+	/* patch all but the first byte */
-+	text_poke((char *)addr + sizeof(int3),
-+		  (const char *) opcode + sizeof(int3),
-+		  len - sizeof(int3));
-+}
-+
-+static void patch_first_byte(void *addr, const void *opcode, unsigned char int3)
-+{
-+	/* patch the first byte */
-+	text_poke(addr, opcode, sizeof(int3));
-+}
-+
- /**
-  * text_poke_bp() -- update instructions on live kernel on SMP
-  * @addr:	address to patch
-@@ -787,27 +810,21 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ static void text_poke_bp_set_handler(void *addr, void *handler,
+ 				     unsigned char int3)
  {
- 	unsigned char int3 = 0xcc;
- 
 -	bp_int3_handler = handler;
 -	bp_int3_addr = (u8 *)addr + sizeof(int3);
--	bp_patching_in_progress = true;
--
+ 	text_poke(addr, &int3, sizeof(int3));
+ }
+ 
+@@ -812,6 +832,9 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 
  	lockdep_assert_held(&text_mutex);
  
-+	bp_patching_in_progress = true;
++	bp_int3_handler = handler;
++	bp_int3_addr = (u8 *)addr + sizeof(int3);
++
+ 	bp_patching_in_progress = true;
  	/*
  	 * Corresponding read barrier in int3 notifier for making sure the
- 	 * in_progress and handler are correctly ordered wrt. patching.
+@@ -841,7 +864,53 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 	 * the writing of the new instruction.
  	 */
- 	smp_wmb();
+ 	bp_patching_in_progress = false;
+-
++	bp_int3_handler = bp_int3_addr = 0;
+ 	return addr;
+ }
  
--	text_poke(addr, &int3, sizeof(int3));
-+	text_poke_bp_set_handler(addr, handler, int3);
++void text_poke_bp_list(struct list_head *entry_list)
++{
++	unsigned char int3 = 0xcc;
++	int patched_all_but_first = 0;
++	struct text_to_poke *tp;
++
++	bp_list = entry_list;
++	bp_patching_in_progress = true;
++	/*
++	 * Corresponding read barrier in int3 notifier for making sure the
++	 * in_progress and handler are correctly ordered wrt. patching.
++	 */
++	smp_wmb();
++
++	list_for_each_entry(tp, entry_list, list)
++		text_poke_bp_set_handler(tp->addr, tp->handler, int3);
++
++	on_each_cpu(do_sync_core, NULL, 1);
++
++	list_for_each_entry(tp, entry_list, list) {
++		if (tp->len - sizeof(int3) > 0) {
++			patch_all_but_first_byte(tp->addr, tp->opcode, tp->len, int3);
++			patched_all_but_first++;
++		}
++	}
++
++	if (patched_all_but_first) {
++		/*
++		 * According to Intel, this core syncing is very likely
++		 * not necessary and we'd be safe even without it. But
++		 * better safe than sorry (plus there's not only Intel).
++		 */
++		on_each_cpu(do_sync_core, NULL, 1);
++	}
++
++	list_for_each_entry(tp, entry_list, list)
++		patch_first_byte(tp->addr, tp->opcode, int3);
++
++	on_each_cpu(do_sync_core, NULL, 1);
++	/*
++	 * sync_core() implies an smp_mb() and orders this store against
++	 * the writing of the new instruction.
++	 */
++	bp_list = 0;
++	bp_patching_in_progress = false;
++}
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index de588ff47f81..3da5af5de4d3 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -12,6 +12,8 @@
+ #include <linux/list.h>
+ #include <linux/jhash.h>
+ #include <linux/cpu.h>
++#include <linux/slab.h>
++#include <linux/list.h>
+ #include <asm/kprobes.h>
+ #include <asm/alternative.h>
+ #include <asm/text-patching.h>
+@@ -139,6 +141,58 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 	mutex_unlock(&text_mutex);
+ }
  
- 	on_each_cpu(do_sync_core, NULL, 1);
++LIST_HEAD(batch_list);
++
++void arch_jump_label_transform_queue(struct jump_entry *entry,
++				     enum jump_label_type type)
++{
++	struct text_to_poke *tp;
++
++	/*
++	 * Batch mode disabled at boot time.
++	 */
++	if (early_boot_irqs_disabled)
++		goto fallback;
++
++	/*
++	 * RFC Note: I put __GFP_NOFAIL, but I could also goto fallback;
++	 * thoughts?
++	 */
++	tp = kzalloc(sizeof(struct text_to_poke), GFP_KERNEL | __GFP_NOFAIL);
++	tp->opcode = kzalloc(sizeof(union jump_code_union),
++			     GFP_KERNEL | __GFP_NOFAIL);
++
++	__jump_label_set_jump_code(entry, type, 0, tp->opcode);
++	tp->addr = (void *) entry->code;
++	tp->len = JUMP_LABEL_NOP_SIZE;
++	tp->handler = (void *) entry->code + JUMP_LABEL_NOP_SIZE;
++
++	list_add_tail(&tp->list, &batch_list);
++
++	return;
++
++fallback:
++	arch_jump_label_transform(entry, type);
++}
++
++void arch_jump_label_transform_apply(void)
++{
++	struct text_to_poke *tp, *next;
++
++	if (early_boot_irqs_disabled)
++		return;
++
++	mutex_lock(&text_mutex);
++	text_poke_bp_list(&batch_list);
++	mutex_unlock(&text_mutex);
++
++	list_for_each_entry_safe(tp, next, &batch_list, list) {
++		list_del(&tp->list);
++		kfree(tp->opcode);
++		kfree(tp);
++	}
++}
++
+ static enum {
+ 	JL_STATE_START,
+ 	JL_STATE_NO_UPDATE,
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index cd3bed880ca0..2aca92e03494 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -156,6 +156,11 @@ extern void jump_label_lock(void);
+ extern void jump_label_unlock(void);
+ extern void arch_jump_label_transform(struct jump_entry *entry,
+ 				      enum jump_label_type type);
++#ifdef HAVE_JUMP_LABEL_BATCH
++extern void arch_jump_label_transform_queue(struct jump_entry *entry,
++					    enum jump_label_type type);
++extern void arch_jump_label_transform_apply(void);
++#endif
+ extern void arch_jump_label_transform_static(struct jump_entry *entry,
+ 					     enum jump_label_type type);
+ extern int jump_label_text_reserved(void *start, void *end);
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 940ba7819c87..f534d9c4e07f 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -377,6 +377,7 @@ bool jump_label_can_update_check(struct jump_entry *entry)
+ 	return 0;
+ }
  
- 	if (len - sizeof(int3) > 0) {
--		/* patch all but the first byte */
--		text_poke((char *)addr + sizeof(int3),
--			  (const char *) opcode + sizeof(int3),
--			  len - sizeof(int3));
-+		patch_all_but_first_byte(addr, opcode, len, int3);
- 		/*
- 		 * According to Intel, this core syncing is very likely
- 		 * not necessary and we'd be safe even without it. But
-@@ -816,8 +833,7 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- 		on_each_cpu(do_sync_core, NULL, 1);
++#ifndef HAVE_JUMP_LABEL_BATCH
+ static void __jump_label_update(struct static_key *key,
+ 				struct jump_entry *entry,
+ 				struct jump_entry *stop)
+@@ -386,6 +387,20 @@ static void __jump_label_update(struct static_key *key,
+ 			arch_jump_label_transform(entry, jump_label_type(entry));
  	}
+ }
++#else
++static void __jump_label_update(struct static_key *key,
++				struct jump_entry *entry,
++				struct jump_entry *stop)
++{
++	for_each_label_entry(key, entry, stop) {
++		if (jump_label_can_update_check(entry))
++			arch_jump_label_transform_queue(entry,
++							jump_label_type(entry));
++	}
++	arch_jump_label_transform_apply();
++
++}
++#endif
  
--	/* patch the first byte */
--	text_poke(addr, opcode, sizeof(int3));
-+	patch_first_byte(addr, opcode, int3);
- 
- 	on_each_cpu(do_sync_core, NULL, 1);
- 	/*
+ void __init jump_label_init(void)
+ {
 -- 
 2.17.1
 
