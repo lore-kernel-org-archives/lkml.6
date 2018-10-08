@@ -6,94 +6,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41221C6787D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA355C6787D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115E820882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:25:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115E820882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mxic.com.tw
+	by mail.kernel.org (Postfix) with ESMTP id 7AD4B2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 02:26:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AD4B2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbeJHJfI (ORCPT
+        id S1726695AbeJHJf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 05:35:08 -0400
-Received: from twhmllg4.macronix.com ([211.75.127.132]:19538 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725760AbeJHJfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 05:35:07 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id w982PY2B085046;
-        Mon, 8 Oct 2018 10:25:37 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   masonccyang@mxic.com.tw
-To:     broonie@kernel.org, tpiepho@impinj.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc:     boris.brezillon@bootlin.com, juliensu@mxic.com.tw,
-        zhengxunli@mxic.com.tw, masonccyang@mxic.com.tw
-Subject: [PATCH v4 2/2] dt-bindings: spi: Document Macronix controller bindings
-Date:   Mon,  8 Oct 2018 10:25:32 +0800
-Message-Id: <1538965532-8908-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1538965532-8908-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1538965532-8908-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com w982PY2B085046
+        Mon, 8 Oct 2018 05:35:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:30043 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725760AbeJHJf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 05:35:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2018 19:26:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,355,1534834800"; 
+   d="scan'208";a="86499619"
+Received: from allen-box.sh.intel.com ([10.239.161.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Oct 2018 19:26:06 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/amd: Add default branch in amd_iommu_capable()
+Date:   Mon,  8 Oct 2018 10:24:19 +0800
+Message-Id: <20181008022419.31865-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mason Yang <masonccyang@mxic.com.tw>
+Recent gcc warns about switching on an enumeration, but not having
+an explicit case statement for all members of the enumeration. To
+show the compiler this is intentional, we simply add a default case
+with nothing more than a break statement.
 
-Document the bindings used by the Macronix controller.
-
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- Documentation/devicetree/bindings/spi/spi-mxic.txt | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-mxic.txt
+ drivers/iommu/amd_iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-mxic.txt b/Documentation/devicetree/bindings/spi/spi-mxic.txt
-new file mode 100644
-index 0000000..529f2da
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-mxic.txt
-@@ -0,0 +1,34 @@
-+Macronix SPI controller Device Tree Bindings
-+--------------------------------------------
-+
-+Required properties:
-+- compatible: should be "mxicy,mx25f0a-spi"
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+- reg: should contain 2 entries, one for the registers and one for the direct
-+       mapping area
-+- reg-names: should contain "regs" and "dirmap"
-+- interrupts: interrupt line connected to the SPI controller
-+- clock-names: should contain "ps_clk", "send_clk" and "send_dly_clk"
-+- clocks: should contain 3 entries for the "ps_clk", "send_clk" and
-+	  "send_dly_clk" clocks
-+
-+Example:
-+
-+	spi@43c30000 {
-+		compatible = "mxicy,mx25f0a-spi";
-+		reg = <0x43c30000 0x10000>, <0xa0000000 0x20000000>;
-+		reg-names = "regs", "dirmap";
-+		clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 18>;
-+		clock-names = "send_clk", "send_dly_clk", "ps_clk";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <25000000>;
-+			spi-tx-bus-width = <4>;
-+			spi-rx-bus-width = <4>;
-+		};
-+	};
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index bee0dfb7b93b..1167ff0416cf 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -3083,6 +3083,8 @@ static bool amd_iommu_capable(enum iommu_cap cap)
+ 		return (irq_remapping_enabled == 1);
+ 	case IOMMU_CAP_NOEXEC:
+ 		return false;
++	default:
++		break;
+ 	}
+ 
+ 	return false;
 -- 
-1.9.1
+2.17.1
 
