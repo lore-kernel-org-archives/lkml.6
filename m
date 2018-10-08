@@ -2,202 +2,82 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8699C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5BEC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E852087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E852087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id A7EF52087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:02:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7EF52087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeJHRKV (ORCPT
+        id S1727065AbeJHRNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:10:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43939 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHRKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:10:20 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w989wlLD560248
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 8 Oct 2018 02:58:47 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w989wlIQ560245;
-        Mon, 8 Oct 2018 02:58:47 -0700
-Date:   Mon, 8 Oct 2018 02:58:47 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Chang S. Bae" <tipbot@zytor.com>
-Message-ID: <tip-b2e2ba578e016a091eb31565849990fe68c7c599@git.kernel.org>
-Cc:     luto@kernel.org, riel@surriel.com, ravi.v.shankar@intel.com,
-        markus.t.metzger@intel.com, mingo@kernel.org,
-        chang.seok.bae@intel.com, hpa@zytor.com, peterz@infradead.org,
-        dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com, luto@amacapital.net,
-        tglx@linutronix.de, brgerst@gmail.com,
-        torvalds@linux-foundation.org, bp@alien8.de
-Reply-To: torvalds@linux-foundation.org, bp@alien8.de, brgerst@gmail.com,
-          dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, luto@amacapital.net,
-          dave.hansen@linux.intel.com, hpa@zytor.com,
-          chang.seok.bae@intel.com, mingo@kernel.org, peterz@infradead.org,
-          riel@surriel.com, ravi.v.shankar@intel.com, luto@kernel.org,
-          markus.t.metzger@intel.com
-In-Reply-To: <1537312139-5580-9-git-send-email-chang.seok.bae@intel.com>
-References: <1537312139-5580-9-git-send-email-chang.seok.bae@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/vdso: Initialize the CPU/node NR segment
- descriptor earlier
-Git-Commit-ID: b2e2ba578e016a091eb31565849990fe68c7c599
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 8 Oct 2018 13:13:09 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11425 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbeJHRNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:13:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 03:02:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,356,1534834800"; 
+   d="scan'208";a="97058705"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 08 Oct 2018 03:02:12 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 08 Oct 2018 13:02:11 +0300
+Date:   Mon, 8 Oct 2018 13:02:11 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: Fix copy/paste on typec_set_vconn_role()
+ kerneldoc
+Message-ID: <20181008100211.GA23604@kuha.fi.intel.com>
+References: <20181007234612.94364-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181007234612.94364-1-swboyd@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b2e2ba578e016a091eb31565849990fe68c7c599
-Gitweb:     https://git.kernel.org/tip/b2e2ba578e016a091eb31565849990fe68c7c599
-Author:     Chang S. Bae <chang.seok.bae@intel.com>
-AuthorDate: Tue, 18 Sep 2018 16:08:59 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 8 Oct 2018 10:41:10 +0200
+On Sun, Oct 07, 2018 at 04:46:12PM -0700, Stephen Boyd wrote:
+> This must have been copy pasted from the function above. Fix it.
+> 
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-x86/vdso: Initialize the CPU/node NR segment descriptor earlier
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Currently the CPU/node NR segment descriptor (GDT_ENTRY_CPU_NUMBER) is
-initialized relatively late during CPU init, from the vCPU code, which
-has a number of disadvantages, such as hotplug CPU notifiers and SMP
-cross-calls.
+> ---
+>  drivers/usb/typec/class.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 00141e05bc72..5db0593ca0bd 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1322,7 +1322,7 @@ void typec_set_pwr_role(struct typec_port *port, enum typec_role role)
+>  EXPORT_SYMBOL_GPL(typec_set_pwr_role);
+>  
+>  /**
+> - * typec_set_pwr_role - Report VCONN source change
+> + * typec_set_vconn_role - Report VCONN source change
+>   * @port: The USB Type-C Port which VCONN role changed
+>   * @role: Source when @port is sourcing VCONN, or Sink when it's not
+>   *
+> -- 
+> Sent by a computer through tubes
 
-Instead just initialize it much earlier, directly in cpu_init().
+Thanks,
 
-This reduces complexity and increases robustness.
-
-[ mingo: Wrote new changelog. ]
-
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Markus T Metzger <markus.t.metzger@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1537312139-5580-9-git-send-email-chang.seok.bae@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/vdso/vma.c    | 33 +--------------------------------
- arch/x86/kernel/cpu/common.c | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 32 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 39b5584c5808..3f9d43f26f63 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -332,35 +332,6 @@ static __init int vdso_setup(char *s)
- 	return 0;
- }
- __setup("vdso=", vdso_setup);
--#endif
--
--#ifdef CONFIG_X86_64
--static void vgetcpu_cpu_init(void *arg)
--{
--	int cpu = smp_processor_id();
--	struct desc_struct d = { };
--	unsigned long cpudata = vdso_encode_cpu_node(cpu, cpu_to_node(cpu));
--
--	if (static_cpu_has(X86_FEATURE_RDTSCP))
--		write_rdtscp_aux(cpudata);
--
--	/* Store CPU and node number in limit */
--	d.limit0 = cpudata;
--	d.limit1 = cpudata >> 16;
--
--	d.type = 5;		/* RO data, expand down, accessed */
--	d.dpl = 3;		/* Visible to user code */
--	d.s = 1;		/* Not a system segment */
--	d.p = 1;		/* Present */
--	d.d = 1;		/* 32-bit */
--
--	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPU_NUMBER, &d, DESCTYPE_S);
--}
--
--static int vgetcpu_online(unsigned int cpu)
--{
--	return smp_call_function_single(cpu, vgetcpu_cpu_init, NULL, 1);
--}
- 
- static int __init init_vdso(void)
- {
-@@ -370,9 +341,7 @@ static int __init init_vdso(void)
- 	init_vdso_image(&vdso_image_x32);
- #endif
- 
--	/* notifier priority > KVM */
--	return cpuhp_setup_state(CPUHP_AP_X86_VDSO_VMA_ONLINE,
--				 "x86/vdso/vma:online", vgetcpu_online, NULL);
-+	return 0;
- }
- subsys_initcall(init_vdso);
- #endif /* CONFIG_X86_64 */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 44c4ef3d989b..a148d18a1ef0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1669,6 +1669,29 @@ static void wait_for_master_cpu(int cpu)
- #endif
- }
- 
-+#ifdef CONFIG_X86_64
-+static void setup_getcpu(int cpu)
-+{
-+	unsigned long cpudata = vdso_encode_cpu_node(cpu, early_cpu_to_node(cpu));
-+	struct desc_struct d = { };
-+
-+	if (static_cpu_has(X86_FEATURE_RDTSCP))
-+		write_rdtscp_aux(cpudata);
-+
-+	/* Store CPU and node number in limit. */
-+	d.limit0 = cpudata;
-+	d.limit1 = cpudata >> 16;
-+
-+	d.type = 5;		/* RO data, expand down, accessed */
-+	d.dpl = 3;		/* Visible to user code */
-+	d.s = 1;		/* Not a system segment */
-+	d.p = 1;		/* Present */
-+	d.d = 1;		/* 32-bit */
-+
-+	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPU_NUMBER, &d, DESCTYPE_S);
-+}
-+#endif
-+
- /*
-  * cpu_init() initializes state that is per-CPU. Some data is already
-  * initialized (naturally) in the bootstrap process, such as the GDT
-@@ -1706,6 +1729,7 @@ void cpu_init(void)
- 	    early_cpu_to_node(cpu) != NUMA_NO_NODE)
- 		set_numa_node(early_cpu_to_node(cpu));
- #endif
-+	setup_getcpu(cpu);
- 
- 	me = current;
- 
+-- 
+heikki
