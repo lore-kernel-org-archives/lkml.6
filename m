@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771E5C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDA2C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D24521502
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00797214DC
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwurOQXj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D24521502
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8JvGsGH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00797214DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeJHWiP (ORCPT
+        id S1727711AbeJHWiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56606 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727524AbeJHWiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:15 -0400
+        id S1727524AbeJHWiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D90012075E;
-        Mon,  8 Oct 2018 15:25:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E05FC2150B;
+        Mon,  8 Oct 2018 15:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012359;
-        bh=kcGU+jBFSSQSgN2MACNzmTHjv3YqU2D0GMbrRiKLCRY=;
+        s=default; t=1539012361;
+        bh=UO17doN27zD4wNlp4kxchSOx+VKjfO5lNoqF12sT0Fs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XwurOQXjccludyk6tyuvbsBatGPpAPCjCZN5voB7WiOgyYKocFKRMPth+hukZxw6P
-         kKoeiyRP/dv48YDJCUTBia96f19ALGv6OtiZkZwvYPkqgOf2m3j3iqqFEMXZ5CWI0r
-         OR+BRzkn3yz5uZuJtPZSN9UwSjGVomAhhaqYHevM=
+        b=Z8JvGsGHM+hhB4fzwuVy9e15JvRznXa5LadxADTWt1jsfRlbrwli+7CKKcL/EaeHN
+         RqWiD3Vu/q+DWxfmlzLvXn6U9jxb1E7z/eLvVBoVKKUGtL3a//hLjxwmHCKFHm5GFk
+         lU90yZwNPn8jXWm17D+6liVcRAOvz3sdSuWnNJi4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Tomer Tayar <Tomer.Tayar@cavium.com>,
+Cc:     Davide Caratti <dcaratti@redhat.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 34/58] qed: Fix populating the invalid stag value in multi function mode.
-Date:   Mon,  8 Oct 2018 11:24:59 -0400
-Message-Id: <20181008152523.70705-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 36/58] bnxt_en: don't try to offload VLAN 'modify' action
+Date:   Mon,  8 Oct 2018 11:25:01 -0400
+Message-Id: <20181008152523.70705-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -54,81 +52,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 50fdf60181b01b7383b85d4b9acbb842263d96a2 ]
+[ Upstream commit 8c6ec3613e7b0aade20a3196169c0bab32ed3e3f ]
 
-In multi-function mode, driver receives the stag value (outer vlan)
-for a PF from management FW (MFW). If the stag value is negotiated prior to
-the driver load, then the stag is not notified to the driver and hence
-driver will have the invalid stag value.
-The fix is to request the MFW for STAG value during the driver load time.
+bnxt offload code currently supports only 'push' and 'pop' operation: let
+.ndo_setup_tc() return -EOPNOTSUPP if VLAN 'modify' action is configured.
 
-Fixes: cac6f691 ("qed: Add support for Unified Fabric Port")
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Fixes: 2ae7408fedfe ("bnxt_en: bnxt: add TC flower filter offload support")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Sathya Perla <sathya.perla@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 15 ++++++++++++++-
- drivers/net/ethernet/qlogic/qed/qed_hsi.h |  4 ++++
- 2 files changed, 18 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index e5249b4741d0..194f4dbe57d3 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -1636,7 +1636,7 @@ static int qed_vf_start(struct qed_hwfn *p_hwfn,
- int qed_hw_init(struct qed_dev *cdev, struct qed_hw_init_params *p_params)
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+index 491bd40a254d..c4c9df029466 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+@@ -75,17 +75,23 @@ static int bnxt_tc_parse_redir(struct bnxt *bp,
+ 	return 0;
+ }
+ 
+-static void bnxt_tc_parse_vlan(struct bnxt *bp,
+-			       struct bnxt_tc_actions *actions,
+-			       const struct tc_action *tc_act)
++static int bnxt_tc_parse_vlan(struct bnxt *bp,
++			      struct bnxt_tc_actions *actions,
++			      const struct tc_action *tc_act)
  {
- 	struct qed_load_req_params load_req_params;
--	u32 load_code, param, drv_mb_param;
-+	u32 load_code, resp, param, drv_mb_param;
- 	bool b_default_mtu = true;
- 	struct qed_hwfn *p_hwfn;
- 	int rc = 0, mfw_rc, i;
-@@ -1782,6 +1782,19 @@ int qed_hw_init(struct qed_dev *cdev, struct qed_hw_init_params *p_params)
+-	if (tcf_vlan_action(tc_act) == TCA_VLAN_ACT_POP) {
++	switch (tcf_vlan_action(tc_act)) {
++	case TCA_VLAN_ACT_POP:
+ 		actions->flags |= BNXT_TC_ACTION_FLAG_POP_VLAN;
+-	} else if (tcf_vlan_action(tc_act) == TCA_VLAN_ACT_PUSH) {
++		break;
++	case TCA_VLAN_ACT_PUSH:
+ 		actions->flags |= BNXT_TC_ACTION_FLAG_PUSH_VLAN;
+ 		actions->push_vlan_tci = htons(tcf_vlan_push_vid(tc_act));
+ 		actions->push_vlan_tpid = tcf_vlan_push_proto(tc_act);
++		break;
++	default:
++		return -EOPNOTSUPP;
+ 	}
++	return 0;
+ }
  
- 	if (IS_PF(cdev)) {
- 		p_hwfn = QED_LEADING_HWFN(cdev);
-+
-+		/* Get pre-negotiated values for stag, bandwidth etc. */
-+		DP_VERBOSE(p_hwfn,
-+			   QED_MSG_SPQ,
-+			   "Sending GET_OEM_UPDATES command to trigger stag/bandwidth attention handling\n");
-+		drv_mb_param = 1 << DRV_MB_PARAM_DUMMY_OEM_UPDATES_OFFSET;
-+		rc = qed_mcp_cmd(p_hwfn, p_hwfn->p_main_ptt,
-+				 DRV_MSG_CODE_GET_OEM_UPDATES,
-+				 drv_mb_param, &resp, &param);
-+		if (rc)
-+			DP_NOTICE(p_hwfn,
-+				  "Failed to send GET_OEM_UPDATES attention request\n");
-+
- 		drv_mb_param = STORM_FW_VERSION;
- 		rc = qed_mcp_cmd(p_hwfn, p_hwfn->p_main_ptt,
- 				 DRV_MSG_CODE_OV_UPDATE_STORM_FW_VER,
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_hsi.h b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-index bee10c1781fb..baa8a795c551 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-@@ -12414,6 +12414,7 @@ struct public_drv_mb {
- #define DRV_MSG_SET_RESOURCE_VALUE_MSG		0x35000000
- #define DRV_MSG_CODE_OV_UPDATE_WOL              0x38000000
- #define DRV_MSG_CODE_OV_UPDATE_ESWITCH_MODE     0x39000000
-+#define DRV_MSG_CODE_GET_OEM_UPDATES            0x41000000
+ static int bnxt_tc_parse_tunnel_set(struct bnxt *bp,
+@@ -136,7 +142,9 @@ static int bnxt_tc_parse_actions(struct bnxt *bp,
  
- #define DRV_MSG_CODE_BW_UPDATE_ACK		0x32000000
- #define DRV_MSG_CODE_NIG_DRAIN			0x30000000
-@@ -12539,6 +12540,9 @@ struct public_drv_mb {
- #define DRV_MB_PARAM_ESWITCH_MODE_VEB	0x1
- #define DRV_MB_PARAM_ESWITCH_MODE_VEPA	0x2
+ 		/* Push/pop VLAN */
+ 		if (is_tcf_vlan(tc_act)) {
+-			bnxt_tc_parse_vlan(bp, actions, tc_act);
++			rc = bnxt_tc_parse_vlan(bp, actions, tc_act);
++			if (rc)
++				return rc;
+ 			continue;
+ 		}
  
-+#define DRV_MB_PARAM_DUMMY_OEM_UPDATES_MASK	0x1
-+#define DRV_MB_PARAM_DUMMY_OEM_UPDATES_OFFSET	0
-+
- #define DRV_MB_PARAM_SET_LED_MODE_OPER		0x0
- #define DRV_MB_PARAM_SET_LED_MODE_ON		0x1
- #define DRV_MB_PARAM_SET_LED_MODE_OFF		0x2
 -- 
 2.17.1
 
