@@ -2,116 +2,185 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF19C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4934FC67806
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF452089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:27:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF452089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 14770205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:37:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14770205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbeJIFk4 (ORCPT
+        id S1726452AbeJIFvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 01:40:56 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35587 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbeJIFkz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 01:40:55 -0400
-Received: by mail-ot1-f66.google.com with SMTP id j9-v6so21527328otl.2;
-        Mon, 08 Oct 2018 15:27:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PBj6laRUBtHS5WTwGPQoOvXjQzrlCfhVTV+O4h6wDsA=;
-        b=iS03SGfnwOasaEIcaTGDmn3Fo5Qo3CvouViu6C6GXLJm5KYzxKwqCAZE3Kbop0q12K
-         NkSH0ICrwQWlarpLo0RZcFe/UW5XZSJXRJ8RMl6cxiMiIK3jr4LRGLzwjGmwXIIG3/zU
-         unF8mvJz57oZXnRhrKqm6Q5VLFrPdebtZQCYKhIgIJ4jv8nAMqiZHGs7Xq5t9NsTmguE
-         Kdi/g2ZSF6RC9jfnzOY0pUClFXmmapUKIJdMr3Ze1TRWbnJ+BxkRKb/mmEr92sN7RquM
-         kx3Vey5EYbNo/HoKRvF5PWI/zC0SZ6jhMJFhau1T9vwtDn9fUQ+bhtlZO+Qq/HG0jWNX
-         c4Rg==
-X-Gm-Message-State: ABuFfojNX0T0lfnYA6uGcE7Y4zbjbSDpAXauUSmD3o05AglFVMSmDptB
-        p65W1blglGFX/pbHbvaukVIOYdNbJoyxD4h6ZE8=
-X-Google-Smtp-Source: ACcGV63T9WG4KY+bc8+0xOT4183y9RIlzYSVsWYKi97gtQY1i9JWHeqL5iaeKCGffAhB2YTe1BFQ5fPMANkI+PCrTMw=
-X-Received: by 2002:a9d:4590:: with SMTP id x16mr10124584ote.258.1539037620215;
- Mon, 08 Oct 2018 15:27:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <000301d45ecb$4f002a90$ed007fb0$@net> <003801d45f54$3d9b0c50$b8d124f0$@net>
-In-Reply-To: <003801d45f54$3d9b0c50$b8d124f0$@net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 9 Oct 2018 00:26:48 +0200
-Message-ID: <CAJZ5v0h4sVoen++nF1cYvqQeY3qN0B1aP42e8A4SZwxzBV3NVA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] cpuidle: menu: Fixes, optimizations and cleanups
-To:     Doug Smythies <dsmythies@telus.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Tue, 9 Oct 2018 01:51:02 -0400
+Received: from mga14.intel.com ([192.55.52.115]:40559 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbeJIFvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 01:51:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 15:37:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,358,1534834800"; 
+   d="scan'208";a="239606712"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.166]) ([10.7.198.166])
+  by orsmga004.jf.intel.com with ESMTP; 08 Oct 2018 15:36:58 -0700
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Logan Gunthorpe <logang@deltatee.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <CAPcyv4jX5WYmMYzGCBrnaqT7tqHGSVPwm7Dpi-XpuM9ns84+0w@mail.gmail.com>
+ <379e1d22-4194-6744-9e80-897b6ba126e9@linux.intel.com>
+ <CAPcyv4i_x4NO2_qsfgwsgii9zmjZ43gJW6OCLpf=CweztRtZZw@mail.gmail.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <95de811f-ad44-c96d-3914-5625933d5e88@linux.intel.com>
+Date:   Mon, 8 Oct 2018 15:36:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4i_x4NO2_qsfgwsgii9zmjZ43gJW6OCLpf=CweztRtZZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 12:14 AM Doug Smythies <dsmythies@telus.net> wrote:
->
-> On 2018.10.08 00:51 Rafael J. Wysocki wrote:
-> > On Mon, Oct 8, 2018 at 8:02 AM Doug Smythies <dsmythies@telus.net> wrote:
-> >>
-> >> On 2018.10.03 23:56 Rafael J. Wysocki wrote:
-> >>> On Tue, Oct 2, 2018 at 11:51 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 
-[cut]
 
-> >> Test 2: pipe test 2 CPUs, one core. CPU test:
-> >>
-> >> The average loop times graph is here:
-> >> http://fast.smythies.com/linux-pm/k419/k419-rjw-pipe-1core.png
-> >>
-> >> The power and idle statistics graphs are here:
-> >> http://fast.smythies.com/linux-pm/k419/k419-rjw-pipe-1core.htm
-> >>
-> >> Conclusions:
-> >>
-> >> Better performance at the cost of more power with
-> >> the patch set, but late August had both better performance
-> >> and less power.
-> >>
-> >> Overall idle entries and exits are about the same, but way
-> >> way more idle state 0 entries and exits with the patch set.
-> >
-> >Same as above (and expected too).
->
-> I Disagree. The significant transfer of idle entries from
-> idle state 1 with kernel 4.19-rc6 to idle state 0 with the
-> additional 8 patch set is virtually entirely due to this patch:
->
-> "[PATCH 2/6] cpuidle: menu: Compute first_idx when latency_req is known"
+On 10/8/2018 3:00 PM, Dan Williams wrote:
+> On Mon, Oct 8, 2018 at 2:48 PM Alexander Duyck
+> <alexander.h.duyck@linux.intel.com> wrote:
+>>
+>> On 10/8/2018 2:01 PM, Dan Williams wrote:
+>>> On Tue, Sep 25, 2018 at 1:29 PM Alexander Duyck
+>>> <alexander.h.duyck@linux.intel.com> wrote:
+>>>>
+>>>> The ZONE_DEVICE pages were being initialized in two locations. One was with
+>>>> the memory_hotplug lock held and another was outside of that lock. The
+>>>> problem with this is that it was nearly doubling the memory initialization
+>>>> time. Instead of doing this twice, once while holding a global lock and
+>>>> once without, I am opting to defer the initialization to the one outside of
+>>>> the lock. This allows us to avoid serializing the overhead for memory init
+>>>> and we can instead focus on per-node init times.
+>>>>
+>>>> One issue I encountered is that devm_memremap_pages and
+>>>> hmm_devmmem_pages_create were initializing only the pgmap field the same
+>>>> way. One wasn't initializing hmm_data, and the other was initializing it to
+>>>> a poison value. Since this is something that is exposed to the driver in
+>>>> the case of hmm I am opting for a third option and just initializing
+>>>> hmm_data to 0 since this is going to be exposed to unknown third party
+>>>> drivers.
+>>>>
+>>>> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+>>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>>> ---
+>>>>
+>>>> v4: Moved moved memmap_init_zone_device to below memmmap_init_zone to avoid
+>>>>       merge conflicts with other changes in the kernel.
+>>>> v5: No change
+>>>
+>>> This patch appears to cause a regression in the "create.sh" unit test
+>>> in the ndctl test suite.
+>>
+>> So all you had to do is run the create.sh script to see the issue? I
+>> just want to confirm there isn't any additional information needed
+>> before I try chasing this down.
+> 
+>  From the ndctl source tree run:
+> 
+>      make -j TESTS="create.sh" check
+> 
+> ...the readme has some more setup instructions:
+> https://github.com/pmem/ndctl/blob/master/README.md
+> 
+> 0day has sometimes run this test suite automatically, but we need to
+> get that more robust because setting up this environment is a bit of a
+> hoop to jump through with the need to setup the nfit_test module.
+> 
+>>> I tried to reproduce on -next with:
+>>>
+>>> 2302f5ee215e mm: defer ZONE_DEVICE page initialization to the point
+>>> where we init pgmap
+>>>
+>>> ...but -next does not even boot for me at that commit.
+>>
+>> What version of -next? There are a couple of patches probably needed
+>> depending on which version you are trying to boot.
+> 
+> Today's -next, but backed up to that above commit. I was also seeing
+> CONFIG_DEBUG_LIST spamming the logs, and a crash in the crypto layer.
+> 
+>>> Here is a warning signature that proceeds a hang with this patch
+>>> applied against v4.19-rc6:
+>>>
+>>> percpu ref (blk_queue_usage_counter_release) <= 0 (-1530626) after
+>>> switching to atomic
+>>> WARNING: CPU: 24 PID: 7346 at lib/percpu-refcount.c:155
+>>> percpu_ref_switch_to_atomic_rcu+0x1f7/0x200
+>>> CPU: 24 PID: 7346 Comm: modprobe Tainted: G           OE     4.19.0-rc6+ #2458
+>>> [..]
+>>> RIP: 0010:percpu_ref_switch_to_atomic_rcu+0x1f7/0x200
+>>> [..]
+>>> Call Trace:
+>>>    <IRQ>
+>>>    ? percpu_ref_reinit+0x140/0x140
+>>>    rcu_process_callbacks+0x273/0x880
+>>>    __do_softirq+0xd2/0x428
+>>>    irq_exit+0xf6/0x100
+>>>    smp_apic_timer_interrupt+0xa2/0x220
+>>>    apic_timer_interrupt+0xf/0x20
+>>>    </IRQ>
+>>> RIP: 0010:lock_acquire+0xb8/0x1a0
+>>> [..]
+>>>    ? __put_page+0x55/0x150
+>>>    ? __put_page+0x55/0x150
+>>>    __put_page+0x83/0x150
+>>>    ? __put_page+0x55/0x150
+>>>    devm_memremap_pages_release+0x194/0x250
+>>>    release_nodes+0x17c/0x2c0
+>>>    device_release_driver_internal+0x1a2/0x250
+>>>    driver_detach+0x3a/0x70
+>>>    bus_remove_driver+0x58/0xd0
+>>>    __x64_sys_delete_module+0x13f/0x200
+>>>    ? trace_hardirqs_off_thunk+0x1a/0x1c
+>>>    do_syscall_64+0x60/0x210
+>>>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>>
+>>
+>> So it looks like we are tearing down memory when this is triggered. Do
+>> we know if this is at the end of the test or if this is running in
+>> parallel with anything?
+> 
+> Should not be running in parallel with anything this test is
+> performing a series of namespace setup and teardown events.
+> 
+> Wait, where did the call to "percpu_ref_get()" go? I think that's the bug.
+> 
 
-OK
+I have a reproduction on my system now as well. I should have a patch 
+ready to go for it in the next hour or so.
 
-> As far as I can determine from all of this data, in particular the
-> histogram data below, it seems to me that it now is selecting
-> idle state 0 whereas before it was selecting idle state 1
-> is the correct decision for those very short duration idle states
-> (well, for my processor (older i7-2600K) at least).
+Thanks.
 
-At least, that's a matter of consistency IMO.
-
-State 1 should not be selected if the final latency limit is below its
-exit latency and that's what happens in that situation.
-
-> Note: I did test my above assertion with kernels compiled with only
-> the first 2 and then 3 of the 8 patch set.
-
-I see.
-
-Thanks,
-Rafael
+- Alex
