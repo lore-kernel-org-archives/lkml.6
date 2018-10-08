@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39EEC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C22C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA4B2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41DE12089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtoUU0jh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA4B2089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiB7U4ti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41DE12089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeJIBsK (ORCPT
+        id S1728135AbeJIBsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60134 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbeJIBsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:10 -0400
+        id S1726723AbeJIBsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5C512087D;
-        Mon,  8 Oct 2018 18:35:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 626882087D;
+        Mon,  8 Oct 2018 18:35:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023707;
-        bh=PCpuUBjTr3hN6g50cXPF27tOwYAPBPnA88Cq1XWRg2U=;
+        s=default; t=1539023709;
+        bh=1y3fHV+cKvqhUaEeUMeLGBPiQk/uUxtRCZ3r3lxYNWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OtoUU0jhUq8wIvn+ZWvlZ+6VtBWQhRNh2tvwdkliZ+Sjcsn5N6lAUTovpzbjWzt+o
-         S3jUA61wn96YCaZmIY/iYaaLSeCVIoWC83bTXsEDFHwXqwoWAwDgq2wMu/Ubx4Ss6h
-         KxhApyO/kHs7c1695pbRWYN2p4dMD8vxvNyjEVio=
+        b=IiB7U4tifr9SmuYSvWV9AFEHn7kp4wvjAwiG+PqDOJ/Jzmp4pd8+URc5DiHcqF/UR
+         jv6qUrnAKaKXhe/PDto1jlVKu3VNjeEarj76adL/1rvy7w+k0slyzI0ttkbfBrhQsK
+         ReQpaFiAyUrYx+vFmbzbNfmy2z5/yQ/9O9ECJz5Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 057/113] USB: remove LPM management from usb_driver_claim_interface()
-Date:   Mon,  8 Oct 2018 20:30:58 +0200
-Message-Id: <20181008175534.157535821@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 058/113] Input: elantech - enable middle button of touchpad on ThinkPad P72
+Date:   Mon,  8 Oct 2018 20:30:59 +0200
+Message-Id: <20181008175534.199604276@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -61,76 +62,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit c183813fcee44a249339b7c46e1ad271ca1870aa upstream.
+commit 91a97507323e1ad4bfc10f4a5922e67cdaf8b3cd upstream.
 
-usb_driver_claim_interface() disables and re-enables Link Power
-Management, but it shouldn't do either one, for the reasons listed
-below.  This patch removes the two LPM-related function calls from the
-routine.
+Adding 2 new touchpad IDs to support middle button support.
 
-The reason for disabling LPM in the analogous function
-usb_probe_interface() is so that drivers won't have to deal with
-unwanted LPM transitions in their probe routine.  But
-usb_driver_claim_interface() doesn't call the driver's probe routine
-(or any other callbacks), so that reason doesn't apply here.
-
-Furthermore, no driver other than usbfs will ever call
-usb_driver_claim_interface() unless it is already bound to another
-interface in the same device, which means disabling LPM here would be
-redundant.  usbfs doesn't interact with LPM at all.
-
-Lastly, the error return from usb_unlocked_disable_lpm() isn't handled
-properly; the code doesn't clean up its earlier actions before
-returning.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Fixes: 8306095fd2c1 ("USB: Disable USB 3.0 LPM in critical sections.")
-CC: <stable@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/driver.c |   15 ---------------
- 1 file changed, 15 deletions(-)
+ drivers/input/mouse/elantech.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -509,7 +509,6 @@ int usb_driver_claim_interface(struct us
- 	struct device *dev;
- 	struct usb_device *udev;
- 	int retval = 0;
--	int lpm_disable_error = -ENODEV;
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1180,6 +1180,8 @@ static const struct dmi_system_id elante
+ static const char * const middle_button_pnp_ids[] = {
+ 	"LEN2131", /* ThinkPad P52 w/ NFC */
+ 	"LEN2132", /* ThinkPad P52 */
++	"LEN2133", /* ThinkPad P72 w/ NFC */
++	"LEN2134", /* ThinkPad P72 */
+ 	NULL
+ };
  
- 	if (!iface)
- 		return -ENODEV;
-@@ -530,16 +529,6 @@ int usb_driver_claim_interface(struct us
- 
- 	iface->condition = USB_INTERFACE_BOUND;
- 
--	/* See the comment about disabling LPM in usb_probe_interface(). */
--	if (driver->disable_hub_initiated_lpm) {
--		lpm_disable_error = usb_unlocked_disable_lpm(udev);
--		if (lpm_disable_error) {
--			dev_err(&iface->dev, "%s Failed to disable LPM for driver %s\n.",
--					__func__, driver->name);
--			return -ENOMEM;
--		}
--	}
--
- 	/* Claimed interfaces are initially inactive (suspended) and
- 	 * runtime-PM-enabled, but only if the driver has autosuspend
- 	 * support.  Otherwise they are marked active, to prevent the
-@@ -558,10 +547,6 @@ int usb_driver_claim_interface(struct us
- 	if (device_is_registered(dev))
- 		retval = device_bind_driver(dev);
- 
--	/* Attempt to re-enable USB3 LPM, if the disable was successful. */
--	if (!lpm_disable_error)
--		usb_unlocked_enable_lpm(udev);
--
- 	if (retval) {
- 		dev->driver = NULL;
- 		usb_set_intfdata(iface, NULL);
 
 
