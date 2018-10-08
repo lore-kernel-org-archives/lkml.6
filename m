@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BEDC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E2FC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8C7F20644
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DE3E20644
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:37:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKbIZ+kk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C7F20644
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeKNmfv6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE3E20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbeJHWte (ORCPT
+        id S1727829AbeJHWtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:49:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56276 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:49:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727258AbeJHWiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:02 -0400
+        id S1726977AbeJHWiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26FAD21529;
-        Mon,  8 Oct 2018 15:25:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79E9C21508;
+        Mon,  8 Oct 2018 15:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012347;
-        bh=S6R3XaiAkauCrW1dI8c1MYAQO1JgED+psD5LOzxQxvk=;
+        s=default; t=1539012346;
+        bh=sR3Lr+0lVpha/GBqZZFq5yugh34NGuyHEQMuvlRl6a8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HKbIZ+kkyIMR5jmyzSVlecJJtTgUmCBYVUFfWNBLNeXgHAoBUpzQupTeiSBklWjf4
-         ZYMxQarUTwfY+Aq27tdR9/tyjRCyTiNpxZWYdJf5993hMaKPzW5g1Jem4w563et73y
-         BbW684XQ3xh7N4tUG7jB6TntmshVqedMqdncdY24=
+        b=SeKNmfv6vJKWjnSzHNp6WIySQj7pDeT965fJdFytT6wSl1pxtlF8kvJ615me0Hpc5
+         wxQFN4GzO5JSZTs5Kt12DmPOHH7JsMVKMTcefMjePM+4JPl4zW4B8UZuDi3wHp4qCh
+         CNPhNk+kSTZVlQXntDdqjxv6W033cZX0kkWJpjcE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Laura Abbott <labbott@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 22/58] intel_th: pci: Add Ice Lake PCH support
-Date:   Mon,  8 Oct 2018 11:24:47 -0400
-Message-Id: <20181008152523.70705-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 20/58] scsi: ibmvscsis: Ensure partition name is properly NUL terminated
+Date:   Mon,  8 Oct 2018 11:24:45 -0400
+Message-Id: <20181008152523.70705-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,34 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 59d08d00d43c644ee2011d7ff1807bdd69f31fe0 ]
+[ Upstream commit adad633af7b970bfa5dd1b624a4afc83cac9b235 ]
 
-This adds Intel(R) Trace Hub PCI ID for Ice Lake PCH.
+While reviewing another part of the code, Kees noticed that the strncpy of the
+partition name might not always be NUL terminated. Switch to using strscpy
+which does this safely.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/hwtracing/intel_th/pci.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/intel_th/pci.c b/drivers/hwtracing/intel_th/pci.c
-index c2e55e5d97f6..1cf6290d6435 100644
---- a/drivers/hwtracing/intel_th/pci.c
-+++ b/drivers/hwtracing/intel_th/pci.c
-@@ -160,6 +160,11 @@ static const struct pci_device_id intel_th_pci_id_table[] = {
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x18e1),
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
- 	},
-+	{
-+		/* Ice Lake PCH */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x34a6),
-+		.driver_data = (kernel_ulong_t)&intel_th_2x,
-+	},
- 	{ 0 },
- };
+diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+index 95bf381413e8..ada1ebebd325 100644
+--- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
++++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+@@ -3478,7 +3478,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
+ 	snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI %s", vdev->name);
+ 
+ 	vscsi->dds.unit_id = vdev->unit_address;
+-	strncpy(vscsi->dds.partition_name, partition_name,
++	strscpy(vscsi->dds.partition_name, partition_name,
+ 		sizeof(vscsi->dds.partition_name));
+ 	vscsi->dds.partition_num = partition_number;
  
 -- 
 2.17.1
