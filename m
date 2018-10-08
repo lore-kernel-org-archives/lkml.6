@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB75C677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AB8C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77C12087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEF8D21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWjBqud6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77C12087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4y74bif"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF8D21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbeJIByi (ORCPT
+        id S1728736AbeJIBym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42140 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728191AbeJIByh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:37 -0400
+        id S1728191AbeJIByk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1222F2087D;
-        Mon,  8 Oct 2018 18:41:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD8A8214C2;
+        Mon,  8 Oct 2018 18:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024093;
-        bh=COeW8wJbyxYIAfJbXkaHMdSo+GfxfLOGtwP4JMWy0L0=;
+        s=default; t=1539024096;
+        bh=T/8LbJWbJPjEfVLWCKm9jx5dErjpBixM8a5+ooSysNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PWjBqud61EU5afVeC+gEXb3SEpUEkaUnQP/17+XwVvVOXlJ5N/+sjuMqkl62HeyyF
-         357J95b7gy3KAI0yTuaVAYmUJhMXBI6jv1k7Ks0W1w+SKiBf0UPsz+4NMQM7fUYNaw
-         xlwM8QcasSHCJ4PHqs25UKl9xvXpXulw/m7YqzZo=
+        b=K4y74bifSy4bJhX4dQprhPh1cDnDf3qhDy0tZeM4SuWFiFp2vZAOpwmlpL15cf7hc
+         Vhmp+K57HnRSf3ItyuR0h3kzHz0zPM7z0R0cCogr/JMEoXPsYNM2ghTuiW4qybStse
+         QaqcdIr0OLws3eFVAJGyshD5D/hfHE5qOAPaj6IE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Arunk Khandavalli <akhandav@codeaurora.org>,
+        Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 18/94] net: hns: add netif_carrier_off before change speed and duplex
-Date:   Mon,  8 Oct 2018 20:30:59 +0200
-Message-Id: <20181008175605.911150406@linuxfoundation.org>
+Subject: [PATCH 4.14 19/94] cfg80211: nl80211_update_ft_ies() to validate NL80211_ATTR_IE
+Date:   Mon,  8 Oct 2018 20:31:00 +0200
+Message-Id: <20181008175605.952831741@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -63,36 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peng Li <lipeng321@huawei.com>
+From: Arunk Khandavalli <akhandav@codeaurora.org>
 
-[ Upstream commit 455c4401fe7a538facaffb35b906ce19f1ece474 ]
+[ Upstream commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 ]
 
-If there are packets in hardware when changing the speed
-or duplex, it may cause hardware hang up.
+nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
+is_valid_ie_attr() before dereferencing it, but that helper function
+returns true in case of NULL pointer (i.e., attribute not included).
+This can result to dereferencing a NULL pointer. Fix that by explicitly
+checking that NL80211_ATTR_IE is included.
 
-This patch adds netif_carrier_off before change speed and
-duplex in ethtool_ops.set_link_ksettings, and adds
-netif_carrier_on after complete the change.
-
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Transition")
+Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/wireless/nl80211.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -243,7 +243,9 @@ static int hns_nic_set_link_ksettings(st
- 	}
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -11679,6 +11679,7 @@ static int nl80211_update_ft_ies(struct
+ 		return -EOPNOTSUPP;
  
- 	if (h->dev->ops->adjust_link) {
-+		netif_carrier_off(net_dev);
- 		h->dev->ops->adjust_link(h, (int)speed, cmd->base.duplex);
-+		netif_carrier_on(net_dev);
- 		return 0;
- 	}
+ 	if (!info->attrs[NL80211_ATTR_MDID] ||
++	    !info->attrs[NL80211_ATTR_IE] ||
+ 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
+ 		return -EINVAL;
  
 
 
