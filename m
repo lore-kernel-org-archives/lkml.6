@@ -2,116 +2,130 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E076C6787E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECE9C6787D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2044520882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:30:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="YTuBYE6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2044520882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	by mail.kernel.org (Postfix) with ESMTP id BEAA82077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 03:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEAA82077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeJHKjl (ORCPT
+        id S1726781AbeJHKkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 06:39:41 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36400 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbeJHKjl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 06:39:41 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u34-v6so19596062qth.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Oct 2018 20:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=0HJFtfBtXyrpZupFgBzUxECYWTLQ+/Rkof+ovmQGJMQ=;
-        b=YTuBYE6ot6bcwdlftYJREir8dEI95p2ZLly8SS57LIe1l51RYR/Vx0/Hy1yqVviP3a
-         SGyKGJ9k1rFL2mUTEqOK6qyJLlWcimddp4rleJvJvizLhlAa9WV8wkoAcHmewuTrXlEr
-         ykJq3jUmSRei6DUyxBeNZx0g7M2Be92zCQwEFa+zS3/iFYdetDErybG7ETeCczcdEqg5
-         K0Y/qQI74909NNz55TJs1BDnJm2Bdymp6QUvOpTR2goWmIoZhzIorHG2m06i7rvEGoCW
-         lLMspplgfLOdpAnY2KrtBSvPqnApg+x5iLmIxINDt3IAGam4xO3GkyZqsJlXQ2h/nLNn
-         MOFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0HJFtfBtXyrpZupFgBzUxECYWTLQ+/Rkof+ovmQGJMQ=;
-        b=t5wVHfsCZkAAUMP5ARVUNb3FEI1G9DbYrSm7jCLWhqlXgovG6O9L7JyVUoaqinxUvr
-         0jqmbMNdw/VxPWeI77ocPbtsWOogSv51oyzbmrd3NWNtnCYlWu7ZdwaLwHvnlTjRLpNq
-         9LWatpRgl13XqJkFGvjk2jWE8+DvNyqWwhpRkGWBZreyDwcFlIqWKR+9jtHvuRQ1b3k/
-         TbZSEGGD/I7xpmiw0zKU+a8alQbP7HFqvoa6MNaqoUv1V8YirFoj+PRsIyKUcnIuBdAn
-         QwWzmIeNKG8v5gaWUaoKr7WM4sVBfZdk7wu9a6v+gqfh6VatOUueJVVpJL3+QR14nN2I
-         vpYg==
-X-Gm-Message-State: ABuFfohSRi41Xnf5LAQr0B7rYcGQLACSKbuwKWQuLjp36BgY9C7DvltN
-        ukrz3NYpQ5Fc+LVyG70fToh88Q==
-X-Google-Smtp-Source: ACcGV60ltub7p897MXVP8dJ0lWKInQxjgW4Z1v/GxiqyYL+V+MsCrq2kr1BYNkPbSbWGXr2fQ9p4tw==
-X-Received: by 2002:aed:2e04:: with SMTP id j4-v6mr16780678qtd.47.1538969407109;
-        Sun, 07 Oct 2018 20:30:07 -0700 (PDT)
-Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::3])
-        by smtp.gmail.com with ESMTPSA id y124-v6sm4289579qke.22.2018.10.07.20.30.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Oct 2018 20:30:06 -0700 (PDT)
-From:   Matheus Tavares <matheus.bernardino@usp.br>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v2] staging: iio: ad2s1210: fix 'assignment operator' style checks
-Date:   Mon,  8 Oct 2018 00:29:38 -0300
-Message-Id: <20181008032938.18801-1-matheus.bernardino@usp.br>
-X-Mailer: git-send-email 2.18.0
+        Mon, 8 Oct 2018 06:40:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49054 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbeJHKkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 06:40:39 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A2A640F1B;
+        Mon,  8 Oct 2018 03:31:06 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-85.pek2.redhat.com [10.72.12.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 672E660FA6;
+        Mon,  8 Oct 2018 03:31:00 +0000 (UTC)
+Subject: Re: [tip:x86/mm] kdump, proc/vmcore: Enable kdumping encrypted memory
+ with SME enabled
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-tip-commits@vger.kernel.org
+References: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
+ <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
+ <21eab36e-d113-cf88-e497-7dd620981544@redhat.com>
+ <20181007084742.GA30797@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <58270f3f-f17c-8996-09cd-6da3481beb40@redhat.com>
+Date:   Mon, 8 Oct 2018 11:30:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181007084742.GA30797@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 08 Oct 2018 03:31:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes all "Assignment operator '=' should be on the previous
-line" checks found in ad2s1210.c with checkpatch.pl.
+在 2018年10月07日 16:47, Borislav Petkov 写道:
+> On Sun, Oct 07, 2018 at 01:55:33PM +0800, lijiang wrote:
+>> Here, it may be have a compile error.
+> 
+> Are you sure? The configs I tried worked fine but I'm open to being
+> shown configs which fail the build.
+> 
 
-Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
----
-Changes in v2: In v1, tabs were accidentally converted to whitespaces.
-Now, tabs were preserved.
+Yes. As previously mentioned, the correct patch is this one:
 
- drivers/staging/iio/resolver/ad2s1210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+index 3e4ba9d753c8..84d8ddcb818e 100644
+--- a/include/linux/crash_dump.h
++++ b/include/linux/crash_dump.h
+@@ -26,6 +26,19 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
+ 
+ extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
+ 						unsigned long, int);
++#if defined(CONFIG_AMD_MEM_ENCRYPT) || defined(CONFIG_X86_64)
++extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
++					  size_t csize, unsigned long offset,
++					  int userbuf);
++#else
++static inline
++ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
++				   unsigned long offset, int userbuf)
++{
++	return 0;
++}
++#endif
++
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index ac13b99bd9cb..d4b1c2c010f2 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -301,8 +301,8 @@ static ssize_t ad2s1210_store_control(struct device *dev,
- 			"ad2s1210: write control register fail\n");
- 		goto error_ret;
- 	}
--	st->resolution
--		= ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
-+	st->resolution =
-+		ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
- 	if (st->pdata->gpioin) {
- 		data = ad2s1210_read_resolution_pin(st);
- 		if (data != st->resolution)
-@@ -363,8 +363,8 @@ static ssize_t ad2s1210_store_resolution(struct device *dev,
- 		dev_err(dev, "ad2s1210: setting resolution fail\n");
- 		goto error_ret;
- 	}
--	st->resolution
--		= ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
-+	st->resolution =
-+		ad2s1210_resolution_value[data & AD2S1210_SET_RESOLUTION];
- 	if (st->pdata->gpioin) {
- 		data = ad2s1210_read_resolution_pin(st);
- 		if (data != st->resolution)
--- 
-2.18.0
+I used the patch above to test six compile cases. All of them passed, there
+was no compile error.
 
+I'm not sure whether the kernel options or compile environment are different.
+Would you like to share your kernel options(.config)? I will use your kernel
+options to compile, and check whether i might also reproduce your compile error. 
+
+1. x86_64 (CONFIG_X86_64=y)
+   a.     
+      CONFIG_AMD_MEM_ENCRYPT=y
+      CONFIG_CRASH_DUMP=y
+
+   b.
+      # CONFIG_AMD_MEM_ENCRYPT is not set
+      # CONFIG_CRASH_DUMP is not set
+
+   c. 
+      # CONFIG_AMD_MEM_ENCRYPT is not set
+      CONFIG_CRASH_DUMP=y
+
+   d. 
+      CONFIG_AMD_MEM_ENCRYPT=y
+      # CONFIG_CRASH_DUMP is not set
+
+Compile command:
+#make clean
+#make ARCH=x86_64 -j32
+
+2. i386 (CONFIG_X86_32=y)
+   a. 
+   CONFIG_CRASH_DUMP=y
+
+   b.
+   # CONFIG_CRASH_DUMP is not set
+
+Compile command:
+#make clean
+#make ARCH=i386 -j32
+
+Thanks.
+Lianbo
