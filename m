@@ -2,185 +2,72 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4934FC67806
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D469BC67879
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14770205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:37:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14770205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 584CA205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 22:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584CA205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbeJIFvC (ORCPT
+        id S1726488AbeJIFx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 01:51:02 -0400
-Received: from mga14.intel.com ([192.55.52.115]:40559 "EHLO mga14.intel.com"
+        Tue, 9 Oct 2018 01:53:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57810 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbeJIFvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 01:51:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 15:37:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,358,1534834800"; 
-   d="scan'208";a="239606712"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.166]) ([10.7.198.166])
-  by orsmga004.jf.intel.com with ESMTP; 08 Oct 2018 15:36:58 -0700
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Logan Gunthorpe <logang@deltatee.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain>
- <CAPcyv4jX5WYmMYzGCBrnaqT7tqHGSVPwm7Dpi-XpuM9ns84+0w@mail.gmail.com>
- <379e1d22-4194-6744-9e80-897b6ba126e9@linux.intel.com>
- <CAPcyv4i_x4NO2_qsfgwsgii9zmjZ43gJW6OCLpf=CweztRtZZw@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <95de811f-ad44-c96d-3914-5625933d5e88@linux.intel.com>
-Date:   Mon, 8 Oct 2018 15:36:58 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4i_x4NO2_qsfgwsgii9zmjZ43gJW6OCLpf=CweztRtZZw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1725783AbeJIFx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 01:53:29 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 16BB0C047B94;
+        Mon,  8 Oct 2018 22:39:32 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73C8F10021B2;
+        Mon,  8 Oct 2018 22:39:28 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     "David Airlie" <airlied@linux.ie>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        linux-kernel@vger.kernel.org, "Sean Paul" <sean@poorly.run>,
+        "Gustavo Padovan" <gustavo@padovan.org>,
+        "Sean Paul" <seanpaul@chromium.org>,
+        "Daniel Vetter" <daniel.vetter@ffwll.ch>,
+        "Ben Skeggs" <bskeggs@redhat.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, "Lyude Paul" <lyude@redhat.com>,
+        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+        "Jani Nikula" <jani.nikula@linux.intel.com>,
+        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH v5 0/5] Fix legacy DPMS changes with MST
+Date:   Mon,  8 Oct 2018 18:39:16 -0400
+Message-Id: <20181008223924.1103-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 08 Oct 2018 22:39:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Latest version of https://patchwork.freedesktop.org/series/49878/
 
+Lyude Paul (5):
+  drm/atomic_helper: Disallow new modesets on unregistered connectors
+  drm/nouveau: Fix nv50_mstc->best_encoder()
+  drm/i915: Don't unset intel_connector->mst_port
+  drm/i915: Skip vcpi allocation for MSTB ports that are gone
+  drm/i915: Fix intel_dp_mst_best_encoder()
 
-On 10/8/2018 3:00 PM, Dan Williams wrote:
-> On Mon, Oct 8, 2018 at 2:48 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
->>
->> On 10/8/2018 2:01 PM, Dan Williams wrote:
->>> On Tue, Sep 25, 2018 at 1:29 PM Alexander Duyck
->>> <alexander.h.duyck@linux.intel.com> wrote:
->>>>
->>>> The ZONE_DEVICE pages were being initialized in two locations. One was with
->>>> the memory_hotplug lock held and another was outside of that lock. The
->>>> problem with this is that it was nearly doubling the memory initialization
->>>> time. Instead of doing this twice, once while holding a global lock and
->>>> once without, I am opting to defer the initialization to the one outside of
->>>> the lock. This allows us to avoid serializing the overhead for memory init
->>>> and we can instead focus on per-node init times.
->>>>
->>>> One issue I encountered is that devm_memremap_pages and
->>>> hmm_devmmem_pages_create were initializing only the pgmap field the same
->>>> way. One wasn't initializing hmm_data, and the other was initializing it to
->>>> a poison value. Since this is something that is exposed to the driver in
->>>> the case of hmm I am opting for a third option and just initializing
->>>> hmm_data to 0 since this is going to be exposed to unknown third party
->>>> drivers.
->>>>
->>>> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
->>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->>>> ---
->>>>
->>>> v4: Moved moved memmap_init_zone_device to below memmmap_init_zone to avoid
->>>>       merge conflicts with other changes in the kernel.
->>>> v5: No change
->>>
->>> This patch appears to cause a regression in the "create.sh" unit test
->>> in the ndctl test suite.
->>
->> So all you had to do is run the create.sh script to see the issue? I
->> just want to confirm there isn't any additional information needed
->> before I try chasing this down.
-> 
->  From the ndctl source tree run:
-> 
->      make -j TESTS="create.sh" check
-> 
-> ...the readme has some more setup instructions:
-> https://github.com/pmem/ndctl/blob/master/README.md
-> 
-> 0day has sometimes run this test suite automatically, but we need to
-> get that more robust because setting up this environment is a bit of a
-> hoop to jump through with the need to setup the nfit_test module.
-> 
->>> I tried to reproduce on -next with:
->>>
->>> 2302f5ee215e mm: defer ZONE_DEVICE page initialization to the point
->>> where we init pgmap
->>>
->>> ...but -next does not even boot for me at that commit.
->>
->> What version of -next? There are a couple of patches probably needed
->> depending on which version you are trying to boot.
-> 
-> Today's -next, but backed up to that above commit. I was also seeing
-> CONFIG_DEBUG_LIST spamming the logs, and a crash in the crypto layer.
-> 
->>> Here is a warning signature that proceeds a hang with this patch
->>> applied against v4.19-rc6:
->>>
->>> percpu ref (blk_queue_usage_counter_release) <= 0 (-1530626) after
->>> switching to atomic
->>> WARNING: CPU: 24 PID: 7346 at lib/percpu-refcount.c:155
->>> percpu_ref_switch_to_atomic_rcu+0x1f7/0x200
->>> CPU: 24 PID: 7346 Comm: modprobe Tainted: G           OE     4.19.0-rc6+ #2458
->>> [..]
->>> RIP: 0010:percpu_ref_switch_to_atomic_rcu+0x1f7/0x200
->>> [..]
->>> Call Trace:
->>>    <IRQ>
->>>    ? percpu_ref_reinit+0x140/0x140
->>>    rcu_process_callbacks+0x273/0x880
->>>    __do_softirq+0xd2/0x428
->>>    irq_exit+0xf6/0x100
->>>    smp_apic_timer_interrupt+0xa2/0x220
->>>    apic_timer_interrupt+0xf/0x20
->>>    </IRQ>
->>> RIP: 0010:lock_acquire+0xb8/0x1a0
->>> [..]
->>>    ? __put_page+0x55/0x150
->>>    ? __put_page+0x55/0x150
->>>    __put_page+0x83/0x150
->>>    ? __put_page+0x55/0x150
->>>    devm_memremap_pages_release+0x194/0x250
->>>    release_nodes+0x17c/0x2c0
->>>    device_release_driver_internal+0x1a2/0x250
->>>    driver_detach+0x3a/0x70
->>>    bus_remove_driver+0x58/0xd0
->>>    __x64_sys_delete_module+0x13f/0x200
->>>    ? trace_hardirqs_off_thunk+0x1a/0x1c
->>>    do_syscall_64+0x60/0x210
->>>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>>
->>
->> So it looks like we are tearing down memory when this is triggered. Do
->> we know if this is at the end of the test or if this is running in
->> parallel with anything?
-> 
-> Should not be running in parallel with anything this test is
-> performing a series of namespace setup and teardown events.
-> 
-> Wait, where did the call to "percpu_ref_get()" go? I think that's the bug.
-> 
+ drivers/gpu/drm/drm_atomic_helper.c     | 21 ++++++++++++-
+ drivers/gpu/drm/i915/intel_dp_mst.c     | 41 ++++++++++++-------------
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 14 +++------
+ 3 files changed, 44 insertions(+), 32 deletions(-)
 
-I have a reproduction on my system now as well. I should have a patch 
-ready to go for it in the next hour or so.
+-- 
+2.17.1
 
-Thanks.
-
-- Alex
