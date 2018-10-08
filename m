@@ -2,121 +2,246 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D8AC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9DDC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778C32089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0756F2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:42:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F6PEVMkz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778C32089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jEVOvCz1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0756F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbeJHXwu (ORCPT
+        id S1726510AbeJHXzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:52:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52016 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeJHXwu (ORCPT
+        Mon, 8 Oct 2018 19:55:03 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39703 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJHXzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:52:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YInI2N0HehEWoHTu3/IQnutvIbD9Tvk9+TKtWH2cjo8=; b=F6PEVMkzTGMB0HqM+ZaTJJQo5d
-        c6rEft4z7WpORPMu3wp0nfkWe4/y4KTrfU/2318zfFDE+uXXdAkkcFDv5xqev60XUvSGhRi/ZDB+4
-        4vU1PoXI8Xk8xZxev9RN/mUzO8iZR2qgdFhwh0/S7JPVR629rD0JnlJiLgHPILXc9Kxbw/bcfTl84
-        MZgjYkswEjHh6IxkoBdauAtkNflhdlV4fHZ6Q9lyesDSrCsoFI/jx9+aABw30il31R9q+xDSzVITS
-        nDGt+q0iBd5ng+PBK+7WixbRVhNu1UReijPdNGYO6Euqt/64sr1C+wdz47DGN+GWPzXrYp8vQdmjM
-        xJGEql3g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9YZY-0001uj-8N; Mon, 08 Oct 2018 16:39:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3387B20294F78; Mon,  8 Oct 2018 18:39:53 +0200 (CEST)
-Date:   Mon, 8 Oct 2018 18:39:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Matthew Helsley <mhelsley@vmware.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        ard.biesheuvel@linaro.org, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
- "jump_function"
-Message-ID: <20181008163953.GD5663@hirez.programming.kicks-ass.net>
-References: <20181006015110.653946300@goodmis.org>
- <20181006015720.634688468@goodmis.org>
- <20181006121211.GA5663@hirez.programming.kicks-ass.net>
- <20181006093905.46276505@vmware.local.home>
- <20181008072134.GB5663@hirez.programming.kicks-ass.net>
- <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
- <20181008155757.GC5663@hirez.programming.kicks-ass.net>
- <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
+        Mon, 8 Oct 2018 19:55:03 -0400
+Received: by mail-oi1-f195.google.com with SMTP id y81-v6so15987785oia.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:42:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jXgHaca1F6yYOCgQKTfufPbTF5DDCMQDOYNV8F3RtwY=;
+        b=jEVOvCz1wkxhiSWQbM5gXuVA628FHNNiXYcJJSH5YVF33go29Ln3IYvj8tXuho9/UA
+         2HULrKVFyPgD572cXR+OceaJlemavelyjZ2l/C5+K+atwygTQKURfUE+wUakKYmrxOGm
+         j8ipbPzAhi0tGthl4xYi+nA9yKlnc8toUUF39bpJDzTxb940DSoXRRqUdNuFBptP+Dkf
+         2J3DFeWv1qIaHFn7nJy63bSDqdhUCwBBF7wZmnf7TmxZe/Vou/afqO1MhFyr1V1z1WzQ
+         sQWvC5gmmk3BenNEHt8Zmvs+t05iKTMR0osOqtVFXzvYIcsLQFXP62Ghj2TYXnwAAdL0
+         jycQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jXgHaca1F6yYOCgQKTfufPbTF5DDCMQDOYNV8F3RtwY=;
+        b=d+hqY3S0sKkYTx54HVufcVQEyG/2cekRKsu7y3n29GVoGZErl4rzGSwXmo0CNXKKW6
+         NfwbnYUG/xGYHV7mpQziaYyKKQwiS68EWXXmb1FIk/AnWmgw2EmPRkGMGiLrbBNiehvM
+         Wv6FxVfq8q9YqYC8hSPNO8llEs5WlujG7Q+p7oGQRKeK05Ig/hY8/s5aI6C/0rI/5+QM
+         XIGNHP4Jl/yxI55qYt4/3vgyDw3OACtyG1XGsYQ3dgASABKE2EQRP2OSoUvCb8Ah+Ein
+         CjZiBTRASO6uLzCJjEnHhnb6GEDuCgXrYTnIFLwPzWlEuEojjLAmzZ73spO1ZYhrvRVA
+         tUjw==
+X-Gm-Message-State: ABuFfoggCmCzFoILNJ5ynO2NREx0l3UTIbOsaCT5stYghNhnUbhGL9RR
+        7VIspA+bqdN1/lH7OAIjFYs/m1nkvh6DpiRyoYEHbQ==
+X-Google-Smtp-Source: ACcGV610S7Q0/x0jIUOwG1VHW5HR6C4sRROABbrz9m9M/TGO55zryWhfMXHiEaMw/nu+YAH2hcri0s+hbtGk3NyMR1A=
+X-Received: by 2002:aca:4d51:: with SMTP id a78-v6mr4763319oib.205.1539016947380;
+ Mon, 08 Oct 2018 09:42:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+In-Reply-To: <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 8 Oct 2018 18:42:00 +0200
+Message-ID: <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     christian@brauner.io
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 09:29:56AM -0700, Andy Lutomirski wrote:
-> 
-> 
-> > On Oct 8, 2018, at 8:57 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > On Mon, Oct 08, 2018 at 01:33:14AM -0700, Andy Lutomirski wrote:
-> >>> Can't we hijack the relocation records for these functions before they
-> >>> get thrown out in the (final) link pass or something?
-> >> 
-> >> I could be talking out my arse here, but I thought we could do this,
-> >> too, then changed my mind.  The relocation records give us the
-> >> location of the call or jump operand, but they don’t give the address
-> >> of the beginning of the instruction.
-> > 
-> > But that's like 1 byte before the operand, right? We could even double check
-> > this by reading back that byte and ensuring it is in fact 0xE8 (CALL).
-> > 
-> > AFAICT there is only the _1_ CALL encoding, and that is the 5 byte: E8 <PLT32>,
-> > so if we have the PLT32 location, we also have the instruction location. Or am
-> > I missing something?
-> 
-> There’s also JMP and Jcc, any of which can be used for rail calls, but
-> those are also one byte. I suppose GCC is unlikely to emit a prefixed
-> form of any of these. So maybe we really can assume they’re all one
-> byte.
+On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
+> On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> > >
+> > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > > As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+> > > > version which can acquire filters is useful. There are at least two reasons
+> > > > this is preferable, even though it uses ptrace:
+> > > >
+> > > > 1. You can control tasks that aren't cooperating with you
+> > > > 2. You can control tasks whose filters block sendmsg() and socket(); if the
+> > > >    task installs a filter which blocks these calls, there's no way with
+> > > >    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+> > >
+> > > So for the slow of mind aka me:
+> > > I'm not sure I completely understand this problem. Can you outline how
+> > > sendmsg() and socket() are involved in this?
+> > >
+> > > I'm also not sure that this holds (but I might misunderstand the
+> > > problem) afaict, you could do try to get the fd out via CLONE_FILES and
+> > > other means so something like:
+> > >
+> > > // let's pretend the libc wrapper for clone actually has sane semantics
+> > > pid = clone(CLONE_FILES);
+> > > if (pid == 0) {
+> > >         fd = seccomp(SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_NEW_LISTENER, &prog);
+> > >
+> > >         // Now this fd will be valid in both parent and child.
+> > >         // If you haven't blocked it you can inform the parent what
+> > >         // the fd number is via pipe2(). If you have blocked it you can
+> > >         // use dup2() and dup to a known fd number.
+> > > }
+> > >
+> > > >
+> > > > v2: fix a bug where listener mode was not unset when an unused fd was not
+> > > >     available
+> > > > v3: fix refcounting bug (Oleg)
+> > > > v4: * change the listener's fd flags to be 0
+> > > >     * rename GET_LISTENER to NEW_LISTENER (Matthew)
+> > > > v5: * add capable(CAP_SYS_ADMIN) requirement
+> > > > v7: * point the new listener at the right filter (Jann)
+> > > >
+> > > > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> > > > CC: Kees Cook <keescook@chromium.org>
+> > > > CC: Andy Lutomirski <luto@amacapital.net>
+> > > > CC: Oleg Nesterov <oleg@redhat.com>
+> > > > CC: Eric W. Biederman <ebiederm@xmission.com>
+> > > > CC: "Serge E. Hallyn" <serge@hallyn.com>
+> > > > CC: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > CC: Tyler Hicks <tyhicks@canonical.com>
+> > > > CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> > > > ---
+> > > >  include/linux/seccomp.h                       |  7 ++
+> > > >  include/uapi/linux/ptrace.h                   |  2 +
+> > > >  kernel/ptrace.c                               |  4 ++
+> > > >  kernel/seccomp.c                              | 31 +++++++++
+> > > >  tools/testing/selftests/seccomp/seccomp_bpf.c | 68 +++++++++++++++++++
+> > > >  5 files changed, 112 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> > > > index 017444b5efed..234c61b37405 100644
+> > > > --- a/include/linux/seccomp.h
+> > > > +++ b/include/linux/seccomp.h
+> > > > @@ -83,6 +83,8 @@ static inline int seccomp_mode(struct seccomp *s)
+> > > >  #ifdef CONFIG_SECCOMP_FILTER
+> > > >  extern void put_seccomp_filter(struct task_struct *tsk);
+> > > >  extern void get_seccomp_filter(struct task_struct *tsk);
+> > > > +extern long seccomp_new_listener(struct task_struct *task,
+> > > > +                              unsigned long filter_off);
+> > > >  #else  /* CONFIG_SECCOMP_FILTER */
+> > > >  static inline void put_seccomp_filter(struct task_struct *tsk)
+> > > >  {
+> > > > @@ -92,6 +94,11 @@ static inline void get_seccomp_filter(struct task_struct *tsk)
+> > > >  {
+> > > >       return;
+> > > >  }
+> > > > +static inline long seccomp_new_listener(struct task_struct *task,
+> > > > +                                     unsigned long filter_off)
+> > > > +{
+> > > > +     return -EINVAL;
+> > > > +}
+> > > >  #endif /* CONFIG_SECCOMP_FILTER */
+> > > >
+> > > >  #if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
+> > > > diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+> > > > index d5a1b8a492b9..e80ecb1bd427 100644
+> > > > --- a/include/uapi/linux/ptrace.h
+> > > > +++ b/include/uapi/linux/ptrace.h
+> > > > @@ -73,6 +73,8 @@ struct seccomp_metadata {
+> > > >       __u64 flags;            /* Output: filter's flags */
+> > > >  };
+> > > >
+> > > > +#define PTRACE_SECCOMP_NEW_LISTENER  0x420e
+> > > > +
+> > > >  /* Read signals from a shared (process wide) queue */
+> > > >  #define PTRACE_PEEKSIGINFO_SHARED    (1 << 0)
+> > > >
+> > > > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> > > > index 21fec73d45d4..289960ac181b 100644
+> > > > --- a/kernel/ptrace.c
+> > > > +++ b/kernel/ptrace.c
+> > > > @@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
+> > > >               ret = seccomp_get_metadata(child, addr, datavp);
+> > > >               break;
+> > > >
+> > > > +     case PTRACE_SECCOMP_NEW_LISTENER:
+> > > > +             ret = seccomp_new_listener(child, addr);
+> > > > +             break;
+> > > > +
+> > > >       default:
+> > > >               break;
+> > > >       }
+> > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > > index 44a31ac8373a..17685803a2af 100644
+> > > > --- a/kernel/seccomp.c
+> > > > +++ b/kernel/seccomp.c
+> > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > > >
+> > > >       return ret;
+> > > >  }
+> > > > +
+> > > > +long seccomp_new_listener(struct task_struct *task,
+> > > > +                       unsigned long filter_off)
+> > > > +{
+> > > > +     struct seccomp_filter *filter;
+> > > > +     struct file *listener;
+> > > > +     int fd;
+> > > > +
+> > > > +     if (!capable(CAP_SYS_ADMIN))
+> > > > +             return -EACCES;
+> > >
+> > > I know this might have been discussed a while back but why exactly do we
+> > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > > use ptrace from in there?
+> >
+> > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> > . Basically, the problem is that this doesn't just give you capability
+> > over the target task, but also over every other task that has the same
+> > filter installed; you need some sort of "is the caller capable over
+> > the filter and anyone who uses it" check.
+>
+> Thanks.
+> But then this new ptrace feature as it stands is imho currently broken.
+> If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+> are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+> if you are ns_cpabable(CAP_SYS_ADMIN) then either the new ptrace() api
+> extension should be fixed to allow for this too or the seccomp() way of
+> retrieving the pid - which I really think we want - needs to be fixed to
+> require capable(CAP_SYS_ADMIN) too.
+> The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+> the preferred way to solve this.
+> Everything else will just be confusing.
 
-Oh, I had not considered tail calls..
+First you say "broken", then you say "confusing". Which one do you mean?
 
-> But there is a nasty potential special case: anything that takes the
-> function’s address. This includes jump tables, computed gotos, and
-> plain old function pointers. And I suspect that any of these could
-> have one of the rather large number of CALL/JMP/Jcc bytes before the
-> relocation by coincidence.
-
-We can have objtool verify the CALL/JMP/Jcc only condition. So if
-someone tries to take the address of a patchable function, it will error
-out.
-
-Heck, it could initially even error out on tail calls.
+Regarding requiring ns_capable() for ptrace: That means that you'll
+have to stash namespace information in the seccomp filter. You'd also
+potentially be eliding the LSM check that would normally have to occur
+between the tracer and the tracee; but I guess that's probably fine?
+CAP_SYS_ADMIN in the init namespace already has some abilities that
+LSMs can't observe; you could argue that CAP_SYS_ADMIN in another
+namespace should have similar semantics, but I'm not sure whether that
+matches what the LSM people want as semantics.
