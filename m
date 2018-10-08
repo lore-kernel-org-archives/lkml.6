@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1A7C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385F1C677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A3DF21479
+	by mail.kernel.org (Postfix) with ESMTP id E722F214FA
 	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXh4Lrbz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A3DF21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4F9xc0l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E722F214FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeJHWiW (ORCPT
+        id S1727863AbeJHWiY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56802 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbeJHWiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:21 -0400
+        id S1726451AbeJHWiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72000214FA;
-        Mon,  8 Oct 2018 15:26:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34C24214FF;
+        Mon,  8 Oct 2018 15:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012366;
-        bh=n0YveCtHLTwW8GiKDkUaXoKB65GoB7l/27hMIT4HNBs=;
+        s=default; t=1539012368;
+        bh=Kxdz2FMheazQ7bfbYa+j9PFYOkN37ZvsaLMSwIvU5FE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gXh4LrbzoBgSCABlmulPoqgfKmUIJL3WOvxO9YPL+xxyTrBjFx8dEBTBb8XWbHzXX
-         Fxa6GTWh1qN59EUd+mUQkHFRkxMPfLtc5OphmL/lLX3qbrrs7hne45ToOBsyMElVhD
-         5rndZDQxi2woWixgyI5amShpF4Uf9FmsEtimLk2Y=
+        b=h4F9xc0lao5QWh6v+JlJWn870xIYzoEiU0u0hfEp34jkZxJfJ9M80K0fdTMc2E4/s
+         oqWv2XdZ+DO2Y/ZV8Ugruszzx1elVuXBEwFby1MxR49R0DOR2X325svLoe0lK/IJMt
+         RALYB0sODGh2W+NQwetquS6rHomTQnfDp4FpLxFs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 41/58] net: mscc: fix the frame extraction into the skb
-Date:   Mon,  8 Oct 2018 11:25:06 -0400
-Message-Id: <20181008152523.70705-41-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 43/58] scsi: sd: don't crash the host on invalid commands
+Date:   Mon,  8 Oct 2018 11:25:08 -0400
+Message-Id: <20181008152523.70705-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -52,62 +55,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-[ Upstream commit 652ef42c134da1bbb03bd4c9b4291dfaf8d7febb ]
+[ Upstream commit f1f1fadacaf08b7cf11714c0c29f8fa4d4ef68a9 ]
 
-When extracting frames from the Ocelot switch, the frame check sequence
-(FCS) is present at the end of the data extracted. The FCS was put into
-the sk buffer which introduced some issues (as length related ones), as
-the FCS shouldn't be part of an Rx sk buffer.
+When sd_init_command() get's a command with a unknown req_op() it crashes the
+system via BUG().
 
-This patch fixes the Ocelot switch extraction behaviour by discarding
-the FCS.
+This makes debugging the actual reason for the broken request cmd_flags pretty
+hard as the system is down before it's able to write out debugging data on the
+serial console or the trace buffer.
 
-Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Change the BUG() to a WARN_ON() and return BLKPREP_KILL to fail gracefully and
+return an I/O error to the producer of the request.
+
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/mscc/ocelot_board.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/scsi/sd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
-index 18df7d934e81..ccfcf3048cd0 100644
---- a/drivers/net/ethernet/mscc/ocelot_board.c
-+++ b/drivers/net/ethernet/mscc/ocelot_board.c
-@@ -91,7 +91,7 @@ static irqreturn_t ocelot_xtr_irq_handler(int irq, void *arg)
- 		struct sk_buff *skb;
- 		struct net_device *dev;
- 		u32 *buf;
--		int sz, len;
-+		int sz, len, buf_len;
- 		u32 ifh[4];
- 		u32 val;
- 		struct frame_info info;
-@@ -116,14 +116,20 @@ static irqreturn_t ocelot_xtr_irq_handler(int irq, void *arg)
- 			err = -ENOMEM;
- 			break;
- 		}
--		buf = (u32 *)skb_put(skb, info.len);
-+		buf_len = info.len - ETH_FCS_LEN;
-+		buf = (u32 *)skb_put(skb, buf_len);
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 9421d9877730..0949d3db56e7 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1277,7 +1277,8 @@ static int sd_init_command(struct scsi_cmnd *cmd)
+ 	case REQ_OP_ZONE_RESET:
+ 		return sd_zbc_setup_reset_cmnd(cmd);
+ 	default:
+-		BUG();
++		WARN_ON_ONCE(1);
++		return BLKPREP_KILL;
+ 	}
+ }
  
- 		len = 0;
- 		do {
- 			sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
- 			*buf++ = val;
- 			len += sz;
--		} while ((sz == 4) && (len < info.len));
-+		} while (len < buf_len);
-+
-+		/* Read the FCS and discard it */
-+		sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
-+		/* Update the statistics if part of the FCS was read before */
-+		len -= ETH_FCS_LEN - sz;
- 
- 		if (sz < 0) {
- 			err = sz;
 -- 
 2.17.1
 
