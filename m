@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43651C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B79C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0957E21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52C6D21479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:41:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2QhzmKU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0957E21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCVxRaux"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C6D21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbeJIBys (ORCPT
+        id S1730073AbeJIByu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:54:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42288 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:54:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbeJIByq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:54:46 -0400
+        id S1726441AbeJIBys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:54:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F5032087D;
-        Mon,  8 Oct 2018 18:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 200212087D;
+        Mon,  8 Oct 2018 18:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024101;
-        bh=mExEGaPW7+huSFTIO0JqNMwiPGiiG/2qg0W8KrTpU2w=;
+        s=default; t=1539024104;
+        bh=qSYKPlZBeT2lObKkdblsCk2276OU2FRRnrqJE/535C8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G2QhzmKUg73yNgTeNZIHP4QD+lkNEOsV5vElwWJdYnhpAfNPNC+BF/f5l0I2iY1jU
-         ZKsM2s62/4pkngJBjzv1UVZYs1e6RGXp7bFpNMT850iJuGz6uAg+Kx4vG+ph5/hYwj
-         m8sH84XWu5uAUQiCD4TC7HcTHvZ6MVWu+UGVWPEw=
+        b=FCVxRauxqDSx8z63YpHxMF+0MrkkKEqfviiPIhH1G3QvKi+v640pWR9bUnr2l2zZ9
+         KVC3HAXAeONlObm3bgdSh+R7bLBmnt0i5AtT5MS3fUe5IMYfxocWLF9S2bBIzxXlxb
+         tbFRNqC1DW7t7ExuS/rJMNUcP04A4a5vmYPs8VUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
         Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 20/94] mac80211: do not convert to A-MSDU if frag/subframe limited
-Date:   Mon,  8 Oct 2018 20:31:01 +0200
-Message-Id: <20181008175606.000434436@linuxfoundation.org>
+Subject: [PATCH 4.14 21/94] mac80211: always account for A-MSDU header changes
+Date:   Mon,  8 Oct 2018 20:31:02 +0200
+Message-Id: <20181008175606.048800057@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,45 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 1eb507903665442360a959136dfa3234c43db085 ]
+[ Upstream commit aa58acf325b4aadeecae2bfc90658273b47dbace ]
 
-Do not start to aggregate packets in a A-MSDU frame (converting the
-first subframe to A-MSDU, adding the header) if max_tx_fragments or
-max_amsdu_subframes limits are already exceeded by it. In particular,
-this happens when drivers set the limit to 1 to avoid A-MSDUs at all.
+In the error path of changing the SKB headroom of the second
+A-MSDU subframe, we would not account for the already-changed
+length of the first frame that just got converted to be in
+A-MSDU format and thus is a bit longer now.
 
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-[reword commit message to be more precise]
+Fix this by doing the necessary accounting.
+
+It would be possible to reorder the operations, but that would
+make the code more complex (to calculate the necessary pad),
+and the headroom expansion should not fail frequently enough
+to make that worthwhile.
+
+Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/tx.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/mac80211/tx.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 --- a/net/mac80211/tx.c
 +++ b/net/mac80211/tx.c
-@@ -3157,9 +3157,6 @@ static bool ieee80211_amsdu_aggregate(st
- 	if (skb->len + head->len > max_amsdu_len)
- 		goto out;
+@@ -3188,7 +3188,7 @@ static bool ieee80211_amsdu_aggregate(st
  
--	if (!ieee80211_amsdu_prepare_head(sdata, fast_tx, head))
+ 	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
+ 						     2 + pad))
 -		goto out;
--
- 	nfrags = 1 + skb_shinfo(skb)->nr_frags;
- 	nfrags += 1 + skb_shinfo(head)->nr_frags;
- 	frag_tail = &skb_shinfo(head)->frag_list;
-@@ -3175,6 +3172,9 @@ static bool ieee80211_amsdu_aggregate(st
- 	if (max_frags && nfrags > max_frags)
- 		goto out;
++		goto out_recalc;
  
-+	if (!ieee80211_amsdu_prepare_head(sdata, fast_tx, head))
-+		goto out;
-+
- 	/*
- 	 * Pad out the previous subframe to a multiple of 4 by adding the
- 	 * padding to the next one, that's being added. Note that head->len
+ 	ret = true;
+ 	data = skb_push(skb, ETH_ALEN + 2);
+@@ -3205,11 +3205,13 @@ static bool ieee80211_amsdu_aggregate(st
+ 	head->data_len += skb->len;
+ 	*frag_tail = skb;
+ 
+-	flow->backlog += head->len - orig_len;
+-	tin->backlog_bytes += head->len - orig_len;
+-
+-	fq_recalc_backlog(fq, tin, flow);
++out_recalc:
++	if (head->len != orig_len) {
++		flow->backlog += head->len - orig_len;
++		tin->backlog_bytes += head->len - orig_len;
+ 
++		fq_recalc_backlog(fq, tin, flow);
++	}
+ out:
+ 	spin_unlock_bh(&fq->lock);
+ 
 
 
