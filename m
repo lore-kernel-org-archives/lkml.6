@@ -6,47 +6,56 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22479C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCE4C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF6CC21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46CDF214C3
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIcbrrk5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6CC21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoGSS4gT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46CDF214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbeJIBva (ORCPT
+        id S1729210AbeJIBvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38302 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:29 -0400
+        id S1726427AbeJIBvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F5032064A;
-        Mon,  8 Oct 2018 18:38:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA0F22089D;
+        Mon,  8 Oct 2018 18:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023905;
-        bh=3bCuaWKF1Zcl1y0LMI/ypIzuzEfDlWSvkeK18H2dkk0=;
+        s=default; t=1539023908;
+        bh=ydWyHCkpSdzTuNs7fTLcHNtR7tLdfqdTx5cek0BRh8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sIcbrrk5wB+w2IU6la1a3fgnZcWLBmQfO7tYB7Ap2pqIESLv2N7orsTDJmO3T8fai
-         Dv53TV+wnp/xsQCUIGvuPI5S3SGs+A5PJY/o3rYluYTvHmqndHAmzubaIFu/Qcs3cu
-         BfL2fauT8Jqn9wrnxe8aFHoVm+O1UFiNNtRARy4g=
+        b=uoGSS4gTf2L/OC9QO6ZLp2pgG1JdgFiadV/bOVoDjzdFsAxanSXNVp0E+LiOJP2vD
+         ozBfhkBpjCRC7NEwpMohq12vdXqmqqkH45sQ8eXc+czL1q5PvbMgGiHVSTyNvW5NXZ
+         wms61OV1rEk6LgsnuG91wKzbKta+Fq1NTykYYhIE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniy Paltsev <paltsev@synopsys.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 12/59] ARC: atomics: unbork atomic_fetch_##op()
-Date:   Mon,  8 Oct 2018 20:31:19 +0200
-Message-Id: <20181008175547.799895210@linuxfoundation.org>
+        stable@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@redhat.com>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ivan Delalande <colona@arista.com>
+Subject: [PATCH 4.9 02/59] time: Introduce jiffies64_to_nsecs()
+Date:   Mon,  8 Oct 2018 20:31:09 +0200
+Message-Id: <20181008175547.105276805@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -64,62 +73,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
 
-[ Upstream commit 3fcbb8260a87efb691d837e8cd24e81f65b3eb70 ]
+commit 07e5f5e353aaa61696c8353d87050994a0c4648a upstream.
 
-In 4.19-rc1, Eugeniy reported weird boot and IO errors on ARC HSDK
+This will be needed for the cputime_t to nsec conversion.
 
-| INFO: task syslogd:77 blocked for more than 10 seconds.
-|       Not tainted 4.19.0-rc1-00007-gf213acea4e88 #40
-| "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-| message.
-| syslogd         D    0    77     76 0x00000000
-|
-| Stack Trace:
-|  __switch_to+0x0/0xac
-|  __schedule+0x1b2/0x730
-|  io_schedule+0x5c/0xc0
-|  __lock_page+0x98/0xdc
-|  find_lock_entry+0x38/0x100
-|  shmem_getpage_gfp.isra.3+0x82/0xbfc
-|  shmem_fault+0x46/0x138
-|  handle_mm_fault+0x5bc/0x924
-|  do_page_fault+0x100/0x2b8
-|  ret_from_exception+0x0/0x8
-
-He bisected to 84c6591103db ("locking/atomics,
-asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*()")
-
-This commit however only unmasked the real issue introduced by commit
-4aef66c8ae9 ("locking/atomic, arch/arc: Fix build") which missed the
-retry-if-scond-failed branch in atomic_fetch_##op() macros.
-
-The bisected commit started using atomic_fetch_##op() macros for building
-the rest of atomics.
-
-Fixes: 4aef66c8ae9 ("locking/atomic, arch/arc: Fix build")
-Reported-by: Eugeniy Paltsev <paltsev@synopsys.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-[vgupta: wrote changelog]
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Wanpeng Li <wanpeng.li@hotmail.com>
+Link: http://lkml.kernel.org/r/1485832191-26889-2-git-send-email-fweisbec@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ivan Delalande <colona@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arc/include/asm/atomic.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/include/asm/atomic.h
-+++ b/arch/arc/include/asm/atomic.h
-@@ -84,7 +84,7 @@ static inline int atomic_fetch_##op(int
- 	"1:	llock   %[orig], [%[ctr]]		\n"		\
- 	"	" #asm_op " %[val], %[orig], %[i]	\n"		\
- 	"	scond   %[val], [%[ctr]]		\n"		\
--	"						\n"		\
-+	"	bnz     1b				\n"		\
- 	: [val]	"=&r"	(val),						\
- 	  [orig] "=&r" (orig)						\
- 	: [ctr]	"r"	(&v->counter),					\
+---
+ include/linux/jiffies.h  |    2 ++
+ kernel/time/time.c       |   10 ++++++++++
+ kernel/time/timeconst.bc |    6 ++++++
+ 3 files changed, 18 insertions(+)
+
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -292,6 +292,8 @@ static inline u64 jiffies_to_nsecs(const
+ 	return (u64)jiffies_to_usecs(j) * NSEC_PER_USEC;
+ }
+ 
++extern u64 jiffies64_to_nsecs(u64 j);
++
+ extern unsigned long __msecs_to_jiffies(const unsigned int m);
+ #if HZ <= MSEC_PER_SEC && !(MSEC_PER_SEC % HZ)
+ /*
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -704,6 +704,16 @@ u64 nsec_to_clock_t(u64 x)
+ #endif
+ }
+ 
++u64 jiffies64_to_nsecs(u64 j)
++{
++#if !(NSEC_PER_SEC % HZ)
++	return (NSEC_PER_SEC / HZ) * j;
++# else
++	return div_u64(j * HZ_TO_NSEC_NUM, HZ_TO_NSEC_DEN);
++#endif
++}
++EXPORT_SYMBOL(jiffies64_to_nsecs);
++
+ /**
+  * nsecs_to_jiffies64 - Convert nsecs in u64 to jiffies64
+  *
+--- a/kernel/time/timeconst.bc
++++ b/kernel/time/timeconst.bc
+@@ -98,6 +98,12 @@ define timeconst(hz) {
+ 		print "#define HZ_TO_USEC_DEN\t\t", hz/cd, "\n"
+ 		print "#define USEC_TO_HZ_NUM\t\t", hz/cd, "\n"
+ 		print "#define USEC_TO_HZ_DEN\t\t", 1000000/cd, "\n"
++
++		cd=gcd(hz,1000000000)
++		print "#define HZ_TO_NSEC_NUM\t\t", 1000000000/cd, "\n"
++		print "#define HZ_TO_NSEC_DEN\t\t", hz/cd, "\n"
++		print "#define NSEC_TO_HZ_NUM\t\t", hz/cd, "\n"
++		print "#define NSEC_TO_HZ_DEN\t\t", 1000000000/cd, "\n"
+ 		print "\n"
+ 
+ 		print "#endif /* KERNEL_TIMECONST_H */\n"
 
 
