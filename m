@@ -2,206 +2,327 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC20DC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6642EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2382089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:35:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUm0bIbQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2382089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A7052086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:35:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7052086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeJHXri (ORCPT
+        id S1726723AbeJHXr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:47:38 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44446 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeJHXri (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:47:38 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 63-v6so21508853wra.11;
-        Mon, 08 Oct 2018 09:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2uQY3rUSBKqw8O35EQPrT9j9ER5Std0rFDoVrpsFcl4=;
-        b=FUm0bIbQWPCqedZjKgVJGxikzq9iLJHWUC8Lzc2Jp+l3/zPtKmIPxhVjbqq3Lw58zk
-         C90IrLE4Vp9pinlO4cZqHVH0v7wpCgiEhU309g4gA7VVildXXv1Sg/vTm5r9wP5D+d96
-         KnL6MU/IGZeMrbg8y+uvUqSDIG8NVoLq9UWi7LPgxXjFICpYpGOFnK5m0JmQmyYbBpV8
-         It/FwVXCXqdrgxA3/YBp+paahwCNSE2ybOKPQEEjYmbWi5//vWTaP8H+ORIMFq29sUkc
-         HzEAJVYjSB9LhAL9UoykObEyw3FuUQhP54kLbvh8TePxgFmL6dh6OwpMx40mCweYqL+R
-         Ghug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2uQY3rUSBKqw8O35EQPrT9j9ER5Std0rFDoVrpsFcl4=;
-        b=byEpIeM/xf+AiPMZ6+zNmsDQkzxb0WdBtJREm8et+dv8ggROrlzl6CLHjdfHm6BP0r
-         L6W7J1ojMciIhZcC0yEccZfM/fIUsJaJBJLZYcC9ysc3o2Hys6PQJm5nc5yiLRq7mXaA
-         aXdYdbpWmWXExjz71a8ubadBWbxhf06llj7Jh5EL2XymEsKF+3N6EVS5Q+Ai+HLlJat2
-         SwV8RTBuPRCfT+/O4ZRFXmB0dV57RCxh968RNQ8fuwbZSqNHngaxih/fjFk8JgRJLnXz
-         dmAU+wooH09jgeqo+2kCuPXZkprJzY5SqDLPlqO0xS9oJ+eRv4BwPngHotkrTnWjwsn6
-         6tCQ==
-X-Gm-Message-State: ABuFfoiNa3pD61lUz3Oun8O75c+EPvoBo++zxyEDayYMyRXr1vduVzyS
-        mReue+QFQpx/lbAccuvuVuC/bXtzQ8nqvQcyzh0=
-X-Google-Smtp-Source: ACcGV60KtJhyHLIiu6r8YlJYmsL9qAIB++JWr3wRLciTaq7YgEeM7vnTSvCGYXk80pVa0S+vW8xiPHyJpHhXVgtjLVg=
-X-Received: by 2002:adf:8382:: with SMTP id 2-v6mr16729635wre.13.1539016503398;
- Mon, 08 Oct 2018 09:35:03 -0700 (PDT)
+        Mon, 8 Oct 2018 19:47:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:53052 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbeJHXr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 19:47:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DBD7ED1;
+        Mon,  8 Oct 2018 09:35:23 -0700 (PDT)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8878F3F5BC;
+        Mon,  8 Oct 2018 09:35:20 -0700 (PDT)
+Subject: Re: [PATCH V10 1/8] irqchip: add C-SKY SMP interrupt controller
+To:     Guo Ren <ren_guo@c-sky.com>, tglx@linutronix.de,
+        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        daniel.lezcano@linaro.org, anurup.m@huawei.com,
+        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
+        zhangshaokun@hisilicon.com, jhogan@kernel.org,
+        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1538672812.git.ren_guo@c-sky.com>
+ <e06484474231375248e3e7a6ab47cf8ff8893129.1538672812.git.ren_guo@c-sky.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <404fb433-020e-28f9-2434-a22c6db36a15@arm.com>
+Date:   Mon, 8 Oct 2018 17:35:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CACE8ZKbUhFyWg5oK1B8+aWAa0tdqKf5Kokj80+8x1X2EUaA_DQ@mail.gmail.com>
- <CACE8ZKZEpQjOW6CSvUuM9xhjtkSCF0bYxcfQ3htSabC=rVJcTA@mail.gmail.com> <86f391e5-9e38-c8b0-4753-4646c322c9bc@hauke-m.de>
-In-Reply-To: <86f391e5-9e38-c8b0-4753-4646c322c9bc@hauke-m.de>
-From:   =?UTF-8?Q?Ren=C3=A9_Kjellerup?= <rk.katana.steel@gmail.com>
-Date:   Mon, 8 Oct 2018 09:34:49 -0700
-Message-ID: <CACE8ZKb5CxEBAdCdGAhwaQHC9_nHBjTTVwxdDOXRayqgz0FK5g@mail.gmail.com>
-Subject: Re: Adding a Basic DT for the Linksys ea6500 v2 wireless home router
-To:     Hauke Mehrtens <hauke@hauke-m.de>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e06484474231375248e3e7a6ab47cf8ff8893129.1538672812.git.ren_guo@c-sky.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hauke,
+Hi Guo,
 
-Updated the file header per your suggestion.
+On 04/10/18 18:22, Guo Ren wrote:
+>   - Irq-csky-mpintc is C-SKY smp system interrupt controller and it
+>     could support 16 soft irqs, 16 private irqs, and 992 max common
+>     irqs.
+> 
+> Changelog:
+>   - pass checkpatch.pl
+>   - Move IPI_IRQ into the driver
+>   - Remove irq_set_default_host() and use set_ipi_irq_mapping()
+>   - Change name with upstream feed-back
+>   - Change irq map, reserve soft_irq & private_irq space
+>   - Add License and Copyright
+>   - Support set_affinity for irq balance in SMP
+> 
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>   drivers/irqchip/Kconfig           |   9 ++
+>   drivers/irqchip/Makefile          |   1 +
+>   drivers/irqchip/irq-csky-mpintc.c | 197 ++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 207 insertions(+)
+>   create mode 100644 drivers/irqchip/irq-csky-mpintc.c
+> 
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 383e7b7..8103f6f 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -371,6 +371,15 @@ config QCOM_PDC
+>   	  Power Domain Controller driver to manage and configure wakeup
+>   	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
+>   
+> +config CSKY_MPINTC
+> +	bool "C-SKY Multi Processor Interrupt Controller"
+> +	depends on CSKY
+> +	help
+> +	  Say yes here to enable C-SKY SMP interrupt controller driver used
+> +	  for C-SKY SMP system.
+> +	  In fact it's not mmio map in hw and it use ld/st to visit the
+> +	  controller's register inside CPU.
+> +
+>   endmenu
+>   
+>   config SIFIVE_PLIC
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index fbd1ec8..6b739ea 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -87,4 +87,5 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
+>   obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
+>   obj-$(CONFIG_NDS32)			+= irq-ativic32.o
+>   obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
+> +obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
+>   obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
+> diff --git a/drivers/irqchip/irq-csky-mpintc.c b/drivers/irqchip/irq-csky-mpintc.c
+> new file mode 100644
+> index 0000000..a008f8e
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-csky-mpintc.c
+> @@ -0,0 +1,197 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/module.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irq.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/smp.h>
+> +#include <linux/io.h>
+> +#include <asm/irq.h>
+> +#include <asm/traps.h>
+> +#include <asm/reg_ops.h>
+> +
+> +static struct irq_domain *root_domain;
+> +static void __iomem *INTCG_base;
+> +static void __iomem *INTCL_base;
+> +
+> +#define IPI_IRQ		15
+> +#define INTC_IRQS	256
+> +#define COMM_IRQ_BASE	32
+> +
+> +#define INTCG_SIZE	0x8000
+> +#define INTCL_SIZE	0x1000
+> +
+> +#define INTCG_ICTLR	0x0
+> +#define INTCG_CICFGR	0x100
+> +#define INTCG_CIDSTR	0x1000
+> +
+> +#define INTCL_PICTLR	0x0
+> +#define INTCL_SIGR	0x60
+> +#define INTCL_HPPIR	0x68
+> +#define INTCL_RDYIR	0x6c
+> +#define INTCL_SENR	0xa0
+> +#define INTCL_CENR	0xa4
+> +#define INTCL_CACR	0xb4
+> +
+> +static DEFINE_PER_CPU(void __iomem *, intcl_reg);
+> +
+> +static void csky_mpintc_handler(struct pt_regs *regs)
+> +{
+> +	void __iomem *reg_base = this_cpu_read(intcl_reg);
+> +
+> +	do {
+> +		handle_domain_irq(root_domain,
+> +				  readl_relaxed(reg_base + INTCL_RDYIR),
+> +				  regs);
+> +	} while (readl_relaxed(reg_base + INTCL_HPPIR) & BIT(31));
+> +}
+> +
+> +static void csky_mpintc_enable(struct irq_data *d)
+> +{
+> +	void __iomem *reg_base = this_cpu_read(intcl_reg);
+> +
+> +	writel_relaxed(d->hwirq, reg_base + INTCL_SENR);
+> +}
+> +
+> +static void csky_mpintc_disable(struct irq_data *d)
+> +{
+> +	void __iomem *reg_base = this_cpu_read(intcl_reg);
+> +
+> +	writel_relaxed(d->hwirq, reg_base + INTCL_CENR);
+> +}
+> +
+> +static void csky_mpintc_eoi(struct irq_data *d)
+> +{
+> +	void __iomem *reg_base = this_cpu_read(intcl_reg);
+> +
+> +	writel_relaxed(d->hwirq, reg_base + INTCL_CACR);
+> +}
+> +
+> +#ifdef CONFIG_SMP
+> +static int csky_irq_set_affinity(struct irq_data *d,
+> +				 const struct cpumask *mask_val,
+> +				 bool force)
+> +{
+> +	unsigned int cpu;
+> +	unsigned int offset = 4 * (d->hwirq - COMM_IRQ_BASE);
+> +
+> +	if (!force)
+> +		cpu = cpumask_any_and(mask_val, cpu_online_mask);
+> +	else
+> +		cpu = cpumask_first(mask_val);
+> +
+> +	if (cpu >= nr_cpu_ids)
+> +		return -EINVAL;
+> +
+> +	/* Enable interrupt destination */
+> +	cpu |= BIT(31);
+> +
+> +	writel_relaxed(cpu, INTCG_base + INTCG_CIDSTR + offset);
+> +
+> +	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+> +
+> +	return IRQ_SET_MASK_OK_DONE;
+> +}
+> +#endif
+> +
+> +static struct irq_chip csky_irq_chip = {
+> +	.name           = "C-SKY SMP Intc",
+> +	.irq_eoi	= csky_mpintc_eoi,
+> +	.irq_enable	= csky_mpintc_enable,
+> +	.irq_disable	= csky_mpintc_disable,
+> +#ifdef CONFIG_SMP
+> +	.irq_set_affinity = csky_irq_set_affinity,
+> +#endif
+> +};
+> +
+> +static int csky_irqdomain_map(struct irq_domain *d, unsigned int irq,
+> +			      irq_hw_number_t hwirq)
+> +{
+> +	if (hwirq < COMM_IRQ_BASE) {
+> +		irq_set_percpu_devid(irq);
+> +		irq_set_chip_and_handler(irq, &csky_irq_chip,
+> +					 handle_percpu_irq);
+> +	} else {
+> +		irq_set_chip_and_handler(irq, &csky_irq_chip,
+> +					 handle_fasteoi_irq);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops csky_irqdomain_ops = {
+> +	.map	= csky_irqdomain_map,
+> +	.xlate	= irq_domain_xlate_onecell,
+> +};
+> +
+> +#ifdef CONFIG_SMP
+> +static void csky_mpintc_send_ipi(const unsigned long *mask)
+> +{
 
-From e97c15ef78d2535c23f32ebbec43bced72b5eaf7 Mon Sep 17 00:00:00 2001
-From: Rene Kjellerup <rk.katana.steel@gmail.com>
-Date: Mon, 1 Oct 2018 14:11:56 -0700
-Subject: [PATCH] ARM: dts: BCM5301X: Add basic DT for Linksys EA6500 V2
+Why isn't this a cpumask? It should be this driver's job to convert the 
+cpumask to an interrupt-controller specific representation, and not the 
+SMP code's.
 
-It's wireless home router based on BCM4708A0 with BCM4360 + BCM4331
-wireless chipsets. The 5GHz chip currently isn't supported only due
-to missing compatible firmware.
+> +	void __iomem *reg_base = this_cpu_read(intcl_reg);
+> +
+> +	/*
+> +	 * INTCL_SIGR[3:0] INTID
+> +	 * INTCL_SIGR[8:15] CPUMASK
+> +	 */
+> +	writel_relaxed((*mask) << 8 | IPI_IRQ, reg_base + INTCL_SIGR);
+> +}
+> +
+> +static int csky_mpintc_ipi_irq_mapping(void)
+> +{
+> +	return irq_create_mapping(root_domain, IPI_IRQ);
+> +}
+> +#endif
+> +
+> +/* C-SKY multi processor interrupt controller */
+> +static int __init
+> +csky_mpintc_init(struct device_node *node, struct device_node *parent)
+> +{
+> +	unsigned int cpu, nr_irq;
+> +	int ret;
+> +
+> +	if (parent)
+> +		return 0;
+> +
+> +	ret = of_property_read_u32(node, "csky,num-irqs", &nr_irq);
+> +	if (ret < 0)
+> +		nr_irq = INTC_IRQS;
+> +
+> +	if (INTCG_base == NULL) {
+> +		INTCG_base = ioremap(mfcr("cr<31, 14>"),
+> +				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
+> +		if (INTCG_base == NULL)
+> +			return -EIO;
+> +
+> +		INTCL_base = INTCG_base + INTCG_SIZE;
+> +
+> +		writel_relaxed(BIT(0), INTCG_base + INTCG_ICTLR);
+> +	}
+> +
+> +	root_domain = irq_domain_add_linear(node, nr_irq, &csky_irqdomain_ops,
+> +					    NULL);
+> +	if (!root_domain)
+> +		return -ENXIO;
+> +
+> +	/* for every cpu */
+> +	for_each_present_cpu(cpu) {
+> +		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
+> +		writel_relaxed(BIT(0), per_cpu(intcl_reg, cpu) + INTCL_PICTLR);
+> +	}
+> +
+> +	set_handle_irq(&csky_mpintc_handler);
+> +
+> +#ifdef CONFIG_SMP
+> +	set_send_ipi(&csky_mpintc_send_ipi);
+> +
+> +	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
 
-the DTS here was based on the Linksys EA6300 V1 DTS, only changing
-the model strings
+Since you seem to be inventing a new set_send_ipi callback, why don't 
+you define it as:
 
-Signed-off-by: Rene Kjellerup <rk.katana.steel@gmail.com>
----
- arch/arm/boot/dts/Makefile                      |  1 +
- arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts | 47 +++++++++++++++++++++=
-++++
- 2 files changed, 48 insertions(+)
- create mode 100644 arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
+void set_send_ipi(void (*func)(const struct cpumask *),
+		  unsigned int ipi_irq);
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b5bd3de87c33..adf8f28f5e44 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -88,6 +88,7 @@ dtb-$(CONFIG_ARCH_BCM_5301X) +=3D \
-     bcm4708-asus-rt-ac68u.dtb \
-     bcm4708-buffalo-wzr-1750dhp.dtb \
-     bcm4708-linksys-ea6300-v1.dtb \
-+    bcm4708-linksys-ea6500-v2.dtb \
-     bcm4708-luxul-xap-1510.dtb \
-     bcm4708-luxul-xwc-1000.dtb \
-     bcm4708-netgear-r6250.dtb \
-diff --git a/arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
-b/arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
-new file mode 100644
-index 000000000000..8a434d2a4b72
---- /dev/null
-+++ b/arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (C) 2017 Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-+ * Copyright (C) 2018 Rene Kjellerup <rk.katana.steel@gmail.com>
-+ *
-+ * this DTS was originally based on bcm4708-linksys-ea6300-v1.dts
-+ */
-+
-+/dts-v1/;
-+
-+#include "bcm4708.dtsi"
-+#include "bcm5301x-nand-cs0-bch8.dtsi"
-+
-+/ {
-+    compatible =3D "linksys,ea6500-v2", "brcm,bcm4708";
-+    model =3D "Linksys EA6500 V2";
-+
-+    chosen {
-+        bootargs =3D "console=3DttyS0,115200";
-+    };
-+
-+    memory {
-+        reg =3D <0x00000000 0x08000000>;
-+    };
-+
-+    gpio-keys {
-+        compatible =3D "gpio-keys";
-+        #address-cells =3D <1>;
-+        #size-cells =3D <0>;
-+
-+        wps {
-+            label =3D "WPS";
-+            linux,code =3D <KEY_WPS_BUTTON>;
-+            gpios =3D <&chipcommon 7 GPIO_ACTIVE_LOW>;
-+        };
-+
-+        restart {
-+            label =3D "Reset";
-+            linux,code =3D <KEY_RESTART>;
-+            gpios =3D <&chipcommon 11 GPIO_ACTIVE_LOW>;
-+        };
-+    };
-+};
-+
-+&usb3_phy {
-+    status =3D "okay";
-+};
---=20
-2.16.4
+after having created the mapping for the IPI interrupt? It would avoid 
+this rather pointless mapping callback.
 
-On Sun, Oct 7, 2018 at 2:08 PM Hauke Mehrtens <hauke@hauke-m.de> wrote:
->
-> On 10/04/2018 11:08 PM, Ren=C3=A9 Kjellerup wrote:
-> > Hi Hauke,
-> >
-> > thank you for suggesting adding the dts patch to mainline kernel,
-> > so here it is.
-> > I feel Rafal technically still have the copyrights, this is pretty
-> > much just a few string updates for the ea6500v2. However with this
-> > dts in latest OpenWrt 18.06 loads and installs on my device.
-> >
-> > I will be available to do more testing should it be required.
-> >
-> > Regrads
-> > Rene Kjellerup
-> > --
-> > -- as life grows older, I gain experience.
-> > -- http://www.alchemiestick.net/
-> >
->
-> Hi Rene,
->
-> Please send you patch inline in the mail and not as an attachment, I
-> would suggest to use "git send-email" for sending the patch.
->
-> Adding Rafal as copyright owner is ok, like you did it now. You could
-> mention in the file header on which dts file this is based.
->
-> Hauke
->
+Thanks,
 
-
---=20
--- as life grows older, I gain experience.
--- http://www.alchemiestick.net/apps/
+	M.
+-- 
+Jazz is not dead. It just smells funny...
