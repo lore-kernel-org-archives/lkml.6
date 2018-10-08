@@ -4,47 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C518C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E04C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C6E20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D1DC20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJbxReJx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C6E20C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmzUe8F/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1DC20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJIBqY (ORCPT
+        id S1727150AbeJIBq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:46:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56536 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:46:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726391AbeJIBqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:46:23 -0400
+        id S1726510AbeJIBq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:46:27 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBCAB2087D;
-        Mon,  8 Oct 2018 18:33:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A30E62087D;
+        Mon,  8 Oct 2018 18:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023601;
-        bh=BIeUfadwax0MUz/LfmvwJJrbQyFJcsE4PjQtiUpcv5E=;
+        s=default; t=1539023605;
+        bh=4eNyM86cNy1epojnfZKgkHk7pyZQT2spd6sxBAprJ8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJbxReJx6Pb24gu6adeaVFreinPpq+++fpmQEx92+lUSO/xVZRXuI/+FeQnKSeapk
-         s0D1DBzSYKiUNZVNb3dZezQHv+p90wLaWaiYUQqVYNoFydWdDY7attIouDsYtLziY9
-         qxZNF/M2Aqvt0XNvi04TB23VNOjE47xoILJQrL7I=
+        b=PmzUe8F/qhkC6nCGCDiwB+8HuQZNBk79313n7rhnIVZZRq6sEmQVk6Gjk53buiTGo
+         e/wGs0w5vq2k0F7ef4fMvXooOheNSL6C0PGlNDmf3O3KQtXQHFSeFAEfS+FqKBzoTO
+         GbkeKZ7fiUxF0KO7guocdOmLRSZXmwadKF8zZXLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 003/113] vmci: type promotion bug in qp_host_get_user_memory()
-Date:   Mon,  8 Oct 2018 20:30:04 +0200
-Message-Id: <20181008175531.043550308@linuxfoundation.org>
+Subject: [PATCH 4.4 004/113] x86/numa_emulation: Fix emulated-to-physical node mapping
+Date:   Mon,  8 Oct 2018 20:30:05 +0200
+Message-Id: <20181008175531.076044994@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,42 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-[ Upstream commit 7fb2fd4e25fc1fb10dcb30b5519de257cfeae84c ]
+[ Upstream commit 3b6c62f363a19ce82bf378187ab97c9dc01e3927 ]
 
-The problem is that if get_user_pages_fast() fails and returns a
-negative error code, it gets type promoted to a high positive value and
-treated as a success.
+Without this change the distance table calculation for emulated nodes
+may use the wrong numa node and report an incorrect distance.
 
-Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/153089328103.27680.14778434392225818887.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/vmw_vmci/vmci_queue_pair.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/mm/numa_emulation.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -755,7 +755,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) produce_uva,
- 				     produce_q->kernel_if->num_pages, 1,
- 				     produce_q->kernel_if->u.h.header_page);
--	if (retval < produce_q->kernel_if->num_pages) {
-+	if (retval < (int)produce_q->kernel_if->num_pages) {
- 		pr_debug("get_user_pages_fast(produce) failed (retval=%d)",
- 			retval);
- 		qp_release_pages(produce_q->kernel_if->u.h.header_page,
-@@ -767,7 +767,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) consume_uva,
- 				     consume_q->kernel_if->num_pages, 1,
- 				     consume_q->kernel_if->u.h.header_page);
--	if (retval < consume_q->kernel_if->num_pages) {
-+	if (retval < (int)consume_q->kernel_if->num_pages) {
- 		pr_debug("get_user_pages_fast(consume) failed (retval=%d)",
- 			retval);
- 		qp_release_pages(consume_q->kernel_if->u.h.header_page,
+--- a/arch/x86/mm/numa_emulation.c
++++ b/arch/x86/mm/numa_emulation.c
+@@ -60,7 +60,7 @@ static int __init emu_setup_memblk(struc
+ 	eb->nid = nid;
+ 
+ 	if (emu_nid_to_phys[nid] == NUMA_NO_NODE)
+-		emu_nid_to_phys[nid] = nid;
++		emu_nid_to_phys[nid] = pb->nid;
+ 
+ 	pb->start += size;
+ 	if (pb->start >= pb->end) {
 
 
