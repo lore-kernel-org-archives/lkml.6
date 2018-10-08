@@ -2,247 +2,156 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A48C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D31C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 750F52087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:58:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750F52087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id F121D2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASfF7Dva"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F121D2087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbeJHRJs (ORCPT
+        id S1727476AbeJHRKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:09:48 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45441 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHRJs (ORCPT
+        Mon, 8 Oct 2018 13:10:11 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44731 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeJHRKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:09:48 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w989wDAI560212
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 8 Oct 2018 02:58:14 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w989wD7d560209;
-        Mon, 8 Oct 2018 02:58:13 -0700
-Date:   Mon, 8 Oct 2018 02:58:13 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Chang S. Bae" <tipbot@zytor.com>
-Message-ID: <tip-ffebbaedc8616cffe648202e364dce6a045d65a2@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, chang.seok.bae@intel.com,
-        hpa@zytor.com, dave.hansen@linux.intel.com, peterz@infradead.org,
-        ravi.v.shankar@intel.com, dvlasenk@redhat.com,
-        markus.t.metzger@intel.com, linux-kernel@vger.kernel.org,
-        brgerst@gmail.com, mingo@kernel.org, luto@kernel.org,
-        riel@surriel.com, luto@amacapital.net, tglx@linutronix.de,
-        bp@alien8.de
-Reply-To: mingo@kernel.org, riel@surriel.com, luto@kernel.org,
-          tglx@linutronix.de, bp@alien8.de, luto@amacapital.net,
-          hpa@zytor.com, torvalds@linux-foundation.org,
-          chang.seok.bae@intel.com, dave.hansen@linux.intel.com,
-          peterz@infradead.org, markus.t.metzger@intel.com,
-          ravi.v.shankar@intel.com, dvlasenk@redhat.com, brgerst@gmail.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <1537312139-5580-8-git-send-email-chang.seok.bae@intel.com>
-References: <1537312139-5580-8-git-send-email-chang.seok.bae@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/vdso: Introduce helper functions for CPU and node
- number
-Git-Commit-ID: ffebbaedc8616cffe648202e364dce6a045d65a2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 8 Oct 2018 13:10:11 -0400
+Received: by mail-ot1-f68.google.com with SMTP id p23so7346658otf.11;
+        Mon, 08 Oct 2018 02:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6pPl+ooxeuaHheuMEW1uilUNg7fgvFgLTQ5AiW5OUWI=;
+        b=ASfF7DvaFE+sS7/Qr+mj2BWqdEmZUx6Vt75cTZCD5+aIVjW/g25ejQ7gNj7lNqcyfX
+         xtwyvO259ecUYT5J09nkD8Idm5zXIO7gTgMxR7DXr2bpiJh028CNoczbkGhI1HCjRApm
+         hj61u+GMhK4rV7tAb2Lw3QFg7PS40sJII52rNaLms+eiKuSk4oUKB+N99WtR497uNXT8
+         1/6RfvT4dLLivJuLu5x17ezOifh3VZoMsko3PEmKkesg+3beIxZy13NqGntee9A8+9Zb
+         NxPRMhjdUv9G4cGXtU6FglDjGZ+zCfjSNLQUF1AtRq3wlkLQuamWY7SerMhnOQlIfklW
+         Lkyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6pPl+ooxeuaHheuMEW1uilUNg7fgvFgLTQ5AiW5OUWI=;
+        b=tB5Qy7aWluPCh2xHUWo2CBoBaC/o+p8/u8b5YblYmNG36EJey0w8sszukaitWHG2B4
+         QKokRWS6T2IPfWMxQiswDg6yVZetgVBB0jJLLoN+YzEtKRjFmk6XZQb70MDvU+bTNpsD
+         q4PQpUX8fmILIvvnaL5QN0VBfOsqijt7G55PE1JNOW7u76z28QKw1uLCVEUP92sdBxIZ
+         6EHvz5U369GcXai+2CZfM/9uBxUKrtihKYQRxwxi7m+VZVfZpnSyF8Kefbn9YNdgALR5
+         66g/HzejGeAstlPkXME0DVPeyHDWHaVdpp4+c1anpkF6aV1XKOy95fLwz0elSsQ1tj5H
+         eJIQ==
+X-Gm-Message-State: ABuFfogKqVMrEr6roE6txfS0SVe8jE3Q17Jogh9H/IEEsTUPrm8qAmvk
+        Z+RXpKojzUUph4gOCnrucGJr/Yr4MazIraT3iIo=
+X-Google-Smtp-Source: ACcGV60FHkthoD1/xyJJDzGkX+kAf83QmfuwLMGujVi2OKG+jlgt8/Cm+gzzqe/ayNHWjE+KLauqJC90gyY7m7ZcYFg=
+X-Received: by 2002:a9d:614a:: with SMTP id c10mr7919361otk.278.1538992757379;
+ Mon, 08 Oct 2018 02:59:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180621063338.20093-1-ganapatrao.kulkarni@cavium.com>
+ <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com> <CADYwmhHdTuK-z4GcGCYypYo2dvvPj7udihPcMmTkHTSU2fOWWw@mail.gmail.com>
+In-Reply-To: <CADYwmhHdTuK-z4GcGCYypYo2dvvPj7udihPcMmTkHTSU2fOWWw@mail.gmail.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Mon, 8 Oct 2018 15:29:05 +0530
+Message-ID: <CAKTKpr7nq7jfXzHmTd-EX6b3MDefa6B5i--Zn=yUZV7MqS2ywA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU driver
+To:     pranith.foss@gmail.com
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <Will.Deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ffebbaedc8616cffe648202e364dce6a045d65a2
-Gitweb:     https://git.kernel.org/tip/ffebbaedc8616cffe648202e364dce6a045d65a2
-Author:     Chang S. Bae <chang.seok.bae@intel.com>
-AuthorDate: Tue, 18 Sep 2018 16:08:58 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 8 Oct 2018 10:41:10 +0200
+Hi Pranith,
 
-x86/vdso: Introduce helper functions for CPU and node number
+On Sat, Jul 7, 2018 at 11:22 AM Pranith Kumar <pranith.foss@gmail.com> wrote:
+>
+> Hi Ganapatrao,
+>
+>
+> On Wed, Jun 20, 2018 at 11:33 PM, Ganapatrao Kulkarni
+> <ganapatrao.kulkarni@cavium.com> wrote:
+>
+> > +
+> > +enum thunderx2_uncore_l3_events {
+> > +       L3_EVENT_NONE,
+> > +       L3_EVENT_NBU_CANCEL,
+> > +       L3_EVENT_DIB_RETRY,
+> > +       L3_EVENT_DOB_RETRY,
+> > +       L3_EVENT_DIB_CREDIT_RETRY,
+> > +       L3_EVENT_DOB_CREDIT_RETRY,
+> > +       L3_EVENT_FORCE_RETRY,
+> > +       L3_EVENT_IDX_CONFLICT_RETRY,
+> > +       L3_EVENT_EVICT_CONFLICT_RETRY,
+> > +       L3_EVENT_BANK_CONFLICT_RETRY,
+> > +       L3_EVENT_FILL_ENTRY_RETRY,
+> > +       L3_EVENT_EVICT_NOT_READY_RETRY,
+> > +       L3_EVENT_L3_RETRY,
+> > +       L3_EVENT_READ_REQ,
+> > +       L3_EVENT_WRITE_BACK_REQ,
+> > +       L3_EVENT_INVALIDATE_NWRITE_REQ,
+> > +       L3_EVENT_INV_REQ,
+> > +       L3_EVENT_SELF_REQ,
+> > +       L3_EVENT_REQ,
+> > +       L3_EVENT_EVICT_REQ,
+> > +       L3_EVENT_INVALIDATE_NWRITE_HIT,
+> > +       L3_EVENT_INVALIDATE_HIT,
+> > +       L3_EVENT_SELF_HIT,
+> > +       L3_EVENT_READ_HIT,
+> > +       L3_EVENT_MAX,
+> > +};
+> > +
+> > +enum thunderx2_uncore_dmc_events {
+> > +       DMC_EVENT_NONE,
+> > +       DMC_EVENT_COUNT_CYCLES,
+> > +       DMC_EVENT_RES2,
+> > +       DMC_EVENT_RES3,
+> > +       DMC_EVENT_RES4,
+> > +       DMC_EVENT_RES5,
+> > +       DMC_EVENT_RES6,
+> > +       DMC_EVENT_RES7,
+> > +       DMC_EVENT_RES8,
+> > +       DMC_EVENT_READ_64B_TXNS,
+> > +       DMC_EVENT_READ_BELOW_64B_TXNS,
+> > +       DMC_EVENT_WRITE_TXNS,
+> > +       DMC_EVENT_TXN_CYCLES,
+> > +       DMC_EVENT_DATA_TRANSFERS,
+> > +       DMC_EVENT_CANCELLED_READ_TXNS,
+> > +       DMC_EVENT_CONSUMED_READ_TXNS,
+> > +       DMC_EVENT_MAX,
+> > +};
+>
+> Can you please provide a link to where these counters are documented?
+> It is not clear what each counter does especially for the L3C events.
 
-Clean up the CPU/node number related code a bit, to make it more apparent
-how we are encoding/extracting the CPU and node fields from the
-segment limit.
+I will add brief description of each event in Documentation.
+>
+> Also, what counter do you need to use to get L3 hit/miss ratio? I
+> think this is the most useful counter related to L3.
 
-No change in functionality intended.
+L3C cache Hit Ratio = (L3_READ_HIT + L3_INV_N_WRITE_HIT +
+L3_INVALIDATE_HIT) / (L3_READ_REQ + L3_INV_N_WRITE_REQ +
+L3_INVALIDATE_REQ)
 
-[ mingo: Wrote new changelog. ]
+>
+> Thanks,
+> --
+> Pranith
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Markus T Metzger <markus.t.metzger@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Link: http://lkml.kernel.org/r/1537312139-5580-8-git-send-email-chang.seok.bae@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/vdso/vgetcpu.c  |  9 +--------
- arch/x86/entry/vdso/vma.c      | 19 +++++++------------
- arch/x86/include/asm/segment.h | 41 +++++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/vgtod.h   | 26 --------------------------
- 4 files changed, 49 insertions(+), 46 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
-index 8ec3d1f4ce9a..de78fc9cd963 100644
---- a/arch/x86/entry/vdso/vgetcpu.c
-+++ b/arch/x86/entry/vdso/vgetcpu.c
-@@ -13,14 +13,7 @@
- notrace long
- __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
- {
--	unsigned int p;
--
--	p = __getcpu();
--
--	if (cpu)
--		*cpu = p & VGETCPU_CPU_MASK;
--	if (node)
--		*node = p >> 12;
-+	vdso_read_cpu_node(cpu, node);
- 	return 0;
- }
- 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 0b114aafcedc..39b5584c5808 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -339,20 +339,15 @@ static void vgetcpu_cpu_init(void *arg)
- {
- 	int cpu = smp_processor_id();
- 	struct desc_struct d = { };
--	unsigned long node = 0;
--#ifdef CONFIG_NUMA
--	node = cpu_to_node(cpu);
--#endif
-+	unsigned long cpudata = vdso_encode_cpu_node(cpu, cpu_to_node(cpu));
-+
- 	if (static_cpu_has(X86_FEATURE_RDTSCP))
--		write_rdtscp_aux((node << 12) | cpu);
-+		write_rdtscp_aux(cpudata);
-+
-+	/* Store CPU and node number in limit */
-+	d.limit0 = cpudata;
-+	d.limit1 = cpudata >> 16;
- 
--	/*
--	 * Store cpu number in limit so that it can be loaded
--	 * quickly in user space in vgetcpu. (12 bits for the CPU
--	 * and 8 bits for the node)
--	 */
--	d.limit0 = cpu | ((node & 0xf) << 12);
--	d.limit1 = node >> 4;
- 	d.type = 5;		/* RO data, expand down, accessed */
- 	d.dpl = 3;		/* Visible to user code */
- 	d.s = 1;		/* Not a system segment */
-diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
-index e3e788ea52e5..4d1f6cc62e13 100644
---- a/arch/x86/include/asm/segment.h
-+++ b/arch/x86/include/asm/segment.h
-@@ -224,6 +224,47 @@
- #define GDT_ENTRY_TLS_ENTRIES		3
- #define TLS_SIZE			(GDT_ENTRY_TLS_ENTRIES* 8)
- 
-+#ifdef CONFIG_X86_64
-+
-+/* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
-+#define VDSO_CPU_SIZE			12
-+#define VDSO_CPU_MASK			0xfff
-+
-+#ifndef __ASSEMBLY__
-+
-+/* Helper functions to store/load CPU and node numbers */
-+
-+static inline unsigned long vdso_encode_cpu_node(int cpu, unsigned long node)
-+{
-+	return ((node << VDSO_CPU_SIZE) | cpu);
-+}
-+
-+static inline void vdso_read_cpu_node(unsigned *cpu, unsigned *node)
-+{
-+	unsigned int p;
-+
-+	/*
-+	 * Load CPU and node number from GDT.  LSL is faster than RDTSCP
-+	 * and works on all CPUs.  This is volatile so that it orders
-+	 * correctly with respect to barrier() and to keep GCC from cleverly
-+	 * hoisting it out of the calling function.
-+	 *
-+	 * If RDPID is available, use it.
-+	 */
-+	alternative_io ("lsl %[seg],%[p]",
-+			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
-+			X86_FEATURE_RDPID,
-+			[p] "=a" (p), [seg] "r" (__CPU_NUMBER_SEG));
-+
-+	if (cpu)
-+		*cpu = (p & VDSO_CPU_MASK);
-+	if (node)
-+		*node = (p >> VDSO_CPU_SIZE);
-+}
-+
-+#endif /* !__ASSEMBLY__ */
-+#endif /* CONFIG_X86_64 */
-+
- #ifdef __KERNEL__
- 
- /*
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index 4e81ea920722..056a61c8c5c7 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -77,30 +77,4 @@ static inline void gtod_write_end(struct vsyscall_gtod_data *s)
- 	++s->seq;
- }
- 
--#ifdef CONFIG_X86_64
--
--#define VGETCPU_CPU_MASK 0xfff
--
--static inline unsigned int __getcpu(void)
--{
--	unsigned int p;
--
--	/*
--	 * Load CPU (and node) number from GDT.  LSL is faster than RDTSCP
--	 * and works on all CPUs.  This is volatile so that it orders
--	 * correctly with respect to barrier() and to keep GCC from cleverly
--	 * hoisting it out of the calling function.
--	 *
--	 * If RDPID is available, use it.
--	 */
--	alternative_io ("lsl %[seg],%[p]",
--			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
--			X86_FEATURE_RDPID,
--			[p] "=a" (p), [seg] "r" (__CPU_NUMBER_SEG));
--
--	return p;
--}
--
--#endif /* CONFIG_X86_64 */
--
- #endif /* _ASM_X86_VGTOD_H */
+thanks
+Ganapat
