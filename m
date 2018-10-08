@@ -2,82 +2,88 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5DFC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C34CDC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174232085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:43:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUH/IuDi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174232085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8EA2E204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA2E204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbeJHVzm (ORCPT
+        id S1726625AbeJHVz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:55:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 17:55:59 -0400
+Received: from mga01.intel.com ([192.55.52.88]:42914 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJHVzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:55:41 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF705204EC;
-        Mon,  8 Oct 2018 14:43:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539009818;
-        bh=720IENbXcqxURIU4OAuMD1kEhRQcdnCDFr9E2jjaOl8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UUH/IuDiCWHteh1lAiETnZQHks4PW3HNjCIzrpzueljYMmoMuK2CP1D0YXMltHFZm
-         7oMcQio6R3gnPcOJXPO+VThxXoVuq6C3auU2csvlxQeIwDlT6l2X7LgXjI0A7+sy81
-         IncsMq/DqOo+s+Sh7lyDQE16aWmoxdDw8yHyWzJQ=
-Date:   Mon, 8 Oct 2018 16:43:35 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: erofs: add SPDX identifer
-Message-ID: <20181008144335.GA15968@kroah.com>
-References: <20181008141409.2624-1-loic.tourlonias.lkml@gmail.com>
- <20181008142228.GB13359@kroah.com>
- <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
+        id S1726078AbeJHVz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:55:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 07:43:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
+   d="scan'208";a="80841113"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 08 Oct 2018 07:43:41 -0700
+Received: from [10.252.30.144] (abudanko-mobl.ccr.corp.intel.com [10.252.30.144])
+        by linux.intel.com (Postfix) with ESMTP id A22DB5801E6;
+        Mon,  8 Oct 2018 07:43:39 -0700 (PDT)
+Subject: Re: [PATCH v11 1/3]: perf util: map data buffer for preserving
+ collected data
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
+ <0ff162a6-67ab-9e73-8d7e-fa57c932ee45@linux.intel.com>
+ <20181008105057.GD17270@krava>
+ <f8ac7176-26a4-7114-3807-abdaffaa897c@linux.intel.com>
+ <20181008123859.GD18757@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <cc781e40-c162-9581-9573-d994785c4cc1@linux.intel.com>
+Date:   Mon, 8 Oct 2018 17:43:38 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181008123859.GD18757@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 10:36:39PM +0800, Gao Xiang wrote:
-> Hi Greg,
+Hi,
+
+On 08.10.2018 15:38, Jiri Olsa wrote:
+> On Mon, Oct 08, 2018 at 03:03:18PM +0300, Alexey Budankov wrote:
+<SNIP>
+>>
+>> Well, let's go with stub functions design as opposite to pure 
+>> conditional compilation. However this may, probably, result in 
+>> unintended Perf tool binary size growth, even if NO_AIO is 
+>> defined during compilation.
 > 
-> On 2018/10/8 22:22, Greg Kroah-Hartman wrote:
-> > Why delete that line?
-> > 
-> > But wait, why do we even have this file at all?  What's wrong with the
-> > lib/lz4/ code that we have in the kernel today?  Shouldn't the code
-> > using these files be moved over to use the lib/ code instead and this
-> > file be deleted?
+> hum, empty functions are be optimized out
+
+Yes, but there will be references to stubs in else branch of 
+record__mmap_read_evlist() so I am not sure that *all* compilers 
+are smart enough to recognize and still optimize it out.
+
+Thanks,
+Alexey
+
 > 
-> EROFS uses customized LZ4 decompression code for now (which has been offically
-> supported in lz4 1.8.3, I have updated it in
-> https://ozlabs.org/~akpm/mmots/broken-out/lib-lz4-update-lz4-decompressor-module.patch
-> if it is shown up in Linux 4.20, I will remove all the customized LZ4 decompression code),
-> but lib/ code lz4def.h isn't export to include/.
-
-It should show up in 4.20, so you should be able to remove this all
-then.
-
-thanks,
-
-greg k-h
+> jirka
+> 
