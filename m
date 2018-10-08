@@ -2,117 +2,148 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C60C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E437DC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739812085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:57:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739812085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B7AD20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:58:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7AD20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeJHSIb (ORCPT
+        id S1727645AbeJHSJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:08:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35322 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbeJHSIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:08:31 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 99928C07C588;
-        Mon,  8 Oct 2018 10:57:22 +0000 (UTC)
-Received: from krava (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E763A170FD;
-        Mon,  8 Oct 2018 10:57:20 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 12:57:20 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 2/3]: perf record: enable asynchronous trace writing
-Message-ID: <20181008105720.GI17270@krava>
-References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
- <31b0ae5f-e1b5-4255-11af-46c8ebe8e2be@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31b0ae5f-e1b5-4255-11af-46c8ebe8e2be@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 08 Oct 2018 10:57:22 +0000 (UTC)
+        Mon, 8 Oct 2018 14:09:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33335 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726882AbeJHSJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 14:09:10 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g9TEY-00051s-7J; Mon, 08 Oct 2018 12:57:54 +0200
+Message-ID: <1538996273.11512.13.camel@pengutronix.de>
+Subject: Re: [PATCH v2] reset: Exclusive resets must be dedicated to a
+ single hardware block
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Date:   Mon, 08 Oct 2018 12:57:53 +0200
+In-Reply-To: <CAMuHMdXFbYkD_Lou0wW__0-8ZPj3cKuJ6it_0hpPwzNU0Zeq3g@mail.gmail.com>
+References: <20180927180038.24599-1-geert+renesas@glider.be>
+         <1538648094.14153.8.camel@pengutronix.de>
+         <CAMuHMdV_qb8qDFJ1VT6FYYkHK73tjbp2hOUShaOEhezPWg+VDg@mail.gmail.com>
+         <CAMuHMdUC3dGRnMCsX3HjmGgb0-vLSNXKXRiiAS+TzW72_uM+LQ@mail.gmail.com>
+         <1538752564.3545.37.camel@pengutronix.de>
+         <CAMuHMdXFbYkD_Lou0wW__0-8ZPj3cKuJ6it_0hpPwzNU0Zeq3g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 09:17:11AM +0300, Alexey Budankov wrote:
+On Mon, 2018-10-08 at 11:59 +0200, Geert Uytterhoeven wrote:
+> Hi Philipp,
+> 
+> On Fri, Oct 5, 2018 at 5:16 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > On Fri, 2018-10-05 at 14:31 +0200, Geert Uytterhoeven wrote:
+> > [...]
+> > > > > > +                     eq = (args2.np == args.np &&
+> > > > > > +                           args2.args_count == args.args_count &&
+> > > > > > +                           !memcmp(args2.args, args.args,
+> > > > > > +                                   args.args_count * sizeof(args.args[0])));
+> > > > 
+> > > > As there's at least one other function in -next that compares of_phandle_args,
+> > > > I will add a helper of_phandle_args_eq().
+> > > > 
+> > > > > > +                     of_node_put(args2.np);
+> > > > > > +                     if (eq)
+> > > > > 
+> > > > > Emitting a loud warning here could be very helpful if it contains
+> > > > > both the reset controller node and the reset index, as well as the
+> > > 
+> > > Actually on DT-based systems, the index is a driver-specific
+> > > implementation detail, and may differ from the actual reset specifier in DT.
+> > > E.g. on R-Car systems, DT uses a human-readable representation matching
+> > > the datasheet, while internally, the driver uses a packed representation.
+> > > Hence printing the index may confuse the user.
+> > > 
+> > > For lookup-based systems, this is different.
+> > 
+> > Correct. I'm so used to #reset-cells = <1>, it's hard to remember the
+> > exceptions. So let's not try to print indices or args.
+> > 
+> > > > > consumer nodes: node and node2.
+> > > > 
+> > > > Indeed, will do, also for lookup resets.
+> > > > 
+> > > > We already have of_print_phandle_args(), but that is a bit inflexible.
+> > > > Adding support for "%pOFa" looks like the modern thing to do.
+> > > 
+> > > Scrap that: of_phandle_args is not derived from a device_node, so %pOFa
+> > > is not appropriate (and would crash instead of fall back to a pointer before
+> > > %pOFa support is implemented). And without more users, it doesn't make much
+> > > sense to go for a new type (e.g. "%pOA")...
+> > > 
+> > > Actually, printing the full reset specifier is not needed. A message like
+> > > 
+> > >     /soc/pwm@e6e31000 and /soc/pwm@e6e30000 share a reset on
+> > > /soc/clock-controller@e6150000
+> > > 
+> > > should give sufficient clue to the user.
+> > 
+> > Yes. You could also pass con_id into __of_reset_is_exclusive and print
+> > that. It would be nice to indicate which consumer requested exclusive
+> > access.
+> 
+> con_id is used for lookup-based resets only?
+>
+> But the value passed there is the "id" parameter of
+> reset_control_get_exclusive().
 
-SNIP
+Sorry, I did mean the id parameter in the __of_reset_control_get case.
 
->  static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
->  				    bool overwrite)
->  {
-> @@ -520,7 +644,10 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->  	int i;
->  	int rc = 0;
->  	struct perf_mmap *maps;
-> -
-> +#ifdef HAVE_AIO_SUPPORT
-> +	int trace_fd = rec->data.file.fd;
-> +	off_t off;
-> +#endif
->  	if (!evlist)
->  		return 0;
->  
-> @@ -531,14 +658,34 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
->  		return 0;
->  
-> +#ifdef HAVE_AIO_SUPPORT
-> +	off = lseek(trace_fd, 0, SEEK_CUR);
-> +#endif
->  	for (i = 0; i < evlist->nr_mmaps; i++) {
->  		struct perf_mmap *map = &maps[i];
->  
->  		if (map->base) {
-> -			if (perf_mmap__push(map, rec, record__pushfn) != 0) {
-> -				rc = -1;
-> -				goto out;
-> +#ifdef HAVE_AIO_SUPPORT
-> +			if (!rec->opts.nr_cblocks) {
-> +#endif
-> +				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
-> +					rc = -1;
-> +					goto out;
-> +				}
-> +#ifdef HAVE_AIO_SUPPORT
-> +			} else {
-> +				/*
-> +				 * Call record__aio_sync() to wait till map->data buffer
-> +				 * becomes available after previous aio write request.
-> +				 */
-> +				record__aio_sync(map);
-> +				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
-> +					lseek(trace_fd, off, SEEK_SET);
-> +					rc = -1;
-> +					goto out;
-> +				}
->  			}
-> +#endif
+> However, that is not the consumer name,
 
-I really don't like this.. let's have some aio_... function with its
-dummy counterpart to be called in here.. and again.. if we realyl must
-have this compiled optionaly, which I'm not convinced of
+It is the name of the reset signal from point of view of the consumer.
+It specifies, via its position in the reset-names property, which of
+potentially multiple reset phandles in the resets property is the one
+causing the conflict.
 
-jirka
+> and usually NULL.
+
+In which case the resets property usually only contains one phandle, so
+it is not needed to determine the conflicting reset control.
+
+> I'm afraid the only way to know the consumer is to print a backtrace with
+> WARN()?
+
+I'm just suggesting to augment the warning message with the reset id, if
+available. For example:
+
+    /soc/pwm@e6e31000 requests exclusive control over reset "pwm"
+    shared with /soc/pwm@e6e30000 on /soc/clock-controller@e6150000
+
+regards
+Philipp
