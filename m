@@ -2,120 +2,130 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7759EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA02DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B1FF20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 652772145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 21:57:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="AqHiZkSc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B1FF20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f2P4smmK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652772145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeJIFCN (ORCPT
+        id S1726757AbeJIFLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 01:02:13 -0400
-Received: from mail-eopbgr50107.outbound.protection.outlook.com ([40.107.5.107]:18123
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725794AbeJIFCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 01:02:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xPaseEfYxx75CI0/ZVjQRy60qqeFbMsF8RE95dJOjiY=;
- b=AqHiZkSc0YcgWsPfCOS+LhKk1qcjUZ/ej5EWLBx6++MSGTrmK15I7aZltizKu3JAMu0R0klG9LlFZBzCOMrJHnB0iqLEsbPABgnnl2iCc/AqUTMI5xE+ncnEdoLlva2Ci1WwKanARflnILqKyYc3hyTy6x+/4I3w+bPca5AT+B4=
-Received: from VI1PR0201MB2464.eurprd02.prod.outlook.com (10.168.64.135) by
- VI1PR0201MB2046.eurprd02.prod.outlook.com (10.167.207.148) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.18; Mon, 8 Oct 2018 21:48:21 +0000
-Received: from VI1PR0201MB2464.eurprd02.prod.outlook.com
- ([fe80::9d75:5038:5eed:c905]) by VI1PR0201MB2464.eurprd02.prod.outlook.com
- ([fe80::9d75:5038:5eed:c905%7]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
- 21:48:21 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Luca Ceresoli <lucaceresoli77@gmail.com>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Michael Shych <michaelsh@mellanox.com>,
-        Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH v2 1/3] i2c: mux: pca954x: simplify code to reach the
- adapter
-Thread-Topic: [PATCH v2 1/3] i2c: mux: pca954x: simplify code to reach the
- adapter
-Thread-Index: AQHUWzDdZcsx+mQps0S8cAqwSuNVz6UQiusAgAVf8gA=
-Date:   Mon, 8 Oct 2018 21:48:20 +0000
-Message-ID: <c3fdd93a-b0db-771e-85e4-480c3b01ac29@axentia.se>
-References: <20181003155024.16024-1-lucaceresoli77@gmail.com>
- <20181005114336.GB5433@kunai>
-In-Reply-To: <20181005114336.GB5433@kunai>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR0502CA0023.eurprd05.prod.outlook.com
- (2603:10a6:3:e3::33) To VI1PR0201MB2464.eurprd02.prod.outlook.com
- (2603:10a6:800:55::7)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0201MB2046;6:CIHPQYEF9BOMkod4v5xQedOWPzXeGO02X8d9v0VTtLTS/R/27YWpEpsG0HSswADS5MJFV3rXPOTYu4ALRJqEusUqSwq2spDjD/bMbaW1Qr0x4EG0/5OtWAMLdoXC6zA77bn+/UQVBqayFBhvPzXEODXXLx1TgeYy4+PVOPUsmMfnV9eY2MNA0nm3rEibU6oCHYAQAHhZctmELLp/KfkUueG5u5KlH5tZD/P2ffKaD6Hl3AO7+Msyo7FsE1fpV81X/TfGuBzxpfigWRQIqEbf865dLWMA+HSUrhLNMOngpJH6QSCoZAQ4h+RplwlbwqXA2dILX1G9TuC5AwVzIeG5Jy/omTw86SIz2HUFD434OofO79DwyUOz1e9/8IN1xOCc7EDG8Q6ATTAjEuoCMPBp7dMClGEnAyp4TVwvv/R5poEyWWGU7nHyWjqAHJiyuV8LRQy/3qPKCgpekv/4CRhv3A==;5:RQl3DN/ln+l1EU8rxN7235xSydl87zzoBWk1zM0rpZL/J2vVbge6NEk+mBsoRFQFWg3mJrjqjz7m32hPaoFklCJ/YhXlYDUd7t6Z1019mLjDSX5UrijpMDapnBiNcQtghYfbhLao60UKaSJRLk3RIhGRzGNNGoUZzGBcvP723Xo=;7:2DDdOav8CEIJnnQaJAFGDphFjRlTxI0u2rNbAxSW0lrJtk+/6aZnwGjfJWowzyn4GGVeLWYP1pvKP55Z7Mt0N1A+5uBlIYaa9avewMXkj6ZubYPzj0gDwE0GY/3SM85GAIbJVE/xF3HjXlgNlgx4WxJIAAsMafSpFkKICkUJBBD9D+s7EyRQ3knvGXCUMIIH9pBvMfoE3IfO7SKHa0k8yUs3MsBkwUiY6ZWTWU35djEeqbtL5oIvA+bwwoTD4rrT
-x-ms-office365-filtering-correlation-id: 77548496-44b1-44ab-adc8-08d62d67c3aa
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2046;
-x-ms-traffictypediagnostic: VI1PR0201MB2046:
-x-microsoft-antispam-prvs: <VI1PR0201MB2046A3BD78D1A86845A32ADFBCE60@VI1PR0201MB2046.eurprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051);SRVR:VI1PR0201MB2046;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB2046;
-x-forefront-prvs: 081904387B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(136003)(366004)(396003)(39830400003)(199004)(189003)(39060400002)(6512007)(53936002)(54906003)(6486002)(110136005)(3846002)(6116002)(256004)(31686004)(99286004)(76176011)(25786009)(4326008)(3260700006)(52116002)(305945005)(6436002)(7736002)(102836004)(105586002)(8676002)(106356001)(81156014)(81166006)(65806001)(65956001)(2906002)(66066001)(26005)(6246003)(64126003)(8936002)(68736007)(229853002)(14454004)(5250100002)(508600001)(97736004)(186003)(65826007)(86362001)(31696002)(2900100001)(5660300001)(6506007)(53546011)(476003)(2616005)(36756003)(386003)(58126008)(11346002)(446003)(71200400001)(71190400001)(316002)(74482002)(486006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2046;H:VI1PR0201MB2464.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: e0jj2h9ud1qLgGOCvA0z/oGMJAaT33apMzgeSgEVTdnBfduKLlpdMlkc++DehnhbWJ7MiF+zcdNLH7fj7UAiO8nkNijRjvazRdtmtm1pf5YCWFnn3bYhKyx7Nf6y75Nc+TzIeBg79nTBjdcZGNat4R4MfCIET3+Y1J4uhSheAul/SP+F/VdqNQPFYg4/efIGTVSE2MB/lWKbVuSE3fpjeXGCftof+XQiS9MnVeqE1aGE+ZJt/wQKxHXNVzSg25/3+qPWA90MCovYFNA8IjV5DC9DVteN/6GIxxChor3/mizV4dj6M6MjQg1VBEpyzYCkX2vjtOcR7vqOG8LUdwkpTPuLaLBBnxP9u/fHHNNJ1II=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <666B2A29BFB0AF48AEB3A4940BD7BEC7@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 9 Oct 2018 01:11:41 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:40797 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeJIFLl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 01:11:41 -0400
+Received: by mail-yw1-f65.google.com with SMTP id l79-v6so8714884ywc.7
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 14:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=adb+csjHuh8r2n+XAl2fzZhXMg6U3zxIwhUI/NO8vvA=;
+        b=f2P4smmKPxfCEB8ziBNLmSuXfnh9kUx1jd+luW7yJqAHgy9V+2SJ9FR/S27X3uW2w2
+         zD7f74+Mw/zgkkksUDVL/CvkJotecx6Jalt3dpm4+KMR8s8YtUbwnC3R0BvBG4cIkFuN
+         XArWIhCXIQEIUwkxS2lpj9Yx+ddEaiqHWEWtg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=adb+csjHuh8r2n+XAl2fzZhXMg6U3zxIwhUI/NO8vvA=;
+        b=F3dxD5GkYZfXTX9yJ9i+v5gDW8ksklgzrGCRIX8M08pl/5665NXW5HMvZFUh+wdStR
+         7eIRbw4G+UemW//FFIZUSgh0K/3hFYeJhx/gWlhDgKbDlKmsx0ZtYYuK6mno8Y1jEiLm
+         aDI03/3V7ZZxWKKEH41uKgSdX6HbPd2YmP1I4Xs68PLbqgXZ8KD4dtxKYEO0yxBqhL3v
+         g7IVSjVD274PGC+ceIa+YCwAtoBmskXM633Kc7fnlFQB726ov7SW+E4TxIxerwZeL5gd
+         dIluJdUltN3j61UraIuvN1iBRhbpWDrq7Om/HUt2uuf8wd+ghjTux/zH7CMM6t/ChoKy
+         Jybw==
+X-Gm-Message-State: ABuFfoj9zjql/ad5JE+skm1dLPBupw0FQgV5Pc8G5TJp8HGw4jGG0KwL
+        6kBLbwNZ5HPNLS3a8LUs6IhcOLSV7c0=
+X-Google-Smtp-Source: ACcGV63IzHEYysJqHloBoHPMsy17lOGGqMlEnCczDeJIu0Yzq7bqlyrdO39Y5bHEExrhiTkLHQXQEw==
+X-Received: by 2002:a81:1393:: with SMTP id 141-v6mr13679820ywt.73.1539035870864;
+        Mon, 08 Oct 2018 14:57:50 -0700 (PDT)
+Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id q6-v6sm761738ywh.41.2018.10.08.14.57.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 14:57:49 -0700 (PDT)
+Received: by mail-yw1-f54.google.com with SMTP id a197-v6so8713968ywh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 14:57:49 -0700 (PDT)
+X-Received: by 2002:a81:2908:: with SMTP id p8-v6mr14716384ywp.407.1539035869058;
+ Mon, 08 Oct 2018 14:57:49 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77548496-44b1-44ab-adc8-08d62d67c3aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 21:48:21.0050
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2046
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 14:57:48 -0700 (PDT)
+In-Reply-To: <20181008202901.7894-1-bp@alien8.de>
+References: <20181008202901.7894-1-bp@alien8.de>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 8 Oct 2018 14:57:48 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKkAf1z1bGjTNn7F-Qf=3eObFD4WS_BYgKONCHd-Ge5dw@mail.gmail.com>
+Message-ID: <CAGXu5jKkAf1z1bGjTNn7F-Qf=3eObFD4WS_BYgKONCHd-Ge5dw@mail.gmail.com>
+Subject: Re: [PATCH] kernel/panic: Do not append newline to the stack
+ protector panic string
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-05 13:43, Wolfram Sang wrote:
-> On Wed, Oct 03, 2018 at 05:50:22PM +0200, Luca Ceresoli wrote:
->> From: Luca Ceresoli <luca@lucaceresoli.net>
->>
->> struct i2c_client has a direct pointer to the adapter, no need to dig
->> it out of the struct device tree.
->>
->> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
->=20
-> I like such cleanups!
+On Mon, Oct 8, 2018 at 1:29 PM, Borislav Petkov <bp@alien8.de> wrote:
+> From: Borislav Petkov <bp@suse.de>
+>
+> ... because panic() itself already does this. Otherwise you have
+> line-broken trailer:
+>
+>   [    1.836965] ---[ end Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: pgd_alloc+0x29e/0x2a0
+>   [    1.836965]  ]---
+>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Me too!
+Acked-by: Kees Cook <keescook@chromium.org>
 
-All three patches applied to for-next. Thanks!
+Andrew, can you take this?
 
-Cheers,
-Peter
+-Kees
+
+> ---
+>  kernel/panic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index 8b2e002d52eb..837a94b7024d 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -631,7 +631,7 @@ device_initcall(register_warn_debugfs);
+>   */
+>  __visible void __stack_chk_fail(void)
+>  {
+> -       panic("stack-protector: Kernel stack is corrupted in: %pB\n",
+> +       panic("stack-protector: Kernel stack is corrupted in: %pB",
+>                 __builtin_return_address(0));
+>  }
+>  EXPORT_SYMBOL(__stack_chk_fail);
+> --
+> 2.19.0.271.gfe8321ec057f
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
