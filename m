@@ -2,147 +2,165 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A257C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8DFC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC22E2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 481532089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 19:49:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qcTdmJno"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC22E2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nzx3q2Gv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 481532089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeJIDCk (ORCPT
+        id S1726788AbeJIDDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:02:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33456 "EHLO
+        Mon, 8 Oct 2018 23:03:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34920 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJIDCj (ORCPT
+        with ESMTP id S1726427AbeJIDDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:02:39 -0400
+        Mon, 8 Oct 2018 23:03:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9+hibdFJ7f+QzvvL8Y657U7dz0koWuYGCzJ6Awvw590=; b=qcTdmJnojkMpi+YOOsp/yTxyZ
-        w4SqVOpTxeV8UCe07T4RjzQyn1UUslnU9wplLB74oAOZzxffXFurGknbMAuw8nb2jI+7BJtU7yutv
-        FrmtBaWlBwDA/AXopenIx0KdoaqDSEveyAfW5AwKvosXMT+mdKiy8FgPV6TL3axw9ZCZv+QK8g80e
-        EL/U5vIP38RWQzuWLxGZD/R8N3Kwng7qBr3q1xswAjdXbm5ZiKkCN13+Gk2hHFVCpHeykPIvLu5bp
-        pdAh0YKVHeDgXVCUh68GJ7pfuhQXKaITFLq8WwHIjn3mRxnJ877W/qxPUy4aWxSmvOkE40p6NZIfa
-        G1kOcoVhg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+         bh=WG7Dk5OPpOMO1UTYw/FTHl05v5IkuVTYd6nps4K8U1s=; b=Nzx3q2Gvo94fMji9maSz2OJYl
+        /yh3mQn8Z+AlpGC+IrmHMY4QqtyhGWpMFr9gAmR8I3VO5VI7VuV/POZDuzi2XApfyttNRQCyfX/go
+        9qwVRp4l+LHFVfqQDy0WdHq8UWCVGGJDhE5dkq/bDULujXy1DZHkZw2Q7FnLTbwNDyAxJA+xW4MgW
+        um52ldaqFhomc7c41SwZOQH7Ch9pH8U/erwZnGZQHhrIlLR1uPIg/0geCz4ZpiV1sso6RqoF/FhDF
+        gshsI9niBU6VZZ9jaHSvLlzSnheVbmzFgYB26viweFTsd9oSPStYeQCIuk8hwqTfgWDcifMae76Qf
+        WnqhGDpKQ==;
+Received: from [179.183.98.126] (helo=coco.lan)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9bWl-0006nu-Js; Mon, 08 Oct 2018 19:49:15 +0000
-Subject: Re: [PATCH v2] Documentation/arm64: HugeTLB page implementation
-To:     Punit Agrawal <punit.agrawal@arm.com>, linux-doc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        steve.capper@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <97e4e5fb-24ed-0545-414a-6a0c0116e6b8@infradead.org>
- <20181008100355.31820-1-punit.agrawal@arm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <67f4ceb7-d41c-ab7a-4d5e-c147dadf6860@infradead.org>
-Date:   Mon, 8 Oct 2018 12:49:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id 1g9bXN-00074m-Fv; Mon, 08 Oct 2018 19:49:53 +0000
+Date:   Mon, 8 Oct 2018 16:49:50 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>
+Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the
+ ambiguity about collecting email addresses
+Message-ID: <20181008164950.71793583@coco.lan>
+In-Reply-To: <1538926141.4115.2.camel@HansenPartnership.com>
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+        <1538861799.4088.6.camel@HansenPartnership.com>
+        <CAKMK7uGvgttqL_RoXumd0F4w8UMqwaVODaMWnOZz5weSFzDJ2A@mail.gmail.com>
+        <1538926141.4115.2.camel@HansenPartnership.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181008100355.31820-1-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/8/18 3:03 AM, Punit Agrawal wrote:
-> Arm v8 architecture supports multiple page sizes - 4k, 16k and
-> 64k. Based on the active page size, the Linux port supports
-> corresponding hugepage sizes at PMD and PUD(4k only) levels.
-> 
-> In addition, the architecture also supports caching larger sized
-> ranges (composed of multiple entries) at the PTE and PMD level in the
-> TLBs using the contiguous bit. The Linux port makes use of this
-> architectural support to enable additional hugepage sizes.
-> 
-> Describe the two different types of hugepages supported by the arm64
-> kernel and the hugepage sizes enabled by each.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
+Em Sun, 07 Oct 2018 08:29:01 -0700
+James Bottomley <James.Bottomley@HansenPartnership.com> escreveu:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> On Sun, 2018-10-07 at 11:04 +0200, Daniel Vetter wrote:
+> > On Sat, Oct 6, 2018 at 11:36 PM James Bottomley
+> > <James.Bottomley@hansenpartnership.com> wrote: =20
+> > >=20
+> > > From 4a614e9440148894207bef5bf69e74071baceb3b Mon Sep 17 00:00:00
+> > > 2001
+> > > From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > > Date: Sat, 6 Oct 2018 14:21:56 -0700
+> > > Subject: [PATCH 1/2] code-of-conduct: Fix the ambiguity about
+> > > collecting email
+> > > =C2=A0addresses
+> > >=20
+> > > The current code of conduct has an ambiguity in the it considers
+> > > publishing private information such as email addresses unacceptable
+> > > behaviour.=C2=A0=C2=A0Since the Linux kernel collects and publishes e=
+mail
+> > > addresses as part of the patch process, add an exception clause for
+> > > email addresses ordinarily collected by the project to correct this
+> > > ambiguity.
+> > >=20
+> > > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c =
+=20
+> > > om> =20
+> > > ---
+> > > =C2=A0Documentation/process/code-of-conduct.rst | 2 +-
+> > > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/Documentation/process/code-of-conduct.rst
+> > > b/Documentation/process/code-of-conduct.rst
+> > > index ab7c24b5478c..aa40e34e7785 100644
+> > > --- a/Documentation/process/code-of-conduct.rst
+> > > +++ b/Documentation/process/code-of-conduct.rst
+> > > @@ -31,7 +31,7 @@ Examples of unacceptable behavior by participants
+> > > include:
+> > > =C2=A0* Trolling, insulting/derogatory comments, and personal or
+> > > political attacks
+> > > =C2=A0* Public or private harassment
+> > > =C2=A0* Publishing others=E2=80=99 private information, such as a phy=
+sical or
+> > > electronic
+> > > -=C2=A0=C2=A0address, without explicit permission
+> > > +=C2=A0=C2=A0address not ordinarily collected by the project, without
+> > > explicit permission
+> > > =C2=A0* Other conduct which could reasonably be considered inappropri=
+ate
+> > > in a
+> > > =C2=A0=C2=A0=C2=A0professional setting =20
+> >=20
+> > We've discussed this a bit with freedesktop.org people a while ago,
+> > both from a CoC and privacy regulations pov, and we concluded that
+> > attaching random people's emails in Reported-by: and similar lines,
+> > without their consent, is indeed a problem. Bugzilla is rather
+> > problematic in this way, since it looks like it's protecting your
+> > email address and keeping it private, but then you can still just
+> > grab it from the bugzilla emails without first asking for permission.
+> > That's one of the reasons why fd.o admins want to retire Bugzilla in
+> > favour of gitlab issues (where this is handled a lot more strictly). =20
+>=20
+> This is a code of conduct example of a violation.  While I agree we
+> should exercise sensitivity in reporter expectations I don't think a
+> maintainer getting it wrong should be equated to doxxing.
+>=20
+> In many ways, this is why having examples sections in quasi legal
+> documents is a bad thing to do because it's arguable (as you have done)
+> that if some behaviour isn't explicitly mentioned in the unacceptable
+> examples it must be acceptable.
+>=20
+> Look at it this way: if a maintainer screws up and adds a reported by
+> from someone who didn't expect their email to be published should that
+> be treated as an immediate code of conduct violation by whatever
+> enforcement process we come up with?  I think most maintainers would
+> answer "no" to this.=20
 
-Thanks.
+Agreed.=20
 
-> ---
-> Hi,
-> 
-> This version incorporates the feedback on v1.
-> 
-> Thanks,
-> Punit
-> 
->  Documentation/arm64/hugetlbpage.txt | 38 +++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/arm64/hugetlbpage.txt
-> 
-> diff --git a/Documentation/arm64/hugetlbpage.txt b/Documentation/arm64/hugetlbpage.txt
-> new file mode 100644
-> index 000000000000..cfae87dc653b
-> --- /dev/null
-> +++ b/Documentation/arm64/hugetlbpage.txt
-> @@ -0,0 +1,38 @@
-> +HugeTLBpage on ARM64
-> +====================
-> +
-> +Hugepage relies on making efficient use of TLBs to improve performance of
-> +address translations. The benefit depends on both -
-> +
-> +  - the size of hugepages
-> +  - size of entries supported by the TLBs
-> +
-> +The ARM64 port supports two flavours of hugepages.
-> +
-> +1) Block mappings at the pud/pmd level
-> +--------------------------------------
-> +
-> +These are regular hugepages where a pmd or a pud page table entry points to a
-> +block of memory. Regardless of the supported size of entries in TLB, block
-> +mappings reduce the depth of page table walk needed to translate hugepage
-> +addresses.
-> +
-> +2) Using the Contiguous bit
-> +---------------------------
-> +
-> +The architecture provides a contiguous bit in the translation table entries
-> +(D4.5.3, ARM DDI 0487C.a) that hints to the MMU to indicate that it is one of a
-> +contiguous set of entries that can be cached in a single TLB entry.
-> +
-> +The contiguous bit is used in Linux to increase the mapping size at the pmd and
-> +pte (last) level. The number of supported contiguous entries varies by page size
-> +and level of the page table.
-> +
-> +
-> +The following hugepage sizes are supported -
-> +
-> +         CONT PTE    PMD    CONT PMD    PUD
-> +         --------    ---    --------    ---
-> +  4K:         64K     2M         32M     1G
-> +  16K:         2M    32M          1G
-> +  64K:         2M   512M         16G
-> 
+I'd say more: what happens if someone adds a diff inside a bug
+report? Not adding the author can be problematic too.
 
+People should assume that, when reporting a bug, replying to
+a patch, etc, his e-mail will be visible by people, and it can be
+used when a fixup patch is produced. If someone doesn't want that,
+it should *explicitly* say otherwise.
 
--- 
-~Randy
+The text changes suggested by James reflects that: an e-mail sent in
+private, with an explicit message saying to not use the personal
+address is not an "electronic address not ordinarily collected by the
+project".
+
+Of course, it is up to the maintainer/developer that receives
+such e-mails to either use its content, anonimizing the submitter
+as requested (and eventually taking associated risks with regards
+to GPL - if the email contains a patch) or to just ignore it.
+
+Anyway, such "special cases" are the kind of thing that makes sense
+on a FAQ, and not at the letter of the document itself.
+
+Thanks,
+Mauro
