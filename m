@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57807C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF43C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166342087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 357EF2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 13:33:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I9mKdYYv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PXHZPQfq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166342087C
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K3Fu49Du";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TTdfr3yz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357EF2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbeJHUpH (ORCPT
+        id S1726721AbeJHUpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 16:45:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47538 "EHLO
+        Mon, 8 Oct 2018 16:45:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47776 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeJHUpG (ORCPT
+        with ESMTP id S1726014AbeJHUpN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:45:06 -0400
+        Mon, 8 Oct 2018 16:45:13 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9F06560C4B; Mon,  8 Oct 2018 13:33:20 +0000 (UTC)
+        id 73AB360C80; Mon,  8 Oct 2018 13:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539005600;
-        bh=au+DdCLnjRnVoVQ1LSmOAwNGCxOeoC4eB7lxO6mPKQw=;
+        s=default; t=1539005606;
+        bh=iv2EK+ZgRhvNeG6DvU2ZFUJoAIM4wftqxW+To1VUSEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I9mKdYYvIXw6inpGcY3HqmFCghEn61j9neRbzKL25kz7XDPzJ0LF80BKbFfaOs7o8
-         kyqGnogKJhlNF7OupaZ2caBABCyuIji+8l8UYIhPsytvkCxVagc5/XDcn7IelaUIWo
-         kkyEtrLwscsqJCwHVPUrENI6hz/TKMvyz2iVVm6g=
+        b=K3Fu49DuTHmQz4bQHZKVvhUwhGWRhYGt4bd7g9vkdCFDn0VrPhw0ra3yFWksokFFU
+         5wqvLoRNrUos8S/a2CqBdo2zCRjJyuOTmb2n7amzCOGuAEIEwn9uyhWNlbAcaxo+sZ
+         iVkmds7hSA1SCH+aDNiahkO1WSnFuliRzJ27HMOE=
 Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vgarodia@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2EC7A60866;
-        Mon,  8 Oct 2018 13:33:16 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B2C6460C80;
+        Mon,  8 Oct 2018 13:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539005599;
-        bh=au+DdCLnjRnVoVQ1LSmOAwNGCxOeoC4eB7lxO6mPKQw=;
+        s=default; t=1539005604;
+        bh=iv2EK+ZgRhvNeG6DvU2ZFUJoAIM4wftqxW+To1VUSEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PXHZPQfqWj9oXiC22GO7ujZut5h1EWuFRDXPjoVB2WlyzGRgx4Q9jBwtOBS1A4yOL
-         WundLWP6IgxaA0Ms44jknlBTtH1iUELLqBj/hcsf6C48g+zes8k0A7EnQRhpgvdNbi
-         4ht1bvlrbTgamFxklCl4RY0FvRZmF6SoRRiPyJx4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EC7A60866
+        b=TTdfr3yzHhTlUVJKeDBR5Oo5I2evSkuyDTnWM0fmKWKGvR4alx07dYLKB58RGXYIY
+         HVHhK/LCKP3RaPLor/N5IEUxn/wighKYzAYoh0f1juSAQ3Rb3qzHiHXqF1+kbLJMlI
+         vKA8TLiSr5TyNz86BuZJmBfK+k4WamKBIzp54C/4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B2C6460C80
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
 From:   Vikash Garodia <vgarodia@codeaurora.org>
@@ -58,9 +57,9 @@ To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
 Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
         vgarodia@codeaurora.org
-Subject: [PATCH v11 2/5] venus: firmware: move load firmware in a separate function
-Date:   Mon,  8 Oct 2018 19:02:49 +0530
-Message-Id: <1539005572-803-3-git-send-email-vgarodia@codeaurora.org>
+Subject: [PATCH v11 3/5] venus: firmware: register separate platform_device for firmware loader
+Date:   Mon,  8 Oct 2018 19:02:50 +0530
+Message-Id: <1539005572-803-4-git-send-email-vgarodia@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539005572-803-1-git-send-email-vgarodia@codeaurora.org>
 References: <1539005572-803-1-git-send-email-vgarodia@codeaurora.org>
@@ -69,151 +68,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Separate firmware loading part into a new function.
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+This registers a firmware platform_device and associate it with
+video-firmware DT subnode. Then calls dma configure to initialize
+dma and iommu.
+
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/core.c     |  4 +-
- drivers/media/platform/qcom/venus/firmware.c | 55 ++++++++++++++++++----------
- drivers/media/platform/qcom/venus/firmware.h |  2 +-
- 3 files changed, 38 insertions(+), 23 deletions(-)
+ drivers/media/platform/qcom/venus/core.c     | 14 +++++--
+ drivers/media/platform/qcom/venus/core.h     |  3 ++
+ drivers/media/platform/qcom/venus/firmware.c | 55 ++++++++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/firmware.h |  2 +
+ 4 files changed, 70 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index bb6add9..75b9785 100644
+index 75b9785..440f25f 100644
 --- a/drivers/media/platform/qcom/venus/core.c
 +++ b/drivers/media/platform/qcom/venus/core.c
-@@ -84,7 +84,7 @@ static void venus_sys_error_handler(struct work_struct *work)
- 
- 	pm_runtime_get_sync(core->dev);
- 
--	ret |= venus_boot(core->dev, core->res->fwname);
-+	ret |= venus_boot(core);
- 
- 	ret |= hfi_core_resume(core, true);
- 
-@@ -284,7 +284,7 @@ static int venus_probe(struct platform_device *pdev)
+@@ -284,6 +284,14 @@ static int venus_probe(struct platform_device *pdev)
  	if (ret < 0)
  		goto err_runtime_disable;
  
--	ret = venus_boot(dev, core->res->fwname);
-+	ret = venus_boot(core);
++	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	if (ret)
++		goto err_runtime_disable;
++
++	ret = venus_firmware_init(core);
++	if (ret)
++		goto err_runtime_disable;
++
+ 	ret = venus_boot(core);
  	if (ret)
  		goto err_runtime_disable;
+@@ -308,10 +316,6 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_core_deinit;
  
+-	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+-	if (ret)
+-		goto err_dev_unregister;
+-
+ 	ret = pm_runtime_put_sync(dev);
+ 	if (ret)
+ 		goto err_dev_unregister;
+@@ -347,6 +351,8 @@ static int venus_remove(struct platform_device *pdev)
+ 	venus_shutdown(dev);
+ 	of_platform_depopulate(dev);
+ 
++	venus_firmware_deinit(core);
++
+ 	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+ 
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 385e309..094c2ec 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -130,6 +130,9 @@ struct venus_core {
+ 	struct device *dev;
+ 	struct device *dev_dec;
+ 	struct device *dev_enc;
++	struct video_firmware {
++		struct device *dev;
++	} fw;
+ 	bool use_tz;
+ 	struct mutex lock;
+ 	struct list_head instances;
 diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-index 0e21a90..1d4f066 100644
+index 1d4f066..98b3b16 100644
 --- a/drivers/media/platform/qcom/venus/firmware.c
 +++ b/drivers/media/platform/qcom/venus/firmware.c
-@@ -60,20 +60,18 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
- 	return 0;
- }
- 
--int venus_boot(struct device *dev, const char *fwname)
-+static int venus_load_fw(struct venus_core *core, const char *fwname,
-+			 phys_addr_t *mem_phys, size_t *mem_size)
- {
- 	const struct firmware *mdt;
- 	struct device_node *node;
--	phys_addr_t mem_phys;
-+	struct device *dev;
- 	struct resource r;
- 	ssize_t fw_size;
--	size_t mem_size;
- 	void *mem_va;
- 	int ret;
- 
--	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) || !qcom_scm_is_available())
--		return -EPROBE_DEFER;
--
-+	dev = core->dev;
- 	node = of_parse_phandle(dev->of_node, "memory-region", 0);
- 	if (!node) {
- 		dev_err(dev, "no memory-region specified\n");
-@@ -84,16 +82,16 @@ int venus_boot(struct device *dev, const char *fwname)
- 	if (ret)
- 		return ret;
- 
--	mem_phys = r.start;
--	mem_size = resource_size(&r);
-+	*mem_phys = r.start;
-+	*mem_size = resource_size(&r);
- 
--	if (mem_size < VENUS_FW_MEM_SIZE)
-+	if (*mem_size < VENUS_FW_MEM_SIZE)
- 		return -EINVAL;
- 
--	mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
-+	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
- 	if (!mem_va) {
- 		dev_err(dev, "unable to map memory region: %pa+%zx\n",
--			&r.start, mem_size);
-+			&r.start, *mem_size);
- 		return -ENOMEM;
- 	}
- 
-@@ -108,23 +106,40 @@ int venus_boot(struct device *dev, const char *fwname)
- 		goto err_unmap;
- 	}
- 
--	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
--			    mem_size, NULL);
-+	if (core->use_tz)
-+		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
-+				    mem_va, *mem_phys, *mem_size, NULL);
-+	else
-+		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
-+					    mem_va, *mem_phys, *mem_size, NULL);
- 
- 	release_firmware(mdt);
- 
--	if (ret)
--		goto err_unmap;
--
--	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
--	if (ret)
--		goto err_unmap;
--
- err_unmap:
- 	memunmap(mem_va);
- 	return ret;
- }
- 
-+int venus_boot(struct venus_core *core)
-+{
-+	struct device *dev = core->dev;
-+	phys_addr_t mem_phys;
-+	size_t mem_size;
-+	int ret;
-+
-+	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) ||
-+	    (core->use_tz && !qcom_scm_is_available()))
-+		return -EPROBE_DEFER;
-+
-+	ret = venus_load_fw(core, core->res->fwname, &mem_phys, &mem_size);
-+	if (ret) {
-+		dev_err(dev, "fail to load video firmware\n");
-+		return -EINVAL;
-+	}
-+
-+	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
-+}
-+
- int venus_shutdown(struct device *dev)
+@@ -18,6 +18,8 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/of_device.h>
+ #include <linux/qcom_scm.h>
+ #include <linux/sizes.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+@@ -144,3 +146,56 @@ int venus_shutdown(struct device *dev)
  {
  	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
+ }
++
++int venus_firmware_init(struct venus_core *core)
++{
++	struct platform_device_info info;
++	struct platform_device *pdev;
++	struct device_node *np;
++	int ret;
++
++	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
++	if (!np) {
++		core->use_tz = true;
++		return 0;
++	}
++
++	memset(&info, 0, sizeof(info));
++	info.fwnode = &np->fwnode;
++	info.parent = core->dev;
++	info.name = np->name;
++	info.dma_mask = DMA_BIT_MASK(32);
++
++	pdev = platform_device_register_full(&info);
++	if (IS_ERR(pdev)) {
++		of_node_put(np);
++		return PTR_ERR(pdev);
++	}
++
++	pdev->dev.of_node = np;
++
++	ret = of_dma_configure(&pdev->dev, np, true);
++	if (ret) {
++		dev_err(core->dev, "dma configure fail\n");
++		goto err_unregister;
++	}
++
++	core->fw.dev = &pdev->dev;
++
++	of_node_put(np);
++
++	return 0;
++
++err_unregister:
++	platform_device_unregister(pdev);
++	of_node_put(np);
++	return ret;
++}
++
++void venus_firmware_deinit(struct venus_core *core)
++{
++	if (!core->fw.dev)
++		return;
++
++	platform_device_unregister(to_platform_device(core->fw.dev));
++}
 diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-index 397570c..1343747 100644
+index 1343747..fd7edf0 100644
 --- a/drivers/media/platform/qcom/venus/firmware.h
 +++ b/drivers/media/platform/qcom/venus/firmware.h
-@@ -16,7 +16,7 @@
+@@ -16,6 +16,8 @@
  
  struct device;
  
--int venus_boot(struct device *dev, const char *fwname);
-+int venus_boot(struct venus_core *core);
++int venus_firmware_init(struct venus_core *core);
++void venus_firmware_deinit(struct venus_core *core);
+ int venus_boot(struct venus_core *core);
  int venus_shutdown(struct device *dev);
  int venus_set_hw_state(struct venus_core *core, bool suspend);
- 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
