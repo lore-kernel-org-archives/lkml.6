@@ -2,108 +2,704 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F914C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B8DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDAAE214C3
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E562420C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:14:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ks1JZ3jK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAAE214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3hjWQx3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E562420C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeJIDWL (ORCPT
+        id S1726757AbeJID2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:22:11 -0400
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:52019 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIDWL (ORCPT
+        Mon, 8 Oct 2018 23:28:03 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38425 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJID2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:22:11 -0400
-Received: by mail-wm1-f50.google.com with SMTP id 143-v6so9248228wmf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 13:08:43 -0700 (PDT)
+        Mon, 8 Oct 2018 23:28:03 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f29-v6so6005276pff.5;
+        Mon, 08 Oct 2018 13:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=02BobGl2NubJwR7sYXPC0Sv+CHJnX0j0cpnGfuOoTdU=;
-        b=Ks1JZ3jK26QNhn1nXaZdlisHYyZlNspIhzRUZTzw2Hm5qelzeKbOV5U46ixLaRq/bf
-         WoWK7h3nJdbqCyqc0iL3Tjwmw9c5SgJiG2IhjUH+6URqjsuzgOxrnkh3wBgsRwKZ5fvF
-         Cd7rhkLAdNrXRi54yYHmcP/XWw5cQjCwN1IIVPziaNTgKYod1s4+X7bmi/9ltcOrNOh3
-         d3nyZ4ugeYQtYiTEBxlznoNBOj4gmRof2s/EVNuxWrQ9O4SePdaYRCMvvcxRPQYUQvNZ
-         wrbK4h14Gsa31jJiYr9BiV8l5FOvKrH1sVQusY9nFq9d57MTgTJhcC7d9HgfTwwXYMll
-         Y2RQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=l9gvYz2Mz8RXfsMPNdJksYr6S3Ia7ykTcPSSRk1b0kw=;
+        b=J3hjWQx3gA83K1evVvGkE10xL6Xsrta7upodIbjKtHca8UWBD+8MZk51F/D95b8L3/
+         Pb5/LOAZK+hZJ3um5jxg2z0ekv752VN1BRy9aLMd8txwq8ELXqBlhW5mPzCpdY5069Mu
+         k5Uxc8pCeFlezu2uPHUyMH4r3QXSJ7Mx3Jw8ocweP9atmgeL/WSlt2FMAd6PNMPtLBt7
+         EOtngYji9W3Top6z4+TzOGo3BXq/Ir/IgoeDiijl4ygB5fy1iAa1cCVmDREldXh1/CSf
+         hFhs3YzDT4WL6QUye05Zf4Dra3Vkrm8PpGFdVpzQAEUtFZpwScax50Qm8U9JFDh/69us
+         oVxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=02BobGl2NubJwR7sYXPC0Sv+CHJnX0j0cpnGfuOoTdU=;
-        b=dREFsGZABF4eNbihq6vHRYbGZLgFQsSnzgy8NpATKnGFJVIgG2aF+gw0pE0wm+X6Te
-         LdEOaFQC1xCTAcEU0Sjat8oqZfwFBhZLFzxhqWzXywTS6/sIMSv90XcfpLieuHhtTmp0
-         8NX/juEDATLT9HKslrZh4sa2D8SeJ4EtsPtM6dkr2Kqcgen5BfQrAuPlvqdocXFHWPAh
-         Te1w4EOSlX7XdfhGgrQyvqj+rIA2oeHwOeFNkcW7gXVj2faeqfPs2nJVnIXQxjAVfOr1
-         furvMnLo6K27FIUwAGrnUO4tnjsTd2yDBATWB2Wjp/p39Syg3KPese1GQtsyPRxYUAic
-         llKQ==
-X-Gm-Message-State: ABuFfogu/YTqKb9cveeQaSiNeFEP588SPfSwxuvF2/WisPQtBjRZHFf1
-        zS6qtkK/imMXbkdpPwS0P8bvRouw5OfiTZyMg/Af
-X-Google-Smtp-Source: ACcGV6376ehOHuH8nNRi00X5LArlgWj1op8IsVu9/x/TQ62lhJm5SfNrrpmL/+DU1PXnkQYLXaZHmvXkPgI/PJA4P58=
-X-Received: by 2002:a1c:88cd:: with SMTP id k196-v6mr15732774wmd.17.1539029322145;
- Mon, 08 Oct 2018 13:08:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <e75fa739-4bcc-dc30-2606-25d2539d2653@molgen.mpg.de>
- <alpine.DEB.2.21.1809191004580.1468@nanos.tec.linutronix.de>
- <0922cc1b-ed51-06e9-df81-57fd5aa8e7de@molgen.mpg.de> <alpine.DEB.2.21.1809210045220.1434@nanos.tec.linutronix.de>
- <c8da5778-3957-2fab-69ea-42f872a5e396@molgen.mpg.de> <alpine.DEB.2.21.1809281653270.2004@nanos.tec.linutronix.de>
- <20181003212255.GB28361@zn.tnic> <20181004080321.GA3630@8bytes.org>
- <alpine.DEB.2.21.1810051124320.3960@nanos.tec.linutronix.de>
- <74dededa-3754-058b-2291-a349b9f3673e@molgen.mpg.de> <alpine.DEB.2.21.1810082108570.2455@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1810082108570.2455@nanos.tec.linutronix.de>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Mon, 8 Oct 2018 15:08:30 -0500
-Message-ID: <CAErSpo5dSd7=BZFoROowLACmkKHHD0gbbRQWN3VCga3M3GepgQ@mail.gmail.com>
-Subject: Re: x86/mm: Found insecure W+X mapping at address (ptrval)/0xc00a0000
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     pmenzel@molgen.mpg.de, Joerg Roedel <joro@8bytes.org>,
-        Borislav Petkov <bp@alien8.de>, linux-mm@kvack.org,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=l9gvYz2Mz8RXfsMPNdJksYr6S3Ia7ykTcPSSRk1b0kw=;
+        b=aZQh5QCe2gwkPdVCNZor7R76+7tHta4uy3G7M5QMJEzzayFDx2YV8GDEkGb1f2jn7T
+         0cUCDW50NN/GFtw048Sxs5+QVwB9mw5Il7Gxh0oXORZT1HqFovm/fRIAZVeFq+skGDXH
+         RQCOKuYptvEQS+SM3smzMnrACLR8QC4QuIDwhrAVerJH63jjldm9/zAWV9LmpmAwx1U2
+         tUqMflQHkfcRVxu5Z1VAmEeYm4f3zRkBKPaSF//hGA8jQ1MjrygJ+L3gZSLq/I9In8gz
+         2iPnrqx6hi+QAiamKC/kQkMGMmXte95jT5W5n7Z9koLi08OYTUKgrpiLkf2zKepem1WW
+         2VyQ==
+X-Gm-Message-State: ABuFfogB9UTYwsoaLvCMXhQjepnorDHm614IjjddHBIl+Xfw8FAU7OyP
+        Us2guPrTYLR9v7ylFv0Y/JfVykki
+X-Google-Smtp-Source: ACcGV604HH5wwMuiOwIm6XRTnT8N9IQFVJeKaifJSzlp7N5f7h65wksaTKBrRZSvcTHYuHxrBz6LiQ==
+X-Received: by 2002:a63:db04:: with SMTP id e4-v6mr22622595pgg.280.1539029673810;
+        Mon, 08 Oct 2018 13:14:33 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id z63-v6sm27041991pfz.31.2018.10.08.13.14.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 13:14:33 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     jdelvare@suse.com, linux@roeck-us.net
+Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] hwmon: (ina3221) Use _info API to register hwmon device
+Date:   Mon,  8 Oct 2018 13:14:24 -0700
+Message-Id: <20181008201424.22978-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 2:37 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Paul,
->
-> On Fri, 5 Oct 2018, Paul Menzel wrote:
-> > On 10/05/18 11:27, Thomas Gleixner wrote:
-> > > If pcibios is enabled and used, need to look at the gory details of that
-> > > first, then the W+X check has to exclude that region. We can't do much
-> > > about that.
-> >
-> > That would also explain, why it only happens with the SeaBIOS payload,
-> > which sets up legacy BIOS calls. Using GRUB directly as payload, no BIOS
-> > calls are set up.
-> >
-> > Reading the Kconfig description of the PCI access mode, the BIOS should
-> > only be used last.
->
-> Correct. And looking at the dmesg you provided it is initialized:
->
-> [    0.441062] PCI: PCI BIOS area is rw and x. Use pci=nobios if you want it NX.
-> [    0.441062] PCI: PCI BIOS revision 2.10 entry at 0xffa40, last bus=3
->
-> Though I assume it's not really required, but this PCI BIOS thing is not
-> really well documented and there are some obsure usage sites involved.
->
-> Bjorn, do you have any insight or did you flush those memories long ago?
+The hwmon core has a newer API which abstracts most of common
+things in the core so as to simplify the hwmon device drivers.
 
-No, I don't.  I was never really involved with PCIBIOS.
+This patch implements this _info API to ina3221 hwmon driver.
+
+It also reduces the binary size:
+   text	   data	    bss	    dec	    hex	filename
+   5114	   1712	      0	   6826	   1aaa	drivers/hwmon/ina3221_before.o
+   4456	    440	      0	   4896	   1320	drivers/hwmon/ina3221.o
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+Changelog
+v1->v2:
+ * Added a binary size comparison in commit message
+ * Dropped unnecessary checks
+ * Dropped misleading ID conversion in the comments
+ * Added two comments to indicate 0-align channel indexes
+ * Used "fall through" instead of "fallthrough"
+
+ drivers/hwmon/ina3221.c | 520 ++++++++++++++++++----------------------
+ 1 file changed, 236 insertions(+), 284 deletions(-)
+
+diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+index ce8f0a8c4982..973fc4af0ddf 100644
+--- a/drivers/hwmon/ina3221.c
++++ b/drivers/hwmon/ina3221.c
+@@ -77,21 +77,6 @@ enum ina3221_channels {
+ 	INA3221_NUM_CHANNELS
+ };
+ 
+-static const unsigned int register_channel[] = {
+-	[INA3221_BUS1] = INA3221_CHANNEL1,
+-	[INA3221_BUS2] = INA3221_CHANNEL2,
+-	[INA3221_BUS3] = INA3221_CHANNEL3,
+-	[INA3221_SHUNT1] = INA3221_CHANNEL1,
+-	[INA3221_SHUNT2] = INA3221_CHANNEL2,
+-	[INA3221_SHUNT3] = INA3221_CHANNEL3,
+-	[INA3221_CRIT1] = INA3221_CHANNEL1,
+-	[INA3221_CRIT2] = INA3221_CHANNEL2,
+-	[INA3221_CRIT3] = INA3221_CHANNEL3,
+-	[INA3221_WARN1] = INA3221_CHANNEL1,
+-	[INA3221_WARN2] = INA3221_CHANNEL2,
+-	[INA3221_WARN3] = INA3221_CHANNEL3,
+-};
+-
+ /**
+  * struct ina3221_input - channel input source specific information
+  * @label: label of channel input source
+@@ -123,58 +108,6 @@ static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
+ 	return ina->reg_config & INA3221_CONFIG_CHx_EN(channel);
+ }
+ 
+-static ssize_t ina3221_show_label(struct device *dev,
+-				  struct device_attribute *attr, char *buf)
+-{
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+-	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int channel = sd_attr->index;
+-	struct ina3221_input *input = &ina->inputs[channel];
+-
+-	return snprintf(buf, PAGE_SIZE, "%s\n", input->label);
+-}
+-
+-static ssize_t ina3221_show_enable(struct device *dev,
+-				   struct device_attribute *attr, char *buf)
+-{
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+-	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int channel = sd_attr->index;
+-
+-	return snprintf(buf, PAGE_SIZE, "%d\n",
+-			ina3221_is_enabled(ina, channel));
+-}
+-
+-static ssize_t ina3221_set_enable(struct device *dev,
+-				  struct device_attribute *attr,
+-				  const char *buf, size_t count)
+-{
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+-	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int channel = sd_attr->index;
+-	u16 config, mask = INA3221_CONFIG_CHx_EN(channel);
+-	bool enable;
+-	int ret;
+-
+-	ret = kstrtobool(buf, &enable);
+-	if (ret)
+-		return ret;
+-
+-	config = enable ? mask : 0;
+-
+-	/* Enable or disable the channel */
+-	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, config);
+-	if (ret)
+-		return ret;
+-
+-	/* Cache the latest config register value */
+-	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
+-	if (ret)
+-		return ret;
+-
+-	return count;
+-}
+-
+ static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
+ 			      int *val)
+ {
+@@ -190,94 +123,104 @@ static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
+ 	return 0;
+ }
+ 
+-static ssize_t ina3221_show_bus_voltage(struct device *dev,
+-					struct device_attribute *attr,
+-					char *buf)
++static const u8 ina3221_in_reg[] = {
++	INA3221_BUS1,
++	INA3221_BUS2,
++	INA3221_BUS3,
++	INA3221_SHUNT1,
++	INA3221_SHUNT2,
++	INA3221_SHUNT3,
++};
++
++static int ina3221_read_in(struct device *dev, u32 attr, int channel, long *val)
+ {
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
++	const bool is_shunt = channel > INA3221_CHANNEL3;
+ 	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int reg = sd_attr->index;
+-	unsigned int channel = register_channel[reg];
+-	int val, voltage_mv, ret;
++	u8 reg = ina3221_in_reg[channel];
++	int regval, ret;
+ 
+-	/* No data for read-only attribute if channel is disabled */
+-	if (!attr->store && !ina3221_is_enabled(ina, channel))
+-		return -ENODATA;
++	/* Translate shunt channel index to sensor channel index */
++	channel %= INA3221_NUM_CHANNELS;
+ 
+-	ret = ina3221_read_value(ina, reg, &val);
+-	if (ret)
+-		return ret;
++	switch (attr) {
++	case hwmon_in_input:
++		if (!ina3221_is_enabled(ina, channel))
++			return -ENODATA;
+ 
+-	voltage_mv = val * 8;
++		ret = ina3221_read_value(ina, reg, &regval);
++		if (ret)
++			return ret;
+ 
+-	return snprintf(buf, PAGE_SIZE, "%d\n", voltage_mv);
++		/*
++		 * Scale of shunt voltage (uV): LSB is 40uV
++		 * Scale of bus voltage (mV): LSB is 8mV
++		 */
++		*val = regval * (is_shunt ? 40 : 8);
++		return 0;
++	case hwmon_in_enable:
++		*val = ina3221_is_enabled(ina, channel);
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
+ }
+ 
+-static ssize_t ina3221_show_shunt_voltage(struct device *dev,
+-					  struct device_attribute *attr,
+-					  char *buf)
++static const u8 ina3221_curr_reg[][INA3221_NUM_CHANNELS] = {
++	[hwmon_curr_input] = { INA3221_SHUNT1, INA3221_SHUNT2, INA3221_SHUNT3 },
++	[hwmon_curr_max] = { INA3221_WARN1, INA3221_WARN2, INA3221_WARN3 },
++	[hwmon_curr_crit] = { INA3221_CRIT1, INA3221_CRIT2, INA3221_CRIT3 },
++	[hwmon_curr_max_alarm] = { F_WF1, F_WF2, F_WF3 },
++	[hwmon_curr_crit_alarm] = { F_CF1, F_CF2, F_CF3 },
++};
++
++static int ina3221_read_curr(struct device *dev, u32 attr,
++			     int channel, long *val)
+ {
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+ 	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int reg = sd_attr->index;
+-	unsigned int channel = register_channel[reg];
+-	int val, voltage_uv, ret;
+-
+-	/* No data for read-only attribute if channel is disabled */
+-	if (!attr->store && !ina3221_is_enabled(ina, channel))
+-		return -ENODATA;
+-
+-	ret = ina3221_read_value(ina, reg, &val);
+-	if (ret)
+-		return ret;
+-	voltage_uv = val * 40;
+-
+-	return snprintf(buf, PAGE_SIZE, "%d\n", voltage_uv);
+-}
+-
+-static ssize_t ina3221_show_current(struct device *dev,
+-				    struct device_attribute *attr, char *buf)
+-{
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+-	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int reg = sd_attr->index;
+-	unsigned int channel = register_channel[reg];
+ 	struct ina3221_input *input = &ina->inputs[channel];
+ 	int resistance_uo = input->shunt_resistor;
+-	int val, current_ma, voltage_nv, ret;
++	u8 reg = ina3221_curr_reg[attr][channel];
++	int regval, voltage_nv, ret;
+ 
+-	/* No data for read-only attribute if channel is disabled */
+-	if (!attr->store && !ina3221_is_enabled(ina, channel))
+-		return -ENODATA;
++	switch (attr) {
++	case hwmon_curr_input:
++		if (!ina3221_is_enabled(ina, channel))
++			return -ENODATA;
++		/* fall through */
++	case hwmon_curr_crit:
++	case hwmon_curr_max:
++		ret = ina3221_read_value(ina, reg, &regval);
++		if (ret)
++			return ret;
+ 
+-	ret = ina3221_read_value(ina, reg, &val);
+-	if (ret)
+-		return ret;
+-	voltage_nv = val * 40000;
+-
+-	current_ma = DIV_ROUND_CLOSEST(voltage_nv, resistance_uo);
+-
+-	return snprintf(buf, PAGE_SIZE, "%d\n", current_ma);
++		/* Scale of shunt voltage: LSB is 40uV (40000nV) */
++		voltage_nv = regval * 40000;
++		/* Return current in mA */
++		*val = DIV_ROUND_CLOSEST(voltage_nv, resistance_uo);
++		return 0;
++	case hwmon_curr_crit_alarm:
++	case hwmon_curr_max_alarm:
++		ret = regmap_field_read(ina->fields[reg], &regval);
++		if (ret)
++			return ret;
++		*val = regval;
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
+ }
+ 
+-static ssize_t ina3221_set_current(struct device *dev,
+-				   struct device_attribute *attr,
+-				   const char *buf, size_t count)
++static int ina3221_write_curr(struct device *dev, u32 attr,
++			      int channel, long val)
+ {
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+ 	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int reg = sd_attr->index;
+-	unsigned int channel = register_channel[reg];
+ 	struct ina3221_input *input = &ina->inputs[channel];
+ 	int resistance_uo = input->shunt_resistor;
+-	int val, current_ma, voltage_uv, ret;
+-
+-	ret = kstrtoint(buf, 0, &current_ma);
+-	if (ret)
+-		return ret;
++	u8 reg = ina3221_curr_reg[attr][channel];
++	int regval, current_ma, voltage_uv;
+ 
+ 	/* clamp current */
+-	current_ma = clamp_val(current_ma,
++	current_ma = clamp_val(val,
+ 			       INT_MIN / resistance_uo,
+ 			       INT_MAX / resistance_uo);
+ 
+@@ -287,15 +230,168 @@ static ssize_t ina3221_set_current(struct device *dev,
+ 	voltage_uv = clamp_val(voltage_uv, -163800, 163800);
+ 
+ 	/* 1 / 40uV(scale) << 3(register shift) = 5 */
+-	val = DIV_ROUND_CLOSEST(voltage_uv, 5) & 0xfff8;
++	regval = DIV_ROUND_CLOSEST(voltage_uv, 5) & 0xfff8;
+ 
+-	ret = regmap_write(ina->regmap, reg, val);
++	return regmap_write(ina->regmap, reg, regval);
++}
++
++static int ina3221_write_enable(struct device *dev, int channel, bool enable)
++{
++	struct ina3221_data *ina = dev_get_drvdata(dev);
++	u16 config, mask = INA3221_CONFIG_CHx_EN(channel);
++	int ret;
++
++	config = enable ? mask : 0;
++
++	/* Enable or disable the channel */
++	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, config);
+ 	if (ret)
+ 		return ret;
+ 
+-	return count;
++	/* Cache the latest config register value */
++	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
++	if (ret)
++		return ret;
++
++	return 0;
+ }
+ 
++static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
++			u32 attr, int channel, long *val)
++{
++	switch (type) {
++	case hwmon_in:
++		/* 0-align channel ID */
++		return ina3221_read_in(dev, attr, channel - 1, val);
++	case hwmon_curr:
++		return ina3221_read_curr(dev, attr, channel, val);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int ina3221_write(struct device *dev, enum hwmon_sensor_types type,
++			 u32 attr, int channel, long val)
++{
++	switch (type) {
++	case hwmon_in:
++		/* 0-align channel ID */
++		return ina3221_write_enable(dev, channel - 1, val);
++	case hwmon_curr:
++		return ina3221_write_curr(dev, attr, channel, val);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int ina3221_read_string(struct device *dev, enum hwmon_sensor_types type,
++			       u32 attr, int channel, const char **str)
++{
++	struct ina3221_data *ina = dev_get_drvdata(dev);
++	int index = channel - 1;
++
++	*str = ina->inputs[index].label;
++
++	return 0;
++}
++
++static umode_t ina3221_is_visible(const void *drvdata,
++				  enum hwmon_sensor_types type,
++				  u32 attr, int channel)
++{
++	const struct ina3221_data *ina = drvdata;
++	const struct ina3221_input *input = NULL;
++
++	switch (type) {
++	case hwmon_in:
++		/* Ignore in0_ */
++		if (channel == 0)
++			return 0;
++
++		switch (attr) {
++		case hwmon_in_label:
++			if (channel - 1 <= INA3221_CHANNEL3)
++				input = &ina->inputs[channel - 1];
++			/* Hide label node if label is not provided */
++			return (input && input->label) ? 0444 : 0;
++		case hwmon_in_input:
++			return 0444;
++		case hwmon_in_enable:
++			return 0644;
++		default:
++			return 0;
++		}
++	case hwmon_curr:
++		switch (attr) {
++		case hwmon_curr_input:
++		case hwmon_curr_crit_alarm:
++		case hwmon_curr_max_alarm:
++			return 0444;
++		case hwmon_curr_crit:
++		case hwmon_curr_max:
++			return 0644;
++		default:
++			return 0;
++		}
++	default:
++		return 0;
++	}
++}
++
++static const u32 ina3221_in_config[] = {
++	/* 0: dummy, skipped in is_visible */
++	HWMON_I_INPUT,
++	/* 1-3: input voltage Channels */
++	HWMON_I_INPUT | HWMON_I_ENABLE | HWMON_I_LABEL,
++	HWMON_I_INPUT | HWMON_I_ENABLE | HWMON_I_LABEL,
++	HWMON_I_INPUT | HWMON_I_ENABLE | HWMON_I_LABEL,
++	/* 4-6: shunt voltage Channels */
++	HWMON_I_INPUT,
++	HWMON_I_INPUT,
++	HWMON_I_INPUT,
++	0
++};
++
++static const struct hwmon_channel_info ina3221_in = {
++	.type = hwmon_in,
++	.config = ina3221_in_config,
++};
++
++#define INA3221_HWMON_CURR_CONFIG (HWMON_C_INPUT | \
++				   HWMON_C_CRIT | HWMON_C_CRIT_ALARM | \
++				   HWMON_C_MAX | HWMON_C_MAX_ALARM)
++
++static const u32 ina3221_curr_config[] = {
++	INA3221_HWMON_CURR_CONFIG,
++	INA3221_HWMON_CURR_CONFIG,
++	INA3221_HWMON_CURR_CONFIG,
++	0
++};
++
++static const struct hwmon_channel_info ina3221_curr = {
++	.type = hwmon_curr,
++	.config = ina3221_curr_config,
++};
++
++static const struct hwmon_channel_info *ina3221_info[] = {
++	&ina3221_in,
++	&ina3221_curr,
++	NULL
++};
++
++static const struct hwmon_ops ina3221_hwmon_ops = {
++	.is_visible = ina3221_is_visible,
++	.read_string = ina3221_read_string,
++	.read = ina3221_read,
++	.write = ina3221_write,
++};
++
++static const struct hwmon_chip_info ina3221_chip_info = {
++	.ops = &ina3221_hwmon_ops,
++	.info = ina3221_info,
++};
++
++/* Extra attribute groups */
+ static ssize_t ina3221_show_shunt(struct device *dev,
+ 				  struct device_attribute *attr, char *buf)
+ {
+@@ -329,54 +425,6 @@ static ssize_t ina3221_set_shunt(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t ina3221_show_alert(struct device *dev,
+-				  struct device_attribute *attr, char *buf)
+-{
+-	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+-	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	unsigned int field = sd_attr->index;
+-	unsigned int regval;
+-	int ret;
+-
+-	ret = regmap_field_read(ina->fields[field], &regval);
+-	if (ret)
+-		return ret;
+-
+-	return snprintf(buf, PAGE_SIZE, "%d\n", regval);
+-}
+-
+-/* input channel label */
+-static SENSOR_DEVICE_ATTR(in1_label, 0444,
+-		ina3221_show_label, NULL, INA3221_CHANNEL1);
+-static SENSOR_DEVICE_ATTR(in2_label, 0444,
+-		ina3221_show_label, NULL, INA3221_CHANNEL2);
+-static SENSOR_DEVICE_ATTR(in3_label, 0444,
+-		ina3221_show_label, NULL, INA3221_CHANNEL3);
+-
+-/* voltage channel enable */
+-static SENSOR_DEVICE_ATTR(in1_enable, 0644,
+-		ina3221_show_enable, ina3221_set_enable, INA3221_CHANNEL1);
+-static SENSOR_DEVICE_ATTR(in2_enable, 0644,
+-		ina3221_show_enable, ina3221_set_enable, INA3221_CHANNEL2);
+-static SENSOR_DEVICE_ATTR(in3_enable, 0644,
+-		ina3221_show_enable, ina3221_set_enable, INA3221_CHANNEL3);
+-
+-/* bus voltage */
+-static SENSOR_DEVICE_ATTR(in1_input, S_IRUGO,
+-		ina3221_show_bus_voltage, NULL, INA3221_BUS1);
+-static SENSOR_DEVICE_ATTR(in2_input, S_IRUGO,
+-		ina3221_show_bus_voltage, NULL, INA3221_BUS2);
+-static SENSOR_DEVICE_ATTR(in3_input, S_IRUGO,
+-		ina3221_show_bus_voltage, NULL, INA3221_BUS3);
+-
+-/* calculated current */
+-static SENSOR_DEVICE_ATTR(curr1_input, S_IRUGO,
+-		ina3221_show_current, NULL, INA3221_SHUNT1);
+-static SENSOR_DEVICE_ATTR(curr2_input, S_IRUGO,
+-		ina3221_show_current, NULL, INA3221_SHUNT2);
+-static SENSOR_DEVICE_ATTR(curr3_input, S_IRUGO,
+-		ina3221_show_current, NULL, INA3221_SHUNT3);
+-
+ /* shunt resistance */
+ static SENSOR_DEVICE_ATTR(shunt1_resistor, S_IRUGO | S_IWUSR,
+ 		ina3221_show_shunt, ina3221_set_shunt, INA3221_CHANNEL1);
+@@ -385,109 +433,13 @@ static SENSOR_DEVICE_ATTR(shunt2_resistor, S_IRUGO | S_IWUSR,
+ static SENSOR_DEVICE_ATTR(shunt3_resistor, S_IRUGO | S_IWUSR,
+ 		ina3221_show_shunt, ina3221_set_shunt, INA3221_CHANNEL3);
+ 
+-/* critical current */
+-static SENSOR_DEVICE_ATTR(curr1_crit, S_IRUGO | S_IWUSR,
+-		ina3221_show_current, ina3221_set_current, INA3221_CRIT1);
+-static SENSOR_DEVICE_ATTR(curr2_crit, S_IRUGO | S_IWUSR,
+-		ina3221_show_current, ina3221_set_current, INA3221_CRIT2);
+-static SENSOR_DEVICE_ATTR(curr3_crit, S_IRUGO | S_IWUSR,
+-		ina3221_show_current, ina3221_set_current, INA3221_CRIT3);
+-
+-/* critical current alert */
+-static SENSOR_DEVICE_ATTR(curr1_crit_alarm, S_IRUGO,
+-		ina3221_show_alert, NULL, F_CF1);
+-static SENSOR_DEVICE_ATTR(curr2_crit_alarm, S_IRUGO,
+-		ina3221_show_alert, NULL, F_CF2);
+-static SENSOR_DEVICE_ATTR(curr3_crit_alarm, S_IRUGO,
+-		ina3221_show_alert, NULL, F_CF3);
+-
+-/* warning current */
+-static SENSOR_DEVICE_ATTR(curr1_max, S_IRUGO | S_IWUSR,
+-		ina3221_show_current, ina3221_set_current, INA3221_WARN1);
+-static SENSOR_DEVICE_ATTR(curr2_max, S_IRUGO | S_IWUSR,
+-		ina3221_show_current, ina3221_set_current, INA3221_WARN2);
+-static SENSOR_DEVICE_ATTR(curr3_max, S_IRUGO | S_IWUSR,
+-		ina3221_show_current, ina3221_set_current, INA3221_WARN3);
+-
+-/* warning current alert */
+-static SENSOR_DEVICE_ATTR(curr1_max_alarm, S_IRUGO,
+-		ina3221_show_alert, NULL, F_WF1);
+-static SENSOR_DEVICE_ATTR(curr2_max_alarm, S_IRUGO,
+-		ina3221_show_alert, NULL, F_WF2);
+-static SENSOR_DEVICE_ATTR(curr3_max_alarm, S_IRUGO,
+-		ina3221_show_alert, NULL, F_WF3);
+-
+-/* shunt voltage */
+-static SENSOR_DEVICE_ATTR(in4_input, S_IRUGO,
+-		ina3221_show_shunt_voltage, NULL, INA3221_SHUNT1);
+-static SENSOR_DEVICE_ATTR(in5_input, S_IRUGO,
+-		ina3221_show_shunt_voltage, NULL, INA3221_SHUNT2);
+-static SENSOR_DEVICE_ATTR(in6_input, S_IRUGO,
+-		ina3221_show_shunt_voltage, NULL, INA3221_SHUNT3);
+-
+ static struct attribute *ina3221_attrs[] = {
+-	/* channel 1 -- make sure label at first */
+-	&sensor_dev_attr_in1_label.dev_attr.attr,
+-	&sensor_dev_attr_in1_enable.dev_attr.attr,
+-	&sensor_dev_attr_in1_input.dev_attr.attr,
+-	&sensor_dev_attr_curr1_input.dev_attr.attr,
+ 	&sensor_dev_attr_shunt1_resistor.dev_attr.attr,
+-	&sensor_dev_attr_curr1_crit.dev_attr.attr,
+-	&sensor_dev_attr_curr1_crit_alarm.dev_attr.attr,
+-	&sensor_dev_attr_curr1_max.dev_attr.attr,
+-	&sensor_dev_attr_curr1_max_alarm.dev_attr.attr,
+-	&sensor_dev_attr_in4_input.dev_attr.attr,
+-
+-	/* channel 2 -- make sure label at first */
+-	&sensor_dev_attr_in2_label.dev_attr.attr,
+-	&sensor_dev_attr_in2_enable.dev_attr.attr,
+-	&sensor_dev_attr_in2_input.dev_attr.attr,
+-	&sensor_dev_attr_curr2_input.dev_attr.attr,
+ 	&sensor_dev_attr_shunt2_resistor.dev_attr.attr,
+-	&sensor_dev_attr_curr2_crit.dev_attr.attr,
+-	&sensor_dev_attr_curr2_crit_alarm.dev_attr.attr,
+-	&sensor_dev_attr_curr2_max.dev_attr.attr,
+-	&sensor_dev_attr_curr2_max_alarm.dev_attr.attr,
+-	&sensor_dev_attr_in5_input.dev_attr.attr,
+-
+-	/* channel 3 -- make sure label at first */
+-	&sensor_dev_attr_in3_label.dev_attr.attr,
+-	&sensor_dev_attr_in3_enable.dev_attr.attr,
+-	&sensor_dev_attr_in3_input.dev_attr.attr,
+-	&sensor_dev_attr_curr3_input.dev_attr.attr,
+ 	&sensor_dev_attr_shunt3_resistor.dev_attr.attr,
+-	&sensor_dev_attr_curr3_crit.dev_attr.attr,
+-	&sensor_dev_attr_curr3_crit_alarm.dev_attr.attr,
+-	&sensor_dev_attr_curr3_max.dev_attr.attr,
+-	&sensor_dev_attr_curr3_max_alarm.dev_attr.attr,
+-	&sensor_dev_attr_in6_input.dev_attr.attr,
+-
+ 	NULL,
+ };
+-
+-static umode_t ina3221_attr_is_visible(struct kobject *kobj,
+-				       struct attribute *attr, int n)
+-{
+-	const int max_attrs = ARRAY_SIZE(ina3221_attrs) - 1;
+-	const int num_attrs = max_attrs / INA3221_NUM_CHANNELS;
+-	struct device *dev = kobj_to_dev(kobj);
+-	struct ina3221_data *ina = dev_get_drvdata(dev);
+-	enum ina3221_channels channel = n / num_attrs;
+-	struct ina3221_input *input = &ina->inputs[channel];
+-	int index = n % num_attrs;
+-
+-	/* Hide label node if label is not provided */
+-	if (index == 0 && !input->label)
+-		return 0;
+-
+-	return attr->mode;
+-}
+-
+-static const struct attribute_group ina3221_group = {
+-	.is_visible = ina3221_attr_is_visible,
+-	.attrs = ina3221_attrs,
+-};
+-__ATTRIBUTE_GROUPS(ina3221);
++ATTRIBUTE_GROUPS(ina3221);
+ 
+ static const struct regmap_range ina3221_yes_ranges[] = {
+ 	regmap_reg_range(INA3221_CONFIG, INA3221_BUS3),
+@@ -622,9 +574,9 @@ static int ina3221_probe(struct i2c_client *client,
+ 
+ 	dev_set_drvdata(dev, ina);
+ 
+-	hwmon_dev = devm_hwmon_device_register_with_groups(dev,
+-							   client->name,
+-							   ina, ina3221_groups);
++	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
++							 &ina3221_chip_info,
++							 ina3221_groups);
+ 	if (IS_ERR(hwmon_dev)) {
+ 		dev_err(dev, "Unable to register hwmon device\n");
+ 		return PTR_ERR(hwmon_dev);
+-- 
+2.17.1
+
