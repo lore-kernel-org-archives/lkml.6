@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 757FEC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE93C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C2AB21565
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE85421557
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:33:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xN7Ltnr0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2AB21565
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6u/9Jht"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE85421557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbeJHWpc (ORCPT
+        id S1728727AbeJHWpn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:45:32 -0400
+        Mon, 8 Oct 2018 18:45:43 -0400
 Received: from mail.kernel.org ([198.145.29.99]:57552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727794AbeJHWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:52 -0400
+        id S1727747AbeJHWiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 065A12151D;
-        Mon,  8 Oct 2018 15:26:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F0252089D;
+        Mon,  8 Oct 2018 15:26:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012397;
-        bh=4hJ1OX5fGu4sM6wIufx7zBXsRIuTPVGk28vtF4RmqUo=;
+        s=default; t=1539012395;
+        bh=hFIa8GqarBjG7dVbOUgEc2lFnrUxRlkI3+aSl3O9hz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xN7Ltnr0tt2FqNYPX/ukCOWx1PjdymRzWWmQ0PKHsv5nQSPzm1BAuh43t+P2gGKXY
-         UR4JFq5ARnZcHCQBexnQ2S8qBDociP08fnFPy4FBPTJCclKHV2ijbT1ODRuGpUJnut
-         Sg6aWfBAqRC237q+jg8ueMvzC527QyX+nQoRPzZw=
+        b=G6u/9Jht4I6CY/UvS+SE9bHLWdYx1hDwc16uoUy+lVXeAHLu0WFeY5fekS1LMZ/RL
+         XVQ77sdDHWbRH9fB2g63EgJqoNh/vjnpfRtfxCA5ocd78VswOtbj7VcRwo9vDmrrYR
+         DIUnSyONAMTMBCZB2O7OPfTlL+/5vQq7PMjU77lo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 07/32] batman-adv: Prevent duplicated softif_vlan entry
-Date:   Mon,  8 Oct 2018 11:26:04 -0400
-Message-Id: <20181008152629.70812-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 05/32] batman-adv: Prevent duplicated gateway_node entry
+Date:   Mon,  8 Oct 2018 11:26:02 -0400
+Message-Id: <20181008152629.70812-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
 References: <20181008152629.70812-1-sashal@kernel.org>
@@ -55,12 +55,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 94cb82f594ed86be303398d6dfc7640a6f1d45d4 ]
+[ Upstream commit dff9bc42ab0b2d38c5e90ddd79b238fed5b4c7ad ]
 
-The function batadv_softif_vlan_get is responsible for adding new
-softif_vlan to the softif_vlan_list. It first checks whether the entry
-already is in the list or not. If it is, then the creation of a new entry
-is aborted.
+The function batadv_gw_node_add is responsible for adding new gw_node to
+the gateway_list. It is expecting that the caller already checked that
+there is not already an entry with the same key or not.
 
 But the lock for the list is only held when the list is really modified.
 This could lead to duplicated entries because another context could create
@@ -69,70 +68,72 @@ an entry with the same key between the check and the list manipulation.
 The check and the manipulation of the list must therefore be in the same
 locked code section.
 
-Fixes: 5d2c05b21337 ("batman-adv: add per VLAN interface attribute framework")
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/soft-interface.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ net/batman-adv/gateway_client.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
-index aa2c49fa31ce..8cedb5db1ab3 100644
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -566,15 +566,20 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
- 	struct batadv_softif_vlan *vlan;
- 	int err;
+diff --git a/net/batman-adv/gateway_client.c b/net/batman-adv/gateway_client.c
+index 06276ae9f752..c6a7341f0527 100644
+--- a/net/batman-adv/gateway_client.c
++++ b/net/batman-adv/gateway_client.c
+@@ -31,6 +31,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kref.h>
+ #include <linux/list.h>
++#include <linux/lockdep.h>
+ #include <linux/netdevice.h>
+ #include <linux/netlink.h>
+ #include <linux/rculist.h>
+@@ -325,6 +326,9 @@ void batadv_gw_check_election(struct batadv_priv *bat_priv,
+  * @bat_priv: the bat priv with all the soft interface information
+  * @orig_node: originator announcing gateway capabilities
+  * @gateway: announced bandwidth information
++ *
++ * Has to be called with the appropriate locks being acquired
++ * (gw.list_lock).
+  */
+ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ 			       struct batadv_orig_node *orig_node,
+@@ -332,6 +336,8 @@ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ {
+ 	struct batadv_gw_node *gw_node;
  
-+	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
++	lockdep_assert_held(&bat_priv->gw.list_lock);
 +
- 	vlan = batadv_softif_vlan_get(bat_priv, vid);
- 	if (vlan) {
- 		batadv_softif_vlan_put(vlan);
-+		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 		return -EEXIST;
+ 	if (gateway->bandwidth_down == 0)
+ 		return;
+ 
+@@ -346,10 +352,8 @@ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ 	gw_node->bandwidth_down = ntohl(gateway->bandwidth_down);
+ 	gw_node->bandwidth_up = ntohl(gateway->bandwidth_up);
+ 
+-	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	kref_get(&gw_node->refcount);
+ 	hlist_add_head_rcu(&gw_node->list, &bat_priv->gw.gateway_list);
+-	spin_unlock_bh(&bat_priv->gw.list_lock);
+ 
+ 	batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+ 		   "Found new gateway %pM -> gw bandwidth: %u.%u/%u.%u MBit\n",
+@@ -405,11 +409,14 @@ void batadv_gw_node_update(struct batadv_priv *bat_priv,
+ {
+ 	struct batadv_gw_node *gw_node, *curr_gw = NULL;
+ 
++	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	gw_node = batadv_gw_node_get(bat_priv, orig_node);
+ 	if (!gw_node) {
+ 		batadv_gw_node_add(bat_priv, orig_node, gateway);
++		spin_unlock_bh(&bat_priv->gw.list_lock);
+ 		goto out;
  	}
++	spin_unlock_bh(&bat_priv->gw.list_lock);
  
- 	vlan = kzalloc(sizeof(*vlan), GFP_ATOMIC);
--	if (!vlan)
-+	if (!vlan) {
-+		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 		return -ENOMEM;
-+	}
- 
- 	vlan->bat_priv = bat_priv;
- 	vlan->vid = vid;
-@@ -582,17 +587,23 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
- 
- 	atomic_set(&vlan->ap_isolation, 0);
- 
-+	kref_get(&vlan->refcount);
-+	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
-+	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
-+
-+	/* batadv_sysfs_add_vlan cannot be in the spinlock section due to the
-+	 * sleeping behavior of the sysfs functions and the fs_reclaim lock
-+	 */
- 	err = batadv_sysfs_add_vlan(bat_priv->soft_iface, vlan);
- 	if (err) {
--		kfree(vlan);
-+		/* ref for the function */
-+		batadv_softif_vlan_put(vlan);
-+
-+		/* ref for the list */
-+		batadv_softif_vlan_put(vlan);
- 		return err;
- 	}
- 
--	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
--	kref_get(&vlan->refcount);
--	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
--	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
--
- 	/* add a new TT local entry. This one will be marked with the NOPURGE
- 	 * flag
- 	 */
+ 	if ((gw_node->bandwidth_down == ntohl(gateway->bandwidth_down)) &&
+ 	    (gw_node->bandwidth_up == ntohl(gateway->bandwidth_up)))
 -- 
 2.17.1
 
