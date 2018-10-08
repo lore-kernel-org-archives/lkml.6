@@ -2,114 +2,138 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0241C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6960C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 750B9213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:11:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ug0k8+Hc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750B9213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 99FA7213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:12:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99FA7213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbeJHXXc (ORCPT
+        id S1726715AbeJHXYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:23:32 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41603 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeJHXXc (ORCPT
+        Mon, 8 Oct 2018 19:24:31 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:41495 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbeJHXYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:23:32 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x31-v6so3368027edd.8;
-        Mon, 08 Oct 2018 09:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9yBkSMFIKQ4AjVNmMUzSE1LxxjNokt3Qz8qtT938+9g=;
-        b=ug0k8+Hc9/IdzQIa2WG4wIPuhsLMwtMR/r0NfPUbEH2nHeyv71uVyjpV/KiGCwEbb3
-         MVCL5LNiY1s8hCNdVqwTG/v1qdzw1Y3eT19+MPth5cRSx/fG55t45lgxC024olT+/Oqv
-         TKztJFaQ48G1SLQZKyd/nVEMjifSS4fdse388UjLvFzigXjhKJz1ZDf8Lx3fhOtEalys
-         KFONgs0dtaAj+N7isZwrfPhlw+ygiSUkeQStgGa7R/sUJOCqfEA6cHk075zEkr2vNeoV
-         /SRkguJ0j6KVkHtA1uzdr1AFCR4xOK8D1SZwzL6S4DT3wh4/vgqaZ3TmmGxfFySJZRi3
-         /XQw==
+        Mon, 8 Oct 2018 19:24:31 -0400
+Received: by mail-it1-f197.google.com with SMTP id 207-v6so1842826itj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 09:12:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9yBkSMFIKQ4AjVNmMUzSE1LxxjNokt3Qz8qtT938+9g=;
-        b=qGAs5SjareVa+cO7QSYIEUAD+Pk49Xmk1X6FzeZNwvl5Gonvbnmm6mUkWGjcEh8ZDN
-         jMmLdt/zTkKoDc5gB4pxnwTKqdKXNIG5M4depJbBnLUFswlzvEkeirjbQWS4IdbDA8OU
-         zfQEuCA0Ho3+XcJPVq3rb/XtP/CJx3qSThnwAvz3Jw36iQjC2pUT8XbWSkER62MCNZ+s
-         23nOS52SKwClFW5Oro7O8yYRRtQzi4YChz3n2KhU95gERrPqHffNy+PKZSNlAgR/qD0g
-         CZnHjuipd236/GV2ZVuSH0YOFH98GfefrKZSKTb6al2tw5B/p5Eghj/dMmKJpgWuPEhK
-         3/oQ==
-X-Gm-Message-State: ABuFfoiMRwIZMcWHhYGTxR8ZY6os0WHzh+F9Lsh8UxiIpPEFiAV1P49W
-        PbhdJwytqxEqNEf7xBjPmxMFyCNmWidI/Gsre8M=
-X-Google-Smtp-Source: ACcGV624SbThifqGs1Xk+8fR7xTIbf+SLxTUj5PUesVVLcf+MiC9o2f0ovzuoU4lxRb+KBi0xytbUhC88YNxaPsgj28=
-X-Received: by 2002:a50:8ba2:: with SMTP id m31-v6mr31365272edm.260.1539015063684;
- Mon, 08 Oct 2018 09:11:03 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=yuehuxoMDHXvDmfAkE+oJjZ2ph8hj3MXS50gVK2yqXc=;
+        b=iV644oGPskD6M6YYVC0WoqLIkvZlavkl/7PfnTIYujlkZ25MCtlvk5tvC42o8mgBsG
+         T8UkRIyz+3rh3gIVTjVLrPiJpoKKI9zTO7PURelnAoPdiwPb+rKG5+A6gCUtOCnICt5d
+         4xbX30TpOYBKyBYnUBXan5HavRxYc8OwDM/f/qnvb4wjivzh8LbWsKA3JElb1/BLjb6r
+         sm4tVTZUuieT05iGpwlluVBvvlKDgLYHOfIWVjsGBK0YZDAlou1A9RWWAGjh0HLrPG8s
+         TlLsR5W5JO8HlI3uPyM47JBgVdF8T5kDQGD53IdoUGiMfp+NQdYM3b91mxbLOmWEI8kR
+         wQ5Q==
+X-Gm-Message-State: ABuFfohZHPL9F0pc47nOvAwzKtF09m8cSnfj82CmqPdkgx5RcBLGMZyk
+        K2x4Z/nKz3XOKZE7Vu0LWgDUbUOSK4cxiP/OJ95NuVSolBih
+X-Google-Smtp-Source: ACcGV62BtjDuH2yBAz0fsv+9ezDRkZZPKIqh4+Jfq6gTbg2Slh+TocFJcLn1PIdCowTIu3uTxAH1pSWwXjKDzhoP+/IJXI4CGUOr
 MIME-Version: 1.0
-References: <0000000000009d47b2057782bab4@google.com>
-In-Reply-To: <0000000000009d47b2057782bab4@google.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Mon, 8 Oct 2018 12:10:27 -0400
-Message-ID: <CAF=yD-+7NxN37Ez=3WXG0+2i6j30uSV8u9D7oJXEhp+SxzYCpA@mail.gmail.com>
-Subject: Re: general protection fault in __handle_mm_fault
-To:     syzbot+1577fbe983d20fe2e88f@syzkaller.appspotmail.com
-Cc:     David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a24:10cd:: with SMTP id 196-v6mr16445007ity.21.1539015122862;
+ Mon, 08 Oct 2018 09:12:02 -0700 (PDT)
+Date:   Mon, 08 Oct 2018 09:12:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b3d5610577b9e12c@google.com>
+Subject: WARNING in __put_task_struct (2)
+From:   syzbot <syzbot+1ed9dfaa984c88cf0ef8@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, ebiederm@xmission.com, guro@fb.com,
+        keescook@chromium.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, luto@amacapital.net,
+        marcos.souza.org@gmail.com, mhocko@kernel.org, riel@surriel.com,
+        syzkaller-bugs@googlegroups.com, wad@chromium.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 6:27 PM syzbot
-<syzbot+1577fbe983d20fe2e88f@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    25bcda3e8b9f Add linux-next specific files for 20181004
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=130e3bf1400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=603d7f9140c3368a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1577fbe983d20fe2e88f
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e88d6400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cdb67e400000
+Hello,
 
-> RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20
-> arch/x86/lib/copy_user_64.S:180
-> Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f
-> 80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f
-> 1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
-> RSP: 0018:ffff8801bbe675b8 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: 0000000000007a50 RCX: 0000000000001b40
-> RDX: 0000000000007a50 RSI: 0000000020077000 RDI: ffff8801ce615f10
-> RBP: ffff8801bbe675f0 R08: ffffed0039cc2f4a R09: ffffed0039cc2f4a
-> R10: ffffed0039cc2f49 R11: ffff8801ce617a4f R12: 0000000020078b40
-> R13: 00000000200710f0 R14: ffff8801ce610000 R15: 00007ffffffff000
->   _copy_from_iter_full+0x263/0xc20 lib/iov_iter.c:724
->   copy_from_iter_full include/linux/uio.h:124 [inline]
->   skb_do_copy_data_nocache include/net/sock.h:1951 [inline]
->   skb_copy_to_page_nocache include/net/sock.h:1977 [inline]
->   tcp_sendmsg_locked+0x159e/0x3f90 net/ipv4/tcp.c:1338
+syzbot found the following crash on:
 
-This started on next-20181004. It still happens as of next-20181008.
+HEAD commit:    ae16eea39a86 Add linux-next specific files for 20181008
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e7c6a1400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42525ce985d1a955
+dashboard link: https://syzkaller.appspot.com/bug?extid=1ed9dfaa984c88cf0ef8
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-It does not trigger on next 20181003. It does not occur if
-CONFIG_DEBUG_KOBJECT is disabled.
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+1ed9dfaa984c88cf0ef8@syzkaller.appspotmail.com
+
+WARNING: CPU: 1 PID: 16271 at kernel/fork.c:718  
+__put_task_struct+0x3ef/0x620 kernel/fork.c:718
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 16271 Comm: syz-executor5 Not tainted 4.19.0-rc7-next-20181008+  
+#89
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:__put_task_struct+0x3ef/0x620 kernel/fork.c:718
+Code: 4c 89 ee e8 d3 9d 7b 00 e9 a1 fe ff ff e8 89 53 37 00 0f 0b e9 7c fd  
+ff ff e8 7d 53 37 00 0f 0b e9 87 fd ff ff e8 71 53 37 00 <0f> 0b e9 d0 fc  
+ff ff e8 65 53 37 00 49 8d 87 90 05 00 00 31 f6 48
+RSP: 0018:ffff88018dbcf808 EFLAGS: 00010293
+RAX: ffff880187474180 RBX: ffff88018cc7a1c0 RCX: ffffffff8147298d
+RDX: 0000000000000000 RSI: ffffffff81472cbf RDI: 0000000000000005
+RBP: ffff88018dbcf8e8 R08: ffff880187474180 R09: ffffed003198f43c
+R10: ffffed003198f43c R11: ffff88018cc7a1e3 R12: 1ffff10031b79f04
+R13: 0000000000000000 R14: ffff88018dbcf8c0 R15: ffff88018daceb40
+  put_task_struct include/linux/sched/task.h:96 [inline]
+  rdma_restrack_del+0x2e0/0x3b0 drivers/infiniband/core/restrack.c:243
+  rdma_destroy_id+0x126/0xcc0 drivers/infiniband/core/cma.c:1820
+  ucma_close+0x114/0x310 drivers/infiniband/core/ucma.c:1767
+  __fput+0x3bc/0xa70 fs/file_table.c:279
+  ____fput+0x15/0x20 fs/file_table.c:312
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x411051
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48  
+83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007ffd6e8617b0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411051
+RDX: 0000000000000000 RSI: 0000000000731850 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 00007ffd6e8616e0 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000001 R14: 0000000000000156 R15: 0000000000000005
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
