@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F72C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93690C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2BCC20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F15420C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4jlRUAV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2BCC20C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJiXtCAa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F15420C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbeJIBsq (ORCPT
+        id S1728370AbeJIBst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33108 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeJIBsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:46 -0400
+        id S1726522AbeJIBss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9202064A;
-        Mon,  8 Oct 2018 18:35:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F0DA2089D;
+        Mon,  8 Oct 2018 18:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023743;
-        bh=vdhjEZxOFO+atx6rutVebkJ0LGrdxQyKPT83ecUJRRc=;
+        s=default; t=1539023745;
+        bh=UktD41+qXLV/DK+UM45RfNDeUvq3WER+SJBsy7kloaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U4jlRUAVy9c6aZQxfo2bWKqIrt7w02EfztF+VZmZNRx63tc4X9OjAJp+Kt/i1iEDG
-         iH78Ir9T2MQNB1zkgLHsmtfXkBqZ/EFtMt64ov4gd12WH6hrAzc5I90jWEV9xAbKra
-         nvOwGM3KuJlS5rKwlVR1B4dpUsGVGXc5Cfu5e9Rw=
+        b=KJiXtCAaJ4AG4q94avjZzxm8MvOARptb3hRWM3EJacZDm4bRBzyUlH7HyAAOb0M38
+         cOO08GgwiyLiUF0iY8Jm+lHbjdYgp1UhG1+Pco5nv46d3GUbfQ0vSD9wFoeltZm+bs
+         ohXpk+J6vL6jry2mI9wCc/VIOg4PoeC6lJU8H3QI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lothar Felten <lothar.felten@gmail.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
         Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 068/113] hwmon: (ina2xx) fix sysfs shunt resistor read access
-Date:   Mon,  8 Oct 2018 20:31:09 +0200
-Message-Id: <20181008175534.688968156@linuxfoundation.org>
+Subject: [PATCH 4.4 069/113] hwmon: (adt7475) Make adt7475_read_word() return errors
+Date:   Mon,  8 Oct 2018 20:31:10 +0200
+Message-Id: <20181008175534.738440568@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,82 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lothar Felten <lothar.felten@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3ad867001c91657c46dcf6656d52eb6080286fd5 ]
+[ Upstream commit f196dec6d50abb2e65fb54a0621b2f1b4d922995 ]
 
-fix the sysfs shunt resistor read access: return the shunt resistor
-value, not the calibration register contents.
+The adt7475_read_word() function was meant to return negative error
+codes on failure.
 
-update email address
-
-Signed-off-by: Lothar Felten <lothar.felten@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/hwmon/ina2xx           |    2 +-
- drivers/hwmon/ina2xx.c               |   13 +++++++++++--
- include/linux/platform_data/ina2xx.h |    2 +-
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/hwmon/adt7475.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/Documentation/hwmon/ina2xx
-+++ b/Documentation/hwmon/ina2xx
-@@ -32,7 +32,7 @@ Supported chips:
-     Datasheet: Publicly available at the Texas Instruments website
-                http://www.ti.com/
- 
--Author: Lothar Felten <l-felten@ti.com>
-+Author: Lothar Felten <lothar.felten@gmail.com>
- 
- Description
- -----------
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -17,7 +17,7 @@
-  * Bi-directional Current/Power Monitor with I2C Interface
-  * Datasheet: http://www.ti.com/product/ina230
-  *
-- * Copyright (C) 2012 Lothar Felten <l-felten@ti.com>
-+ * Copyright (C) 2012 Lothar Felten <lothar.felten@gmail.com>
-  * Thanks to Jan Volkering
-  *
-  * This program is free software; you can redistribute it and/or modify
-@@ -328,6 +328,15 @@ static int ina2xx_set_shunt(struct ina2x
- 	return 0;
+--- a/drivers/hwmon/adt7475.c
++++ b/drivers/hwmon/adt7475.c
+@@ -274,14 +274,18 @@ static inline u16 volt2reg(int channel,
+ 	return clamp_val(reg, 0, 1023) & (0xff << 2);
  }
  
-+static ssize_t ina2xx_show_shunt(struct device *dev,
-+			      struct device_attribute *da,
-+			      char *buf)
-+{
-+	struct ina2xx_data *data = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%li\n", data->rshunt);
-+}
-+
- static ssize_t ina2xx_store_shunt(struct device *dev,
- 				  struct device_attribute *da,
- 				  const char *buf, size_t count)
-@@ -402,7 +411,7 @@ static SENSOR_DEVICE_ATTR(power1_input,
+-static u16 adt7475_read_word(struct i2c_client *client, int reg)
++static int adt7475_read_word(struct i2c_client *client, int reg)
+ {
+-	u16 val;
++	int val1, val2;
  
- /* shunt resistance */
- static SENSOR_DEVICE_ATTR(shunt_resistor, S_IRUGO | S_IWUSR,
--			  ina2xx_show_value, ina2xx_store_shunt,
-+			  ina2xx_show_shunt, ina2xx_store_shunt,
- 			  INA2XX_CALIBRATION);
+-	val = i2c_smbus_read_byte_data(client, reg);
+-	val |= (i2c_smbus_read_byte_data(client, reg + 1) << 8);
++	val1 = i2c_smbus_read_byte_data(client, reg);
++	if (val1 < 0)
++		return val1;
++	val2 = i2c_smbus_read_byte_data(client, reg + 1);
++	if (val2 < 0)
++		return val2;
  
- /* update interval (ina226 only) */
---- a/include/linux/platform_data/ina2xx.h
-+++ b/include/linux/platform_data/ina2xx.h
-@@ -1,7 +1,7 @@
- /*
-  * Driver for Texas Instruments INA219, INA226 power monitor chips
-  *
-- * Copyright (C) 2012 Lothar Felten <l-felten@ti.com>
-+ * Copyright (C) 2012 Lothar Felten <lothar.felten@gmail.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
+-	return val;
++	return val1 | (val2 << 8);
+ }
+ 
+ static void adt7475_write_word(struct i2c_client *client, int reg, u16 val)
 
 
