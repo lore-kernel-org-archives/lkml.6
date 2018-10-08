@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE8C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E84C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 574C3214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3FB121479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIiQpX3A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574C3214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="My92qQye"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FB121479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJHWiM (ORCPT
+        id S1727596AbeJHWiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727451AbeJHWiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:10 -0400
+        id S1727524AbeJHWiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A00921479;
-        Mon,  8 Oct 2018 15:25:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 317272150B;
+        Mon,  8 Oct 2018 15:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012355;
-        bh=o1DHp62sSM1TQLsAAwi463e4uDDDeXJ13PfiSZjq6ZM=;
+        s=default; t=1539012357;
+        bh=jTnMrgMdxxY9A+ljdAEFjBKwKM/i0ryfptcUnhaIWGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GIiQpX3AZuu0+6Kaxee7qsFBXf+br+Pof3rooOWdiTZffjlIxWiNQF6IfmcaT/0ys
-         y3g1f0KpGetyqrTUWpAeOoj/5jGju7TiiiCXydqmeU7adELvyjdkSgRgzBUzYAd31o
-         HW87d/X3VqohYOLL20LH9ZmOKDhJL4HkyBNnJCYY=
+        b=My92qQyejPPG1Uqf5iMnEomfcpnVyRh31vXhj2dICTeCmHfL0NP66Gtb8Ldd/06CV
+         cMqHKF/ZyNZj9ft56Tqnx9p1udOfTrccIqvgHTlEFx1FyWJxJOtjYV79IcWppUuu/u
+         uv13lgPC6cqn71cTl2dg7LtPc7PwMYHTM1G8w2/0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 29/58] ravb: do not write 1 to reserved bits
-Date:   Mon,  8 Oct 2018 11:24:54 -0400
-Message-Id: <20181008152523.70705-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 32/58] net: mvpp2: fix a txq_done race condition
+Date:   Mon,  8 Oct 2018 11:24:57 -0400
+Message-Id: <20181008152523.70705-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -53,134 +52,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 2fe397a3959de8a472f165e6d152f64cb77fa2cc ]
+[ Upstream commit 774268f3e51b53ed432a1ec516574fd5ba469398 ]
 
-EtherAVB hardware requires 0 to be written to status register bits in
-order to clear them, however, care must be taken not to:
+When no Tx IRQ is available, the txq_done() routine (called from
+tx_done()) shouldn't be called from the polling function, as in such
+case it is already called in the Tx path thanks to an hrtimer. This
+mostly occurred when using PPv2.1, as the engine then do not have Tx
+IRQs.
 
-1. Clear other bits, by writing zero to them
-2. Write one to reserved bits
-
-This patch corrects the ravb driver with respect to the second point above.
-This is done by defining reserved bit masks for the affected registers and,
-after auditing the code, ensure all sites that may write a one to a
-reserved bit use are suitably masked.
-
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: edc660fa09e2 ("net: mvpp2: replace TX coalescing interrupts with hrtimer")
+Reported-by: Stefan Chulski <stefanc@marvell.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/renesas/ravb.h      |  5 +++++
- drivers/net/ethernet/renesas/ravb_main.c | 11 ++++++-----
- drivers/net/ethernet/renesas/ravb_ptp.c  |  2 +-
- 3 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index b81f4faf7b10..1c40989479bd 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -431,6 +431,7 @@ enum EIS_BIT {
- 	EIS_CULF1	= 0x00000080,
- 	EIS_TFFF	= 0x00000100,
- 	EIS_QFS		= 0x00010000,
-+	EIS_RESERVED	= (GENMASK(31, 17) | GENMASK(15, 11)),
- };
- 
- /* RIC0 */
-@@ -475,6 +476,7 @@ enum RIS0_BIT {
- 	RIS0_FRF15	= 0x00008000,
- 	RIS0_FRF16	= 0x00010000,
- 	RIS0_FRF17	= 0x00020000,
-+	RIS0_RESERVED	= GENMASK(31, 18),
- };
- 
- /* RIC1 */
-@@ -531,6 +533,7 @@ enum RIS2_BIT {
- 	RIS2_QFF16	= 0x00010000,
- 	RIS2_QFF17	= 0x00020000,
- 	RIS2_RFFF	= 0x80000000,
-+	RIS2_RESERVED	= GENMASK(30, 18),
- };
- 
- /* TIC */
-@@ -547,6 +550,7 @@ enum TIS_BIT {
- 	TIS_FTF1	= 0x00000002,	/* Undocumented? */
- 	TIS_TFUF	= 0x00000100,
- 	TIS_TFWF	= 0x00000200,
-+	TIS_RESERVED	= (GENMASK(31, 20) | GENMASK(15, 12) | GENMASK(7, 4))
- };
- 
- /* ISS */
-@@ -620,6 +624,7 @@ enum GIC_BIT {
- enum GIS_BIT {
- 	GIS_PTCF	= 0x00000001,	/* Undocumented? */
- 	GIS_PTMF	= 0x00000004,
-+	GIS_RESERVED	= GENMASK(15, 10),
- };
- 
- /* GIE (R-Car Gen3 only) */
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 0d811c02ff34..db4e306ca996 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -742,10 +742,11 @@ static void ravb_error_interrupt(struct net_device *ndev)
- 	u32 eis, ris2;
- 
- 	eis = ravb_read(ndev, EIS);
--	ravb_write(ndev, ~EIS_QFS, EIS);
-+	ravb_write(ndev, ~(EIS_QFS | EIS_RESERVED), EIS);
- 	if (eis & EIS_QFS) {
- 		ris2 = ravb_read(ndev, RIS2);
--		ravb_write(ndev, ~(RIS2_QFF0 | RIS2_RFFF), RIS2);
-+		ravb_write(ndev, ~(RIS2_QFF0 | RIS2_RFFF | RIS2_RESERVED),
-+			   RIS2);
- 
- 		/* Receive Descriptor Empty int */
- 		if (ris2 & RIS2_QFF0)
-@@ -798,7 +799,7 @@ static bool ravb_timestamp_interrupt(struct net_device *ndev)
- 	u32 tis = ravb_read(ndev, TIS);
- 
- 	if (tis & TIS_TFUF) {
--		ravb_write(ndev, ~TIS_TFUF, TIS);
-+		ravb_write(ndev, ~(TIS_TFUF | TIS_RESERVED), TIS);
- 		ravb_get_tx_tstamp(ndev);
- 		return true;
- 	}
-@@ -933,7 +934,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 		/* Processing RX Descriptor Ring */
- 		if (ris0 & mask) {
- 			/* Clear RX interrupt */
--			ravb_write(ndev, ~mask, RIS0);
-+			ravb_write(ndev, ~(mask | RIS0_RESERVED), RIS0);
- 			if (ravb_rx(ndev, &quota, q))
- 				goto out;
- 		}
-@@ -941,7 +942,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 		if (tis & mask) {
- 			spin_lock_irqsave(&priv->lock, flags);
- 			/* Clear TX interrupt */
--			ravb_write(ndev, ~mask, TIS);
-+			ravb_write(ndev, ~(mask | TIS_RESERVED), TIS);
- 			ravb_tx_free(ndev, q, true);
- 			netif_wake_subqueue(ndev, q);
- 			mmiowb();
-diff --git a/drivers/net/ethernet/renesas/ravb_ptp.c b/drivers/net/ethernet/renesas/ravb_ptp.c
-index eede70ec37f8..9e3222fd69f9 100644
---- a/drivers/net/ethernet/renesas/ravb_ptp.c
-+++ b/drivers/net/ethernet/renesas/ravb_ptp.c
-@@ -319,7 +319,7 @@ void ravb_ptp_interrupt(struct net_device *ndev)
- 		}
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 661fa5a38df2..a1c7193cf858 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -3055,10 +3055,12 @@ static int mvpp2_poll(struct napi_struct *napi, int budget)
+ 				   cause_rx_tx & ~MVPP2_CAUSE_MISC_SUM_MASK);
  	}
  
--	ravb_write(ndev, ~gis, GIS);
-+	ravb_write(ndev, ~(gis | GIS_RESERVED), GIS);
- }
+-	cause_tx = cause_rx_tx & MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK;
+-	if (cause_tx) {
+-		cause_tx >>= MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_OFFSET;
+-		mvpp2_tx_done(port, cause_tx, qv->sw_thread_id);
++	if (port->has_tx_irqs) {
++		cause_tx = cause_rx_tx & MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK;
++		if (cause_tx) {
++			cause_tx >>= MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_OFFSET;
++			mvpp2_tx_done(port, cause_tx, qv->sw_thread_id);
++		}
+ 	}
  
- void ravb_ptp_init(struct net_device *ndev, struct platform_device *pdev)
+ 	/* Process RX packets */
 -- 
 2.17.1
 
