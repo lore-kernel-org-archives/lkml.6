@@ -2,85 +2,88 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F210C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318F7C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17274205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:48:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ql1FbgE9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17274205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 012A8205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:48:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012A8205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeJHWAK (ORCPT
+        id S1726665AbeJHWAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:00:10 -0400
-Received: from mail-io1-f49.google.com ([209.85.166.49]:33508 "EHLO
-        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeJHWAK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:00:10 -0400
-Received: by mail-io1-f49.google.com with SMTP id l25-v6so16075175ioj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 07:48:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fHlvVCqPSvIqr2VI+JMj/d4p8FlUlBcs0rrEdgObXbc=;
-        b=Ql1FbgE9n9g64+sCump9uc0SJvjuliTxzxwWqKfICszKvZNsdBNh8MVfv6JBdVaiWb
-         PkUEJuhzoQfeytPppRh9Aeen1LBGwlZ53Bhv37YSkAN7LAj+nySHDUbUy9MCOeVCJ067
-         k/s9VymKF87KQrFYMbaRwMqto2ALvh/FYdvJzuVHp6melUv9K/j7+UCPxt24m+tTqp/m
-         hw3UpGx5Q3CdGj2IAI8s0RKUbBdAndbppt5Xo7A6Oawn2Dkflx+ieUW/sH83sPocDOOd
-         mPCb/IBapSEKt7MfjrgscXLuu9KRgxCqQmcwTxDJwbvbgOe1N5NOwbSwQJX8YoKqB0f1
-         HcVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fHlvVCqPSvIqr2VI+JMj/d4p8FlUlBcs0rrEdgObXbc=;
-        b=opqXHQFC+DMwJJyqpFGno/aL74U0hRHlL9fM19/qDkoTidipUPyPQecCl9AkMVyemB
-         4eD0NRy8AQpvnFIGWsZGBGNygdSc7MRR5O54DYSxAWlOEvuMXu3oh04Z2S5agdD3daLw
-         xIqWNxfpdbbfzsuLG1bqFhLVaoBVP+XkU0tyLcleMvYsuyI255JG6EkRylpkYFLRPs9u
-         bH+cvqTPSNk+FV2tZjYUa2RGMOja2s5V5NQdhwhtgWGTd5e7cwjdk6VrEykQXO9sJoyQ
-         X7iLHsqCbtQaMV8m8LsSBjAVWLdu7e0Uh5d8SfAVS2KdUvqzE14ruB+XUDMtp7Atmyms
-         VWZQ==
-X-Gm-Message-State: ABuFfois4uJW+Ien0tnHkEg6Q6dP+TelILtR/gumDsZgoqBalw8fSSTl
-        Sr9RpHcnU/p285us//MntotWbu54Cu8GWk7p968Q8/+l7An1jg==
-X-Google-Smtp-Source: ACcGV6200BOC1xsqqCl84u/7m4E+jtPzo9GmO3XLhzml9PuJ6IAqw+bn0fxvskv8txyEOxc/arrXhUpGL3+xqaBmOYQ=
-X-Received: by 2002:a6b:500e:: with SMTP id e14-v6mr17492677iob.73.1539010084305;
- Mon, 08 Oct 2018 07:48:04 -0700 (PDT)
+        Mon, 8 Oct 2018 18:00:38 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60783 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726159AbeJHWAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:00:37 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3E24CC7AB1BB4;
+        Mon,  8 Oct 2018 22:48:29 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 8 Oct 2018
+ 22:48:22 +0800
+Subject: Re: [PATCH v2] staging: erofs: add SPDX identifer
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        Loic Tourlonias <loic.tourlonias.lkml@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20181008141409.2624-1-loic.tourlonias.lkml@gmail.com>
+ <20181008142228.GB13359@kroah.com>
+ <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
+ <20181008144335.GA15968@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <a460f98f-d566-1d9d-b395-e8604519b442@huawei.com>
+Date:   Mon, 8 Oct 2018 22:48:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <1538919405-3093-1-git-send-email-laoar.shao@gmail.com>
- <0652963b-90ac-06a7-3a35-50a307465cf9@gmail.com> <CALOAHbAAwr1rsPhHT4R7wn3SYJ220C-i92qObSA3Cvp99M8i8w@mail.gmail.com>
-In-Reply-To: <CALOAHbAAwr1rsPhHT4R7wn3SYJ220C-i92qObSA3Cvp99M8i8w@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Mon, 8 Oct 2018 07:47:52 -0700
-Message-ID: <CANn89iLUKmiP==WP=cf9KYwMaNDbsU2M=b07dPU+DspfBGSsAg@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next] inet: do not set backlog if listen fails
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181008144335.GA15968@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 3:47 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->
->
-> Pls. correct me if I missed something.
->
+Hi Greg,
 
-You missed that this variable must be set before listener is setup.
-Same feedback than prior version really (when you trived to move
-around sk_ack_backlog clearing)
+On 2018/10/8 22:43, Greg Kroah-Hartman wrote:
+> On Mon, Oct 08, 2018 at 10:36:39PM +0800, Gao Xiang wrote:
+>> Hi Greg,
+>>
+>> On 2018/10/8 22:22, Greg Kroah-Hartman wrote:
+>>> Why delete that line?
+>>>
+>>> But wait, why do we even have this file at all?  What's wrong with the
+>>> lib/lz4/ code that we have in the kernel today?  Shouldn't the code
+>>> using these files be moved over to use the lib/ code instead and this
+>>> file be deleted?
+>>
+>> EROFS uses customized LZ4 decompression code for now (which has been offically
+>> supported in lz4 1.8.3, I have updated it in
+>> https://ozlabs.org/~akpm/mmots/broken-out/lib-lz4-update-lz4-decompressor-module.patch
+>> if it is shown up in Linux 4.20, I will remove all the customized LZ4 decompression code),
+>> but lib/ code lz4def.h isn't export to include/.
+> 
+> It should show up in 4.20, so you should be able to remove this all
+> then.
 
-You are changing inet_csk_listen_start() but this is wrong...
+Yes, that is correct. I will fix it in 4.20 if the updated LZ4 is already there. :)
+
+Thanks,
+Gao Xiang
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
