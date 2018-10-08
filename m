@@ -2,78 +2,106 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD622C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE75FC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 741B920C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741B920C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7DE6420C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:01:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUxPFTnh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE6420C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbeJIDOs (ORCPT
+        id S1727059AbeJIDPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:14:48 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42520 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726613AbeJIDOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:14:47 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 9DbXTs4w8x02; Mon,  8 Oct 2018 22:01:21 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F2F391EC00EA;
-        Mon,  8 Oct 2018 22:01:20 +0200 (CEST)
-Date:   Mon, 8 Oct 2018 22:01:15 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] x86/mm: Do not warn about PCI BIOS W+X mappings
-Message-ID: <20181008200115.GC5919@zn.tnic>
-References: <alpine.DEB.2.21.1810082151160.2455@nanos.tec.linutronix.de>
+        Mon, 8 Oct 2018 23:15:17 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42177 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726468AbeJIDPR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 23:15:17 -0400
+Received: by mail-ot1-f68.google.com with SMTP id h26-v6so21167190otl.9;
+        Mon, 08 Oct 2018 13:01:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2kKzKuYLxFmOznQF7FZm25ikVnhG5wW3QzkssWMOODM=;
+        b=SUxPFTnhXA5Lwizkj7EmFvhWmOU/5Cg6ICG4DtuuYWw7JMVmoIf5TqaVPgSEYDqM66
+         lSIpKVlb3tUna0tJ/yOl3qF6QE4QRHdefD64khGwQrFK67l3w3myhNf1XI0qEZ96gQgX
+         NM3Rz749aVLiQ7WjsDQV33BBQd/fRj25YAorxLScJc8uFLX7W7R2y4Y6YE11aoI/nVDc
+         g75kQjJ9GMv1NmxArfjoclwdulrYaZcOUU9qtlnW8RZ6Ip0WA8Ie6FNRGLayXDbgDZ67
+         FJy6MD+qlCdNwGdawycKIl/MGK05NckH+3C8Mh7pzE6G9u2j8YIipRova7c1x2IdpXgf
+         74JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2kKzKuYLxFmOznQF7FZm25ikVnhG5wW3QzkssWMOODM=;
+        b=mWIgE0HBUflusOVQqlgM09555BRJM1yyiNK07/iQI/cy2nRe+a3UWCDFIR1Euo+v9Z
+         cBL5cAN4tbhDMK+cUUFmIq8/Hkx4kw7b1n2zYCkZrSit0mKKp/3Z9m8gBzjeWsdkQzWq
+         Y9cNYHCBI1GH2D5EtVdaRJ8ZDVzs29gIiA6Gpv+mC9vupA73vvkYkCfxZqRzVqh5QMFj
+         MuqBBVOXHAzWNw99VH928CUZXWPP4mj6JuXyWSy3vYAKv1PS2WWX/G3c1G9tN35LPMOR
+         LtN3tvyz+8JEuSSFw647A6n0iOxK+nkEP+d9lg491Gxc1qP6whId9zmTKHC4/sTHgiYV
+         iKsw==
+X-Gm-Message-State: ABuFfoh3RVZsJdoB8mEsAdY99tWWqbGjaCfckTi4Q1+LhmLqBXUG+y53
+        7td5Jjsd7hXXmQZzVuN0E15Mxn8oWm7vzRt0/UM=
+X-Google-Smtp-Source: ACcGV61vhlGnJyE8TpuKBWijPIj/pA9U6Ne44+NQl5AzeHhVDn33WKdHcCN3i840xcqt6ZD3Wihhl9PBbFj6d3sJjUw=
+X-Received: by 2002:a9d:30c6:: with SMTP id r6mr14235922otg.344.1539028909567;
+ Mon, 08 Oct 2018 13:01:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1810082151160.2455@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181008191913.11527-1-sudip.mukherjee@codethink.co.uk> <c7da9adc-3cb3-c5a6-519c-ba4440897c28@kernel.org>
+In-Reply-To: <c7da9adc-3cb3-c5a6-519c-ba4440897c28@kernel.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Mon, 8 Oct 2018 21:01:13 +0100
+Message-ID: <CADVatmOZ943m_bmXS9vQs8Fy73aaG1PNP1YCzX-J2HN_f5Zigw@mail.gmail.com>
+Subject: Re: [PATCH] usbip: vhci_hcd: check port number before using
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Valentina Manea <valentina.manea.m@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org,
+        syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com,
+        Stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 09:53:48PM +0200, Thomas Gleixner wrote:
-> PCI BIOS requires the BIOS area 0x0A0000-0x0FFFFFF to be mapped W+X for
-> various legacy reasons. When CONFIG_DEBUG_WX is enabled, this triggers the
-> WX warning, but this is misleading because the mapping is required and is
-> not a result of an accidental oversight.
-> 
-> Prevent the full warning when PCI BIOS is enabled and the detected WX
-> mapping is in the BIOS area. Just emit a pr_warn() which denotes the
-> fact. This is partially duplicating the info which the PCI BIOS code emits
-> when it maps the area as executable, but that info is not in the context of
-> the WX checking output.
-> 
-> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Oct 8, 2018 at 8:29 PM Shuah Khan <shuah@kernel.org> wrote:
+>
+> Hi Sudip,
+>
+> On 10/08/2018 01:19 PM, Sudip Mukherjee wrote:
+> > From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> >
+> > The port number is checked and it just prints an error message but it
+> > still continues to use the invalid port. And as a result it accesses
+> > memory which is not its resulting in  BUG report from KASAN.
+>
+> Yes there is an issue with out of bounds access. But this isn't the
+> right fix.
+>
+> >
+> > Reported-by: syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com
+> > Cc: stable <stable@vger.kernel.org>
+> > Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+>
+> I sent in a fix for this last Friday.
+>
+> https://patchwork.kernel.org/patch/10628833/
 
-Tested-by: Borislav Petkov <bp@suse.de>
+And I can confirm this patch also fixes the issue tested with the
+reproducer I was using in my vm.
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Regards
+Sudip
