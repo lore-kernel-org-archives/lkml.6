@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13CBC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74221C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9504214C5
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F39B214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:34:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3owd/kb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9504214C5
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8jUYex6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F39B214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeJIBrj (ORCPT
+        id S1727943AbeJIBrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:47:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59024 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:47:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbeJIBrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:47:39 -0400
+        id S1726691AbeJIBrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:47:41 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCCFD20C0A;
-        Mon,  8 Oct 2018 18:34:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C6A2087D;
+        Mon,  8 Oct 2018 18:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023676;
-        bh=QnPmBnlyQqkHDjdFmHJs8oUvNlHQ+D3GPqXXvoetNnM=;
+        s=default; t=1539023679;
+        bh=HQGjTRgYfVSAFmEitE3EMv/Od/ibi8EVlabRmb0IWgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c3owd/kb1dAsCJYEBnpOyXazQlFmrCovjnDrCal0CkIjuIKtHWmf5+mv4wmD/KsmN
-         nwG/On8BLcqvt6G6C3Fpgf4yx4IGdtUM29ZsUAcSrSDfsxhb3jz9SkBdWlx0cNEJjH
-         /u2XPcK/UffcgjjcHv42czc1RQgZizvYpnoDRJZI=
+        b=H8jUYex6eMrn6ZuCCYmlRt4zC6LhrBq8nj8BpRiGCEpw0d5TdgiIazCJZN1UNTdsg
+         t6e7my8pnkmP3rEcCdI7E7A0+Kx5RlC39G3rJzrtQxdw1dVNU0yfu0F03eesdBHHXj
+         uHGRzspp5SxdZ5vTS2t7RokvxnHkkVm6kJAZwm5w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        stable@vger.kernel.org, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 045/113] spi: tegra20-slink: explicitly enable/disable clock
-Date:   Mon,  8 Oct 2018 20:30:46 +0200
-Message-Id: <20181008175533.097141304@linuxfoundation.org>
+Subject: [PATCH 4.4 046/113] spi: sh-msiof: Fix invalid SPI use during system suspend
+Date:   Mon,  8 Oct 2018 20:30:47 +0200
+Message-Id: <20181008175533.144302505@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,84 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
-commit 7001cab1dabc0b72b2b672ef58a90ab64f5e2343 upstream.
+commit ffa69d6a16f686efe45269342474e421f2aa58b2 upstream.
 
-Depending on the SPI instance one may get an interrupt storm upon
-requesting resp. interrupt unless the clock is explicitly enabled
-beforehand. This has been observed trying to bring up instance 4 on
-T20.
+If the SPI queue is running during system suspend, the system may lock
+up.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Fix this by stopping/restarting the queue during system suspend/resume
+by calling spi_master_suspend()/spi_master_resume() from the PM
+callbacks.  In-kernel users will receive an -ESHUTDOWN error while
+system suspend/resume is in progress.
+
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+[geert: Cleanup, reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-tegra20-slink.c |   31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ drivers/spi/spi-sh-msiof.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1063,6 +1063,24 @@ static int tegra_slink_probe(struct plat
- 		goto exit_free_master;
- 	}
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1275,12 +1275,37 @@ static const struct platform_device_id s
+ };
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
  
-+	/* disabled clock may cause interrupt storm upon request */
-+	tspi->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(tspi->clk)) {
-+		ret = PTR_ERR(tspi->clk);
-+		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
-+		goto exit_free_master;
-+	}
-+	ret = clk_prepare(tspi->clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
-+		goto exit_free_master;
-+	}
-+	ret = clk_enable(tspi->clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
-+		goto exit_free_master;
-+	}
++#ifdef CONFIG_PM_SLEEP
++static int sh_msiof_spi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
 +
- 	spi_irq = platform_get_irq(pdev, 0);
- 	tspi->irq = spi_irq;
- 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
-@@ -1071,14 +1089,7 @@ static int tegra_slink_probe(struct plat
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
- 					tspi->irq);
--		goto exit_free_master;
--	}
--
--	tspi->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(tspi->clk)) {
--		dev_err(&pdev->dev, "can not get clock\n");
--		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_clk_disable;
- 	}
- 
- 	tspi->rst = devm_reset_control_get(&pdev->dev, "spi");
-@@ -1138,6 +1149,8 @@ exit_rx_dma_free:
- 	tegra_slink_deinit_dma_param(tspi, true);
- exit_free_irq:
- 	free_irq(spi_irq, tspi);
-+exit_clk_disable:
-+	clk_disable(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1150,6 +1163,8 @@ static int tegra_slink_remove(struct pla
- 
- 	free_irq(tspi->irq, tspi);
- 
-+	clk_disable(tspi->clk);
++	return spi_master_suspend(p->master);
++}
 +
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
- 
++static int sh_msiof_spi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
++
++	return spi_master_resume(p->master);
++}
++
++static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
++			 sh_msiof_spi_resume);
++#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static struct platform_driver sh_msiof_spi_drv = {
+ 	.probe		= sh_msiof_spi_probe,
+ 	.remove		= sh_msiof_spi_remove,
+ 	.id_table	= spi_driver_ids,
+ 	.driver		= {
+ 		.name		= "spi_sh_msiof",
++		.pm		= DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(sh_msiof_match),
+ 	},
+ };
 
 
