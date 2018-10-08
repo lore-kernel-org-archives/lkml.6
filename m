@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AE8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2B1C65BD1
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4B8214C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4B8214C4
+	by mail.kernel.org (Postfix) with ESMTP id EE25E214C5
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 07:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE25E214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeJHO6t (ORCPT
+        id S1727362AbeJHO6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 10:58:49 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:46752 "EHLO inva021.nxp.com"
+        Mon, 8 Oct 2018 10:58:52 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:46890 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbeJHO6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 10:58:49 -0400
+        id S1725983AbeJHO6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 10:58:52 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 38CC52000F2;
-        Mon,  8 Oct 2018 09:48:23 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 093B02000EE;
+        Mon,  8 Oct 2018 09:48:27 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DC4CB200011;
-        Mon,  8 Oct 2018 09:48:18 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A1DAF2001F5;
+        Mon,  8 Oct 2018 09:48:22 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C522A40309;
-        Mon,  8 Oct 2018 15:48:12 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8892B40318;
+        Mon,  8 Oct 2018 15:48:16 +0800 (SGT)
 From:   Yangbo Lu <yangbo.lu@nxp.com>
 To:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
         netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
@@ -39,9 +39,9 @@ To:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Lunn <andrew@lunn.ch>
 Cc:     Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v3, 4/6] net: dpaa2: rename rtc as ptp in dpaa2-ptp driver
-Date:   Mon,  8 Oct 2018 15:44:28 +0800
-Message-Id: <20181008074430.34379-4-yangbo.lu@nxp.com>
+Subject: [v3, 6/6] net: dpaa2: fix and improve dpaa2-ptp driver
+Date:   Mon,  8 Oct 2018 15:44:30 +0800
+Message-Id: <20181008074430.34379-6-yangbo.lu@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20181008074430.34379-1-yangbo.lu@nxp.com>
 References: <20181008074430.34379-1-yangbo.lu@nxp.com>
@@ -51,130 +51,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In dpaa2-ptp driver, it's odd to use rtc in names of
-some functions and structures except these dprtc APIs.
-This patch is to use ptp instead of rtc in names.
+This patch is to fix and improve dpaa2-ptp driver
+in some places.
+
+- Fixed the return for some functions.
+- Replaced kzalloc with devm_kzalloc.
+- Removed dev_set_drvdata(dev, NULL).
+- Made ptp_dpaa2_caps const.
 
 Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
 Changes for v2:
 	- Added this patch.
 Changes for v3:
-	- Modified commit message.
+	- None.
 ---
- drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c |   30 +++++++++++-----------
- 1 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c |   25 ++++++++--------------
+ 1 files changed, 9 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-index 2e90d5a..c73eef2 100644
+index c73eef2..84b942b 100644
 --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
 +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-@@ -12,7 +12,7 @@
- #include "dpaa2-ptp.h"
+@@ -46,7 +46,7 @@ static int ptp_dpaa2_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
+ 					  mc_dev->mc_handle, tmr_add);
+ 	if (err)
+ 		dev_err(dev, "dprtc_set_freq_compensation err %d\n", err);
+-	return 0;
++	return err;
+ }
  
- struct ptp_dpaa2_priv {
--	struct fsl_mc_device *rtc_mc_dev;
-+	struct fsl_mc_device *ptp_mc_dev;
- 	struct ptp_clock *clock;
- 	struct ptp_clock_info caps;
- 	u32 freq_comp;
-@@ -23,7 +23,7 @@ static int ptp_dpaa2_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	u64 adj;
- 	u32 diff, tmr_add;
-@@ -53,7 +53,7 @@ static int ptp_dpaa2_adjtime(struct ptp_clock_info *ptp, s64 delta)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	s64 now;
- 	int err = 0;
-@@ -78,7 +78,7 @@ static int ptp_dpaa2_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	u64 ns;
- 	u32 remainder;
-@@ -100,7 +100,7 @@ static int ptp_dpaa2_settime(struct ptp_clock_info *ptp,
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	u64 ns;
- 	int err = 0;
-@@ -129,7 +129,7 @@ static int ptp_dpaa2_settime(struct ptp_clock_info *ptp,
- 	.settime64	= ptp_dpaa2_settime,
- };
- 
--static int rtc_probe(struct fsl_mc_device *mc_dev)
-+static int dpaa2_ptp_probe(struct fsl_mc_device *mc_dev)
- {
- 	struct device *dev = &mc_dev->dev;
- 	struct ptp_dpaa2_priv *ptp_dpaa2;
-@@ -153,7 +153,7 @@ static int rtc_probe(struct fsl_mc_device *mc_dev)
- 		goto err_free_mcp;
+ static int ptp_dpaa2_adjtime(struct ptp_clock_info *ptp, s64 delta)
+@@ -61,17 +61,15 @@ static int ptp_dpaa2_adjtime(struct ptp_clock_info *ptp, s64 delta)
+ 	err = dprtc_get_time(mc_dev->mc_io, 0, mc_dev->mc_handle, &now);
+ 	if (err) {
+ 		dev_err(dev, "dprtc_get_time err %d\n", err);
+-		return 0;
++		return err;
  	}
  
--	ptp_dpaa2->rtc_mc_dev = mc_dev;
-+	ptp_dpaa2->ptp_mc_dev = mc_dev;
+ 	now += delta;
  
- 	err = dprtc_get_freq_compensation(mc_dev->mc_io, 0,
- 					  mc_dev->mc_handle, &tmr_add);
-@@ -187,7 +187,7 @@ static int rtc_probe(struct fsl_mc_device *mc_dev)
+ 	err = dprtc_set_time(mc_dev->mc_io, 0, mc_dev->mc_handle, now);
+-	if (err) {
++	if (err)
+ 		dev_err(dev, "dprtc_set_time err %d\n", err);
+-		return 0;
+-	}
+-	return 0;
++	return err;
+ }
+ 
+ static int ptp_dpaa2_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
+@@ -87,12 +85,12 @@ static int ptp_dpaa2_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
+ 	err = dprtc_get_time(mc_dev->mc_io, 0, mc_dev->mc_handle, &ns);
+ 	if (err) {
+ 		dev_err(dev, "dprtc_get_time err %d\n", err);
+-		return 0;
++		return err;
+ 	}
+ 
+ 	ts->tv_sec = div_u64_rem(ns, 1000000000, &remainder);
+ 	ts->tv_nsec = remainder;
+-	return 0;
++	return err;
+ }
+ 
+ static int ptp_dpaa2_settime(struct ptp_clock_info *ptp,
+@@ -111,10 +109,10 @@ static int ptp_dpaa2_settime(struct ptp_clock_info *ptp,
+ 	err = dprtc_set_time(mc_dev->mc_io, 0, mc_dev->mc_handle, ns);
+ 	if (err)
+ 		dev_err(dev, "dprtc_set_time err %d\n", err);
+-	return 0;
++	return err;
+ }
+ 
+-static struct ptp_clock_info ptp_dpaa2_caps = {
++static const struct ptp_clock_info ptp_dpaa2_caps = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "DPAA2 PTP Clock",
+ 	.max_adj	= 512000,
+@@ -136,7 +134,7 @@ static int dpaa2_ptp_probe(struct fsl_mc_device *mc_dev)
+ 	u32 tmr_add = 0;
+ 	int err;
+ 
+-	ptp_dpaa2 = kzalloc(sizeof(*ptp_dpaa2), GFP_KERNEL);
++	ptp_dpaa2 = devm_kzalloc(dev, sizeof(*ptp_dpaa2), GFP_KERNEL);
+ 	if (!ptp_dpaa2)
+ 		return -ENOMEM;
+ 
+@@ -182,8 +180,6 @@ static int dpaa2_ptp_probe(struct fsl_mc_device *mc_dev)
+ err_free_mcp:
+ 	fsl_mc_portal_free(mc_dev->mc_io);
+ err_exit:
+-	kfree(ptp_dpaa2);
+-	dev_set_drvdata(dev, NULL);
  	return err;
  }
  
--static int rtc_remove(struct fsl_mc_device *mc_dev)
-+static int dpaa2_ptp_remove(struct fsl_mc_device *mc_dev)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2;
- 	struct device *dev = &mc_dev->dev;
-@@ -204,26 +204,26 @@ static int rtc_remove(struct fsl_mc_device *mc_dev)
+@@ -198,9 +194,6 @@ static int dpaa2_ptp_remove(struct fsl_mc_device *mc_dev)
+ 	dprtc_close(mc_dev->mc_io, 0, mc_dev->mc_handle);
+ 	fsl_mc_portal_free(mc_dev->mc_io);
+ 
+-	kfree(ptp_dpaa2);
+-	dev_set_drvdata(dev, NULL);
+-
  	return 0;
  }
  
--static const struct fsl_mc_device_id rtc_match_id_table[] = {
-+static const struct fsl_mc_device_id dpaa2_ptp_match_id_table[] = {
- 	{
- 		.vendor = FSL_MC_VENDOR_FREESCALE,
- 		.obj_type = "dprtc",
- 	},
- 	{}
- };
--MODULE_DEVICE_TABLE(fslmc, rtc_match_id_table);
-+MODULE_DEVICE_TABLE(fslmc, dpaa2_ptp_match_id_table);
- 
--static struct fsl_mc_driver rtc_drv = {
-+static struct fsl_mc_driver dpaa2_ptp_drv = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.owner = THIS_MODULE,
- 	},
--	.probe = rtc_probe,
--	.remove = rtc_remove,
--	.match_id_table = rtc_match_id_table,
-+	.probe = dpaa2_ptp_probe,
-+	.remove = dpaa2_ptp_remove,
-+	.match_id_table = dpaa2_ptp_match_id_table,
- };
- 
--module_fsl_mc_driver(rtc_drv);
-+module_fsl_mc_driver(dpaa2_ptp_drv);
- 
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("DPAA2 PTP Clock Driver");
 -- 
 1.7.1
 
