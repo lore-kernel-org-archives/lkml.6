@@ -7,44 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEECC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4C5C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7863220C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8350B214C5
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vjIMf1vU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7863220C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3F2upLp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8350B214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbeJIBtH (ORCPT
+        id S1728498AbeJIBtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33742 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbeJIBtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:06 -0400
+        id S1726989AbeJIBtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BAEF2064A;
-        Mon,  8 Oct 2018 18:36:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDF222064A;
+        Mon,  8 Oct 2018 18:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023763;
-        bh=wH/wT8v9JQ8ilQF3RqX/7747rondeYCeTzZvtMGfGvc=;
+        s=default; t=1539023766;
+        bh=1hSI/JqnozqXo1nz23ftTVW7C9ZDpq8RyZJS40aQQ0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vjIMf1vUTHaVVcWEuX7jaCRbkiNHVVmxc6gxrAgKZKPpzW7Bsb3DHIp//fFKinbcP
-         GPJTOsK0DNstV4UYiFPhZZpzMgd/IO3eJ09U0oxAhgJl5WwqktudHicmhdfhL5jXzE
-         Cip6cMObEQ+r8YCf7ZpPl0xNUpJmClT6EYhssZ+U=
+        b=p3F2upLpH6UdeLrNnjZvyPKheJvwE/X14d8wdH8Ld3IphccQmFvu+KKj+QnoL4bzp
+         Lc+jch9fAKLsQbQQ+otcwyc1ap1PogIc6nCp4ssIgDCGwdaDmGsjay5cgjjQiPBDsK
+         Jd9WnB0hds71DI/CO94ZfcL0bZ0YZpTG0/jbWZi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 051/113] USB: handle NULL config in usb_find_alt_setting()
-Date:   Mon,  8 Oct 2018 20:30:52 +0200
-Message-Id: <20181008175533.611043597@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        zhong jiang <zhongjiang@huawei.com>
+Subject: [PATCH 4.4 052/113] slub: make ->cpu_partial unsigned int
+Date:   Mon,  8 Oct 2018 20:30:53 +0200
+Message-Id: <20181008175533.669145656@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -62,38 +68,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-commit c9a4cb204e9eb7fa7dfbe3f7d3a674fa530aa193 upstream.
+commit e5d9998f3e09359b372a037a6ac55ba235d95d57 upstream.
 
-usb_find_alt_setting() takes a pointer to a struct usb_host_config as
-an argument; it searches for an interface with specified interface and
-alternate setting numbers in that config.  However, it crashes if the
-usb_host_config pointer argument is NULL.
+	/*
+	 * cpu_partial determined the maximum number of objects
+	 * kept in the per cpu partial lists of a processor.
+	 */
 
-Since this is a general-purpose routine, available for use in many
-places, we want to to be more robust.  This patch makes it return NULL
-whenever the config argument is NULL.
+Can't be negative.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180305200730.15812-15-adobriyan@gmail.com
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Acked-by: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/usb.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/slub_def.h |    3 ++-
+ mm/slub.c                |    6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -95,6 +95,8 @@ struct usb_host_interface *usb_find_alt_
- 	struct usb_interface_cache *intf_cache = NULL;
- 	int i;
+--- a/include/linux/slub_def.h
++++ b/include/linux/slub_def.h
+@@ -67,7 +67,8 @@ struct kmem_cache {
+ 	int size;		/* The size of an object including meta data */
+ 	int object_size;	/* The size of an object without meta data */
+ 	int offset;		/* Free pointer offset. */
+-	int cpu_partial;	/* Number of per cpu partial objects to keep around */
++	/* Number of per cpu partial objects to keep around */
++	unsigned int cpu_partial;
+ 	struct kmem_cache_order_objects oo;
  
-+	if (!config)
-+		return NULL;
- 	for (i = 0; i < config->desc.bNumInterfaces; i++) {
- 		if (config->intf_cache[i]->altsetting[0].desc.bInterfaceNumber
- 				== iface_num) {
+ 	/* Allocation and freeing of slabs */
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1661,7 +1661,7 @@ static void *get_partial_node(struct kme
+ {
+ 	struct page *page, *page2;
+ 	void *object = NULL;
+-	int available = 0;
++	unsigned int available = 0;
+ 	int objects;
+ 
+ 	/*
+@@ -4674,10 +4674,10 @@ static ssize_t cpu_partial_show(struct k
+ static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
+ 				 size_t length)
+ {
+-	unsigned long objects;
++	unsigned int objects;
+ 	int err;
+ 
+-	err = kstrtoul(buf, 10, &objects);
++	err = kstrtouint(buf, 10, &objects);
+ 	if (err)
+ 		return err;
+ 	if (objects && !kmem_cache_has_cpu_partial(s))
 
 
