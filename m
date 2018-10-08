@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28ABC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD54C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9960720652
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FC352086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQykFgr1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9960720652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFO6ClhK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC352086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeJHWhx (ORCPT
+        id S1727429AbeJHWur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:37:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55944 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:50:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726754AbeJHWhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:37:52 -0400
+        id S1726892AbeJHWhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:37:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50DDD213A2;
-        Mon,  8 Oct 2018 15:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 299FF2145D;
+        Mon,  8 Oct 2018 15:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012337;
-        bh=DJraqWQv7w2D12YbzFAN7EO8Eg8DLbEeRTn52nNQHyI=;
+        s=default; t=1539012338;
+        bh=OqVDLI38IOd+1PyRD0hsblu11L8+F83XLszN8QUdkIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQykFgr1sm1CBvu0hEi3/8QRI2hPyFxhPmBrcdcOLolsLKADYLzMCXf7TOFmaa4OJ
-         zMdVQ6q8gj9GkVTAIGWPPKsCdx3/88IqoGUIMvebtoxoHy3azxDv9sKsXbwwg4yvbV
-         4d5TVN4bV6wM5VVxlrSPVClsjJS1qPCjz8o/MGOQ=
+        b=FFO6ClhK5dt77VkW1K+POWoB94IjDpby3kowXxfT3goPRSzMo+s84EQSy1icuidu/
+         0DXFi/BqzJEBhYblSNjicvaf60jFrxHiRZAPeVMScsstlUn34VE5eXiQMwdeuvGxY0
+         EoR2+KCdqEbwelKE3ZeqXE8e8U3y3ic2Sydn99b4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 11/58] batman-adv: Prevent duplicated softif_vlan entry
-Date:   Mon,  8 Oct 2018 11:24:36 -0400
-Message-Id: <20181008152523.70705-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 12/58] batman-adv: Prevent duplicated global TT entry
+Date:   Mon,  8 Oct 2018 11:24:37 -0400
+Message-Id: <20181008152523.70705-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
 References: <20181008152523.70705-1-sashal@kernel.org>
@@ -55,10 +55,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 94cb82f594ed86be303398d6dfc7640a6f1d45d4 ]
+[ Upstream commit e7136e48ffdfb9f37b0820f619380485eb407361 ]
 
-The function batadv_softif_vlan_get is responsible for adding new
-softif_vlan to the softif_vlan_list. It first checks whether the entry
+The function batadv_tt_global_orig_entry_add is responsible for adding new
+tt_orig_list_entry to the orig_list. It first checks whether the entry
 already is in the list or not. If it is, then the creation of a new entry
 is aborted.
 
@@ -69,70 +69,48 @@ an entry with the same key between the check and the list manipulation.
 The check and the manipulation of the list must therefore be in the same
 locked code section.
 
-Fixes: 5d2c05b21337 ("batman-adv: add per VLAN interface attribute framework")
+Fixes: d657e621a0f5 ("batman-adv: add reference counting for type batadv_tt_orig_list_entry")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/soft-interface.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ net/batman-adv/translation-table.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
-index 1485263a348b..626ddca332db 100644
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -574,15 +574,20 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
- 	struct batadv_softif_vlan *vlan;
- 	int err;
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 12a2b7d21376..d21624c44665 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -1613,6 +1613,8 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+ {
+ 	struct batadv_tt_orig_list_entry *orig_entry;
  
-+	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
++	spin_lock_bh(&tt_global->list_lock);
 +
- 	vlan = batadv_softif_vlan_get(bat_priv, vid);
- 	if (vlan) {
- 		batadv_softif_vlan_put(vlan);
-+		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 		return -EEXIST;
- 	}
+ 	orig_entry = batadv_tt_global_orig_entry_find(tt_global, orig_node);
+ 	if (orig_entry) {
+ 		/* refresh the ttvn: the current value could be a bogus one that
+@@ -1635,11 +1637,9 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+ 	orig_entry->flags = flags;
+ 	kref_init(&orig_entry->refcount);
  
- 	vlan = kzalloc(sizeof(*vlan), GFP_ATOMIC);
--	if (!vlan)
-+	if (!vlan) {
-+		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 		return -ENOMEM;
-+	}
+-	spin_lock_bh(&tt_global->list_lock);
+ 	kref_get(&orig_entry->refcount);
+ 	hlist_add_head_rcu(&orig_entry->list,
+ 			   &tt_global->orig_list);
+-	spin_unlock_bh(&tt_global->list_lock);
+ 	atomic_inc(&tt_global->orig_list_count);
  
- 	vlan->bat_priv = bat_priv;
- 	vlan->vid = vid;
-@@ -590,17 +595,23 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
- 
- 	atomic_set(&vlan->ap_isolation, 0);
- 
-+	kref_get(&vlan->refcount);
-+	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
-+	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
+ sync_flags:
+@@ -1647,6 +1647,8 @@ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+ out:
+ 	if (orig_entry)
+ 		batadv_tt_orig_list_entry_put(orig_entry);
 +
-+	/* batadv_sysfs_add_vlan cannot be in the spinlock section due to the
-+	 * sleeping behavior of the sysfs functions and the fs_reclaim lock
-+	 */
- 	err = batadv_sysfs_add_vlan(bat_priv->soft_iface, vlan);
- 	if (err) {
--		kfree(vlan);
-+		/* ref for the function */
-+		batadv_softif_vlan_put(vlan);
-+
-+		/* ref for the list */
-+		batadv_softif_vlan_put(vlan);
- 		return err;
- 	}
++	spin_unlock_bh(&tt_global->list_lock);
+ }
  
--	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
--	kref_get(&vlan->refcount);
--	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
--	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
--
- 	/* add a new TT local entry. This one will be marked with the NOPURGE
- 	 * flag
- 	 */
+ /**
 -- 
 2.17.1
 
