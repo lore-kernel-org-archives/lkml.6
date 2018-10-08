@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC0EC677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21753C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A08E121526
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF942152C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeaKWrMx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A08E121526
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyEqRyTq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF942152C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbeJHWiv (ORCPT
+        id S1728342AbeJHWix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:38:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57524 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:38:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727794AbeJHWiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:38:50 -0400
+        id S1728321AbeJHWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:38:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7227F2075E;
-        Mon,  8 Oct 2018 15:26:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BEBC214FF;
+        Mon,  8 Oct 2018 15:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012395;
-        bh=quSnEnslFpwyPHOf2roEuuOO/21HCHheIlEp1/ZGiD0=;
+        s=default; t=1539012396;
+        bh=7wr5E5C/Ls5l9ZH+bf5LjcvGZ0NXpMrOUbpTwd2kfZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CeaKWrMxHqAUFwTz8MWmqenqf7NjoWSErkjfvmezWQhPA/SU6R49iKT0FMH+g4aoy
-         9vxAX4L+TVizgSorZpBrRid9B6q5S0MCPq8YDmZiteDmgnJ/3W4kFqLpPcbzoO+dn4
-         4ZsgYIafGStd0FnO+fSddtpOA/P2d4KeDBCXtcJg=
+        b=pyEqRyTqksibG+toiyDNCvlgV/6o0IGeA/xi/I9M26rNLfAQW5knUKOYYSMGBTm9N
+         7AUupNinRRRykDi96SqYp3rKEaTEokDhLGVLws22oGi8nC915RbdBfXGWTqEi8teAb
+         TYXia3fIPZYtJpyeyMT3tFnXiI39DcUNWcDhpSKY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 04/32] batman-adv: Fix segfault when writing to sysfs elp_interval
-Date:   Mon,  8 Oct 2018 11:26:01 -0400
-Message-Id: <20181008152629.70812-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 06/32] batman-adv: Prevent duplicated nc_node entry
+Date:   Mon,  8 Oct 2018 11:26:03 -0400
+Message-Id: <20181008152629.70812-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181008152629.70812-1-sashal@kernel.org>
 References: <20181008152629.70812-1-sashal@kernel.org>
@@ -55,112 +54,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit a25bab9d723a08bd0bdafb1529faf9094c690b70 ]
+[ Upstream commit fa122fec8640eb7186ce5a41b83a4c1744ceef8f ]
 
-The per hardif sysfs file "batman_adv/elp_interval" is using the generic
-functions to store/show uint values. The helper __batadv_store_uint_attr
-requires the softif net_device as parameter to print the resulting change
-as info text when the users writes to this file. It uses the helper
-function batadv_info to add it at the same time to the kernel ring buffer
-and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG is enabled).
+The function batadv_nc_get_nc_node is responsible for adding new nc_nodes
+to the in_coding_list and out_coding_list. It first checks whether the
+entry already is in the list or not. If it is, then the creation of a new
+entry is aborted.
 
-The function batadv_info requires as first parameter the batman-adv softif
-net_device. This parameter is then used to find the private buffer which
-contains the debug log for this batman-adv interface. But
-batadv_store_throughput_override used as first argument the slave
-net_device. This slave device doesn't have the batadv_priv private data
-which is access by batadv_info.
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
 
-Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
-to a segfault or to memory corruption.
+The check and the manipulation of the list must therefore be in the same
+locked code section.
 
-Fixes: 0744ff8fa8fa ("batman-adv: Add hard_iface specific sysfs wrapper macros for UINT")
+Fixes: d56b1705e28c ("batman-adv: network coding - detect coding nodes and remove these after timeout")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/batman-adv/sysfs.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ net/batman-adv/network-coding.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/net/batman-adv/sysfs.c b/net/batman-adv/sysfs.c
-index ec412c5b8697..2ef9b136fc39 100644
---- a/net/batman-adv/sysfs.c
-+++ b/net/batman-adv/sysfs.c
-@@ -186,7 +186,8 @@ ssize_t batadv_store_##_name(struct kobject *kobj,			\
- 									\
- 	return __batadv_store_uint_attr(buff, count, _min, _max,	\
- 					_post_func, attr,		\
--					&bat_priv->_var, net_dev);	\
-+					&bat_priv->_var, net_dev,	\
-+					NULL);	\
- }
+diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-coding.c
+index 3604d7899e2c..7a7dcac20566 100644
+--- a/net/batman-adv/network-coding.c
++++ b/net/batman-adv/network-coding.c
+@@ -850,16 +850,27 @@ batadv_nc_get_nc_node(struct batadv_priv *bat_priv,
+ 	spinlock_t *lock; /* Used to lock list selected by "int in_coding" */
+ 	struct list_head *list;
  
- #define BATADV_ATTR_SIF_SHOW_UINT(_name, _var)				\
-@@ -260,7 +261,9 @@ ssize_t batadv_store_##_name(struct kobject *kobj,			\
- 									\
- 	length = __batadv_store_uint_attr(buff, count, _min, _max,	\
- 					  _post_func, attr,		\
--					  &hard_iface->_var, net_dev);	\
-+					  &hard_iface->_var,		\
-+					  hard_iface->soft_iface,	\
-+					  net_dev);			\
- 									\
- 	batadv_hardif_put(hard_iface);				\
- 	return length;							\
-@@ -354,10 +357,12 @@ __batadv_store_bool_attr(char *buff, size_t count,
- 
- static int batadv_store_uint_attr(const char *buff, size_t count,
- 				  struct net_device *net_dev,
-+				  struct net_device *slave_dev,
- 				  const char *attr_name,
- 				  unsigned int min, unsigned int max,
- 				  atomic_t *attr)
- {
-+	char ifname[IFNAMSIZ + 3] = "";
- 	unsigned long uint_val;
- 	int ret;
- 
-@@ -383,8 +388,11 @@ static int batadv_store_uint_attr(const char *buff, size_t count,
- 	if (atomic_read(attr) == uint_val)
- 		return count;
- 
--	batadv_info(net_dev, "%s: Changing from: %i to: %lu\n",
--		    attr_name, atomic_read(attr), uint_val);
-+	if (slave_dev)
-+		snprintf(ifname, sizeof(ifname), "%s: ", slave_dev->name);
++	/* Select ingoing or outgoing coding node */
++	if (in_coding) {
++		lock = &orig_neigh_node->in_coding_list_lock;
++		list = &orig_neigh_node->in_coding_list;
++	} else {
++		lock = &orig_neigh_node->out_coding_list_lock;
++		list = &orig_neigh_node->out_coding_list;
++	}
 +
-+	batadv_info(net_dev, "%s: %sChanging from: %i to: %lu\n",
-+		    attr_name, ifname, atomic_read(attr), uint_val);
++	spin_lock_bh(lock);
++
+ 	/* Check if nc_node is already added */
+ 	nc_node = batadv_nc_find_nc_node(orig_node, orig_neigh_node, in_coding);
  
- 	atomic_set(attr, uint_val);
- 	return count;
-@@ -395,12 +403,13 @@ static ssize_t __batadv_store_uint_attr(const char *buff, size_t count,
- 					void (*post_func)(struct net_device *),
- 					const struct attribute *attr,
- 					atomic_t *attr_store,
--					struct net_device *net_dev)
-+					struct net_device *net_dev,
-+					struct net_device *slave_dev)
- {
- 	int ret;
+ 	/* Node found */
+ 	if (nc_node)
+-		return nc_node;
++		goto unlock;
  
--	ret = batadv_store_uint_attr(buff, count, net_dev, attr->name, min, max,
--				     attr_store);
-+	ret = batadv_store_uint_attr(buff, count, net_dev, slave_dev,
-+				     attr->name, min, max, attr_store);
- 	if (post_func && ret)
- 		post_func(net_dev);
+ 	nc_node = kzalloc(sizeof(*nc_node), GFP_ATOMIC);
+ 	if (!nc_node)
+-		return NULL;
++		goto unlock;
  
-@@ -569,7 +578,7 @@ static ssize_t batadv_store_gw_sel_class(struct kobject *kobj,
- 	return __batadv_store_uint_attr(buff, count, 1, BATADV_TQ_MAX_VALUE,
- 					batadv_post_gw_reselect, attr,
- 					&bat_priv->gw.sel_class,
--					bat_priv->soft_iface);
-+					bat_priv->soft_iface, NULL);
- }
+ 	/* Initialize nc_node */
+ 	INIT_LIST_HEAD(&nc_node->list);
+@@ -868,22 +879,14 @@ batadv_nc_get_nc_node(struct batadv_priv *bat_priv,
+ 	kref_get(&orig_neigh_node->refcount);
+ 	nc_node->orig_node = orig_neigh_node;
  
- static ssize_t batadv_show_gw_bwidth(struct kobject *kobj,
+-	/* Select ingoing or outgoing coding node */
+-	if (in_coding) {
+-		lock = &orig_neigh_node->in_coding_list_lock;
+-		list = &orig_neigh_node->in_coding_list;
+-	} else {
+-		lock = &orig_neigh_node->out_coding_list_lock;
+-		list = &orig_neigh_node->out_coding_list;
+-	}
+-
+ 	batadv_dbg(BATADV_DBG_NC, bat_priv, "Adding nc_node %pM -> %pM\n",
+ 		   nc_node->addr, nc_node->orig_node->orig);
+ 
+ 	/* Add nc_node to orig_node */
+-	spin_lock_bh(lock);
+ 	kref_get(&nc_node->refcount);
+ 	list_add_tail_rcu(&nc_node->list, list);
++
++unlock:
+ 	spin_unlock_bh(lock);
+ 
+ 	return nc_node;
 -- 
 2.17.1
 
