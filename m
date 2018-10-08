@@ -2,159 +2,116 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD080C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F96C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6380A2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A97521479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:49:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="gNzsLmzk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6380A2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMDyvYN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A97521479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731939AbeJICCs (ORCPT
+        id S1731948AbeJICCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 22:02:48 -0400
-Received: from mail.kdab.com ([176.9.126.58]:10305 "EHLO mail.kdab.com"
+        Mon, 8 Oct 2018 22:02:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730559AbeJICCr (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 22:02:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1539024576; x=1539888577; bh=0Wd1A5qhNVP0NxLR5Xi16bjltwU
- 70Oj54TY354n4OzI=; b=gNzsLmzkf9rmJac5U3k54WnJy5RddjS9Ms3oggPRLeo
- dWa94gyGR1LMyItqikRw6RxpAbbbly04pDquxsQ5lGm4DluFVRY5/2WnRLFKYnH6
- LuceSolepc2VGx0xQyk5JiNoz2Do1SdJQU8yUdNxSEjFw/3oRXdOXHIfiaKYRCpw
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf record: use unmapped IP for inline callchain cursors
-Date:   Mon, 08 Oct 2018 20:49:32 +0200
-Message-ID: <5853017.W5yrxTLJX6@agathebauer>
-Organization: KDAB
-In-Reply-To: <20181005134831.GA20250@kernel.org>
-References: <20181002073949.3297-1-milian.wolff@kdab.com>
- <f71ed02b-1234-db9c-6a48-1a399359b5e8@linux.ibm.com>
- <20181005134831.GA20250@kernel.org>
+        id S1730559AbeJICCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 22:02:50 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18737204FD;
+        Mon,  8 Oct 2018 18:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539024583;
+        bh=sY02rBfSrvgFjMzn6Hl14GGJOO6NuVrYp1y1/fw1kS0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CMDyvYN18W+hjk404HZkaWkp7ZMnBbTGcm02mJnDnI9HJxtlq1hz5FrX52HEaboPa
+         698hDj/BRRW1U0KqvKKj1lmefQAkCtFx+Dl3H78GWpe+9EizOhopibUusMHaZfWuTX
+         xcPqfzUhNTxf8q/Zb2Y4nyTOu22A76JmGYmHubZ4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Jan Kara <jack@suse.cz>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 064/168] fsnotify: fix ignore mask logic in fsnotify()
+Date:   Mon,  8 Oct 2018 20:30:44 +0200
+Message-Id: <20181008175622.483891230@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
+References: <20181008175620.043587728@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5148452.kjaPzXp2qi";
- micalg="sha256"; protocol="application/pkcs7-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart5148452.kjaPzXp2qi
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-On Freitag, 5. Oktober 2018 15:48:31 CEST Arnaldo Carvalho de Melo wrote:
-> Em Wed, Oct 03, 2018 at 09:05:37AM +0530, Ravi Bangoria escreveu:
-> > LGTM.
-> > 
-> > Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> 
-> So, I've added this as a 'git rebase -i' 'fixup', i.e. kept the commit
-> log message for the patch this patch fixes, and combined the two into
-> just one patch so that we don't pollute the bisect history, since this
-> hasn't made it yet to tip, and I also added Ravi's Tested-by, since this
-> tests both.
+------------------
 
-Thanks a lot for the cleanup work Arnaldo.
+From: Amir Goldstein <amir73il@gmail.com>
 
-Cheers
+[ Upstream commit 9bdda4e9cf2dcecb60a0683b10ffb8cd7e5f2f45 ]
 
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart5148452.kjaPzXp2qi
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Commit 92183a42898d ("fsnotify: fix ignore mask logic in
+send_to_group()") acknoledges the use case of ignoring an event on
+an inode mark, because of an ignore mask on a mount mark of the same
+group (i.e. I want to get all events on this file, except for the events
+that came from that mount).
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDA4MTg0OTMyWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQg3hOP66ghCOj/u3D/JgCADWZA4e+A
-rvsJQypWCly5z+MwDQYJKoZIhvcNAQEBBQAEggEAXY9vFd+UDT4P5HAfGWpkCn4ozxEXEX6GlBnJ
-E0ScDXh8fSsATbM2DkSsMwYYJlhCKKlXzck5hVgL6Vm4DUInsWeexDmwI3pKv8Xa2xzBQNU1OAKU
-VOdoFjQM/gFR85Q4M9N0Y2Msg+vMz+JRFBINjwefcLdDBVtWNA6SINg5QgU738Whr0dBpODyB1Nr
-CgYlyw+Sfo+M+RBnWu2Va59sjsXSjeOU5LZLwr06bLoRwvoFPSd6qhEarbb4G5CHrP+h+EXfJ6MM
-jZPUY8O9EDd4XVJTsXgWC8Xb1ECU2QfMdFLvRJW6LNsbqYghOBWstjW8MwQmNB1bW5JUUOEpkN8L
-JgAAAAAAAA==
+This change depends on correctly merging the inode marks and mount marks
+group lists, so that the mount mark ignore mask would be tested in
+send_to_group(). Alas, the merging of the lists did not take into
+account the case where event in question is not in the mask of any of
+the mount marks.
 
+To fix this, completely remove the tests for inode and mount event masks
+from the lists merging code.
 
---nextPart5148452.kjaPzXp2qi--
+Fixes: 92183a42898d ("fsnotify: fix ignore mask logic in send_to_group")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/notify/fsnotify.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -351,16 +351,9 @@ int fsnotify(struct inode *to_tell, __u3
+ 
+ 	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
+ 
+-	if ((mask & FS_MODIFY) ||
+-	    (test_mask & to_tell->i_fsnotify_mask)) {
+-		iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+-			fsnotify_first_mark(&to_tell->i_fsnotify_marks);
+-	}
+-
+-	if (mnt && ((mask & FS_MODIFY) ||
+-		    (test_mask & mnt->mnt_fsnotify_mask))) {
+-		iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+-			fsnotify_first_mark(&to_tell->i_fsnotify_marks);
++	iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
++		fsnotify_first_mark(&to_tell->i_fsnotify_marks);
++	if (mnt) {
+ 		iter_info.marks[FSNOTIFY_OBJ_TYPE_VFSMOUNT] =
+ 			fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
+ 	}
 
 
