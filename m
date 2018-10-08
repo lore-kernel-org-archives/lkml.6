@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41561C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B017C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B603214C3
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 421E5214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:43:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iscVHRP6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B603214C3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+AEYz/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421E5214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbeJIB44 (ORCPT
+        id S1730605AbeJIB47 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:56:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44782 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:56:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729885AbeJIB4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:56:55 -0400
+        id S1729885AbeJIB46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:56:58 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEC1F2087D;
-        Mon,  8 Oct 2018 18:43:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEB8A2064A;
+        Mon,  8 Oct 2018 18:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024230;
-        bh=ANmwA/ALpYI559KNF/EOOSfSdtFokBzGpl3cfiRyeHw=;
+        s=default; t=1539024233;
+        bh=LQhNEp5DaLt+ZX3ifKgVI0VCEMHyQ9J9yxXV0WQdMz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iscVHRP6Mg7FzuStLoRAFoVl0kq6/JTKpjbbbXPnGIfIawC473Eb0Cnj5cpp21n9b
-         Ac7nlLH56/v9Un8OM+CP7snQ5hWTTDOVwIsj6qzK51Iupdg3ie0zk8MlvlFcTPkkEH
-         NhLyu2ZADWh7fQsbcXPoAN2RGqQsvpK7WHOp3/AQ=
+        b=R+AEYz/zwmtEnFGkvJDB586++eXhVVr2SAJb4MS0yutlFlOukHLOszGsQ/ppvxF4O
+         QMHLePI9rUnzSPdyVc00g8uQB6H+IBGI6pkFRd6B/q3tdJ7+VH7f2FSMpyIkhDuPNX
+         57lDU9Afop4OkPh8HE9wVsIwFKPv2JJ6p6+afXMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacek Tomaka <jacek.tomaka@poczta.fm>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 65/94] perf/x86/intel: Add support/quirk for the MISPREDICT bit on Knights Landing CPUs
-Date:   Mon,  8 Oct 2018 20:31:46 +0200
-Message-Id: <20181008175609.555414593@linuxfoundation.org>
+Subject: [PATCH 4.14 66/94] dm thin metadata: try to avoid ever aborting transactions
+Date:   Mon,  8 Oct 2018 20:31:47 +0200
+Message-Id: <20181008175609.656421529@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -66,72 +63,260 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacek Tomaka <jacek.tomaka@poczta.fm>
+From: Joe Thornber <ejt@redhat.com>
 
-[ Upstream commit 16160c1946b702dcfa95ef63389a56deb2f1c7cb ]
+[ Upstream commit 3ab91828166895600efd9cdc3a0eb32001f7204a ]
 
-Problem: perf did not show branch predicted/mispredicted bit in brstack.
+Committing a transaction can consume some metadata of it's own, we now
+reserve a small amount of metadata to cover this.  Free metadata
+reported by the kernel will not include this reserve.
 
-Output of perf -F brstack for profile collected
+If any of the reserve has been used after a commit we enter a new
+internal state PM_OUT_OF_METADATA_SPACE.  This is reported as
+PM_READ_ONLY, so no userland changes are needed.  If the metadata
+device is resized the pool will move back to PM_WRITE.
 
-Before:
+These changes mean we never need to abort and rollback a transaction due
+to running out of metadata space.  This is particularly important
+because there have been a handful of reports of data corruption against
+DM thin-provisioning that can all be attributed to the thin-pool having
+ran out of metadata space.
 
- 0x4fdbcd/0x4fdc03/-/-/-/0
- 0x45f4c1/0x4fdba0/-/-/-/0
- 0x45f544/0x45f4bb/-/-/-/0
- 0x45f555/0x45f53c/-/-/-/0
- 0x7f66901cc24b/0x45f555/-/-/-/0
- 0x7f66901cc22e/0x7f66901cc23d/-/-/-/0
- 0x7f66901cc1ff/0x7f66901cc20f/-/-/-/0
- 0x7f66901cc1e8/0x7f66901cc1fc/-/-/-/0
-
-After:
-
- 0x4fdbcd/0x4fdc03/P/-/-/0
- 0x45f4c1/0x4fdba0/P/-/-/0
- 0x45f544/0x45f4bb/P/-/-/0
- 0x45f555/0x45f53c/P/-/-/0
- 0x7f66901cc24b/0x45f555/P/-/-/0
- 0x7f66901cc22e/0x7f66901cc23d/P/-/-/0
- 0x7f66901cc1ff/0x7f66901cc20f/P/-/-/0
- 0x7f66901cc1e8/0x7f66901cc1fc/P/-/-/0
-
-Cause:
-
-As mentioned in Software Development Manual vol 3, 17.4.8.1,
-IA32_PERF_CAPABILITIES[5:0] indicates the format of the address that is
-stored in the LBR stack. Knights Landing reports 1 (LBR_FORMAT_LIP) as
-its format. Despite that, registers containing FROM address of the branch,
-do have MISPREDICT bit but because of the format indicated in
-IA32_PERF_CAPABILITIES[5:0], LBR did not read MISPREDICT bit.
-
-Solution:
-
-Teach LBR about above Knights Landing quirk and make it read MISPREDICT bit.
-
-Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180802013830.10600-1-jacekt@dugeo.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/lbr.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/md/dm-thin-metadata.c |   36 ++++++++++++++++++++
+ drivers/md/dm-thin.c          |   73 +++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 100 insertions(+), 9 deletions(-)
 
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -1250,4 +1250,8 @@ void intel_pmu_lbr_init_knl(void)
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -189,6 +189,12 @@ struct dm_pool_metadata {
+ 	sector_t data_block_size;
  
- 	x86_pmu.lbr_sel_mask = LBR_SEL_MASK;
- 	x86_pmu.lbr_sel_map  = snb_lbr_sel_map;
+ 	/*
++	 * We reserve a section of the metadata for commit overhead.
++	 * All reported space does *not* include this.
++	 */
++	dm_block_t metadata_reserve;
 +
-+	/* Knights Landing does have MISPREDICT bit */
-+	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_LIP)
-+		x86_pmu.intel_cap.lbr_format = LBR_FORMAT_EIP_FLAGS;
++	/*
+ 	 * Set if a transaction has to be aborted but the attempt to roll back
+ 	 * to the previous (good) transaction failed.  The only pool metadata
+ 	 * operation possible in this state is the closing of the device.
+@@ -825,6 +831,22 @@ static int __commit_transaction(struct d
+ 	return dm_tm_commit(pmd->tm, sblock);
  }
+ 
++static void __set_metadata_reserve(struct dm_pool_metadata *pmd)
++{
++	int r;
++	dm_block_t total;
++	dm_block_t max_blocks = 4096; /* 16M */
++
++	r = dm_sm_get_nr_blocks(pmd->metadata_sm, &total);
++	if (r) {
++		DMERR("could not get size of metadata device");
++		pmd->metadata_reserve = max_blocks;
++	} else {
++		sector_div(total, 10);
++		pmd->metadata_reserve = min(max_blocks, total);
++	}
++}
++
+ struct dm_pool_metadata *dm_pool_metadata_open(struct block_device *bdev,
+ 					       sector_t data_block_size,
+ 					       bool format_device)
+@@ -858,6 +880,8 @@ struct dm_pool_metadata *dm_pool_metadat
+ 		return ERR_PTR(r);
+ 	}
+ 
++	__set_metadata_reserve(pmd);
++
+ 	return pmd;
+ }
+ 
+@@ -1829,6 +1853,13 @@ int dm_pool_get_free_metadata_block_coun
+ 	down_read(&pmd->root_lock);
+ 	if (!pmd->fail_io)
+ 		r = dm_sm_get_nr_free(pmd->metadata_sm, result);
++
++	if (!r) {
++		if (*result < pmd->metadata_reserve)
++			*result = 0;
++		else
++			*result -= pmd->metadata_reserve;
++	}
+ 	up_read(&pmd->root_lock);
+ 
+ 	return r;
+@@ -1941,8 +1972,11 @@ int dm_pool_resize_metadata_dev(struct d
+ 	int r = -EINVAL;
+ 
+ 	down_write(&pmd->root_lock);
+-	if (!pmd->fail_io)
++	if (!pmd->fail_io) {
+ 		r = __resize_space_map(pmd->metadata_sm, new_count);
++		if (!r)
++			__set_metadata_reserve(pmd);
++	}
+ 	up_write(&pmd->root_lock);
+ 
+ 	return r;
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -200,7 +200,13 @@ struct dm_thin_new_mapping;
+ enum pool_mode {
+ 	PM_WRITE,		/* metadata may be changed */
+ 	PM_OUT_OF_DATA_SPACE,	/* metadata may be changed, though data may not be allocated */
++
++	/*
++	 * Like READ_ONLY, except may switch back to WRITE on metadata resize. Reported as READ_ONLY.
++	 */
++	PM_OUT_OF_METADATA_SPACE,
+ 	PM_READ_ONLY,		/* metadata may not be changed */
++
+ 	PM_FAIL,		/* all I/O fails */
+ };
+ 
+@@ -1382,7 +1388,35 @@ static void set_pool_mode(struct pool *p
+ 
+ static void requeue_bios(struct pool *pool);
+ 
+-static void check_for_space(struct pool *pool)
++static bool is_read_only_pool_mode(enum pool_mode mode)
++{
++	return (mode == PM_OUT_OF_METADATA_SPACE || mode == PM_READ_ONLY);
++}
++
++static bool is_read_only(struct pool *pool)
++{
++	return is_read_only_pool_mode(get_pool_mode(pool));
++}
++
++static void check_for_metadata_space(struct pool *pool)
++{
++	int r;
++	const char *ooms_reason = NULL;
++	dm_block_t nr_free;
++
++	r = dm_pool_get_free_metadata_block_count(pool->pmd, &nr_free);
++	if (r)
++		ooms_reason = "Could not get free metadata blocks";
++	else if (!nr_free)
++		ooms_reason = "No free metadata blocks";
++
++	if (ooms_reason && !is_read_only(pool)) {
++		DMERR("%s", ooms_reason);
++		set_pool_mode(pool, PM_OUT_OF_METADATA_SPACE);
++	}
++}
++
++static void check_for_data_space(struct pool *pool)
+ {
+ 	int r;
+ 	dm_block_t nr_free;
+@@ -1408,14 +1442,16 @@ static int commit(struct pool *pool)
+ {
+ 	int r;
+ 
+-	if (get_pool_mode(pool) >= PM_READ_ONLY)
++	if (get_pool_mode(pool) >= PM_OUT_OF_METADATA_SPACE)
+ 		return -EINVAL;
+ 
+ 	r = dm_pool_commit_metadata(pool->pmd);
+ 	if (r)
+ 		metadata_operation_failed(pool, "dm_pool_commit_metadata", r);
+-	else
+-		check_for_space(pool);
++	else {
++		check_for_metadata_space(pool);
++		check_for_data_space(pool);
++	}
+ 
+ 	return r;
+ }
+@@ -1481,6 +1517,19 @@ static int alloc_data_block(struct thin_
+ 		return r;
+ 	}
+ 
++	r = dm_pool_get_free_metadata_block_count(pool->pmd, &free_blocks);
++	if (r) {
++		metadata_operation_failed(pool, "dm_pool_get_free_metadata_block_count", r);
++		return r;
++	}
++
++	if (!free_blocks) {
++		/* Let's commit before we use up the metadata reserve. */
++		r = commit(pool);
++		if (r)
++			return r;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1512,6 +1561,7 @@ static blk_status_t should_error_unservi
+ 	case PM_OUT_OF_DATA_SPACE:
+ 		return pool->pf.error_if_no_space ? BLK_STS_NOSPC : 0;
+ 
++	case PM_OUT_OF_METADATA_SPACE:
+ 	case PM_READ_ONLY:
+ 	case PM_FAIL:
+ 		return BLK_STS_IOERR;
+@@ -2475,8 +2525,9 @@ static void set_pool_mode(struct pool *p
+ 		error_retry_list(pool);
+ 		break;
+ 
++	case PM_OUT_OF_METADATA_SPACE:
+ 	case PM_READ_ONLY:
+-		if (old_mode != new_mode)
++		if (!is_read_only_pool_mode(old_mode))
+ 			notify_of_pool_mode_change(pool, "read-only");
+ 		dm_pool_metadata_read_only(pool->pmd);
+ 		pool->process_bio = process_bio_read_only;
+@@ -3412,6 +3463,10 @@ static int maybe_resize_metadata_dev(str
+ 		DMINFO("%s: growing the metadata device from %llu to %llu blocks",
+ 		       dm_device_name(pool->pool_md),
+ 		       sb_metadata_dev_size, metadata_dev_size);
++
++		if (get_pool_mode(pool) == PM_OUT_OF_METADATA_SPACE)
++			set_pool_mode(pool, PM_WRITE);
++
+ 		r = dm_pool_resize_metadata_dev(pool->pmd, metadata_dev_size);
+ 		if (r) {
+ 			metadata_operation_failed(pool, "dm_pool_resize_metadata_dev", r);
+@@ -3715,7 +3770,7 @@ static int pool_message(struct dm_target
+ 	struct pool_c *pt = ti->private;
+ 	struct pool *pool = pt->pool;
+ 
+-	if (get_pool_mode(pool) >= PM_READ_ONLY) {
++	if (get_pool_mode(pool) >= PM_OUT_OF_METADATA_SPACE) {
+ 		DMERR("%s: unable to service pool target messages in READ_ONLY or FAIL mode",
+ 		      dm_device_name(pool->pool_md));
+ 		return -EOPNOTSUPP;
+@@ -3789,6 +3844,7 @@ static void pool_status(struct dm_target
+ 	dm_block_t nr_blocks_data;
+ 	dm_block_t nr_blocks_metadata;
+ 	dm_block_t held_root;
++	enum pool_mode mode;
+ 	char buf[BDEVNAME_SIZE];
+ 	char buf2[BDEVNAME_SIZE];
+ 	struct pool_c *pt = ti->private;
+@@ -3859,9 +3915,10 @@ static void pool_status(struct dm_target
+ 		else
+ 			DMEMIT("- ");
+ 
+-		if (pool->pf.mode == PM_OUT_OF_DATA_SPACE)
++		mode = get_pool_mode(pool);
++		if (mode == PM_OUT_OF_DATA_SPACE)
+ 			DMEMIT("out_of_data_space ");
+-		else if (pool->pf.mode == PM_READ_ONLY)
++		else if (is_read_only_pool_mode(mode))
+ 			DMEMIT("ro ");
+ 		else
+ 			DMEMIT("rw ");
 
 
