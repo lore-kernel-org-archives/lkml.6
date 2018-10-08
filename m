@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93939C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D384C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E461214C3
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1471420C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:37:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cx+pOpyT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E461214C3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRCUlpsD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1471420C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeJIBuj (ORCPT
+        id S1728967AbeJIBun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:50:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36928 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:50:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:50:38 -0400
+        id S1726427AbeJIBum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:50:42 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9CD521479;
-        Mon,  8 Oct 2018 18:37:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A3BC2064A;
+        Mon,  8 Oct 2018 18:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023855;
-        bh=kOIdCr1K9QoImF4XKsMvoShxfdh6yp3BBswsWt+fgYY=;
+        s=default; t=1539023858;
+        bh=IAsHHYCztPpcIkrmwwH35uXzDptgbAegAocotLal+g4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cx+pOpyTbIAo5CmmOZ49jpaXG6mBbdcbLJo92fPwx/DsotdHWOLygi2ZHjqQtxOHZ
-         jGzQaXDZ6FQ9VY2uYlt2K8mvFnBbl5Mk85HWii6zSJYF2csYkVjuAG+pIZ08JXMFaI
-         snfZW9zeyCODEqdQS9aQziQOVK3u1ZHsW6L7qOUk=
+        b=VRCUlpsDI0qIR0B6nlvtLGlK3UoCn8Dzdi1efStx2dtVPMhLEhfjC2syvq1X7QNL7
+         ZRRpwh1+13HtUZzsJyQCbf7q9zvf5iwbFJhlGlc2F5C6v+hWoIsnh0yOGfJdEAr2ML
+         CUSUk3nSJI77CycFU/5cm/AyKNYCPZklbEv+gP/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 100/113] arch/hexagon: fix kernel/dma.c build warning
-Date:   Mon,  8 Oct 2018 20:31:41 +0200
-Message-Id: <20181008175536.804387083@linuxfoundation.org>
+        stable@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>,
+        Paulo Alcantara <palcantara@suse.deR>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.4 109/113] smb2: fix missing files in root share directory listing
+Date:   Mon,  8 Oct 2018 20:31:50 +0200
+Message-Id: <20181008175537.301997288@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -65,40 +64,175 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Aurelien Aptel <aaptel@suse.com>
 
-[ Upstream commit 200f351e27f014fcbf69b544b0b4b72aeaf45fd3 ]
+commit 0595751f267994c3c7027377058e4185b3a28e75 upstream.
 
-Fix build warning in arch/hexagon/kernel/dma.c by casting a void *
-to unsigned long to match the function parameter type.
+When mounting a Windows share that is the root of a drive (eg. C$)
+the server does not return . and .. directory entries. This results in
+the smb2 code path erroneously skipping the 2 first entries.
 
-../arch/hexagon/kernel/dma.c: In function 'arch_dma_alloc':
-../arch/hexagon/kernel/dma.c:51:5: warning: passing argument 2 of 'gen_pool_add' makes integer from pointer without a cast [enabled by default]
-../include/linux/genalloc.h:112:19: note: expected 'long unsigned int' but argument is of type 'void *'
+Pseudo-code of the readdir() code path:
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
-Patch-mainline: linux-kernel @ 07/20/2018, 20:17
-[rkuo@codeaurora.org: fixed architecture name]
-Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+cifs_readdir(struct file, struct dir_context)
+    initiate_cifs_search            <-- if no reponse cached yet
+        server->ops->query_dir_first
+
+    dir_emit_dots
+        dir_emit                    <-- adds "." and ".." if we're at pos=0
+
+    find_cifs_entry
+        initiate_cifs_search        <-- if pos < start of current response
+                                         (restart search)
+        server->ops->query_dir_next <-- if pos > end of current response
+                                         (fetch next search res)
+
+    for(...)                        <-- loops over cur response entries
+                                          starting at pos
+        cifs_filldir                <-- skip . and .., emit entry
+            cifs_fill_dirent
+            dir_emit
+	pos++
+
+A) dir_emit_dots() always adds . & ..
+   and sets the current dir pos to 2 (0 and 1 are done).
+
+Therefore we always want the index_to_find to be 2 regardless of if
+the response has . and ..
+
+B) smb1 code initializes index_of_last_entry with a +2 offset
+
+  in cifssmb.c CIFSFindFirst():
+		psrch_inf->index_of_last_entry = 2 /* skip . and .. */ +
+			psrch_inf->entries_in_buffer;
+
+Later in find_cifs_entry() we want to find the next dir entry at pos=2
+as a result of (A)
+
+	first_entry_in_buffer = cfile->srch_inf.index_of_last_entry -
+					cfile->srch_inf.entries_in_buffer;
+
+This var is the dir pos that the first entry in the buffer will
+have therefore it must be 2 in the first call.
+
+If we don't offset index_of_last_entry by 2 (like in (B)),
+first_entry_in_buffer=0 but we were instructed to get pos=2 so this
+code in find_cifs_entry() skips the 2 first which is ok for non-root
+shares, as it skips . and .. from the response but is not ok for root
+shares where the 2 first are actual files
+
+		pos_in_buf = index_to_find - first_entry_in_buffer;
+                // pos_in_buf=2
+		// we skip 2 first response entries :(
+		for (i = 0; (i < (pos_in_buf)) && (cur_ent != NULL); i++) {
+			/* go entry by entry figuring out which is first */
+			cur_ent = nxt_dir_entry(cur_ent, end_of_smb,
+						cfile->srch_inf.info_level);
+		}
+
+C) cifs_filldir() skips . and .. so we can safely ignore them for now.
+
+Sample program:
+
+int main(int argc, char **argv)
+{
+	const char *path = argc >= 2 ? argv[1] : ".";
+	DIR *dh;
+	struct dirent *de;
+
+	printf("listing path <%s>\n", path);
+	dh = opendir(path);
+	if (!dh) {
+		printf("opendir error %d\n", errno);
+		return 1;
+	}
+
+	while (1) {
+		de = readdir(dh);
+		if (!de) {
+			if (errno) {
+				printf("readdir error %d\n", errno);
+				return 1;
+			}
+			printf("end of listing\n");
+			break;
+		}
+		printf("off=%lu <%s>\n", de->d_off, de->d_name);
+	}
+
+	return 0;
+}
+
+Before the fix with SMB1 on root shares:
+
+<.>            off=1
+<..>           off=2
+<$Recycle.Bin> off=3
+<bootmgr>      off=4
+
+and on non-root shares:
+
+<.>    off=1
+<..>   off=4  <-- after adding .., the offsets jumps to +2 because
+<2536> off=5       we skipped . and .. from response buffer (C)
+<411>  off=6       but still incremented pos
+<file> off=7
+<fsx>  off=8
+
+Therefore the fix for smb2 is to mimic smb1 behaviour and offset the
+index_of_last_entry by 2.
+
+Test results comparing smb1 and smb2 before/after the fix on root
+share, non-root shares and on large directories (ie. multi-response
+dir listing):
+
+PRE FIX
+=======
+pre-1-root VS pre-2-root:
+        ERR pre-2-root is missing [bootmgr, $Recycle.Bin]
+pre-1-nonroot VS pre-2-nonroot:
+        OK~ same files, same order, different offsets
+pre-1-nonroot-large VS pre-2-nonroot-large:
+        OK~ same files, same order, different offsets
+
+POST FIX
+========
+post-1-root VS post-2-root:
+        OK same files, same order, same offsets
+post-1-nonroot VS post-2-nonroot:
+        OK same files, same order, same offsets
+post-1-nonroot-large VS post-2-nonroot-large:
+        OK same files, same order, same offsets
+
+REGRESSION?
+===========
+pre-1-root VS post-1-root:
+        OK same files, same order, same offsets
+pre-1-nonroot VS post-1-nonroot:
+        OK same files, same order, same offsets
+
+BugLink: https://bugzilla.samba.org/show_bug.cgi?id=13107
+Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Paulo Alcantara <palcantara@suse.deR>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/hexagon/kernel/dma.c |    2 +-
+ fs/cifs/smb2ops.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/hexagon/kernel/dma.c
-+++ b/arch/hexagon/kernel/dma.c
-@@ -68,7 +68,7 @@ static void *hexagon_dma_alloc_coherent(
- 			panic("Can't create %s() memory pool!", __func__);
- 		else
- 			gen_pool_add(coherent_pool,
--				pfn_to_virt(max_low_pfn),
-+				(unsigned long)pfn_to_virt(max_low_pfn),
- 				hexagon_coherent_pool_size, -1);
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -914,7 +914,7 @@ smb2_query_dir_first(const unsigned int
  	}
  
+ 	srch_inf->entries_in_buffer = 0;
+-	srch_inf->index_of_last_entry = 0;
++	srch_inf->index_of_last_entry = 2;
+ 
+ 	rc = SMB2_query_directory(xid, tcon, fid->persistent_fid,
+ 				  fid->volatile_fid, 0, srch_inf);
 
 
