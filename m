@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F15FC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A44EAC677E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 597AE2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EAEB2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:36:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKhgLmgA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597AE2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVL4wXrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EAEB2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbeJIBt3 (ORCPT
+        id S1728628AbeJIBtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:49:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34556 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:49:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbeJIBt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:49:28 -0400
+        id S1727803AbeJIBtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:49:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EB582089D;
-        Mon,  8 Oct 2018 18:36:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2820D2064A;
+        Mon,  8 Oct 2018 18:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023784;
-        bh=WnbT0hL9HAIh5jO1lS1T2bVA49AOT0KX6nvHm8LhVwg=;
+        s=default; t=1539023787;
+        bh=K1Gcp0PbFrYH99qQkMN2qXBLKzEwHpuwhonDvYx+rzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lKhgLmgAexJoYWSgdcDKAy+VidjscpwQyMrJBq5zyzDEjjumkztHyfXITxEDXZpoB
-         sSiBWLdEuzRQozRE1s2Y6XQchEFXSkTEOBlnZOfz/JiNXGJTArVVgMbr4tfneMqEEV
-         zJ3Xmyl3ShPO1PANlczRyeNE4fX019zybgUlT/x4=
+        b=aVL4wXrJo6Fc+E9NJQrJ4g4/7k1nPikkrdTJ3uri/YHpIu0VtNN/CXms9VWcQulw1
+         DZqiHFPUBko+Ld3B8RwAizTbx+rGbQFHMp3r0M0au5XcmKpCRmdKMP7PbBfQLqDfl6
+         EbDCneKgnFvqBdDEhqXQ2m8Poxf8oVNkS0q+ojOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Danek Duvall <duvall@comfychair.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Jon Kuhn <jkuhn@barracuda.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 075/113] mac80211: correct use of IEEE80211_VHT_CAP_RXSTBC_X
-Date:   Mon,  8 Oct 2018 20:31:16 +0200
-Message-Id: <20181008175535.077727292@linuxfoundation.org>
+Subject: [PATCH 4.4 084/113] fs/cifs: dont translate SFM_SLASH (U+F026) to backslash
+Date:   Mon,  8 Oct 2018 20:31:25 +0200
+Message-Id: <20181008175536.000119586@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,37 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Danek Duvall <duvall@comfychair.org>
+From: Jon Kuhn <jkuhn@barracuda.com>
 
-[ Upstream commit 67d1ba8a6dc83d90cd58b89fa6cbf9ae35a0cf7f ]
+[ Upstream commit c15e3f19a6d5c89b1209dc94b40e568177cb0921 ]
 
-The mod mask for VHT capabilities intends to say that you can override
-the number of STBC receive streams, and it does, but only by accident.
-The IEEE80211_VHT_CAP_RXSTBC_X aren't bits to be set, but values (albeit
-left-shifted).  ORing the bits together gets the right answer, but we
-should use the _MASK macro here instead.
+When a Mac client saves an item containing a backslash to a file server
+the backslash is represented in the CIFS/SMB protocol as as U+F026.
+Before this change, listing a directory containing an item with a
+backslash in its name will return that item with the backslash
+represented with a true backslash character (U+005C) because
+convert_sfm_character mapped U+F026 to U+005C when interpretting the
+CIFS/SMB protocol response.  However, attempting to open or stat the
+path using a true backslash will result in an error because
+convert_to_sfm_char does not map U+005C back to U+F026 causing the
+CIFS/SMB request to be made with the backslash represented as U+005C.
 
-Signed-off-by: Danek Duvall <duvall@comfychair.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This change simply prevents the U+F026 to U+005C conversion from
+happenning.  This is analogous to how the code does not do any
+translation of UNI_SLASH (U+F000).
+
+Signed-off-by: Jon Kuhn <jkuhn@barracuda.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/main.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/cifs/cifs_unicode.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -460,10 +460,7 @@ static const struct ieee80211_vht_cap ma
- 		cpu_to_le32(IEEE80211_VHT_CAP_RXLDPC |
- 			    IEEE80211_VHT_CAP_SHORT_GI_80 |
- 			    IEEE80211_VHT_CAP_SHORT_GI_160 |
--			    IEEE80211_VHT_CAP_RXSTBC_1 |
--			    IEEE80211_VHT_CAP_RXSTBC_2 |
--			    IEEE80211_VHT_CAP_RXSTBC_3 |
--			    IEEE80211_VHT_CAP_RXSTBC_4 |
-+			    IEEE80211_VHT_CAP_RXSTBC_MASK |
- 			    IEEE80211_VHT_CAP_TXSTBC |
- 			    IEEE80211_VHT_CAP_SU_BEAMFORMER_CAPABLE |
- 			    IEEE80211_VHT_CAP_SU_BEAMFORMEE_CAPABLE |
+--- a/fs/cifs/cifs_unicode.c
++++ b/fs/cifs/cifs_unicode.c
+@@ -101,9 +101,6 @@ convert_sfm_char(const __u16 src_char, c
+ 	case SFM_LESSTHAN:
+ 		*target = '<';
+ 		break;
+-	case SFM_SLASH:
+-		*target = '\\';
+-		break;
+ 	case SFM_SPACE:
+ 		*target = ' ';
+ 		break;
 
 
