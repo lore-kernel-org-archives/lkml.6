@@ -2,106 +2,129 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588DAC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 357B6C65BD1
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3EE52087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:27:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EE52087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 047422084D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 08:32:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047422084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbeJHPhy (ORCPT
+        id S1727031AbeJHPml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 11:37:54 -0400
-Received: from ozlabs.org ([203.11.71.1]:53325 "EHLO ozlabs.org"
+        Mon, 8 Oct 2018 11:42:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36022 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbeJHPhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:37:54 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42TD4Q4FsSz9s9J;
-        Mon,  8 Oct 2018 19:27:18 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     YueHaibing <yuehaibing@huawei.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     YueHaibing <yuehaibing@huawei.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] powerpc/powernv: Fix debugfs_simple_attr.cocci warnings
-In-Reply-To: <1538736631-99728-1-git-send-email-yuehaibing@huawei.com>
-References: <1538736631-99728-1-git-send-email-yuehaibing@huawei.com>
-Date:   Mon, 08 Oct 2018 19:27:17 +1100
-Message-ID: <87va6c268q.fsf@concordia.ellerman.id.au>
+        id S1726096AbeJHPmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 11:42:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E2667207CC; Mon,  8 Oct 2018 10:32:03 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AE15C2072D;
+        Mon,  8 Oct 2018 10:31:53 +0200 (CEST)
+Date:   Mon, 8 Oct 2018 10:31:54 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
+        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v2 01/29] dt-bindings: bus: add H6 DE3 bus binding
+Message-ID: <20181008083154.hhrelzmmpbjwu7sy@flea>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+ <20181007093905.11253-2-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3log35b4kqixjsi6"
+Content-Disposition: inline
+In-Reply-To: <20181007093905.11253-2-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> writes:
-> Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-> for debugfs files.
->
-> Semantic patch information:
-> Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-> imposes some significant overhead as compared to
-> DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
 
-Sorry this isn't detailed enough for me to actually understand the
-pros/cons of this patch.
+--3log35b4kqixjsi6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Perhaps I'm expected to know it, but I don't.
-
-I had a look at what each macro produces and it wasn't obvious to me
-what the benefit is.
-
-cheers
-
-> Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Sun, Oct 07, 2018 at 11:38:37AM +0200, Jernej Skrabec wrote:
+> From: Icenowy Zheng <icenowy@aosc.io>
+>=20
+> The Allwinner H6 DE3 bus is similar to the A64 DE2 one.
+>=20
+> Add its compatible string with the A64 string as fallback to the
+> binding.
+>=20
+> Some description of the binding is modified to make it more generic.
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  arch/powerpc/platforms/powernv/memtrace.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
-> index 84d038e..0cb6548 100644
-> --- a/arch/powerpc/platforms/powernv/memtrace.c
-> +++ b/arch/powerpc/platforms/powernv/memtrace.c
-> @@ -311,8 +311,8 @@ static int memtrace_enable_get(void *data, u64 *val)
->  	return 0;
->  }
->  
-> -DEFINE_SIMPLE_ATTRIBUTE(memtrace_init_fops, memtrace_enable_get,
-> -					memtrace_enable_set, "0x%016llx\n");
-> +DEFINE_DEBUGFS_ATTRIBUTE(memtrace_init_fops, memtrace_enable_get,
-> +			 memtrace_enable_set, "0x%016llx\n");
->  
->  static int memtrace_init(void)
->  {
-> @@ -321,8 +321,8 @@ static int memtrace_init(void)
->  	if (!memtrace_debugfs_dir)
->  		return -1;
->  
-> -	debugfs_create_file("enable", 0600, memtrace_debugfs_dir,
-> -			    NULL, &memtrace_init_fops);
-> +	debugfs_create_file_unsafe("enable", 0600, memtrace_debugfs_dir, NULL,
-> +				   &memtrace_init_fops);
->  
->  	return 0;
->  }
+>  Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/D=
+ocumentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+> index 87dfb33fb3be..ac1445b95f41 100644
+> --- a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+> +++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+> @@ -1,11 +1,14 @@
+> -Device tree bindings for Allwinner A64 DE2 bus
+> +Device tree bindings for Allwinner DE2/3 bus
+> =20
+>  The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SR=
+AM C)
+> -to be claimed for enabling the access.
+> +to be claimed for enabling the access. The DE3 on Allwinner H6 is at the=
+ same
+> +situation, and the binding also applies.
+> =20
+>  Required properties:
+> =20
+> - - compatible:		Should contain "allwinner,sun50i-a64-de2"
+> + - compatible:		Should be one of:
+> +				- "allwinner,sun50i-a64-de2"
+> +				- "allwinner,sun50i-a6-de3", "allwinner,sun50i-a64-de2"
+
+                                                    ^ that would be h6 I gu=
+ess?
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--3log35b4kqixjsi6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu7FfkACgkQ0rTAlCFN
+r3TIgQ//SivUUsAlT5b1rfWXw2uIAhHhSS1ujd0WM58KWZ9Wcfj/H/DqwxwKsf6a
+VhV6JRjh47bNCPgR6uHoNAnzG5/3rFCKqgRxDynEXiE2cKtX6X28rEMUGC19Fzub
+t4AHDv94quEB3UCpSlsmZ64UnizUqw5gpQBkpihCub/EFvd31ro5cYRcb5ovlqem
+fjVZsYaL74e7BfgpYWi7hlqpUY3JMf7SzigkCDLrsS9t/DeHFq/ESwYTiY2R/l5O
+Ktjq75/PyM0hhDFIxiiQpJa2HRIMAXfVIXYkQRwAp8VrAuQ4usZ6jMWp/q7LE/yx
+dLUUHPwH5nkm8KtFGJ0p1zvPwxc68qCsiNf7bStxrzfd/UEjtsorhqoV6bxNrM7g
+HJjXpK74tgWadAQDOvNXp05TJveHy1MfCad8UY6uoPKRwEIkZqFo87l5xwMR36xT
+3k5MKwb9rFTnvV5Uk4mbnV8n+m+E0ksMZEl0EHmDDt1mf0WTIQ/OkAinSw6oSeZj
+jyDPBcS/upsARcnTEfOhFjFGW8mNIVEylE1hmUJD/5zaKvzwSX9XLspSwMbMdWO3
+FSSI+beJAojP73/qnZ8RxLQyPKg8qb9R0otNwaDahmaBvmC6EXSCPz0AP9l3ZE0t
+hO7QTSjY+mPb88JQ6nM70ebx1HcBUmWHED5fSf3Mr3ECHwf8/74=
+=AuM9
+-----END PGP SIGNATURE-----
+
+--3log35b4kqixjsi6--
