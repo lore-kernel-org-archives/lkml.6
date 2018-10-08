@@ -2,118 +2,184 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057E2C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2997DC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC46C2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8E220858
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 14:57:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ukRMHOua"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC46C2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCnhnp4e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8E220858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeJHWIL (ORCPT
+        id S1726483AbeJHWJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:08:11 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54615 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeJHWIL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:08:11 -0400
-Received: by mail-it1-f193.google.com with SMTP id l191-v6so11819488ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 07:56:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3MU0FRVwtyxREGUt3pr07bjMmmAUa61FYU+Ei0ub3BA=;
-        b=ukRMHOuaRdcPsQZjSw9LCn/H5PcttTStkB6w+io4wATUsskP99NqwG02EAD4d3dOr1
-         1RStIHs6QMU2JIr40ZlkgVVTO4g8ParSwM/OJs6TAaWqk3rQhnPE+KG+0Chi9jK90Jpi
-         aWKG4hJmgTPFgr9DpJ9oiIQ7/n6jH9Q+hjfj6Zz++VEh+GJlvyEspDgLUAZ+pwe+CNUE
-         ekN/G+MZr2xHYA77fHVswv/wzzv/Se374KsZaRQkviF3kC0P+zvbj3St9u4/M6vmUJC0
-         H13OQwN4IziTxWbRdWF3BZCT5ejT+xKlNqJJ2C6bys3X3br0FRktwQ9cbVc/qr2Nmi/P
-         KnkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3MU0FRVwtyxREGUt3pr07bjMmmAUa61FYU+Ei0ub3BA=;
-        b=BiTnLeRjM5RJXvEUWVoEQzdYLaqoVhrbYedol6jjmgCQNII44pv7JyslnvPjeb+qS5
-         z52kE3UM15uqlCb054W0YCQoZoaRuWFpweKn5TDB9RSTJKVyrB2ZBZA8elhVzkAxg0gP
-         IpWCOz0HF2v1bUgtGJm8Vr1WjgdRzhxpzFw2hWVD5kdn9xCeGuvrTPiGnnKuOEt+EPE/
-         C6TX161T5nzXBsaLskh/nMoAYQBmLeV6I9jDnoWPs50Lcjz1rReH0rKEkI3W1xrl1z44
-         KBfqdARw9/ad9BHJHPbpCIkLzCgdreqru4RLEY3i4u8a18R39ECqCUhsh9TU1owfphQv
-         pP3A==
-X-Gm-Message-State: ABuFfojL/z7lCOLlI/RLSQInlqxA75sh+jsOC0ha3eN+2wsgYp6cSamE
-        ZPcBRnE5U7ntpq1e+KzP7u1z8i8zjn+lBYOYVmo=
-X-Google-Smtp-Source: ACcGV62dJvH3AwLMbkr+M2xwHFaZB2mweB5kvkB0QyXZGiZOV12cNYJdfJOdFu04R4i8JjAjhxyl6oUXtxNGBURfvOw=
-X-Received: by 2002:a24:9981:: with SMTP id a123-v6mr17180478ite.133.1539010563961;
- Mon, 08 Oct 2018 07:56:03 -0700 (PDT)
+        Mon, 8 Oct 2018 18:09:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbeJHWJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:09:49 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80B1C20878;
+        Mon,  8 Oct 2018 14:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539010660;
+        bh=1BE0fw0J6LIRJq+p2GmA36rsVMGIZ+lKvwe/cLY4HQ4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bCnhnp4eEYFxEFqoMCY9JW1YwDB+SeXXDDy93WH/q+eQDWTjLvq/gvYJ6N6n07q88
+         qLIOnplc7iJ159v2Rokq0QuUIGqWQyKPalB+hBV78PfFQjIzsJSOWWVO5hXRTttpUk
+         tYhiwrZwB4Crt04GY7BpI1IclcAD3ZKwyZqR8o5c=
+Received: by mail-qt1-f177.google.com with SMTP id b4-v6so13174613qtc.7;
+        Mon, 08 Oct 2018 07:57:40 -0700 (PDT)
+X-Gm-Message-State: ABuFfohtIH7TizgdpuP+k4v0cZr8xEyjneGdjBJqemuVvMi3XW/BnnyW
+        rw3DSxrLpglDAK2tDSYooR5KO3FaessO7J56Hw==
+X-Google-Smtp-Source: ACcGV63kRvahAnuLfjlkXq4x2Du56g/dNSuTSlLH2jYw0qKttpn+PMNma6684mZPs0FhUPbEiIJvByBxewfeerCkQ5Y=
+X-Received: by 2002:a0c:bc03:: with SMTP id j3-v6mr19885313qvg.77.1539010659716;
+ Mon, 08 Oct 2018 07:57:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181008141409.2624-1-loic.tourlonias.lkml@gmail.com>
- <20181008142228.GB13359@kroah.com> <e9620bf6-5f3f-108d-b9f1-91af1ad603d6@huawei.com>
- <20181008144335.GA15968@kroah.com> <a460f98f-d566-1d9d-b395-e8604519b442@huawei.com>
-In-Reply-To: <a460f98f-d566-1d9d-b395-e8604519b442@huawei.com>
-From:   =?UTF-8?Q?lo=C3=AFc_tourlonias?= <loic.tourlonias@gmail.com>
-Date:   Mon, 8 Oct 2018 17:00:18 +0200
-Message-ID: <CA+XxOSG+cJ3FZ4S7qcRWWDcktDpStuoa7nTuAUOr+U-uTTUcYg@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: erofs: add SPDX identifer
-To:     gaoxiang25@huawei.com
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-erofs@lists.ozlabs.org, yuchao0@huawei.com,
-        loic.tourlonias.lkml@gmail.com, linux-kernel@vger.kernel.org
+References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
+ <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
+In-Reply-To: <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 8 Oct 2018 09:57:27 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com>
+Message-ID: <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com>
+Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
+ bindings to json-schema
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gao,
-On Mon, Oct 8, 2018 at 4:48 PM Gao Xiang <gaoxiang25@huawei.com> wrote:
+On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> Hi Greg,
+> Hi Rob,
 >
-> On 2018/10/8 22:43, Greg Kroah-Hartman wrote:
-> > On Mon, Oct 08, 2018 at 10:36:39PM +0800, Gao Xiang wrote:
-> >> Hi Greg,
-> >>
-> >> On 2018/10/8 22:22, Greg Kroah-Hartman wrote:
-> >>> Why delete that line?
-> >>>
-> >>> But wait, why do we even have this file at all?  What's wrong with the
-> >>> lib/lz4/ code that we have in the kernel today?  Shouldn't the code
-> >>> using these files be moved over to use the lib/ code instead and this
-> >>> file be deleted?
-> >>
-> >> EROFS uses customized LZ4 decompression code for now (which has been offically
-> >> supported in lz4 1.8.3, I have updated it in
-> >> https://ozlabs.org/~akpm/mmots/broken-out/lib-lz4-update-lz4-decompressor-module.patch
-> >> if it is shown up in Linux 4.20, I will remove all the customized LZ4 decompression code),
-> >> but lib/ code lz4def.h isn't export to include/.
+> On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
+> > Convert Renesas SoC bindings to DT schema format using json-schema.
 > >
-> > It should show up in 4.20, so you should be able to remove this all
-> > then.
+> > Cc: Simon Horman <horms@verge.net.au>
+> > Cc: Magnus Damm <magnus.damm@gmail.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
 >
-> Yes, that is correct. I will fix it in 4.20 if the updated LZ4 is already there. :)
+> Thanks for your patch!
+>
+> Note that this will need a rebase, as more SoCs/boards have been added
+> in -next.
+>
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
+> > @@ -0,0 +1,205 @@
+> > +# SPDX-License-Identifier: None
+>
+> The old file didn't have an SPDX header, so it was GPL-2.0, implicitly?
 
-So no need to update the patch since the file will be removed. Am I correct?
+Right. I meant to update this with something. I'd prefer it be dual
+licensed as these aren't just kernel files, but I don't really want to
+try to gather permissions from all the copyright holders. And who is
+the copyright holder when it is implicit? Everyone listed by git
+blame?
 
-Too bad, I'll make my first patch later... ^^
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bindings/arm/shmobile.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
+> > +
+> > +maintainers:
+> > +  - Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Simon Horman <horms@verge.net.au> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
+> Magnus Damm <magnus.damm@gmail.com> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
+>
+> You had it right in the CC list, though...
 
-Thanks
-Loic
+I generated it here from git log rather get_maintainers.pl because
+get_maintainers.pl just lists me for a bunch of them.
+
+> > +      - description: RZ/G1M (R8A77430)
+> > +        items:
+> > +          - enum:
+> > +              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
+> > +              - iwave,g20d
+> > +          - const: iwave,g20m
+> > +          - const: renesas,r8a7743
+> > +
+> > +      - items:
+> > +          - enum:
+> > +              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
+> > +              - iwave,g20m
+> > +          - const: renesas,r8a7743
+> > +
+> > +      - description: RZ/G1N (R8A77440)
+> > +        items:
+> > +          - enum:
+> > +              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
 >
-> Thanks,
-> Gao Xiang
+> This board belongs under the RZ/G1M section above
+> (see also the 7743 in the part number).
+
+Indeed. Not sure how I screwed that one up.
+
+> > +          - const: renesas,r8a7744
 >
-> >
-> > thanks,
-> >
-> > greg k-h
-> >
+> > +      - description: Kingfisher (SBEV-RCAR-KF-M03)
+> > +        items:
+> > +          - const: shimafuji,kingfisher
+> > +          - enum:
+> > +              - renesas,h3ulcb
+> > +              - renesas,m3ulcb
+> > +          - enum:
+> > +              - renesas,r8a7795
+> > +              - renesas,r8a7796
+>
+> This looks a bit funny: all other entries have the "const" last, and
+> use it for the
+> SoC number. May be correct, though.
+> To clarify, this is an extension board that can fit both the [HM]3ULCB
+> boards (actually also the new M3NULCB, I think).
+
+This being Kingfisher?
+
+I wrote this based on dts files in the tree. There's 2 combinations that I see:
+
+"shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795"
+"shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796"
+
+The schema allows 4 combinations (1 * 2 * 2). I have no idea if the
+other combinations are possible. If not, then we could rewrite this as
+2 entries with 3 const values each.
+
+Rob
