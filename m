@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2429C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFCDC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B34D2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367A12087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:44:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+lzF+cJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B34D2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTzgiMue"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367A12087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730682AbeJIB5P (ORCPT
+        id S1730694AbeJIB5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:57:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45168 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:57:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729988AbeJIB5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:57:15 -0400
+        id S1729988AbeJIB5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:57:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 309142087D;
-        Mon,  8 Oct 2018 18:44:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DB0A2064A;
+        Mon,  8 Oct 2018 18:44:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024250;
-        bh=llu042UDqR+/766t8VziI+j8gv0E4gvYC3x8eGaUhhc=;
+        s=default; t=1539024253;
+        bh=3Yh+HglZMfqPiurzcB7D1604rp7SutvMqOQjPnbukJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q+lzF+cJjQxEhDX96BeQpgewTTPUC4MaxCuUl5vZ7T2lorB0Qf4iWhgjk4Lt9QHuB
-         Se3qDE9Pky6zDbE0gWPuSop8Ank3OmAr4T8GWNAhnInc/NI1M38dYp/liC4ObxMEvA
-         fcUzwRUr7Quj2oFcnTAdXLebjQ5a9TJlCcA29T0o=
+        b=aTzgiMueuczZ19KaiQ2m0ZuyXyTJglk5xqNyujKa9atRjj9EaqRNx9SVqwa7rNfEx
+         5IED7lvKn7mvb2zBuMGhqsUSRBIkV9tJMHUUfRKvxlxVXSP4KV/YMLup/VeovVYGPv
+         YFt/jnwQsESQNviwMMVnTnxvDwrdagkFCTXgRbG0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 71/94] drm/amdgpu: fix error handling in amdgpu_cs_user_fence_chunk
-Date:   Mon,  8 Oct 2018 20:31:52 +0200
-Message-Id: <20181008175609.941081208@linuxfoundation.org>
+Subject: [PATCH 4.14 72/94] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
+Date:   Mon,  8 Oct 2018 20:31:53 +0200
+Message-Id: <20181008175609.987808262@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -65,65 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Christian König" <christian.koenig@amd.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 0165de983272d1fae0809ed9db47c46a412279bc ]
+[ Upstream commit 6ad569019999300afd8e614d296fdc356550b77f ]
 
-Slowly leaking memory one page at a time :)
+After system suspend, sometimes the r8169 doesn't work when ethernet
+cable gets pluggued.
 
-Signed-off-by: Christian KÃ¶nig <christian.koenig@amd.com>
-Reviewed-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This issue happens because rtl_reset_work() doesn't get called from
+rtl8169_runtime_resume(), after system suspend.
+
+In rtl_task(), RTL_FLAG_TASK_* only gets cleared if this condition is
+met:
+if (!netif_running(dev) ||
+    !test_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags))
+    ...
+
+If RTL_FLAG_TASK_ENABLED was cleared during system suspend while
+RTL_FLAG_TASK_RESET_PENDING was set, the next rtl_schedule_task() won't
+schedule task as the flag is still there.
+
+So in addition to clearing RTL_FLAG_TASK_ENABLED, also clears other
+flags.
+
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -37,6 +37,7 @@ static int amdgpu_cs_user_fence_chunk(st
- {
- 	struct drm_gem_object *gobj;
- 	unsigned long size;
-+	int r;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -760,7 +760,7 @@ struct rtl8169_tc_offsets {
+ };
  
- 	gobj = drm_gem_object_lookup(p->filp, data->handle);
- 	if (gobj == NULL)
-@@ -48,20 +49,26 @@ static int amdgpu_cs_user_fence_chunk(st
- 	p->uf_entry.tv.shared = true;
- 	p->uf_entry.user_pages = NULL;
+ enum rtl_flag {
+-	RTL_FLAG_TASK_ENABLED,
++	RTL_FLAG_TASK_ENABLED = 0,
+ 	RTL_FLAG_TASK_SLOW_PENDING,
+ 	RTL_FLAG_TASK_RESET_PENDING,
+ 	RTL_FLAG_TASK_PHY_PENDING,
+@@ -7657,7 +7657,8 @@ static int rtl8169_close(struct net_devi
+ 	rtl8169_update_counters(dev);
  
--	size = amdgpu_bo_size(p->uf_entry.robj);
--	if (size != PAGE_SIZE || (data->offset + 8) > size)
--		return -EINVAL;
--
--	*offset = data->offset;
--
- 	drm_gem_object_put_unlocked(gobj);
+ 	rtl_lock_work(tp);
+-	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
++	/* Clear all task flags */
++	bitmap_zero(tp->wk.flags, RTL_FLAG_MAX);
  
-+	size = amdgpu_bo_size(p->uf_entry.robj);
-+	if (size != PAGE_SIZE || (data->offset + 8) > size) {
-+		r = -EINVAL;
-+		goto error_unref;
-+	}
+ 	rtl8169_down(dev);
+ 	rtl_unlock_work(tp);
+@@ -7838,7 +7839,9 @@ static void rtl8169_net_suspend(struct n
+ 
+ 	rtl_lock_work(tp);
+ 	napi_disable(&tp->napi);
+-	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
++	/* Clear all task flags */
++	bitmap_zero(tp->wk.flags, RTL_FLAG_MAX);
 +
- 	if (amdgpu_ttm_tt_get_usermm(p->uf_entry.robj->tbo.ttm)) {
--		amdgpu_bo_unref(&p->uf_entry.robj);
--		return -EINVAL;
-+		r = -EINVAL;
-+		goto error_unref;
- 	}
+ 	rtl_unlock_work(tp);
  
-+	*offset = data->offset;
-+
- 	return 0;
-+
-+error_unref:
-+	amdgpu_bo_unref(&p->uf_entry.robj);
-+	return r;
- }
- 
- static int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, void *data)
+ 	rtl_pll_power_down(tp);
 
 
