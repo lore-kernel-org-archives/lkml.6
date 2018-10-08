@@ -2,84 +2,88 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71605C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73ED5C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359AA20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JRcQNoRv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 359AA20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 463C420882
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463C420882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbeJHWzX (ORCPT
+        id S1726933AbeJHWzk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:55:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60600 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeJHWzW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:55:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pLyxuLJJ9Vk4U6UE9iqcKchQsbnDHKkOvEdexAG3x6Y=; b=JRcQNoRvSWViPCMoNSoeqqGcO
-        0I184CYa+m1hILYG6rQiZms4APh1eRodzB0Ds7nGU9RPq3K/3tVOnTifkbwmbQ3B2j0n/8iOTmxAY
-        vpGN57oSD8nFDCiAuN/ZCgivQlCWgdnzntIfz4C3/m94eYlBZk31VN3LYNTclyAZg7v3dqXZ36y00
-        F/XfbSTi5Zjv+DohjCRGPID2iZ0XDOwBiZnmf2jPCevRpzvTx/y0lgjB9yG+xEuy+DAXvEdPSkPAi
-        6hs00D57HfhFzKwTnctn3rIhDSoodduHl3LtDmlNIvX0rNUlmWytnXyB/SdImDljRP1X1gZrhRm4D
-        5R4rK4Cnw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9XgU-0002fr-QT; Mon, 08 Oct 2018 15:43:02 +0000
-Subject: Re: [GIT PULL 11/16] stm class: Document the MIPI SyS-T protocol
- usage
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <20181005124306.54870-1-alexander.shishkin@linux.intel.com>
- <20181005124306.54870-12-alexander.shishkin@linux.intel.com>
- <5e7d8200-d357-4105-b00a-3ca36d375aac@infradead.org>
- <87r2h0651k.fsf@ashishki-desk.ger.corp.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b0d04799-f05b-3034-9528-37a12295a376@infradead.org>
-Date:   Mon, 8 Oct 2018 08:42:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 8 Oct 2018 18:55:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44602 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726159AbeJHWzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:55:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A31FDAF58;
+        Mon,  8 Oct 2018 15:43:18 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 17:43:17 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20181008154317.2owdxq7y6kie5sxh@pathway.suse.cz>
+References: <20180914122217.GA518@tigerII.localdomain>
+ <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
+ <7dadfa8c-1f69-ae0f-d747-dbbc9f97c2b6@i-love.sakura.ne.jp>
+ <20180928090939.GE1160@jagdpanzerIV>
+ <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
+ <20180929105151.GA1392@tigerII.localdomain>
+ <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
+ <20181001023721.GA6409@jagdpanzerIV>
+ <880ef52f-dff7-af91-5353-f63513265ffe@i-love.sakura.ne.jp>
+ <20181002063851.GF598@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <87r2h0651k.fsf@ashishki-desk.ger.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002063851.GF598@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/8/18 4:39 AM, Alexander Shishkin wrote:
-> Randy Dunlap <rdunlap@infradead.org> writes:
+On Tue 2018-10-02 15:38:51, Sergey Senozhatsky wrote:
+> On (10/01/18 20:21), Tetsuo Handa wrote:
+> > Maybe "struct printk_buffer" after all becomes identical to "struct cont". But
+> > I guess that even 16 printk_buffer-s is practically sufficient for 1024 CPUs
+> > system, and allocating NR_CPUS printk_buffer-s will be too wasteful.
 > 
->> Hi,
->> one small typo/spello below...
->>
->>> +If the protocol name is omitted, the STM class will chose whichever
->>
->> s/chose/choose/
-> 
-> Aw shucks, me can has spelling good. Do you mind if I fix it in later
-> rcs?
+> NR_CPUS buffers is quite a lot, indeed. Maybe we can do something like
+> NR_CPUS/4 + 1, etc. Kconfig option will be super hard to get right for
+> distributions. If people who wrote the code didn't agree on the correct
+> number of buffers and passed it to the distributions, then it's a good
+> sign than distributions will have problems picking up the good number as
+> well.
 
-No problem for me.
+I am afraid that only some testing or real life experience might tell
+us what number is good enough.
 
-tanks.
--- 
-~Randy
+The good thing is that it could only be better than the current
+state when we have only one cont buffer.
+
+Also I would not be so much afraid of the per-cpu buffer. We already
+use 16kB per-CPU for printk_safe and printk_nmi. One more kB should
+no be that big deal.
+
+Best Regards,
+Petr
