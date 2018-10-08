@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E5EC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39EEC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9C32089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BA4B2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZQIIr51"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9C32089D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtoUU0jh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA4B2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeJIBsH (ORCPT
+        id S1728114AbeJIBsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:48:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60042 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:48:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbeJIBsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:48:07 -0400
+        id S1726723AbeJIBsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:48:10 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D836B2145D;
-        Mon,  8 Oct 2018 18:35:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5C512087D;
+        Mon,  8 Oct 2018 18:35:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023704;
-        bh=RN62Xq106SAQoKeR8q5QpXNy+t5rnwkJ10wRSm4Je4A=;
+        s=default; t=1539023707;
+        bh=PCpuUBjTr3hN6g50cXPF27tOwYAPBPnA88Cq1XWRg2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CZQIIr51Yl6CFuL/gJ6U6IujgWOU7I2IPYMcdRbbNMUTKV7fyoKPsXZGZjj3KVtUe
-         17kAcJyMhOH8sxsrqTURaO1UGMCXP2w21F+1/zoaTh2yZmMuUSeJvzHCzdS5gwOdN5
-         /OtzIWLgA35b439UwiGE5MYspW8s4J7d2iCLwpy8=
+        b=OtoUU0jhUq8wIvn+ZWvlZ+6VtBWQhRNh2tvwdkliZ+Sjcsn5N6lAUTovpzbjWzt+o
+         S3jUA61wn96YCaZmIY/iYaaLSeCVIoWC83bTXsEDFHwXqwoWAwDgq2wMu/Ubx4Ss6h
+         KxhApyO/kHs7c1695pbRWYN2p4dMD8vxvNyjEVio=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 048/113] spi: rspi: Fix invalid SPI use during system suspend
-Date:   Mon,  8 Oct 2018 20:30:49 +0200
-Message-Id: <20181008175533.390638198@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.4 057/113] USB: remove LPM management from usb_driver_claim_interface()
+Date:   Mon,  8 Oct 2018 20:30:58 +0200
+Message-Id: <20181008175534.157535821@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -63,67 +61,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit c1ca59c22c56930b377a665fdd1b43351887830b upstream.
+commit c183813fcee44a249339b7c46e1ad271ca1870aa upstream.
 
-If the SPI queue is running during system suspend, the system may lock
-up.
+usb_driver_claim_interface() disables and re-enables Link Power
+Management, but it shouldn't do either one, for the reasons listed
+below.  This patch removes the two LPM-related function calls from the
+routine.
 
-Fix this by stopping/restarting the queue during system suspend/resume,
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
+The reason for disabling LPM in the analogous function
+usb_probe_interface() is so that drivers won't have to deal with
+unwanted LPM transitions in their probe routine.  But
+usb_driver_claim_interface() doesn't call the driver's probe routine
+(or any other callbacks), so that reason doesn't apply here.
 
-Based on a patch for sh-msiof by Gaku Inami.
+Furthermore, no driver other than usbfs will ever call
+usb_driver_claim_interface() unless it is already bound to another
+interface in the same device, which means disabling LPM here would be
+redundant.  usbfs doesn't interact with LPM at all.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Lastly, the error return from usb_unlocked_disable_lpm() isn't handled
+properly; the code doesn't clean up its earlier actions before
+returning.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 8306095fd2c1 ("USB: Disable USB 3.0 LPM in critical sections.")
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-rspi.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/usb/core/driver.c |   15 ---------------
+ 1 file changed, 15 deletions(-)
 
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1303,12 +1303,36 @@ static const struct platform_device_id s
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -509,7 +509,6 @@ int usb_driver_claim_interface(struct us
+ 	struct device *dev;
+ 	struct usb_device *udev;
+ 	int retval = 0;
+-	int lpm_disable_error = -ENODEV;
  
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ 	if (!iface)
+ 		return -ENODEV;
+@@ -530,16 +529,6 @@ int usb_driver_claim_interface(struct us
  
-+#ifdef CONFIG_PM_SLEEP
-+static int rspi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(rspi->master);
-+}
-+
-+static int rspi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(rspi->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
-+#define DEV_PM_OPS	&rspi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver rspi_driver = {
- 	.probe =	rspi_probe,
- 	.remove =	rspi_remove,
- 	.id_table =	spi_driver_ids,
- 	.driver		= {
- 		.name = "renesas_spi",
-+		.pm = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(rspi_of_match),
- 	},
- };
+ 	iface->condition = USB_INTERFACE_BOUND;
+ 
+-	/* See the comment about disabling LPM in usb_probe_interface(). */
+-	if (driver->disable_hub_initiated_lpm) {
+-		lpm_disable_error = usb_unlocked_disable_lpm(udev);
+-		if (lpm_disable_error) {
+-			dev_err(&iface->dev, "%s Failed to disable LPM for driver %s\n.",
+-					__func__, driver->name);
+-			return -ENOMEM;
+-		}
+-	}
+-
+ 	/* Claimed interfaces are initially inactive (suspended) and
+ 	 * runtime-PM-enabled, but only if the driver has autosuspend
+ 	 * support.  Otherwise they are marked active, to prevent the
+@@ -558,10 +547,6 @@ int usb_driver_claim_interface(struct us
+ 	if (device_is_registered(dev))
+ 		retval = device_bind_driver(dev);
+ 
+-	/* Attempt to re-enable USB3 LPM, if the disable was successful. */
+-	if (!lpm_disable_error)
+-		usb_unlocked_enable_lpm(udev);
+-
+ 	if (retval) {
+ 		dev->driver = NULL;
+ 		usb_set_intfdata(iface, NULL);
 
 
