@@ -2,99 +2,94 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8055DC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D683C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09DB52089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:05:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYzDTZkJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DB52089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 84E7520C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 20:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E7520C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeJIDTP (ORCPT
+        id S1727028AbeJIDUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 23:19:15 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40181 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeJIDTO (ORCPT
+        Mon, 8 Oct 2018 23:20:03 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:45063 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726468AbeJIDUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 23:19:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n31-v6so8302273pgm.7;
-        Mon, 08 Oct 2018 13:05:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=NETaRhhqThBx8sJ4jYSJZpsYlid5vjM+cDKbA/NtqBs=;
-        b=AYzDTZkJphxZWE/3MrHZKk/0sedhI1+egfw4EJAuaWqkyMG4Mozm20Fb4XpcyOV9Do
-         E7Vw954VOJWgH6qms9+TkkvyOqMNsqHUEykjbxKPjC8brZDYc/yATeYoUECGjm/e8JSU
-         zN8I9fZ57H4T7KRVTCE0krrlMEnDz46045O6dwb0ee3fq+qnYDAdCjSVetd0u/mmyA3K
-         C9X30ZR32FmOVKo1IjWYVPRAr5UXIqchF5E++wUxF1b0jcdONamCRzI0ooMb3YDJirLi
-         DVczn1h94zm2DTKf9qPtGbEhLjPiMf3skFQeNVHUMA0TyfZhqGK9bFNr9lE7HGjapDXo
-         lRIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NETaRhhqThBx8sJ4jYSJZpsYlid5vjM+cDKbA/NtqBs=;
-        b=QRpVUnLFp8NGzAQrDiB4Qgkz4EBsOlL/d5IfY5x2ng4HJ+0h/2/l8i1zwfXEIzZbjR
-         IIsJjli7chtuxwOAZ+7eTLIAiX0xqjE6QDHbDHBgjGJrhOdpXwOPnH4JiTBFYtvzA3+L
-         tyDsVhO9w8EN9UZMOMCxksRk3cfnLa+KV+dqPRJycbtfuKa6puKvwNqdPIRz4oRB5HMo
-         BNcT6zMI/Yz2sTWGAgqf+4xi7LLzdkDXSHxf1He8GWjapZ4drLfWRLcS6r8sQueBtmIv
-         6EYppDTsjfUcSfA0FHLlRiZR1udqEprm6Ook4fLCsbjxVkNVyjdg1Lc/3luZIQlkId5s
-         5V0w==
-X-Gm-Message-State: ABuFfogcbYlKmyvzYASqRI4zOiZrlhZOYq28ohXCIZrTGt9mslACXO2I
-        I7eqjuYF0oMpdS28OncyZYU=
-X-Google-Smtp-Source: ACcGV61CsXnjV3pRTzEL6iAvZZP/GsTWZ34nxajd1OXUWwEJERQAfuDXWwg2XB1EdxeDvH49fpTSKQ==
-X-Received: by 2002:a62:5982:: with SMTP id k2-v6mr16236060pfj.180.1539029147508;
-        Mon, 08 Oct 2018 13:05:47 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id e19-v6sm36576193pfb.153.2018.10.08.13.05.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 13:05:46 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net
-Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (ina3221) Clamp shunt resistor value from DT
-Date:   Mon,  8 Oct 2018 13:05:37 -0700
-Message-Id: <20181008200537.22062-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Oct 2018 23:20:02 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 071F241C54;
+        Mon,  8 Oct 2018 20:06:35 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fDyvvFnXitu5; Mon,  8 Oct 2018 20:06:35 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id C6BF442BB0;
+        Mon,  8 Oct 2018 20:06:24 +0000 (UTC)
+Subject: Re: [PATCH] usbip: vhci_hcd: check port number before using
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     Valentina Manea <valentina.manea.m@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org,
+        syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com,
+        Stable <stable@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
+References: <20181008191913.11527-1-sudip.mukherjee@codethink.co.uk>
+ <c7da9adc-3cb3-c5a6-519c-ba4440897c28@kernel.org>
+ <CADVatmOZ943m_bmXS9vQs8Fy73aaG1PNP1YCzX-J2HN_f5Zigw@mail.gmail.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <97565b6e-025a-520e-d1c9-8f47b1934153@kernel.org>
+Date:   Mon, 8 Oct 2018 14:06:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CADVatmOZ943m_bmXS9vQs8Fy73aaG1PNP1YCzX-J2HN_f5Zigw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The input->shunt_resistor is int type while the value from DT is
-unsigned int. Meanwhile, a divide-by-zero error would happen if
-the value is 0. So this patch just simply clamps the value.
+On 10/08/2018 02:01 PM, Sudip Mukherjee wrote:
+> On Mon, Oct 8, 2018 at 8:29 PM Shuah Khan <shuah@kernel.org> wrote:
+>>
+>> Hi Sudip,
+>>
+>> On 10/08/2018 01:19 PM, Sudip Mukherjee wrote:
+>>> From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+>>>
+>>> The port number is checked and it just prints an error message but it
+>>> still continues to use the invalid port. And as a result it accesses
+>>> memory which is not its resulting in  BUG report from KASAN.
+>>
+>> Yes there is an issue with out of bounds access. But this isn't the
+>> right fix.
+>>
+>>>
+>>> Reported-by: syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com
+>>> Cc: stable <stable@vger.kernel.org>
+>>> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+>>
+>> I sent in a fix for this last Friday.
+>>
+>> https://patchwork.kernel.org/patch/10628833/
+> 
+> And I can confirm this patch also fixes the issue tested with the
+> reproducer I was using in my vm.
+> 
+> 
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/hwmon/ina3221.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Great Thanks for testing the patch.
 
-diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index c3a497aed345..ce8f0a8c4982 100644
---- a/drivers/hwmon/ina3221.c
-+++ b/drivers/hwmon/ina3221.c
-@@ -536,8 +536,10 @@ static int ina3221_probe_child_from_dt(struct device *dev,
- 	of_property_read_string(child, "label", &input->label);
- 
- 	/* Overwrite default shunt resistor value optionally */
--	if (!of_property_read_u32(child, "shunt-resistor-micro-ohms", &val))
-+	if (!of_property_read_u32(child, "shunt-resistor-micro-ohms", &val)) {
-+		val = clamp_val(val, 1, INT_MAX);
- 		input->shunt_resistor = val;
-+	}
- 
- 	return 0;
- }
--- 
-2.17.1
-
+thanks,
+-- Shuah
