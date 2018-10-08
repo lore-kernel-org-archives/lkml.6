@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C05C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3BFC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C2662064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2BF82087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:42:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aR0A5RE4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C2662064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S25nyKrZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2BF82087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730183AbeJIBzO (ORCPT
+        id S1730195AbeJIBzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:55:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42794 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:55:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730155AbeJIBzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:55:14 -0400
+        id S1729537AbeJIBzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:55:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1DBD21479;
-        Mon,  8 Oct 2018 18:42:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2A5B2087D;
+        Mon,  8 Oct 2018 18:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024129;
-        bh=tQyXYkY79xFbx/iCTjMmmSWNdubQY0llE5xEAZ/MCpc=;
+        s=default; t=1539024132;
+        bh=cOCDHBjQn4dwQJJNA95ih3hz7lSEr7dqVeFZWQAWOmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aR0A5RE47DFBWOBk2YERyfZJPb+TIw7nNirvOlOaBo0YeU5wZhEmQk41S6eVnebeY
-         NwDEqUMGdc534OKZIkzZa9Cj6peT0Am3LpdttOjZ4PQ/pZmH9DillnJVy+yU+dbibl
-         K7bB2JE8gywgtSYGq+TV0bNQy95/OmigkxWWRjlA=
+        b=S25nyKrZ292mem4/LUTKvKqNC7v8hCWf7apzr2Cj8uXoX/IXQWwmziat5cR9Wa3yU
+         fRSDK6/K/HgOvi5s3hIcFABgbYe1PupQfHfXcRq0txBNdSCt/FMCpg3mp/oa2UfYr0
+         JGMbJmhdJe111aeVhBhU7fwAA4ZRQNsJc7ySw32E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 08/94] btrfs: btrfs_shrink_device should call commit transaction at the end
-Date:   Mon,  8 Oct 2018 20:30:49 +0200
-Message-Id: <20181008175605.456547473@linuxfoundation.org>
+Subject: [PATCH 4.14 09/94] scsi: csiostor: add a check for NULL pointer after kmalloc()
+Date:   Mon,  8 Oct 2018 20:30:50 +0200
+Message-Id: <20181008175605.500837173@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,66 +64,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 801660b040d132f67fac6a95910ad307c5929b49 ]
+[ Upstream commit 89809b028b6f54187b7d81a0c69b35d394c52e62 ]
 
-Test case btrfs/164 reports use-after-free:
-
-[ 6712.084324] general protection fault: 0000 [#1] PREEMPT SMP
-..
-[ 6712.195423]  btrfs_update_commit_device_size+0x75/0xf0 [btrfs]
-[ 6712.201424]  btrfs_commit_transaction+0x57d/0xa90 [btrfs]
-[ 6712.206999]  btrfs_rm_device+0x627/0x850 [btrfs]
-[ 6712.211800]  btrfs_ioctl+0x2b03/0x3120 [btrfs]
-
-Reason for this is that btrfs_shrink_device adds the resized device to
-the fs_devices::resized_devices after it has called the last commit
-transaction.
-
-So the list fs_devices::resized_devices is not empty when
-btrfs_shrink_device returns.  Now the parent function
-btrfs_rm_device calls:
-
-        btrfs_close_bdev(device);
-        call_rcu(&device->rcu, free_device_rcu);
-
-and then does the transactio ncommit. It goes through the
-fs_devices::resized_devices in btrfs_update_commit_device_size and
-leads to use-after-free.
-
-Fix this by making sure btrfs_shrink_device calls the last needed
-btrfs_commit_transaction before the return. This is consistent with what
-the grow counterpart does and this makes sure the on-disk state is
-persistent when the function returns.
-
-Reported-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Tested-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ update changelog ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/volumes.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/scsi/csiostor/csio_hw.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -4517,7 +4517,12 @@ again:
+--- a/drivers/scsi/csiostor/csio_hw.c
++++ b/drivers/scsi/csiostor/csio_hw.c
+@@ -2010,8 +2010,8 @@ bye:
+ }
  
- 	/* Now btrfs_update_device() will change the on-disk size. */
- 	ret = btrfs_update_device(trans, device);
--	btrfs_end_transaction(trans);
-+	if (ret < 0) {
-+		btrfs_abort_transaction(trans, ret);
-+		btrfs_end_transaction(trans);
-+	} else {
-+		ret = btrfs_commit_transaction(trans);
-+	}
- done:
- 	btrfs_free_path(path);
- 	if (ret) {
+ /*
+- * Returns -EINVAL if attempts to flash the firmware failed
+- * else returns 0,
++ * Returns -EINVAL if attempts to flash the firmware failed,
++ * -ENOMEM if memory allocation failed else returns 0,
+  * if flashing was not attempted because the card had the
+  * latest firmware ECANCELED is returned
+  */
+@@ -2039,6 +2039,13 @@ csio_hw_flash_fw(struct csio_hw *hw, int
+ 		return -EINVAL;
+ 	}
+ 
++	/* allocate memory to read the header of the firmware on the
++	 * card
++	 */
++	card_fw = kmalloc(sizeof(*card_fw), GFP_KERNEL);
++	if (!card_fw)
++		return -ENOMEM;
++
+ 	if (csio_is_t5(pci_dev->device & CSIO_HW_CHIP_MASK))
+ 		fw_bin_file = FW_FNAME_T5;
+ 	else
+@@ -2052,11 +2059,6 @@ csio_hw_flash_fw(struct csio_hw *hw, int
+ 		fw_size = fw->size;
+ 	}
+ 
+-	/* allocate memory to read the header of the firmware on the
+-	 * card
+-	 */
+-	card_fw = kmalloc(sizeof(*card_fw), GFP_KERNEL);
+-
+ 	/* upgrade FW logic */
+ 	ret = csio_hw_prep_fw(hw, fw_info, fw_data, fw_size, card_fw,
+ 			 hw->fw_state, reset);
 
 
