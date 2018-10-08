@@ -2,109 +2,137 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC11FC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D28ABC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AACE52086D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACE52086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9960720652
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:38:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQykFgr1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9960720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbeJHWuS (ORCPT
+        id S1726921AbeJHWhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:50:18 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:51716 "EHLO fuzix.org"
+        Mon, 8 Oct 2018 18:37:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726679AbeJHWuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:50:17 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w98Fbn4c013828;
-        Mon, 8 Oct 2018 16:37:49 +0100
-Date:   Mon, 8 Oct 2018 16:37:48 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Tim.Bird@sony.com, ksummit-discuss@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-Message-ID: <20181008163748.0e68cba5@alans-desktop>
-In-Reply-To: <1538883209.4088.14.camel@HansenPartnership.com>
-References: <1538861738.4088.5.camel@HansenPartnership.com>
-        <1538861851.4088.7.camel@HansenPartnership.com>
-        <ECADFF3FD767C149AD96A924E7EA6EAF80516F31@USCULXMSG01.am.sony.com>
-        <1538883209.4088.14.camel@HansenPartnership.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726754AbeJHWhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:37:52 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50DDD213A2;
+        Mon,  8 Oct 2018 15:25:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539012337;
+        bh=DJraqWQv7w2D12YbzFAN7EO8Eg8DLbEeRTn52nNQHyI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CQykFgr1sm1CBvu0hEi3/8QRI2hPyFxhPmBrcdcOLolsLKADYLzMCXf7TOFmaa4OJ
+         zMdVQ6q8gj9GkVTAIGWPPKsCdx3/88IqoGUIMvebtoxoHy3azxDv9sKsXbwwg4yvbV
+         4d5TVN4bV6wM5VVxlrSPVClsjJS1qPCjz8o/MGOQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 11/58] batman-adv: Prevent duplicated softif_vlan entry
+Date:   Mon,  8 Oct 2018 11:24:36 -0400
+Message-Id: <20181008152523.70705-11-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008152523.70705-1-sashal@kernel.org>
+References: <20181008152523.70705-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Sven Eckelmann <sven@narfation.org>
+
+[ Upstream commit 94cb82f594ed86be303398d6dfc7640a6f1d45d4 ]
+
+The function batadv_softif_vlan_get is responsible for adding new
+softif_vlan to the softif_vlan_list. It first checks whether the entry
+already is in the list or not. If it is, then the creation of a new entry
+is aborted.
+
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
+
+The check and the manipulation of the list must therefore be in the same
+locked code section.
+
+Fixes: 5d2c05b21337 ("batman-adv: add per VLAN interface attribute framework")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ net/batman-adv/soft-interface.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
+index 1485263a348b..626ddca332db 100644
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@ -574,15 +574,20 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
+ 	struct batadv_softif_vlan *vlan;
+ 	int err;
  
-> I happen to think that the fact that the TAB cannot compel where it
-> cannot persuade is a huge strength of the system because it means
-> there's no power structure to subvert if someone were interested in
-> using it to try to impose their own viewpoint on the community.  But
-> that's just my opinion and I did write the TAB charter, so I'm probably
-> biased in this viewpoint.
-
-The TAB can't handle it anyway because the privacy promise about
-reporting is incompatible with reality for three reasons (and I bet there
-are more)
-
-1. Things like the EUCD can force almost all but the name to be revealed
-to the person complained about as the tab has no legal privilege.
-2. There are lots of laws in lots of locations where some allegations
-*MUST* be reported to law enforcement.
-3. We know from things like the catholic church debacle that serious
-allegations need to be fast-pathed to the legal system - yet the privacy
-promises are incompatible with that.
-
-It ever got really nasty then the scenario that unfolds is potentially
-the following
-
-Developer A makes a complaint about developer B
-Developer B's employer fires developer B
-
-Developer B then uses things like the EUCD to force the TAB to provide
-the complaint details (with personal data redacted) and the TAB has no
-real defence as it's not legally privileged. 
-
-Developer B then sues developer A, the TAB for all sorts of things, the
-LF and their employer.
-
-In court what's going to happen to the TAB ?
-
-= Where is your written policy ?
-= Who approved it and reviewed it for legal compliance ?
-= What are your qualifications in this area ?
-= Where are the full minutes of the decision ?
-= Which of you work for rival companies ?
-= What personal connections do or your frends have to A and B ?
-
-Needless to say answers like 'we don't have one, nobody, none, umm I think
-there's an email thread' are not going to go down well.
-
-This sort of mess works with big company HR departments because they've
-got lawyers and they have lots of written process. If it hits a court
-then B's employer is able to point at all their rules and policies,
-employment contracts etc. All of the decisions were either legally
-privileged or minuted properly. The people who made the decisions have
-appropriate professional qualifications.
-
-The TAB can't enforce anything. If maintainers decide to carry on
-accepting patches from someone what can they do ?
-
-So both patches:
-
-Reviewed-by: Alan Cox <alan@llwyncelyn.cymru>
-
++	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
++
+ 	vlan = batadv_softif_vlan_get(bat_priv, vid);
+ 	if (vlan) {
+ 		batadv_softif_vlan_put(vlan);
++		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
+ 		return -EEXIST;
+ 	}
+ 
+ 	vlan = kzalloc(sizeof(*vlan), GFP_ATOMIC);
+-	if (!vlan)
++	if (!vlan) {
++		spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
+ 		return -ENOMEM;
++	}
+ 
+ 	vlan->bat_priv = bat_priv;
+ 	vlan->vid = vid;
+@@ -590,17 +595,23 @@ int batadv_softif_create_vlan(struct batadv_priv *bat_priv, unsigned short vid)
+ 
+ 	atomic_set(&vlan->ap_isolation, 0);
+ 
++	kref_get(&vlan->refcount);
++	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
++	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
++
++	/* batadv_sysfs_add_vlan cannot be in the spinlock section due to the
++	 * sleeping behavior of the sysfs functions and the fs_reclaim lock
++	 */
+ 	err = batadv_sysfs_add_vlan(bat_priv->soft_iface, vlan);
+ 	if (err) {
+-		kfree(vlan);
++		/* ref for the function */
++		batadv_softif_vlan_put(vlan);
++
++		/* ref for the list */
++		batadv_softif_vlan_put(vlan);
+ 		return err;
+ 	}
+ 
+-	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
+-	kref_get(&vlan->refcount);
+-	hlist_add_head_rcu(&vlan->list, &bat_priv->softif_vlan_list);
+-	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
+-
+ 	/* add a new TT local entry. This one will be marked with the NOPURGE
+ 	 * flag
+ 	 */
+-- 
+2.17.1
 
