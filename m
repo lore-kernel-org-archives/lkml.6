@@ -2,198 +2,139 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 354F4C6787E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 00:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40112C6787E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 00:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51BE2084D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 00:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51BE2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EEDEB2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 00:48:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ovrowa8k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDEB2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbeJHH4g convert rfc822-to-8bit (ORCPT
+        id S1726386AbeJHH50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 03:56:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34238 "EHLO mx1.redhat.com"
+        Mon, 8 Oct 2018 03:57:26 -0400
+Received: from ozlabs.org ([203.11.71.1]:56305 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbeJHH4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 03:56:36 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725760AbeJHH50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 03:57:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B1A6C04B928;
-        Mon,  8 Oct 2018 00:47:29 +0000 (UTC)
-Received: from tagon (ovpn-120-183.rdu2.redhat.com [10.10.120.183])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 361112010D55;
-        Mon,  8 Oct 2018 00:47:28 +0000 (UTC)
-Date:   Sun, 7 Oct 2018 19:47:26 -0500
-From:   Clark Williams <williams@redhat.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] kasan: convert kasan/quarantine_lock to raw_spinlock
-Message-ID: <20181007194726.78d8464f@tagon>
-In-Reply-To: <20181005163320.zkacovxvlih6blpp@linutronix.de>
-References: <20180918152931.17322-1-williams@redhat.com>
-        <20181005163018.icbknlzymwjhdehi@linutronix.de>
-        <20181005163320.zkacovxvlih6blpp@linutronix.de>
-Organization: Red Hat, Inc
+        by ozlabs.org (Postfix) with ESMTPSA id 42T1tg04ZJz9sCr;
+        Mon,  8 Oct 2018 11:48:10 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538959691;
+        bh=/7hdWEwoKT4HEqDL9FTnqJQ3b04pUcsnbQRFNO4797E=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ovrowa8kA86pkAXGZGeB3QN1DuXJErZ77NMUKwRYvVGEsM5b0PHYQv0g4Eo2qLHOi
+         KJDlxHPVnRwilDvbmo4cBbdutaxRrxZYgOgFr/XWkeQejfIivg7UTSWd2juGFKr3dJ
+         d+Y6gzfP3BQVR8VvHvFlfFGqp3QhglgIGm5biQ7OWlJnEXOQoxbZ0UJfwU0B9ByLsj
+         zOSpubI3095Lo2eiln3Z+1tV4iZPSO5tzWfxNjxgUwCT8JybifW2aD2XpLM5QGZXJt
+         gXZRX7RUQVhDn+5UWcq8Djv760gCSIrUZ/ql+Qt7/eLCwuBmrZ0llVUQUfJGipkulL
+         HI+uem4hM+m5w==
+Date:   Mon, 8 Oct 2018 11:48:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: linux-next: manual merge of the crypto tree with the
+ compiler-attributes tree
+Message-ID: <20181008114810.6ebbb337@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 08 Oct 2018 00:47:29 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XXnT=3WqFicXpf1WwTseQTM"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I applied this patch to a fairly stock 4.18-rt5 kernel and booted with no complaints, then
-ran rteval for 12h with no stack splats reported. I'll keep banging on it but preliminary
-reports look good. 
+--Sig_/XXnT=3WqFicXpf1WwTseQTM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Clark
+Hi all,
 
-On Fri, 5 Oct 2018 18:33:20 +0200
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+Today's linux-next merge of the crypto tree got a conflict in:
 
-> On 2018-10-05 18:30:18 [+0200], To Clark Williams wrote:
-> > This is the minimum to get this working on RT splat free. There is one
-> > memory deallocation with irqs off which should work on RT in its current
-> > way.
-> > Once this and the on_each_cpu() invocation, I was wondering if…  
-> 
-> the patch at the bottom wouldn't work just fine for everyone.
-> It would have the beaty of annotating the locking scope a little and
-> avoiding the on_each_cpu() invocation. No local_irq_save() but actually
-> the proper locking primitives.
-> I haven't fully decoded the srcu part in the code.
-> 
-> Wouldn't that work for you?
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  mm/kasan/quarantine.c | 45 +++++++++++++++++++++++++------------------
->  1 file changed, 26 insertions(+), 19 deletions(-)
-> 
-> diff --git a/mm/kasan/quarantine.c b/mm/kasan/quarantine.c
-> index 3a8ddf8baf7dc..8ed595960e3c1 100644
-> --- a/mm/kasan/quarantine.c
-> +++ b/mm/kasan/quarantine.c
-> @@ -39,12 +39,13 @@
->   * objects inside of it.
->   */
->  struct qlist_head {
-> +	spinlock_t	lock;
->  	struct qlist_node *head;
->  	struct qlist_node *tail;
->  	size_t bytes;
->  };
->  
-> -#define QLIST_INIT { NULL, NULL, 0 }
-> +#define QLIST_INIT {.head = NULL, .tail = NULL, .bytes = 0 }
->  
->  static bool qlist_empty(struct qlist_head *q)
->  {
-> @@ -95,7 +96,9 @@ static void qlist_move_all(struct qlist_head *from, struct qlist_head *to)
->   * The object quarantine consists of per-cpu queues and a global queue,
->   * guarded by quarantine_lock.
->   */
-> -static DEFINE_PER_CPU(struct qlist_head, cpu_quarantine);
-> +static DEFINE_PER_CPU(struct qlist_head, cpu_quarantine) = {
-> +	.lock = __SPIN_LOCK_UNLOCKED(cpu_quarantine.lock),
-> +};
->  
->  /* Round-robin FIFO array of batches. */
->  static struct qlist_head global_quarantine[QUARANTINE_BATCHES];
-> @@ -183,12 +186,13 @@ void quarantine_put(struct kasan_free_meta *info, struct kmem_cache *cache)
->  	 * beginning which ensures that it either sees the objects in per-cpu
->  	 * lists or in the global quarantine.
->  	 */
-> -	local_irq_save(flags);
-> +	q = raw_cpu_ptr(&cpu_quarantine);
-> +	spin_lock_irqsave(&q->lock, flags);
->  
-> -	q = this_cpu_ptr(&cpu_quarantine);
->  	qlist_put(q, &info->quarantine_link, cache->size);
->  	if (unlikely(q->bytes > QUARANTINE_PERCPU_SIZE)) {
->  		qlist_move_all(q, &temp);
-> +		spin_unlock(&q->lock);
->  
->  		spin_lock(&quarantine_lock);
->  		WRITE_ONCE(quarantine_size, quarantine_size + temp.bytes);
-> @@ -203,10 +207,10 @@ void quarantine_put(struct kasan_free_meta *info, struct kmem_cache *cache)
->  			if (new_tail != quarantine_head)
->  				quarantine_tail = new_tail;
->  		}
-> -		spin_unlock(&quarantine_lock);
-> +		spin_unlock_irqrestore(&quarantine_lock, flags);
-> +	} else {
-> +		spin_unlock_irqrestore(&q->lock, flags);
->  	}
-> -
-> -	local_irq_restore(flags);
->  }
->  
->  void quarantine_reduce(void)
-> @@ -284,21 +288,11 @@ static void qlist_move_cache(struct qlist_head *from,
->  	}
->  }
->  
-> -static void per_cpu_remove_cache(void *arg)
-> -{
-> -	struct kmem_cache *cache = arg;
-> -	struct qlist_head to_free = QLIST_INIT;
-> -	struct qlist_head *q;
-> -
-> -	q = this_cpu_ptr(&cpu_quarantine);
-> -	qlist_move_cache(q, &to_free, cache);
-> -	qlist_free_all(&to_free, cache);
-> -}
-> -
->  /* Free all quarantined objects belonging to cache. */
->  void quarantine_remove_cache(struct kmem_cache *cache)
->  {
->  	unsigned long flags, i;
-> +	unsigned int cpu;
->  	struct qlist_head to_free = QLIST_INIT;
->  
->  	/*
-> @@ -308,7 +302,20 @@ void quarantine_remove_cache(struct kmem_cache *cache)
->  	 * achieves the first goal, while synchronize_srcu() achieves the
->  	 * second.
->  	 */
-> -	on_each_cpu(per_cpu_remove_cache, cache, 1);
-> +	/* get_online_cpus() invoked by caller */
-> +	for_each_online_cpu(cpu) {
-> +		struct qlist_head *q;
-> +		unsigned long flags;
-> +		struct qlist_head to_free = QLIST_INIT;
-> +
-> +		q = per_cpu_ptr(&cpu_quarantine, cpu);
-> +		spin_lock_irqsave(&q->lock, flags);
-> +		qlist_move_cache(q, &to_free, cache);
-> +		spin_unlock_irqrestore(&q->lock, flags);
-> +
-> +		qlist_free_all(&to_free, cache);
-> +
-> +	}
->  
->  	spin_lock_irqsave(&quarantine_lock, flags);
->  	for (i = 0; i < QUARANTINE_BATCHES; i++) {
-> -- 
-> 2.19.0
-> 
+  include/linux/compiler_types.h
 
+between commit:
 
--- 
-The United States Coast Guard
-Ruining Natural Selection since 1790
+  a3f8a30f3f00 ("Compiler Attributes: use feature checks instead of version=
+ checks")
+
+from the compiler-attributes tree and commit:
+
+  f3569fd613f6 ("crypto: shash - Remove VLA usage in unaligned hashing")
+
+from the crypto tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+A removed line was moved to a new file, so I have applied the following
+merge fix patch from today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Oct 2018 11:44:24 +1100
+Subject: [PATCH] crypto: fixup for movement of __aligned_largest
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/compiler_attributes.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_a=
+ttributes.h
+index 6b28c1b7310c..9db94801c780 100644
+--- a/include/linux/compiler_attributes.h
++++ b/include/linux/compiler_attributes.h
+@@ -49,7 +49,6 @@
+  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.ht=
+ml#index-aligned-variable-attribute
+  */
+ #define __aligned(x)                    __attribute__((__aligned__(x)))
+-#define __aligned_largest               __attribute__((__aligned__))
+=20
+ /*
+  * Note: users of __always_inline currently do not write "inline" themselv=
+es,
+--=20
+2.18.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/XXnT=3WqFicXpf1WwTseQTM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu6qUoACgkQAVBC80lX
+0Gx+4gf/SNH9A95PkGldA12AeMgCDgtiQRIL+gOwJwyjnrh9fURD4oYQ9cKCmGFF
+gamZAib/dfFCcGwPec6CefSwSjqRuRzJzOe5FINCZabUSfkggb7rxPPN1eZcEUBn
+lFEbItnYtU/DHSs4kDPXX1NjC85gGKeZ8zeX+H0M2U8h0mzExdVXoS6x9+t+XGQM
+/lVx/qpjBUSohA6wdbLkRxcMRX2KIiFlUiEBDa+ovmazpwmZlP3GAzGSJ3M6IrNd
+VSt7oy0W/pwxmJU5yhpyIhesnCCD7lXNWf9GUHMAd/Oo0UcNx1/fEHyitGxIlvL/
+fkxp6KlplyHE2NsyHi5llA/JD5CQig==
+=bMZN
+-----END PGP SIGNATURE-----
+
+--Sig_/XXnT=3WqFicXpf1WwTseQTM--
