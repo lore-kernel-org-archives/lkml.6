@@ -6,50 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E04C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F2EC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1DC20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 501872089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:33:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmzUe8F/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1DC20C0A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="efo5dVrj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501872089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeJIBq2 (ORCPT
+        id S1727195AbeJIBqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:46:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:46:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbeJIBq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:46:27 -0400
+        id S1726510AbeJIBqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:46:34 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A30E62087D;
-        Mon,  8 Oct 2018 18:33:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6DCA2145D;
+        Mon,  8 Oct 2018 18:33:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023605;
-        bh=4eNyM86cNy1epojnfZKgkHk7pyZQT2spd6sxBAprJ8o=;
+        s=default; t=1539023612;
+        bh=Sbne7PpAvvZgCORwUp4rNuejZxfYFFnn0AeqIY2uPMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PmzUe8F/qhkC6nCGCDiwB+8HuQZNBk79313n7rhnIVZZRq6sEmQVk6Gjk53buiTGo
-         e/wGs0w5vq2k0F7ef4fMvXooOheNSL6C0PGlNDmf3O3KQtXQHFSeFAEfS+FqKBzoTO
-         GbkeKZ7fiUxF0KO7guocdOmLRSZXmwadKF8zZXLQ=
+        b=efo5dVrj6A707x3HYMrBoIb8FcthIsP/loOESAWdDwfT+91zXNla3pxeWHN10iEqB
+         eVDqitdKwMi8U5ixSBoXn9f9QlRnG6m0uLwr10FB3HXe6pM54H28O5obky1+dlhSn/
+         G38S0aax0lGKwKx4RD8fxfnvNLhfQMIyNEBLvPjQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 004/113] x86/numa_emulation: Fix emulated-to-physical node mapping
-Date:   Mon,  8 Oct 2018 20:30:05 +0200
-Message-Id: <20181008175531.076044994@linuxfoundation.org>
+Subject: [PATCH 4.4 005/113] staging: rts5208: fix missing error check on call to rtsx_write_register
+Date:   Mon,  8 Oct 2018 20:30:06 +0200
+Message-Id: <20181008175531.125162724@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
 References: <20181008175530.864641368@linuxfoundation.org>
@@ -67,38 +61,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 3b6c62f363a19ce82bf378187ab97c9dc01e3927 ]
+[ Upstream commit c5fae4f4fd28189b1062fb8ef7b21fec37cb8b17 ]
 
-Without this change the distance table calculation for emulated nodes
-may use the wrong numa node and report an incorrect distance.
+Currently the check on error return from the call to rtsx_write_register
+is checking the error status from the previous call. Fix this by adding
+in the missing assignment of retval.
 
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/153089328103.27680.14778434392225818887.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Detected by CoverityScan, CID#709877
+
+Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/numa_emulation.c |    2 +-
+ drivers/staging/rts5208/sd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/mm/numa_emulation.c
-+++ b/arch/x86/mm/numa_emulation.c
-@@ -60,7 +60,7 @@ static int __init emu_setup_memblk(struc
- 	eb->nid = nid;
+--- a/drivers/staging/rts5208/sd.c
++++ b/drivers/staging/rts5208/sd.c
+@@ -5031,7 +5031,7 @@ int sd_execute_write_data(struct scsi_cm
+ 			goto SD_Execute_Write_Cmd_Failed;
+ 		}
  
- 	if (emu_nid_to_phys[nid] == NUMA_NO_NODE)
--		emu_nid_to_phys[nid] = nid;
-+		emu_nid_to_phys[nid] = pb->nid;
- 
- 	pb->start += size;
- 	if (pb->start >= pb->end) {
+-		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
++		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
+ 		if (retval != STATUS_SUCCESS) {
+ 			rtsx_trace(chip);
+ 			goto SD_Execute_Write_Cmd_Failed;
 
 
