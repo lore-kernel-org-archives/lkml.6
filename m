@@ -2,151 +2,168 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47DCC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A0EC64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8023C205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8023C205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 02ADA2064E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02ADA2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeJHRSJ (ORCPT
+        id S1727838AbeJHRSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:18:09 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:38722 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726193AbeJHRSJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:18:09 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id 9SRPgLSKkSskC9SRSgfo7b; Mon, 08 Oct 2018 12:07:11 +0200
-Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder
- interface
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180831074743.235010-1-acourbot@chromium.org>
- <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl>
- <CAPBb6MU=wJ5WrHpwXZcWLsv7dD42UT+R6ppKyLnZesuExAbNWA@mail.gmail.com>
- <604a46db-b912-4b78-620e-1b1ba38fa130@xs4all.nl>
- <CAAFQd5ANVWury7c1xH6r6uX-SFgSzsTyonFan5TjdOytmoW-kw@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <3cd8e2f0-d9c1-6907-d16b-d3c6699c9ef8@xs4all.nl>
-Date:   Mon, 8 Oct 2018 12:07:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5ANVWury7c1xH6r6uX-SFgSzsTyonFan5TjdOytmoW-kw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNAxquIzA7cZ3tn0fzN9rBt3jCQYlWMS6EWXme12TvrCg1NBglqxdQZTYh8LBcA0U99zhMWvLiQy9XLeKEkXD0tt3sm3hm2MBC1XMH1m2n7HAcO9VLn0
- VVDwMPFjSXXeyaLQdQ89bgkTVA10RgA2YC6oqWbUXN1KqWG93wReFFaV/gRul5k/jeo8s2t77W++QSVUFI13niAYAYuVQoOUlMKIZWEzlY302AD9eLdk4lA3
- yPFe80puYk57UC6mQgELwx6n3p/hHS9IR++wg3+HWfTLyrnUBczftny1+hlBLMbx4TLbpRZ3aWb9Z1dJstW06ZNb8G4m/2qJwp+O771G5cJvjrQppCVsnFiA
- H4S1JK36uH5msLjGKU5W16s7dupUITfx0/ZqZCRqRGGsbIKyTHM=
+        Mon, 8 Oct 2018 13:18:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38926 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726810AbeJHRSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:18:48 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EBCA020898; Mon,  8 Oct 2018 12:07:49 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A1DE2208B5;
+        Mon,  8 Oct 2018 12:07:39 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com
+Cc:     allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com,
+        Raju Lakkaraju <Raju.Lakkaraju@microchip.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH net-next v3 3/6] net: phy: mscc: Add EEE init sequence
+Date:   Mon,  8 Oct 2018 12:07:25 +0200
+Message-Id: <20181008100728.24959-4-quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/03/2018 12:10 PM, Tomasz Figa wrote:
-> On Tue, Sep 11, 2018 at 5:48 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 09/11/18 10:40, Alexandre Courbot wrote:
->>>> I am not sure whether this should be documented, but there are some additional
->>>> restrictions w.r.t. reference frames:
->>>>
->>>> Since decoders need access to the decoded reference frames there are some corner
->>>> cases that need to be checked:
->>>>
->>>> 1) V4L2_MEMORY_USERPTR cannot be used for the capture queue: the driver does not
->>>>    know when a malloced but dequeued buffer is freed, so the reference frame
->>>>    could suddenly be gone.
->>>
->>> It it is confirmed that we cannot use USERPTR buffers as CAPTURE then
->>> this probably needs to be documented. I wonder if there isn't a way to
->>> avoid this by having vb2 keep a reference to the pages in such a way
->>> that they would not be recycled after after userspace calls free() on
->>> the buffer. Is that possible with user-allocated memory?
->>
->> vb2 keeps a reference while the buffer is queued, but that reference is
->> released once the buffer is dequeued. Correctly, IMHO. If you provide
->> USERPTR, than userspace is responsible for the memory. Changing this
->> would require changing the API, since USERPTR has always worked like
->> this.
-> 
-> That would be a userspace bug wouldn't it? The next try to get user
-> pages would fail in that case and we could just fail such decode
-> request, couldn't we?
-> 
-> (Personally I'm not a big fan of USERPTR, though.)
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
 
-Yes, just don't support USERPTR for drivers like this. USERPTR just
-doesn't make sense.
+Microsemi PHYs (VSC 8530/31/40/41) need to update the Energy Efficient
+Ethernet initialization sequence.
+In order to avoid certain link state errors that could result in link
+drops and packet loss, the physical coding sublayer (PCS) must be
+updated with settings related to EEE in order to improve performance.
 
-> 
->>
->>>
->>> Not that I think that forbidding USERPTR buffers in this scenario
->>> would be a big problem.
->>
->> I think it is perfectly OK to forbid this. Ideally I would like to have
->> some test in v4l2-compliance or (even better) v4l2-mem2mem.c for this,
->> but it is actually not that easy to identify drivers like this.
->>
->> Suggestions for this on a postcard...
->>
->>>
->>>>
->>>> 2) V4L2_MEMORY_DMABUF can be used, but drivers should check that the dma buffer is
->>>>    still available AND increase the dmabuf refcount while it is used by the HW.
->>>
->>> Yeah, with DMABUF the above problem can easily be avoided at least.
->>>
->>>>
->>>> 3) What to do if userspace has requeued a buffer containing a reference frame,
->>>>    and you want to decode a B/P-frame that refers to that buffer? We need to
->>>>    check against that: I think that when you queue a capture buffer whose index
->>>>    is used in a pending request as a reference frame, than that should fail with
->>>>    an error.
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+---
+ drivers/net/phy/mscc.c | 65 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-Perhaps an error is overkill, but I think a warning should be issued.
-
- And trying to queue a request referring to a buffer that has been
- requeued should also fail.
-
-I don't think this is right, this is likely a valid case.
-
-Regards,
-
-	Hans
-
->>>>
->>>> We might need to add some support for this in v4l2-mem2mem.c or vb2.
->>>
->>> Sounds good, and we should document this as well.
->>>
->>
->> Right. And test it!
-> 
-> I'm not convinced that we should be enforcing this. Moreover,
-> requeuing a buffer containing a reference frame for a pending request
-> is not bound to be an error. It might be a legit case when the same
-> entry in the reference list is replaced with a different key frame
-> decoded into the same buffer as the reference list entry pointed until
-> now.
-> 
-> Best regards,
-> Tomasz
-> 
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index 47fbab489287..d304fb4df23c 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -67,6 +67,7 @@ enum rgmii_rx_clock_delay {
+ #define MSCC_PHY_PAGE_STANDARD		  0x0000 /* Standard registers */
+ #define MSCC_PHY_PAGE_EXTENDED		  0x0001 /* Extended registers */
+ #define MSCC_PHY_PAGE_EXTENDED_2	  0x0002 /* Extended reg - page 2 */
++#define MSCC_PHY_PAGE_TR		  0x52b5 /* Token ring registers */
+ 
+ /* Extended Page 1 Registers */
+ #define MSCC_PHY_CU_MEDIA_CRC_VALID_CNT	  18
+@@ -100,6 +101,13 @@ enum rgmii_rx_clock_delay {
+ #define SECURE_ON_ENABLE		  0x8000
+ #define SECURE_ON_PASSWD_LEN_4		  0x4000
+ 
++/* Token ring page Registers */
++#define MSCC_PHY_TR_CNTL		  16
++#define TR_WRITE			  0x8000
++#define TR_ADDR(x)			  (0x7fff & (x))
++#define MSCC_PHY_TR_LSB			  17
++#define MSCC_PHY_TR_MSB			  18
++
+ /* Microsemi PHY ID's */
+ #define PHY_ID_VSC8530			  0x00070560
+ #define PHY_ID_VSC8531			  0x00070570
+@@ -129,6 +137,11 @@ enum rgmii_rx_clock_delay {
+ 				BIT(VSC8531_FORCE_LED_OFF) | \
+ 				BIT(VSC8531_FORCE_LED_ON))
+ 
++struct reg_val {
++	u16	reg;
++	u32	val;
++};
++
+ struct vsc85xx_hw_stat {
+ 	const char *string;
+ 	u8 reg;
+@@ -647,6 +660,54 @@ static int vsc85xx_set_tunable(struct phy_device *phydev,
+ 	}
+ }
+ 
++/* mdiobus lock should be locked when using this function */
++static void vsc85xx_tr_write(struct phy_device *phydev, u16 addr, u32 val)
++{
++	__phy_write(phydev, MSCC_PHY_TR_MSB, val >> 16);
++	__phy_write(phydev, MSCC_PHY_TR_LSB, val & GENMASK(15, 0));
++	__phy_write(phydev, MSCC_PHY_TR_CNTL, TR_WRITE | TR_ADDR(addr));
++}
++
++static int vsc85xx_eee_init_seq_set(struct phy_device *phydev)
++{
++	const struct reg_val init_eee[] = {
++		{0x0f82, 0x0012b00a},
++		{0x1686, 0x00000004},
++		{0x168c, 0x00d2c46f},
++		{0x17a2, 0x00000620},
++		{0x16a0, 0x00eeffdd},
++		{0x16a6, 0x00071448},
++		{0x16a4, 0x0013132f},
++		{0x16a8, 0x00000000},
++		{0x0ffc, 0x00c0a028},
++		{0x0fe8, 0x0091b06c},
++		{0x0fea, 0x00041600},
++		{0x0f80, 0x00000af4},
++		{0x0fec, 0x00901809},
++		{0x0fee, 0x0000a6a1},
++		{0x0ffe, 0x00b01007},
++		{0x16b0, 0x00eeff00},
++		{0x16b2, 0x00007000},
++		{0x16b4, 0x00000814},
++	};
++	unsigned int i;
++	int oldpage;
++
++	mutex_lock(&phydev->lock);
++	oldpage = phy_select_page(phydev, MSCC_PHY_PAGE_TR);
++	if (oldpage < 0)
++		goto out_unlock;
++
++	for (i = 0; i < ARRAY_SIZE(init_eee); i++)
++		vsc85xx_tr_write(phydev, init_eee[i].reg, init_eee[i].val);
++
++out_unlock:
++	oldpage = phy_restore_page(phydev, oldpage, oldpage);
++	mutex_unlock(&phydev->lock);
++
++	return oldpage;
++}
++
+ static int vsc85xx_config_init(struct phy_device *phydev)
+ {
+ 	int rc, i;
+@@ -664,6 +725,10 @@ static int vsc85xx_config_init(struct phy_device *phydev)
+ 	if (rc)
+ 		return rc;
+ 
++	rc = vsc85xx_eee_init_seq_set(phydev);
++	if (rc)
++		return rc;
++
+ 	for (i = 0; i < vsc8531->nleds; i++) {
+ 		rc = vsc85xx_led_cntl_set(phydev, i, vsc8531->leds_mode[i]);
+ 		if (rc)
+-- 
+2.17.1
 
