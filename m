@@ -2,89 +2,52 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675E9C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29F2C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA0CA2087D
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:30:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v8ooykFe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA0CA2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 67FC42087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 06:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67FC42087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbeJHNkn (ORCPT
+        id S1726721AbeJHNqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 09:40:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59472 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 09:46:22 -0400
+Received: from verein.lst.de ([213.95.11.211]:45885 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbeJHNkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 09:40:43 -0400
-Received: from dragon (unknown [45.56.155.247])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4B3220841;
-        Mon,  8 Oct 2018 06:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538980236;
-        bh=16ELG+CSU3u1BMU5fLF7OoWi8uvTstmqAn+GzZQbnTY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v8ooykFeGOOXK8yGwzL+plFpZ3wGrgTrSlNZkrHeUtZit0oW75gs2FiOcIvxrgBoW
-         X7GVk24v8yKokLsZKqsmh92CSTfMlqXG3WKPe9hENOab4abIXRm2cuz0vFl4u0vyBY
-         jRRAos7naxUOtlyqAc/We7PZVRB1BwaP5tPPGOFw=
-Date:   Mon, 8 Oct 2018 14:30:09 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jun Nie <jun.nie@linaro.org>,
-        Baoyou Xie <baoyou.xie@linaro.org>
-Subject: Re: [PATCH 06/36] dt-bindings: arm: zte: Move sysctrl bindings to
- their own doc
-Message-ID: <20181008063007.GL3587@dragon>
-References: <20181005165848.3474-1-robh@kernel.org>
- <20181005165848.3474-7-robh@kernel.org>
+        id S1725857AbeJHNqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 09:46:22 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 9CE6868C73; Mon,  8 Oct 2018 08:36:13 +0200 (CEST)
+Date:   Mon, 8 Oct 2018 08:36:13 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] dma-debug: Check for drivers mapping invalid
+ addresses in dma_map_single()
+Message-ID: <20181008063613.GA2411@lst.de>
+References: <20181001215337.13358-1-swboyd@chromium.org> <62816605-0cc9-3743-e98c-682bf7996c6c@arm.com> <153897315026.119890.9913725764215566223@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181005165848.3474-7-robh@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <153897315026.119890.9913725764215566223@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 11:58:18AM -0500, Rob Herring wrote:
-> In preparation to convert board-level bindings to json-schema, move
-> various misc SoC bindings out to their own file.
+On Sun, Oct 07, 2018 at 09:32:30PM -0700, Stephen Boyd wrote:
+> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 > 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Jun Nie <jun.nie@linaro.org>
-> Cc: Baoyou Xie <baoyou.xie@linaro.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/arm/zte-sysctrl.txt   | 30 +++++++++++++++++++
+> Thanks for checking! ;)
 
-zte,sysctrl.txt to be consistent with other files like
-fsl,layerscape-dcfg.txt?  I'm fine with either way, but just want to
-see more consistent naming convention?  Other than that,
-
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Can you resend the fixed version to make my life easier?
