@@ -2,212 +2,285 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA5CC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EDBC64EB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21EB320878
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A505D2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 09:47:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yqB1lfzP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21EB320878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mfQV5Kc3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A505D2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeJHQ6d (ORCPT
+        id S1727346AbeJHQ6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 12:58:33 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40310 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbeJHQ6d (ORCPT
+        Mon, 8 Oct 2018 12:58:45 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35384 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeJHQ6p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:58:33 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w989l5Hb065093;
-        Mon, 8 Oct 2018 04:47:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538992025;
-        bh=scT66Oq/b6VUOnxyOvF4ElEAK4FmZmB+uWsNSYEUcsI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=yqB1lfzPIq5E1FzykyqYlxR19y+qfacqY+Gs/pov2Xnwn697b6k6qeEYbm/JiDSAJ
-         VrHg+DNFIWVPim7t+0bUkafRsA6r3Xh2qMuM6eaa/aWIIqkN9pkOCHEh0heDsK12Sf
-         McHnXT04NFaAEPZI3a2gxWuz7VbGZ3WdCswImCb4=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w989l4A9019256;
-        Mon, 8 Oct 2018 04:47:04 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 8 Oct
- 2018 04:47:03 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 8 Oct 2018 04:47:04 -0500
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w989l0su018274;
-        Mon, 8 Oct 2018 04:47:01 -0500
-Subject: Re: [PATCH 1/2] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
-References: <20181006072812.15814-1-lokeshvutla@ti.com>
- <20181006072812.15814-2-lokeshvutla@ti.com>
- <86tvlztmt1.wl-marc.zyngier@arm.com>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <8a05f735-01bd-5c2d-fcfa-dcc00adffd0b@ti.com>
-Date:   Mon, 8 Oct 2018 15:16:58 +0530
+        Mon, 8 Oct 2018 12:58:45 -0400
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A40AF1283;
+        Mon,  8 Oct 2018 11:47:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1538992072;
+        bh=Iy/A0wqPxHF471U48IUZR87JnVxpBXwQb30VI5LC5M0=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mfQV5Kc3FDIZr3PUFgE6XuxT0hk1MmrBaxPtCYaz4j5X6FSG8unEtwkS8Pbc0IBQp
+         2/81SNn/ttWCJ5M0fnOpVYPQbdMxCsWUnhUArA5qeRDX1paVZK6pRlfWDXX+K74peE
+         p25OZSuTnPFaULM0rh6gF5xuxP8xCbWRhFCazEF0=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricky Liang <jcliang@chromium.org>,
+        Shik Chen <shik@chromium.org>
+References: <20181003070656.193854-1-keiichiw@chromium.org>
+ <CAD90VcbBUcpwLsY0sHim+mML6esSjZA2ocX0Ff-YiZxBsLTZ+w@mail.gmail.com>
+ <5b236e95-b737-51b3-df4f-eea41a36735e@xs4all.nl>
+ <CAD90VcaexKNsRE9s32UanzE32YM2EXFySCArkt_Zo2V3-eRnqQ@mail.gmail.com>
+ <997483ea-4a41-a947-2cc8-45892ef91bc6@ideasonboard.com>
+ <d8b8d5bb-788d-1089-3a9d-ca42926ecc7b@xs4all.nl>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <ce006570-af4a-f4a5-fd0b-74d0638da56d@ideasonboard.com>
+Date:   Mon, 8 Oct 2018 10:47:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <86tvlztmt1.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <d8b8d5bb-788d-1089-3a9d-ca42926ecc7b@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On Saturday 06 October 2018 03:32 PM, Marc Zyngier wrote:
-> On Sat, 06 Oct 2018 08:28:11 +0100,
-> Lokesh Vutla <lokeshvutla@ti.com> wrote:
+On 08/10/18 10:00, Hans Verkuil wrote:
+> On 10/08/2018 10:35 AM, Kieran Bingham wrote:
+>> On 06/10/18 11:29, Keiichi Watanabe wrote:
+>>> Hi all,
+>>>
+>>> On Fri, Oct 5, 2018 at 6:18 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>> On 10/03/18 09:08, Keiichi Watanabe wrote:
+>>>>> I think 480p is a common frame size and it's worth supporting in vivid.
+>>>>> But, my patch might be ad-hoc. Actually, I'm not sure which values are
+>>>>> suitable for the intervals.
+>>>>
+>>>> I can apply this ad-hoc patch as-is.
+>>>>
+>>>> Or do you want to postpone this and work on a more generic solution?
+>>>> Although I am not sure what that would look like.
+>>>
+>>> I prefer providing a more flexible way rather than this ad-hoc patch.
+>>> It would be helpful if there is a way of changing supported frame sizes easily.
+>>> Perhaps, Kieran and me would use it, at least:)
+>>>
 >>
->> Add the DT binding documentation for Interrupt router driver.
+>> o/ <raising hand in agreement>
 >>
->> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->> ---
->>   .../interrupt-controller/ti,sci-intr.txt      | 83 +++++++++++++++++++
->>   MAINTAINERS                                   |  1 +
->>   2 files changed, 84 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>>>
+>>>> Proposals are welcome!
+>>>>
+>>>> The main purpose of this code is to have something that kind of acts like
+>>>> a real webcam that has various resolutions, and a slower framerate for
+>>>> higher resolutions (as you would expect).
+>>>
+>>> This sounds reasonable, so I guess we can keep this way as default and
+>>> provide a way for specifying extra frame sizes as an option.
+>>>
+>>> For example, how about a module option like this?
+>>> "webcam_sizes=640x480@15,320x240@30"
+>>>
+>>> If this parameter is passed to vivid, vivid works like a webcam that
+>>> supports the following 7 pairs of frame size and fps:
+>>> - 5 pairs of frame sizes and fps, as with the current implementation
+>>> - 640x480 (15fps)
+>>> - 320x240 (30fps)
 >>
->> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->> new file mode 100644
->> index 000000000000..681ca53cc5fb
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->> @@ -0,0 +1,83 @@
->> +Texas Instruments K3 Interrupt Router
->> +=====================================
->> +
->> +The Interrupt Router (INTR) module provides a mechanism to mux M
->> +interrupt inputs to N interrupt outputs, where all M inputs are selectable
->> +to be driven per N output. There is one register per output (MUXCNTL_N) that
->> +controls the selection.
->> +
->> +
->> +                                 Interrupt Router
->> +                             +----------------------+
->> +                             |  Inputs     Outputs  |
->> +        +-------+            | +------+             |
->> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
->> +        +-------+            | +------+             |      controller
->> +                             |    .        +-----+  |      +-------+
->> +        +-------+            |    .        |  0  |  |----->|  GIC  |
->> +        | INTA  |----------->|    .        +-----+  |      +-------+
->> +        +-------+            |    .          .      |
->> +                             | +------+      .      |
->> +                             | | irqM |    +-----+  |
->> +                             | +------+    |  N  |  |
->> +                             |             +-----+  |
->> +                             +----------------------+
->> +
->> +Configuration of these MUXCNTL_N registers is done by a system controller
->> +(like the Device Memory and Security Controller on K3 AM654 SoC). System
->> +controller will keep track of the used and unused registers within the Router.
->> +Driver should request the system controller to get the range of GIC IRQs
->> +assigned to the requesting hosts. It is the drivers responsibility to keep
->> +track of GIC IRQs.
+>> I like the concept of being able to specify as a module parameter.
+>>
+>> Perhaps we could have a magic marker on the string to define if the
+>> existing frame sizes should be kept - or if this is just a complete
+>> override ?
 > 
-> I would drop the GIC here, and replace it by "parent interrupt
-> controller", as nothing here is GIC specific
+> No, just override. It's hard otherwise since you would have to keep the
+> lists sorted by resolution/fps.
 > 
->> +
->> +Communication between the host processor running an OS and the system
->> +controller happens through a protocol called TI System Control Interface
->> +(TISCI protocol). For more details refer:
->> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
->> +
->> +TISCI Interrupt Router Node:
->> +----------------------------
->> +- compatible:		Must be "ti,sci-intr".
->> +- interrupt-controller:	Identifies the node as an interrupt controller
->> +- #interrupt-cells:	Specifies the number of cells needed to encode an
->> +			interrupt source. The value should be 3.
->> +			First cell should contain the TISCI device ID of source
->> +			Second cell should contain the interrupt source offset
->> +			within the device
->> +			Third cell specifies the trigger type as defined
->> +			in interrupts.txt in this directory.
+> If you want to set it yourself, then just do a complete override.
+
+OK. That's reasonable for me.
+
+ @@ -9,3 +9,0 @@ suggestion
+ - magic-marker
+
+
+>>  vivid.webcam=640x480@15,320x240@30  # Specify sizes explicitly
+>>  vivid.webcam=+640x480@15,320x240@30  # Append to existing frames
+>>               ^ Magic Marker
+>>
+>> We might of course want multiple rates per frame,
+>>
+>>  vivid.webcam=640x480@15-25-30-90-120, # Separator to be defined...
 > 
-> Are all trigger types supported?
+> Stick to @, so: vivid.webcam=640x480@15@25@30@90@120
 
-Nope, only level interrupts are supported. Will fix it in v2.
+Yes, of course that makes a lot more sense now I see it :-)
 
+--
+Kieran
+
+
+> This looks like a good proposal to me.
 > 
->> +- interrupt-parent:	phandle of irq parent for TISCI intr. The parent must
->> +			use the same interrupt-cells format as GIC.
+> BTW, I still would like to add 640x480 added to the default list:
+> it's a common resolution and it makes sense to add it.
 > 
-> Why that constraint? From what I can see, the two are fairly
-> independent, and the constraint looks more of a Linux driver issue
-> than a DT constraint.
-
-Driver when calling irq_domain_alloc_irqs_parent(), the fwspec node that gets 
-passed assumes that parent is gic. parameters are filled in with such 
-assumption. Do you suggest anything to make it more generic?
-
+> So I plan to accept the patch regardless.
 > 
->> +- ti,sci:		Phandle to TI-SCI compatible System controller node.
->> +- ti,sci-dst-id:	TISCI device ID of the destination IRQ controller.
->> +- ti,sci-rm-range-girq:	Tuple corresponding to unique TISCI resource type that
->> +			defines the dst host irq ranges assigned to this
->> +			interrupt router from this host context.
->> +			Tuple should be of format <type subtype>.
->> +
+> Regards,
+> 
+> 	Hans
+> 
+>>
+>>
+>>>
+>>> If this parameter is not passed, vivid's behavior won't change from
+>>> the current one.
+>>>
+>>> How do you think?
+>>>
+>>> We might want to stop using the default framesizes, i.e. vivid only
+>>> supports framesize/fps that passed as the option.
+>>> But, if we do so, the parameter will become mandatory and it would be annoying.
+>>
+>> I think mandatory would be annoying yes.
+>>
+>> Thus my suggestion for a magic marker above :)
+>>
+>> --
+>> Kieran
+>>
+>>
+>>> So, I personally like to keep the default framesizes.
+>>>
+>>> Best regards,
+>>> Kei
+>>>
+>>>>
+>>>> Regards,
+>>>>
+>>>>         Hans
+>>>>
+>>>>>
+>>>>> We might want to add a more flexible/extensible way to specify frame sizes.
+>>>>> e.g. passing frame sizes and intervals as module parameters
+>>>>>
+>>>>> Kei
+>>>>>
+>>>>> On Wed, Oct 3, 2018 at 4:06 PM, Keiichi Watanabe <keiichiw@chromium.org> wrote:
+>>>>>> Support 640x480 as a frame size for video input devices of vivid.
+>>>>>>
+>>>>>> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+>>>>>> ---
+>>>>>>  drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
+>>>>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
+>>>>>> index 58e14dd1dcd3..da80bf4bc365 100644
+>>>>>> --- a/drivers/media/platform/vivid/vivid-vid-cap.c
+>>>>>> +++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+>>>>>> @@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
+>>>>>>  };
+>>>>>>
+>>>>>>  /* The number of discrete webcam framesizes */
+>>>>>> -#define VIVID_WEBCAM_SIZES 5
+>>>>>> +#define VIVID_WEBCAM_SIZES 6
+>>>>>>  /* The number of discrete webcam frameintervals */
+>>>>>>  #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
+>>>>>>
+>>>>>> @@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
+>>>>>>  static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
+>>>>>>         {  320, 180 },
+>>>>>>         {  640, 360 },
+>>>>>> +       {  640, 480 },
+>>>>>>         { 1280, 720 },
+>>>>>>         { 1920, 1080 },
+>>>>>>         { 3840, 2160 },
+>>>>>> @@ -75,6 +76,8 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+>>>>>>         {  1, 5 },
+>>>>>>         {  1, 10 },
+>>>>>>         {  1, 15 },
+>>>>>> +       {  1, 15 },
+>>>>>> +       {  1, 25 },
+>>>>>>         {  1, 25 },
+>>>>>>         {  1, 30 },
+>>>>>>         {  1, 50 },
+>>>>>> --
+>>>>>> 2.19.0.605.g01d371f741-goog
+>>>>>>
+>>>>
+>>
+>>
+> 
 
-Thanks a lot for the review. Also, I need a suggestion regarding one more 
-interrupt controller(Interrupt Aggregator) on the same SoC controlled by 
-TISCI_PROTOCOL.
-
-The Interrupt Aggregator (INTA) provides a centralized machine
-which handles the termination of system events to that they can
-be coherently processed by the host(s) in the system. Integration looks 
-something similar https://pastebin.ubuntu.com/p/T32vbrwsch/ .
-
-Configuration of the Intmap registers that maps global events to vint is done
-by a system controller (like the Device Memory and Security Controller on K3
-AM654 SoC). Driver should request the system controller to get the range
-of global events and vints assigned to the requesting host. Management
-of these requested resources should be handled by driver and requests
-system controller to map specific global event to vint, bit pair.
-
-There can be cases such that IRQ routes can involve both INTR and INTA like below:
-	IP ---> INTA ---> INTR ----> GIC.
-
-In these cases TISCI involves only one message with parametes(source id, source 
-offset, inta_id, dst id) for configuring IRQ route till the destination. Co 
-processor will detect there is INTR in the IRQ path and configure that as well.
-
-Right now I kind of differentiated this scenario in INTA driver by passing a 
-flag(TI_SCI_EVENT) to INTR driver. If such flag comes, INTR driver should avoid 
-calling ti_sci api for configuring. Do you think this is the right direction or 
-do you suggest a better solution.
-
-If I am not clear in the above description, I can post an RFC for INTA driver 
-for continuing this discussion.
-
-Thanks and regards,
-Lokesh
+-- 
+Regards
+--
+Kieran
