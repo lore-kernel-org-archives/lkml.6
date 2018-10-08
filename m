@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29181C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE6EC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E7A2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D812087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:39:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1HncJQC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E7A2064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRx+IwCz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D812087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbeJIBwZ (ORCPT
+        id S1729473AbeJIBw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:52:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39600 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:52:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726995AbeJIBwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:52:23 -0400
+        id S1728535AbeJIBwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:52:25 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A5742064A;
-        Mon,  8 Oct 2018 18:39:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80A48214C2;
+        Mon,  8 Oct 2018 18:39:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023959;
-        bh=RJ5UjucTY2S/7pXvcoewwT3YZzHJDdeTmFxpff4+ml8=;
+        s=default; t=1539023962;
+        bh=373dXUTCKX8wRt04yFQe21CCLygefLlIAR8X7QxoDgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F1HncJQCXjBjTaUM5Oe9Wn2p4beuzAZGS4dxLd6KD8BCM+smcDcnItWsRxAEdxKxl
-         7X8jABY/Hx9MFh4lo3XxtcOjnxq7TCzoaRmRhq+igVvcxt3CrDYbhaHL8ZK00ikyXa
-         q8Eh8YCMrvxP4TxWcriUVVgO7f6YfPjzJ+QLkqN0=
+        b=fRx+IwCz8YzSJTQBE62wW2sL+J/2ojdrT6A4xjtD1WYwJayHv0A2/T2Y4rfhDWfqD
+         TxIhkOoMke4ZQ4AwEDSi6+k003AeAiZCIUaW0vbUuSjRO5xYxCVIoi7+5lmMuTSbPy
+         Fmjo0gswFzFE4TChopAFtBXjN3Rxvl6ch7RxAnic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 31/59] perf probe powerpc: Ignore SyS symbols irrespective of endianness
-Date:   Mon,  8 Oct 2018 20:31:38 +0200
-Message-Id: <20181008175550.047770072@linuxfoundation.org>
+Subject: [PATCH 4.9 32/59] RDMA/ucma: check fd type in ucma_migrate_id()
+Date:   Mon,  8 Oct 2018 20:31:39 +0200
+Message-Id: <20181008175550.099330635@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -68,55 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit fa694160cca6dbba17c57dc7efec5f93feaf8795 ]
+[ Upstream commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 ]
 
-This makes sure that the SyS symbols are ignored for any powerpc system,
-not just the big endian ones.
+The current code grabs the private_data of whatever file descriptor
+userspace has supplied and implicitly casts it to a `struct ucma_file *`,
+potentially causing a type confusion.
 
-Reported-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Fixes: fb6d59423115 ("perf probe ppc: Use the right prefix when ignoring SyS symbols on ppc")
-Link: http://lkml.kernel.org/r/20180828090848.1914-1-sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This is probably fine in practice because the pointer is only used for
+comparisons, it is never actually dereferenced; and even in the
+comparisons, it is unlikely that a file from another filesystem would have
+a ->private_data pointer that happens to also be valid in this context.
+But ->private_data is not always guaranteed to be a valid pointer to an
+object owned by the file's filesystem; for example, some filesystems just
+cram numbers in there.
+
+Check the type of the supplied file descriptor to be safe, analogous to how
+other places in the kernel do it.
+
+Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/powerpc/util/sym-handling.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/ucma.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -21,15 +21,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -124,6 +124,8 @@ static DEFINE_MUTEX(mut);
+ static DEFINE_IDR(ctx_idr);
+ static DEFINE_IDR(multicast_idr);
  
- #endif
- 
--#if !defined(_CALL_ELF) || _CALL_ELF != 2
- int arch__choose_best_symbol(struct symbol *syma,
- 			     struct symbol *symb __maybe_unused)
++static const struct file_operations ucma_fops;
++
+ static inline struct ucma_context *_ucma_find_context(int id,
+ 						      struct ucma_file *file)
  {
- 	char *sym = syma->name;
+@@ -1545,6 +1547,10 @@ static ssize_t ucma_migrate_id(struct uc
+ 	f = fdget(cmd.fd);
+ 	if (!f.file)
+ 		return -ENOENT;
++	if (f.file->f_op != &ucma_fops) {
++		ret = -EINVAL;
++		goto file_put;
++	}
  
-+#if !defined(_CALL_ELF) || _CALL_ELF != 2
- 	/* Skip over any initial dot */
- 	if (*sym == '.')
- 		sym++;
-+#endif
- 
- 	/* Avoid "SyS" kernel syscall aliases */
- 	if (strlen(sym) >= 3 && !strncmp(sym, "SyS", 3))
-@@ -40,6 +41,7 @@ int arch__choose_best_symbol(struct symb
- 	return SYMBOL_A;
- }
- 
-+#if !defined(_CALL_ELF) || _CALL_ELF != 2
- /* Allow matching against dot variants */
- int arch__compare_symbol_names(const char *namea, const char *nameb)
- {
+ 	/* Validate current fd and prevent destruction of id. */
+ 	ctx = ucma_get_ctx(f.file->private_data, cmd.id);
 
 
