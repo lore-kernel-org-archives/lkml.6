@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50281C677E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9260EC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 186C9204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 538B121479
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zZm1ZfkH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186C9204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YknC90bE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538B121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731068AbeJIB6v (ORCPT
+        id S1731076AbeJIB6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:58:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJIB6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:50 -0400
+        id S1728570AbeJIB6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:52 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB48A204FD;
-        Mon,  8 Oct 2018 18:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B84B2087D;
+        Mon,  8 Oct 2018 18:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024344;
-        bh=41p9KN9k4s3tPZUftJb1EMAJYi5aofoZtntKxNIhtGs=;
+        s=default; t=1539024346;
+        bh=WUvoHHhguRsBAOaE0SoyeetpJzc2gPq5FmUS1WQodHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zZm1ZfkHFZg36ega5JSkSoREiuR9dnYWfqXeEzzFW05aYdISRCXSzQFKijvtqE7TC
-         UXU5FimjcTtmzUg1277SyaZANYHty40cvlF/sMWQ3dDd8rN6vy+FM4OlMR97wpkE4h
-         LySxoerAvMjhpqOkpS/H29J5k/u20xUK9qeJAsss=
+        b=YknC90bEJm61EZWAB+AO906J+hzn0kxMpaRQIVwreMchnu30jbrhABGpb414gkExA
+         QKphJwex/8I01SgTQoiLdu9iMk6ZYe66Gm991rrqZWrzXaqi70sCIoVCYjBbT7j1W+
+         SYd5RooJcvK26EVizjDcLbW35S/NrXxjygNgvA3U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        stable@vger.kernel.org,
+        syzbot+2a12f11c306afe871c1f@syzkaller.appspotmail.com,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 002/168] mac80211: Run TXQ teardown code before de-registering interfaces
-Date:   Mon,  8 Oct 2018 20:29:42 +0200
-Message-Id: <20181008175620.132926836@linuxfoundation.org>
+Subject: [PATCH 4.18 003/168] mac80211_hwsim: require at least one channel
+Date:   Mon,  8 Oct 2018 20:29:43 +0200
+Message-Id: <20181008175620.171849782@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
 References: <20181008175620.043587728@linuxfoundation.org>
@@ -64,43 +64,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Toke Høiland-Jørgensen" <toke@toke.dk>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 77cfaf52eca5cac30ed029507e0cab065f888995 ]
+[ Upstream commit 484004339d4514fde425f6e8a9f6a6cc979bb0c3 ]
 
-The TXQ teardown code can reference the vif data structures that are
-stored in the netdev private memory area if there are still packets on
-the queue when it is being freed. Since the TXQ teardown code is run
-after the netdevs are freed, this can lead to a use-after-free. Fix this
-by moving the TXQ teardown code to earlier in ieee80211_unregister_hw().
+Syzbot continues to try to create mac80211_hwsim radios, and
+manages to pass parameters that are later checked with WARN_ON
+in cfg80211 - catch another one in hwsim directly.
 
-Reported-by: Ben Greear <greearb@candelatech.com>
-Tested-by: Ben Greear <greearb@candelatech.com>
-Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
+Reported-by: syzbot+2a12f11c306afe871c1f@syzkaller.appspotmail.com
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mac80211_hwsim.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -1182,6 +1182,7 @@ void ieee80211_unregister_hw(struct ieee
- #if IS_ENABLED(CONFIG_IPV6)
- 	unregister_inet6addr_notifier(&local->ifa6_notifier);
- #endif
-+	ieee80211_txq_teardown_flows(local);
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3194,6 +3194,11 @@ static int hwsim_new_radio_nl(struct sk_
+ 	if (info->attrs[HWSIM_ATTR_CHANNELS])
+ 		param.channels = nla_get_u32(info->attrs[HWSIM_ATTR_CHANNELS]);
  
- 	rtnl_lock();
- 
-@@ -1210,7 +1211,6 @@ void ieee80211_unregister_hw(struct ieee
- 	skb_queue_purge(&local->skb_queue);
- 	skb_queue_purge(&local->skb_queue_unreliable);
- 	skb_queue_purge(&local->skb_queue_tdls_chsw);
--	ieee80211_txq_teardown_flows(local);
- 
- 	destroy_workqueue(local->workqueue);
- 	wiphy_unregister(local->hw.wiphy);
++	if (param.channels < 1) {
++		GENL_SET_ERR_MSG(info, "must have at least one channel");
++		return -EINVAL;
++	}
++
+ 	if (param.channels > CFG80211_MAX_NUM_DIFFERENT_CHANNELS) {
+ 		GENL_SET_ERR_MSG(info, "too many channels specified");
+ 		return -EINVAL;
 
 
