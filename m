@@ -2,126 +2,116 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE80C65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4441BC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088B92075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 11:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E863D2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 12:02:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="IQvmHzwZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088B92075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="eYDE/pRT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E863D2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbeJHTKO (ORCPT
+        id S1727768AbeJHTOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 15:10:14 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33615 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbeJHTKO (ORCPT
+        Mon, 8 Oct 2018 15:14:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43512 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbeJHTOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 15:10:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e4-v6so20548933wrs.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 04:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=kEttI9DqBpEzCiX8HuqBjrpcDfxr7iT8ZpKlqnognH8=;
-        b=IQvmHzwZfulf/wprwi1MB26tTIpLaaft69Y38IanWHK93ByYKsvcOxpM46CAwN8WhI
-         Py8xepJIGKSCbf0c9PT/9nP5uxAI6MfjabdaYDnP0MBHjfZHy5W0UwFPdmVTbK3yLcCx
-         psds9lqCQrXUWjn1N5oAVtDlXgksj4yNneG00QqvdQhqjTh+QEKgYY/B3INV1g8eB3NB
-         WbfqW29ks8BfkcbYxEGOtL8k02HU3f4w+8KMbgYrRec90bC4WMHoTTfKwKjvjzbrRQje
-         Q6MGEOY1EAGst9aWnX5eo+5nbW6UAElwdBwrHkfzFEGjLiXWRLjv/5z5/53btMpQuzO0
-         Kheg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=kEttI9DqBpEzCiX8HuqBjrpcDfxr7iT8ZpKlqnognH8=;
-        b=su4YCbMjsCHs1n98RlG8BY9nkcD8j+djlHMRYyUo/iRHcVaAdtDEJNb8/cnAanXZJI
-         cMFdzBroJ/CbqmMJtwGWOuEuS/ox4jJu4nnIAd5Dlz9UT29fjx+Xb6xK1drvk65BXBp3
-         J6SYaQ3XxRuiT6jwoyiq9wosuYRFmJ+kAgF009n/4x6o4glvNiimMGGJDrBneePgyf0b
-         SRpINCQ+ZI8qLdGjD7EDZAp5iJBQPYdp/yJWN2fEernGP96S87ZQYoITZ/CyuX4i0ymB
-         0zwPS2LbGEwTQcvLSF4TWoPz/sE8lm+9lT5QqIhOauHkkJezcHap/Khx7q/z1O/hUeSu
-         MvbA==
-X-Gm-Message-State: ABuFfogWm+DIwe6njo2npSli27m9Gp0DBAU0vRQ1xqYNdwubJZZOLV2s
-        PKli3OprC2f7INTIAsuRnPF6w94AE+lhXQ==
-X-Google-Smtp-Source: ACcGV62CYS2MuVtuCEoVCMMQbxBeZnc5Lw3At/FFF2XR+ATbyi4+VfSFAwJIFFi1AKqTcEstlEAEbw==
-X-Received: by 2002:adf:fa4e:: with SMTP id y14-v6mr16578699wrr.155.1538999929256;
-        Mon, 08 Oct 2018 04:58:49 -0700 (PDT)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id q16-v6sm13351105wrn.41.2018.10.08.04.58.48
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 08 Oct 2018 04:58:48 -0700 (PDT)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        gregkh@linuxfoundation.org, geert@linux-m68k.org,
-        rdunlap@infradead.org
-Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v2] of: base: Fix english spelling in of_alias_get_alias_list()
-Date:   Mon,  8 Oct 2018 13:58:47 +0200
-Message-Id: <1e4e9047636e94dc2bff62b915bd0261f334dd8a.1538999925.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 8 Oct 2018 15:14:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4zM7joX3kGQmn2PkKa8CCXCvpW50J8l8UNfGvZ8tZkY=; b=eYDE/pRTdCn65NVawh0a//30E
+        LtM5kZPtLWhB1TNYCoQVanHfgnoCs2Qv+zo1BrDQLFa3ry14jBWCIs+pmynhIYXa7gyWmj9xgqIb6
+        P6DV9YgXg3NEV4/A3V+pFde3e9Y5AtxBPGUyUGdlS1itWFhStTeEWogTIKsvSZ164joDw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g9UFB-0002XX-75; Mon, 08 Oct 2018 12:02:37 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id A45AF1122339; Mon,  8 Oct 2018 13:02:36 +0100 (BST)
+Date:   Mon, 8 Oct 2018 13:02:36 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-kernel@vger.kernel.org,
+        ksummit-discuss@lists.linuxfoundation.org
+Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
+ of discrimination factors
+Message-ID: <20181008120236.GD5684@sirena.org.uk>
+References: <20181007085102.17795-1-geert@linux-m68k.org>
+ <20181007113514.GA21217@localhost>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9dgjiU4MmWPVapMU"
+Content-Disposition: inline
+In-Reply-To: <20181007113514.GA21217@localhost>
+X-Cookie: There's no time like the pleasant.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix english spelling in of_alias_get_alias_list().
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: b1078c355d76 ("of: base: Introduce of_alias_get_alias_list() to check alias IDs")
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+--9dgjiU4MmWPVapMU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes in v2:
-- Fix 2 more issues reported by Randy Dunlap
-- Add fixed log sha1
+On Sun, Oct 07, 2018 at 04:35:14AM -0700, Josh Triplett wrote:
+> On Sun, Oct 07, 2018 at 10:51:02AM +0200, Geert Uytterhoeven wrote:
+> > Providing an explicit list of discrimination factors may give the false
+> > impression that discrimination based on other unlisted factors would be
+> > allowed.
 
-Greg: Please apply it on the top of tty-next because patch is going via
-your tree.
+> > Avoid any ambiguity by removing the list, to ensure "a harassment-free
+> > experience for everyone", period.
 
----
- drivers/of/base.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> I would suggest reading the commit message that added this in the first
+> place. "Explicit guidelines have demonstrated success in other projects
+> and other areas of the kernel." See also various comparisons of codes of
+> conduct, which make the same point. The point of this list is precisely
+> to serve as one such explicit guideline; removing it would rather defeat
+> the purpose.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 33011b88ed3f..908de45f966b 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1948,7 +1948,7 @@ int of_alias_get_id(struct device_node *np, const char *stem)
-  * @matches:	Array of OF device match structures to search in
-  * @stem:	Alias stem of the given device_node
-  * @bitmap:	Bitmap field pointer
-- * @nbits:	Maximum number of alias ID which can be recorded it bitmap
-+ * @nbits:	Maximum number of alias IDs which can be recorded in bitmap
-  *
-  * The function travels the lookup table to record alias ids for the given
-  * device match structures and alias stem.
-@@ -1971,7 +1971,7 @@ int of_alias_get_alias_list(const struct of_device_id *matches,
- 			 __func__, app->stem, app->id);
- 
- 		if (strcmp(app->stem, stem) != 0) {
--			pr_debug("%s: stem comparison doesn't passed %s\n",
-+			pr_debug("%s: stem comparison didn't pass %s\n",
- 				 __func__, app->stem);
- 			continue;
- 		}
-@@ -1986,7 +1986,7 @@ int of_alias_get_alias_list(const struct of_device_id *matches,
- 			pr_debug("%s: Allocated ID %d\n", __func__, app->id);
- 			set_bit(app->id, bitmap);
- 		}
--		/* Alias exist but it not compatible with matches */
-+		/* Alias exists but is not compatible with matches */
- 	}
- 	mutex_unlock(&of_mutex);
- 
--- 
-1.9.1
+The Debian code of conduct also omits the explicit list of factors.  In
+their case it was a deliberate decision due to a real fear that people
+involved in and adjacent to the project would try to rules lawyer an
+explict list and wanting to make the code of conduct robust against
+that.  The communities seem similar enough that it's worth thinking
+about for the kernel as well, Debian has had to deal with some serious
+problems in the past so there's some experience behind the decisions
+there.
 
+> In any case, this is not the appropriate place for such patches, any
+> more than it's the place for patches to the GPL.
+
+We do need some way to talk about what we're trying to do here.
+
+--9dgjiU4MmWPVapMU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu7R1sACgkQJNaLcl1U
+h9DSlgf/TrAjyhsy9c4hZmukCHV26ymNY8mSxDTh5O7+Nuu+GljrpWBax57/Iuye
+TJvuTKYrKvVyHSUxeoiNlBNCzGJumO8zOwQ4T0PcjvbSr3Bb49TcFpU2dVUsrmy6
+wtFG+xd8UujJunnp/2Ij2vLIznOCdijqhiJjZUTG+hm3yUrWNr6r9f+JkZYy7cM8
++JH+vME2UTErPAQ9iOaSmdTgEClD6ILMzBVLQkZ43CZsz+ppAs0HKL+zBowvULtD
+EG9+0gH84qhM41+7TEufY/H2no1uwsMPalM4DfELJ6K7OqwcO0+uQPjBquriJRAS
+YBZf0ImvUPzNbK1NL0QXdz16lMUmFw==
+=lPR7
+-----END PGP SIGNATURE-----
+
+--9dgjiU4MmWPVapMU--
