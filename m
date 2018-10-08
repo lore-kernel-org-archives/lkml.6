@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEA3C677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15501C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59350214C3
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C96842064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO9Jh7HR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59350214C3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yRVp5xel"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96842064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730973AbeJIB62 (ORCPT
+        id S1730984AbeJIB6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:58:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:58:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJIB61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:58:27 -0400
+        id S1728570AbeJIB6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:58:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAE2D204FD;
-        Mon,  8 Oct 2018 18:45:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD3AB2087D;
+        Mon,  8 Oct 2018 18:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024321;
-        bh=Ua4dz3c+au4gHQL/TG/nKa6zA6W9aNRbyfFatVZIVpI=;
+        s=default; t=1539024324;
+        bh=khEJpZhISYkxJirKwzzONEZN3GiBEQuFMY5Gm15ZqeI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DO9Jh7HRO2TvbVmgb5E+61u5bfWhaTFt3ctcARvOVBpgMg3eD0KJi3r0J96fIVFVV
-         2CyVumx8TXnG9TljlJ3EH39pend95lPh74gWLNYnaS23EHdoAnopjsiLOC7O86JSia
-         XQVtRtOZ1AmrmAdAex65to3rTMkOR2NCIhk9IP1g=
+        b=yRVp5xela4e1ctxm4+bqxOYI1ylCpGLKDbYzq1n8XBvu/ckP8+qZf4oZlX34yMUow
+         c1K8GHIqtlhVfvX7r/MjZgOOCEu8aeSum+yYZPiOhmmQGjXwkST8tep49feG1MNNfo
+         h4pYfUkJZ72nxVt7UeLZtDGb2d/qBJeAD0GfC6c4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Marc=20Aur=C3=A8le=20La=20France?= <tsi@tuyoix.net>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 82/94] sysfs: Do not return POSIX ACL xattrs via listxattr
-Date:   Mon,  8 Oct 2018 20:32:03 +0200
-Message-Id: <20181008175610.430772014@linuxfoundation.org>
+        stable@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>,
+        Paulo Alcantara <palcantara@suse.deR>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 83/94] smb2: fix missing files in root share directory listing
+Date:   Mon,  8 Oct 2018 20:32:04 +0200
+Message-Id: <20181008175610.483263330@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175605.067676667@linuxfoundation.org>
 References: <20181008175605.067676667@linuxfoundation.org>
@@ -64,64 +64,175 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Aurelien Aptel <aaptel@suse.com>
 
-commit ffc4c92227db5699493e43eb140b4cb5904c30ff upstream.
+commit 0595751f267994c3c7027377058e4185b3a28e75 upstream.
 
-Commit 786534b92f3c introduced a regression that caused listxattr to
-return the POSIX ACL attribute names even though sysfs doesn't support
-POSIX ACLs.  This happens because simple_xattr_list checks for NULL
-i_acl / i_default_acl, but inode_init_always initializes those fields
-to ACL_NOT_CACHED ((void *)-1).  For example:
-    $ getfattr -m- -d /sys
-    /sys: system.posix_acl_access: Operation not supported
-    /sys: system.posix_acl_default: Operation not supported
-Fix this in simple_xattr_list by checking if the filesystem supports POSIX ACLs.
+When mounting a Windows share that is the root of a drive (eg. C$)
+the server does not return . and .. directory entries. This results in
+the smb2 code path erroneously skipping the 2 first entries.
 
-Fixes: 786534b92f3c ("tmpfs: listxattr should include POSIX ACL xattrs")
-Reported-by:  Marc Aurèle La France <tsi@tuyoix.net>
-Tested-by: Marc Aurèle La France <tsi@tuyoix.net>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: stable@vger.kernel.org # v4.5+
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Pseudo-code of the readdir() code path:
+
+cifs_readdir(struct file, struct dir_context)
+    initiate_cifs_search            <-- if no reponse cached yet
+        server->ops->query_dir_first
+
+    dir_emit_dots
+        dir_emit                    <-- adds "." and ".." if we're at pos=0
+
+    find_cifs_entry
+        initiate_cifs_search        <-- if pos < start of current response
+                                         (restart search)
+        server->ops->query_dir_next <-- if pos > end of current response
+                                         (fetch next search res)
+
+    for(...)                        <-- loops over cur response entries
+                                          starting at pos
+        cifs_filldir                <-- skip . and .., emit entry
+            cifs_fill_dirent
+            dir_emit
+	pos++
+
+A) dir_emit_dots() always adds . & ..
+   and sets the current dir pos to 2 (0 and 1 are done).
+
+Therefore we always want the index_to_find to be 2 regardless of if
+the response has . and ..
+
+B) smb1 code initializes index_of_last_entry with a +2 offset
+
+  in cifssmb.c CIFSFindFirst():
+		psrch_inf->index_of_last_entry = 2 /* skip . and .. */ +
+			psrch_inf->entries_in_buffer;
+
+Later in find_cifs_entry() we want to find the next dir entry at pos=2
+as a result of (A)
+
+	first_entry_in_buffer = cfile->srch_inf.index_of_last_entry -
+					cfile->srch_inf.entries_in_buffer;
+
+This var is the dir pos that the first entry in the buffer will
+have therefore it must be 2 in the first call.
+
+If we don't offset index_of_last_entry by 2 (like in (B)),
+first_entry_in_buffer=0 but we were instructed to get pos=2 so this
+code in find_cifs_entry() skips the 2 first which is ok for non-root
+shares, as it skips . and .. from the response but is not ok for root
+shares where the 2 first are actual files
+
+		pos_in_buf = index_to_find - first_entry_in_buffer;
+                // pos_in_buf=2
+		// we skip 2 first response entries :(
+		for (i = 0; (i < (pos_in_buf)) && (cur_ent != NULL); i++) {
+			/* go entry by entry figuring out which is first */
+			cur_ent = nxt_dir_entry(cur_ent, end_of_smb,
+						cfile->srch_inf.info_level);
+		}
+
+C) cifs_filldir() skips . and .. so we can safely ignore them for now.
+
+Sample program:
+
+int main(int argc, char **argv)
+{
+	const char *path = argc >= 2 ? argv[1] : ".";
+	DIR *dh;
+	struct dirent *de;
+
+	printf("listing path <%s>\n", path);
+	dh = opendir(path);
+	if (!dh) {
+		printf("opendir error %d\n", errno);
+		return 1;
+	}
+
+	while (1) {
+		de = readdir(dh);
+		if (!de) {
+			if (errno) {
+				printf("readdir error %d\n", errno);
+				return 1;
+			}
+			printf("end of listing\n");
+			break;
+		}
+		printf("off=%lu <%s>\n", de->d_off, de->d_name);
+	}
+
+	return 0;
+}
+
+Before the fix with SMB1 on root shares:
+
+<.>            off=1
+<..>           off=2
+<$Recycle.Bin> off=3
+<bootmgr>      off=4
+
+and on non-root shares:
+
+<.>    off=1
+<..>   off=4  <-- after adding .., the offsets jumps to +2 because
+<2536> off=5       we skipped . and .. from response buffer (C)
+<411>  off=6       but still incremented pos
+<file> off=7
+<fsx>  off=8
+
+Therefore the fix for smb2 is to mimic smb1 behaviour and offset the
+index_of_last_entry by 2.
+
+Test results comparing smb1 and smb2 before/after the fix on root
+share, non-root shares and on large directories (ie. multi-response
+dir listing):
+
+PRE FIX
+=======
+pre-1-root VS pre-2-root:
+        ERR pre-2-root is missing [bootmgr, $Recycle.Bin]
+pre-1-nonroot VS pre-2-nonroot:
+        OK~ same files, same order, different offsets
+pre-1-nonroot-large VS pre-2-nonroot-large:
+        OK~ same files, same order, different offsets
+
+POST FIX
+========
+post-1-root VS post-2-root:
+        OK same files, same order, same offsets
+post-1-nonroot VS post-2-nonroot:
+        OK same files, same order, same offsets
+post-1-nonroot-large VS post-2-nonroot-large:
+        OK same files, same order, same offsets
+
+REGRESSION?
+===========
+pre-1-root VS post-1-root:
+        OK same files, same order, same offsets
+pre-1-nonroot VS post-1-nonroot:
+        OK same files, same order, same offsets
+
+BugLink: https://bugzilla.samba.org/show_bug.cgi?id=13107
+Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Paulo Alcantara <palcantara@suse.deR>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xattr.c |   24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ fs/cifs/smb2ops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -951,17 +951,19 @@ ssize_t simple_xattr_list(struct inode *
- 	int err = 0;
- 
- #ifdef CONFIG_FS_POSIX_ACL
--	if (inode->i_acl) {
--		err = xattr_list_one(&buffer, &remaining_size,
--				     XATTR_NAME_POSIX_ACL_ACCESS);
--		if (err)
--			return err;
--	}
--	if (inode->i_default_acl) {
--		err = xattr_list_one(&buffer, &remaining_size,
--				     XATTR_NAME_POSIX_ACL_DEFAULT);
--		if (err)
--			return err;
-+	if (IS_POSIXACL(inode)) {
-+		if (inode->i_acl) {
-+			err = xattr_list_one(&buffer, &remaining_size,
-+					     XATTR_NAME_POSIX_ACL_ACCESS);
-+			if (err)
-+				return err;
-+		}
-+		if (inode->i_default_acl) {
-+			err = xattr_list_one(&buffer, &remaining_size,
-+					     XATTR_NAME_POSIX_ACL_DEFAULT);
-+			if (err)
-+				return err;
-+		}
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1239,7 +1239,7 @@ smb2_query_dir_first(const unsigned int
  	}
- #endif
  
+ 	srch_inf->entries_in_buffer = 0;
+-	srch_inf->index_of_last_entry = 0;
++	srch_inf->index_of_last_entry = 2;
+ 
+ 	rc = SMB2_query_directory(xid, tcon, fid->persistent_fid,
+ 				  fid->volatile_fid, 0, srch_inf);
 
 
