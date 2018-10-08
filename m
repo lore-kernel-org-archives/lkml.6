@@ -2,98 +2,121 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2ECC65C20
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1E4C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A06682075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A06682075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 471D22075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:11:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 471D22075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbeJHWXW (ORCPT
+        id S1726613AbeJHWXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:23:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32424 "EHLO mx1.redhat.com"
+        Mon, 8 Oct 2018 18:23:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:10653 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbeJHWXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:23:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63785811AC;
-        Mon,  8 Oct 2018 15:11:11 +0000 (UTC)
-Received: from krava (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AA4C25C554;
-        Mon,  8 Oct 2018 15:11:09 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 17:11:08 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 2/3]: perf record: enable asynchronous trace writing
-Message-ID: <20181008151108.GH18757@krava>
-References: <7d42aa80-8e69-44e4-b963-e8ef89df2099@linux.intel.com>
- <31b0ae5f-e1b5-4255-11af-46c8ebe8e2be@linux.intel.com>
- <20181008105254.GG17270@krava>
- <de91f032-94e5-626e-bf2c-2f3a21ab6db1@linux.intel.com>
- <20181008125310.GF18757@krava>
- <c6331666-e4af-f1b5-99a5-abf0fdd54a63@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6331666-e4af-f1b5-99a5-abf0fdd54a63@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 08 Oct 2018 15:11:11 +0000 (UTC)
+        id S1726078AbeJHWXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:23:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 08:11:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,357,1534834800"; 
+   d="scan'208";a="93292011"
+Received: from mucrsa0015.imu.intel.com ([10.62.163.98])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Oct 2018 08:11:08 -0700
+From:   Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: conservative: Fix requested_freq handling
+Date:   Mon,  8 Oct 2018 17:09:00 +0200
+Message-Id: <20181008150901.19667-1-waldemar.rymarkiewicz@gmail.com>
+X-Mailer: git-send-email 2.10.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 05:42:18PM +0300, Alexey Budankov wrote:
-> Hi,
-> On 08.10.2018 15:53, Jiri Olsa wrote:
-> > On Mon, Oct 08, 2018 at 03:24:31PM +0300, Alexey Budankov wrote:
-> >> Hi,
-> >>
-> >> On 08.10.2018 13:52, Jiri Olsa wrote:
-> >>> On Mon, Oct 08, 2018 at 09:17:11AM +0300, Alexey Budankov wrote:
-> >> <SNIP>
-> >>>> +#ifdef HAVE_AIO_SUPPORT
-> >>>> +	off = lseek(trace_fd, 0, SEEK_CUR);
-> >>>> +#endif
-> >>>
-> >>> I'm still little puzzled why we need to do this,
-> >>> when the aio write takes the offset value, but
-> >>
-> >> pwrite() syscall [1] which is the base for aio_write() doesn't 
-> >> advance file pos value so it requires to be calculated and 
-> >> updated by callers of aio_write() API.
-> > 
-> > ok, so aio_write does not need the offset to be updated,
-> > who needs it then?
-> 
-> aio_write() needs this offset as an input parameter.
-> aio_write() gets offset as a part of cblock object.
+From: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
 
-yes, it's an 'arg' to aio_write syscall
+The governor updates dbs_info->requested_freq only after increasing or
+decreasing frequency. There is, however, an use case when this is not
+sufficient.
 
-> Adjacent aio_write() records should not overlap in the trace file so
-> off value is incremented by size in every loop iteration after 
-> successful aio_write() call.
+Imagine, external module constraining cpufreq policy in a way that policy->max
+= policy->min = max_available_freq (eg. 1Ghz). CPUfreq will set freq to
+max_freq and conservative gov will not try downscale/upscale due to the
+limits. It will just exit instead
 
-but does the aio_write need the lseek 'set' call? if not, we could
-keep the 'offset' value within perf (like in the struct perf_data_file
-or struct record) without any need to call lseek
+    if (requested_freq > policy->max || requested_freq < policy->min)
+            //max=min=1Ghz -> requested_freq=cur=1Ghz
+            requested_freq = policy->cur;
+    [...]
+    if (requested_freq == policy->max)
+             goto out;
 
-jirka
+In a result, dbs_info->requested_freq is not updated with newly calculated
+requested_freq=1Ghz. Next, execution of update routine will use again
+previously stored requested_freq (in my case it was min_available_freq)
+
+    [...]
+    unsigned int requested_freq = dbs_info->requested_freq;
+    [....]
+
+Now, when external module returns to previous policy limits that is
+policy->min = min_available_freq and policy->max = max_available_freq,
+conservative governor is not able to decrease frequency because stored
+requested_freq is still or rather already set to min_available_freq so
+the check (for decreasing)
+
+    [...]
+    if (load < cs_tuners->down_threshold) {
+    [....]
+           if (requested_freq == policy->min)
+                   goto out;
+    [...]
+
+returns from routine before it does any freq change. To fix that just update
+dbs_info->requested_freq every time we go out from the update routine.
+
+Signed-off-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+---
+ drivers/cpufreq/cpufreq_conservative.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq_conservative.c b/drivers/cpufreq/cpufreq_conservative.c
+index f20f20a..7f90f6e 100644
+--- a/drivers/cpufreq/cpufreq_conservative.c
++++ b/drivers/cpufreq/cpufreq_conservative.c
+@@ -113,7 +113,6 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
+ 			requested_freq = policy->max;
+ 
+ 		__cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_H);
+-		dbs_info->requested_freq = requested_freq;
+ 		goto out;
+ 	}
+ 
+@@ -136,10 +135,10 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
+ 			requested_freq = policy->min;
+ 
+ 		__cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_L);
+-		dbs_info->requested_freq = requested_freq;
+ 	}
+ 
+  out:
++	dbs_info->requested_freq = requested_freq;
+ 	return dbs_data->sampling_rate;
+ }
+ 
+-- 
+2.10.1
+
