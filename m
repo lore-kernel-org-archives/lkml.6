@@ -2,106 +2,122 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975C5C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FA1C64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4142064E
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="a0bwpWKk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4142064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 62FEB2075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FEB2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbeJHRZ7 (ORCPT
+        id S1727484AbeJHR0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:25:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60400 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHRZ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:25:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ICtrL6OFaypuwGaTLgHqyAdZfd5BpManm30pPFSxdq8=; b=a0bwpWKkbtmEr5iU6q/VnSFlN
-        KO19vIhjswccuiao+VEHYqGnS9p/WDrERvWyBt8Wf1u0lId+oL2ohG9EmRqFmIUJF4Mpo3RLx827e
-        3aPaSHgprTEUehedKoli2o1twGmX0Y+RjGGEJbY+OyHbPGkD66hGCG4Rddj4vzeoaejVc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g9SYx-0002Ox-L8; Mon, 08 Oct 2018 10:14:55 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2AAC31122338; Mon,  8 Oct 2018 11:14:55 +0100 (BST)
-Date:   Mon, 8 Oct 2018 11:14:55 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>
-Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the ambiguity
- about collecting email addresses
-Message-ID: <20181008101455.GC5684@sirena.org.uk>
-References: <1538861738.4088.5.camel@HansenPartnership.com>
- <1538861799.4088.6.camel@HansenPartnership.com>
- <CAPM=9tz3Z=vD6qWUL2boZGEAgMeC_o9euBXFu2V58RHOn6gR9g@mail.gmail.com>
- <20181007225613.GZ32577@ZenIV.linux.org.uk>
- <CAPM=9tzU_wy77j=sx9u9gFsJp-M4ktH7hLQE5=_wKbow9p+iuQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
-Content-Disposition: inline
-In-Reply-To: <CAPM=9tzU_wy77j=sx9u9gFsJp-M4ktH7hLQE5=_wKbow9p+iuQ@mail.gmail.com>
-X-Cookie: There's no time like the pleasant.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 8 Oct 2018 13:26:03 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39131 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbeJHR0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 13:26:03 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B6EEC20DD2; Mon,  8 Oct 2018 12:15:01 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 57000207F3;
+        Mon,  8 Oct 2018 12:14:51 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, andrew@lunn.ch,
+        f.fainelli@gmail.com
+Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        antoine.tenart@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [RESEND PATCH v2 0/5] net: phy: mscc: add support for VSC8584 and VSC8574 Microsemi quad-port PHYs
+Date:   Mon,  8 Oct 2018 12:14:40 +0200
+Message-Id: <20181008101445.25946-1-quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+RESEND: rebased on top of latest net-next and on top of latest version of
+"net: phy: mscc: various improvements to Microsemi PHY driver" patch
+series.
 
---da4uJneut+ArUgXk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Both PHYs are 4-port PHY that are 10/100/1000BASE-T, 100BASE-FX, 1000BASE-X
+and triple-speed copper SFP capable, can communicate with the MAC via
+SGMII, QSGMII or 1000BASE-X, supports downshifting and can set the blinking
+pattern of each of its 4 LEDs, supports SyncE as well as HP Auto-MDIX
+detection.
 
-On Mon, Oct 08, 2018 at 09:37:59AM +1000, Dave Airlie wrote:
-> On Mon, 8 Oct 2018 at 08:56, Al Viro <viro@zeniv.linux.org.uk> wrote:
+VSC8574 supports WOL and VSC8584 supports hardware offloading of MACsec.
 
-> > We can surround it with "explanations" until we get something that more or
-> > less fits, but then we'd need to reanalyse them every time an upstream
-> > change gets merged.  And the lack of textual conflicts is not a good thing
-> > in such situations, obviously.
+This patch series add support for 10/100/1000BASE-T, SGMII/QSGMII link with
+the MAC, downshifting, HP Auto-MDIX detection and blinking pattern for
+their 4 LEDs.
 
-> We do this already for the GPL (hence the GPLv2 only, and syscall exceptions).
+They have also an internal Intel 8051 microcontroller whose firmware needs
+to be patched when the PHY is reset. If the 8051's firmware has the
+expected CRC, its patching can be skipped. The microcontroller can be
+accessed from any port of the PHY, though the CRC function can only be done
+through the PHY that is the base PHY of the package (internal address 0)
+due to a limitation of the firmware.
 
-That works reasonably well for licenses because people reading licenses
-tend to do so in a rather detail oriented fashion so it's not that big
-an obstacle to have something that's a bit harder to follow.  It's not
-clear to me that the same thing is going to apply to people reading
-codes of conduct, especially those looking for reassurance from them.
-It might be OK but it's probably worth thinking about.
+The GPIO register bank is a set of registers that are common to all PHYs in
+the package. So any modification in any register of this bank affects all
+PHYs of the package.
 
---da4uJneut+ArUgXk
-Content-Type: application/pgp-signature; name="signature.asc"
+If the PHYs haven't been reset before booting the Linux kernel and were
+configured to use interrupts for e.g. link status updates, it is required
+to clear the interrupts mask register of all PHYs before being able to use
+interrupts with any PHY. The first PHY of the package that will be init
+will take care of clearing all PHYs interrupts mask registers. Thus, we
+need to keep track of the init sequence in the package, if it's already
+been done or if it's to be done.
 
------BEGIN PGP SIGNATURE-----
+Most of the init sequence of a PHY of the package is common to all PHYs in
+the package, thus we use the SMI broadcast feature which enables us to
+propagate a write in one register of one PHY to all PHYs in the same
+package.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu7Lh4ACgkQJNaLcl1U
-h9BlGgf+Jd5yIlAzK7IXrz8w956FmPTkmDOrFMDyp5IKt/nNOYYYI8LgnvSRysUW
-UF6MJN+yr3cCaKjPAhfdV/IuBojliG5E/ooSqijwKFVB8eGdLQ+4i319T1tpNNcM
-jCb2yfTaVuexPS8fNVEVURre8XF11Z8TvmELROVZN5Eih2EL5BecdZ2gUGtBCM19
-CWwmhrKWOxYcZ4sPuYqWLUo39PSDSEs1EL2QSww6q+E1LT5hkhir+j7X5ehLGqYL
-aHyNJ8haLbPFNn0guJHeGPbZ5D89jb+018UNPcR/xIegxWSHhrylghaV0LiRBtle
-07A7WB0QUzP3ojoGnitbPwPeHJoqeA==
-=hXVf
------END PGP SIGNATURE-----
+We also introduce a new development board called PCB120 which exists in
+variants for VSC8584 and VSC8574 (and that's the only difference to the
+best of my knowledge).
 
---da4uJneut+ArUgXk--
+I suggest patches 1 to 3 go through net tree and patches 4 and 5 go
+through MIPS tree. Patches going through net tree and those going through
+MIPS tree do not depend on one another.
+
+This patch series depends on this patch series:
+(https://lore.kernel.org/lkml/20181008100728.24959-1-quentin.schulz@bootlin.com/)
+
+Thanks,
+Quentin
+
+Quentin Schulz (5):
+  dt-bindings: net: vsc8531: add two additional LED modes for VSC8584
+  net: phy: mscc: add support for VSC8584 PHY
+  net: phy: mscc: add support for VSC8574 PHY
+  MIPS: mscc: add DT for Ocelot PCB120
+  MIPS: mscc: add PCB120 to the ocelot fitImage
+
+ arch/mips/boot/dts/mscc/Makefile              |    2 +-
+ arch/mips/boot/dts/mscc/ocelot_pcb120.dts     |  107 ++
+ arch/mips/generic/Kconfig                     |    6 +-
+ arch/mips/generic/Platform                    |    2 +-
+ ...ocelot_pcb123.its.S => board-ocelot.its.S} |   17 +
+ drivers/net/phy/mscc.c                        | 1065 +++++++++++++++++
+ include/dt-bindings/net/mscc-phy-vsc8531.h    |    2 +
+ 7 files changed, 1196 insertions(+), 5 deletions(-)
+ create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb120.dts
+ rename arch/mips/generic/{board-ocelot_pcb123.its.S => board-ocelot.its.S} (55%)
+
+-- 
+2.17.1
+
