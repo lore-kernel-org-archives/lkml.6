@@ -2,143 +2,100 @@ Return-Path: <SRS0=fRGm=MU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C00DC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6E6C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D51120882
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D51120882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id CFC10205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 10:06:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC10205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbeJHRRV (ORCPT
+        id S1727605AbeJHRRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:17:21 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49081 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJHRRU (ORCPT
+        Mon, 8 Oct 2018 13:17:39 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:57401 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726193AbeJHRRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:17:20 -0400
-Received: from 79.184.255.62.ipv4.supernova.orange.pl (79.184.255.62) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id 18fb83422f7cfb5f; Mon, 8 Oct 2018 12:06:22 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     lenb@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com,
-        pprakash@codeaurora.org, george.cherian@cavium.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI / CPPC: Add support for guaranteed performance
-Date:   Mon, 08 Oct 2018 12:03:17 +0200
-Message-ID: <3282468.StlflVgT3Q@aspire.rjw.lan>
-In-Reply-To: <20181007043945.19350-1-srinivas.pandruvada@linux.intel.com>
-References: <20181007043945.19350-1-srinivas.pandruvada@linux.intel.com>
+        Mon, 8 Oct 2018 13:17:38 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-86-gkA6zT1YPEeRvr6tsSYA0g-1; Mon, 08 Oct 2018 11:06:40 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 8 Oct 2018 11:06:40 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 8 Oct 2018 11:06:40 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Bin Meng' <bmeng.cn@gmail.com>,
+        "helgaas@kernel.org" <helgaas@kernel.org>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Thomas Jarosch <thomas.jarosch@intra2net.com>,
+        stable <stable@vger.kernel.org>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] pci: Add a few new IDs for Intel GPU "spurious interrupt"
+ quirk
+Thread-Topic: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
+ interrupt" quirk
+Thread-Index: AQHUXuuBTtSmrEla30a9wTOD32YprqUVGqcg
+Date:   Mon, 8 Oct 2018 10:06:40 +0000
+Message-ID: <2d2878e5a44c496cb0937f02d64e0b38@AcuMS.aculab.com>
+References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
+ <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
+ <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
+In-Reply-To: <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-MC-Unique: gkA6zT1YPEeRvr6tsSYA0g-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, October 7, 2018 6:39:45 AM CEST Srinivas Pandruvada wrote:
-> The Continuous Performance Control Package can have guaranteed performance
-> field. Add support to read guaranteed performance.
-> 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  Documentation/acpi/cppc_sysfs.txt |  2 ++
->  drivers/acpi/cppc_acpi.c          | 10 ++++++++--
->  include/acpi/cppc_acpi.h          |  1 +
->  3 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/acpi/cppc_sysfs.txt b/Documentation/acpi/cppc_sysfs.txt
-> index f20fb445135d..812574d30717 100644
-> --- a/Documentation/acpi/cppc_sysfs.txt
-> +++ b/Documentation/acpi/cppc_sysfs.txt
-> @@ -22,6 +22,7 @@ $ ls -lR  /sys/devices/system/cpu/cpu0/acpi_cppc/
->  /sys/devices/system/cpu/cpu0/acpi_cppc/:
->  total 0
->  -r--r--r-- 1 root root 65536 Mar  5 19:38 feedback_ctrs
-> +-r--r--r-- 1 root root 65536 Mar  5 19:38 guaranteed_perf
->  -r--r--r-- 1 root root 65536 Mar  5 19:38 highest_perf
->  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_freq
->  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_nonlinear_perf
-> @@ -33,6 +34,7 @@ total 0
->  
->  --------------------------------------------------------------------------------
->  
-> +* guaranteed_perf : Guaranteed performance of this processor (abstract scale).
->  * highest_perf : Highest performance of this processor (abstract scale).
->  * nominal_perf : Highest sustained performance of this processor (abstract scale).
->  * lowest_nonlinear_perf : Lowest performance of this processor with nonlinear
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index d9ce4b162e2c..5babb9402f11 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -153,6 +153,7 @@ __ATTR(_name, 0444, show_##_name, NULL)
->  	}								\
->  	define_one_cppc_ro(member_name)
->  
-> +show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf);
->  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf);
->  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
->  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
-> @@ -189,6 +190,7 @@ static struct attribute *cppc_attrs[] = {
->  	&nominal_perf.attr,
->  	&nominal_freq.attr,
->  	&lowest_freq.attr,
-> +	&guaranteed_perf.attr,
->  	NULL
->  };
->  
-> @@ -1061,9 +1063,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
->  {
->  	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
->  	struct cpc_register_resource *highest_reg, *lowest_reg,
-> -		*lowest_non_linear_reg, *nominal_reg,
-> +		*lowest_non_linear_reg, *nominal_reg, *guaranteed_reg,
->  		*low_freq_reg = NULL, *nom_freq_reg = NULL;
-> -	u64 high, low, nom, min_nonlinear, low_f = 0, nom_f = 0;
-> +	u64 high, low, guaranteed, nom, min_nonlinear, low_f = 0, nom_f = 0;
->  	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
->  	struct cppc_pcc_data *pcc_ss_data = NULL;
->  	int ret = 0, regs_in_pcc = 0;
-> @@ -1079,6 +1081,7 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
->  	nominal_reg = &cpc_desc->cpc_regs[NOMINAL_PERF];
->  	low_freq_reg = &cpc_desc->cpc_regs[LOWEST_FREQ];
->  	nom_freq_reg = &cpc_desc->cpc_regs[NOMINAL_FREQ];
-> +	guaranteed_reg = &cpc_desc->cpc_regs[GUARANTEED_PERF];
->  
->  	/* Are any of the regs PCC ?*/
->  	if (CPC_IN_PCC(highest_reg) || CPC_IN_PCC(lowest_reg) ||
-> @@ -1107,6 +1110,9 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
->  	cpc_read(cpunum, nominal_reg, &nom);
->  	perf_caps->nominal_perf = nom;
->  
-> +	cpc_read(cpunum, guaranteed_reg, &guaranteed);
-> +	perf_caps->guaranteed_perf = guaranteed;
-> +
->  	cpc_read(cpunum, lowest_non_linear_reg, &min_nonlinear);
->  	perf_caps->lowest_nonlinear_perf = min_nonlinear;
->  
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 8e0b8250a139..cf59e6210d27 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -104,6 +104,7 @@ enum cppc_regs {
->   * today.
->   */
->  struct cppc_perf_caps {
-> +	u32 guaranteed_perf;
->  	u32 highest_perf;
->  	u32 nominal_perf;
->  	u32 lowest_perf;
-> 
-
-Can you resend with CCs to linux-acpi/linux-pm, please?
-
+RnJvbTogQmluIE1lbmcNCj4gU2VudDogMDggT2N0b2JlciAyMDE4IDEwOjQ0DQouLi4NCj4gQ29y
+cmVjdCwgZGlzYWJsZSB0aGUgc2hhcmVkIGludGVycnVwdCBsaW5lIGtlZXBzIGFsbCBkZXZpY2Vz
+IHVzaW5nDQo+IHRoYXQgbGluZSBmcm9tIHdvcmtpbmcsIHdoaWNoIGlzIGN1cnJlbnQga2VybmVs
+J3MgYmVoYXZpb3Igdy9vIHRoaXMNCj4gcXVpcmsgaGFuZGxpbmc6IGl0IGRpc2FibGVzIHRoZSAo
+c2hhcmVkKSBpbnRlcnJ1cHQgbGluZSBhZnRlciAxMDAuMDAwKw0KPiBnZW5lcmF0ZWQgaW50ZXJy
+dXB0cy4gQnV0IHRoZSBzaWRlIGVmZmVjdCBpcyB0aGF0IG90aGVyIGRldmljZXMgYmVjb21lDQo+
+IHVudXNhYmxlIGFmdGVyIHRoYXQgKGVnOiBVU0IgZGV2aWNlcyB3aGljaCBzaGFyZSB0aGUgc2Ft
+ZSBpbnRlcnJ1cHQNCj4gbGluZSB3aXRoIHRoZSBJbnRlbCBHUFUpLiBUaGF0J3Mgd2h5IHRoZSBv
+cmlnaW5hbCBjb21taXQsIGY2N2ZkNTVmYTk2Zg0KPiAoIlBDSTogQWRkIHF1aXJrIGZvciBzdGls
+bCBlbmFibGVkIGludGVycnVwdHMgb24gSW50ZWwgU2FuZHkgQnJpZGdlDQo+IEdQVXMiKSBkaXNh
+YmxlcyB0aGUgR1BVJ3MgaW50ZXJydXB0IGRpcmVjdGx5LCB3aGljaCBzaG91bGQgcmVhbGx5IGJl
+DQo+IGRvbmUgYnkgdGhlIFZHQSBCSU9TIGl0c2VsZiAoYSBidWdneSBWQklPUyEpLg0KDQpTaG91
+bGRuJ3QgdGhlIGtlcm5lbCBqdXN0IGRpc2FibGUgYWxsIFBDSShlKSBpbnRlcnJ1cHRzIGJ5IHdy
+aXRpbmcNCjEgdG8gdGhlIGNvbmZpZyBzcGFjZSBjb250cm9sIHJlZ2lzdGVyIGJpdCBkdXJpbmcg
+Z3JvcGU/DQpDYW4gaXQgZXZlciBieSByaWdodCBmb3IgdGhpcyB0byBiZSBzZXQ/DQoNCkFwYXJ0
+IGZyb20gVkdBIHRoZSAnYnVzIG1hc3RlcicgYml0IGFsc28gbmVlZHMgdG8gYmUgY2xlYXIuDQoN
+CklTVFIgc29tZSB2ZXJ5IGVhcmx5IFBDSSBzeXN0ZW1zIHdoaWNoIGZhaWxlZCB0byByZXNldCB0
+aGUgUENJDQpidXMgZHVyaW5nIHJlYm9vdCAtIGF0IGxlYXN0IHRoZSAnYnVzIG1hc3RlcicgYml0
+IHJlbWFpbmVkDQpzZXQgZm9yIGFuIGV0aGVybmV0IGNhcmQuDQpPbiBhIHByaXZhdGUgTEFOIHRo
+ZSBPUyBnb3QgcmVpbnN0YWxsZWQgYW5kIHJlYm9vdGVkIHdpdGhvdXQNCnVzaW5nIGFsbCB0aGUg
+ZXRoZXJuZXQgcmVjZWl2ZSBidWZmZXJzIGFuZCB0aGVuIGRpZWQgYmVjYXVzZQ0KYSByZWNlaXZl
+IGZyYW1lIGdvdCB3cml0dGVuIGludG8gJ3JhbmRvbScgbWVtb3J5Lg0KDQoJRGF2aWQNCg0KLQ0K
+UmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1p
+bHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVz
+KQ0K
 
