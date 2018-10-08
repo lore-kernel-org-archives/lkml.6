@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28CCC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9056DC677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD2E214C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16F8C2087D
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:38:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3G9Ugfz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD2E214C2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ye5tg9QB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F8C2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbeJIBvf (ORCPT
+        id S1729238AbeJIBvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:51:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38438 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbeJIBve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:51:34 -0400
+        id S1726427AbeJIBvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:51:37 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92DF0214C2;
-        Mon,  8 Oct 2018 18:38:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68A1120C0A;
+        Mon,  8 Oct 2018 18:38:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539023911;
-        bh=8mC/hqfsGZemliNQ7eR/LJ7401nZIRDusPuS4insOfg=;
+        s=default; t=1539023913;
+        bh=VrxR3Khs4mxrCnWgj7tKfpl7S8AgFx0W4SCxm6E3dzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g3G9UgfzNpr7lt+Qw+O3Txv9HlzTKldXqcGw6JPnWHmty0CofApbywOal3lu0W8RV
-         RlpGUjbdgE3Pl6tnjdzf+tW2+YpjTpdBCt9NNm80V4wdG1rmTFhPwZJgfqd7PJfjYS
-         NvxttobRRBZqK+HjrGMIYUwqHRnK+deWvzS7CwtE=
+        b=Ye5tg9QBgYBzO9T8f8uWLmIler+Zlhz74TB+OScDCpI61A6QHipUJ3UpfMtGJnlOs
+         rGVjgO1pWftDdmOmMHNVvqVsodI0M7Zg+ZhMAR8iGEmrdH22ebBbriYpjFJsed5fDq
+         hYap8P81oKhmaGxw4cQhsspLnIfZIa85kyPizKGU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 03/59] mac80211: Run TXQ teardown code before de-registering interfaces
-Date:   Mon,  8 Oct 2018 20:31:10 +0200
-Message-Id: <20181008175547.240790589@linuxfoundation.org>
+Subject: [PATCH 4.9 04/59] KVM: PPC: Book3S HV: Dont truncate HPTE index in xlate function
+Date:   Mon,  8 Oct 2018 20:31:11 +0200
+Message-Id: <20181008175547.329910370@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -63,43 +61,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Toke Høiland-Jørgensen" <toke@toke.dk>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 77cfaf52eca5cac30ed029507e0cab065f888995 ]
+[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
 
-The TXQ teardown code can reference the vif data structures that are
-stored in the netdev private memory area if there are still packets on
-the queue when it is being freed. Since the TXQ teardown code is run
-after the netdevs are freed, this can lead to a use-after-free. Fix this
-by moving the TXQ teardown code to earlier in ieee80211_unregister_hw().
+This fixes a bug which causes guest virtual addresses to get translated
+to guest real addresses incorrectly when the guest is using the HPT MMU
+and has more than 256GB of RAM, or more specifically has a HPT larger
+than 2GB.  This has showed up in testing as a failure of the host to
+emulate doorbell instructions correctly on POWER9 for HPT guests with
+more than 256GB of RAM.
 
-Reported-by: Ben Greear <greearb@candelatech.com>
-Tested-by: Ben Greear <greearb@candelatech.com>
-Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
+is stored as an int, and in forming the HPTE address, the index gets
+shifted left 4 bits as an int before being signed-extended to 64 bits.
+The simple fix is to make the variable a long int, matching the
+return type of kvmppc_hv_find_lock_hpte(), which is what calculates
+the index.
+
+Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S HV guests")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/main.c |    2 +-
+ arch/powerpc/kvm/book3s_64_mmu_hv.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -1164,6 +1164,7 @@ void ieee80211_unregister_hw(struct ieee
- #if IS_ENABLED(CONFIG_IPV6)
- 	unregister_inet6addr_notifier(&local->ifa6_notifier);
- #endif
-+	ieee80211_txq_teardown_flows(local);
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -314,7 +314,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate
+ 	unsigned long pp, key;
+ 	unsigned long v, gr;
+ 	__be64 *hptep;
+-	int index;
++	long int index;
+ 	int virtmode = vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
  
- 	rtnl_lock();
- 
-@@ -1191,7 +1192,6 @@ void ieee80211_unregister_hw(struct ieee
- 	skb_queue_purge(&local->skb_queue);
- 	skb_queue_purge(&local->skb_queue_unreliable);
- 	skb_queue_purge(&local->skb_queue_tdls_chsw);
--	ieee80211_txq_teardown_flows(local);
- 
- 	destroy_workqueue(local->workqueue);
- 	wiphy_unregister(local->hw.wiphy);
+ 	/* Get SLB entry */
 
 
