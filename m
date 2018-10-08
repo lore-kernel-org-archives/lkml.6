@@ -4,94 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714DDC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5133BC65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E6A21533
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D33521569
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 15:27:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="smgAsnWz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E6A21533
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FapQHpCC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D33521569
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbeJHWjk (ORCPT
+        id S1729061AbeJHWjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:39:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59104 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 18:39:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728918AbeJHWjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 18:39:39 -0400
+        id S1727836AbeJHWjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 18:39:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E66C92156D;
-        Mon,  8 Oct 2018 15:27:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EA9221531;
+        Mon,  8 Oct 2018 15:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539012443;
-        bh=yHB5ahIa4TX9QioB9aOdBoc+GN7Joxg/E5HNDfee7+E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=smgAsnWz8M6dqiyGT45wNADXipXSHqO74abG5NllavlXZ8NrnBZ9EaCQaSgaqbiz5
-         /WPNkChmx7/jVFHZJGpl0g8M3sbenJUoXvY2VsNSLuR2oYpmxqE8o5tYcvTf0q/IKd
-         buq6YHNa9/MJmY4hQGzBY5yKR/DqSGQIJsP5eZKI=
+        s=default; t=1539012457;
+        bh=yY0d3kC2aC1Ge7uFMUnrlRPpI/cKBSdlIuFF4/Cqntk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FapQHpCCnvNkJPgdci3a+tAG3t127KS9WL7zaO58Bttksv+538BJG+321N6ZM0eei
+         mIZZxrAy5n+iMP1IVdP+0EW+nxA5YqlYOy2lR0707A+jlbWGUhpqcKweefVMWCjvqJ
+         VIFkRD81Vowt9wia3QnhestfrEwC052RRMXMtXMI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Cowgill <jcowgill@debian.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
+Cc:     Jozef Balga <jozef.balga@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 20/23] RISC-V: include linux/ftrace.h in asm-prototypes.h
-Date:   Mon,  8 Oct 2018 11:27:00 -0400
-Message-Id: <20181008152703.70891-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 1/9] media: af9035: prevent buffer overflow on write
+Date:   Mon,  8 Oct 2018 11:27:26 -0400
+Message-Id: <20181008152734.70962-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181008152703.70891-1-sashal@kernel.org>
-References: <20181008152703.70891-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Cowgill <jcowgill@debian.org>
+From: Jozef Balga <jozef.balga@gmail.com>
 
-[ Upstream commit 57a489786de9ec37d6e25ef1305dc337047f0236 ]
+[ Upstream commit 312f73b648626a0526a3aceebb0a3192aaba05ce ]
 
-Building a riscv kernel with CONFIG_FUNCTION_TRACER and
-CONFIG_MODVERSIONS enabled results in these two warnings:
+When less than 3 bytes are written to the device, memcpy is called with
+negative array size which leads to buffer overflow and kernel panic. This
+patch adds a condition and returns -EOPNOTSUPP instead.
+Fixes bugzilla issue 64871
 
-  MODPOST vmlinux.o
-WARNING: EXPORT symbol "return_to_handler" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "_mcount" [vmlinux] version generation failed, symbol will not be versioned.
-
-When exporting symbols from an assembly file, the MODVERSIONS code
-requires their prototypes to be defined in asm-prototypes.h (see
-scripts/Makefile.build). Since both of these symbols have prototypes
-defined in linux/ftrace.h, include this header from RISC-V's
-asm-prototypes.h.
-
-Reported-by: Karsten Merker <merker@debian.org>
-Signed-off-by: James Cowgill <jcowgill@debian.org>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+[mchehab+samsung@kernel.org: fix a merge conflict and changed the
+ condition to match the patch's comment, e. g. len == 3 could
+ also be valid]
+Signed-off-by: Jozef Balga <jozef.balga@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/riscv/include/asm/asm-prototypes.h | 7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 arch/riscv/include/asm/asm-prototypes.h
+ drivers/media/usb/dvb-usb-v2/af9035.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
-new file mode 100644
-index 000000000000..c9fecd120d18
---- /dev/null
-+++ b/arch/riscv/include/asm/asm-prototypes.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RISCV_PROTOTYPES_H
-+
-+#include <linux/ftrace.h>
-+#include <asm-generic/asm-prototypes.h>
-+
-+#endif /* _ASM_RISCV_PROTOTYPES_H */
+diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
+index 6e02a15d39ce..abddb621d9e6 100644
+--- a/drivers/media/usb/dvb-usb-v2/af9035.c
++++ b/drivers/media/usb/dvb-usb-v2/af9035.c
+@@ -389,8 +389,10 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
+ 			    msg[0].addr == (state->af9033_i2c_addr[1] >> 1))
+ 				reg |= 0x100000;
+ 
+-			ret = af9035_wr_regs(d, reg, &msg[0].buf[3],
+-					msg[0].len - 3);
++			ret = (msg[0].len >= 3) ? af9035_wr_regs(d, reg,
++							         &msg[0].buf[3],
++							         msg[0].len - 3)
++					        : -EOPNOTSUPP;
+ 		} else {
+ 			/* I2C write */
+ 			u8 buf[MAX_XFER_SIZE];
 -- 
 2.17.1
 
