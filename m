@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998FFC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08216C65C20
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0DA21479
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7678214C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 18:40:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAxtMAXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0DA21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w3+skE2R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7678214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbeJIBxG (ORCPT
+        id S1728006AbeJIBxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 21:53:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40366 "EHLO mail.kernel.org"
+        Mon, 8 Oct 2018 21:53:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbeJIBxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 21:53:06 -0400
+        id S1727315AbeJIBxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 8 Oct 2018 21:53:08 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21BA4214C2;
-        Mon,  8 Oct 2018 18:40:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD2612087D;
+        Mon,  8 Oct 2018 18:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539024001;
-        bh=UafVoD41BU0uxbht1NBqFb1/HxelyQUaMLp5B11wxQk=;
+        s=default; t=1539024004;
+        bh=oL6b7k1Ud6kZ3oVvsu4UnJ5NOTU6qQQNztM0z2k5GFo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BAxtMAXbDie3MxNPczeiTKhTagYfT4a6Uocxqd5z/y1YW3rvArpxGZHWsQ+m7ocz9
-         I5zqQ/CKR0+cGJJ2icdvou98Emg/IcIsD+mOSV1h1QUg3AhY2HJr94e7oXdlXFWiw8
-         Z8jt1mheTuc8o88fezEhByCcEQdeZPbx3Ni31pPA=
+        b=w3+skE2RDpwbeS1oHgfcyKX05GOl4FUI+At0sFewjP9jQaTt4FlNkgHa9Zq4k+61L
+         Wb+GJtS4j17N3hKUSHqn0+iLW56XC75HC9Dw2hmMpL596A1nrXplET4il/GAGTBwjC
+         om+DViEo1JHWypBJaMssnFrD0UKvnTrhU7vq2smc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
+        Neil Brown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 22/59] mac80211: shorten the IBSS debug messages
-Date:   Mon,  8 Oct 2018 20:31:29 +0200
-Message-Id: <20181008175548.822115513@linuxfoundation.org>
+Subject: [PATCH 4.9 13/59] RAID10 BUG_ON in raise_barrier when force is true and conf->barrier is 0
+Date:   Mon,  8 Oct 2018 20:31:20 +0200
+Message-Id: <20181008175547.895788348@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 References: <20181008175546.620836256@linuxfoundation.org>
@@ -65,83 +63,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Xiao Ni <xni@redhat.com>
 
-[ Upstream commit c6e57b3896fc76299913b8cfd82d853bee8a2c84 ]
+[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
 
-When tracing is enabled, all the debug messages are recorded and must
-not exceed MAX_MSG_LEN (100) columns. Longer debug messages grant the
-user with:
+In raid10 reshape_request it gets max_sectors in read_balance. If the underlayer disks
+have bad blocks, the max_sectors is less than last. It will call goto read_more many
+times. It calls raise_barrier(conf, sectors_done != 0) every time. In this condition
+sectors_done is not 0. So the value passed to the argument force of raise_barrier is
+true.
 
-WARNING: CPU: 3 PID: 32642 at /tmp/wifi-core-20180806094828/src/iwlwifi-stack-dev/net/mac80211/./trace_msg.h:32 trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
-Workqueue: phy1 ieee80211_iface_work [mac80211]
- RIP: 0010:trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
- Call Trace:
-  __sdata_dbg+0xbd/0x120 [mac80211]
-  ieee80211_ibss_rx_queued_mgmt+0x15f/0x510 [mac80211]
-  ieee80211_iface_work+0x21d/0x320 [mac80211]
+In raise_barrier it checks conf->barrier when force is true. If force is true and
+conf->barrier is 0, it panic. In this case reshape_request submits bio to under layer
+disks. And in the callback function of the bio it calls lower_barrier. If the bio
+finishes before calling raise_barrier again, it can trigger the BUG_ON.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Add one pair of raise_barrier/lower_barrier to fix this bug.
+
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Suggested-by: Neil Brown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/ibss.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/md/raid10.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/mac80211/ibss.c
-+++ b/net/mac80211/ibss.c
-@@ -948,8 +948,8 @@ static void ieee80211_rx_mgmt_deauth_ibs
- 	if (len < IEEE80211_DEAUTH_FRAME_LEN)
- 		return;
- 
--	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM BSSID=%pM (reason: %d)\n",
--		 mgmt->sa, mgmt->da, mgmt->bssid, reason);
-+	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
-+	ibss_dbg(sdata, "\tBSSID=%pM (reason: %d)\n", mgmt->bssid, reason);
- 	sta_info_destroy_addr(sdata, mgmt->sa);
- }
- 
-@@ -967,9 +967,9 @@ static void ieee80211_rx_mgmt_auth_ibss(
- 	auth_alg = le16_to_cpu(mgmt->u.auth.auth_alg);
- 	auth_transaction = le16_to_cpu(mgmt->u.auth.auth_transaction);
- 
--	ibss_dbg(sdata,
--		 "RX Auth SA=%pM DA=%pM BSSID=%pM (auth_transaction=%d)\n",
--		 mgmt->sa, mgmt->da, mgmt->bssid, auth_transaction);
-+	ibss_dbg(sdata, "RX Auth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
-+	ibss_dbg(sdata, "\tBSSID=%pM (auth_transaction=%d)\n",
-+		 mgmt->bssid, auth_transaction);
- 
- 	if (auth_alg != WLAN_AUTH_OPEN || auth_transaction != 1)
- 		return;
-@@ -1176,10 +1176,10 @@ static void ieee80211_rx_bss_info(struct
- 		rx_timestamp = drv_get_tsf(local, sdata);
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4381,11 +4381,12 @@ static sector_t reshape_request(struct m
+ 		allow_barrier(conf);
  	}
  
--	ibss_dbg(sdata,
--		 "RX beacon SA=%pM BSSID=%pM TSF=0x%llx BCN=0x%llx diff=%lld @%lu\n",
-+	ibss_dbg(sdata, "RX beacon SA=%pM BSSID=%pM TSF=0x%llx\n",
- 		 mgmt->sa, mgmt->bssid,
--		 (unsigned long long)rx_timestamp,
-+		 (unsigned long long)rx_timestamp);
-+	ibss_dbg(sdata, "\tBCN=0x%llx diff=%lld @%lu\n",
- 		 (unsigned long long)beacon_timestamp,
- 		 (unsigned long long)(rx_timestamp - beacon_timestamp),
- 		 jiffies);
-@@ -1538,9 +1538,9 @@ static void ieee80211_rx_mgmt_probe_req(
++	raise_barrier(conf, 0);
+ read_more:
+ 	/* Now schedule reads for blocks from sector_nr to last */
+ 	r10_bio = mempool_alloc(conf->r10buf_pool, GFP_NOIO);
+ 	r10_bio->state = 0;
+-	raise_barrier(conf, sectors_done != 0);
++	raise_barrier(conf, 1);
+ 	atomic_set(&r10_bio->remaining, 0);
+ 	r10_bio->mddev = mddev;
+ 	r10_bio->sector = sector_nr;
+@@ -4492,6 +4493,8 @@ bio_full:
+ 	if (sector_nr <= last)
+ 		goto read_more;
  
- 	tx_last_beacon = drv_tx_last_beacon(local);
- 
--	ibss_dbg(sdata,
--		 "RX ProbeReq SA=%pM DA=%pM BSSID=%pM (tx_last_beacon=%d)\n",
--		 mgmt->sa, mgmt->da, mgmt->bssid, tx_last_beacon);
-+	ibss_dbg(sdata, "RX ProbeReq SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
-+	ibss_dbg(sdata, "\tBSSID=%pM (tx_last_beacon=%d)\n",
-+		 mgmt->bssid, tx_last_beacon);
- 
- 	if (!tx_last_beacon && is_multicast_ether_addr(mgmt->da))
- 		return;
++	lower_barrier(conf);
++
+ 	/* Now that we have done the whole section we can
+ 	 * update reshape_progress
+ 	 */
 
 
