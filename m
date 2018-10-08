@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D7DC677D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E85C677D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C9A213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C9A213A2
+	by mail.kernel.org (Postfix) with ESMTP id B64C8213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  8 Oct 2018 16:30:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64C8213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeJHXmi convert rfc822-to-8bit (ORCPT
+        id S1726799AbeJHXmn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:42:38 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2327 "EHLO
+        Mon, 8 Oct 2018 19:42:43 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59954 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726418AbeJHXmi (ORCPT
+        by vger.kernel.org with ESMTP id S1726418AbeJHXmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:42:38 -0400
+        Mon, 8 Oct 2018 19:42:42 -0400
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98GJhdH002950;
-        Mon, 8 Oct 2018 18:29:42 +0200
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w98GJhdG002950;
+        Mon, 8 Oct 2018 18:29:41 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mxjgxm25n-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mxjgxm25k-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 08 Oct 2018 18:29:42 +0200
+        Mon, 08 Oct 2018 18:29:41 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CC3BE34;
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0F2B03D;
         Mon,  8 Oct 2018 16:29:41 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9829557D1;
-        Mon,  8 Oct 2018 16:29:41 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
- (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 8 Oct
- 2018 18:29:41 +0200
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CFAEB57D1;
+        Mon,  8 Oct 2018 16:29:40 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 8 Oct
+ 2018 18:29:40 +0200
 Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
  SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Mon, 8 Oct 2018 18:29:41 +0200
+ 15.00.1347.000; Mon, 8 Oct 2018 18:29:40 +0200
 From:   Pascal PAILLET-LME <p.paillet@st.com>
 To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -58,11 +58,13 @@ To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
         "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
         "eballetbo@gmail.com" <eballetbo@gmail.com>
 CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH v3 5/8] dt-bindings: input: document stpmic1 pmic onkey
-Thread-Topic: [PATCH v3 5/8] dt-bindings: input: document stpmic1 pmic onkey
-Thread-Index: AQHUXyQdFh6gHFHM3kChRAEXRCfihA==
-Date:   Mon, 8 Oct 2018 16:29:41 +0000
-Message-ID: <1539016176-4072-6-git-send-email-p.paillet@st.com>
+Subject: [PATCH v3 3/8] dt-bindings: regulator: document stpmic1 pmic
+ regulators
+Thread-Topic: [PATCH v3 3/8] dt-bindings: regulator: document stpmic1 pmic
+ regulators
+Thread-Index: AQHUXyQcs4Yh8MP34ka8P5zvtPW7Eg==
+Date:   Mon, 8 Oct 2018 16:29:40 +0000
+Message-ID: <1539016176-4072-4-git-send-email-p.paillet@st.com>
 References: <1539016176-4072-1-git-send-email-p.paillet@st.com>
 In-Reply-To: <1539016176-4072-1-git-send-email-p.paillet@st.com>
 Accept-Language: en-US
@@ -84,55 +86,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: pascal paillet <p.paillet@st.com>
 
-The stpmic1 pmic is able to manage an onkey button. It can be configured
-to shut-down the power supplies on a long key-press with an adjustable
-duration.
+The STPMIC1 regulators supply power to the application processor as well as
+to the external system peripherals such as DDR, Flash memories and system
+devices.
 
 Signed-off-by: pascal paillet <p.paillet@st.com>
 ---
-changes in v3:
-* Replace st,onkey-long-press-seconds and st,onkey-pwroff-enabled by 
-power-off-time-sec.
+changes in v3: nothing
 
- .../devicetree/bindings/input/st,stpmic1-onkey.txt | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+ .../bindings/regulator/st,stpmic1-regulator.txt    | 68 ++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
 
-diff --git a/Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt b/Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+diff --git a/Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt b/Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
 new file mode 100644
-index 0000000..8c58186
+index 0000000..a3f4762
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
-@@ -0,0 +1,30 @@
-+STMicroelectronics STPMIC1 Onkey
++++ b/Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+@@ -0,0 +1,68 @@
++STMicroelectronics STPMIC1 Voltage regulators
 +
-+Required properties:
++Regulator Nodes are optional depending on needs.
 +
-+- compatible = "st,stpmic1-onkey";
-+- interrupt-parent: phandle to the parent interrupt controller
-+- interrupts: interrupt line to use
-+- interrupt-names = "onkey-falling", "onkey-rising"
-+	onkey-falling: happens when onkey is pressed; IT_PONKEY_F of pmic
-+	onkey-rising: happens when onkey is released; IT_PONKEY_R of pmic
++Available Regulators in STPMIC1 device are:
++  - buck1 for Buck BUCK1
++  - buck2 for Buck BUCK2
++  - buck3 for Buck BUCK3
++  - buck4 for Buck BUCK4
++  - ldo1 for LDO LDO1
++  - ldo2 for LDO LDO2
++  - ldo3 for LDO LDO3
++  - ldo4 for LDO LDO4
++  - ldo5 for LDO LDO5
++  - ldo6 for LDO LDO6
++  - vref_ddr for LDO Vref DDR
++  - boost for Buck BOOST
++  - pwr_sw1 for VBUS_OTG switch
++  - pwr_sw2 for SW_OUT switch
++
++Switches are fixed voltage regulators with only enable/disable capability.
 +
 +Optional properties:
-+
-+- st,onkey-clear-cc-flag: onkey is able power on after an
-+  over-current shutdown event.
-+- st,onkey-pu-inactive: onkey pull up is not active
-+- power-off-time-sec: Duration in seconds which the key should be kept
-+        pressed for device to power off automatically (from 1 to 16 seconds).
-+        see See Documentation/devicetree/bindings/input/keys.txt
++- st,mask-reset: mask reset for this regulator: the regulator configuration
++  is maintained during pmic reset.
++- regulator-pull-down: enable high pull down
++  if not specified light pull down is used
++- regulator-over-current-protection:
++    if set, all regulators are switched off in case of over-current detection
++    on this regulator,
++    if not set, the driver only sends an over-current event.
++- interrupt-parent: phandle to the parent interrupt controller
++- interrupts: index of current limit detection interrupt
++- <regulator>-supply: phandle to the parent supply/regulator node
++	each regulator supply can be described except vref_ddr.
 +
 +Example:
++regulators {
++	compatible = "st,stpmic1-regulators";
 +
-+onkey {
-+	compatible = "st,stpmic1-onkey";
-+	interrupt-parent = <&pmic>;
-+	interrupts = <IT_PONKEY_F 0>,<IT_PONKEY_R 1>;
-+	interrupt-names = "onkey-falling", "onkey-rising";
-+	st,onkey-pwroff-enabled;
-+	st,onkey-long-press-seconds = <10>;
++	ldo6-supply = <&v3v3>;
++
++	vdd_core: buck1 {
++		regulator-name = "vdd_core";
++		interrupts = <IT_CURLIM_BUCK1 0>;
++		interrupt-parent = <&pmic>;
++		st,mask-reset;
++		regulator-pull-down;
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1200000>;
++	};
++
++	v3v3: buck4 {
++		regulator-name = "v3v3";
++		interrupts = <IT_CURLIM_BUCK4 0>;
++		interrupt-parent = <&mypmic>;
++
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	v1v8: ldo6 {
++		regulator-name = "v1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-over-current-protection;
++	};
 +};
 -- 
 1.9.1
