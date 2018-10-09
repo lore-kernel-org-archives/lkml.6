@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C10C8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9DCC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82287214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3199E214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="Blkhwp1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82287214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="VrukCQR+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3199E214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeJISaI (ORCPT
+        id S1727214AbeJISaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:30:08 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40626 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbeJISaG (ORCPT
+        Tue, 9 Oct 2018 14:30:11 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35522 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbeJISaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:30:06 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n31-v6so648051pgm.7
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:40 -0700 (PDT)
+        Tue, 9 Oct 2018 14:30:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l17-v6so683743pff.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=I1p9bXnHXgng+Azijy0DrFN05uFEZCB7dmzLswOYo5Y=;
-        b=Blkhwp1xJbWp35U1e6Uu9LYfhiCdE/9ugrt25jlgOs+I4H3cX9UP5a0H84yde+b4ve
-         p/gyDKnwI9+gW2RhZtH+DXQV2w+KG987FBoMqy2flrWepV9JxKgftBieBKMZY3JVAHhd
-         sQHXdwxbCi0muW5czh75wuRpiJYcZ9GzEuHxtG2pQlOI6bJGsH2PfZTHh12aDwraJNRb
-         jeLn7R5r8O5rrTYvdL64ttaVdXYUyTGyoHBichHpeAsESzswnvr8EGluEMPfIwnxip6J
-         ndqI2a7hizK3Fk4fTV6yGnHl3jTvxcU00anMVIBQvjVOEQOcljGnK5QG6LnqgFBT/akD
-         TzKA==
+        bh=dMma1QgoNzYAJWq7mzyuRrx+HVtXHEDnfcf4uhZYrKU=;
+        b=VrukCQR+K4zG+3m9erzdrqhco9bKKjEgvErBy08wMdvMoLUHyGW0BFBaz/MIXr0cT4
+         2n6JWUlIgo6EG0KQXe6seCVpV5hRNc7XCCewO0iMNojj0GU2m3ttR1beVC2EInFSAGZB
+         ept+gN0WhvJxnlQk6xv826fm50u+x5r7PqWXs+W4xLvv+TOBhA4I5Q7KL+SfPPS/ZxvT
+         b4i/eVsH6ctCNWtIH76ofdnlAQV7c6Ofcu4fMiCbTChjVl6NZBs3O9UF4Skw3m5OJ+/I
+         AgDjoOp4H3ojzXYxkKDNE9nrgpCABkRNMErlyWsdhr2XqcemKHogjl2SPetbPUnuN58/
+         T4bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I1p9bXnHXgng+Azijy0DrFN05uFEZCB7dmzLswOYo5Y=;
-        b=ncYUOX1ELWNJeGRiDcnWlXgaB0M3tNg5dxswEzJvjf71B0L1UCUb36z91XGCkxrEGF
-         n9TIBhyOBvjPBTrwvEm3ynK2aJxxp/+RvMj0nPgl03EOXijIHosG1u2lIuBrdvuYW3Eu
-         u7TcNtWguBTj5YjTceN46rabIRbtihpz6k5HMrLc0eBBRfwINlL+o38rdOhr26wHZxXz
-         0tr5BWr/T1PffD6X128+36GtwFxYF+gsWghspBSvDq2Jh1FCLugyTl27b5Pr6AnDyYSj
-         gSAjzRLA71/hfkEJOFAmZh5zhFq0rCOLGV8Ce0m2jtyqmkMc/L89WCIqUbGe1GTs7SR/
-         +Hnw==
-X-Gm-Message-State: ABuFfog4Vst5s43sWwux1t+EWUzHfYP5WNLLUJS6msF7ou7lA4+HC2wM
-        u+U7tthZLbtW64tdQw8McOgBNQ==
-X-Google-Smtp-Source: ACcGV61ZNXTE31soF3gokNKJoRqUisMJt41vRMrSsFQe4+uzPGOO55XmqHeifMVOtrUVDx+semBr0Q==
-X-Received: by 2002:a63:194a:: with SMTP id 10-v6mr20928494pgz.192.1539083620362;
-        Tue, 09 Oct 2018 04:13:40 -0700 (PDT)
+        bh=dMma1QgoNzYAJWq7mzyuRrx+HVtXHEDnfcf4uhZYrKU=;
+        b=d1pqNROJNwuRM/hJ6mVvZV/uGvpPdBkyn5/I+hT8+dMGMUyyNWgL+sjpHYb2O5yeBq
+         Sju/bdP2NoChhGUF6QvY/B3EWgRogsGKlPEHRkfXLK8vmpz+RoBP4gnhDv06wFgA510c
+         I+WjGe3i8nse7QNzFHPvBtz60/NU7F/EOq6IP6DEQhr8IiqiurjWm5KrwR44sOFre8ze
+         WTDed0bOdrQzrUdbV4A09w1/dKtw5ryAqmOq7HC+WHPha5pBPeY/SYY08qt2114RfCdS
+         QSQh2D3mKMjWKrBeGTfwPJEgfrhgtiDRsVKMbZseCshq2KuytgujPLoslNbp/IFyHRJi
+         LSJA==
+X-Gm-Message-State: ABuFfoiPQFJoeEYthZFa/DJjcMm5FqMGJwOwq8GWtdPdAmwxdhUaNRwv
+        ErgrLYaBN8QJfnOzEpH2n2qNrA==
+X-Google-Smtp-Source: ACcGV63iVZ0TEo9GvllHBPN4OSIrePCrYFk3miPQsnm0tdX40ajEp4xOtUOQi2iyV2uexNH/f/qf/Q==
+X-Received: by 2002:a63:1d10:: with SMTP id d16-v6mr24128416pgd.228.1539083623731;
+        Tue, 09 Oct 2018 04:13:43 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.37
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:13:39 -0700 (PDT)
+        Tue, 09 Oct 2018 04:13:42 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 08/45] lightnvm: pblk: fix incorrect min_write_pgs
-Date:   Tue,  9 Oct 2018 13:11:38 +0200
-Message-Id: <20181009111215.7653-9-mb@lightnvm.io>
+Subject: [GIT PULL 09/45] lightnvm: pblk: remove size and out of bounds read check
+Date:   Tue,  9 Oct 2018 13:11:39 +0200
+Message-Id: <20181009111215.7653-10-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -77,30 +77,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The calculation of pblk->min_write_pgs should only use the optimal
-write size attribute provided by the drive, it does not correlate to
-the memory page size of the system, which can be smaller or larger
-than the LBA size reported.
+The I/O size and capacity checks are already done by the block layer.
 
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 Reviewed-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/lightnvm/pblk-read.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 9119c64d6f62..8adc8ac8b03c 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -371,7 +371,7 @@ static int pblk_core_init(struct pblk *pblk)
- 	atomic64_set(&pblk->nr_flush, 0);
- 	pblk->nr_flush_rst = 0;
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index 9c61c19be5dc..ba3dcb6be4c3 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -449,13 +449,6 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 	DECLARE_BITMAP(read_bitmap, NVM_MAX_VLBA);
+ 	int ret = NVM_IO_ERR;
  
--	pblk->min_write_pgs = geo->ws_opt * (geo->csecs / PAGE_SIZE);
-+	pblk->min_write_pgs = geo->ws_opt;
- 	max_write_ppas = pblk->min_write_pgs * geo->all_luns;
- 	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
- 	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
+-	/* logic error: lba out-of-bounds. Ignore read request */
+-	if (blba >= pblk->rl.nr_secs || nr_secs > NVM_MAX_VLBA) {
+-		WARN(1, "pblk: read lba out of bounds (lba:%llu, nr:%d)\n",
+-					(unsigned long long)blba, nr_secs);
+-		return NVM_IO_ERR;
+-	}
+-
+ 	generic_start_io_acct(q, REQ_OP_READ, bio_sectors(bio),
+ 			      &pblk->disk->part0);
+ 
 -- 
 2.17.1
 
