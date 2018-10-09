@@ -2,129 +2,170 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADD7C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 289D8C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB92214FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC7B214DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwbHvqgz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB92214FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OZA8QYex";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OZA8QYex"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAC7B214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeJIX0R (ORCPT
+        id S1726991AbeJIX0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:26:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbeJIX0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:26:17 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5D7C20C0A;
-        Tue,  9 Oct 2018 16:08:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539101318;
-        bh=8u5tgihylxFcH5NWwdU6szc9qryCAenTCSaRWtpwlNM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fwbHvqgzqEpQuocLhNuEWmrfy0gLfueOYWykip/QfgMctLweHMjNB8TDM6RvzM4bn
-         b26XdnUoqOwHwH6TO7RmgN7rjUlVTX26sGoJetQ3mSgNX+MYX3liUOq1uswdHA/3Og
-         EaywFaQ3hZw0y6DmA93k8G7txiHKpQBdvhpxSsnE=
-Date:   Tue, 9 Oct 2018 18:08:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Andre Tomt <andre@tomt.net>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.18 000/168] 4.18.13-stable review
-Message-ID: <20181009160836.GB8426@kroah.com>
-References: <20181008175620.043587728@linuxfoundation.org>
- <966cae81-c3f6-1d38-5721-97dc317a3fde@tomt.net>
- <20181009092154.GC19241@kroah.com>
- <41c3c40f-2757-9405-4899-02eacb3d05f0@tomt.net>
- <20181009151828.hv6rrxyttjfj3yq7@salvia>
- <20181009152021.gthtffreggalvy64@salvia>
+        Tue, 9 Oct 2018 19:26:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37982 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIX0Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:26:25 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8050A60769; Tue,  9 Oct 2018 16:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539101326;
+        bh=zFZULSunT5LnxaYk6Ecs0J2mSCvVfeKE6bGpHn8yKFk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OZA8QYexIGhet398cF+5XnRv7jQzGInzL2zcr1YYy9Ye5lbgLZlMCTGdAUKEI16bO
+         RuObgvp+nwy1/Mtit7tOCAGo1hFYdhv28Tfcg1+krCMwAfCRPCBTRgbMNc6YPgxagF
+         F4EaSCTn9Di55OmCqhPQN8TuHl9XEjFUBnFvxUX4=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 0DBB460591;
+        Tue,  9 Oct 2018 16:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539101326;
+        bh=zFZULSunT5LnxaYk6Ecs0J2mSCvVfeKE6bGpHn8yKFk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OZA8QYexIGhet398cF+5XnRv7jQzGInzL2zcr1YYy9Ye5lbgLZlMCTGdAUKEI16bO
+         RuObgvp+nwy1/Mtit7tOCAGo1hFYdhv28Tfcg1+krCMwAfCRPCBTRgbMNc6YPgxagF
+         F4EaSCTn9Di55OmCqhPQN8TuHl9XEjFUBnFvxUX4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181009152021.gthtffreggalvy64@salvia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 09 Oct 2018 21:38:46 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        tsoni@codeaurora.org, linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
+ each remoteproc segment
+In-Reply-To: <20181008062333.GN12063@builder>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+ <20180727152003.11663-2-sibis@codeaurora.org>
+ <20181008062333.GN12063@builder>
+Message-ID: <002930d1f2515a5988f98a3bb1a5ceed@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 05:20:21PM +0200, Pablo Neira Ayuso wrote:
-> On Tue, Oct 09, 2018 at 05:18:28PM +0200, Pablo Neira Ayuso wrote:
-> > On Tue, Oct 09, 2018 at 01:33:39PM +0200, Andre Tomt wrote:
-> > > On 09. okt. 2018 11:21, Greg Kroah-Hartman wrote:
-> > > > On Tue, Oct 09, 2018 at 05:21:31AM +0200, Andre Tomt wrote:
-> > > > > On 08. okt. 2018 20:29, Greg Kroah-Hartman wrote:
-> > > > > > This is the start of the stable review cycle for the 4.18.13 release.
-> > > > > > There are 168 patches in this series, all will be posted as a response
-> > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > let me know.
-> > > > > 
-> > > > >    CC [M]  net/ipv4/netfilter/nf_conntrack_proto_icmp.o
-> > > > > net/ipv4/netfilter/nf_conntrack_proto_icmp.c:373:3: error: ‘const struct
-> > > > > nf_conntrack_l4proto’ has no member named ‘ctnl_timeout’; did you mean
-> > > > > ‘get_timeouts’?
-> > > > >    .ctnl_timeout  = {
-> > > > >     ^~~~~~~~~~~~
-> > > > >     get_timeouts
-> > > > > 
-> > > > > The problematic patch is:> netfilter-conntrack-timeout-interface-depend-on-config_nf_conntrack_timeout.patch
-> > > > > 
-> > > > > The stuff the commit message talks about seems like it was added in
-> > > > > 4.19-rc1, so this should not go into stable.
-> > > > > 
-> > > > > Kernel builds fine with this one patch reverted.
-> > > > 
-> > > > So you have CONFIG_NF_CT_NETLINK_TIMEOUT enabled but not
-> > > > CONFIG_NF_NETLINK_TIMEOUT?  Looks like we just need to modify the .h
-> > > > file to fix this up properly, right?
-> > > 
-> > > Adding Pablo to the thread as I dont know
-> > > 
-> > > > This isn't showing up in my build tests as that configuration seems a
-> > > > bit odd to me.
-> > > 
-> > > I think you meant CONFIG_NF_CONNTRACK_TIMEOUT instead of
-> > > CONFIG_NF_NETLINK_TIMEOUT?
-> > > 
-> > > This is the configuration:
-> > > CONFIG_NF_CONNTRACK_TIMEOUT=y
-> > > # CONFIG_NF_CT_NETLINK_TIMEOUT is not set
-> > 
-> > upstream commit a874752a10da113f513980e28f562d946d3f829d depends on:
-> > 
-> > commit 6c1fd7dc489d9bf64196f5b0fa33e059f64460c8
-> > Author: Pablo Neira Ayuso <pablo@netfilter.org>
-> > Date:   Tue Aug 7 17:14:15 2018 +0200
-> > 
-> >     netfilter: cttimeout: decouple timeout policy from nfnetlink_cttimeout object
-> > 
-> > So I would suggest to keep it back / not place it 4.18.x stable.
-> 
-> Hm, actually, a874752a10da113f513980e28f562d946d3f829 depends on:
-> 
-> commit ad83f2a9ce37a264202f48f4fd8889ee9056b703
-> Author: Pablo Neira Ayuso <pablo@netfilter.org>
-> Date:   Tue Aug 7 17:14:19 2018 +0200
-> 
->     netfilter: remove ifdef around cttimeout in struct nf_conntrack_l4proto
-> 
-> Not the one I mentioned above.
+Hi Bjorn,
+Thanks for the review :)
 
-Thanks for the info, I've now dropped this from both 4.14.y and 4.18.y.
+On 2018-10-08 11:53, Bjorn Andersson wrote:
+> On Fri 27 Jul 08:19 PDT 2018, Sibi Sankar wrote:
+> 
+>> Introduce custom dump function per remoteproc segment. It is 
+>> responsible
+>> for filling the device memory segment associated with coredump
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
+>>  include/linux/remoteproc.h           |  3 +++
+>>  2 files changed, 13 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/remoteproc_core.c 
+>> b/drivers/remoteproc/remoteproc_core.c
+>> index 283b258f5e0f..ec56cd822b26 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc 
+>> *rproc)
+>>  		phdr->p_align = 0;
+>> 
+>>  		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>> -		if (!ptr) {
+>> -			dev_err(&rproc->dev,
+>> +
+>> +		if (segment->dump) {
+>> +			segment->dump(rproc, ptr, segment->size, data + offset);
+> 
+> rproc_da_to_va() is an exported symbol, so if you pass segment to the
+> dump function the driver can, if it needs to, call the function itself.
+> 
+> A typical use case, that I see, is to use the custom dump function to
+> write out CPU or hardware state to the dump file, in which case the 
+> "da"
+> won't be valid.
+> 
+> 
+> So please make this call dump(rproc, segment, data + offset) and move
+> the rproc_da_to_va() into the else block.
+> 
 
-greg k-h
+yup will redefine it.
+
+>> +		} else {
+>> +			if (!ptr) {
+>> +				dev_err(&rproc->dev,
+>>  				"invalid coredump segment (%pad, %zu)\n",
+>>  				&segment->da, segment->size);
+>> -			memset(data + offset, 0xff, segment->size);
+>> -		} else {
+>> -			memcpy(data + offset, ptr, segment->size);
+>> +				memset(data + offset, 0xff, segment->size);
+>> +			} else {
+>> +				memcpy(data + offset, ptr, segment->size);
+>> +			}
+>>  		}
+>> 
+>>  		offset += phdr->p_filesz;
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index e3c5d856b6da..0fbb01a9955c 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -399,6 +399,8 @@ enum rproc_crash_type {
+>>   * @node:	list node related to the rproc segment list
+>>   * @da:		device address of the segment
+>>   * @size:	size of the segment
+>> + * @dump:	custom dump function to fill device memory segment 
+>> associated
+>> + *		with coredump
+>>   */
+>>  struct rproc_dump_segment {
+>>  	struct list_head node;
+>> @@ -406,6 +408,7 @@ struct rproc_dump_segment {
+>>  	dma_addr_t da;
+>>  	size_t size;
+>> 
+>> +	void (*dump)(struct rproc *rproc, void *ptr, size_t len, void 
+>> *priv);
+> 
+> "priv" isn't the best name to represent the memory to which you expect
+> dump to write to. Please call it "dest".
+> 
+
+will rename it
+
+>>  	loff_t offset;
+>>  };
+> 
+> Regards,
+> Bjorn
+
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
