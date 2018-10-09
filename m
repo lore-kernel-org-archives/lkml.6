@@ -2,124 +2,173 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87AAC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900F3C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98CC214D5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:12:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98CC214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 49207214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="Ehts/CCw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49207214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbeJIS2i (ORCPT
+        id S1726718AbeJIS3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:28:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47534 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726160AbeJIS2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:28:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 822C1AF6F;
-        Tue,  9 Oct 2018 11:12:10 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 13:12:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] mm: Shuffle initial free memory
-Message-ID: <20181009111209.GL8528@dhcp22.suse.cz>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153861932401.2863953.11364943845583542894.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074838.GE22173@dhcp22.suse.cz>
- <CAPcyv4jO_K8g3XRzuYOQPeGT--aPtucwZsqkywxOFO4Zny5Xrg@mail.gmail.com>
+        Tue, 9 Oct 2018 14:29:41 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34007 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbeJIS3l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 14:29:41 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k19-v6so683516pfi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MXyuX/eQAsmUVQCsPh/3ouIrGtbN7Q8q10YOZMYO9jQ=;
+        b=Ehts/CCwdtmnZQad135C51xhugYCFS+soebIQ3RucheWZfcAmaLNTqn1+Jh1/FPMRB
+         7xE1bc9nUkE+4zP2PRbTAiUlKhXlqu2tbWiBqfA9C/L7t+47R5/8kZzOdeXJyOWqGaHB
+         iszoAguMMMrNaM++UlTlW6pS9EHX3oi2uqele5PLzoH/R+bTw6y4g9uarvzmq1dYvFtA
+         c4IAjqJt8Sk1qWsLwdMnAUl7YsfrVXTQqOvR0OQ8rJVV+68Ak/w/3V8Ml4ha5pGpOkb+
+         9YwoI8rx3Ples/ri4tMqwawj5mUXnvwwarI9okmk0p/76LYpzBXt1cVZwTHYFamaM2Us
+         0Bsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MXyuX/eQAsmUVQCsPh/3ouIrGtbN7Q8q10YOZMYO9jQ=;
+        b=OJnMNV7e5y76es7xO6iDmu8logWCWlVJzOR3g0i3BSZ+einGErbAgebjqsRwNsf8G7
+         sp4S5r+8Ixo6I1WSmojPQaPB3TaZKInYAFbj8siuZoqggeo3H/qMMDy5HJTWvWpqK71l
+         6qJqfWf/M1FNgeptNPx8FRwKA1RAibFrJyVr8u9jzNDlc+cHL9hI3UkSwLDaOOu3p6lM
+         5Br1kDXO9juwQEo5WPgQOheP/k48SUNPzkRoMlLjLKtlvw+FIXl+TxLBeZ8OxZpVL0+Y
+         DWLFOn8gj65sU3XL9pJQu+Qrm2uUeiYg29M6zTw5zjV2ZMrDDPqOtn1MlAFO8B3vDFNv
+         N7yA==
+X-Gm-Message-State: ABuFfoinETac6ARdPEreplNj8kX/xhgFM1x8hDglaueHTW8GnNK3E2Ly
+        RLHW6p80/EU0Sv7Akelwa2gEiA==
+X-Google-Smtp-Source: ACcGV60FXQYsxlxG/viRdMZUcLvJoCP8hjrTR9mdvBHdAI0XEmY17Jg71uAShmXYgoMVRc0qFESkyg==
+X-Received: by 2002:a63:501:: with SMTP id 1-v6mr24833936pgf.205.1539083594357;
+        Tue, 09 Oct 2018 04:13:14 -0700 (PDT)
+Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 04:13:12 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     axboe@fb.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 00/45] lightnvm updates for 4.20.
+Date:   Tue,  9 Oct 2018 13:11:30 +0200
+Message-Id: <20181009111215.7653-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jO_K8g3XRzuYOQPeGT--aPtucwZsqkywxOFO4Zny5Xrg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 04-10-18 09:51:37, Dan Williams wrote:
-> On Thu, Oct 4, 2018 at 12:48 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Wed 03-10-18 19:15:24, Dan Williams wrote:
-> > > Some data exfiltration and return-oriented-programming attacks rely on
-> > > the ability to infer the location of sensitive data objects. The kernel
-> > > page allocator, especially early in system boot, has predictable
-> > > first-in-first out behavior for physical pages. Pages are freed in
-> > > physical address order when first onlined.
-> > >
-> > > Introduce shuffle_free_memory(), and its helper shuffle_zone(), to
-> > > perform a Fisher-Yates shuffle of the page allocator 'free_area' lists
-> > > when they are initially populated with free memory at boot and at
-> > > hotplug time.
-> > >
-> > > Quoting Kees:
-> > >     "While we already have a base-address randomization
-> > >      (CONFIG_RANDOMIZE_MEMORY), attacks against the same hardware and
-> > >      memory layouts would certainly be using the predictability of
-> > >      allocation ordering (i.e. for attacks where the base address isn't
-> > >      important: only the relative positions between allocated memory).
-> > >      This is common in lots of heap-style attacks. They try to gain
-> > >      control over ordering by spraying allocations, etc.
-> > >
-> > >      I'd really like to see this because it gives us something similar
-> > >      to CONFIG_SLAB_FREELIST_RANDOM but for the page allocator."
-> > >
-> > > Another motivation for this change is performance in the presence of a
-> > > memory-side cache. In the future, memory-side-cache technology will be
-> > > available on generally available server platforms. The proposed
-> > > randomization approach has been measured to improve the cache conflict
-> > > rate by a factor of 2.5X on a well-known Java benchmark. It avoids
-> > > performance peaks and valleys to provide more predictable performance.
-> > >
-> > > While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
-> > > caches it leaves vast bulk of memory to be predictably in order
-> > > allocated. That ordering can be detected by a memory side-cache.
-> > >
-> > > The shuffling is done in terms of 'shuffle_page_order' sized free pages
-> > > where the default shuffle_page_order is MAX_ORDER-1 i.e. 10, 4MB this
-> > > trades off randomization granularity for time spent shuffling.
-> > > MAX_ORDER-1 was chosen to be minimally invasive to the page allocator
-> > > while still showing memory-side cache behavior improvements.
-> > >
-> > > The performance impact of the shuffling appears to be in the noise
-> > > compared to other memory initialization work. Also the bulk of the work
-> > > is done in the background as a part of deferred_init_memmap().
-> >
-> > This is the biggest portion of the series and I am wondering why do we
-> > need it at all. Why it isn't sufficient to rely on the patch 3 here?
-> 
-> In fact we started with only patch3 and it had no measurable impact on
-> the cache conflict rate.
-> 
-> > Pages freed from the bootmem allocator go via the same path so they
-> > might be shuffled at that time. Or is there any problem with that?
-> > Not enough entropy at the time when this is called or the final result
-> > is not randomized enough (some numbers would be helpful).
-> 
-> So the reason front-back randomization is not enough is due to the
-> in-order initial freeing of pages. At the start of that process
-> putting page1 in front or behind page0 still keeps them close
-> together, page2 is still near page1 and has a high chance of being
-> adjacent. As more pages are added ordering diversity improves, but
-> there is still high page locality for the low address pages and this
-> leads to no significant impact to the cache conflict rate. Patch3 is
-> enough to keep the entropy sustained over time, but it's not enough
-> initially.
+Hi Jens,
 
-That should be in the changelog IMHO.
+Please pick up the following patches for 4.20.
+
+The changes include:
+
+ - pblk trace support from Hans.
+ - SPDX license header update from Javier.
+ - Tons of refactoring patches from Javier, and me to cleanly abstract
+   the 1.2 and 2.0 specs behind a common core interface.
+ - Enable pblk to use a common interface to retrieve chunk metadata.
+   From me.
+ - Bug fixes from Hans, Javier, Jia-ju, Wei, Zhoujie, and me.
+
+Thanks!,
+Matias
+
+Hans Holmberg (11):
+  lightnvm: introduce nvm_rq_to_ppa_list
+  lightnvm: pblk: allocate line map bitmaps using a mempool
+  lightnvm: pblk: remove unused parameters in pblk_up_rq
+  lightnvm: pblk: fix up prints in pblk_read_check_rand
+  lightnvm: pblk: fix write amplificiation calculation
+  lightnvm: pblk: add trace events for chunk states
+  lightnvm: pblk: add trace events for line state changes
+  lightnvm: pblk: add trace events for pblk state changes
+  lightnvm: pblk: add tracing for chunk resets
+  lightnvm: pblk: stop recreating global caches
+  lightnvm: pblk: fix mapping issue on failed writes
+
+Javier González (21):
+  lightnvm: pblk: fix race condition on metadata I/O
+  lightnvm: pblk: add helpers for chunk addresses
+  lightnvm: pblk: improve line helpers
+  lightnvm: pblk: fix comment typo
+  lightnvm: pblk: remove unused variable.
+  lightnvm: pblk: guarantee emeta on line close
+  lightnvm: move ppa transformations to core
+  lightnvm: pblk: calculate line pad distance in helper
+  lightnvm: use internal allocation for chunk log page
+  lightnvm: pblk: encapsulate rqd dma allocations
+  lightnvm: pblk: refactor metadata paths
+  lightnvm: pblk: take write semaphore on metadata
+  lightnvm: pblk: recover open lines on 2.0 devices
+  lightnvm: pblk: add SPDX license tag
+  lightnvm: pblk: fix race on sysfs line state
+  lightnvm: pblk: remove unused function
+  lightnvm: pblk: encapsulate rb pointer operations
+  lightnvm: pblk: move ring buffer alloc/free rb init
+  lightnvm: pblk: guarantee mw_cunits on read buffer
+  lightnvm: do no update csecs and sos on 1.2
+  lightnvm: pblk: guarantee that backpointer is respected on writer
+    stall
+
+Jia-Ju Bai (1):
+  lightnvm: pblk: fix two sleep-in-atomic-context bugs
+
+Matias Bjørling (10):
+  lightnvm: remove dependencies on BLK_DEV_NVME and PCI
+  lightnvm: combine 1.2 and 2.0 command flags
+  lightnvm: pblk: fix rqd.error return value in pblk_blk_erase_sync
+  lightnvm: move device L2P detection to core
+  lightnvm: move bad block and chunk state logic to core
+  lightnvm: pblk: unify vector max req constants
+  lightnvm: pblk: fix incorrect min_write_pgs
+  lightnvm: pblk: remove size and out of bounds read check
+  lightnvm: pblk: refactor put line fn on read completion
+  lightnvm: pblk: remove debug from pblk_[down/up]_page
+
+Wei Yongjun (1):
+  lightnvm: pblk: fix error handling of pblk_lines_init()
+
+Zhoujie Wu (1):
+  lightnvm: pblk: consider max hw sectors supported for max_write_pgs
+
+ drivers/lightnvm/Kconfig         |   3 +-
+ drivers/lightnvm/core.c          | 334 ++++++++++++++----
+ drivers/lightnvm/pblk-cache.c    |   1 +
+ drivers/lightnvm/pblk-core.c     | 589 +++++++++++++++++--------------
+ drivers/lightnvm/pblk-gc.c       |  11 +-
+ drivers/lightnvm/pblk-init.c     | 321 +++++++----------
+ drivers/lightnvm/pblk-map.c      |  13 +-
+ drivers/lightnvm/pblk-rb.c       | 110 +++---
+ drivers/lightnvm/pblk-read.c     |  86 ++---
+ drivers/lightnvm/pblk-recovery.c | 477 +++++++++----------------
+ drivers/lightnvm/pblk-rl.c       |   5 +-
+ drivers/lightnvm/pblk-sysfs.c    |  12 +-
+ drivers/lightnvm/pblk-trace.h    | 145 ++++++++
+ drivers/lightnvm/pblk-write.c    |  90 ++---
+ drivers/lightnvm/pblk.h          | 225 ++++--------
+ drivers/nvme/host/lightnvm.c     |  32 +-
+ include/linux/lightnvm.h         | 166 ++++++++-
+ 17 files changed, 1436 insertions(+), 1184 deletions(-)
+ create mode 100644 drivers/lightnvm/pblk-trace.h
 
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
