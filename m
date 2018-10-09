@@ -2,125 +2,205 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 912B3C6787A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668ABC6787A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF26205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF26205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 1E4DB205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxLZECHP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4DB205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbeJIIVw (ORCPT
+        id S1726849AbeJIIWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:21:52 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:43568 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726434AbeJIIVw (ORCPT
+        Tue, 9 Oct 2018 04:22:18 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37753 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbeJIIWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:21:52 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9917TDF029146
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 21:07:29 -0400
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9917OaB017257
-        for <linux-kernel@vger.kernel.org>; Mon, 8 Oct 2018 21:07:29 -0400
-Received: by mail-qk1-f197.google.com with SMTP id v14-v6so22835393qkg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 18:07:29 -0700 (PDT)
+        Tue, 9 Oct 2018 04:22:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y11-v6so11926984wrd.4;
+        Mon, 08 Oct 2018 18:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=5ODFFAehFtVzpa3EBEncia5u6Fqogg8s8zHRCY5WcnY=;
+        b=AxLZECHP9dEzPI5Wt/ySWsEWfNr6idUy6iDZy80+zhAycpXwCgusXKw817zBBctxQy
+         LWP+j1EwE9KgVeNW8HKr4pHIEpmktMcrIJFdlKHbpLgP3f6CGviyfXOavOtVGz0dt8Aa
+         4aM/fDvli+Qq14pMrnDJm9JEqTrJLGLS+kEmtk1fV6nr076GxD068iHWPv3DobWR8Q7U
+         bNkEhZFolgWBIGEWlIq75LJoyvYhv3doX9uKbX2fxg5Y7yb70Ud0AA5c2l99+lJvQmI6
+         qy7Ghw8Y6hnvhn6He0Hyfg4yTbKh/7i7gmwUtxUkXSFnX1T13DTVcrVvFN1A0mPVFfKI
+         PR9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=OZZ9FcNi3tT8GKvVPXviXaIzxMTzqnAYwnDgoXOeAT8=;
-        b=E4IvWnqwfyhMT3LkN7FHBEFQY7VhClCRmIC/dtV4hsucxObyArX7tYpmwCccu6sbJo
-         fDrqfWkcT/p9GZkahSGGBsK/5bhEpCOP7XIsNvboa3l44WkwgvnfwVNcO8n7zPnVvtSx
-         mnVfSR9SWhRQD5AWPlvICLBnlFO5xZ7OzO4W/DSKCbVaZMffN7ZkPFIRvLJWoOTfe8UI
-         LDxNyeYyaJGgufwhTy/Q5ncQutNfSl+LzGHpUHmIgDmc24qnqZrYgvup3fkiXy/9opq5
-         s+NbszC7ZuYn8rn97+dAicjmnFkfkuCRu9h2F6tNuj9LIUL9UNI5bWfkHWzDPFcbJnsw
-         btSw==
-X-Gm-Message-State: ABuFfoh3DvwGMhfacewhEEFJSESzlRuEZr8ykqSgGCd9VlwciVrkbWIV
-        rf3eAjqjw8bmVgggGMJbGYlaPRDI59trteTxfECA5CLF0CMssIRC1GIeYPbL5uPaSMQ1GxBzh1j
-        /N75+LrPvieZleMskHHs0H+LFbpINNWPO7Oc=
-X-Received: by 2002:ad4:518e:: with SMTP id b14-v6mr21664535qvp.101.1539047243899;
-        Mon, 08 Oct 2018 18:07:23 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV61k8RZW98PubmxVSGs5HM1L5loKokrLSRWnqCRidJQrm7Gn68WXCHnJWcgjXE7o/V/4Fd0ktw==
-X-Received: by 2002:ad4:518e:: with SMTP id b14-v6mr21664520qvp.101.1539047243499;
-        Mon, 08 Oct 2018 18:07:23 -0700 (PDT)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4340::be3])
-        by smtp.gmail.com with ESMTPSA id m6-v6sm10724383qta.50.2018.10.08.18.07.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 18:07:22 -0700 (PDT)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     Song Liu <liu.song.a23@gmail.com>
-Cc:     wang6495@umn.edu, kjlu@umn.edu,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Networking <netdev@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=5ODFFAehFtVzpa3EBEncia5u6Fqogg8s8zHRCY5WcnY=;
+        b=CCFNF0KCJV1pcEzH9MNSb1Lg1EYi7K72zIQusEoSdpgEPF/70XiWPcgGvH8OUU/tM+
+         3j3APN7EcJubUTvCGG7JE0nyUDozxnQkd4MnF0nLbNIobQFudVJWk5mIf1Bpnvp+pXWK
+         CwavhTAfTIG/x3bOIKK4FRCUTvEdr7Eg/1CT3UIpBgR7OH91Da1kc4uWjV55GcrVz8+3
+         QbxQFizeFbhe2Il8cVO720w1Q7FzzBp2aEPxD7BtbBpayPisAjoNGX2hyoc28C9mhtVA
+         ICCfHaAmJO8lS53vb2cUlj/aqJBPf6tYoF8KIcvwJoo654GSBud3s1JMui+5s7rVPHzT
+         CvnQ==
+X-Gm-Message-State: ABuFfoiQHJMsVxEvoToYzyeg8J7iUT84AlYEhpyPs++glBHXdoHXvSN9
+        bFhMT8PnSa7ykYIrDeXNL1/xRMO0
+X-Google-Smtp-Source: ACcGV61sh1QiXNFtcU7grqf6aJUxJt3KfknBy1W1YNqHuoxYApH4QbVEnx99gPNHPyjbF8dAHnxnHA==
+X-Received: by 2002:adf:82e3:: with SMTP id 90-v6mr17351474wrc.131.1539047272190;
+        Mon, 08 Oct 2018 18:07:52 -0700 (PDT)
+Received: from [172.30.1.166] (nat-wv.mentorg.com. [192.94.38.34])
+        by smtp.gmail.com with ESMTPSA id v76-v6sm18957035wmd.32.2018.10.08.18.07.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 18:07:51 -0700 (PDT)
+Subject: Re: [PATCH v4 10/11] media: imx: Allow interweave with top/bottom
+ lines swapped
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: btf: Fix a missing check bug
-In-Reply-To: <CAPhsuW5nPGMOEMKa1UFwgquoUeYiUV8i8nVgWfM6McH2Ri1esg@mail.gmail.com>
-References: <1538943795-30895-1-git-send-email-wang6495@umn.edu> <CAPhsuW5vnVjRS7DWFYPSmq5G-dAFxOrHCAOMkK-iaOoirzMazQ@mail.gmail.com> <43898.1539033428@turing-police.cc.vt.edu>
- <CAPhsuW5nPGMOEMKa1UFwgquoUeYiUV8i8nVgWfM6McH2Ri1esg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1539047240_7716P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+References: <20181004185401.15751-1-slongerbeam@gmail.com>
+ <20181004185401.15751-11-slongerbeam@gmail.com>
+ <1538736221.3545.17.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <6c8404fa-88b4-9e07-34d4-bc6652736644@gmail.com>
+Date:   Mon, 8 Oct 2018 18:07:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1538736221.3545.17.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 08 Oct 2018 21:07:20 -0400
-Message-ID: <9337.1539047240@turing-police.cc.vt.edu>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1539047240_7716P
-Content-Type: text/plain; charset=us-ascii
+Hi Philipp,
 
-On Mon, 08 Oct 2018 17:44:46 -0700, Song Liu said:
 
-> I think I get the security concept here. However, hdr_len here is only used to
-> copy the whole header into kernel space, and it is not used in other
-> logic at all.
-> I cannot image any security flaw with either hdr_len > btf->hdr->hdr_len case or
-> hdr_len < btf->hdr->hdr_len. Could you please provide more insights on what
-> would break by malicious user space?
+On 10/05/2018 03:43 AM, Philipp Zabel wrote:
+> Hi Steve,
+>
+> On Thu, 2018-10-04 at 11:54 -0700, Steve Longerbeam wrote:
+>> Allow sequential->interlaced interweaving but with top/bottom
+>> lines swapped to the output buffer.
+>>
+>> This can be accomplished by adding one line length to IDMAC output
+>> channel address, with a negative line length for the interlace offset.
+>>
+>> This is to allow the seq-bt -> interlaced-bt transformation, where
+>> bottom lines are still dominant (older in time) but with top lines
+>> first in the interweaved output buffer.
+>>
+>> With this support, the CSI can now allow seq-bt at its source pads,
+>> e.g. the following transformations are allowed in CSI from sink to
+>> source:
+>>
+>> seq-tb -> seq-bt
+>> seq-bt -> seq-bt
+>> alternate -> seq-bt
+>>
+>> Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>> ---
+>>   drivers/staging/media/imx/imx-ic-prpencvf.c | 17 +++++++-
+>>   drivers/staging/media/imx/imx-media-csi.c   | 46 +++++++++++++++++----
+>>   2 files changed, 53 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+>> index cf76b0432371..1499b0c62d74 100644
+>> --- a/drivers/staging/media/imx/imx-ic-prpencvf.c
+>> +++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+>> @@ -106,6 +106,8 @@ struct prp_priv {
+>>   	u32 frame_sequence; /* frame sequence counter */
+>>   	bool last_eof;  /* waiting for last EOF at stream off */
+>>   	bool nfb4eof;    /* NFB4EOF encountered during streaming */
+>> +	u32 interweave_offset; /* interweave line offset to swap
+>> +				  top/bottom lines */
+> We have to store this instead of using vdev->fmt.fmt.bytesperline
+> because this potentially is the pre-rotation stride instead?
 
-Say the biggest allowed value for hdr_len is 128.  We check the value, the user has 98.
-They then stuff 16,383 into there.
+interweave_offset was used by prp_vb2_buf_done() below, but in fact
+that function is passed the non-rotation IDMAC channel (priv->out_ch)
+_only_ if rotation is not enabled, so it is actually safe to use
+vdev->fmt.fmt.bytesperline for the interweave offset in
+prp_vb2_buf_done().
 
-Now here's the problem - hdr_len is a local variable, and evaporates when the function
-returns.  From here on out, anybody who cares about the header length will use the
-value in btf->hdr_len....
+So I've gotten rid of interweave_offset in both imx-ic-prpencvf.c and
+imx-media-csi.c, and replaced with a boolean interweave_swap as you
+suggested. I agree it is much cleaner.
+   
 
-(And yes, somebody *does* care about the length, otherwise we wouldn't need a field
-saying what the length was....)
+>>
+>> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+>> index 679295da5dde..592f7d6edec1 100644
+>> --- a/drivers/staging/media/imx/imx-media-csi.c
+>> +++ b/drivers/staging/media/imx/imx-media-csi.c
+>> @@ -114,6 +114,8 @@ struct csi_priv {
+>>   	u32 frame_sequence; /* frame sequence counter */
+>>   	bool last_eof;   /* waiting for last EOF at stream off */
+>>   	bool nfb4eof;    /* NFB4EOF encountered during streaming */
+>> +	u32 interweave_offset; /* interweave line offset to swap
+>> +				  top/bottom lines */
+> This doesn't seem necessary. Since there is no rotation here, the offset
+> is just vdev->fmt.fmt.pix.bytesperline if interweave_swap is enabled.
+> Maybe turn this into a bool interweave_swap?
 
-Now think how many ways that can go pear-shaped.  You copied in 98 bytes, but outside
-the function, they think that header is almost 4 pages long.  Does that ever get used as
-a length for kmemcpy()?  Or a limit for a 'for (i=start; i< (start+hdr->hdr_len); i++)' that
-walks across a variable length header?
+Agreed.
 
-Can you cook up a way to have a good chance to oops the kernel when it walks off the
-page you allocated the 98 bytes on?  Can you use it to export chunks of memory out to
-userspace?  Lots and lots of ways for this to kersplat a kernel...;
+>
+>>   	struct completion last_eof_comp;
+>>   };
+>>   
+>> @@ -286,7 +288,8 @@ static void csi_vb2_buf_done(struct csi_priv *priv)
+>>   	if (ipu_idmac_buffer_is_ready(priv->idmac_ch, priv->ipu_buf_num))
+>>   		ipu_idmac_clear_buffer(priv->idmac_ch, priv->ipu_buf_num);
+>>   
+>> -	ipu_cpmem_set_buffer(priv->idmac_ch, priv->ipu_buf_num, phys);
+>> +	ipu_cpmem_set_buffer(priv->idmac_ch, priv->ipu_buf_num,
+>> +			     phys + priv->interweave_offset);
+>>   }
+>>   
+>>   static irqreturn_t csi_idmac_eof_interrupt(int irq, void *dev_id)
+>> @@ -396,10 +399,10 @@ static void csi_idmac_unsetup_vb2_buf(struct csi_priv *priv,
+>>   static int csi_idmac_setup_channel(struct csi_priv *priv)
+>>   {
+>>   	struct imx_media_video_dev *vdev = priv->vdev;
+>> +	bool passthrough, interweave, interweave_swap;
+>>   	const struct imx_media_pixfmt *incc;
+>>   	struct v4l2_mbus_framefmt *infmt;
+>>   	struct v4l2_mbus_framefmt *outfmt;
+>> -	bool passthrough, interweave;
+>>   	struct ipu_image image;
+>>   	u32 passthrough_bits;
+>>   	u32 passthrough_cycles;
+>> @@ -433,6 +436,8 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
+>>   	 */
+>>   	interweave = V4L2_FIELD_IS_INTERLACED(image.pix.field) &&
+>>   		V4L2_FIELD_IS_SEQUENTIAL(outfmt->field);
+>> +	interweave_swap = interweave &&
+>> +		image.pix.field == V4L2_FIELD_INTERLACED_BT;
+> Although this could just as well be recalculated in csi_vb2_buf_done.
 
---==_Exmh_1539047240_7716P
-Content-Type: application/pgp-signature
+In the future yes, when we add support for alternate mode (I assume
+that's what you are getting at?).
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
 
-iQEVAwUBW7v/SI0DS38y7CIcAQKEFgf9E+sMPZmhYDvR8pRqDx1ieuHDbfnaMBNm
-PDfnp/S5xMWASD9bEEGu5xtSYC9aR1GjTFFtyW/ytz1wIpXHyf7XZgOf4HqJfrkK
-DqqTOxkzkuTcyNafTbyrv3Mpzu/VhnHnjnRv45BYWCOXGJzXALgjeyvywJcJuzkH
-7Vd0n0GGc+aHxBhAbTYPx1es+lrD9MaxJzMwbPp0u6zMAIFr1GMtwihu1GfDjEM+
-1zLllX8a/tIEaCpTbQuYli8gWVbMfWELartMBm8taFfppIj+/op4UMH79FZY96gy
-8nTQZgvIlIWbNrAyydG6P9lPFTBT/d7n9c7TQeCWkwoPRvBU7pB1GQ==
-=h6iu
------END PGP SIGNATURE-----
+> Apart from that,
+>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
---==_Exmh_1539047240_7716P--
+Thanks.
+
+Steve
+
