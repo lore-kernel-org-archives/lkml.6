@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C401CECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EADBC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC31214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2488A20858
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kdY7h6gD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC31214C5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ER4xWmIG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2488A20858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJIXnA (ORCPT
+        id S1727396AbeJIXnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:43:00 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40908 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbeJIXnA (ORCPT
+        Tue, 9 Oct 2018 19:43:03 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44785 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbeJIXnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:43:00 -0400
-Received: by mail-qt1-f193.google.com with SMTP id b4-v6so2290317qtc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:25:16 -0700 (PDT)
+        Tue, 9 Oct 2018 19:43:02 -0400
+Received: by mail-qt1-f195.google.com with SMTP id c56-v6so2271565qtd.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:25:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zIbq74SHzUmAAn9beXqSbIF0xv76+VwJaPbFBIeIe1U=;
-        b=kdY7h6gD1j1ZOLtPzQxEfbc4s3OD13OAN015eqld8teNR3+nmmjs/yTd5FpiU0di87
-         qpUqMO8Ns1pedoP0cGypsMgs2UXMZqoWFLcxwWAjKO6dfseK3ibqVv3MH+mTC/ttnPl+
-         8bAduK1OBfF087dvUgV/UImLxOwwIHScBIC9c=
+        bh=GRe242656I2kSmkisEDP4QURqPrSR1lR6wXda3PHx2M=;
+        b=ER4xWmIGGf0H2vl9y2Fj4owD1BLyf9jZ95fW+MYRK+nMMVlkbQWwdinhRQcjqR5zxn
+         PykedBVvjECgPpObatTrDWTvAFhWZwEnfot/r1pOdP7ivf04iIYooC4YU3fO2I0jg7eT
+         F1bCoLNJysWM98qBP8HpCLP3hZcnodWcJAFb4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zIbq74SHzUmAAn9beXqSbIF0xv76+VwJaPbFBIeIe1U=;
-        b=so5ZN5aLRFWvi/3D6ImffHKuHuAiYPa9UI5+mavPS4pVl8H9CQ6R/fsv04DRR9Z5Bb
-         dzaRWxeGQGf1OhUB4iWymU2K8Lkr7hDrAlw3UHV8qCoJ6cKCE/7UQ6EwiykL0hXZBr32
-         wq6H1WDtpGBiwkcTvc8SE0AxDveMPrcV6+IUf5SOUTJxfkCAHjBs/pkuDZb60d4nIzGG
-         AXV7tdgvqONajHfevLq8r8gw4Ul8WVevds/6Ck0FEwGUlAu8OfmxIqxYkJLTmCqrP6gY
-         NEdcE3vjPvCl6CuTlIziwZ3olMQsEt5cSqcnUtvZbkTw1DE0yJUnNxWhR69ByEbdFsFZ
-         GUZg==
-X-Gm-Message-State: ABuFfogDpMF8RshqJjw3+Q1J7XowIPekZ3Ai8y4whfQNqOTBhIHD64mJ
-        zQrLlHPjFoESqcpClC78dPJDhGdhcHMbkw==
-X-Google-Smtp-Source: ACcGV602XfqXVNPD/Eg/092xZk0PMy7jAlLchI99z3G11vY0KKo70lEW4tCqakEIbaPNLs+84lDBbg==
-X-Received: by 2002:aed:3342:: with SMTP id u60-v6mr20271131qtd.177.1539102315988;
-        Tue, 09 Oct 2018 09:25:15 -0700 (PDT)
+        bh=GRe242656I2kSmkisEDP4QURqPrSR1lR6wXda3PHx2M=;
+        b=EXf1wEa56NdpLBRcpz9IxszTmfuD+7GvRPmV/4a5B590Mc/NH3ZlhSY/ZcAvK1gHGP
+         fjen6SneXh9xYReFFahRVZGm4Y2i+PTndx4yodoqUe77IScd3TAAgyy2/jglo3QIvAl4
+         p5YHTYPuWqlYPfdEnujefq4UZDez8zC4vb4T5/3pW2XYegVeFE1tLPOUWU9RDe5eoBQv
+         oCGePH2xOfEEKmuOToI3SrwTvbSEPx+2rG8dnjk6A5xaYnRQYYuCpKNFHA4lhk9Wn3vv
+         aUsMNqvgUZQlhGXv3iE60gAVOY6uADxTcD/1DQtjEhIHnttANSzXKVwg3SG3ZvlCsPW+
+         3grA==
+X-Gm-Message-State: ABuFfog9k+ARRMTfQCINHjQYSaQ+VkthlA9W7NMQV0sdea5jz9N0J9q3
+        9stCre/qHmJsYW6x9aGWV1uuxPQD32WVpA==
+X-Google-Smtp-Source: ACcGV60Llln9ZCWafJEK6fMBK1Nqy3RYsHyDNkTUKBi8WhMBLN3UN0uL+/DEIuwtndugvjZNB4QhdQ==
+X-Received: by 2002:ac8:b0d:: with SMTP id e13-v6mr742910qti.375.1539102317526;
+        Tue, 09 Oct 2018 09:25:17 -0700 (PDT)
 Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
-        by smtp.googlemail.com with ESMTPSA id o7-v6sm10441169qkc.67.2018.10.09.09.25.14
+        by smtp.googlemail.com with ESMTPSA id o7-v6sm10441169qkc.67.2018.10.09.09.25.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 09:25:15 -0700 (PDT)
+        Tue, 09 Oct 2018 09:25:16 -0700 (PDT)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org, rui.zhang@intel.com
@@ -64,9 +64,9 @@ Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
         daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
         quentin.perret@arm.com, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org
-Subject: [RFC PATCH 6/7] sched/fair: update cpu_capcity to reflect thermal pressure
-Date:   Tue,  9 Oct 2018 12:25:01 -0400
-Message-Id: <1539102302-9057-7-git-send-email-thara.gopinath@linaro.org>
+Subject: [RFC PATCH 7/7] thermal/cpu-cooling: Update thermal pressure in case of a maximum frequency capping
+Date:   Tue,  9 Oct 2018 12:25:02 -0400
+Message-Id: <1539102302-9057-8-git-send-email-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
 References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
@@ -75,29 +75,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpu_capacity relflects the maximum available capacity of a cpu. Thermal
-pressure on a cpu means this maximum available capacity is reduced. This
-patch reduces the average thermal pressure for a cpu from its maximum
-available capacity so that cpu_capacity reflects the actual
-available capacity.
+Thermal governors can request for a cpu's maximum supported frequency
+to be capped in case of an overheat event. This in turn means that the
+maximum capacity available for tasks to run on the particular cpu is
+reduced. Delta between the original maximum capacity and capped
+maximum capacity is known as thermal pressure. Enable cpufreq cooling
+device to update the thermal pressure in event of a capped
+maximum frequency.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- kernel/sched/fair.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/thermal/cpu_cooling.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7deb1d0..8651e55 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7497,6 +7497,7 @@ static unsigned long scale_rt_capacity(int cpu)
+diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+index dfd2324..da8de66 100644
+--- a/drivers/thermal/cpu_cooling.c
++++ b/drivers/thermal/cpu_cooling.c
+@@ -31,6 +31,7 @@
+ #include <linux/slab.h>
+ #include <linux/cpu.h>
+ #include <linux/cpu_cooling.h>
++#include <linux/sched/topology.h>
  
- 	used = READ_ONCE(rq->avg_rt.util_avg);
- 	used += READ_ONCE(rq->avg_dl.util_avg);
-+	used += READ_ONCE(rq->avg_thermal.load_avg);
+ #include <trace/events/thermal.h>
  
- 	if (unlikely(used >= max))
- 		return 1;
+@@ -132,6 +133,21 @@ static unsigned long get_level(struct cpufreq_cooling_device *cpufreq_cdev,
+ }
+ 
+ /**
++ * cpufreq_update_sched_max_capacity - update scheduler about change in cpu
++ *					max frequency.
++ * @policy - cpufreq policy whose max frequency is capped.
++ */
++static void cpufreq_update_sched_max_capacity(struct cpufreq_policy *policy)
++{
++	int cpu;
++	unsigned long capacity = (policy->max << SCHED_CAPACITY_SHIFT) /
++					policy->cpuinfo.max_freq;
++
++	for_each_cpu(cpu, policy->cpus)
++		update_maxcap_capacity(cpu, capacity);
++}
++
++/**
+  * cpufreq_thermal_notifier - notifier callback for cpufreq policy change.
+  * @nb:	struct notifier_block * with callback info.
+  * @event: value showing cpufreq event for which this function invoked.
+@@ -175,8 +191,10 @@ static int cpufreq_thermal_notifier(struct notifier_block *nb,
+ 		 */
+ 		clipped_freq = cpufreq_cdev->clipped_freq;
+ 
+-		if (policy->max > clipped_freq)
++		if (policy->max > clipped_freq) {
+ 			cpufreq_verify_within_limits(policy, 0, clipped_freq);
++			cpufreq_update_sched_max_capacity(policy);
++		}
+ 		break;
+ 	}
+ 	mutex_unlock(&cooling_list_lock);
 -- 
 2.1.4
 
