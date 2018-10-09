@@ -2,172 +2,84 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB27C00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5114C00449
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35768213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35768213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C82E2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:22:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="tXWq1Fvq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C82E2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJIJfy (ORCPT
+        id S1726933AbeJIJhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 05:35:54 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:49094 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726761AbeJIJfx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 05:35:53 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w992M8jx032690;
-        Tue, 9 Oct 2018 10:22:08 +0800 (GMT-8)
-        (envelope-from alankao@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 9 Oct 2018
- 10:19:27 +0800
-From:   Alan Kao <alankao@andestech.com>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-CC:     Greentime Hu <greentime@andestech.com>,
-        Vincent Chen <vincentc@andestech.com>,
-        Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>,
-        Alan Kao <alankao@andestech.com>
-Subject: [PATCH v8 5/5] Auto-detect whether a FPU exists
-Date:   Tue, 9 Oct 2018 10:18:34 +0800
-Message-ID: <1539051514-3658-6-git-send-email-alankao@andestech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539051514-3658-1-git-send-email-alankao@andestech.com>
-References: <1539051514-3658-1-git-send-email-alankao@andestech.com>
+        Tue, 9 Oct 2018 05:37:23 -0400
+Received: from imap.thunk.org ([74.207.234.97]:54284 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726596AbeJIJhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 05:37:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=jnvoCjz6a6qViKGOG3dAb2r4nAaNA+7Ez8KM7xPbbvo=; b=tXWq1FvqJUy3iIn59Aedqd+3bQ
+        vdle1y2O7xfEh4H7/oE56p6QFcgvR8XXxL7qj/VM2NhbBx/mDVn7lDeksjm7hGiYbnq3cuZE/a6Gx
+        hwT6x9DCGaBbcxQsoYLMyYx0C18LzrcTCAM1cyp87qfM9WVdOitxZ2E7G9/JQR0yNqx4=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1g9hfY-0001X6-Ou; Tue, 09 Oct 2018 02:22:44 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5F08E7A7900; Mon,  8 Oct 2018 22:22:43 -0400 (EDT)
+Date:   Mon, 8 Oct 2018 22:22:43 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     valdis.kletnieks@vt.edu
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [BUG] ext4 null pointer crash in linux-next
+Message-ID: <20181009022243.GD3369@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        valdis.kletnieks@vt.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+References: <36243.1539028475@turing-police.cc.vt.edu>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w992M8jx032690
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36243.1539028475@turing-police.cc.vt.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We expect that a kernel with CONFIG_FPU=y can still support no-FPU
-machines. To do so, the kernel should first examine the existence of a
-FPU, then do nothing if a FPU does exist; otherwise, it should
-disable/bypass all FPU-related functions.
+On Mon, Oct 08, 2018 at 03:54:35PM -0400, valdis.kletnieks@vt.edu wrote:
+> I'm seeing a fairly replicable crash/hang with a traceback implicating ext4 (or
+> possibly the block layer). next-20180918 seemed stable, but next-20180926 and
+> -next-20181005 have a habit of crashing while dnf is updating software (so far,
+> I've hit it 6 times with identical tracebacks while attempting to update software
+> 
+> This ringing any bells, or did I just buy myself another git bisect? Google says
+> that ext4_mpage_readpages from the traceback hasn't been referenced in the
+> last 2 months...
 
-In this patch, a new global variable, has_fpu, is created and determined
-when parsing the hardware capability from device tree during booting.
-This variable is used in those FPU-related functions.
+I'm afraid you're going to have to do a git bisect.  I've been doing
+full regression tests of ext4.git and nothing like this has turned up.
 
-Signed-off-by: Alan Kao <alankao@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Vincent Chen <vincentc@andestech.com>
-Cc: Zong Li <zong@andestech.com>
-Cc: Nick Hu <nickhu@andestech.com>
----
- arch/riscv/include/asm/switch_to.h | 8 ++++----
- arch/riscv/kernel/cpufeature.c     | 8 ++++++++
- arch/riscv/kernel/process.c        | 4 +++-
- arch/riscv/kernel/signal.c         | 6 ++++--
- 4 files changed, 19 insertions(+), 7 deletions(-)
+Instead of doing a full bisect, maybe try doing the ext4.git tree by
+itself, and the block.git tree by itself, and maybe those two trees
+merged together?
 
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index 093050b..7335590 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -56,13 +56,12 @@ static inline void __switch_to_aux(struct task_struct *prev,
- 	fstate_restore(next, task_pt_regs(next));
- }
- 
--#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_INITIAL)
--
-+extern bool has_fpu;
- #else
-+#define has_fpu false
- #define fstate_save(task, regs) do { } while (0)
- #define fstate_restore(task, regs) do { } while (0)
- #define __switch_to_aux(__prev, __next) do { } while (0)
--#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_OFF)
- #endif
- 
- extern struct task_struct *__switch_to(struct task_struct *,
-@@ -72,7 +71,8 @@ extern struct task_struct *__switch_to(struct task_struct *,
- do {							\
- 	struct task_struct *__prev = (prev);		\
- 	struct task_struct *__next = (next);		\
--	__switch_to_aux(__prev, __next);		\
-+	if (has_fpu)					\
-+		__switch_to_aux(__prev, __next);	\
- 	((last) = __switch_to(__prev, __next));		\
- } while (0)
- 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 17011a8..46942e6 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -22,6 +22,9 @@
- #include <asm/hwcap.h>
- 
- unsigned long elf_hwcap __read_mostly;
-+#ifdef CONFIG_FPU
-+bool has_fpu __read_mostly;
-+#endif
- 
- void riscv_fill_hwcap(void)
- {
-@@ -58,4 +61,9 @@ void riscv_fill_hwcap(void)
- 		elf_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
- 
- 	pr_info("elf_hwcap is 0x%lx", elf_hwcap);
-+
-+#ifdef CONFIG_FPU
-+	if (elf_hwcap & (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D))
-+		has_fpu = true;
-+#endif
- }
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index 07d5156..bef1999 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -76,7 +76,9 @@ void show_regs(struct pt_regs *regs)
- void start_thread(struct pt_regs *regs, unsigned long pc,
- 	unsigned long sp)
- {
--	regs->sstatus = DEFAULT_SSTATUS;
-+	regs->sstatus = SR_SPIE;
-+	if (has_fpu)
-+		regs->sstatus |= SR_FS_INITIAL;
- 	regs->sepc = pc;
- 	regs->sp = sp;
- 	set_fs(USER_DS);
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 2450b82..f9b5e7e 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -98,7 +98,8 @@ static long restore_sigcontext(struct pt_regs *regs,
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
- 	/* Restore the floating-point state. */
--	err |= restore_fp_state(regs, &sc->sc_fpregs);
-+	if (has_fpu)
-+		err |= restore_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
- 
-@@ -150,7 +151,8 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
- 	/* Save the floating-point state. */
--	err |= save_fp_state(regs, &sc->sc_fpregs);
-+	if (has_fpu)
-+		err |= save_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
- 
--- 
-2.7.4
-
+						- Ted
