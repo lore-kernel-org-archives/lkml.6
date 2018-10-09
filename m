@@ -2,153 +2,109 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12395C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545C4C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7BCB214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F5D214D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:15:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPWipFoR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7BCB214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="HB2OHuNh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F5D214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeJIWdF (ORCPT
+        id S1726786AbeJIWdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:33:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46820 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbeJIWdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:33:05 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E494214C5;
-        Tue,  9 Oct 2018 15:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539098140;
-        bh=rTVVzimHPT5zjErwjAVplaGZk6TZZJfnsRMtwUmNrMM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dPWipFoRyyUliTYmT7uzuUAkpfeVDn6XmdkQnwFe9tXiAsAev0Cn5nXvDORxFySEc
-         NBeqkg8zjdFDUfktjrcU996CsOj8rhl9ib+HiWh0XxuvpJMhQkZTfR168Uxwannp15
-         0Qn9MTGj39nStZto0gD7VYPSz4edLD5etyvDLOxg=
-Date:   Tue, 9 Oct 2018 17:15:38 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Zhu, Rex" <Rex.Zhu@amd.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
- smu7/8
-Message-ID: <20181009151538.GA23783@kroah.com>
-References: <20180924113103.999624566@linuxfoundation.org>
- <20180924113125.488862921@linuxfoundation.org>
- <BN6PR12MB18092FFEF5BB3861912C8535F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20181008144421.GB15968@kroah.com>
- <BN6PR12MB180971CA88D1B8D580512A71F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20181008171115.GB29418@kroah.com>
- <BN6PR12MB1809AAC678E020F33E189C92F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20181009124520.GA1633@kroah.com>
- <BN6PR12MB1809C04BB67BD6D95822E3EFF7E70@BN6PR12MB1809.namprd12.prod.outlook.com>
+        Tue, 9 Oct 2018 18:33:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45204 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIWdL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:33:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=n4+oGBHSsuFEYcEMPKD2u7djK83UxxOwivAa4Dqescc=; b=HB2OHuNhYEZuqcJDtuCmeWhxY
+        nVh5PIzyYoj6BW5mDNdJOiJuBHwvnkwblZYElRYcp4lfwpTveXwTXc9WDKAit854nzu/9COqUlPU6
+        eJlEezZf3EsIdi7nEubA0RHCPp4CEq9zcz4P/tjeHcKbYZwn+HRfGH8p1vFw+N2RbQptI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g9tjS-0005sk-Fj; Tue, 09 Oct 2018 15:15:34 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id AAEE9112234B; Tue,  9 Oct 2018 16:15:33 +0100 (BST)
+Date:   Tue, 9 Oct 2018 16:15:33 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Silesh C V <svellattu@mvista.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lijun Ou <oulijun@huawei.com>,
+        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v3 1/2] Driver core: add bus_find_device_by_fwnode
+Message-ID: <20181009151533.GC20774@sirena.org.uk>
+References: <1539080245-25818-1-git-send-email-svellattu@mvista.com>
+ <20181009110210.i6xphyuy5jkcfaug@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
 Content-Disposition: inline
-In-Reply-To: <BN6PR12MB1809C04BB67BD6D95822E3EFF7E70@BN6PR12MB1809.namprd12.prod.outlook.com>
+In-Reply-To: <20181009110210.i6xphyuy5jkcfaug@katana>
+X-Cookie: Ego sum ens omnipotens.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 01:55:06PM +0000, Deucher, Alexander wrote:
-> > -----Original Message-----
-> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Sent: Tuesday, October 9, 2018 8:45 AM
-> > To: Deucher, Alexander <Alexander.Deucher@amd.com>
-> > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Wentland, Harry
-> > <Harry.Wentland@amd.com>; Zhu, Rex <Rex.Zhu@amd.com>; Sasha Levin
-> > <alexander.levin@microsoft.com>
-> > Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC
-> > for smu7/8
-> > 
-> > On Mon, Oct 08, 2018 at 06:01:50PM +0000, Deucher, Alexander wrote:
-> > > > -----Original Message-----
-> > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Sent: Monday, October 8, 2018 1:11 PM
-> > > > To: Deucher, Alexander <Alexander.Deucher@amd.com>
-> > > > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Wentland,
-> > > > Harry <Harry.Wentland@amd.com>; Zhu, Rex <Rex.Zhu@amd.com>;
-> > Sasha
-> > > > Levin <alexander.levin@microsoft.com>
-> > > > Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values
-> > > > to DC for smu7/8
-> > > >
-> > > > On Mon, Oct 08, 2018 at 04:02:19PM +0000, Deucher, Alexander wrote:
-> > > > > > -----Original Message-----
-> > > > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > > Sent: Monday, October 8, 2018 10:44 AM
-> > > > > > To: Deucher, Alexander <Alexander.Deucher@amd.com>
-> > > > > > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org;
-> > > > > > Wentland, Harry <Harry.Wentland@amd.com>; Zhu, Rex
-> > > > > > <Rex.Zhu@amd.com>;
-> > > > Sasha
-> > > > > > Levin <alexander.levin@microsoft.com>
-> > > > > > Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock
-> > > > > > values to DC for smu7/8
-> > > > > >
-> > > > > > On Mon, Oct 08, 2018 at 02:33:56PM +0000, Deucher, Alexander
-> > wrote:
-> > > > > > > > -----Original Message-----
-> > > > > > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > > > > Sent: Monday, September 24, 2018 7:53 AM
-> > > > > > > > To: linux-kernel@vger.kernel.org
-> > > > > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
-> > > > > > > > stable@vger.kernel.org; Wentland, Harry
-> > > > > > > > <Harry.Wentland@amd.com>; Deucher, Alexander
-> > > > > > > > <Alexander.Deucher@amd.com>; Zhu, Rex
-> > <Rex.Zhu@amd.com>;
-> > > > Sasha
-> > > > > > > > Levin <alexander.levin@microsoft.com>
-> > > > > > > > Subject: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock
-> > > > > > > > values to DC for
-> > > > > > > > smu7/8
-> > > > > > > >
-> > > > > > > > 4.18-stable review patch.  If anyone has any objections,
-> > > > > > > > please let me
-> > > > > > know.
-> > > > > > > >
-> > > > > > >
-> > > > > > > This regresses power usage on 4.18.  Please revert.
-> > > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=201275
-> > > > > >
-> > > > > > Is it reverted in "upstream" as well?  If not, please get the
-> > > > > > fix in there and then I will be glad to backport it here.
-> > > > > >
-> > > > >
-> > > > > There's no breakage in upstream.  This patch addressed breakages
-> > > > > in
-> > > > > 4.19 specifically due to some other refactoring we did in the driver.
-> > > > > I'll try and dig out the exact series of patches this addressed.
-> > > >
-> > > > So there is no problem in 4.19-rc7?  That contridicts the statement
-> > > > of looking in drm-next for the fixes.
-> > >
-> > > Sorry, what statement about drm-next?  This patch was for 4.19 and was
-> > not intended for 4.18.  It was picked up by Sasha's auto select system for
-> > stable.
-> > 
-> > I thought this thread said that.
-> > 
-> > Ok, so I should just revert it?
-> 
-> Yes, please.
 
-Now reverted, thanks.
+--kfjH4zxOES6UT95V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-greg k-h
+On Tue, Oct 09, 2018 at 01:02:10PM +0200, Wolfram Sang wrote:
+
+> We recently had this discussion in I2C world about using the parent if
+> the (logical) device has a NULL fw_node [1]. I don't know if the other
+> subsystems you modify use logical devices as well? If no, it seems we
+> need an additional check for the parent in the I2C core only. If yes,
+> this might be considered in your patchset?
+
+SPI has a logical controller device as well.
+
+--kfjH4zxOES6UT95V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu8xhQACgkQJNaLcl1U
+h9AH2gf8C9kz4kG030ID6648vQo9YUHUoHqyzVjXg2u/cPM6H4/AVpiOaeJqSMij
+Pl2KZbqPFisjnybJq3lPJaDx3f53TRfGL8/P5Q2AjVPvWMXWDO98JuQ0AA2MhHl2
+i7FcqD3mn8QkQu5wbJZOrYj//rnaWXcrVWyDotQXWSKwzHaZp6tBHdfVoUMWgo6w
+c45J4E19sRqtAlqFq2/GAR6Mo8Q0nRM410agaluau0zmBIZeTbL1SEDZO0DoVM2p
+XgspSOm1lWaSBoRA9wc/+gVG5V/g+5IdLqm+UmOdWasBd4loPAr6Bl9f/CNrlVig
+BBjsiPDh9yO9eGKeBQ/CMU7nXOlYqQ==
+=Jk+F
+-----END PGP SIGNATURE-----
+
+--kfjH4zxOES6UT95V--
