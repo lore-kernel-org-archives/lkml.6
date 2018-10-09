@@ -2,108 +2,190 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1E6C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842AAC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA48E2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4760A2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qu7r30hW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA48E2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BzQh9QHz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4760A2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbeJIUpO (ORCPT
+        id S1727517AbeJIUnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:45:14 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47346 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbeJIUpF (ORCPT
+        Tue, 9 Oct 2018 16:43:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49586 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbeJIUnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:45:05 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w99DO0dc078850;
-        Tue, 9 Oct 2018 13:28:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=BundRp6hFN5Q/gzCC/KnlIkhLHDripEBGPRb3OPKDo8=;
- b=Qu7r30hWAmMhevM85PAKHGd8VMdZ6gA/UfReFJ5uGhIN+R3PuBfALXhmv7E85PMl5fBM
- u2+n0jEGtXQnG4/XRSxVTotJ1XTdeAuZBrjrs2JFMNRLgQDUXuWxS11tV3HTLGi+jI9t
- c5BatFzC53JVg+TvSLoWvyc29iweB2O9ZN7K7E/PCL0JzSkLEEbtIxsIyKb/NDdBf4i0
- AcVIX7tZErwie4wfuFMS1brRmZ88AOJyN0uCASiLftNJqKUN2aESd+xLuvfaTHzr2UEO
- 7k2zI3AImwJWoopWU09N8Qwb4MNtjoAEdK6w1AxSmpWJxz0aNw7n46P3Y7U2/wuU9O// nw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2mxnpqw46a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 09 Oct 2018 13:28:02 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w99DRunV002046
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 9 Oct 2018 13:27:57 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w99DRubs001804;
-        Tue, 9 Oct 2018 13:27:56 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 09 Oct 2018 13:27:56 +0000
-From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <Haakon.Bugge@oracle.com>
-To:     Yishai Hadas <yishaih@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        Tue, 9 Oct 2018 16:43:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6xV/WpKVguy+7dNBIsuEqczBqEePEOdZd5rcV9GeR8s=; b=BzQh9QHz3roG6GtLk9xod+o2+R
+        QgEu+Yj0yhhbto0eCEpx65EdHrcciCT04Ks8VJeT3OtrGSnRTJI21Q2xY5lD76QOxNEyCcw0/O4T3
+        Ywtegp3xx1ZV3Nj3egui3CbzlOQuqPejD5flsBXtd4TzJVp2Es++u0xT7/PStAiuW6j5+ceDAx3xw
+        CVSUn1kDOtg2Ys0EtScNRd5fwoKqfxOPfi7igYzMzMTv9WznNK4pJuoB/W58JDobYtxGVLRBF5whO
+        WGHPxBKXrYKlo6Khd61o0hWj05EE6qhx3yeFyNgA9xxMcMPuu5rGAX4HAWpk1UXL1JSu7SqtRh/fV
+        4GhmwyZg==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g9s1I-0001Ko-H0; Tue, 09 Oct 2018 13:25:52 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     leon@kernel.org
-Subject: [PATCH  v3 1/2] IB/mlx4: Enable debug print of SMPs
-Date:   Tue,  9 Oct 2018 15:27:39 +0200
-Message-Id: <20181009132740.2210085-2-Haakon.Bugge@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20181009132740.2210085-1-Haakon.Bugge@oracle.com>
-References: <20181009132740.2210085-1-Haakon.Bugge@oracle.com>
+Subject: [PATCH 20/33] powerpc/dma: remove the iommu fallback for coherent allocations
+Date:   Tue,  9 Oct 2018 15:24:47 +0200
+Message-Id: <20181009132500.17643-21-hch@lst.de>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181009132500.17643-1-hch@lst.de>
+References: <20181009132500.17643-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9040 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=729
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810090133
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IB Subnet Management Packets (SMPs) were excluded from debug prints.
+All iommu capable platforms now always use the iommu code with the
+internal bypass, so there is not need for this magic anymore.
 
-Fixed by enabling print even on QP0 MADs.
-
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
+ arch/powerpc/Kconfig      |  4 ---
+ arch/powerpc/kernel/dma.c | 68 ++-------------------------------------
+ 2 files changed, 2 insertions(+), 70 deletions(-)
 
-v1 -> v3:
-   * No changes
----
- drivers/infiniband/hw/mlx4/mad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index e5466d786bb1..1718715cc094 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -807,7 +807,7 @@ static int ib_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
- 	int err;
- 	struct ib_port_attr pattr;
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 06996df07cad..7097019d8907 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -119,9 +119,6 @@ config GENERIC_HWEIGHT
+ 	bool
+ 	default y
  
--	if (in_wc && in_wc->qp->qp_num) {
-+	if (in_wc && in_wc->qp) {
- 		pr_debug("received MAD: slid:%d sqpn:%d "
- 			"dlid_bits:%d dqpn:%d wc_flags:0x%x, cls %x, mtd %x, atr %x\n",
- 			in_wc->slid, in_wc->src_qp,
+-config ARCH_HAS_DMA_SET_COHERENT_MASK
+-        bool
+-
+ config PPC
+ 	bool
+ 	default y
+@@ -129,7 +126,6 @@ config PPC
+ 	# Please keep this list sorted alphabetically.
+ 	#
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+-	select ARCH_HAS_DMA_SET_COHERENT_MASK
+ 	select ARCH_HAS_ELF_RANDOMIZE
+ 	select ARCH_HAS_FORTIFY_SOURCE
+ 	select ARCH_HAS_GCOV_PROFILE_ALL
+diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
+index 78ef4076e15c..bef91b8ad064 100644
+--- a/arch/powerpc/kernel/dma.c
++++ b/arch/powerpc/kernel/dma.c
+@@ -114,51 +114,6 @@ void __dma_nommu_free_coherent(struct device *dev, size_t size,
+ }
+ #endif /* !CONFIG_NOT_COHERENT_CACHE */
+ 
+-static void *dma_nommu_alloc_coherent(struct device *dev, size_t size,
+-				       dma_addr_t *dma_handle, gfp_t flag,
+-				       unsigned long attrs)
+-{
+-	struct iommu_table *iommu;
+-
+-	/* The coherent mask may be smaller than the real mask, check if
+-	 * we can really use the direct ops
+-	 */
+-	if (dma_nommu_dma_supported(dev, dev->coherent_dma_mask))
+-		return __dma_nommu_alloc_coherent(dev, size, dma_handle,
+-						   flag, attrs);
+-
+-	/* Ok we can't ... do we have an iommu ? If not, fail */
+-	iommu = get_iommu_table_base(dev);
+-	if (!iommu)
+-		return NULL;
+-
+-	/* Try to use the iommu */
+-	return iommu_alloc_coherent(dev, iommu, size, dma_handle,
+-				    dev->coherent_dma_mask, flag,
+-				    dev_to_node(dev));
+-}
+-
+-static void dma_nommu_free_coherent(struct device *dev, size_t size,
+-				     void *vaddr, dma_addr_t dma_handle,
+-				     unsigned long attrs)
+-{
+-	struct iommu_table *iommu;
+-
+-	/* See comments in dma_nommu_alloc_coherent() */
+-	if (dma_nommu_dma_supported(dev, dev->coherent_dma_mask))
+-		return __dma_nommu_free_coherent(dev, size, vaddr, dma_handle,
+-						  attrs);
+-	/* Maybe we used an iommu ... */
+-	iommu = get_iommu_table_base(dev);
+-
+-	/* If we hit that we should have never allocated in the first
+-	 * place so how come we are freeing ?
+-	 */
+-	if (WARN_ON(!iommu))
+-		return;
+-	iommu_free_coherent(iommu, size, vaddr, dma_handle);
+-}
+-
+ int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
+ 			     void *cpu_addr, dma_addr_t handle, size_t size,
+ 			     unsigned long attrs)
+@@ -228,8 +183,8 @@ static inline void dma_nommu_sync_single(struct device *dev,
+ #endif
+ 
+ const struct dma_map_ops dma_nommu_ops = {
+-	.alloc				= dma_nommu_alloc_coherent,
+-	.free				= dma_nommu_free_coherent,
++	.alloc				= __dma_nommu_alloc_coherent,
++	.free				= __dma_nommu_free_coherent,
+ 	.mmap				= dma_nommu_mmap_coherent,
+ 	.map_sg				= dma_nommu_map_sg,
+ 	.dma_supported			= dma_nommu_dma_supported,
+@@ -243,25 +198,6 @@ const struct dma_map_ops dma_nommu_ops = {
+ };
+ EXPORT_SYMBOL(dma_nommu_ops);
+ 
+-int dma_set_coherent_mask(struct device *dev, u64 mask)
+-{
+-	if (!dma_supported(dev, mask)) {
+-		/*
+-		 * We need to special case the direct DMA ops which can
+-		 * support a fallback for coherent allocations. There
+-		 * is no dma_op->set_coherent_mask() so we have to do
+-		 * things the hard way:
+-		 */
+-		if (get_dma_ops(dev) != &dma_nommu_ops ||
+-		    get_iommu_table_base(dev) == NULL ||
+-		    !dma_iommu_dma_supported(dev, mask))
+-			return -EIO;
+-	}
+-	dev->coherent_dma_mask = mask;
+-	return 0;
+-}
+-EXPORT_SYMBOL(dma_set_coherent_mask);
+-
+ int dma_set_mask(struct device *dev, u64 dma_mask)
+ {
+ 	if (ppc_md.dma_set_mask)
 -- 
-2.14.3
+2.19.0
 
