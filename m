@@ -2,290 +2,414 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E508C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFB0C65BD1
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409A4214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409A4214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B154214FE
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:29:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzN8MvLT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B154214FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeJJDrr (ORCPT
+        id S1726902AbeJJDr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:47:47 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63669 "EHLO mga12.intel.com"
+        Tue, 9 Oct 2018 23:47:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbeJJDrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:47:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 13:29:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,361,1534834800"; 
-   d="scan'208";a="98834476"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.165]) ([10.7.198.165])
-  by orsmga002.jf.intel.com with ESMTP; 09 Oct 2018 13:26:41 -0700
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain>
- <20181009170051.GA40606@tiger-server>
- <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
-Date:   Tue, 9 Oct 2018 13:26:41 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726854AbeJJDr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 23:47:57 -0400
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BDFB21502;
+        Tue,  9 Oct 2018 20:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539116954;
+        bh=MCI5b5HJO5DnZBuC4X0jVqffYlYEyk7qDapdV6AF1i0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UzN8MvLTip5X/GUNk8Vk2EEs7uQGuWvhY9h1cTeA0xyZlBqwfFdUeHpB58vgArRwn
+         6Q9ITzzQMQ9HAkU0nNeV1gdHxL2g+ouv5DIMBWl4Uc5104k8Lubaw1tQ1x801afHtN
+         AgwU2JzLDKjuXE2NVlVqwTTCCcJPamztAeFHzOU0=
+Received: by mail-ed1-f44.google.com with SMTP id y20-v6so2907524eds.10;
+        Tue, 09 Oct 2018 13:29:13 -0700 (PDT)
+X-Gm-Message-State: ABuFfohb+Sn4//F6v0LPT6xkzxRyhLofxpN3d3P/aUrfoQ8Tt34IetTV
+        dMFbk8p+txEkv3DbhjZg3D81sWsJaoyo17YqocA=
+X-Google-Smtp-Source: ACcGV60Z1rtoF5AYDnkzMIgpYF3faySawnEfxWT41oWORcndDz8FX+22OCaOEwGY5i/xcxrueOJVoMk8dtMu9uDeW8c=
+X-Received: by 2002:a05:6402:14da:: with SMTP id f26mr38085391edx.224.1539116952321;
+ Tue, 09 Oct 2018 13:29:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com> <1538712767-30394-6-git-send-email-frowand.list@gmail.com>
+In-Reply-To: <1538712767-30394-6-git-send-email-frowand.list@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 9 Oct 2018 15:28:35 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+Message-ID: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+Subject: Re: [PATCH 05/16] of: overlay: use prop add changeset entry for
+ property in new nodes
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/9/2018 11:04 AM, Dan Williams wrote:
-> On Tue, Oct 9, 2018 at 3:21 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
->>
->> On 2018-09-25 at 13:21:24 -0700, Alexander Duyck wrote:
->>> The ZONE_DEVICE pages were being initialized in two locations. One was with
->>> the memory_hotplug lock held and another was outside of that lock. The
->>> problem with this is that it was nearly doubling the memory initialization
->>> time. Instead of doing this twice, once while holding a global lock and
->>> once without, I am opting to defer the initialization to the one outside of
->>> the lock. This allows us to avoid serializing the overhead for memory init
->>> and we can instead focus on per-node init times.
->>>
->>> One issue I encountered is that devm_memremap_pages and
->>> hmm_devmmem_pages_create were initializing only the pgmap field the same
->>> way. One wasn't initializing hmm_data, and the other was initializing it to
->>> a poison value. Since this is something that is exposed to the driver in
->>> the case of hmm I am opting for a third option and just initializing
->>> hmm_data to 0 since this is going to be exposed to unknown third party
->>> drivers.
->>>
->>> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
->>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->>> ---
->>>
->>> v4: Moved moved memmap_init_zone_device to below memmmap_init_zone to avoid
->>>      merge conflicts with other changes in the kernel.
->>> v5: No change
->>>
->>>   include/linux/mm.h |    2 +
->>>   kernel/memremap.c  |   24 +++++---------
->>>   mm/hmm.c           |   12 ++++---
->>>   mm/page_alloc.c    |   92 ++++++++++++++++++++++++++++++++++++++++++++++++++--
->>>   4 files changed, 107 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index 06d7d7576f8d..7312fb78ef31 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -848,6 +848,8 @@ static inline bool is_zone_device_page(const struct page *page)
->>>   {
->>>        return page_zonenum(page) == ZONE_DEVICE;
->>>   }
->>> +extern void memmap_init_zone_device(struct zone *, unsigned long,
->>> +                                 unsigned long, struct dev_pagemap *);
->>>   #else
->>>   static inline bool is_zone_device_page(const struct page *page)
->>>   {
->>> diff --git a/kernel/memremap.c b/kernel/memremap.c
->>> index 5b8600d39931..d0c32e473f82 100644
->>> --- a/kernel/memremap.c
->>> +++ b/kernel/memremap.c
->>> @@ -175,10 +175,10 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
->>>        struct vmem_altmap *altmap = pgmap->altmap_valid ?
->>>                        &pgmap->altmap : NULL;
->>>        struct resource *res = &pgmap->res;
->>> -     unsigned long pfn, pgoff, order;
->>> +     struct dev_pagemap *conflict_pgmap;
->>>        pgprot_t pgprot = PAGE_KERNEL;
->>> +     unsigned long pgoff, order;
->>>        int error, nid, is_ram;
->>> -     struct dev_pagemap *conflict_pgmap;
->>>
->>>        align_start = res->start & ~(SECTION_SIZE - 1);
->>>        align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
->>> @@ -256,19 +256,13 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
->>>        if (error)
->>>                goto err_add_memory;
->>>
->>> -     for_each_device_pfn(pfn, pgmap) {
->>> -             struct page *page = pfn_to_page(pfn);
->>> -
->>> -             /*
->>> -              * ZONE_DEVICE pages union ->lru with a ->pgmap back
->>> -              * pointer.  It is a bug if a ZONE_DEVICE page is ever
->>> -              * freed or placed on a driver-private list.  Seed the
->>> -              * storage with LIST_POISON* values.
->>> -              */
->>> -             list_del(&page->lru);
->>> -             page->pgmap = pgmap;
->>> -             percpu_ref_get(pgmap->ref);
->>> -     }
->>> +     /*
->>> +      * Initialization of the pages has been deferred until now in order
->>> +      * to allow us to do the work while not holding the hotplug lock.
->>> +      */
->>> +     memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
->>> +                             align_start >> PAGE_SHIFT,
->>> +                             align_size >> PAGE_SHIFT, pgmap);
->>>
->>>        devm_add_action(dev, devm_memremap_pages_release, pgmap);
->>>
->>> diff --git a/mm/hmm.c b/mm/hmm.c
->>> index c968e49f7a0c..774d684fa2b4 100644
->>> --- a/mm/hmm.c
->>> +++ b/mm/hmm.c
->>> @@ -1024,7 +1024,6 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
->>>        resource_size_t key, align_start, align_size, align_end;
->>>        struct device *device = devmem->device;
->>>        int ret, nid, is_ram;
->>> -     unsigned long pfn;
->>>
->>>        align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
->>>        align_size = ALIGN(devmem->resource->start +
->>> @@ -1109,11 +1108,14 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
->>>                                align_size >> PAGE_SHIFT, NULL);
->>>        mem_hotplug_done();
->>>
->>> -     for (pfn = devmem->pfn_first; pfn < devmem->pfn_last; pfn++) {
->>> -             struct page *page = pfn_to_page(pfn);
->>> +     /*
->>> +      * Initialization of the pages has been deferred until now in order
->>> +      * to allow us to do the work while not holding the hotplug lock.
->>> +      */
->>> +     memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
->>> +                             align_start >> PAGE_SHIFT,
->>> +                             align_size >> PAGE_SHIFT, &devmem->pagemap);
->>>
->>> -             page->pgmap = &devmem->pagemap;
->>> -     }
->>>        return 0;
->>>
->>>   error_add_memory:
->>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>> index 926ad3083b28..7ec0997ded39 100644
->>> --- a/mm/page_alloc.c
->>> +++ b/mm/page_alloc.c
->>> @@ -5489,12 +5489,23 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->>>        if (highest_memmap_pfn < end_pfn - 1)
->>>                highest_memmap_pfn = end_pfn - 1;
->>>
->>> +#ifdef CONFIG_ZONE_DEVICE
->>>        /*
->>>         * Honor reservation requested by the driver for this ZONE_DEVICE
->>> -      * memory
->>> +      * memory. We limit the total number of pages to initialize to just
->>> +      * those that might contain the memory mapping. We will defer the
->>> +      * ZONE_DEVICE page initialization until after we have released
->>> +      * the hotplug lock.
->>>         */
->>> -     if (altmap && start_pfn == altmap->base_pfn)
->>> -             start_pfn += altmap->reserve;
->>> +     if (zone == ZONE_DEVICE) {
->>> +             if (!altmap)
->>> +                     return;
->>> +
->>> +             if (start_pfn == altmap->base_pfn)
->>> +                     start_pfn += altmap->reserve;
->>> +             end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
->>> +     }
->>> +#endif
->>>
->>>        for (pfn = start_pfn; pfn < end_pfn; pfn++) {
->>>                /*
->>> @@ -5538,6 +5549,81 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->>>        }
->>>   }
->>>
->>> +#ifdef CONFIG_ZONE_DEVICE
->>> +void __ref memmap_init_zone_device(struct zone *zone,
->>> +                                unsigned long start_pfn,
->>> +                                unsigned long size,
->>> +                                struct dev_pagemap *pgmap)
->>> +{
->>> +     unsigned long pfn, end_pfn = start_pfn + size;
->>> +     struct pglist_data *pgdat = zone->zone_pgdat;
->>> +     unsigned long zone_idx = zone_idx(zone);
->>> +     unsigned long start = jiffies;
->>> +     int nid = pgdat->node_id;
->>> +
->>> +     if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
->>> +             return;
->>> +
->>> +     /*
->>> +      * The call to memmap_init_zone should have already taken care
->>> +      * of the pages reserved for the memmap, so we can just jump to
->>> +      * the end of that region and start processing the device pages.
->>> +      */
->>> +     if (pgmap->altmap_valid) {
->>> +             struct vmem_altmap *altmap = &pgmap->altmap;
->>> +
->>> +             start_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
->>> +             size = end_pfn - start_pfn;
->>> +     }
->>> +
->>> +     for (pfn = start_pfn; pfn < end_pfn; pfn++) {
->>> +             struct page *page = pfn_to_page(pfn);
->>> +
->>> +             __init_single_page(page, pfn, zone_idx, nid);
->>> +
->>> +             /*
->>> +              * Mark page reserved as it will need to wait for onlining
->>> +              * phase for it to be fully associated with a zone.
->>> +              *
->>> +              * We can use the non-atomic __set_bit operation for setting
->>> +              * the flag as we are still initializing the pages.
->>> +              */
->>> +             __SetPageReserved(page);
->>
->> So we need to hold the page reserved flag while memory onlining.
->> But after onlined, Do we neeed to clear the reserved flag in the DEV/FS
->> DAX memory type?
->> @Dan, What will going on with this?
->>
-> 
-> That comment is incorrect, device-pages are never onlined. So I think
-> we can just skip that call to __SetPageReserved() unless the memory
-> range is MEMORY_DEVICE_{PRIVATE,PUBLIC}.
-> 
+On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
+>
+> From: Frank Rowand <frank.rowand@sony.com>
+>
 
-When pages are "onlined" via __free_pages_boot_core they clear the 
-reserved bit, that is the reason for the comment. The reserved bit is 
-meant to indicate that the page cannot be swapped out or moved based on 
-the description of the bit.
+Hi Frank,
 
-I would think with that being the case we still probably need the call 
-to __SetPageReserved to set the bit with the expectation that it will 
-not be cleared for device-pages since the pages are not onlined. 
-Removing the call to __SetPageReserved would probably introduce a number 
-of regressions as there are multiple spots that use the reserved bit to 
-determine if a page can be swapped out to disk, mapped as system memory, 
-or migrated.
+> The changeset entry 'update property' was used for new properties in
+> an overlay instead of 'add property'.
+>
+> The decision of whether to use 'update property' was based on whether
+> the property already exists in the subtree where the node is being
+> spliced into.  At the top level of creating a changeset describing the
+> overlay, the target node is in the live devicetree, so checking whether
+> the property exists in the target node returns the correct result.
+> As soon as the changeset creation algorithm recurses into a new node,
+> the target is no longer in the live devicetree, but is instead in the
+> detached overlay tree, thus all properties are incorrectly found to
+> already exist in the target.
 
-Thanks.
+When I applied an overlay (that added a few gpio controllers, etc),
+the node names for nodes added from the overlay end up NULL.   It
+seems related to this patch and the next one.  I haven't completely
+root caused this but if I back out to before this patch, the situation
+is fixed.
 
-- Alex
+root@arria10:~/unit_tests# ls /sys/bus/platform/drivers/altera_gpio/
+bind             ff200010.<NULL>  ff200020.<NULL>  ff200030.<NULL>
+uevent           unbind
 
+root@arria10:~/unit_tests# ls /sys/bus/platform/drivers/altera_freeze_br/
+bind             ff200450.<NULL>  uevent           unbind
+
+Alan
+
+>
+> This fix will expose another devicetree bug that will be fixed
+> in the following patch in the series.
+>
+> When this patch is applied the errors reported by the devictree
+> unittest will change, and the unittest results will change from:
+>
+>    ### dt-test ### end of unittest - 210 passed, 0 failed
+>
+> to
+>
+>    ### dt-test ### end of unittest - 203 passed, 7 failed
+>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>  drivers/of/overlay.c | 112 ++++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 74 insertions(+), 38 deletions(-)
+>
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index 32cfee68f2e3..0b0904f44bc7 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -24,6 +24,26 @@
+>  #include "of_private.h"
+>
+>  /**
+> + * struct target - info about current target node as recursing through overlay
+> + * @np:                        node where current level of overlay will be applied
+> + * @in_livetree:       @np is a node in the live devicetree
+> + *
+> + * Used in the algorithm to create the portion of a changeset that describes
+> + * an overlay fragment, which is a devicetree subtree.  Initially @np is a node
+> + * in the live devicetree where the overlay subtree is targeted to be grafted
+> + * into.  When recursing to the next level of the overlay subtree, the target
+> + * also recurses to the next level of the live devicetree, as long as overlay
+> + * subtree node also exists in the live devicetree.  When a node in the overlay
+> + * subtree does not exist at the same level in the live devicetree, target->np
+> + * points to a newly allocated node, and all subsequent targets in the subtree
+> + * will be newly allocated nodes.
+> + */
+> +struct target {
+> +       struct device_node *np;
+> +       bool in_livetree;
+> +};
+> +
+> +/**
+>   * struct fragment - info about fragment nodes in overlay expanded device tree
+>   * @target:    target of the overlay operation
+>   * @overlay:   pointer to the __overlay__ node
+> @@ -72,8 +92,7 @@ static int devicetree_corrupt(void)
+>  }
+>
+>  static int build_changeset_next_level(struct overlay_changeset *ovcs,
+> -               struct device_node *target_node,
+> -               const struct device_node *overlay_node);
+> +               struct target *target, const struct device_node *overlay_node);
+>
+>  /*
+>   * of_resolve_phandles() finds the largest phandle in the live tree.
+> @@ -257,14 +276,17 @@ static struct property *dup_and_fixup_symbol_prop(
+>  /**
+>   * add_changeset_property() - add @overlay_prop to overlay changeset
+>   * @ovcs:              overlay changeset
+> - * @target_node:       where to place @overlay_prop in live tree
+> + * @target:            where @overlay_prop will be placed
+>   * @overlay_prop:      property to add or update, from overlay tree
+>   * @is_symbols_prop:   1 if @overlay_prop is from node "/__symbols__"
+>   *
+> - * If @overlay_prop does not already exist in @target_node, add changeset entry
+> - * to add @overlay_prop in @target_node, else add changeset entry to update
+> + * If @overlay_prop does not already exist in live devicetree, add changeset
+> + * entry to add @overlay_prop in @target, else add changeset entry to update
+>   * value of @overlay_prop.
+>   *
+> + * @target may be either in the live devicetree or in a new subtree that
+> + * is contained in the changeset.
+> + *
+>   * Some special properties are not updated (no error returned).
+>   *
+>   * Update of property in symbols node is not allowed.
+> @@ -273,20 +295,22 @@ static struct property *dup_and_fixup_symbol_prop(
+>   * invalid @overlay.
+>   */
+>  static int add_changeset_property(struct overlay_changeset *ovcs,
+> -               struct device_node *target_node,
+> -               struct property *overlay_prop,
+> +               struct target *target, struct property *overlay_prop,
+>                 bool is_symbols_prop)
+>  {
+>         struct property *new_prop = NULL, *prop;
+>         int ret = 0;
+>
+> -       prop = of_find_property(target_node, overlay_prop->name, NULL);
+> -
+>         if (!of_prop_cmp(overlay_prop->name, "name") ||
+>             !of_prop_cmp(overlay_prop->name, "phandle") ||
+>             !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+>                 return 0;
+>
+> +       if (target->in_livetree)
+> +               prop = of_find_property(target->np, overlay_prop->name, NULL);
+> +       else
+> +               prop = NULL;
+> +
+>         if (is_symbols_prop) {
+>                 if (prop)
+>                         return -EINVAL;
+> @@ -299,10 +323,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>                 return -ENOMEM;
+>
+>         if (!prop)
+> -               ret = of_changeset_add_property(&ovcs->cset, target_node,
+> +               ret = of_changeset_add_property(&ovcs->cset, target->np,
+>                                                 new_prop);
+>         else
+> -               ret = of_changeset_update_property(&ovcs->cset, target_node,
+> +               ret = of_changeset_update_property(&ovcs->cset, target->np,
+>                                                    new_prop);
+>
+>         if (ret) {
+> @@ -315,14 +339,14 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>
+>  /**
+>   * add_changeset_node() - add @node (and children) to overlay changeset
+> - * @ovcs:              overlay changeset
+> - * @target_node:       where to place @node in live tree
+> - * @node:              node from within overlay device tree fragment
+> + * @ovcs:      overlay changeset
+> + * @target:    where @overlay_prop will be placed in live tree or changeset
+> + * @node:      node from within overlay device tree fragment
+>   *
+> - * If @node does not already exist in @target_node, add changeset entry
+> - * to add @node in @target_node.
+> + * If @node does not already exist in @target, add changeset entry
+> + * to add @node in @target.
+>   *
+> - * If @node already exists in @target_node, and the existing node has
+> + * If @node already exists in @target, and the existing node has
+>   * a phandle, the overlay node is not allowed to have a phandle.
+>   *
+>   * If @node has child nodes, add the children recursively via
+> @@ -355,15 +379,16 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>   * invalid @overlay.
+>   */
+>  static int add_changeset_node(struct overlay_changeset *ovcs,
+> -               struct device_node *target_node, struct device_node *node)
+> +               struct target *target, struct device_node *node)
+>  {
+>         const char *node_kbasename;
+>         struct device_node *tchild;
+> +       struct target target_child;
+>         int ret = 0;
+>
+>         node_kbasename = kbasename(node->full_name);
+>
+> -       for_each_child_of_node(target_node, tchild)
+> +       for_each_child_of_node(target->np, tchild)
+>                 if (!of_node_cmp(node_kbasename, kbasename(tchild->full_name)))
+>                         break;
+>
+> @@ -372,22 +397,28 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>                 if (!tchild)
+>                         return -ENOMEM;
+>
+> -               tchild->parent = target_node;
+> +               tchild->parent = target->np;
+>                 of_node_set_flag(tchild, OF_OVERLAY);
+>
+>                 ret = of_changeset_attach_node(&ovcs->cset, tchild);
+>                 if (ret)
+>                         return ret;
+>
+> -               ret = build_changeset_next_level(ovcs, tchild, node);
+> +               target_child.np = tchild;
+> +               target_child.in_livetree = false;
+> +
+> +               ret = build_changeset_next_level(ovcs, &target_child, node);
+>                 of_node_put(tchild);
+>                 return ret;
+>         }
+>
+> -       if (node->phandle && tchild->phandle)
+> +       if (node->phandle && tchild->phandle) {
+>                 ret = -EINVAL;
+> -       else
+> -               ret = build_changeset_next_level(ovcs, tchild, node);
+> +       } else {
+> +               target_child.np = tchild;
+> +               target_child.in_livetree = target->in_livetree;
+> +               ret = build_changeset_next_level(ovcs, &target_child, node);
+> +       }
+>         of_node_put(tchild);
+>
+>         return ret;
+> @@ -396,7 +427,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>  /**
+>   * build_changeset_next_level() - add level of overlay changeset
+>   * @ovcs:              overlay changeset
+> - * @target_node:       where to place @overlay_node in live tree
+> + * @target:            where to place @overlay_node in live tree
+>   * @overlay_node:      node from within an overlay device tree fragment
+>   *
+>   * Add the properties (if any) and nodes (if any) from @overlay_node to the
+> @@ -409,27 +440,26 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>   * invalid @overlay_node.
+>   */
+>  static int build_changeset_next_level(struct overlay_changeset *ovcs,
+> -               struct device_node *target_node,
+> -               const struct device_node *overlay_node)
+> +               struct target *target, const struct device_node *overlay_node)
+>  {
+>         struct device_node *child;
+>         struct property *prop;
+>         int ret;
+>
+>         for_each_property_of_node(overlay_node, prop) {
+> -               ret = add_changeset_property(ovcs, target_node, prop, 0);
+> +               ret = add_changeset_property(ovcs, target, prop, 0);
+>                 if (ret) {
+>                         pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
+> -                                target_node, prop->name, ret);
+> +                                target->np, prop->name, ret);
+>                         return ret;
+>                 }
+>         }
+>
+>         for_each_child_of_node(overlay_node, child) {
+> -               ret = add_changeset_node(ovcs, target_node, child);
+> +               ret = add_changeset_node(ovcs, target, child);
+>                 if (ret) {
+>                         pr_debug("Failed to apply node @%pOF/%s, err=%d\n",
+> -                                target_node, child->name, ret);
+> +                                target->np, child->name, ret);
+>                         of_node_put(child);
+>                         return ret;
+>                 }
+> @@ -442,17 +472,17 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>   * Add the properties from __overlay__ node to the @ovcs->cset changeset.
+>   */
+>  static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
+> -               struct device_node *target_node,
+> +               struct target *target,
+>                 const struct device_node *overlay_symbols_node)
+>  {
+>         struct property *prop;
+>         int ret;
+>
+>         for_each_property_of_node(overlay_symbols_node, prop) {
+> -               ret = add_changeset_property(ovcs, target_node, prop, 1);
+> +               ret = add_changeset_property(ovcs, target, prop, 1);
+>                 if (ret) {
+>                         pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
+> -                                target_node, prop->name, ret);
+> +                                target->np, prop->name, ret);
+>                         return ret;
+>                 }
+>         }
+> @@ -475,6 +505,7 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
+>  static int build_changeset(struct overlay_changeset *ovcs)
+>  {
+>         struct fragment *fragment;
+> +       struct target target;
+>         int fragments_count, i, ret;
+>
+>         /*
+> @@ -489,7 +520,9 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>         for (i = 0; i < fragments_count; i++) {
+>                 fragment = &ovcs->fragments[i];
+>
+> -               ret = build_changeset_next_level(ovcs, fragment->target,
+> +               target.np = fragment->target;
+> +               target.in_livetree = true;
+> +               ret = build_changeset_next_level(ovcs, &target,
+>                                                  fragment->overlay);
+>                 if (ret) {
+>                         pr_debug("apply failed '%pOF'\n", fragment->target);
+> @@ -499,7 +532,10 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>
+>         if (ovcs->symbols_fragment) {
+>                 fragment = &ovcs->fragments[ovcs->count - 1];
+> -               ret = build_changeset_symbols_node(ovcs, fragment->target,
+> +
+> +               target.np = fragment->target;
+> +               target.in_livetree = true;
+> +               ret = build_changeset_symbols_node(ovcs, &target,
+>                                                    fragment->overlay);
+>                 if (ret) {
+>                         pr_debug("apply failed '%pOF'\n", fragment->target);
+> @@ -517,7 +553,7 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>   * 1) "target" property containing the phandle of the target
+>   * 2) "target-path" property containing the path of the target
+>   */
+> -static struct device_node *find_target_node(struct device_node *info_node)
+> +static struct device_node *find_target(struct device_node *info_node)
+>  {
+>         struct device_node *node;
+>         const char *path;
+> @@ -623,7 +659,7 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
+>
+>                 fragment = &fragments[cnt];
+>                 fragment->overlay = overlay_node;
+> -               fragment->target = find_target_node(node);
+> +               fragment->target = find_target(node);
+>                 if (!fragment->target) {
+>                         of_node_put(fragment->overlay);
+>                         ret = -EINVAL;
+> --
+> Frank Rowand <frank.rowand@sony.com>
+>
