@@ -2,160 +2,233 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA57ECDFDF
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2B1ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4568D2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD56F20644
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QLN55wqy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4568D2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXxmfG9z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD56F20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeJJBuD (ORCPT
+        id S1726718AbeJJBzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:50:03 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32932 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbeJJBuD (ORCPT
+        Tue, 9 Oct 2018 21:55:38 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44989 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeJJBzi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:50:03 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y18-v6so1243666pge.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 11:31:46 -0700 (PDT)
+        Tue, 9 Oct 2018 21:55:38 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v6-v6so2491961ljc.11;
+        Tue, 09 Oct 2018 11:37:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=902PhF52M/Cz6Tu0Ri21LRUdH6aCiX/xSuwLUBdR8ts=;
-        b=QLN55wqy95vfQfu3ELTE4AOFrRezhhBK59GpCWSwIOsxFbNAwjmYqdA85qD9jVibFn
-         A7I/V4JIPKkLuv5Sz5TWsB/VYDKIBi/U+wQANi3MqtHdJDT9W9CEpqfWw/K1vi4G1jyL
-         p8RxgjVI6jM3N+vJ7d9hkwn1nUnFK3hx31WLI=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YxrVkyPivpkFoQ0gm/AxS7eKXoEdX7Yw147iqGTDhTA=;
+        b=LXxmfG9zN4r3UJcPEmwKtxjXd6x4jBzonHFw0zkCDNVBKNbWc4RuRL0xyTosnaggIm
+         eB/RRty7ZAiwCtAWR3eV5n3+lq3lQe7TJXjivnIBy4uFk0VWaTggkI0Zp+UEpDkFFHPz
+         YCro82WmExKS6xgoGYmswSWABrOSXJPWWAAHSqciN0b+gWqRw9J+e2FIgZEejbj+TbnZ
+         HN/EiMFyvf9kiHxsza+2mrT9UIblJehLy+cIg1C+HXFm/t3M/Ie9i5aVDGZHi5ukZwRW
+         /Qw7UAFwYQGdRXtyj1lAQT2TUVLyUScMxFyh8EBq9e842t6Tikx2wUZNI4EV/zhJwdF4
+         pWVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=902PhF52M/Cz6Tu0Ri21LRUdH6aCiX/xSuwLUBdR8ts=;
-        b=Gomzg0BXyNO6qnWQlUU8m6IVX1yjVFcOJAvM1ei1sICT7CzvLju8G5GgmkGiABvxA1
-         u9wORWAEzXOWj0XFmvnzZKEg72/VsDiPitDPOvuFUDaSH/zvF+qlOj5hq7K/P4m2v25/
-         DgG3l6YQOb2yABaL2C7ORe+XOG/N8M9Gj1yEw5kG57p5/tyC/ly0R0KYtv6AxaTOIC6M
-         txXT7OZ4cts/pwlRp5/ix2ma/G2u0oU6NhInmyQQ9p5eKrqzgZkgzp94VugJmh/U+9+O
-         Rt8J601OCVGpk1ivl2hpJRTUdxLhkKYyglRvOpcwqvB0nVxwZGlq+Vh1GbhiFkuN8Mgc
-         g8pQ==
-X-Gm-Message-State: ABuFfogtPcep33nP1FKxEdexlDwElLv7UCyV8faLlrj4OpdnrVPoph/7
-        QOnLxZT26Issw+nJszqzaymURA==
-X-Google-Smtp-Source: ACcGV62FGv5+mRRhnjg9YGiStdG8+taHNLe/5v+BoNk8URpqchtFOAwlxfD6zJwEgMXBfeGyG0mYAQ==
-X-Received: by 2002:a62:798e:: with SMTP id u136-v6mr30611363pfc.95.1539109905997;
-        Tue, 09 Oct 2018 11:31:45 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id l10-v6sm39061838pgs.45.2018.10.09.11.31.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 11:31:44 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 11:31:42 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, swboyd@chromium.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
-Message-ID: <20181009183141.GA126050@ban.mtv.corp.google.com>
-References: <20180925210255.172734-1-mka@chromium.org>
- <20181009010711.GA1577@ban.mtv.corp.google.com>
- <CAMuHMdWe5JYp5eC2PvuG4xEud908Crhm+BhrtxPJ4Uo1-LCc4g@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YxrVkyPivpkFoQ0gm/AxS7eKXoEdX7Yw147iqGTDhTA=;
+        b=El8dxeCbQ0/uDxx7hNSE3jQH8s+h0axNB3YPvcIP+vDv/JPwcIlJwxy6Ai/f7rU6mA
+         aAehqWajT7iEjpv428xidkoy1Rew3FWDfiyUbQYSPa3EB2U2kSVaxO3WVLw4CXMDadCK
+         XSj1dVCug9pMDYjB+Ig3Z6jninQX0nxyEfXvsNyJbwGFRJTqvdFm4fJYW3ea4NfwsVaF
+         8mHqly8KXups0Udvl7Af/mFkx4WVr0ClUwPWemG/VT0i8MvuxSHvb2m0aSahXAplYFhJ
+         Lw1ewTPtiCop3+HP1j0JUf/8bgJiHBvZuPACOh7RFt87jYo82wt9bw5sjys5prAAILX6
+         B+kA==
+X-Gm-Message-State: ABuFfogQUk7Yql+/n9vrjt0rJqky1TSxdwzQTFuyQ0IDnhY22Q6MU+rm
+        G4BWVw8AAdB5Q3RaZl3tPiWbYjto
+X-Google-Smtp-Source: ACcGV605OhgzHJ46etb4HC2N2D6MoyVEM/bnw7EAJxnktStmWGhvHE4woCcouo5Dnj5vhK295QeS6g==
+X-Received: by 2002:a2e:990a:: with SMTP id v10-v6mr4850084lji.22.1539110236720;
+        Tue, 09 Oct 2018 11:37:16 -0700 (PDT)
+Received: from [192.168.1.18] (dki68.neoplus.adsl.tpnet.pl. [83.24.12.68])
+        by smtp.gmail.com with ESMTPSA id 25-v6sm4557003lfv.43.2018.10.09.11.37.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 11:37:15 -0700 (PDT)
+Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
+ <9bf6236e-83af-7156-b26b-7d88ece2d81e@gmail.com>
+ <CAMz4kuJ4iB7pn+i29aypnbxxPK_UDjus=EiNZ2WefBB0onZPTg@mail.gmail.com>
+ <7051613e-f2db-260f-85d7-d40278fd11cb@gmail.com>
+ <CAMz4kuKJ73mHzYotwmx08h1sJJiKAZNCspo0_v7L-2Ec+5rEQg@mail.gmail.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <931be52e-fa7e-72f8-0e5f-9a8a006d6ccd@gmail.com>
+Date:   Tue, 9 Oct 2018 20:37:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAMz4kuKJ73mHzYotwmx08h1sJJiKAZNCspo0_v7L-2Ec+5rEQg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWe5JYp5eC2PvuG4xEud908Crhm+BhrtxPJ4Uo1-LCc4g@mail.gmail.com>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 09:22:07AM +0200, Geert Uytterhoeven wrote:
-> Please note these aliases become cumbersome once you start considering
-> (dynamic) DT overlays.  That's why I made them optional in the sh-sci
-> serial driver, cfr. commit 7678f4c20fa7670f ("serial: sh-sci: Add support
-> for dynamic instances").
+Hi Baolin,
 
-Note that as I understand it, the entire point of documenting this sort
-of thing is to help solidify the interface between a DT aware boot
-program (e.g., bootloader) and a device tree which is provided
-separately, to avoid memorizing node/path hierarchy. It doesn't need to
-(and doesn't, as I read it) enforce an OS's device naming policy.
-
-> Relevant parts of the commit description are:
+On 10/09/2018 02:01 PM, Baolin Wang wrote:
+> Hi Jacek and Pavel,
 > 
->     On DT platforms, the sh-sci driver requires the presence of "serialN"
->     aliases in DT, from which instance IDs are derived.  If a DT alias is
->     missing, the drivers fails to probe the corresponding serial port.
+> On 5 October 2018 at 04:00, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>> Hi Baolin,
+>>
+>> On 10/03/2018 03:21 AM, Baolin Wang wrote:
+>>> Hi Jacek,
+>>>
+>>> On 3 October 2018 at 04:25, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>> Hi Baolin,
+>>>>
+>>>> Thank you for the v14. We'll probably need v15, though :-)
+>>>>
+>>>> I added the comments in the code below.
+>>>>
+>>>> On 10/02/2018 05:43 PM, Baolin Wang wrote:
+>>>>> This patch adds one new led trigger that LED device can configure
+>>>>> the software or hardware pattern and trigger it.
+>>>>>
+>>>>> Consumers can write 'pattern' file to enable the software pattern
+>>>>> which alters the brightness for the specified duration with one
+>>>>> software timer.
+>>>>>
+>>>>> Moreover consumers can write 'hw_pattern' file to enable the hardware
+>>>>> pattern for some LED controllers which can autonomously control
+>>>>> brightness over time, according to some preprogrammed hardware
+>>>>> patterns.
+>>>>>
+>>>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+>>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>>>> ---
+>>>>> Changes from v13:
+>>>>>  - Add duration validation for gradual dimming.
+>>>>>  - Coding style optimization.
+>>>>>
+>>>>> Changes from v12:
+>>>>>  - Add gradual dimming support for software pattern.
+>>>>>
+>>>>> Changes from v11:
+>>>>>  - Change -1 means repeat indefinitely.
+>>>>>
+>>>>> Changes from v10:
+>>>>>  - Change 'int' to 'u32' for delta_t field.
+>>>>>
+>>>>> Changes from v9:
+>>>>>  - None.
+>>>>>
+>>>>> Changes from v8:
+>>>>>  - None.
+>>>>>
+>>>>> Changes from v7:
+>>>>>  - Move the SC27XX hardware patterns description into its own ABI file.
+>>>>>
+>>>>> Changes from v6:
+>>>>>  - Improve commit message.
+>>>>>  - Optimize the description of the hw_pattern file.
+>>>>>  - Simplify some logics.
+>>>>>
+>>>>> Changes from v5:
+>>>>>  - Add one 'hw_pattern' file for hardware patterns.
+>>>>>
+>>>>> Changes from v4:
+>>>>>  - Change the repeat file to return the originally written number.
+>>>>>  - Improve comments.
+>>>>>  - Fix some build warnings.
+>>>>>
+>>>>> Changes from v3:
+>>>>>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>>>>>  - Support one pattern.
+>>>>>
+>>>>> Changes from v2:
+>>>>>  - Remove hardware_pattern boolen.
+>>>>>  - Chnage the pattern string format.
+>>>>>
+>>>>> Changes from v1:
+>>>>>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>>>>>  - Introduce hardware_pattern flag to determine if software pattern
+>>>>>  or hardware pattern.
+>>>>>  - Re-implement pattern_trig_store_pattern() function.
+>>>>>  - Remove pattern_get() interface.
+>>>>>  - Improve comments.
+>>>>>  - Other small optimization.
+>>>>> ---
+>>>>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |  76 ++++
+>>>>>  drivers/leds/trigger/Kconfig                       |   7 +
+>>>>>  drivers/leds/trigger/Makefile                      |   1 +
+>>>>>  drivers/leds/trigger/ledtrig-pattern.c             | 431 +++++++++++++++++++++
+>>>>>  include/linux/leds.h                               |  15 +
+>>>>>  5 files changed, 530 insertions(+)
+>>>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+>>>>>
+>>>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>>> new file mode 100644
+>>>>> index 0000000..22d7af7
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>>> @@ -0,0 +1,76 @@
+>>>>> +What:                /sys/class/leds/<led>/pattern
+>>>>> +Date:                September 2018
+>>>>> +KernelVersion:       4.20
+>>>>> +Description:
+>>>>> +             Specify a software pattern for the LED, that supports altering
+>>>>> +             the brightness for the specified duration with one software
+>>>>> +             timer. It can do gradual dimming and constant brightness.
+>>>>> +
+>>>>> +             The pattern is given by a series of tuples, of brightness and
+>>>>> +             duration (ms). The LED is expected to traverse the series and
+>>>>> +             each brightness value for the specified duration. Duration of
+>>>>> +             0 means brightness should immediately change to new value.
+>>>>> +
+>>>>> +             1. When doing gradual dimming, the led brightness will be updated
+>>>>> +             every 50 milliseconds, so the duration of each step should not
+>>>>> +             less than 50 milliseconds.
+>>>>
+>>>> I'd like to avoid this constraint. Lowest supported delta_t should be 1.
+>>>>
+>>>> We should only prevent entering dimming mode if current delta_t
+>>>> is lower than UPDATE_INTERVAL.
+>>>
+>>> I do not think so. If the pattern format is used for dimming and the
+>>> delta_t is lower than UPDATE_INTERVAL, we should return errors. Since
+>>> in this case, we can not change to constant mode.
+>>
+>> I'll play with the code at weekend and will let you know my findings.
 > 
->     This becomes cumbersome when considering DT overlays, as currently
->     there is no upstream support for dynamically updating the /aliases node
->     in DT.
+> Thanks Jacek. Do you have any more suggestion?
 
-That part is not a DT spec problem :)
+Sorry to say, but I had really busy weekend and failed to carve out
+time for looking into that. It's queued up with the highest priority
+on my todo list of things needing more than five minutes of attention.
 
->     Furthermore, even in the presence of such support, hardcoded
->     instance IDs in independent overlays are prone to conflicts.
-> 
->     Hence add support for dynamic instance IDs, to be used in the absence of
->     a DT alias.  This makes serial ports behave similar to I2C and SPI
->     buses, which already support dynamic instances.
+> BTW, we have not get a consensus about adding one 'dimming_interval'
+> file to set the dimming interval instead of fixed 50 ms.
+> Pavel, I want to hear your suggestion before I submit new patch set? Thanks.
 
-This seems to be a much different sort of problem. People always love
-having predictable IDs given by the OS (myself included), but that's
-just plain hard to do and impossible in some cases. I don't think that's
-what this document is about though.
+I think that this feature belongs to the "nice to have" category,
+and lack of it will not prevent us from merging the patch set.
 
-IOW, this document seems pretty consistent with the above: it doesn't
-require the usage of aliases (and it seems silly to have a driver
-*require* an alias) -- it just documents how one should name such an
-alias if you expect multiple independent software components to
-understand it.
-
-> To clarify my point: R-Car M2-W has 4 different types of serial ports, for a
-> total of 18 ports, and the two ports on a board labeled 0 and 1 may not
-> correspond to the physical first two ports (what's "first" in a collection of
-> 4 different types?).
-> 
-> Aliases may be fine for referring to the main serial console (labeled
-> port 0 on the device, too), and the primary Ethernet interface (so U-Boot
-> knows where to add the "local-mac-address" property), but beyond that,
-> I think they should be avoided.
-
-That's fair enough. Just because the solution isn't an all-purpose tool
-doesn't mean it shouldn't be documented. The general concept is already
-in ePAPR, but it's just not very specific about property names.
-
-> Just my two^H^H^Hfive €c.
-
-Thanks,
-Brian
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+-- 
+Best regards,
+Jacek Anaszewski
