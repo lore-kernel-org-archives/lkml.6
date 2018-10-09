@@ -2,160 +2,183 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04258C67879
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD03C67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5033205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5033205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D532205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:07:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OycQHvQx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D532205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeJIIV0 (ORCPT
+        id S1726752AbeJIIVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:21:26 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54893 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeJIIV0 (ORCPT
+        Tue, 9 Oct 2018 04:21:39 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35218 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeJIIVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:21:26 -0400
-Received: by mail-io1-f71.google.com with SMTP id l24-v6so21189863iok.21
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 18:07:02 -0700 (PDT)
+        Tue, 9 Oct 2018 04:21:39 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l17-v6so4788394pff.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 18:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zMjslepzakTLo3e6QKPDkzI3w1kDi1qg8wBr+Kn9rJk=;
+        b=OycQHvQxh7F6wT1ZKUL+PBdNqQZjRdIIGaCndb78uyL53gludte9HqEvsAs/OxTw0P
+         okqlouidCri/pJ4QzpyfKXj4p9Vv38oUaHfcJOVhOoiN0omRT1hh/0IwTvnTBjawF3Gv
+         pn9VdI5VjSZ3jIM4D7PqdbITptlbSvb19dY1U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=SlHmKsBol4IlccEcvKBO/mAwvUoSpimbySEIUUeJkb8=;
-        b=hDRBm/pbPFIGP3XoJkjH836qHhHFCfrU2QVcVMqCvVwnCsbV3kMWQxgU0J2StxpJHH
-         V8dy2wq9KpElXxK2u7d842HHSFnCN2Scj8BbEIVtJw9DABbI4wzXffoAk2/nkEHAhSb5
-         vozZqTkKjonHjC5oRFJbE8A7FzD+uf8H64tN4RUcQh+6FgflJd9iLmYlbikOLVGgwdD5
-         TjX+KtuvEdkC9kI1tFbhLCDqdmQSsJfJaWrAksE1Wr8cGO1B7kLGZZZudhKeVWKUW67X
-         ubXZXfK76QfG1NWE5lCyl+Wdz70zPxLjxKiiGN/ZkEIsG6eOPmL6aYo6wVlVnCNunnHe
-         /C4g==
-X-Gm-Message-State: ABuFfohHs34RChEoG3RUjwZwr3C5l0FFvzTCQNkcs1hI8zGXSmCWYVqh
-        o0eF+4MB/s1KynxR0HVEPAR97nx605d1EKSURhfgRBQTf/2H
-X-Google-Smtp-Source: ACcGV60H/FFAtLYYyKnl7/zhTe7eEQeu262T+4acZ71/VuIyfOdj6eoriK1Sr9aD9KZO/f39q5KnIBsyYG6MvjQHAM/3jwXsXRnj
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zMjslepzakTLo3e6QKPDkzI3w1kDi1qg8wBr+Kn9rJk=;
+        b=Jk6RjY8pcyM5ze3Jr804mz21RbTWqWcLxVFCHnRi/O6SvlfvWDEPQIzMMLim1OgbbB
+         KHbtCIX3st2T13OS3cWaqhWATpTrC0xX8oOKHK854Jk9/xyyHJXoelituOZnbSXOica0
+         zE7RtOeVUmOxoZhf0W19EjrKocp3z1n1l5N6KNodJ4s5Pasi+x4RQvOlo0gPdoCTkmls
+         c3N/uN7vzW85XF1L6GYhDPUjagJ9TPGNddFUoWx0bAc2TjGouoAcgkKo/T9KJUaw1TcR
+         angUCDl8vMiTYkVrVNBtwZY9WdwODVynwlamKnRJ4G0OZCnlchD6nRmWhYhioP0V56AU
+         8knA==
+X-Gm-Message-State: ABuFfoiKsN1wyXjw+Hq/SsC8O04O0fuCzNxFzUEADPt2tWvDTstqPG/o
+        x8orYSGEqdVl4HXqJxNjM2Megg==
+X-Google-Smtp-Source: ACcGV61XcYLBAd2t2YqT6mRggGVW4Qfaz8sJjLTV2mGHoXgkeWK6gOVq/NRk3mm1CqZMGSOPNU1bBA==
+X-Received: by 2002:a63:6d83:: with SMTP id i125-v6mr22741818pgc.215.1539047236053;
+        Mon, 08 Oct 2018 18:07:16 -0700 (PDT)
+Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id h88-v6sm43113399pfa.184.2018.10.08.18.07.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 18:07:15 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 18:07:13 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-spi@vger.kernel.org,
+        netdev@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
+Message-ID: <20181009010711.GA1577@ban.mtv.corp.google.com>
+References: <20180925210255.172734-1-mka@chromium.org>
 MIME-Version: 1.0
-X-Received: by 2002:a24:d49:: with SMTP id 70-v6mr307453itx.5.1539047222527;
- Mon, 08 Oct 2018 18:07:02 -0700 (PDT)
-Date:   Mon, 08 Oct 2018 18:07:02 -0700
-In-Reply-To: <000000000000ca61cd0571178677@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fddb150577c15af6@google.com>
-Subject: Re: BUG: corrupted list in p9_read_work
-From:   syzbot <syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com>
-To:     asmadeus@codewreck.org, davem@davemloft.net, ericvh@gmail.com,
-        linux-kernel@vger.kernel.org, lucho@ionkov.net,
-        netdev@vger.kernel.org, rminnich@sandia.gov,
-        syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925210255.172734-1-mka@chromium.org>
+User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
++ linux-spi, linux-wireless, netdev
++ others from previous conversations
 
-HEAD commit:    0854ba5ff5c9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1514ec06400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
-dashboard link: https://syzkaller.appspot.com/bug?extid=2222c34dc40b515f30dc
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b91685400000
+Hi,
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com
+On Tue, Sep 25, 2018 at 02:02:55PM -0700, Matthias Kaehlcke wrote:
+> Add a global binding for the 'aliases' node. This includes an initial list
+> of standardized alias names for some hardware components that are commonly
+> found in 'aliases'.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  Documentation/devicetree/bindings/aliases.txt | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/aliases.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/aliases.txt b/Documentation/devicetree/bindings/aliases.txt
+> new file mode 100644
+> index 000000000000..d64ed1c7eb34
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/aliases.txt
+> @@ -0,0 +1,47 @@
+> +The aliases node
+> +----------------
 
-FS-Cache: N-cookie d=000000000a092700 n=00000000d8ee0022
-FS-Cache: N-key=[10] '34323935303034313132'
-list_del corruption, ffff88019ae36ee8->next is LIST_POISON1  
-(dead000000000100)
-------------[ cut here ]------------
-kobject: '9p-11043': free name
-kernel BUG at lib/list_debug.c:47!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 2686 Comm: kworker/1:2 Not tainted 4.19.0-rc7+ #274
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-kobject: '9p-11049' (0000000096206f7a): kobject_add_internal:  
-parent: 'bdi', set: 'devices'
-Workqueue: events p9_read_work
-RIP: 0010:__list_del_entry_valid.cold.1+0x26/0x58 lib/list_debug.c:45
-Code: d7 fd 0f 0b 4c 89 e2 48 89 de 48 c7 c7 40 92 40 88 e8 7a a2 d7 fd 0f  
-0b 4c 89 ea 48 89 de 48 c7 c7 e0 91 40 88 e8 66 a2 d7 fd <0f> 0b 48 89 de  
-48 c7 c7 00 93 40 88 e8 55 a2 d7 fd 0f 0b 48 89 de
-RSP: 0018:ffff8801cc5975b8 EFLAGS: 00010282
-kobject: '9p-11049' (0000000096206f7a): kobject_uevent_env
-RAX: 000000000000004e RBX: ffff88019ae36ee8 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81650405 RDI: 0000000000000005
-RBP: ffff8801cc5975d0 R08: ffff8801cc58a4c0 R09: ffffed003b5e4fe8
-R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: dead000000000200
-R13: dead000000000100 R14: ffff8801c8931050 R15: ffff8801c8931010
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fef196c1000 CR3: 00000001ccff7000 CR4: 00000000001406e0
-Call Trace:
-kobject: '9p-11049' (0000000096206f7a): fill_kobj_path: path  
-= '/devices/virtual/bdi/9p-11049'
-  __list_del_entry include/linux/list.h:117 [inline]
-  list_del include/linux/list.h:125 [inline]
-  p9_read_work+0xab6/0x10e0 net/9p/trans_fd.c:379
-kobject: 'loop4' (00000000513f3e2f): kobject_uevent_env
-FS-Cache: Duplicate cookie detected
-  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
-FS-Cache: O-cookie c=00000000911358e4 [p=000000006545c95d fl=222 nc=0 na=1]
-FS-Cache: O-cookie d=000000000a092700 n=000000007635356b
-FS-Cache: O-key=[10] '
-34
-32
-39
-35
-30
-30
-34
-31
-32
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-36
-'
-FS-Cache: N-cookie c=00000000abaeee81 [p=000000006545c95d fl=2 nc=0 na=1]
-FS-Cache: N-cookie d=000000000a092700 n=00000000ee16a363
-FS-Cache: N-key=[10] '
-34
-32
-39
-35
-30
-30
-34
-  kthread+0x35a/0x420 kernel/kthread.c:246
-31
-32
-36
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-'
-Modules linked in:
----[ end trace 41e06641f5c3c814 ]---
-kobject: '9p-11050' (000000002a096aa2): kobject_add_internal:  
-parent: 'bdi', set: 'devices'
-RIP: 0010:__list_del_entry_valid.cold.1+0x26/0x58 lib/list_debug.c:45
-Code: d7 fd 0f 0b 4c 89 e2 48 89 de 48 c7 c7 40 92 40 88 e8 7a a2 d7 fd 0f  
-0b 4c 89 ea 48 89 de 48 c7 c7 e0 91 40 88 e8 66 a2 d7 fd <0f> 0b 48 89 de  
-48 c7 c7 00 93 40 88 e8 55 a2 d7 fd 0f 0b 48 89 de
-RSP: 0018:ffff8801cc5975b8 EFLAGS: 00010282
-RAX: 000000000000004e RBX: ffff88019ae36ee8 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81650405 RDI: 0000000000000005
-RBP: ffff8801cc5975d0 R08: ffff8801cc58a4c0 R09: ffffed003b5e4fe8
-R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: dead000000000200
-R13: dead000000000100 R14: ffff8801c8931050 R15: ffff8801c8931010
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fef196c1000 CR3: 00000001ccff7000 CR4: 00000000001406e0
+I like the idea in general, and it might be good to note (e.g., commit
+message) that this was inspired by this thread:
 
+https://lore.kernel.org/lkml/20180815221601.GB24830@rob-hp-laptop/
+
+where we were interested in firmware-to-device-tree path stability --
+and the answer was basically: don't memorize paths, just use aliases
+instead. But then, it was clear that aliases were not documented very
+formally at all.
+
+So here we are!
+
+> +
+> +The aliases node contains properties that represent aliases to device tree
+> +nodes. The name of the property is the alias name, the value is the path of
+> +a the device tree node that corresponds to the alias. The path may be
+> +specified as a string or a phandle.
+> +
+> +Alias names are often suffixed with a numeric ID, especially when there may
+> +be multiple instances of the same type. The ID typically corresponds to the
+> +hardware layout, it may also be used by drivers for a stable mapping of
+> +device names and hardware entities.
+> +
+> +Alias names
+> +-----------
+> +
+> +The devicetree specification doesn't require the use of specific alias
+> +names to refer to hardware entities of a given type, however the Linux
+> +kernel aims for a certain level of consistency.
+> +
+> +The following standardized alias names shall be used for their
+> +corresponding hardware components:
+> +
+> +  bluetoothN		Bluetooth controller
+> +  ethernetN		Ethernet interface
+> +  gpioN			GPIO controller
+> +  i2cN			i2c bus
+> +  mmcN			MMC bus
+> +  rtcN			Real time clock
+> +  serialN		UART port
+> +  spiN			SPI bus
+> +  wifiN			Wireless network interface
+
+For the network-device-related names (bluetooth, ethernet, and wifi), I
+think there's a clear documented reason for this (supporting MAC address
+plumbing from a DT-aware bootloader). I'm not quite as sure about all
+the others, and unfortunately, I'm aware of at least one subsystem owner
+that explicitly does NOT like the aliases usage that is currently
+supported (spi), and shot down a patch where I tried to use it in a DTS
+file (despite its regular usage in many other DTS files).
+
+So I guess I'm saying: perhaps we should get buy-in from various
+subsystems before we include them? So maybe it's wiser to start
+small(er) and only add once we're sure they are useful? Or perhaps Rob
+has other thoughts.
+
+> +
+> +The above list is not exhaustive and will be extended over time. Please
+> +send patches to devicetree@vger.kernel.org if you think a hardware
+> +component and its alias name should be on the list.
+> +
+> +Example
+> +-------
+> +
+> +aliases {
+> +	bluetooth0 = "/soc/serial@fdf01000/bluetooth";
+> +	rtc0 = &rtc0;
+> +	wifi0 = &wlcore;
+> +};
+> +
+> +(based on arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts)
+
+What is the relevance of this line? This doesn't look anything like that
+hikey DTS. Maybe the "based on" line should just be removed? The example
+seems fine though.
+
+Anyway, perhaps with a trimmed list of supported alias names:
+
+Reviewed-by: Brian Norris <briannorris@chromium.org>
