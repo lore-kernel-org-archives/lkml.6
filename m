@@ -2,188 +2,200 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 464A6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EEEC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45B1214FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:52:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45B1214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E86BA214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:53:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CcLeu2sj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86BA214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbeJJAKo (ORCPT
+        id S1726840AbeJJALm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:10:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50488 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJJAKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:10:44 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D8C73082E4E;
-        Tue,  9 Oct 2018 16:52:52 +0000 (UTC)
-Received: from [10.36.117.230] (ovpn-117-230.ams2.redhat.com [10.36.117.230])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E9AD694D0;
-        Tue,  9 Oct 2018 16:52:50 +0000 (UTC)
-Subject: Re: [PATCH v2] KVM: LAPIC: Tune lapic_timer_advance_ns automatically
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <1539046928-18600-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8f6a633b-9b7d-656e-599a-e1811656bbf1@redhat.com>
-Date:   Tue, 9 Oct 2018 18:52:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 9 Oct 2018 20:11:42 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43545 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJJALl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:11:41 -0400
+Received: by mail-ot1-f65.google.com with SMTP id k9so2348792otl.10
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XLScJQ3M0L+Pt8WJbGYIgvxV+Ts8MyCg7P0E5Ju8AQs=;
+        b=CcLeu2sj8u7IIqSsPW/L0Oor/Sv1rGkYmrQVD5Ke9gsqdeyRvjzTxHVO78axkMhADn
+         vqI2L3IeKDXqVFlNrVdUIHPa9CB6amNxdJkCm1KMzsldVFO6mAQSSWNUjo98fhoQrtI3
+         bgJS6B0a8QGIOLsoeajsPQJO4mKh1dS0SuBStXS9nXTT6ueCZpdO1mwpmr74Npfazlyw
+         1EzRLlft1/7XqAeYeLpGSOjSkZVYdPocNuUkcXHmVv0cH7AYtuch+IB82nFHl3wtoHPq
+         lKbayCzlduuFgDnskwHqYAhfizgAawRGDDHr4glJuHzKT2W9opMFMCKvNVhGx66T18nU
+         qE7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XLScJQ3M0L+Pt8WJbGYIgvxV+Ts8MyCg7P0E5Ju8AQs=;
+        b=dD69eRAEvSxmtZz/GcNd84CtuuloKQK5YMEI+7Ajk27cprj44t2aDqlcVcbHik6R9j
+         h6fwmGg6/VB6RoYDy/C26tTF+MPLwu9Kr4eeV53V8yktlCreFdC5yoTzVVSJheczD0Je
+         vm1a+litt6ZdpLPUtmtKvSWl5Y9fzBxxJLt5hSU1hAo9v/QdjIAAgllHOzW+MBCTLD5s
+         MY2XHOfpablI1nQxXmFYfeGVqpZyHvi2yW+mX5GxxvUM8H5Hr8VtCXdAy5txNoqvmTAU
+         yok1KSQIbaQArU56APwld7DZNqnT6rzewwQ1I2VJ5MFMAjkcgIel+frcYDVKhOovGDxe
+         4HOg==
+X-Gm-Message-State: ABuFfoh1ORSyfcxK1vQz4rgeZUl5rDCKoBJcH8MHJcN9/PEEKSkGqs95
+        5ygA0bscywEiaEH1hnLq/b87nxuEqCI2FcvmK1PWTIrVGYU=
+X-Google-Smtp-Source: ACcGV63gjdM5pBNIJ8UwKAVE7OEBXu6QrDHb6q+tgfsN8jhG0q1r6mE1koW3qimuN43a/5cgHOmY8IPiIhJp7b4czqM=
+X-Received: by 2002:a9d:5733:: with SMTP id p48mr16375411oth.292.1539104028723;
+ Tue, 09 Oct 2018 09:53:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1539046928-18600-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 09 Oct 2018 16:52:52 +0000 (UTC)
+References: <20181009103752.21482-1-laurent@vivier.eu> <20181009103752.21482-2-laurent@vivier.eu>
+ <f14ce318-5a1a-06f3-2e90-91220f39e74b@virtuozzo.com> <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
+In-Reply-To: <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 9 Oct 2018 18:53:22 +0200
+Message-ID: <CAG48ez0pAxC+yetPfM+XyS8kfqA4hw1hxjKG55gbF-4qcNWUiA@mail.gmail.com>
+Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     ktkhai@virtuozzo.com, kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, dima@arista.com,
+        Linux API <linux-api@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        containers@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 03:02, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> In cloud environment, lapic_timer_advance_ns is needed to be tuned for every CPU 
-> generations, and every host kernel versions(the kvm-unit-tests/tscdeadline_latency.flat 
-> is 5700 cycles for upstream kernel and 9600 cycles for our 3.10 product kernel, 
-> both preemption_timer=N, Skylake server).
-> 
-> This patch adds the capability to automatically tune lapic_timer_advance_ns
-> step by step, the initial value is 1000ns as 'commit d0659d946be0 ("KVM: x86: 
-> add option to advance tscdeadline hrtimer expiration")' recommended, it will be 
-> reduced when it is too early, and increased when it is too late. The guest_tsc 
-> and tsc_deadline are hard to equal, so we assume we are done when the delta 
-> is within a small scope e.g. 100 cycles. This patch reduces latency 
-> (kvm-unit-tests/tscdeadline_latency, busy waits, preemption_timer enabled)
-> from ~2600 cyles to ~1200 cyles on our Skylake server.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v1 -> v2:
->  * converts between guest TSC units to host nanoseconds correctly
->  * put hard-coded numbers to #define 
-> 
->  arch/x86/kvm/lapic.c | 25 ++++++++++++++++++++++++-
->  arch/x86/kvm/x86.c   |  2 +-
->  2 files changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index fbb0e6d..197cf5d 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -70,6 +70,11 @@
->  #define APIC_BROADCAST			0xFF
->  #define X2APIC_BROADCAST		0xFFFFFFFFul
->  
-> +static bool lapic_timer_advance_adjust_done = false;
-> +#define LAPIC_TIMER_ADVANCE_ADJUST_DONE 100
-> +/* step-by-step approximation to mitigate fluctuation */
-> +#define LAPIC_TIMER_ADVANCE_ADJUST_STEP 8
-> +
->  static inline int apic_test_vector(int vec, void *bitmap)
->  {
->  	return test_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
-> @@ -1472,7 +1477,7 @@ static bool lapic_timer_int_injected(struct kvm_vcpu *vcpu)
->  void wait_lapic_expire(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_lapic *apic = vcpu->arch.apic;
-> -	u64 guest_tsc, tsc_deadline;
-> +	u64 guest_tsc, tsc_deadline, ns;
->  
->  	if (!lapic_in_kernel(vcpu))
->  		return;
-> @@ -1492,6 +1497,24 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
->  	if (guest_tsc < tsc_deadline)
->  		__delay(min(tsc_deadline - guest_tsc,
->  			nsec_to_cycles(vcpu, lapic_timer_advance_ns)));
-> +
-> +	if (!lapic_timer_advance_adjust_done) {
-> +		/* too early */
-> +		if (guest_tsc < tsc_deadline) {
-> +			ns = (tsc_deadline - guest_tsc) * 1000000ULL;
-> +			do_div(ns, vcpu->arch.virtual_tsc_khz);
-> +			lapic_timer_advance_ns -= min((unsigned int)ns,
-> +				lapic_timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
-> +		} else {
-> +		/* too late */
-> +			ns = (guest_tsc - tsc_deadline) * 1000000ULL;
-> +			do_div(ns, vcpu->arch.virtual_tsc_khz);
-> +			lapic_timer_advance_ns += min((unsigned int)ns,
-> +				lapic_timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
-> +		}
-> +		if (abs(guest_tsc - tsc_deadline) < LAPIC_TIMER_ADVANCE_ADJUST_DONE)
-> +			lapic_timer_advance_adjust_done = true;
-> +	}
->  }
->  
->  static void start_sw_tscdeadline(struct kvm_lapic *apic)
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index ca71773..1f3f955 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -136,7 +136,7 @@ static u32 __read_mostly tsc_tolerance_ppm = 250;
->  module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
->  
->  /* lapic timer advance (tscdeadline mode only) in nanoseconds */
-> -unsigned int __read_mostly lapic_timer_advance_ns = 0;
-> +unsigned int __read_mostly lapic_timer_advance_ns = 1000;
->  module_param(lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
->  EXPORT_SYMBOL_GPL(lapic_timer_advance_ns);
->  
-> 
+On Tue, Oct 9, 2018 at 6:45 PM Laurent Vivier <laurent@vivier.eu> wrote:
+> Le 09/10/2018 =C3=A0 18:15, Kirill Tkhai a =C3=A9crit :
+> > On 09.10.2018 13:37, Laurent Vivier wrote:
+> >> This patch allows to have a different binfmt_misc configuration
+> >> for each new user namespace. By default, the binfmt_misc configuration
+> >> is the one of the previous level, but if the binfmt_misc filesystem is
+> >> mounted in the new namespace a new empty binfmt instance is created an=
+d
+> >> used in this namespace.
+> >>
+> >> For instance, using "unshare" we can start a chroot of an another
+> >> architecture and configure the binfmt_misc interpreter without being r=
+oot
+> >> to run the binaries in this chroot.
+> >>
+> >> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> >> ---
+> >>  fs/binfmt_misc.c               | 106 ++++++++++++++++++++++++--------=
+-
+> >>  include/linux/user_namespace.h |  13 ++++
+> >>  kernel/user.c                  |  13 ++++
+> >>  kernel/user_namespace.c        |   3 +
+> >>  4 files changed, 107 insertions(+), 28 deletions(-)
+> >>
+> >> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> >> index aa4a7a23ff99..1e0029d097d9 100644
+> >> --- a/fs/binfmt_misc.c
+> >> +++ b/fs/binfmt_misc.c
+> ...
+> >> @@ -80,18 +74,32 @@ static int entry_count;
+> >>   */
+> >>  #define MAX_REGISTER_LENGTH 1920
+> >>
+> >> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
+> >> +{
+> >> +    struct binfmt_namespace *b_ns;
+> >> +
+> >> +    while (ns) {
+> >> +            b_ns =3D READ_ONCE(ns->binfmt_ns);
+> >> +            if (b_ns)
+> >> +                    return b_ns;
+> >> +            ns =3D ns->parent;
+> >> +    }
+> >> +    WARN_ON_ONCE(1);
+> >> +    return NULL;
+> >> +}
+> >> +
+> ...
+> >> @@ -823,12 +847,34 @@ static const struct super_operations s_ops =3D {
+> >>  static int bm_fill_super(struct super_block *sb, void *data, int sile=
+nt)
+> >>  {
+> >>      int err;
+> >> +    struct user_namespace *ns =3D sb->s_user_ns;
+> >>      static const struct tree_descr bm_files[] =3D {
+> >>              [2] =3D {"status", &bm_status_operations, S_IWUSR|S_IRUGO=
+},
+> >>              [3] =3D {"register", &bm_register_operations, S_IWUSR},
+> >>              /* last one */ {""}
+> >>      };
+> >>
+> >> +    /* create a new binfmt namespace
+> >> +     * if we are not in the first user namespace
+> >> +     * but the binfmt namespace is the first one
+> >> +     */
+> >> +    if (READ_ONCE(ns->binfmt_ns) =3D=3D NULL) {
+> >> +            struct binfmt_namespace *new_ns;
+> >> +
+> >> +            new_ns =3D kmalloc(sizeof(struct binfmt_namespace),
+> >> +                             GFP_KERNEL);
+> >> +            if (new_ns =3D=3D NULL)
+> >> +                    return -ENOMEM;
+> >> +            INIT_LIST_HEAD(&new_ns->entries);
+> >> +            new_ns->enabled =3D 1;
+> >> +            rwlock_init(&new_ns->entries_lock);
+> >> +            new_ns->bm_mnt =3D NULL;
+> >> +            new_ns->entry_count =3D 0;
+> >> +            /* ensure new_ns is completely initialized before sharing=
+ it */
+> >> +            smp_wmb();
+> >
+> > (I haven't dived into patch logic, here just small barrier remark from =
+quick sight).
+> > smp_wmb() has no sense without paired smp_rmb() on the read side. Possi=
+ble,
+> > you want something like below in read hunk:
+> >
+> > +             b_ns =3D READ_ONCE(ns->binfmt_ns);
+> > +             if (b_ns) {
+> > +                     smp_rmb();
+> > +                     return b_ns;
+> > +             }
+> >
+> >
+>
+> The write barrier is here to ensure the structure is fully written
+> before we set the pointer.
+>
+> I don't understand how read barrier can change something at this level,
+> IMHO the couple WRITE_ONCE()/READ_ONCE() should be enough to ensure we
+> have correctly initialized the pointer and the structure when we read
+> the pointer back.
+>
+> I think the pointer itself is the "barrier" to access the memory
+> modified before.
 
-Queued, thanks.
+Things don't work that way on alpha, but that's why READ_ONCE()
+includes an smp_read_barrier_depends():
 
-Paolo
+#define __READ_ONCE(x, check)                                           \
+({                                                                      \
+        union { typeof(x) __val; char __c[1]; } __u;                    \
+        if (check)                                                      \
+                __read_once_size(&(x), __u.__c, sizeof(x));             \
+        else                                                            \
+                __read_once_size_nocheck(&(x), __u.__c, sizeof(x));     \
+        smp_read_barrier_depends(); /* Enforce dependency ordering from x *=
+/ \
+        __u.__val;                                                      \
+})
+#define READ_ONCE(x) __READ_ONCE(x, 1)
