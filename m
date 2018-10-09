@@ -2,92 +2,263 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06146C65BD1
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874FCC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73FE214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73FE214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B4D9214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:34:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c02aZUvJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4D9214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbeJJDtD (ORCPT
+        id S1726788AbeJJDxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:49:03 -0400
-Received: from muru.com ([72.249.23.125]:51852 "EHLO muru.com"
+        Tue, 9 Oct 2018 23:53:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbeJJDtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:49:03 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 7899E80C3;
-        Tue,  9 Oct 2018 20:30:18 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 13:30:17 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] dt-bindings: phy: add cpsw port interface mode
- selection phy bindings
-Message-ID: <20181009203017.GM5662@atomide.com>
-References: <20181008234949.15416-1-grygorii.strashko@ti.com>
- <20181008234949.15416-3-grygorii.strashko@ti.com>
- <20181009144000.GL5662@atomide.com>
- <3fa09831-0f70-dfcc-3fd9-f877215a4631@ti.com>
+        id S1726579AbeJJDxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 23:53:08 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77ABD214C4;
+        Tue,  9 Oct 2018 20:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539117264;
+        bh=geTX9f2Q1fw8JCj0sx4lXutNXjoTCgnePKZhWPFcrmE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=c02aZUvJnZPbR+2nyAtphQlD5yfP0v0PNTnMYWjUNEhWEGA5fzCtnrHGgnGnCo8m6
+         TYAbONMMAvoREkYFgxb+YAmEb5ghKOg1PDEwSNEPERESPen/Qa06Stx+tTkFE719ga
+         XWSCLUdIJaYKpgBBsboJO3Yw3BCOap9LavBq/OxI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fa09831-0f70-dfcc-3fd9-f877215a4631@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chandanu@codeaurora.org, Taniya Das <tdas@codeaurora.org>
+References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
+ <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port clocks
+Date:   Tue, 09 Oct 2018 13:34:23 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [181009 20:10]:
-> 
-> 
-> On 10/09/2018 09:40 AM, Tony Lindgren wrote:
-> > * Grygorii Strashko <grygorii.strashko@ti.com> [181008 23:54]:
-> >> +Examples:
-> >> +	phy_gmii_sel: phy-gmii-sel {
-> >> +		compatible = "ti,am3352-phy-gmii-sel";
-> >> +		syscon-scm = <&scm_conf>;
-> >> +		#phy-cells = <2>;
-> >> +	};
-> > 
-> > Now that this driver can live in it's proper place in the
-> 
-> right
-> 
-> > dts, you may want to consider just using standard reg
-> > property for it instead of the syscon-scm. And also get
-> > rid of the syscon reads and writes.
-> 
-> Could you help clarify how to get syscon in this case?
-> syscon_node_to_regmap(dev->parent->of_node)?
+Quoting Taniya Das (2018-10-09 06:57:47)
+> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-s=
+dm845.c
+> index 0cc4909..6d3136a 100644
+> --- a/drivers/clk/qcom/dispcc-sdm845.c
+> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> @@ -128,6 +144,100 @@ enum {
+>         },
+>  };
+> =
 
-Hmm I don't think you need syscon at all now. You can just
-ioremap the register(s) and use readl/writel and that's it.
-Or use regmap without syscon if you prefer that.
+> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] =3D {
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src =3D {
+> +       .cmd_rcgr =3D 0x219c,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_2,
+> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_aux_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_dp_aux_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_2,
+> +               .num_parents =3D 2,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] =3D {
+> +       F(108000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> +       F(180000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> +       F(360000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src =3D {
+> +       .cmd_rcgr =3D 0x2154,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_1,
+> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_crypto_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_dp_crypto_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_1,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_GET_RATE_NOCACHE,
 
-The ioremap in this case should be hitting cached ranges
-anyways, so no extra overhead there.
+Why?
 
-> Also, there are could be more then one gmii_sel registers in SCM in the future,
-> so I hidden offsets in of_match data. 
-> As result, "reg" not needed at all now.
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] =3D {
+> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
 
-But then you have to patch driver for various SoCs
-instead of just configuring the standard reg property
-in the dts file :)
+Are these in kHz? They really look like it and that's bad. Why do we
+need them at all? Just to make sure the display driver picks these exact
+frequencies? It seems like we could just pass whatever number comes in
+up to the parent and see what it can do.
 
-Regards,
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src =3D {
+> +       .cmd_rcgr =3D 0x2138,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_1,
+> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_link_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_dp_link_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_1,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src =3D {
+> +       .cmd_rcgr =3D 0x2184,
+> +       .mnd_width =3D 16,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_1,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_dp_pixel1_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_1,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_dp_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src =3D {
+> +       .cmd_rcgr =3D 0x216c,
+> +       .mnd_width =3D 16,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_1,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_dp_pixel_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_1,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_dp_ops,
+> +       },
+> +};
+> +
+>  static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] =3D {
+>         F(19200000, P_BI_TCXO, 1, 0, 0),
+>         { }
+> @@ -391,6 +501,115 @@ enum {
+>         },
+>  };
+> =
 
-Tony
+> +static struct clk_branch disp_cc_mdss_dp_aux_clk =3D {
+> +       .halt_reg =3D 0x2054,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x2054,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "disp_cc_mdss_dp_aux_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "disp_cc_mdss_dp_aux_clk_src",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_crypto_clk =3D {
+> +       .halt_reg =3D 0x2048,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x2048,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "disp_cc_mdss_dp_crypto_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "disp_cc_mdss_dp_crypto_clk_src",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_link_clk =3D {
+> +       .halt_reg =3D 0x2040,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x2040,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "disp_cc_mdss_dp_link_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "disp_cc_mdss_dp_link_clk_src",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 (div 4=
+) */
+
+Not sure what this comment is for. But it's interesting nonetheless.
+
+> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk =3D {
+> +       .halt_reg =3D 0x2044,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x2044,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "disp_cc_mdss_dp_link_intf_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "disp_cc_mdss_dp_link_clk_src",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_GET_RATE_NOCACHE,
+
+Why?
+
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
