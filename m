@@ -6,44 +6,50 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EF1C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF65C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42F6F2075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F6F2075C
+	by mail.kernel.org (Postfix) with ESMTP id A86242075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86242075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbeJIOQ0 (ORCPT
+        id S1726647AbeJIORW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:16:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59235 "EHLO
+        Tue, 9 Oct 2018 10:17:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46325 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbeJIOQ0 (ORCPT
+        with ESMTP id S1725855AbeJIORV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:16:26 -0400
+        Tue, 9 Oct 2018 10:17:21 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9970qRi935322
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9971PJ2935374
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Oct 2018 00:00:52 -0700
+        Tue, 9 Oct 2018 00:01:26 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9970qaW935319;
-        Tue, 9 Oct 2018 00:00:52 -0700
-Date:   Tue, 9 Oct 2018 00:00:52 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9971Pgu935371;
+        Tue, 9 Oct 2018 00:01:25 -0700
+Date:   Tue, 9 Oct 2018 00:01:25 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-49e00eee00612b1357596fed8a88b621a7648c14@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        reinette.chatre@intel.com, mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, reinette.chatre@intel.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com>
-References: <69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com>
+From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
+Message-ID: <tip-e054637597ba36d3729ba6a3a3dd7aad8e2a3003@git.kernel.org>
+Cc:     mgorman@techsingularity.net, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, peterz@infradead.org, linux-mm@kvack.org,
+        riel@surriel.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        srikar@linux.vnet.ibm.com
+Reply-To: peterz@infradead.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
+          riel@surriel.com, linux-mm@kvack.org,
+          torvalds@linux-foundation.org, tglx@linutronix.de,
+          srikar@linux.vnet.ibm.com, hpa@zytor.com
+In-Reply-To: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Fix out-of-bounds memory access in
- CBM tests
-Git-Commit-ID: 49e00eee00612b1357596fed8a88b621a7648c14
+Subject: [tip:sched/urgent] mm, sched/numa: Remove remaining traces of NUMA
+ rate-limiting
+Git-Commit-ID: e054637597ba36d3729ba6a3a3dd7aad8e2a3003
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,220 +63,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  49e00eee00612b1357596fed8a88b621a7648c14
-Gitweb:     https://git.kernel.org/tip/49e00eee00612b1357596fed8a88b621a7648c14
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Thu, 4 Oct 2018 14:05:23 -0700
+Commit-ID:  e054637597ba36d3729ba6a3a3dd7aad8e2a3003
+Gitweb:     https://git.kernel.org/tip/e054637597ba36d3729ba6a3a3dd7aad8e2a3003
+Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+AuthorDate: Sat, 6 Oct 2018 16:53:19 +0530
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 9 Oct 2018 08:02:15 +0200
+CommitDate: Tue, 9 Oct 2018 08:30:51 +0200
 
-x86/intel_rdt: Fix out-of-bounds memory access in CBM tests
+mm, sched/numa: Remove remaining traces of NUMA rate-limiting
 
-While the DOC at the beginning of lib/bitmap.c explicitly states that
-"The number of valid bits in a given bitmap does _not_ need to be an
-exact multiple of BITS_PER_LONG.", some of the bitmap operations do
-indeed access BITS_PER_LONG portions of the provided bitmap no matter
-the size of the provided bitmap. For example, if bitmap_intersects()
-is provided with an 8 bit bitmap the operation will access
-BITS_PER_LONG bits from the provided bitmap. While the operation
-ensures that these extra bits do not affect the result, the memory
-is still accessed.
+Remove the leftover pglist_data::numabalancing_migrate_lock and its
+initialization, we stopped using this lock with:
 
-The capacity bitmasks (CBMs) are typically stored in u32 since they
-can never exceed 32 bits. A few instances exist where a bitmap_*
-operation is performed on a CBM by simply pointing the bitmap operation
-to the stored u32 value.
+  efaffc5e40ae ("mm, sched/numa: Remove rate-limiting of automatic NUMA balancing migration")
 
-The consequence of this pattern is that some bitmap_* operations will
-access out-of-bounds memory when interacting with the provided CBM. This
-is confirmed with a KASAN test that reports:
+[ mingo: Rewrote the changelog. ]
 
- BUG: KASAN: stack-out-of-bounds in __bitmap_intersects+0xa2/0x100
-
-and
-
- BUG: KASAN: stack-out-of-bounds in __bitmap_weight+0x58/0x90
-
-Fix this by moving any CBM provided to a bitmap operation needing
-BITS_PER_LONG to an 'unsigned long' variable.
-
-[ tglx: Changed related function arguments to unsigned long and got rid
-	of the _cbm extra step ]
-
-Fixes: 72d505056604 ("x86/intel_rdt: Add utilities to test pseudo-locked region possibility")
-Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
-Fixes: d9b48c86eb38 ("x86/intel_rdt: Display resource groups' allocations' size in bytes")
-Fixes: 95f0b77efa57 ("x86/intel_rdt: Initialize new resource group with sane defaults")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com
-Cc: tony.luck@intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: dave.hansen@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-MM <linux-mm@kvack.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/cpu/intel_rdt.h             |  6 ++---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 20 ++++++++--------
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 36 ++++++++++++++++++-----------
- 3 files changed, 37 insertions(+), 25 deletions(-)
+ include/linux/mmzone.h |  4 ----
+ mm/page_alloc.c        | 10 ----------
+ 2 files changed, 14 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 285eb3ec4200..3736f6dc9545 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -529,14 +529,14 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
- bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--			   u32 _cbm, int closid, bool exclusive);
-+			   unsigned long cbm, int closid, bool exclusive);
- unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
--				  u32 cbm);
-+				  unsigned long cbm);
- enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- int rdtgroup_tasks_assigned(struct rdtgroup *r);
- int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
- int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
--bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
- bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
- int rdt_pseudo_lock_init(void);
- void rdt_pseudo_lock_release(void);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 40f3903ae5d9..f8c260d522ca 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -797,25 +797,27 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
- /**
-  * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
-  * @d: RDT domain
-- * @_cbm: CBM to test
-+ * @cbm: CBM to test
-  *
-- * @d represents a cache instance and @_cbm a capacity bitmask that is
-- * considered for it. Determine if @_cbm overlaps with any existing
-+ * @d represents a cache instance and @cbm a capacity bitmask that is
-+ * considered for it. Determine if @cbm overlaps with any existing
-  * pseudo-locked region on @d.
-  *
-- * Return: true if @_cbm overlaps with pseudo-locked region on @d, false
-+ * @cbm is unsigned long, even if only 32 bits are used, to make the
-+ * bitmap functions work correctly.
-+ *
-+ * Return: true if @cbm overlaps with pseudo-locked region on @d, false
-  * otherwise.
-  */
--bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm)
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 3f4c0b167333..d4b0c79d2924 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -667,10 +667,6 @@ typedef struct pglist_data {
+ 	enum zone_type kcompactd_classzone_idx;
+ 	wait_queue_head_t kcompactd_wait;
+ 	struct task_struct *kcompactd;
+-#endif
+-#ifdef CONFIG_NUMA_BALANCING
+-	/* Lock serializing the migrate rate limiting window */
+-	spinlock_t numabalancing_migrate_lock;
+ #endif
+ 	/*
+ 	 * This is a per-node reserve of pages that are not available
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 706a738c0aee..e2ef1c17942f 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6193,15 +6193,6 @@ static unsigned long __init calc_memmap_size(unsigned long spanned_pages,
+ 	return PAGE_ALIGN(pages * sizeof(struct page)) >> PAGE_SHIFT;
+ }
+ 
+-#ifdef CONFIG_NUMA_BALANCING
+-static void pgdat_init_numabalancing(struct pglist_data *pgdat)
+-{
+-	spin_lock_init(&pgdat->numabalancing_migrate_lock);
+-}
+-#else
+-static void pgdat_init_numabalancing(struct pglist_data *pgdat) {}
+-#endif
+-
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ static void pgdat_init_split_queue(struct pglist_data *pgdat)
  {
--	unsigned long *cbm = (unsigned long *)&_cbm;
--	unsigned long *cbm_b;
- 	unsigned int cbm_len;
-+	unsigned long cbm_b;
- 
- 	if (d->plr) {
- 		cbm_len = d->plr->r->cache.cbm_len;
--		cbm_b = (unsigned long *)&d->plr->cbm;
--		if (bitmap_intersects(cbm, cbm_b, cbm_len))
-+		cbm_b = d->plr->cbm;
-+		if (bitmap_intersects(&cbm, &cbm_b, cbm_len))
- 			return true;
- 	}
- 	return false;
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 1b8e86a5d5e1..b140c68bc14b 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -975,33 +975,34 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
-  * is false then overlaps with any resource group or hardware entities
-  * will be considered.
-  *
-+ * @cbm is unsigned long, even if only 32 bits are used, to make the
-+ * bitmap functions work correctly.
-+ *
-  * Return: false if CBM does not overlap, true if it does.
-  */
- bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--			   u32 _cbm, int closid, bool exclusive)
-+			   unsigned long cbm, int closid, bool exclusive)
+@@ -6226,7 +6217,6 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
  {
--	unsigned long *cbm = (unsigned long *)&_cbm;
--	unsigned long *ctrl_b;
- 	enum rdtgrp_mode mode;
-+	unsigned long ctrl_b;
- 	u32 *ctrl;
- 	int i;
+ 	pgdat_resize_init(pgdat);
  
- 	/* Check for any overlap with regions used by hardware directly */
- 	if (!exclusive) {
--		if (bitmap_intersects(cbm,
--				      (unsigned long *)&r->cache.shareable_bits,
--				      r->cache.cbm_len))
-+		ctrl_b = r->cache.shareable_bits;
-+		if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len))
- 			return true;
- 	}
+-	pgdat_init_numabalancing(pgdat);
+ 	pgdat_init_split_queue(pgdat);
+ 	pgdat_init_kcompactd(pgdat);
  
- 	/* Check for overlap with other resource groups */
- 	ctrl = d->ctrl_val;
- 	for (i = 0; i < closids_supported(); i++, ctrl++) {
--		ctrl_b = (unsigned long *)ctrl;
-+		ctrl_b = *ctrl;
- 		mode = rdtgroup_mode_by_closid(i);
- 		if (closid_allocated(i) && i != closid &&
- 		    mode != RDT_MODE_PSEUDO_LOCKSETUP) {
--			if (bitmap_intersects(cbm, ctrl_b, r->cache.cbm_len)) {
-+			if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len)) {
- 				if (exclusive) {
- 					if (mode == RDT_MODE_EXCLUSIVE)
- 						return true;
-@@ -1138,15 +1139,18 @@ out:
-  * computed by first dividing the total cache size by the CBM length to
-  * determine how many bytes each bit in the bitmask represents. The result
-  * is multiplied with the number of bits set in the bitmask.
-+ *
-+ * @cbm is unsigned long, even if only 32 bits are used to make the
-+ * bitmap functions work correctly.
-  */
- unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
--				  struct rdt_domain *d, u32 cbm)
-+				  struct rdt_domain *d, unsigned long cbm)
- {
- 	struct cpu_cacheinfo *ci;
- 	unsigned int size = 0;
- 	int num_b, i;
- 
--	num_b = bitmap_weight((unsigned long *)&cbm, r->cache.cbm_len);
-+	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
- 	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
- 	for (i = 0; i < ci->num_leaves; i++) {
- 		if (ci->info_list[i].level == r->cache_level) {
-@@ -2353,6 +2357,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 	u32 used_b = 0, unused_b = 0;
- 	u32 closid = rdtgrp->closid;
- 	struct rdt_resource *r;
-+	unsigned long tmp_cbm;
- 	enum rdtgrp_mode mode;
- 	struct rdt_domain *d;
- 	int i, ret;
-@@ -2390,9 +2395,14 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 			 * modify the CBM based on system availability.
- 			 */
- 			cbm_ensure_valid(&d->new_ctrl, r);
--			if (bitmap_weight((unsigned long *) &d->new_ctrl,
--					  r->cache.cbm_len) <
--					r->cache.min_cbm_bits) {
-+			/*
-+			 * Assign the u32 CBM to an unsigned long to ensure
-+			 * that bitmap_weight() does not access out-of-bound
-+			 * memory.
-+			 */
-+			tmp_cbm = d->new_ctrl;
-+			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
-+			    r->cache.min_cbm_bits) {
- 				rdt_last_cmd_printf("no space on %s:%d\n",
- 						    r->name, d->id);
- 				return -ENOSPC;
