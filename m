@@ -2,117 +2,127 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7E2ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E75ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A82222075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5280F2075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:21:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHRCjovn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A82222075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hBVvZccy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hBVvZccy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5280F2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeJIXjQ (ORCPT
+        id S1726840AbeJIXjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:39:16 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38388 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIXjQ (ORCPT
+        Tue, 9 Oct 2018 19:39:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41076 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJIXjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:39:16 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f8-v6so1056179pgq.5;
-        Tue, 09 Oct 2018 09:21:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=puxlPuMk288kKHPHTeZA6u4dEIDz5FZjlt+fgwCwMuA=;
-        b=XHRCjovnBoIEwZHJdoMR7Ox6nUzxFI33lbIFBtdW2GDsdulNbU5FfOg++vMpA3I/Jl
-         Rs3gFPTO37tQP3AwnxJhIHyx4Y7wkKLWsw57sg0JgHNX/Fq5e3kiGrLQZrImr3mcI0Mt
-         UX1o4ZJgcWJftrcPv/+kFiF6wrp7cDdc+49k2z06kWb5NCTZo6F/oJVe9V/WWf/C5gI8
-         PEIPHDY4P1YV/oluHjGt15MiHmqeZbBUB9uvfMcsaCxMYPi3crOr6JGLqUntEuj6pCqc
-         G57ToxOBljuoCaZZi1noHQtuFzLNrba5cfl8xsgp2VRtwweaRtfhi9npqe32h0cLbvqh
-         cZlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=puxlPuMk288kKHPHTeZA6u4dEIDz5FZjlt+fgwCwMuA=;
-        b=iTh3cCAwZSQ6OJlpyWk4c9fWa35vr0uXqfnFWvUj+td5yBevIgHu2ugJ/CMU+JNs/k
-         R3jnn+kl4R2XYSH/Gh4lwjTDZgoAcWWFFgwVV1Ffrv9CpAn1DIlKFPFh4KGI4EOxvDbO
-         vmVVqrmfZEV/3MKQHHrmrX1aT+2lViLJ7pVs0+8xWEsrF9eCF9kGdpyc95uB8iTuP+i3
-         a1HPA2dTGA74RKSpgSo5vFB8KU6T/RWhsRs4Xr4dj82d/1IPB59lw7A0aaXXhYG6Zeu+
-         pFUdYvhLK3XUU0G3BwUTj2fy4nEzmA3ksV7s0kEuTAVHdmuYYDlBIA/AhhhtLSrLSEPh
-         gIPA==
-X-Gm-Message-State: ABuFfohFPHGryGTfM3uz7sz3yp42bKbkrP3b/8VGsyGzoU4vjjKq/kGk
-        sLoKWNWYNLarwVFF0yGx7KY+BiPq
-X-Google-Smtp-Source: ACcGV611OL5C7OwTwO47Y+dEp78CLXDGAAehVlPh/4/NgZ9Y4E065y3OKz5poA2fRdV/W3hHYqrXIg==
-X-Received: by 2002:a62:dd01:: with SMTP id w1-v6mr30566704pff.129.1539102093203;
-        Tue, 09 Oct 2018 09:21:33 -0700 (PDT)
-Received: from ?IPv6:2601:284:8200:5cfb:c54f:5aee:a291:8def? ([2601:284:8200:5cfb:c54f:5aee:a291:8def])
-        by smtp.googlemail.com with ESMTPSA id l129-v6sm32192824pfc.155.2018.10.09.09.21.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 09:21:32 -0700 (PDT)
-Subject: Re: [PATCH net-next] rtnetlink: mpls: ip_valid_fib_dump_req()
- requires CONFIG_INET
-To:     Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Christian Brauner <christian@brauner.io>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181009161031.1003047-1-arnd@arndb.de>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <e86775fb-ecf2-676e-0d36-9236c8e70f24@gmail.com>
-Date:   Tue, 9 Oct 2018 10:21:30 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 9 Oct 2018 19:39:25 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E503060C1C; Tue,  9 Oct 2018 16:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539102102;
+        bh=velnWwH0RIRg7KUC8RmDTFCPl6CvtGRXeY0/+UHhayg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hBVvZccyNd1Eg559zjDo56ktqBow/4Z/Y36v9giPBVUDxgmgG2jgUbLq9YgPTltkn
+         lw/J4q+UZnAnP0j4kYmCjmyxx3LapQgmEMCwgZL6k3cvq+P5wWef+onCo5wAI0DZMR
+         T30rAeihwB3rSQ8ZEPJoc12LOTGGGMfZJu56yP5I=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 549A86024C;
+        Tue,  9 Oct 2018 16:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539102102;
+        bh=velnWwH0RIRg7KUC8RmDTFCPl6CvtGRXeY0/+UHhayg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hBVvZccyNd1Eg559zjDo56ktqBow/4Z/Y36v9giPBVUDxgmgG2jgUbLq9YgPTltkn
+         lw/J4q+UZnAnP0j4kYmCjmyxx3LapQgmEMCwgZL6k3cvq+P5wWef+onCo5wAI0DZMR
+         T30rAeihwB3rSQ8ZEPJoc12LOTGGGMfZJu56yP5I=
 MIME-Version: 1.0
-In-Reply-To: <20181009161031.1003047-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 09 Oct 2018 21:51:42 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        tsoni@codeaurora.org
+Subject: Re: [PATCH v3 5/6] remoteproc: qcom: q6v5-pil: Register
+ segments/dumpfn for coredump
+In-Reply-To: <20181008064828.GP12063@builder>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+ <20180727152003.11663-6-sibis@codeaurora.org>
+ <20181008064828.GP12063@builder>
+Message-ID: <dda01ec2e056d4ae2946484aa101b5bc@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/9/18 10:10 AM, Arnd Bergmann wrote:
-> The newly added call to ip_valid_fib_dump_req() causes a link error
-> in configurations that enable MPLS but not IPv4:
+Hi Bjorn,
+Thanks for the review !
+
+On 2018-10-08 12:18, Bjorn Andersson wrote:
+> On Fri 27 Jul 08:20 PDT 2018, Sibi Sankar wrote:
 > 
-> net/mpls/af_mpls.o: In function `mpls_dump_routes':
-> af_mpls.c:(.text+0xed0): undefined reference to `ip_valid_fib_dump_req'
+>> Register the MDT segments and custom dumpfn with the remoteproc core
+>> dump functionality.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_pil.c | 40 
+>> ++++++++++++++++++++++++++++++
+>>  1 file changed, 40 insertions(+)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c 
+>> b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index ac3342f9ea5a..22bb049c3e7f 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -1058,10 +1058,50 @@ static void *q6v5_da_to_va(struct rproc 
+>> *rproc, u64 da, int len)
+>>  	return qproc->mpss_region + offset;
+>>  }
+>> 
+>> +static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>> +				const struct firmware *fw_unused)
 > 
-> With the added IS_ENABLED() check we get the previous behavior
-> back in that configuration, and skip the check.
-> 
-> Fixes: e8ba330ac0c5 ("rtnetlink: Update fib dumps for strict data checking")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  net/mpls/af_mpls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/mpls/af_mpls.c b/net/mpls/af_mpls.c
-> index 7f891ffffc05..99ff6114d513 100644
-> --- a/net/mpls/af_mpls.c
-> +++ b/net/mpls/af_mpls.c
-> @@ -2041,7 +2041,7 @@ static int mpls_dump_routes(struct sk_buff *skb, struct netlink_callback *cb)
->  
->  	ASSERT_RTNL();
->  
-> -	if (cb->strict_check) {
-> +	if (IS_ENABLED(CONFIG_INET) && cb->strict_check) {
->  		int err = ip_valid_fib_dump_req(nlh, cb->extack);
->  
->  		if (err < 0)
+> How about naming it mba_fw instead of unused? Just as unused, but 
+> easier
+> to understand why it isn't used.
 > 
 
-If INET is not defined then mpls will need its own valid_dump_req
-function to ensure strict_check semantics are managed. I'll send a patch.
+sure
+
+>> +{
+>> +	const struct firmware *fw;
+>> +	const struct elf32_phdr *phdrs;
+>> +	const struct elf32_phdr *phdr;
+>> +	const struct elf32_hdr *ehdr;
+>> +	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+> 
+> No need for an explicit typecast from void *.
+> 
+
+will remove it
+
+> The rest looks good!
+> 
+> Regards,
+> Bjorn
+
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
