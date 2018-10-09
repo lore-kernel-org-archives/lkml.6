@@ -2,112 +2,156 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B89C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1072C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C8920835
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:55:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C8920835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id A813020C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:57:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dW5Bo9UG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A813020C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbeJINK3 (ORCPT
+        id S1726522AbeJINMl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:10:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39435 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbeJINK3 (ORCPT
+        Tue, 9 Oct 2018 09:12:41 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39055 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeJINMk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:10:29 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w995sod5916930
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 8 Oct 2018 22:54:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w995snNZ916926;
-        Mon, 8 Oct 2018 22:54:49 -0700
-Date:   Mon, 8 Oct 2018 22:54:49 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Geert Uytterhoeven <tipbot@zytor.com>
-Message-ID: <tip-b8d62f33b7b225935649ab165d901fe8dd7f95e5@git.kernel.org>
-Cc:     mingo@kernel.org, trivial@kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        geert+renesas@glider.be, hpa@zytor.com, peterz@infradead.org,
-        tglx@linutronix.de
-Reply-To: trivial@kernel.org, mingo@kernel.org,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          geert+renesas@glider.be, hpa@zytor.com, peterz@infradead.org,
-          tglx@linutronix.de
-In-Reply-To: <20181008111726.26286-1-geert+renesas@glider.be>
-References: <20181008111726.26286-1-geert+renesas@glider.be>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq: Fix grammar s/an /a /
-Git-Commit-ID: b8d62f33b7b225935649ab165d901fe8dd7f95e5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 9 Oct 2018 09:12:40 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w14-v6so255171plp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 22:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=inzA/yGeZ9aiC3VA2i1tkm+Tkpl7/w8C3is8FRDdUxk=;
+        b=dW5Bo9UGk275LYTyGf4nmVoR0ggE3MFHkF5jgcqdnUU3jUVa57QlyTOR/TxBxMH9J5
+         ny0NMuW+FcR1x3Ug+JCS27hLNazQy35SbFkG8cncuh8pcuIXwreq+kGt1PnyPx0QNTR9
+         G7t6sOYSegG6oFKpRny8Pe3qwEmcaaERzU/i0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=inzA/yGeZ9aiC3VA2i1tkm+Tkpl7/w8C3is8FRDdUxk=;
+        b=eYuULXour0Cs1RX2N2aNcgZuGRVr8ZeESQztSrZn7N9JDGRo7lQiCsit4cL7yJkwm4
+         TdG9DAHyfY9ETA4miFOSwd/PgmlLOY0DETA5iwlSA6wmZh2U6sVaZ0821RjA09aiwPUJ
+         d/YrEPMa7k8N7SmihMDP6wcdV9k4rsmk5AOUV6NPp77B9Qdp60DhRIcMXaoimeZdd4op
+         9oGEIhzi5PMpuQN8pm462lFB4hMwgZkvglf0id88VoWQiEbN/7Ca2lIQehZQwv2Pw2hX
+         TRwB+LIhvnK3PrD2yU4jQQwYRe5bCyFMTOI6qNkied63o2WVEgNCbkVzpJ0cKgUgs2qb
+         wqBg==
+X-Gm-Message-State: ABuFfoj6Yu6b4+1Dlo2IZcjz6PsgzmHfvWUT+IGeoFun5BlF70N6VVT2
+        V40TKUt89rxLRbEolUJFS6mSrA==
+X-Google-Smtp-Source: ACcGV6356/jriVRzzMA4+sFDA3yg2mLRX9PHTqD75D2WrP0MRe0Bn7sRVA7Q9gxxdfuXiemBfYWoiA==
+X-Received: by 2002:a17:902:9893:: with SMTP id s19-v6mr27022168plp.130.1539064646238;
+        Mon, 08 Oct 2018 22:57:26 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm23617607pfn.118.2018.10.08.22.57.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 22:57:25 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180925210255.172734-1-mka@chromium.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+References: <20180925210255.172734-1-mka@chromium.org>
+Message-ID: <153906464468.119890.12038987094612660933@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
+Date:   Mon, 08 Oct 2018 22:57:24 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b8d62f33b7b225935649ab165d901fe8dd7f95e5
-Gitweb:     https://git.kernel.org/tip/b8d62f33b7b225935649ab165d901fe8dd7f95e5
-Author:     Geert Uytterhoeven <geert+renesas@glider.be>
-AuthorDate: Mon, 8 Oct 2018 13:17:26 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 9 Oct 2018 07:50:41 +0200
+Quoting Matthias Kaehlcke (2018-09-25 14:02:55)
+> Add a global binding for the 'aliases' node. This includes an initial list
+> of standardized alias names for some hardware components that are commonly
+> found in 'aliases'.
+> =
 
-genirq: Fix grammar s/an /a /
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  Documentation/devicetree/bindings/aliases.txt | 47 +++++++++++++++++++
 
-Fix a grammar mistake in <linux/interrupt.h>.
+Any chance we can get a documentation update for the devicetree spec as
+well?
 
-[ mingo: While at it also fix another similar error in another comment as well. ]
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/aliases.txt
+> =
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jiri Kosina <trivial@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181008111726.26286-1-geert%2Brenesas@glider.be
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/interrupt.h | 2 +-
- kernel/irq/irqdomain.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/aliases.txt b/Documentatio=
+n/devicetree/bindings/aliases.txt
+> new file mode 100644
+> index 000000000000..d64ed1c7eb34
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/aliases.txt
+> @@ -0,0 +1,47 @@
+> +The aliases node
+> +----------------
+> +
+> +The aliases node contains properties that represent aliases to device tr=
+ee
+> +nodes. The name of the property is the alias name, the value is the path=
+ of
+> +a the device tree node that corresponds to the alias. The path may be
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index eeceac3376fc..1d6711c28271 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -45,7 +45,7 @@
-  * IRQF_PERCPU - Interrupt is per cpu
-  * IRQF_NOBALANCING - Flag to exclude this interrupt from irq balancing
-  * IRQF_IRQPOLL - Interrupt is used for polling (only the interrupt that is
-- *                registered first in an shared interrupt is considered for
-+ *                registered first in a shared interrupt is considered for
-  *                performance reasons)
-  * IRQF_ONESHOT - Interrupt is not reenabled after the hardirq handler finished.
-  *                Used by threaded interrupts which need to keep the
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 3b30a4aeb0db..3366d11c3e02 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -867,7 +867,7 @@ void irq_dispose_mapping(unsigned int virq)
- EXPORT_SYMBOL_GPL(irq_dispose_mapping);
- 
- /**
-- * irq_find_mapping() - Find a linux irq from an hw irq number.
-+ * irq_find_mapping() - Find a linux irq from a hw irq number.
-  * @domain: domain owning this hardware interrupt
-  * @hwirq: hardware irq number in that domain space
-  */
+s/a //
+
+> +specified as a string or a phandle.
+> +
+> +Alias names are often suffixed with a numeric ID, especially when there =
+may
+> +be multiple instances of the same type. The ID typically corresponds to =
+the
+> +hardware layout, it may also be used by drivers for a stable mapping of
+> +device names and hardware entities.
+
+Indicate the numeric ID is a u32 or something like that?
+
+> +
+> +Alias names
+> +-----------
+> +
+> +The devicetree specification doesn't require the use of specific alias
+> +names to refer to hardware entities of a given type, however the Linux
+> +kernel aims for a certain level of consistency.
+> +
+> +The following standardized alias names shall be used for their
+> +corresponding hardware components:
+> +
+> +  bluetoothN           Bluetooth controller
+
+Can we use syntax like:
+
+	bluetooth<N>
+
+to indicate that <N> is an unsigned integer?
+
+> +  ethernetN            Ethernet interface
+> +  gpioN                        GPIO controller
+> +  i2cN                 i2c bus
+> +  mmcN                 MMC bus
+> +  rtcN                 Real time clock
+> +  serialN              UART port
+> +  spiN                 SPI bus
+> +  wifiN                        Wireless network interface
+> +
+> +The above list is not exhaustive and will be extended over time. Please
+> +send patches to devicetree@vger.kernel.org if you think a hardware
+> +component and its alias name should be on the list.
+> +
