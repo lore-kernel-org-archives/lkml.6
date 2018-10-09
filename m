@@ -2,195 +2,155 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B32C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA8FC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A7E214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B7B214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:18:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="BeoElXDl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A7E214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/1NQkkJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B7B214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbeJJDdT (ORCPT
+        id S1727863AbeJJDhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:33:19 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45767 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeJJDdS (ORCPT
+        Tue, 9 Oct 2018 23:37:06 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52486 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbeJJDhG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:33:18 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y15-v6so1350777plr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:14:40 -0700 (PDT)
+        Tue, 9 Oct 2018 23:37:06 -0400
+Received: by mail-it1-f195.google.com with SMTP id 134-v6so4732158itz.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:18:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V18Z3eBngl64nu3A+zrmzE7Etk3mR/lRybg06jtcvaQ=;
-        b=BeoElXDlJzTZzVxV/Ugq+efw1Z1UhukGXfG0nBm39VLNGuUIQGhfUStb8xl10LFnn1
-         QvM/8w5aImUG7sgfTeytSBUunMi6mULgs9DC2NDSmrWZBr6lQTLjxT0blWXN8tzL+/0g
-         mjdqRhLnuChSYvjtl1k/nNhL4+gdGnOT67yDA=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fJ5NMaNNETqyc6A6yRZZINFjSOJuyWDFoQxNboxqLZk=;
+        b=Z/1NQkkJuVJ5leecIhOlH4oFQQYJOE4xxdZcAqSYlUl+uwA5PUYZx7gTBSzqtlj2/I
+         hDgEurqisn3AG+ScAC51BXQVV6dEJqqBCrXz7BYmnLmok0g70/csiYwHaflmkM2fjYLL
+         GN70ULtPsC6evhW/CSf7vNC9BPECCLr+cUT1BX4OlHi9Yb12Isvah+XgJhpd6CXCYSpM
+         Aqnx+Wzcb02I4+E+J8rJS16qnAHLuDWhEsy7VkbEEEk11qWEtfqeEm8e/8xY6OBUVZsl
+         QvRxjKghLaT/ZVAwWeMxocvW/7jpNi1sRabMMj/u/NE7rTg7fEbzPyMG2Euo9MwAt7Du
+         BIfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V18Z3eBngl64nu3A+zrmzE7Etk3mR/lRybg06jtcvaQ=;
-        b=jcCQb3zUA8HzG4UsiHbK353+HG63+OpPY6BnGJxx+jTBYJvt8xYWoVe3FhxdBu8C0h
-         3/dn2cq75bq+ccghoix2rEALPMgOBxhHQOsak6a4XQjqmcJoh8Skck2lqo+85vqxnO+u
-         DIkSlK4IrXiSd855fMkKy3B7zr1fMdRYXzCyM5ckLSYr5J8rjQpd9ionYeHSPr64ohSR
-         Rtp+E4zOjzYhRmx+GEdAOe3jILzZIqjAbPrl1xnv94CHeuWEMhXZFr6hWKX/yAWMYx7j
-         /vm2wenwU+8IKcxmhjIx6YU97jwbK9SM7ugatwqeDp2B7NAeu/UzoGqiGUnwdk+AF8eR
-         RL5Q==
-X-Gm-Message-State: ABuFfohAuHURwyMsvO2RxcqjMkzhc0EiqoBdDQFjaESE749TTQxVykDb
-        Rgu4Y3D/6/s3cFhk+GjB2Z/WCj0f+78=
-X-Google-Smtp-Source: ACcGV61V0RCzBgoeI8y85vA2psUTe3/j++wWW2JskMRkOixECYpMBrd8kiRPSIdV29vesF4/SmKLJQ==
-X-Received: by 2002:a17:902:8543:: with SMTP id d3-v6mr30716888plo.81.1539116079648;
-        Tue, 09 Oct 2018 13:14:39 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm25555664pgs.50.2018.10.09.13.14.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 13:14:31 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     kernel-team@android.com, Joel Fernandes <joel@joelfernandes.org>,
-        minchan@google.com, hughd@google.com, lokeshgidra@google.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] mm: Speed up mremap on large regions
-Date:   Tue,  9 Oct 2018 13:14:00 -0700
-Message-Id: <20181009201400.168705-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fJ5NMaNNETqyc6A6yRZZINFjSOJuyWDFoQxNboxqLZk=;
+        b=rXA0QixFlpVlMfrzu1fFzLRTAkjCsKoNGWIFszUDs0SjUTDfjZDQYKZNRi9XZ+7ekq
+         o4kCzcDXDpYkhwRu0IEaOqSMfaHWwY504amJYkIvtN3g3JUWchdf9ZWDsLry7PWLKz8t
+         G/+vZSMBhNBir/ZwC8u4QOPsLVnEPL12FRrha5puRTs0wnj10G6Rnl+I7Gga1qcqC48W
+         Ad4UZGu+zKp9k0ryZ7OUc6SyFtRrnY3Gvodjk0faRcfLCr2ecMY5Bwm5ROH2W9nzMcOI
+         gdkySHM7w7q6CGcB3T6P8krVtRcyUf6JcAxxm1wn9meOl2rcxlMIA74yx6fMT72X7V/X
+         ARhw==
+X-Gm-Message-State: ABuFfoi3yCnK10IDH7vPZOgjyBQde5zCP1kvn0cMxilOhdZcxQD0TAf3
+        7zJS4iGPeCAuAXfqtRf068XJFQWVsr25FXoBj0k=
+X-Google-Smtp-Source: ACcGV62c8cofsx+9oVgGAd5TdZ2OsOoGDEjJdAHUF5+G7XuHr2DshMAMT2odtRlB8TBZ2jDmpFiVpVLmD1lG99UZWtw=
+X-Received: by 2002:a24:9d90:: with SMTP id f138-v6mr3113705itd.57.1539116306925;
+ Tue, 09 Oct 2018 13:18:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAO49afLqUGuBi_R7BKyojqnkHrMGqXquy-FdVFscOu6Ez0cVFw@mail.gmail.com>
+ <20181009164743.GA22886@krava> <CAO49af+zxxVh9HGfjKxS=vQcD5po7-oLU87Zp0F21M-C64nWUA@mail.gmail.com>
+In-Reply-To: <CAO49af+zxxVh9HGfjKxS=vQcD5po7-oLU87Zp0F21M-C64nWUA@mail.gmail.com>
+From:   Anthony LaTorre <tlatorre9@gmail.com>
+Date:   Tue, 9 Oct 2018 15:18:12 -0500
+Message-ID: <CAO49afJVHsywYdosSqceQiMzFdaYivm4kiNnC_+WKq15jsA7Dg@mail.gmail.com>
+Subject: Re: perf report segfault
+To:     jolsa@redhat.com
+Cc:     peterz@infradead.org, mingo@redhat.com, jolsa@kernel.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Android needs to mremap large regions of memory during memory management
-related operations. The mremap system call can be really slow if THP is
-not enabled. The bottleneck is move_page_tables, which is copying each
-pte at a time, and can be really slow across a large map. Turning on THP
-may not be a viable option, and is not for us. This patch speeds up the
-performance for non-THP system by copying at the PMD level when possible.
+Ok, I can reliably reproduce it by profiling the following program:
 
-The speed up is three orders of magnitude. On a 1GB mremap, the mremap
-completion times drops from 160-250 millesconds to 380-400 microseconds.
+#include <math.h>
 
-Before:
-Total mremap time for 1GB data: 242321014 nanoseconds.
-Total mremap time for 1GB data: 196842467 nanoseconds.
-Total mremap time for 1GB data: 167051162 nanoseconds.
+int main(int argc, char **argv)
+{
+    int i;
+    double sum;
 
-After:
-Total mremap time for 1GB data: 385781 nanoseconds.
-Total mremap time for 1GB data: 388959 nanoseconds.
-Total mremap time for 1GB data: 402813 nanoseconds.
+    while (1) {
+        sum += exp(++i);
+    }
 
-Incase THP is enabled, the optimization is skipped. I also flush the
-tlb every time we do this optimization since I couldn't find a way to
-determine if the low-level PTEs are dirty. It is seen that the cost of
-doing so is not much compared the improvement, on both x86-64 and arm64.
+    return 0;
+}
 
-Cc: minchan@google.com
-Cc: hughd@google.com
-Cc: lokeshgidra@google.com
-Cc: kernel-team@android.com
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- mm/mremap.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+compiled with:
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 5c2e18505f75..68ddc9e9dfde 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -191,6 +191,54 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
- 		drop_rmap_locks(vma);
- }
- 
-+bool move_normal_pmd(struct vm_area_struct *vma, unsigned long old_addr,
-+		  unsigned long new_addr, unsigned long old_end,
-+		  pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush)
-+{
-+	spinlock_t *old_ptl, *new_ptl;
-+	struct mm_struct *mm = vma->vm_mm;
-+
-+	if ((old_addr & ~PMD_MASK) || (new_addr & ~PMD_MASK)
-+	    || old_end - old_addr < PMD_SIZE)
-+		return false;
-+
-+	/*
-+	 * The destination pmd shouldn't be established, free_pgtables()
-+	 * should have release it.
-+	 */
-+	if (WARN_ON(!pmd_none(*new_pmd)))
-+		return false;
-+
-+	/*
-+	 * We don't have to worry about the ordering of src and dst
-+	 * ptlocks because exclusive mmap_sem prevents deadlock.
-+	 */
-+	old_ptl = pmd_lock(vma->vm_mm, old_pmd);
-+	if (old_ptl) {
-+		pmd_t pmd;
-+
-+		new_ptl = pmd_lockptr(mm, new_pmd);
-+		if (new_ptl != old_ptl)
-+			spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
-+
-+		/* Clear the pmd */
-+		pmd = *old_pmd;
-+		pmd_clear(old_pmd);
-+
-+		VM_BUG_ON(!pmd_none(*new_pmd));
-+
-+		/* Set the new pmd */
-+		set_pmd_at(mm, new_addr, new_pmd, pmd);
-+		if (new_ptl != old_ptl)
-+			spin_unlock(new_ptl);
-+		spin_unlock(old_ptl);
-+
-+		*need_flush = true;
-+		return true;
-+	}
-+	return false;
-+}
-+
- unsigned long move_page_tables(struct vm_area_struct *vma,
- 		unsigned long old_addr, struct vm_area_struct *new_vma,
- 		unsigned long new_addr, unsigned long len,
-@@ -239,7 +287,21 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
- 			split_huge_pmd(vma, old_pmd, old_addr);
- 			if (pmd_trans_unstable(old_pmd))
- 				continue;
-+		} else if (extent == PMD_SIZE) {
-+			bool moved;
-+
-+			/* See comment in move_ptes() */
-+			if (need_rmap_locks)
-+				take_rmap_locks(vma);
-+			moved = move_normal_pmd(vma, old_addr, new_addr,
-+					old_end, old_pmd, new_pmd,
-+					&need_flush);
-+			if (need_rmap_locks)
-+				drop_rmap_locks(vma);
-+			if (moved)
-+				continue;
- 		}
-+
- 		if (pte_alloc(new_vma->vm_mm, new_pmd, new_addr))
- 			break;
- 		next = (new_addr + PMD_SIZE) & PMD_MASK;
--- 
-2.19.0.605.g01d371f741-goog
+$ cc -o test test.c -lm
 
+with the following command:
+
+$ perf record -F 99 -p 20016 --call-graph dwarf sleep 10
+
+Tony
+On Tue, Oct 9, 2018 at 1:54 PM Anthony LaTorre <tlatorre9@gmail.com> wrote:
+>
+> Can you reproduce the segfault from the perf.data file I provided?
+>
+> Tony
+> On Tue, Oct 9, 2018 at 11:47 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Tue, Oct 09, 2018 at 11:27:04AM -0500, Anthony LaTorre wrote:
+> > > Hi,
+> > >
+> > > I'm currently running Linux kernel 4.18.10-100.fc27.x86_64 and have a
+> > > problem profiling a program that used to work. Currently when I
+> > > profile the program with the following command:
+> > >
+> > > $ perf record -F 99 -p PID --call-graph dwarf sleep 10
+> > >
+> > > it produces a data file which causes perf report to segfault:
+> > >
+> > > $ perf report
+> > > perf: Segmentation fault
+> > > -------- backtrace --------
+> > > perf(+0x325302)[0x55860ae79302]
+> > > /lib64/libc.so.6(+0x347d0)[0x7fbc8f3987d0]
+> > > perf(+0x273e80)[0x55860adc7e80]
+> > > perf(unwind__get_entries+0x1d9)[0x55860ae4ace9]
+> > > perf(thread__resolve_callchain+0xfd)[0x55860adce7dd]
+> > > perf(sample__resolve_callchain+0x58)[0x55860adc45b8]
+> > > perf(hist_entry_iter__add+0x98)[0x55860adfa908]
+> > > perf(+0x1ab8d9)[0x55860acff8d9]
+> > > perf(+0x280603)[0x55860add4603]
+> > > perf(+0x283c63)[0x55860add7c63]
+> > > perf(+0x280e04)[0x55860add4e04]
+> > > perf(perf_session__process_events+0x8ae)[0x55860add6bee]
+> > > perf(cmd_report+0x190f)[0x55860ad01a4f]
+> > > perf(+0x21a961)[0x55860ad6e961]
+> > > perf(+0x21ac6e)[0x55860ad6ec6e]
+> > > perf(main+0x361)[0x55860ace8411]
+> > > /lib64/libc.so.6(__libc_start_main+0xea)[0x7fbc8f384fea]
+> > > perf(_start+0x2a)[0x55860ace889a]
+> > >
+> > > I've attached the data file which is causing the issue.
+> > >
+> > > The perf version is:
+> > >
+> > > $ perf --version
+> > > perf version 4.18.10
+> > >
+> > > and I'm running Fedora 27 if that makes a difference.
+> > >
+> > > I've tried to reproduce with simpler programs so I could send a
+> > > minimal working example, but it doesn't appear to cause the issue.
+> >
+> > please do, I can't reproduce this
+> >
+> > thanks,
+> > jirka
