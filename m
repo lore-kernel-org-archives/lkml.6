@@ -2,142 +2,192 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60662C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF448C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057EA21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:32:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nanometrics.ca header.i=@nanometrics.ca header.b="XxOcowjD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057EA21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=nanometrics.ca
+	by mail.kernel.org (Postfix) with ESMTP id 74DB7214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DB7214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeJJAuA (ORCPT
+        id S1727181AbeJJAwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:50:00 -0400
-Received: from mail-it1-f170.google.com ([209.85.166.170]:56141 "EHLO
-        mail-it1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbeJJAt0 (ORCPT
+        Tue, 9 Oct 2018 20:52:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55500 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726468AbeJJAwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:49:26 -0400
-Received: by mail-it1-f170.google.com with SMTP id c23-v6so3883115itd.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nanometrics.ca; s=google;
-        h=mime-version:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=syHuYulLxBme0vmwa314TMLha7/Hw7uICCzj802OzdI=;
-        b=XxOcowjD9fnUFTBJX0K8ex8PQxTqsfI25Q4IoWuhfxUjKC1gsMPrJhN8crX6y+vRXk
-         TqFCEH/QKILe0lYDh5VZH0wYBuiv0U9i53hwlJ9v/zHLzs81KJRzhxgdDYmn2rpSF9x7
-         rQGEAzdH0E2w8juajUjutTA279PzYNmA34iOc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references;
-        bh=syHuYulLxBme0vmwa314TMLha7/Hw7uICCzj802OzdI=;
-        b=fTSAGs8oODpnrx+dz4e/bMhCQiYsEahntND4Eu6InVH9m+/fA/E0vFRdvyLFwbzgVI
-         zxB5XrGbfoZKi3ZJviAFtPLpDo7h81gDgILMXPXSHy1TsN6cIhSj4JcivG6E0g3Rz+EH
-         bLByVxfzi+qLKsD0xxFcy8ctUBrk5w3ivTuC5URSA/UUgX4XpZX1aav+ETkmmXv8oRQz
-         EXQ/qlVFIdqU6QlYBebdLLHGqAAIcFqfaWx54gGEPFdYAdVOyzMfvSfywPKg/CZGmqzT
-         ldprNZzvwofjluXqC0AfYqoLjW5hruLJ/6UOwKxoVuMUSYkXko6rNlLJ8rCAY637G41S
-         djCw==
-X-Gm-Message-State: ABuFfoi2TrWzPtYU0JeNA4j+Nh6CfJKHzJ6gCz3+nqJbo/ETRqCE/BHv
-        zdgdNcOgcwaY6CM/CYVeU1rTtjqLRvDwQwOxOwW0P4RL3giCjIK1AKgGoPUWiw1cj9LcaMg4yxr
-        tvbqNX+UF5RlFCocN
-MIME-Version: 1.0
-X-Google-Smtp-Source: ACcGV60+vmQi17SX+s/VMyYOWueMAYtxmCb7F63hziTwxjWy2K9hYjFE9XLcaqqVqXA52z2iSHi1Gw==
-X-Received: by 2002:a24:1dd8:: with SMTP id 207-v6mr2567405itj.126.1539106283979;
-        Tue, 09 Oct 2018 10:31:23 -0700 (PDT)
-Received: from jamesnuss-kubuntu.nanometrics.ca ([72.142.127.130])
-        by smtp.gmail.com with ESMTPSA id c24-v6sm6321018iod.44.2018.10.09.10.31.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 10:31:23 -0700 (PDT)
-From:   James Nuss <jamesnuss@nanometrics.ca>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] mmc-utils: treat FIRMWARE_VERSION as binary field instead of string
-Date:   Tue,  9 Oct 2018 13:31:06 -0400
-Message-Id: <e2b6431104a6a822840d4e7b984d7aa23048a0af.1539103468.git.jamesnuss@nanometrics.ca>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1539103468.git.jamesnuss@nanometrics.ca>
-References: <cover.1539103468.git.jamesnuss@nanometrics.ca>
-In-Reply-To: <cover.1539103468.git.jamesnuss@nanometrics.ca>
-References: <cover.1539103468.git.jamesnuss@nanometrics.ca>
-Content-Type: text/plain; charset="US-ASCII"
+        Tue, 9 Oct 2018 20:52:04 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HTY53063424
+        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 13:34:00 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0wusrsdt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:34:00 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Tue, 9 Oct 2018 18:33:58 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 9 Oct 2018 18:33:53 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w99HXpux8585618
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 9 Oct 2018 17:33:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FD8B52051;
+        Tue,  9 Oct 2018 20:33:25 +0100 (BST)
+Received: from swastik.in.ibm.com (unknown [9.195.38.245])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 11EB552050;
+        Tue,  9 Oct 2018 20:33:19 +0100 (BST)
+From:   Nayna Jain <nayna@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, pjones@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, ebiederm@xmission.com,
+        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v6 0/6] Add support for architecture specific IMA policies 
+Date:   Tue,  9 Oct 2018 23:00:32 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18100917-0012-0000-0000-000002B4B414
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100917-0013-0000-0000-000020E90810
+Message-Id: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=938 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810090169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The FIRMWARE_VERSION field is 8-bytes in size and contains non-printable
-characters.
+From: Nayna Jain <nayna@linux.ibm.com>
 
-Treat this field as binary and print individual byte values in hex
+The architecture specific policy, introduced in this patch set, permits
+different architectures to define IMA policy rules based on kernel
+configuration and system runtime information.
 
-Signed-off-by: James Nuss <jamesnuss@nanometrics.ca>
----
- mmc.h      |  9 ++++++++-
- mmc_cmds.c | 11 +++++++++--
- 2 files changed, 17 insertions(+), 3 deletions(-)
+For example, on x86, there are two methods of verifying the kexec'ed kernel
+image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
+KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
+syscall to verify file signatures, but does not prevent the kexec_load
+syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
+kernel image, loaded via the kexec_file_load syscall, is validly signed and
+prevents loading a kernel image via the kexec_load syscall. When secure
+boot is enabled, the kexec'ed kernel image needs to be signed and the
+signature verified. In this environment, either method of verifying the
+kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
+disabled.
 
-diff --git a/mmc.h b/mmc.h
-index 5d8a7e3..86e209a 100644
---- a/mmc.h
-+++ b/mmc.h
-@@ -59,7 +59,14 @@
- #define EXT_CSD_OPTIMAL_READ_SIZE	266	/* RO */
- #define EXT_CSD_OPTIMAL_WRITE_SIZE	265	/* RO */
- #define EXT_CSD_OPTIMAL_TRIM_UNIT_SIZE	264	/* RO */
--#define EXT_CSD_FIRMWARE_VERSION	254	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_7	261	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_6	260	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_5	259	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_4	258	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_3	257	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_2	256	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_1	255	/* RO */
-+#define EXT_CSD_FIRMWARE_VERSION_0	254	/* RO */
- #define EXT_CSD_CACHE_SIZE_3		252
- #define EXT_CSD_CACHE_SIZE_2		251
- #define EXT_CSD_CACHE_SIZE_1		250
-diff --git a/mmc_cmds.c b/mmc_cmds.c
-index 97ea111..45aa4c0 100644
---- a/mmc_cmds.c
-+++ b/mmc_cmds.c
-@@ -1758,8 +1758,15 @@ int do_read_extcsd(int nargs, char **argv)
- 	}
- 
- 	if (ext_csd_rev >= 7) {
--		printf("eMMC Firmware Version: %s\n",
--			(char*)&ext_csd[EXT_CSD_FIRMWARE_VERSION]);
-+		printf("Firmware Version: 0x%02x%02x%02x%02x%02x%02x%02x%02x\n",
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_7],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_6],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_5],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_4],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_3],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_2],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_1],
-+			ext_csd[EXT_CSD_FIRMWARE_VERSION_0]);
- 		printf("eMMC Life Time Estimation A [EXT_CSD_DEVICE_LIFE_TIME_EST_TYP_A]: 0x%02x\n",
- 			ext_csd[EXT_CSD_DEVICE_LIFE_TIME_EST_TYP_A]);
- 		printf("eMMC Life Time Estimation B [EXT_CSD_DEVICE_LIFE_TIME_EST_TYP_B]: 0x%02x\n",
+The previous version of this patchset introduced a new IMA policy rule to
+disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
+however that is removed from this version by introducing a different
+mechanism, as described below.
+
+The patchset defines an arch_ima_get_secureboot() function to retrieve the
+secureboot state of the system. If secureboot is enabled and
+CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
+syscall.
+
+To support architecture specific policies, a new function
+arch_get_ima_policy() is defined. This patch set defines IMA
+KERNEL_KEXEC_POLICY rules for x86 *only* if CONFIG_KEXEC_VERIFY_SIG is
+disabled and secure boot is enabled.
+
+This patch set includes a patch, which refactors ima_init_policy() to
+remove code duplication.
+
+Changelog:
+
+v6:
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- Includes Mimi's feedback - replace #ifdef with IS_ENABLED
+	in .c file
+* ima: add support for arch specific policies
+	- Fixed one line exceeding 80 character's warning
+* x86/ima: define arch_get_ima_policy() for x86
+	- Includes Mimi's feedback - replace #ifdef with IS_ENABLED
+	in .c file and fixed a comment
+
+v5:
+
+* ima: refactor ima_init_policy()
+	- Includes Mimi's feedback - updated patch description, and
+	code fixes. 
+* ima: add support for arch specific policies
+	- Includes Mimi's feedback - updated comment.
+* ima: add support for external setting of ima_appraise
+	- Includes Mimi's feedback - This patch is deleted. This is
+	handled by enabling IMA_APPRAISE_BOOTPARAM only if IMA_ARCH_POLICY
+	is not enabled. The change is done in the Patch 5/5.
+
+v4:
+* ima: refactor ima_init_policy()
+	- Fixed the issue reported by Dan Carpenter. Replaced logical
+	operator (&&) with bitwise operator (&).
+
+v3:
+* x86/ima: define arch_ima_get_secureboot
+	- Edited subject line, added x86.
+
+* x86/ima: define arch_get_ima_policy() for x86
+	- Fixed the error reported by kbuild test robot. The error was
+	appearing when CONFIG_X86 is enabled, but CONFIG_IMA_ARCH_POLICY
+	is disabled.
+
+v2:
+* ima: define arch_ima_get_secureboot
+	- New Patch - to retrieve secureboot state of the system
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
+	  configured and secureboot is enabled
+* ima: refactor ima_init_policy()
+	- New Patch - cleans up the code duplication in
+	  ima_init_policy(), adds new function add_rules()
+* ima: add support for arch specific policies
+	- modified ima_init_arch_policy() and ima_init_policy() to
+	  use add_rules() from previous patch.
+* ima: add support for external setting of ima_appraise
+	- sets ima_appraise flag explicitly for arch_specific setting
+* ima: add support for KEXEC_ORIG_KERNEL_CHECK
+	- deleted the patch based on Seth's feedback
+* x86/ima: define arch_get_ima_policy() for x86
+	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
+	  Seth's feedback.
+
+Eric Richter (1):
+  x86/ima: define arch_get_ima_policy() for x86
+
+Nayna Jain (4):
+  x86/ima: define arch_ima_get_secureboot
+  ima: prevent kexec_load syscall based on runtime secureboot flag
+  ima: refactor ima_init_policy()
+  ima: add support for arch specific policies
+
+ arch/x86/kernel/Makefile            |   2 +
+ arch/x86/kernel/ima_arch.c          |  33 +++++++
+ include/linux/ima.h                 |  15 ++++
+ security/integrity/ima/Kconfig      |  10 ++-
+ security/integrity/ima/ima_main.c   |  17 ++--
+ security/integrity/ima/ima_policy.c | 167 +++++++++++++++++++++++++++---------
+ 6 files changed, 195 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
+
 -- 
-2.7.4
+2.13.6
 
-
--- 
-This message is intended exclusively for the individual or entity to which 
-it is addressed. This communication may contain information that is 
-proprietary, privileged, confidential or otherwise legally exempt from 
-disclosure. If you are not the named addressee, or have been inadvertently 
-and erroneously referenced in the address line, you are not authorized to 
-read, print, retain, copy or disseminate this message or any part of it. If 
-you have received this message in error, please notify the sender 
-immediately by e-mail and delete all copies of the message.
