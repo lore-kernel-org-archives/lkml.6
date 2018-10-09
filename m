@@ -2,159 +2,183 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803FEC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EE8C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352B32087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:21:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352B32087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7001E2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:22:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7001E2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeJIOhF (ORCPT
+        id S1726540AbeJIOhw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:37:05 -0400
-Received: from mga03.intel.com ([134.134.136.65]:41722 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbeJIOhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:37:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 00:21:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,359,1534834800"; 
-   d="asc'?scan'208";a="264081649"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.128])
-  by orsmga005.jf.intel.com with ESMTP; 09 Oct 2018 00:20:56 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
-        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     "v.anuragkumar\@gmail.com" <v.anuragkumar@gmail.com>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Thinh.Nguyen\@synopsys.com" <Thinh.Nguyen@synopsys.com>,
-        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
-Subject: RE: [PATCH v5 0/8] usb: dwc3: Fix broken BULK stream support to dwc3 gadget driver
-In-Reply-To: <BL0PR02MB5633850DAB27466B4D5D6F44A7E70@BL0PR02MB5633.namprd02.prod.outlook.com>
-References: <1537021801-23896-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <BL0PR02MB563373F068BC275BCB14DBE3A7E60@BL0PR02MB5633.namprd02.prod.outlook.com> <871s8zptow.fsf@linux.intel.com> <BL0PR02MB5633850DAB27466B4D5D6F44A7E70@BL0PR02MB5633.namprd02.prod.outlook.com>
-Date:   Tue, 09 Oct 2018 10:20:52 +0300
-Message-ID: <87tvlvoaaz.fsf@linux.intel.com>
+        Tue, 9 Oct 2018 10:37:52 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:38860 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeJIOhw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 10:37:52 -0400
+Received: by mail-vk1-f194.google.com with SMTP id g80-v6so135047vke.5;
+        Tue, 09 Oct 2018 00:22:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OL9cT4Zqq0h25PQkgi+i/S7JxdGcT0dyj4FXZ0kFai4=;
+        b=E8Gu4khmFN2v38Psw1YPaeVOpp+1a7cq4yaFmwbhg0WEkrliJ/zZmq0Yqi5TI8tRkh
+         L8ktNIHunS8jENLeSJuRcyRUrojRrCdoYGtv/hH/T5fFyDOzzqKyOPgFcDQmMyWti5gk
+         M8rsJaYDpEc6mM+gpi15i700obZhTy/82sUJ2KTYHZ1Pbl+epjP1BLcgWMCHptcRhVXP
+         vN4BBwClw6nRPJrkccSagDk7Ml5WgzwacfjTgmQ9DEUwRUVe52QILnF8wKMqL2dpFuXd
+         z8dwPN58P9vBKENXpIJI2OM1EjrY5EDaxJYFoP8duQ4M1pFqBXE+R0rbw7eXRdYtIZFP
+         m3bg==
+X-Gm-Message-State: ABuFfohxu4e27gS7Uex/LCm2pg2iIvQ7QGUQZgoPaMvcM+JJsZodDRxW
+        /OjS3yXQqKJcB9lO6ZWToWuJw3vTLIydJIE1DZ4=
+X-Google-Smtp-Source: ACcGV63lskTU3FoTi5+mRIJ3KkCvwEbwtUk4nalWIoXCre7y6P5MUgiLe0rORKkQaDhu4wxdNe/5XMPcg6PsirTEEBA=
+X-Received: by 2002:a1f:2d56:: with SMTP id t83-v6mr10486742vkt.65.1539069739010;
+ Tue, 09 Oct 2018 00:22:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20180925210255.172734-1-mka@chromium.org> <20181009010711.GA1577@ban.mtv.corp.google.com>
+In-Reply-To: <20181009010711.GA1577@ban.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 9 Oct 2018 09:22:07 +0200
+Message-ID: <CAMuHMdWe5JYp5eC2PvuG4xEud908Crhm+BhrtxPJ4Uo1-LCc4g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, swboyd@chromium.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Brian,
 
+On Tue, Oct 9, 2018 at 3:07 AM Brian Norris <briannorris@chromium.org> wrote:
+> On Tue, Sep 25, 2018 at 02:02:55PM -0700, Matthias Kaehlcke wrote:
+> > Add a global binding for the 'aliases' node. This includes an initial list
+> > of standardized alias names for some hardware components that are commonly
+> > found in 'aliases'.
+> >
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-Hi,
-
-Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
->>> Please let us know if you have any suggestions / comments on this patch=
- series.
->>> If you feel this patch series are okay, can we proceed with them?
->>
->>I really don't like this dwc3-specific timer. The best way here would be
->>to add a timer on udc/core.c which can be reused by any udc. This would
->>mean, of course, teaching udc/core about streams and lettting it do part
->>of the handling.
->>
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/aliases.txt
+> > @@ -0,0 +1,47 @@
+> > +The aliases node
+> > +----------------
 >
-> Thanks for spending your time in reviewing this patch. The reason for add=
-ing the
-> timer is when streams are enabled there could be chances for the host and=
- gadget
-> controller to become out of sync, the gadget may wait for the host to iss=
-ue prime
-> transaction and the host may wait for the gadget to issue ERDY. To avoid =
-such a
-> potential deadlock conditions, timeout needs to be implemented in dwc3 dr=
-iver.
+> I like the idea in general, and it might be good to note (e.g., commit
+> message) that this was inspired by this thread:
+>
+> https://lore.kernel.org/lkml/20180815221601.GB24830@rob-hp-laptop/
+>
+> where we were interested in firmware-to-device-tree path stability --
+> and the answer was basically: don't memorize paths, just use aliases
+> instead. But then, it was clear that aliases were not documented very
+> formally at all.
+>
+> So here we are!
+>
+> > +
+> > +The aliases node contains properties that represent aliases to device tree
+> > +nodes. The name of the property is the alias name, the value is the path of
+> > +a the device tree node that corresponds to the alias. The path may be
+> > +specified as a string or a phandle.
+> > +
+> > +Alias names are often suffixed with a numeric ID, especially when there may
+> > +be multiple instances of the same type. The ID typically corresponds to the
+> > +hardware layout, it may also be used by drivers for a stable mapping of
+> > +device names and hardware entities.
+> > +
+> > +Alias names
+> > +-----------
+> > +
+> > +The devicetree specification doesn't require the use of specific alias
+> > +names to refer to hardware entities of a given type, however the Linux
+> > +kernel aims for a certain level of consistency.
+> > +
+> > +The following standardized alias names shall be used for their
 
-"in dwc3 driver" is an implementation choice. The situation you describe
-could happen with any UDC, right?
+s/shall/may/
 
-> After timeout occurs, gadget will first stop transfer and restart the tra=
-nsfer again.
-> This issue is mentioned in databook 2.90A section 9.5.2. I am not aware o=
-f how
-> other controllers are handling the streams, but since this issue looks mo=
-re like a
+> > +corresponding hardware components:
+> > +
+> > +  bluetoothN         Bluetooth controller
+> > +  ethernetN          Ethernet interface
+> > +  gpioN                      GPIO controller
+> > +  i2cN                       i2c bus
+> > +  mmcN                       MMC bus
+> > +  rtcN                       Real time clock
+> > +  serialN            UART port
+> > +  spiN                       SPI bus
+> > +  wifiN                      Wireless network interface
+>
+> For the network-device-related names (bluetooth, ethernet, and wifi), I
+> think there's a clear documented reason for this (supporting MAC address
+> plumbing from a DT-aware bootloader). I'm not quite as sure about all
+> the others, and unfortunately, I'm aware of at least one subsystem owner
+> that explicitly does NOT like the aliases usage that is currently
+> supported (spi), and shot down a patch where I tried to use it in a DTS
+> file (despite its regular usage in many other DTS files).
+>
+> So I guess I'm saying: perhaps we should get buy-in from various
+> subsystems before we include them? So maybe it's wiser to start
+> small(er) and only add once we're sure they are useful? Or perhaps Rob
+> has other thoughts.
 
-We should get in touch with other UDC authors. We have at least Renesas,
-net2280, bcd_udc and mtu3 supporting superspeed.
+Please note these aliases become cumbersome once you start considering
+(dynamic) DT overlays.  That's why I made them optional in the sh-sci
+serial driver, cfr. commit 7678f4c20fa7670f ("serial: sh-sci: Add support
+for dynamic instances").
+Relevant parts of the commit description are:
 
-> dwc3 specific issue, I think it would be more convincing to add the timer=
- in dwc3
-> gadget driver rather than adding in udc framework. Also we are stopping t=
-he timer
+    On DT platforms, the sh-sci driver requires the presence of "serialN"
+    aliases in DT, from which instance IDs are derived.  If a DT alias is
+    missing, the drivers fails to probe the corresponding serial port.
 
-why? When the situation you describe is something that can happen with
-any udc, why should we reimplement the solution on all UDCs supporting
-streams when we can give generic support for handling certain
-situations?
+    This becomes cumbersome when considering DT overlays, as currently
+    there is no upstream support for dynamically updating the /aliases node
+    in DT.  Furthermore, even in the presence of such support, hardcoded
+    instance IDs in independent overlays are prone to conflicts.
 
-> when a valid StreamEvnt is found, which would be difficult to handle if t=
-he timer is
+    Hence add support for dynamic instance IDs, to be used in the absence of
+    a DT alias.  This makes serial ports behave similar to I2C and SPI
+    buses, which already support dynamic instances.
 
-Why difficult? udc-core would call:
+To clarify my point: R-Car M2-W has 4 different types of serial ports, for a
+total of 18 ports, and the two ports on a board labeled 0 and 1 may not
+correspond to the physical first two ports (what's "first" in a collection of
+4 different types?).
 
-mod_timer(gadget->stream_timeout_timer, msecs_to_jiffies(50));
+Aliases may be fine for referring to the main serial console (labeled
+port 0 on the device, too), and the primary Ethernet interface (so U-Boot
+knows where to add the "local-mac-address" property), but beyond that,
+I think they should be avoided.
 
-Once you receive stream event, dwc3 would call:
+Just my two^H^H^Hfive €c.
 
-if (timer_pending(dwc->gadget.stream_timeout_timer))
-	del_timer(dwc->gadget.stream_timeout_timer);
+Gr{oetje,eeting}s,
 
-Why is that difficult? You could even avoid anything to be written in
-dwc3 and put the del_timer() inside usb_gadget_giveback_request()
-itself. That why, dwc3 doesn't even have to know that there's a timer
-running. Also, you're timer function, instead of calling dwc3's private
-functions, should be relying on the gadget API.
+                        Geert
 
-Your timer, apparently, should be fired per-request, then your timer
-function would call:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-usb_ep_dequeue(request);
-usb_ep_queue(request);
-
-If the timer expires. This would work for any UDC, not only dwc3. Then,
-this is something we document for all UDCs and they'd have to adhere to
-the API.
-
-In summary, not that many changes needed to dwc3. Nothing related to
-timers inside dwc3. Almost everythin can, and should, be done
-generically.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlu8VtQACgkQzL64meEa
-mQaxGw//bafmw8cp0DNNzmkKdCWsZyhJ486+anJgz+CgxQrohMs2JDwoHkIxRq+u
-GnG2cR2fnwS2hTTIo4prJPyqJoQjAmzjHar/QHatkBqeJVXCBuYhA0DP2RrQ/s57
-5C/phtSg1PQlgirSfZrIxCv7T0n+LaFyYWuFrW+Bgwi2GJKCMFVlo0q3MFaOSxds
-/U/BeNsGKoLon3wQFH/KGB73+7d9HH61BnpSSNrHFhUiHgJJxYHZmUCkr0YjwTDY
-gql8lV4PnmM+Fhh4pQ6dZr2H4ZWPr2Z6Gxv3scej4+JWF1OdwrEr9d/dUa453RXT
-ss4R+k0aLh2JTVLphROTCO9CHi683jxhIGdWGVeSrEIJ5jETUj1QtAyyM6g163ui
-uR4xrnviEFRfm/qVS6VJzQigccDTMHL/83d7mJRO9Pt5Hmt6oHVqF+jHmRKAkPOg
-73SBFepHOW2nrpEoU4Hmg4CqzO0z5ouR1FJCZZ4pXl/CpuzCb1OjLo485rflaCLK
-giTAO7wZl1mSNEn8tq5yh8Qxeb8cZhpfNKJrcGp2tY/jFg6nidfk7yCt9nFWpbIl
-c+7Gy7NcRcwVFvJ4sydjdmBIR/uzYzoEnyqCuURcCaZRueSG9bwLysKzsFfRVwdL
-+rkOJhB3LsNMaX56wpyRrSYJo3F6F9Z55UrCMEVf6NV4L6N6gV0=
-=OjZJ
------END PGP SIGNATURE-----
---=-=-=--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
