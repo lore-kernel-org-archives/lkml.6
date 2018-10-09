@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B567C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FB3C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3291214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AC9F214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="aA2O5Ym4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3291214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="UY+Osic1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC9F214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbeJISa2 (ORCPT
+        id S1727403AbeJISac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:30:28 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35195 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeJISa1 (ORCPT
+        Tue, 9 Oct 2018 14:30:32 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45804 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbeJISab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:30:27 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v133-v6so661243pgb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:01 -0700 (PDT)
+        Tue, 9 Oct 2018 14:30:31 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u12-v6so659895pfn.12
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AfEYPVh4rqHS6+QUeAah9CXPO2mj/JAmATW5DSk6e3A=;
-        b=aA2O5Ym4Y/iXk8JWL5FotQ8HLg3FHlj9ZN6JRvnl3I/E4K21HzpvrHgcA+/1CnVw1Q
-         jPLP8+H20MxCqPt7zhynY7HSHMTdyFuALJTXdFZZqcrjsaXRd34Ae6ALjzDPDzPxluDT
-         1Lv9QJwYb7oLTU0ZyhCpFPlFzqzgX2ot7J8NNibPi96//ru0mwIQlF82HtQG4XWCM2BS
-         5Bd6wHvaxs5F2vP0rnJ6lhZR2tn4TbtK6zfS3sPiTVkOeeE7b5fVLt/h361FCl6Xj7Cd
-         WFhxfjIdbeEh9vvt5a8MAf+/uXZkgJZpJQBP6JZKRIZl6112JX0gnvfAqJemxHrauX4y
-         wKEg==
+        bh=cVE8QAHSKwbZCuFwtDriA/w50/SsD44nW2TsoCxLFiY=;
+        b=UY+Osic1dkywK30vBG/0XDMGI01PhPRWkMwdxlhmIvy6IXreiMLCxf7W12cRrqWiHy
+         EHVzacC51h7is1t9qqWvixGOr/pAlBW5sOE2feXa3eDE6CNZQdpZYDhk9+QnKkFu99zT
+         5HAsbt5laVRKZ5AskDW65elwm9YRyP7Caj5wx6Hk/oPrzSvE8MGY3YXozzhFfPmkdGs7
+         nCASKLrrwUP1G6DiE1p1mB3OkWj1ufPZGXMgg3Ooh9oJUAP+dyQMw/xB0D7PmL0r4uMC
+         S51Xv0UWqctZQ+xsVFfOP0buYdet5D5+PQx4YNmPtoB7HjjKg214xJLlSfNkb02zOE+X
+         dnmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AfEYPVh4rqHS6+QUeAah9CXPO2mj/JAmATW5DSk6e3A=;
-        b=H1Rvyr1LEEQ8r8C7BhSlsquLiAZzEGSipEqdweWaJWb8hMGaDjjirOgo378ITTe53T
-         WKWbM4mGeInSAAOmA6XcCEM4EDaacak8HOzFLLdeTWHgrO28flHP7SXkDiNSw10bxiJ/
-         IZatllbmoBpVK2NLiuYodmK5oEwF/xTlxqadqs0q1zFkiciFndoB+Z2eeiayzLw9cG2X
-         Nn+TTuL373paPTVnzDCh9kElnOsgGAkQlcaGBqiZuSUUSBS1xkTZeUXxfLioy2EtAWYI
-         ob133fTM9EAjkXx3YhF3x83/J7D1ZNjVChJUnk+fDyftOHnq9p9HtFc52WoNP/Y/hWu3
-         IzMw==
-X-Gm-Message-State: ABuFfojUbpNxt6ePAeoUqcjmAHUAccqc/Pkqgb1GymdebR5LNPqRZPzF
-        2N18jEjUbl7nQceJ4qV96MQwVA==
-X-Google-Smtp-Source: ACcGV60XGBGU3dNEdeMWIX0PkM6C5PZTT+cCkHapsWT8CDfo5He7geXqgnkS2RBh5SvnYCDJcdsvBA==
-X-Received: by 2002:a63:6d83:: with SMTP id i125-v6mr24412670pgc.215.1539083641044;
-        Tue, 09 Oct 2018 04:14:01 -0700 (PDT)
+        bh=cVE8QAHSKwbZCuFwtDriA/w50/SsD44nW2TsoCxLFiY=;
+        b=gcfGCX5A1WbIzpaBBOaKaBwYySVYRLANHNhdN6WNfGaQ/C0HmpAvy/0Hd8UcsRwPVE
+         4AANMD7TMXFW+9hGUoY+ND8Z07H6uxT2ZhlA0fOQUMkCBiwbZqO4XvytY2/AVfs/5m10
+         /o1d6FjCf4+73OrwnuC08jSTUv7fjNR+dY8gPQAPF6qIAz3OtoLLBerOhVMBiWMWZ+Qy
+         NH0wDmW/PPz5sDbJ/ZfRA57suTjwgZ07zPrWgzU3D9ri7pVfj3Po/lo/ISH08z18UBFN
+         sQTaiS9/m8Poay1M0uP+Eg1TjnAr/4w5UoetCKyHvUoNnJ2w1YXcVDigjhatxLq0Wl1o
+         Xzbg==
+X-Gm-Message-State: ABuFfoifF/zv9jEWMyOR4R/o+Ddg+QTuY4f5U41bzKCGQdmCZeNGB5JR
+        iz9Gbf2ALgsCOhZ7mWuOSWq+Bw==
+X-Google-Smtp-Source: ACcGV608Kg/hsZNoz1ZZEjvkEV35ZHVimSwf9G/716lUdHDjy61X5KL63z7nxS4WIQdEof/SXQMRLQ==
+X-Received: by 2002:a63:cb51:: with SMTP id m17-v6mr24565179pgi.105.1539083644658;
+        Tue, 09 Oct 2018 04:14:04 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.57
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:13:59 -0700 (PDT)
+        Tue, 09 Oct 2018 04:14:03 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 14/45] lightnvm: pblk: remove unused variable.
-Date:   Tue,  9 Oct 2018 13:11:44 +0200
-Message-Id: <20181009111215.7653-15-mb@lightnvm.io>
+Subject: [GIT PULL 15/45] lightnvm: pblk: guarantee emeta on line close
+Date:   Tue,  9 Oct 2018 13:11:45 +0200
+Message-Id: <20181009111215.7653-16-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -81,26 +81,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-Removed unused struct ppa_addr variable.
+If a line is recovered from open chunks, the memory structures for
+emeta have not necessarily been properly set on line initialization.
+When closing a line, make sure that emeta is consistent so that the line
+can be recovered on the fast path on next reboot.
+
+Also, remove a couple of empty lines at the end of the function.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/lightnvm/pblk-core.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index af9477b7e803..1865ac1560fa 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -1373,7 +1373,6 @@ static inline int pblk_check_io(struct pblk *pblk, struct nvm_rq *rqd)
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 36ac9eff8ebd..a31417682c90 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1775,6 +1775,17 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+ 	wa->pad = cpu_to_le64(atomic64_read(&pblk->pad_wa));
+ 	wa->gc = cpu_to_le64(atomic64_read(&pblk->gc_wa));
  
- 	if (rqd->opcode == NVM_OP_PWRITE) {
- 		struct pblk_line *line;
--		struct ppa_addr ppa;
- 		int i;
++	if (le32_to_cpu(emeta_buf->header.identifier) != PBLK_MAGIC) {
++		emeta_buf->header.identifier = cpu_to_le32(PBLK_MAGIC);
++		memcpy(emeta_buf->header.uuid, pblk->instance_uuid, 16);
++		emeta_buf->header.id = cpu_to_le32(line->id);
++		emeta_buf->header.type = cpu_to_le16(line->type);
++		emeta_buf->header.version_major = EMETA_VERSION_MAJOR;
++		emeta_buf->header.version_minor = EMETA_VERSION_MINOR;
++		emeta_buf->header.crc = cpu_to_le32(
++			pblk_calc_meta_header_crc(pblk, &emeta_buf->header));
++	}
++
+ 	emeta_buf->nr_valid_lbas = cpu_to_le64(line->nr_valid_lbas);
+ 	emeta_buf->crc = cpu_to_le32(pblk_calc_emeta_crc(pblk, emeta_buf));
  
- 		for (i = 0; i < rqd->nr_ppas; i++) {
+@@ -1792,8 +1803,6 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+ 	spin_unlock(&l_mg->close_lock);
+ 
+ 	pblk_line_should_sync_meta(pblk);
+-
+-
+ }
+ 
+ static void pblk_save_lba_list(struct pblk *pblk, struct pblk_line *line)
 -- 
 2.17.1
 
