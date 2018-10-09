@@ -2,196 +2,89 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C113ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08518ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67C6214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A24AC214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:51:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="el2EUKH7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67C6214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="aQfvXEvy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24AC214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbeJJCGn (ORCPT
+        id S1726728AbeJJCJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 22:06:43 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:35133 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbeJJCGm (ORCPT
+        Tue, 9 Oct 2018 22:09:47 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:53214 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbeJJCJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 22:06:42 -0400
-Received: by mail-yw1-f67.google.com with SMTP id y76-v6so1113381ywd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 11:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IJnCLRw3K+q3Md8hRn4AAV6ZWYmte8NOr8osfiV9S1M=;
-        b=el2EUKH7k0vuEAzqiBypMiUy3RyKKukFBLG0f2cl17Plo4OYPhfACk0S11Jf4PBgRa
-         b4cTCDsdeeYj81uWm6iEZDx/TlqhMh6WonLGKHU68SbN9yRHOdh3oowHVP2erFo64mei
-         yLcny3Kx2s7peV4X6z8UxNZJo7Emr4+/0/TlBLLnbBXBQd0WTufMOXLdu9ojkrkmoJd5
-         WQqVYKT/pDBkGYMiEWUPlkG9e8GPbNmyeU6jFf9IgVJNEX2RvAcU+rHPlY4ml0UdhAGL
-         VbiaVpjlKmGyiv+efZ5DRsc3zFholac0xI4hhQ834jskAMLJwwhtTovei1j31saiN2YJ
-         OveQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IJnCLRw3K+q3Md8hRn4AAV6ZWYmte8NOr8osfiV9S1M=;
-        b=pbu6usiC1h/51Dt8+y6p3IatE5gYNs+RykBFxBIFDBzpJSwssINR+NQWW7yeGDkBkT
-         hgGXeMwTgzuG3fb2h8MS91UU5ww7qEYmSMfaCLBvryeCWs+ESrj+rjKPi1kQnhhlsO74
-         FBmOQvpZ3BGIY9gVMtsOa4fJ4kX5TPjGhh+ie9Uh+Jw+1Tix7oCWv+h+wS1joXaDrUd4
-         /hASaeEOBGUbUYK7yr42v3Ovw8rBOx8N3gxsPUvLBJzi5cpGbJHZ/ywlOOqnI25HmDKk
-         t/7RlyBxGqOc/s3kBbPirXwbpXMPHMo3rEC13Zj70PuS4sBq2eaH91djG5FzFAH8FogN
-         /wNw==
-X-Gm-Message-State: ABuFfoh0NbqIFc9Sncy3r2EVK25Cm08Qnd3aW0yX2TEllERIjjsqQXLn
-        tiAkvgjUTAuwk/XkG3+jR2VvCQ==
-X-Google-Smtp-Source: ACcGV62qRx2HfQJfPX3jBPoOLE9skEPk+s+BCfnqkpFsTggsdSHGjGMixGKyjd7YcA94hpHjdAvWHQ==
-X-Received: by 2002:a81:e901:: with SMTP id d1-v6mr16555259ywm.383.1539110901166;
-        Tue, 09 Oct 2018 11:48:21 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::6:14c5])
-        by smtp.gmail.com with ESMTPSA id x133-v6sm13947696ywg.66.2018.10.09.11.48.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 11:48:20 -0700 (PDT)
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Rik van Riel <riel@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH 4/4] mm: zero-seek shrinkers
-Date:   Tue,  9 Oct 2018 14:47:33 -0400
-Message-Id: <20181009184732.762-5-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181009184732.762-1-hannes@cmpxchg.org>
-References: <20181009184732.762-1-hannes@cmpxchg.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 9 Oct 2018 22:09:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1539111086; x=1570647086;
+  h=from:to:cc:subject:date:message-id;
+  bh=QbO4SRoV4FLbe735YZxFuxe+2rYyhQSJagMIlJj9fzw=;
+  b=aQfvXEvyIh5ZUau4BIZf9p3XeYqzaiv2Z1yV1d3TE5THCz93O+n/d05/
+   9PqFE+s3IWwWisRxJQzzow4dsrN6CnAKzBAOMAjQnDe+walW0cKhYo1dJ
+   z8P26ju2pNH8PSPPg/Q3vR2KZ+Y64seHTDIALBgmcGRE5A+k+WXXdDFye
+   er0YvlXUWx5JnqpuIkC5hkPhn6WoDq/UiLxIsXpebxFinxM6HLIXzwZxk
+   Kv0nfrghrRu87TYSVWVr/GPTspWSfJJfg3XODsw4xN9jeo2IV1sqYeput
+   kAI8LeHUtnzqUjDBmVlPd9V6v9UnEuGTjmQCuwgo7qURfCNjStxOTHhmf
+   A==;
+X-IronPort-AV: E=Sophos;i="5.54,361,1534780800"; 
+   d="scan'208";a="93263445"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Oct 2018 02:51:25 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 09 Oct 2018 11:36:35 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 09 Oct 2018 11:51:25 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        thierry.reding@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        hch@infradead.org, atish.patra@wdc.com
+Subject: [RFC 0/4] GPIO & PWM support for HiFive Unleashed 
+Date:   Tue,  9 Oct 2018 11:51:21 -0700
+Message-Id: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The page cache and most shrinkable slab caches hold data that has been
-read from disk, but there are some caches that only cache CPU work,
-such as the dentry and inode caches of procfs and sysfs, as well as
-the subset of radix tree nodes that track non-resident page cache.
+This patch series adds GPIO & PWM drivers and DT documentation
+for HiFive Unleashed board. The patches are mostly based on
+Wesley's patch.
 
-Currently, all these are shrunk at the same rate: using DEFAULT_SEEKS
-for the shrinker's seeks setting tells the reclaim algorithm that for
-every two page cache pages scanned it should scan one slab object.
+Wesley W. Terpstra (4):
+  pwm: sifive: Add DT documentation for SiFive PWM Controller.
+  pwm: sifive: Add a driver for SiFive SoC PWM
+  gpio: sifive: Add DT documentation for SiFive GPIO.
+  gpio: sifive: Add GPIO driver for SiFive SoCs
 
-This is a bogus setting. A virtual inode that required no IO to create
-is not twice as valuable as a page cache page; shadow cache entries
-with eviction distances beyond the size of memory aren't either.
+ .../devicetree/bindings/gpio/gpio-sifive.txt       |  28 ++
+ .../devicetree/bindings/pwm/pwm-sifive.txt         |  32 ++
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-sifive.c                         | 326 +++++++++++++++++++++
+ drivers/pwm/Kconfig                                |  10 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-sifive.c                           | 240 +++++++++++++++
+ 8 files changed, 645 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sifive.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+ create mode 100644 drivers/gpio/gpio-sifive.c
+ create mode 100644 drivers/pwm/pwm-sifive.c
 
-In most cases, the behavior in practice is still fine. Such virtual
-caches don't tend to grow and assert themselves aggressively, and
-usually get picked up before they cause problems. But there are
-scenarios where that's not true.
-
-Our database workloads suffer from two of those. For one, their file
-workingset is several times bigger than available memory, which has
-the kernel aggressively create shadow page cache entries for the
-non-resident parts of it. The workingset code does tell the VM that
-most of these are expendable, but the VM ends up balancing them 2:1 to
-cache pages as per the seeks setting. This is a huge waste of memory.
-
-These workloads also deal with tens of thousands of open files and use
-/proc for introspection, which ends up growing the proc_inode_cache to
-absurdly large sizes - again at the cost of valuable cache space,
-which isn't a reasonable trade-off, given that proc inodes can be
-re-created without involving the disk.
-
-This patch implements a "zero-seek" setting for shrinkers that results
-in a target ratio of 0:1 between their objects and IO-backed
-caches. This allows such virtual caches to grow when memory is
-available (they do cache/avoid CPU work after all), but effectively
-disables them as soon as IO-backed objects are under pressure.
-
-It then switches the shrinkers for procfs and sysfs metadata, as well
-as excess page cache shadow nodes, to the new zero-seek setting.
-
-Reported-by: Domas Mituzas <dmituzas@fb.com>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- fs/kernfs/mount.c |  3 +++
- fs/proc/root.c    |  3 +++
- mm/vmscan.c       | 15 ++++++++++++---
- mm/workingset.c   |  2 +-
- 4 files changed, 19 insertions(+), 4 deletions(-)
-
-diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-index 1bd43f6947f3..7d56b624e0dc 100644
---- a/fs/kernfs/mount.c
-+++ b/fs/kernfs/mount.c
-@@ -251,6 +251,9 @@ static int kernfs_fill_super(struct super_block *sb, struct kernfs_fs_context *k
- 		sb->s_export_op = &kernfs_export_ops;
- 	sb->s_time_gran = 1;
- 
-+	/* sysfs dentries and inodes don't require IO to create */
-+	sb->s_shrink.seeks = 0;
-+
- 	/* get root inode, initialize and unlock it */
- 	mutex_lock(&kernfs_mutex);
- 	inode = kernfs_get_inode(sb, info->root->kn);
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 8912a8b57ac3..74975ca77b71 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -127,6 +127,9 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 	 */
- 	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
- 
-+	/* procfs dentries and inodes don't require IO to create */
-+	s->s_shrink.seeks = 0;
-+
- 	pde_get(&proc_root);
- 	root_inode = proc_get_inode(s, &proc_root);
- 	if (!root_inode) {
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a859f64a2166..62ac0c488624 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -474,9 +474,18 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
- 
- 	total_scan = nr;
--	delta = freeable >> priority;
--	delta *= 4;
--	do_div(delta, shrinker->seeks);
-+	if (shrinker->seeks) {
-+		delta = freeable >> priority;
-+		delta *= 4;
-+		do_div(delta, shrinker->seeks);
-+	} else {
-+		/*
-+		 * These objects don't require any IO to create. Trim
-+		 * them aggressively under memory pressure to keep
-+		 * them from causing refetches in the IO caches.
-+		 */
-+		delta = freeable / 2;
-+	}
- 
- 	/*
- 	 * Make sure we apply some minimal pressure on default priority
-diff --git a/mm/workingset.c b/mm/workingset.c
-index cfdf6adf7e7c..97523c4d3496 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -523,7 +523,7 @@ static unsigned long scan_shadow_nodes(struct shrinker *shrinker,
- static struct shrinker workingset_shadow_shrinker = {
- 	.count_objects = count_shadow_nodes,
- 	.scan_objects = scan_shadow_nodes,
--	.seeks = DEFAULT_SEEKS,
-+	.seeks = 0, /* ->count reports only fully expendable nodes */
- 	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE,
- };
- 
 -- 
-2.19.0
+2.7.4
 
