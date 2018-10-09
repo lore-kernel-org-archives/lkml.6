@@ -2,139 +2,195 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91A3C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B32C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6013D214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:13:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6013D214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id E5A7E214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:14:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="BeoElXDl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A7E214DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbeJJDcL (ORCPT
+        id S1727858AbeJJDdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:32:11 -0400
-Received: from mout.gmx.net ([212.227.17.20]:33327 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726828AbeJJDcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:32:11 -0400
-Received: from ls3530.fritz.box ([92.116.190.11]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LswqM-1fi9aY1vT8-012cJ6; Tue, 09
- Oct 2018 22:13:24 +0200
-Received: from ls3530.fritz.box ([92.116.190.11]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LswqM-1fi9aY1vT8-012cJ6; Tue, 09
- Oct 2018 22:13:24 +0200
-Date:   Tue, 9 Oct 2018 22:13:21 +0200
-From:   Helge Deller <deller@gmx.de>
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Tue, 9 Oct 2018 23:33:19 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45767 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727784AbeJJDdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 23:33:18 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y15-v6so1350777plr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V18Z3eBngl64nu3A+zrmzE7Etk3mR/lRybg06jtcvaQ=;
+        b=BeoElXDlJzTZzVxV/Ugq+efw1Z1UhukGXfG0nBm39VLNGuUIQGhfUStb8xl10LFnn1
+         QvM/8w5aImUG7sgfTeytSBUunMi6mULgs9DC2NDSmrWZBr6lQTLjxT0blWXN8tzL+/0g
+         mjdqRhLnuChSYvjtl1k/nNhL4+gdGnOT67yDA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V18Z3eBngl64nu3A+zrmzE7Etk3mR/lRybg06jtcvaQ=;
+        b=jcCQb3zUA8HzG4UsiHbK353+HG63+OpPY6BnGJxx+jTBYJvt8xYWoVe3FhxdBu8C0h
+         3/dn2cq75bq+ccghoix2rEALPMgOBxhHQOsak6a4XQjqmcJoh8Skck2lqo+85vqxnO+u
+         DIkSlK4IrXiSd855fMkKy3B7zr1fMdRYXzCyM5ckLSYr5J8rjQpd9ionYeHSPr64ohSR
+         Rtp+E4zOjzYhRmx+GEdAOe3jILzZIqjAbPrl1xnv94CHeuWEMhXZFr6hWKX/yAWMYx7j
+         /vm2wenwU+8IKcxmhjIx6YU97jwbK9SM7ugatwqeDp2B7NAeu/UzoGqiGUnwdk+AF8eR
+         RL5Q==
+X-Gm-Message-State: ABuFfohAuHURwyMsvO2RxcqjMkzhc0EiqoBdDQFjaESE749TTQxVykDb
+        Rgu4Y3D/6/s3cFhk+GjB2Z/WCj0f+78=
+X-Google-Smtp-Source: ACcGV61V0RCzBgoeI8y85vA2psUTe3/j++wWW2JskMRkOixECYpMBrd8kiRPSIdV29vesF4/SmKLJQ==
+X-Received: by 2002:a17:902:8543:: with SMTP id d3-v6mr30716888plo.81.1539116079648;
+        Tue, 09 Oct 2018 13:14:39 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id z4-v6sm25555664pgs.50.2018.10.09.13.14.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 13:14:31 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     kernel-team@android.com, Joel Fernandes <joel@joelfernandes.org>,
+        minchan@google.com, hughd@google.com, lokeshgidra@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org
-Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file
- generation
-Message-ID: <20181009201321.GA28911@ls3530.fritz.box>
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-5-git-send-email-firoz.khan@linaro.org>
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] mm: Speed up mremap on large regions
+Date:   Tue,  9 Oct 2018 13:14:00 -0700
+Message-Id: <20181009201400.168705-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538975801-13735-5-git-send-email-firoz.khan@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Provags-ID: V03:K1:/PWtdBnS8lDeTPmWziQV9OMb06a4zQCtAhKO80BxaVYiDnCf1VI
- zMkH+7ll66aH4M+qesTL2bFBaQa84oXmOkq7+l9/+O8sZQRUD5UqnfGkI4Y8OvlkMgabb1+
- GYAJaL9jEnGzuc8Ul+bGi1/HJGaZmQt3FkBL0mz1liREGrxsizGzoD74byIDO/5++dARlS1
- FaDzvr1xdjJGV8hF1wdrg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mHUcCajHNrs=:dC0Qg7JRqKXrhgRXm+VQ/c
- UJZynhic4ymOWa+fyQaRZSq7rCr8xdAgjpEFoXhq7og7MFFbr0NmZ83MgreBvp1XISVtsHaVM
- QqluUNapVDNjLZMoga+jFMXnTdr9MOrbCHp+6OSHu9eMziCmOyH3YItfXK0r77Am5NkakuH8p
- rkv0IrbxNTLWesZB+5gIPKHe4X9e41SRKkuUX+zm0NQCOeBSahqYfTP5bgZ7mCa6Z+LeRWr+r
- Ol4/fE/AqJ3bt/y0e/61y3HCWQwyU7CX5R5u3gFzEtQ4QSBCFfmh8v8JVNOn/toeg8uFE8BZR
- NLdCpVrbnmtxH+GupDrchAQwKnE/sT2KD45+oRXwGXnEK2L5Iyxmf1lwFId1LqHwXzbIgGhE9
- vJAgBCQMMiizDyKultuUxJXebXiAa/Xf5bcQ+0PNC2pcfZ0JdwSmxq9soXv/9RZmIXdPxRUT9
- Hy7EyOeyFIo+UEJak/EUPjgb/WPF4I8ondjR5L/5qG2EN0Ct8WZ5EWL6rQLESpqIl86jlQIHY
- LwE1+uEGlp+XgLnCeUG+jigsWRIp8haiSrHEwED6YZTMusSFTanlnk80dRMHwvzK433cFIBTU
- iFzmIg5VI+7k3tOZ7e8yXTkL/vVPlk4cQTKvbELg/YjpGmWor7zBWx0BpmrR9S/LNlhaCawNL
- gsXTLySu3hZ1yBQn3+n0vSJ1eH8TnxpYd2GUHHWkVqh0nwsdsU9c0Q9lwT70qvv7jj/9tXyGp
- nenZBno9BDWiQPOEdQm/Cnz85GKNEcK/8oojbY+b5VfSlKzgjp6wq8Aqu5KGuVwYCQ7zftfHt
- f8hyMMdh0ttFn9BoztMCn7qdnlhOQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Firoz Khan <firoz.khan@linaro.org>:
-> System call table generation script must be run to generate
-> unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
-> will have changes which will invokes the script.
-> 
-> This patch will generate unistd_32/64.h and syscall_table_
-> 32/64/c32.h files by the syscall table generation script
-> invoked by arch/parisc/Makefile and the generated files against
-> the removed files will be identical.
-> 
-> The generated uapi header file will be included in uapi/asm/
-> unistd_32/64.h and generated system call table support file will
-> be included by arch/sparc/kernel/syscall_table_32/64.S file.
-> 
-> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-> ---
->  arch/parisc/Makefile                  |   4 +
->  arch/parisc/include/asm/Kbuild        |   3 +
->  arch/parisc/include/uapi/asm/Kbuild   |   2 +
->  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
->  arch/parisc/kernel/syscall.S          |  12 +-
->  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
+Android needs to mremap large regions of memory during memory management
+related operations. The mremap system call can be really slow if THP is
+not enabled. The bottleneck is move_page_tables, which is copying each
+pte at a time, and can be really slow across a large map. Turning on THP
+may not be a viable option, and is not for us. This patch speeds up the
+performance for non-THP system by copying at the PMD level when possible.
 
+The speed up is three orders of magnitude. On a 1GB mremap, the mremap
+completion times drops from 160-250 millesconds to 380-400 microseconds.
 
-Can we please get rid of those two new files: 
+Before:
+Total mremap time for 1GB data: 242321014 nanoseconds.
+Total mremap time for 1GB data: 196842467 nanoseconds.
+Total mremap time for 1GB data: 167051162 nanoseconds.
 
->  arch/parisc/kernel/syscall_table_32.S |  13 +
->  arch/parisc/kernel/syscall_table_64.S |  20 ++
+After:
+Total mremap time for 1GB data: 385781 nanoseconds.
+Total mremap time for 1GB data: 388959 nanoseconds.
+Total mremap time for 1GB data: 402813 nanoseconds.
 
-Both are not needed (at least on parisc) if you apply the following
-patch on top of your patch series.
-This patch finally fixes the 64-bit kernel on parisc (tested on real
-hardware).
+Incase THP is enabled, the optimization is skipped. I also flush the
+tlb every time we do this optimization since I couldn't find a way to
+determine if the low-level PTEs are dirty. It is seen that the cost of
+doing so is not much compared the improvement, on both x86-64 and arm64.
 
-Helge
+Cc: minchan@google.com
+Cc: hughd@google.com
+Cc: lokeshgidra@google.com
+Cc: kernel-team@android.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ mm/mremap.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
-index 2523b83b88d8..45cddeeb968f 100644
---- a/arch/parisc/kernel/syscall.S
-+++ b/arch/parisc/kernel/syscall.S
-@@ -923,10 +923,20 @@ ENTRY(lws_table)
- END(lws_table)
- 	/* End of lws table */
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 5c2e18505f75..68ddc9e9dfde 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -191,6 +191,54 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 		drop_rmap_locks(vma);
+ }
  
--#include "syscall_table_32.S"
-+#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
++bool move_normal_pmd(struct vm_area_struct *vma, unsigned long old_addr,
++		  unsigned long new_addr, unsigned long old_end,
++		  pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush)
++{
++	spinlock_t *old_ptl, *new_ptl;
++	struct mm_struct *mm = vma->vm_mm;
 +
-+ENTRY(sys_call_table)
-+#if defined(CONFIG_64BIT)
-+#include <asm/syscall_table_c32.h>	/* compat syscalls */
-+#else
-+#include <asm/syscall_table_32.h>	/* 32-bit native syscalls */
-+#endif
-+END(sys_call_table)
++	if ((old_addr & ~PMD_MASK) || (new_addr & ~PMD_MASK)
++	    || old_end - old_addr < PMD_SIZE)
++		return false;
 +
- #ifdef CONFIG_64BIT
--#define SYSCALL_TABLE_64BIT
--#include "syscall_table_64.S"
-+ENTRY(sys_call_table64)
-+#include <asm/syscall_table_64.h>	/* 64-bit native syscalls */
-+END(sys_call_table64)
- #endif
- 
- 	/*
++	/*
++	 * The destination pmd shouldn't be established, free_pgtables()
++	 * should have release it.
++	 */
++	if (WARN_ON(!pmd_none(*new_pmd)))
++		return false;
++
++	/*
++	 * We don't have to worry about the ordering of src and dst
++	 * ptlocks because exclusive mmap_sem prevents deadlock.
++	 */
++	old_ptl = pmd_lock(vma->vm_mm, old_pmd);
++	if (old_ptl) {
++		pmd_t pmd;
++
++		new_ptl = pmd_lockptr(mm, new_pmd);
++		if (new_ptl != old_ptl)
++			spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
++
++		/* Clear the pmd */
++		pmd = *old_pmd;
++		pmd_clear(old_pmd);
++
++		VM_BUG_ON(!pmd_none(*new_pmd));
++
++		/* Set the new pmd */
++		set_pmd_at(mm, new_addr, new_pmd, pmd);
++		if (new_ptl != old_ptl)
++			spin_unlock(new_ptl);
++		spin_unlock(old_ptl);
++
++		*need_flush = true;
++		return true;
++	}
++	return false;
++}
++
+ unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		unsigned long old_addr, struct vm_area_struct *new_vma,
+ 		unsigned long new_addr, unsigned long len,
+@@ -239,7 +287,21 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+ 			split_huge_pmd(vma, old_pmd, old_addr);
+ 			if (pmd_trans_unstable(old_pmd))
+ 				continue;
++		} else if (extent == PMD_SIZE) {
++			bool moved;
++
++			/* See comment in move_ptes() */
++			if (need_rmap_locks)
++				take_rmap_locks(vma);
++			moved = move_normal_pmd(vma, old_addr, new_addr,
++					old_end, old_pmd, new_pmd,
++					&need_flush);
++			if (need_rmap_locks)
++				drop_rmap_locks(vma);
++			if (moved)
++				continue;
+ 		}
++
+ 		if (pte_alloc(new_vma->vm_mm, new_pmd, new_addr))
+ 			break;
+ 		next = (new_addr + PMD_SIZE) & PMD_MASK;
+-- 
+2.19.0.605.g01d371f741-goog
+
