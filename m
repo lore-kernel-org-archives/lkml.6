@@ -2,118 +2,148 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD6FC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32622C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B9382086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:43:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GNrs8w0T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9382086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 003B821502
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:44:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003B821502
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbeJIVAu (ORCPT
+        id S1726846AbeJIVBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:00:50 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:47085 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeJIVAu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:00:50 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r64-v6so856615pfb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:43:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v0tKwxus/drX5kV0Dku9xw8w+RqBKDes35458ovCeko=;
-        b=GNrs8w0TnmS4AmZ9kO0oufL04s14JZVCall9swho5QWJdXZbJ/tSyCDFdkQuucu6h0
-         tR35EKE/9wOWbPxQlczIc7/y2QS8HUTd+u3ydSd5Rd9zso4KKv3LOVOMmiyTn+w2x11w
-         6Spq6jLevOTUcUHBhbcfzzT5WRa37gfa7QOi4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v0tKwxus/drX5kV0Dku9xw8w+RqBKDes35458ovCeko=;
-        b=rGhsirVihqm4lwv7tDfiM3yQ+3mNu5EfmHrsLWY86LERaYbZ85qtKKfBPkz7lUxuc0
-         cCrF9X7ka0NuPljf+dOsqAoczYSsWINxPxkXJ558fQNJxOZV0b+HY2gYbE1AzzjVtOs+
-         7+4x2sA/eNVR9hgQgqbfmbjSzZ5UNdg5oFgdkl93Ph93WOEqMRBES+97yYdh5QD9btIE
-         MbjikXqcMRWr9LdGwQNXCa4I8F5ZAxtZO6QDE0Xs8/aBrnMG3v/6bmi/9sMtswbtYvnZ
-         GVMY5lR8gC7MM8DT60cOkCrJUa50j1mHnvPkYkoEwMP0sY1OWE5XeEq4bepnMywpO9QD
-         zC6g==
-X-Gm-Message-State: ABuFfoglVqv1aoTNpzWFne8AUvqibbxiJStiF8yX4XxZifaP69s7W2yL
-        TE1ZDO7ovP8FrqIxC5k1BApDJA6yo4c=
-X-Google-Smtp-Source: ACcGV62uLqMHR1tagdzZnIm92fx9JV6+OP+aW09uSrzRukfIdvbL5NkhY/zvoDKTIWPP7wqyuF259w==
-X-Received: by 2002:a63:b409:: with SMTP id s9-v6mr25409528pgf.437.1539092629720;
-        Tue, 09 Oct 2018 06:43:49 -0700 (PDT)
-Received: from keiichiw1.tok.corp.google.com ([2401:fa00:4:4:968c:de0d:27a3:4bef])
-        by smtp.gmail.com with ESMTPSA id f83-v6sm29850828pfa.109.2018.10.09.06.43.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 06:43:48 -0700 (PDT)
-From:   Keiichi Watanabe <keiichiw@chromium.org>
-To:     linux-media@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com,
-        tfiga@chromium.org, jcliang@chromium.org, shik@chromium.org,
-        Keiichi Watanabe <keiichiw@chromium.org>
-Subject: [PATCH v2] media: vivid: Support 480p for webcam capture
-Date:   Tue,  9 Oct 2018 22:43:39 +0900
-Message-Id: <20181009134339.233238-1-keiichiw@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-MIME-Version: 1.0
+        Tue, 9 Oct 2018 17:01:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50118 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726540AbeJIVBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:01:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 31296B012;
+        Tue,  9 Oct 2018 13:44:28 +0000 (UTC)
+Date:   Tue, 09 Oct 2018 15:44:27 +0200
+Message-ID: <s5hy3b7z138.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Mike Brady <mikebrady@eircom.net>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint [Resend in plain text...]
+In-Reply-To: <828AF61F-4F6F-44C3-B463-7FE4EB8974F1@eircom.net>
+References: <20180904155858.8001-1-tiwai@suse.de>
+        <20180904155858.8001-18-tiwai@suse.de>
+        <4c5f9aed-8fbe-fe22-0c8d-097d8915805c@i2se.com>
+        <s5h4lelu84e.wl-tiwai@suse.de>
+        <8866e22a-6cd7-d32d-92e5-9a4e60206d2f@i2se.com>
+        <s5hworhs559.wl-tiwai@suse.de>
+        <828AF61F-4F6F-44C3-B463-7FE4EB8974F1@eircom.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support 640x480 as a frame size for video input devices of vivid.
+On Tue, 09 Oct 2018 15:18:15 +0200,
+Mike Brady wrote:
+> 
+> >> @Mike: Do you want to write a patch series which upstream "interpolate
+> >> audio delay" and addresses Takashi's comments?
+> >> 
+> >> I would help you, in case you have questions about setup a Raspberry Pi
+> >> with Mainline kernel or patch submission.
+> > 
+> > Well, the question is who really wants this.  The value given by that
+> > patch is nothing but some estimation and might be even incorrect.
+> > 
+> > PulseAudio won't need it any longer when you set the BATCH flag.
+> > Then it'll switch from tsched mode to the old mode, and the delay
+> > value would be almost irrelevant.
+> 
+> Well, two answers. First, Shairport Sync
+> (https://github.com/mikebrady/shairport-sync) needs it — whenever a
+> packet of audio frames is about to be added to the output queue (at
+> approximately 7.9 millisecond intervals), the delay is checked to
+> try to maintain sync to within a few milliseconds. The BCM2835 audio
+> device is the only one I have yet come across with so much
+> jitter. Whatever other drivers do, the delay they report doesn’t
+> suffer from anything like this level of jitter.
 
-Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
----
- drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+OK, if there is another application using that delay value, it's worth
+to consider providing a fine-grained value.
 
-diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
-index 58e14dd1dcd3..6cf910a60ecf 100644
---- a/drivers/media/platform/vivid/vivid-vid-cap.c
-+++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-@@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
- };
- 
- /* The number of discrete webcam framesizes */
--#define VIVID_WEBCAM_SIZES 5
-+#define VIVID_WEBCAM_SIZES 6
- /* The number of discrete webcam frameintervals */
- #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
- 
-@@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
- static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
- 	{  320, 180 },
- 	{  640, 360 },
-+	{  640, 480 },
- 	{ 1280, 720 },
- 	{ 1920, 1080 },
- 	{ 3840, 2160 },
-@@ -74,9 +75,11 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
- 	{  1, 4 },
- 	{  1, 5 },
- 	{  1, 10 },
-+	{  2, 25 },
- 	{  1, 15 },
- 	{  1, 25 },
- 	{  1, 30 },
-+	{  1, 40 },
- 	{  1, 50 },
- 	{  1, 60 },
- };
--- 
-2.19.0.605.g01d371f741-goog
+> The second answer is that the veracity of the ALSA documentation
+> depends on it — any application using the ALSA system for
+> synchronisation will rely on this being an accurate reflection of
+> the situation. AFAIK there is really no workaround it if the
+> application is confined to “safe” ALSA
+> (http://0pointer.de/blog/projects/guide-to-sound-apis).
 
+> On LMKL.org, Takashi wrote:
+> 
+> > Date	Wed, 19 Sep 2018 11:52:33 +0200
+> > From	Takashi Iwai <>
+> > Subject	Re: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint
+> 
+> > [snip]
+> 
+> > That's OK, as long as the computation is accurate enough (at least not
+> > exceed the actual position) and is light-weight.
+> 
+> > [snip]
+> 
+> The overhead is small -- an extra ktime_get() every time a GPU message
+> is sent -- and another call and a few calculations whenever the delay
+> is sought from userland.
+> 
+> At 48,000 frames per second, i.e. approximately 20 microseconds per
+> frame, it would take a clock inaccuracy of roughly
+> 20 microseconds in 10 milliseconds -- 2,000 parts per million — to
+> result in an inaccurate estimate. 
+> Crystal or resonator-based clocks typically have an inaccuracy of
+> 10s to 100s of parts per million.
+> 
+> Finally, to see the effect of the absence and presence of this
+> interpolation, please have a look at this:
+> https://github.com/raspberrypi/firmware/issues/1026#issuecomment-415746016,
+> where a downstream version of this fix was being discussed.
+
+I'm not opposing to the usage of delay value.  The attribute is
+provided exactly for such a purpose.  It's a good thing (tm).
+
+The potential problem is, however, rather the implementation: it's
+using a system timer for interpolation, which is known to drift from
+the actual clocks.  Though, one may say that in such a use case, we
+may ignore the drift since the interpolation is so narrow.
+
+But another question is whether it should be implemented in each
+driver level.  The time-stamping is basically a PCM core
+functionality, and nothing specific to the hardware, especially when
+it's referring to the system timer.
+
+e.g. you can think in a different way, too: we may put a timestamp at
+each hwptr update, and pass it as-is, instead of updating the
+timestamp at each position query.  This will effectively gives the
+accurate position-timestamp pair, and user-space may interpolate as it
+likes, too.
+
+
+In anyway, if *this* kind of feature needs to be merged, it's
+definitely to be discussed with the upstream.  So, if you're going to
+merge that sort of path, please keep Cc to alsa-devel ML.
+
+
+thanks,
+
+Takashi
