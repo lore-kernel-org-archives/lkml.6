@@ -2,155 +2,184 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE88C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4016C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBDD22075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:18:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBDD22075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 778A62075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:19:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dExpgIcC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778A62075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeJIPdt (ORCPT
+        id S1726646AbeJIPfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:33:49 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7895 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725866AbeJIPdt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:33:49 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9989ZA7016177;
-        Tue, 9 Oct 2018 10:17:42 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mxjgxqgw1-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 09 Oct 2018 10:17:42 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6200D31;
-        Tue,  9 Oct 2018 08:17:41 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 27362FDE;
-        Tue,  9 Oct 2018 08:17:41 +0000 (GMT)
-Received: from [10.201.23.236] (10.75.127.48) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 9 Oct
- 2018 10:17:40 +0200
-Subject: Re: [PATCH v3 3/7] dt-bindings: stm32-mdma: Add DMA/MDMA chaining
- support bindings
-To:     Vinod <vkoul@kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
- <1538139715-24406-4-git-send-email-pierre-yves.mordret@st.com>
- <20181007145930.GA2372@vkoul-mobl>
-From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <31f5a087-6a83-76ff-dc5c-29e8ecc95744@st.com>
-Date:   Tue, 9 Oct 2018 10:17:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 11:35:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725866AbeJIPfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:35:06 -0400
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 587E4214DA;
+        Tue,  9 Oct 2018 08:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539073161;
+        bh=+8TrLxl44qZpH7Njv/jvir5YcCoI141qyw/Tb+frXI0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dExpgIcCn/VaHlHmFJ9CJFhgVK4mtyKoLQ7FhBre7R4oPREubWqZuwqMzqPxYHIJE
+         cLbtCs7Mcawycv1CDsNTY6U7Iy9QPxh1eNojptlLMIUjfA9aesXwAGS5Tgsmy+B0mA
+         WMa8uEV2OxBLRYM1xQmpaDiWFuQ87w+3kNM3ZMkY=
+Received: by mail-wm1-f51.google.com with SMTP id y11-v6so878797wma.3;
+        Tue, 09 Oct 2018 01:19:21 -0700 (PDT)
+X-Gm-Message-State: ABuFfogtg9pGQUIijF6+fTCjIEbZafan6NQEBndMFNDpytH0VbJfl2ax
+        xsADyeYisnfIQKHCffQrOEj+SXdMnQ5Ppi1pvB8=
+X-Google-Smtp-Source: ACcGV62wjPVqUFYRXSDQhPtRvfU5qYDtqbrNzSMScv7aaW8HMybno4JoFs/Bpo9ZZQLAiDdbGY6/zyMtGKeT5ZARekE=
+X-Received: by 2002:a1c:ab54:: with SMTP id u81-v6mr1021067wme.45.1539073159645;
+ Tue, 09 Oct 2018 01:19:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181007145930.GA2372@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_05:,,
- signatures=0
+References: <CGME20181008125047eucas1p23e520d778ad5f18aba57b21641d4cb4c@eucas1p2.samsung.com>
+ <20181008125009.3721-1-m.szyprowski@samsung.com> <20181008125009.3721-3-m.szyprowski@samsung.com>
+In-Reply-To: <20181008125009.3721-3-m.szyprowski@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 9 Oct 2018 10:19:08 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeAt_fwVCkCw-8iGprB8Y=Dxj=hx5UyJw1kjsbmMwh2pA@mail.gmail.com>
+Message-ID: <CAJKOXPeAt_fwVCkCw-8iGprB8Y=Dxj=hx5UyJw1kjsbmMwh2pA@mail.gmail.com>
+Subject: Re: [PATCH 2/7] clocksource: exynos_mct: Add arch_timer cooperation
+ mode for ARM64
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, catalin.marinas@arm.com, marc.zyngier@arm.com,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 8 Oct 2018 at 14:50, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> To get ARM Architected Timers working on Samsung Exynos SoCs, one has to
+> first configure and enable Exynos Multi-Core Timer, because they both
+> share some common hardware blocks. This patch adds a mode of cooperation
+> with arch_timer driver, so kernel can use CP15 based timer interface via
+> arch_timer driver, which is mandatory on ARM64. In such mode driver only
+> configures MCT registers and starts the timer but don't register any
+> clocksource or events in the system. Those are left to be handled by
+> arch_timer driver.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clocksource/exynos_mct.c | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 43b335ff4a96..05b201ed8ef5 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -57,6 +57,7 @@
+>  #define TICK_BASE_CNT  1
+>
+>  enum {
+> +       MCT_INT_NONE = 0,
+>         MCT_INT_SPI,
+>         MCT_INT_PPI
+>  };
+> @@ -238,6 +239,9 @@ static int __init exynos4_clocksource_init(void)
+>  {
+>         exynos4_mct_frc_start();
+>
+> +       if (!mct_int_type)
+> +               return 0;
+> +
+>  #if defined(CONFIG_ARM)
+>         exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+>         exynos4_delay_timer.freq = clk_rate;
+> @@ -343,6 +347,9 @@ static struct irqaction mct_comp_event_irq = {
+>
+>  static int exynos4_clockevent_init(void)
+>  {
+> +       if (!mct_int_type)
+> +               return 0;
+> +
+>         mct_comp_device.cpumask = cpumask_of(0);
+>         clockevents_config_and_register(&mct_comp_device, clk_rate,
+>                                         0xf, 0xffffffff);
+> @@ -476,12 +483,12 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+>
+>                 irq_force_affinity(evt->irq, cpumask_of(cpu));
+>                 enable_irq(evt->irq);
+> -       } else {
+> +       } else if (mct_int_type == MCT_INT_PPI) {
+>                 enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+>         }
+> -       clockevents_config_and_register(evt, clk_rate / (TICK_BASE_CNT + 1),
+> -                                       0xf, 0x7fffffff);
+> -
+> +       if (mct_int_type)
+> +               clockevents_config_and_register(evt,
+> +                              clk_rate / (TICK_BASE_CNT + 1), 0xf, 0x7fffffff);
+>         return 0;
+>  }
+>
+> @@ -496,7 +503,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+>                 if (evt->irq != -1)
+>                         disable_irq_nosync(evt->irq);
+>                 exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+> -       } else {
+> +       } else if (mct_int_type == MCT_INT_PPI) {
+>                 disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+>         }
+>         return 0;
+> @@ -529,7 +536,7 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+>                                          &percpu_mct_tick);
+>                 WARN(err, "MCT: can't request IRQ %d (%d)\n",
+>                      mct_irqs[MCT_L0_IRQ], err);
+> -       } else {
+> +       } else if (mct_int_type == MCT_INT_SPI) {
+>                 for_each_possible_cpu(cpu) {
+>                         int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
+>                         struct mct_clock_event_device *pcpu_mevt =
 
+The error path of cpuhp_setup_state() does not look correct because
+request_percpu_irq() was not called. The error path looks suspicious
+also for MCT_INT_SPI path - the IRQs were allocated with regular
+request_irq but are freed with percpu version.
 
-On 10/07/2018 04:59 PM, Vinod wrote:
-> On 28-09-18, 15:01, Pierre-Yves MORDRET wrote:
->> From: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
->>
->> This patch adds the description of the 2 properties needed to support M2M
->> transfer triggered by STM32 DMA when his transfer is complete.
->>
->> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
->> ---
->>   Version history:
->>     v3:
->>     v2:
->>        * rework content
->>     v1:
->>        * Initial
->> ---
->> ---
->>  Documentation/devicetree/bindings/dma/stm32-mdma.txt | 12 ++++++++----
->>  1 file changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/stm32-mdma.txt b/Documentation/devicetree/bindings/dma/stm32-mdma.txt
->> index d18772d..27c2812 100644
->> --- a/Documentation/devicetree/bindings/dma/stm32-mdma.txt
->> +++ b/Documentation/devicetree/bindings/dma/stm32-mdma.txt
->> @@ -10,7 +10,7 @@ Required properties:
->>  - interrupts: Should contain the MDMA interrupt.
->>  - clocks: Should contain the input clock of the DMA instance.
->>  - resets: Reference to a reset controller asserting the DMA controller.
->> -- #dma-cells : Must be <5>. See DMA client paragraph for more details.
->> +- #dma-cells : Must be <6>. See DMA client paragraph for more details.
-> 
-> can you update the example for 6 cells?
+> @@ -573,6 +580,15 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>
+>         mct_int_type = int_type;
+>
+> +       if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ARM_ARCH_TIMER)) {
+> +               struct device_node *np = of_find_compatible_node(NULL, NULL,
+> +                                                            "arm,armv8-timer");
+> +               if (np) {
+> +                       mct_int_type = MCT_INT_NONE;
+> +                       of_node_put(np);
 
-of course.
+In this case, later the mct_irqs are being assigned but totally not
+used. Are they needed?
 
-> 
-> Also what happens to dts using 5 cells..
+Best regards,
+Krzysztof
 
-They are not managed, but it should. I will update this flaw. Thanks for
-pointing this out.
-
-> 
->>  
->>  Optional properties:
->>  - dma-channels: Number of DMA channels supported by the controller.
->> @@ -26,7 +26,7 @@ Example:
->>  		interrupts = <122>;
->>  		clocks = <&timer_clk>;
->>  		resets = <&rcc 992>;
->> -		#dma-cells = <5>;
->> +		#dma-cells = <6>;
->>  		dma-channels = <16>;
->>  		dma-requests = <32>;
->>  		st,ahb-addr-masks = <0x20000000>, <0x00000000>;
->> @@ -35,8 +35,8 @@ Example:
->>  * DMA client
->>  
->>  DMA clients connected to the STM32 MDMA controller must use the format
->> -described in the dma.txt file, using a five-cell specifier for each channel:
->> -a phandle to the MDMA controller plus the following five integer cells:
->> +described in the dma.txt file, using a six-cell specifier for each channel:
->> +a phandle to the MDMA controller plus the following six integer cells:
->>  
->>  1. The request line number
->>  2. The priority level
->> @@ -76,6 +76,10 @@ a phandle to the MDMA controller plus the following five integer cells:
->>     if no HW ack signal is used by the MDMA client
->>  5. A 32bit mask specifying the value to be written to acknowledge the request
->>     if no HW ack signal is used by the MDMA client
->> +6. A bitfield value specifying if the MDMA client wants to generate M2M
->> +   transfer with HW trigger (1) or not (0). This bitfield should be only
->> +   enabled for M2M transfer triggered by STM32 DMA client. The memory devices
->> +   involved in this kind of transfer are SRAM and DDR.
->>  
->>  Example:
->>  
->> -- 
->> 2.7.4
-> 
+> +               }
+> +       }
+> +
+>         /* This driver uses only one global timer interrupt */
+>         mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
+>
+> --
+> 2.17.1
+>
