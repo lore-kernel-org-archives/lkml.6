@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CCBECDE47
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BADECDE48
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B11DB214FE
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 151E3214FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qm3ZsKXr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B11DB214FE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oh+NT+ff"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151E3214FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeJIXql (ORCPT
+        id S1727554AbeJIXqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:46:41 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55731 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeJIXqk (ORCPT
+        Tue, 9 Oct 2018 19:46:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43370 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeJIXqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:46:40 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 206-v6so2520711wmb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:28:54 -0700 (PDT)
+        Tue, 9 Oct 2018 19:46:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n1-v6so2509270wrt.10
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tEQypoJExVT08PG3jvYi3cMy48tMRH7WxT4wHh3YxX4=;
-        b=qm3ZsKXrbH7qlOSbQa7p9kUGeuCTcD3p0jLN78j5dh8dCg7w15ynZR4scSe/Kd1nXZ
-         jG1dqu6tstf/h+z23SwBgVfj1RyaZ/4ZHgSTDJoFDb1J9jgmGoL4O3dtN9pW1oGyv2nC
-         KLdICxP0hhK92h/Lcf9OArzA9EunhHlI1Jyp8YfxquQdaODWnh480/EnoW/NlHE/2O7Y
-         33vcG0aWL8JdJn/j5sTc2wU3O3tOBk6RxcVVghQfi2XbETBc2EUZRzc/iKnNGHV8V2Gz
-         1vd97f32V0qzZgtcOHhHU+BovNjof7AawhKGeKZNjkcPEt+ulItyzwELWvOy7oRMa5zR
-         PE/A==
+        bh=pW4H/oLkMUquIMiCs18y3wN7hCaDV3HqSP/jxxq3Qe8=;
+        b=oh+NT+ffx9sCqRLxpzBnJHKQ0adQJlOPjHDvP7MG83Rhf7543pGXk6+cqQMOVq+W8W
+         I+N8jbBPOTwssR2VGrUI2aX8x7oH9xbZO0yhONCs8RZYWqeqvzH9q/1zq6D+lJqPFKO9
+         rkJb4BAlxxYwIWfc/41mHn8nHWQE6lemfqcWEByV6aCN5yNRCOwqVb2QSKHEK2pBcCS+
+         QRWOuItI5vtTCtigpykg88NQDUsI7p75u90DZP6QfBUKob/jYrJ34DSvSTYJWJW8N6cT
+         0mw4m+/z91Ikj4wlEW0SJTDfkbvWa9u6QXYoyy49/KLCiyQSLYO82DYxpoxp1hkrVGL4
+         8dGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tEQypoJExVT08PG3jvYi3cMy48tMRH7WxT4wHh3YxX4=;
-        b=NJudRzjvWvxURlQjLHlYUacOcJgAnRJFBgzF6jlkd1RR36zMRHoW1NndpmyqiCq/IE
-         w+zub1f7O4zB7e7F8e7Xr/ZKB9I6sGw1UYHS8ysYcyasC6ttnxD7PRckAGj9Uic5ldT1
-         3s6Mw2ILVxvrVR9ZaCU47zJrHPn6sM3j8iKLeJZWrnbtnxXV4zdjgVthb5OMZYHXRWGu
-         +Ur+MBUdUnU067hFlSPO7YKhZBkw4rEJ/bdTj62uc9fcR6Z4exRgXP2JlUmDN1AIIlWu
-         aBZRqRhtEwGNT4B4XpYhSB0YseF9RudKu47HGrE6xYISUasdyabfGJGrtr+8R7PcHQ7/
-         p7AA==
-X-Gm-Message-State: ABuFfohf1Ab7vl09OnQN8CWvI1Y2qkwDEFjxhMznDi8S3k2YczdK3C/1
-        N0gBydWAQX9S7lMrnctF490=
-X-Google-Smtp-Source: ACcGV60Nt8o0jeSV5LtH2uLFi1X3BEqBOD9PlWLxGizl2YHW1E35tPSmgbRvSWHNw28dDuKlUbVS7w==
-X-Received: by 2002:a7b:c150:: with SMTP id z16-v6mr2629923wmi.25.1539102534231;
-        Tue, 09 Oct 2018 09:28:54 -0700 (PDT)
+        bh=pW4H/oLkMUquIMiCs18y3wN7hCaDV3HqSP/jxxq3Qe8=;
+        b=QJzlBg0AoRnDIUZy5/vkA18LXcVWT6jSmX2esxWCZoB2BGHjq9kU5JZuo5hWRN2npw
+         JvQ31/NiHg4JoRhhJFw1oTu2ACXIN6/gSgJ0QapelIZwuC0rQmKJKx2bIlVs5RybdMmh
+         XGHagh9sdPs27hLm1xkSsyLcCeJlXXuq+b2bNxG63pes0gAlsNNDt7Z0vZOTdFJ4/a79
+         7nPtGwQF8pAWL59E7hydSZO42iHs3zCvnsEBnFSbh+VUjST04vyBkbhdPObP+LtOzxLQ
+         NNg7ANNP5+jEPiFikUqMSPMVL/mvsi5qEgQ5sjM7xlzHTGMq/+daVDuyyBzqij/eFPmu
+         tcHg==
+X-Gm-Message-State: ABuFfogGWJz3oRJGa4hPkaAQw6aptngeExUpb9zWPBrUti/WNEhXT2Ge
+        FOCVD0uYWOIulZdfdUOJiiA=
+X-Google-Smtp-Source: ACcGV6310TdbnO9GkVwqzDWxWUI9GVWs8FTxF1EvgUNyuyAz0WcXpKt5UGT2dPgSe67cVO++uejSnw==
+X-Received: by 2002:adf:92a6:: with SMTP id 35-v6mr17953310wrn.137.1539102541755;
+        Tue, 09 Oct 2018 09:29:01 -0700 (PDT)
 Received: from kheib-workstation.mynet (bzq-109-64-21-122.red.bezeqint.net. [109.64.21.122])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.28.52
+        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.29.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 09:28:53 -0700 (PDT)
+        Tue, 09 Oct 2018 09:29:01 -0700 (PDT)
 From:   Kamal Heib <kamalheib1@gmail.com>
 To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, kamalheib1@gmail.com
-Subject: [PATCH rdma-next 09/18] RDMA/mlx5: Initialize ib_device_ops struct
-Date:   Tue,  9 Oct 2018 19:28:08 +0300
-Message-Id: <20181009162817.4635-10-kamalheib1@gmail.com>
+Subject: [PATCH rdma-next 15/18] RDMA/usnic: Initialize ib_device_ops struct
+Date:   Tue,  9 Oct 2018 19:28:14 +0300
+Message-Id: <20181009162817.4635-16-kamalheib1@gmail.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181009162817.4635-1-kamalheib1@gmail.com>
 References: <20181009162817.4635-1-kamalheib1@gmail.com>
@@ -76,230 +76,59 @@ Initialize ib_device_ops with the supported operations.
 
 Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
 ---
- drivers/infiniband/hw/mlx5/main.c | 126 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 125 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/usnic/usnic_ib_main.c | 32 +++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index b3294a7e3ff9..1d2b8f4b2904 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -5760,6 +5760,92 @@ static void mlx5_ib_stage_flow_db_cleanup(struct mlx5_ib_dev *dev)
- 	kfree(dev->flow_db);
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+index e3f98fe2f1e6..e327f5ec818e 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+@@ -330,6 +330,37 @@ static void usnic_get_dev_fw_str(struct ib_device *device, char *str)
+ 	snprintf(str, IB_FW_VERSION_NAME_MAX, "%s", info.fw_version);
  }
  
-+static struct ib_device_ops mlx5_ib_dev_ops = {
-+	.query_device		= mlx5_ib_query_device,
-+	.get_link_layer		= mlx5_ib_port_link_layer,
-+	.query_gid		= mlx5_ib_query_gid,
-+	.add_gid		= mlx5_ib_add_gid,
-+	.del_gid		= mlx5_ib_del_gid,
-+	.query_pkey		= mlx5_ib_query_pkey,
-+	.modify_device		= mlx5_ib_modify_device,
-+	.modify_port		= mlx5_ib_modify_port,
-+	.alloc_ucontext		= mlx5_ib_alloc_ucontext,
-+	.dealloc_ucontext	= mlx5_ib_dealloc_ucontext,
-+	.mmap			= mlx5_ib_mmap,
-+	.alloc_pd		= mlx5_ib_alloc_pd,
-+	.dealloc_pd		= mlx5_ib_dealloc_pd,
-+	.create_ah		= mlx5_ib_create_ah,
-+	.query_ah		= mlx5_ib_query_ah,
-+	.destroy_ah		= mlx5_ib_destroy_ah,
-+	.create_srq		= mlx5_ib_create_srq,
-+	.modify_srq		= mlx5_ib_modify_srq,
-+	.query_srq		= mlx5_ib_query_srq,
-+	.destroy_srq		= mlx5_ib_destroy_srq,
-+	.post_srq_recv		= mlx5_ib_post_srq_recv,
-+	.create_qp		= mlx5_ib_create_qp,
-+	.modify_qp		= mlx5_ib_modify_qp,
-+	.query_qp		= mlx5_ib_query_qp,
-+	.destroy_qp		= mlx5_ib_destroy_qp,
-+	.drain_sq		= mlx5_ib_drain_sq,
-+	.drain_rq		= mlx5_ib_drain_rq,
-+	.post_send		= mlx5_ib_post_send,
-+	.post_recv		= mlx5_ib_post_recv,
-+	.create_cq		= mlx5_ib_create_cq,
-+	.modify_cq		= mlx5_ib_modify_cq,
-+	.resize_cq		= mlx5_ib_resize_cq,
-+	.destroy_cq		= mlx5_ib_destroy_cq,
-+	.poll_cq		= mlx5_ib_poll_cq,
-+	.req_notify_cq		= mlx5_ib_arm_cq,
-+	.get_dma_mr		= mlx5_ib_get_dma_mr,
-+	.reg_user_mr		= mlx5_ib_reg_user_mr,
-+	.rereg_user_mr		= mlx5_ib_rereg_user_mr,
-+	.dereg_mr		= mlx5_ib_dereg_mr,
-+	.attach_mcast		= mlx5_ib_mcg_attach,
-+	.detach_mcast		= mlx5_ib_mcg_detach,
-+	.process_mad		= mlx5_ib_process_mad,
-+	.alloc_mr		= mlx5_ib_alloc_mr,
-+	.map_mr_sg		= mlx5_ib_map_mr_sg,
-+	.check_mr_status	= mlx5_ib_check_mr_status,
-+	.get_dev_fw_str		= get_dev_fw_str,
-+	.get_vector_affinity	= mlx5_ib_get_vector_affinity,
-+	.disassociate_ucontext	= mlx5_ib_disassociate_ucontext,
-+	.create_flow		= mlx5_ib_create_flow,
-+	.destroy_flow		= mlx5_ib_destroy_flow,
-+	.create_flow_action_esp	= mlx5_ib_create_flow_action_esp,
-+	.destroy_flow_action	= mlx5_ib_destroy_flow_action,
-+	.modify_flow_action_esp	= mlx5_ib_modify_flow_action_esp,
-+	.create_counters	= mlx5_ib_create_counters,
-+	.destroy_counters	= mlx5_ib_destroy_counters,
-+	.read_counters		= mlx5_ib_read_counters,
++static struct ib_device_ops usnic_dev_ops = {
++	.query_device		= usnic_ib_query_device,
++	.query_port		= usnic_ib_query_port,
++	.query_pkey		= usnic_ib_query_pkey,
++	.query_gid		= usnic_ib_query_gid,
++	.get_netdev		= usnic_get_netdev,
++	.get_link_layer		= usnic_ib_port_link_layer,
++	.alloc_pd		= usnic_ib_alloc_pd,
++	.dealloc_pd		= usnic_ib_dealloc_pd,
++	.create_qp		= usnic_ib_create_qp,
++	.modify_qp		= usnic_ib_modify_qp,
++	.query_qp		= usnic_ib_query_qp,
++	.destroy_qp		= usnic_ib_destroy_qp,
++	.create_cq		= usnic_ib_create_cq,
++	.destroy_cq		= usnic_ib_destroy_cq,
++	.reg_user_mr		= usnic_ib_reg_mr,
++	.dereg_mr		= usnic_ib_dereg_mr,
++	.alloc_ucontext		= usnic_ib_alloc_ucontext,
++	.dealloc_ucontext	= usnic_ib_dealloc_ucontext,
++	.mmap			= usnic_ib_mmap,
++	.create_ah		= usnic_ib_create_ah,
++	.destroy_ah		= usnic_ib_destroy_ah,
++	.post_send		= usnic_ib_post_send,
++	.post_recv		= usnic_ib_post_recv,
++	.poll_cq		= usnic_ib_poll_cq,
++	.req_notify_cq		= usnic_ib_req_notify_cq,
++	.get_dma_mr		= usnic_ib_get_dma_mr,
++	.get_port_immutable	= usnic_port_immutable,
++	.get_dev_fw_str		= usnic_get_dev_fw_str,
 +};
 +
-+static struct ib_device_ops mlx5_ib_dev_ipoib_enhanced_ops = {
-+	.alloc_rdma_netdev	= mlx5_ib_alloc_rdma_netdev,
-+};
-+
-+static struct ib_device_ops mlx5_ib_dev_sriov_ops = {
-+	.get_vf_config		= mlx5_ib_get_vf_config,
-+	.set_vf_link_state	= mlx5_ib_set_vf_link_state,
-+	.get_vf_stats		= mlx5_ib_get_vf_stats,
-+	.set_vf_guid		= mlx5_ib_set_vf_guid,
-+};
-+
-+static struct ib_device_ops mlx5_ib_dev_mw_ops = {
-+	.alloc_mw		= mlx5_ib_alloc_mw,
-+	.dealloc_mw		= mlx5_ib_dealloc_mw,
-+};
-+
-+static struct ib_device_ops mlx5_ib_dev_xrc_ops = {
-+	.alloc_xrcd		= mlx5_ib_alloc_xrcd,
-+	.dealloc_xrcd		= mlx5_ib_dealloc_xrcd,
-+};
-+
-+static struct ib_device_ops mlx5_ib_dev_dm_ops = {
-+	.alloc_dm		= mlx5_ib_alloc_dm,
-+	.dealloc_dm		= mlx5_ib_dealloc_dm,
-+	.reg_dm_mr		= mlx5_ib_reg_dm_mr,
-+};
-+
- int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
+ /* Start of PF discovery section */
+ static void *usnic_ib_device_add(struct pci_dev *dev)
  {
- 	struct mlx5_core_dev *mdev = dev->mdev;
-@@ -5847,14 +5933,18 @@ int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
- 	dev->ib_dev.check_mr_status	= mlx5_ib_check_mr_status;
- 	dev->ib_dev.get_dev_fw_str      = get_dev_fw_str;
- 	dev->ib_dev.get_vector_affinity	= mlx5_ib_get_vector_affinity;
--	if (MLX5_CAP_GEN(mdev, ipoib_enhanced_offloads))
-+	if (MLX5_CAP_GEN(mdev, ipoib_enhanced_offloads)) {
- 		dev->ib_dev.alloc_rdma_netdev	= mlx5_ib_alloc_rdma_netdev;
-+		ib_set_device_ops(&dev->ib_dev,
-+				  &mlx5_ib_dev_ipoib_enhanced_ops);
-+	}
+@@ -415,6 +446,7 @@ static void *usnic_ib_device_add(struct pci_dev *dev)
+ 	us_ibdev->ib_dev.get_port_immutable = usnic_port_immutable;
+ 	us_ibdev->ib_dev.get_dev_fw_str     = usnic_get_dev_fw_str;
  
- 	if (mlx5_core_is_pf(mdev)) {
- 		dev->ib_dev.get_vf_config	= mlx5_ib_get_vf_config;
- 		dev->ib_dev.set_vf_link_state	= mlx5_ib_set_vf_link_state;
- 		dev->ib_dev.get_vf_stats	= mlx5_ib_get_vf_stats;
- 		dev->ib_dev.set_vf_guid		= mlx5_ib_set_vf_guid;
-+		ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_sriov_ops);
- 	}
++	ib_set_device_ops(&us_ibdev->ib_dev, &usnic_dev_ops);
  
- 	dev->ib_dev.disassociate_ucontext = mlx5_ib_disassociate_ucontext;
-@@ -5864,6 +5954,7 @@ int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
- 	if (MLX5_CAP_GEN(mdev, imaicl)) {
- 		dev->ib_dev.alloc_mw		= mlx5_ib_alloc_mw;
- 		dev->ib_dev.dealloc_mw		= mlx5_ib_dealloc_mw;
-+		ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_mw_ops);
- 		dev->ib_dev.uverbs_cmd_mask |=
- 			(1ull << IB_USER_VERBS_CMD_ALLOC_MW)	|
- 			(1ull << IB_USER_VERBS_CMD_DEALLOC_MW);
-@@ -5872,6 +5963,7 @@ int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
- 	if (MLX5_CAP_GEN(mdev, xrc)) {
- 		dev->ib_dev.alloc_xrcd = mlx5_ib_alloc_xrcd;
- 		dev->ib_dev.dealloc_xrcd = mlx5_ib_dealloc_xrcd;
-+		ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_xrc_ops);
- 		dev->ib_dev.uverbs_cmd_mask |=
- 			(1ull << IB_USER_VERBS_CMD_OPEN_XRCD) |
- 			(1ull << IB_USER_VERBS_CMD_CLOSE_XRCD);
-@@ -5881,6 +5973,7 @@ int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
- 		dev->ib_dev.alloc_dm = mlx5_ib_alloc_dm;
- 		dev->ib_dev.dealloc_dm = mlx5_ib_dealloc_dm;
- 		dev->ib_dev.reg_dm_mr = mlx5_ib_reg_dm_mr;
-+		ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_dm_ops);
- 	}
- 
- 	dev->ib_dev.create_flow	= mlx5_ib_create_flow;
-@@ -5895,6 +5988,7 @@ int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
- 	dev->ib_dev.create_counters = mlx5_ib_create_counters;
- 	dev->ib_dev.destroy_counters = mlx5_ib_destroy_counters;
- 	dev->ib_dev.read_counters = mlx5_ib_read_counters;
-+	ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_ops);
- 
- 	err = init_node_data(dev);
- 	if (err)
-@@ -5908,22 +6002,45 @@ int mlx5_ib_stage_caps_init(struct mlx5_ib_dev *dev)
- 	return 0;
- }
- 
-+static struct ib_device_ops mlx5_ib_dev_port_ops = {
-+	.get_port_immutable	= mlx5_port_immutable,
-+	.query_port		= mlx5_ib_query_port,
-+};
-+
- static int mlx5_ib_stage_non_default_cb(struct mlx5_ib_dev *dev)
- {
- 	dev->ib_dev.get_port_immutable  = mlx5_port_immutable;
- 	dev->ib_dev.query_port		= mlx5_ib_query_port;
- 
-+	ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_port_ops);
-+
- 	return 0;
- }
- 
-+static struct ib_device_ops mlx5_ib_dev_port_rep_ops = {
-+	.get_port_immutable	= mlx5_port_rep_immutable,
-+	.query_port		= mlx5_ib_rep_query_port,
-+};
-+
- int mlx5_ib_stage_rep_non_default_cb(struct mlx5_ib_dev *dev)
- {
- 	dev->ib_dev.get_port_immutable  = mlx5_port_rep_immutable;
- 	dev->ib_dev.query_port		= mlx5_ib_rep_query_port;
- 
-+	ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_port_rep_ops);
-+
- 	return 0;
- }
- 
-+static struct ib_device_ops mlx5_ib_dev_common_roce_ops = {
-+	.get_netdev		= mlx5_ib_get_netdev,
-+	.create_wq		= mlx5_ib_create_wq,
-+	.modify_wq		= mlx5_ib_modify_wq,
-+	.destroy_wq		= mlx5_ib_destroy_wq,
-+	.create_rwq_ind_table	= mlx5_ib_create_rwq_ind_table,
-+	.destroy_rwq_ind_table	= mlx5_ib_destroy_rwq_ind_table,
-+};
-+
- static int mlx5_ib_stage_common_roce_init(struct mlx5_ib_dev *dev)
- {
- 	u8 port_num;
-@@ -5942,6 +6059,7 @@ static int mlx5_ib_stage_common_roce_init(struct mlx5_ib_dev *dev)
- 	dev->ib_dev.create_rwq_ind_table = mlx5_ib_create_rwq_ind_table;
- 	dev->ib_dev.destroy_rwq_ind_table = mlx5_ib_destroy_rwq_ind_table;
- 
-+	ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_common_roce_ops);
- 	dev->ib_dev.uverbs_ex_cmd_mask |=
- 			(1ull << IB_USER_VERBS_EX_CMD_CREATE_WQ) |
- 			(1ull << IB_USER_VERBS_EX_CMD_MODIFY_WQ) |
-@@ -6041,11 +6159,17 @@ static int mlx5_ib_stage_odp_init(struct mlx5_ib_dev *dev)
- 	return mlx5_ib_odp_init_one(dev);
- }
- 
-+static struct ib_device_ops mlx5_ib_dev_hw_stats_ops = {
-+	.get_hw_stats		= mlx5_ib_get_hw_stats,
-+	.alloc_hw_stats		= mlx5_ib_alloc_hw_stats,
-+};
-+
- int mlx5_ib_stage_counters_init(struct mlx5_ib_dev *dev)
- {
- 	if (MLX5_CAP_GEN(dev->mdev, max_qp_cnt)) {
- 		dev->ib_dev.get_hw_stats	= mlx5_ib_get_hw_stats;
- 		dev->ib_dev.alloc_hw_stats	= mlx5_ib_alloc_hw_stats;
-+		ib_set_device_ops(&dev->ib_dev, &mlx5_ib_dev_hw_stats_ops);
- 
- 		return mlx5_ib_alloc_counters(dev);
- 	}
+ 	us_ibdev->ib_dev.driver_id = RDMA_DRIVER_USNIC;
+ 	if (ib_register_device(&us_ibdev->ib_dev, "usnic_%d", NULL))
 -- 
 2.14.4
 
