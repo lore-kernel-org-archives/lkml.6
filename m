@@ -2,145 +2,175 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C353C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAA2C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBC320C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:31:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCBC320C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FA1520C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA1520C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJIWtV (ORCPT
+        id S1726830AbeJIWtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:49:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36637 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeJIWtV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:49:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99FVMxX1091824
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Oct 2018 08:31:22 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99FVL791091821;
-        Tue, 9 Oct 2018 08:31:21 -0700
-Date:   Tue, 9 Oct 2018 08:31:21 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Bjorn Helgaas <tipbot@zytor.com>
-Message-ID: <tip-a98959fdbda1849a01b2150bb635ed559ec06700@git.kernel.org>
-Cc:     dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        lijiang@redhat.com, bp@suse.de, bhelgaas@google.com,
-        baiyaowei@cmss.chinamobile.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tiwai@suse.de,
-        mingo@kernel.org, brijesh.singh@amd.com, tglx@linutronix.de,
-        x86@kernel.org, vgoyal@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tiwai@suse.de,
-          mingo@kernel.org, tglx@linutronix.de, brijesh.singh@amd.com,
-          vgoyal@redhat.com, x86@kernel.org, thomas.lendacky@amd.com,
-          lijiang@redhat.com, dan.j.williams@intel.com, bp@suse.de,
-          bhelgaas@google.com, akpm@linux-foundation.org,
-          baiyaowei@cmss.chinamobile.com
-In-Reply-To: <153805812254.1157.16736368485811773752.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153805812254.1157.16736368485811773752.stgit@bhelgaas-glaptop.roam.corp.google.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] resource: Include resource end in walk_*() interfaces
-Git-Commit-ID: a98959fdbda1849a01b2150bb635ed559ec06700
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 9 Oct 2018 18:49:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46260 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726468AbeJIWtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:49:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6ACB3B069;
+        Tue,  9 Oct 2018 15:32:10 +0000 (UTC)
+Date:   Tue, 09 Oct 2018 17:32:08 +0200
+Message-ID: <s5h1s8zyw3r.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Mike Brady <mikebrady@eircom.net>
+Cc:     Takashi Iwai <tiwai@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint [Resend in plain text...]
+In-Reply-To: <425F6E5F-782E-4288-ABF0-180504FD7B01@eircom.net>
+References: <20180904155858.8001-1-tiwai@suse.de>
+        <20180904155858.8001-18-tiwai@suse.de>
+        <4c5f9aed-8fbe-fe22-0c8d-097d8915805c@i2se.com>
+        <s5h4lelu84e.wl-tiwai@suse.de>
+        <8866e22a-6cd7-d32d-92e5-9a4e60206d2f@i2se.com>
+        <s5hworhs559.wl-tiwai@suse.de>
+        <828AF61F-4F6F-44C3-B463-7FE4EB8974F1@eircom.net>
+        <s5hy3b7z138.wl-tiwai@suse.de>
+        <425F6E5F-782E-4288-ABF0-180504FD7B01@eircom.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a98959fdbda1849a01b2150bb635ed559ec06700
-Gitweb:     https://git.kernel.org/tip/a98959fdbda1849a01b2150bb635ed559ec06700
-Author:     Bjorn Helgaas <bhelgaas@google.com>
-AuthorDate: Thu, 27 Sep 2018 09:22:02 -0500
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 9 Oct 2018 17:18:34 +0200
+On Tue, 09 Oct 2018 17:28:36 +0200,
+Mike Brady wrote:
+> 
+> Hi Takashi.
+> 
+> > On 9 Oct 2018, at 14:44, Takashi Iwai <tiwai@suse.de> wrote:
+> > 
+> > On Tue, 09 Oct 2018 15:18:15 +0200,
+> > Mike Brady wrote:
+> >> 
+> >>>> @Mike: Do you want to write a patch series which upstream "interpolate
+> >>>> audio delay" and addresses Takashi's comments?
+> >>>> 
+> >>>> I would help you, in case you have questions about setup a Raspberry Pi
+> >>>> with Mainline kernel or patch submission.
+> >>> 
+> >>> Well, the question is who really wants this.  The value given by that
+> >>> patch is nothing but some estimation and might be even incorrect.
+> >>> 
+> >>> PulseAudio won't need it any longer when you set the BATCH flag.
+> >>> Then it'll switch from tsched mode to the old mode, and the delay
+> >>> value would be almost irrelevant.
+> >> 
+> >> Well, two answers. First, Shairport Sync
+> >> (https://github.com/mikebrady/shairport-sync) needs it — whenever a
+> >> packet of audio frames is about to be added to the output queue (at
+> >> approximately 7.9 millisecond intervals), the delay is checked to
+> >> try to maintain sync to within a few milliseconds. The BCM2835 audio
+> >> device is the only one I have yet come across with so much
+> >> jitter. Whatever other drivers do, the delay they report doesn’t
+> >> suffer from anything like this level of jitter.
+> > 
+> > OK, if there is another application using that delay value, it's worth
+> > to consider providing a fine-grained value.
+> > 
+> >> The second answer is that the veracity of the ALSA documentation
+> >> depends on it — any application using the ALSA system for
+> >> synchronisation will rely on this being an accurate reflection of
+> >> the situation. AFAIK there is really no workaround it if the
+> >> application is confined to “safe” ALSA
+> >> (http://0pointer.de/blog/projects/guide-to-sound-apis).
+> > 
+> >> On LMKL.org, Takashi wrote:
+> >> 
+> >>> Date	Wed, 19 Sep 2018 11:52:33 +0200
+> >>> From	Takashi Iwai <>
+> >>> Subject	Re: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint
+> >> 
+> >>> [snip]
+> >> 
+> >>> That's OK, as long as the computation is accurate enough (at least not
+> >>> exceed the actual position) and is light-weight.
+> >> 
+> >>> [snip]
+> >> 
+> >> The overhead is small -- an extra ktime_get() every time a GPU message
+> >> is sent -- and another call and a few calculations whenever the delay
+> >> is sought from userland.
+> >> 
+> >> At 48,000 frames per second, i.e. approximately 20 microseconds per
+> >> frame, it would take a clock inaccuracy of roughly
+> >> 20 microseconds in 10 milliseconds -- 2,000 parts per million — to
+> >> result in an inaccurate estimate. 
+> >> Crystal or resonator-based clocks typically have an inaccuracy of
+> >> 10s to 100s of parts per million.
+> >> 
+> >> Finally, to see the effect of the absence and presence of this
+> >> interpolation, please have a look at this:
+> >> https://github.com/raspberrypi/firmware/issues/1026#issuecomment-415746016,
+> >> where a downstream version of this fix was being discussed.
+> > 
+> > I'm not opposing to the usage of delay value.  The attribute is
+> > provided exactly for such a purpose.  It's a good thing (tm).
+> > 
+> > The potential problem is, however, rather the implementation: it's
+> > using a system timer for interpolation, which is known to drift from
+> > the actual clocks.  Though, one may say that in such a use case, we
+> > may ignore the drift since the interpolation is so narrow.
+> 
+> Yes, that was my thought. I guess another thing in its favour is that this audio device will always
+> be in partnership with a processor as part of an SoC, so it will always be likely to have a reasonably
+> accurate clock.
+> 
+> > But another question is whether it should be implemented in each
+> > driver level.  The time-stamping is basically a PCM core
+> > functionality, and nothing specific to the hardware, especially when
+> > it's referring to the system timer.
+> 
+> That’s a fair point. I don’t know what is done in other drivers, but can only report that with one possible exception,
+> the DACs used with Shairport Sync by many end users report well-behaved delay figures, certainly to within two microseconds. I’m afraid I don’t know how they do it.
+> 
+> > e.g. you can think in a different way, too: we may put a timestamp at
+> > each hwptr update, and pass it as-is, instead of updating the
+> > timestamp at each position query.  This will effectively gives the
+> > accurate position-timestamp pair, and user-space may interpolate as it
+> > likes, too.
+> 
+> That’s not a bad idea, and I might take it up on the alsa-devel mailing list, as you suggest.
+> 
+> > In anyway, if *this* kind of feature needs to be merged, it's
+> > definitely to be discussed with the upstream.  So, if you're going to
+> > merge that sort of path, please keep Cc to alsa-devel ML.
+> 
+> In the meantime, would you think that the balance of convenience lies with this interpolation scheme? (Finally, I have a patch ready….)
 
-resource: Include resource end in walk_*() interfaces
+I find it's not too bad, at least as a starting point.
+It doesn't break anything dramatically from the existing API POV.
 
-find_next_iomem_res() finds an iomem resource that covers part of a range
-described by "start, end".  All callers expect that range to be inclusive,
-i.e., both start and end are included, but find_next_iomem_res() doesn't
-handle the end address correctly.
+We may brush up things (or extend the API) later, and may move it up
+to the core code.  But, again, as a kick off, it's good to start with
+a local minimal change.
 
-If it finds an iomem resource that contains exactly the end address, it
-skips it, e.g., if "start, end" is [0x0-0x10000] and there happens to be an
-iomem resource [mem 0x10000-0x10000] (the single byte at 0x10000), we skip
-it:
 
-  find_next_iomem_res(...)
-  {
-    start = 0x0;
-    end = 0x10000;
-    for (p = next_resource(...)) {
-      # p->start = 0x10000;
-      # p->end = 0x10000;
-      # we *should* return this resource, but this condition is false:
-      if ((p->end >= start) && (p->start < end))
-        break;
+thanks,
 
-Adjust find_next_iomem_res() so it allows a resource that includes the
-single byte at the end of the range.  This is a corner case that we
-probably don't see in practice.
-
-Fixes: 58c1b5b07907 ("[PATCH] memory hotadd fixes: find_next_system_ram catch range fix")
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Brijesh Singh <brijesh.singh@amd.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: H. Peter Anvin <hpa@zytor.com>
-CC: Lianbo Jiang <lijiang@redhat.com>
-CC: Takashi Iwai <tiwai@suse.de>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Tom Lendacky <thomas.lendacky@amd.com>
-CC: Vivek Goyal <vgoyal@redhat.com>
-CC: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-CC: bhe@redhat.com
-CC: dan.j.williams@intel.com
-CC: dyoung@redhat.com
-CC: kexec@lists.infradead.org
-CC: mingo@redhat.com
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/153805812254.1157.16736368485811773752.stgit@bhelgaas-glaptop.roam.corp.google.com
----
- kernel/resource.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 30e1bc68503b..155ec873ea4d 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -319,7 +319,7 @@ int release_resource(struct resource *old)
- EXPORT_SYMBOL(release_resource);
- 
- /*
-- * Finds the lowest iomem resource existing within [res->start.res->end).
-+ * Finds the lowest iomem resource existing within [res->start..res->end].
-  * The caller must specify res->start, res->end, res->flags, and optionally
-  * desc.  If found, returns 0, res is overwritten, if not found, returns -1.
-  * This function walks the whole tree and not just first level children until
-@@ -352,7 +352,7 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
- 			p = NULL;
- 			break;
- 		}
--		if ((p->end >= start) && (p->start < end))
-+		if ((p->end >= start) && (p->start <= end))
- 			break;
- 	}
- 
+Takashi
