@@ -2,140 +2,99 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A95CC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DA4C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D5C214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:53:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D5C214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FC0E2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:54:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC0E2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbeJIVKk (ORCPT
+        id S1727357AbeJIVLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:10:40 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13607 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726434AbeJIVKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:10:39 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DDDB2C1F9E6B6;
-        Tue,  9 Oct 2018 21:53:30 +0800 (CST)
-Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 9 Oct 2018
- 21:53:23 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH] staging: erofs: harden inode lookup for 32-bit platforms
-Date:   Tue, 9 Oct 2018 22:07:13 +0800
-Message-ID: <20181009140713.29629-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        Tue, 9 Oct 2018 17:11:11 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:2963 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726445AbeJIVIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:08:44 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42TzD05HrSz9ttfw;
+        Tue,  9 Oct 2018 15:51:28 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Q92iFL9qXqj1; Tue,  9 Oct 2018 15:51:28 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42TzD04lgFz9ttfv;
+        Tue,  9 Oct 2018 15:51:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 48BF98B80B;
+        Tue,  9 Oct 2018 15:51:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id GJPX7AwcyvsH; Tue,  9 Oct 2018 15:51:40 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 124048B80A;
+        Tue,  9 Oct 2018 15:51:40 +0200 (CEST)
+Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id D94E76F442; Tue,  9 Oct 2018 13:51:39 +0000 (UTC)
+Message-Id: <841b980a6f1b3e9a9d3c20c5da39a88292033dbe.1539092111.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1539092111.git.christophe.leroy@c-s.fr>
+References: <cover.1539092111.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 04/24] soc/fsl/qbman: use ioremap_cache() instead of
+ ioremap_prot(0)
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+Date:   Tue,  9 Oct 2018 13:51:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces inode hash function, test and set callbacks,
-and iget5_locked to find the right inode for 32-bit platforms.
+ioremap_prot() with flag set to 0 relies on a hack in
+__ioremap_caller() which adds PAGE_KERNEL flags when the
+handed flags don't look like a valid set of flags
+(ie don't include _PAGE_PRESENT)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+The intention being to map cached memory, use ioremap_cache() instead.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
+ drivers/soc/fsl/qbman/qman_ccsr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The patch has been previewed in the linux-erofs mailing list, submit to
-the staging mailing list for linux-4.20.
-
-Thanks,
-Gao Xiang
-
- drivers/staging/erofs/inode.c    | 37 ++++++++++++++++++++++++++++++++++++-
- drivers/staging/erofs/internal.h |  9 +++++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index da8693a7c3d3..04c61a9d7b76 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -232,10 +232,45 @@ static int fill_inode(struct inode *inode, int isdir)
- 	return err;
- }
- 
-+/*
-+ * erofs nid is 64bits, but i_ino is 'unsigned long', therefore
-+ * we should do more for 32-bit platform to find the right inode.
-+ */
-+#if BITS_PER_LONG == 32
-+static int erofs_ilookup_test_actor(struct inode *inode, void *opaque)
-+{
-+	const erofs_nid_t nid = *(erofs_nid_t *)opaque;
-+
-+	return EROFS_V(inode)->nid == nid;
-+}
-+
-+static int erofs_iget_set_actor(struct inode *inode, void *opaque)
-+{
-+	const erofs_nid_t nid = *(erofs_nid_t *)opaque;
-+
-+	inode->i_ino = erofs_inode_hash(nid);
-+	return 0;
-+}
-+#endif
-+
-+static inline struct inode *erofs_iget_locked(struct super_block *sb,
-+					      erofs_nid_t nid)
-+{
-+	const unsigned long hashval = erofs_inode_hash(nid);
-+
-+#if BITS_PER_LONG >= 64
-+	/* it is safe to use iget_locked for >= 64-bit platform */
-+	return iget_locked(sb, hashval);
-+#else
-+	return iget5_locked(sb, hashval, erofs_ilookup_test_actor,
-+		erofs_iget_set_actor, &nid);
-+#endif
-+}
-+
- struct inode *erofs_iget(struct super_block *sb,
- 	erofs_nid_t nid, bool isdir)
+diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
+index 79cba58387a5..0fbb201346c7 100644
+--- a/drivers/soc/fsl/qbman/qman_ccsr.c
++++ b/drivers/soc/fsl/qbman/qman_ccsr.c
+@@ -418,7 +418,7 @@ static size_t fqd_sz, pfdr_sz;
+ static int zero_priv_mem(phys_addr_t addr, size_t sz)
  {
--	struct inode *inode = iget_locked(sb, nid);
-+	struct inode *inode = erofs_iget_locked(sb, nid);
+ 	/* map as cacheable, non-guarded */
+-	void __iomem *tmpp = ioremap_prot(addr, sz, 0);
++	void __iomem *tmpp = ioremap_cache(addr, sz);
  
- 	if (unlikely(inode == NULL))
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 5096b27bcf0d..57575c7f5635 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -517,6 +517,15 @@ erofs_get_inline_page(struct inode *inode,
- }
- 
- /* inode.c */
-+static inline unsigned long erofs_inode_hash(erofs_nid_t nid)
-+{
-+#if BITS_PER_LONG == 32
-+	return (nid >> 32) ^ (nid & 0xffffffff);
-+#else
-+	return nid;
-+#endif
-+}
-+
- extern struct inode *erofs_iget(struct super_block *sb,
- 	erofs_nid_t nid, bool dir);
- 
+ 	if (!tmpp)
+ 		return -ENOMEM;
 -- 
-2.14.4
+2.13.3
 
