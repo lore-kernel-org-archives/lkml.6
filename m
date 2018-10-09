@@ -2,92 +2,235 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B90ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2AAECDFAC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830552064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830552064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id E7BAE2064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wtf3xh+9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BAE2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeJJBFK (ORCPT
+        id S1726969AbeJJBF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:05:10 -0400
-Received: from smtprelay0100.hostedemail.com ([216.40.44.100]:43844 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726415AbeJJBFK (ORCPT
+        Tue, 9 Oct 2018 21:05:26 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41984 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeJJBF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:05:10 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 36531180A8459;
-        Tue,  9 Oct 2018 17:47:02 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: grain81_1fe660c1bae26
-X-Filterd-Recvd-Size: 2351
-Received: from XPS-9350 (unknown [172.58.41.87])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  9 Oct 2018 17:46:58 +0000 (UTC)
-Message-ID: <262d8a05cedc76bc90fa5be7d3b92d5faa2b4ce9.camel@perches.com>
-Subject: Re: [Patch v2] MAINTAINERS: intel_telemetry: Update maintainers info
-From:   Joe Perches <joe@perches.com>
-To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org
-Cc:     dvhart@infradead.org, andy@infradead.org,
-        linux-kernel@vger.kernel.org, rajneesh.bhardwaj@intel.com,
-        david.e.box@linux.intel.com
-Date:   Tue, 09 Oct 2018 10:46:56 -0700
-In-Reply-To: <20181009141833.25972-1-rajneesh.bhardwaj@linux.intel.com>
-References: <20181009141833.25972-1-rajneesh.bhardwaj@linux.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
+        Tue, 9 Oct 2018 21:05:26 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c8-v6so1181047plo.9;
+        Tue, 09 Oct 2018 10:47:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=NFWjmn9TDBkATQaXA+17wcOB9zqUAyWN/ATkHmUsFrI=;
+        b=Wtf3xh+91coxGwz0/GhW5Al1NovWJuWT8wWlaORqbX6i0cwDicJK/YSWNf6qKGcGuZ
+         GEf9dmIRBwb+HuuES1bx2foO/tJRsY4uwnhdNpISaQAoSSVMhIP3OhKttBmL7bhI1Tgs
+         JJgLY36EU6zUM2iwn7pFrwMHJQE6sJYpKoy3RgTEZgEoH+MA/T7VLb3K0jxoGJaK65rQ
+         Xkbg+p/0hNIZ3uTcWSjkhZ574Gj60Ph9fUX/GY1lKMj+EzE66ZwwCnJGMGjl+o7BbbC4
+         oLCAJLpoYkgdHjdeRYR6A5IqAJH8brj7/PATaYc8F1CfeZYGivqX8hCUoJbelI8lknRI
+         QYNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NFWjmn9TDBkATQaXA+17wcOB9zqUAyWN/ATkHmUsFrI=;
+        b=V51BGKinGzovTSLSFBzn0rtbCINGVkuI1Ir9IFhcZfpGZJVyhpK6HMXSVuAQ95KpqR
+         CBPa/p9j+WRkTNPtQEkDYarthSTTJKXx/6z04KfG8qhvRcS2co5qm+SguoIMSF0Ae003
+         20KIwGPEl1vVKJPRDXa5AOu+Bbxdz4IwQBs1nuFc+8i5iR25XzarwORAMSseia+fs39R
+         w1EEmOLGiXf/c3A00RLJcz4guaED2AzBH9W+u6xZQdMvqTWcZyx6WFe14mAILX/2iu1w
+         PzVvkBqURcYXjaIwfohcNjDQRbIY3Nx6pfSoVyifXlnqWEsceSWaeYWKj/07ThY6HnfB
+         1i0g==
+X-Gm-Message-State: ABuFfogxlht6zSdoNnLB8MOPTwpYfVGNvSbSbmj/DFvhrsCiJRW4FLuZ
+        QtRQxSHhS4pkxvMpzqpeZoOPSm5P
+X-Google-Smtp-Source: ACcGV61Mtsb3n+jsJE1FIsHQJl8zKkJ1GS2z4+mmEGqTlRquTy07L7z/fN7J78akZlcb9/FwKT69lA==
+X-Received: by 2002:a17:902:be11:: with SMTP id r17-v6mr10028510pls.112.1539107239225;
+        Tue, 09 Oct 2018 10:47:19 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id 22-v6sm29767184pfl.126.2018.10.09.10.47.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 10:47:18 -0700 (PDT)
+Subject: Re: [PATCH v15 06/16] of/fdt: add helper functions for handling
+ properties
+To:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, dyoung@redhat.com,
+        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
+        kexec@lists.infradead.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
+ <20180928064841.14117-7-takahiro.akashi@linaro.org>
+ <CAL_JsqKwmcdQ+2eK3LGHhcQ2Wb+Yz1-Atz0-3K6WKNZQt_woVw@mail.gmail.com>
+ <20181005030849.GK32578@linaro.org>
+ <CAL_Jsq+wXU8PCyJhaTKE7ezZhiD0KARUFXVzQBk0ZptEEK7ubQ@mail.gmail.com>
+ <20181009003733.GN32578@linaro.org>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <c65e42ce-1a98-7680-3a09-1f737eb26763@gmail.com>
+Date:   Tue, 9 Oct 2018 10:47:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181009003733.GN32578@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-09 at 19:48 +0530, Rajneesh Bhardwaj wrote:
-> Add myself and David as the new maintainers for Intel Telemetry driver
-> since Souvik no longer works with Intel. David and I work on power
-> management and debug related drivers which are pretty close to this one
-> in terms of functionalities so volunteering for the task.
+On 10/08/18 17:37, AKASHI, Takahiro wrote:
+> On Fri, Oct 05, 2018 at 08:23:57AM -0500, Rob Herring wrote:
+>> On Thu, Oct 4, 2018 at 10:07 PM AKASHI, Takahiro
+>> <takahiro.akashi@linaro.org> wrote:
+>>>
+>>> Rob,
+>>>
+>>> # I haven't replied to this comment yet.
+>>>
+>>> On Fri, Sep 28, 2018 at 08:44:42AM -0500, Rob Herring wrote:
+>>>> +David Gibson
+>>>>
+>>>> On Fri, Sep 28, 2018 at 1:48 AM AKASHI Takahiro
+>>>> <takahiro.akashi@linaro.org> wrote:
+>>>>>
+>>>>> These functions will be used later to handle kexec-specific properties
+>>>>> in arm64's kexec_file implementation.
+>>>>>
+>>>>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>>>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>>>> Cc: Frank Rowand <frowand.list@gmail.com>
+>>>>> Cc: devicetree@vger.kernel.org
+>>>>> ---
+>>>>>  drivers/of/fdt.c       | 56 ++++++++++++++++++++++++++++++++++++++++++
+>>>>>  include/linux/of_fdt.h |  4 +++
+>>>>>  2 files changed, 60 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+>>>>> index 800ad252cf9c..c65c31562ccb 100644
+>>>>> --- a/drivers/of/fdt.c
+>>>>> +++ b/drivers/of/fdt.c
+>>>>> @@ -25,6 +25,7 @@
+>>>>>  #include <linux/debugfs.h>
+>>>>>  #include <linux/serial_core.h>
+>>>>>  #include <linux/sysfs.h>
+>>>>> +#include <linux/types.h>
+>>>>>
+>>>>>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+>>>>>  #include <asm/page.h>
+>>>>> @@ -1323,3 +1324,58 @@ late_initcall(of_fdt_raw_init);
+>>>>>  #endif
+>>>>>
+>>>>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
+>>>>> +
+>>>>> +#define FDT_ALIGN(x, a)        (((x) + (a) - 1) & ~((a) - 1))
+>>>>> +#define FDT_TAGALIGN(x)        (FDT_ALIGN((x), FDT_TAGSIZE))
+>>>>> +
+>>>>> +int fdt_prop_len(const char *prop_name, int len)
+>>>>> +{
+>>>>> +       return (strlen(prop_name) + 1) +
+>>>>> +               sizeof(struct fdt_property) +
+>>>>> +               FDT_TAGALIGN(len);
+>>>>
+>>>> Looks like you are using this to calculate how much space you need to
+>>>> allocate in addition to the current DTB for a couple of new or
+>>>> replaced properties. I'm not sure that this calculation is completely
+>>>> accurate. And it is strange there doesn't seem to be any libfdt
+>>>> function for this already. It would be simpler to just add some fixed
+>>>> additional amount.
+>>>>
+>>>> Maybe David G has comments on this?
+>>>>
+>>>>> +}
+>>>>> +
+>>>>
+>>>> The rest of this should go in drivers/of/fdt_address.c. Ultimately, it
+>>>> should go into libfdt, but I'm fine with having it in the kernel for
+>>>> now.
+>>>
+>>> I'd like to have this function in the kernel for now.
+>>>
+>>>>> +static void fill_property(void *buf, u64 val64, int cells)
+>>>>> +{
+>>>>> +       __be32 val32;
+>>>>> +
+>>>>> +       while (cells) {
+>>>>> +               val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
+>>>>> +               memcpy(buf, &val32, sizeof(val32));
+>>>>> +               buf += sizeof(val32);
+>>>>
+>>>> This is kind of hard to read. I would copy u-boot's fdt_pack_reg function.
+>>>
+>>> Are you sure?
+>>> I originally implemented this function in a similar way that fdt_pack_reg()
+>>> was, but, you suggested, in your past comment[1], that we'd be better to
+>>> have of_read_number()-like implementation.
+>>>
+>>> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579118.html
+>>
+>> Yeah, you're right. Plus, I'm not sure the u-boot one would work for
+>> unaligned accesses with armv5 and earlier h/w.
+>>
+>> My only comment then is I think you can drop the U32_MAX masking.
 > 
-> Signed-off-by: Box, David E <david.e.box@linux.intel.com>
-> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> ---
->  MAINTAINERS | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Okay, then I will leave this function, yet renaming it to
+> cpu64_to_fdt_cells() after Frank's comment.
+
+I have second guessed myself and do not like the name I suggested
+because what the function really does is either cpu32 to be32 or
+cpu64 to be64.
+
+I agree with Rob that readability is important here.  Instead of
+having a fill_property() function, how about having inline code,
+something like (untested even for thinkos):
+
+	prop = buf;
+
+	if (addr_cells == 1) {
+		*(__be32 *)prop = cpu32_to_be32(addr);
+		prop += 4;
+	} else {
+		*(__be64 *)prop = cpu64_to_be64(addr);
+		prop += 8;
+	}
+
+	if (size_cells == 1)
+		*(__be32 *)prop = cpu32_to_be32(size);
+	else
+		*(__be64 *)prop = cpu64_to_be64(size);
+
+You might want to also give Rob a chance to bike shed on this
+suggestion.
+
+-Frank
+
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 22065048d89d..f33ebd1b8034 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7530,7 +7530,8 @@ F:	arch/x86/crypto/sha*-mb/
->  F:	crypto/mcryptd.c
->  
->  INTEL TELEMETRY DRIVER
-> -M:	Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-> +M:	Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> +M:	Box, David E <david.e.box@linux.intel.com>
-
-It is better to quote your name when it uses
-non-alphabetic characters like periods and commas.
-
-Especially the comma because that is commonly used
-by email clients as a multiple address separator so
-it makes copy/paste use error-prone.
-
-It's also likely better to use a more typical
-"First <Initial> Last" name style. 
-
->  L:	platform-driver-x86@vger.kernel.org
->  S:	Maintained
->  F:	arch/x86/include/asm/intel_telemetry.hch mor
+> Thanks,
+> -Takahiro Akashi
+>>
+>> Rob
+> 
 
