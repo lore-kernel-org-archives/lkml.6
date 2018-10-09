@@ -2,149 +2,394 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0307ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00402ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A8C12087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="crxD6DoB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8C12087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A96072087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96072087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeJJAE7 (ORCPT
+        id S1727123AbeJJAFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:04:59 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41553 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbeJJAE6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:04:58 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c32so2339392otb.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o1BaTp0M17T5kDBODSTuCLVUFELZt/q2avjOti0PYLY=;
-        b=crxD6DoBtPnPEOuJNZPkKla1pwqNuNqXpUmC5B1ClvaF3Zc6kneA2xe2YDNetmXkAG
-         o4irsIJ+OuE9FIYqZBRT/1e+wB9/5mNtfvcpNnNSLbOUOW29tl+YvB6fAgyl7XkRITBQ
-         v5vUhHAeRpatJjhonLcLlCjJ3e4IBy6yfU2Y7V4S2dyNmeswTJKr6RUAByVf5F7X38HK
-         kHnteWGa0c8Ead0C3emXCMouacYfzoxFu5zHRkK4evYyZ2n/7ER+du21Vt5VaHEB/DI7
-         xCQAxv3b1kJ+8X3bScXWS1KiLhRt7leU8SihcBoy7n3fTvn5X0Lxcln5USEioF8AjbPp
-         8voA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o1BaTp0M17T5kDBODSTuCLVUFELZt/q2avjOti0PYLY=;
-        b=az9tZXROerl2dNG38ob1V7KTBxI7o9F8NDyTVCrd+gR9LPyKb2UeS3X6sidQz+lN6E
-         smB9vFgbzN6A1BoKydwQPf2Rj7Tfr09APhzoVrYOCNT6BCUlHaAvYvoMDwba9GtydX1C
-         lUFWOiarEFJ1/Wtwc1DAZ//jQoSL7nUaizcKicyn0s2iILyHaerYbTw7yFXCULXC9X9h
-         YWY4t7CKG1DpSDq3qnDRV7nHd8FbvdTWNtmRem0/FumKNTn+Al19NH2nTfJ2lncmVVCc
-         dhDuqr9Cgw9Xr119eWt0iRg03NuIIflpwF5luIt2oPMxTkEqmaDu6sonDDlIOEEYhOCn
-         CcjQ==
-X-Gm-Message-State: ABuFfogsgDohzXJPU3JK0yrVNFaOJhpOlpfD/V41m641bq0trIIFcudn
-        nQoK3tprPFdztIi17BrOzoR1C+JdNQfqvbf6PAZYJA==
-X-Google-Smtp-Source: ACcGV61WPrl5cZ3k5YCAmh23lcobRYCJiN1lT6kMIeay2i8YlYOF8tW7WfQCVFc18PJHxXW+5V9UOUtL+A6tNYps7qQ=
-X-Received: by 2002:a9d:5733:: with SMTP id p48mr16358823oth.292.1539103627631;
- Tue, 09 Oct 2018 09:47:07 -0700 (PDT)
+        Tue, 9 Oct 2018 20:05:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726982AbeJJAFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:05:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3644F83F3E;
+        Tue,  9 Oct 2018 16:47:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 92E2F74E85;
+        Tue,  9 Oct 2018 16:47:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 03/22] KEYS: Provide missing asymmetric key subops for new
+ key type ops [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Denis Kenzior <denkenz@gmail.com>,
+        Denis Kenzior <denkenz@gmail.com>, dhowells@redhat.com,
+        denkenz@gmail.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 09 Oct 2018 17:47:07 +0100
+Message-ID: <153910362782.12141.4858735029700372600.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
+References: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20181009070230.12884-1-cyphar@cyphar.com> <20181009070230.12884-4-cyphar@cyphar.com>
- <CAG48ez3Ae5b20g2UquekfBNaUw1tLt4nWy2pYm-LNRMbDVpHfA@mail.gmail.com> <20181009153728.2altaqxclntvyc7b@mikami>
-In-Reply-To: <20181009153728.2altaqxclntvyc7b@mikami>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 9 Oct 2018 18:46:41 +0200
-Message-ID: <CAG48ez0TeT7=SC7rxNC6RA4ALUcqfRrewx9RYtg9PwFkmy044A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] namei: aggressively check for nd->root escape on
- ".." resolution
-To:     asarai@suse.de
-Cc:     cyphar@cyphar.com, Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>, christian@brauner.io,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 09 Oct 2018 16:47:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 5:36 PM Aleksa Sarai <asarai@suse.de> wrote:
-> On 2018-10-09, 'Jann Horn' via dev <jannh@google.com> wrote:
-> > On Tue, Oct 9, 2018 at 9:03 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > > This patch allows for AT_BENEATH and AT_THIS_ROOT to safely permit ".."
-> > > resolution (in the case of AT_BENEATH the resolution will still fail if
-> > > ".." resolution would resolve a path outside of the root -- while
-> > > AT_THIS_ROOT will chroot(2)-style scope it). "proclink" jumps are still
-> > > disallowed entirely because now they could result in inconsistent
-> > > behaviour if resolution encounters a subsequent "..".
-> > >
-> > > The need for this patch is explained by observing there is a fairly
-> > > easy-to-exploit race condition with chroot(2) (and thus by extension
-> > > AT_THIS_ROOT and AT_BENEATH) where a rename(2) of a path can be used to
-> > > "skip over" nd->root and thus escape to the filesystem above nd->root.
-> > >
-> > >   thread1 [attacker]:
-> > >     for (;;)
-> > >       renameat2(AT_FDCWD, "/a/b/c", AT_FDCWD, "/a/d", RENAME_EXCHANGE);
-> > >   thread2 [victim]:
-> > >     for (;;)
-> > >       openat(dirb, "b/c/../../etc/shadow", O_THISROOT);
-> > >
-> > > With fairly significant regularity, thread2 will resolve to
-> > > "/etc/shadow" rather than "/a/b/etc/shadow". There is also a similar
-> > > (though somewhat more privileged) attack using MS_MOVE.
-> > >
-> > > With this patch, such cases will be detected *during* ".." resolution
-> > > (which is the weak point of chroot(2) -- since walking *into* a
-> > > subdirectory tautologically cannot result in you walking *outside*
-> > > nd->root -- except through a bind-mount or "proclink"). By detecting
-> > > this at ".." resolution (rather than checking only at the end of the
-> > > entire resolution) we can both correct escapes by jumping back to the
-> > > root (in the case of AT_THIS_ROOT), as well as avoid revealing to
-> > > attackers the structure of the filesystem outside of the root (through
-> > > timing attacks for instance).
-> > >
-> > > In order to avoid a quadratic lookup with each ".." entry, we only
-> > > activate the slow path if a write through &rename_lock or &mount_lock
-> > > have occurred during path resolution (&rename_lock and &mount_lock are
-> > > re-taken to further optimise the lookup). Since the primary attack being
-> > > protected against is MS_MOVE or rename(2), not doing additional checks
-> > > unless a mount or rename have occurred avoids making the common case
-> > > slow.
-> > >
-> > > The use of __d_path here might seem suspect, but on further inspection
-> > > of the most important race (a path was *inside* the root but is now
-> > > *outside*), there appears to be no attack potential. If __d_path occurs
-> > > before the rename, then the path will be resolved but since the path was
-> > > originally inside the root there is no escape. Subsequent ".." jumps are
-> > > guaranteed to check __d_path reachable (by construction, &rename_lock or
-> > > &mount_lock must have been taken after __d_path returned),
-> >
-> > "after"? Don't you mean "before"? Otherwise I don't understand what
-> > you're saying here.
->
-> I meant that the attacker doing the rename must've taken &rename_lock
-> or &mount_lock after __d_path returns in the target process (because the
-> race being examined is that the rename occurs *after* __d_path) and thus
-> are guaranteed to be detected).
->
-> Maybe there's a better way to phrase what I mean...
+Provide the missing asymmetric key subops for new key type ops.  This
+include query, encrypt, decrypt and create signature.  Verify signature
+already exists.  Also provided are accessor functions for this:
 
-Aah, I thought you were referring to what the victim process is doing,
-not what the racing attacker is doing.
+	int query_asymmetric_key(const struct key *key,
+				 struct kernel_pkey_query *info);
+
+	int encrypt_blob(struct kernel_pkey_params *params,
+			 const void *data, void *enc);
+	int decrypt_blob(struct kernel_pkey_params *params,
+			 const void *enc, void *data);
+	int create_signature(struct kernel_pkey_params *params,
+			     const void *data, void *enc);
+
+The public_key_signature struct gains an encoding field to carry the
+encoding for verify_signature().
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Marcel Holtmann <marcel@holtmann.org>
+Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
+Reviewed-by: Denis Kenzior <denkenz@gmail.com>
+Tested-by: Denis Kenzior <denkenz@gmail.com>
+---
+
+ Documentation/crypto/asymmetric-keys.txt |   24 ++++++--
+ crypto/asymmetric_keys/asymmetric_keys.h |    3 +
+ crypto/asymmetric_keys/asymmetric_type.c |   43 ++++++++++++++
+ crypto/asymmetric_keys/signature.c       |   95 ++++++++++++++++++++++++++++++
+ include/crypto/public_key.h              |   13 +++-
+ include/keys/asymmetric-subtype.h        |    9 +++
+ 6 files changed, 180 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
+index 5969bf42562a..deb656ef008b 100644
+--- a/Documentation/crypto/asymmetric-keys.txt
++++ b/Documentation/crypto/asymmetric-keys.txt
+@@ -183,6 +183,10 @@ and looks like the following:
+ 
+ 		void (*describe)(const struct key *key, struct seq_file *m);
+ 		void (*destroy)(void *payload);
++		int (*query)(const struct kernel_pkey_params *params,
++			     struct kernel_pkey_query *info);
++		int (*eds_op)(struct kernel_pkey_params *params,
++			      const void *in, void *out);
+ 		int (*verify_signature)(const struct key *key,
+ 					const struct public_key_signature *sig);
+ 	};
+@@ -207,12 +211,22 @@ There are a number of operations defined by the subtype:
+      asymmetric key will look after freeing the fingerprint and releasing the
+      reference on the subtype module.
+ 
+- (3) verify_signature().
++ (3) query().
+ 
+-     Optional.  These are the entry points for the key usage operations.
+-     Currently there is only the one defined.  If not set, the caller will be
+-     given -ENOTSUPP.  The subtype may do anything it likes to implement an
+-     operation, including offloading to hardware.
++     Mandatory.  This is a function for querying the capabilities of a key.
++
++ (4) eds_op().
++
++     Optional.  This is the entry point for the encryption, decryption and
++     signature creation operations (which are distinguished by the operation ID
++     in the parameter struct).  The subtype may do anything it likes to
++     implement an operation, including offloading to hardware.
++
++ (5) verify_signature().
++
++     Optional.  This is the entry point for signature verification.  The
++     subtype may do anything it likes to implement an operation, including
++     offloading to hardware.
+ 
+ 
+ ==========================
+diff --git a/crypto/asymmetric_keys/asymmetric_keys.h b/crypto/asymmetric_keys/asymmetric_keys.h
+index ca8e9ac34ce6..7be1ccf4fa9f 100644
+--- a/crypto/asymmetric_keys/asymmetric_keys.h
++++ b/crypto/asymmetric_keys/asymmetric_keys.h
+@@ -16,3 +16,6 @@ extern struct asymmetric_key_id *asymmetric_key_hex_to_key_id(const char *id);
+ extern int __asymmetric_key_hex_to_key_id(const char *id,
+ 					  struct asymmetric_key_id *match_id,
+ 					  size_t hexlen);
++
++extern int asymmetric_key_eds_op(struct kernel_pkey_params *params,
++				 const void *in, void *out);
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+index 26539e9a8bda..69a0788a7de5 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
+ #include <keys/system_keyring.h>
++#include <keys/user-type.h>
+ #include "asymmetric_keys.h"
+ 
+ MODULE_LICENSE("GPL");
+@@ -538,6 +539,45 @@ static struct key_restriction *asymmetric_lookup_restriction(
+ 	return ret;
+ }
+ 
++int asymmetric_key_eds_op(struct kernel_pkey_params *params,
++			  const void *in, void *out)
++{
++	const struct asymmetric_key_subtype *subtype;
++	struct key *key = params->key;
++	int ret;
++
++	pr_devel("==>%s()\n", __func__);
++
++	if (key->type != &key_type_asymmetric)
++		return -EINVAL;
++	subtype = asymmetric_key_subtype(key);
++	if (!subtype ||
++	    !key->payload.data[0])
++		return -EINVAL;
++	if (!subtype->eds_op)
++		return -ENOTSUPP;
++
++	ret = subtype->eds_op(params, in, out);
++
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++
++static int asymmetric_key_verify_signature(struct kernel_pkey_params *params,
++					   const void *in, const void *in2)
++{
++	struct public_key_signature sig = {
++		.s_size		= params->in2_len,
++		.digest_size	= params->in_len,
++		.encoding	= params->encoding,
++		.hash_algo	= params->hash_algo,
++		.digest		= (void *)in,
++		.s		= (void *)in2,
++	};
++
++	return verify_signature(params->key, &sig);
++}
++
+ struct key_type key_type_asymmetric = {
+ 	.name			= "asymmetric",
+ 	.preparse		= asymmetric_key_preparse,
+@@ -548,6 +588,9 @@ struct key_type key_type_asymmetric = {
+ 	.destroy		= asymmetric_key_destroy,
+ 	.describe		= asymmetric_key_describe,
+ 	.lookup_restriction	= asymmetric_lookup_restriction,
++	.asym_query		= query_asymmetric_key,
++	.asym_eds_op		= asymmetric_key_eds_op,
++	.asym_verify_signature	= asymmetric_key_verify_signature,
+ };
+ EXPORT_SYMBOL_GPL(key_type_asymmetric);
+ 
+diff --git a/crypto/asymmetric_keys/signature.c b/crypto/asymmetric_keys/signature.c
+index 28198314bc39..ad95a58c6642 100644
+--- a/crypto/asymmetric_keys/signature.c
++++ b/crypto/asymmetric_keys/signature.c
+@@ -16,7 +16,9 @@
+ #include <linux/export.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/keyctl.h>
+ #include <crypto/public_key.h>
++#include <keys/user-type.h>
+ #include "asymmetric_keys.h"
+ 
+ /*
+@@ -36,6 +38,99 @@ void public_key_signature_free(struct public_key_signature *sig)
+ }
+ EXPORT_SYMBOL_GPL(public_key_signature_free);
+ 
++/**
++ * query_asymmetric_key - Get information about an aymmetric key.
++ * @params: Various parameters.
++ * @info: Where to put the information.
++ */
++int query_asymmetric_key(const struct kernel_pkey_params *params,
++			 struct kernel_pkey_query *info)
++{
++	const struct asymmetric_key_subtype *subtype;
++	struct key *key = params->key;
++	int ret;
++
++	pr_devel("==>%s()\n", __func__);
++
++	if (key->type != &key_type_asymmetric)
++		return -EINVAL;
++	subtype = asymmetric_key_subtype(key);
++	if (!subtype ||
++	    !key->payload.data[0])
++		return -EINVAL;
++	if (!subtype->query)
++		return -ENOTSUPP;
++
++	ret = subtype->query(params, info);
++
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(query_asymmetric_key);
++
++/**
++ * encrypt_blob - Encrypt data using an asymmetric key
++ * @params: Various parameters
++ * @data: Data blob to be encrypted, length params->data_len
++ * @enc: Encrypted data buffer, length params->enc_len
++ *
++ * Encrypt the specified data blob using the private key specified by
++ * params->key.  The encrypted data is wrapped in an encoding if
++ * params->encoding is specified (eg. "pkcs1").
++ *
++ * Returns the length of the data placed in the encrypted data buffer or an
++ * error.
++ */
++int encrypt_blob(struct kernel_pkey_params *params,
++		 const void *data, void *enc)
++{
++	params->op = kernel_pkey_encrypt;
++	return asymmetric_key_eds_op(params, data, enc);
++}
++EXPORT_SYMBOL_GPL(encrypt_blob);
++
++/**
++ * decrypt_blob - Decrypt data using an asymmetric key
++ * @params: Various parameters
++ * @enc: Encrypted data to be decrypted, length params->enc_len
++ * @data: Decrypted data buffer, length params->data_len
++ *
++ * Decrypt the specified data blob using the private key specified by
++ * params->key.  The decrypted data is wrapped in an encoding if
++ * params->encoding is specified (eg. "pkcs1").
++ *
++ * Returns the length of the data placed in the decrypted data buffer or an
++ * error.
++ */
++int decrypt_blob(struct kernel_pkey_params *params,
++		 const void *enc, void *data)
++{
++	params->op = kernel_pkey_decrypt;
++	return asymmetric_key_eds_op(params, enc, data);
++}
++EXPORT_SYMBOL_GPL(decrypt_blob);
++
++/**
++ * create_signature - Sign some data using an asymmetric key
++ * @params: Various parameters
++ * @data: Data blob to be signed, length params->data_len
++ * @enc: Signature buffer, length params->enc_len
++ *
++ * Sign the specified data blob using the private key specified by params->key.
++ * The signature is wrapped in an encoding if params->encoding is specified
++ * (eg. "pkcs1").  If the encoding needs to know the digest type, this can be
++ * passed through params->hash_algo (eg. "sha1").
++ *
++ * Returns the length of the data placed in the signature buffer or an error.
++ */
++int create_signature(struct kernel_pkey_params *params,
++		     const void *data, void *enc)
++{
++	params->op = kernel_pkey_sign;
++	return asymmetric_key_eds_op(params, data, enc);
++}
++EXPORT_SYMBOL_GPL(create_signature);
++
+ /**
+  * verify_signature - Initiate the use of an asymmetric key to verify a signature
+  * @key: The asymmetric key to verify against
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index e0b681a717ba..3a1047a0195c 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -14,6 +14,8 @@
+ #ifndef _LINUX_PUBLIC_KEY_H
+ #define _LINUX_PUBLIC_KEY_H
+ 
++#include <linux/keyctl.h>
++
+ /*
+  * Cryptographic data for the public-key subtype of the asymmetric key type.
+  *
+@@ -40,6 +42,7 @@ struct public_key_signature {
+ 	u8 digest_size;		/* Number of bytes in digest */
+ 	const char *pkey_algo;
+ 	const char *hash_algo;
++	const char *encoding;
+ };
+ 
+ extern void public_key_signature_free(struct public_key_signature *sig);
+@@ -65,8 +68,14 @@ extern int restrict_link_by_key_or_keyring_chain(struct key *trust_keyring,
+ 						 const union key_payload *payload,
+ 						 struct key *trusted);
+ 
+-extern int verify_signature(const struct key *key,
+-			    const struct public_key_signature *sig);
++extern int query_asymmetric_key(const struct kernel_pkey_params *,
++				struct kernel_pkey_query *);
++
++extern int encrypt_blob(struct kernel_pkey_params *, const void *, void *);
++extern int decrypt_blob(struct kernel_pkey_params *, const void *, void *);
++extern int create_signature(struct kernel_pkey_params *, const void *, void *);
++extern int verify_signature(const struct key *,
++			    const struct public_key_signature *);
+ 
+ int public_key_verify_signature(const struct public_key *pkey,
+ 				const struct public_key_signature *sig);
+diff --git a/include/keys/asymmetric-subtype.h b/include/keys/asymmetric-subtype.h
+index e0a9c2368872..9ce2f0fae57e 100644
+--- a/include/keys/asymmetric-subtype.h
++++ b/include/keys/asymmetric-subtype.h
+@@ -17,6 +17,8 @@
+ #include <linux/seq_file.h>
+ #include <keys/asymmetric-type.h>
+ 
++struct kernel_pkey_query;
++struct kernel_pkey_params;
+ struct public_key_signature;
+ 
+ /*
+@@ -34,6 +36,13 @@ struct asymmetric_key_subtype {
+ 	/* Destroy a key of this subtype */
+ 	void (*destroy)(void *payload_crypto, void *payload_auth);
+ 
++	int (*query)(const struct kernel_pkey_params *params,
++		     struct kernel_pkey_query *info);
++
++	/* Encrypt/decrypt/sign data */
++	int (*eds_op)(struct kernel_pkey_params *params,
++		      const void *in, void *out);
++
+ 	/* Verify the signature on a key of this subtype (optional) */
+ 	int (*verify_signature)(const struct key *key,
+ 				const struct public_key_signature *sig);
+
