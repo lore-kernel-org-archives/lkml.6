@@ -2,246 +2,154 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01323ECDFAC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74AAECDFAC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0A1121479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHiTeurX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A1121479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7345A21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7345A21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeJJBFz (ORCPT
+        id S1727281AbeJJBGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:05:55 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34001 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJJBFy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:05:54 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w19-v6so2508789eds.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:references:to:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Tla7pet3I34OcZVjHR/nVD2DOu8/NEoCygp2kvsRcLk=;
-        b=LHiTeurXHw5zBDt9EG9NrrHzNXD5dmN2YHEmWBuy5OZnUZum1M8ykc8jvPRAmNX9+L
-         ybYI8sjMhrW0Ky5ar3AuhDN+fEf3Ai29k3qy7INRVsAZ/s4gC17oAP834v3DUMfK+Odm
-         FxSjRZ6+RGzM5bcrfaGPkSnjruJJuKZ0H4kjDL/e9usWZAXDn0hfKjFmqHV7QHYqtPzI
-         w4+bADXOkAKxGBzDjNL06xStJuMlvJCd14ro/Eac26Rl6rqkiQDtmUDzqw5rWvZt2/AM
-         i5c2RkmQVkxBp91ptbP5LH09LVt9uURAHRgAAF3YyXwgMgIGzhd0MVGHZJY17dj+xDf0
-         n+jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:references:to:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Tla7pet3I34OcZVjHR/nVD2DOu8/NEoCygp2kvsRcLk=;
-        b=Aq6w2d9rOwkReYOtGU6edX2vkROw/JhZZ7QJV8gjEDqLo4TqMc/ez2OjJu0uwjYRjT
-         n56wZjYjyq2hmBYlXCg5b5OFmsoI1IOVCWmmh+HApWpp9xxuVY9c/5edGdzcSWzwWsM7
-         wHLduY1cjn1YpSI8XStf4+Swo8olCePJjLSA/i2i0rIY4gfPt+MiLcLTrmWYdOjhMXgw
-         Rt2YS4TsWF/FsTeE4XBk3UWxSYQtGx1q57uPTrsVa1yqmbIdgZenKaZd4+K2aC5/Z9FO
-         q2sRqchQuYZkcjVjJcjOdIwravrYMmtZPQN0oHfaPFTz1ysALhRNjJw/7X3Y9Z5I+Pjq
-         SgCQ==
-X-Gm-Message-State: ABuFfogZOYJh57+YvcQg7JyNcxQkQi8TVbYXLL77Uuiut6SFZzleYf5d
-        8WrVgF13SUH+/reaVXCivQfGkKnhEtw=
-X-Google-Smtp-Source: ACcGV61NbMLhy1sPZmNQHwPHjSDvvAMJSg4tFYvrZt9geBrbvPn5KEHkPC3J2T7R4qR2AUiXdptgvw==
-X-Received: by 2002:aa7:d58a:: with SMTP id r10-v6mr37747457edq.161.1539107266886;
-        Tue, 09 Oct 2018 10:47:46 -0700 (PDT)
-Received: from [192.168.1.88] ([194.230.158.33])
-        by smtp.googlemail.com with ESMTPSA id g13-v6sm2358516edv.48.2018.10.09.10.47.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 10:47:46 -0700 (PDT)
-Subject: [PATCH] IAD Register is yet readable trough iad sys file. Fix
- snprintf (%u for unsigned, count for max size).
-References: <af443df9-b919-24ee-70ac-dbc80566f787@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     greg@kroah.com, manio@skyboo.net
-From:   Julien Folly <julien.folly@gmail.com>
-X-Forwarded-Message-Id: <af443df9-b919-24ee-70ac-dbc80566f787@gmail.com>
-Message-ID: <1e173939-d95d-c94f-971d-99ff84eb8eb1@gmail.com>
-Date:   Tue, 9 Oct 2018 19:47:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <af443df9-b919-24ee-70ac-dbc80566f787@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 9 Oct 2018 21:06:35 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:35400 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbeJJBGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 21:06:34 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 4148EBFE24;
+        Tue,  9 Oct 2018 19:48:27 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 27EFEC0FFD; Tue,  9 Oct 2018 19:48:26 +0200 (CEST)
+Received: from shepard (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 4BA82C0FE9;
+        Tue,  9 Oct 2018 19:48:23 +0200 (CEST)
+Message-ID: <21f6b66ea646c6e24e5801023557e8b5db3831d6.camel@paulk.fr>
+Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
+ decoder interface
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 09 Oct 2018 19:48:09 +0200
+In-Reply-To: <CAAFQd5A4t1F9kqepJ+11GJj7zJWKTp-bD1aCNL0N1w9Qeqtmuw@mail.gmail.com>
+References: <20181004081119.102575-1-acourbot@chromium.org>
+         <f1fa989b372b514f0a7534057de80b0c453cc8a3.camel@paulk.fr>
+         <CAAFQd5A4t1F9kqepJ+11GJj7zJWKTp-bD1aCNL0N1w9Qeqtmuw@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-NJuvIF4jZV9m01lN8MZm"
+X-Mailer: Evolution 3.28.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IAD Register is yet readable trough the "iad" sys file.
 
-A write to the "iad" sys file enables or disables the current
-measurement, but it was not possible to get the measured value by
-reading it.
-Fix: %u in snprintf for unsigned values (vdd and vad)
-Fix: Avoid possibles overflows (Usage of the 'count' variables)
+--=-NJuvIF4jZV9m01lN8MZm
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julien Folly <julien.folly@gmail.com>
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
----
-  drivers/w1/slaves/w1_ds2438.c | 66 ++++++++++++++++++++++++++++++++++---------
-  1 file changed, 52 insertions(+), 14 deletions(-)
+Hi,
 
-diff --git a/drivers/w1/slaves/w1_ds2438.c b/drivers/w1/slaves/w1_ds2438.c
-index bf641a1..7c4e33d 100644
---- a/drivers/w1/slaves/w1_ds2438.c
-+++ b/drivers/w1/slaves/w1_ds2438.c
-@@ -186,8 +186,8 @@ static int w1_ds2438_change_config_bit(struct w1_slave *sl, u8 mask, u8 value)
-  	return -1;
-  }
-  
--static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
--				      int adc_input, uint16_t *voltage)
-+static int w1_ds2438_get_voltage(struct w1_slave *sl,
-+				 int adc_input, uint16_t *voltage)
-  {
-  	unsigned int retries = W1_DS2438_RETRIES;
-  	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
-@@ -235,6 +235,25 @@ static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
-  	return ret;
-  }
-  
-+static int w1_ds2438_get_current(struct w1_slave *sl, int16_t *voltage)
-+{
-+	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
-+	int ret;
-+
-+	mutex_lock(&sl->master->bus_mutex);
-+
-+	if (w1_ds2438_get_page(sl, 0, w1_buf) == 0) {
-+		/* The voltage measured across current sense resistor RSENS. */
-+		*voltage = (((int16_t) w1_buf[DS2438_CURRENT_MSB]) << 8) | ((int16_t) w1_buf[DS2438_CURRENT_LSB]);
-+		ret = 0;
-+	} else
-+		ret = -1;
-+
-+	mutex_unlock(&sl->master->bus_mutex);
-+
-+	return ret;
-+}
-+
-  static ssize_t iad_write(struct file *filp, struct kobject *kobj,
-  			 struct bin_attribute *bin_attr, char *buf,
-  			 loff_t off, size_t count)
-@@ -257,6 +276,27 @@ static ssize_t iad_write(struct file *filp, struct kobject *kobj,
-  	return ret;
-  }
-  
-+static ssize_t iad_read(struct file *filp, struct kobject *kobj,
-+			struct bin_attribute *bin_attr, char *buf,
-+			loff_t off, size_t count)
-+{
-+	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-+	int ret;
-+	int16_t voltage;
-+
-+	if (off != 0)
-+		return 0;
-+	if (!buf)
-+		return -EINVAL;
-+
-+	if (w1_ds2438_get_current(sl, &voltage) == 0) {
-+		ret = snprintf(buf, count, "%i\n", voltage);
-+	} else
-+		ret = -EIO;
-+
-+	return ret;
-+}
-+
-  static ssize_t page0_read(struct file *filp, struct kobject *kobj,
-  			  struct bin_attribute *bin_attr, char *buf,
-  			  loff_t off, size_t count)
-@@ -272,9 +312,13 @@ static ssize_t page0_read(struct file *filp, struct kobject *kobj,
-  
-  	mutex_lock(&sl->master->bus_mutex);
-  
-+	/* Read no more than page0 size */
-+	if (count > DS2438_PAGE_SIZE)
-+		count = DS2438_PAGE_SIZE;
-+
-  	if (w1_ds2438_get_page(sl, 0, w1_buf) == 0) {
--		memcpy(buf, &w1_buf, DS2438_PAGE_SIZE);
--		ret = DS2438_PAGE_SIZE;
-+		memcpy(buf, &w1_buf, count);
-+		ret = count;
-  	} else
-  		ret = -EIO;
-  
-@@ -289,7 +333,6 @@ static ssize_t temperature_read(struct file *filp, struct kobject *kobj,
-  {
-  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-  	int ret;
--	ssize_t c = PAGE_SIZE;
-  	int16_t temp;
-  
-  	if (off != 0)
-@@ -298,8 +341,7 @@ static ssize_t temperature_read(struct file *filp, struct kobject *kobj,
-  		return -EINVAL;
-  
-  	if (w1_ds2438_get_temperature(sl, &temp) == 0) {
--		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", temp);
--		ret = PAGE_SIZE - c;
-+		ret = snprintf(buf, count, "%i\n", temp);
-  	} else
-  		ret = -EIO;
-  
-@@ -312,7 +354,6 @@ static ssize_t vad_read(struct file *filp, struct kobject *kobj,
-  {
-  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-  	int ret;
--	ssize_t c = PAGE_SIZE;
-  	uint16_t voltage;
-  
-  	if (off != 0)
-@@ -321,8 +362,7 @@ static ssize_t vad_read(struct file *filp, struct kobject *kobj,
-  		return -EINVAL;
-  
-  	if (w1_ds2438_get_voltage(sl, DS2438_ADC_INPUT_VAD, &voltage) == 0) {
--		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", voltage);
--		ret = PAGE_SIZE - c;
-+		ret = snprintf(buf, count, "%u\n", voltage);
-  	} else
-  		ret = -EIO;
-  
-@@ -335,7 +375,6 @@ static ssize_t vdd_read(struct file *filp, struct kobject *kobj,
-  {
-  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-  	int ret;
--	ssize_t c = PAGE_SIZE;
-  	uint16_t voltage;
-  
-  	if (off != 0)
-@@ -344,15 +383,14 @@ static ssize_t vdd_read(struct file *filp, struct kobject *kobj,
-  		return -EINVAL;
-  
-  	if (w1_ds2438_get_voltage(sl, DS2438_ADC_INPUT_VDD, &voltage) == 0) {
--		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", voltage);
--		ret = PAGE_SIZE - c;
-+		ret = snprintf(buf, count, "%u\n", voltage);
-  	} else
-  		ret = -EIO;
-  
-  	return ret;
-  }
-  
--static BIN_ATTR(iad, S_IRUGO | S_IWUSR | S_IWGRP, NULL, iad_write, 1);
-+static BIN_ATTR(iad, S_IRUGO | S_IWUSR | S_IWGRP, iad_read, iad_write, 0);
-  static BIN_ATTR_RO(page0, DS2438_PAGE_SIZE);
-  static BIN_ATTR_RO(temperature, 0/* real length varies */);
-  static BIN_ATTR_RO(vad, 0/* real length varies */);
--- 
-2.7.4
+Le mardi 09 octobre 2018 =C3=A0 16:30 +0900, Tomasz Figa a =C3=A9crit :
+> On Thu, Oct 4, 2018 at 9:46 PM Paul Kocialkowski <contact@paulk.fr> wrote=
+:
+> >=20
+> > Hi,
+> >=20
+> > Here are a few minor suggestion about H.264 controls.
+> >=20
+> > Le jeudi 04 octobre 2018 =C3=A0 17:11 +0900, Alexandre Courbot a =C3=A9=
+crit :
+> > > diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Doc=
+umentation/media/uapi/v4l/extended-controls.rst
+> > > index a9252225b63e..9d06d853d4ff 100644
+> > > --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> > > +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> > > @@ -810,6 +810,31 @@ enum v4l2_mpeg_video_bitrate_mode -
+> > >      otherwise the decoder expects a single frame in per buffer.
+> > >      Applicable to the decoder, all codecs.
+> > >=20
+> > > +.. _v4l2-mpeg-h264:
+> > > +
+> > > +``V4L2_CID_MPEG_VIDEO_H264_SPS``
+> > > +    Instance of struct v4l2_ctrl_h264_sps, containing the SPS of to =
+use with
+> > > +    the next queued frame. Applicable to the H.264 stateless decoder=
+.
+> > > +
+> > > +``V4L2_CID_MPEG_VIDEO_H264_PPS``
+> > > +    Instance of struct v4l2_ctrl_h264_pps, containing the PPS of to =
+use with
+> > > +    the next queued frame. Applicable to the H.264 stateless decoder=
+.
+> > > +
+> > > +``V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX``
+> >=20
+> > For consistency with MPEG-2 and upcoming JPEG, I think we should call
+> > this "H264_QUANTIZATION".
+>=20
+> I'd rather stay consistent with H.264 specification, which uses the
+> wording as defined in Alex's patch. Otherwise it would be difficult to
+> correlate between the controls and the specification, which is
+> something that the userspace developer would definitely need to
+> understand how to properly parse the stream and obtain the decoding
+> parameters.
+
+Okay, I agree this makes more sense than trying to keep the names
+consistent across codecs.
+
+> >=20
+> > > +    Instance of struct v4l2_ctrl_h264_scaling_matrix, containing the=
+ scaling
+> > > +    matrix to use when decoding the next queued frame. Applicable to=
+ the H.264
+> > > +    stateless decoder.
+> > > +
+> > > +``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM``
+> >=20
+> > Ditto with "H264_SLICE_PARAMS".
+> >=20
+>=20
+> It doesn't seem to be related to the spec in this case and "params"
+> sounds better indeed.
+
+Cheers,
+
+Paul
+
+--=-NJuvIF4jZV9m01lN8MZm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlu86dkACgkQhP3B6o/u
+lQwvgw/+NzUyPZU/e3+Obp5UTRuXVtUTm/zTLzu9q6MRD4VMlAlrs4IEMDwEWk7/
+oBIaNWSTF2cz//wPpfz6RqnqHHK9BsKVOBYi13o1SGUFRZPK2g50H1iloSNvfwRT
+kZ8gZgDOM4UGyly9zwv749pJHoWjcXFzXU+2kFdhdcbpjxJfEVKS9CmgUJH/ZptG
+aixn6UXkToZ24Hm/QazAQcPk4G4gqJHB5tE6AP/QhrgntS3U+JWcPayStSx1zaJp
+UHxDqGjLxHMbw0g7haK7WngsOBbi+v9AQJeFaoHDI/P7VhJd18AirFnuEYr90CjA
+OfAo2MPK900abYmtgm2IRTGO98G5zAwlZ0GlX5TVo0mdIGKeo6oZZGEnsYMhaX3D
+LWR6EY4UBhZT0M6XlK1P+85AHknzw6kcorFtNrD3GRIx4BGL8f4o/gnxD1Fx/yo0
+W/t5ywwgw52M8YOt4ZRNIxuWOUiewzRS79sWNPTHEELTDs8lna2ONUxFIh3CL7w8
+MuVCcQvpCX9vAjRkVAAOdXjZxM11aOfduvKvZIvukDNpSgumqq8W4v3ZHib4TF9s
+rBN/6L/NRoLqX+SupzL4egAfNHSg/OKBDzR3b9BOgbyKAEa0cFPyQXHl+TXx2eld
+qfiO1UUbGCJcSgLP+4KVut6AUX6sZe3BzhBV0gJMu+9o21EfeL0=
+=62QB
+-----END PGP SIGNATURE-----
+
+--=-NJuvIF4jZV9m01lN8MZm--
 
