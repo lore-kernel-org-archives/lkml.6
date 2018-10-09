@@ -6,49 +6,50 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C68C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE58C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD4B2086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD4B2086D
+	by mail.kernel.org (Postfix) with ESMTP id 3CA7F214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA7F214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeJIVJ0 (ORCPT
+        id S1727771AbeJIVJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:09:26 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:64181 "EHLO pegase1.c-s.fr"
+        Tue, 9 Oct 2018 17:09:30 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:33507 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727078AbeJIVJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:09:26 -0400
+        id S1726862AbeJIVJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:09:29 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42TzDc1ngdz9ttgH;
-        Tue,  9 Oct 2018 15:52:00 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 42TzDg4GkWz9ttgP;
+        Tue,  9 Oct 2018 15:52:03 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id hNE_nhzX-OvC; Tue,  9 Oct 2018 15:52:00 +0200 (CEST)
+        with ESMTP id uevxpmo_iuCS; Tue,  9 Oct 2018 15:52:03 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42TzDc130nz9ttfw;
-        Tue,  9 Oct 2018 15:52:00 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42TzDg3kd2z9ttfw;
+        Tue,  9 Oct 2018 15:52:03 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A8F078B80C;
-        Tue,  9 Oct 2018 15:52:11 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1226D8B80B;
+        Tue,  9 Oct 2018 15:52:15 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id wgmbqJRf80gK; Tue,  9 Oct 2018 15:52:11 +0200 (CEST)
+        with ESMTP id 3E5-3YIo-CO4; Tue,  9 Oct 2018 15:52:14 +0200 (CEST)
 Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 193558B80A;
-        Tue,  9 Oct 2018 15:52:11 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D34548B80A;
+        Tue,  9 Oct 2018 15:52:14 +0200 (CEST)
 Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 60C9B6F444; Tue,  9 Oct 2018 13:52:10 +0000 (UTC)
-Message-Id: <f442fba83ab8488ec73c4f060fdb134f425b7598.1539092112.git.christophe.leroy@c-s.fr>
+        id 7561D6F444; Tue,  9 Oct 2018 13:52:14 +0000 (UTC)
+Message-Id: <66ab295549a362f8b79921e2accd8e4fbe47f35f.1539092112.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1539092111.git.christophe.leroy@c-s.fr>
 References: <cover.1539092111.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 19/24] powerpc/nohash/64: do not include pte-common.h
+Subject: [PATCH v3 21/24] powerpc/mm: Define platform default caches related
+ flags
 To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
@@ -63,140 +64,76 @@ To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
         linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Date:   Tue,  9 Oct 2018 13:52:10 +0000 (UTC)
+Date:   Tue,  9 Oct 2018 13:52:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nohash/64 only uses book3e PTE flags, so it doesn't need pte-common.h
-
-This also allows to drop PAGE_SAO and H_PAGE_4K_PFN from pte_common.h
-as they are only used by PPC64
+Cache related flags like _PAGE_COHERENT and _PAGE_WRITETHRU
+are defined on most platforms. The platforms not defining
+them don't define any alternative. So we can give them a NUL
+value directly for those platforms directly.
 
 Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/nohash/64/pgtable.h | 16 ++++++++++++-
- arch/powerpc/include/asm/nohash/pgtable.h    | 27 +++++++++++++++++++++
- arch/powerpc/include/asm/pte-common.h        | 35 ----------------------------
- 3 files changed, 42 insertions(+), 36 deletions(-)
+ arch/powerpc/include/asm/nohash/32/pte-40x.h |  3 +++
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h |  4 ++++
+ arch/powerpc/include/asm/pte-common.h        | 11 -----------
+ 3 files changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index b7d65d4b61be..9ccea94b3d4e 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -89,7 +89,21 @@
-  * Include the PTE bits definitions
-  */
- #include <asm/nohash/pte-book3e.h>
--#include <asm/pte-common.h>
-+
-+#define _PAGE_HWWRITE	0
-+#define _PAGE_SAO	0
-+#define _PAGE_RO 0
-+#define _PAGE_NA 0
-+#define _PAGE_HUGE 0
-+
-+#define PTE_RPN_MASK	(~((1UL << PTE_RPN_SHIFT) - 1))
-+
-+/* _PAGE_CHG_MASK masks of bits that are to be preserved across
-+ * pgprot changes
-+ */
-+#define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_SPECIAL)
-+
-+#define H_PAGE_4K_PFN 0
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-40x.h b/arch/powerpc/include/asm/nohash/32/pte-40x.h
+index ab043b3e9b99..7a8b3c94592f 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-40x.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-40x.h
+@@ -53,6 +53,9 @@
+ /* No page size encoding in the linux PTE */
+ #define _PAGE_PSIZE		0
  
- #ifndef __ASSEMBLY__
- /* pte_clear moved to later in this file */
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index 8de3b7eb88b0..d3feeac19467 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -8,6 +8,33 @@
- #include <asm/nohash/32/pgtable.h>
- #endif
++/* cache related flags non existing on 40x */
++#define _PAGE_COHERENT	0
++
+ #define _PAGE_KERNEL_RO		0
+ #define _PAGE_KERNEL_ROX	_PAGE_EXEC
+ #define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW | _PAGE_HWWRITE)
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+index b899c3c877ac..2b4669b3badb 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+@@ -46,6 +46,10 @@
+ #define _PAGE_NA	0x0200	/* Supervisor NA, User no access */
+ #define _PAGE_RO	0x0600	/* Supervisor RO, User no access */
  
-+/* Permission masks used for kernel mappings */
-+#define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
-+#define PAGE_KERNEL_NC	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | _PAGE_NO_CACHE)
-+#define PAGE_KERNEL_NCG	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | \
-+				 _PAGE_NO_CACHE | _PAGE_GUARDED)
-+#define PAGE_KERNEL_X	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RWX)
-+#define PAGE_KERNEL_RO	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RO)
-+#define PAGE_KERNEL_ROX	__pgprot(_PAGE_BASE | _PAGE_KERNEL_ROX)
++/* cache related flags non existing on 8xx */
++#define _PAGE_COHERENT	0
++#define _PAGE_WRITETHRU	0
 +
-+/* Protection used for kernel text. We want the debuggers to be able to
-+ * set breakpoints anywhere, so don't write protect the kernel text
-+ * on platforms where such control is possible.
-+ */
-+#if defined(CONFIG_KGDB) || defined(CONFIG_XMON) || defined(CONFIG_BDI_SWITCH) ||\
-+	defined(CONFIG_KPROBES) || defined(CONFIG_DYNAMIC_FTRACE)
-+#define PAGE_KERNEL_TEXT	PAGE_KERNEL_X
-+#else
-+#define PAGE_KERNEL_TEXT	PAGE_KERNEL_ROX
-+#endif
-+
-+/* Make modules code happy. We don't set RO yet */
-+#define PAGE_KERNEL_EXEC	PAGE_KERNEL_X
-+
-+/* Advertise special mapping type for AGP */
-+#define PAGE_AGP		(PAGE_KERNEL_NC)
-+#define HAVE_PAGE_AGP
-+
- #ifndef __ASSEMBLY__
- 
- /* Generic accessors to PTE bits */
+ #define _PAGE_KERNEL_RO		(_PAGE_PRIVILEGED | _PAGE_RO)
+ #define _PAGE_KERNEL_ROX	(_PAGE_PRIVILEGED | _PAGE_RO | _PAGE_EXEC)
+ #define _PAGE_KERNEL_RW		(_PAGE_PRIVILEGED | _PAGE_DIRTY)
 diff --git a/arch/powerpc/include/asm/pte-common.h b/arch/powerpc/include/asm/pte-common.h
-index cce60b3ba7d4..4d594039bca5 100644
+index 1a2102f8b1e7..ff01368a175a 100644
 --- a/arch/powerpc/include/asm/pte-common.h
 +++ b/arch/powerpc/include/asm/pte-common.h
-@@ -14,9 +14,6 @@
- #ifndef _PAGE_WRITETHRU
- #define _PAGE_WRITETHRU	0
- #endif
--#ifndef _PAGE_SAO
--#define _PAGE_SAO	0
--#endif
- /* _PAGE_RO and _PAGE_RW shall not be defined at the same time */
- #ifndef _PAGE_RO
- #define _PAGE_RO 0
-@@ -61,35 +58,3 @@
-  */
- #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_DIRTY | \
-                          _PAGE_ACCESSED | _PAGE_SPECIAL)
--
--/* Permission masks used for kernel mappings */
--#define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
--#define PAGE_KERNEL_NC	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | \
--				 _PAGE_NO_CACHE)
--#define PAGE_KERNEL_NCG	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | \
--				 _PAGE_NO_CACHE | _PAGE_GUARDED)
--#define PAGE_KERNEL_X	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RWX)
--#define PAGE_KERNEL_RO	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RO)
--#define PAGE_KERNEL_ROX	__pgprot(_PAGE_BASE | _PAGE_KERNEL_ROX)
--
--/* Protection used for kernel text. We want the debuggers to be able to
-- * set breakpoints anywhere, so don't write protect the kernel text
-- * on platforms where such control is possible.
+@@ -1,17 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /* Included from asm/pgtable-*.h only ! */
+ 
+-/*
+- * Some bits are only used on some cpu families... Make sure that all
+- * the undefined gets a sensible default
 - */
--#if defined(CONFIG_KGDB) || defined(CONFIG_XMON) || defined(CONFIG_BDI_SWITCH) ||\
--	defined(CONFIG_KPROBES) || defined(CONFIG_DYNAMIC_FTRACE)
--#define PAGE_KERNEL_TEXT	PAGE_KERNEL_X
--#else
--#define PAGE_KERNEL_TEXT	PAGE_KERNEL_ROX
+-#ifndef _PAGE_COHERENT
+-#define _PAGE_COHERENT	0
+-#endif
+-#ifndef _PAGE_WRITETHRU
+-#define _PAGE_WRITETHRU	0
 -#endif
 -
--/* Make modules code happy. We don't set RO yet */
--#define PAGE_KERNEL_EXEC	PAGE_KERNEL_X
--
--/* Advertise special mapping type for AGP */
--#define PAGE_AGP		(PAGE_KERNEL_NC)
--#define HAVE_PAGE_AGP
--
--#ifndef H_PAGE_4K_PFN
--#define H_PAGE_4K_PFN 0
--#endif
+ /* Location of the PFN in the PTE. Most 32-bit platforms use the same
+  * as _PAGE_SHIFT here (ie, naturally aligned).
+  * Platform who don't just pre-define the value so we don't override it here
 -- 
 2.13.3
 
