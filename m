@@ -2,439 +2,159 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C910C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB46C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0B61204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:31:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 630C521479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:31:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNb1vWJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B61204FD
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fT3KjC3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 630C521479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbeJIOqt (ORCPT
+        id S1726840AbeJIOq4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:46:49 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44053 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeJIOqt (ORCPT
+        Tue, 9 Oct 2018 10:46:56 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54025 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbeJIOqz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:46:49 -0400
-Received: by mail-io1-f65.google.com with SMTP id x26-v6so407708iog.11
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:31:15 -0700 (PDT)
+        Tue, 9 Oct 2018 10:46:55 -0400
+Received: by mail-it1-f193.google.com with SMTP id q70-v6so1234488itb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:31:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=E9G8mf4SutymBlB/Au3EDvC079F4SJgYHpdHUvJqnRA=;
-        b=eNb1vWJnbkY6k/OAMoLwbRtmwwoptX/GrdXR330S4HKjXeyItZCZA3YdXfIl0Cx2K9
-         i3yMbaE5NKvg2RMbz6t1IGSb6jXv6HibyhdnPK8iV49hb6bh1Wg/L/pTFKVsSmmvKcy7
-         a0iGeaFGNLXhLJ+FyGHyCoBRScnofoQD9KDik=
+        bh=iwucvk/3zPnT3tEdEHqgQxvJSq9CXa7yh8gF93fxGH8=;
+        b=fT3KjC3jk0xNw8YKiRmPUPbR1knviiB2uhOyuuizZY+7PQqIDkHPmhs2HCtiCOt0iu
+         +n1nQ1O2caXh2FpVFXcTBdhN9FmsRA1opqxo9rYp6tpf2rsbziNPqk3TkLfGFmH/51H0
+         xpycK+gkaGOhp3ky9y96rG8lhhy3sJCJToimM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=E9G8mf4SutymBlB/Au3EDvC079F4SJgYHpdHUvJqnRA=;
-        b=A35FYpmvHpcDfWTy09UUI4bqZknviIMoh4i4ioAzhA5gEk/HpAQBdYJWQMA0gjd2u+
-         X9KYu4BZCoERARFEZsHKTxEYSlMEeRiETH4459k90Ag4mLCuALAEpyGxigI+nma+IjS4
-         tSogFR8QoMnHBaJbw45ITv2CDSQW3GEE+BGvKfS2+rdmI8LWU/ZDRb3w8W692XpKLgKA
-         yjtmiWtuvPMCFdfEX0UCmouWwYCObU5nMZUc8j3dGEUzyM6ZSoLBQmVTTOJ0Fvt5xIZo
-         tihG+h0cEZsTGrIBCAPcXJidiZtynmrQpAHFQHaVmdXqcCANGiGhfFyiuI4Addv2Nyly
-         XfWA==
-X-Gm-Message-State: ABuFfogoYp7R09l+7CvjCSqZ2IBIdUe/dVXCSYfv3gVxKYHgIrtg+P59
-        m+RVKB/88K01f+MUcAg64HQ20+UR4Gwu4xe3TtnFZQ==
-X-Google-Smtp-Source: ACcGV63X9fy2LrSMpR3vu0sSwv4jOZiYjKsPbFTehpU+jR4LcoTe+aC14hLZBoNns8RTLHO2Y0cPniG4UtFC1rHfGbk=
-X-Received: by 2002:a6b:144b:: with SMTP id 72-v6mr17679340iou.218.1539070274988;
- Tue, 09 Oct 2018 00:31:14 -0700 (PDT)
+        bh=iwucvk/3zPnT3tEdEHqgQxvJSq9CXa7yh8gF93fxGH8=;
+        b=TIia2OHyDEANJUxk/OYTHqu2EzOgK977l2Om3xJOncQSFPYyq05lxv1m24BwU4IYAu
+         a7cY+9xmoAflqC95ycAS8O5Dm9BUC2jB0GAb+YRtshySsX6W81Nq0+VrPNlkvu3pW5iY
+         wVvLnANShBj8IddH9uPRl5uHTYZqRVJ6OISS4/ZyRLzxj6ipKRey0moCbDbyCqa02mGR
+         oovWFc+WNlI5WLuIWxzxad+V5v2kY1Tm+vzdQ87+qgiHUkajTKfY/VxOcVe9KWgVpI4h
+         8bgB1tVsF2HfnR+QBzgNxPpxX7NXmsnkTa6MNAL4dcg0fPlbSNKYk8nzSlIXXsbDtLCC
+         F08A==
+X-Gm-Message-State: ABuFfoi3EJUSkbyzn9//74kymi18nOSDkNaQUj7B/3jyiz2lLC8od0c5
+        F89eToNJuvk0509Wx/IBprgp+3oxTrKblP9MTqyz1Q==
+X-Google-Smtp-Source: ACcGV62elQ2ZSoexP6OAEM7/rQprGX0iZBn8ipd41iYiFPguA11icQ61GyQ2Kq6/rlFGvusBCZ5/6yK30Qr7nd6bJxc=
+X-Received: by 2002:a24:6b4d:: with SMTP id v74-v6mr856527itc.26.1539070281374;
+ Tue, 09 Oct 2018 00:31:21 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Tue, 9 Oct 2018 00:30:34 -0700 (PDT)
-In-Reply-To: <dfd6f0ee-bfd9-b951-c296-61442a458a24@ti.com>
-References: <20181004111451.9539-1-faiz_abbas@ti.com> <20181004111451.9539-3-faiz_abbas@ti.com>
- <CAPDyKFpgUqHy4ihN-NZd8Qiat8K3U7xzofj_yjpDqGiFLd3JGg@mail.gmail.com> <dfd6f0ee-bfd9-b951-c296-61442a458a24@ti.com>
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Tue, 9 Oct 2018 00:30:41 -0700 (PDT)
+In-Reply-To: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
+References: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 9 Oct 2018 09:30:34 +0200
-Message-ID: <CAPDyKFoA89rOa38jd7MQg7CiFy8OBoRdhFZmeCF3ZgL_4ZK6Tw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] phy: am654-mmc-phy: Add Support for MMC PHY on AM654 Devices
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Faiz Abbas <faiz_abbas@ti.com>,
+Date:   Tue, 9 Oct 2018 09:30:41 +0200
+Message-ID: <CAPDyKFp0oHHS=bkXj_AbiLmbNxW07pFnk-4m9kwQtYkh_ogKgw@mail.gmail.com>
+Subject: Re: [PATCH V6 00/23] mmc: mmci: add sdmmc variant for stm32
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         DTML <devicetree@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
+        linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 October 2018 at 07:18, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> Hi Uffe,
+On 8 October 2018 at 14:08, Ludovic Barre <ludovic.Barre@st.com> wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
 >
-> On Monday 08 October 2018 05:02 PM, Ulf Hansson wrote:
->> On 4 October 2018 at 13:14, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>> Add driver support for the MMC physical layer present
->>> on TI's AM654 devices.
->>>
->>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->>
->> I assume Kishon would like to pick up this through his tree? If not,
->> please tell and I can do it, with his ack.
+> The goal of this serie is to add support of sdmmc for stm32.
+> Be to able to add this new variant it is needed to do some changes in
+> mmci core:
+> -Internalize specific needs of legacy dmaengine.
+> -Create and setup dma_priv pointer.
+> -Create generic callbacks which share some features (like cookie...)
+>  and call specific needs.
 >
-> yes, I'll pick this in my tree.
+> change v6:
+> -move mmci_variant_init in mmci.c
+> -dma_setup/release: let the variants clean up themselves.
+>
+> change v5:
+> -error management in mmci_dmae_setup and qcom_dma_setup
+>  mmci_dmae_setup: fail when tx & rx are not defined.
+>  qcom_dma_setup: faill if one of channels is not defined.
+> -define mmci_variant_init following CONFIG_DMA_ENGINE state.
+> -squash dma_setup/dma_release callback.
+>
+> change v4:
+> -checkpatch fix bool to u8
+> -add use_dma variable to fallback to pio mode
+> -move to optional reset with dt binding note for sdmmc
+> -separate patch for DT doc
+>
+> change v3:
+> -remove __dma_inprogress rename
+> -remove bad space at end of "st,use-ckin"
+>
+> change v2:
+> -rename to mmci_prep/unprep_data
+> -rename specific dma engine structure to mmci_dmae_next/priv
+> -follow "_" recommandation
+> -remove dma prefixe of mmci_dmae_priv fields
+>
+> Ludovic Barre (23):
+>   mmc: mmci: create common mmci_dma_setup/release
+>   mmc: mmci: introduce dma_priv pointer to mmci_host
+>   mmc: mmci: merge prepare data functions
+>   mmc: mmci: add prepare/unprepare_data callbacks
+>   mmc: mmci: add get_next_data callback
+>   mmc: mmci: add dma_start callback
+>   mmc: mmci: add dma_finalize callback
+>   mmc: mmci: add dma_error callback
+>   mmc: mmci: add validate_data callback
+>   mmc: mmci: add set_clk/pwrreg callbacks
+>   mmc: mmci: add datactrl block size variant property
+>   mmc: mmci: expand startbiterr to irqmask and error check
+>   mmc: mmci: add variant properties to define cpsm & cmdresp bits
+>   mmc: mmci: add variant property to define dpsm bit
+>   mmc: mmci: add variant property to define irq pio mask
+>   mmc: mmci: add variant property to write datactrl before command
+>   mmc: mmci: add variant property to not read datacnt
+>   dt-bindings: mmci: add optional reset property
+>   mmc: mmci: add optional reset property
+>   mmc: mmci: add clock divider for stm32 sdmmc
+>   mmc: mmci: add stm32 sdmmc registers
+>   dt-bindings: mmci: add stm32 sdmmc variant
+>   mmc: mmci: add stm32 sdmmc variant
+>
+>  Documentation/devicetree/bindings/mmc/mmci.txt |  11 +
+>  drivers/mmc/host/Kconfig                       |  10 +
+>  drivers/mmc/host/Makefile                      |   1 +
+>  drivers/mmc/host/mmci.c                        | 628 ++++++++++++++++++-------
+>  drivers/mmc/host/mmci.h                        | 140 +++++-
+>  drivers/mmc/host/mmci_qcom_dml.c               |  17 +-
+>  drivers/mmc/host/mmci_stm32_sdmmc.c            | 282 +++++++++++
+>  7 files changed, 886 insertions(+), 203 deletions(-)
+>  create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
+>
+> --
+> 2.7.4
 >
 
-So I have picked patch3, 4 and 5. The rest I leave for you to pick up then.
+Applied for next, thanks!
+
+FYI, I made little fixup of the help text in the Kconfig for the last patch.
 
 Kind regards
 Uffe
-
->>
->> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->
-> Thanks
-> Kishon
->
->>
->> Kind regards
->> Uffe
->>
->>> ---
->>>  drivers/phy/ti/Kconfig         |   7 +
->>>  drivers/phy/ti/Makefile        |   1 +
->>>  drivers/phy/ti/phy-am654-mmc.c | 291 +++++++++++++++++++++++++++++++++
->>>  3 files changed, 299 insertions(+)
->>>  create mode 100644 drivers/phy/ti/phy-am654-mmc.c
->>>
->>> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
->>> index 20503562666c..ea5fe4db01c8 100644
->>> --- a/drivers/phy/ti/Kconfig
->>> +++ b/drivers/phy/ti/Kconfig
->>> @@ -76,3 +76,10 @@ config TWL4030_USB
->>>           family chips (including the TWL5030 and TPS659x0 devices).
->>>           This transceiver supports high and full speed devices plus,
->>>           in host mode, low speed.
->>> +
->>> +config PHY_AM654_MMC
->>> +       bool "TI AM654 MMC PHY Support"
->>> +       select GENERIC_PHY
->>> +       help
->>> +         This option enables support for the Physical layer for MMC host
->>> +         controllers present on TI AM654 SOCs.
->>> diff --git a/drivers/phy/ti/Makefile b/drivers/phy/ti/Makefile
->>> index 9f361756eaf2..5b2db2d164a5 100644
->>> --- a/drivers/phy/ti/Makefile
->>> +++ b/drivers/phy/ti/Makefile
->>> @@ -6,3 +6,4 @@ obj-$(CONFIG_OMAP_USB2)                 += phy-omap-usb2.o
->>>  obj-$(CONFIG_TI_PIPE3)                 += phy-ti-pipe3.o
->>>  obj-$(CONFIG_PHY_TUSB1210)             += phy-tusb1210.o
->>>  obj-$(CONFIG_TWL4030_USB)              += phy-twl4030-usb.o
->>> +obj-$(CONFIG_PHY_AM654_MMC)            += phy-am654-mmc.o
->>> diff --git a/drivers/phy/ti/phy-am654-mmc.c b/drivers/phy/ti/phy-am654-mmc.c
->>> new file mode 100644
->>> index 000000000000..91255947fb67
->>> --- /dev/null
->>> +++ b/drivers/phy/ti/phy-am654-mmc.c
->>> @@ -0,0 +1,291 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * phy-am654-mmc.c - MMC PHY driver for TI's AM654 SOCs
->>> + *
->>> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com
->>> + *
->>> + */
->>> +
->>> +#include <linux/clk.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of.h>
->>> +#include <linux/phy/phy.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/printk.h>
->>> +#include <linux/regmap.h>
->>> +
->>> +/* MMC PHY Registers */
->>> +#define PHYCTRL_CTRL1_REG      0x00
->>> +#define PHYCTRL_CTRL2_REG      0x04
->>> +#define PHYCTRL_CTRL3_REG      0x08
->>> +#define PHYCTRL_CTRL4_REG      0x0C
->>> +#define PHYCTRL_CTRL5_REG      0x10
->>> +#define PHYCTRL_CTRL6_REG      0x14
->>> +#define PHYCTRL_STAT1_REG      0x30
->>> +#define PHYCTRL_STAT2_REG      0x34
->>> +
->>> +#define IOMUX_ENABLE_SHIFT     31
->>> +#define IOMUX_ENABLE_MASK      BIT(IOMUX_ENABLE_SHIFT)
->>> +#define OTAPDLYENA_SHIFT       20
->>> +#define OTAPDLYENA_MASK        BIT(OTAPDLYENA_SHIFT)
->>> +#define OTAPDLYSEL_SHIFT       12
->>> +#define OTAPDLYSEL_MASK        GENMASK(15, 12)
->>> +#define STRBSEL_SHIFT          24
->>> +#define STRBSEL_MASK           GENMASK(27, 24)
->>> +#define SEL50_SHIFT            8
->>> +#define SEL50_MASK             BIT(SEL50_SHIFT)
->>> +#define SEL100_SHIFT           9
->>> +#define SEL100_MASK            BIT(SEL100_SHIFT)
->>> +#define DLL_TRIM_ICP_SHIFT     4
->>> +#define DLL_TRIM_ICP_MASK      GENMASK(7, 4)
->>> +#define DR_TY_SHIFT            20
->>> +#define DR_TY_MASK             GENMASK(22, 20)
->>> +#define ENDLL_SHIFT            1
->>> +#define ENDLL_MASK             BIT(ENDLL_SHIFT)
->>> +#define DLLRDY_SHIFT           0
->>> +#define DLLRDY_MASK            BIT(DLLRDY_SHIFT)
->>> +#define PDB_SHIFT              0
->>> +#define PDB_MASK               BIT(PDB_SHIFT)
->>> +#define CALDONE_SHIFT          1
->>> +#define CALDONE_MASK           BIT(CALDONE_SHIFT)
->>> +
->>> +#define DRIVER_STRENGTH_50_OHM 0x0
->>> +#define DRIVER_STRENGTH_33_OHM 0x1
->>> +#define DRIVER_STRENGTH_66_OHM 0x2
->>> +#define DRIVER_STRENGTH_100_OHM        0x3
->>> +#define DRIVER_STRENGTH_40_OHM 0x4
->>> +
->>> +static struct regmap_config am654_mmc_phy_regmap_config = {
->>> +       .reg_bits = 32,
->>> +       .val_bits = 32,
->>> +       .reg_stride = 4,
->>> +       .fast_io = true,
->>> +};
->>> +
->>> +struct am654_mmc_phy {
->>> +       struct regmap *reg_base;
->>> +       struct clk *mmcclk;
->>> +       int otap_del_sel;
->>> +       int trm_icp;
->>> +       int drv_strength;
->>> +};
->>> +
->>> +static int am654_mmc_phy_init(struct phy *phy)
->>> +{
->>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
->>> +       int ret;
->>> +       u32 val;
->>> +
->>> +       /* Reset registers to default value */
->>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL1_REG, 0x10000);
->>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL4_REG, 0x0);
->>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL5_REG, 0x0);
->>> +
->>> +       /* Calibrate IO lines */
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
->>> +                          PDB_MASK, PDB_MASK);
->>> +       ret = regmap_read_poll_timeout(mmc_phy->reg_base, PHYCTRL_STAT1_REG,
->>> +                                      val, val & CALDONE_MASK, 1, 20);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       /* Enable pins by setting the IO mux to 0 */
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
->>> +                          IOMUX_ENABLE_MASK, 0);
->>> +
->>> +       mmc_phy->mmcclk = clk_get(&phy->dev, "mmcclk");
->>> +       if (IS_ERR(mmc_phy->mmcclk)) {
->>> +               dev_err(&phy->dev, "Error getting mmcclk");
->>> +               return PTR_ERR(mmc_phy->mmcclk);
->>> +       }
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static int am654_mmc_phy_exit(struct phy *phy)
->>> +{
->>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
->>> +
->>> +       clk_put(mmc_phy->mmcclk);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static int am654_mmc_phy_power_on(struct phy *phy)
->>> +{
->>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
->>> +       u32 mask, val;
->>> +       int sel50, sel100;
->>> +       int rate;
->>> +
->>> +       /* Setup DLL Output TAP delay */
->>> +       mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
->>> +       val = (1 << OTAPDLYENA_SHIFT) |
->>> +             (mmc_phy->otap_del_sel << OTAPDLYSEL_SHIFT);
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL4_REG,
->>> +                          mask, val);
->>> +
->>> +       rate = clk_get_rate(mmc_phy->mmcclk);
->>> +       switch (rate) {
->>> +       case 200000000:
->>> +               sel50 = 0;
->>> +               sel100 = 0;
->>> +               break;
->>> +       case 100000000:
->>> +               sel50 = 0;
->>> +               sel100 = 1;
->>> +               break;
->>> +       default:
->>> +               sel50 = 1;
->>> +               sel100 = 0;
->>> +       }
->>> +
->>> +       /* Configure PHY DLL frequency */
->>> +       mask = SEL50_MASK | SEL100_MASK;
->>> +       val = (sel50 << SEL50_SHIFT) | (sel100 << SEL100_SHIFT);
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL5_REG,
->>> +                          mask, val);
->>> +
->>> +       /* Configure DLL TRIM */
->>> +       mask = DLL_TRIM_ICP_MASK;
->>> +       val = mmc_phy->trm_icp << DLL_TRIM_ICP_SHIFT;
->>> +
->>> +       /* Configure DLL driver strength */
->>> +       mask |= DR_TY_MASK;
->>> +       val |= mmc_phy->drv_strength << DR_TY_SHIFT;
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG, mask, val);
->>> +
->>> +       /* Enable DLL */
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
->>> +                          ENDLL_MASK, 0x1 << ENDLL_SHIFT);
->>> +
->>> +       /*
->>> +        * Poll for DLL ready. Use a one second timeout.
->>> +        * Works in all experiments done so far
->>> +        */
->>> +       return regmap_read_poll_timeout(mmc_phy->reg_base, PHYCTRL_STAT1_REG,
->>> +                                       val, val & DLLRDY_MASK, 1000, 1000000);
->>> +
->>> +}
->>> +
->>> +static int am654_mmc_phy_power_off(struct phy *phy)
->>> +{
->>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
->>> +
->>> +       /* Disable DLL */
->>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
->>> +                          ENDLL_MASK, 0);
->>> +
->>> +       /* Reset registers to default value except PDB */
->>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
->>> +                    0x10000 | PDB_MASK);
->>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL4_REG, 0x0);
->>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL5_REG, 0x0);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static const struct phy_ops ops = {
->>> +       .init           = am654_mmc_phy_init,
->>> +       .exit           = am654_mmc_phy_exit,
->>> +       .power_on       = am654_mmc_phy_power_on,
->>> +       .power_off      = am654_mmc_phy_power_off,
->>> +       .owner          = THIS_MODULE,
->>> +};
->>> +
->>> +static int am654_mmc_phy_probe(struct platform_device *pdev)
->>> +{
->>> +       struct phy_provider *phy_provider;
->>> +       struct device *dev = &pdev->dev;
->>> +       struct device_node *np = dev->of_node;
->>> +       struct am654_mmc_phy *mmc_phy;
->>> +       struct phy *generic_phy;
->>> +       struct resource *res;
->>> +       void __iomem *base;
->>> +       struct regmap *map;
->>> +       int drv_strength;
->>> +       int err;
->>> +
->>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +       base = devm_ioremap_resource(&pdev->dev, res);
->>> +       if (IS_ERR(base))
->>> +               return PTR_ERR(base);
->>> +
->>> +       map = devm_regmap_init_mmio(dev, base, &am654_mmc_phy_regmap_config);
->>> +       if (IS_ERR(map)) {
->>> +               dev_err(dev, "could not initialize regmap\n");
->>> +               return PTR_ERR(map);
->>> +       }
->>> +
->>> +       mmc_phy = devm_kzalloc(dev, sizeof(struct am654_mmc_phy), GFP_KERNEL);
->>> +       if (!mmc_phy)
->>> +               return -ENOMEM;
->>> +
->>> +       mmc_phy->reg_base = map;
->>> +       err = of_property_read_u32(np, "ti,otap-del-sel",
->>> +                                  &mmc_phy->otap_del_sel);
->>> +       if (err)
->>> +               return err;
->>> +
->>> +       err = of_property_read_u32(np, "ti,trm-icp",
->>> +                                  &mmc_phy->trm_icp);
->>> +       if (err)
->>> +               return err;
->>> +
->>> +       err = of_property_read_u32(np, "ti,driver-strength-ohm", &drv_strength);
->>> +       if (err)
->>> +               return err;
->>> +
->>> +       switch (drv_strength) {
->>> +       case 50:
->>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_50_OHM;
->>> +               break;
->>> +       case 33:
->>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_33_OHM;
->>> +               break;
->>> +       case 66:
->>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_66_OHM;
->>> +               break;
->>> +       case 100:
->>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_100_OHM;
->>> +               break;
->>> +       case 40:
->>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_40_OHM;
->>> +               break;
->>> +       default:
->>> +               dev_err(dev, "Invalid driver strength\n");
->>> +               return -EINVAL;
->>> +       }
->>> +
->>> +       generic_phy = devm_phy_create(dev, dev->of_node, &ops);
->>> +       if (IS_ERR(generic_phy)) {
->>> +               dev_err(dev, "failed to create PHY\n");
->>> +               return PTR_ERR(generic_phy);
->>> +       }
->>> +
->>> +       phy_set_drvdata(generic_phy, mmc_phy);
->>> +       phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->>> +
->>> +       return PTR_ERR_OR_ZERO(phy_provider);
->>> +}
->>> +
->>> +static const struct of_device_id am654_mmc_phy_dt_ids[] = {
->>> +       { .compatible = "ti,am654-mmc-phy" },
->>> +       {}
->>> +};
->>> +
->>> +MODULE_DEVICE_TABLE(of, am654_mmc_phy_dt_ids);
->>> +
->>> +static struct platform_driver am654_mmc_phy_driver = {
->>> +       .probe          = am654_mmc_phy_probe,
->>> +       .driver         = {
->>> +               .name   = "am654-mmc-phy",
->>> +               .of_match_table = am654_mmc_phy_dt_ids,
->>> +       },
->>> +};
->>> +
->>> +module_platform_driver(am654_mmc_phy_driver);
->>> +
->>> +MODULE_AUTHOR("Faiz Abbas <faiz_abbas@ti.com>");
->>> +MODULE_DESCRIPTION("TI AM654 MMC PHY driver");
->>> +MODULE_LICENSE("GPL v2");
->>> --
->>> 2.18.0
->>>
