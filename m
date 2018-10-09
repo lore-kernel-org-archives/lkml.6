@@ -2,249 +2,255 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FD2C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5548CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0B4D2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B4D2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DD9D22054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:43:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Bh2oBcjH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9D22054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeJIR6B convert rfc822-to-8bit (ORCPT
+        id S1726849AbeJIR7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:58:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726479AbeJIR6B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:58:01 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99Ae2ZA049201
-        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 06:41:42 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0r5c70m2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:41:42 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 9 Oct 2018 11:41:38 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 9 Oct 2018 11:41:36 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w99AfZ4E62652494
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 9 Oct 2018 10:41:35 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4334BAE05A;
-        Tue,  9 Oct 2018 13:40:20 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1638BAE056;
-        Tue,  9 Oct 2018 13:40:20 +0100 (BST)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.92])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  9 Oct 2018 13:40:20 +0100 (BST)
-Subject: Re: [PATCH] KVM: Start populating /sys/hypervisor with KVM entries
-To:     Filippo Sironi <sironi@amazon.de>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1539078879-4372-1-git-send-email-sironi@amazon.de>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Tue, 9 Oct 2018 12:41:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-In-Reply-To: <1539078879-4372-1-git-send-email-sironi@amazon.de>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18100910-0028-0000-0000-000003047EB1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100910-0029-0000-0000-000023BED00D
-Message-Id: <c81b65ba-c562-1869-483b-aee5229501e0@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        Tue, 9 Oct 2018 13:59:49 -0400
+Received: from mail-bn3nam01on0078.outbound.protection.outlook.com ([104.47.33.78]:36746
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726451AbeJIR7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 13:59:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FZDbvX80yVo90qgesIGNUf+ardU3SYNN5g2N2J79h8k=;
+ b=Bh2oBcjHoHeFOW5/TGXvuBWtCrRVnIoGV+g7bKFkcNmNHyUk6RfCNTSLot/MrCUfWxxUP5zSCoq1VSPRhmcBhB/h9Hbxyd+2nKBDOCXJcy/bQeDrUhZN472l3r0qH7eZlVEAGAb70htBWC3asHaZSreeNQWXPyPBVggVadq6px4=
+Received: from BN4PR12CA0023.namprd12.prod.outlook.com (2603:10b6:403:2::33)
+ by SN1PR12MB0430.namprd12.prod.outlook.com (2a01:111:e400:5865::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1207.21; Tue, 9 Oct
+ 2018 10:43:25 +0000
+Received: from CO1NAM03FT042.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::202) by BN4PR12CA0023.outlook.office365.com
+ (2603:10b6:403:2::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1207.21 via Frontend
+ Transport; Tue, 9 Oct 2018 10:43:25 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; lists.freedesktop.org; dkim=none (message not signed)
+ header.d=none;lists.freedesktop.org; dmarc=permerror action=none
+ header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV02.amd.com (165.204.84.17) by
+ CO1NAM03FT042.mail.protection.outlook.com (10.152.81.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.20.1228.17 via Frontend Transport; Tue, 9 Oct 2018 10:43:24 +0000
+Received: from hr-amur2 (10.34.1.3) by SATLEXCHOV02.amd.com (10.181.40.72)
+ with Microsoft SMTP Server (TLS) id 14.3.389.1; Tue, 9 Oct 2018 05:43:22
+ -0500
+Date:   Tue, 9 Oct 2018 18:43:19 +0800
+From:   Huang Rui <ray.huang@amd.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][drm-next] drm/amdgpu/powerplay: fix missing break in
+ switch statements
+Message-ID: <20181009104318.GA20785@hr-amur2>
+References: <20181008162228.4599-1-colin.king@canonical.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810090110
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181008162228.4599-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(136003)(2980300002)(428003)(199004)(189003)(106466001)(23726003)(186003)(446003)(26005)(1076002)(46406003)(6246003)(77096007)(105586002)(33716001)(2906002)(4326008)(104016004)(97736004)(336012)(426003)(33656002)(11346002)(126002)(476003)(316002)(229853002)(86362001)(58126008)(575784001)(81166006)(53936002)(76176011)(356003)(8936002)(6916009)(305945005)(478600001)(72206003)(81156014)(486006)(5660300001)(33896004)(8676002)(50466002)(9686003)(97756001)(68736007)(6306002)(54906003)(55016002)(47776003)(16586007)(6666003)(966005)(18370500001)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0430;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT042;1:1dBJ34ZdAfRekRf5gYWBQpAyEK1rZUw2UrXnSbpXy5vr4wfhnOiAIybE4j7GR5iu+szQw0A89gBB8U62h1IR2DUmAvmdr1HDeCV6c/pmjmc5ozJMexDpvLqSaDQbiv+t
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: aab0b318-d26b-4839-985e-08d62dd40a5d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:SN1PR12MB0430;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0430;3:KJdID+8BpKa4Tsck9iIHNCKy0iII/QFkV68RULRxTUv9VbbU0L67MOkNRex+6MGLQ/aQ9gmbC0mCvLwmS4aNHKr4zI5rHoMTJQTewSS1JnzJ/6SA19poSl6ZW/rlSuliB3+DA8mKeIJsASQSB0TAMWywDVz5QNDYhyjVIapFldJVjk5zIeEj9Mm8CBThIpuDUYTp9MJLvWhpTHRZVGqz1ujveil8CFWzhb5msonVNgQTSR+FFs8FKCfJ1DCB93KgMzG8wZPRIKqacn9I/Cz22byN4Ib91v+9nbWAyDK2bP2U9SXZGVBRSwvF6krSXXh6AtZRRY/FHcVV3r0F5ydsSnWNZgdUozHj7pvpahK4Q4I=;25:kq/RTpRfHqjSazdEndGocHOPob4Wemj7R/9QIMxSk7pu2PC1K/eLcHkKwucpfZIJpYT7BZfqDOnMgNZYrh9yWZe8dTAyQOPzCVjM7com587V3+BzmgKKW1zhknDphqghiPeI2TOpDzdBiSK21de/83/EpnqdZX7p9xs3a76ZAZGDuVsDe4TMw9lGPgEp1keZwv8ytxjzC0UWy36w87PcYkswnXvQlZCnsbKb8DlfL8T4orjyjm9TSDoUy4e3KSZM3BQ9zpmU1qvZlTegHlKBkqE/SvG3cScpWFSPfwzY8zgzGtLb6EbcR+uLgb27CErfEU9l38wlMIIC5p85/3gR4A==
+X-MS-TrafficTypeDiagnostic: SN1PR12MB0430:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0430;31:Hy1LVW0ZQ+15S4MvwOIlq46Onn7gghjUAvOu1y2RJ5HYaohmKwmG9d5n8pSVJTQdZqutlN6GOvK9SzSfkS3OA7bqSSsMryZ8i1qI2sd8jHWWVRxXAW1qCDYz5WxJ2JvvOLprlHzRazhb7TXM8y+OO3CTehflQA6UBRudPEsFU3paJplphN1Gh5qf29cIifKJWb+LiGEbQLEif1FUlLxccUnF11k/fMmXuE1pk22PaQE=;20:AlZHMuoVfauXI3PvYd35+n6BQPzp45A4WgqpZ588qPdnm4H++L9VSSFeT+YiZLwQFFNarwJ51gJPU2AhAAePekYHVd8sSiflA6i7ik/eVd3+hyICm/3QbnvF9oZsHaVBmvKvyBlKdxWa4AiCiZKTMa+z+cYEz/4CAPy164oidljO4AniTv/BVHJQAM5qfuMLr/K0gPqcdLb1z26J/BVJBTUz1y+kokhnpyJB1cjitXSHz48OiZjnUkq8PcAXL1KNhaRvHqiDl5j21nV5XoaMJ613A0x0fWr5ziNtYZOJhipLQHy/6AhDXM/crlc+Z5RKyxH2syJ9DLztlAF8XYnIEzHo7nrsgkG3wwvJMLL4plW5LIp2iPrJzavNKvm8C6eNwrWeYOaNkZ40l9Z9O8dajvp3I/hYOULyYHspyG14xj6msLa2+u1i6e+tF5V974KeMxJZVLmyNqx1p+dTjUV7T96NyyRYtH9Do8dQZvLj81n/ImWq7Wz3HysGmu20iAEA
+X-Microsoft-Antispam-PRVS: <SN1PR12MB04307EBA1596F428D9D56455ECE70@SN1PR12MB0430.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(198206253151910)(767451399110)(217544274631240);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93003095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:SN1PR12MB0430;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0430;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0430;4:qF/MfTR4RjRjD+d2Wncy3376nbDyF8BuXrH4kS1H1HrrJVgEXQOoEO1Ltx99lwJBmfY+hcIf9X+vLBwDXUU5aMRiy+MoHGNLJMpW44OxFMiQcNpmVqR0AQQ/V9qs8Z++HqzLeHgLNCiXux4bBCnWweg1WPDjekLRQqAaF1qQLv+Dtg7oMJR90IAtl5BpGKoTbQf/tzn4ncVgptUY3lsYnfp32v2joGonsHcFIULYMqVGo5Wf2v636scOaGhB5CHGDKStNroPf1mDDoKyUJ2eW8HKrbgq2kfejoRZwhumdkbP+qAZGhZSksNl+g190w3IDSxp0I83TX0eWLMKeSk8xkmB78qXYvkjQ0W05kQvDOXDAUicUo8Wc8V0PR0tf0B/
+X-Forefront-PRVS: 08200063E9
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB0430;23:yOFV4ecLygoaH4ynL5H1v00lRIYvNkTgg8BIfgLh7?=
+ =?us-ascii?Q?3oNq6UlqqZ+vPcfHzIcFk1WwstPFM4juJcjRRWFIidvy2d9pnr1csWCjP0nK?=
+ =?us-ascii?Q?81uAMRVexl4vwB31Ip7fzNj0QWVgw0OmthhDtnKw/k60aDuR0OgohPUtvfUr?=
+ =?us-ascii?Q?aJPp0x61TwJ3G7q3h0zPIevoDnOnRN/KSmTeQ+E47tCBMLXLrWcimdWbwkCM?=
+ =?us-ascii?Q?pUDGYQVaipjbEJGZc/eUEFaVPuIjQhwMkpJw+Wmw+qE8wKBMpzcjriC26Uq3?=
+ =?us-ascii?Q?D7LUxiRuROn3LFZqo37boswD5DaEkM5317vhqgvgUvWTeTBgAKRQ0GEQYFzj?=
+ =?us-ascii?Q?mQ4JZb4szmc15vx563UWjuIWewGZrWmCWwMOgf7kd01kQTt5LGI9qD6dZewb?=
+ =?us-ascii?Q?5SjggiDR7VOYMoOIc0FaID3RMmsUiqxwLM5N5Q1HDfM1eZJefTubegX/0opq?=
+ =?us-ascii?Q?yDTgUI2PVSzdtn6ylm/gZL0sBibEaQhA3nT0JUN/HHxX7RFQXTI0L4hkOpR4?=
+ =?us-ascii?Q?24AgEX9YruOmq3q9ndTSqRqUVo3s8HF0rQMxmccZ3zNchZ6N1ImJ+so2YuDh?=
+ =?us-ascii?Q?2SVsGa5LePPtPg07yhSSHD5hjF7ORmAqpaF1DZxl0y3h28w3z4pJq2YFXACF?=
+ =?us-ascii?Q?jvbizEP2gy2jkJRxwG4WWPcaxx9wVBKzpnSGKYSthH7Ea3Su56l3bR192ain?=
+ =?us-ascii?Q?n7+laguDCNr19PXVEV1xmcKoxGmVmWTnm1LL7K3XuNUXeFlp4wneYm9qTkV1?=
+ =?us-ascii?Q?J65unNqjVKQQhTmXMzVJI5lFlgDpND9DWHK+kYURPZ98KXYIiRmyQQxwoZmB?=
+ =?us-ascii?Q?80YWbbNbfpqH+AUXFyuRMgrZCKZB+QpbSQwlp5WziNVQiBLCk5m0j43ojZ83?=
+ =?us-ascii?Q?9ahf2KD6wHv2jGpKwxAXC2UZFydzoszt5H6ZQjM7Gpq+df/ZDXTF7eOk+rHm?=
+ =?us-ascii?Q?TTNu2FiBg7X6DhUY4ceMPKQHV4yeKWqVFaCExNG3d0zPdI9QWN49cyfjzxAF?=
+ =?us-ascii?Q?U6YevezpxKFR758duyKKGgiytgCVdQAm+QCHX4G6V+3RZELdps5aPd9vosbU?=
+ =?us-ascii?Q?hCPUkj0EqbM2KnVvcC7cuTw8uP8djw6OJcP8jve3GsROKJuZKQu9KBb3qmKJ?=
+ =?us-ascii?Q?3VEUgOR+9BToPimJGhgpxt9ARFAlp9XoZ4F7yjbuHgly2KUpRT4rq5aHQfbY?=
+ =?us-ascii?Q?HIfIqxLayKlwTl5QF08pzHmW7NSk9rYT0ihtNkLVlSkjw7JgR/NDdjXgxwNr?=
+ =?us-ascii?Q?6X6ua1uxDp0yns5EGYCgOcsyx5suOQORMIFoxxxHiMt9uHmZPTkmh/vXLYsG?=
+ =?us-ascii?Q?9v02c5GOV54ZksML5+dbsxNIRahoC1tSsrYbJCHP9YGvvV316OMdIrwFR4jq?=
+ =?us-ascii?Q?alDRVGy74TXFHzKWfQzVaZxylA=3D?=
+X-Microsoft-Antispam-Message-Info: xOnRLpAqjvKUnkB8qFMCDuNXrhcmxTy3D2nWdINWLdvV/XBybUXrozSTKQuf7JIQNKFhoVS2+PAkqgV+ipEGyolZiMhpPYzyXK3d+7ju7QpBYZZnuYWpv5r/SKknnHQXEvDBJtZKfZe3dIweqV/MRDow72wZA1Z75/rWrQAJLz4VWkRBJtAmqleobdWpCfEQ2U0UR2d/JQRhtFfWVMlXG2NHTXho4bHqKwlvPOgHS3g25uYT5DS4aQKHFF2Ot2veJv5odK5Nq95MVMeM1VloyvAxrnvkWLpTGcTKOHiRdZxrOofGLbKnKSuO9IWn2r+p6H7Egoi+S6aNKO7u2IIvXWQ1wcHQBTR3X2gUaAuSNxo=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0430;6:+KqZuV2gvhBLtjbGLjoUdoNj3g9nyPItn0io6J7ImRbN6Vwt9vLzp/rGxOsP+LM+z1sQXWHvaDxYI/MGiai+OaqktvL9lrkx/ycOWfUZwX6UMXkRpWpT4LptJBqJRh98xprVxQuJZAwV1tqjHznQjaVe5gIh7Qu1kmya+FP7VaYO9zl4hmo4POknWOHLTyDgJ7lW2H2qJc8UYkL5aKlh2H5Y0aKI8v9vB7ZwclmhJeyYNy8rrA2u3So+KXccv4xRi54ixCOhU53fvEjZIMNojyEPkyf+gD41NQo/fw9Psc8M0T5euX8jRI/6gsmvlWnQt8wCwMKKBdWmMRnN8J+eKzSo+cd7YvKLGcZinQRY7//9qSGyJFontei+Aku0/UXKEacW79jGVkDr7btXHlB9W/wzE5wZe6yPAkfebnKayUdIEPAslDwFpquJnAyf++ih4bg+/ONJg4b0Bk3+6hBshg==;5:LMTqMVHnrkdROJuYL71a+9yxwyHY3ABXlVb3yDhHHfayLRGkuA+ItAgm4Kd2Ywqwy8zS5lb+0W2w5mDR4tx3GIkCWEhXxhCuxgY02lbJfUIdCvqfNO0AKJLJ7ygjuQMx+EpgSZVY+VxPyS1V9/H6jGtlv40rsTz/B8ujH/wOEhs=;7:qq0ail0A1nt4ax7qO4CpiusOalAaMSDO5t6AyrzIcyWVGzBejcBx1zRbVGMF/Cg6IcbqXTfL4oBD1endSBfy6vMzByvdV6ja5JZ8wqSQxu80XJpiujNS05dFDoUoQv3I7Nm+Ghow9oezAMwy/QNwP4iFywGctUf51hF5QKBw/alPlXRhPymXI/N53wD3uzC23fTG8G8Z3y3y2IhxOvdZknJgdeszDcHzBrfw9+AY01IHhGfMdXfjOeccgUwFUlHM
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0430;20:tMIoLArV0M4F3hpUl+Cn4HWIm2zEsrB5E+ZtHmkdaQ30ntCdZu9GO2HtnPCPlgu33z2UUISYUpSP+Q55gJtUJSHz/NI4v38xjn5gDSyLwtCqiyMnGI4UDlLtweo9Bv3ufm+qkUWUXlPMpwKmhGMERwzsIkRXUds6ukbmZGZ84H5mARxreKgfR5mMcmcR4vqbtC7hEQUeVyCKL99sv8XC9PUOatkRoG9F3/qpoGFzbHBhRLhnQP5NNQ2toTe+yems
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2018 10:43:24.6289
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aab0b318-d26b-4839-985e-08d62dd40a5d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0430
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/09/2018 11:54 AM, Filippo Sironi wrote:
-> Start populating /sys/hypervisor with KVM entries when we're running on
-> KVM. This is to replicate functionality that's available when we're
-> running on Xen.
+On Mon, Oct 08, 2018 at 05:22:28PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Let's start with /sys/hypervisor/uuid, which users prefer over
-> /sys/devices/virtual/dmi/id/product_uuid as a way to recognize a virtual
-> machine, since it's also available when running on Xen HVM and on Xen PV
-> and, on top of that doesn't require root privileges by default.
-
-Can you make this an arch hook? On s390 it is possible to get the uuid with
-the stsi instruction. 
-See
-https://git.kernel.org/pub/scm/virt/kvm/kvm.git/tree/arch/s390/kernel/sysinfo.c#n248
-
-
-We do use uuid_t, but we can certainly return a char*.
-
-
-
-
+> There are several switch statements that are missing break statements.
+> Add missing breaks to handle any fall-throughs corner cases.
 > 
-> Signed-off-by: Filippo Sironi <sironi@amazon.de>
+> Detected by CoverityScan, CID#1457175 ("Missing break in switch")
+> 
+> Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Huang Rui <ray.huang@amd.com>
+
 > ---
->  drivers/Kconfig              |  2 ++
->  drivers/Makefile             |  2 ++
->  drivers/kvm/Kconfig          | 14 ++++++++++++++
->  drivers/kvm/Makefile         |  1 +
->  drivers/kvm/sys-hypervisor.c | 26 ++++++++++++++++++++++++++
->  5 files changed, 45 insertions(+)
->  create mode 100644 drivers/kvm/Kconfig
->  create mode 100644 drivers/kvm/Makefile
->  create mode 100644 drivers/kvm/sys-hypervisor.c
+>  drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
+>  drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
+>  drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
+>  drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
+>  drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
+>  5 files changed, 10 insertions(+)
 > 
-> diff --git a/drivers/Kconfig b/drivers/Kconfig
-> index afc942c54814..597519c5f7c8 100644
-> --- a/drivers/Kconfig
-> +++ b/drivers/Kconfig
-> @@ -135,6 +135,8 @@ source "drivers/hv/Kconfig"
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+> index 18643e06bc6f..669bd0c2a16c 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+> @@ -2269,11 +2269,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
+>  		case DRAM_LOG_BUFF_SIZE:
+>  			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+>  		}
+> +		break;
+>  	case SMU_Discrete_DpmTable:
+>  		switch (member) {
+>  		case LowSclkInterruptThreshold:
+>  			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
+>  		}
+> +		break;
+>  	}
+>  	pr_debug("can't get the offset of type %x member %x\n", type, member);
+>  	return 0;
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> index ec14798e87b6..bddd6d09f887 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> @@ -2331,6 +2331,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+>  		case DRAM_LOG_BUFF_SIZE:
+>  			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+>  		}
+> +		break;
+>  	case SMU_Discrete_DpmTable:
+>  		switch (member) {
+>  		case UvdBootLevel:
+> @@ -2340,6 +2341,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+>  		case LowSclkInterruptThreshold:
+>  			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
+>  		}
+> +		break;
+>  	}
+>  	pr_warn("can't get the offset of type %x member %x\n", type, member);
+>  	return 0;
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> index 73aa368a454e..2d4c7f167b88 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> @@ -2237,11 +2237,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
+>  		case DRAM_LOG_BUFF_SIZE:
+>  			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+>  		}
+> +		break;
+>  	case SMU_Discrete_DpmTable:
+>  		switch (member) {
+>  		case LowSclkInterruptThreshold:
+>  			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
+>  		}
+> +		break;
+>  	}
+>  	pr_warn("can't get the offset of type %x member %x\n", type, member);
+>  	return 0;
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> index ae8378ed32ee..a2ba5b012866 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> @@ -2619,6 +2619,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+>  		case DRAM_LOG_BUFF_SIZE:
+>  			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+>  		}
+> +		break;
+>  	case SMU_Discrete_DpmTable:
+>  		switch (member) {
+>  		case UvdBootLevel:
+> @@ -2628,6 +2629,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+>  		case LowSclkInterruptThreshold:
+>  			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
+>  		}
+> +		break;
+>  	}
+>  	pr_warn("can't get the offset of type %x member %x\n", type, member);
+>  	return 0;
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> index 3d415fabbd93..9f71512b2510 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> @@ -2185,6 +2185,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+>  		case DRAM_LOG_BUFF_SIZE:
+>  			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+>  		}
+> +		break;
+>  	case SMU_Discrete_DpmTable:
+>  		switch (member) {
+>  		case UvdBootLevel:
+> @@ -2194,6 +2195,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+>  		case LowSclkInterruptThreshold:
+>  			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
+>  		}
+> +		break;
+>  	}
+>  	pr_warn("can't get the offset of type %x member %x\n", type, member);
+>  	return 0;
+> -- 
+> 2.17.1
 > 
->  source "drivers/xen/Kconfig"
-> 
-> +source "drivers/kvm/Kconfig"
-> +
->  source "drivers/staging/Kconfig"
-> 
->  source "drivers/platform/Kconfig"
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index 1056f9699192..727205e287fc 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -47,6 +47,8 @@ obj-y				+= soc/
->  obj-$(CONFIG_VIRTIO)		+= virtio/
->  obj-$(CONFIG_XEN)		+= xen/
-> 
-> +obj-$(CONFIG_KVM_GUEST)		+= kvm/
-> +
->  # regulators early, since some subsystems rely on them to initialize
->  obj-$(CONFIG_REGULATOR)		+= regulator/
-> 
-> diff --git a/drivers/kvm/Kconfig b/drivers/kvm/Kconfig
-> new file mode 100644
-> index 000000000000..3fc041df7c11
-> --- /dev/null
-> +++ b/drivers/kvm/Kconfig
-> @@ -0,0 +1,14 @@
-> +menu "KVM driver support"
-> +        depends on KVM_GUEST
-> +
-> +config KVM_SYS_HYPERVISOR
-> +        bool "Create KVM entries under /sys/hypervisor"
-> +        depends on SYSFS
-> +        select SYS_HYPERVISOR
-> +        default y
-> +        help
-> +          Create KVM entries under /sys/hypervisor (e.g., uuid). When running
-> +          native or on another hypervisor, /sys/hypervisor may still be
-> +          present, but it will have no KVM entries.
-> +
-> +endmenu
-> diff --git a/drivers/kvm/Makefile b/drivers/kvm/Makefile
-> new file mode 100644
-> index 000000000000..73a43fc994b9
-> --- /dev/null
-> +++ b/drivers/kvm/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_KVM_SYS_HYPERVISOR) += sys-hypervisor.o
-> diff --git a/drivers/kvm/sys-hypervisor.c b/drivers/kvm/sys-hypervisor.c
-> new file mode 100644
-> index 000000000000..ef04ca65cf1a
-> --- /dev/null
-> +++ b/drivers/kvm/sys-hypervisor.c
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <asm/kvm_para.h>
-> +
-> +#include <linux/dmi.h>
-> +#include <linux/kobject.h>
-> +#include <linux/sysfs.h>
-> +
-> +static ssize_t uuid_show(struct kobject *obj,
-> +			 struct kobj_attribute *attr,
-> +			 char *buf)
-> +{
-> +	const char *uuid = dmi_get_system_info(DMI_PRODUCT_UUID);
-> +	return sprintf(buf, "%s\n", uuid);
-> +}
-> +
-> +static struct kobj_attribute uuid = __ATTR_RO(uuid);
-> +
-> +static int __init uuid_init(void)
-> +{
-> +	if (!kvm_para_available())
-> +		return 0;
-> +	return sysfs_create_file(hypervisor_kobj, &uuid.attr);
-> +}
-> +
-> +device_initcall(uuid_init);
-> 
-
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
