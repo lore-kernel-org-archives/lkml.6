@@ -2,170 +2,114 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC19C67879
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F020C67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA7E214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 314432145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="pvVUAL45"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DA7E214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ge6D+aV6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314432145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeJIH6g (ORCPT
+        id S1726617AbeJIH7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 03:58:36 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:23995 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725749AbeJIH6f (ORCPT
+        Tue, 9 Oct 2018 03:59:19 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34879 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbeJIH7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 03:58:35 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie2.idc.renesas.com with ESMTP; 09 Oct 2018 09:44:13 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 120796EE0C;
-        Tue,  9 Oct 2018 09:44:13 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,358,1534777200"; 
-   d="scan'208";a="293013746"
-Received: from mail-os2jpn01lp0150.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.150])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 09 Oct 2018 09:44:12 +0900
+        Tue, 9 Oct 2018 03:59:19 -0400
+Received: by mail-qt1-f193.google.com with SMTP id v19-v6so23009046qtg.2;
+        Mon, 08 Oct 2018 17:44:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ifEZElYU1oAHqaTeyY9TVDg6GmFAtU9cBWUwj/B22y4=;
- b=pvVUAL45LYHxnBWlmmnIeRZMuHT04AOqmcACCs1HgxnVhSr8wjRSIXYWfcFKe0MLEw0aZme+zGfZ3bOALO/fMrMGDlpntRgl1QV5VELmsuQCAazRQouJZppNiE5sh1F2NlPsaGLOYhHqqIvFGy7Zi7aXcjD5L9nRtDCzYsldPYQ=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- TY1PR01MB1866.jpnprd01.prod.outlook.com (2603:1096:403:2::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.23; Tue, 9 Oct 2018 00:44:11 +0000
-Message-ID: <87h8hward4.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH linux-next v2 9/9] ASoC: rsnd: add busif property to dai stream
-In-Reply-To: <a5712f6a-a61b-f6c4-4f3d-a6d4a60bcfab@mentor.com>
-References: <20181003090136.4556-1-jiada_wang@mentor.com>
-        <87va6ipkaz.wl-kuninori.morimoto.gx@renesas.com>
-        <557e63d1-dbb7-4232-b53e-4a5499024180@mentor.com>
-        <87pnwqpeni.wl-kuninori.morimoto.gx@renesas.com>
-        <a5712f6a-a61b-f6c4-4f3d-a6d4a60bcfab@mentor.com>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Tue, 9 Oct 2018 00:44:11 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: TY1PR01CA0184.jpnprd01.prod.outlook.com (2603:1096:403::14)
- To TY1PR01MB1866.jpnprd01.prod.outlook.com (2603:1096:403:2::22)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c4f0c5f2-02bc-45d4-c58e-08d62d80545c
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1866;
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;3:zCPZKrKj0AelTpxMPdgfBTfCTi7sR7sUM8wxvT/T7Cw4CqgQBkarVeMoVItjb1+DKFdf68MLYwRXpHbhWw0Jnoi7LoBAAQ9HGy2Q26XzO1BdPggMQ2eKKotzHYXSFQj5+iZaFaHH/7XXHW5PS1Tf6YDtn04kbsCk1O6jADkhTux8LRzjy69Jl4G45XaHekOMvdG7M8Zo6kFxpvAztiwp9Rz4j9PcOd6ZFuLTTLKk/hfiaJBKQF7RvRDYckRvGM2O;25:CeL00kOYu1guPyEthiQF00Fg1V7fQWZyg9KCM6xn31kkgxyrmgskLYzSfHRuai4kQXSbOxSZyAWbQsvHkLo/HQNcHzF3mruyWThbSrE28IOKh9bAFpmovMtqCvUeuWMuspLVxt6zjst8XcgZ3I3wORmXVj9W5jPmPUj8WNsTQoqn0+F29RLdljsiEexVDiuZfO3mOvNdp+0CRfi2CgaikVdWXM4akZsE8LpRzmnqmt1x/aCCA9b5ezCU9+9dMQ/J2gRMxizY1GRVKi3r07vy6+6xJ1hkiQJ/7E1Mp1cIlRON9GumfCW+82UUjI57Wjo1l/oCR+FXlNdGUvQ0+8NmMQ==;31:cmf5S7p9e9ViRy4EVWQmQQaNUwLSwbzVRqK7xkZrbECGhZ/lyPQgqHLm/vdCRuG19ltjOysy3khJXS0YQJoBIhvCBJgU6K0kQuCjrAptAUo3f6Z8lNKMSWDOpgf/soFPb87Qa0eIWnZ+DMgeMPzcjMSZHFzzcjZ3mSFf0ByvxYmhXGi2qZKeEcrzHboEWMvP/nhxKfCvxmFR8cXqmPUq5XoYN+KOLQ/roN1Ccp9iIkU=
-X-MS-TrafficTypeDiagnostic: TY1PR01MB1866:
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;20:IyaJwq0KFCMO5kW0jh/XJ0eARV8O3kcOo7EjxD8+vG1254Yii/lBJ9GiiAoidCARGrx/eLhu7qQwwea3dLh02STVWuq0v8fOUkwHGUCM6fq7rr41cMm6/TVIpzjHrKWADqgr80iHFe4vpKd6AKGLpNKJoGSmZSIy3t76mlXyMrwk7pxx0ulWu5uIVEUdT23k05Ua9iBO7HLBuo1fmbGuSflJFBNhW9Hjve0lGGX9BN0xo9H95OD4pqIAK/8ac3nvRrMFkTIz9wVdBq1uYnMjNqJ1KT3Nmwr+FlzntaQx43K8jRjVewmC14p2/PTjJP2OgDwX03i/AWb6jZJI/31t5CB7LtBM8bWuXE9Srm16r41686RPYk9DiR39pA7FPoiQGFoxznmPMPWmMXXbYwZzZfL82bBGpYQIyhPOl56oD0eWG0Jyq5Yhj1sSvtHqRez6J11N33poJzdk6WbtsdYLks2xzDyTijkL9pbuaGOS+/i/HvlYnsOmaH2rZyU8Z1yG;4:zs3v+jK1XBU49tjvLQ4ZwO7+NuD0lvkoLz99cvWmZ3lyotgg5eS+hzZ4D3Fge3UQk5C8Dp4H95jMxwH0GXLCaCjAu4pk2b8ME9SydIIM36HLIa55xpwinDdHPHtXYUG3ca8+Fu59o8Y/G7Po/YKpHlvzDD1VTCCcGLp3IuYRD3AuqtevS0hdFU9DscJD42rffvdhVfhT8z/xzcdq9zukNqc3VDNAC7+7q1mT7qqcaiLSyn98/05z0yFEtnYbm1LIO2bEjRqokhSU5QRK1q+2FQ==
-X-Microsoft-Antispam-PRVS: <TY1PR01MB1866EC6156CBA561A3F47C31D4E70@TY1PR01MB1866.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:TY1PR01MB1866;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1866;
-X-Forefront-PRVS: 08200063E9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(346002)(376002)(136003)(57704003)(199004)(189003)(8676002)(16526019)(8936002)(7736002)(86362001)(81166006)(446003)(305945005)(81156014)(186003)(229853002)(6246003)(4326008)(486006)(50466002)(26005)(36756003)(956004)(476003)(68736007)(2616005)(47776003)(11346002)(97736004)(66066001)(386003)(7696005)(5660300001)(23726003)(3846002)(6116002)(53936002)(16586007)(54906003)(478600001)(316002)(93886005)(106356001)(52116002)(76176011)(105586002)(69596002)(6916009)(58126008)(53416004)(6486002)(25786009)(2906002)(39060400002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1866;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1866;23:13lZQdjkS5/bymlDJEIJN2cf5DC3362jvwd71OhZy?=
- =?us-ascii?Q?+kTYuV7GRsWuTOmUEW+OJCwRV7V+iHoUkQ5SPy+AMMGVAweLI8POe9a7OaAt?=
- =?us-ascii?Q?IyWtXbUM8wxzx6XvZaUdt2SH2V4uJ+Uu9bcEptkk1EeaF26fhqGfrR1EfKaq?=
- =?us-ascii?Q?UkLc2vWksuqG7cY1PY2TyFNiaLdsrRjH00tfG9VR5vneYvX5aSKKkftjiCkB?=
- =?us-ascii?Q?vTjYysJQJypAb5qx8goT6v6Qikgg8oN5Y9hQB6Xwt8t4vkpA+SnlSYntZD2q?=
- =?us-ascii?Q?LnnZbD9ihyTORlntodROxFZzo+kGATKtFddzUlHIRdWnvhaeZZHzCw08Q1rL?=
- =?us-ascii?Q?N/T1AL/3dzIMD+du+tQ1lb1PBofxasvELxCyko0gn55ZMFm/wjph6Kq/UOBZ?=
- =?us-ascii?Q?dzt+e8bsmPZYi4TOh7c2JRuRIBSoCV81PQ/eUhXJTqJrmT7EqboCUt/1RhG/?=
- =?us-ascii?Q?3jQIxbbhlc4Umv0ue9ly7pobvGPWQoO7/wMlrr87473eJgZWjc6f1OFrash9?=
- =?us-ascii?Q?w1RdLE3pNrSv2qlmidsNmsnl0CHV57LkGnMuTaN51rZ9DpffRqcWWkvXzl2V?=
- =?us-ascii?Q?uNGfaIxR2pQa7CAIyfEMgg/JwcsofmzXBGmXYECHRAdlN1ml0m4vvASgpFX0?=
- =?us-ascii?Q?6wyFeET3m+jsyDmtcRglCOB0wSDkFn78Y3+6AT4Mo6MlqdJvx8gGxljL7vq9?=
- =?us-ascii?Q?MjJjG/zA/oQksPxt7RHrgxH/7jbVq95SADA9PNAj3jdmzHIf/+z3AKUuBqGK?=
- =?us-ascii?Q?6Kcb8j1z6DqY8AEoUMXylCoYgvCWMhOm4B0mI8zf4k9vS5/U0BfLEzUqNWhE?=
- =?us-ascii?Q?UY81zDTAIXLS9iGOHCRHiAhfox5V8+dnrNKsXE9Nk5GrsoFi/2eql8vRHecj?=
- =?us-ascii?Q?onvWG5ODWVEDZx/++9q6xPw3kERzr98fGbinUoUZANZhakS0AR4sGfxv+TVQ?=
- =?us-ascii?Q?IUG/gDTtYyU7Lg5nSz84JCkkS7ndLq+d55vyjefembo+cG9ieuNj6uF3UBSM?=
- =?us-ascii?Q?oQY4xsvnRVrzn1BXfnHTGVaq4BFMEKa7F9uVHVTKa/+eJxrYFnlwUKYwDpKL?=
- =?us-ascii?Q?WD9Fk2cA4bR4ExoRtWbgV62xRt8RrU6ulXux+ajlYBhts5kxT2nJC5g77POY?=
- =?us-ascii?Q?wWIyDrXwXaMSfbVYKKvD98NWwHMTnzNXRIR7lqtpN8Zq8dLH+qQnxo2Hmxl0?=
- =?us-ascii?Q?HHU/eLD6DaSzNlZGKDg6544EuqN3V/jppCSLQfAF7Px7RsJ1bh27b+oQwoiM?=
- =?us-ascii?Q?jypw0pKNNMjbaYmzCko/0St4KMxhyu3ISqa1UTm7/DXMP4fL47LoM4RM5lTy?=
- =?us-ascii?Q?KqFW7xCNNNrfbD3Yj+LTOM=3D?=
-X-Microsoft-Antispam-Message-Info: DlG4jSkGjXiCOcY9pL/8dceSgbhWwq/lCZChy5oF0smqF6qqlyHOzgPtbqKak4nj+wQfj09b+2g7YLNulre095O0UNtC7wgfyONIb3Zn8Fy3qcYaZy9z5YvFPHCeukyQZbic9WYZlx3f4zjgwexQYvs8g2u1tDZScJnNcxJP5ztd2lE5oTN/qgsMWPUuE0ZOST3B53+tzTOYwU/Zbpd3qJoqaDselU2T2DjMhQGS9Agr1r920qYketFiSZ11NlOkb0chc5ryNuSCU/89FHCk8fBDlC7jiYXlDSd/PhmJbKNISkw6nUO8k1uWEkNbcIS/6XdbQGbZTfZGA1w8xupUjzwtaDd0RV3TJwekAUH78lQ=
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;6:sCn4ZwlBvacOvE4cgcqnn61qdzPHXeDBMslf0jXrjphTa1/1nw2rAxc7PMgvpLYpFKzben9xRkkIkGZzDMENf0cCD6gWZefu0rkatGtcTtk1tugtJ46b7braUyhuoQx5dQqeDBJ66Q91WmySaGATzcMb1s7A5qP0iimcMuRNLgl0toAuO7w5wKOkDewRLaEv5/u00G2jRSAEDztYI+ic/AGk9WirPmW6Gs4Awq+D4SIG70m8zKeY8AJVMqwLioYUhVtTqoe2YqMFoGBeIdt862rzSmPBYfpqUnOX1R+Z0dQjrmZRuhKtZzvebokEBUtRxK9fh1yMwxEes2rvJz7pHyiA/PiHxNcs9VjSsYW/GWaGDHygBgWd42QeGfKPIwdTKrNdpT9UAoFlMtq3OoJAI/FBwGQg6fhAdKJonTrLfrlfFOE4UaOSx8sxBtAvuTdLMbFHVWQkWQPukNbZZx/tUw==;5:nP1FcSRvnyu1jeE4s33KLSKlMMgBg5ShtiichxOTW/A9G85x4zMOxuoj3BGENTFvA+o7j1WSrmMZSktMtrHNgq4uh3l/jErw74dZ3LLRANhSMAMxdX5aVZkI0icaEgE5/x1GD6U+sOLydbR/PyjY1+FyjswBnIuLys9zDHIrVdM=;7:sCXO+tOZOm7NQcHvm/8rL2F9w//rE7tWIneafCv8vVQzP74yUY8BKTKoLGiS5cWL+iYCAOMBb+BQxmG2SefnUi73q3o40ZLcF1PHGUfVOhCpNqijFIU9XV1ftLwrVtvtC6Mk0nFk4IETmQHLRhjlQ+QtNwiO0XYGGHX/dO9pLJd7u06IY0pq2aIavezh+POyCywdKcf11b2su1Yw5aZcwlnxDXLsffgc/CDCpCyeJEQvW1TukTx1tXDGSrMY9MqF
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;20:fseybDF+4GkENEHFFivsPK4yz4FNaHSh59uEffpsoAZRGOSzy1dW+4BHDyu3tisAKguy+PaJIPzWns2pJcbd6zVLHBN5JQJmYzqaC0uV5X0lxOB198BvWNIn76iR40JTzBEuvxO0fCoewACeC3M/Du26ZAf2YBESPztFlAkJGeM=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2018 00:44:11.3143 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4f0c5f2-02bc-45d4-c58e-08d62d80545c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1866
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ICfAujeX9Ki4u3dqmrqRil9WVpptlgrIhpg5HD58dcc=;
+        b=ge6D+aV6FD0IRq61BXIOveVctaCJ1U8LL86VqQEAhEgXCTGxdJ68ElIxV6gKQrJogV
+         FhyRawkhB+xDGpyzfewuR82lTVvRdpczvDiBNTLeClWmAP38VExybwgDvlgSWVNNLoFf
+         MEbc3rwvrK0E0SaMnYEDX/vTk5g/+ETrvGANzOkgWb+gB6lQKguYgzmB5iXmf1aVwVzV
+         JM10UXmvdFAqXsePTbN41e8DAoCSFFQnc6+jU7B4KzG7ZBlKHYSYQ1A0/Ngrso3XNzZp
+         gHN6GL+/Xrx0MSiwQ40OrKS7oZdL4gp2jqQYhvZeu5kBsXo1g5vPhAQoBH3L/tu/iGAV
+         ywcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ICfAujeX9Ki4u3dqmrqRil9WVpptlgrIhpg5HD58dcc=;
+        b=aIQk2XLxWeAlK7B7/05WqMhhy2fQkBExeLqI9mtgx701wQF2SQ5z5H1Zu/Po+3M4cG
+         o0AliZVtj3yEgDuHgN7A6P0HRoKP/+lwcrHuH+I+4wKCf+jB11hoX87ISJqEIivMUq+F
+         IHq7PgAOlqiGzp1Z9mgRy9PCGZIJU0uxTF+u7yk9q9SxiYau8NhPCk0wOTLXLsz4N/Yl
+         1nObxfEZeUsxqYBRP6TOMvG3ji57Iq33aq26vPxhL7DDgzkDR2xdoczT8W/RW0HzyYN+
+         z99HkokPGFVcoiA4Z/c8tUUGTCVhXP3rH78TFGJePoA5mCOToeJXLep5jU+O+dKYLOK0
+         gsKw==
+X-Gm-Message-State: ABuFfojoOW+sgH5E4bJXboSZXsjxqMFQaemtqYKt+Z1kIyu8xNAUYp+5
+        WyWhPdKPlW5U/D+LKjCYR3+9EbpDpSTJyxrxWIw=
+X-Google-Smtp-Source: ACcGV627zzytLpEb+tyF3y7xN3Ibm605GhdWDwElVuIzxUCBvxQtOqVPLKRH6ZGpX51+IPsjkY7NdH+LezyFDwXr9Zc=
+X-Received: by 2002:ac8:1793:: with SMTP id o19-v6mr21303598qtj.98.1539045898549;
+ Mon, 08 Oct 2018 17:44:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <1538943795-30895-1-git-send-email-wang6495@umn.edu>
+ <CAPhsuW5vnVjRS7DWFYPSmq5G-dAFxOrHCAOMkK-iaOoirzMazQ@mail.gmail.com> <43898.1539033428@turing-police.cc.vt.edu>
+In-Reply-To: <43898.1539033428@turing-police.cc.vt.edu>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Mon, 8 Oct 2018 17:44:46 -0700
+Message-ID: <CAPhsuW5nPGMOEMKa1UFwgquoUeYiUV8i8nVgWfM6McH2Ri1esg@mail.gmail.com>
+Subject: Re: [PATCH] bpf: btf: Fix a missing check bug
+To:     valdis.kletnieks@vt.edu
+Cc:     wang6495@umn.edu, kjlu@umn.edu,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 8, 2018 at 2:17 PM <valdis.kletnieks@vt.edu> wrote:
+>
+> On Mon, 08 Oct 2018 13:51:09 -0700, Song Liu said:
+> > On Sun, Oct 7, 2018 at 1:26 PM Wenwen Wang <wang6495@umn.edu> wrote:
+>
+> > > same value. Given that the btf data is in the user space, a malicious user
+> > > can race to change the data between the two copies. By doing so, the user
+> > > can provide malicious data to the kernel and cause undefined behavior.
+>
+> > These two numbers are copied from same memory location, right? So I
+> > think this check is not necessary?
+>
+> Security researchers call this a TOCTOU bug - Time of Check - Time of Use.
+>
+> What can happen:
+>
+> 1) We fetch the value  (say we get 90) from userspace and stash it in hdr_len.
+>
+> 2) We do some other stuff like check the hdr_len isn't too big, etc..
+>
+>         meanwhile, on another CPU running another thread of the process...
+>                 3) malicious code stuffs a 117 into that field
+>
+> 4) We fetch the entire header, incliding a now-changed hdr_len  (now 117) and
+> stick it in btf->hdr->hdr_len.
+>
+> 5) Any code that assumes that hdr_len and btf->hdr->hdr_len are the same value
+> explodes in interesting ways.
 
-Hi Jiada
+I think I get the security concept here. However, hdr_len here is only used to
+copy the whole header into kernel space, and it is not used in other
+logic at all.
+I cannot image any security flaw with either hdr_len > btf->hdr->hdr_len case or
+hdr_len < btf->hdr->hdr_len. Could you please provide more insights on what
+would break by malicious user space?
 
-> SSI can work in following modes
-> 1. Basic Mode: (channel 1, 2, 4, 6, 8, 16)
-> 2. TDM Extended Mode: (channel 6, 8)
-> 3. TDM Split Mode: (channel 1, 2)
-> 4. TDM Ex-Split mode: (Channel 2, 4, 6, 8, 10)
-(snip)
-> > So, my opinions for BUSIFn support are
-> > 	- SSI mode should be selected automatically
-> can you give me your idea, how to automatically determine working mode,
-> when user plays 2 channel stream on playback dai-link
-
-If my understanding was correct, we can do like this
-If DT indicated sound card has dai-link x N, tdm-slots = <M>,
-	If (N, M) = (1, 2) : Basic mode
-	If (N, M) = (1, >2): TDM mode
-	If (N, M) = (2, 4) : TDM Split mode
-	If (N, M) = (2, >4): TDM Ex-Split mode
-	If (N, M) = (>2, 8): TDM Split mode
-	...
-
-Maybe some combination was wrong, but we can do something like this ?
-
-> for example user asks dai-link0 to playback 2ch audio stream,
-> driver can't determine which mode to work, as it can be Basic mode,
-> Split mode or Ex-Split mode.
-
-Why do we need to use Basic mode if HW has TDM Split mode connection?
-If user playbacks 2ch audio in such situation,
-we can use TDM Split mode (= only 2ch has sound, other channel has no sound ?) 
-user might start to playback for other channels.
-I'm not sure how it works...
-
-> > 	- BUSIFn connection should be selected on DT
-> since which BUSIFx is used during audio data transfer, is not
-> consideration of user,
-> I think your previous suggestion, (automatically select BUSIFx) makes
-> more sense
-
-I'm not yet sure detail, but in your idea, does it mean,
-BUSIFx connection might be exchanged runtime ?
-I think BUSIFx connection shouldn't exchanged runtime IMO.
-Otherwise, sound position can't be fixed, and user can't control
-sound, I think...
-
-Best regards
----
-Kuninori Morimoto
+Thanks,
+Song
