@@ -2,122 +2,212 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82265C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977E5C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8342087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 507DC2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="JMHq0P1I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8342087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l8UPegYX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507DC2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeJIUne (ORCPT
+        id S1728004AbeJIUnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:34 -0400
-Received: from mail-dm3nam03on0067.outbound.protection.outlook.com ([104.47.41.67]:54352
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726496AbeJIUne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MrIOXDzCkE8Jj/RlHIuuYGPtLh/eaARxvmvm5jzWwt4=;
- b=JMHq0P1IomOpEDnwKV93vOEUKCiDwBftABu9xHwEdohEuD8PypNQ5kyuk4n0q+x+ZibLd0GSzNFlErzi1iAd9a6XN0W6Y5k7XZwE1Wuer3OCYKGHMWAaenrNVXNiE1Dtu3ItSEwf4tnOe2gIZhDL4lg/pOgJ/UYtykCR2Lkiro0=
-Received: from BYAPR07MB4599.namprd07.prod.outlook.com (52.135.204.25) by
- BYAPR07MB4821.namprd07.prod.outlook.com (20.176.250.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.25; Tue, 9 Oct 2018 13:26:34 +0000
-Received: from BYAPR07MB4599.namprd07.prod.outlook.com
- ([fe80::8057:24ac:d594:6f3d]) by BYAPR07MB4599.namprd07.prod.outlook.com
- ([fe80::8057:24ac:d594:6f3d%5]) with mapi id 15.20.1207.024; Tue, 9 Oct 2018
- 13:26:34 +0000
-From:   Jan Glauber <Jan.Glauber@cavium.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-CC:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: KASAN: use-after-scope in ext4_group_desc_csum
-Thread-Topic: KASAN: use-after-scope in ext4_group_desc_csum
-Thread-Index: AQHUXJR/cP5Refn5uUq4/pFkL4/NFg==
-Date:   Tue, 9 Oct 2018 13:26:34 +0000
-Message-ID: <20181009132625.GC21519@hc>
-References: <20181005101629.GA21469@hc>
- <CACT4Y+ZQr4DZtTLUxAe4HrC6=fQBQCJcs4U5xVjqsz8wu8uH8g@mail.gmail.com>
- <20181005130506.GA5972@hc>
- <CACT4Y+bY=Ota1E_tf_QgsT9d2YdQ7xXE0k=Q1VPJga=Ge+1UpA@mail.gmail.com>
-In-Reply-To: <CACT4Y+bY=Ota1E_tf_QgsT9d2YdQ7xXE0k=Q1VPJga=Ge+1UpA@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0202CA0026.eurprd02.prod.outlook.com
- (2603:10a6:803:14::39) To BYAPR07MB4599.namprd07.prod.outlook.com
- (2603:10b6:a02:f2::25)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jan.Glauber@cavium.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [88.66.109.80]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB4821;6:4ojvOLa3hITGg52I4mBfOG11hxX5jvQkAcz5Bco15FbD8rjhgfcCjeuBJw5eQzQTWH4y9a4XH8dCKM6OIzdpkYAPDz3h2Yf7WlSSINlfRezv86QnJdc1ZvElOmPWbirjLnb2ClIbfIl1Vv3UhUxaMtHrT7I9TuGGSOj7tlqEFzPAK+1bMcbw20wxy5H4ar7Kk1bGlJiTDLQ5ZGs6Nl+EC5j/3nNmQszS22t41//1LEy9Jtb0TWDWxY3WX2abw96ODVMurL7CBs7Jdz+Q8d862ZlLWFyuMVCKM181jWjM58560dS6FLPkNdZYq7x1r0+ieJ22UHfUssTnmwoNqCZ7DPWUdgZ53V4PrMznKjAeYlaEGZonRLYg4BZDkX4RuhqCBSbu9WecVCpTI3NLdPAv+6Gq/6gcZ12Q++oFnZvC92yzP/obujDMmmf63E33tW/ju0y/S/Bi+O9uTzBF1Yzoug==;5:+OnYIcDzkXc65llDnlzphgPs9ikToKHKIJUKwBMkottMWsiK+64v2cmgcxo8B1n/glBhzSy1w9U4lsOUCC+5uROPJ/BoNZl5uxeC0FM4mItts+bzTXLKHocWVIitDXKpVSLCrAckmVV9LhNYWwf1/ZwwHLcTJejzewjEyhoEzRc=;7:Uo9OjKuWniFQpFmdIDQCfZpTngCSsnFpVYUB3ScMrfVrAEOjdGkDlYJXgB5gAo3PTKYDB+IGA/ntunyHdYp5uxnd9J4S4EgxT2QY+ag9Hr7qRZSbl3ei8Hsugbro5NwUugTt73GnO2yO299YYs+8/nhtnoUZOzH9ZL9M7Drrme1C9IOIto5ugT7gZR6sDS7H0ZAU28rjn3yFn8famdU1/33JJXfKmVKi0NrJj/LYx09XPs0n6BxL0MjMSuY7rm3F
-x-ms-office365-filtering-correlation-id: 95860660-b992-4775-c54b-08d62dead4e6
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4821;
-x-ms-traffictypediagnostic: BYAPR07MB4821:
-x-microsoft-antispam-prvs: <BYAPR07MB482126C4F405B55C9FB15D3591E70@BYAPR07MB4821.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:BYAPR07MB4821;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4821;
-x-forefront-prvs: 08200063E9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(396003)(366004)(376002)(346002)(39860400002)(189003)(199004)(6116002)(81166006)(386003)(966005)(1076002)(256004)(5660300001)(106356001)(25786009)(14444005)(6506007)(14454004)(186003)(66066001)(53936002)(4326008)(52116002)(105586002)(26005)(6306002)(9686003)(8936002)(33896004)(68736007)(86362001)(81156014)(6512007)(76176011)(2900100001)(99286004)(446003)(6436002)(2906002)(6246003)(33656002)(8676002)(102836004)(305945005)(71200400001)(15760500003)(316002)(33716001)(71190400001)(476003)(44832011)(478600001)(54906003)(5250100002)(11346002)(6486002)(7736002)(229853002)(72206003)(3846002)(97736004)(6916009)(486006)(93886005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4821;H:BYAPR07MB4599.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Pk/7lqto0x20MXolQXTNDzDzGgv1rj+cu6x1Hj/mtA9ymzD5KM3BPh9QbhkrLL+RlCkWhshzmC4zva7s9db60fKTrfj/chm33+ZbDTCkC/LO9PhMAGf2QsHCL9nB4kDjYWkX9USRE+F1XpSoMyOMeqRkU34z0F1X31KyNxywPsKuw6QfCX9JbXJ5Z+I4gEK94I4D6jC31L+WmPTQk19NN/iIn6UZrnNSI4pWJvTocTjeSrLKMAX9g18cNiqPRHQXbT18XuL/z2DaVmU3dKBl6/3lxZjliVLj/LaQrx3+WRile0Phv1AchAbQ9ja7flq6KuLsc/BG67plosg0JGHrAP2N/OHU84a7ZkGyReTZFQk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E8DE22F174853542BCDF666DF230FC50@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 9 Oct 2018 16:43:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50570 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeJIUng (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:43:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NGCU2lrt5bq7Rc3mk/OMld2IdjRQQ5SDzs63QFi1+BM=; b=l8UPegYXTgla6zResoGtjiiUTT
+        K+v5TvfDQ5H3YaN3kxyiX7jPgviqYWxTjEoEQZU4u+DiIpu467fj+ymlbo3+6mY8K4f8Ch/Kzqepg
+        RNb8G6lbsBKg+mFZ3Z36s/Abf9X8IAvdUghidJn/Gy98NTsa4WRRRj4amyXkx9yjuyzvuDF6nNIQo
+        /sBRmXtNeKN4pkfk91f/Bc35+5/kb2UJxoyNNdb4X4StNTdKP6D0Fm2dLvwxaviRFCS8SYf9vrwjp
+        fxOhWVl6+nD8nUS+5I00J1JYd+IXujk1QOvjmcQbFDxZaVqqxC432carN1AGcsvLixsi7K0ma5kp9
+        WJiHx8zQ==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g9s1l-0001dF-Dg; Tue, 09 Oct 2018 13:26:21 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 31/33] powerpc/dma: remove dma_nommu_mmap_coherent
+Date:   Tue,  9 Oct 2018 15:24:58 +0200
+Message-Id: <20181009132500.17643-32-hch@lst.de>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181009132500.17643-1-hch@lst.de>
+References: <20181009132500.17643-1-hch@lst.de>
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95860660-b992-4775-c54b-08d62dead4e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 13:26:34.5432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4821
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 05:32:07PM +0200, Dmitry Vyukov wrote:
-[...]
+The coherent cache version of this function already is functionally
+identicall to the default version, and by defining the
+arch_dma_coherent_to_pfn hook the same is ture for the noncoherent
+version as well.
 
-> This all makes me think that somebody else has left these 0xf8 in
-> shadow before ext4_map_blocks started executing.
-> Unfortunately debugging garbage in stack shadow is not completely
-> trivial and there is no common recipe. I don't have setup to run arm64
-> kernel at the moment. I would try to locate that garbage in stack
-> shadow earlier, e.g. calling another function before ext4_map_blocks,
-> implementing that function in mm/kasan/kasan.c (non-instrumented
-> itself) and then try to scan stack and verify presence of 0xf8
-> garbage. If this works out, then try to catch garbage earlier and/or
-> try to figure out what function left that garbage (that's possible by
-> locating 0x41b58ab3 magic:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D198435).
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/powerpc/include/asm/dma-mapping.h |  4 ----
+ arch/powerpc/kernel/dma-iommu.c        |  1 -
+ arch/powerpc/kernel/dma-swiotlb.c      |  1 -
+ arch/powerpc/kernel/dma.c              | 19 -------------------
+ arch/powerpc/mm/dma-noncoherent.c      |  7 +++++--
+ arch/powerpc/platforms/Kconfig.cputype |  1 +
+ arch/powerpc/platforms/pseries/vio.c   |  1 -
+ 7 files changed, 6 insertions(+), 28 deletions(-)
 
-Thanks a lot for your analysis! I'll try to debug this further but as
-you pointed out it might be difficult to catch who writes beforehand to
-that location.
+diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+index e12439ae8211..ababad4b07a7 100644
+--- a/arch/powerpc/include/asm/dma-mapping.h
++++ b/arch/powerpc/include/asm/dma-mapping.h
+@@ -25,10 +25,6 @@ extern void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
+ extern void __dma_nommu_free_coherent(struct device *dev, size_t size,
+ 				       void *vaddr, dma_addr_t dma_handle,
+ 				       unsigned long attrs);
+-extern int dma_nommu_mmap_coherent(struct device *dev,
+-				    struct vm_area_struct *vma,
+-				    void *cpu_addr, dma_addr_t handle,
+-				    size_t size, unsigned long attrs);
+ int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
+ 		int nents, enum dma_data_direction direction,
+ 		unsigned long attrs);
+diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
+index 7fa3636636fa..2e682004959f 100644
+--- a/arch/powerpc/kernel/dma-iommu.c
++++ b/arch/powerpc/kernel/dma-iommu.c
+@@ -172,7 +172,6 @@ int dma_iommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ const struct dma_map_ops dma_iommu_ops = {
+ 	.alloc			= dma_iommu_alloc_coherent,
+ 	.free			= dma_iommu_free_coherent,
+-	.mmap			= dma_nommu_mmap_coherent,
+ 	.map_sg			= dma_iommu_map_sg,
+ 	.unmap_sg		= dma_iommu_unmap_sg,
+ 	.dma_supported		= dma_iommu_dma_supported,
+diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
+index d33caff8c684..c6f8519f8d4e 100644
+--- a/arch/powerpc/kernel/dma-swiotlb.c
++++ b/arch/powerpc/kernel/dma-swiotlb.c
+@@ -42,7 +42,6 @@ unsigned int ppc_swiotlb_enable;
+ const struct dma_map_ops powerpc_swiotlb_dma_ops = {
+ 	.alloc = __dma_nommu_alloc_coherent,
+ 	.free = __dma_nommu_free_coherent,
+-	.mmap = dma_nommu_mmap_coherent,
+ 	.map_sg = swiotlb_map_sg_attrs,
+ 	.unmap_sg = swiotlb_unmap_sg_attrs,
+ 	.dma_supported = swiotlb_dma_supported,
+diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
+index 7f7f3a069b63..92cc402d249f 100644
+--- a/arch/powerpc/kernel/dma.c
++++ b/arch/powerpc/kernel/dma.c
+@@ -113,24 +113,6 @@ void __dma_nommu_free_coherent(struct device *dev, size_t size,
+ }
+ #endif /* !CONFIG_NOT_COHERENT_CACHE */
+ 
+-int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
+-			     void *cpu_addr, dma_addr_t handle, size_t size,
+-			     unsigned long attrs)
+-{
+-	unsigned long pfn;
+-
+-#ifdef CONFIG_NOT_COHERENT_CACHE
+-	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+-	pfn = __dma_get_coherent_pfn((unsigned long)cpu_addr);
+-#else
+-	pfn = page_to_pfn(virt_to_page(cpu_addr));
+-#endif
+-	return remap_pfn_range(vma, vma->vm_start,
+-			       pfn + vma->vm_pgoff,
+-			       vma->vm_end - vma->vm_start,
+-			       vma->vm_page_prot);
+-}
+-
+ int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
+ 		int nents, enum dma_data_direction direction,
+ 		unsigned long attrs)
+@@ -184,7 +166,6 @@ static inline void dma_nommu_sync_single(struct device *dev,
+ const struct dma_map_ops dma_nommu_ops = {
+ 	.alloc				= __dma_nommu_alloc_coherent,
+ 	.free				= __dma_nommu_free_coherent,
+-	.mmap				= dma_nommu_mmap_coherent,
+ 	.map_sg				= dma_nommu_map_sg,
+ 	.dma_supported			= dma_nommu_dma_supported,
+ 	.map_page			= dma_nommu_map_page,
+diff --git a/arch/powerpc/mm/dma-noncoherent.c b/arch/powerpc/mm/dma-noncoherent.c
+index 965ce3d19f5a..a016c9c356d5 100644
+--- a/arch/powerpc/mm/dma-noncoherent.c
++++ b/arch/powerpc/mm/dma-noncoherent.c
+@@ -30,6 +30,7 @@
+ #include <linux/types.h>
+ #include <linux/highmem.h>
+ #include <linux/dma-direct.h>
++#include <linux/dma-noncoherent.h>
+ #include <linux/export.h>
+ 
+ #include <asm/tlbflush.h>
+@@ -400,14 +401,16 @@ EXPORT_SYMBOL(__dma_sync_page);
+ 
+ /*
+  * Return the PFN for a given cpu virtual address returned by
+- * __dma_nommu_alloc_coherent. This is used by dma_mmap_coherent()
++ * __dma_nommu_alloc_coherent.
+  */
+-unsigned long __dma_get_coherent_pfn(unsigned long cpu_addr)
++long arch_dma_coherent_to_pfn(struct device *dev, void *vaddr,
++		dma_addr_t dma_addr)
+ {
+ 	/* This should always be populated, so we don't test every
+ 	 * level. If that fails, we'll have a nice crash which
+ 	 * will be as good as a BUG_ON()
+ 	 */
++	unsigned long cpu_addr = (unsigned long)vaddr;
+ 	pgd_t *pgd = pgd_offset_k(cpu_addr);
+ 	pud_t *pud = pud_offset(pgd, cpu_addr);
+ 	pmd_t *pmd = pmd_offset(pud, cpu_addr);
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index 6c6a7c72cae4..0c4fc631cb33 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -415,6 +415,7 @@ config NR_CPUS
+ config NOT_COHERENT_CACHE
+ 	bool
+ 	depends on 4xx || PPC_8xx || E200 || PPC_MPC512x || GAMECUBE_COMMON
++	select ARCH_HAS_DMA_COHERENT_TO_PFN
+ 	default n if PPC_47x
+ 	default y
+ 
+diff --git a/arch/powerpc/platforms/pseries/vio.c b/arch/powerpc/platforms/pseries/vio.c
+index 1dfff53ebd7f..3ad74efc83bf 100644
+--- a/arch/powerpc/platforms/pseries/vio.c
++++ b/arch/powerpc/platforms/pseries/vio.c
+@@ -603,7 +603,6 @@ static void vio_dma_iommu_unmap_sg(struct device *dev,
+ static const struct dma_map_ops vio_dma_mapping_ops = {
+ 	.alloc             = vio_dma_iommu_alloc_coherent,
+ 	.free              = vio_dma_iommu_free_coherent,
+-	.mmap		   = dma_nommu_mmap_coherent,
+ 	.map_sg            = vio_dma_iommu_map_sg,
+ 	.unmap_sg          = vio_dma_iommu_unmap_sg,
+ 	.map_page          = vio_dma_iommu_map_page,
+-- 
+2.19.0
 
---Jan
