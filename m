@@ -3,53 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B5BC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEF7C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF4E2086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:52:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF4E2086D
+	by mail.kernel.org (Postfix) with ESMTP id CE36D20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:53:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE36D20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeJIVJu (ORCPT
+        id S1727267AbeJIVKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:09:50 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:24873 "EHLO pegase1.c-s.fr"
+        Tue, 9 Oct 2018 17:10:07 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:17873 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727728AbeJIVJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:09:32 -0400
+        id S1726568AbeJIVJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:09:26 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42TzDn6LRVz9ttgT;
-        Tue,  9 Oct 2018 15:52:09 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 42TzDY4W7Qz9ttgK;
+        Tue,  9 Oct 2018 15:51:57 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id M9Vqu9Pp3zub; Tue,  9 Oct 2018 15:52:09 +0200 (CEST)
+        with ESMTP id ihE9KqE_cSW8; Tue,  9 Oct 2018 15:51:57 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42TzDn5Yf8z9ttfw;
-        Tue,  9 Oct 2018 15:52:09 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42TzDY3vZBz9ttfw;
+        Tue,  9 Oct 2018 15:51:57 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7780A8B80B;
-        Tue,  9 Oct 2018 15:52:21 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0EDA18B80F;
+        Tue,  9 Oct 2018 15:52:09 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id LCm6wsDMZERj; Tue,  9 Oct 2018 15:52:21 +0200 (CEST)
+        with ESMTP id cn_062aFv_7C; Tue,  9 Oct 2018 15:52:08 +0200 (CEST)
 Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0DB3D8B80A;
-        Tue,  9 Oct 2018 15:52:21 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9FAC58B80B;
+        Tue,  9 Oct 2018 15:52:08 +0200 (CEST)
 Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 8C0026F444; Tue,  9 Oct 2018 13:52:20 +0000 (UTC)
-Message-Id: <45a7925eab3cc8d1203136f99230ae9f4e5c8c20.1539092112.git.christophe.leroy@c-s.fr>
+        id 49CA86F444; Tue,  9 Oct 2018 13:52:08 +0000 (UTC)
+Message-Id: <b25a091d3753f72cdc8dbfd08b1ffd0c2be4f955.1539092112.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1539092111.git.christophe.leroy@c-s.fr>
 References: <cover.1539092111.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 24/24] powerpc/book3s64: Avoid multiple endian conversion
- in pte helpers
+Subject: [PATCH v3 18/24] powerpc/mm: Distribute platform specific PAGE and
+ PMD flags and definitions
 To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
@@ -64,236 +64,371 @@ To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
         linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Date:   Tue,  9 Oct 2018 13:52:20 +0000 (UTC)
+Date:   Tue,  9 Oct 2018 13:52:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the same spirit as already done in pte query helpers,
-this patch changes pte setting helpers to perform endian
-conversions on the constants rather than on the pte value.
+The base kernel PAGE_XXXX definition sets are more or less platform
+specific. Lets distribute them close to platform _PAGE_XXX flags
+definition, and customise them to their exact platform flags.
 
-In the meantime, it changes pte_access_permitted() to use
-pte helpers for the same reason.
+Also defines _PAGE_PSIZE and _PTE_NONE_MASK for each platform
+allthough they are defined as 0.
 
+Do the same with _PMD flags like _PMD_USER and _PMD_PRESENT_MASK
+
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/64/pgtable.h | 71 +++++++++++++---------------
- 1 file changed, 32 insertions(+), 39 deletions(-)
+ arch/powerpc/include/asm/nohash/32/pte-40x.h       | 29 ++++++++++
+ arch/powerpc/include/asm/nohash/32/pte-44x.h       | 35 ++++++++++++
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h       | 27 +++++++++
+ arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h | 38 +++++++++++++
+ arch/powerpc/include/asm/nohash/pte-book3e.h       | 30 ++++++++++
+ arch/powerpc/include/asm/pte-common.h              | 66 ----------------------
+ 6 files changed, 159 insertions(+), 66 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index cf8dbd5f8f03..f0c79f370cf0 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -506,12 +506,12 @@ static inline bool pte_soft_dirty(pte_t pte)
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-40x.h b/arch/powerpc/include/asm/nohash/32/pte-40x.h
+index bb4b3a4b92a0..2b48bc289a4d 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-40x.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-40x.h
+@@ -50,13 +50,42 @@
+ #define _PAGE_EXEC	0x200	/* hardware: EX permission */
+ #define _PAGE_ACCESSED	0x400	/* software: R: page referenced */
  
- static inline pte_t pte_mksoft_dirty(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_SOFT_DIRTY));
- }
- 
- static inline pte_t pte_clear_soft_dirty(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~_PAGE_SOFT_DIRTY);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_SOFT_DIRTY));
- }
- #endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
- 
-@@ -532,7 +532,7 @@ static inline pte_t pte_mk_savedwrite(pte_t pte)
- 	 */
- 	VM_BUG_ON((pte_raw(pte) & cpu_to_be64(_PAGE_PRESENT | _PAGE_RWX | _PAGE_PRIVILEGED)) !=
- 		  cpu_to_be64(_PAGE_PRESENT | _PAGE_PRIVILEGED));
--	return __pte(pte_val(pte) & ~_PAGE_PRIVILEGED);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_PRIVILEGED));
- }
- 
- #define pte_clear_savedwrite pte_clear_savedwrite
-@@ -542,14 +542,14 @@ static inline pte_t pte_clear_savedwrite(pte_t pte)
- 	 * Used by KSM subsystem to make a protnone pte readonly.
- 	 */
- 	VM_BUG_ON(!pte_protnone(pte));
--	return __pte(pte_val(pte) | _PAGE_PRIVILEGED);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_PRIVILEGED));
- }
- #else
- #define pte_clear_savedwrite pte_clear_savedwrite
- static inline pte_t pte_clear_savedwrite(pte_t pte)
- {
- 	VM_WARN_ON(1);
--	return __pte(pte_val(pte) & ~_PAGE_WRITE);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_WRITE));
- }
- #endif /* CONFIG_NUMA_BALANCING */
- 
-@@ -578,25 +578,22 @@ static inline bool arch_pte_access_permitted(u64 pte, bool write, bool execute)
- }
- #endif /* CONFIG_PPC_MEM_KEYS */
- 
-+static inline bool pte_user(pte_t pte)
-+{
-+	return !(pte_raw(pte) & cpu_to_be64(_PAGE_PRIVILEGED));
-+}
++/* No page size encoding in the linux PTE */
++#define _PAGE_PSIZE		0
 +
- #define pte_access_permitted pte_access_permitted
- static inline bool pte_access_permitted(pte_t pte, bool write)
- {
--	unsigned long pteval = pte_val(pte);
--	/* Also check for pte_user */
--	unsigned long clear_pte_bits = _PAGE_PRIVILEGED;
- 	/*
- 	 * _PAGE_READ is needed for any access and will be
- 	 * cleared for PROT_NONE
- 	 */
--	unsigned long need_pte_bits = _PAGE_PRESENT | _PAGE_READ;
++#define _PAGE_KERNEL_RO		0
++#define _PAGE_KERNEL_ROX	_PAGE_EXEC
++#define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW | _PAGE_HWWRITE)
++#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_HWWRITE | _PAGE_EXEC)
++
+ #define _PMD_PRESENT	0x400	/* PMD points to page of PTEs */
++#define _PMD_PRESENT_MASK	_PMD_PRESENT
+ #define _PMD_BAD	0x802
+ #define _PMD_SIZE_4M	0x0c0
+ #define _PMD_SIZE_16M	0x0e0
++#define _PMD_USER	0
++
++#define _PTE_NONE_MASK	0
+ 
+ /* Until my rework is finished, 40x still needs atomic PTE updates */
+ #define PTE_ATOMIC_UPDATES	1
+ 
++/* Mask of bits returned by pte_pgprot() */
++#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_NO_CACHE | \
++			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
++			 _PAGE_RW | _PAGE_HWWRITE | _PAGE_DIRTY | _PAGE_EXEC)
++
++#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED)
++#define _PAGE_BASE	(_PAGE_BASE_NC)
++
++/* Permission masks used to generate the __P and __S table */
++#define PAGE_NONE	__pgprot(_PAGE_BASE)
++#define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
++#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++
+ #endif /* __KERNEL__ */
+ #endif /*  _ASM_POWERPC_NOHASH_32_PTE_40x_H */
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-44x.h b/arch/powerpc/include/asm/nohash/32/pte-44x.h
+index f812c0272364..8d6b268a986f 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-44x.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-44x.h
+@@ -85,14 +85,49 @@
+ #define _PAGE_NO_CACHE	0x00000400		/* H: I bit */
+ #define _PAGE_WRITETHRU	0x00000800		/* H: W bit */
+ 
++/* No page size encoding in the linux PTE */
++#define _PAGE_PSIZE		0
++
++#define _PAGE_KERNEL_RO		0
++#define _PAGE_KERNEL_ROX	_PAGE_EXEC
++#define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
++#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_EXEC)
++
++/* Mask of bits returned by pte_pgprot() */
++#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
++			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
++			 _PAGE_RW | _PAGE_DIRTY | _PAGE_EXEC)
++
+ /* TODO: Add large page lowmem mapping support */
+ #define _PMD_PRESENT	0
+ #define _PMD_PRESENT_MASK (PAGE_MASK)
+ #define _PMD_BAD	(~PAGE_MASK)
++#define _PMD_USER	0
+ 
+ /* ERPN in a PTE never gets cleared, ignore it */
+ #define _PTE_NONE_MASK	0xffffffff00000000ULL
+ 
++/*
++ * We define 2 sets of base prot bits, one for basic pages (ie,
++ * cacheable kernel and user pages) and one for non cacheable
++ * pages. We always set _PAGE_COHERENT when SMP is enabled or
++ * the processor might need it for DMA coherency.
++ */
++#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED)
++#if defined(CONFIG_SMP)
++#define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
++#else
++#define _PAGE_BASE	(_PAGE_BASE_NC)
++#endif
++
++/* Permission masks used to generate the __P and __S table */
++#define PAGE_NONE	__pgprot(_PAGE_BASE)
++#define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
++#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+ 
+ #endif /* __KERNEL__ */
+ #endif /*  _ASM_POWERPC_NOHASH_32_PTE_44x_H */
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+index f04cb46ae8a1..d06fc45bd9ac 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+@@ -46,19 +46,46 @@
+ #define _PAGE_NA	0x0200	/* Supervisor NA, User no access */
+ #define _PAGE_RO	0x0600	/* Supervisor RO, User no access */
+ 
++#define _PAGE_KERNEL_RO		(_PAGE_PRIVILEGED | _PAGE_RO)
++#define _PAGE_KERNEL_ROX	(_PAGE_PRIVILEGED | _PAGE_RO | _PAGE_EXEC)
++#define _PAGE_KERNEL_RW		(_PAGE_PRIVILEGED | _PAGE_DIRTY)
++#define _PAGE_KERNEL_RWX	(_PAGE_PRIVILEGED | _PAGE_DIRTY | _PAGE_EXEC)
++
++/* Mask of bits returned by pte_pgprot() */
++#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_NO_CACHE | \
++			 _PAGE_ACCESSED | _PAGE_RO | _PAGE_NA | \
++			 _PAGE_PRIVILEGED | _PAGE_DIRTY | _PAGE_EXEC)
++
+ #define _PMD_PRESENT	0x0001
++#define _PMD_PRESENT_MASK	_PMD_PRESENT
+ #define _PMD_BAD	0x0fd0
+ #define _PMD_PAGE_MASK	0x000c
+ #define _PMD_PAGE_8M	0x000c
+ #define _PMD_PAGE_512K	0x0004
+ #define _PMD_USER	0x0020	/* APG 1 */
+ 
++#define _PTE_NONE_MASK	0
++
+ /* Until my rework is finished, 8xx still needs atomic PTE updates */
+ #define PTE_ATOMIC_UPDATES	1
+ 
+ #ifdef CONFIG_PPC_16K_PAGES
+ #define _PAGE_PSIZE	_PAGE_HUGE
++#else
++#define _PAGE_PSIZE		0
+ #endif
+ 
++#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE)
++#define _PAGE_BASE	(_PAGE_BASE_NC)
++
++/* Permission masks used to generate the __P and __S table */
++#define PAGE_NONE	__pgprot(_PAGE_BASE | _PAGE_NA)
++#define PAGE_SHARED	__pgprot(_PAGE_BASE)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_EXEC)
++#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_RO)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_RO | _PAGE_EXEC)
++#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_RO)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_RO | _PAGE_EXEC)
++
+ #endif /* __KERNEL__ */
+ #endif /*  _ASM_POWERPC_NOHASH_32_PTE_8xx_H */
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h b/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h
+index d1ee24e9e137..1ecf60fe0909 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h
+@@ -31,11 +31,49 @@
+ #define _PAGE_WRITETHRU	0x00400	/* H: W bit */
+ #define _PAGE_SPECIAL	0x00800 /* S: Special page */
+ 
++#define _PAGE_KERNEL_RO		0
++#define _PAGE_KERNEL_ROX	_PAGE_EXEC
++#define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
++#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_EXEC)
++
++/* No page size encoding in the linux PTE */
++#define _PAGE_PSIZE		0
++
++/* Mask of bits returned by pte_pgprot() */
++#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
++			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
++			 _PAGE_RW | _PAGE_DIRTY | _PAGE_EXEC)
++
+ #define _PMD_PRESENT	0
+ #define _PMD_PRESENT_MASK (PAGE_MASK)
+ #define _PMD_BAD	(~PAGE_MASK)
++#define _PMD_USER	0
++
++#define _PTE_NONE_MASK	0
+ 
+ #define PTE_WIMGE_SHIFT (6)
+ 
++/*
++ * We define 2 sets of base prot bits, one for basic pages (ie,
++ * cacheable kernel and user pages) and one for non cacheable
++ * pages. We always set _PAGE_COHERENT when SMP is enabled or
++ * the processor might need it for DMA coherency.
++ */
++#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED)
++#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
++#define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
++#else
++#define _PAGE_BASE	(_PAGE_BASE_NC)
++#endif
++
++/* Permission masks used to generate the __P and __S table */
++#define PAGE_NONE	__pgprot(_PAGE_BASE)
++#define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
++#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++
+ #endif /* __KERNEL__ */
+ #endif /*  _ASM_POWERPC_NOHASH_32_PTE_FSL_BOOKE_H */
+diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
+index 12730b81cd98..58eef8cb569d 100644
+--- a/arch/powerpc/include/asm/nohash/pte-book3e.h
++++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
+@@ -77,7 +77,37 @@
+ #define _PMD_PRESENT	0
+ #define _PMD_PRESENT_MASK (PAGE_MASK)
+ #define _PMD_BAD	(~PAGE_MASK)
++#define _PMD_USER	0
++#else
++#define _PTE_NONE_MASK	0
+ #endif
+ 
++/* Mask of bits returned by pte_pgprot() */
++#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
++			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
++			 _PAGE_PRIVILEGED | _PAGE_RW | _PAGE_DIRTY | _PAGE_EXEC)
++
++/*
++ * We define 2 sets of base prot bits, one for basic pages (ie,
++ * cacheable kernel and user pages) and one for non cacheable
++ * pages. We always set _PAGE_COHERENT when SMP is enabled or
++ * the processor might need it for DMA coherency.
++ */
++#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE)
++#if defined(CONFIG_SMP)
++#define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
++#else
++#define _PAGE_BASE	(_PAGE_BASE_NC)
++#endif
++
++/* Permission masks used to generate the __P and __S table */
++#define PAGE_NONE	__pgprot(_PAGE_BASE)
++#define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
++#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
++
+ #endif /* __KERNEL__ */
+ #endif /*  _ASM_POWERPC_NOHASH_PTE_BOOK3E_H */
+diff --git a/arch/powerpc/include/asm/pte-common.h b/arch/powerpc/include/asm/pte-common.h
+index 556a914ff845..cce60b3ba7d4 100644
+--- a/arch/powerpc/include/asm/pte-common.h
++++ b/arch/powerpc/include/asm/pte-common.h
+@@ -17,9 +17,6 @@
+ #ifndef _PAGE_SAO
+ #define _PAGE_SAO	0
+ #endif
+-#ifndef _PAGE_PSIZE
+-#define _PAGE_PSIZE		0
+-#endif
+ /* _PAGE_RO and _PAGE_RW shall not be defined at the same time */
+ #ifndef _PAGE_RO
+ #define _PAGE_RO 0
+@@ -42,30 +39,6 @@
+ #define _PAGE_HUGE 0
+ #endif
+ 
+-#ifndef _PMD_PRESENT_MASK
+-#define _PMD_PRESENT_MASK	_PMD_PRESENT
+-#endif
+-#ifndef _PMD_USER
+-#define _PMD_USER	0
+-#endif
+-#ifndef _PAGE_KERNEL_RO
+-#define _PAGE_KERNEL_RO		(_PAGE_PRIVILEGED | _PAGE_RO)
+-#endif
+-#ifndef _PAGE_KERNEL_ROX
+-#define _PAGE_KERNEL_ROX	(_PAGE_PRIVILEGED | _PAGE_RO | _PAGE_EXEC)
+-#endif
+-#ifndef _PAGE_KERNEL_RW
+-#define _PAGE_KERNEL_RW		(_PAGE_PRIVILEGED | _PAGE_DIRTY | _PAGE_RW | \
+-				 _PAGE_HWWRITE)
+-#endif
+-#ifndef _PAGE_KERNEL_RWX
+-#define _PAGE_KERNEL_RWX	(_PAGE_PRIVILEGED | _PAGE_DIRTY | _PAGE_RW | \
+-				 _PAGE_HWWRITE | _PAGE_EXEC)
+-#endif
+-#ifndef _PTE_NONE_MASK
+-#define _PTE_NONE_MASK	0
+-#endif
 -
--	if (write)
--		need_pte_bits |= _PAGE_WRITE;
+ /* Location of the PFN in the PTE. Most 32-bit platforms use the same
+  * as _PAGE_SHIFT here (ie, naturally aligned).
+  * Platform who don't just pre-define the value so we don't override it here
+@@ -89,45 +62,6 @@
+ #define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_DIRTY | \
+                          _PAGE_ACCESSED | _PAGE_SPECIAL)
+ 
+-/* Mask of bits returned by pte_pgprot() */
+-#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
+-			 _PAGE_WRITETHRU | \
+-			 _PAGE_USER | _PAGE_ACCESSED | _PAGE_RO | _PAGE_NA | \
+-			 _PAGE_PRIVILEGED | \
+-			 _PAGE_RW | _PAGE_HWWRITE | _PAGE_DIRTY | _PAGE_EXEC)
 -
--	if ((pteval & need_pte_bits) != need_pte_bits)
-+	if (!pte_present(pte) || !pte_user(pte) || !pte_read(pte))
- 		return false;
- 
--	if ((pteval & clear_pte_bits) == clear_pte_bits)
-+	if (write && !pte_write(pte))
- 		return false;
- 
- 	return arch_pte_access_permitted(pte_val(pte), write, 0);
-@@ -625,32 +622,32 @@ static inline pte_t pte_wrprotect(pte_t pte)
- {
- 	if (unlikely(pte_savedwrite(pte)))
- 		return pte_clear_savedwrite(pte);
--	return __pte(pte_val(pte) & ~_PAGE_WRITE);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_WRITE));
- }
- 
- static inline pte_t pte_exprotect(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~_PAGE_EXEC);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_EXEC));
- }
- 
- static inline pte_t pte_mkclean(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~_PAGE_DIRTY);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_DIRTY));
- }
- 
- static inline pte_t pte_mkold(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~_PAGE_ACCESSED);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_ACCESSED));
- }
- 
- static inline pte_t pte_mkexec(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_EXEC);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_EXEC));
- }
- 
- static inline pte_t pte_mkpte(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_PTE);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_PTE));
- }
- 
- static inline pte_t pte_mkwrite(pte_t pte)
-@@ -658,22 +655,22 @@ static inline pte_t pte_mkwrite(pte_t pte)
- 	/*
- 	 * write implies read, hence set both
- 	 */
--	return __pte(pte_val(pte) | _PAGE_RW);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_RW));
- }
- 
- static inline pte_t pte_mkdirty(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_DIRTY | _PAGE_SOFT_DIRTY));
- }
- 
- static inline pte_t pte_mkyoung(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_ACCESSED);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_ACCESSED));
- }
- 
- static inline pte_t pte_mkspecial(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_SPECIAL);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_SPECIAL));
- }
- 
- static inline pte_t pte_mkhuge(pte_t pte)
-@@ -683,17 +680,17 @@ static inline pte_t pte_mkhuge(pte_t pte)
- 
- static inline pte_t pte_mkdevmap(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_SPECIAL|_PAGE_DEVMAP);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_SPECIAL | _PAGE_DEVMAP));
- }
- 
- static inline pte_t pte_mkprivileged(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_PRIVILEGED);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_PRIVILEGED));
- }
- 
- static inline pte_t pte_mkuser(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~_PAGE_PRIVILEGED);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_PRIVILEGED));
- }
- 
- /*
-@@ -712,12 +709,8 @@ static inline int pte_devmap(pte_t pte)
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- {
- 	/* FIXME!! check whether this need to be a conditional */
--	return __pte((pte_val(pte) & _PAGE_CHG_MASK) | pgprot_val(newprot));
--}
+-/*
+- * We define 2 sets of base prot bits, one for basic pages (ie,
+- * cacheable kernel and user pages) and one for non cacheable
+- * pages. We always set _PAGE_COHERENT when SMP is enabled or
+- * the processor might need it for DMA coherency.
+- */
+-#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE)
+-#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
+-#define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
+-#else
+-#define _PAGE_BASE	(_PAGE_BASE_NC)
+-#endif
 -
--static inline bool pte_user(pte_t pte)
--{
--	return !(pte_raw(pte) & cpu_to_be64(_PAGE_PRIVILEGED));
-+	return __pte_raw((pte_raw(pte) & cpu_to_be64(_PAGE_CHG_MASK)) |
-+			 cpu_to_be64(pgprot_val(newprot)));
- }
- 
- /* Encode and de-code a swap entry */
-@@ -760,7 +753,7 @@ static inline bool pte_user(pte_t pte)
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
- {
--	return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
-+	return __pte_raw(pte_raw(pte) | cpu_to_be64(_PAGE_SWP_SOFT_DIRTY));
- }
- 
- static inline bool pte_swp_soft_dirty(pte_t pte)
-@@ -770,7 +763,7 @@ static inline bool pte_swp_soft_dirty(pte_t pte)
- 
- static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~_PAGE_SWP_SOFT_DIRTY);
-+	return __pte_raw(pte_raw(pte) & cpu_to_be64(~_PAGE_SWP_SOFT_DIRTY));
- }
- #endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
- 
-@@ -859,10 +852,10 @@ static inline pgprot_t pgprot_writecombine(pgprot_t prot)
-  */
- static inline bool pte_ci(pte_t pte)
- {
--	unsigned long pte_v = pte_val(pte);
-+	__be64 pte_v = pte_raw(pte);
- 
--	if (((pte_v & _PAGE_CACHE_CTL) == _PAGE_TOLERANT) ||
--	    ((pte_v & _PAGE_CACHE_CTL) == _PAGE_NON_IDEMPOTENT))
-+	if (((pte_v & cpu_to_be64(_PAGE_CACHE_CTL)) == cpu_to_be64(_PAGE_TOLERANT)) ||
-+	    ((pte_v & cpu_to_be64(_PAGE_CACHE_CTL)) == cpu_to_be64(_PAGE_NON_IDEMPOTENT)))
- 		return true;
- 	return false;
- }
+-/* Permission masks used to generate the __P and __S table,
+- *
+- * Note:__pgprot is defined in arch/powerpc/include/asm/page.h
+- *
+- * Write permissions imply read permissions for now (we could make write-only
+- * pages on BookE but we don't bother for now). Execute permission control is
+- * possible on platforms that define _PAGE_EXEC
+- */
+-#define PAGE_NONE	__pgprot(_PAGE_BASE | _PAGE_NA)
+-#define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
+-#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | \
+-				 _PAGE_EXEC)
+-#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RO)
+-#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RO | \
+-				 _PAGE_EXEC)
+-#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RO)
+-#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RO | \
+-				 _PAGE_EXEC)
+-
+ /* Permission masks used for kernel mappings */
+ #define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
+ #define PAGE_KERNEL_NC	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | \
 -- 
 2.13.3
 
